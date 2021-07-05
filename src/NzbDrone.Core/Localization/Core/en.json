@@ -1,8 +1,10 @@
 {
-  "Language": "Language",
-  "UI Language": "UI Language",
-  "Language that Whisparr will use for UI": "Language that Whisparr will use for UI",
   "Browser Reload Required": "Browser Reload Required",
-  "HiddenClickToShow": "Hidden, Click To Show",
-  "ShownClickToHide": "Shown, Click To Hide"
+  "HiddenClickToShow": "Hidden, click to show",
+  "HideAdvanced": "Hide Advanced",
+  "Language": "Language",
+  "Language that Whisparr will use for UI": "Language that Whisparr will use for UI",
+  "ShowAdvanced": "Show Advanced",
+  "ShownClickToHide": "Shown, click to hide",
+  "UI Language": "UI Language"
 }

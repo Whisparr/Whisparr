@@ -19,6 +19,8 @@ namespace Whisparr.Http.ClientSchema
         public string Section { get; set; }
         public string Hidden { get; set; }
         public PrivacyLevel Privacy { get; set; }
+        public string Placeholder { get; set; }
+
         public Field Clone()
         {
             return (Field)MemberwiseClone();

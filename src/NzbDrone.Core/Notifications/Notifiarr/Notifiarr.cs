@@ -34,8 +34,8 @@ namespace NzbDrone.Core.Notifications.Notifiarr
             variables.Add("Whisparr_Movie_Year", movie.Year.ToString());
             variables.Add("Whisparr_Movie_ImdbId", movie.ImdbId ?? string.Empty);
             variables.Add("Whisparr_Movie_TmdbId", movie.TmdbId.ToString());
-            variables.Add("Whisparr_Movie_In_Cinemas_Date", movie.InCinemas.ToString() ?? string.Empty);
-            variables.Add("Whisparr_Movie_Physical_Release_Date", movie.PhysicalRelease.ToString() ?? string.Empty);
+            variables.Add("Whisparr_Movie_In_Cinemas_Date", movie.MovieMetadata.Value.InCinemas.ToString() ?? string.Empty);
+            variables.Add("Whisparr_Movie_Physical_Release_Date", movie.MovieMetadata.Value.PhysicalRelease.ToString() ?? string.Empty);
             variables.Add("Whisparr_Release_Title", remoteMovie.Release.Title);
             variables.Add("Whisparr_Release_Indexer", remoteMovie.Release.Indexer ?? string.Empty);
             variables.Add("Whisparr_Release_Size", remoteMovie.Release.Size.ToString());
@@ -65,8 +65,8 @@ namespace NzbDrone.Core.Notifications.Notifiarr
             variables.Add("Whisparr_Movie_Path", movie.Path);
             variables.Add("Whisparr_Movie_ImdbId", movie.ImdbId ?? string.Empty);
             variables.Add("Whisparr_Movie_TmdbId", movie.TmdbId.ToString());
-            variables.Add("Whisparr_Movie_In_Cinemas_Date", movie.InCinemas.ToString() ?? string.Empty);
-            variables.Add("Whisparr_Movie_Physical_Release_Date", movie.PhysicalRelease.ToString() ?? string.Empty);
+            variables.Add("Whisparr_Movie_In_Cinemas_Date", movie.MovieMetadata.Value.InCinemas.ToString() ?? string.Empty);
+            variables.Add("Whisparr_Movie_Physical_Release_Date", movie.MovieMetadata.Value.PhysicalRelease.ToString() ?? string.Empty);
             variables.Add("Whisparr_MovieFile_Id", movieFile.Id.ToString());
             variables.Add("Whisparr_MovieFile_RelativePath", movieFile.RelativePath);
             variables.Add("Whisparr_MovieFile_Path", Path.Combine(movie.Path, movieFile.RelativePath));

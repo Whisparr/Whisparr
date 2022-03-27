@@ -19,42 +19,42 @@ class MoreInfo extends Component {
             {translate('HomePage')}
           </DescriptionListItemTitle>
           <DescriptionListItemDescription>
-            <Link to="https://radarr.video/">radarr.video</Link>
+            <Link to="https://whisparr.com/">whisparr.com</Link>
           </DescriptionListItemDescription>
 
           <DescriptionListItemTitle>
             {translate('Wiki')}
           </DescriptionListItemTitle>
           <DescriptionListItemDescription>
-            <Link to="https://wiki.servarr.com/radarr">{translate('Wiki')}</Link>
+            <Link to="https://wiki.servarr.com/whisparr">{translate('Wiki')}</Link>
           </DescriptionListItemDescription>
 
           <DescriptionListItemTitle>
             {translate('Reddit')}
           </DescriptionListItemTitle>
           <DescriptionListItemDescription>
-            <Link to="https://www.reddit.com/r/Radarr/">/r/Radarr</Link>
+            <Link to="https://www.reddit.com/r/Whisparr/">/r/Whisparr</Link>
           </DescriptionListItemDescription>
 
           <DescriptionListItemTitle>
             {translate('Discord')}
           </DescriptionListItemTitle>
           <DescriptionListItemDescription>
-            <Link to="https://radarr.video/discord">radarr.video/discord</Link>
+            <Link to="https://whisparr.com/discord">whisparr.com/discord</Link>
           </DescriptionListItemDescription>
 
           <DescriptionListItemTitle>
             {translate('Source')}
           </DescriptionListItemTitle>
           <DescriptionListItemDescription>
-            <Link to="https://github.com/Radarr/Radarr/">github.com/Radarr/Radarr</Link>
+            <Link to="https://github.com/Whisparr/Whisparr/">github.com/Whisparr/Whisparr</Link>
           </DescriptionListItemDescription>
 
           <DescriptionListItemTitle>
             {translate('FeatureRequests')}
           </DescriptionListItemTitle>
           <DescriptionListItemDescription>
-            <Link to="https://github.com/Radarr/Radarr/issues">github.com/Radarr/Radarr/issues</Link>
+            <Link to="https://github.com/Whisparr/Whisparr/issues">github.com/Whisparr/Whisparr/issues</Link>
           </DescriptionListItemDescription>
 
         </DescriptionList>

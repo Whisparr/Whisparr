@@ -27,17 +27,17 @@ namespace NzbDrone.Core.Test.ParserTests
             },
             new object[]
             {
-                @"C:\Test\Movie.2018.DVDRip.XviD-RADARR\AHFMZXGHEWD660.mkv".AsOsAgnostic(),
+                @"C:\Test\Movie.2018.DVDRip.XviD-WHISPARR\AHFMZXGHEWD660.mkv".AsOsAgnostic(),
                 "Movie",
                 Quality.DVD,
-                "RADARR"
+                "WHISPARR"
             },
             new object[]
             {
-                @"C:\Test\Movie.2018.1080p.BluRay.x264-RADARR\Backup_72023S02-12.mkv".AsOsAgnostic(),
+                @"C:\Test\Movie.2018.1080p.BluRay.x264-WHISPARR\Backup_72023S02-12.mkv".AsOsAgnostic(),
                 "Movie",
                 Quality.Bluray1080p,
-                "RADARR"
+                "WHISPARR"
             },
             new object[]
             {

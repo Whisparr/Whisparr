@@ -19,11 +19,11 @@ namespace NzbDrone.Common.Composition
         public static IEnumerable<Assembly> Load(IEnumerable<string> assemblyNames)
         {
             var toLoad = assemblyNames.ToList();
-            toLoad.Add("Radarr.Common");
-            toLoad.Add(OsInfo.IsWindows ? "Radarr.Windows" : "Radarr.Mono");
+            toLoad.Add("Whisparr.Common");
+            toLoad.Add(OsInfo.IsWindows ? "Whisparr.Windows" : "Whisparr.Mono");
 
             var toRegisterResolver = new List<string> { "System.Data.SQLite" };
-            toRegisterResolver.AddRange(assemblyNames.Intersect(new[] { "Radarr.Core" }));
+            toRegisterResolver.AddRange(assemblyNames.Intersect(new[] { "Whisparr.Core" }));
             RegisterNativeResolver(toRegisterResolver);
 
             var startupPath = AppDomain.CurrentDomain.BaseDirectory;

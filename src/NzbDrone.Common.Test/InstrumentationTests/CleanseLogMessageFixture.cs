@@ -61,7 +61,7 @@ namespace NzbDrone.Common.Test.InstrumentationTests
         [TestCase(@"OutputPath=/home/mySecret/Downloads")]
         [TestCase("Hardlinking episode file: /home/mySecret/Downloads to /media/abc.mkv")]
         [TestCase("Hardlink '/home/mySecret/Downloads/abs.mkv' to '/media/abc.mkv' failed.")]
-        [TestCase("https://notifiarr.com/notifier.php: api=1234530f-422f-4aac-b6b3-01233210aaaa&radarr_health_issue_message=Download")]
+        [TestCase("https://notifiarr.com/notifier.php: api=1234530f-422f-4aac-b6b3-01233210aaaa&whisparr_health_issue_message=Download")]
         [TestCase("/readarr/signalr/messages/negotiate?access_token=1234530f422f4aacb6b301233210aaaa&negotiateVersion=1")]
 
         // Announce URLs (passkeys) Magnet & Tracker
@@ -76,7 +76,7 @@ namespace NzbDrone.Common.Test.InstrumentationTests
         [TestCase(@"tracker"":""http://xxx.yyy/announce.php?passkey=9pr04sg601233210imaveql2tyu8xyui"",""info"":""http://xxx.yyy/info?a=b""")]
 
         // Notifiarr
-        [TestCase(@"https://xxx.yyy/api/v1/notification/radarr/9pr04sg6-0123-3210-imav-eql2tyu8xyui")]
+        [TestCase(@"https://xxx.yyy/api/v1/notification/whisparr/9pr04sg6-0123-3210-imav-eql2tyu8xyui")]
 
         public void should_clean_message(string message)
         {

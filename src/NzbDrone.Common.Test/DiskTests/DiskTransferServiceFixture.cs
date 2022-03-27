@@ -14,8 +14,8 @@ namespace NzbDrone.Common.Test.DiskTests
     [TestFixture]
     public class DiskTransferServiceFixture : TestBase<DiskTransferService>
     {
-        private readonly string _sourcePath = @"C:\source\my.video.mkv".AsOsAgnostic();
-        private readonly string _targetPath = @"C:\target\my.video.mkv".AsOsAgnostic();
+        private readonly string _sourcePath = @"C:\source\my.com.mkv".AsOsAgnostic();
+        private readonly string _targetPath = @"C:\target\my.com.mkv".AsOsAgnostic();
         private readonly string _nfsFile = ".nfs01231232";
 
         private MockMount _sourceMount;

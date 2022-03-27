@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using Radarr.Api.V3.Notifications;
 using RestSharp;
+using Whisparr.Api.V3.Notifications;
 
 namespace NzbDrone.Integration.Test.Client
 {

@@ -42,7 +42,7 @@ namespace NzbDrone.Core.Notifications.Notifiarr
             try
             {
                 var variables = new StringDictionary();
-                variables.Add("Radarr_EventType", "Test");
+                variables.Add("Whisparr_EventType", "Test");
 
                 SendNotification(variables, settings);
                 return null;

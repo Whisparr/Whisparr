@@ -42,7 +42,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Specifications
                     {
                         _logger.Debug("Rejected Multi-Part File: {0}", localMovie.Path);
 
-                        return Decision.Reject("File is suspected multi-part file, Radarr doesn't support this");
+                        return Decision.Reject("File is suspected multi-part file, Whisparr doesn't support this");
                     }
                 }
             }

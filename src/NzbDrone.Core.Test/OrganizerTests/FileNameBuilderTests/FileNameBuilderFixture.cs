@@ -59,7 +59,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
             Mocker.GetMock<INamingConfigService>()
                   .Setup(c => c.GetConfig()).Returns(_namingConfig);
 
-            _movieFile = new MovieFile { Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "RadarrTest" };
+            _movieFile = new MovieFile { Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "WhisparrTest" };
 
             Mocker.GetMock<IQualityDefinitionService>()
                 .Setup(v => v.Get(Moq.It.IsAny<Quality>()))
@@ -609,19 +609,19 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         }
 
         [Test]
-        public void should_use_Radarr_as_release_group_when_not_available()
+        public void should_use_Whisparr_as_release_group_when_not_available()
         {
             _movieFile.ReleaseGroup = null;
             _namingConfig.StandardMovieFormat = "{Release Group}";
 
             Subject.BuildFileName(_movie, _movieFile)
-                   .Should().Be("Radarr");
+                   .Should().Be("Whisparr");
         }
 
         [TestCase("{Movie Title}{-Release Group}", "South Park")]
         [TestCase("{Movie Title}{ Release Group}", "South Park")]
         [TestCase("{Movie Title}{ [Release Group]}", "South Park")]
-        public void should_not_use_Radarr_as_release_group_if_pattern_has_separator(string pattern, string expectedFileName)
+        public void should_not_use_Whisparr_as_release_group_if_pattern_has_separator(string pattern, string expectedFileName)
         {
             _movieFile.ReleaseGroup = null;
             _namingConfig.StandardMovieFormat = pattern;

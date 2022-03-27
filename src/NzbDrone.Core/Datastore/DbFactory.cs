@@ -108,14 +108,14 @@ namespace NzbDrone.Core.Datastore
 
                 if (OsInfo.IsOsx)
                 {
-                    throw new CorruptDatabaseException("Database file: {0} is corrupt, restore from backup if available. See: https://wiki.servarr.com/radarr/faq#i-use-radarr-on-a-mac-and-it-suddenly-stopped-working-what-happened", e, fileName);
+                    throw new CorruptDatabaseException("Database file: {0} is corrupt, restore from backup if available. See: https://wiki.servarr.com/whisparr/faq#i-use-whisparr-on-a-mac-and-it-suddenly-stopped-working-what-happened", e, fileName);
                 }
 
-                throw new CorruptDatabaseException("Database file: {0} is corrupt, restore from backup if available. See: https://wiki.servarr.com/radarr/faq#i-am-getting-an-error-database-disk-image-is-malformed", e, fileName);
+                throw new CorruptDatabaseException("Database file: {0} is corrupt, restore from backup if available. See: https://wiki.servarr.com/whisparr/faq#i-am-getting-an-error-database-disk-image-is-malformed", e, fileName);
             }
             catch (Exception e)
             {
-                throw new RadarrStartupException(e, "Error creating main database");
+                throw new WhisparrStartupException(e, "Error creating main database");
             }
         }
 
@@ -147,7 +147,7 @@ namespace NzbDrone.Core.Datastore
             }
             catch (Exception e)
             {
-                throw new RadarrStartupException(e, "Error creating log database");
+                throw new WhisparrStartupException(e, "Error creating log database");
             }
         }
     }

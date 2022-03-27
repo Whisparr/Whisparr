@@ -1,14 +1,14 @@
-# Radarr
+# Whisparr
 
-[![Build Status](https://dev.azure.com/Radarr/Radarr/_apis/build/status/Radarr.Radarr?branchName=develop)](https://dev.azure.com/Radarr/Radarr/_build/latest?definitionId=1&branchName=develop)
-[![Translated](https://translate.servarr.com/widgets/servarr/-/radarr/svg-badge.svg)](https://translate.servarr.com/engage/radarr/?utm_source=widget)
-[![Docker Pulls](https://img.shields.io/docker/pulls/linuxserver/radarr.svg)](https://wiki.servarr.com/radarr/installation#docker)
-![Github Downloads](https://img.shields.io/github/downloads/Radarr/Radarr/total.svg)
-[![Backers on Open Collective](https://opencollective.com/Radarr/backers/badge.svg)](#backers)
-[![Sponsors on Open Collective](https://opencollective.com/Radarr/sponsors/badge.svg)](#sponsors)
-[![Mega Sponsors on Open Collective](https://opencollective.com/Radarr/megasponsors/badge.svg)](#mega-sponsors)
+[![Build Status](https://dev.azure.com/Whisparr/Whisparr/_apis/build/status/Whisparr.Whisparr?branchName=develop)](https://dev.azure.com/Whisparr/Whisparr/_build/latest?definitionId=1&branchName=develop)
+[![Translated](https://translate.servarr.com/widgets/servarr/-/whisparr/svg-badge.svg)](https://translate.servarr.com/engage/whisparr/?utm_source=widget)
+[![Docker Pulls](https://img.shields.io/docker/pulls/linuxserver/whisparr.svg)](https://wiki.servarr.com/whisparr/installation#docker)
+![Github Downloads](https://img.shields.io/github/downloads/Whisparr/Whisparr/total.svg)
+[![Backers on Open Collective](https://opencollective.com/Whisparr/backers/badge.svg)](#backers)
+[![Sponsors on Open Collective](https://opencollective.com/Whisparr/sponsors/badge.svg)](#sponsors)
+[![Mega Sponsors on Open Collective](https://opencollective.com/Whisparr/megasponsors/badge.svg)](#mega-sponsors)
 
-Radarr is a movie collection manager for Usenet and BitTorrent users. It can monitor multiple RSS feeds for new movies and will interface with clients and indexers to grab, sort, and rename them. It can also be configured to automatically upgrade the quality of existing files in the library when a better quality format becomes available.
+Whisparr is a movie collection manager for Usenet and BitTorrent users. It can monitor multiple RSS feeds for new movies and will interface with clients and indexers to grab, sort, and rename them. It can also be configured to automatically upgrade the quality of existing files in the library when a better quality format becomes available.
 Note that only one type of a given movie is supported. If you want both an 4k version and 1080p version of a given movie you will need multiple instances.
 
 ## Major Features Include
@@ -28,44 +28,44 @@ Note that only one type of a given movie is supported. If you want both an 4k ve
 * Full integration with Kodi and Plex (notifications, library updates)
 * Importing Metadata such as trailers or subtitles
 * Adding metadata such as posters and information for Kodi and others to use
-* Advanced customization for profiles, such that Radarr will always download the copy you want
+* Advanced customization for profiles, such that Whisparr will always download the copy you want
 * A beautiful UI
 
 ## Support
 
-[![Wiki](https://img.shields.io/badge/servarr-wiki-181717.svg?maxAge=60)](https://wiki.servarr.com/radarr)
-[![Discord](https://img.shields.io/badge/discord-chat-7289DA.svg?maxAge=60)](https://radarr.video/discord)
-[![Reddit](https://img.shields.io/badge/reddit-discussion-FF4500.svg?maxAge=60)](https://www.reddit.com/r/Radarr)
+[![Wiki](https://img.shields.io/badge/servarr-wiki-181717.svg?maxAge=60)](https://wiki.servarr.com/whisparr)
+[![Discord](https://img.shields.io/badge/discord-chat-7289DA.svg?maxAge=60)](https://whisparr.com/discord)
+[![Reddit](https://img.shields.io/badge/reddit-discussion-FF4500.svg?maxAge=60)](https://www.reddit.com/r/Whisparr)
 
 Note: GitHub Issues are for Bugs and Feature Requests Only
 
-[![GitHub - Bugs and Feature Requests Only](https://img.shields.io/badge/github-issues-red.svg?maxAge=60)](https://github.com/Radarr/Radarr/issues)
+[![GitHub - Bugs and Feature Requests Only](https://img.shields.io/badge/github-issues-red.svg?maxAge=60)](https://github.com/Whisparr/Whisparr/issues)
 
 ## Contributors & Developers
 
-[API Documentation](https://radarr.video/docs/api/)
+[API Documentation](https://whisparr.com/docs/api/)
 
 This project exists thanks to all the people who contribute.
 - [Contribute (GitHub)](CONTRIBUTING.md)
-- [Contribution (Wiki Article)](https://wiki.servarr.com/radarr/contributing)
+- [Contribution (Wiki Article)](https://wiki.servarr.com/whisparr/contributing)
 
-[![Contributors List](https://opencollective.com/Radarr/contributors.svg?width=890&button=false)](https://github.com/Radarr/Radarr/graphs/contributors)
+[![Contributors List](https://opencollective.com/Whisparr/contributors.svg?width=890&button=false)](https://github.com/Whisparr/Whisparr/graphs/contributors)
 
 ## Backers
 
-Thank you to all our backers! 🙏 [Become a backer](https://opencollective.com/Radarr#backer)
+Thank you to all our backers! 🙏 [Become a backer](https://opencollective.com/Whisparr#backer)
 
-[![Backers List](https://opencollective.com/Radarr/backers.svg?width=890)](https://opencollective.com/Radarr#backer)
+[![Backers List](https://opencollective.com/Whisparr/backers.svg?width=890)](https://opencollective.com/Whisparr#backer)
 
 ## Sponsors
 
-Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [Become a sponsor](https://opencollective.com/Radarr#sponsor)
+Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [Become a sponsor](https://opencollective.com/Whisparr#sponsor)
 
-[![Sponsors List](https://opencollective.com/Radarr/sponsors.svg?width=890)](https://opencollective.com/Radarr#sponsor)
+[![Sponsors List](https://opencollective.com/Whisparr/sponsors.svg?width=890)](https://opencollective.com/Whisparr#sponsor)
 
 ## Mega Sponsors
 
-[![Mega Sponsors List](https://opencollective.com/Radarr/tiers/mega-sponsor.svg?width=890)](https://opencollective.com/Radarr#mega-sponsor)
+[![Mega Sponsors List](https://opencollective.com/Whisparr/tiers/mega-sponsor.svg?width=890)](https://opencollective.com/Whisparr#mega-sponsor)
 
 ## JetBrains
 

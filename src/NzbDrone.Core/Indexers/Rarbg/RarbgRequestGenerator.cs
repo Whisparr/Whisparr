@@ -68,7 +68,7 @@ namespace NzbDrone.Core.Indexers.Rarbg
             requestBuilder.AddQueryParam("limit", "100");
             requestBuilder.AddQueryParam("token", _tokenProvider.GetToken(Settings));
             requestBuilder.AddQueryParam("format", "json_extended");
-            requestBuilder.AddQueryParam("app_id", "Radarr");
+            requestBuilder.AddQueryParam("app_id", "Whisparr");
 
             yield return new IndexerRequest(requestBuilder.Build());
         }

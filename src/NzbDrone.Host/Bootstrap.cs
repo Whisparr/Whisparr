@@ -26,7 +26,7 @@ using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Datastore.Extensions;
 using NzbDrone.Host;
 
-namespace Radarr.Host
+namespace Whisparr.Host
 {
     public static class Bootstrap
     {
@@ -34,18 +34,18 @@ namespace Radarr.Host
 
         public static readonly List<string> ASSEMBLIES = new List<string>
         {
-            "Radarr.Host",
-            "Radarr.Core",
-            "Radarr.SignalR",
-            "Radarr.Api.V3",
-            "Radarr.Http"
+            "Whisparr.Host",
+            "Whisparr.Core",
+            "Whisparr.SignalR",
+            "Whisparr.Api.V3",
+            "Whisparr.Http"
         };
 
         public static void Start(string[] args, Action<IHostBuilder> trayCallback = null)
         {
             try
             {
-                Logger.Info("Starting Radarr - {0} - Version {1}",
+                Logger.Info("Starting Whisparr - {0} - Version {1}",
                             Process.GetCurrentProcess().MainModule.FileName,
                             Assembly.GetExecutingAssembly().GetName().Version);
 
@@ -94,7 +94,7 @@ namespace Radarr.Host
             }
             catch (InvalidConfigFileException ex)
             {
-                throw new RadarrStartupException(ex);
+                throw new WhisparrStartupException(ex);
             }
             catch (TerminateApplicationException e)
             {
@@ -108,7 +108,7 @@ namespace Radarr.Host
             var config = GetConfiguration(context);
 
             var bindAddress = config.GetValue(nameof(ConfigFileProvider.BindAddress), "*");
-            var port = config.GetValue(nameof(ConfigFileProvider.Port), 7878);
+            var port = config.GetValue(nameof(ConfigFileProvider.Port), 6969);
             var sslPort = config.GetValue(nameof(ConfigFileProvider.SslPort), 8787);
             var enableSsl = config.GetValue(nameof(ConfigFileProvider.EnableSsl), false);
             var sslCertPath = config.GetValue<string>(nameof(ConfigFileProvider.SslCertPath));
@@ -221,11 +221,11 @@ namespace Radarr.Host
             {
                 if (ex.HResult == 0x2 || ex.HResult == 0x2006D080)
                 {
-                    throw new RadarrStartupException(ex,
+                    throw new WhisparrStartupException(ex,
                         $"The SSL certificate file {cert} does not exist");
                 }
 
-                throw new RadarrStartupException(ex);
+                throw new WhisparrStartupException(ex);
             }
 
             return certificate;

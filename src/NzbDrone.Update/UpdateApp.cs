@@ -33,10 +33,10 @@ namespace NzbDrone.Update
                 var startupArgument = new StartupContext(args);
                 NzbDroneLogger.Register(startupArgument, true, true);
 
-                Logger.Info("Starting Radarr Update Client");
+                Logger.Info("Starting Whisparr Update Client");
 
                 var container = new Container(rules => rules.WithNzbDroneRules())
-                    .AutoAddServices(new List<string> { "Radarr.Update" })
+                    .AutoAddServices(new List<string> { "Whisparr.Update" })
                     .AddNzbDroneLogger()
                     .AddStartupContext(startupArgument);
 
@@ -105,7 +105,7 @@ namespace NzbDrone.Update
                 throw new ArgumentOutOfRangeException("arg", "Invalid process ID");
             }
 
-            Logger.Debug("Radarr process ID: {0}", id);
+            Logger.Debug("Whisparr process ID: {0}", id);
             return id;
         }
 

@@ -336,7 +336,7 @@ namespace NzbDrone.Core.Test.MediaFiles.MovieImport
         [Test]
         public void should_use_folder_info_original_title_to_find_relative_path()
         {
-            var name = "Transformers.2007.720p.BluRay.x264-Radarr";
+            var name = "Transformers.2007.720p.BluRay.x264-Whisparr";
             var outputPath = Path.Combine(@"C:\Test\Unsorted\movies\".AsOsAgnostic(), name);
             var localMovie = _approvedDecisions.First().LocalMovie;
 
@@ -353,7 +353,7 @@ namespace NzbDrone.Core.Test.MediaFiles.MovieImport
         {
             WindowsOnly();
 
-            var name = "Transformers.2007.720p.BluRay.x264-Radarr";
+            var name = "Transformers.2007.720p.BluRay.x264-Whisparr";
             var outputPath = @"C:\".AsOsAgnostic();
             var localMovie = _approvedDecisions.First().LocalMovie;
             localMovie.FolderMovieInfo = new ParsedMovieInfo { ReleaseTitle = name };
@@ -369,7 +369,7 @@ namespace NzbDrone.Core.Test.MediaFiles.MovieImport
         {
             WindowsOnly();
 
-            var name = "Transformers.2007.720p.BluRay.x264-Radarr";
+            var name = "Transformers.2007.720p.BluRay.x264-Whisparr";
             var outputPath = @"\\server\share";
             var localMovie = _approvedDecisions.First().LocalMovie;
 
@@ -384,7 +384,7 @@ namespace NzbDrone.Core.Test.MediaFiles.MovieImport
         [Test]
         public void should_use_folder_info_original_title_to_find_relative_path_when_file_is_not_in_download_client_item_output_directory()
         {
-            var name = "Transformers.2007.720p.BluRay.x264-Radarr";
+            var name = "Transformers.2007.720p.BluRay.x264-Whisparr";
             var outputPath = Path.Combine(@"C:\Test\Unsorted\movie\".AsOsAgnostic(), name);
             var localMovie = _approvedDecisions.First().LocalMovie;
 
@@ -400,7 +400,7 @@ namespace NzbDrone.Core.Test.MediaFiles.MovieImport
         [Test]
         public void should_use_folder_info_original_title_to_find_relative_path_when_download_client_item_has_an_empty_output_path()
         {
-            var name = "Transformers.2007.720p.BluRay.x264-Radarr";
+            var name = "Transformers.2007.720p.BluRay.x264-Whisparr";
             var outputPath = Path.Combine(@"C:\Test\Unsorted\movies\".AsOsAgnostic(), name);
             var localMovie = _approvedDecisions.First().LocalMovie;
 

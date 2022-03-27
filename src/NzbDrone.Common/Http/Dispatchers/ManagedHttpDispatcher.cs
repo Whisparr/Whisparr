@@ -206,7 +206,7 @@ namespace NzbDrone.Common.Http.Dispatchers
                         webRequest.Headers.TransferEncoding.ParseAdd(header.Value);
                         break;
                     case "User-Agent":
-                        throw new NotSupportedException("User-Agent other than Radarr not allowed.");
+                        throw new NotSupportedException("User-Agent other than Whisparr not allowed.");
                     case "Proxy-Connection":
                         throw new NotImplementedException();
                     default:

@@ -9,8 +9,8 @@ namespace NzbDrone.Core.Indexers.Newznab
     {
         public static List<FieldSelectOption> GetFieldSelectOptions(List<NewznabCategory> categories)
         {
-            // Categories not relevant for Radarr
-            var ignoreCategories = new[] { 1000, 3000, 4000, 6000, 7000 };
+            // Categories not relevant for Whisparr
+            var ignoreCategories = new[] { 1000, 2000, 3000, 4000, 6000, 7000 };
 
             // And maybe relevant for specific users
             var unimportantCategories = new[] { 0, 5000 };
@@ -23,17 +23,16 @@ namespace NzbDrone.Core.Indexers.Newznab
                 categories = new List<NewznabCategory>();
                 categories.Add(new NewznabCategory
                 {
-                    Id = 2000,
-                    Name = "Movies",
+                    Id = 6000,
+                    Name = "XXX",
                     Subcategories = new List<NewznabCategory>
                     {
-                        new NewznabCategory { Id = 2010, Name = "Foreign" },
-                        new NewznabCategory { Id = 2020, Name = "Other" },
-                        new NewznabCategory { Id = 2030, Name = "SD" },
-                        new NewznabCategory { Id = 2040, Name = "HD" },
-                        new NewznabCategory { Id = 2045, Name = "UHD" },
-                        new NewznabCategory { Id = 2050, Name = "BluRay" },
-                        new NewznabCategory { Id = 2060, Name = "3D" }
+                        new NewznabCategory { Id = 6010, Name = "DVD" },
+                        new NewznabCategory { Id = 6020, Name = "WMV" },
+                        new NewznabCategory { Id = 6030, Name = "XVid" },
+                        new NewznabCategory { Id = 6040, Name = "x264" },
+                        new NewznabCategory { Id = 6050, Name = "Pack" },
+                        new NewznabCategory { Id = 6070, Name = "Other" }
                     }
                 });
             }

@@ -43,7 +43,7 @@ namespace NzbDrone.Core.Datastore.Converters
                 reader.Read(); // Move to start of object (stored in this property)
                 ValidateToken(reader, JsonTokenType.StartObject); // Start of formattag
 
-                var type = Type.GetType($"NzbDrone.Core.CustomFormats.{typename}, Radarr.Core", true);
+                var type = Type.GetType($"NzbDrone.Core.CustomFormats.{typename}, Whisparr.Core", true);
                 var item = (ICustomFormatSpecification)JsonSerializer.Deserialize(ref reader, type, options);
                 results.Add(item);
 

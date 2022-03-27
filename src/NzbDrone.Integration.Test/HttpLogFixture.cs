@@ -17,10 +17,10 @@ namespace NzbDrone.Integration.Test
 
             var resultGet = Movies.All();
 
-            var logFile = "radarr.trace.txt";
+            var logFile = "whisparr.trace.txt";
             var logLines = Logs.GetLogFileLines(logFile);
 
-            var resultPost = Movies.InvalidPost(new Radarr.Api.V3.Movies.MovieResource());
+            var resultPost = Movies.InvalidPost(new Whisparr.Api.V3.Movies.MovieResource());
 
             // Skip 2 and 1 to ignore the logs endpoint
             logLines = Logs.GetLogFileLines(logFile).Skip(logLines.Length + 2).ToArray();

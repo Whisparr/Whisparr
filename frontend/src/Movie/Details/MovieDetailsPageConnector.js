@@ -62,7 +62,7 @@ class MovieDetailsPageConnector extends Component {
 
   componentDidUpdate(prevProps) {
     if (!this.props.titleSlug) {
-      this.props.push(`${window.Radarr.urlBase}/`);
+      this.props.push(`${window.Whisparr.urlBase}/`);
       return;
     }
   }

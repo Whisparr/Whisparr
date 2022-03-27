@@ -123,7 +123,7 @@ namespace NzbDrone.Core.Notifications.Plex.Server
         {
             if (version >= new Version(1, 3, 0) && version < new Version(1, 3, 1))
             {
-                throw new PlexVersionException("Found version {0}, upgrade to PMS 1.3.1 to fix library updating and then restart Radarr", version);
+                throw new PlexVersionException("Found version {0}, upgrade to PMS 1.3.1 to fix library updating and then restart Whisparr", version);
             }
         }
 

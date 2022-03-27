@@ -20,15 +20,15 @@ namespace NzbDrone.Common.EnvironmentInfo
 
             IsWindowsService = hostLifetime is WindowsServiceLifetime;
 
-            // net6.0 will return Radarr.dll for entry assembly, we need the actual
-            // executable name (Radarr on linux).  On mono this will return the location of
+            // net6.0 will return Whisparr.dll for entry assembly, we need the actual
+            // executable name (Whisparr on linux).  On mono this will return the location of
             // the mono executable itself, which is not what we want.
             var entry = Process.GetCurrentProcess().MainModule;
 
             if (entry != null)
             {
                 ExecutingApplication = entry.FileName;
-                IsWindowsTray = OsInfo.IsWindows && entry.ModuleName == $"{ProcessProvider.RADARR_PROCESS_NAME}.exe";
+                IsWindowsTray = OsInfo.IsWindows && entry.ModuleName == $"{ProcessProvider.WHISPARR_PROCESS_NAME}.exe";
             }
         }
 
@@ -89,7 +89,7 @@ namespace NzbDrone.Common.EnvironmentInfo
             {
                 if (OsInfo.IsWindows)
                 {
-                    return IsUserInteractive && Process.GetCurrentProcess().ProcessName.Equals(ProcessProvider.RADARR_PROCESS_NAME, StringComparison.InvariantCultureIgnoreCase);
+                    return IsUserInteractive && Process.GetCurrentProcess().ProcessName.Equals(ProcessProvider.WHISPARR_PROCESS_NAME, StringComparison.InvariantCultureIgnoreCase);
                 }
 
                 return false;

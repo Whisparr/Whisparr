@@ -181,7 +181,7 @@ function EditImportListModalContent(props) {
               </FormGroup>
 
               <FormGroup>
-                <FormLabel>{translate('RadarrTags')}</FormLabel>
+                <FormLabel>{translate('WhisparrTags')}</FormLabel>
 
                 <FormInputGroup
                   type={inputTypes.TAG}

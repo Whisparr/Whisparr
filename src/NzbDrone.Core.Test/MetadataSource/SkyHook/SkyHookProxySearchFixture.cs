@@ -21,8 +21,8 @@ namespace NzbDrone.Core.Test.MetadataSource.SkyHook
 
         // TODO: TMDB Doesn't like when we clean periods from this
         // [TestCase("The Man from U.N.C.L.E.", "The Man from U.N.C.L.E.")]
-        [TestCase("imdb:tt2527336", "Star Wars: The Last Jedi")]
-        [TestCase("imdb:tt2798920", "Annihilation")]
+        [TestCase("imdb:tt0081593", "Taboo")]
+        [TestCase("imdb:tt0084755", "Taboo II")]
         public void successful_search(string title, string expected)
         {
             var result = Subject.SearchForNewMovie(title);

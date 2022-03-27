@@ -153,7 +153,7 @@ namespace NzbDrone.Test.Common.AutoMoq
             RegisterPlatformLibrary(container);
             AddTheAutoMockingContainerExtensionToTheContainer(container);
 
-            AssemblyLoader.RegisterNativeResolver(new[] { "System.Data.SQLite", "Radarr.Core" });
+            AssemblyLoader.RegisterNativeResolver(new[] { "System.Data.SQLite", "Whisparr.Core" });
         }
 
         private static void AddTheAutoMockingContainerExtensionToTheContainer(IUnityContainer container)
@@ -189,11 +189,11 @@ namespace NzbDrone.Test.Common.AutoMoq
 
         private void RegisterPlatformLibrary(IUnityContainer container)
         {
-            var assemblyName = "Radarr.Windows";
+            var assemblyName = "Whisparr.Windows";
 
             if (OsInfo.IsNotWindows)
             {
-                assemblyName = "Radarr.Mono";
+                assemblyName = "Whisparr.Mono";
             }
 
             if (!File.Exists(assemblyName + ".dll"))

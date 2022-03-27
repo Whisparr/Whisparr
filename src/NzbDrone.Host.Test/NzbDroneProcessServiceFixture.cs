@@ -4,7 +4,7 @@ using NUnit.Framework;
 using NzbDrone.Common.Model;
 using NzbDrone.Common.Processes;
 using NzbDrone.Test.Common;
-using Radarr.Host;
+using Whisparr.Host;
 
 namespace NzbDrone.App.Test
 {
@@ -20,11 +20,11 @@ namespace NzbDrone.App.Test
                 .Returns(new ProcessInfo() { Id = CURRENT_PROCESS_ID });
 
             Mocker.GetMock<IProcessProvider>()
-                  .Setup(s => s.FindProcessByName(ProcessProvider.RADARR_CONSOLE_PROCESS_NAME))
+                  .Setup(s => s.FindProcessByName(ProcessProvider.WHISPARR_CONSOLE_PROCESS_NAME))
                   .Returns(new List<ProcessInfo>());
 
             Mocker.GetMock<IProcessProvider>()
-                  .Setup(s => s.FindProcessByName(ProcessProvider.RADARR_PROCESS_NAME))
+                  .Setup(s => s.FindProcessByName(ProcessProvider.WHISPARR_PROCESS_NAME))
                   .Returns(new List<ProcessInfo>());
         }
 
@@ -32,7 +32,7 @@ namespace NzbDrone.App.Test
         public void should_continue_if_only_instance()
         {
             Mocker.GetMock<IProcessProvider>()
-                  .Setup(c => c.FindProcessByName(It.Is<string>(f => f.Contains("Radarr"))))
+                  .Setup(c => c.FindProcessByName(It.Is<string>(f => f.Contains("Whisparr"))))
                   .Returns(new List<ProcessInfo>
                            {
                                new ProcessInfo { Id = CURRENT_PROCESS_ID }
@@ -47,7 +47,7 @@ namespace NzbDrone.App.Test
         public void should_enforce_if_another_console_is_running()
         {
             Mocker.GetMock<IProcessProvider>()
-                  .Setup(c => c.FindProcessByName(ProcessProvider.RADARR_CONSOLE_PROCESS_NAME))
+                  .Setup(c => c.FindProcessByName(ProcessProvider.WHISPARR_CONSOLE_PROCESS_NAME))
                   .Returns(new List<ProcessInfo>
                            {
                                new ProcessInfo { Id = 10 },
@@ -63,7 +63,7 @@ namespace NzbDrone.App.Test
         public void should_return_false_if_another_gui_is_running()
         {
             Mocker.GetMock<IProcessProvider>()
-                  .Setup(c => c.FindProcessByName(ProcessProvider.RADARR_PROCESS_NAME))
+                  .Setup(c => c.FindProcessByName(ProcessProvider.WHISPARR_PROCESS_NAME))
                   .Returns(new List<ProcessInfo>
                            {
                                new ProcessInfo { Id = CURRENT_PROCESS_ID },

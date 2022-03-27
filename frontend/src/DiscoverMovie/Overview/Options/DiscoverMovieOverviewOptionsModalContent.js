@@ -132,7 +132,7 @@ class DiscoverMovieOverviewOptionsModalContent extends Component {
         <ModalBody>
           <Form>
             <FormGroup>
-              <FormLabel>{translate('IncludeRadarrRecommendations')}</FormLabel>
+              <FormLabel>{translate('IncludeWhisparrRecommendations')}</FormLabel>
               <FormInputGroup
                 type={inputTypes.CHECK}
                 name="includeRecommendations"

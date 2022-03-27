@@ -4,7 +4,7 @@ TYPE=$2
 COVERAGE=$3
 WHERE="Category!=ManualTest"
 TEST_PATTERN="*Test.dll"
-FILES=( "Radarr.Api.Test.dll" "Radarr.Automation.Test.dll" "Radarr.Common.Test.dll" "Radarr.Core.Test.dll" "Radarr.Host.Test.dll" "Radarr.Integration.Test.dll" "Radarr.Libraries.Test.dll" "Radarr.Mono.Test.dll" "Radarr.Update.Test.dll" "Radarr.Windows.Test.dll" )
+FILES=( "Whisparr.Api.Test.dll" "Whisparr.Automation.Test.dll" "Whisparr.Common.Test.dll" "Whisparr.Core.Test.dll" "Whisparr.Host.Test.dll" "Whisparr.Integration.Test.dll" "Whisparr.Libraries.Test.dll" "Whisparr.Mono.Test.dll" "Whisparr.Update.Test.dll" "Whisparr.Windows.Test.dll" )
 ASSMEBLIES=""
 TEST_LOG_FILE="TestLog.txt"
 
@@ -20,7 +20,7 @@ fi
 rm -f "$TEST_LOG_FILE"
 
 # Uncomment to log test output to a file instead of the console
-export RADARR_TESTS_LOG_OUTPUT="File"
+export WHISPARR_TESTS_LOG_OUTPUT="File"
 
 VSTEST_PARAMS="--logger:nunit;LogFilePath=TestResult.xml"
 
@@ -35,10 +35,10 @@ if [ "$PLATFORM" = "Mac" ]; then
 fi
 
 if [ "$PLATFORM" = "Windows" ]; then
-  mkdir -p "$ProgramData/Radarr"
+  mkdir -p "$ProgramData/Whisparr"
   WHERE="$WHERE&Category!=LINUX"
 elif [ "$PLATFORM" = "Linux" ] || [ "$PLATFORM" = "Mac" ] ; then
-  mkdir -p ~/.config/Radarr
+  mkdir -p ~/.config/Whisparr
   WHERE="$WHERE&Category!=WINDOWS"
 else
   echo "Platform must be provided as first arguement: Windows, Linux or Mac"

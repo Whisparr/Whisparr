@@ -1,4 +1,4 @@
-const radarrYellow = '#ffc230';
+const whisparrYellow = '#ff69b4';
 
 module.exports = {
   textColor: '#515253',
@@ -17,7 +17,7 @@ module.exports = {
   queueColor: '#7a43b6',
   purple: '#7a43b6',
   pink: '#ff69b4',
-  radarrYellow,
+  whisparrYellow,
   helpTextColor: '#909293',
   darkGray: '#888',
   gray: '#adadad',
@@ -26,7 +26,7 @@ module.exports = {
 
   // Theme Colors
 
-  themeBlue: radarrYellow,
+  themeBlue: whisparrYellow,
   themeRed: '#c4273c',
   themeDarkColor: '#595959',
   themeLightColor: '#707070',
@@ -113,8 +113,8 @@ module.exports = {
   //
   // Toolbar
 
-  toobarButtonHoverColor: '#ffc230',
-  toobarButtonSelectedColor: '#ffc230',
+  toobarButtonHoverColor: '#ff69b4',
+  toobarButtonSelectedColor: '#ff69b4',
 
   //
   // Scroller

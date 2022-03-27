@@ -46,8 +46,7 @@ class PageHeader extends Component {
 
   render() {
     const {
-      onSidebarToggle,
-      isSmallScreen
+      onSidebarToggle
     } = this.props;
 
     return (
@@ -61,8 +60,8 @@ class PageHeader extends Component {
             }}
           >
             <img
-              className={isSmallScreen ? styles.logo : styles.logoFull}
-              src={isSmallScreen ? `${window.Radarr.urlBase}/Content/Images/logo.png` : `${window.Radarr.urlBase}/Content/Images/logo-full.png`}
+              className={styles.logo}
+              src={`${window.Whisparr.urlBase}/Content/Images/logo.png`}
             />
           </Link>
         </div>
@@ -81,14 +80,14 @@ class PageHeader extends Component {
           <IconButton
             className={styles.donate}
             name={icons.HEART}
-            to="https://radarr.video/donate"
+            to="https://whisparr.com/donate"
             size={14}
           />
           <IconButton
             className={styles.translate}
             title={translate('SuggestTranslationChange')}
             name={icons.TRANSLATE}
-            to="https://translate.servarr.com/projects/radarr/radarr/"
+            to="https://translate.servarr.com/projects/whisparr/whisparr/"
             size={24}
           />
           <PageHeaderActionsMenuConnector
@@ -107,7 +106,6 @@ class PageHeader extends Component {
 
 PageHeader.propTypes = {
   onSidebarToggle: PropTypes.func.isRequired,
-  isSmallScreen: PropTypes.bool.isRequired,
   bindShortcut: PropTypes.func.isRequired
 };
 

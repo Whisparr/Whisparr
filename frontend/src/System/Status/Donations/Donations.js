@@ -12,11 +12,11 @@ class Donations extends Component {
   render() {
     return (
       <FieldSet legend={translate('Donations')}>
-        <div className={styles.logoContainer} title="Radarr">
-          <Link to="https://radarr.video/donate">
+        <div className={styles.logoContainer} title="Whisparr">
+          <Link to="https://whisparr.com/donate">
             <img
               className={styles.logo}
-              src={`${window.Radarr.urlBase}/Content/Images/Icons/logo-radarr.png`}
+              src={`${window.Whisparr.urlBase}/Content/Images/Icons/logo-whisparr.png`}
             />
           </Link>
         </div>
@@ -24,7 +24,7 @@ class Donations extends Component {
           <Link to="https://lidarr.audio/donate">
             <img
               className={styles.logo}
-              src={`${window.Radarr.urlBase}/Content/Images/Icons/logo-lidarr.png`}
+              src={`${window.Whisparr.urlBase}/Content/Images/Icons/logo-lidarr.png`}
             />
           </Link>
         </div>
@@ -32,7 +32,7 @@ class Donations extends Component {
           <Link to="https://readarr.com/donate">
             <img
               className={styles.logo}
-              src={`${window.Radarr.urlBase}/Content/Images/Icons/logo-readarr.png`}
+              src={`${window.Whisparr.urlBase}/Content/Images/Icons/logo-readarr.png`}
             />
           </Link>
         </div>
@@ -40,7 +40,7 @@ class Donations extends Component {
           <Link to="https://prowlarr.com/donate">
             <img
               className={styles.logo}
-              src={`${window.Radarr.urlBase}/Content/Images/Icons/logo-prowlarr.png`}
+              src={`${window.Whisparr.urlBase}/Content/Images/Icons/logo-prowlarr.png`}
             />
           </Link>
         </div>
@@ -48,7 +48,7 @@ class Donations extends Component {
           <Link to="https://sonarr.tv/donate">
             <img
               className={styles.logo}
-              src={`${window.Radarr.urlBase}/Content/Images/Icons/logo-sonarr.png`}
+              src={`${window.Whisparr.urlBase}/Content/Images/Icons/logo-sonarr.png`}
             />
           </Link>
         </div>

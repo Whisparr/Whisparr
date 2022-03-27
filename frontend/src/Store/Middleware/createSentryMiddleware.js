@@ -56,8 +56,8 @@ function identity(stuff) {
 }
 
 function stripUrlBase(frame) {
-  if (frame.filename && window.Radarr.urlBase) {
-    frame.filename = frame.filename.replace(window.Radarr.urlBase, '');
+  if (frame.filename && window.Whisparr.urlBase) {
+    frame.filename = frame.filename.replace(window.Whisparr.urlBase, '');
   }
   return frame;
 }
@@ -94,14 +94,14 @@ export default function createSentryMiddleware() {
     release,
     userHash,
     isProduction
-  } = window.Radarr;
+  } = window.Whisparr;
 
   if (!analytics) {
     return;
   }
 
-  const dsn = isProduction ? 'https://7794f2858478485ea337fb5535624fbd@sentry.servarr.com/12' :
-    'https://da610619280249f891ec3ee306906793@sentry.servarr.com/13';
+  const dsn = isProduction ? 'https://a9b74cc29e0745958559b151d25a43a2@sentry.servarr.com/39' :
+    'https://a9b74cc29e0745958559b151d25a43a2@sentry.servarr.com/39';
 
   sentry.init({
     dsn,

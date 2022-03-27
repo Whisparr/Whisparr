@@ -127,19 +127,19 @@ namespace NzbDrone.Core.Test.ParserTests
                 "Kjeller chitai",
                 "Basement of Shame"
             })]
-        [TestCase("Radarr.Under.Water.(aka.Beneath.the.Code.Freeze).1997.DVDRip.x264.CG-Grzechsin.mkv",
+        [TestCase("Whisparr.Under.Water.(aka.Beneath.the.Code.Freeze).1997.DVDRip.x264.CG-Grzechsin.mkv",
             new string[]
             {
-                "Radarr Under Water (aka Beneath the Code Freeze)",
-                "Radarr Under Water",
+                "Whisparr Under Water (aka Beneath the Code Freeze)",
+                "Whisparr Under Water",
                 "Beneath the Code Freeze"
             })]
-        [TestCase("Radarr.prodavet. AKA.Radarr.Shift.2005.DVDRip.x264-HANDJOB.mkv",
+        [TestCase("Whisparr.prodavet. AKA.Whisparr.Shift.2005.DVDRip.x264-HANDJOB.mkv",
             new string[]
             {
-                "Radarr prodavet  AKA Radarr Shift",
-                "Radarr prodavet",
-                "Radarr Shift"
+                "Whisparr prodavet  AKA Whisparr Shift",
+                "Whisparr prodavet",
+                "Whisparr Shift"
             })]
         [TestCase("AKA.2002.DVDRip.x264-HANDJOB.mkv",
             new string[]

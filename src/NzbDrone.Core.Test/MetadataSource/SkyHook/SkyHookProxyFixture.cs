@@ -17,9 +17,8 @@ namespace NzbDrone.Core.Test.MetadataSource.SkyHook
             UseRealHttp();
         }
 
-        [TestCase(11, "Star Wars")]
-        [TestCase(2, "Ariel")]
-        [TestCase(70981, "Prometheus")]
+        [TestCase(42019, "Taboo")]
+        [TestCase(37795, "Taboo II")]
         public void should_be_able_to_get_movie_detail(int tmdbId, string title)
         {
             var details = Subject.GetMovieInfo(tmdbId).Item1;
@@ -36,7 +35,6 @@ namespace NzbDrone.Core.Test.MetadataSource.SkyHook
             movie.CleanTitle.Should().Be(Parser.Parser.CleanMovieTitle(movie.Title));
             movie.SortTitle.Should().Be(MovieTitleNormalizer.Normalize(movie.Title, movie.TmdbId));
             movie.Overview.Should().NotBeNullOrWhiteSpace();
-            movie.InCinemas.Should().HaveValue();
             movie.Images.Should().NotBeEmpty();
             movie.ImdbId.Should().NotBeNullOrWhiteSpace();
             movie.Studio.Should().NotBeNullOrWhiteSpace();

@@ -13,7 +13,7 @@ using NzbDrone.Core.Datastore.Extensions;
 using NzbDrone.Core.Lifecycle;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Test.Common;
-using Radarr.Host;
+using Whisparr.Host;
 
 namespace NzbDrone.Common.Test
 {

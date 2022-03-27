@@ -1,4 +1,4 @@
-﻿namespace Radarr.Host
+﻿namespace Whisparr.Host
 {
     public enum ApplicationModes
     {

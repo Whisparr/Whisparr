@@ -51,7 +51,7 @@ function AppRoutes(props) {
       />
 
       {
-        window.Radarr.urlBase &&
+        window.Whisparr.urlBase &&
           <Route
             exact={true}
             path="/"

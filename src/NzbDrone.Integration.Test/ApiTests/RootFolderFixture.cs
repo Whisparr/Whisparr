@@ -1,7 +1,7 @@
 ﻿using System;
 using FluentAssertions;
 using NUnit.Framework;
-using Radarr.Api.V3.RootFolders;
+using Whisparr.Api.V3.RootFolders;
 
 namespace NzbDrone.Integration.Test.ApiTests
 {

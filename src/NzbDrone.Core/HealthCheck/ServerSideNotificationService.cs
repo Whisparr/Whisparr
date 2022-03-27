@@ -23,7 +23,7 @@ namespace NzbDrone.Core.HealthCheck
         private readonly IHttpRequestBuilderFactory _cloudRequestBuilder;
         private readonly Logger _logger;
 
-        public ServerSideNotificationService(IHttpClient client, IConfigFileProvider configFileProvider, IRadarrCloudRequestBuilder cloudRequestBuilder, Logger logger)
+        public ServerSideNotificationService(IHttpClient client, IConfigFileProvider configFileProvider, IWhisparrCloudRequestBuilder cloudRequestBuilder, Logger logger)
         {
             _client = client;
             _configFileProvider = configFileProvider;

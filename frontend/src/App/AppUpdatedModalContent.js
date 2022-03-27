@@ -64,7 +64,7 @@ function AppUpdatedModalContent(props) {
   return (
     <ModalContent onModalClose={onModalClose}>
       <ModalHeader>
-        {translate('RadarrUpdated')}
+        {translate('WhisparrUpdated')}
       </ModalHeader>
 
       <ModalBody>

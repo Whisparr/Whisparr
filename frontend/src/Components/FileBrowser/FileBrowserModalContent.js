@@ -129,7 +129,7 @@ class FileBrowserModalContent extends Component {
                 className={styles.mappedDrivesWarning}
                 kind={kinds.WARNING}
               >
-                <Link to="https://wiki.servarr.com/radarr/faq#why-cant-radarr-see-my-files-on-a-remote-server">
+                <Link to="https://wiki.servarr.com/whisparr/faq#why-cant-whisparr-see-my-files-on-a-remote-server">
                   {translate('MappedDrivesRunningAsService')}
                 </Link> .
               </Alert>

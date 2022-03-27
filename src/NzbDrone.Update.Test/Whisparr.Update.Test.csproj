@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net6.0</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NzbDrone.Test.Common\Whisparr.Test.Common.csproj" />
+    <ProjectReference Include="..\NzbDrone.Update\Whisparr.Update.csproj" />
+  </ItemGroup>
+</Project>

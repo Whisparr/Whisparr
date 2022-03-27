@@ -54,7 +54,7 @@ class AddImportListModalContent extends Component {
 
                 <Alert kind={kinds.INFO}>
                   <div>
-                    {translate('RadarrSupportsAnyRSSMovieListsAsWellAsTheOneStatedBelow')}
+                    {translate('WhisparrSupportsAnyRSSMovieListsAsWellAsTheOneStatedBelow')}
                   </div>
                   <div>
                     {translate('ForMoreInformationOnTheIndividualImportListsClinkOnTheInfoButtons')}

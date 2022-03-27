@@ -4,7 +4,7 @@ using NzbDrone.Common;
 using NzbDrone.Common.EnvironmentInfo;
 using NzbDrone.Common.Processes;
 using NzbDrone.Test.Common;
-using Radarr.Host;
+using Whisparr.Host;
 
 namespace NzbDrone.App.Test
 {

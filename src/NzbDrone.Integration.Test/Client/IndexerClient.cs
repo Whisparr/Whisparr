@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using Radarr.Api.V3.Indexers;
 using RestSharp;
+using Whisparr.Api.V3.Indexers;
 
 namespace NzbDrone.Integration.Test.Client
 {

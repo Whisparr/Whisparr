@@ -319,7 +319,7 @@ namespace NzbDrone.Core.Download.Clients.Nzbget
                 return new NzbDroneValidationFailure(string.Empty, "NzbGet setting KeepHistory should be greater than 0")
                 {
                     InfoLink = _proxy.GetBaseUrl(Settings),
-                    DetailedDescription = "NzbGet setting KeepHistory is set to 0. Which prevents Radarr from seeing completed downloads."
+                    DetailedDescription = "NzbGet setting KeepHistory is set to 0. Which prevents Whisparr from seeing completed downloads."
                 };
             }
             else if (value > 25000)

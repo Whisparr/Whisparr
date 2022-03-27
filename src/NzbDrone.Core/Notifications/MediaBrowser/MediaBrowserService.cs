@@ -41,7 +41,7 @@ namespace NzbDrone.Core.Notifications.Emby
             {
                 _logger.Debug("Testing connection to MediaBrowser: {0}", settings.Address);
 
-                Notify(settings, "Test from Radarr", "Success! MediaBrowser has been successfully configured!");
+                Notify(settings, "Test from Whisparr", "Success! MediaBrowser has been successfully configured!");
             }
             catch (HttpException ex)
             {

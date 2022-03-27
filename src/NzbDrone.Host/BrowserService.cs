@@ -4,7 +4,7 @@ using NzbDrone.Common.EnvironmentInfo;
 using NzbDrone.Common.Processes;
 using NzbDrone.Core.Configuration;
 
-namespace Radarr.Host
+namespace Whisparr.Host
 {
     public interface IBrowserService
     {

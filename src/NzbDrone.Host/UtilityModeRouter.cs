@@ -2,10 +2,10 @@ using NLog;
 using NzbDrone.Common;
 using NzbDrone.Common.EnvironmentInfo;
 using NzbDrone.Common.Processes;
-using Radarr.Host.AccessControl;
+using Whisparr.Host.AccessControl;
 using IServiceProvider = NzbDrone.Common.IServiceProvider;
 
-namespace Radarr.Host
+namespace Whisparr.Host
 {
     public interface IUtilityModeRouter
     {
@@ -53,7 +53,7 @@ namespace Radarr.Host
                             _serviceProvider.SetPermissions(ServiceProvider.SERVICE_NAME);
 
                             // Start the service and exit.
-                            // Ensures that there isn't an instance of Radarr already running that the service account cannot stop.
+                            // Ensures that there isn't an instance of Whisparr already running that the service account cannot stop.
                             _processProvider.SpawnNewProcess("sc.exe", $"start {ServiceProvider.SERVICE_NAME}", null, true);
                         }
 

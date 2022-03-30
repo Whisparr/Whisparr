@@ -1,6 +1,6 @@
 # Whisparr
 
-[![Build Status](https://dev.azure.com/Whisparr/Whisparr/_apis/build/status/Whisparr.Whisparr?branchName=develop)](https://dev.azure.com/Whisparr/Whisparr/_build/latest?definitionId=1&branchName=develop)
+[![Build Status](https://dev.azure.com/Servarr/Whisparr/_apis/build/status/Whisparr.Whisparr?branchName=develop)](https://dev.azure.com/Servarr/Whisparr/_build/latest?definitionId=1&branchName=develop)
 [![Translated](https://translate.servarr.com/widgets/servarr/-/whisparr/svg-badge.svg)](https://translate.servarr.com/engage/whisparr/?utm_source=widget)
 [![Docker Pulls](https://img.shields.io/docker/pulls/linuxserver/whisparr.svg)](https://wiki.servarr.com/whisparr/installation#docker)
 ![Github Downloads](https://img.shields.io/github/downloads/Whisparr/Whisparr/total.svg)
@@ -8,7 +8,7 @@
 [![Sponsors on Open Collective](https://opencollective.com/Whisparr/sponsors/badge.svg)](#sponsors)
 [![Mega Sponsors on Open Collective](https://opencollective.com/Whisparr/megasponsors/badge.svg)](#mega-sponsors)
 
-Whisparr is a movie collection manager for Usenet and BitTorrent users. It can monitor multiple RSS feeds for new movies and will interface with clients and indexers to grab, sort, and rename them. It can also be configured to automatically upgrade the quality of existing files in the library when a better quality format becomes available.
+Whisparr is an adult movie collection manager for Usenet and BitTorrent users. It can monitor multiple RSS feeds for new movies and will interface with clients and indexers to grab, sort, and rename them. It can also be configured to automatically upgrade the quality of existing files in the library when a better quality format becomes available.
 Note that only one type of a given movie is supported. If you want both an 4k version and 1080p version of a given movie you will need multiple instances.
 
 ## Major Features Include

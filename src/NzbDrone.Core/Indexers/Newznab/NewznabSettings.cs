@@ -59,7 +59,7 @@ namespace NzbDrone.Core.Indexers.Newznab
         public NewznabSettings()
         {
             ApiPath = "/api";
-            Categories = new[] { 2000, 2010, 2020, 2030, 2040, 2045, 2050, 2060 };
+            Categories = new[] { 6000, 6010, 6020, 6030, 6040, 6045, 6050, 6070, 6080, 6090 };
             MultiLanguages = new List<int>();
         }
 

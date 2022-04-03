@@ -1,10 +1,13 @@
 using System;
+using System.Data.Common;
 using System.Data.SQLite;
 using NLog;
+using Npgsql;
 using NzbDrone.Common.Disk;
 using NzbDrone.Common.EnvironmentInfo;
 using NzbDrone.Common.Exceptions;
 using NzbDrone.Common.Instrumentation;
+using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Datastore.Migration.Framework;
 
 namespace NzbDrone.Core.Datastore
@@ -85,8 +88,18 @@ namespace NzbDrone.Core.Datastore
 
             var db = new Database(migrationContext.MigrationType.ToString(), () =>
             {
-                var conn = SQLiteFactory.Instance.CreateConnection();
-                conn.ConnectionString = connectionString;
+                DbConnection conn;
+
+                if (connectionString.Contains(".db"))
+                {
+                    conn = SQLiteFactory.Instance.CreateConnection();
+                    conn.ConnectionString = connectionString;
+                }
+                else
+                {
+                    conn = new NpgsqlConnection(connectionString);
+                }
+
                 conn.Open();
 
                 return conn;

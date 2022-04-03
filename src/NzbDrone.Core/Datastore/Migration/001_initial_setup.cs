@@ -109,7 +109,7 @@ namespace NzbDrone.Core.Datastore.Migration
                 .WithColumn("CutoffFormatScore").AsInt32().WithDefaultValue(0)
                 .WithColumn("FormatItems").AsString().WithDefaultValue("[{\"format\":0, \"allowed\":true}]");
 
-            Execute.Sql("UPDATE Profiles SET Language = 1");
+            Execute.Sql("UPDATE \"Profiles\" SET \"Language\" = 1");
 
             Create.TableForModel("NamingConfig")
                 .WithColumn("MultiEpisodeStyle").AsInt32()
@@ -177,8 +177,8 @@ namespace NzbDrone.Core.Datastore.Migration
 
             Insert.IntoTable("DelayProfiles").Row(new
             {
-                EnableUsenet = 1,
-                EnableTorrent = 1,
+                EnableUsenet = true,
+                EnableTorrent = true,
                 PreferredProtocol = 1,
                 UsenetDelay = 0,
                 TorrentDelay = 0,

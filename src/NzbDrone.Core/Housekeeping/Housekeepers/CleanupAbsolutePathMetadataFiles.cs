@@ -16,16 +16,32 @@ namespace NzbDrone.Core.Housekeeping.Housekeepers
         {
             using (var mapper = _database.OpenConnection())
             {
-                mapper.Execute(@"DELETE FROM MetadataFiles
-                                     WHERE Id IN (
-                                         SELECT Id FROM MetadataFiles
-                                         WHERE RelativePath
-                                         LIKE '_:\%'
-                                         OR RelativePath
-                                         LIKE '\%'
-                                         OR RelativePath
+                if (_database.DatabaseType == DatabaseType.PostgreSQL)
+                {
+                    mapper.Execute(@"DELETE FROM ""MetadataFiles""
+                                     WHERE ""Id"" = ANY (
+                                         SELECT ""Id"" FROM ""MetadataFiles""
+                                         WHERE ""RelativePath""
+                                         LIKE '_:\\%'
+                                         OR ""RelativePath""
+                                         LIKE '\\%'
+                                         OR ""RelativePath""
                                          LIKE '/%'
                                      )");
+                }
+                else
+                {
+                    mapper.Execute(@"DELETE FROM ""MetadataFiles""
+                                     WHERE ""Id"" IN (
+                                         SELECT ""Id"" FROM ""MetadataFiles""
+                                         WHERE ""RelativePath""
+                                         LIKE '_:\%'
+                                         OR ""RelativePath""
+                                         LIKE '\%'
+                                         OR ""RelativePath""
+                                         LIKE '/%'
+                                     )");
+                }
             }
         }
     }

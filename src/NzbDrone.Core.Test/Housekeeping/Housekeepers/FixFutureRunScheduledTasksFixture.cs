@@ -41,7 +41,7 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
 
             Subject.Clean();
 
-            AllStoredModels.ToList().ForEach(t => t.LastExecution.Should().Be(expectedTime));
+            AllStoredModels.ToList().ForEach(t => t.LastExecution.Should().BeCloseTo(expectedTime));
         }
     }
 }

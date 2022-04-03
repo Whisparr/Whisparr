@@ -52,7 +52,7 @@ namespace NzbDrone.Core.Datastore.Migration
                 .WithColumn("OriginalLanguage").AsInt32().WithDefaultValue((int)Language.English)
                 .WithColumn("OriginalTitle").AsString().Nullable()
                 .WithColumn("DigitalRelease").AsDateTime().Nullable()
-                .WithColumn("MinimumAvailability").AsInt32().WithDefaultValue(MovieStatusType.Released);
+                .WithColumn("MinimumAvailability").AsInt32().WithDefaultValue((int)MovieStatusType.Released);
 
             Create.TableForModel("History")
                 .WithColumn("MovieId").AsInt32()
@@ -79,7 +79,7 @@ namespace NzbDrone.Core.Datastore.Migration
                 .WithColumn("OnMovieDelete").AsBoolean().WithDefaultValue(false)
                 .WithColumn("OnMovieFileDelete").AsBoolean().WithDefaultValue(false)
                 .WithColumn("OnMovieFileDeleteForUpgrade").AsBoolean().WithDefaultValue(false)
-                .WithColumn("OnApplicationUpdate").AsBoolean().WithDefaultValue(0);
+                .WithColumn("OnApplicationUpdate").AsBoolean().WithDefaultValue(false);
 
             Create.TableForModel("ScheduledTasks")
                 .WithColumn("TypeName").AsString().Unique()
@@ -104,7 +104,7 @@ namespace NzbDrone.Core.Datastore.Migration
                 .WithColumn("Cutoff").AsInt32()
                 .WithColumn("Items").AsString().NotNullable()
                 .WithColumn("Language").AsInt32().Nullable()
-                .WithColumn("UpgradeAllowed").AsInt32().Nullable()
+                .WithColumn("UpgradeAllowed").AsBoolean().Nullable()
                 .WithColumn("MinFormatScore").AsInt32().WithDefaultValue(0)
                 .WithColumn("CutoffFormatScore").AsInt32().WithDefaultValue(0)
                 .WithColumn("FormatItems").AsString().WithDefaultValue("[{\"format\":0, \"allowed\":true}]");
@@ -117,7 +117,7 @@ namespace NzbDrone.Core.Datastore.Migration
                 .WithColumn("StandardMovieFormat").AsString().Nullable()
                 .WithColumn("MovieFolderFormat").AsString().Nullable()
                 .WithColumn("ColonReplacementFormat").AsInt32().NotNullable().WithDefaultValue(0)
-                .WithColumn("RenameMovies").AsBoolean().WithDefaultValue(0);
+                .WithColumn("RenameMovies").AsBoolean().WithDefaultValue(false);
 
             Create.TableForModel("QualityDefinitions")
                 .WithColumn("Quality").AsInt32().Unique()
@@ -239,7 +239,7 @@ namespace NzbDrone.Core.Datastore.Migration
                     .WithColumn("RootFolderPath").AsString()
                     .WithColumn("ShouldMonitor").AsInt32()
                     .WithColumn("ProfileId").AsInt32()
-                    .WithColumn("MinimumAvailability").AsInt32().WithDefaultValue(MovieStatusType.Released)
+                    .WithColumn("MinimumAvailability").AsInt32().WithDefaultValue((int)MovieStatusType.Released)
                     .WithColumn("Tags").AsString().Nullable()
                     .WithColumn("SearchOnAdd").AsBoolean().WithDefaultValue(false);
 
@@ -343,13 +343,22 @@ namespace NzbDrone.Core.Datastore.Migration
                 .WithColumn("LastSyncListInfo").AsString().Nullable();
 
             //Manual SQL, Fluent Migrator doesn't support multi-column unique contraint on table creation, SQLite doesn't support adding it after creation
-            Execute.Sql("CREATE TABLE MovieTranslations(" +
+            IfDatabase("sqlite").Execute.Sql("CREATE TABLE MovieTranslations(" +
                 "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                 "MovieId INTEGER NOT NULL, " +
                 "Title TEXT, " +
                 "CleanTitle TEXT, " +
                 "Overview TEXT, " +
                 "Language INTEGER NOT NULL, " +
+                "Unique(\"MovieId\", \"Language\"));");
+
+            IfDatabase("postgres").Execute.Sql("CREATE TABLE \"MovieTranslations\"(" +
+                "\"Id\" SERIAL PRIMARY KEY , " +
+                "\"MovieId\" INTEGER NOT NULL, " +
+                "\"Title\" TEXT, " +
+                "\"CleanTitle\" TEXT, " +
+                "\"Overview\" TEXT, " +
+                "\"Language\" INTEGER NOT NULL, " +
                 "Unique(\"MovieId\", \"Language\"));");
 
             // Prevent failure if two movies have same alt titles
@@ -403,7 +412,7 @@ namespace NzbDrone.Core.Datastore.Migration
             Create.TableForModel("CustomFormats")
                 .WithColumn("Name").AsString().Unique()
                 .WithColumn("Specifications").AsString().WithDefaultValue("[]")
-                .WithColumn("IncludeCustomFormatWhenRenaming").AsBoolean().WithDefaultValue(0);
+                .WithColumn("IncludeCustomFormatWhenRenaming").AsBoolean().WithDefaultValue(false);
         }
 
         protected override void LogDbUpgrade()

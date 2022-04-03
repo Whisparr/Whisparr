@@ -14,7 +14,7 @@ namespace NzbDrone.Core.Datastore
         public static PostgresOptions GetOptions()
         {
             var config = new ConfigurationBuilder()
-                .AddEnvironmentVariables("Radarr__")
+                .AddEnvironmentVariables("Whisparr__")
                 .Build();
 
             var postgresOptions = new PostgresOptions();

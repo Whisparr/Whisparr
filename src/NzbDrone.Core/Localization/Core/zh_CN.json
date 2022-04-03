@@ -398,7 +398,7 @@
     "FirstDayOfWeek": "每周的第一天",
     "FilterPlaceHolder": "搜索影片",
     "Filter": "过滤",
-    "FileWasDeletedByViaUI": "使用UI删除的文件",
+    "FileWasDeletedByViaUI": "文件已通过 UI 删除",
     "FileWasDeletedByUpgrade": "升级时删除的文件",
     "Files": "文件",
     "FileNames": "文件名",

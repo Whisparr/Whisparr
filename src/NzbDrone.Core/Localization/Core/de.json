@@ -333,7 +333,7 @@
     "Branch": "Git-Branch",
     "BypassProxyForLocalAddresses": "Proxy für lokale Adressen umgehen",
     "CertificateValidation": "Zertifikat Validierung",
-    "CertificateValidationHelpText": "Ändere wie streng die Validierung der HTTPS-Zertifizierung ist. Ändere nichts, außer du verstehst die Risiken.",
+    "CertificateValidationHelpText": "Ändere wie streng die Validierung der HTTPS-Zertifizierung ist. Nicht anpassen, außer du kennst das Risiko.",
     "CertificationCountry": "Zertifizierungs Land",
     "ChangeFileDate": "Erstelldatum der Datei anpassen",
     "ChangeHasNotBeenSavedYet": "Änderung wurde noch nicht gespeichert",

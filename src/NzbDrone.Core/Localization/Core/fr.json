@@ -863,7 +863,7 @@
     "CustomFormatHelpText": "Raddar met un score pour chaque release en additionnant les scores des formats personnalisés correspondants. Si une nouvelle release permet d'améliorer le score, pour une qualité identique ou supérieure, alors Raddar la téléchargera.",
     "Days": "Jours",
     "Debug": "Debug",
-    "DefaultCase": "Cas par défaut",
+    "DefaultCase": "Casse par défaut",
     "DeletedMsg": "Le film à été supprimé de TMDb",
     "DeleteFilesHelpText": "Supprimer les fichiers du film et dossier du film",
     "DeleteFilesLabel": "Supprimer {0} fichiers",

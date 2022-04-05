@@ -1114,5 +1114,6 @@
     "OnApplicationUpdateHelpText": "Alkalmazásfrissítésről",
     "SizeLimit": "Méretkorlát",
     "OriginalTitle": "Eredeti Cím",
-    "OriginalLanguage": "Eredeti nyelv"
+    "OriginalLanguage": "Eredeti nyelv",
+    "Database": "Adatbázis"
 }

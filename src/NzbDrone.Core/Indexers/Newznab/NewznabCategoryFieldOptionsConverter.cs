@@ -10,7 +10,7 @@ namespace NzbDrone.Core.Indexers.Newznab
         public static List<FieldSelectOption> GetFieldSelectOptions(List<NewznabCategory> categories)
         {
             // Categories not relevant for Whisparr
-            var ignoreCategories = new[] { 1000, 2000, 3000, 4000, 7000 };
+            var ignoreCategories = new[] { 1000, 3000, 4000, 7000 };
 
             // And maybe relevant for specific users
             var unimportantCategories = new[] { 0, 2000, 5000 };

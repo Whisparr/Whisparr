@@ -6,5 +6,15 @@
     "Always": "总是",
     "Analytics": "分析",
     "AddIndexer": "添加索引器",
-    "ApiKey": "API密钥"
+    "ApiKey": "API密钥",
+    "AppDataDirectory": "‎应用程序数据‎‎目录‎",
+    "AppDataLocationHealthCheckMessage": "‎无法进行更新以防止在‎‎更新‎‎时删除‎‎应用程序数据‎",
+    "ApplyTagsHelpTexts4": "‎替换‎‎：‎‎将标记替换为‎‎输入的标记（不输入任何标记以‎‎清除‎‎所有标记）‎",
+    "AreYouSureYouWantToResetYourAPIKey": "你‎是否确实要重置 ‎‎API‎‎ 密钥‎‎‎？",
+    "AcceptConfirmationModal": "‎接受默认模式‎",
+    "Actions": "行为",
+    "Age": "年龄",
+    "All": "全部",
+    "ApplyTags": "‎应用‎‎标签‎",
+    "ApplyTagsHelpTexts3": "‎移除‎‎：‎‎移除‎‎输入的标签‎"
 }

@@ -33,38 +33,6 @@ namespace NzbDrone.Core.Indexers.Newznab
             }
         }
 
-        private bool SupportsImdbSearch
-        {
-            get
-            {
-                var capabilities = _capabilitiesProvider.GetCapabilities(Settings);
-
-                return capabilities.SupportedMovieSearchParameters != null &&
-                       capabilities.SupportedMovieSearchParameters.Contains("imdbid");
-            }
-        }
-
-        private bool SupportsTmdbSearch
-        {
-            get
-            {
-                var capabilities = _capabilitiesProvider.GetCapabilities(Settings);
-
-                return capabilities.SupportedMovieSearchParameters != null &&
-                       capabilities.SupportedMovieSearchParameters.Contains("tmdbid");
-            }
-        }
-
-        private bool SupportsAggregatedIdSearch
-        {
-            get
-            {
-                var capabilities = _capabilitiesProvider.GetCapabilities(Settings);
-
-                return capabilities.SupportsAggregateIdSearch;
-            }
-        }
-
         private string TextSearchEngine
         {
             get
@@ -75,28 +43,13 @@ namespace NzbDrone.Core.Indexers.Newznab
             }
         }
 
-        private string MovieTextSearchEngine
-        {
-            get
-            {
-                var capabilities = _capabilitiesProvider.GetCapabilities(Settings);
-
-                return capabilities.MovieTextSearchEngine;
-            }
-        }
-
         public virtual IndexerPageableRequestChain GetRecentRequests()
         {
             var pageableRequests = new IndexerPageableRequestChain();
 
             var capabilities = _capabilitiesProvider.GetCapabilities(Settings);
 
-            // Some indexers might forget to enable movie search, but normal search still works fine. Thus we force a normal search.
-            if (capabilities.SupportedMovieSearchParameters != null)
-            {
-                pageableRequests.Add(GetPagedRequests(MaxPages, Settings.Categories, "movie", ""));
-            }
-            else if (capabilities.SupportedSearchParameters != null)
+            if (capabilities.SupportedSearchParameters != null)
             {
                 pageableRequests.Add(GetPagedRequests(MaxPages, Settings.Categories, "search", ""));
             }
@@ -115,43 +68,6 @@ namespace NzbDrone.Core.Indexers.Newznab
 
         private void AddMovieIdPageableRequests(IndexerPageableRequestChain chain, int maxPages, IEnumerable<int> categories, SearchCriteriaBase searchCriteria)
         {
-            var includeTmdbSearch = SupportsTmdbSearch && searchCriteria.Movie.TmdbId > 0;
-            var includeImdbSearch = SupportsImdbSearch && searchCriteria.Movie.ImdbId.IsNotNullOrWhiteSpace();
-
-            if (SupportsAggregatedIdSearch && (includeTmdbSearch || includeImdbSearch))
-            {
-                var ids = "";
-
-                if (includeTmdbSearch)
-                {
-                    ids += "&tmdbid=" + searchCriteria.Movie.TmdbId;
-                }
-
-                if (includeImdbSearch)
-                {
-                    ids += "&imdbid=" + searchCriteria.Movie.ImdbId.Substring(2);
-                }
-
-                chain.Add(GetPagedRequests(maxPages, categories, "movie", ids));
-            }
-            else
-            {
-                if (includeTmdbSearch)
-                {
-                    chain.Add(GetPagedRequests(maxPages,
-                        categories,
-                        "movie",
-                        string.Format("&tmdbid={0}", searchCriteria.Movie.TmdbId)));
-                }
-                else if (includeImdbSearch)
-                {
-                    chain.Add(GetPagedRequests(maxPages,
-                        categories,
-                        "movie",
-                        string.Format("&imdbid={0}", searchCriteria.Movie.ImdbId.Substring(2))));
-                }
-            }
-
             if (SupportsSearch)
             {
                 chain.AddTier();

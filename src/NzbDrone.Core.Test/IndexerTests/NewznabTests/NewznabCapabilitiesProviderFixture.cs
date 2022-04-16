@@ -104,7 +104,6 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
             var caps = Subject.GetCapabilities(_settings);
 
             caps.TextSearchEngine.Should().Be("sphinx");
-            caps.MovieTextSearchEngine.Should().Be("sphinx");
         }
 
         [Test]
@@ -116,7 +115,6 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
             var caps = Subject.GetCapabilities(_settings);
 
             caps.TextSearchEngine.Should().Be("raw");
-            caps.MovieTextSearchEngine.Should().Be("raw2");
         }
     }
 }

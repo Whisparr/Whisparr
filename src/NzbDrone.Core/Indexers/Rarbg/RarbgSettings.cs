@@ -30,16 +30,7 @@ namespace NzbDrone.Core.Indexers.Rarbg
             MinimumSeeders = IndexerDefaults.MINIMUM_SEEDERS;
             Categories = new int[]
             {
-                (int)RarbgCategories.Movie_Xvid,
-                (int)RarbgCategories.Movie_Xvid_720p,
-                (int)RarbgCategories.Movie_x264,
-                (int)RarbgCategories.Movie_x264_720p,
-                (int)RarbgCategories.Movie_x264_1080p,
-                (int)RarbgCategories.Movie_x264_4K,
-                (int)RarbgCategories.Movie_x265_1080p,
-                (int)RarbgCategories.Movie_x265_4K,
-                (int)RarbgCategories.Movie_x265_4K_HDR,
-                (int)RarbgCategories.Movie_BD_Remux
+                (int)RarbgCategories.XXX
             };
             MultiLanguages = new List<int>();
             RequiredFlags = new List<int>();

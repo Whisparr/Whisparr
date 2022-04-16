@@ -27,7 +27,7 @@ namespace NzbDrone.Core.Indexers.HDBits
             BaseUrl = "https://hdbits.org";
             MinimumSeeders = IndexerDefaults.MINIMUM_SEEDERS;
 
-            Categories = new int[] { (int)HdBitsCategory.Movie };
+            Categories = new int[] { (int)HdBitsCategory.Xxx };
             Codecs = System.Array.Empty<int>();
             Mediums = System.Array.Empty<int>();
             MultiLanguages = new List<int>();

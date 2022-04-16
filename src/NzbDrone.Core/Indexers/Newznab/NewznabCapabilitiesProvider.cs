@@ -127,22 +127,6 @@ namespace NzbDrone.Core.Indexers.Newznab
 
                     capabilities.TextSearchEngine = xmlBasicSearch.Attribute("searchEngine")?.Value ?? capabilities.TextSearchEngine;
                 }
-
-                var xmlMovieSearch = xmlSearching.Element("movie-search");
-                if (xmlMovieSearch == null || xmlMovieSearch.Attribute("available").Value != "yes")
-                {
-                    capabilities.SupportedMovieSearchParameters = null;
-                }
-                else
-                {
-                    if (xmlMovieSearch.Attribute("supportedParams") != null)
-                    {
-                        capabilities.SupportedMovieSearchParameters = xmlMovieSearch.Attribute("supportedParams").Value.Split(',');
-                        capabilities.SupportsAggregateIdSearch = true;
-                    }
-
-                    capabilities.MovieTextSearchEngine = xmlMovieSearch.Attribute("searchEngine")?.Value ?? capabilities.MovieTextSearchEngine;
-                }
             }
 
             var xmlCategories = xmlRoot.Element("categories");

@@ -133,13 +133,6 @@ namespace NzbDrone.Core.Indexers.Torznab
                     return null;
                 }
 
-                if (capabilities.SupportedMovieSearchParameters != null &&
-                    new[] { "q", "imdbid" }.Any(v => capabilities.SupportedMovieSearchParameters.Contains(v)) &&
-                    new[] { "imdbtitle", "imdbyear" }.All(v => capabilities.SupportedMovieSearchParameters.Contains(v)))
-                {
-                    return null;
-                }
-
                 return new ValidationFailure(string.Empty, "This indexer does not support searching for movies :(. Tell your indexer staff to enable this or force add the indexer by disabling search, adding the indexer and then enabling it again.");
             }
             catch (Exception ex)

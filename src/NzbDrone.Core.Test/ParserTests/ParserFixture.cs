@@ -62,6 +62,8 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("G.I.Movie.Movie.2013.THEATRiCAL.COMPLETE.BLURAY-GLiMMER", "G.I. Movie Movie")]
         [TestCase("www.Torrenting.org - Movie.2008.720p.X264-DIMENSION", "Movie")]
         [TestCase("The.French.Movie.2013.720p.BluRay.x264 - ROUGH[PublicHD]", "The French Movie")]
+        [TestCase("40.Years.Old.Temptations.Of.A.Married.Women.XXX.2017.DVDRIP.x264-group", "40 Years Old Temptations Of A Married Women")]
+        [TestCase("40.Years.Old.Temptations.Of.A.Married.Women.XXX.DVDRIP.x264-group", "40 Years Old Temptations Of A Married Women")]
         public void should_parse_movie_title(string postTitle, string title)
         {
             Parser.Parser.ParseMovieTitle(postTitle).PrimaryMovieTitle.Should().Be(title);

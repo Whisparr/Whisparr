@@ -68,7 +68,7 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
         {
             var results = Subject.GetSearchRequests(_movieSearchCriteria);
 
-            results.GetAllTiers().Should().HaveCount(1);
+            results.GetAllTiers().Should().HaveCount(2);
 
             var pages = results.GetAllTiers().First().Take(3).ToList();
 
@@ -82,7 +82,7 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
         {
             var results = Subject.GetSearchRequests(_movieSearchCriteria);
 
-            results.GetAllTiers().Should().HaveCount(1);
+            results.GetAllTiers().Should().HaveCount(2);
 
             var pages = results.GetAllTiers().First().Take(500).ToList();
 

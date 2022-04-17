@@ -76,10 +76,18 @@ namespace NzbDrone.Core.Indexers.Newznab
                 {
                     var searchQuery = queryTitle;
 
-                    if (!Settings.RemoveYear)
-                    {
-                        searchQuery = string.Format("{0} {1}", searchQuery, searchCriteria.Movie.Year);
-                    }
+                    searchQuery = string.Format("{0} {1}", searchQuery, searchCriteria.Movie.Year);
+
+                    chain.Add(GetPagedRequests(MaxPages,
+                        Settings.Categories,
+                        "search",
+                        string.Format("&q={0}", NewsnabifyTitle(searchQuery))));
+                }
+
+                chain.AddTier();
+                foreach (var queryTitle in queryTitles)
+                {
+                    var searchQuery = queryTitle;
 
                     chain.Add(GetPagedRequests(MaxPages,
                         Settings.Categories,

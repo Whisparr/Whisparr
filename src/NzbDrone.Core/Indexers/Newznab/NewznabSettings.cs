@@ -81,13 +81,6 @@ namespace NzbDrone.Core.Indexers.Newznab
         [FieldDefinition(5, Label = "Additional Parameters", HelpText = "Additional Newznab parameters", Advanced = true)]
         public string AdditionalParameters { get; set; }
 
-        [FieldDefinition(6,
-            Label = "Remove year from search string",
-            HelpText = "Should Whisparr remove the year after the title when searching this indexer?",
-            Advanced = true,
-            Type = FieldType.Checkbox)]
-        public bool RemoveYear { get; set; }
-
         // Field 8 is used by TorznabSettings MinimumSeeders
         // If you need to add another field here, update TorznabSettings as well and this comment
         public virtual NzbDroneValidationResult Validate()

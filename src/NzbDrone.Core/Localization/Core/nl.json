@@ -122,7 +122,7 @@
     "ListExclusions": "Uitzonderingenlijst",
     "Languages": "Talen",
     "Language": "Taal",
-    "ShowAdvanced": "Toon Gevorderd",
+    "ShowAdvanced": "Toon Geavanceerd",
     "RootFolderCheckSingleMessage": "Ontbrekende hoofdmap: {0}",
     "RSSSync": "RSS Sync.",
     "IndexerSearchCheckNoInteractiveMessage": "Geen indexeerders beschikbaar met \"Interactief Zoeken\" ingeschakeld, Whisparr zal geen interactieve zoekopdrachten uitvoeren",
@@ -271,7 +271,7 @@
     "ShowSearch": "Toon Zoeken",
     "ShowQualityProfile": "Toon Kwaliteitsprofielen",
     "ShowPath": "Toon Pad",
-    "ShowMonitored": "Toon Bewaakte",
+    "ShowMonitored": "Toon Gemonitorde",
     "ShowDateAdded": "Toon Datum Toegevoegd",
     "SettingsWeekColumnHeaderHelpText": "Wordt getoond boven elke kolom wanneer de actieve weergave Week is",
     "SettingsWeekColumnHeader": "Week Kolom Koptekst",
@@ -1078,5 +1078,7 @@
     "UnableToLoadBlocklist": "Kon zwarte lijst niet laden",
     "Blocklisted": "Blokkeerlijst",
     "AreYouSureYouWantToRemoveSelectedItemFromQueue": "Ben je zeker dat je {1} item{2} uit de wachtrij wilt verwijderen?",
-    "BlocklistReleases": "Uitgave op blokkeerlijst zetten"
+    "BlocklistReleases": "Uitgave op blokkeerlijst zetten",
+    "SetReleaseGroup": "Stel Release Groep in",
+    "SelectReleaseGroup": "Selecteer Release Groep"
 }

@@ -46,7 +46,8 @@ namespace NzbDrone.Core.ImportLists.TMDb.Popular
                                                .SetSegment("api", "3")
                                                .SetSegment("route", "discover")
                                                .SetSegment("id", "")
-                                               .SetSegment("secondaryRoute", "movie");
+                                               .SetSegment("secondaryRoute", "movie")
+                                               .AddQueryParam("include_adult", true);
 
             switch (Settings.TMDbListType)
             {

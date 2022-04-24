@@ -34,5 +34,6 @@
     "Cancel": "取消",
     "CertificateValidation": "证书认证",
     "Close": "关闭",
-    "CloneProfile": "复制配置文件"
+    "CloneProfile": "复制配置文件",
+    "DBMigration": "数据库迁移版本"
 }

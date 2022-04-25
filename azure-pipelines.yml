@@ -313,7 +313,7 @@ stages:
       - task: ArchiveFiles@2
         displayName: Create linux-x86 tar
         inputs:
-          archiveFile: '$(Build.ArtifactStagingDirectory)/Radarr.$(buildName).linux-core-x86.tar.gz'
+          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).linux-core-x86.tar.gz'
           archiveType: 'tar'
           tarCompression: 'gz'
           includeRootFolder: false
@@ -544,10 +544,10 @@ stages:
       variables:
         pattern: 'Whisparr.*.linux-core-x64.tar.gz'
         artifactName: linux-x64-tests
-        Radarr__Postgres__Host: 'localhost'
-        Radarr__Postgres__Port: '5432'
-        Radarr__Postgres__User: 'whisparr'
-        Radarr__Postgres__Password: 'whisparr'
+        Whisparr__Postgres__Host: 'localhost'
+        Whisparr__Postgres__Port: '5432'
+        Whisparr__Postgres__User: 'whisparr'
+        Whisparr__Postgres__Password: 'whisparr'
 
       pool:
         vmImage: ${{ variables.linuxImage }}

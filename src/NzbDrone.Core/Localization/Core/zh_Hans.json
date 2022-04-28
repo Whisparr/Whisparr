@@ -297,5 +297,10 @@
     "Password": "密码",
     "Database": "数据库",
     "Info": "信息",
-    "UnableToLoadNotifications": "无法加载通知连接"
+    "UnableToLoadNotifications": "无法加载通知连接",
+    "Activity": "活动",
+    "AddCustomFormat": "添加自定义格式",
+    "AddedToDownloadQueue": "添加到下载队列",
+    "AddMovie": "添加电影",
+    "AddMovies": "添加电影"
 }

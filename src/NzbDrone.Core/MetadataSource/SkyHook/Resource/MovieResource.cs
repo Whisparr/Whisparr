@@ -5,7 +5,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook.Resource
 {
     public class MovieResource
     {
-        public int TmdbId { get; set; }
+        public int ForeignId { get; set; }
         public string ImdbId { get; set; }
         public string Overview { get; set; }
         public string Title { get; set; }
@@ -21,7 +21,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook.Resource
 
         public int Year { get; set; }
         public DateTime? Premier { get; set; }
-        public DateTime? InCinema { get; set; }
+        public DateTime? ReleaseDate { get; set; }
         public DateTime? PhysicalRelease { get; set; }
         public DateTime? DigitalRelease { get; set; }
 

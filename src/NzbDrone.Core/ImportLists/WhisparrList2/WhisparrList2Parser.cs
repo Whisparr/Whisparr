@@ -29,7 +29,7 @@ namespace NzbDrone.Core.ImportLists.WhisparrList2
                 return movies;
             }
 
-            return jsonResponse.SelectList(m => new ImportListMovie { TmdbId = m.TmdbId });
+            return jsonResponse.SelectList(m => new ImportListMovie { TmdbId = m.ForeignId });
         }
 
         protected virtual bool PreProcess(ImportListResponse listResponse)

@@ -47,7 +47,7 @@ namespace NzbDrone.Core.ImportLists.WhisparrList2.IMDbList
                     return movies;
                 }
 
-                return jsonResponse.SelectList(m => new ImportListMovie { TmdbId = m.TmdbId });
+                return jsonResponse.SelectList(m => new ImportListMovie { TmdbId = m.ForeignId });
             }
         }
     }

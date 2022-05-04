@@ -540,7 +540,7 @@
     "MarkAsFailedMessageText": "Sei sicuro di voler segnare '{0}' come fallito?",
     "MarkAsFailed": "Segna come fallito",
     "Manual": "Manuale",
-    "MaintenanceRelease": "Release di Manutenzione: correzione di bug e altre implementazioni. Vedi la storia dei Commit su Github per maggiori dettagli",
+    "MaintenanceRelease": "Release di Manutenzione: correzione di bug e altre miglioramenti. Vedi la storia dei Commit su Github per maggiori dettagli",
     "LogLevelTraceHelpTextWarning": "Il Trace Log dovrebbe essere abilitato solo temporaneamente",
     "LogLevel": "Livello di Log",
     "Local": "Locale",
@@ -949,12 +949,12 @@
     "Large": "Grande",
     "LastUsed": "Ultimo uso",
     "LogOnly": "Solo registro",
-    "LookingForReleaseProfiles1": "Cerchi profili di rilascio? Provare",
-    "LookingForReleaseProfiles2": "anziché.",
+    "LookingForReleaseProfiles1": "Cerchi profili di rilascio? Prova",
+    "LookingForReleaseProfiles2": "piuttosto.",
     "LowerCase": "Minuscolo",
-    "ManualImportSelectLanguage": "Importazione manuale: selezionare la lingua",
+    "ManualImportSelectLanguage": "Importazione manuale: seleziona Lingua",
     "ManualImportSelectMovie": "Importazione manuale: seleziona Film",
-    "ManualImportSelectQuality": " Importazione manuale: selezionare la qualità",
+    "ManualImportSelectQuality": " Importazione manuale: seleziona Qualità",
     "MegabytesPerMinute": "Megabyte al minuto",
     "Min": "Min",
     "MinimumCustomFormatScore": "Punteggio formato personalizzato minimo",
@@ -1081,5 +1081,6 @@
     "UpdateAvailable": "É disponibile un nuovo aggiornamento",
     "BypassDelayIfHighestQualityHelpText": "Salta il ritardo quando la release ha la più alta qualità abilitata nel profilo qualità con il protocollo preferito",
     "NotificationTriggersHelpText": "Selezionare quali eventi attiveranno questa notifica",
-    "Database": "Database"
+    "Database": "Database",
+    "AnnouncedMsg": "Il film è stato annunciato"
 }

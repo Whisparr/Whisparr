@@ -116,7 +116,7 @@ function IndexerOptions(props) {
                 min={0}
                 max={120}
                 unit="minutes"
-                helpText={translate('HelpText')}
+                helpText={translate('RssSyncHelpText')}
                 helpTextWarning={translate('RSSSyncIntervalHelpTextWarning')}
                 helpLink="https://wiki.servarr.com/whisparr/faq#how-does-whisparr-work"
                 onChange={onInputChange}

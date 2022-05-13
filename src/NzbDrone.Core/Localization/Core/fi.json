@@ -51,7 +51,7 @@
     "LinkHere": "tässä",
     "ListSyncLevelHelpText": "Kirjaston elokuvat poistetaan tai niiden valvonta lopetetaan, jollei niitä ole tuontilistallasi.",
     "ManualImportSelectMovie": "Manuaalinen tuonti - Valitse Elokuva",
-    "MappedDrivesRunningAsService": "Yhdistetyt verkkoasemat eivät ole käytettävissä, kun niitä käytetään Windows-palveluna. Katso lisätietoja UKK: sta",
+    "MappedDrivesRunningAsService": "Yhdistetyt verkkoasemat eivät ole käytettävissä, kun sovellus suoritetaan Windows-palveluna. Lisätietoja löydät UKK:stä.",
     "MinimumAgeHelpText": "Vain Usenet: NZB: n vähimmäisikä minuutteina, ennen kuin heidät napataan. Käytä tätä antaaksesi uusille julkaisuille aikaa levittää usenet-palveluntarjoajallesi.",
     "MinimumFreeSpaceWhenImportingHelpText": "Estä tuonti, jos vapaan levytilan määrä sen jälkeen jää tässä määritetyn arvon alle.",
     "MonitoredHelpText": "Elokuvaa etsitään ja se ladataan, jos se on saatavilla.",

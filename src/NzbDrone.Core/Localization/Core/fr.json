@@ -1100,5 +1100,6 @@
     "Database": "Base de données",
     "Waiting": "En attente",
     "RemotePathMappingCheckBadDockerPath": "Vous utilisez docker ; le client de téléchargement {0} enregistre les téléchargements dans {1} mais ce n'est pas un chemin valide. Vérifiez vos paramètres de dossier distant et les paramètres de votre client de téléchargement.",
-    "RemotePathMappingCheckFilesBadDockerPath": "Vous utilisez docker ; {0} signifie les téléchargement dans {1} mais ce n'est pas un dossier valide. Vérifiez vos paramètres de dossier distant et les paramètres de votre client de téléchargement."
+    "RemotePathMappingCheckFilesBadDockerPath": "Vous utilisez docker ; {0} signifie les téléchargement dans {1} mais ce n'est pas un dossier valide. Vérifiez vos paramètres de dossier distant et les paramètres de votre client de téléchargement.",
+    "RefreshMonitoredIntervalHelpText": "Intervalle en minutes entre chaque vérification des téléchargements, minimum 1 minute"
 }

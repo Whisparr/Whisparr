@@ -313,53 +313,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
         {
             try
             {
-                var lowerTitle = title.ToLower();
-
-                lowerTitle = lowerTitle.Replace(".", "");
-
-                var parserTitle = lowerTitle;
-
-                var parserResult = Parser.Parser.ParseMovieTitle(title, true);
-
-                var yearTerm = "";
-
-                if (parserResult != null && parserResult.PrimaryMovieTitle != title)
-                {
-                    //Parser found something interesting!
-                    parserTitle = parserResult.PrimaryMovieTitle.ToLower().Replace(".", " "); //TODO Update so not every period gets replaced (e.g. R.I.P.D.)
-                    if (parserResult.Year > 1800)
-                    {
-                        yearTerm = parserResult.Year.ToString();
-                    }
-
-                    if (parserResult.ImdbId.IsNotNullOrWhiteSpace())
-                    {
-                        try
-                        {
-                            var movieLookup = GetMovieByImdbId(parserResult.ImdbId);
-                            return movieLookup == null ? new List<Movie>() : new List<Movie> { _movieService.FindByTmdbId(movieLookup.TmdbId) ?? new Movie { MovieMetadata = movieLookup } };
-                        }
-                        catch (Exception)
-                        {
-                            return new List<Movie>();
-                        }
-                    }
-
-                    if (parserResult.TmdbId > 0)
-                    {
-                        try
-                        {
-                            var movieLookup = GetMovieInfo(parserResult.TmdbId).Item1;
-                            return movieLookup == null ? new List<Movie>() : new List<Movie> { _movieService.FindByTmdbId(movieLookup.TmdbId) ?? new Movie { MovieMetadata = movieLookup } };
-                        }
-                        catch (Exception)
-                        {
-                            return new List<Movie>();
-                        }
-                    }
-                }
-
-                parserTitle = StripTrailingTheFromTitle(parserTitle);
+                var lowerTitle = title.ToLowerInvariant();
 
                 if (lowerTitle.StartsWith("imdb:") || lowerTitle.StartsWith("imdbid:"))
                 {
@@ -405,14 +359,11 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                     }
                 }
 
-                var searchTerm = parserTitle.Replace("_", "+").Replace(" ", "+").Replace(".", "+");
-
-                var firstChar = searchTerm.First();
+                var searchTerm = title.ToLower().Replace("_", "+").Replace(" ", "+").Replace(".", "+").Trim();
 
                 var request = _whisparrMetadata.Create()
                     .SetSegment("route", "search")
                     .AddQueryParam("q", searchTerm)
-                    .AddQueryParam("year", yearTerm)
                     .Build();
 
                 request.AllowAutoRedirect = true;

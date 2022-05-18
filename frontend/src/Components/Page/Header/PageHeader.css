@@ -56,7 +56,7 @@
   line-height: 60px;
 
   &:hover {
-    color: $toobarButtonHoverColor;
+    color: var(--toobarButtonHoverColor);
   }
 }
 

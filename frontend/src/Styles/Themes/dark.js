@@ -187,33 +187,6 @@ module.exports = {
   popoverTitleBorderInverseColor: '#707070',
   popoverShadowInverseColor: 'rgba(0, 0, 0, 0.2)',
   popoverArrowBorderInverseColor: 'rgba(58, 63, 81, 0.75)',
-  
-  underlayBackgroundColor: white,
-  availNotMonitoredColor: darkGray,
-  freeSpaceColor: darkGray,
-  excludedColor: white,
-  controlsColor: white,
-  backdropOverlayColor: black,
-  headerContentColor: white,
-  endedColor: white,
-  containerBackgroundColor: white,
-  sliderAccentColor: '#5d9cec',
-  handleQualityDefinition: white,
-  
-  
-  //
-  // Calender
-  
-  calendarBorderColor: '#e5e5e5',
-  calendarTodayBackgroundColor: darkGray,
-  calendarTextDim: dimColor,
-  
-  //
-  // Queue
-  
-  queueColor: purple,
-  queueBorderColor: purple,
-  progressColor: white,
 
   //
   // Misc

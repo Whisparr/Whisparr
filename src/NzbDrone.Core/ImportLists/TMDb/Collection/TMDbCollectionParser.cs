@@ -27,7 +27,7 @@ namespace NzbDrone.Core.ImportLists.TMDb.Collection
             foreach (var movie in jsonResponse.Parts)
             {
                 // Movies with no Year Fix
-                if (string.IsNullOrWhiteSpace(movie.ReleaseDate))
+                if (string.IsNullOrWhiteSpace(movie.ReleaseDate) || !movie.Adult)
                 {
                     continue;
                 }

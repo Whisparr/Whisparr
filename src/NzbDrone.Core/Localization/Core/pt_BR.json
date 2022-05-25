@@ -486,7 +486,7 @@
     "AddMovies": "Adicionar filmes",
     "AddMovie": "Adicionar filme",
     "AddListExclusion": "Adicionar exclusão à lista",
-    "AddList": "Adicionar lista",
+    "AddList": "Adicionar à Lista",
     "AddingTag": "Adicionando etiqueta",
     "AddIndexer": "Adicionar indexador",
     "AddImportExclusionHelpText": "Impedir a adição do filme ao Whisparr por listas",
@@ -756,7 +756,7 @@
     "Restrictions": "Restrições",
     "RestoreBackup": "Restaurar backup",
     "Restore": "Restaurar",
-    "RestartRequiredHelpTextWarning": "Requer reinício para ter efeito",
+    "RestartRequiredHelpTextWarning": "Requer reinicio para fazer efeito",
     "RestartWhisparr": "Reiniciar o Whisparr",
     "RestartNow": "Reiniciar agora",
     "Restart": "Reiniciar",
@@ -774,7 +774,7 @@
     "Reorder": "Reorganizar",
     "RenameMoviesHelpText": "O Whisparr usará o nome de arquivo existente se a renomeação estiver desativada",
     "RenameMovies": "Renomear filmes",
-    "RenameFiles": "Renomear arquivos",
+    "RenameFiles": "Renomear Arquivos",
     "Renamed": "Renomeado",
     "RemovingTag": "Removendo tag",
     "RemoveSelected": "Remover selecionado(s)",
@@ -1117,5 +1117,7 @@
     "OriginalLanguage": "Idioma Original",
     "Database": "Banco de dados",
     "RefreshMonitoredIntervalHelpText": "Com que frequência atualizar downloads monitorados de clientes de download, no mínimo 1 minuto",
-    "RssSyncHelpText": "Intervalo em minutos. Defina como zero para desabilitar (isso interromperá todas as capturas de liberação automática)"
+    "RssSyncHelpText": "Intervalo em minutos. Defina como zero para desabilitar (isso interromperá todas as capturas de liberação automática)",
+    "InstanceName": "Nome da instância",
+    "InstanceNameHelpText": "Nome da instância na guia e para o nome do aplicativo Syslog"
 }

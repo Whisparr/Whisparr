@@ -1116,5 +1116,6 @@
     "SizeLimit": "尺寸限制",
     "DiscordUrlInSlackNotification": "你将Discord通知设为Slack通知，如设为Discord通知功能更好，受到影响的通知是: {0}",
     "IndexerJackettAll": "使用 Jackett 不受支持的“全部”终点的索引器：{0}",
-    "InstanceName": "中文"
+    "InstanceName": "中文",
+    "InstanceNameHelpText": "选项卡及日志应用名称"
 }

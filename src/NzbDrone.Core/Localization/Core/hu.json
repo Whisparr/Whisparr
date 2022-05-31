@@ -1115,5 +1115,6 @@
     "SizeLimit": "Méretkorlát",
     "OriginalTitle": "Eredeti Cím",
     "OriginalLanguage": "Eredeti nyelv",
-    "Database": "Adatbázis"
+    "Database": "Adatbázis",
+    "InstanceName": "Példány Neve"
 }

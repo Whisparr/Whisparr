@@ -107,6 +107,7 @@ namespace NzbDrone.Core.ImportLists
                     AddOptions = new AddMovieOptions
                     {
                         SearchForMovie = monitored && importList.SearchOnAdd,
+                        AddMethod = AddMovieMethod.List
                     }
                 });
             }

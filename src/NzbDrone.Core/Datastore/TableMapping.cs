@@ -87,6 +87,7 @@ namespace NzbDrone.Core.Datastore
                   .Ignore(i => i.SupportsOnDownload)
                   .Ignore(i => i.SupportsOnUpgrade)
                   .Ignore(i => i.SupportsOnRename)
+                  .Ignore(i => i.SupportsOnMovieAdded)
                   .Ignore(i => i.SupportsOnMovieDelete)
                   .Ignore(i => i.SupportsOnMovieFileDelete)
                   .Ignore(i => i.SupportsOnMovieFileDeleteForUpgrade)

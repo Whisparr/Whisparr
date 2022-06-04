@@ -194,6 +194,17 @@ class UISettings extends Component {
                       {...settings.enableColorImpairedMode}
                     />
                   </FormGroup>
+
+                  <FormGroup>
+                    <FormLabel>{translate('SettingsEnableSFWMode')}</FormLabel>
+                    <FormInputGroup
+                      type={inputTypes.CHECK}
+                      name="enableSfwMode"
+                      helpText={translate('SettingsEnableSFWModeHelpText')}
+                      onChange={onInputChange}
+                      {...settings.enableSfwMode}
+                    />
+                  </FormGroup>
                 </FieldSet>
 
                 <FieldSet legend={translate('Language')}>

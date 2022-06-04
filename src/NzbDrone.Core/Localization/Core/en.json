@@ -1,4 +1,6 @@
 {
+  "SettingsEnableSFWMode": "Enable SFW Images",
+  "SettingsEnableSFWModeHelpText": "This will blur all images unless you mouseover them",
   "About": "About",
   "AcceptConfirmationModal": "Accept Confirmation Modal",
   "Actions": "Actions",

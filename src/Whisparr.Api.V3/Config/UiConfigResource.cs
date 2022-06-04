@@ -19,6 +19,7 @@ namespace Whisparr.Api.V3.Config
         public bool ShowRelativeDates { get; set; }
 
         public bool EnableColorImpairedMode { get; set; }
+        public bool EnableSfwMode { get; set; }
         public int MovieInfoLanguage { get; set; }
         public int UILanguage { get; set; }
     }
@@ -40,6 +41,7 @@ namespace Whisparr.Api.V3.Config
                 ShowRelativeDates = model.ShowRelativeDates,
 
                 EnableColorImpairedMode = model.EnableColorImpairedMode,
+                EnableSfwMode = model.EnableSfwMode,
                 MovieInfoLanguage = model.MovieInfoLanguage,
                 UILanguage = model.UILanguage
             };

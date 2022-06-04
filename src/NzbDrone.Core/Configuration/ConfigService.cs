@@ -373,6 +373,13 @@ namespace NzbDrone.Core.Configuration
             set { SetValue("EnableColorImpairedMode", value); }
         }
 
+        public bool EnableSfwMode
+        {
+            get { return GetValueBoolean("EnableSfwMode", false); }
+
+            set { SetValue("EnableSfwMode", value); }
+        }
+
         public int MovieInfoLanguage
         {
             get { return GetValueInt("MovieInfoLanguage", (int)Language.English); }

@@ -54,6 +54,7 @@ import {
   faExclamationTriangle as fasExclamationTriangle,
   faExternalLinkAlt as fasExternalLinkAlt,
   faEye as fasEye,
+  faEyeSlash as fasEyeSlash,
   faFastBackward as fasFastBackward,
   faFastForward as fasFastForward,
   faFileExport as fasFileExport,
@@ -120,6 +121,7 @@ export const ANNOUNCED = fasBullhorn;
 export const ARROW_LEFT = fasArrowCircleLeft;
 export const ARROW_RIGHT = fasArrowCircleRight;
 export const BACKUP = farFileArchive;
+export const BLOCKLIST = fasBan;
 export const BUG = fasBug;
 export const CALENDAR = fasCalendarAlt;
 export const CALENDAR_O = farCalendar;
@@ -174,6 +176,7 @@ export const MONITORED = fasBookmark;
 export const NETWORK = fasBroadcastTower;
 export const NAVBAR_COLLAPSE = fasBars;
 export const NOT_AIRED = farClock;
+export const NSFW = fasEye;
 export const ORGANIZE = fasSitemap;
 export const OVERFLOW = fasEllipsisH;
 export const OVERVIEW = fasThList;
@@ -204,6 +207,7 @@ export const MOVIE_CONTINUING = fasPlay;
 export const SERIES_ENDED = fasStop;
 export const MOVIE_DELETED = fasExclamationTriangle;
 export const SETTINGS = fasCogs;
+export const SFW = fasEyeSlash;
 export const SHUTDOWN = fasPowerOff;
 export const SORT = fasSort;
 export const SORT_ASCENDING = fasSortUp;
@@ -225,4 +229,3 @@ export const UNSAVED_SETTING = farDotCircle;
 export const VIEW = fasEye;
 export const WARNING = fasExclamationTriangle;
 export const WIKI = fasBookReader;
-export const BLOCKLIST = fasBan;

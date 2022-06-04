@@ -6,9 +6,11 @@ import DiscoverMoviePoster from './DiscoverMoviePoster';
 function createMapStateToProps() {
   return createSelector(
     createDimensionsSelector(),
-    ( dimensions) => {
+    (state) => state.settings.safeForWorkMode,
+    (dimensions, safeForWork) => {
       return {
-        isSmallScreen: dimensions.isSmallScreen
+        isSmallScreen: dimensions.isSmallScreen,
+        safeForWork
       };
     }
   );

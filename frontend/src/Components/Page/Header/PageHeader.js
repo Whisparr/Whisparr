@@ -8,6 +8,7 @@ import translate from 'Utilities/String/translate';
 import KeyboardShortcutsModal from './KeyboardShortcutsModal';
 import MovieSearchInputConnector from './MovieSearchInputConnector';
 import PageHeaderActionsMenuConnector from './PageHeaderActionsMenuConnector';
+import SafeForWorkButtonConnector from './SafeForWorkButtonConnector';
 import styles from './PageHeader.css';
 
 class PageHeader extends Component {
@@ -77,6 +78,8 @@ class PageHeader extends Component {
         <MovieSearchInputConnector />
 
         <div className={styles.right}>
+
+          <SafeForWorkButtonConnector />
           <IconButton
             className={styles.donate}
             name={icons.HEART}

@@ -16,7 +16,6 @@ import DiscoverMoviePosterInfo from './DiscoverMoviePosterInfo';
 import styles from './DiscoverMoviePoster.css';
 
 class DiscoverMoviePoster extends Component {
-
   //
   // Lifecycle
 
@@ -92,6 +91,7 @@ class DiscoverMoviePoster extends Component {
       showRelativeDates,
       shortDateFormat,
       timeFormat,
+      safeForWork,
       ...otherProps
     } = this.props;
 
@@ -164,7 +164,7 @@ class DiscoverMoviePoster extends Component {
             {...linkProps}
           >
             <MoviePoster
-              className={styles.poster}
+              className={safeForWork ? styles.posterSfw : styles.poster}
               style={elementStyle}
               images={images}
               size={250}
@@ -239,7 +239,8 @@ DiscoverMoviePoster.propTypes = {
   isExisting: PropTypes.bool.isRequired,
   isExcluded: PropTypes.bool.isRequired,
   isSelected: PropTypes.bool,
-  onSelectedChange: PropTypes.func.isRequired
+  onSelectedChange: PropTypes.func.isRequired,
+  safeForWork: PropTypes.bool
 };
 
 export default DiscoverMoviePoster;

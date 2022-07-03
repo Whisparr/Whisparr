@@ -21,6 +21,7 @@ namespace NzbDrone.Core.Test.MetadataSource.SkyHook
 
         // TODO: TMDB Doesn't like when we clean periods from this
         // [TestCase("The Man from U.N.C.L.E.", "The Man from U.N.C.L.E.")]
+        [Ignore("Testing TPDB")]
         [TestCase("imdb:tt0081593", "Taboo")]
         [TestCase("imdb:tt0084755", "Taboo II")]
         public void successful_search(string title, string expected)
@@ -38,7 +39,6 @@ namespace NzbDrone.Core.Test.MetadataSource.SkyHook
         [TestCase("tmdbid: 99999999999999999999")]
         [TestCase("tmdbid: 0")]
         [TestCase("tmdbid: -12")]
-        [TestCase("tmdbid:1")]
         [TestCase("adjalkwdjkalwdjklawjdlKAJD;EF")]
         [TestCase("imdb: tt9805708")]
         public void no_search_result(string term)

@@ -6,7 +6,7 @@ namespace NzbDrone.Integration.Test.ApiTests
     [TestFixture]
     public class MovieLookupFixture : IntegrationTest
     {
-        [TestCase("taboo", "Taboo")]
+        [TestCase("taboo", "Sexual Taboo")]
         public void lookup_new_movie_by_title(string term, string title)
         {
             var movie = Movies.Lookup(term);
@@ -15,6 +15,7 @@ namespace NzbDrone.Integration.Test.ApiTests
             movie.Should().Contain(c => c.Title == title);
         }
 
+        [Ignore("Testing TPDB")]
         [Test]
         public void lookup_new_movie_by_imdbid()
         {

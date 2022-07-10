@@ -11,6 +11,7 @@ using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.MetadataSource;
 using NzbDrone.Core.Movies;
 using NzbDrone.Core.Organizer;
+using Whisparr.Api.V3.Movies;
 using Whisparr.Http;
 
 namespace Whisparr.Api.V3.ImportLists
@@ -19,6 +20,7 @@ namespace Whisparr.Api.V3.ImportLists
     public class ImportListMoviesController : Controller
     {
         private readonly IMovieService _movieService;
+        private readonly IAddMovieService _addMovieService;
         private readonly IProvideMovieInfo _movieInfo;
         private readonly IBuildFileNames _fileNameBuilder;
         private readonly IImportListMovieService _listMovieService;
@@ -27,6 +29,7 @@ namespace Whisparr.Api.V3.ImportLists
         private readonly IConfigService _configService;
 
         public ImportListMoviesController(IMovieService movieService,
+                                    IAddMovieService addMovieService,
                                     IProvideMovieInfo movieInfo,
                                     IBuildFileNames fileNameBuilder,
                                     IImportListMovieService listMovieService,
@@ -35,6 +38,7 @@ namespace Whisparr.Api.V3.ImportLists
                                     IConfigService configService)
         {
             _movieService = movieService;
+            _addMovieService = addMovieService;
             _movieInfo = movieInfo;
             _fileNameBuilder = fileNameBuilder;
             _listMovieService = listMovieService;
@@ -87,6 +91,14 @@ namespace Whisparr.Api.V3.ImportLists
             }).ToList();
 
             return realResults;
+        }
+
+        [HttpPost]
+        public object AddMovies([FromBody] List<MovieResource> resource)
+        {
+            var newMovies = resource.ToModel();
+
+            return _addMovieService.AddMovies(newMovies, true).ToResource(0);
         }
 
         private IEnumerable<ImportListMoviesResource> MapToResource(IEnumerable<Movie> movies, Language language)

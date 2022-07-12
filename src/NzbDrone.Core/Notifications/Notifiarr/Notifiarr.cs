@@ -48,6 +48,8 @@ namespace NzbDrone.Core.Notifications.Notifiarr
             variables.Add("Whisparr_Download_Client", message.DownloadClientName ?? string.Empty);
             variables.Add("Whisparr_Download_Client_Type", message.DownloadClientType ?? string.Empty);
             variables.Add("Whisparr_Download_Id", message.DownloadId ?? string.Empty);
+            variables.Add("Whisparr_Release_CustomFormat", string.Join("|", remoteMovie.CustomFormats));
+            variables.Add("Whisparr_Release_CustomFormatScore", remoteMovie.CustomFormatScore.ToString());
 
             _proxy.SendNotification(variables, Settings);
         }

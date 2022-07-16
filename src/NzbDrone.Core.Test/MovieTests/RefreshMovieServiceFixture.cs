@@ -10,6 +10,7 @@ using NzbDrone.Core.MetadataSource;
 using NzbDrone.Core.Movies;
 using NzbDrone.Core.Movies.Commands;
 using NzbDrone.Core.Movies.Credits;
+using NzbDrone.Core.RootFolders;
 using NzbDrone.Core.Test.Framework;
 using NzbDrone.Test.Common;
 
@@ -43,6 +44,10 @@ namespace NzbDrone.Core.Test.MovieTests
             Mocker.GetMock<IProvideMovieInfo>()
                   .Setup(s => s.GetMovieInfo(It.IsAny<int>()))
                   .Callback<int>((i) => { throw new MovieNotFoundException(i); });
+
+            Mocker.GetMock<IRootFolderService>()
+                  .Setup(s => s.GetBestRootFolderPath(It.IsAny<string>()))
+                  .Returns(string.Empty);
         }
 
         private void GivenNewMovieInfo(MovieMetadata movie)

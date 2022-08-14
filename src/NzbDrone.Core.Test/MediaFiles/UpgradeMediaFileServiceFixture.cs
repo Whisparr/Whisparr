@@ -15,19 +15,19 @@ namespace NzbDrone.Core.Test.MediaFiles
 {
     public class UpgradeMediaFileServiceFixture : CoreTest<UpgradeMediaFileService>
     {
-        private MovieFile _movieFile;
+        private MediaFile _movieFile;
         private LocalMovie _localMovie;
 
         [SetUp]
         public void Setup()
         {
             _localMovie = new LocalMovie();
-            _localMovie.Movie = new Movie
+            _localMovie.Movie = new Media
             {
                 Path = @"C:\Test\Movies\Movie".AsOsAgnostic()
             };
 
-            _movieFile = Builder<MovieFile>
+            _movieFile = Builder<MediaFile>
                   .CreateNew()
                   .Build();
 
@@ -48,7 +48,7 @@ namespace NzbDrone.Core.Test.MediaFiles
         {
             _localMovie.Movie.MovieFileId = 1;
             _localMovie.Movie.MovieFile =
-                new MovieFile
+                new MediaFile
                 {
                     Id = 1,
                     RelativePath = @"A.Movie.2019.avi",
@@ -72,7 +72,7 @@ namespace NzbDrone.Core.Test.MediaFiles
 
             Subject.UpgradeMovieFile(_movieFile, _localMovie);
 
-            Mocker.GetMock<IMediaFileService>().Verify(v => v.Delete(It.IsAny<MovieFile>(), DeleteMediaFileReason.Upgrade), Times.Once());
+            Mocker.GetMock<IMediaFileService>().Verify(v => v.Delete(It.IsAny<MediaFile>(), DeleteMediaFileReason.Upgrade), Times.Once());
         }
 
         [Test]

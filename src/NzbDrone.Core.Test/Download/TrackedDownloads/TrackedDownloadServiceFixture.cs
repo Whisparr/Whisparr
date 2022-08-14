@@ -45,7 +45,7 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
 
             var remoteEpisode = new RemoteMovie
             {
-                Movie = new Movie() { Id = 3 },
+                Movie = new Media() { Id = 3 },
 
                 ParsedMovieInfo = new ParsedMovieInfo()
                 {
@@ -55,7 +55,7 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
             };
 
             Mocker.GetMock<IParsingService>()
-                  .Setup(s => s.Map(It.Is<ParsedMovieInfo>(i => i.PrimaryMovieTitle == "A Movie"), It.IsAny<string>(), null))
+                  .Setup(s => s.Map(It.Is<ParsedMovieInfo>(i => i.PrimaryMovieTitle == "A Movie"), null))
                   .Returns(new MappingResult { RemoteMovie = remoteEpisode });
 
             ParseMovieTitle();
@@ -93,7 +93,7 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
 
             var remoteMovie = new RemoteMovie
             {
-                Movie = new Movie() { Id = 3 },
+                Movie = new Media() { Id = 3 },
 
                 ParsedMovieInfo = new ParsedMovieInfo()
                 {
@@ -103,7 +103,7 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
             };
 
             Mocker.GetMock<IParsingService>()
-                  .Setup(s => s.Map(It.IsAny<ParsedMovieInfo>(), It.IsAny<string>(), null))
+                  .Setup(s => s.Map(It.IsAny<ParsedMovieInfo>(), null))
                   .Returns(new MappingResult { RemoteMovie = remoteMovie });
 
             Mocker.GetMock<IHistoryService>()
@@ -135,10 +135,10 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
             Subject.GetTrackedDownloads().Should().HaveCount(1);
 
             Mocker.GetMock<IParsingService>()
-                  .Setup(s => s.Map(It.IsAny<ParsedMovieInfo>(), It.IsAny<string>(), null))
+                  .Setup(s => s.Map(It.IsAny<ParsedMovieInfo>(), null))
                   .Returns(new MappingResult { MappingResultType = MappingResultType.Unknown });
 
-            Subject.Handle(new MoviesDeletedEvent(new List<Movie> { remoteMovie.Movie }, false, false));
+            Subject.Handle(new MoviesDeletedEvent(new List<Media> { remoteMovie.Movie }, false, false));
 
             var trackedDownloads = Subject.GetTrackedDownloads();
             trackedDownloads.Should().HaveCount(1);
@@ -152,7 +152,7 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
 
             var remoteMovie = new RemoteMovie
             {
-                Movie = new Movie() { Id = 3 },
+                Movie = new Media() { Id = 3 },
 
                 ParsedMovieInfo = new ParsedMovieInfo()
                 {
@@ -162,7 +162,7 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
             };
 
             Mocker.GetMock<IParsingService>()
-                  .Setup(s => s.Map(It.IsAny<ParsedMovieInfo>(), It.IsAny<string>(), null))
+                  .Setup(s => s.Map(It.IsAny<ParsedMovieInfo>(), null))
                   .Returns(new MappingResult { MappingResultType = MappingResultType.Unknown });
 
             Mocker.GetMock<IHistoryService>()
@@ -194,10 +194,10 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
             Subject.GetTrackedDownloads().Should().HaveCount(1);
 
             Mocker.GetMock<IParsingService>()
-                  .Setup(s => s.Map(It.IsAny<ParsedMovieInfo>(), It.IsAny<string>(), null))
+                  .Setup(s => s.Map(It.IsAny<ParsedMovieInfo>(), null))
                   .Returns(new MappingResult { MappingResultType = MappingResultType.Unknown });
 
-            Subject.Handle(new MoviesDeletedEvent(new List<Movie> { remoteMovie.Movie }, false, false));
+            Subject.Handle(new MoviesDeletedEvent(new List<Media> { remoteMovie.Movie }, false, false));
 
             var trackedDownloads = Subject.GetTrackedDownloads();
             trackedDownloads.Should().HaveCount(1);

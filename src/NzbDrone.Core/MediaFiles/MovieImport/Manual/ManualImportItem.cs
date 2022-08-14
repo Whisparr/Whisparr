@@ -18,6 +18,6 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Manual
         public string ReleaseGroup { get; set; }
         public string DownloadId { get; set; }
         public IEnumerable<Rejection> Rejections { get; set; }
-        public Movie Movie { get; set; }
+        public Media Movie { get; set; }
     }
 }

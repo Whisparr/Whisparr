@@ -17,7 +17,7 @@ namespace NzbDrone.Core.Extras
 {
     public interface IExtraService
     {
-        void ImportMovie(LocalMovie localMovie, MovieFile movieFile, bool isReadOnly);
+        void ImportMovie(LocalMovie localMovie, MediaFile movieFile, bool isReadOnly);
     }
 
     public class ExtraService : IExtraService,
@@ -48,14 +48,14 @@ namespace NzbDrone.Core.Extras
             _logger = logger;
         }
 
-        public void ImportMovie(LocalMovie localMovie, MovieFile movieFile, bool isReadOnly)
+        public void ImportMovie(LocalMovie localMovie, MediaFile movieFile, bool isReadOnly)
         {
             ImportExtraFiles(localMovie, movieFile, isReadOnly);
 
             CreateAfterMovieImport(localMovie.Movie, movieFile);
         }
 
-        public void ImportExtraFiles(LocalMovie localMovie, MovieFile movieFile, bool isReadOnly)
+        public void ImportExtraFiles(LocalMovie localMovie, MediaFile movieFile, bool isReadOnly)
         {
             if (!_configService.ImportExtraFiles)
             {
@@ -120,7 +120,7 @@ namespace NzbDrone.Core.Extras
             }
         }
 
-        private void CreateAfterMovieImport(Movie movie, MovieFile movieFile)
+        private void CreateAfterMovieImport(Media movie, MediaFile movieFile)
         {
             foreach (var extraFileManager in _extraFileManagers)
             {
@@ -173,7 +173,7 @@ namespace NzbDrone.Core.Extras
             }
         }
 
-        private List<MovieFile> GetMovieFiles(int movieId)
+        private List<MediaFile> GetMovieFiles(int movieId)
         {
             var movieFiles = _mediaFileService.GetFilesByMovie(movieId);
 

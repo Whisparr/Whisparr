@@ -11,26 +11,26 @@ namespace NzbDrone.Core.MediaFiles
 {
     public interface IMediaFileService
     {
-        MovieFile Add(MovieFile movieFile);
-        void Update(MovieFile movieFile);
-        void Update(List<MovieFile> movieFile);
-        void Delete(MovieFile movieFile, DeleteMediaFileReason reason);
-        List<MovieFile> GetFilesByMovie(int movieId);
-        List<MovieFile> GetFilesWithoutMediaInfo();
-        List<string> FilterExistingFiles(List<string> files, Movie movie);
-        MovieFile GetMovie(int id);
-        List<MovieFile> GetMovies(IEnumerable<int> ids);
-        List<MovieFile> GetFilesWithRelativePath(int movieIds, string relativePath);
+        MediaFile Add(MediaFile movieFile);
+        void Update(MediaFile movieFile);
+        void Update(List<MediaFile> movieFile);
+        void Delete(MediaFile movieFile, DeleteMediaFileReason reason);
+        List<MediaFile> GetFilesByMovie(int movieId);
+        List<MediaFile> GetFilesWithoutMediaInfo();
+        List<string> FilterExistingFiles(List<string> files, Media movie);
+        MediaFile GetMovie(int id);
+        List<MediaFile> GetMovies(IEnumerable<int> ids);
+        List<MediaFile> GetFilesWithRelativePath(int movieIds, string relativePath);
     }
 
     public class MediaFileService : IMediaFileService, IHandleAsync<MoviesDeletedEvent>
     {
         private readonly IMediaFileRepository _mediaFileRepository;
-        private readonly IMovieRepository _movieRepository;
+        private readonly IMediaRepository _movieRepository;
         private readonly IEventAggregator _eventAggregator;
 
         public MediaFileService(IMediaFileRepository mediaFileRepository,
-                                IMovieRepository movieRepository,
+                                IMediaRepository movieRepository,
                                 IEventAggregator eventAggregator)
         {
             _mediaFileRepository = mediaFileRepository;
@@ -38,7 +38,7 @@ namespace NzbDrone.Core.MediaFiles
             _eventAggregator = eventAggregator;
         }
 
-        public MovieFile Add(MovieFile movieFile)
+        public MediaFile Add(MediaFile movieFile)
         {
             var addedFile = _mediaFileRepository.Insert(movieFile);
             if (addedFile.Movie == null)
@@ -51,17 +51,17 @@ namespace NzbDrone.Core.MediaFiles
             return addedFile;
         }
 
-        public void Update(MovieFile movieFile)
+        public void Update(MediaFile movieFile)
         {
             _mediaFileRepository.Update(movieFile);
         }
 
-        public void Update(List<MovieFile> movieFiles)
+        public void Update(List<MediaFile> movieFiles)
         {
             _mediaFileRepository.UpdateMany(movieFiles);
         }
 
-        public void Delete(MovieFile movieFile, DeleteMediaFileReason reason)
+        public void Delete(MediaFile movieFile, DeleteMediaFileReason reason)
         {
             //Little hack so we have the movie attached for the event consumers
             if (movieFile.Movie == null)
@@ -75,17 +75,17 @@ namespace NzbDrone.Core.MediaFiles
             _eventAggregator.PublishEvent(new MovieFileDeletedEvent(movieFile, reason));
         }
 
-        public List<MovieFile> GetFilesByMovie(int movieId)
+        public List<MediaFile> GetFilesByMovie(int movieId)
         {
             return _mediaFileRepository.GetFilesByMovie(movieId);
         }
 
-        public List<MovieFile> GetFilesWithoutMediaInfo()
+        public List<MediaFile> GetFilesWithoutMediaInfo()
         {
             return _mediaFileRepository.GetFilesWithoutMediaInfo();
         }
 
-        public List<string> FilterExistingFiles(List<string> files, Movie movie)
+        public List<string> FilterExistingFiles(List<string> files, Media movie)
         {
             var movieFiles = GetFilesByMovie(movie.Id).Select(f => Path.Combine(movie.Path, f.RelativePath)).ToList();
 
@@ -97,17 +97,17 @@ namespace NzbDrone.Core.MediaFiles
             return files.Except(movieFiles, PathEqualityComparer.Instance).ToList();
         }
 
-        public List<MovieFile> GetMovies(IEnumerable<int> ids)
+        public List<MediaFile> GetMovies(IEnumerable<int> ids)
         {
             return _mediaFileRepository.Get(ids).ToList();
         }
 
-        public MovieFile GetMovie(int id)
+        public MediaFile GetMovie(int id)
         {
             return _mediaFileRepository.Get(id);
         }
 
-        public List<MovieFile> GetFilesWithRelativePath(int movieId, string relativePath)
+        public List<MediaFile> GetFilesWithRelativePath(int movieId, string relativePath)
         {
             return _mediaFileRepository.GetFilesWithRelativePath(movieId, relativePath);
         }
@@ -117,7 +117,7 @@ namespace NzbDrone.Core.MediaFiles
             _mediaFileRepository.DeleteForMovies(message.Movies.Select(m => m.Id).ToList());
         }
 
-        public static List<string> FilterExistingFiles(List<string> files, List<MovieFile> movieFiles, Movie movie)
+        public static List<string> FilterExistingFiles(List<string> files, List<MediaFile> movieFiles, Media movie)
         {
             var seriesFilePaths = movieFiles.Select(f => Path.Combine(movie.Path, f.RelativePath)).ToList();
 

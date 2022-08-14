@@ -32,7 +32,7 @@ namespace Whisparr.Api.V3.MovieFiles
 
     public static class MovieFileResourceMapper
     {
-        private static MovieFileResource ToResource(this MovieFile model)
+        private static MovieFileResource ToResource(this MediaFile model)
         {
             if (model == null)
             {
@@ -60,7 +60,7 @@ namespace Whisparr.Api.V3.MovieFiles
             };
         }
 
-        public static MovieFileResource ToResource(this MovieFile model, NzbDrone.Core.Movies.Movie movie, IUpgradableSpecification upgradableSpecification)
+        public static MovieFileResource ToResource(this MediaFile model, NzbDrone.Core.Movies.Media movie, IUpgradableSpecification upgradableSpecification)
         {
             if (model == null)
             {

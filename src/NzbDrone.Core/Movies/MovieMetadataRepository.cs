@@ -6,15 +6,14 @@ using NzbDrone.Core.Messaging.Events;
 
 namespace NzbDrone.Core.Movies
 {
-    public interface IMovieMetadataRepository : IBasicRepository<MovieMetadata>
+    public interface IMovieMetadataRepository : IBasicRepository<MediaMetadata>
     {
-        MovieMetadata FindByTmdbId(int tmdbId);
-        MovieMetadata FindByImdbId(string imdbId);
-        List<MovieMetadata> FindById(List<int> tmdbIds);
-        bool UpsertMany(List<MovieMetadata> data);
+        MediaMetadata FindByTmdbId(int tmdbId);
+        List<MediaMetadata> FindById(List<int> tmdbIds);
+        bool UpsertMany(List<MediaMetadata> data);
     }
 
-    public class MovieMetadataRepository : BasicRepository<MovieMetadata>, IMovieMetadataRepository
+    public class MovieMetadataRepository : BasicRepository<MediaMetadata>, IMovieMetadataRepository
     {
         private readonly Logger _logger;
 
@@ -24,31 +23,26 @@ namespace NzbDrone.Core.Movies
             _logger = logger;
         }
 
-        public MovieMetadata FindByTmdbId(int tmdbId)
+        public MediaMetadata FindByTmdbId(int tmdbId)
         {
-            return Query(x => x.TmdbId == tmdbId).FirstOrDefault();
+            return Query(x => x.ForiegnId == tmdbId).FirstOrDefault();
         }
 
-        public MovieMetadata FindByImdbId(string imdbId)
+        public List<MediaMetadata> FindById(List<int> tmdbIds)
         {
-            return Query(x => x.ImdbId == imdbId).FirstOrDefault();
+            return Query(x => Enumerable.Contains(tmdbIds, x.ForiegnId));
         }
 
-        public List<MovieMetadata> FindById(List<int> tmdbIds)
+        public bool UpsertMany(List<MediaMetadata> data)
         {
-            return Query(x => Enumerable.Contains(tmdbIds, x.TmdbId));
-        }
-
-        public bool UpsertMany(List<MovieMetadata> data)
-        {
-            var existingMetadata = FindById(data.Select(x => x.TmdbId).ToList());
-            var updateMetadataList = new List<MovieMetadata>();
-            var addMetadataList = new List<MovieMetadata>();
+            var existingMetadata = FindById(data.Select(x => x.ForiegnId).ToList());
+            var updateMetadataList = new List<MediaMetadata>();
+            var addMetadataList = new List<MediaMetadata>();
             int upToDateMetadataCount = 0;
 
             foreach (var meta in data)
             {
-                var existing = existingMetadata.SingleOrDefault(x => x.TmdbId == meta.TmdbId);
+                var existing = existingMetadata.SingleOrDefault(x => x.ForiegnId == meta.ForiegnId);
                 if (existing != null)
                 {
                     meta.UseDbFieldsFrom(existing);

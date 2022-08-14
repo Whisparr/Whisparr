@@ -88,11 +88,11 @@ namespace NzbDrone.Core.ImportLists
 
                             if (!importListReports.AnyFailure)
                             {
-                                var alreadyMapped = result.Movies.Where(x => importListReports.Movies.Any(r => r.TmdbId == x.TmdbId));
-                                var listMovies = MapMovieReports(importListReports.Movies.Where(x => !result.Movies.Any(r => r.TmdbId == x.TmdbId)).ToList()).Where(x => x.TmdbId > 0).ToList();
+                                var alreadyMapped = result.Movies.Where(x => importListReports.Movies.Any(r => r.ForiegnId == x.ForiegnId));
+                                var listMovies = MapMovieReports(importListReports.Movies.Where(x => !result.Movies.Any(r => r.ForiegnId == x.ForiegnId)).ToList()).Where(x => x.ForiegnId > 0).ToList();
 
                                 listMovies.AddRange(alreadyMapped);
-                                listMovies = listMovies.DistinctBy(x => x.TmdbId).ToList();
+                                listMovies = listMovies.DistinctBy(x => x.ForiegnId).ToList();
                                 listMovies.ForEach(m => m.ListId = importList.Definition.Id);
 
                                 result.Movies.AddRange(listMovies);
@@ -142,9 +142,9 @@ namespace NzbDrone.Core.ImportLists
 
                     if (!importListReports.AnyFailure)
                     {
-                        var listMovies = MapMovieReports(importListReports.Movies).Where(x => x.TmdbId > 0).ToList();
+                        var listMovies = MapMovieReports(importListReports.Movies).Where(x => x.ForiegnId > 0).ToList();
 
-                        listMovies = listMovies.DistinctBy(x => x.TmdbId).ToList();
+                        listMovies = listMovies.DistinctBy(x => x.ForiegnId).ToList();
                         listMovies.ForEach(m => m.ListId = importList.Definition.Id);
 
                         result.Movies.AddRange(listMovies);
@@ -166,9 +166,9 @@ namespace NzbDrone.Core.ImportLists
 
         private List<ImportListMovie> MapMovieReports(List<ImportListMovie> reports)
         {
-            var mappedMovies = reports.Select(m => _movieSearch.MapMovieToTmdbMovie(new MovieMetadata { Title = m.Title, TmdbId = m.TmdbId, ImdbId = m.ImdbId, Year = m.Year }))
+            var mappedMovies = reports.Select(m => _movieSearch.MapMovieToTmdbMovie(new MediaMetadata { Title = m.Title, ForiegnId = m.ForiegnId, Year = m.Year }))
                                       .Where(x => x != null)
-                                      .DistinctBy(x => x.TmdbId)
+                                      .DistinctBy(x => x.ForiegnId)
                                       .ToList();
 
             _movieMetadataService.UpsertMany(mappedMovies);

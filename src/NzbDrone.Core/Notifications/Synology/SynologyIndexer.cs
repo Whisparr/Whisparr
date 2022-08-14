@@ -39,7 +39,7 @@ namespace NzbDrone.Core.Notifications.Synology
             }
         }
 
-        public override void OnMovieRename(Movie movie, List<RenamedMovieFile> renamedFiles)
+        public override void OnMovieRename(Media movie, List<RenamedMovieFile> renamedFiles)
         {
             if (Settings.UpdateLibrary)
             {

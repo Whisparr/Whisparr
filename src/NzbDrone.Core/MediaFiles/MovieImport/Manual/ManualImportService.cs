@@ -104,8 +104,8 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Manual
 
             if (languageParse.Count <= 1 && languageParse.First() == Language.Unknown && movie != null)
             {
-                languageParse = new List<Language> { movie.MovieMetadata.Value.OriginalLanguage };
-                _logger.Debug("Language couldn't be parsed from release, fallback to movie original language: {0}", movie.MovieMetadata.Value.OriginalLanguage.Name);
+                languageParse = new List<Language> { movie.MediaMetadata.Value.OriginalLanguage };
+                _logger.Debug("Language couldn't be parsed from release, fallback to movie original language: {0}", movie.MediaMetadata.Value.OriginalLanguage.Name);
             }
 
             var localMovie = new LocalMovie
@@ -174,7 +174,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Manual
             return decisions.Select(decision => MapItem(decision, rootFolder, downloadId, directoryInfo.Name)).ToList();
         }
 
-        private ManualImportItem ProcessFile(string rootFolder, string baseFolder, string file, string downloadId, Movie movie = null)
+        private ManualImportItem ProcessFile(string rootFolder, string baseFolder, string file, string downloadId, Media movie = null)
         {
             try
             {
@@ -259,7 +259,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Manual
             return items;
         }
 
-        private bool SceneSource(Movie movie, string folder)
+        private bool SceneSource(Media movie, string folder)
         {
             return !(movie.Path.PathEquals(folder) || movie.Path.IsParentPath(folder));
         }

@@ -16,8 +16,8 @@ namespace NzbDrone.Core.Movies
 {
     public interface IAddMovieService
     {
-        Movie AddMovie(Movie newMovie);
-        List<Movie> AddMovies(List<Movie> newMovies, bool ignoreErrors = false);
+        Media AddMovie(Media newMovie);
+        List<Media> AddMovies(List<Media> newMovies, bool ignoreErrors = false);
     }
 
     public class AddMovieService : IAddMovieService
@@ -44,7 +44,7 @@ namespace NzbDrone.Core.Movies
             _logger = logger;
         }
 
-        public Movie AddMovie(Movie newMovie)
+        public Media AddMovie(Media newMovie)
         {
             Ensure.That(newMovie, () => newMovie).IsNotNull();
 
@@ -53,18 +53,18 @@ namespace NzbDrone.Core.Movies
 
             _logger.Info("Adding Movie {0} Path: [{1}]", newMovie, newMovie.Path);
 
-            _movieMetadataService.Upsert(newMovie.MovieMetadata.Value);
-            newMovie.MovieMetadataId = newMovie.MovieMetadata.Value.Id;
+            _movieMetadataService.Upsert(newMovie.MediaMetadata.Value);
+            newMovie.MovieMetadataId = newMovie.MediaMetadata.Value.Id;
 
             _movieService.AddMovie(newMovie);
 
             return newMovie;
         }
 
-        public List<Movie> AddMovies(List<Movie> newMovies, bool ignoreErrors = false)
+        public List<Media> AddMovies(List<Media> newMovies, bool ignoreErrors = false)
         {
             var added = DateTime.UtcNow;
-            var moviesToAdd = new List<Movie>();
+            var moviesToAdd = new List<Media>();
 
             foreach (var m in newMovies)
             {
@@ -85,31 +85,31 @@ namespace NzbDrone.Core.Movies
                         throw;
                     }
 
-                    _logger.Debug("TmdbId {0} was not added due to validation failures. {1}", m.TmdbId, ex.Message);
+                    _logger.Debug("TmdbId {0} was not added due to validation failures. {1}", m.ForiegnId, ex.Message);
                 }
             }
 
-            _movieMetadataService.UpsertMany(moviesToAdd.Select(x => x.MovieMetadata.Value).ToList());
-            moviesToAdd.ForEach(x => x.MovieMetadataId = x.MovieMetadata.Value.Id);
+            _movieMetadataService.UpsertMany(moviesToAdd.Select(x => x.MediaMetadata.Value).ToList());
+            moviesToAdd.ForEach(x => x.MovieMetadataId = x.MediaMetadata.Value.Id);
 
             return _movieService.AddMovies(moviesToAdd);
         }
 
-        private Movie AddSkyhookData(Movie newMovie)
+        private Media AddSkyhookData(Media newMovie)
         {
-            var movie = new Movie();
+            var movie = new Media();
 
             try
             {
-                movie.MovieMetadata = _movieInfo.GetMovieInfo(newMovie.TmdbId).Item1;
+                movie.MediaMetadata = _movieInfo.GetMovieInfo(newMovie.ForiegnId).Item1;
             }
             catch (MovieNotFoundException)
             {
-                _logger.Error("TmdbId {0} was not found, it may have been removed from TMDb. Path: {1}", newMovie.TmdbId, newMovie.Path);
+                _logger.Error("TmdbId {0} was not found, it may have been removed from TMDb. Path: {1}", newMovie.ForiegnId, newMovie.Path);
 
                 throw new ValidationException(new List<ValidationFailure>
                                               {
-                                                  new ValidationFailure("TmdbId", $"A movie with this ID was not found. Path: {newMovie.Path}", newMovie.TmdbId)
+                                                  new ValidationFailure("TmdbId", $"A movie with this ID was not found. Path: {newMovie.Path}", newMovie.ForiegnId)
                                               });
             }
 
@@ -118,7 +118,7 @@ namespace NzbDrone.Core.Movies
             return movie;
         }
 
-        private Movie SetPropertiesAndValidate(Movie newMovie)
+        private Media SetPropertiesAndValidate(Media newMovie)
         {
             if (string.IsNullOrWhiteSpace(newMovie.Path))
             {
@@ -126,8 +126,8 @@ namespace NzbDrone.Core.Movies
                 newMovie.Path = Path.Combine(newMovie.RootFolderPath, folderName);
             }
 
-            newMovie.MovieMetadata.Value.CleanTitle = newMovie.Title.CleanMovieTitle();
-            newMovie.MovieMetadata.Value.SortTitle = MovieTitleNormalizer.Normalize(newMovie.Title, newMovie.TmdbId);
+            newMovie.MediaMetadata.Value.CleanTitle = newMovie.Title.CleanMovieTitle();
+            newMovie.MediaMetadata.Value.SortTitle = MovieTitleNormalizer.Normalize(newMovie.Title, newMovie.ForiegnId);
             newMovie.Added = DateTime.UtcNow;
 
             var validationResult = _addMovieValidator.Validate(newMovie);

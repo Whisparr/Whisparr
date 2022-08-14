@@ -24,7 +24,7 @@ namespace NzbDrone.Core.Movies
             _logger = logger;
         }
 
-        private void HandleScanEvents(Movie movie)
+        private void HandleScanEvents(Media movie)
         {
             if (movie.AddOptions == null)
             {

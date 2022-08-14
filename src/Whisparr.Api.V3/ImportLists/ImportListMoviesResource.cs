@@ -45,7 +45,7 @@ namespace Whisparr.Api.V3.ImportLists
 
     public static class DiscoverMoviesResourceMapper
     {
-        public static ImportListMoviesResource ToResource(this Movie model)
+        public static ImportListMoviesResource ToResource(this Media model)
         {
             if (model == null)
             {
@@ -54,29 +54,26 @@ namespace Whisparr.Api.V3.ImportLists
 
             return new ImportListMoviesResource
             {
-                TmdbId = model.TmdbId,
+                TmdbId = model.ForiegnId,
                 Title = model.Title,
-                SortTitle = model.MovieMetadata.Value.SortTitle,
-                InCinemas = model.MovieMetadata.Value.InCinemas,
-                PhysicalRelease = model.MovieMetadata.Value.PhysicalRelease,
-                DigitalRelease = model.MovieMetadata.Value.DigitalRelease,
+                SortTitle = model.MediaMetadata.Value.SortTitle,
+                DigitalRelease = model.MediaMetadata.Value.DigitalRelease,
 
-                Status = model.MovieMetadata.Value.Status,
-                Overview = model.MovieMetadata.Value.Overview,
+                Status = model.MediaMetadata.Value.Status,
+                Overview = model.MediaMetadata.Value.Overview,
 
-                Images = model.MovieMetadata.Value.Images,
+                Images = model.MediaMetadata.Value.Images,
 
                 Year = model.Year,
 
-                Runtime = model.MovieMetadata.Value.Runtime,
-                ImdbId = model.ImdbId,
-                Certification = model.MovieMetadata.Value.Certification,
-                Website = model.MovieMetadata.Value.Website,
-                Genres = model.MovieMetadata.Value.Genres,
-                Ratings = model.MovieMetadata.Value.Ratings,
-                YouTubeTrailerId = model.MovieMetadata.Value.YouTubeTrailerId,
-                Studio = model.MovieMetadata.Value.Studio,
-                Collection = model.MovieMetadata.Value.Collection
+                Runtime = model.MediaMetadata.Value.Runtime,
+                Certification = model.MediaMetadata.Value.Certification,
+                Website = model.MediaMetadata.Value.Website,
+                Genres = model.MediaMetadata.Value.Genres,
+                Ratings = model.MediaMetadata.Value.Ratings,
+                YouTubeTrailerId = model.MediaMetadata.Value.YouTubeTrailerId,
+                Studio = model.MediaMetadata.Value.Studio,
+                Collection = model.MediaMetadata.Value.Collection
             };
         }
 
@@ -89,11 +86,9 @@ namespace Whisparr.Api.V3.ImportLists
 
             return new ImportListMoviesResource
             {
-                TmdbId = model.TmdbId,
+                TmdbId = model.ForiegnId,
                 Title = model.Title,
                 SortTitle = model.MovieMetadata.Value.SortTitle,
-                InCinemas = model.MovieMetadata.Value.InCinemas,
-                PhysicalRelease = model.MovieMetadata.Value.PhysicalRelease,
                 DigitalRelease = model.MovieMetadata.Value.DigitalRelease,
 
                 Status = model.MovieMetadata.Value.Status,
@@ -104,7 +99,6 @@ namespace Whisparr.Api.V3.ImportLists
                 Year = model.Year,
 
                 Runtime = model.MovieMetadata.Value.Runtime,
-                ImdbId = model.ImdbId,
                 Certification = model.MovieMetadata.Value.Certification,
                 Website = model.MovieMetadata.Value.Website,
                 Genres = model.MovieMetadata.Value.Genres,

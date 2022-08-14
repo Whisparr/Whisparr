@@ -9,7 +9,7 @@ namespace NzbDrone.Core.MediaFiles
 {
     public interface IMediaFileTableCleanupService
     {
-        void Clean(Movie movie, List<string> filesOnDisk);
+        void Clean(Media movie, List<string> filesOnDisk);
     }
 
     public class MediaFileTableCleanupService : IMediaFileTableCleanupService
@@ -27,7 +27,7 @@ namespace NzbDrone.Core.MediaFiles
             _logger = logger;
         }
 
-        public void Clean(Movie movie, List<string> filesOnDisk)
+        public void Clean(Media movie, List<string> filesOnDisk)
         {
             var movieFiles = _mediaFileService.GetFilesByMovie(movie.Id);
 

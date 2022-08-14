@@ -6,10 +6,10 @@ namespace NzbDrone.Core.MediaFiles
     {
         public MovieFileMoveResult()
         {
-            OldFiles = new List<MovieFile>();
+            OldFiles = new List<MediaFile>();
         }
 
-        public MovieFile MovieFile { get; set; }
-        public List<MovieFile> OldFiles { get; set; }
+        public MediaFile MovieFile { get; set; }
+        public List<MediaFile> OldFiles { get; set; }
     }
 }

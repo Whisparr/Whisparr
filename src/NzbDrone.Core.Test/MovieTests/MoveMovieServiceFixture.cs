@@ -16,14 +16,14 @@ namespace NzbDrone.Core.Test.MovieTests
     [TestFixture]
     public class MoveMovieServiceFixture : CoreTest<MoveMovieService>
     {
-        private Movie _movie;
+        private Media _movie;
         private MoveMovieCommand _command;
         private BulkMoveMovieCommand _bulkCommand;
 
         [SetUp]
         public void Setup()
         {
-            _movie = Builder<Movie>
+            _movie = Builder<Media>
                 .CreateNew()
                 .Build();
 
@@ -83,7 +83,7 @@ namespace NzbDrone.Core.Test.MovieTests
             ExceptionVerification.ExpectedErrors(1);
 
             Mocker.GetMock<IMovieService>()
-                  .Verify(v => v.UpdateMovie(It.IsAny<Movie>()), Times.Once());
+                  .Verify(v => v.UpdateMovie(It.IsAny<Media>()), Times.Once());
         }
 
         [Test]
@@ -95,7 +95,7 @@ namespace NzbDrone.Core.Test.MovieTests
                   .Verify(v => v.TransferFolder(_command.SourcePath, _command.DestinationPath, TransferMode.Move), Times.Once());
 
             Mocker.GetMock<IBuildFileNames>()
-                  .Verify(v => v.GetMovieFolder(It.IsAny<Movie>(), null), Times.Never());
+                  .Verify(v => v.GetMovieFolder(It.IsAny<Media>(), null), Times.Never());
         }
 
         [Test]
@@ -105,7 +105,7 @@ namespace NzbDrone.Core.Test.MovieTests
             var expectedPath = Path.Combine(_bulkCommand.DestinationRootFolder, movieFolder);
 
             Mocker.GetMock<IBuildFileNames>()
-                    .Setup(s => s.GetMovieFolder(It.IsAny<Movie>(), null))
+                    .Setup(s => s.GetMovieFolder(It.IsAny<Media>(), null))
                     .Returns(movieFolder);
 
             Subject.Execute(_bulkCommand);
@@ -127,7 +127,7 @@ namespace NzbDrone.Core.Test.MovieTests
                   .Verify(v => v.TransferFolder(_command.SourcePath, _command.DestinationPath, TransferMode.Move), Times.Never());
 
             Mocker.GetMock<IBuildFileNames>()
-                  .Verify(v => v.GetMovieFolder(It.IsAny<Movie>(), null), Times.Never());
+                  .Verify(v => v.GetMovieFolder(It.IsAny<Media>(), null), Times.Never());
         }
     }
 }

@@ -7,7 +7,7 @@ namespace NzbDrone.Core.Notifications
     public class GrabMessage
     {
         public string Message { get; set; }
-        public Movie Movie { get; set; }
+        public Media Movie { get; set; }
         public RemoteMovie RemoteMovie { get; set; }
         public QualityModel Quality { get; set; }
         public string DownloadClientType { get; set; }

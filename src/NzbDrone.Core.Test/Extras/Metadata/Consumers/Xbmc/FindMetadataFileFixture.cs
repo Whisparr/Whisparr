@@ -14,12 +14,12 @@ namespace NzbDrone.Core.Test.Extras.Metadata.Consumers.Xbmc
     [TestFixture]
     public class FindMetadataFileFixture : CoreTest<XbmcMetadata>
     {
-        private Movie _movie;
+        private Media _movie;
 
         [SetUp]
         public void Setup()
         {
-            _movie = Builder<Movie>.CreateNew()
+            _movie = Builder<Media>.CreateNew()
                                      .With(s => s.Path = @"C:\Test\Movies\The.Movie".AsOsAgnostic())
                                      .Build();
         }

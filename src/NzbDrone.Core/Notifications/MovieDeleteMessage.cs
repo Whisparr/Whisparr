@@ -6,7 +6,7 @@ namespace NzbDrone.Core.Notifications
     public class MovieDeleteMessage
     {
         public string Message { get; set; }
-        public Movie Movie { get; set; }
+        public Media Movie { get; set; }
         public bool DeletedFiles { get; set; }
         public string DeletedFilesMessage { get; set; }
 
@@ -15,7 +15,7 @@ namespace NzbDrone.Core.Notifications
             return Message;
         }
 
-        public MovieDeleteMessage(Movie movie, bool deleteFiles)
+        public MovieDeleteMessage(Media movie, bool deleteFiles)
         {
             Movie = movie;
             DeletedFiles = deleteFiles;

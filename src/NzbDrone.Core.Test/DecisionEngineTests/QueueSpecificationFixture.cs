@@ -20,10 +20,10 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
     [TestFixture]
     public class QueueSpecificationFixture : CoreTest<QueueSpecification>
     {
-        private Movie _movie;
+        private Media _movie;
         private RemoteMovie _remoteMovie;
 
-        private Movie _otherMovie;
+        private Media _otherMovie;
 
         private ReleaseInfo _releaseInfo;
 
@@ -34,7 +34,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
 
             CustomFormatsFixture.GivenCustomFormats();
 
-            _movie = Builder<Movie>.CreateNew()
+            _movie = Builder<Media>.CreateNew()
                                      .With(e => e.Profile = new Profile
                                      {
                                          Items = Qualities.QualityFixture.GetDefaultQualities(),
@@ -44,7 +44,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
                                      })
                                      .Build();
 
-            _otherMovie = Builder<Movie>.CreateNew()
+            _otherMovie = Builder<Media>.CreateNew()
                                           .With(s => s.Id = 2)
                                           .Build();
 

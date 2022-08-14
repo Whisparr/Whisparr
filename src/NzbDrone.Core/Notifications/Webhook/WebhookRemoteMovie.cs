@@ -16,18 +16,16 @@ namespace NzbDrone.Core.Notifications.Webhook
 
         public WebhookRemoteMovie(RemoteMovie remoteMovie)
         {
-            TmdbId = remoteMovie.Movie.MovieMetadata.Value.TmdbId;
-            ImdbId = remoteMovie.Movie.MovieMetadata.Value.ImdbId;
-            Title = remoteMovie.Movie.MovieMetadata.Value.Title;
-            Year = remoteMovie.Movie.MovieMetadata.Value.Year;
+            TmdbId = remoteMovie.Movie.MediaMetadata.Value.ForiegnId;
+            Title = remoteMovie.Movie.MediaMetadata.Value.Title;
+            Year = remoteMovie.Movie.MediaMetadata.Value.Year;
         }
 
-        public WebhookRemoteMovie(Movie movie)
+        public WebhookRemoteMovie(Media movie)
         {
-            TmdbId = movie.MovieMetadata.Value.TmdbId;
-            ImdbId = movie.MovieMetadata.Value.ImdbId;
-            Title = movie.MovieMetadata.Value.Title;
-            Year = movie.MovieMetadata.Value.Year;
+            TmdbId = movie.MediaMetadata.Value.ForiegnId;
+            Title = movie.MediaMetadata.Value.Title;
+            Year = movie.MediaMetadata.Value.Year;
         }
     }
 }

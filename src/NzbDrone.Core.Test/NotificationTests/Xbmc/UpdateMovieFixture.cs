@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using FizzWare.NBuilder;
 using Moq;
@@ -41,8 +41,7 @@ namespace NzbDrone.Core.Test.NotificationTests.Xbmc
         [Test]
         public void should_update_using_movie_path()
         {
-            var movie = Builder<Movie>.CreateNew()
-                                      .With(s => s.ImdbId = IMDB_ID)
+            var movie = Builder<Media>.CreateNew()
                                       .Build();
 
             Subject.UpdateMovie(_settings, movie);
@@ -54,8 +53,7 @@ namespace NzbDrone.Core.Test.NotificationTests.Xbmc
         [Test]
         public void should_update_all_paths_when_movie_path_not_found()
         {
-            var fakeMovie = Builder<Movie>.CreateNew()
-                                          .With(s => s.ImdbId = "tt01000")
+            var fakeMovie = Builder<Media>.CreateNew()
                                           .With(s => s.Title = "Not A Real Movie")
                                           .Build();
 

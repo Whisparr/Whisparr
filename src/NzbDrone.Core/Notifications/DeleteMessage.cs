@@ -7,8 +7,8 @@ namespace NzbDrone.Core.Notifications
     public class DeleteMessage
     {
         public string Message { get; set; }
-        public Movie Movie { get; set; }
-        public MovieFile MovieFile { get; set; }
+        public Media Movie { get; set; }
+        public MediaFile MovieFile { get; set; }
 
         public DeleteMediaFileReason Reason { get; set; }
 

@@ -11,17 +11,17 @@ namespace NzbDrone.Core.Test.MetadataSource
     [TestFixture]
     public class SearchMovieComparerFixture : CoreTest
     {
-        private List<Movie> _series;
+        private List<Media> _series;
 
         [SetUp]
         public void Setup()
         {
-            _series = new List<Movie>();
+            _series = new List<Media>();
         }
 
         private void WithSeries(string title)
         {
-            _series.Add(new Movie { Title = title });
+            _series.Add(new Media { Title = title });
         }
 
         [Test]

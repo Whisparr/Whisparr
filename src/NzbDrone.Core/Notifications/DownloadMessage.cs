@@ -8,9 +8,9 @@ namespace NzbDrone.Core.Notifications
     public class DownloadMessage
     {
         public string Message { get; set; }
-        public Movie Movie { get; set; }
-        public MovieFile MovieFile { get; set; }
-        public List<MovieFile> OldMovieFiles { get; set; }
+        public Media Movie { get; set; }
+        public MediaFile MovieFile { get; set; }
+        public List<MediaFile> OldMovieFiles { get; set; }
         public string SourcePath { get; set; }
         public DownloadClientItemClientInfo DownloadClientInfo { get; set; }
         public string DownloadId { get; set; }

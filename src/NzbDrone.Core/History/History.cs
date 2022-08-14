@@ -20,7 +20,7 @@ namespace NzbDrone.Core.History
         public string SourceTitle { get; set; }
         public QualityModel Quality { get; set; }
         public DateTime Date { get; set; }
-        public Movie Movie { get; set; }
+        public Media Movie { get; set; }
         public MovieHistoryEventType EventType { get; set; }
         public Dictionary<string, string> Data { get; set; }
         public List<Language> Languages { get; set; }

@@ -19,9 +19,9 @@ namespace NzbDrone.Core.Extras
         }
 
         public abstract int Order { get; }
-        public abstract IEnumerable<ExtraFile> ProcessFiles(Movie movie, List<string> filesOnDisk, List<string> importedFiles);
+        public abstract IEnumerable<ExtraFile> ProcessFiles(Media movie, List<string> filesOnDisk, List<string> importedFiles);
 
-        public virtual ImportExistingExtraFileFilterResult<TExtraFile> FilterAndClean(Movie movie, List<string> filesOnDisk, List<string> importedFiles)
+        public virtual ImportExistingExtraFileFilterResult<TExtraFile> FilterAndClean(Media movie, List<string> filesOnDisk, List<string> importedFiles)
         {
             var movieFiles = _extraFileService.GetFilesByMovie(movie.Id);
 
@@ -30,7 +30,7 @@ namespace NzbDrone.Core.Extras
             return Filter(movie, filesOnDisk, importedFiles, movieFiles);
         }
 
-        private ImportExistingExtraFileFilterResult<TExtraFile> Filter(Movie movie, List<string> filesOnDisk, List<string> importedFiles, List<TExtraFile> movieFiles)
+        private ImportExistingExtraFileFilterResult<TExtraFile> Filter(Media movie, List<string> filesOnDisk, List<string> importedFiles, List<TExtraFile> movieFiles)
         {
             var previouslyImported = movieFiles.IntersectBy(s => Path.Combine(movie.Path, s.RelativePath), filesOnDisk, f => f, PathEqualityComparer.Instance).ToList();
             var filteredFiles = filesOnDisk.Except(previouslyImported.Select(f => Path.Combine(movie.Path, f.RelativePath)).ToList(), PathEqualityComparer.Instance)
@@ -42,7 +42,7 @@ namespace NzbDrone.Core.Extras
             return new ImportExistingExtraFileFilterResult<TExtraFile>(previouslyImported, filteredFiles);
         }
 
-        private void Clean(Movie movie, List<string> filesOnDisk, List<string> importedFiles, List<TExtraFile> movieFiles)
+        private void Clean(Media movie, List<string> filesOnDisk, List<string> importedFiles, List<TExtraFile> movieFiles)
         {
             var alreadyImportedFileIds = movieFiles.IntersectBy(f => Path.Combine(movie.Path, f.RelativePath), importedFiles, i => i, PathEqualityComparer.Instance)
                 .Select(f => f.Id);

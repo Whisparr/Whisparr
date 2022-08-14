@@ -34,10 +34,8 @@ namespace NzbDrone.Core.Notifications.Notifiarr
             variables.Add("Whisparr_Movie_Id", movie.Id.ToString());
             variables.Add("Whisparr_Movie_Title", movie.Title);
             variables.Add("Whisparr_Movie_Year", movie.Year.ToString());
-            variables.Add("Whisparr_Movie_ImdbId", movie.ImdbId ?? string.Empty);
-            variables.Add("Whisparr_Movie_TmdbId", movie.TmdbId.ToString());
-            variables.Add("Whisparr_Movie_In_Cinemas_Date", movie.MovieMetadata.Value.InCinemas.ToString() ?? string.Empty);
-            variables.Add("Whisparr_Movie_Physical_Release_Date", movie.MovieMetadata.Value.PhysicalRelease.ToString() ?? string.Empty);
+            variables.Add("Whisparr_Movie_TmdbId", movie.ForiegnId.ToString());
+            variables.Add("Whisparr_Movie_Digital_Release_Date", movie.MediaMetadata.Value.DigitalRelease.ToString() ?? string.Empty);
             variables.Add("Whisparr_Release_Title", remoteMovie.Release.Title);
             variables.Add("Whisparr_Release_Indexer", remoteMovie.Release.Indexer ?? string.Empty);
             variables.Add("Whisparr_Release_Size", remoteMovie.Release.Size.ToString());
@@ -67,10 +65,8 @@ namespace NzbDrone.Core.Notifications.Notifiarr
             variables.Add("Whisparr_Movie_Title", movie.Title);
             variables.Add("Whisparr_Movie_Year", movie.Year.ToString());
             variables.Add("Whisparr_Movie_Path", movie.Path);
-            variables.Add("Whisparr_Movie_ImdbId", movie.ImdbId ?? string.Empty);
-            variables.Add("Whisparr_Movie_TmdbId", movie.TmdbId.ToString());
-            variables.Add("Whisparr_Movie_In_Cinemas_Date", movie.MovieMetadata.Value.InCinemas.ToString() ?? string.Empty);
-            variables.Add("Whisparr_Movie_Physical_Release_Date", movie.MovieMetadata.Value.PhysicalRelease.ToString() ?? string.Empty);
+            variables.Add("Whisparr_Movie_TmdbId", movie.ForiegnId.ToString());
+            variables.Add("Whisparr_Movie_Digital_Release_Date", movie.MediaMetadata.Value.DigitalRelease.ToString() ?? string.Empty);
             variables.Add("Whisparr_MovieFile_Id", movieFile.Id.ToString());
             variables.Add("Whisparr_MovieFile_RelativePath", movieFile.RelativePath);
             variables.Add("Whisparr_MovieFile_Path", Path.Combine(movie.Path, movieFile.RelativePath));
@@ -115,8 +111,7 @@ namespace NzbDrone.Core.Notifications.Notifiarr
             variables.Add("Whisparr_Movie_Title", movie.Title);
             variables.Add("Whisparr_Movie_Year", movie.Year.ToString());
             variables.Add("Whisparr_Movie_Path", movie.Path);
-            variables.Add("Whisparr_Movie_ImdbId", movie.ImdbId ?? string.Empty);
-            variables.Add("Whisparr_Movie_TmdbId", movie.TmdbId.ToString());
+            variables.Add("Whisparr_Movie_TmdbId", movie.ForiegnId.ToString());
             variables.Add("Whisparr_MovieFile_Id", movieFile.Id.ToString());
             variables.Add("Whisparr_MovieFile_RelativePath", movieFile.RelativePath);
             variables.Add("Whisparr_MovieFile_Path", Path.Combine(movie.Path, movieFile.RelativePath));
@@ -129,17 +124,16 @@ namespace NzbDrone.Core.Notifications.Notifiarr
             _proxy.SendNotification(variables, Settings);
         }
 
-        public override void OnMovieAdded(Movie movie)
+        public override void OnMovieAdded(Media movie)
         {
             var variables = new StringDictionary();
 
             variables.Add("Radarr_EventType", "MovieAdded");
             variables.Add("Radarr_Movie_Id", movie.Id.ToString());
-            variables.Add("Radarr_Movie_Title", movie.MovieMetadata.Value.Title);
-            variables.Add("Radarr_Movie_Year", movie.MovieMetadata.Value.Year.ToString());
+            variables.Add("Radarr_Movie_Title", movie.MediaMetadata.Value.Title);
+            variables.Add("Radarr_Movie_Year", movie.MediaMetadata.Value.Year.ToString());
             variables.Add("Radarr_Movie_Path", movie.Path);
-            variables.Add("Radarr_Movie_ImdbId", movie.MovieMetadata.Value.ImdbId ?? string.Empty);
-            variables.Add("Radarr_Movie_TmdbId", movie.MovieMetadata.Value.TmdbId.ToString());
+            variables.Add("Radarr_Movie_TmdbId", movie.MediaMetadata.Value.ForiegnId.ToString());
             variables.Add("Radarr_Movie_AddMethod", movie.AddOptions.AddMethod.ToString());
 
             _proxy.SendNotification(variables, Settings);
@@ -155,8 +149,7 @@ namespace NzbDrone.Core.Notifications.Notifiarr
             variables.Add("Whisparr_Movie_Title", movie.Title);
             variables.Add("Whisparr_Movie_Year", movie.Year.ToString());
             variables.Add("Whisparr_Movie_Path", movie.Path);
-            variables.Add("Whisparr_Movie_ImdbId", movie.ImdbId ?? string.Empty);
-            variables.Add("Whisparr_Movie_TmdbId", movie.TmdbId.ToString());
+            variables.Add("Whisparr_Movie_TmdbId", movie.ForiegnId.ToString());
             variables.Add("Whisparr_Movie_DeletedFiles", deleteMessage.DeletedFiles.ToString());
             if (deleteMessage.DeletedFiles && movie.MovieFile != null)
             {

@@ -53,15 +53,15 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             _reports = new List<ReleaseInfo> { new ReleaseInfo { Title = "Trolls.2016.720p.WEB-DL.DD5.1.H264-FGT" } };
             _remoteEpisode = new RemoteMovie
             {
-                Movie = new Movie(),
+                Movie = new Media(),
                 ParsedMovieInfo = new ParsedMovieInfo()
             };
 
-            _mappingResult = new MappingResult { Movie = new Movie(), MappingResultType = MappingResultType.Success };
+            _mappingResult = new MappingResult { Movie = new Media(), MappingResultType = MappingResultType.Success };
             _mappingResult.RemoteMovie = _remoteEpisode;
 
             Mocker.GetMock<IParsingService>()
-                  .Setup(c => c.Map(It.IsAny<ParsedMovieInfo>(), It.IsAny<string>(), It.IsAny<SearchCriteriaBase>())).Returns(_mappingResult);
+                  .Setup(c => c.Map(It.IsAny<ParsedMovieInfo>(), It.IsAny<SearchCriteriaBase>())).Returns(_mappingResult);
         }
 
         private void GivenSpecifications(params Mock<IDecisionEngineSpecification>[] mocks)
@@ -132,7 +132,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
 
             Subject.GetRssDecision(_reports).ToList();
 
-            Mocker.GetMock<IParsingService>().Verify(c => c.Map(It.IsAny<ParsedMovieInfo>(), It.IsAny<string>(), It.IsAny<SearchCriteriaBase>()), Times.Never());
+            Mocker.GetMock<IParsingService>().Verify(c => c.Map(It.IsAny<ParsedMovieInfo>(), It.IsAny<SearchCriteriaBase>()), Times.Never());
 
             _pass1.Verify(c => c.IsSatisfiedBy(It.IsAny<RemoteMovie>(), null), Times.Never());
             _pass2.Verify(c => c.IsSatisfiedBy(It.IsAny<RemoteMovie>(), null), Times.Never());
@@ -148,7 +148,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
 
             var results = Subject.GetRssDecision(_reports).ToList();
 
-            Mocker.GetMock<IParsingService>().Verify(c => c.Map(It.IsAny<ParsedMovieInfo>(), It.IsAny<string>(), It.IsAny<SearchCriteriaBase>()), Times.Never());
+            Mocker.GetMock<IParsingService>().Verify(c => c.Map(It.IsAny<ParsedMovieInfo>(), It.IsAny<SearchCriteriaBase>()), Times.Never());
 
             _pass1.Verify(c => c.IsSatisfiedBy(It.IsAny<RemoteMovie>(), null), Times.Never());
             _pass2.Verify(c => c.IsSatisfiedBy(It.IsAny<RemoteMovie>(), null), Times.Never());
@@ -166,7 +166,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
 
             Subject.GetSearchDecision(_reports, new MovieSearchCriteria()).ToList();
 
-            Mocker.GetMock<IParsingService>().Verify(c => c.Map(It.IsAny<ParsedMovieInfo>(), It.IsAny<string>(), It.IsAny<SearchCriteriaBase>()), Times.Never());
+            Mocker.GetMock<IParsingService>().Verify(c => c.Map(It.IsAny<ParsedMovieInfo>(), It.IsAny<SearchCriteriaBase>()), Times.Never());
 
             _pass1.Verify(c => c.IsSatisfiedBy(It.IsAny<RemoteMovie>(), null), Times.Never());
             _pass2.Verify(c => c.IsSatisfiedBy(It.IsAny<RemoteMovie>(), null), Times.Never());
@@ -193,7 +193,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         {
             GivenSpecifications(_pass1);
 
-            Mocker.GetMock<IParsingService>().Setup(c => c.Map(It.IsAny<ParsedMovieInfo>(), It.IsAny<string>(), It.IsAny<SearchCriteriaBase>()))
+            Mocker.GetMock<IParsingService>().Setup(c => c.Map(It.IsAny<ParsedMovieInfo>(), It.IsAny<SearchCriteriaBase>()))
                      .Throws<TestException>();
 
             _reports = new List<ReleaseInfo>
@@ -205,7 +205,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
 
             Subject.GetRssDecision(_reports);
 
-            Mocker.GetMock<IParsingService>().Verify(c => c.Map(It.IsAny<ParsedMovieInfo>(), It.IsAny<string>(), It.IsAny<SearchCriteriaBase>()), Times.Exactly(_reports.Count));
+            Mocker.GetMock<IParsingService>().Verify(c => c.Map(It.IsAny<ParsedMovieInfo>(), It.IsAny<SearchCriteriaBase>()), Times.Exactly(_reports.Count));
 
             ExceptionVerification.ExpectedErrors(3);
         }
@@ -257,7 +257,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         {
             GivenSpecifications(_pass1);
 
-            Mocker.GetMock<IParsingService>().Setup(c => c.Map(It.IsAny<ParsedMovieInfo>(), It.IsAny<string>(), It.IsAny<SearchCriteriaBase>()))
+            Mocker.GetMock<IParsingService>().Setup(c => c.Map(It.IsAny<ParsedMovieInfo>(), It.IsAny<SearchCriteriaBase>()))
                      .Throws<TestException>();
 
             _reports = new List<ReleaseInfo>

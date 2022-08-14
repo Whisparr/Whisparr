@@ -24,7 +24,7 @@ namespace NzbDrone.Core.Test.HealthCheck.Checks
 
         private void GivenMissingRootFolder()
         {
-            var movies = Builder<Movie>.CreateListOfSize(1)
+            var movies = Builder<Media>.CreateListOfSize(1)
                                         .Build()
                                         .ToList();
 

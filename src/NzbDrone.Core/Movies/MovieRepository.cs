@@ -13,31 +13,30 @@ using NzbDrone.Core.Qualities;
 
 namespace NzbDrone.Core.Movies
 {
-    public interface IMovieRepository : IBasicRepository<Movie>
+    public interface IMediaRepository : IBasicRepository<Media>
     {
         bool MoviePathExists(string path);
-        List<Movie> FindByTitles(List<string> titles);
-        Movie FindByImdbId(string imdbid);
-        Movie FindByTmdbId(int tmdbid);
-        List<Movie> FindByTmdbId(List<int> tmdbids);
-        List<Movie> MoviesBetweenDates(DateTime start, DateTime end, bool includeUnmonitored);
-        PagingSpec<Movie> MoviesWithoutFiles(PagingSpec<Movie> pagingSpec);
-        List<Movie> GetMoviesByFileId(int fileId);
+        List<Media> FindByTitles(List<string> titles);
+        Media FindByTmdbId(int tmdbid);
+        List<Media> FindByTmdbId(List<int> tmdbids);
+        List<Media> MoviesBetweenDates(DateTime start, DateTime end, bool includeUnmonitored);
+        PagingSpec<Media> MoviesWithoutFiles(PagingSpec<Media> pagingSpec);
+        List<Media> GetMoviesByFileId(int fileId);
         void SetFileId(int fileId, int movieId);
-        PagingSpec<Movie> MoviesWhereCutoffUnmet(PagingSpec<Movie> pagingSpec, List<QualitiesBelowCutoff> qualitiesBelowCutoff);
-        Movie FindByPath(string path);
+        PagingSpec<Media> MoviesWhereCutoffUnmet(PagingSpec<Media> pagingSpec, List<QualitiesBelowCutoff> qualitiesBelowCutoff);
+        Media FindByPath(string path);
         Dictionary<int, string> AllMoviePaths();
         List<int> AllMovieTmdbIds();
         Dictionary<int, List<int>> AllMovieTags();
         List<int> GetRecommendations();
     }
 
-    public class MovieRepository : BasicRepository<Movie>, IMovieRepository
+    public class MediaRepository : BasicRepository<Media>, IMediaRepository
     {
         private readonly IProfileRepository _profileRepository;
         private readonly IAlternativeTitleRepository _alternativeTitleRepository;
 
-        public MovieRepository(IMainDatabase database,
+        public MediaRepository(IMainDatabase database,
                                IProfileRepository profileRepository,
                                IAlternativeTitleRepository alternativeTitleRepository,
                                IEventAggregator eventAggregator)
@@ -48,14 +47,14 @@ namespace NzbDrone.Core.Movies
         }
 
         protected override SqlBuilder Builder() => new SqlBuilder(_database.DatabaseType)
-            .Join<Movie, Profile>((m, p) => m.ProfileId == p.Id)
-            .Join<Movie, MovieMetadata>((m, p) => m.MovieMetadataId == p.Id)
-            .LeftJoin<Movie, MovieFile>((m, f) => m.Id == f.MovieId)
-            .LeftJoin<MovieMetadata, AlternativeTitle>((mm, t) => mm.Id == t.MovieMetadataId);
+            .Join<Media, Profile>((m, p) => m.ProfileId == p.Id)
+            .Join<Media, MediaMetadata>((m, p) => m.MovieMetadataId == p.Id)
+            .LeftJoin<Media, MediaFile>((m, f) => m.Id == f.MovieId)
+            .LeftJoin<MediaMetadata, AlternativeTitle>((mm, t) => mm.Id == t.MovieMetadataId);
 
-        private Movie Map(Dictionary<int, Movie> dict, Movie movie, Profile profile, MovieFile movieFile, AlternativeTitle altTitle = null, MovieTranslation translation = null)
+        private Media Map(Dictionary<int, Media> dict, Media movie, Profile profile, MediaFile movieFile, AlternativeTitle altTitle = null, MovieTranslation translation = null)
         {
-            Movie movieEntry;
+            Media movieEntry;
 
             if (!dict.TryGetValue(movie.Id, out movieEntry))
             {
@@ -67,52 +66,52 @@ namespace NzbDrone.Core.Movies
 
             if (altTitle != null)
             {
-                movieEntry.MovieMetadata.Value.AlternativeTitles.Add(altTitle);
+                movieEntry.MediaMetadata.Value.AlternativeTitles.Add(altTitle);
             }
 
             if (translation != null)
             {
-                movieEntry.MovieMetadata.Value.Translations.Add(translation);
+                movieEntry.MediaMetadata.Value.Translations.Add(translation);
             }
 
             return movieEntry;
         }
 
-        protected override List<Movie> Query(SqlBuilder builder)
+        protected override List<Media> Query(SqlBuilder builder)
         {
-            var movieDictionary = new Dictionary<int, Movie>();
+            var movieDictionary = new Dictionary<int, Media>();
 
-            _ = _database.QueryJoined<Movie, Profile, MovieFile, AlternativeTitle>(
+            _ = _database.QueryJoined<Media, Profile, MediaFile, AlternativeTitle>(
                 builder,
                 (movie, profile, file, altTitle) => Map(movieDictionary, movie, profile, file, altTitle));
 
             return movieDictionary.Values.ToList();
         }
 
-        public override IEnumerable<Movie> All()
+        public override IEnumerable<Media> All()
         {
             // the skips the join on profile and alternative title and populates manually
             // to avoid repeatedly deserializing the same profile / movie
             var builder = new SqlBuilder(_database.DatabaseType)
-                .LeftJoin<Movie, MovieFile>((m, f) => m.MovieFileId == f.Id)
-                .LeftJoin<Movie, MovieMetadata>((m, f) => m.MovieMetadataId == f.Id);
+                .LeftJoin<Media, MediaFile>((m, f) => m.MovieFileId == f.Id)
+                .LeftJoin<Media, MediaMetadata>((m, f) => m.MovieMetadataId == f.Id);
 
             var profiles = _profileRepository.All().ToDictionary(x => x.Id);
             var titles = _alternativeTitleRepository.All()
                 .GroupBy(x => x.MovieMetadataId)
                 .ToDictionary(x => x.Key, y => y.ToList());
 
-            return _database.QueryJoined<Movie, MovieFile, MovieMetadata>(
+            return _database.QueryJoined<Media, MediaFile, MediaMetadata>(
                 builder,
                 (movie, file, metadata) =>
                 {
                     movie.MovieFile = file;
-                    movie.MovieMetadata = metadata;
+                    movie.MediaMetadata = metadata;
                     movie.Profile = profiles[movie.ProfileId];
 
                     if (titles.TryGetValue(movie.MovieMetadataId, out var altTitles))
                     {
-                        movie.MovieMetadata.Value.AlternativeTitles = altTitles;
+                        movie.MediaMetadata.Value.AlternativeTitles = altTitles;
                     }
 
                     return movie;
@@ -124,11 +123,11 @@ namespace NzbDrone.Core.Movies
             return Query(x => x.Path == path).Any();
         }
 
-        public List<Movie> FindByTitles(List<string> titles)
+        public List<Media> FindByTitles(List<string> titles)
         {
             var distinct = titles.Distinct().ToList();
 
-            var results = new List<Movie>();
+            var results = new List<Media>();
 
             results.AddRange(FindByMovieTitles(distinct));
             results.AddRange(FindByAltTitles(distinct));
@@ -139,35 +138,35 @@ namespace NzbDrone.Core.Movies
 
         // This is a bit of a hack, but if you try to combine / rationalise these then
         // SQLite makes a mess of the query plan and ends up doing a table scan
-        private List<Movie> FindByMovieTitles(List<string> titles)
+        private List<Media> FindByMovieTitles(List<string> titles)
         {
-            var movieDictionary = new Dictionary<int, Movie>();
+            var movieDictionary = new Dictionary<int, Media>();
 
             var builder = new SqlBuilder(_database.DatabaseType)
-                .Join<Movie, Profile>((m, p) => m.ProfileId == p.Id)
-                .Join<Movie, MovieMetadata>((m, p) => m.MovieMetadataId == p.Id)
-                .LeftJoin<Movie, MovieFile>((m, f) => m.Id == f.MovieId)
-                .Where<MovieMetadata>(x => titles.Contains(x.CleanTitle) || titles.Contains(x.CleanOriginalTitle));
+                .Join<Media, Profile>((m, p) => m.ProfileId == p.Id)
+                .Join<Media, MediaMetadata>((m, p) => m.MovieMetadataId == p.Id)
+                .LeftJoin<Media, MediaFile>((m, f) => m.Id == f.MovieId)
+                .Where<MediaMetadata>(x => titles.Contains(x.CleanTitle) || titles.Contains(x.CleanOriginalTitle));
 
-            _ = _database.QueryJoined<Movie, Profile, MovieFile>(
+            _ = _database.QueryJoined<Media, Profile, MediaFile>(
                 builder,
                 (movie, profile, file) => Map(movieDictionary, movie, profile, file));
 
             return movieDictionary.Values.ToList();
         }
 
-        private List<Movie> FindByAltTitles(List<string> titles)
+        private List<Media> FindByAltTitles(List<string> titles)
         {
-            var movieDictionary = new Dictionary<int, Movie>();
+            var movieDictionary = new Dictionary<int, Media>();
 
             var builder = new SqlBuilder(_database.DatabaseType)
-            .Join<AlternativeTitle, MovieMetadata>((t, mm) => t.MovieMetadataId == mm.Id)
-            .Join<MovieMetadata, Movie>((mm, m) => mm.Id == m.MovieMetadataId)
-            .Join<Movie, Profile>((m, p) => m.ProfileId == p.Id)
-            .LeftJoin<Movie, MovieFile>((m, f) => m.Id == f.MovieId)
+            .Join<AlternativeTitle, MediaMetadata>((t, mm) => t.MovieMetadataId == mm.Id)
+            .Join<MediaMetadata, Media>((mm, m) => mm.Id == m.MovieMetadataId)
+            .Join<Media, Profile>((m, p) => m.ProfileId == p.Id)
+            .LeftJoin<Media, MediaFile>((m, f) => m.Id == f.MovieId)
             .Where<AlternativeTitle>(x => titles.Contains(x.CleanTitle));
 
-            _ = _database.QueryJoined<AlternativeTitle, Profile, Movie, MovieFile>(
+            _ = _database.QueryJoined<AlternativeTitle, Profile, Media, MediaFile>(
                 builder,
                 (altTitle, profile, movie, file) =>
                 {
@@ -178,18 +177,18 @@ namespace NzbDrone.Core.Movies
             return movieDictionary.Values.ToList();
         }
 
-        private List<Movie> FindByTransTitles(List<string> titles)
+        private List<Media> FindByTransTitles(List<string> titles)
         {
-            var movieDictionary = new Dictionary<int, Movie>();
+            var movieDictionary = new Dictionary<int, Media>();
 
             var builder = new SqlBuilder(_database.DatabaseType)
-                .Join<MovieTranslation, MovieMetadata>((t, mm) => t.MovieMetadataId == mm.Id)
-                .Join<MovieMetadata, Movie>((mm, m) => mm.Id == m.MovieMetadataId)
-                .Join<Movie, Profile>((m, p) => m.ProfileId == p.Id)
-                .LeftJoin<Movie, MovieFile>((m, f) => m.Id == f.MovieId)
+                .Join<MovieTranslation, MediaMetadata>((t, mm) => t.MovieMetadataId == mm.Id)
+                .Join<MediaMetadata, Media>((mm, m) => mm.Id == m.MovieMetadataId)
+                .Join<Media, Profile>((m, p) => m.ProfileId == p.Id)
+                .LeftJoin<Media, MediaFile>((m, f) => m.Id == f.MovieId)
                 .Where<MovieTranslation>(x => titles.Contains(x.CleanTitle));
 
-            _ = _database.QueryJoined<MovieTranslation, Profile, Movie, MovieFile>(
+            _ = _database.QueryJoined<MovieTranslation, Profile, Media, MediaFile>(
                 builder,
                 (trans, profile, movie, file) =>
                 {
@@ -200,52 +199,43 @@ namespace NzbDrone.Core.Movies
             return movieDictionary.Values.ToList();
         }
 
-        public Movie FindByImdbId(string imdbid)
+        public Media FindByTmdbId(int tmdbid)
         {
-            var imdbIdWithPrefix = Parser.Parser.NormalizeImdbId(imdbid);
-            return imdbIdWithPrefix == null ? null : Query(x => x.MovieMetadata.Value.ImdbId == imdbIdWithPrefix).FirstOrDefault();
+            return Query(x => x.MediaMetadata.Value.ForiegnId == tmdbid).FirstOrDefault();
         }
 
-        public Movie FindByTmdbId(int tmdbid)
+        public List<Media> FindByTmdbId(List<int> tmdbids)
         {
-            return Query(x => x.MovieMetadata.Value.TmdbId == tmdbid).FirstOrDefault();
+            return Query(x => tmdbids.Contains(x.ForiegnId));
         }
 
-        public List<Movie> FindByTmdbId(List<int> tmdbids)
-        {
-            return Query(x => tmdbids.Contains(x.TmdbId));
-        }
-
-        public List<Movie> GetMoviesByFileId(int fileId)
+        public List<Media> GetMoviesByFileId(int fileId)
         {
             return Query(x => x.MovieFileId == fileId);
         }
 
         public void SetFileId(int fileId, int movieId)
         {
-            SetFields(new Movie { Id = movieId, MovieFileId = fileId }, movie => movie.MovieFileId);
+            SetFields(new Media { Id = movieId, MovieFileId = fileId }, movie => movie.MovieFileId);
         }
 
-        public List<Movie> MoviesBetweenDates(DateTime start, DateTime end, bool includeUnmonitored)
+        public List<Media> MoviesBetweenDates(DateTime start, DateTime end, bool includeUnmonitored)
         {
             var builder = Builder()
-                .Where<Movie>(m =>
-                              (m.MovieMetadata.Value.InCinemas >= start && m.MovieMetadata.Value.InCinemas <= end) ||
-                              (m.MovieMetadata.Value.PhysicalRelease >= start && m.MovieMetadata.Value.PhysicalRelease <= end) ||
-                              (m.MovieMetadata.Value.DigitalRelease >= start && m.MovieMetadata.Value.DigitalRelease <= end));
+                .Where<Media>(m => m.MediaMetadata.Value.DigitalRelease >= start && m.MediaMetadata.Value.DigitalRelease <= end);
 
             if (!includeUnmonitored)
             {
-                builder.Where<Movie>(x => x.Monitored == true);
+                builder.Where<Media>(x => x.Monitored == true);
             }
 
             return Query(builder);
         }
 
         public SqlBuilder MoviesWithoutFilesBuilder() => Builder()
-            .Where<Movie>(x => x.MovieFileId == 0);
+            .Where<Media>(x => x.MovieFileId == 0);
 
-        public PagingSpec<Movie> MoviesWithoutFiles(PagingSpec<Movie> pagingSpec)
+        public PagingSpec<Media> MoviesWithoutFiles(PagingSpec<Media> pagingSpec)
         {
             pagingSpec.Records = GetPagedRecords(MoviesWithoutFilesBuilder(), pagingSpec, PagedQuery);
             pagingSpec.TotalRecords = GetPagedRecordCount(MoviesWithoutFilesBuilder().SelectCount(), pagingSpec);
@@ -254,10 +244,10 @@ namespace NzbDrone.Core.Movies
         }
 
         public SqlBuilder MoviesWhereCutoffUnmetBuilder(List<QualitiesBelowCutoff> qualitiesBelowCutoff) => Builder()
-                .Where<Movie>(x => x.MovieFileId != 0)
+                .Where<Media>(x => x.MovieFileId != 0)
                 .Where(BuildQualityCutoffWhereClause(qualitiesBelowCutoff));
 
-        public PagingSpec<Movie> MoviesWhereCutoffUnmet(PagingSpec<Movie> pagingSpec, List<QualitiesBelowCutoff> qualitiesBelowCutoff)
+        public PagingSpec<Media> MoviesWhereCutoffUnmet(PagingSpec<Media> pagingSpec, List<QualitiesBelowCutoff> qualitiesBelowCutoff)
         {
             pagingSpec.Records = GetPagedRecords(MoviesWhereCutoffUnmetBuilder(qualitiesBelowCutoff), pagingSpec, PagedQuery);
             pagingSpec.TotalRecords = GetPagedRecordCount(MoviesWhereCutoffUnmetBuilder(qualitiesBelowCutoff).SelectCount(), pagingSpec);
@@ -273,14 +263,14 @@ namespace NzbDrone.Core.Movies
             {
                 foreach (var belowCutoff in profile.QualityIds)
                 {
-                    clauses.Add(string.Format($"(\"{_table}\".\"ProfileId\" = {profile.ProfileId} AND \"MovieFiles\".\"Quality\" LIKE '%_quality_: {belowCutoff},%')"));
+                    clauses.Add(string.Format($"(\"{_table}\".\"ProfileId\" = {profile.ProfileId} AND \"MediaFiles\".\"Quality\" LIKE '%_quality_: {belowCutoff},%')"));
                 }
             }
 
             return string.Format("({0})", string.Join(" OR ", clauses));
         }
 
-        public Movie FindByPath(string path)
+        public Media FindByPath(string path)
         {
             return Query(x => x.Path == path).FirstOrDefault();
         }
@@ -289,7 +279,7 @@ namespace NzbDrone.Core.Movies
         {
             using (var conn = _database.OpenConnection())
             {
-                var strSql = "SELECT \"Id\" AS \"Key\", \"Path\" AS \"Value\" FROM \"Movies\"";
+                var strSql = "SELECT \"Id\" AS \"Key\", \"Path\" AS \"Value\" FROM \"Media\"";
                 return conn.Query<KeyValuePair<int, string>>(strSql).ToDictionary(x => x.Key, x => x.Value);
             }
         }
@@ -298,7 +288,7 @@ namespace NzbDrone.Core.Movies
         {
             using (var conn = _database.OpenConnection())
             {
-                return conn.Query<int>("SELECT \"TmdbId\" FROM \"MovieMetadata\" JOIN \"Movies\" ON (\"Movies\".\"MovieMetadataId\" = \"MovieMetadata\".\"Id\")").ToList();
+                return conn.Query<int>("SELECT \"TmdbId\" FROM \"MovieMetadata\" JOIN \"Media\" ON (\"Media\".\"MovieMetadataId\" = \"MovieMetadata\".\"Id\")").ToList();
             }
         }
 
@@ -306,7 +296,7 @@ namespace NzbDrone.Core.Movies
         {
             using (var conn = _database.OpenConnection())
             {
-                var strSql = "SELECT \"Id\" AS \"Key\", \"Tags\" AS \"Value\" FROM \"Movies\"";
+                var strSql = "SELECT \"Id\" AS \"Key\", \"Tags\" AS \"Value\" FROM \"Media\"";
                 return conn.Query<KeyValuePair<int, List<int>>>(strSql).ToDictionary(x => x.Key, x => x.Value);
             }
         }

@@ -13,13 +13,13 @@ namespace NzbDrone.Core.Test.NotificationTests
     [TestFixture]
     public class SynologyIndexerFixture : CoreTest<SynologyIndexer>
     {
-        private Movie _movie;
+        private Media _movie;
         private DownloadMessage _upgrade;
 
         [SetUp]
         public void SetUp()
         {
-            _movie = new Movie
+            _movie = new Media
             {
                 Path = @"C:\Test\".AsOsAgnostic()
             };
@@ -28,18 +28,18 @@ namespace NzbDrone.Core.Test.NotificationTests
             {
                 Movie = _movie,
 
-                MovieFile = new MovieFile
+                MovieFile = new MediaFile
                 {
                     RelativePath = "moviefile1.mkv"
                 },
 
-                OldMovieFiles = new List<MovieFile>
+                OldMovieFiles = new List<MediaFile>
                 {
-                    new MovieFile
+                    new MediaFile
                     {
                         RelativePath = "oldmoviefile1.mkv"
                     },
-                    new MovieFile
+                    new MediaFile
                     {
                         RelativePath = "oldmoviefile2.mkv"
                     }

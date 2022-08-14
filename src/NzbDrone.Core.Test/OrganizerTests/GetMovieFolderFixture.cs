@@ -28,7 +28,7 @@ namespace NzbDrone.Core.Test.OrganizerTests
         {
             _namingConfig.MovieFolderFormat = format;
 
-            var movie = new Movie { Title = movieTitle, Year = year };
+            var movie = new Media { Title = movieTitle, Year = year };
 
             Subject.GetMovieFolder(movie).Should().Be(expected);
         }

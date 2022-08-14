@@ -34,7 +34,7 @@ namespace NzbDrone.Core.Movies
             _logger = logger;
         }
 
-        private void MoveSingleMovie(Movie movie, string sourcePath, string destinationPath, int? index = null, int? total = null)
+        private void MoveSingleMovie(Media movie, string sourcePath, string destinationPath, int? index = null, int? total = null)
         {
             if (!_diskProvider.FolderExists(sourcePath))
             {

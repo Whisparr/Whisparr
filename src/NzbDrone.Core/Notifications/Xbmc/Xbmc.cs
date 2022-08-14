@@ -37,7 +37,7 @@ namespace NzbDrone.Core.Notifications.Xbmc
             UpdateAndCleanMovie(message.Movie, message.OldMovieFiles.Any());
         }
 
-        public override void OnMovieRename(Movie movie, List<RenamedMovieFile> renamedFiles)
+        public override void OnMovieRename(Media movie, List<RenamedMovieFile> renamedFiles)
         {
             UpdateAndCleanMovie(movie);
         }
@@ -98,7 +98,7 @@ namespace NzbDrone.Core.Notifications.Xbmc
             }
         }
 
-        private void UpdateAndCleanMovie(Movie movie, bool clean = true)
+        private void UpdateAndCleanMovie(Media movie, bool clean = true)
         {
             try
             {

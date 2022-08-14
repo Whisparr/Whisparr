@@ -20,4 +20,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Datastore\Migration\" />
+  </ItemGroup>
 </Project>

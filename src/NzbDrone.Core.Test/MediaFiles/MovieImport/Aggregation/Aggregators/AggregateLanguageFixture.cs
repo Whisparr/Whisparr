@@ -18,13 +18,13 @@ namespace NzbDrone.Core.Test.MediaFiles.MovieImport.Aggregation.Aggregators
     public class AggregateLanguageFixture : CoreTest<AggregateLanguage>
     {
         private LocalMovie _localMovie;
-        private Movie _movie;
+        private Media _movie;
 
         [SetUp]
         public void Setup()
         {
-            _movie = Builder<Movie>.CreateNew()
-                                   .With(m => m.MovieMetadata.Value.OriginalLanguage = Language.English)
+            _movie = Builder<Media>.CreateNew()
+                                   .With(m => m.MediaMetadata.Value.OriginalLanguage = Language.English)
                                    .Build();
 
             _localMovie = Builder<LocalMovie>.CreateNew()
@@ -72,7 +72,7 @@ namespace NzbDrone.Core.Test.MediaFiles.MovieImport.Aggregation.Aggregators
         {
             var result = Subject.Aggregate(_localMovie, null, false);
 
-            result.Languages.Should().Contain(_movie.MovieMetadata.Value.OriginalLanguage);
+            result.Languages.Should().Contain(_movie.MediaMetadata.Value.OriginalLanguage);
         }
 
         [Test]

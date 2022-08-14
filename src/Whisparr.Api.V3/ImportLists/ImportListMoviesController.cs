@@ -58,13 +58,13 @@ namespace Whisparr.Api.V3.ImportLists
 
             if (includeRecommendations)
             {
-                var mapped = new List<Movie>();
+                var mapped = new List<Media>();
 
                 var results = _movieService.GetRecommendedTmdbIds();
 
                 if (results.Count > 0)
                 {
-                    mapped = _movieInfo.GetBulkMovieInfo(results).Select(m => new Movie { MovieMetadata = m }).ToList();
+                    mapped = _movieInfo.GetBulkMovieInfo(results).Select(m => new Media { MediaMetadata = m }).ToList();
                 }
 
                 realResults.AddRange(MapToResource(mapped.Where(x => x != null), movieLanguge));
@@ -101,18 +101,18 @@ namespace Whisparr.Api.V3.ImportLists
             return _addMovieService.AddMovies(newMovies, true).ToResource(0);
         }
 
-        private IEnumerable<ImportListMoviesResource> MapToResource(IEnumerable<Movie> movies, Language language)
+        private IEnumerable<ImportListMoviesResource> MapToResource(IEnumerable<Media> movies, Language language)
         {
             foreach (var currentMovie in movies)
             {
                 var resource = DiscoverMoviesResourceMapper.ToResource(currentMovie);
-                var poster = currentMovie.MovieMetadata.Value.Images.FirstOrDefault(c => c.CoverType == MediaCoverTypes.Poster);
+                var poster = currentMovie.MediaMetadata.Value.Images.FirstOrDefault(c => c.CoverType == MediaCoverTypes.Poster);
                 if (poster != null)
                 {
                     resource.RemotePoster = poster.Url;
                 }
 
-                var translation = currentMovie.MovieMetadata.Value.Translations.FirstOrDefault(t => t.Language == language);
+                var translation = currentMovie.MediaMetadata.Value.Translations.FirstOrDefault(t => t.Language == language);
 
                 resource.Title = translation?.Title ?? resource.Title;
                 resource.Overview = translation?.Overview ?? resource.Overview;
@@ -137,12 +137,11 @@ namespace Whisparr.Api.V3.ImportLists
 
                 resource.Title = translation?.Title ?? resource.Title;
                 resource.Overview = translation?.Overview ?? resource.Overview;
-                resource.Folder = _fileNameBuilder.GetMovieFolder(new Movie
+                resource.Folder = _fileNameBuilder.GetMovieFolder(new Media
                 {
                     Title = currentMovie.Title,
                     Year = currentMovie.Year,
-                    ImdbId = currentMovie.ImdbId,
-                    TmdbId = currentMovie.TmdbId
+                    ForiegnId = currentMovie.ForiegnId
                 });
 
                 yield return resource;

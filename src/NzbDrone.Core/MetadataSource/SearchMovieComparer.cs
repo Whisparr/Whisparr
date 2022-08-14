@@ -6,7 +6,7 @@ using NzbDrone.Core.Movies;
 
 namespace NzbDrone.Core.MetadataSource
 {
-    public class SearchMovieComparer : IComparer<Movie>
+    public class SearchMovieComparer : IComparer<Media>
     {
         private static readonly Regex RegexCleanPunctuation = new Regex("[-._:]", RegexOptions.Compiled);
         private static readonly Regex RegexCleanCountryYearPostfix = new Regex(@"(?<=.+)( \([A-Z]{2}\)| \(\d{4}\)| \([A-Z]{2}\) \(\d{4}\))$", RegexOptions.Compiled);
@@ -33,7 +33,7 @@ namespace NzbDrone.Core.MetadataSource
             }
         }
 
-        public int Compare(Movie x, Movie y)
+        public int Compare(Media x, Media y)
         {
             int result = 0;
 
@@ -75,7 +75,7 @@ namespace NzbDrone.Core.MetadataSource
             return Compare(x, y, s => SearchQuery.LevenshteinDistanceClean(s.Title) - GetYearFactor(s));
         }
 
-        public int Compare<T>(Movie x, Movie y, Func<Movie, T> keySelector)
+        public int Compare<T>(Media x, Media y, Func<Media, T> keySelector)
             where T : IComparable<T>
         {
             var keyX = keySelector(x);
@@ -84,7 +84,7 @@ namespace NzbDrone.Core.MetadataSource
             return keyX.CompareTo(keyY);
         }
 
-        public int CompareWithYear(Movie x, Movie y, Predicate<Movie> canMatch)
+        public int CompareWithYear(Media x, Media y, Predicate<Media> canMatch)
         {
             var matchX = canMatch(x);
             var matchY = canMatch(y);
@@ -128,7 +128,7 @@ namespace NzbDrone.Core.MetadataSource
             return title.Trim().ToLowerInvariant();
         }
 
-        private int GetYearFactor(Movie movie)
+        private int GetYearFactor(Media movie)
         {
             if (_year.HasValue)
             {

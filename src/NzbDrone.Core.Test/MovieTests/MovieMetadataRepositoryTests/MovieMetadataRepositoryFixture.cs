@@ -11,16 +11,16 @@ namespace NzbDrone.Core.Test.MovieTests.MovieMetadataRepositoryTests
 {
     [TestFixture]
 
-    public class MovieMetadataRepositoryFixture : DbTest<MovieMetadataRepository, MovieMetadata>
+    public class MovieMetadataRepositoryFixture : DbTest<MovieMetadataRepository, MediaMetadata>
     {
         private MovieMetadataRepository _movieMetadataRepo;
-        private List<MovieMetadata> _metadataList;
+        private List<MediaMetadata> _metadataList;
 
         [SetUp]
         public void Setup()
         {
             _movieMetadataRepo = Mocker.Resolve<MovieMetadataRepository>();
-            _metadataList = Builder<MovieMetadata>.CreateListOfSize(10).All().With(x => x.Id = 0).BuildList();
+            _metadataList = Builder<MediaMetadata>.CreateListOfSize(10).All().With(x => x.Id = 0).BuildList();
         }
 
         [Test]

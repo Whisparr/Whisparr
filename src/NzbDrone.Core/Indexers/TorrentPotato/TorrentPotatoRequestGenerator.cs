@@ -59,14 +59,7 @@ namespace NzbDrone.Core.Indexers.TorrentPotato
                 requestBuilder.AddQueryParam("user", "");
             }
 
-            if (searchCriteria.Movie.ImdbId.IsNotNullOrWhiteSpace())
-            {
-                requestBuilder.AddQueryParam("imdbid", searchCriteria.Movie.ImdbId);
-            }
-            else
-            {
-                requestBuilder.AddQueryParam("search", $"{searchCriteria.Movie.Title} {searchCriteria.Movie.Year}");
-            }
+            requestBuilder.AddQueryParam("search", $"{searchCriteria.Movie.Title} {searchCriteria.Movie.Year}");
 
             yield return new IndexerRequest(requestBuilder.Build());
         }

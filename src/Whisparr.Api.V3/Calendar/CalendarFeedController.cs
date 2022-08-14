@@ -54,9 +54,9 @@ namespace Whisparr.Api.V3.Calendar
                     continue;
                 }
 
-                CreateEvent(calendar, movie.MovieMetadata, "cinematic");
-                CreateEvent(calendar, movie.MovieMetadata, "digital");
-                CreateEvent(calendar, movie.MovieMetadata, "physical");
+                CreateEvent(calendar, movie.MediaMetadata, "cinematic");
+                CreateEvent(calendar, movie.MediaMetadata, "digital");
+                CreateEvent(calendar, movie.MediaMetadata, "physical");
             }
 
             var serializer = (IStringSerializer)new SerializerFactory().Build(calendar.GetType(), new SerializationContext());
@@ -65,24 +65,11 @@ namespace Whisparr.Api.V3.Calendar
             return Content(icalendar, "text/calendar");
         }
 
-        private void CreateEvent(Ical.Net.Calendar calendar, MovieMetadata movie, string releaseType)
+        private void CreateEvent(Ical.Net.Calendar calendar, MediaMetadata movie, string releaseType)
         {
-            var date = movie.InCinemas;
-            string eventType = "_cinemas";
-            string summaryText = "(Theatrical Release)";
-
-            if (releaseType == "digital")
-            {
-                date = movie.DigitalRelease;
-                eventType = "_digital";
-                summaryText = "(Digital Release)";
-            }
-            else if (releaseType == "physical")
-            {
-                date = movie.PhysicalRelease;
-                eventType = "_physical";
-                summaryText = "(Physical Release)";
-            }
+            var date = movie.DigitalRelease;
+            string eventType = "_digital";
+            string summaryText = "(Digital Release)";
 
             if (!date.HasValue)
             {

@@ -18,8 +18,8 @@ namespace NzbDrone.Core.Notifications.Trakt
     {
         HttpRequest GetOAuthRequest(string callbackUrl);
         TraktAuthRefreshResource RefreshAuthToken(string refreshToken);
-        void AddMovieToCollection(TraktSettings settings, Movie movie, MovieFile movieFile);
-        void RemoveMovieFromCollection(TraktSettings settings, Movie movie);
+        void AddMovieToCollection(TraktSettings settings, Media movie, MediaFile movieFile);
+        void RemoveMovieFromCollection(TraktSettings settings, Media movie);
         string GetUserName(string accessToken);
         ValidationFailure Test(TraktSettings settings);
     }
@@ -76,7 +76,7 @@ namespace NzbDrone.Core.Notifications.Trakt
             }
         }
 
-        public void RemoveMovieFromCollection(TraktSettings settings, Movie movie)
+        public void RemoveMovieFromCollection(TraktSettings settings, Media movie)
         {
             var payload = new TraktCollectMoviesResource
             {
@@ -89,15 +89,14 @@ namespace NzbDrone.Core.Notifications.Trakt
                 Year = movie.Year,
                 Ids = new TraktMovieIdsResource
                 {
-                    Tmdb = movie.MovieMetadata.Value.TmdbId,
-                    Imdb = movie.MovieMetadata.Value.ImdbId ?? "",
+                    Tmdb = movie.MediaMetadata.Value.ForiegnId
                 }
             });
 
             _proxy.RemoveFromCollection(payload, settings.AccessToken);
         }
 
-        public void AddMovieToCollection(TraktSettings settings, Movie movie, MovieFile movieFile)
+        public void AddMovieToCollection(TraktSettings settings, Media movie, MediaFile movieFile)
         {
             var payload = new TraktCollectMoviesResource
             {
@@ -120,8 +119,7 @@ namespace NzbDrone.Core.Notifications.Trakt
                 Audio = audio,
                 Ids = new TraktMovieIdsResource
                 {
-                    Tmdb = movie.MovieMetadata.Value.TmdbId,
-                    Imdb = movie.MovieMetadata.Value.ImdbId ?? "",
+                    Tmdb = movie.MediaMetadata.Value.ForiegnId
                 }
             });
 
@@ -183,7 +181,7 @@ namespace NzbDrone.Core.Notifications.Trakt
             return traktResolution;
         }
 
-        private string MapAudio(MovieFile movieFile)
+        private string MapAudio(MediaFile movieFile)
         {
             var traktAudioFormat = string.Empty;
 
@@ -248,7 +246,7 @@ namespace NzbDrone.Core.Notifications.Trakt
             return traktAudioFormat;
         }
 
-        private string MapAudioChannels(MovieFile movieFile, string audioFormat)
+        private string MapAudioChannels(MediaFile movieFile, string audioFormat)
         {
             var audioChannels = movieFile.MediaInfo != null ? MediaInfoFormatter.FormatAudioChannels(movieFile.MediaInfo).ToString("0.0") : string.Empty;
 

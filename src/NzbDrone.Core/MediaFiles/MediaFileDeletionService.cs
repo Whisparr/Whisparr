@@ -16,7 +16,7 @@ namespace NzbDrone.Core.MediaFiles
 {
     public interface IDeleteMediaFiles
     {
-        void DeleteMovieFile(Movie movie, MovieFile movieFile);
+        void DeleteMovieFile(Media movie, MediaFile movieFile);
     }
 
     public class MediaFileDeletionService : IDeleteMediaFiles,
@@ -48,7 +48,7 @@ namespace NzbDrone.Core.MediaFiles
             _logger = logger;
         }
 
-        public void DeleteMovieFile(Movie movie, MovieFile movieFile)
+        public void DeleteMovieFile(Media movie, MediaFile movieFile)
         {
             var fullPath = Path.Combine(movie.Path, movieFile.RelativePath);
             var rootFolder = _diskProvider.GetParentFolder(movie.Path);

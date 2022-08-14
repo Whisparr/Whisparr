@@ -19,7 +19,7 @@ namespace NzbDrone.Core.Test.Download.Pending.PendingReleaseServiceTests
     public class RemoveGrabbedFixture : CoreTest<PendingReleaseService>
     {
         private DownloadDecision _temporarilyRejected;
-        private Movie _movie;
+        private Media _movie;
         private Profile _profile;
         private ReleaseInfo _release;
         private ParsedMovieInfo _parsedMovieInfo;
@@ -29,7 +29,7 @@ namespace NzbDrone.Core.Test.Download.Pending.PendingReleaseServiceTests
         [SetUp]
         public void Setup()
         {
-            _movie = Builder<Movie>.CreateNew()
+            _movie = Builder<Media>.CreateNew()
                                      .Build();
 
             _profile = new Profile
@@ -74,7 +74,7 @@ namespace NzbDrone.Core.Test.Download.Pending.PendingReleaseServiceTests
 
             Mocker.GetMock<IMovieService>()
                   .Setup(s => s.GetMovies(It.IsAny<IEnumerable<int>>()))
-                  .Returns(new List<Movie> { _movie });
+                  .Returns(new List<Media> { _movie });
 
             Mocker.GetMock<IPrioritizeDownloadDecision>()
                   .Setup(s => s.PrioritizeDecisionsForMovies(It.IsAny<List<DownloadDecision>>()))

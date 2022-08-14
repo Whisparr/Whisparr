@@ -24,8 +24,8 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
     public class FileNameBuilderFixture : CoreTest<FileNameBuilder>
     {
-        private Movie _movie;
-        private MovieFile _movieFile;
+        private Media _movie;
+        private MediaFile _movieFile;
         private List<MovieTranslation> _movieTranslations;
         private NamingConfig _namingConfig;
 
@@ -47,10 +47,10 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
                 }
             };
 
-            _movie = Builder<Movie>
+            _movie = Builder<Media>
                     .CreateNew()
                     .With(s => s.Title = "South Park")
-                    .With(s => s.MovieMetadata.Value.OriginalTitle = "South of the Park")
+                    .With(s => s.MediaMetadata.Value.OriginalTitle = "South of the Park")
                     .Build();
 
             _namingConfig = NamingConfig.Default;
@@ -59,7 +59,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
             Mocker.GetMock<INamingConfigService>()
                   .Setup(c => c.GetConfig()).Returns(_namingConfig);
 
-            _movieFile = new MovieFile { Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "WhisparrTest" };
+            _movieFile = new MediaFile { Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "WhisparrTest" };
 
             Mocker.GetMock<IQualityDefinitionService>()
                 .Setup(v => v.Get(Moq.It.IsAny<Quality>()))
@@ -206,7 +206,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         public void should_replace_movie_original_title()
         {
             _namingConfig.StandardMovieFormat = "{Movie OriginalTitle}";
-            _movie.MovieMetadata.Value.OriginalTitle = "South of the Park";
+            _movie.MediaMetadata.Value.OriginalTitle = "South of the Park";
 
             Subject.BuildFileName(_movie, _movieFile)
                    .Should().Be("South of the Park");
@@ -216,7 +216,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         public void should_replace_movie_certification()
         {
             _namingConfig.StandardMovieFormat = "{Movie Certification}";
-            _movie.MovieMetadata.Value.Certification = "R";
+            _movie.MediaMetadata.Value.Certification = "R";
 
             Subject.BuildFileName(_movie, _movieFile)
                    .Should().Be("R");
@@ -226,7 +226,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         public void should_replace_movie_collection()
         {
             _namingConfig.StandardMovieFormat = "{Movie Collection}";
-            _movie.MovieMetadata.Value.Collection = new MovieCollection { Name = "South Part Collection" };
+            _movie.MediaMetadata.Value.Collection = new MovieCollection { Name = "South Part Collection" };
 
             Subject.BuildFileName(_movie, _movieFile)
                    .Should().Be("South Part Collection");
@@ -585,7 +585,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         {
             Thread.CurrentThread.CurrentCulture = new CultureInfo(culture);
 
-            _movie.TmdbId = 124578;
+            _movie.ForiegnId = 124578;
             _movie.Year = 2020;
             GivenMediaInfoModel();
 

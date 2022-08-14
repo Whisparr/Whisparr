@@ -59,14 +59,14 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             remoteMovie.ParsedMovieInfo.Year = 1998;
             remoteMovie.ParsedMovieInfo.Quality = quality;
 
-            remoteMovie.Movie = Builder<Movie>.CreateNew().With(m => m.Profile = new Profile
+            remoteMovie.Movie = Builder<Media>.CreateNew().With(m => m.Profile = new Profile
             {
                 Items = Qualities.QualityFixture.GetDefaultQualities(),
                 FormatItems = CustomFormatsFixture.GetSampleFormatItems(_customFormat1.Name, _customFormat2.Name),
                 MinFormatScore = 0
             })
                 .With(m => m.Title = "A Movie")
-                .With(m => m.MovieMetadata.Value.Runtime = runtime).Build();
+                .With(m => m.MediaMetadata.Value.Runtime = runtime).Build();
 
             remoteMovie.Release = new ReleaseInfo();
             remoteMovie.Release.PublishDate = DateTime.Now.AddDays(-age);

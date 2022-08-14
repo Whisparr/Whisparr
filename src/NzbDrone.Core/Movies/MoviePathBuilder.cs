@@ -8,7 +8,7 @@ namespace NzbDrone.Core.Movies
 {
     public interface IBuildMoviePaths
     {
-        string BuildPath(Movie movie, bool useExistingRelativeFolder);
+        string BuildPath(Media movie, bool useExistingRelativeFolder);
     }
 
     public class MoviePathBuilder : IBuildMoviePaths
@@ -22,7 +22,7 @@ namespace NzbDrone.Core.Movies
             _rootFolderService = rootFolderService;
         }
 
-        public string BuildPath(Movie movie, bool useExistingRelativeFolder)
+        public string BuildPath(Media movie, bool useExistingRelativeFolder)
         {
             if (movie.RootFolderPath.IsNullOrWhiteSpace())
             {
@@ -38,7 +38,7 @@ namespace NzbDrone.Core.Movies
             return Path.Combine(movie.RootFolderPath, _fileNameBuilder.GetMovieFolder(movie));
         }
 
-        private string GetExistingRelativePath(Movie movie)
+        private string GetExistingRelativePath(Media movie)
         {
             var rootFolderPath = _rootFolderService.GetBestRootFolderPath(movie.Path);
 

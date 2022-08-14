@@ -16,8 +16,8 @@ namespace NzbDrone.Core.Notifications.Plex.Server
 {
     public interface IPlexServerService
     {
-        void UpdateLibrary(Movie movie, PlexServerSettings settings);
-        void UpdateLibrary(IEnumerable<Movie> movie, PlexServerSettings settings);
+        void UpdateLibrary(Media movie, PlexServerSettings settings);
+        void UpdateLibrary(IEnumerable<Media> movie, PlexServerSettings settings);
         ValidationFailure Test(PlexServerSettings settings);
     }
 
@@ -38,12 +38,12 @@ namespace NzbDrone.Core.Notifications.Plex.Server
             _logger = logger;
         }
 
-        public void UpdateLibrary(Movie movie, PlexServerSettings settings)
+        public void UpdateLibrary(Media movie, PlexServerSettings settings)
         {
             UpdateLibrary(new[] { movie }, settings);
         }
 
-        public void UpdateLibrary(IEnumerable<Movie> multipleMovies, PlexServerSettings settings)
+        public void UpdateLibrary(IEnumerable<Media> multipleMovies, PlexServerSettings settings)
         {
             try
             {
@@ -200,27 +200,18 @@ namespace NzbDrone.Core.Notifications.Plex.Server
             _plexServerProxy.Update(sectionId, settings);
         }
 
-        private bool UpdatePartialSection(Movie movie, List<PlexSection> sections, PlexServerSettings settings)
+        private bool UpdatePartialSection(Media movie, List<PlexSection> sections, PlexServerSettings settings)
         {
             var partiallyUpdated = false;
 
             foreach (var section in sections)
             {
-                var metadataId = GetMetadataId(section.Id, movie, section.Language, settings);
-
-                if (metadataId.IsNotNullOrWhiteSpace())
-                {
-                    _logger.Debug("Updating Plex host: {0}, Section: {1}, Movie: {2}", settings.Host, section.Id, movie);
-                    _plexServerProxy.UpdateMovie(metadataId, settings);
-
-                    partiallyUpdated = true;
-                }
             }
 
             return partiallyUpdated;
         }
 
-        private bool UpdatePath(Movie movie, List<PlexSection> sections, PlexServerSettings settings)
+        private bool UpdatePath(Media movie, List<PlexSection> sections, PlexServerSettings settings)
         {
             var pathUpdated = false;
 
@@ -250,13 +241,6 @@ namespace NzbDrone.Core.Notifications.Plex.Server
             }
 
             return pathUpdated;
-        }
-
-        private string GetMetadataId(int sectionId, Movie movie, string language, PlexServerSettings settings)
-        {
-            _logger.Debug("Getting metadata from Plex host: {0} for movie: {1}", settings.Host, movie);
-
-            return _plexServerProxy.GetMetadataId(sectionId, movie.ImdbId, language, settings);
         }
 
         public ValidationFailure Test(PlexServerSettings settings)

@@ -5,9 +5,9 @@ namespace NzbDrone.Core.Movies.Events
 {
     public class MoviesImportedEvent : IEvent
     {
-        public List<Movie> Movies { get; private set; }
+        public List<Media> Movies { get; private set; }
 
-        public MoviesImportedEvent(List<Movie> movies)
+        public MoviesImportedEvent(List<Media> movies)
         {
             Movies = movies;
         }

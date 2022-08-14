@@ -22,7 +22,7 @@ using BadRequestException = Whisparr.Http.REST.BadRequestException;
 namespace Whisparr.Api.V3.MovieFiles
 {
     [V3ApiController]
-    public class MovieFileController : RestControllerWithSignalR<MovieFileResource, MovieFile>,
+    public class MovieFileController : RestControllerWithSignalR<MovieFileResource, MediaFile>,
                                  IHandle<MovieFileAddedEvent>,
                                  IHandle<MovieFileDeletedEvent>
     {

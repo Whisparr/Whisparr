@@ -17,47 +17,59 @@ namespace NzbDrone.Core.Datastore.Migration
             Create.TableForModel("RootFolders")
                   .WithColumn("Path").AsString().Unique();
 
-            Create.TableForModel("Movies")
-                .WithColumn("ImdbId").AsString().Nullable()
-                .WithColumn("Title").AsString()
-                .WithColumn("TitleSlug").AsString().Unique()
-                .WithColumn("SortTitle").AsString().Nullable()
-                .WithColumn("CleanTitle").AsString()
-                .WithColumn("Status").AsInt32()
-                .WithColumn("Overview").AsString().Nullable()
-                .WithColumn("Images").AsString()
+            Create.TableForModel("Media")
                 .WithColumn("Path").AsString()
                 .WithColumn("Monitored").AsBoolean()
+                .WithColumn("MovieMetadataId").AsInt32().Unique()
                 .WithColumn("ProfileId").AsInt32()
-                .WithColumn("LastInfoSync").AsDateTime().Nullable()
-                .WithColumn("LastDiskSync").AsDateTime().Nullable()
-                .WithColumn("Runtime").AsInt32()
-                .WithColumn("InCinemas").AsDateTime().Nullable()
-                .WithColumn("Year").AsInt32().Nullable()
-                .WithColumn("Added").AsDateTime().Nullable()
-                .WithColumn("Ratings").AsString().Nullable()
-                .WithColumn("Genres").AsString().Nullable()
+                .WithColumn("Added").AsDateTimeOffset().Nullable()
                 .WithColumn("Tags").AsString().Nullable()
-                .WithColumn("Certification").AsString().Nullable()
                 .WithColumn("AddOptions").AsString().Nullable()
                 .WithColumn("MovieFileId").AsInt32().WithDefaultValue(0)
-                .WithColumn("TmdbId").AsInt32().Unique()
-                .WithColumn("Website").AsString().Nullable()
-                .WithColumn("PhysicalRelease").AsDateTime().Nullable()
-                .WithColumn("YouTubeTrailerId").AsString().Nullable()
-                .WithColumn("Studio").AsString().Nullable()
-                .WithColumn("SecondaryYear").AsInt32().Nullable()
-                .WithColumn("Collection").AsString().Nullable()
-                .WithColumn("Recommendations").AsString().WithDefaultValue("[]")
-                .WithColumn("OriginalLanguage").AsInt32().WithDefaultValue((int)Language.English)
-                .WithColumn("OriginalTitle").AsString().Nullable()
-                .WithColumn("DigitalRelease").AsDateTime().Nullable()
                 .WithColumn("MinimumAvailability").AsInt32().WithDefaultValue((int)MovieStatusType.Released);
+
+            Create.TableForModel("MediaMetadata")
+                .WithColumn("ForiegnId").AsInt32().Unique()
+                .WithColumn("Images").AsString()
+                .WithColumn("Genres").AsString().Nullable()
+                .WithColumn("Title").AsString()
+                .WithColumn("SortTitle").AsString().Nullable()
+                .WithColumn("CleanTitle").AsString().Nullable().Indexed()
+                .WithColumn("OriginalTitle").AsString().Nullable()
+                .WithColumn("CleanOriginalTitle").AsString().Nullable().Indexed()
+                .WithColumn("OriginalLanguage").AsInt32()
+                .WithColumn("Status").AsInt32()
+                .WithColumn("LastInfoSync").AsDateTimeOffset().Nullable()
+                .WithColumn("Runtime").AsInt32()
+                .WithColumn("DigitalRelease").AsDateTimeOffset().Nullable()
+                .WithColumn("Year").AsInt32().Nullable()
+                .WithColumn("SecondaryYear").AsInt32().Nullable()
+                .WithColumn("Ratings").AsString().Nullable()
+                .WithColumn("Recommendations").AsString()
+                .WithColumn("Certification").AsString().Nullable()
+                .WithColumn("YouTubeTrailerId").AsString().Nullable()
+                .WithColumn("Collection").AsString().Nullable()
+                .WithColumn("Studio").AsString().Nullable()
+                .WithColumn("Overview").AsString().Nullable()
+                .WithColumn("Website").AsString().Nullable()
+                .WithColumn("ReleaseType").AsInt32()
+                .WithColumn("Popularity").AsFloat().Nullable();
+
+            // Expand this out as needed, Should have a tie with credits
+            Create.TableForModel("Performers")
+                .WithColumn("Monitored").AsBoolean()
+                .WithColumn("ForeignId").AsInt32()
+                .WithColumn("Gender").AsInt32();
+
+            // Expand this out as needed, Collection could be a site or movie collection
+            Create.TableForModel("Collection")
+                .WithColumn("Monitored").AsBoolean()
+                .WithColumn("ForeignId").AsInt32();
 
             Create.TableForModel("History")
                 .WithColumn("MovieId").AsInt32()
                 .WithColumn("SourceTitle").AsString()
-                .WithColumn("Date").AsDateTime()
+                .WithColumn("Date").AsDateTimeOffset()
                 .WithColumn("Quality").AsString()
                 .WithColumn("Data").AsString()
                 .WithColumn("EventType").AsInt32().Nullable()
@@ -79,13 +91,14 @@ namespace NzbDrone.Core.Datastore.Migration
                 .WithColumn("OnMovieDelete").AsBoolean().WithDefaultValue(false)
                 .WithColumn("OnMovieFileDelete").AsBoolean().WithDefaultValue(false)
                 .WithColumn("OnMovieFileDeleteForUpgrade").AsBoolean().WithDefaultValue(false)
-                .WithColumn("OnApplicationUpdate").AsBoolean().WithDefaultValue(false);
+                .WithColumn("OnApplicationUpdate").AsBoolean().WithDefaultValue(false)
+                .WithColumn("OnMovieAdded").AsBoolean().WithDefaultValue(false);
 
             Create.TableForModel("ScheduledTasks")
                 .WithColumn("TypeName").AsString().Unique()
                 .WithColumn("Interval").AsDouble()
-                .WithColumn("LastExecution").AsDateTime()
-                .WithColumn("LastStartTime").AsDateTime().Nullable();
+                .WithColumn("LastExecution").AsDateTimeOffset()
+                .WithColumn("LastStartTime").AsDateTimeOffset().Nullable();
 
             Create.TableForModel("Indexers")
                 .WithColumn("Name").AsString().Unique()
@@ -145,7 +158,7 @@ namespace NzbDrone.Core.Datastore.Migration
 
             Create.TableForModel("PendingReleases")
                 .WithColumn("Title").AsString()
-                .WithColumn("Added").AsDateTime()
+                .WithColumn("Added").AsDateTimeOffset()
                 .WithColumn("Release").AsString()
                 .WithColumn("MovieId").AsInt32().WithDefaultValue(0)
                 .WithColumn("ParsedMovieInfo").AsString().Nullable()
@@ -196,30 +209,30 @@ namespace NzbDrone.Core.Datastore.Migration
                 .WithColumn("Body").AsString().NotNullable()
                 .WithColumn("Priority").AsInt32().NotNullable()
                 .WithColumn("Status").AsInt32().NotNullable()
-                .WithColumn("QueuedAt").AsDateTime().NotNullable()
-                .WithColumn("StartedAt").AsDateTime().Nullable()
-                .WithColumn("EndedAt").AsDateTime().Nullable()
+                .WithColumn("QueuedAt").AsDateTimeOffset().NotNullable()
+                .WithColumn("StartedAt").AsDateTimeOffset().Nullable()
+                .WithColumn("EndedAt").AsDateTimeOffset().Nullable()
                 .WithColumn("Duration").AsString().Nullable()
                 .WithColumn("Exception").AsString().Nullable()
                 .WithColumn("Trigger").AsInt32().NotNullable();
 
             Create.TableForModel("IndexerStatus")
                 .WithColumn("ProviderId").AsInt32().NotNullable().Unique()
-                .WithColumn("InitialFailure").AsDateTime().Nullable()
-                .WithColumn("MostRecentFailure").AsDateTime().Nullable()
+                .WithColumn("InitialFailure").AsDateTimeOffset().Nullable()
+                .WithColumn("MostRecentFailure").AsDateTimeOffset().Nullable()
                 .WithColumn("EscalationLevel").AsInt32().NotNullable()
-                .WithColumn("DisabledTill").AsDateTime().Nullable()
+                .WithColumn("DisabledTill").AsDateTimeOffset().Nullable()
                 .WithColumn("LastRssSyncReleaseInfo").AsString().Nullable()
                 .WithColumn("Cookies").AsString().Nullable()
-                .WithColumn("CookiesExpirationDate").AsDateTime().Nullable();
+                .WithColumn("CookiesExpirationDate").AsDateTimeOffset().Nullable();
 
             Create.Index().OnTable("History").OnColumn("Date");
 
-            Create.TableForModel("MovieFiles")
+            Create.TableForModel("MediaFiles")
                   .WithColumn("MovieId").AsInt32()
                   .WithColumn("Quality").AsString()
                   .WithColumn("Size").AsInt64()
-                  .WithColumn("DateAdded").AsDateTime()
+                  .WithColumn("DateAdded").AsDateTimeOffset()
                   .WithColumn("SceneName").AsString().Nullable()
                   .WithColumn("MediaInfo").AsString().Nullable()
                   .WithColumn("ReleaseGroup").AsString().Nullable()
@@ -249,7 +262,7 @@ namespace NzbDrone.Core.Datastore.Migration
                     .WithColumn("MovieYear").AsInt64().Nullable().WithDefaultValue(0);
 
             Create.TableForModel("AlternativeTitles")
-                      .WithColumn("MovieId").AsInt64().NotNullable()
+                      .WithColumn("MovieMetadataId").AsInt64().NotNullable()
                       .WithColumn("Title").AsString().NotNullable()
                       .WithColumn("CleanTitle").AsString().Unique()
                       .WithColumn("SourceType").AsInt64().WithDefaultValue(0)
@@ -263,16 +276,16 @@ namespace NzbDrone.Core.Datastore.Migration
                 .WithColumn("MovieFileId").AsInt32().NotNullable()
                 .WithColumn("RelativePath").AsString().NotNullable()
                 .WithColumn("Extension").AsString().NotNullable()
-                .WithColumn("Added").AsDateTime().NotNullable()
-                .WithColumn("LastUpdated").AsDateTime().NotNullable();
+                .WithColumn("Added").AsDateTimeOffset().NotNullable()
+                .WithColumn("LastUpdated").AsDateTimeOffset().NotNullable();
 
             Create.TableForModel("SubtitleFiles")
                 .WithColumn("MovieId").AsInt32().NotNullable()
                 .WithColumn("MovieFileId").AsInt32().NotNullable()
                 .WithColumn("RelativePath").AsString().NotNullable()
                 .WithColumn("Extension").AsString().NotNullable()
-                .WithColumn("Added").AsDateTime().NotNullable()
-                .WithColumn("LastUpdated").AsDateTime().NotNullable()
+                .WithColumn("Added").AsDateTimeOffset().NotNullable()
+                .WithColumn("LastUpdated").AsDateTimeOffset().NotNullable()
                 .WithColumn("Language").AsInt32().NotNullable();
 
             Create.TableForModel("MetadataFiles")
@@ -280,10 +293,10 @@ namespace NzbDrone.Core.Datastore.Migration
                 .WithColumn("Consumer").AsString().NotNullable()
                 .WithColumn("Type").AsInt32().NotNullable()
                 .WithColumn("RelativePath").AsString().NotNullable()
-                .WithColumn("LastUpdated").AsDateTime().NotNullable()
+                .WithColumn("LastUpdated").AsDateTimeOffset().NotNullable()
                 .WithColumn("MovieFileId").AsInt32().Nullable()
                 .WithColumn("Hash").AsString().Nullable()
-                .WithColumn("Added").AsDateTime().Nullable()
+                .WithColumn("Added").AsDateTimeOffset().Nullable()
                 .WithColumn("Extension").AsString().NotNullable();
 
             Create.TableForModel("CustomFilters")
@@ -293,37 +306,34 @@ namespace NzbDrone.Core.Datastore.Migration
 
             Create.TableForModel("DownloadClientStatus")
                     .WithColumn("ProviderId").AsInt32().NotNullable().Unique()
-                    .WithColumn("InitialFailure").AsDateTime().Nullable()
-                    .WithColumn("MostRecentFailure").AsDateTime().Nullable()
+                    .WithColumn("InitialFailure").AsDateTimeOffset().Nullable()
+                    .WithColumn("MostRecentFailure").AsDateTimeOffset().Nullable()
                     .WithColumn("EscalationLevel").AsInt32().NotNullable()
-                    .WithColumn("DisabledTill").AsDateTime().Nullable();
+                    .WithColumn("DisabledTill").AsDateTimeOffset().Nullable();
 
-            Create.Index("IX_MovieFiles_MovieId").OnTable("MovieFiles").OnColumn("MovieId");
+            Create.Index("IX_MediaFiles_MovieId").OnTable("MediaFiles").OnColumn("MovieId");
             Create.Index("IX_AlternativeTitles_MovieId").OnTable("AlternativeTitles").OnColumn("MovieId");
 
-            // Speed up release processing (these are present in Sonarr)
-            Create.Index("IX_Movies_CleanTitle").OnTable("Movies").OnColumn("CleanTitle");
-            Create.Index("IX_Movies_ImdbId").OnTable("Movies").OnColumn("ImdbId");
+            Create.TableForModel("Credits")
+                    .WithColumn("MovieMetadataId").AsInt32()
+                    .WithColumn("CreditForeignId").AsString().Unique()
+                    .WithColumn("PerformerForeignId").AsInt32()
+                    .WithColumn("Name").AsString()
+                    .WithColumn("Images").AsString()
+                    .WithColumn("Character").AsString().Nullable()
+                    .WithColumn("Order").AsInt32()
+                    .WithColumn("Job").AsString().Nullable()
+                    .WithColumn("Department").AsString().Nullable()
+                    .WithColumn("Type").AsInt32();
 
-            Create.TableForModel("Credits").WithColumn("MovieId").AsInt32()
-                      .WithColumn("CreditTmdbId").AsString().Unique()
-                      .WithColumn("PersonTmdbId").AsInt32()
-                      .WithColumn("Name").AsString()
-                      .WithColumn("Images").AsString()
-                      .WithColumn("Character").AsString().Nullable()
-                      .WithColumn("Order").AsInt32()
-                      .WithColumn("Job").AsString().Nullable()
-                      .WithColumn("Department").AsString().Nullable()
-                      .WithColumn("Type").AsInt32();
-
-            Create.Index().OnTable("Credits").OnColumn("MovieId");
+            Create.Index().OnTable("Credits").OnColumn("MovieMetadataId");
 
             Create.TableForModel("DownloadHistory")
                   .WithColumn("EventType").AsInt32().NotNullable()
                   .WithColumn("MovieId").AsInt32().NotNullable()
                   .WithColumn("DownloadId").AsString().NotNullable()
                   .WithColumn("SourceTitle").AsString().NotNullable()
-                  .WithColumn("Date").AsDateTime().NotNullable()
+                  .WithColumn("Date").AsDateTimeOffset().NotNullable()
                   .WithColumn("Protocol").AsInt32().Nullable()
                   .WithColumn("IndexerId").AsInt32().Nullable()
                   .WithColumn("DownloadClientId").AsInt32().Nullable()
@@ -336,61 +346,40 @@ namespace NzbDrone.Core.Datastore.Migration
 
             Create.TableForModel("ImportListStatus")
                 .WithColumn("ProviderId").AsInt32().NotNullable().Unique()
-                .WithColumn("InitialFailure").AsDateTime().Nullable()
-                .WithColumn("MostRecentFailure").AsDateTime().Nullable()
+                .WithColumn("InitialFailure").AsDateTimeOffset().Nullable()
+                .WithColumn("MostRecentFailure").AsDateTimeOffset().Nullable()
                 .WithColumn("EscalationLevel").AsInt32().NotNullable()
-                .WithColumn("DisabledTill").AsDateTime().Nullable()
+                .WithColumn("DisabledTill").AsDateTimeOffset().Nullable()
                 .WithColumn("LastSyncListInfo").AsString().Nullable();
 
             //Manual SQL, Fluent Migrator doesn't support multi-column unique contraint on table creation, SQLite doesn't support adding it after creation
             IfDatabase("sqlite").Execute.Sql("CREATE TABLE MovieTranslations(" +
                 "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                "MovieId INTEGER NOT NULL, " +
+                "MovieMetadataId INTEGER NOT NULL, " +
                 "Title TEXT, " +
                 "CleanTitle TEXT, " +
                 "Overview TEXT, " +
                 "Language INTEGER NOT NULL, " +
-                "Unique(\"MovieId\", \"Language\"));");
+                "Unique(\"MovieMetadataId\", \"Language\"));");
 
             IfDatabase("postgres").Execute.Sql("CREATE TABLE \"MovieTranslations\"(" +
                 "\"Id\" SERIAL PRIMARY KEY , " +
-                "\"MovieId\" INTEGER NOT NULL, " +
+                "\"MovieMetadataId\" INTEGER NOT NULL, " +
                 "\"Title\" TEXT, " +
                 "\"CleanTitle\" TEXT, " +
                 "\"Overview\" TEXT, " +
                 "\"Language\" INTEGER NOT NULL, " +
-                "Unique(\"MovieId\", \"Language\"));");
+                "Unique(\"MovieMetadataId\", \"Language\"));");
 
             // Prevent failure if two movies have same alt titles
             Execute.Sql("DROP INDEX IF EXISTS \"IX_AlternativeTitles_CleanTitle\"");
 
             Create.Index("IX_MovieTranslations_Language").OnTable("MovieTranslations").OnColumn("Language");
-            Create.Index("IX_MovieTranslations_MovieId").OnTable("MovieTranslations").OnColumn("MovieId");
+            Create.Index("IX_MovieTranslations_MovieMetadataId").OnTable("MovieTranslations").OnColumn("MovieMetadataId");
 
             Create.TableForModel("ImportListMovies")
-                .WithColumn("ImdbId").AsString().Nullable()
-                .WithColumn("TmdbId").AsInt32()
-                .WithColumn("ListId").AsInt32()
-                .WithColumn("Title").AsString()
-                .WithColumn("SortTitle").AsString().Nullable()
-                .WithColumn("Status").AsInt32()
-                .WithColumn("Overview").AsString().Nullable()
-                .WithColumn("Images").AsString()
-                .WithColumn("LastInfoSync").AsDateTime().Nullable()
-                .WithColumn("Runtime").AsInt32()
-                .WithColumn("InCinemas").AsDateTime().Nullable()
-                .WithColumn("Year").AsInt32().Nullable()
-                .WithColumn("Ratings").AsString().Nullable()
-                .WithColumn("Genres").AsString().Nullable()
-                .WithColumn("Certification").AsString().Nullable()
-                .WithColumn("Collection").AsString().Nullable()
-                .WithColumn("Website").AsString().Nullable()
-                .WithColumn("OriginalTitle").AsString().Nullable()
-                .WithColumn("PhysicalRelease").AsDateTime().Nullable()
-                .WithColumn("Translations").AsString()
-                .WithColumn("Studio").AsString().Nullable()
-                .WithColumn("YouTubeTrailerId").AsString().Nullable()
-                .WithColumn("DigitalRelease").AsDateTime().Nullable();
+                .WithColumn("MovieMetadataId").AsInt32()
+                .WithColumn("ListId").AsInt32();
 
             Create.Index().OnTable("AlternativeTitles").OnColumn("CleanTitle");
             Create.Index().OnTable("MovieTranslations").OnColumn("CleanTitle");
@@ -398,8 +387,8 @@ namespace NzbDrone.Core.Datastore.Migration
             Create.TableForModel("Blocklist")
                 .WithColumn("SourceTitle").AsString()
                 .WithColumn("Quality").AsString()
-                .WithColumn("Date").AsDateTime()
-                .WithColumn("PublishedDate").AsDateTime().Nullable()
+                .WithColumn("Date").AsDateTimeOffset()
+                .WithColumn("PublishedDate").AsDateTimeOffset().Nullable()
                 .WithColumn("Size").AsInt64().Nullable()
                 .WithColumn("Protocol").AsInt32().Nullable()
                 .WithColumn("Indexer").AsString().Nullable()
@@ -419,14 +408,14 @@ namespace NzbDrone.Core.Datastore.Migration
         {
             Create.TableForModel("Logs")
                   .WithColumn("Message").AsString()
-                  .WithColumn("Time").AsDateTime().Indexed()
+                  .WithColumn("Time").AsDateTimeOffset().Indexed()
                   .WithColumn("Logger").AsString()
                   .WithColumn("Exception").AsString().Nullable()
                   .WithColumn("ExceptionType").AsString().Nullable()
                   .WithColumn("Level").AsString();
 
             Create.TableForModel("UpdateHistory")
-                  .WithColumn("Date").AsDateTime().NotNullable().Indexed()
+                  .WithColumn("Date").AsDateTimeOffset().NotNullable().Indexed()
                   .WithColumn("Version").AsString().NotNullable()
                   .WithColumn("EventType").AsInt32().NotNullable();
         }

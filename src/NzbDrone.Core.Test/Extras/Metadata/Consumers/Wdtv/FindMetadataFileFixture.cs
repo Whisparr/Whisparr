@@ -13,12 +13,12 @@ namespace NzbDrone.Core.Test.Extras.Metadata.Consumers.Wdtv
     [TestFixture]
     public class FindMetadataFileFixture : CoreTest<WdtvMetadata>
     {
-        private Movie _movie;
+        private Media _movie;
 
         [SetUp]
         public void Setup()
         {
-            _movie = Builder<Movie>.CreateNew()
+            _movie = Builder<Media>.CreateNew()
                                      .With(s => s.Path = @"C:\Test\Movies\The.Movie".AsOsAgnostic())
                                      .Build();
         }

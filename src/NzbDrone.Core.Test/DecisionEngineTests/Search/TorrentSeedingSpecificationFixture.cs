@@ -15,14 +15,14 @@ namespace NzbDrone.Core.Test.DecisionEngineTests.Search
     [TestFixture]
     public class TorrentSeedingSpecificationFixture : TestBase<TorrentSeedingSpecification>
     {
-        private Movie _movie;
+        private Media _movie;
         private RemoteMovie _remoteMovie;
         private IndexerDefinition _indexerDefinition;
 
         [SetUp]
         public void Setup()
         {
-            _movie = Builder<Movie>.CreateNew().With(s => s.Id = 1).Build();
+            _movie = Builder<Media>.CreateNew().With(s => s.Id = 1).Build();
 
             _remoteMovie = new RemoteMovie
             {

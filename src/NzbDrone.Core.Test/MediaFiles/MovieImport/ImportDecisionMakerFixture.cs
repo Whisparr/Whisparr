@@ -26,7 +26,7 @@ namespace NzbDrone.Core.Test.MediaFiles.MovieImport
     {
         private List<string> _videoFiles;
         private LocalMovie _localMovie;
-        private Movie _movie;
+        private Media _movie;
         private QualityModel _quality;
         private ParsedMovieInfo _fileInfo;
 
@@ -57,7 +57,7 @@ namespace NzbDrone.Core.Test.MediaFiles.MovieImport
             _fail2.Setup(c => c.IsSatisfiedBy(It.IsAny<LocalMovie>(), It.IsAny<DownloadClientItem>())).Returns(Decision.Reject("_fail2"));
             _fail3.Setup(c => c.IsSatisfiedBy(It.IsAny<LocalMovie>(), It.IsAny<DownloadClientItem>())).Returns(Decision.Reject("_fail3"));
 
-            _movie = Builder<Movie>.CreateNew()
+            _movie = Builder<Media>.CreateNew()
                                      .With(e => e.Path = @"C:\Test\Movie".AsOsAgnostic())
                                      .With(e => e.Profile = new Profile { Items = Qualities.QualityFixture.GetDefaultQualities() })
                                      .Build();
@@ -95,7 +95,7 @@ namespace NzbDrone.Core.Test.MediaFiles.MovieImport
             _videoFiles = videoFiles.ToList();
 
             Mocker.GetMock<IMediaFileService>()
-                  .Setup(c => c.FilterExistingFiles(_videoFiles, It.IsAny<Movie>()))
+                  .Setup(c => c.FilterExistingFiles(_videoFiles, It.IsAny<Media>()))
                   .Returns(_videoFiles);
         }
 

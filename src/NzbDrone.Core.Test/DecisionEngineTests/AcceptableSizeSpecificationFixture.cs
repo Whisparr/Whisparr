@@ -16,14 +16,14 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
 
     public class AcceptableSizeSpecificationFixture : CoreTest<AcceptableSizeSpecification>
     {
-        private Movie _movie;
+        private Media _movie;
         private RemoteMovie _remoteMovie;
         private QualityDefinition _qualityType;
 
         [SetUp]
         public void Setup()
         {
-            _movie = Builder<Movie>.CreateNew().Build();
+            _movie = Builder<Media>.CreateNew().Build();
 
             _qualityType = Builder<QualityDefinition>.CreateNew()
                 .With(q => q.MinSize = 2)
@@ -53,7 +53,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         [TestCase(60, 1000, false)]
         public void single_episode(int runtime, int sizeInMegaBytes, bool expectedResult)
         {
-            _movie.MovieMetadata.Value.Runtime = runtime;
+            _movie.MediaMetadata.Value.Runtime = runtime;
             _remoteMovie.Movie = _movie;
             _remoteMovie.Release.Size = sizeInMegaBytes.Megabytes();
 
@@ -63,7 +63,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         [Test]
         public void should_return_true_if_size_is_zero()
         {
-            _movie.MovieMetadata.Value.Runtime = 120;
+            _movie.MediaMetadata.Value.Runtime = 120;
             _remoteMovie.Movie = _movie;
             _remoteMovie.Release.Size = 0;
             _qualityType.MinSize = 10;
@@ -75,7 +75,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         [Test]
         public void should_return_true_if_unlimited_30_minute()
         {
-            _movie.MovieMetadata.Value.Runtime = 30;
+            _movie.MediaMetadata.Value.Runtime = 30;
             _remoteMovie.Movie = _movie;
             _remoteMovie.Release.Size = 18457280000;
             _qualityType.MaxSize = null;
@@ -86,7 +86,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         [Test]
         public void should_return_true_if_unlimited_60_minute()
         {
-            _movie.MovieMetadata.Value.Runtime = 60;
+            _movie.MediaMetadata.Value.Runtime = 60;
             _remoteMovie.Movie = _movie;
             _remoteMovie.Release.Size = 36857280000;
             _qualityType.MaxSize = null;
@@ -97,7 +97,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         [Test]
         public void should_use_110_minutes_if_runtime_is_0()
         {
-            _movie.MovieMetadata.Value.Runtime = 0;
+            _movie.MediaMetadata.Value.Runtime = 0;
             _remoteMovie.Movie = _movie;
             _remoteMovie.Release.Size = 1095.Megabytes();
 

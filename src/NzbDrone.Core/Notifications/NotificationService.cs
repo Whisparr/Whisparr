@@ -38,24 +38,22 @@ namespace NzbDrone.Core.Notifications
             _logger = logger;
         }
 
-        private string GetMessage(Movie movie, QualityModel quality)
+        private string GetMessage(Media movie, QualityModel quality)
         {
             var qualityString = quality.Quality.ToString();
-            var imdbUrl = "https://www.imdb.com/title/" + movie.MovieMetadata.Value.ImdbId + "/";
 
             if (quality.Revision.Version > 1)
             {
                 qualityString += " Proper";
             }
 
-            return string.Format("{0} ({1}) [{2}] {3}",
+            return string.Format("{0} ({1}) [{2}]",
                                     movie.Title,
                                     movie.Year,
-                                    qualityString,
-                                    imdbUrl);
+                                    qualityString);
         }
 
-        private bool ShouldHandleMovie(ProviderDefinition definition, Movie movie)
+        private bool ShouldHandleMovie(ProviderDefinition definition, Media movie)
         {
             if (definition.Tags.Empty())
             {
@@ -263,7 +261,7 @@ namespace NzbDrone.Core.Notifications
 
         public void Handle(MoviesDeletedEvent message)
         {
-            foreach (Movie movie in message.Movies)
+            foreach (Media movie in message.Movies)
             {
                 var deleteMessage = new MovieDeleteMessage(movie, message.DeleteFiles);
 

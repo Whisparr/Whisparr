@@ -69,8 +69,8 @@ namespace NzbDrone.Core.Test.HistoryTests
         [Test]
         public void should_use_file_name_for_source_title_if_scene_name_is_null()
         {
-            var movie = Builder<Movie>.CreateNew().Build();
-            var movieFile = Builder<MovieFile>.CreateNew()
+            var movie = Builder<Media>.CreateNew().Build();
+            var movieFile = Builder<MediaFile>.CreateNew()
                                                   .With(f => f.SceneName = null)
                                                   .Build();
 
@@ -91,7 +91,7 @@ namespace NzbDrone.Core.Test.HistoryTests
                 DownloadId = "abcd"
             };
 
-            Subject.Handle(new MovieFileImportedEvent(localMovie, movieFile, new List<MovieFile>(), true, downloadClientItem));
+            Subject.Handle(new MovieFileImportedEvent(localMovie, movieFile, new List<MediaFile>(), true, downloadClientItem));
 
             Mocker.GetMock<IHistoryRepository>()
                 .Verify(v => v.Insert(It.Is<MovieHistory>(h => h.SourceTitle == Path.GetFileNameWithoutExtension(localMovie.Path))));

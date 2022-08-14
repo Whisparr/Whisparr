@@ -23,8 +23,8 @@ namespace NzbDrone.Core.Test.NotificationTests
         {
             _downloadMessage = new DownloadMessage
             {
-                Movie = new Movie(),
-                MovieFile = new MovieFile
+                Movie = new Media(),
+                MovieFile = new MediaFile
                 {
                     MediaInfo = null,
                     Quality = new QualityModel

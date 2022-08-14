@@ -26,7 +26,7 @@ namespace NzbDrone.Core.RootFolders
     {
         private readonly IRootFolderRepository _rootFolderRepository;
         private readonly IDiskProvider _diskProvider;
-        private readonly IMovieRepository _movieRepository;
+        private readonly IMediaRepository _movieRepository;
         private readonly IConfigService _configService;
         private readonly Logger _logger;
 
@@ -45,7 +45,7 @@ namespace NzbDrone.Core.RootFolders
 
         public RootFolderService(IRootFolderRepository rootFolderRepository,
                                  IDiskProvider diskProvider,
-                                 IMovieRepository movieRepository,
+                                 IMediaRepository movieRepository,
                                  IConfigService configService,
                                  Logger logger)
         {

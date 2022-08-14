@@ -9,11 +9,11 @@ namespace NzbDrone.Core.Movies.Credits
     public interface ICreditService
     {
         List<Credit> GetAllCreditsForMovieMetadata(int movieMetadataId);
-        Credit AddCredit(Credit credit, MovieMetadata movie);
-        List<Credit> AddCredits(List<Credit> credits, MovieMetadata movie);
+        Credit AddCredit(Credit credit, MediaMetadata movie);
+        List<Credit> AddCredits(List<Credit> credits, MediaMetadata movie);
         Credit GetById(int id);
         List<Credit> GetAllCredits();
-        List<Credit> UpdateCredits(List<Credit> credits, MovieMetadata movie);
+        List<Credit> UpdateCredits(List<Credit> credits, MediaMetadata movie);
     }
 
     public class CreditService : ICreditService, IHandleAsync<MoviesDeletedEvent>
@@ -30,13 +30,13 @@ namespace NzbDrone.Core.Movies.Credits
             return _creditRepo.FindByMovieMetadataId(movieMetadataId).ToList();
         }
 
-        public Credit AddCredit(Credit credit, MovieMetadata movie)
+        public Credit AddCredit(Credit credit, MediaMetadata movie)
         {
             credit.MovieMetadataId = movie.Id;
             return _creditRepo.Insert(credit);
         }
 
-        public List<Credit> AddCredits(List<Credit> credits, MovieMetadata movie)
+        public List<Credit> AddCredits(List<Credit> credits, MediaMetadata movie)
         {
             credits.ForEach(t => t.MovieMetadataId = movie.Id);
             _creditRepo.InsertMany(credits);
@@ -58,7 +58,7 @@ namespace NzbDrone.Core.Movies.Credits
             _creditRepo.Delete(credit);
         }
 
-        public List<Credit> UpdateCredits(List<Credit> credits, MovieMetadata movieMetadata)
+        public List<Credit> UpdateCredits(List<Credit> credits, MediaMetadata movieMetadata)
         {
             int movieMetadataId = movieMetadata.Id;
 
@@ -69,13 +69,13 @@ namespace NzbDrone.Core.Movies.Credits
             var existingCredits = _creditRepo.FindByMovieMetadataId(movieMetadataId);
 
             // Should never have multiple credits with same credit_id, but check to ensure incase TMDB is on fritz
-            var dupeFreeCredits = credits.DistinctBy(m => m.CreditTmdbId).ToList();
+            var dupeFreeCredits = credits.DistinctBy(m => m.CreditForeignId).ToList();
 
-            dupeFreeCredits.ForEach(c => c.Id = existingCredits.FirstOrDefault(t => t.CreditTmdbId == c.CreditTmdbId)?.Id ?? 0);
+            dupeFreeCredits.ForEach(c => c.Id = existingCredits.FirstOrDefault(t => t.CreditForeignId == c.CreditForeignId)?.Id ?? 0);
 
             var insert = dupeFreeCredits.Where(t => t.Id == 0).ToList();
             var update = dupeFreeCredits.Where(t => t.Id > 0).ToList();
-            var delete = existingCredits.Where(t => !dupeFreeCredits.Any(c => c.CreditTmdbId == t.CreditTmdbId)).ToList();
+            var delete = existingCredits.Where(t => !dupeFreeCredits.Any(c => c.CreditForeignId == t.CreditForeignId)).ToList();
 
             _creditRepo.DeleteMany(delete);
             _creditRepo.UpdateMany(update);

@@ -20,7 +20,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         {
             _remoteMovie = new RemoteMovie
             {
-                Movie = new Movie
+                Movie = new Media
                 {
                     Tags = new HashSet<int>()
                 },

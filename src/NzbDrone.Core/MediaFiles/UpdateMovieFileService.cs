@@ -14,7 +14,7 @@ namespace NzbDrone.Core.MediaFiles
 {
     public interface IUpdateMovieFileService
     {
-        void ChangeFileDateForFile(MovieFile movieFile, Movie movie);
+        void ChangeFileDateForFile(MediaFile movieFile, Media movie);
     }
 
     public class UpdateMovieFileService : IUpdateMovieFileService,
@@ -36,12 +36,12 @@ namespace NzbDrone.Core.MediaFiles
             _logger = logger;
         }
 
-        public void ChangeFileDateForFile(MovieFile movieFile, Movie movie)
+        public void ChangeFileDateForFile(MediaFile movieFile, Media movie)
         {
             ChangeFileDate(movieFile, movie);
         }
 
-        private bool ChangeFileDate(MovieFile movieFile, Movie movie)
+        private bool ChangeFileDate(MediaFile movieFile, Media movie)
         {
             var movieFilePath = Path.Combine(movie.Path, movieFile.RelativePath);
 
@@ -49,7 +49,7 @@ namespace NzbDrone.Core.MediaFiles
             {
                 case FileDateType.Release:
                     {
-                        var releaseDate = movie.MovieMetadata.Value.PhysicalRelease ?? movie.MovieMetadata.Value.DigitalRelease;
+                        var releaseDate = movie.MediaMetadata.Value.DigitalRelease;
 
                         if (releaseDate.HasValue == false)
                         {
@@ -57,18 +57,6 @@ namespace NzbDrone.Core.MediaFiles
                         }
 
                         return ChangeFileDate(movieFilePath, releaseDate.Value);
-                    }
-
-                case FileDateType.Cinemas:
-                    {
-                        var airDate = movie.MovieMetadata.Value.InCinemas;
-
-                        if (airDate.HasValue == false)
-                        {
-                            return false;
-                        }
-
-                        return ChangeFileDate(movieFilePath, airDate.Value);
                     }
             }
 
@@ -108,7 +96,7 @@ namespace NzbDrone.Core.MediaFiles
             }
 
             var movieFiles = _mediaFileService.GetFilesByMovie(message.Movie.Id);
-            var updated = new List<MovieFile>();
+            var updated = new List<MediaFile>();
 
             foreach (var movieFile in movieFiles)
             {

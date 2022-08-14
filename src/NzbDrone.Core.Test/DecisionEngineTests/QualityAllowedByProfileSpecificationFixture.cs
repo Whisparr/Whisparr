@@ -33,7 +33,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         [SetUp]
         public void Setup()
         {
-            var fakeSeries = Builder<Movie>.CreateNew()
+            var fakeSeries = Builder<Media>.CreateNew()
                 .With(c => c.Profile = new Profile { Cutoff = Quality.Bluray1080p.Id })
                          .Build();
 

@@ -20,18 +20,18 @@ namespace NzbDrone.Core.Test.DecisionEngineTests.RssSync
     public class ProperSpecificationFixture : CoreTest<ProperSpecification>
     {
         private RemoteMovie _parseResultSingle;
-        private MovieFile _firstFile;
-        private MovieFile _secondFile;
+        private MediaFile _firstFile;
+        private MediaFile _secondFile;
 
         [SetUp]
         public void Setup()
         {
             Mocker.Resolve<UpgradableSpecification>();
 
-            _firstFile = new MovieFile { Quality = new QualityModel(Quality.Bluray1080p, new Revision(version: 1)), DateAdded = DateTime.Now };
-            _secondFile = new MovieFile { Quality = new QualityModel(Quality.Bluray1080p, new Revision(version: 1)), DateAdded = DateTime.Now };
+            _firstFile = new MediaFile { Quality = new QualityModel(Quality.Bluray1080p, new Revision(version: 1)), DateAdded = DateTime.Now };
+            _secondFile = new MediaFile { Quality = new QualityModel(Quality.Bluray1080p, new Revision(version: 1)), DateAdded = DateTime.Now };
 
-            var fakeSeries = Builder<Movie>.CreateNew()
+            var fakeSeries = Builder<Media>.CreateNew()
                          .With(c => c.Profile = new Profile { Cutoff = Quality.Bluray1080p.Id })
                          .With(c => c.MovieFile = _firstFile)
                          .Build();

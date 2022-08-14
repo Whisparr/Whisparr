@@ -18,16 +18,16 @@ namespace NzbDrone.Core.Test.MediaCoverTests
     [TestFixture]
     public class MediaCoverServiceFixture : CoreTest<MediaCoverService>
     {
-        private Movie _movie;
+        private Media _movie;
 
         [SetUp]
         public void Setup()
         {
             Mocker.SetConstant<IAppFolderInfo>(new AppFolderInfo(Mocker.Resolve<IStartupContext>()));
 
-            _movie = Builder<Movie>.CreateNew()
+            _movie = Builder<Media>.CreateNew()
                 .With(v => v.Id = 2)
-                .With(v => v.MovieMetadata.Value.Images = new List<MediaCover.MediaCover> { new MediaCover.MediaCover(MediaCoverTypes.Poster, "") })
+                .With(v => v.MediaMetadata.Value.Images = new List<MediaCover.MediaCover> { new MediaCover.MediaCover(MediaCoverTypes.Poster, "") })
                 .Build();
 
             Mocker.GetMock<IMovieService>().Setup(m => m.GetMovie(It.Is<int>(id => id == _movie.Id))).Returns(_movie);

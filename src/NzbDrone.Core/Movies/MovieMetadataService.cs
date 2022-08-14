@@ -4,11 +4,10 @@ namespace NzbDrone.Core.Movies
 {
     public interface IMovieMetadataService
     {
-        MovieMetadata Get(int id);
-        MovieMetadata FindByTmdbId(int tmdbId);
-        MovieMetadata FindByImdbId(string imdbId);
-        bool Upsert(MovieMetadata movie);
-        bool UpsertMany(List<MovieMetadata> movies);
+        MediaMetadata Get(int id);
+        MediaMetadata FindByTmdbId(int tmdbId);
+        bool Upsert(MediaMetadata movie);
+        bool UpsertMany(List<MediaMetadata> movies);
     }
 
     public class MovieMetadataService : IMovieMetadataService
@@ -20,27 +19,22 @@ namespace NzbDrone.Core.Movies
             _movieMetadataRepository = movieMetadataRepository;
         }
 
-        public MovieMetadata FindByTmdbId(int tmdbId)
+        public MediaMetadata FindByTmdbId(int tmdbId)
         {
             return _movieMetadataRepository.FindByTmdbId(tmdbId);
         }
 
-        public MovieMetadata FindByImdbId(string imdbId)
-        {
-            return _movieMetadataRepository.FindByImdbId(imdbId);
-        }
-
-        public MovieMetadata Get(int id)
+        public MediaMetadata Get(int id)
         {
             return _movieMetadataRepository.Get(id);
         }
 
-        public bool Upsert(MovieMetadata movie)
+        public bool Upsert(MediaMetadata movie)
         {
-            return _movieMetadataRepository.UpsertMany(new List<MovieMetadata> { movie });
+            return _movieMetadataRepository.UpsertMany(new List<MediaMetadata> { movie });
         }
 
-        public bool UpsertMany(List<MovieMetadata> movies)
+        public bool UpsertMany(List<MediaMetadata> movies)
         {
             return _movieMetadataRepository.UpsertMany(movies);
         }

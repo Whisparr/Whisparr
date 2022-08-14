@@ -5,10 +5,10 @@ namespace NzbDrone.Core.MediaCover
 {
     public class MediaCoversUpdatedEvent : IEvent
     {
-        public Movie Movie { get; set; }
+        public Media Movie { get; set; }
         public bool Updated { get; set; }
 
-        public MediaCoversUpdatedEvent(Movie movie, bool updated)
+        public MediaCoversUpdatedEvent(Media movie, bool updated)
         {
             Movie = movie;
             Updated = updated;

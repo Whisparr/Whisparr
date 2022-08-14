@@ -19,18 +19,18 @@ namespace NzbDrone.Core.Test.MediaFiles.MovieFileMovingServiceTests
     [TestFixture]
     public class MoveMovieFileFixture : CoreTest<MovieFileMovingService>
     {
-        private Movie _movie;
-        private MovieFile _movieFile;
+        private Media _movie;
+        private MediaFile _movieFile;
         private LocalMovie _localMovie;
 
         [SetUp]
         public void Setup()
         {
-            _movie = Builder<Movie>.CreateNew()
+            _movie = Builder<Media>.CreateNew()
                                      .With(s => s.Path = @"C:\Test\Movies\Movie".AsOsAgnostic())
                                      .Build();
 
-            _movieFile = Builder<MovieFile>.CreateNew()
+            _movieFile = Builder<MediaFile>.CreateNew()
                                                .With(f => f.Path = null)
                                                .With(f => f.RelativePath = @"File.avi")
                                                .Build();
@@ -40,11 +40,11 @@ namespace NzbDrone.Core.Test.MediaFiles.MovieFileMovingServiceTests
                                                  .Build();
 
             Mocker.GetMock<IBuildFileNames>()
-                  .Setup(s => s.BuildFileName(It.IsAny<Movie>(), It.IsAny<MovieFile>(), null, null))
+                  .Setup(s => s.BuildFileName(It.IsAny<Media>(), It.IsAny<MediaFile>(), null, null))
                   .Returns("File Name");
 
             Mocker.GetMock<IBuildFileNames>()
-                  .Setup(s => s.BuildFilePath(It.IsAny<Movie>(), It.IsAny<string>(), It.IsAny<string>()))
+                  .Setup(s => s.BuildFilePath(It.IsAny<Media>(), It.IsAny<string>(), It.IsAny<string>()))
                   .Returns(@"C:\Test\Movies\Movie\File Name.avi".AsOsAgnostic());
 
             var rootFolder = @"C:\Test\Movies\".AsOsAgnostic();

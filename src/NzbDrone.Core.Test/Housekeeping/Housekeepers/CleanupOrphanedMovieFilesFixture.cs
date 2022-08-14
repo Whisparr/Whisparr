@@ -13,12 +13,12 @@ using NzbDrone.Core.Test.Framework;
 namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
 {
     [TestFixture]
-    public class CleanupOrphanedMovieFilesFixture : DbTest<CleanupOrphanedMovieFiles, MovieFile>
+    public class CleanupOrphanedMovieFilesFixture : DbTest<CleanupOrphanedMovieFiles, MediaFile>
     {
         [Test]
         public void should_delete_orphaned_episode_files()
         {
-            var movieFile = Builder<MovieFile>.CreateNew()
+            var movieFile = Builder<MediaFile>.CreateNew()
                                                   .With(h => h.Quality = new QualityModel())
                                                   .With(h => h.Languages = new List<Language> { Language.English })
                                                   .BuildNew();
@@ -31,7 +31,7 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
         [Test]
         public void should_not_delete_unorphaned_movie_files()
         {
-            var movieFiles = Builder<MovieFile>.CreateListOfSize(2)
+            var movieFiles = Builder<MediaFile>.CreateListOfSize(2)
                                                    .All()
                                                    .With(h => h.Quality = new QualityModel())
                                                    .With(h => h.Languages = new List<Language> { Language.English })
@@ -39,7 +39,7 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
 
             Db.InsertMany(movieFiles);
 
-            var movie = Builder<Movie>.CreateNew()
+            var movie = Builder<Media>.CreateNew()
                                           .With(e => e.MovieFileId = movieFiles.First().Id)
                                           .BuildNew();
 
@@ -47,7 +47,7 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
 
             Subject.Clean();
             AllStoredModels.Should().HaveCount(1);
-            Db.All<Movie>().Should().Contain(e => e.MovieFileId == AllStoredModels.First().Id);
+            Db.All<Media>().Should().Contain(e => e.MovieFileId == AllStoredModels.First().Id);
         }
     }
 }

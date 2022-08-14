@@ -14,7 +14,7 @@ namespace NzbDrone.Core.Test.MovieTests.MovieRepositoryTests
 {
     [TestFixture]
 
-    public class MovieRepositoryFixture : DbTest<MovieRepository, Movie>
+    public class MovieRepositoryFixture : DbTest<MediaRepository, Media>
     {
         private IProfileRepository _profileRepository;
 
@@ -43,7 +43,7 @@ namespace NzbDrone.Core.Test.MovieTests.MovieRepositoryTests
 
             _profileRepository.Insert(profile);
 
-            var movie = Builder<Movie>.CreateNew().BuildNew();
+            var movie = Builder<Media>.CreateNew().BuildNew();
             movie.ProfileId = profile.Id;
 
             Subject.Insert(movie);

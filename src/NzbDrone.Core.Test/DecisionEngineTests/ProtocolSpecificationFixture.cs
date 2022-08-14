@@ -22,7 +22,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         {
             _remoteEpisode = new RemoteMovie();
             _remoteEpisode.Release = new ReleaseInfo();
-            _remoteEpisode.Movie = new Movie();
+            _remoteEpisode.Movie = new Media();
 
             _delayProfile = new DelayProfile();
 

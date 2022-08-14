@@ -57,7 +57,7 @@ namespace NzbDrone.Core.MediaFiles
             return GetPreviews(movie, file).OrderByDescending(m => m.MovieId).ToList(); //TODO: Would really like to not have these be lists
         }
 
-        private IEnumerable<RenameMovieFilePreview> GetPreviews(Movie movie, List<MovieFile> files)
+        private IEnumerable<RenameMovieFilePreview> GetPreviews(Media movie, List<MediaFile> files)
         {
             foreach (var file in files)
             {
@@ -80,7 +80,7 @@ namespace NzbDrone.Core.MediaFiles
             }
         }
 
-        private List<RenamedMovieFile> RenameFiles(List<MovieFile> movieFiles, Movie movie)
+        private List<RenamedMovieFile> RenameFiles(List<MediaFile> movieFiles, Media movie)
         {
             var renamed = new List<RenamedMovieFile>();
 

@@ -43,8 +43,7 @@ namespace NzbDrone.Core.ImportLists.Plex
 
                 movies.AddIfNotNull(new ImportListMovie()
                 {
-                    ImdbId = imdbId,
-                    TmdbId = tmdbId,
+                    ForiegnId = tmdbId,
                     Title = item.Title,
                     Year = item.Year
                 });

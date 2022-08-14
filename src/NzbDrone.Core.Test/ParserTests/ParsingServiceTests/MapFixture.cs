@@ -18,7 +18,7 @@ namespace NzbDrone.Core.Test.ParserTests.ParsingServiceTests
     [TestFixture]
     public class MapFixture : TestBase<ParsingService>
     {
-        private Movie _movie;
+        private Media _movie;
         private ParsedMovieInfo _parsedMovieInfo;
         private ParsedMovieInfo _wrongYearInfo;
         private ParsedMovieInfo _wrongTitleInfo;
@@ -34,13 +34,13 @@ namespace NzbDrone.Core.Test.ParserTests.ParsingServiceTests
         [SetUp]
         public void Setup()
         {
-            _movie = Builder<Movie>.CreateNew()
+            _movie = Builder<Media>.CreateNew()
                                    .With(m => m.Title = "Fack Ju Göthe 2")
-                                   .With(m => m.MovieMetadata.Value.CleanTitle = "fackjugoethe2")
+                                   .With(m => m.MediaMetadata.Value.CleanTitle = "fackjugoethe2")
                                    .With(m => m.Year = 2015)
-                                   .With(m => m.MovieMetadata.Value.AlternativeTitles = new List<AlternativeTitle> { new AlternativeTitle("Fack Ju Göthe 2: Same same") })
-                                   .With(m => m.MovieMetadata.Value.Translations = new List<MovieTranslation> { new MovieTranslation { Title = "Translated Title", CleanTitle = "translatedtitle" } })
-                                   .With(m => m.MovieMetadata.Value.OriginalLanguage = Language.English)
+                                   .With(m => m.MediaMetadata.Value.AlternativeTitles = new List<AlternativeTitle> { new AlternativeTitle("Fack Ju Göthe 2: Same same") })
+                                   .With(m => m.MediaMetadata.Value.Translations = new List<MovieTranslation> { new MovieTranslation { Title = "Translated Title", CleanTitle = "translatedtitle" } })
+                                   .With(m => m.MediaMetadata.Value.OriginalLanguage = Language.English)
                                    .Build();
 
             _parsedMovieInfo = new ParsedMovieInfo
@@ -66,14 +66,14 @@ namespace NzbDrone.Core.Test.ParserTests.ParsingServiceTests
 
             _alternativeTitleInfo = new ParsedMovieInfo
             {
-                MovieTitles = new List<string> { _movie.MovieMetadata.Value.AlternativeTitles.First().Title },
+                MovieTitles = new List<string> { _movie.MediaMetadata.Value.AlternativeTitles.First().Title },
                 Languages = new List<Language> { Language.English },
                 Year = _movie.Year,
             };
 
             _translationTitleInfo = new ParsedMovieInfo
             {
-                MovieTitles = new List<string> { _movie.MovieMetadata.Value.Translations.First().Title },
+                MovieTitles = new List<string> { _movie.MediaMetadata.Value.Translations.First().Title },
                 Languages = new List<Language> { Language.English },
                 Year = _movie.Year,
             };
@@ -129,7 +129,7 @@ namespace NzbDrone.Core.Test.ParserTests.ParsingServiceTests
         {
             GivenMatchByMovieTitle();
 
-            Subject.Map(_parsedMovieInfo, "", null);
+            Subject.Map(_parsedMovieInfo, null);
 
             Mocker.GetMock<IMovieService>()
                 .Verify(v => v.FindByTitle(It.IsAny<List<string>>(), It.IsAny<int>(), It.IsAny<List<string>>(), null), Times.Once());
@@ -140,7 +140,7 @@ namespace NzbDrone.Core.Test.ParserTests.ParsingServiceTests
         {
             GivenMatchByMovieTitle();
 
-            Subject.Map(_parsedMovieInfo, "", _movieSearchCriteria);
+            Subject.Map(_parsedMovieInfo, _movieSearchCriteria);
 
             Mocker.GetMock<IMovieService>()
                   .Verify(v => v.FindByTitle(It.IsAny<string>()), Times.Never());
@@ -150,14 +150,14 @@ namespace NzbDrone.Core.Test.ParserTests.ParsingServiceTests
         public void should_not_match_with_wrong_year()
         {
             GivenMatchByMovieTitle();
-            Subject.Map(_wrongYearInfo, "", _movieSearchCriteria).MappingResultType.Should().Be(MappingResultType.WrongYear);
+            Subject.Map(_wrongYearInfo, _movieSearchCriteria).MappingResultType.Should().Be(MappingResultType.WrongYear);
         }
 
         [Test]
         public void should_not_match_wrong_title()
         {
             GivenMatchByMovieTitle();
-            Subject.Map(_wrongTitleInfo, "", _movieSearchCriteria).MappingResultType.Should().Be(MappingResultType.WrongTitle);
+            Subject.Map(_wrongTitleInfo, _movieSearchCriteria).MappingResultType.Should().Be(MappingResultType.WrongTitle);
         }
 
         [Test]
@@ -165,49 +165,49 @@ namespace NzbDrone.Core.Test.ParserTests.ParsingServiceTests
         {
             Mocker.GetMock<IMovieService>()
                 .Setup(s => s.FindByTitle(It.IsAny<string>()))
-                .Returns((Movie)null);
-            Subject.Map(_parsedMovieInfo, "", null).MappingResultType.Should()
+                .Returns((Media)null);
+            Subject.Map(_parsedMovieInfo, null).MappingResultType.Should()
                 .Be(MappingResultType.TitleNotFound);
         }
 
         [Test]
         public void should_match_alternative_title()
         {
-            Subject.Map(_alternativeTitleInfo, "", _movieSearchCriteria).Movie.Should().Be(_movieSearchCriteria.Movie);
+            Subject.Map(_alternativeTitleInfo, _movieSearchCriteria).Movie.Should().Be(_movieSearchCriteria.Movie);
         }
 
         [Test]
         public void should_match_translation_title()
         {
-            Subject.Map(_translationTitleInfo, "", _movieSearchCriteria).Movie.Should().Be(_movieSearchCriteria.Movie);
+            Subject.Map(_translationTitleInfo, _movieSearchCriteria).Movie.Should().Be(_movieSearchCriteria.Movie);
         }
 
         [Test]
         public void should_match_roman_title()
         {
-            Subject.Map(_romanTitleInfo, "", _movieSearchCriteria).Movie.Should().Be(_movieSearchCriteria.Movie);
+            Subject.Map(_romanTitleInfo, _movieSearchCriteria).Movie.Should().Be(_movieSearchCriteria.Movie);
         }
 
         [Test]
         public void should_match_umlauts()
         {
-            Subject.Map(_umlautInfo, "", _movieSearchCriteria).Movie.Should().Be(_movieSearchCriteria.Movie);
-            Subject.Map(_umlautAltInfo, "", _movieSearchCriteria).Movie.Should().Be(_movieSearchCriteria.Movie);
+            Subject.Map(_umlautInfo, _movieSearchCriteria).Movie.Should().Be(_movieSearchCriteria.Movie);
+            Subject.Map(_umlautAltInfo, _movieSearchCriteria).Movie.Should().Be(_movieSearchCriteria.Movie);
         }
 
         [Test]
         public void should_convert_original()
         {
-            Subject.Map(_multiLanguageInfo, "", _movieSearchCriteria).RemoteMovie.ParsedMovieInfo.Languages.Should().Contain(Language.English);
-            Subject.Map(_multiLanguageInfo, "", _movieSearchCriteria).RemoteMovie.ParsedMovieInfo.Languages.Should().Contain(Language.French);
+            Subject.Map(_multiLanguageInfo, _movieSearchCriteria).RemoteMovie.ParsedMovieInfo.Languages.Should().Contain(Language.English);
+            Subject.Map(_multiLanguageInfo, _movieSearchCriteria).RemoteMovie.ParsedMovieInfo.Languages.Should().Contain(Language.French);
         }
 
         [Test]
         public void should_remove_original_as_already_exists()
         {
-            Subject.Map(_multiLanguageWithOriginalInfo, "", _movieSearchCriteria).RemoteMovie.ParsedMovieInfo.Languages.Should().Contain(Language.English);
-            Subject.Map(_multiLanguageWithOriginalInfo, "", _movieSearchCriteria).RemoteMovie.ParsedMovieInfo.Languages.Should().Contain(Language.French);
-            Subject.Map(_multiLanguageWithOriginalInfo, "", _movieSearchCriteria).RemoteMovie.ParsedMovieInfo.Languages.Should().NotContain(Language.Original);
+            Subject.Map(_multiLanguageWithOriginalInfo, _movieSearchCriteria).RemoteMovie.ParsedMovieInfo.Languages.Should().Contain(Language.English);
+            Subject.Map(_multiLanguageWithOriginalInfo, _movieSearchCriteria).RemoteMovie.ParsedMovieInfo.Languages.Should().Contain(Language.French);
+            Subject.Map(_multiLanguageWithOriginalInfo, _movieSearchCriteria).RemoteMovie.ParsedMovieInfo.Languages.Should().NotContain(Language.Original);
         }
     }
 }

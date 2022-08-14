@@ -21,14 +21,14 @@ namespace NzbDrone.Core.HealthCheck.Checks
 
         public override HealthCheck Check()
         {
-            var deletedMovie = _movieService.GetAllMovies().Where(v => v.MovieMetadata.Value.Status == MovieStatusType.Deleted).ToList();
+            var deletedMovie = _movieService.GetAllMovies().Where(v => v.MediaMetadata.Value.Status == MovieStatusType.Deleted).ToList();
 
             if (deletedMovie.Empty())
             {
                 return new HealthCheck(GetType());
             }
 
-            var movieText = deletedMovie.Select(s => $"{s.Title} (tmdbid {s.TmdbId})").Join(", ");
+            var movieText = deletedMovie.Select(s => $"{s.Title} (tmdbid {s.ForiegnId})").Join(", ");
 
             if (deletedMovie.Count == 1)
             {
@@ -40,12 +40,12 @@ namespace NzbDrone.Core.HealthCheck.Checks
 
         public bool ShouldCheckOnEvent(MoviesDeletedEvent message)
         {
-            return message.Movies.Any(m => m.MovieMetadata.Value.Status == MovieStatusType.Deleted);
+            return message.Movies.Any(m => m.MediaMetadata.Value.Status == MovieStatusType.Deleted);
         }
 
         public bool ShouldCheckOnEvent(MovieUpdatedEvent message)
         {
-            return message.Movie.MovieMetadata.Value.Status == MovieStatusType.Deleted;
+            return message.Movie.MediaMetadata.Value.Status == MovieStatusType.Deleted;
         }
     }
 }

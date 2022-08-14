@@ -36,7 +36,7 @@ namespace NzbDrone.Core.ImportLists.TMDb
         {
             var movie =  new ImportListMovie
             {
-                TmdbId = movieResult.Id,
+                ForiegnId = movieResult.Id,
                 Title = movieResult.Title,
             };
 

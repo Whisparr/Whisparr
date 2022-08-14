@@ -9,21 +9,21 @@ namespace NzbDrone.Core.Movies
 {
     public interface IMovieCutoffService
     {
-        PagingSpec<Movie> MoviesWhereCutoffUnmet(PagingSpec<Movie> pagingSpec);
+        PagingSpec<Media> MoviesWhereCutoffUnmet(PagingSpec<Media> pagingSpec);
     }
 
     public class MovieCutoffService : IMovieCutoffService
     {
-        private readonly IMovieRepository _movieRepository;
+        private readonly IMediaRepository _movieRepository;
         private readonly IProfileService _profileService;
 
-        public MovieCutoffService(IMovieRepository movieRepository, IProfileService profileService, Logger logger)
+        public MovieCutoffService(IMediaRepository movieRepository, IProfileService profileService, Logger logger)
         {
             _movieRepository = movieRepository;
             _profileService = profileService;
         }
 
-        public PagingSpec<Movie> MoviesWhereCutoffUnmet(PagingSpec<Movie> pagingSpec)
+        public PagingSpec<Media> MoviesWhereCutoffUnmet(PagingSpec<Media> pagingSpec)
         {
             var qualitiesBelowCutoff = new List<QualitiesBelowCutoff>();
             var profiles = _profileService.All();

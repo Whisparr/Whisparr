@@ -5,9 +5,9 @@ namespace NzbDrone.Core.MediaFiles.Events
 {
     public class MovieScannedEvent : IEvent
     {
-        public Movie Movie { get; private set; }
+        public Media Movie { get; private set; }
 
-        public MovieScannedEvent(Movie movie)
+        public MovieScannedEvent(Media movie)
         {
             Movie = movie;
         }

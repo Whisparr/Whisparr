@@ -5,8 +5,8 @@ namespace NzbDrone.Core.MetadataSource
 {
     public interface ISearchForNewMovie
     {
-        List<Movie> SearchForNewMovie(string title);
+        List<Media> SearchForNewMovie(string title);
 
-        MovieMetadata MapMovieToTmdbMovie(MovieMetadata movie);
+        MediaMetadata MapMovieToTmdbMovie(MediaMetadata movie);
     }
 }

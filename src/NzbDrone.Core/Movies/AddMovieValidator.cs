@@ -6,10 +6,10 @@ namespace NzbDrone.Core.Movies
 {
     public interface IAddMovieValidator
     {
-        ValidationResult Validate(Movie instance);
+        ValidationResult Validate(Media instance);
     }
 
-    public class AddMovieValidator : AbstractValidator<Movie>, IAddMovieValidator
+    public class AddMovieValidator : AbstractValidator<Media>, IAddMovieValidator
     {
         public AddMovieValidator(RootFolderValidator rootFolderValidator,
                                  RecycleBinValidator recycleBinValidator,

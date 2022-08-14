@@ -12,7 +12,7 @@ namespace NzbDrone.Core.Queue
 {
     public class Queue : ModelBase
     {
-        public Movie Movie { get; set; }
+        public Media Movie { get; set; }
         public List<Language> Languages { get; set; }
         public QualityModel Quality { get; set; }
         public decimal Size { get; set; }

@@ -5,10 +5,10 @@ namespace NzbDrone.Core.MediaFiles.Events
 {
     public class MovieScanSkippedEvent : IEvent
     {
-        public Movie Movie { get; private set; }
+        public Media Movie { get; private set; }
         public MovieScanSkippedReason Reason { get; set; }
 
-        public MovieScanSkippedEvent(Movie movie, MovieScanSkippedReason reason)
+        public MovieScanSkippedEvent(Media movie, MovieScanSkippedReason reason)
         {
             Movie = movie;
             Reason = reason;

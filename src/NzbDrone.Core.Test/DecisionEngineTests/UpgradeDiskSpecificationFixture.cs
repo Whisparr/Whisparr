@@ -23,7 +23,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         private UpgradeDiskSpecification _upgradeDisk;
 
         private RemoteMovie _parseResultSingle;
-        private MovieFile _firstFile;
+        private MediaFile _firstFile;
 
         [SetUp]
         public void Setup()
@@ -33,9 +33,9 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
 
             CustomFormatsFixture.GivenCustomFormats();
 
-            _firstFile = new MovieFile { Quality = new QualityModel(Quality.Bluray1080p, new Revision(version: 2)), DateAdded = DateTime.Now };
+            _firstFile = new MediaFile { Quality = new QualityModel(Quality.Bluray1080p, new Revision(version: 2)), DateAdded = DateTime.Now };
 
-            var fakeSeries = Builder<Movie>.CreateNew()
+            var fakeSeries = Builder<Media>.CreateNew()
                 .With(c => c.Profile = new Profile
                 {
                     Cutoff = Quality.Bluray1080p.Id, Items = Qualities.QualityFixture.GetDefaultQualities(),
@@ -53,7 +53,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             };
 
             Mocker.GetMock<ICustomFormatCalculationService>()
-                .Setup(x => x.ParseCustomFormat(It.IsAny<MovieFile>()))
+                .Setup(x => x.ParseCustomFormat(It.IsAny<MediaFile>()))
                 .Returns(new List<CustomFormat>());
         }
 
@@ -80,7 +80,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         public void should_not_be_upgradable_if_qualities_are_the_same()
         {
             Mocker.GetMock<ICustomFormatCalculationService>()
-                .Setup(x => x.ParseCustomFormat(It.IsAny<MovieFile>()))
+                .Setup(x => x.ParseCustomFormat(It.IsAny<MediaFile>()))
                 .Returns(new List<CustomFormat>());
 
             _firstFile.Quality = new QualityModel(Quality.WEBDL1080p);

@@ -255,7 +255,7 @@ namespace NzbDrone.Core.Download.Pending
         {
             var result = new List<PendingRelease>();
 
-            var movieMap = new Dictionary<int, Movie>();
+            var movieMap = new Dictionary<int, Media>();
 
             if (knownRemoteMovies != null)
             {
@@ -391,12 +391,12 @@ namespace NzbDrone.Core.Download.Pending
             return GetPendingReleases().First(p => queueId == GetQueueId(p, p.RemoteMovie.Movie));
         }
 
-        private int GetQueueId(PendingRelease pendingRelease, Movie movie)
+        private int GetQueueId(PendingRelease pendingRelease, Media movie)
         {
             return HashConverter.GetHashInt31(string.Format("pending-{0}-movie{1}", pendingRelease.Id, movie.Id));
         }
 
-        private int PrioritizeDownloadProtocol(Movie movie, DownloadProtocol downloadProtocol)
+        private int PrioritizeDownloadProtocol(Media movie, DownloadProtocol downloadProtocol)
         {
             var delayProfile = _delayProfileService.BestForTags(movie.Tags);
 

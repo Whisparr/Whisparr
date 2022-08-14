@@ -9,7 +9,7 @@ namespace NzbDrone.Core.Extras.Others
 {
     public interface IOtherExtraFileRenamer
     {
-        void RenameOtherExtraFile(Movie movie, string path);
+        void RenameOtherExtraFile(Media movie, string path);
     }
 
     public class OtherExtraFileRenamer : IOtherExtraFileRenamer
@@ -30,7 +30,7 @@ namespace NzbDrone.Core.Extras.Others
             _otherExtraFileService = otherExtraFileService;
         }
 
-        public void RenameOtherExtraFile(Movie movie, string path)
+        public void RenameOtherExtraFile(Media movie, string path)
         {
             if (!_diskProvider.FileExists(path))
             {
@@ -55,7 +55,7 @@ namespace NzbDrone.Core.Extras.Others
             }
         }
 
-        private void RemoveOtherExtraFile(Movie movie, string path)
+        private void RemoveOtherExtraFile(Media movie, string path)
         {
             if (!_diskProvider.FileExists(path))
             {

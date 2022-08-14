@@ -17,9 +17,9 @@ namespace NzbDrone.Core.Organizer
     {
         private readonly IBuildFileNames _buildFileNames;
 
-        private static MovieFile _movieFile;
-        private static Movie _movie;
-        private static MovieMetadata _movieMetadata;
+        private static MediaFile _movieFile;
+        private static Media _movie;
+        private static MediaMetadata _movieMetadata;
         private static List<CustomFormat> _customFormats;
 
         public FileNameSampleService(IBuildFileNames buildFileNames)
@@ -40,7 +40,7 @@ namespace NzbDrone.Core.Organizer
                 Subtitles = new List<string> { "eng", "ger" }
             };
 
-            _movieFile = new MovieFile
+            _movieFile = new MediaFile
             {
                 Quality = new QualityModel(Quality.Bluray1080p, new Revision(2)),
                 RelativePath = "The.Movie.Title.2010.1080p.BluRay.DTS.x264-EVOLVE.mkv",
@@ -50,22 +50,21 @@ namespace NzbDrone.Core.Organizer
                 Edition = "Ultimate extended edition",
             };
 
-            _movieMetadata = new MovieMetadata
+            _movieMetadata = new MediaMetadata
             {
                 Title = "The Movie: Title",
                 OriginalTitle = "The Original Movie Title",
                 Collection = new MovieCollection { Name = "The Movie Collection", TmdbId = 123654 },
                 Certification = "R",
                 Year = 2010,
-                ImdbId = "tt0066921",
-                TmdbId = 345691
+                ForiegnId = 345691
             };
 
-            _movie = new Movie
+            _movie = new Media
             {
                 MovieFile = _movieFile,
                 MovieFileId = 1,
-                MovieMetadata = _movieMetadata,
+                MediaMetadata = _movieMetadata,
                 MovieMetadataId = 1
             };
 
@@ -99,7 +98,7 @@ namespace NzbDrone.Core.Organizer
             return _buildFileNames.GetMovieFolder(_movie, nameSpec);
         }
 
-        private string BuildSample(Movie movie, MovieFile movieFile, NamingConfig nameSpec)
+        private string BuildSample(Media movie, MediaFile movieFile, NamingConfig nameSpec)
         {
             try
             {

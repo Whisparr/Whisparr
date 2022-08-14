@@ -67,7 +67,7 @@ namespace NzbDrone.Core.Notifications.Webhook
             _proxy.SendWebhook(payload, Settings);
         }
 
-        public override void OnMovieRename(Movie movie, List<RenamedMovieFile> renamedFiles)
+        public override void OnMovieRename(Media movie, List<RenamedMovieFile> renamedFiles)
         {
             var payload = new WebhookRenamePayload
             {
@@ -79,7 +79,7 @@ namespace NzbDrone.Core.Notifications.Webhook
             _proxy.SendWebhook(payload, Settings);
         }
 
-        public override void OnMovieAdded(Movie movie)
+        public override void OnMovieAdded(Media movie)
         {
             var payload = new WebhookRenamePayload
             {

@@ -12,7 +12,7 @@ namespace NzbDrone.Core.Movies.Translations
     {
         List<MovieTranslation> GetAllTranslationsForMovieMetadata(int movieMetadataId);
         List<MovieTranslation> GetAllTranslationsForLanguage(Language language);
-        List<MovieTranslation> UpdateTranslations(List<MovieTranslation> titles, MovieMetadata movie);
+        List<MovieTranslation> UpdateTranslations(List<MovieTranslation> titles, MediaMetadata movie);
     }
 
     public class MovieTranslationService : IMovieTranslationService, IHandleAsync<MoviesDeletedEvent>
@@ -42,7 +42,7 @@ namespace NzbDrone.Core.Movies.Translations
             _translationRepo.Delete(title);
         }
 
-        public List<MovieTranslation> UpdateTranslations(List<MovieTranslation> translations, MovieMetadata movieMetadata)
+        public List<MovieTranslation> UpdateTranslations(List<MovieTranslation> translations, MediaMetadata movieMetadata)
         {
             int movieMetadataId = movieMetadata.Id;
 

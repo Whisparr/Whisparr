@@ -14,13 +14,13 @@ namespace NzbDrone.Core.Test.MediaFiles.MovieImport.Specifications
     [TestFixture]
     public class UpgradeSpecificationFixture : CoreTest<UpgradeSpecification>
     {
-        private Movie _movie;
+        private Media _movie;
         private LocalMovie _localMovie;
 
         [SetUp]
         public void Setup()
         {
-            _movie = Builder<Movie>.CreateNew()
+            _movie = Builder<Media>.CreateNew()
                                      .With(e => e.Profile = new Profile { Items = Qualities.QualityFixture.GetDefaultQualities() })
                                      .Build();
 
@@ -46,7 +46,7 @@ namespace NzbDrone.Core.Test.MediaFiles.MovieImport.Specifications
         {
             _localMovie.Movie.MovieFileId = 1;
             _localMovie.Movie.MovieFile =
-                    new MovieFile
+                    new MediaFile
                     {
                         Quality = new QualityModel(Quality.SDTV, new Revision(version: 1))
                     };
@@ -59,7 +59,7 @@ namespace NzbDrone.Core.Test.MediaFiles.MovieImport.Specifications
         {
             _localMovie.Movie.MovieFileId = 1;
             _localMovie.Movie.MovieFile =
-                new MovieFile
+                new MediaFile
                 {
                     Quality = new QualityModel(Quality.Bluray720p, new Revision(version: 1))
                 };

@@ -49,11 +49,11 @@ namespace NzbDrone.Core.Notifications
         {
         }
 
-        public virtual void OnMovieRename(Movie movie, List<RenamedMovieFile> renamedFiles)
+        public virtual void OnMovieRename(Media movie, List<RenamedMovieFile> renamedFiles)
         {
         }
 
-        public virtual void OnMovieAdded(Movie movie)
+        public virtual void OnMovieAdded(Media movie)
         {
         }
 

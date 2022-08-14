@@ -31,7 +31,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
 
             _remoteMovie = new RemoteMovie()
             {
-                Movie = Builder<Movie>.CreateNew().Build(),
+                Movie = Builder<Media>.CreateNew().Build(),
                 ParsedMovieInfo = Builder<ParsedMovieInfo>.CreateNew().With(x => x.Quality = null).Build()
             };
 
@@ -50,7 +50,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
 
         private void GivenFileQuality(QualityModel quality)
         {
-            _remoteMovie.Movie.MovieFile = Builder<MovieFile>.CreateNew().With(x => x.Quality = quality).Build();
+            _remoteMovie.Movie.MovieFile = Builder<MediaFile>.CreateNew().With(x => x.Quality = quality).Build();
         }
 
         private void GivenNewQuality(QualityModel quality)
@@ -61,7 +61,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         private void GivenOldCustomFormats(List<CustomFormat> formats)
         {
             Mocker.GetMock<ICustomFormatCalculationService>()
-                .Setup(x => x.ParseCustomFormat(It.IsAny<MovieFile>()))
+                .Setup(x => x.ParseCustomFormat(It.IsAny<MediaFile>()))
                 .Returns(formats);
         }
 

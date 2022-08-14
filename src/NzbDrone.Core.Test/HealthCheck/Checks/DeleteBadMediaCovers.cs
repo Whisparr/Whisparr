@@ -20,12 +20,12 @@ namespace NzbDrone.Core.Test.HealthCheck.Checks
     public class DeleteBadMediaCoversFixture : CoreTest<DeleteBadMediaCovers>
     {
         private List<MetadataFile> _metadata;
-        private List<Movie> _movies;
+        private List<Media> _movies;
 
         [SetUp]
         public void Setup()
         {
-            _movies = Builder<Movie>.CreateListOfSize(1)
+            _movies = Builder<Media>.CreateListOfSize(1)
                 .All()
                 .With(c => c.Path = "C:\\Movie\\".AsOsAgnostic())
                 .Build().ToList();

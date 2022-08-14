@@ -14,12 +14,12 @@ namespace NzbDrone.Core.Extras.Files
     public interface IManageExtraFiles
     {
         int Order { get; }
-        IEnumerable<ExtraFile> CreateAfterMediaCoverUpdate(Movie movie);
-        IEnumerable<ExtraFile> CreateAfterMovieScan(Movie movie, List<MovieFile> movieFiles);
-        IEnumerable<ExtraFile> CreateAfterMovieImport(Movie movie, MovieFile movieFile);
-        IEnumerable<ExtraFile> CreateAfterMovieFolder(Movie movie, string movieFolder);
-        IEnumerable<ExtraFile> MoveFilesAfterRename(Movie movie, List<MovieFile> movieFiles);
-        ExtraFile Import(Movie movie, MovieFile movieFile, string path, string extension, bool readOnly);
+        IEnumerable<ExtraFile> CreateAfterMediaCoverUpdate(Media movie);
+        IEnumerable<ExtraFile> CreateAfterMovieScan(Media movie, List<MediaFile> movieFiles);
+        IEnumerable<ExtraFile> CreateAfterMovieImport(Media movie, MediaFile movieFile);
+        IEnumerable<ExtraFile> CreateAfterMovieFolder(Media movie, string movieFolder);
+        IEnumerable<ExtraFile> MoveFilesAfterRename(Media movie, List<MediaFile> movieFiles);
+        ExtraFile Import(Media movie, MediaFile movieFile, string path, string extension, bool readOnly);
     }
 
     public abstract class ExtraFileManager<TExtraFile> : IManageExtraFiles
@@ -42,14 +42,14 @@ namespace NzbDrone.Core.Extras.Files
         }
 
         public abstract int Order { get; }
-        public abstract IEnumerable<ExtraFile> CreateAfterMediaCoverUpdate(Movie movie);
-        public abstract IEnumerable<ExtraFile> CreateAfterMovieScan(Movie movie, List<MovieFile> movieFiles);
-        public abstract IEnumerable<ExtraFile> CreateAfterMovieImport(Movie movie, MovieFile movieFile);
-        public abstract IEnumerable<ExtraFile> CreateAfterMovieFolder(Movie movie, string movieFolder);
-        public abstract IEnumerable<ExtraFile> MoveFilesAfterRename(Movie movie, List<MovieFile> movieFiles);
-        public abstract ExtraFile Import(Movie movie, MovieFile movieFile, string path, string extension, bool readOnly);
+        public abstract IEnumerable<ExtraFile> CreateAfterMediaCoverUpdate(Media movie);
+        public abstract IEnumerable<ExtraFile> CreateAfterMovieScan(Media movie, List<MediaFile> movieFiles);
+        public abstract IEnumerable<ExtraFile> CreateAfterMovieImport(Media movie, MediaFile movieFile);
+        public abstract IEnumerable<ExtraFile> CreateAfterMovieFolder(Media movie, string movieFolder);
+        public abstract IEnumerable<ExtraFile> MoveFilesAfterRename(Media movie, List<MediaFile> movieFiles);
+        public abstract ExtraFile Import(Media movie, MediaFile movieFile, string path, string extension, bool readOnly);
 
-        protected TExtraFile ImportFile(Movie movie, MovieFile movieFile, string path, bool readOnly, string extension, string fileNameSuffix = null)
+        protected TExtraFile ImportFile(Media movie, MediaFile movieFile, string path, bool readOnly, string extension, string fileNameSuffix = null)
         {
             var movieFilePath = Path.Combine(movie.Path, movieFile.RelativePath);
             var newFolder = Path.GetDirectoryName(movieFilePath);
@@ -88,7 +88,7 @@ namespace NzbDrone.Core.Extras.Files
             };
         }
 
-        protected TExtraFile MoveFile(Movie movie, MovieFile movieFile, TExtraFile extraFile, string fileNameSuffix = null)
+        protected TExtraFile MoveFile(Media movie, MediaFile movieFile, TExtraFile extraFile, string fileNameSuffix = null)
         {
             var newFolder = Path.GetDirectoryName(Path.Combine(movie.Path, movieFile.RelativePath));
             var filenameBuilder = new StringBuilder(Path.GetFileNameWithoutExtension(movieFile.RelativePath));

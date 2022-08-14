@@ -18,7 +18,7 @@ namespace NzbDrone.Core.Test.MovieTests.AlternativeTitleServiceTests
         private Credit _credit2;
         private Credit _credit3;
 
-        private MovieMetadata _movie;
+        private MediaMetadata _movie;
 
         [SetUp]
         public void Setup()
@@ -31,7 +31,7 @@ namespace NzbDrone.Core.Test.MovieTests.AlternativeTitleServiceTests
             _credit2 = credits[1];
             _credit3 = credits[2];
 
-            _movie = Builder<MovieMetadata>.CreateNew().With(m => m.Id = 1).Build();
+            _movie = Builder<MediaMetadata>.CreateNew().With(m => m.Id = 1).Build();
         }
 
         private void GivenExistingCredits(params Credit[] credits)

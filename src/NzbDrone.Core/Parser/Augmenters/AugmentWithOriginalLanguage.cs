@@ -10,15 +10,15 @@ namespace NzbDrone.Core.Parser.Augmenters
         {
             get
             {
-                return typeof(Movie);
+                return typeof(Media);
             }
         }
 
         public ParsedMovieInfo AugmentMovieInfo(ParsedMovieInfo movieInfo, object helper)
         {
-            if (helper is Movie movie && movie?.MovieMetadata.Value.OriginalLanguage != null && movieInfo != null)
+            if (helper is Media movie && movie?.MediaMetadata.Value.OriginalLanguage != null && movieInfo != null)
             {
-                movieInfo.ExtraInfo["OriginalLanguage"] = movie.MovieMetadata.Value.OriginalLanguage;
+                movieInfo.ExtraInfo["OriginalLanguage"] = movie.MediaMetadata.Value.OriginalLanguage;
             }
 
             return movieInfo;

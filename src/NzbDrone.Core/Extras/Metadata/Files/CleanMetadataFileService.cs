@@ -7,7 +7,7 @@ namespace NzbDrone.Core.Extras.Metadata.Files
 {
     public interface ICleanMetadataService
     {
-        void Clean(Movie movie);
+        void Clean(Media movie);
     }
 
     public class CleanExtraFileService : ICleanMetadataService
@@ -25,7 +25,7 @@ namespace NzbDrone.Core.Extras.Metadata.Files
             _logger = logger;
         }
 
-        public void Clean(Movie movie)
+        public void Clean(Media movie)
         {
             _logger.Debug("Cleaning missing metadata files for movie: {0}", movie.Title);
 

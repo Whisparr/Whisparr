@@ -25,13 +25,13 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
                 {
                     Languages = new List<Language> { Language.English }
                 },
-                Movie = new Movie
+                Movie = new Media
                          {
                              Profile = new Profile
                              {
                                  Language = Language.English
                              },
-                             MovieMetadata = new MovieMetadata
+                             MediaMetadata = new MediaMetadata
                              {
                                  OriginalLanguage = Language.French
                              }

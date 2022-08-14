@@ -27,7 +27,7 @@ namespace NzbDrone.Core.Notifications.Prowl
             _prowlProxy.SendNotification(MOVIE_DOWNLOADED_TITLE, message.Message, Settings);
         }
 
-        public override void OnMovieAdded(Movie movie)
+        public override void OnMovieAdded(Media movie)
         {
             _prowlProxy.SendNotification(MOVIE_ADDED_TITLE, $"{movie.Title} added to library", Settings);
         }

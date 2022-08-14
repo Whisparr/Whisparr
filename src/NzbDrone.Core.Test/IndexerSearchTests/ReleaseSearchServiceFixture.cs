@@ -19,7 +19,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
         public class ReleaseSearchServiceFixture : CoreTest<ReleaseSearchService>
     {
         private Mock<IIndexer> _mockIndexer;
-        private Movie _movie;
+        private Media _movie;
 
         [SetUp]
         public void SetUp()
@@ -36,7 +36,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
                 .Setup(s => s.GetSearchDecision(It.IsAny<List<Parser.Model.ReleaseInfo>>(), It.IsAny<SearchCriteriaBase>()))
                 .Returns(new List<DownloadDecision>());
 
-            _movie = Builder<Movie>.CreateNew()
+            _movie = Builder<Media>.CreateNew()
                 .With(v => v.Monitored = true)
                 .Build();
 
@@ -86,7 +86,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
                 Id = 1
             });
 
-            _movie = Builder<Movie>.CreateNew()
+            _movie = Builder<Media>.CreateNew()
                 .With(v => v.Monitored = true)
                 .With(v => v.Tags = new HashSet<int> { 3 })
                 .Build();
@@ -113,7 +113,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
                 Tags = new HashSet<int> { 1, 2, 3 }
             });
 
-            _movie = Builder<Movie>.CreateNew()
+            _movie = Builder<Media>.CreateNew()
                 .With(v => v.Monitored = true)
                 .With(v => v.Tags = new HashSet<int> { 3, 4, 5 })
                 .Build();
@@ -140,7 +140,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
                 Tags = new HashSet<int> { 1, 2, 3 }
             });
 
-            _movie = Builder<Movie>.CreateNew()
+            _movie = Builder<Media>.CreateNew()
                 .With(v => v.Monitored = true)
                 .With(v => v.Tags = new HashSet<int> { 4, 5, 6 })
                 .Build();

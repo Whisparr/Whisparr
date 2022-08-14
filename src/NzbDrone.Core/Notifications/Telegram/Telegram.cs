@@ -35,7 +35,7 @@ namespace NzbDrone.Core.Notifications.Telegram
             }
         }
 
-        public override void OnMovieAdded(Movie movie)
+        public override void OnMovieAdded(Media movie)
         {
             _proxy.SendNotification(MOVIE_ADDED_TITLE, $"{movie.Title} added to library", Settings);
         }

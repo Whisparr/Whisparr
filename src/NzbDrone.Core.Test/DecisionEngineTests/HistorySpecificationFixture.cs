@@ -30,7 +30,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         private RemoteMovie _parseResultSingle;
         private QualityModel _upgradableQuality;
         private QualityModel _notupgradableQuality;
-        private Movie _fakeMovie;
+        private Media _fakeMovie;
 
         [SetUp]
         public void Setup()
@@ -40,7 +40,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
 
             CustomFormatsFixture.GivenCustomFormats();
 
-            _fakeMovie = Builder<Movie>.CreateNew()
+            _fakeMovie = Builder<Media>.CreateNew()
                 .With(c => c.Profile = new Profile
                 {
                     Items = Qualities.QualityFixture.GetDefaultQualities(),

@@ -28,7 +28,7 @@ namespace NzbDrone.Core.Test.QueueTests
                                         .With(v => v.DownloadClientInfo = downloadClientInfo)
                                         .Build();
 
-            var series = Builder<Movie>.CreateNew()
+            var series = Builder<Media>.CreateNew()
                                         .Build();
 
             var remoteEpisode = Builder<RemoteMovie>.CreateNew()

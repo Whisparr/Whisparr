@@ -11,10 +11,10 @@ namespace NzbDrone.Core.Notifications
 
         void OnGrab(GrabMessage grabMessage);
         void OnDownload(DownloadMessage message);
-        void OnMovieRename(Movie movie, List<RenamedMovieFile> renamedFiles);
+        void OnMovieRename(Media movie, List<RenamedMovieFile> renamedFiles);
         void OnMovieFileDelete(MovieFileDeleteMessage deleteMessage);
         void OnMovieDelete(MovieDeleteMessage deleteMessage);
-        void OnMovieAdded(Movie movie);
+        void OnMovieAdded(Media movie);
         void OnHealthIssue(HealthCheck.HealthCheck healthCheck);
         void OnApplicationUpdate(ApplicationUpdateMessage updateMessage);
         void ProcessQueue();

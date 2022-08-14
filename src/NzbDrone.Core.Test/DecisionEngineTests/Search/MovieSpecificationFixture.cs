@@ -12,16 +12,16 @@ namespace NzbDrone.Core.Test.DecisionEngineTests.Search
     [TestFixture]
     public class MovieSpecificationFixture : TestBase<MovieSpecification>
     {
-        private Movie _movie1;
-        private Movie _movie2;
+        private Media _movie1;
+        private Media _movie2;
         private RemoteMovie _remoteEpisode = new RemoteMovie();
         private SearchCriteriaBase _searchCriteria = new MovieSearchCriteria();
 
         [SetUp]
         public void Setup()
         {
-            _movie1 = Builder<Movie>.CreateNew().With(s => s.Id = 1).Build();
-            _movie2 = Builder<Movie>.CreateNew().With(s => s.Id = 2).Build();
+            _movie1 = Builder<Media>.CreateNew().With(s => s.Id = 1).Build();
+            _movie2 = Builder<Media>.CreateNew().With(s => s.Id = 2).Build();
 
             _remoteEpisode.Movie = _movie1;
         }

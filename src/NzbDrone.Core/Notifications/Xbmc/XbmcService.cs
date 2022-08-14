@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using FluentValidation.Results;
@@ -11,7 +11,7 @@ namespace NzbDrone.Core.Notifications.Xbmc
     public interface IXbmcService
     {
         void Notify(XbmcSettings settings, string title, string message);
-        void UpdateMovie(XbmcSettings settings, Movie movie);
+        void UpdateMovie(XbmcSettings settings, Media movie);
         void Clean(XbmcSettings settings);
         ValidationFailure Test(XbmcSettings settings, string message);
     }
@@ -33,7 +33,7 @@ namespace NzbDrone.Core.Notifications.Xbmc
             _proxy.Notify(settings, title, message);
         }
 
-        public void UpdateMovie(XbmcSettings settings, Movie movie)
+        public void UpdateMovie(XbmcSettings settings, Media movie)
         {
             if (!settings.AlwaysUpdate)
             {
@@ -55,7 +55,7 @@ namespace NzbDrone.Core.Notifications.Xbmc
             _proxy.CleanLibrary(settings);
         }
 
-        public string GetMoviePath(XbmcSettings settings, Movie movie)
+        public string GetMoviePath(XbmcSettings settings, Media movie)
         {
             var allMovies = _proxy.GetMovies(settings);
 
@@ -67,7 +67,7 @@ namespace NzbDrone.Core.Notifications.Xbmc
 
             var matchingMovies = allMovies.FirstOrDefault(s =>
             {
-                return s.ImdbNumber == movie.ImdbId || s.Label == movie.Title;
+                return s.Label == movie.Title;
             });
 
             if (matchingMovies != null)
@@ -78,7 +78,7 @@ namespace NzbDrone.Core.Notifications.Xbmc
             return null;
         }
 
-        private void UpdateMovieLibrary(XbmcSettings settings, Movie movie)
+        private void UpdateMovieLibrary(XbmcSettings settings, Media movie)
         {
             try
             {

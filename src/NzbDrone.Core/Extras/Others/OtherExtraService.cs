@@ -29,27 +29,27 @@ namespace NzbDrone.Core.Extras.Others
 
         public override int Order => 2;
 
-        public override IEnumerable<ExtraFile> CreateAfterMediaCoverUpdate(Movie movie)
+        public override IEnumerable<ExtraFile> CreateAfterMediaCoverUpdate(Media movie)
         {
             return Enumerable.Empty<ExtraFile>();
         }
 
-        public override IEnumerable<ExtraFile> CreateAfterMovieScan(Movie movie, List<MovieFile> movieFiles)
+        public override IEnumerable<ExtraFile> CreateAfterMovieScan(Media movie, List<MediaFile> movieFiles)
         {
             return Enumerable.Empty<ExtraFile>();
         }
 
-        public override IEnumerable<ExtraFile> CreateAfterMovieImport(Movie movie, MovieFile movieFile)
+        public override IEnumerable<ExtraFile> CreateAfterMovieImport(Media movie, MediaFile movieFile)
         {
             return Enumerable.Empty<ExtraFile>();
         }
 
-        public override IEnumerable<ExtraFile> CreateAfterMovieFolder(Movie movie, string movieFolder)
+        public override IEnumerable<ExtraFile> CreateAfterMovieFolder(Media movie, string movieFolder)
         {
             return Enumerable.Empty<ExtraFile>();
         }
 
-        public override IEnumerable<ExtraFile> MoveFilesAfterRename(Movie movie, List<MovieFile> movieFiles)
+        public override IEnumerable<ExtraFile> MoveFilesAfterRename(Media movie, List<MediaFile> movieFiles)
         {
             var extraFiles = _otherExtraFileService.GetFilesByMovie(movie.Id);
             var movedFiles = new List<OtherExtraFile>();
@@ -69,7 +69,7 @@ namespace NzbDrone.Core.Extras.Others
             return movedFiles;
         }
 
-        public override ExtraFile Import(Movie movie, MovieFile movieFile, string path, string extension, bool readOnly)
+        public override ExtraFile Import(Media movie, MediaFile movieFile, string path, string extension, bool readOnly)
         {
             var extraFile = ImportFile(movie, movieFile, path, readOnly, extension, null);
 

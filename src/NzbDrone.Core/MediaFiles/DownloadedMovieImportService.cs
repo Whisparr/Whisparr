@@ -20,8 +20,8 @@ namespace NzbDrone.Core.MediaFiles
     public interface IDownloadedMovieImportService
     {
         List<ImportResult> ProcessRootFolder(DirectoryInfo directoryInfo);
-        List<ImportResult> ProcessPath(string path, ImportMode importMode = ImportMode.Auto, Movie movie = null, DownloadClientItem downloadClientItem = null);
-        bool ShouldDeleteFolder(DirectoryInfo directoryInfo, Movie movie);
+        List<ImportResult> ProcessPath(string path, ImportMode importMode = ImportMode.Auto, Media movie = null, DownloadClientItem downloadClientItem = null);
+        bool ShouldDeleteFolder(DirectoryInfo directoryInfo, Media movie);
     }
 
     public class DownloadedMovieImportService : IDownloadedMovieImportService
@@ -82,7 +82,7 @@ namespace NzbDrone.Core.MediaFiles
             return results;
         }
 
-        public List<ImportResult> ProcessPath(string path, ImportMode importMode = ImportMode.Auto, Movie movie = null, DownloadClientItem downloadClientItem = null)
+        public List<ImportResult> ProcessPath(string path, ImportMode importMode = ImportMode.Auto, Media movie = null, DownloadClientItem downloadClientItem = null)
         {
             _logger.Debug("Processing path: {0}", path);
 
@@ -114,7 +114,7 @@ namespace NzbDrone.Core.MediaFiles
             return new List<ImportResult>();
         }
 
-        public bool ShouldDeleteFolder(DirectoryInfo directoryInfo, Movie movie)
+        public bool ShouldDeleteFolder(DirectoryInfo directoryInfo, Media movie)
         {
             try
                 {
@@ -134,7 +134,7 @@ namespace NzbDrone.Core.MediaFiles
                         return false;
                     }
 
-                    if (_detectSample.IsSample(movie.MovieMetadata, videoFile) != DetectSampleResult.Sample)
+                    if (_detectSample.IsSample(movie.MediaMetadata, videoFile) != DetectSampleResult.Sample)
                     {
                         _logger.Warn("Non-sample file detected: [{0}]", videoFile);
                         return false;
@@ -179,7 +179,7 @@ namespace NzbDrone.Core.MediaFiles
             return ProcessFolder(directoryInfo, importMode, movie, downloadClientItem);
         }
 
-        private List<ImportResult> ProcessFolder(DirectoryInfo directoryInfo, ImportMode importMode, Movie movie, DownloadClientItem downloadClientItem)
+        private List<ImportResult> ProcessFolder(DirectoryInfo directoryInfo, ImportMode importMode, Media movie, DownloadClientItem downloadClientItem)
         {
             if (_movieService.MoviePathExists(directoryInfo.FullName))
             {
@@ -249,7 +249,7 @@ namespace NzbDrone.Core.MediaFiles
             return ProcessFile(fileInfo, importMode, movie, downloadClientItem);
         }
 
-        private List<ImportResult> ProcessFile(FileInfo fileInfo, ImportMode importMode, Movie movie, DownloadClientItem downloadClientItem)
+        private List<ImportResult> ProcessFile(FileInfo fileInfo, ImportMode importMode, Media movie, DownloadClientItem downloadClientItem)
         {
             if (Path.GetFileNameWithoutExtension(fileInfo.Name).StartsWith("._"))
             {

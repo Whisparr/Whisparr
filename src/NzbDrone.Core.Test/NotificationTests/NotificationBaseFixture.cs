@@ -59,12 +59,12 @@ namespace NzbDrone.Core.Test.NotificationTests
                 TestLogger.Info("OnDownload was called");
             }
 
-            public override void OnMovieRename(Movie movie, List<RenamedMovieFile> renamedFiles)
+            public override void OnMovieRename(Media movie, List<RenamedMovieFile> renamedFiles)
             {
                 TestLogger.Info("OnRename was called");
             }
 
-            public override void OnMovieAdded(Movie movie)
+            public override void OnMovieAdded(Media movie)
             {
                 TestLogger.Info("OnMovieAdded was called");
             }

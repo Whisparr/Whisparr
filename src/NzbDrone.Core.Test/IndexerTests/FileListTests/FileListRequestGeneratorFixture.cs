@@ -25,14 +25,9 @@ namespace NzbDrone.Core.Test.IndexerTests.FileListTests
 
             _movieSearchCriteria = new MovieSearchCriteria
             {
-                Movie = new Movies.Movie { ImdbId = "tt0076759", Title = "Star Wars", Year = 1977 },
+                Movie = new Movies.Media { Title = "Star Wars", Year = 1977 },
                 SceneTitles = new List<string> { "Star Wars" }
             };
-        }
-
-        private void MovieWithoutIMDB()
-        {
-            _movieSearchCriteria.Movie.ImdbId = null;
         }
 
         [Test]
@@ -63,8 +58,6 @@ namespace NzbDrone.Core.Test.IndexerTests.FileListTests
         [Test]
         public void should_search_by_name_and_year_if_missing_imdbid()
         {
-            MovieWithoutIMDB();
-
             var results = Subject.GetSearchRequests(_movieSearchCriteria);
 
             results.GetAllTiers().Should().HaveCount(1);

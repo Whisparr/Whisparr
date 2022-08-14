@@ -148,19 +148,6 @@ namespace NzbDrone.Core.ImportLists.RSSImport
             {
                 releaseInfo.Title = result.PrimaryMovieTitle;
                 releaseInfo.Year = result.Year;
-                releaseInfo.ImdbId = result.ImdbId;
-            }
-
-            try
-            {
-                if (releaseInfo.ImdbId.IsNullOrWhiteSpace())
-                {
-                    releaseInfo.ImdbId = GetImdbId(item);
-                }
-            }
-            catch (Exception)
-            {
-                _logger.Debug("Unable to extract Imdb Id :(.");
             }
 
             return releaseInfo;

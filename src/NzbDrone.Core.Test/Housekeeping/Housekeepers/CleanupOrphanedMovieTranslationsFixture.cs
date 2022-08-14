@@ -28,7 +28,7 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
         [Test]
         public void should_not_delete_unorphaned_movie_translation_items()
         {
-            var movieMetadata = Builder<MovieMetadata>.CreateNew().BuildNew();
+            var movieMetadata = Builder<MediaMetadata>.CreateNew().BuildNew();
 
             Db.Insert(movieMetadata);
 

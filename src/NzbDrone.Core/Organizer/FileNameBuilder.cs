@@ -21,10 +21,10 @@ namespace NzbDrone.Core.Organizer
 {
     public interface IBuildFileNames
     {
-        string BuildFileName(Movie movie, MovieFile movieFile, NamingConfig namingConfig = null, List<CustomFormat> customFormats = null);
-        string BuildFilePath(Movie movie, string fileName, string extension);
+        string BuildFileName(Media movie, MediaFile movieFile, NamingConfig namingConfig = null, List<CustomFormat> customFormats = null);
+        string BuildFilePath(Media movie, string fileName, string extension);
         BasicNamingConfig GetBasicNamingConfig(NamingConfig nameSpec);
-        string GetMovieFolder(Movie movie, NamingConfig namingConfig = null);
+        string GetMovieFolder(Media movie, NamingConfig namingConfig = null);
     }
 
     public class FileNameBuilder : IBuildFileNames
@@ -111,7 +111,7 @@ namespace NzbDrone.Core.Organizer
             _logger = logger;
         }
 
-        public string BuildFileName(Movie movie, MovieFile movieFile, NamingConfig namingConfig = null, List<CustomFormat> customFormats = null)
+        public string BuildFileName(Media movie, MediaFile movieFile, NamingConfig namingConfig = null, List<CustomFormat> customFormats = null)
         {
             if (namingConfig == null)
             {
@@ -159,7 +159,7 @@ namespace NzbDrone.Core.Organizer
             return Path.Combine(components.ToArray());
         }
 
-        public string BuildFilePath(Movie movie, string fileName, string extension)
+        public string BuildFilePath(Media movie, string fileName, string extension)
         {
             Ensure.That(extension, () => extension).IsNotNullOrWhiteSpace();
 
@@ -173,7 +173,7 @@ namespace NzbDrone.Core.Organizer
             return new BasicNamingConfig(); //For now let's be lazy
         }
 
-        public string GetMovieFolder(Movie movie, NamingConfig namingConfig = null)
+        public string GetMovieFolder(Media movie, NamingConfig namingConfig = null)
         {
             if (namingConfig == null)
             {
@@ -198,7 +198,7 @@ namespace NzbDrone.Core.Organizer
             }
             else
             {
-                AddMovieFileTokens(tokenHandlers, new MovieFile { SceneName = $"{movie.Title} {movie.Year}", RelativePath = $"{movie.Title} {movie.Year}" });
+                AddMovieFileTokens(tokenHandlers, new MediaFile { SceneName = $"{movie.Title} {movie.Year}", RelativePath = $"{movie.Title} {movie.Year}" });
             }
 
             var splitPatterns = pattern.Split(new char[] { '\\', '/' }, StringSplitOptions.RemoveEmptyEntries);
@@ -258,20 +258,20 @@ namespace NzbDrone.Core.Organizer
             return name.Trim(' ', '.');
         }
 
-        private void AddMovieTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Movie movie)
+        private void AddMovieTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Media movie)
         {
             tokenHandlers["{Movie Title}"] = m => GetLanguageTitle(movie, m.CustomFormat);
             tokenHandlers["{Movie CleanTitle}"] = m => CleanTitle(GetLanguageTitle(movie, m.CustomFormat));
             tokenHandlers["{Movie Title The}"] = m => TitleThe(movie.Title);
             tokenHandlers["{Movie TitleFirstCharacter}"] = m => TitleThe(movie.Title).Substring(0, 1).FirstCharToUpper();
-            tokenHandlers["{Movie OriginalTitle}"] = m => movie.MovieMetadata.Value.OriginalTitle ?? string.Empty;
-            tokenHandlers["{Movie CleanOriginalTitle}"] = m => CleanTitle(movie.MovieMetadata.Value.OriginalTitle) ?? string.Empty;
+            tokenHandlers["{Movie OriginalTitle}"] = m => movie.MediaMetadata.Value.OriginalTitle ?? string.Empty;
+            tokenHandlers["{Movie CleanOriginalTitle}"] = m => CleanTitle(movie.MediaMetadata.Value.OriginalTitle) ?? string.Empty;
 
-            tokenHandlers["{Movie Certification}"] = m => movie.MovieMetadata.Value.Certification ?? string.Empty;
-            tokenHandlers["{Movie Collection}"] = m => movie.MovieMetadata.Value.Collection?.Name ?? string.Empty;
+            tokenHandlers["{Movie Certification}"] = m => movie.MediaMetadata.Value.Certification ?? string.Empty;
+            tokenHandlers["{Movie Collection}"] = m => movie.MediaMetadata.Value.Collection?.Name ?? string.Empty;
         }
 
-        private string GetLanguageTitle(Movie movie, string isoCodes)
+        private string GetLanguageTitle(Media movie, string isoCodes)
         {
             if (isoCodes.IsNotNullOrWhiteSpace())
             {
@@ -284,9 +284,9 @@ namespace NzbDrone.Core.Organizer
                         continue;
                     }
 
-                    var titles = movie.MovieMetadata.Value.Translations.Where(t => t.Language == language).ToList();
+                    var titles = movie.MediaMetadata.Value.Translations.Where(t => t.Language == language).ToList();
 
-                    if (!movie.MovieMetadata.Value.Translations.Any())
+                    if (!movie.MediaMetadata.Value.Translations.Any())
                     {
                         titles = _movieTranslationService.GetAllTranslationsForMovieMetadata(movie.MovieMetadataId).Where(t => t.Language == language).ToList();
                     }
@@ -298,7 +298,7 @@ namespace NzbDrone.Core.Organizer
             return movie.Title;
         }
 
-        private void AddTagsTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, MovieFile movieFile)
+        private void AddTagsTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, MediaFile movieFile)
         {
             if (movieFile.Edition.IsNotNullOrWhiteSpace())
             {
@@ -317,13 +317,12 @@ namespace NzbDrone.Core.Organizer
             tokenHandlers["{Release Year}"] = m => string.Format("{0}", releaseYear.ToString()); //Do I need m.CustomFormat?
         }
 
-        private void AddIdTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Movie movie)
+        private void AddIdTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Media movie)
         {
-            tokenHandlers["{ImdbId}"] = m => movie.MovieMetadata.Value.ImdbId ?? string.Empty;
-            tokenHandlers["{TmdbId}"] = m => movie.MovieMetadata.Value.TmdbId.ToString();
+            tokenHandlers["{TmdbId}"] = m => movie.MediaMetadata.Value.ForiegnId.ToString();
         }
 
-        private void AddMovieFileTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, MovieFile movieFile)
+        private void AddMovieFileTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, MediaFile movieFile)
         {
             tokenHandlers["{Original Title}"] = m => GetOriginalTitle(movieFile);
             tokenHandlers["{Original Filename}"] = m => GetOriginalFileName(movieFile);
@@ -331,7 +330,7 @@ namespace NzbDrone.Core.Organizer
             tokenHandlers["{Release Group}"] = m => movieFile.ReleaseGroup ?? m.DefaultValue("Whisparr");
         }
 
-        private void AddQualityTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Movie movie, MovieFile movieFile)
+        private void AddQualityTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Media movie, MediaFile movieFile)
         {
             if (movieFile?.Quality?.Quality == null)
             {
@@ -359,7 +358,7 @@ namespace NzbDrone.Core.Organizer
             { MediaInfoVideoDynamicRangeTypeToken, 10 }
         };
 
-        private void AddMediaInfoTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, MovieFile movieFile)
+        private void AddMediaInfoTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, MediaFile movieFile)
         {
             if (movieFile.MediaInfo == null)
             {
@@ -425,7 +424,7 @@ namespace NzbDrone.Core.Organizer
                 m => MediaInfoFormatter.FormatVideoDynamicRangeType(movieFile.MediaInfo);
         }
 
-        private void AddCustomFormats(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Movie movie, MovieFile movieFile, List<CustomFormat> customFormats = null)
+        private void AddCustomFormats(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Media movie, MediaFile movieFile, List<CustomFormat> customFormats = null)
         {
             if (customFormats == null)
             {
@@ -468,7 +467,7 @@ namespace NzbDrone.Core.Organizer
             return string.Join("+", tokens.Distinct());
         }
 
-        private void UpdateMediaInfoIfNeeded(string pattern, MovieFile movieFile, Movie movie)
+        private void UpdateMediaInfoIfNeeded(string pattern, MediaFile movieFile, Media movie)
         {
             if (movie.Path.IsNullOrWhiteSpace())
             {
@@ -549,7 +548,7 @@ namespace NzbDrone.Core.Organizer
             return value.ToString(split[1]);
         }
 
-        private string GetQualityProper(Movie movie, QualityModel quality)
+        private string GetQualityProper(Media movie, QualityModel quality)
         {
             if (quality.Revision.Version > 1)
             {
@@ -559,7 +558,7 @@ namespace NzbDrone.Core.Organizer
             return string.Empty;
         }
 
-        private string GetQualityReal(Movie movie, QualityModel quality)
+        private string GetQualityReal(Media movie, QualityModel quality)
         {
             if (quality.Revision.Real > 0)
             {
@@ -569,7 +568,7 @@ namespace NzbDrone.Core.Organizer
             return string.Empty;
         }
 
-        private string GetOriginalTitle(MovieFile movieFile)
+        private string GetOriginalTitle(MediaFile movieFile)
         {
             if (movieFile.SceneName.IsNullOrWhiteSpace())
             {
@@ -579,7 +578,7 @@ namespace NzbDrone.Core.Organizer
             return movieFile.SceneName;
         }
 
-        private string GetOriginalFileName(MovieFile movieFile)
+        private string GetOriginalFileName(MediaFile movieFile)
         {
             if (movieFile.RelativePath.IsNullOrWhiteSpace())
             {

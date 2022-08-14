@@ -8,9 +8,9 @@ namespace NzbDrone.Core.ImportLists
 {
     public interface IImportListStatusService : IProviderStatusServiceBase<ImportListStatus>
     {
-        Movie GetLastSyncListInfo(int importListId);
+        Media GetLastSyncListInfo(int importListId);
 
-        void UpdateListSyncStatus(int importListId, Movie listItemInfo);
+        void UpdateListSyncStatus(int importListId, Media listItemInfo);
     }
 
     public class ImportListStatusService : ProviderStatusServiceBase<IImportList, ImportListStatus>, IImportListStatusService
@@ -20,12 +20,12 @@ namespace NzbDrone.Core.ImportLists
         {
         }
 
-        public Movie GetLastSyncListInfo(int importListId)
+        public Media GetLastSyncListInfo(int importListId)
         {
             return GetProviderStatus(importListId).LastSyncListInfo;
         }
 
-        public void UpdateListSyncStatus(int importListId, Movie listItemInfo)
+        public void UpdateListSyncStatus(int importListId, Media listItemInfo)
         {
             lock (_syncRoot)
             {

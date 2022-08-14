@@ -29,7 +29,7 @@ namespace NzbDrone.Core.Test.MediaFiles.MovieImport.Specifications
             {
                 Path = @"C:\Test\Unsorted TV\30.rock\30.rock.s01e01.avi".AsOsAgnostic(),
                 Size = 100,
-                Movie = Builder<Movie>.CreateNew().Build()
+                Movie = Builder<Media>.CreateNew().Build()
             };
         }
 

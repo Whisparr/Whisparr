@@ -16,14 +16,14 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
     public class ReservedDeviceNameFixture : CoreTest<FileNameBuilder>
     {
-        private Movie _movie;
-        private MovieFile _movieFile;
+        private Media _movie;
+        private MediaFile _movieFile;
         private NamingConfig _namingConfig;
 
         [SetUp]
         public void Setup()
         {
-            _movie = Builder<Movie>
+            _movie = Builder<Media>
                     .CreateNew()
                     .Build();
 
@@ -33,7 +33,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
             Mocker.GetMock<INamingConfigService>()
                   .Setup(c => c.GetConfig()).Returns(_namingConfig);
 
-            _movieFile = new MovieFile { Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "WhisparrTest" };
+            _movieFile = new MediaFile { Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "WhisparrTest" };
 
             Mocker.GetMock<IQualityDefinitionService>()
                 .Setup(v => v.Get(Moq.It.IsAny<Quality>()))

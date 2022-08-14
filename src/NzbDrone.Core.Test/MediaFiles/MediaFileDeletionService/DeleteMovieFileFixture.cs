@@ -15,17 +15,17 @@ namespace NzbDrone.Core.Test.MediaFiles.MediaFileDeletionService
     public class DeleteMovieFileFixture : CoreTest<Core.MediaFiles.MediaFileDeletionService>
     {
         private static readonly string RootFolder = @"C:\Test\Movies";
-        private Movie _movie;
-        private MovieFile _movieFile;
+        private Media _movie;
+        private MediaFile _movieFile;
 
         [SetUp]
         public void Setup()
         {
-            _movie = Builder<Movie>.CreateNew()
+            _movie = Builder<Media>.CreateNew()
                                      .With(s => s.Path = Path.Combine(RootFolder, "Movie Title"))
                                      .Build();
 
-            _movieFile = Builder<MovieFile>.CreateNew()
+            _movieFile = Builder<MediaFile>.CreateNew()
                                                .With(f => f.RelativePath = "Some SubFolder")
                                                .With(f => f.Path = Path.Combine(_movie.Path, "Some SubFolder"))
                                                .Build();

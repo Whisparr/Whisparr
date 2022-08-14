@@ -15,19 +15,19 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
     [TestFixture]
     public class CleanTitleFixture : CoreTest<FileNameBuilder>
     {
-        private Movie _series;
-        private MovieFile _episodeFile;
+        private Media _series;
+        private MediaFile _episodeFile;
         private NamingConfig _namingConfig;
 
         [SetUp]
         public void Setup()
         {
-            _series = Builder<Movie>
+            _series = Builder<Media>
                 .CreateNew()
                 .With(s => s.Title = "South Park")
                 .Build();
 
-            _episodeFile = new MovieFile { Quality = new QualityModel(), ReleaseGroup = "SonarrTest" };
+            _episodeFile = new MediaFile { Quality = new QualityModel(), ReleaseGroup = "SonarrTest" };
 
             _namingConfig = NamingConfig.Default;
             _namingConfig.RenameMovies = true;

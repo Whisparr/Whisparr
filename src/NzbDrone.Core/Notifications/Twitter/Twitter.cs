@@ -29,7 +29,7 @@ namespace NzbDrone.Core.Notifications.Twitter
             _twitterService.SendNotification($"[Whisparr] Imported: {message.Message}", Settings);
         }
 
-        public override void OnMovieAdded(Movie movie)
+        public override void OnMovieAdded(Media movie)
         {
             _twitterService.SendNotification($"[Radarr] Added: {movie.Title}", Settings);
         }

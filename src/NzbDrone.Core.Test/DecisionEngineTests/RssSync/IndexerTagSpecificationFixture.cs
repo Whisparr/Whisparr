@@ -20,7 +20,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests.RssSync
 
         private RemoteMovie _parseResultMulti;
         private IndexerDefinition _fakeIndexerDefinition;
-        private Movie _fakeMovie;
+        private Media _fakeMovie;
         private ReleaseInfo _fakeRelease;
 
         [SetUp]
@@ -43,7 +43,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests.RssSync
 
             _specification = Mocker.Resolve<IndexerTagSpecification>();
 
-            _fakeMovie = Builder<Movie>.CreateNew()
+            _fakeMovie = Builder<Media>.CreateNew()
                 .With(c => c.Monitored = true)
                 .With(c => c.Tags = new HashSet<int>())
                 .Build();

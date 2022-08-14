@@ -59,7 +59,7 @@ namespace NzbDrone.Core.IndexerSearch
 
         public void Execute(MissingMoviesSearchCommand message)
         {
-            var pagingSpec = new PagingSpec<Movie>
+            var pagingSpec = new PagingSpec<Media>
             {
                 Page = 1,
                 PageSize = 100000,
@@ -68,7 +68,7 @@ namespace NzbDrone.Core.IndexerSearch
             };
 
             pagingSpec.FilterExpressions.Add(v => v.Monitored == true);
-            List<Movie> movies = _movieService.MoviesWithoutFiles(pagingSpec).Records.ToList();
+            List<Media> movies = _movieService.MoviesWithoutFiles(pagingSpec).Records.ToList();
 
             var queue = _queueService.GetQueue().Where(q => q.Movie != null).Select(q => q.Movie.Id);
             var missing = movies.Where(e => !queue.Contains(e.Id)).ToList();
@@ -78,7 +78,7 @@ namespace NzbDrone.Core.IndexerSearch
 
         public void Execute(CutoffUnmetMoviesSearchCommand message)
         {
-            var pagingSpec = new PagingSpec<Movie>
+            var pagingSpec = new PagingSpec<Media>
             {
                 Page = 1,
                 PageSize = 100000,
@@ -88,7 +88,7 @@ namespace NzbDrone.Core.IndexerSearch
 
             pagingSpec.FilterExpressions.Add(v => v.Monitored == true);
 
-            List<Movie> movies = _movieCutoffService.MoviesWhereCutoffUnmet(pagingSpec).Records.ToList();
+            List<Media> movies = _movieCutoffService.MoviesWhereCutoffUnmet(pagingSpec).Records.ToList();
 
             var queue = _queueService.GetQueue().Where(q => q.Movie != null).Select(q => q.Movie.Id);
             var missing = movies.Where(e => !queue.Contains(e.Id)).ToList();
@@ -96,7 +96,7 @@ namespace NzbDrone.Core.IndexerSearch
             SearchForMissingMovies(missing, message.Trigger == CommandTrigger.Manual);
         }
 
-        private void SearchForMissingMovies(List<Movie> movies, bool userInvokedSearch)
+        private void SearchForMissingMovies(List<Media> movies, bool userInvokedSearch)
         {
             _logger.ProgressInfo("Performing missing search for {0} movies", movies.Count);
             var downloadedCount = 0;

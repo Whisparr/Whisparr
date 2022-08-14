@@ -31,7 +31,7 @@ using Whisparr.Http.REST.Attributes;
 namespace Whisparr.Api.V3.Movies
 {
     [V3ApiController]
-    public class MovieController : RestControllerWithSignalR<MovieResource, Movie>,
+    public class MovieController : RestControllerWithSignalR<MovieResource, Media>,
                                 IHandle<MovieFileImportedEvent>,
                                 IHandle<MovieFileDeletedEvent>,
                                 IHandle<MovieUpdatedEvent>,
@@ -140,7 +140,7 @@ namespace Whisparr.Api.V3.Movies
 
                 foreach (var movie in movies)
                 {
-                    var translation = GetTranslationFromDict(tdict, movie.MovieMetadata, configLanguage);
+                    var translation = GetTranslationFromDict(tdict, movie.MediaMetadata, configLanguage);
                     moviesResources.Add(movie.ToResource(availDelay, translation, _qualityUpgradableSpecification));
                 }
 
@@ -156,7 +156,7 @@ namespace Whisparr.Api.V3.Movies
             return MapToResource(movie);
         }
 
-        protected MovieResource MapToResource(Movie movie)
+        protected MovieResource MapToResource(Media movie)
         {
             if (movie == null)
             {
@@ -166,7 +166,7 @@ namespace Whisparr.Api.V3.Movies
             var availDelay = _configService.AvailabilityDelay;
 
             var translations = _movieTranslationService.GetAllTranslationsForMovieMetadata(movie.MovieMetadataId);
-            var translation = GetMovieTranslation(translations, movie.MovieMetadata, (Language)_configService.MovieInfoLanguage);
+            var translation = GetMovieTranslation(translations, movie.MediaMetadata, (Language)_configService.MovieInfoLanguage);
 
             var resource = movie.ToResource(availDelay, translation, _qualityUpgradableSpecification);
             MapCoversToLocal(resource);
@@ -174,7 +174,7 @@ namespace Whisparr.Api.V3.Movies
             return resource;
         }
 
-        private MovieTranslation GetMovieTranslation(List<MovieTranslation> translations, MovieMetadata movie, Language configLanguage)
+        private MovieTranslation GetMovieTranslation(List<MovieTranslation> translations, MediaMetadata movie, Language configLanguage)
         {
             if (configLanguage == Language.Original)
             {
@@ -188,7 +188,7 @@ namespace Whisparr.Api.V3.Movies
             return translations.FirstOrDefault(t => t.Language == configLanguage && t.MovieMetadataId == movie.Id);
         }
 
-        private MovieTranslation GetTranslationFromDict(Dictionary<int, MovieTranslation> translations, MovieMetadata movie, Language configLanguage)
+        private MovieTranslation GetTranslationFromDict(Dictionary<int, MovieTranslation> translations, MediaMetadata movie, Language configLanguage)
         {
             if (configLanguage == Language.Original)
             {
@@ -237,7 +237,7 @@ namespace Whisparr.Api.V3.Movies
             var availDelay = _configService.AvailabilityDelay;
 
             var translations = _movieTranslationService.GetAllTranslationsForMovieMetadata(movie.MovieMetadataId);
-            var translation = GetMovieTranslation(translations, movie.MovieMetadata, (Language)_configService.MovieInfoLanguage);
+            var translation = GetMovieTranslation(translations, movie.MediaMetadata, (Language)_configService.MovieInfoLanguage);
 
             BroadcastResourceChange(ModelAction.Updated, updatedMovie.ToResource(availDelay, translation, _qualityUpgradableSpecification));
 
@@ -268,7 +268,7 @@ namespace Whisparr.Api.V3.Movies
         {
             var availDelay = _configService.AvailabilityDelay;
             var translations = _movieTranslationService.GetAllTranslationsForMovieMetadata(message.ImportedMovie.Movie.MovieMetadataId);
-            var translation = GetMovieTranslation(translations, message.ImportedMovie.Movie.MovieMetadata, (Language)_configService.MovieInfoLanguage);
+            var translation = GetMovieTranslation(translations, message.ImportedMovie.Movie.MediaMetadata, (Language)_configService.MovieInfoLanguage);
             BroadcastResourceChange(ModelAction.Updated, message.ImportedMovie.Movie.ToResource(availDelay, translation, _qualityUpgradableSpecification));
         }
 
@@ -288,7 +288,7 @@ namespace Whisparr.Api.V3.Movies
         {
             var availDelay = _configService.AvailabilityDelay;
             var translations = _movieTranslationService.GetAllTranslationsForMovieMetadata(message.Movie.MovieMetadataId);
-            var translation = GetMovieTranslation(translations, message.Movie.MovieMetadata, (Language)_configService.MovieInfoLanguage);
+            var translation = GetMovieTranslation(translations, message.Movie.MediaMetadata, (Language)_configService.MovieInfoLanguage);
             BroadcastResourceChange(ModelAction.Updated, message.Movie.ToResource(availDelay, translation, _qualityUpgradableSpecification));
         }
 
@@ -297,7 +297,7 @@ namespace Whisparr.Api.V3.Movies
         {
             var availDelay = _configService.AvailabilityDelay;
             var translations = _movieTranslationService.GetAllTranslationsForMovieMetadata(message.Movie.MovieMetadataId);
-            var translation = GetMovieTranslation(translations, message.Movie.MovieMetadata, (Language)_configService.MovieInfoLanguage);
+            var translation = GetMovieTranslation(translations, message.Movie.MediaMetadata, (Language)_configService.MovieInfoLanguage);
             BroadcastResourceChange(ModelAction.Updated, message.Movie.ToResource(availDelay, translation, _qualityUpgradableSpecification));
         }
 
@@ -315,7 +315,7 @@ namespace Whisparr.Api.V3.Movies
         {
             var availDelay = _configService.AvailabilityDelay;
             var translations = _movieTranslationService.GetAllTranslationsForMovieMetadata(message.Movie.MovieMetadataId);
-            var translation = GetMovieTranslation(translations, message.Movie.MovieMetadata, (Language)_configService.MovieInfoLanguage);
+            var translation = GetMovieTranslation(translations, message.Movie.MediaMetadata, (Language)_configService.MovieInfoLanguage);
             BroadcastResourceChange(ModelAction.Updated, message.Movie.ToResource(availDelay, translation, _qualityUpgradableSpecification));
         }
 

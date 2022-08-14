@@ -98,7 +98,7 @@ namespace NzbDrone.Core.DecisionEngine
                     }
                     else
                     {
-                        result = _parsingService.Map(parsedMovieInfo, report.ImdbId.ToString(), searchCriteria);
+                        result = _parsingService.Map(parsedMovieInfo, searchCriteria);
                     }
 
                     result.ReleaseName = report.Title;

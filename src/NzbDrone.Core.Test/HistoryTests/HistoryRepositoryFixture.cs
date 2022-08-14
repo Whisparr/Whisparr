@@ -15,17 +15,17 @@ namespace NzbDrone.Core.Test.HistoryTests
     [TestFixture]
     public class HistoryRepositoryFixture : DbTest<HistoryRepository, MovieHistory>
     {
-        private Movie _movie1;
-        private Movie _movie2;
+        private Media _movie1;
+        private Media _movie2;
 
         [SetUp]
         public void Setup()
         {
-            _movie1 = Builder<Movie>.CreateNew()
+            _movie1 = Builder<Media>.CreateNew()
                                     .With(s => s.Id = 7)
                                     .Build();
 
-            _movie2 = Builder<Movie>.CreateNew()
+            _movie2 = Builder<Media>.CreateNew()
                                     .With(s => s.Id = 8)
                                     .Build();
         }

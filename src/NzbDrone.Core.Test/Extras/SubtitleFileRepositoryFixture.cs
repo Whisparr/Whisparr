@@ -13,23 +13,23 @@ namespace NzbDrone.Core.Test.MediaFiles
     [TestFixture]
     public class SubtitleFileRepositoryFixture : DbTest<SubtitleFileRepository, SubtitleFile>
     {
-        private Movie _movie;
-        private MovieFile _movieFile1;
-        private MovieFile _movieFile2;
+        private Media _movie;
+        private MediaFile _movieFile1;
+        private MediaFile _movieFile2;
 
         [SetUp]
         public void Setup()
         {
-            _movie = Builder<Movie>.CreateNew()
+            _movie = Builder<Media>.CreateNew()
                                      .With(s => s.Id = 7)
                                      .Build();
 
-            _movieFile1 = Builder<MovieFile>.CreateNew()
+            _movieFile1 = Builder<MediaFile>.CreateNew()
                                      .With(s => s.Id = 10)
                                      .With(s => s.MovieId = _movie.Id)
                                      .Build();
 
-            _movieFile2 = Builder<MovieFile>.CreateNew()
+            _movieFile2 = Builder<MediaFile>.CreateNew()
                                      .With(s => s.Id = 11)
                                      .With(s => s.MovieId = _movie.Id)
                                      .Build();

@@ -51,7 +51,7 @@ namespace NzbDrone.Core.Test.Profiles
         [Test]
         public void should_not_be_able_to_delete_profile_if_assigned_to_movie()
         {
-            var movieList = Builder<Movie>.CreateListOfSize(3)
+            var movieList = Builder<Media>.CreateListOfSize(3)
                                             .Random(1)
                                             .With(c => c.ProfileId = 2)
                                             .Build().ToList();
@@ -72,7 +72,7 @@ namespace NzbDrone.Core.Test.Profiles
         [Test]
         public void should_not_be_able_to_delete_profile_if_assigned_to_list()
         {
-            var movieList = Builder<Movie>.CreateListOfSize(3)
+            var movieList = Builder<Media>.CreateListOfSize(3)
                 .All()
                 .With(c => c.ProfileId = 1)
                 .Build().ToList();
@@ -93,7 +93,7 @@ namespace NzbDrone.Core.Test.Profiles
         [Test]
         public void should_delete_profile_if_not_assigned_to_movie_or_list()
         {
-            var movieList = Builder<Movie>.CreateListOfSize(3)
+            var movieList = Builder<Media>.CreateListOfSize(3)
                                             .All()
                                             .With(c => c.ProfileId = 2)
                                             .Build().ToList();

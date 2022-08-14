@@ -18,24 +18,24 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
 
         private RemoteMovie _parseResultMulti;
         private RemoteMovie _parseResultSingle;
-        private Movie _fakeSeries;
-        private Movie _firstEpisode;
-        private Movie _secondEpisode;
+        private Media _fakeSeries;
+        private Media _firstEpisode;
+        private Media _secondEpisode;
 
         [SetUp]
         public void Setup()
         {
             _monitoredEpisodeSpecification = Mocker.Resolve<MonitoredMovieSpecification>();
 
-            _fakeSeries = Builder<Movie>.CreateNew()
+            _fakeSeries = Builder<Media>.CreateNew()
                 .With(c => c.Monitored = true)
                 .Build();
 
-            _firstEpisode = new Movie() { Monitored = true };
-            _secondEpisode = new Movie() { Monitored = true };
+            _firstEpisode = new Media() { Monitored = true };
+            _secondEpisode = new Media() { Monitored = true };
 
-            var singleEpisodeList = new List<Movie> { _firstEpisode };
-            var doubleEpisodeList = new List<Movie> { _firstEpisode, _secondEpisode };
+            var singleEpisodeList = new List<Media> { _firstEpisode };
+            var doubleEpisodeList = new List<Media> { _firstEpisode, _secondEpisode };
 
             _parseResultMulti = new RemoteMovie
             {

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using FizzWare.NBuilder;
 using FluentAssertions;
@@ -15,7 +15,7 @@ namespace NzbDrone.Core.Test.NotificationTests.Xbmc
     {
         private const string IMDB_ID = "tt67890";
         private XbmcSettings _settings;
-        private Movie _movie;
+        private Media _movie;
         private List<XbmcMovie> _xbmcMovies;
 
         [SetUp]
@@ -37,29 +37,18 @@ namespace NzbDrone.Core.Test.NotificationTests.Xbmc
                   .Returns(_xbmcMovies);
         }
 
-        private void GivenMatchingImdbId()
-        {
-            _movie = new Movie
-            {
-                ImdbId = IMDB_ID,
-                Title = "Movie"
-            };
-        }
-
         private void GivenMatchingTitle()
         {
-            _movie = new Movie
+            _movie = new Media
             {
-                ImdbId = "tt01000",
                 Title = _xbmcMovies.First().Label
             };
         }
 
         private void GivenMatchingMovie()
         {
-            _movie = new Movie
+            _movie = new Media
             {
-                ImdbId = "tt01000",
                 Title = "Does not exist"
             };
         }
@@ -75,8 +64,6 @@ namespace NzbDrone.Core.Test.NotificationTests.Xbmc
         [Test]
         public void should_return_path_when_tvdbId_matches()
         {
-            GivenMatchingImdbId();
-
             Subject.GetMoviePath(_settings, _movie).Should().Be(_xbmcMovies.First().File);
         }
 

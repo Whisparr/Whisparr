@@ -54,7 +54,7 @@ namespace NzbDrone.Core.Queue
             }
         }
 
-        private Queue MapMovie(TrackedDownload trackedDownload, Movie movie)
+        private Queue MapMovie(TrackedDownload trackedDownload, Media movie)
         {
             var queue = new Queue
             {

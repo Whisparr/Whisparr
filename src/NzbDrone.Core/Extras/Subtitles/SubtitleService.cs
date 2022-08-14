@@ -35,27 +35,27 @@ namespace NzbDrone.Core.Extras.Subtitles
 
         public override int Order => 1;
 
-        public override IEnumerable<ExtraFile> CreateAfterMediaCoverUpdate(Movie movie)
+        public override IEnumerable<ExtraFile> CreateAfterMediaCoverUpdate(Media movie)
         {
             return Enumerable.Empty<SubtitleFile>();
         }
 
-        public override IEnumerable<ExtraFile> CreateAfterMovieScan(Movie movie, List<MovieFile> movieFiles)
+        public override IEnumerable<ExtraFile> CreateAfterMovieScan(Media movie, List<MediaFile> movieFiles)
         {
             return Enumerable.Empty<SubtitleFile>();
         }
 
-        public override IEnumerable<ExtraFile> CreateAfterMovieImport(Movie movie, MovieFile movieFile)
+        public override IEnumerable<ExtraFile> CreateAfterMovieImport(Media movie, MediaFile movieFile)
         {
             return Enumerable.Empty<SubtitleFile>();
         }
 
-        public override IEnumerable<ExtraFile> CreateAfterMovieFolder(Movie movie, string movieFolder)
+        public override IEnumerable<ExtraFile> CreateAfterMovieFolder(Media movie, string movieFolder)
         {
             return Enumerable.Empty<SubtitleFile>();
         }
 
-        public override IEnumerable<ExtraFile> MoveFilesAfterRename(Movie movie, List<MovieFile> movieFiles)
+        public override IEnumerable<ExtraFile> MoveFilesAfterRename(Media movie, List<MediaFile> movieFiles)
         {
             var subtitleFiles = _subtitleFileService.GetFilesByMovie(movie.Id);
 
@@ -91,7 +91,7 @@ namespace NzbDrone.Core.Extras.Subtitles
             return movedFiles;
         }
 
-        public override ExtraFile Import(Movie movie, MovieFile movieFile, string path, string extension, bool readOnly)
+        public override ExtraFile Import(Media movie, MediaFile movieFile, string path, string extension, bool readOnly)
         {
             if (SubtitleFileExtensions.Extensions.Contains(Path.GetExtension(path)))
             {

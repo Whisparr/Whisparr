@@ -10,20 +10,18 @@ namespace NzbDrone.Core.Test.MovieTests
     [TestFixture]
     public class MovieIsAvailableFixture : CoreTest
     {
-        private Movie _movie;
+        private Media _movie;
 
         [SetUp]
         public void Setup()
         {
-            _movie = Builder<Movie>.CreateNew()
+            _movie = Builder<Media>.CreateNew()
                                      .Build();
         }
 
         private void SetMovieProperties(DateTime? cinema, DateTime? physical, DateTime? digital, MovieStatusType minimumAvailability)
         {
-            _movie.MovieMetadata.Value.InCinemas = cinema;
-            _movie.MovieMetadata.Value.PhysicalRelease = physical;
-            _movie.MovieMetadata.Value.DigitalRelease = digital;
+            _movie.MediaMetadata.Value.DigitalRelease = digital;
             _movie.MinimumAvailability = minimumAvailability;
         }
 

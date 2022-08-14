@@ -37,8 +37,8 @@ namespace Whisparr.Api.V3.Credits
             {
                 Id = model.Id,
                 MovieMetadataId = model.MovieMetadataId,
-                CreditTmdbId = model.CreditTmdbId,
-                PersonTmdbId = model.PersonTmdbId,
+                CreditTmdbId = model.CreditForeignId,
+                PersonTmdbId = model.PerformerForeignId,
                 PersonName = model.Name,
                 Order = model.Order,
                 Character = model.Character,
@@ -72,8 +72,8 @@ namespace Whisparr.Api.V3.Credits
                 Job = resource.Job,
                 Type = resource.Type,
                 Images = resource.Images,
-                CreditTmdbId = resource.CreditTmdbId,
-                PersonTmdbId = resource.PersonTmdbId
+                CreditForeignId = resource.CreditTmdbId,
+                PerformerForeignId = resource.PersonTmdbId
             };
         }
     }

@@ -29,7 +29,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests
                 .Returns(30);
 
             Mocker.GetMock<IParsingService>()
-                .Setup(s => s.Map(It.IsAny<ParsedMovieInfo>(), It.IsAny<string>(), (SearchCriteriaBase)null))
+                .Setup(s => s.Map(It.IsAny<ParsedMovieInfo>(), (SearchCriteriaBase)null))
                 .Returns(() => new MappingResult { RemoteMovie = CreateRemoteMovie(), MappingResultType = MappingResultType.Success });
 
             Mocker.GetMock<IHttpClient>()
@@ -51,7 +51,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests
 
             remoteMovie.ParsedMovieInfo = new ParsedMovieInfo();
 
-            remoteMovie.Movie = new Movie();
+            remoteMovie.Movie = new Media();
 
             return remoteMovie;
         }

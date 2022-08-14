@@ -56,7 +56,7 @@ namespace NzbDrone.Core.Extras.Metadata
 
         public override int Order => 0;
 
-        public override IEnumerable<ExtraFile> CreateAfterMediaCoverUpdate(Movie movie)
+        public override IEnumerable<ExtraFile> CreateAfterMediaCoverUpdate(Media movie)
         {
             var metadataFiles = _metadataFileService.GetFilesByMovie(movie.Id);
             _cleanMetadataService.Clean(movie);
@@ -81,7 +81,7 @@ namespace NzbDrone.Core.Extras.Metadata
             return files;
         }
 
-        public override IEnumerable<ExtraFile> CreateAfterMovieScan(Movie movie, List<MovieFile> movieFiles)
+        public override IEnumerable<ExtraFile> CreateAfterMovieScan(Media movie, List<MediaFile> movieFiles)
         {
             var metadataFiles = _metadataFileService.GetFilesByMovie(movie.Id);
             _cleanMetadataService.Clean(movie);
@@ -111,7 +111,7 @@ namespace NzbDrone.Core.Extras.Metadata
             return files;
         }
 
-        public override IEnumerable<ExtraFile> CreateAfterMovieImport(Movie movie, MovieFile movieFile)
+        public override IEnumerable<ExtraFile> CreateAfterMovieImport(Media movie, MediaFile movieFile)
         {
             var files = new List<MetadataFile>();
 
@@ -125,7 +125,7 @@ namespace NzbDrone.Core.Extras.Metadata
             return files;
         }
 
-        public override IEnumerable<ExtraFile> CreateAfterMovieFolder(Movie movie, string movieFolder)
+        public override IEnumerable<ExtraFile> CreateAfterMovieFolder(Media movie, string movieFolder)
         {
             var metadataFiles = _metadataFileService.GetFilesByMovie(movie.Id);
 
@@ -151,7 +151,7 @@ namespace NzbDrone.Core.Extras.Metadata
             return files;
         }
 
-        public override IEnumerable<ExtraFile> MoveFilesAfterRename(Movie movie, List<MovieFile> movieFiles)
+        public override IEnumerable<ExtraFile> MoveFilesAfterRename(Media movie, List<MediaFile> movieFiles)
         {
             var metadataFiles = _metadataFileService.GetFilesByMovie(movie.Id);
             var movedFiles = new List<MetadataFile>();
@@ -191,7 +191,7 @@ namespace NzbDrone.Core.Extras.Metadata
             return movedFiles;
         }
 
-        public override ExtraFile Import(Movie movie, MovieFile movieFile, string path, string extension, bool readOnly)
+        public override ExtraFile Import(Media movie, MediaFile movieFile, string path, string extension, bool readOnly)
         {
             return null;
         }
@@ -201,7 +201,7 @@ namespace NzbDrone.Core.Extras.Metadata
             return movieMetadata.Where(c => c.Consumer == consumer.GetType().Name).ToList();
         }
 
-        private MetadataFile ProcessMovieMetadata(IMetadata consumer, Movie movie, MovieFile movieFile, List<MetadataFile> existingMetadataFiles)
+        private MetadataFile ProcessMovieMetadata(IMetadata consumer, Media movie, MediaFile movieFile, List<MetadataFile> existingMetadataFiles)
         {
             var movieFileMetadata = consumer.MovieMetadata(movie, movieFile);
 
@@ -253,7 +253,7 @@ namespace NzbDrone.Core.Extras.Metadata
             return metadata;
         }
 
-        private List<MetadataFile> ProcessMovieImages(IMetadata consumer, Movie movie, List<MetadataFile> existingMetadataFiles)
+        private List<MetadataFile> ProcessMovieImages(IMetadata consumer, Media movie, List<MetadataFile> existingMetadataFiles)
         {
             var result = new List<MetadataFile>();
 
@@ -288,7 +288,7 @@ namespace NzbDrone.Core.Extras.Metadata
             return result;
         }
 
-        private void DownloadImage(Movie movie, ImageFileResult image)
+        private void DownloadImage(Media movie, ImageFileResult image)
         {
             var fullPath = Path.Combine(movie.Path, image.RelativePath);
 
@@ -325,7 +325,7 @@ namespace NzbDrone.Core.Extras.Metadata
             _mediaFileAttributeService.SetFilePermissions(path);
         }
 
-        private MetadataFile GetMetadataFile(Movie movie, List<MetadataFile> existingMetadataFiles, Func<MetadataFile, bool> predicate)
+        private MetadataFile GetMetadataFile(Media movie, List<MetadataFile> existingMetadataFiles, Func<MetadataFile, bool> predicate)
         {
             var matchingMetadataFiles = existingMetadataFiles.Where(predicate).ToList();
 

@@ -15,19 +15,19 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
     [TestFixture]
     public class TitleTheFixture : CoreTest<FileNameBuilder>
     {
-        private Movie _movie;
-        private MovieFile _movieFile;
+        private Media _movie;
+        private MediaFile _movieFile;
         private NamingConfig _namingConfig;
 
         [SetUp]
         public void Setup()
         {
-            _movie = Builder<Movie>
+            _movie = Builder<Media>
                     .CreateNew()
                     .With(e => e.Title = "Batman")
                     .Build();
 
-            _movieFile = new MovieFile { Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "WhisparrTest" };
+            _movieFile = new MediaFile { Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "WhisparrTest" };
 
             _namingConfig = NamingConfig.Default;
             _namingConfig.RenameMovies = true;

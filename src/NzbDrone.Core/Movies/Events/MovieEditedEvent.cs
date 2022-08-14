@@ -4,10 +4,10 @@ namespace NzbDrone.Core.Movies.Events
 {
     public class MovieEditedEvent : IEvent
     {
-        public Movie Movie { get; private set; }
-        public Movie OldMovie { get; private set; }
+        public Media Movie { get; private set; }
+        public Media OldMovie { get; private set; }
 
-        public MovieEditedEvent(Movie movie, Movie oldMovie)
+        public MovieEditedEvent(Media movie, Media oldMovie)
         {
             Movie = movie;
             OldMovie = oldMovie;

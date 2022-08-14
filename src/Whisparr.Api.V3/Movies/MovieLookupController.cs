@@ -44,18 +44,18 @@ namespace Whisparr.Api.V3.Movies
         public object SearchByTmdbId(int tmdbId)
         {
             var availDelay = _configService.AvailabilityDelay;
-            var result = new Movie { MovieMetadata = _movieInfo.GetMovieInfo(tmdbId).Item1 };
-            var translation = result.MovieMetadata.Value.Translations.FirstOrDefault(t => t.Language == (Language)_configService.MovieInfoLanguage);
+            var result = new Media { MediaMetadata = _movieInfo.GetMovieInfo(tmdbId).Item1 };
+            var translation = result.MediaMetadata.Value.Translations.FirstOrDefault(t => t.Language == (Language)_configService.MovieInfoLanguage);
             return result.ToResource(availDelay, translation);
         }
 
         [HttpGet("imdb")]
         public object SearchByImdbId(string imdbId)
         {
-            var result = new Movie { MovieMetadata = _movieInfo.GetMovieByImdbId(imdbId) };
+            var result = new Media { MediaMetadata = _movieInfo.GetMovieByImdbId(imdbId) };
 
             var availDelay = _configService.AvailabilityDelay;
-            var translation = result.MovieMetadata.Value.Translations.FirstOrDefault(t => t.Language == (Language)_configService.MovieInfoLanguage);
+            var translation = result.MediaMetadata.Value.Translations.FirstOrDefault(t => t.Language == (Language)_configService.MovieInfoLanguage);
             return result.ToResource(availDelay, translation);
         }
 
@@ -67,17 +67,17 @@ namespace Whisparr.Api.V3.Movies
             return MapToResource(searchResults);
         }
 
-        private IEnumerable<MovieResource> MapToResource(IEnumerable<Movie> movies)
+        private IEnumerable<MovieResource> MapToResource(IEnumerable<Media> movies)
         {
             foreach (var currentMovie in movies)
             {
                 var availDelay = _configService.AvailabilityDelay;
-                var translation = currentMovie.MovieMetadata.Value.Translations.FirstOrDefault(t => t.Language == (Language)_configService.MovieInfoLanguage);
+                var translation = currentMovie.MediaMetadata.Value.Translations.FirstOrDefault(t => t.Language == (Language)_configService.MovieInfoLanguage);
                 var resource = currentMovie.ToResource(availDelay, translation);
 
                 _coverMapper.ConvertToLocalUrls(resource.Id, resource.Images);
 
-                var poster = currentMovie.MovieMetadata.Value.Images.FirstOrDefault(c => c.CoverType == MediaCoverTypes.Poster);
+                var poster = currentMovie.MediaMetadata.Value.Images.FirstOrDefault(c => c.CoverType == MediaCoverTypes.Poster);
                 if (poster != null)
                 {
                     resource.RemotePoster = poster.RemoteUrl;

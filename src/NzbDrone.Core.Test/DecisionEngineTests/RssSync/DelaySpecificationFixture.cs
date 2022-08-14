@@ -37,7 +37,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests.RssSync
                                                  .With(d => d.PreferredProtocol = DownloadProtocol.Usenet)
                                                  .Build();
 
-            var series = Builder<Movie>.CreateNew()
+            var series = Builder<Media>.CreateNew()
                                         .With(s => s.Profile = _profile)
                                         .Build();
 
@@ -68,7 +68,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests.RssSync
         private void GivenExistingFile(QualityModel quality)
         {
             //_remoteEpisode.Episodes.First().EpisodeFileId = 1;
-            _remoteMovie.Movie.MovieFile = new MovieFile { Quality = quality };
+            _remoteMovie.Movie.MovieFile = new MediaFile { Quality = quality };
         }
 
         private void GivenUpgradeForExistingFile()

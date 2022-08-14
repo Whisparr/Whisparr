@@ -14,16 +14,16 @@ namespace NzbDrone.Core.Test.MediaFiles
 {
     public class RenameMovieFileServiceFixture : CoreTest<RenameMovieFileService>
     {
-        private Movie _movie;
-        private List<MovieFile> _movieFiles;
+        private Media _movie;
+        private List<MediaFile> _movieFiles;
 
         [SetUp]
         public void Setup()
         {
-            _movie = Builder<Movie>.CreateNew()
+            _movie = Builder<Media>.CreateNew()
                                      .Build();
 
-            _movieFiles = Builder<MovieFile>.CreateListOfSize(2)
+            _movieFiles = Builder<MediaFile>.CreateListOfSize(2)
                                                 .All()
                                                 .With(e => e.MovieId = _movie.Id)
                                                 .Build()
@@ -38,7 +38,7 @@ namespace NzbDrone.Core.Test.MediaFiles
         {
             Mocker.GetMock<IMediaFileService>()
                   .Setup(s => s.GetMovies(It.IsAny<IEnumerable<int>>()))
-                  .Returns(new List<MovieFile>());
+                  .Returns(new List<MediaFile>());
         }
 
         private void GivenMovieFiles()
@@ -51,7 +51,7 @@ namespace NzbDrone.Core.Test.MediaFiles
         private void GivenMovedFiles()
         {
             Mocker.GetMock<IMoveMovieFiles>()
-                  .Setup(s => s.MoveMovieFile(It.IsAny<MovieFile>(), _movie));
+                  .Setup(s => s.MoveMovieFile(It.IsAny<MediaFile>(), _movie));
         }
 
         [Test]
@@ -71,7 +71,7 @@ namespace NzbDrone.Core.Test.MediaFiles
             GivenMovieFiles();
 
             Mocker.GetMock<IMoveMovieFiles>()
-                  .Setup(s => s.MoveMovieFile(It.IsAny<MovieFile>(), It.IsAny<Movie>()))
+                  .Setup(s => s.MoveMovieFile(It.IsAny<MediaFile>(), It.IsAny<Media>()))
                   .Throws(new SameFilenameException("Same file name", "Filename"));
 
             Subject.Execute(new RenameFilesCommand(_movie.Id, new List<int> { 1 }));
@@ -101,7 +101,7 @@ namespace NzbDrone.Core.Test.MediaFiles
             Subject.Execute(new RenameFilesCommand(_movie.Id, new List<int> { 1 }));
 
             Mocker.GetMock<IMediaFileService>()
-                  .Verify(v => v.Update(It.IsAny<MovieFile>()), Times.Exactly(2));
+                  .Verify(v => v.Update(It.IsAny<MediaFile>()), Times.Exactly(2));
         }
 
         [Test]

@@ -14,14 +14,14 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
     [TestFixture]
     public class TrackedDownloadAlreadyImportedFixture : CoreTest<TrackedDownloadAlreadyImported>
     {
-        private Movie _movie;
+        private Media _movie;
         private TrackedDownload _trackedDownload;
         private List<MovieHistory> _historyItems;
 
         [SetUp]
         public void Setup()
         {
-            _movie = Builder<Movie>.CreateNew().Build();
+            _movie = Builder<Media>.CreateNew().Build();
 
             var remoteMovie = Builder<RemoteMovie>.CreateNew()
                                                       .With(r => r.Movie = _movie)
@@ -38,7 +38,7 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
             _historyItems = new List<MovieHistory>();
         }
 
-        public void GivenHistoryForMovie(Movie movie, params MovieHistoryEventType[] eventTypes)
+        public void GivenHistoryForMovie(Media movie, params MovieHistoryEventType[] eventTypes)
         {
             foreach (var eventType in eventTypes)
             {

@@ -21,7 +21,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         private const int FIRST_MOVIE_ID = 1;
         private const string TITLE = "Movie.Title.2018.720p.HDTV.x264-Whisparr";
 
-        private Movie _movie;
+        private Media _movie;
         private QualityModel _hdtv720p;
         private QualityModel _hdtv1080p;
         private RemoteMovie _remoteMovie;
@@ -30,7 +30,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         [SetUp]
         public void Setup()
         {
-            _movie = Builder<Movie>.CreateNew()
+            _movie = Builder<Media>.CreateNew()
                                     .With(m => m.Id = FIRST_MOVIE_ID)
                                     .With(m => m.MovieFileId = 1)
                                     .Build();

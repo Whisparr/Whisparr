@@ -11,13 +11,13 @@ namespace NzbDrone.Core.Test.MediaFiles.MovieImport.Specifications
     [TestFixture]
     public class NotSampleSpecificationFixture : CoreTest<NotSampleSpecification>
     {
-        private Movie _movie;
+        private Media _movie;
         private LocalMovie _localEpisode;
 
         [SetUp]
         public void Setup()
         {
-            _movie = Builder<Movie>.CreateNew()
+            _movie = Builder<Media>.CreateNew()
                                      .Build();
 
             _localEpisode = new LocalMovie

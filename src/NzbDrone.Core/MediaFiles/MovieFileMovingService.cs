@@ -17,9 +17,9 @@ namespace NzbDrone.Core.MediaFiles
 {
     public interface IMoveMovieFiles
     {
-        MovieFile MoveMovieFile(MovieFile movieFile, Movie movie);
-        MovieFile MoveMovieFile(MovieFile movieFile, LocalMovie localMovie);
-        MovieFile CopyMovieFile(MovieFile movieFile, LocalMovie localMovie);
+        MediaFile MoveMovieFile(MediaFile movieFile, Media movie);
+        MediaFile MoveMovieFile(MediaFile movieFile, LocalMovie localMovie);
+        MediaFile CopyMovieFile(MediaFile movieFile, LocalMovie localMovie);
     }
 
     public class MovieFileMovingService : IMoveMovieFiles
@@ -55,7 +55,7 @@ namespace NzbDrone.Core.MediaFiles
             _logger = logger;
         }
 
-        public MovieFile MoveMovieFile(MovieFile movieFile, Movie movie)
+        public MediaFile MoveMovieFile(MediaFile movieFile, Media movie)
         {
             var newFileName = _buildFileNames.BuildFileName(movie, movieFile);
             var filePath = _buildFileNames.BuildFilePath(movie, newFileName, Path.GetExtension(movieFile.RelativePath));
@@ -67,7 +67,7 @@ namespace NzbDrone.Core.MediaFiles
             return TransferFile(movieFile, movie, filePath, TransferMode.Move);
         }
 
-        public MovieFile MoveMovieFile(MovieFile movieFile, LocalMovie localMovie)
+        public MediaFile MoveMovieFile(MediaFile movieFile, LocalMovie localMovie)
         {
             var newFileName = _buildFileNames.BuildFileName(localMovie.Movie, movieFile);
             var filePath = _buildFileNames.BuildFilePath(localMovie.Movie, newFileName, Path.GetExtension(localMovie.Path));
@@ -79,7 +79,7 @@ namespace NzbDrone.Core.MediaFiles
             return TransferFile(movieFile, localMovie.Movie, filePath, TransferMode.Move);
         }
 
-        public MovieFile CopyMovieFile(MovieFile movieFile, LocalMovie localMovie)
+        public MediaFile CopyMovieFile(MediaFile movieFile, LocalMovie localMovie)
         {
             var newFileName = _buildFileNames.BuildFileName(localMovie.Movie, movieFile);
             var filePath = _buildFileNames.BuildFilePath(localMovie.Movie, newFileName, Path.GetExtension(localMovie.Path));
@@ -96,7 +96,7 @@ namespace NzbDrone.Core.MediaFiles
             return TransferFile(movieFile, localMovie.Movie, filePath, TransferMode.Copy);
         }
 
-        private MovieFile TransferFile(MovieFile movieFile, Movie movie, string destinationFilePath, TransferMode mode)
+        private MediaFile TransferFile(MediaFile movieFile, Media movie, string destinationFilePath, TransferMode mode)
         {
             Ensure.That(movieFile, () => movieFile).IsNotNull();
             Ensure.That(movie, () => movie).IsNotNull();
@@ -134,12 +134,12 @@ namespace NzbDrone.Core.MediaFiles
             return movieFile;
         }
 
-        private void EnsureMovieFolder(MovieFile movieFile, LocalMovie localMovie, string filePath)
+        private void EnsureMovieFolder(MediaFile movieFile, LocalMovie localMovie, string filePath)
         {
             EnsureMovieFolder(movieFile, localMovie.Movie, filePath);
         }
 
-        private void EnsureMovieFolder(MovieFile movieFile, Movie movie, string filePath)
+        private void EnsureMovieFolder(MediaFile movieFile, Media movie, string filePath)
         {
             var movieFileFolder = Path.GetDirectoryName(filePath);
 

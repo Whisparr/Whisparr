@@ -8,7 +8,7 @@ namespace NzbDrone.Core.Notifications.Webhook
         {
         }
 
-        public WebhookMovieFile(MovieFile movieFile)
+        public WebhookMovieFile(MediaFile movieFile)
         {
             Id = movieFile.Id;
             RelativePath = movieFile.RelativePath;

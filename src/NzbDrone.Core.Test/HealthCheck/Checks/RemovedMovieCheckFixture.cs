@@ -22,26 +22,26 @@ namespace NzbDrone.Core.Test.HealthCheck.Checks
 
         private void GivenMovie(int amount, int deleted)
         {
-            List<Movie> movie;
+            List<Media> movie;
 
             if (amount == 0)
             {
-                movie = new List<Movie>();
+                movie = new List<Media>();
             }
             else if (deleted == 0)
             {
-                movie = Builder<Movie>.CreateListOfSize(amount)
+                movie = Builder<Media>.CreateListOfSize(amount)
                     .All()
-                    .With(v => v.MovieMetadata.Value.Status = MovieStatusType.Released)
+                    .With(v => v.MediaMetadata.Value.Status = MovieStatusType.Released)
                     .BuildList();
             }
             else
             {
-                movie = Builder<Movie>.CreateListOfSize(amount)
+                movie = Builder<Media>.CreateListOfSize(amount)
                     .All()
-                    .With(v => v.MovieMetadata.Value.Status = MovieStatusType.Released)
+                    .With(v => v.MediaMetadata.Value.Status = MovieStatusType.Released)
                     .Random(deleted)
-                    .With(v => v.MovieMetadata.Value.Status = MovieStatusType.Deleted)
+                    .With(v => v.MediaMetadata.Value.Status = MovieStatusType.Deleted)
                     .BuildList();
             }
 

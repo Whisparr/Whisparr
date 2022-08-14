@@ -22,12 +22,12 @@ namespace NzbDrone.Core.Test.Datastore
             Mocker.Resolve<DbFactory>();
         }
 
-        private WhereBuilderSqlite Where(Expression<Func<Movie, bool>> filter)
+        private WhereBuilderSqlite Where(Expression<Func<Media, bool>> filter)
         {
             return new WhereBuilderSqlite(filter, true, 0);
         }
 
-        private WhereBuilderSqlite WhereMeta(Expression<Func<MovieMetadata, bool>> filter)
+        private WhereBuilderSqlite WhereMeta(Expression<Func<MediaMetadata, bool>> filter)
         {
             return new WhereBuilderSqlite(filter, true, 0);
         }
@@ -54,7 +54,7 @@ namespace NzbDrone.Core.Test.Datastore
         [Test]
         public void where_equal_property()
         {
-            var movie = new Movie { Id = 10 };
+            var movie = new Media { Id = 10 };
             _subject = Where(x => x.Id == movie.Id);
 
             _subject.Parameters.ParameterNames.Should().HaveCount(1);
@@ -75,7 +75,7 @@ namespace NzbDrone.Core.Test.Datastore
         [Test]
         public void where_throws_without_concrete_condition_if_requiresConcreteCondition()
         {
-            Expression<Func<Movie, Movie, bool>> filter = (x, y) => x.Id == y.Id;
+            Expression<Func<Media, Media, bool>> filter = (x, y) => x.Id == y.Id;
             _subject = new WhereBuilderSqlite(filter, true, 0);
             Assert.Throws<InvalidOperationException>(() => _subject.ToString());
         }
@@ -83,7 +83,7 @@ namespace NzbDrone.Core.Test.Datastore
         [Test]
         public void where_allows_abstract_condition_if_not_requiresConcreteCondition()
         {
-            Expression<Func<Movie, Movie, bool>> filter = (x, y) => x.Id == y.Id;
+            Expression<Func<Media, Media, bool>> filter = (x, y) => x.Id == y.Id;
             _subject = new WhereBuilderSqlite(filter, false, 0);
             _subject.ToString().Should().Be($"(\"Movies\".\"Id\" = \"Movies\".\"Id\")");
         }
@@ -108,7 +108,7 @@ namespace NzbDrone.Core.Test.Datastore
         [Test]
         public void where_equal_null_property()
         {
-            var movie = new MovieMetadata { CleanTitle = null };
+            var movie = new MediaMetadata { CleanTitle = null };
             _subject = WhereMeta(x => x.CleanTitle == movie.CleanTitle);
 
             _subject.ToString().Should().Be($"(\"MovieMetadata\".\"CleanTitle\" IS NULL)");

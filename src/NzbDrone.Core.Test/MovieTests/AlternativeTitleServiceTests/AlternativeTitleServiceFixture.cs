@@ -18,7 +18,7 @@ namespace NzbDrone.Core.Test.MovieTests.AlternativeTitleServiceTests
         private AlternativeTitle _title2;
         private AlternativeTitle _title3;
 
-        private MovieMetadata _movie;
+        private MediaMetadata _movie;
 
         [SetUp]
         public void Setup()
@@ -28,7 +28,7 @@ namespace NzbDrone.Core.Test.MovieTests.AlternativeTitleServiceTests
             _title2 = titles[1];
             _title3 = titles[2];
 
-            _movie = Builder<MovieMetadata>.CreateNew()
+            _movie = Builder<MediaMetadata>.CreateNew()
                 .With(m => m.CleanTitle = "myothertitle")
                 .With(m => m.Id = 1)
                 .Build();
@@ -73,7 +73,7 @@ namespace NzbDrone.Core.Test.MovieTests.AlternativeTitleServiceTests
         {
             GivenExistingTitles();
             var titles = new List<AlternativeTitle> { _title1 };
-            var movie = Builder<MovieMetadata>.CreateNew().With(m => m.CleanTitle = _title1.CleanTitle).Build();
+            var movie = Builder<MediaMetadata>.CreateNew().With(m => m.CleanTitle = _title1.CleanTitle).Build();
 
             Subject.UpdateTitles(titles, movie);
 

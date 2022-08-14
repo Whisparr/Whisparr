@@ -7,12 +7,12 @@ using NzbDrone.Core.Profiles;
 
 namespace NzbDrone.Core.Movies
 {
-    public class Movie : ModelBase
+    public class Media : ModelBase
     {
-        public Movie()
+        public Media()
         {
             Tags = new HashSet<int>();
-            MovieMetadata = new MovieMetadata();
+            MediaMetadata = new MediaMetadata();
         }
 
         public int MovieMetadataId { get; set; }
@@ -23,14 +23,14 @@ namespace NzbDrone.Core.Movies
 
         public string Path { get; set; }
 
-        public LazyLoaded<MovieMetadata> MovieMetadata { get; set; }
+        public LazyLoaded<MediaMetadata> MediaMetadata { get; set; }
 
         public string RootFolderPath { get; set; }
         public DateTime Added { get; set; }
         public Profile Profile { get; set; }
         public HashSet<int> Tags { get; set; }
         public AddMovieOptions AddOptions { get; set; }
-        public MovieFile MovieFile { get; set; }
+        public MediaFile MovieFile { get; set; }
         public int MovieFileId { get; set; }
 
         public bool HasFile => MovieFileId > 0;
@@ -38,26 +38,20 @@ namespace NzbDrone.Core.Movies
         //compatibility properties
         public string Title
         {
-            get { return MovieMetadata.Value.Title; }
-            set { MovieMetadata.Value.Title = value; }
+            get { return MediaMetadata.Value.Title; }
+            set { MediaMetadata.Value.Title = value; }
         }
 
-        public int TmdbId
+        public int ForiegnId
         {
-            get { return MovieMetadata.Value.TmdbId; }
-            set { MovieMetadata.Value.TmdbId = value; }
-        }
-
-        public string ImdbId
-        {
-            get { return MovieMetadata.Value.ImdbId; }
-            set { MovieMetadata.Value.ImdbId = value; }
+            get { return MediaMetadata.Value.ForiegnId; }
+            set { MediaMetadata.Value.ForiegnId = value; }
         }
 
         public int Year
         {
-            get { return MovieMetadata.Value.Year; }
-            set { MovieMetadata.Value.Year = value; }
+            get { return MediaMetadata.Value.Year; }
+            set { MediaMetadata.Value.Year = value; }
         }
 
         public string FolderName()
@@ -84,27 +78,15 @@ namespace NzbDrone.Core.Movies
             {
                 minimumAvailabilityDate = DateTime.MinValue;
             }
-            else if (MinimumAvailability == MovieStatusType.InCinemas && MovieMetadata.Value.InCinemas.HasValue)
-            {
-                minimumAvailabilityDate = MovieMetadata.Value.InCinemas.Value;
-            }
             else
             {
-                if (MovieMetadata.Value.PhysicalRelease.HasValue && MovieMetadata.Value.DigitalRelease.HasValue)
+                if (MediaMetadata.Value.DigitalRelease.HasValue)
                 {
-                    minimumAvailabilityDate = new DateTime(Math.Min(MovieMetadata.Value.PhysicalRelease.Value.Ticks, MovieMetadata.Value.DigitalRelease.Value.Ticks));
-                }
-                else if (MovieMetadata.Value.PhysicalRelease.HasValue)
-                {
-                    minimumAvailabilityDate = MovieMetadata.Value.PhysicalRelease.Value;
-                }
-                else if (MovieMetadata.Value.DigitalRelease.HasValue)
-                {
-                    minimumAvailabilityDate = MovieMetadata.Value.DigitalRelease.Value;
+                    minimumAvailabilityDate = MediaMetadata.Value.DigitalRelease.Value;
                 }
                 else
                 {
-                    minimumAvailabilityDate = MovieMetadata.Value.InCinemas.HasValue ? MovieMetadata.Value.InCinemas.Value.AddDays(90) : DateTime.MaxValue;
+                    minimumAvailabilityDate = DateTime.MaxValue;
                 }
             }
 
@@ -118,10 +100,10 @@ namespace NzbDrone.Core.Movies
 
         public override string ToString()
         {
-            return string.Format("[{1} ({2})][{0}, {3}]", MovieMetadata.Value.ImdbId, MovieMetadata.Value.Title.NullSafe(), MovieMetadata.Value.Year.NullSafe(), MovieMetadata.Value.TmdbId);
+            return string.Format("[{1} ({2})][{3}]", MediaMetadata.Value.Title.NullSafe(), MediaMetadata.Value.Year.NullSafe(), MediaMetadata.Value.ForiegnId);
         }
 
-        public void ApplyChanges(Movie otherMovie)
+        public void ApplyChanges(Media otherMovie)
         {
             Path = otherMovie.Path;
             ProfileId = otherMovie.ProfileId;

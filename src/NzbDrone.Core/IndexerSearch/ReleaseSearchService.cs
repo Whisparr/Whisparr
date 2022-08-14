@@ -19,7 +19,7 @@ namespace NzbDrone.Core.IndexerSearch
     public interface ISearchForReleases
     {
         List<DownloadDecision> MovieSearch(int movieId, bool userInvokedSearch, bool interactiveSearch);
-        List<DownloadDecision> MovieSearch(Movie movie, bool userInvokedSearch, bool interactiveSearch);
+        List<DownloadDecision> MovieSearch(Media movie, bool userInvokedSearch, bool interactiveSearch);
     }
 
     public class ReleaseSearchService : ISearchForReleases
@@ -49,12 +49,12 @@ namespace NzbDrone.Core.IndexerSearch
         public List<DownloadDecision> MovieSearch(int movieId, bool userInvokedSearch, bool interactiveSearch)
         {
             var movie = _movieService.GetMovie(movieId);
-            movie.MovieMetadata.Value.Translations = _movieTranslationService.GetAllTranslationsForMovieMetadata(movie.MovieMetadataId);
+            movie.MediaMetadata.Value.Translations = _movieTranslationService.GetAllTranslationsForMovieMetadata(movie.MovieMetadataId);
 
             return MovieSearch(movie, userInvokedSearch, interactiveSearch);
         }
 
-        public List<DownloadDecision> MovieSearch(Movie movie, bool userInvokedSearch, bool interactiveSearch)
+        public List<DownloadDecision> MovieSearch(Media movie, bool userInvokedSearch, bool interactiveSearch)
         {
             var downloadDecisions = new List<DownloadDecision>();
 
@@ -66,7 +66,7 @@ namespace NzbDrone.Core.IndexerSearch
             return DeDupeDecisions(downloadDecisions);
         }
 
-        private TSpec Get<TSpec>(Movie movie, bool userInvokedSearch, bool interactiveSearch)
+        private TSpec Get<TSpec>(Media movie, bool userInvokedSearch, bool interactiveSearch)
             where TSpec : SearchCriteriaBase, new()
         {
             var spec = new TSpec()
@@ -81,8 +81,8 @@ namespace NzbDrone.Core.IndexerSearch
 
             var queryTranlations = new List<string>
             {
-                movie.MovieMetadata.Value.Title,
-                movie.MovieMetadata.Value.OriginalTitle
+                movie.MediaMetadata.Value.Title,
+                movie.MediaMetadata.Value.OriginalTitle
             };
 
             //Add Translation of wanted languages to search query

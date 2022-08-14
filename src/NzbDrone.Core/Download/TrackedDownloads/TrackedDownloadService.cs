@@ -117,7 +117,7 @@ namespace NzbDrone.Core.Download.TrackedDownloads
 
                 if (parsedMovieInfo != null)
                 {
-                    trackedDownload.RemoteMovie = _parsingService.Map(parsedMovieInfo, "", null).RemoteMovie;
+                    trackedDownload.RemoteMovie = _parsingService.Map(parsedMovieInfo, null).RemoteMovie;
                 }
 
                 var downloadHistory = _downloadHistoryService.GetLatestDownloadHistoryItem(downloadItem.DownloadId);
@@ -143,7 +143,7 @@ namespace NzbDrone.Core.Download.TrackedDownloads
 
                         if (parsedMovieInfo != null)
                         {
-                            trackedDownload.RemoteMovie = _parsingService.Map(parsedMovieInfo, "", null).RemoteMovie;
+                            trackedDownload.RemoteMovie = _parsingService.Map(parsedMovieInfo, null).RemoteMovie;
                         }
                     }
                 }
@@ -191,7 +191,7 @@ namespace NzbDrone.Core.Download.TrackedDownloads
         {
             var parsedMovieInfo = Parser.Parser.ParseMovieTitle(trackedDownload.DownloadItem.Title);
 
-            trackedDownload.RemoteMovie = parsedMovieInfo == null ? null : _parsingService.Map(parsedMovieInfo, "", null).RemoteMovie;
+            trackedDownload.RemoteMovie = parsedMovieInfo == null ? null : _parsingService.Map(parsedMovieInfo, null).RemoteMovie;
         }
 
         private static TrackedDownloadState GetStateFromHistory(DownloadHistoryEventType eventType)

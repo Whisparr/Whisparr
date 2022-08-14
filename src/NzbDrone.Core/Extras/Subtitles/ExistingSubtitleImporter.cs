@@ -27,7 +27,7 @@ namespace NzbDrone.Core.Extras.Subtitles
 
         public override int Order => 1;
 
-        public override IEnumerable<ExtraFile> ProcessFiles(Movie movie, List<string> filesOnDisk, List<string> importedFiles)
+        public override IEnumerable<ExtraFile> ProcessFiles(Media movie, List<string> filesOnDisk, List<string> importedFiles)
         {
             _logger.Debug("Looking for existing subtitle files in {0}", movie.Path);
 

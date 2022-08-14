@@ -105,22 +105,20 @@ namespace NzbDrone.Core.Datastore
 
             Mapper.Entity<MovieHistory>("History").RegisterModel();
 
-            Mapper.Entity<MovieFile>("MovieFiles").RegisterModel()
+            Mapper.Entity<MediaFile>("MediaFiles").RegisterModel()
                   .Ignore(f => f.Path);
 
-            Mapper.Entity<Movie>("Movies").RegisterModel()
+            Mapper.Entity<Media>("Media").RegisterModel()
                   .Ignore(s => s.RootFolderPath)
                   .Ignore(s => s.Title)
                   .Ignore(s => s.Year)
-                  .Ignore(s => s.TmdbId)
-                  .Ignore(s => s.ImdbId)
-                  .HasOne(a => a.MovieMetadata, a => a.MovieMetadataId);
+                  .Ignore(s => s.ForiegnId)
+                  .HasOne(a => a.MediaMetadata, a => a.MovieMetadataId);
 
             Mapper.Entity<ImportListMovie>("ImportListMovies").RegisterModel()
                   .Ignore(s => s.Title)
                   .Ignore(s => s.Year)
-                  .Ignore(s => s.TmdbId)
-                  .Ignore(s => s.ImdbId)
+                  .Ignore(s => s.ForiegnId)
                   .HasOne(a => a.MovieMetadata, a => a.MovieMetadataId);
 
             Mapper.Entity<AlternativeTitle>("AlternativeTitles").RegisterModel();
@@ -167,7 +165,7 @@ namespace NzbDrone.Core.Datastore
 
             Mapper.Entity<UpdateHistory>("UpdateHistory").RegisterModel();
 
-            Mapper.Entity<MovieMetadata>("MovieMetadata").RegisterModel()
+            Mapper.Entity<MediaMetadata>("MediaMetadata").RegisterModel()
                 .Ignore(s => s.Translations);
         }
 

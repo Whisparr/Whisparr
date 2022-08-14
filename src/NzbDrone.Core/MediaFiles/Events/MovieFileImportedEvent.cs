@@ -8,13 +8,13 @@ namespace NzbDrone.Core.MediaFiles.Events
     public class MovieFileImportedEvent : IEvent
     {
         public LocalMovie MovieInfo { get; private set; }
-        public MovieFile ImportedMovie { get; private set; }
-        public List<MovieFile> OldFiles { get; private set; }
+        public MediaFile ImportedMovie { get; private set; }
+        public List<MediaFile> OldFiles { get; private set; }
         public bool NewDownload { get; private set; }
         public DownloadClientItemClientInfo DownloadClientInfo { get; set; }
         public string DownloadId { get; private set; }
 
-        public MovieFileImportedEvent(LocalMovie movieInfo, MovieFile importedMovie, List<MovieFile> oldFiles, bool newDownload, DownloadClientItem downloadClientItem)
+        public MovieFileImportedEvent(LocalMovie movieInfo, MediaFile importedMovie, List<MediaFile> oldFiles, bool newDownload, DownloadClientItem downloadClientItem)
         {
             MovieInfo = movieInfo;
             ImportedMovie = importedMovie;

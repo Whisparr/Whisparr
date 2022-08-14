@@ -15,10 +15,10 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
 {
     public interface IMakeImportDecision
     {
-        List<ImportDecision> GetImportDecisions(List<string> videoFiles, Movie movie);
-        List<ImportDecision> GetImportDecisions(List<string> videoFiles, Movie movie, bool filterExistingFiles);
-        List<ImportDecision> GetImportDecisions(List<string> videoFiles, Movie movie, DownloadClientItem downloadClientItem, ParsedMovieInfo folderInfo, bool sceneSource);
-        List<ImportDecision> GetImportDecisions(List<string> videoFiles, Movie movie, DownloadClientItem downloadClientItem, ParsedMovieInfo folderInfo, bool sceneSource, bool filterExistingFiles);
+        List<ImportDecision> GetImportDecisions(List<string> videoFiles, Media movie);
+        List<ImportDecision> GetImportDecisions(List<string> videoFiles, Media movie, bool filterExistingFiles);
+        List<ImportDecision> GetImportDecisions(List<string> videoFiles, Media movie, DownloadClientItem downloadClientItem, ParsedMovieInfo folderInfo, bool sceneSource);
+        List<ImportDecision> GetImportDecisions(List<string> videoFiles, Media movie, DownloadClientItem downloadClientItem, ParsedMovieInfo folderInfo, bool sceneSource, bool filterExistingFiles);
         ImportDecision GetDecision(LocalMovie localMovie, DownloadClientItem downloadClientItem);
     }
 
@@ -49,22 +49,22 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
             _logger = logger;
         }
 
-        public List<ImportDecision> GetImportDecisions(List<string> videoFiles, Movie movie)
+        public List<ImportDecision> GetImportDecisions(List<string> videoFiles, Media movie)
         {
             return GetImportDecisions(videoFiles, movie, null, null, false);
         }
 
-        public List<ImportDecision> GetImportDecisions(List<string> videoFiles, Movie movie, bool filterExistingFiles)
+        public List<ImportDecision> GetImportDecisions(List<string> videoFiles, Media movie, bool filterExistingFiles)
         {
             return GetImportDecisions(videoFiles, movie, null, null, false, filterExistingFiles);
         }
 
-        public List<ImportDecision> GetImportDecisions(List<string> videoFiles, Movie movie, DownloadClientItem downloadClientItem, ParsedMovieInfo folderInfo, bool sceneSource)
+        public List<ImportDecision> GetImportDecisions(List<string> videoFiles, Media movie, DownloadClientItem downloadClientItem, ParsedMovieInfo folderInfo, bool sceneSource)
         {
             return GetImportDecisions(videoFiles, movie, downloadClientItem, folderInfo, sceneSource, true);
         }
 
-        public List<ImportDecision> GetImportDecisions(List<string> videoFiles, Movie movie, DownloadClientItem downloadClientItem, ParsedMovieInfo folderInfo, bool sceneSource, bool filterExistingFiles)
+        public List<ImportDecision> GetImportDecisions(List<string> videoFiles, Media movie, DownloadClientItem downloadClientItem, ParsedMovieInfo folderInfo, bool sceneSource, bool filterExistingFiles)
         {
             var newFiles = filterExistingFiles ? _mediaFileService.FilterExistingFiles(videoFiles.ToList(), movie) : videoFiles.ToList();
 
@@ -78,7 +78,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
                 downloadClientItemInfo = _parsingService.EnhanceMovieInfo(downloadClientItemInfo);
             }
 
-            var nonSampleVideoFileCount = GetNonSampleVideoFileCount(newFiles, movie.MovieMetadata);
+            var nonSampleVideoFileCount = GetNonSampleVideoFileCount(newFiles, movie.MediaMetadata);
 
             var decisions = new List<ImportDecision>();
 
@@ -187,7 +187,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
             return null;
         }
 
-        private int GetNonSampleVideoFileCount(List<string> videoFiles, MovieMetadata movie)
+        private int GetNonSampleVideoFileCount(List<string> videoFiles, MediaMetadata movie)
         {
             return videoFiles.Count(file =>
             {

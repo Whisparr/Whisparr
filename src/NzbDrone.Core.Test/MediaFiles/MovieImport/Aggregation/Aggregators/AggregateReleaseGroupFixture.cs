@@ -12,12 +12,12 @@ namespace NzbDrone.Core.Test.MediaFiles.MovieImport.Aggregation.Aggregators
     [TestFixture]
     public class AggregateReleaseGroupFixture : CoreTest<AggregateReleaseGroup>
     {
-        private Movie _movie;
+        private Media _movie;
 
         [SetUp]
         public void Setup()
         {
-            _movie = Builder<Movie>.CreateNew().Build();
+            _movie = Builder<Media>.CreateNew().Build();
         }
 
         [Test]

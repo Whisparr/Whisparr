@@ -19,7 +19,7 @@ namespace NzbDrone.Core.Test.MediaFiles.DiskScanServiceTests
     [TestFixture]
     public class ScanFixture : CoreTest<DiskScanService>
     {
-        private Movie _movie;
+        private Media _movie;
         private string _rootFolder;
         private string _otherMovieFolder;
 
@@ -30,7 +30,7 @@ namespace NzbDrone.Core.Test.MediaFiles.DiskScanServiceTests
             _otherMovieFolder = @"C:\Test\Movies\OtherMovie".AsOsAgnostic();
             var movieFolder = @"C:\Test\Movies\Movie".AsOsAgnostic();
 
-            _movie = Builder<Movie>.CreateNew()
+            _movie = Builder<Media>.CreateNew()
                 .With(s => s.Path = movieFolder)
                                      .Build();
 
@@ -48,7 +48,7 @@ namespace NzbDrone.Core.Test.MediaFiles.DiskScanServiceTests
 
             Mocker.GetMock<IMediaFileService>()
                   .Setup(s => s.GetFilesByMovie(It.IsAny<int>()))
-                  .Returns(new List<MovieFile>());
+                  .Returns(new List<MediaFile>());
         }
 
         private void GivenRootFolder(params string[] subfolders)
@@ -99,7 +99,7 @@ namespace NzbDrone.Core.Test.MediaFiles.DiskScanServiceTests
                   .Verify(v => v.CreateFolder(_movie.Path), Times.Never());
 
             Mocker.GetMock<IMediaFileTableCleanupService>()
-                .Verify(v => v.Clean(It.IsAny<Movie>(), It.IsAny<List<string>>()), Times.Never());
+                .Verify(v => v.Clean(It.IsAny<Media>(), It.IsAny<List<string>>()), Times.Never());
         }
 
         [Test]
@@ -118,7 +118,7 @@ namespace NzbDrone.Core.Test.MediaFiles.DiskScanServiceTests
                   .Verify(v => v.CreateFolder(_movie.Path), Times.Never());
 
             Mocker.GetMock<IMediaFileTableCleanupService>()
-                  .Verify(v => v.Clean(It.IsAny<Movie>(), It.IsAny<List<string>>()), Times.Never());
+                  .Verify(v => v.Clean(It.IsAny<Media>(), It.IsAny<List<string>>()), Times.Never());
 
             Mocker.GetMock<IMakeImportDecision>()
                   .Verify(v => v.GetImportDecisions(It.IsAny<List<string>>(), _movie, false), Times.Never());
@@ -230,7 +230,7 @@ namespace NzbDrone.Core.Test.MediaFiles.DiskScanServiceTests
                   .Verify(v => v.FolderExists(_movie.Path), Times.Once());
 
             Mocker.GetMock<IMediaFileTableCleanupService>()
-                  .Verify(v => v.Clean(It.IsAny<Movie>(), It.IsAny<List<string>>()), Times.Once());
+                  .Verify(v => v.Clean(It.IsAny<Media>(), It.IsAny<List<string>>()), Times.Once());
 
             Mocker.GetMock<IMakeImportDecision>()
                   .Verify(v => v.GetImportDecisions(It.IsAny<List<string>>(), _movie, false), Times.Never());

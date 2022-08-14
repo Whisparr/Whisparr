@@ -31,7 +31,7 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
         [Test]
         public void should_not_delete_unorphaned_blocklist_items()
         {
-            var movie = Builder<Movie>.CreateNew().BuildNew();
+            var movie = Builder<Media>.CreateNew().BuildNew();
 
             Db.Insert(movie);
 

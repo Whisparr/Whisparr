@@ -14,9 +14,9 @@ namespace NzbDrone.Core.Test.ParserTests.ParsingServiceTests.AugmentersTests
         public void should_add_movie_original_language()
         {
             var releaseInfo = new ParsedMovieInfo();
-            var movie = new Movies.Movie
+            var movie = new Movies.Media
             {
-                MovieMetadata = new Movies.MovieMetadata
+                MediaMetadata = new Movies.MediaMetadata
                 {
                     OriginalLanguage = Language.English
                 }

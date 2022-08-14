@@ -16,14 +16,14 @@ namespace NzbDrone.Core.Test.Download.Pending.PendingReleaseServiceTests
     public class RemovePendingFixture : CoreTest<PendingReleaseService>
     {
         private List<PendingRelease> _pending;
-        private Movie _movie;
+        private Media _movie;
 
         [SetUp]
         public void Setup()
         {
             _pending = new List<PendingRelease>();
 
-            _movie = Builder<Movie>.CreateNew()
+            _movie = Builder<Media>.CreateNew()
                                        .Build();
 
             Mocker.GetMock<IPendingReleaseRepository>()
@@ -40,7 +40,7 @@ namespace NzbDrone.Core.Test.Download.Pending.PendingReleaseServiceTests
 
             Mocker.GetMock<IMovieService>()
                   .Setup(s => s.GetMovies(It.IsAny<IEnumerable<int>>()))
-                  .Returns(new List<Movie> { _movie });
+                  .Returns(new List<Media> { _movie });
 
             Mocker.GetMock<IParsingService>()
                   .Setup(s => s.GetMovie(It.IsAny<string>()))

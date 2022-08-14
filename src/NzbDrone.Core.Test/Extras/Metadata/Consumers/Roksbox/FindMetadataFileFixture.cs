@@ -13,12 +13,12 @@ namespace NzbDrone.Core.Test.Extras.Metadata.Consumers.Roksbox
     [TestFixture]
     public class FindMetadataFileFixture : CoreTest<RoksboxMetadata>
     {
-        private Movie _movie;
+        private Media _movie;
 
         [SetUp]
         public void Setup()
         {
-            _movie = Builder<Movie>.CreateNew()
+            _movie = Builder<Media>.CreateNew()
                                      .With(s => s.Path = @"C:\Test\Movies\The.Movie.2011".AsOsAgnostic())
                                      .Build();
         }

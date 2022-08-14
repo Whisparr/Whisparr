@@ -10,7 +10,7 @@ using NzbDrone.Core.Qualities;
 
 namespace NzbDrone.Core.MediaFiles
 {
-    public class MovieFile : ModelBase
+    public class MediaFile : ModelBase
     {
         public int MovieId { get; set; }
         public string RelativePath { get; set; }
@@ -25,7 +25,7 @@ namespace NzbDrone.Core.MediaFiles
         public List<Language> Languages { get; set; }
         public MediaInfoModel MediaInfo { get; set; }
         public string Edition { get; set; }
-        public Movie Movie { get; set; }
+        public Media Movie { get; set; }
 
         public override string ToString()
         {

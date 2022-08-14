@@ -30,16 +30,16 @@ namespace NzbDrone.Core.Test.Download.DownloadApprovedReportsTests
                 .Returns<List<DownloadDecision>>(v => v);
         }
 
-        private Movie GetMovie(int id)
+        private Media GetMovie(int id)
         {
-            return Builder<Movie>.CreateNew()
+            return Builder<Media>.CreateNew()
                             .With(e => e.Id = id)
                                  .With(m => m.Tags = new HashSet<int>())
 
                             .Build();
         }
 
-        private RemoteMovie GetRemoteMovie(QualityModel quality, Movie movie = null, DownloadProtocol downloadProtocol = DownloadProtocol.Usenet)
+        private RemoteMovie GetRemoteMovie(QualityModel quality, Media movie = null, DownloadProtocol downloadProtocol = DownloadProtocol.Usenet)
         {
             if (movie == null)
             {

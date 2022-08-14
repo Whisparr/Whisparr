@@ -140,12 +140,12 @@ namespace NzbDrone.Core.MediaCover
             return Path.Combine(_coverRootFolder, movieId.ToString());
         }
 
-        private bool EnsureCovers(Movie movie)
+        private bool EnsureCovers(Media movie)
         {
             bool updated = false;
             var toResize = new List<Tuple<MediaCover, bool>>();
 
-            foreach (var cover in movie.MovieMetadata.Value.Images)
+            foreach (var cover in movie.MediaMetadata.Value.Images)
             {
                 var fileName = GetCoverPath(movie.Id, cover.CoverType);
                 var alreadyExists = false;
@@ -191,7 +191,7 @@ namespace NzbDrone.Core.MediaCover
             return updated;
         }
 
-        private void DownloadCover(Movie movie, MediaCover cover)
+        private void DownloadCover(Media movie, MediaCover cover)
         {
             var fileName = GetCoverPath(movie.Id, cover.CoverType);
 
@@ -199,7 +199,7 @@ namespace NzbDrone.Core.MediaCover
             _httpClient.DownloadFile(cover.Url, fileName);
         }
 
-        private void EnsureResizedCovers(Movie movie, MediaCover cover, bool forceResize)
+        private void EnsureResizedCovers(Media movie, MediaCover cover, bool forceResize)
         {
             int[] heights;
 

@@ -16,7 +16,7 @@ namespace NzbDrone.Core.Test.MediaFiles.MovieImport.Specifications
     [TestFixture]
     public class FreeSpaceSpecificationFixture : CoreTest<FreeSpaceSpecification>
     {
-        private Movie _movie;
+        private Media _movie;
         private LocalMovie _localMovie;
         private string _rootFolder;
 
@@ -25,7 +25,7 @@ namespace NzbDrone.Core.Test.MediaFiles.MovieImport.Specifications
         {
             _rootFolder = @"C:\Test\TV".AsOsAgnostic();
 
-            _movie = Builder<Movie>.CreateNew()
+            _movie = Builder<Media>.CreateNew()
                 .With(s => s.Path = Path.Combine(_rootFolder, "30 Rock"))
                 .Build();
 

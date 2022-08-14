@@ -34,9 +34,9 @@ namespace NzbDrone.Core.Notifications.Discord
                     Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
                     IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
                 },
-                Url = $"https://www.themoviedb.org/movie/{message.Movie.MovieMetadata.Value.TmdbId}",
+                Url = $"https://www.themoviedb.org/movie/{message.Movie.MediaMetadata.Value.ForiegnId}",
                 Description = "Movie Grabbed",
-                Title = message.Movie.MovieMetadata.Value.Year > 0 ? $"{message.Movie.MovieMetadata.Value.Title} ({message.Movie.MovieMetadata.Value.Year})" : message.Movie.MovieMetadata.Value.Title,
+                Title = message.Movie.MediaMetadata.Value.Year > 0 ? $"{message.Movie.MediaMetadata.Value.Title} ({message.Movie.MediaMetadata.Value.Year})" : message.Movie.MediaMetadata.Value.Title,
                 Color = (int)DiscordColors.Standard,
                 Fields = new List<DiscordField>(),
                 Timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
@@ -46,7 +46,7 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 embed.Thumbnail = new DiscordImage
                 {
-                    Url = message.Movie.MovieMetadata.Value.Images.FirstOrDefault(x => x.CoverType == MediaCoverTypes.Poster)?.Url
+                    Url = message.Movie.MediaMetadata.Value.Images.FirstOrDefault(x => x.CoverType == MediaCoverTypes.Poster)?.Url
                 };
             }
 
@@ -54,7 +54,7 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 embed.Image = new DiscordImage
                 {
-                    Url = message.Movie.MovieMetadata.Value.Images.FirstOrDefault(x => x.CoverType == MediaCoverTypes.Fanart)?.Url
+                    Url = message.Movie.MediaMetadata.Value.Images.FirstOrDefault(x => x.CoverType == MediaCoverTypes.Fanart)?.Url
                 };
             }
 
@@ -66,15 +66,15 @@ namespace NzbDrone.Core.Notifications.Discord
                 {
                     case DiscordGrabFieldType.Overview:
                         discordField.Name = "Overview";
-                        discordField.Value = message.Movie.MovieMetadata.Value.Overview.Length <= 300 ? message.Movie.MovieMetadata.Value.Overview : message.Movie.MovieMetadata.Value.Overview.Substring(0, 300) + "...";
+                        discordField.Value = message.Movie.MediaMetadata.Value.Overview.Length <= 300 ? message.Movie.MediaMetadata.Value.Overview : message.Movie.MediaMetadata.Value.Overview.Substring(0, 300) + "...";
                         break;
                     case DiscordGrabFieldType.Rating:
                         discordField.Name = "Rating";
-                        discordField.Value = message.Movie.MovieMetadata.Value.Ratings.Tmdb?.Value.ToString() ?? string.Empty;
+                        discordField.Value = message.Movie.MediaMetadata.Value.Ratings.Tmdb?.Value.ToString() ?? string.Empty;
                         break;
                     case DiscordGrabFieldType.Genres:
                         discordField.Name = "Genres";
-                        discordField.Value = message.Movie.MovieMetadata.Value.Genres.Take(5).Join(", ");
+                        discordField.Value = message.Movie.MediaMetadata.Value.Genres.Take(5).Join(", ");
                         break;
                     case DiscordGrabFieldType.Quality:
                         discordField.Name = "Quality";
@@ -129,9 +129,9 @@ namespace NzbDrone.Core.Notifications.Discord
                     Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
                     IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
                 },
-                Url = $"https://www.themoviedb.org/movie/{message.Movie.MovieMetadata.Value.TmdbId}",
+                Url = $"https://www.themoviedb.org/movie/{message.Movie.MediaMetadata.Value.ForiegnId}",
                 Description = isUpgrade ? "Movie Upgraded" : "Movie Imported",
-                Title = message.Movie.MovieMetadata.Value.Year > 0 ? $"{message.Movie.MovieMetadata.Value.Title} ({message.Movie.MovieMetadata.Value.Year})" : message.Movie.MovieMetadata.Value.Title,
+                Title = message.Movie.MediaMetadata.Value.Year > 0 ? $"{message.Movie.MediaMetadata.Value.Title} ({message.Movie.MediaMetadata.Value.Year})" : message.Movie.MediaMetadata.Value.Title,
                 Color = isUpgrade ? (int)DiscordColors.Upgrade : (int)DiscordColors.Success,
                 Fields = new List<DiscordField>(),
                 Timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
@@ -141,7 +141,7 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 embed.Thumbnail = new DiscordImage
                 {
-                    Url = message.Movie.MovieMetadata.Value.Images.FirstOrDefault(x => x.CoverType == MediaCoverTypes.Poster)?.Url
+                    Url = message.Movie.MediaMetadata.Value.Images.FirstOrDefault(x => x.CoverType == MediaCoverTypes.Poster)?.Url
                 };
             }
 
@@ -149,7 +149,7 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 embed.Image = new DiscordImage
                 {
-                    Url = message.Movie.MovieMetadata.Value.Images.FirstOrDefault(x => x.CoverType == MediaCoverTypes.Fanart)?.Url
+                    Url = message.Movie.MediaMetadata.Value.Images.FirstOrDefault(x => x.CoverType == MediaCoverTypes.Fanart)?.Url
                 };
             }
 
@@ -161,15 +161,15 @@ namespace NzbDrone.Core.Notifications.Discord
                 {
                     case DiscordImportFieldType.Overview:
                         discordField.Name = "Overview";
-                        discordField.Value = message.Movie.MovieMetadata.Value.Overview.Length <= 300 ? message.Movie.MovieMetadata.Value.Overview : message.Movie.MovieMetadata.Value.Overview.Substring(0, 300) + "...";
+                        discordField.Value = message.Movie.MediaMetadata.Value.Overview.Length <= 300 ? message.Movie.MediaMetadata.Value.Overview : message.Movie.MediaMetadata.Value.Overview.Substring(0, 300) + "...";
                         break;
                     case DiscordImportFieldType.Rating:
                         discordField.Name = "Rating";
-                        discordField.Value = message.Movie.MovieMetadata.Value.Ratings.Tmdb?.Value.ToString() ?? string.Empty;
+                        discordField.Value = message.Movie.MediaMetadata.Value.Ratings.Tmdb?.Value.ToString() ?? string.Empty;
                         break;
                     case DiscordImportFieldType.Genres:
                         discordField.Name = "Genres";
-                        discordField.Value = message.Movie.MovieMetadata.Value.Genres.Take(5).Join(", ");
+                        discordField.Value = message.Movie.MediaMetadata.Value.Genres.Take(5).Join(", ");
                         break;
                     case DiscordImportFieldType.Quality:
                         discordField.Name = "Quality";
@@ -222,7 +222,7 @@ namespace NzbDrone.Core.Notifications.Discord
             _proxy.SendPayload(payload, Settings);
         }
 
-        public override void OnMovieRename(Movie movie, List<RenamedMovieFile> renamedFiles)
+        public override void OnMovieRename(Media movie, List<RenamedMovieFile> renamedFiles)
         {
             var attachments = new List<Embed>();
 
@@ -230,7 +230,7 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 attachments.Add(new Embed
                 {
-                    Title = movie.MovieMetadata.Value.Title,
+                    Title = movie.MediaMetadata.Value.Title,
                     Description = renamedFile.PreviousRelativePath + " renamed to " + renamedFile.MovieFile.RelativePath,
                 });
             }
@@ -248,7 +248,7 @@ namespace NzbDrone.Core.Notifications.Discord
                               {
                                   new Embed
                                   {
-                                      Title = movie.MovieMetadata.Value.Title,
+                                      Title = movie.MediaMetadata.Value.Title,
                                       Description = deleteMessage.DeletedFilesMessage
                                   }
                               };
@@ -267,7 +267,7 @@ namespace NzbDrone.Core.Notifications.Discord
                               {
                                   new Embed
                                   {
-                                      Title = movie.MovieMetadata.Value.Title,
+                                      Title = movie.MediaMetadata.Value.Title,
                                       Description = deleteMessage.MovieFile.Path
                                   }
                               };
@@ -399,23 +399,19 @@ namespace NzbDrone.Core.Notifications.Discord
             return string.Format("{0} {1}", (Math.Sign(byteCount) * num).ToString(), suf[place]);
         }
 
-        private static string GetLinksString(Movie movie)
+        private static string GetLinksString(Media movie)
         {
-            var links = string.Format("[{0}]({1})", "TMDb", $"https://themoviedb.org/movie/{movie.MovieMetadata.Value.TmdbId}");
-            links += string.Format(" / [{0}]({1})", "Trakt", $"https://trakt.tv/search/tmdb/{movie.MovieMetadata.Value.TmdbId}?id_type=movie");
-            if (movie.MovieMetadata.Value.ImdbId.IsNotNullOrWhiteSpace())
+            var links = string.Format("[{0}]({1})", "TMDb", $"https://themoviedb.org/movie/{movie.MediaMetadata.Value.ForiegnId}");
+            links += string.Format(" / [{0}]({1})", "Trakt", $"https://trakt.tv/search/tmdb/{movie.MediaMetadata.Value.ForiegnId}?id_type=movie");
+
+            if (movie.MediaMetadata.Value.YouTubeTrailerId.IsNotNullOrWhiteSpace())
             {
-                links += string.Format(" / [{0}]({1})", "IMDb", $"https://imdb.com/title/{movie.MovieMetadata.Value.ImdbId}/");
+                links += string.Format(" / [{0}]({1})", "YouTube", $"https://www.youtube.com/watch?v={movie.MediaMetadata.Value.YouTubeTrailerId}");
             }
 
-            if (movie.MovieMetadata.Value.YouTubeTrailerId.IsNotNullOrWhiteSpace())
+            if (movie.MediaMetadata.Value.Website.IsNotNullOrWhiteSpace())
             {
-                links += string.Format(" / [{0}]({1})", "YouTube", $"https://www.youtube.com/watch?v={movie.MovieMetadata.Value.YouTubeTrailerId}");
-            }
-
-            if (movie.MovieMetadata.Value.Website.IsNotNullOrWhiteSpace())
-            {
-                links += string.Format(" / [{0}]({1})", "Website", movie.MovieMetadata.Value.Website);
+                links += string.Format(" / [{0}]({1})", "Website", movie.MediaMetadata.Value.Website);
             }
 
             return links;

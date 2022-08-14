@@ -65,7 +65,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
             foreach (var importDecision in qualifiedImports.OrderByDescending(e => e.LocalMovie.Size))
             {
                 var localMovie = importDecision.LocalMovie;
-                var oldFiles = new List<MovieFile>();
+                var oldFiles = new List<MediaFile>();
 
                 try
                 {
@@ -77,7 +77,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
                         continue;
                     }
 
-                    var movieFile = new MovieFile();
+                    var movieFile = new MediaFile();
                     movieFile.DateAdded = DateTime.UtcNow;
                     movieFile.MovieId = localMovie.Movie.Id;
                     movieFile.Path = localMovie.Path.CleanFilePath();

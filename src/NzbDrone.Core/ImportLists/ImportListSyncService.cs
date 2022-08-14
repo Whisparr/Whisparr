@@ -65,45 +65,44 @@ namespace NzbDrone.Core.ImportLists
             ProcessReports(result);
         }
 
-        private void ProcessMovieReport(ImportListDefinition importList, ImportListMovie report, List<ImportExclusion> listExclusions, List<int> dbMovies, List<Movie> moviesToAdd)
+        private void ProcessMovieReport(ImportListDefinition importList, ImportListMovie report, List<ImportExclusion> listExclusions, List<int> dbMovies, List<Media> moviesToAdd)
         {
-            if (report.TmdbId == 0 || !importList.EnableAuto)
+            if (report.ForiegnId == 0 || !importList.EnableAuto)
             {
                 return;
             }
 
             // Check to see if movie in DB
-            if (dbMovies.Contains(report.TmdbId))
+            if (dbMovies.Contains(report.ForiegnId))
             {
-                _logger.Debug("{0} [{1}] Rejected, Movie Exists in DB", report.TmdbId, report.Title);
+                _logger.Debug("{0} [{1}] Rejected, Movie Exists in DB", report.ForiegnId, report.Title);
                 return;
             }
 
             // Check to see if movie excluded
-            var excludedMovie = listExclusions.Where(s => s.TmdbId == report.TmdbId).SingleOrDefault();
+            var excludedMovie = listExclusions.Where(s => s.TmdbId == report.ForiegnId).SingleOrDefault();
 
             if (excludedMovie != null)
             {
-                _logger.Debug("{0} [{1}] Rejected due to list exlcusion", report.TmdbId, report.Title);
+                _logger.Debug("{0} [{1}] Rejected due to list exlcusion", report.ForiegnId, report.Title);
                 return;
             }
 
             // Append Artist if not already in DB or already on add list
-            if (moviesToAdd.All(s => s.TmdbId != report.TmdbId))
+            if (moviesToAdd.All(s => s.ForiegnId != report.ForiegnId))
             {
                 var monitored = importList.ShouldMonitor;
 
-                moviesToAdd.Add(new Movie
+                moviesToAdd.Add(new Media
                 {
                     Monitored = monitored,
                     RootFolderPath = importList.RootFolderPath,
                     ProfileId = importList.ProfileId,
                     MinimumAvailability = importList.MinimumAvailability,
                     Tags = importList.Tags,
-                    TmdbId = report.TmdbId,
+                    ForiegnId = report.ForiegnId,
                     Title = report.Title,
                     Year = report.Year,
-                    ImdbId = report.ImdbId,
                     AddOptions = new AddMovieOptions
                     {
                         SearchForMovie = monitored && importList.SearchOnAdd,
@@ -117,14 +116,9 @@ namespace NzbDrone.Core.ImportLists
         {
             listFetchResult.Movies = listFetchResult.Movies.DistinctBy(x =>
             {
-                if (x.TmdbId != 0)
+                if (x.ForiegnId != 0)
                 {
-                    return x.TmdbId.ToString();
-                }
-
-                if (x.ImdbId.IsNotNullOrWhiteSpace())
-                {
-                    return x.ImdbId;
+                    return x.ForiegnId.ToString();
                 }
 
                 return x.Title;
@@ -134,7 +128,7 @@ namespace NzbDrone.Core.ImportLists
 
             var importExclusions = _exclusionService.GetAllExclusions();
             var dbMovies = _movieService.AllMovieTmdbIds();
-            var moviesToAdd = new List<Movie>();
+            var moviesToAdd = new List<Media>();
 
             var groupedMovies = listedMovies.GroupBy(x => x.ListId);
 
@@ -144,7 +138,7 @@ namespace NzbDrone.Core.ImportLists
 
                 foreach (var movie in list)
                 {
-                    if (movie.TmdbId != 0)
+                    if (movie.ForiegnId != 0)
                     {
                         ProcessMovieReport(importList, movie, importExclusions, dbMovies, moviesToAdd);
                     }
@@ -173,7 +167,7 @@ namespace NzbDrone.Core.ImportLists
 
         private void CleanLibrary(List<ImportListMovie> listMovies)
         {
-            var moviesToUpdate = new List<Movie>();
+            var moviesToUpdate = new List<Media>();
 
             if (_configService.ListSyncLevel == "disabled")
             {
@@ -184,7 +178,7 @@ namespace NzbDrone.Core.ImportLists
             var moviesInLibrary = _movieService.GetAllMovies();
             foreach (var movie in moviesInLibrary)
             {
-                var movieExists = listMovies.Any(c => c.TmdbId == movie.TmdbId || c.ImdbId == movie.ImdbId);
+                var movieExists = listMovies.Any(c => c.ForiegnId == movie.ForiegnId);
 
                 if (!movieExists)
                 {

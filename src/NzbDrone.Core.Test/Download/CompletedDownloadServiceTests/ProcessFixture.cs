@@ -64,7 +64,7 @@ namespace NzbDrone.Core.Test.Download.CompletedDownloadServiceTests
         {
             return new RemoteMovie
             {
-                Movie = new Movie(),
+                Movie = new Media(),
             };
         }
 
@@ -92,7 +92,7 @@ namespace NzbDrone.Core.Test.Download.CompletedDownloadServiceTests
 
             Mocker.GetMock<IParsingService>()
                   .Setup(s => s.GetMovie(It.IsAny<string>()))
-                  .Returns((Movie)null);
+                  .Returns((Media)null);
 
             Mocker.GetMock<IParsingService>()
                   .Setup(s => s.GetMovie("Droned S01E01"))
@@ -152,7 +152,7 @@ namespace NzbDrone.Core.Test.Download.CompletedDownloadServiceTests
             GivenABadlyNamedDownload();
 
             Mocker.GetMock<IDownloadedMovieImportService>()
-                  .Setup(v => v.ProcessPath(It.IsAny<string>(), It.IsAny<ImportMode>(), It.IsAny<Movie>(), It.IsAny<DownloadClientItem>()))
+                  .Setup(v => v.ProcessPath(It.IsAny<string>(), It.IsAny<ImportMode>(), It.IsAny<Media>(), It.IsAny<DownloadClientItem>()))
                   .Returns(new List<ImportResult>
                            {
                                new ImportResult(new ImportDecision(new LocalMovie { Path = @"C:\TestPath\Droned.S01E01.mkv" }))
@@ -171,7 +171,7 @@ namespace NzbDrone.Core.Test.Download.CompletedDownloadServiceTests
         {
             Mocker.GetMock<IParsingService>()
                   .Setup(s => s.GetMovie("Drone.S01E01.HDTV"))
-                  .Returns((Movie)null);
+                  .Returns((Media)null);
 
             Subject.Check(_trackedDownload);
 

@@ -5,9 +5,9 @@ namespace NzbDrone.Core.Movies
 {
     public static class EnumerableExtensions
     {
-        public static Movie FirstWithYear(this IEnumerable<Movie> query, int? year)
+        public static Media FirstWithYear(this IEnumerable<Media> query, int? year)
         {
-            return year.HasValue ? query.FirstOrDefault(movie => movie.Year == year || movie.MovieMetadata.Value.SecondaryYear == year) : query.FirstOrDefault();
+            return year.HasValue ? query.FirstOrDefault(movie => movie.Year == year || movie.MediaMetadata.Value.SecondaryYear == year) : query.FirstOrDefault();
         }
     }
 }

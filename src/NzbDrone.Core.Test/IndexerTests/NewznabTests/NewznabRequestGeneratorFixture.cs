@@ -26,7 +26,7 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
 
             _movieSearchCriteria = new MovieSearchCriteria
             {
-                Movie = new Movies.Movie { ImdbId = "tt0076759", Title = "Star Wars", Year = 1977, TmdbId = 11 },
+                Movie = new Movies.Media { Title = "Star Wars", Year = 1977, ForiegnId = 11 },
                 SceneTitles = new List<string> { "Star Wars" }
             };
 
@@ -97,7 +97,7 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
 
             MovieSearchCriteria movieRawSearchCriteria = new MovieSearchCriteria
             {
-                Movie = new Movies.Movie { Title = "Some Movie & Title: Words", Year = 2021, TmdbId = 123 },
+                Movie = new Movies.Media { Title = "Some Movie & Title: Words", Year = 2021, ForiegnId = 123 },
                 SceneTitles = new List<string> { "Some Movie & Title: Words" }
             };
 
@@ -118,7 +118,7 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
 
             MovieSearchCriteria movieRawSearchCriteria = new MovieSearchCriteria
             {
-                Movie = new Movies.Movie { Title = "Some Movie & Title: Words", Year = 2021, TmdbId = 123 },
+                Movie = new Movies.Media { Title = "Some Movie & Title: Words", Year = 2021, ForiegnId = 123 },
                 SceneTitles = new List<string> { "Some Movie & Title: Words" }
             };
 

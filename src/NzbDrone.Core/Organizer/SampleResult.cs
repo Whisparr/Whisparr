@@ -6,7 +6,7 @@ namespace NzbDrone.Core.Organizer
     public class SampleResult
     {
         public string FileName { get; set; }
-        public Movie Movie { get; set; }
-        public MovieFile MovieFile { get; set; }
+        public Media Movie { get; set; }
+        public MediaFile MovieFile { get; set; }
     }
 }

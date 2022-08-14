@@ -21,7 +21,7 @@ namespace NzbDrone.Core.Notifications.Plex.Server
 
         private class PlexUpdateQueue
         {
-            public Dictionary<int, Movie> Pending { get; } = new Dictionary<int, Movie>();
+            public Dictionary<int, Media> Pending { get; } = new Dictionary<int, Media>();
             public bool Refreshing { get; set; }
         }
 
@@ -44,7 +44,7 @@ namespace NzbDrone.Core.Notifications.Plex.Server
             UpdateIfEnabled(message.Movie);
         }
 
-        public override void OnMovieRename(Movie movie, List<RenamedMovieFile> renamedFiles)
+        public override void OnMovieRename(Media movie, List<RenamedMovieFile> renamedFiles)
         {
             UpdateIfEnabled(movie);
         }
@@ -62,7 +62,7 @@ namespace NzbDrone.Core.Notifications.Plex.Server
             }
         }
 
-        private void UpdateIfEnabled(Movie movie)
+        private void UpdateIfEnabled(Media movie)
         {
             if (Settings.UpdateLibrary)
             {
@@ -97,7 +97,7 @@ namespace NzbDrone.Core.Notifications.Plex.Server
             {
                 while (true)
                 {
-                    List<Movie> refreshingMovies;
+                    List<Media> refreshingMovies;
                     lock (queue)
                     {
                         if (queue.Pending.Empty())

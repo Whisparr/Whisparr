@@ -11,19 +11,19 @@ using NzbDrone.Core.Test.Framework;
 namespace NzbDrone.Core.Test.MediaFiles
 {
     [TestFixture]
-    public class MediaFileRepositoryFixture : DbTest<MediaFileRepository, MovieFile>
+    public class MediaFileRepositoryFixture : DbTest<MediaFileRepository, MediaFile>
     {
-        private Movie _movie1;
-        private Movie _movie2;
+        private Media _movie1;
+        private Media _movie2;
 
         [SetUp]
         public void Setup()
         {
-            _movie1 = Builder<Movie>.CreateNew()
+            _movie1 = Builder<Media>.CreateNew()
                                     .With(s => s.Id = 7)
                                     .Build();
 
-            _movie2 = Builder<Movie>.CreateNew()
+            _movie2 = Builder<Media>.CreateNew()
                                     .With(s => s.Id = 8)
                                     .Build();
         }
@@ -31,7 +31,7 @@ namespace NzbDrone.Core.Test.MediaFiles
         [Test]
         public void get_files_by_movie()
         {
-            var files = Builder<MovieFile>.CreateListOfSize(10)
+            var files = Builder<MediaFile>.CreateListOfSize(10)
                 .All()
                 .With(c => c.Id = 0)
                 .With(c => c.Quality = new QualityModel())
@@ -51,7 +51,7 @@ namespace NzbDrone.Core.Test.MediaFiles
         [Test]
         public void should_delete_files_by_movieId()
         {
-            var items = Builder<MovieFile>.CreateListOfSize(5)
+            var items = Builder<MediaFile>.CreateListOfSize(5)
                 .TheFirst(1)
                 .With(c => c.MovieId = _movie2.Id)
                 .TheRest()

@@ -4,9 +4,9 @@ namespace NzbDrone.Core.Housekeeping.Housekeepers
 {
     public class UpdateCleanTitleForMovies : IHousekeepingTask
     {
-        private readonly IMovieRepository _movieRepository;
+        private readonly IMediaRepository _movieRepository;
 
-        public UpdateCleanTitleForMovies(IMovieRepository movieRepository)
+        public UpdateCleanTitleForMovies(IMediaRepository movieRepository)
         {
             _movieRepository = movieRepository;
         }

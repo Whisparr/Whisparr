@@ -11,8 +11,8 @@ namespace NzbDrone.Core.Movies.Credits
         }
 
         public string Name { get; set; }
-        public string CreditTmdbId { get; set; }
-        public int PersonTmdbId { get; set; }
+        public string CreditForeignId { get; set; }
+        public int PerformerForeignId { get; set; }
         public int MovieMetadataId { get; set; }
         public List<MediaCover.MediaCover> Images { get; set; }
         public string Department { get; set; }

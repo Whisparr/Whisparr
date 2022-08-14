@@ -38,7 +38,7 @@ namespace Whisparr.Api.V3.Parse
                 };
             }
 
-            var remoteMovie = _parsingService.Map(parsedMovieInfo, "");
+            var remoteMovie = _parsingService.Map(parsedMovieInfo);
 
             if (remoteMovie != null)
             {

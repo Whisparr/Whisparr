@@ -7,9 +7,9 @@ namespace NzbDrone.Core.MetadataSource
 {
     public interface IProvideMovieInfo
     {
-        MovieMetadata GetMovieByImdbId(string imdbId);
-        Tuple<MovieMetadata, List<Credit>> GetMovieInfo(int tmdbId);
-        List<MovieMetadata> GetBulkMovieInfo(List<int> tmdbIds);
+        MediaMetadata GetMovieByImdbId(string imdbId);
+        Tuple<MediaMetadata, List<Credit>> GetMovieInfo(int tmdbId);
+        List<MediaMetadata> GetBulkMovieInfo(List<int> tmdbIds);
 
         HashSet<int> GetChangedMovies(DateTime startTime);
     }

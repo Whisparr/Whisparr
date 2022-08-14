@@ -14,12 +14,12 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
     [TestFixture]
     public class CleanupOrphanedHistoryItemsFixture : DbTest<CleanupOrphanedHistoryItems, MovieHistory>
     {
-        private Movie _movie;
+        private Media _movie;
 
         [SetUp]
         public void Setup()
         {
-            _movie = Builder<Movie>.CreateNew()
+            _movie = Builder<Media>.CreateNew()
                                    .BuildNew();
         }
 

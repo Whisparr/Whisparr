@@ -22,7 +22,7 @@ namespace NzbDrone.Core.MediaFiles
 {
     public interface IDiskScanService
     {
-        void Scan(Movie movie);
+        void Scan(Media movie);
         string[] GetVideoFiles(string path, bool allDirectories = true);
         string[] GetNonVideoFiles(string path, bool allDirectories = true);
         List<string> FilterPaths(string basePath, IEnumerable<string> paths, bool filterExtras = true);
@@ -74,7 +74,7 @@ namespace NzbDrone.Core.MediaFiles
         private static readonly Regex ExcludedExtraFilesRegex = new Regex(@"(-(trailer|other|behindthescenes|deleted|featurette|interview|scene|short)\.[^.]+$)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         private static readonly Regex ExcludedFilesRegex = new Regex(@"^\._|^Thumbs\.db$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-        public void Scan(Movie movie)
+        public void Scan(Media movie)
         {
             var rootFolder = _rootFolderService.GetBestRootFolderPath(movie.Path);
 
@@ -144,7 +144,7 @@ namespace NzbDrone.Core.MediaFiles
 
             // Update existing files that have a different file size
             var fileInfoStopwatch = Stopwatch.StartNew();
-            var filesToUpdate = new List<MovieFile>();
+            var filesToUpdate = new List<MediaFile>();
 
             foreach (var file in movieFiles)
             {
@@ -177,13 +177,13 @@ namespace NzbDrone.Core.MediaFiles
             CompletedScanning(movie);
         }
 
-        private void CleanMediaFiles(Movie movie, List<string> mediaFileList)
+        private void CleanMediaFiles(Media movie, List<string> mediaFileList)
         {
             _logger.Debug("{0} Cleaning up media files in DB", movie);
             _mediaFileTableCleanupService.Clean(movie, mediaFileList);
         }
 
-        private void CompletedScanning(Movie movie)
+        private void CompletedScanning(Media movie)
         {
             _logger.Info("Completed scanning disk for {0}", movie.Title);
             _eventAggregator.PublishEvent(new MovieScannedEvent(movie));

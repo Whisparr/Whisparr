@@ -14,12 +14,12 @@ namespace NzbDrone.Core.Test.MovieTests
     [TestFixture]
     public class MovieFolderPathBuilderFixture : CoreTest<MoviePathBuilder>
     {
-        private Movie _movie;
+        private Media _movie;
 
         [SetUp]
         public void Setup()
         {
-            _movie = Builder<Movie>.CreateNew()
+            _movie = Builder<Media>.CreateNew()
                                      .With(s => s.Title = "Movie Title")
                                      .With(s => s.Path = @"C:\Test\Movies\Movie.Title".AsOsAgnostic())
                                      .With(s => s.RootFolderPath = null)

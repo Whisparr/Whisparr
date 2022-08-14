@@ -59,7 +59,7 @@ namespace NzbDrone.Core.Movies
             _logger = logger;
         }
 
-        private Movie RefreshMovieInfo(int movieId)
+        private Media RefreshMovieInfo(int movieId)
         {
             // Get the movie before updating, that way any changes made to the movie after the refresh started,
             // but before this movie was refreshed won't be lost.
@@ -68,12 +68,12 @@ namespace NzbDrone.Core.Movies
 
             _logger.ProgressInfo("Updating info for {0}", movie.Title);
 
-            MovieMetadata movieInfo;
+            MediaMetadata movieInfo;
             List<Credit> credits;
 
             try
             {
-                var tuple = _movieInfo.GetMovieInfo(movie.TmdbId);
+                var tuple = _movieInfo.GetMovieInfo(movie.ForiegnId);
                 movieInfo = tuple.Item1;
                 credits = tuple.Item2;
             }
@@ -90,14 +90,13 @@ namespace NzbDrone.Core.Movies
                 throw;
             }
 
-            if (movieMetadata.TmdbId != movieInfo.TmdbId)
+            if (movieMetadata.ForiegnId != movieInfo.ForiegnId)
             {
-                _logger.Warn("Movie '{0}' (TMDb: {1}) was replaced with '{2}' (TMDb: {3}), because the original was a duplicate.", movie.Title, movie.TmdbId, movieInfo.Title, movieInfo.TmdbId);
-                movieMetadata.TmdbId = movieInfo.TmdbId;
+                _logger.Warn("Movie '{0}' (TMDb: {1}) was replaced with '{2}' (TMDb: {3}), because the original was a duplicate.", movie.Title, movie.ForiegnId, movieInfo.Title, movieInfo.ForiegnId);
+                movieMetadata.ForiegnId = movieInfo.ForiegnId;
             }
 
             movieMetadata.Title = movieInfo.Title;
-            movieMetadata.ImdbId = movieInfo.ImdbId;
             movieMetadata.Overview = movieInfo.Overview;
             movieMetadata.Status = movieInfo.Status;
             movieMetadata.CleanTitle = movieInfo.CleanTitle;
@@ -109,12 +108,10 @@ namespace NzbDrone.Core.Movies
 
             //movie.Genres = movieInfo.Genres;
             movieMetadata.Certification = movieInfo.Certification;
-            movieMetadata.InCinemas = movieInfo.InCinemas;
             movieMetadata.Website = movieInfo.Website;
 
             movieMetadata.Year = movieInfo.Year;
             movieMetadata.SecondaryYear = movieInfo.SecondaryYear;
-            movieMetadata.PhysicalRelease = movieInfo.PhysicalRelease;
             movieMetadata.DigitalRelease = movieInfo.DigitalRelease;
             movieMetadata.YouTubeTrailerId = movieInfo.YouTubeTrailerId;
             movieMetadata.Studio = movieInfo.Studio;
@@ -136,7 +133,7 @@ namespace NzbDrone.Core.Movies
             return movie;
         }
 
-        private void RescanMovie(Movie movie, bool isNew, CommandTrigger trigger)
+        private void RescanMovie(Media movie, bool isNew, CommandTrigger trigger)
         {
             var rescanAfterRefresh = _configService.RescanAfterRefresh;
             var shouldRescan = true;
@@ -191,7 +188,7 @@ namespace NzbDrone.Core.Movies
                     }
                     catch (MovieNotFoundException)
                     {
-                        _logger.Error("Movie '{0}' (TMDb {1}) was not found, it may have been removed from The Movie Database.", movie.Title, movie.TmdbId);
+                        _logger.Error("Movie '{0}' (TMDb {1}) was not found, it may have been removed from The Movie Database.", movie.Title, movie.ForiegnId);
                     }
                     catch (Exception e)
                     {
@@ -204,7 +201,7 @@ namespace NzbDrone.Core.Movies
             else
             {
                 // TODO refresh all moviemetadata here, even if not used by a Movie
-                var allMovie = _movieService.GetAllMovies().OrderBy(c => c.MovieMetadata.Value.SortTitle).ToList();
+                var allMovie = _movieService.GetAllMovies().OrderBy(c => c.MediaMetadata.Value.SortTitle).ToList();
 
                 var updatedTMDBMovies = new HashSet<int>();
 
@@ -216,7 +213,7 @@ namespace NzbDrone.Core.Movies
                 foreach (var movie in allMovie)
                 {
                     var movieLocal = movie;
-                    if ((updatedTMDBMovies.Count == 0 && _checkIfMovieShouldBeRefreshed.ShouldRefresh(movie.MovieMetadata)) || updatedTMDBMovies.Contains(movie.TmdbId) || message.Trigger == CommandTrigger.Manual)
+                    if ((updatedTMDBMovies.Count == 0 && _checkIfMovieShouldBeRefreshed.ShouldRefresh(movie.MediaMetadata)) || updatedTMDBMovies.Contains(movie.ForiegnId) || message.Trigger == CommandTrigger.Manual)
                     {
                         try
                         {
@@ -224,7 +221,7 @@ namespace NzbDrone.Core.Movies
                         }
                         catch (MovieNotFoundException)
                         {
-                            _logger.Error("Movie '{0}' (TMDb {1}) was not found, it may have been removed from The Movie Database.", movieLocal.Title, movieLocal.TmdbId);
+                            _logger.Error("Movie '{0}' (TMDb {1}) was not found, it may have been removed from The Movie Database.", movieLocal.Title, movieLocal.ForiegnId);
                             continue;
                         }
                         catch (Exception e)

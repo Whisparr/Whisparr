@@ -7,9 +7,9 @@ using NzbDrone.Core.Movies.Translations;
 
 namespace NzbDrone.Core.Movies
 {
-    public class MovieMetadata : Entity<MovieMetadata>
+    public class MediaMetadata : Entity<MediaMetadata>
     {
-        public MovieMetadata()
+        public MediaMetadata()
         {
             AlternativeTitles = new List<AlternativeTitle>();
             Translations = new List<MovieTranslation>();
@@ -20,12 +20,10 @@ namespace NzbDrone.Core.Movies
             Ratings = new Ratings();
         }
 
-        public int TmdbId { get; set; }
+        public int ForiegnId { get; set; }
 
         public List<MediaCover.MediaCover> Images { get; set; }
         public List<string> Genres { get; set; }
-        public DateTime? InCinemas { get; set; }
-        public DateTime? PhysicalRelease { get; set; }
         public DateTime? DigitalRelease { get; set; }
         public string Certification { get; set; }
         public int Year { get; set; }
@@ -35,11 +33,11 @@ namespace NzbDrone.Core.Movies
         public DateTime? LastInfoSync { get; set; }
         public int Runtime { get; set; }
         public string Website { get; set; }
-        public string ImdbId { get; set; }
         public string Title { get; set; }
         public string CleanTitle { get; set; }
         public string SortTitle { get; set; }
         public MovieStatusType Status { get; set; }
+        public ReleaseType ReleaseType { get; set; }
         public string Overview { get; set; }
 
         //Get Loaded via a Join Query
@@ -60,14 +58,9 @@ namespace NzbDrone.Core.Movies
         {
             get
             {
-                if (PhysicalRelease.HasValue)
+                if (DigitalRelease.HasValue)
                 {
-                    return PhysicalRelease.Value >= DateTime.UtcNow.AddDays(-21);
-                }
-
-                if (InCinemas.HasValue)
-                {
-                    return InCinemas.Value >= DateTime.UtcNow.AddDays(-120);
+                    return DigitalRelease.Value >= DateTime.UtcNow.AddDays(-21);
                 }
 
                 return true;
@@ -76,7 +69,13 @@ namespace NzbDrone.Core.Movies
 
         public DateTime PhysicalReleaseDate()
         {
-            return PhysicalRelease ?? (InCinemas?.AddDays(90) ?? DateTime.MaxValue);
+            return DigitalRelease ?? DateTime.MaxValue;
         }
+    }
+
+    public enum ReleaseType
+    {
+        Scene,
+        Movie
     }
 }

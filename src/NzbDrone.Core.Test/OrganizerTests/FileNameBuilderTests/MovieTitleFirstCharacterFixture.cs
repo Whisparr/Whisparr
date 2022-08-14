@@ -13,13 +13,13 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
     [TestFixture]
     public class MovieTitleFirstCharacterFixture : CoreTest<FileNameBuilder>
     {
-        private Movie _movie;
+        private Media _movie;
         private NamingConfig _namingConfig;
 
         [SetUp]
         public void Setup()
         {
-            _movie = Builder<Movie>
+            _movie = Builder<Media>
                     .CreateNew()
                     .Build();
 

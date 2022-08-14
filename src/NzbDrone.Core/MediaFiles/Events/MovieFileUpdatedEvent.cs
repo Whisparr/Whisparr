@@ -4,9 +4,9 @@ namespace NzbDrone.Core.MediaFiles.Events
 {
     public class MovieFileUpdatedEvent : IEvent
     {
-        public MovieFile MovieFile { get; private set; }
+        public MediaFile MovieFile { get; private set; }
 
-        public MovieFileUpdatedEvent(MovieFile movieFile)
+        public MovieFileUpdatedEvent(MediaFile movieFile)
         {
             MovieFile = movieFile;
         }

@@ -30,7 +30,7 @@ namespace NzbDrone.Core.Notifications.Mailgun
             _proxy.SendNotification(downloadMessage.OldMovieFiles.Count > 0 ? MOVIE_UPGRADED_TITLE : MOVIE_DOWNLOADED_TITLE, downloadMessage.Message, Settings);
         }
 
-        public override void OnMovieAdded(Movie movie)
+        public override void OnMovieAdded(Media movie)
         {
             _proxy.SendNotification(MOVIE_ADDED_TITLE, $"{movie.Title} added to library", Settings);
         }

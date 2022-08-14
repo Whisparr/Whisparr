@@ -30,7 +30,7 @@ namespace NzbDrone.Core.Notifications.PushBullet
             _proxy.SendNotification(MOVIE_DOWNLOADED_TITLE_BRANDED, message.Message, Settings);
         }
 
-        public override void OnMovieAdded(Movie movie)
+        public override void OnMovieAdded(Media movie)
         {
             _proxy.SendNotification(MOVIE_ADDED_TITLE_BRANDED, $"{movie.Title} added to library", Settings);
         }

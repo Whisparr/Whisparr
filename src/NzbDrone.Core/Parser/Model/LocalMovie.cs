@@ -17,7 +17,7 @@ namespace NzbDrone.Core.Parser.Model
         public ParsedMovieInfo FileMovieInfo { get; set; }
         public ParsedMovieInfo DownloadClientMovieInfo { get; set; }
         public ParsedMovieInfo FolderMovieInfo { get; set; }
-        public Movie Movie { get; set; }
+        public Media Movie { get; set; }
         public QualityModel Quality { get; set; }
         public List<Language> Languages { get; set; }
         public MediaInfoModel MediaInfo { get; set; }

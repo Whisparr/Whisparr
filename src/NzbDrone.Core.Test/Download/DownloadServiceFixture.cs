@@ -40,7 +40,7 @@ namespace NzbDrone.Core.Test.Download
                 .Build();
 
             _parseResult = Builder<RemoteMovie>.CreateNew()
-                   .With(c => c.Movie = Builder<Movie>.CreateNew().Build())
+                   .With(c => c.Movie = Builder<Media>.CreateNew().Build())
                    .With(c => c.Release = releaseInfo)
                    .Build();
         }

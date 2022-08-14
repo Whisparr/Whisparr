@@ -11,12 +11,12 @@ using NzbDrone.Core.Test.Framework;
 namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
 {
     [TestFixture]
-    public class CleanupOrphanedMovieMetadataFixture : DbTest<CleanupOrphanedMovieMetadata, MovieMetadata>
+    public class CleanupOrphanedMovieMetadataFixture : DbTest<CleanupOrphanedMovieMetadata, MediaMetadata>
     {
         [Test]
         public void should_delete_orphaned_movie_metadata_items()
         {
-            var metadata = Builder<MovieMetadata>.CreateNew().BuildNew();
+            var metadata = Builder<MediaMetadata>.CreateNew().BuildNew();
 
             Db.Insert(metadata);
             Subject.Clean();
@@ -26,11 +26,11 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
         [Test]
         public void should_not_delete_unorphaned_movie_metadata_items()
         {
-            var movieMetadata = Builder<MovieMetadata>.CreateNew().BuildNew();
+            var movieMetadata = Builder<MediaMetadata>.CreateNew().BuildNew();
 
             Db.Insert(movieMetadata);
 
-            var movie = Builder<Movie>.CreateNew()
+            var movie = Builder<Media>.CreateNew()
                                               .With(b => b.MovieMetadataId = movieMetadata.Id)
                                               .BuildNew();
 
@@ -43,7 +43,7 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
         [Test]
         public void should_not_delete_unorphaned_movie_metadata_items_for_lists()
         {
-            var movieMetadata = Builder<MovieMetadata>.CreateNew().BuildNew();
+            var movieMetadata = Builder<MediaMetadata>.CreateNew().BuildNew();
 
             Db.Insert(movieMetadata);
 

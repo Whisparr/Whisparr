@@ -32,7 +32,7 @@ namespace NzbDrone.Core.Test.MediaFiles
                 .Returns(new List<ImportResult>());
 
             Mocker.GetMock<IDownloadedMovieImportService>()
-                .Setup(v => v.ProcessPath(It.IsAny<string>(), It.IsAny<ImportMode>(), It.IsAny<Movie>(), It.IsAny<DownloadClientItem>()))
+                .Setup(v => v.ProcessPath(It.IsAny<string>(), It.IsAny<ImportMode>(), It.IsAny<Media>(), It.IsAny<DownloadClientItem>()))
                 .Returns(new List<ImportResult>());
 
             var downloadItem = Builder<DownloadClientItem>.CreateNew()
@@ -41,7 +41,7 @@ namespace NzbDrone.Core.Test.MediaFiles
                 .Build();
 
             var remoteMovie = Builder<RemoteMovie>.CreateNew()
-                .With(v => v.Movie = new Movie())
+                .With(v => v.Movie = new Media())
                 .Build();
 
             _trackedDownload = new TrackedDownload

@@ -79,7 +79,7 @@ namespace Whisparr.Api.V3.Movies
 
     public static class MovieResourceMapper
     {
-        public static MovieResource ToResource(this Movie model, int availDelay, MovieTranslation movieTranslation = null, IUpgradableSpecification upgradableSpecification = null)
+        public static MovieResource ToResource(this Media model, int availDelay, MovieTranslation movieTranslation = null, IUpgradableSpecification upgradableSpecification = null)
         {
             if (model == null)
             {
@@ -91,29 +91,27 @@ namespace Whisparr.Api.V3.Movies
             MovieFileResource movieFile = model.MovieFile?.ToResource(model, upgradableSpecification);
 
             var translatedTitle = movieTranslation?.Title ?? model.Title;
-            var translatedOverview = movieTranslation?.Overview ?? model.MovieMetadata.Value.Overview;
+            var translatedOverview = movieTranslation?.Overview ?? model.MediaMetadata.Value.Overview;
 
             return new MovieResource
             {
                 Id = model.Id,
-                TmdbId = model.TmdbId,
+                TmdbId = model.ForiegnId,
                 Title = translatedTitle,
-                OriginalTitle = model.MovieMetadata.Value.OriginalTitle,
-                OriginalLanguage = model.MovieMetadata.Value.OriginalLanguage,
+                OriginalTitle = model.MediaMetadata.Value.OriginalTitle,
+                OriginalLanguage = model.MediaMetadata.Value.OriginalLanguage,
                 SortTitle = translatedTitle.NormalizeTitle(),
-                InCinemas = model.MovieMetadata.Value.InCinemas,
-                PhysicalRelease = model.MovieMetadata.Value.PhysicalRelease,
-                DigitalRelease = model.MovieMetadata.Value.DigitalRelease,
+                DigitalRelease = model.MediaMetadata.Value.DigitalRelease,
                 HasFile = model.HasFile,
 
                 SizeOnDisk = size,
-                Status = model.MovieMetadata.Value.Status,
+                Status = model.MediaMetadata.Value.Status,
                 Overview = translatedOverview,
 
-                Images = model.MovieMetadata.Value.Images,
+                Images = model.MediaMetadata.Value.Images,
 
                 Year = model.Year,
-                SecondaryYear = model.MovieMetadata.Value.SecondaryYear,
+                SecondaryYear = model.MediaMetadata.Value.SecondaryYear,
 
                 Path = model.Path,
                 QualityProfileId = model.ProfileId,
@@ -124,48 +122,45 @@ namespace Whisparr.Api.V3.Movies
                 IsAvailable = model.IsAvailable(availDelay),
                 FolderName = model.FolderName(),
 
-                Runtime = model.MovieMetadata.Value.Runtime,
-                CleanTitle = model.MovieMetadata.Value.CleanTitle,
-                ImdbId = model.ImdbId,
-                TitleSlug = model.MovieMetadata.Value.TmdbId.ToString(),
+                Runtime = model.MediaMetadata.Value.Runtime,
+                CleanTitle = model.MediaMetadata.Value.CleanTitle,
+                TitleSlug = model.MediaMetadata.Value.ForiegnId.ToString(),
                 RootFolderPath = model.RootFolderPath,
-                Certification = model.MovieMetadata.Value.Certification,
-                Website = model.MovieMetadata.Value.Website,
-                Genres = model.MovieMetadata.Value.Genres,
+                Certification = model.MediaMetadata.Value.Certification,
+                Website = model.MediaMetadata.Value.Website,
+                Genres = model.MediaMetadata.Value.Genres,
                 Tags = model.Tags,
                 Added = model.Added,
                 AddOptions = model.AddOptions,
-                AlternateTitles = model.MovieMetadata.Value.AlternativeTitles.ToResource(),
-                Ratings = model.MovieMetadata.Value.Ratings,
+                AlternateTitles = model.MediaMetadata.Value.AlternativeTitles.ToResource(),
+                Ratings = model.MediaMetadata.Value.Ratings,
                 MovieFile = movieFile,
-                YouTubeTrailerId = model.MovieMetadata.Value.YouTubeTrailerId,
-                Studio = model.MovieMetadata.Value.Studio,
-                Collection = model.MovieMetadata.Value.Collection,
-                Popularity = model.MovieMetadata.Value.Popularity
+                YouTubeTrailerId = model.MediaMetadata.Value.YouTubeTrailerId,
+                Studio = model.MediaMetadata.Value.Studio,
+                Collection = model.MediaMetadata.Value.Collection,
+                Popularity = model.MediaMetadata.Value.Popularity
             };
         }
 
-        public static Movie ToModel(this MovieResource resource)
+        public static Media ToModel(this MovieResource resource)
         {
             if (resource == null)
             {
                 return null;
             }
 
-            return new Movie
+            return new Media
             {
                 Id = resource.Id,
 
-                MovieMetadata = new MovieMetadata
+                MediaMetadata = new MediaMetadata
                 {
-                    TmdbId = resource.TmdbId,
+                    ForiegnId = resource.TmdbId,
                     Title = resource.Title,
                     Genres = resource.Genres,
                     Images = resource.Images,
                     OriginalTitle = resource.OriginalTitle,
                     SortTitle = resource.SortTitle,
-                    InCinemas = resource.InCinemas,
-                    PhysicalRelease = resource.PhysicalRelease,
                     Year = resource.Year,
                     SecondaryYear = resource.SecondaryYear,
                     Overview = resource.Overview,
@@ -175,8 +170,7 @@ namespace Whisparr.Api.V3.Movies
                     YouTubeTrailerId = resource.YouTubeTrailerId,
                     Studio = resource.Studio,
                     Runtime = resource.Runtime,
-                    CleanTitle = resource.CleanTitle,
-                    ImdbId = resource.ImdbId,
+                    CleanTitle = resource.CleanTitle
                 },
 
                 Path = resource.Path,
@@ -193,7 +187,7 @@ namespace Whisparr.Api.V3.Movies
             };
         }
 
-        public static Movie ToModel(this MovieResource resource, Movie movie)
+        public static Media ToModel(this MovieResource resource, Media movie)
         {
             var updatedmovie = resource.ToModel();
 
@@ -202,12 +196,12 @@ namespace Whisparr.Api.V3.Movies
             return movie;
         }
 
-        public static List<MovieResource> ToResource(this IEnumerable<Movie> movies, int availDelay, IUpgradableSpecification upgradableSpecification = null)
+        public static List<MovieResource> ToResource(this IEnumerable<Media> movies, int availDelay, IUpgradableSpecification upgradableSpecification = null)
         {
             return movies.Select(x => ToResource(x, availDelay, null, upgradableSpecification)).ToList();
         }
 
-        public static List<Movie> ToModel(this IEnumerable<MovieResource> resources)
+        public static List<Media> ToModel(this IEnumerable<MovieResource> resources)
         {
             return resources.Select(ToModel).ToList();
         }

@@ -41,7 +41,7 @@ namespace NzbDrone.Core.Notifications.Email
             SendEmail(Settings, MOVIE_DOWNLOADED_TITLE_BRANDED, body);
         }
 
-        public override void OnMovieAdded(Movie movie)
+        public override void OnMovieAdded(Media movie)
         {
             var body = $"{movie.Title} added to library.";
 

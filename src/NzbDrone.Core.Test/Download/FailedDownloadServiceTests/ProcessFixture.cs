@@ -34,7 +34,7 @@ namespace NzbDrone.Core.Test.Download.FailedDownloadServiceTests
 
             var remoteMovie = new RemoteMovie
             {
-                Movie = new Movie(),
+                Movie = new Media(),
             };
 
             _trackedDownload = Builder<TrackedDownload>.CreateNew()

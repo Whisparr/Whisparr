@@ -16,8 +16,8 @@ namespace NzbDrone.Core.Test.Blocklisting
     public class BlocklistRepositoryFixture : DbTest<BlocklistRepository, Blocklist>
     {
         private Blocklist _blocklist;
-        private Movie _movie1;
-        private Movie _movie2;
+        private Media _movie1;
+        private Media _movie2;
 
         [SetUp]
         public void Setup()
@@ -31,11 +31,11 @@ namespace NzbDrone.Core.Test.Blocklisting
                 Date = DateTime.UtcNow
             };
 
-            _movie1 = Builder<Movie>.CreateNew()
+            _movie1 = Builder<Media>.CreateNew()
                          .With(s => s.Id = 7)
                          .Build();
 
-            _movie2 = Builder<Movie>.CreateNew()
+            _movie2 = Builder<Media>.CreateNew()
                                      .With(s => s.Id = 8)
                                      .Build();
         }

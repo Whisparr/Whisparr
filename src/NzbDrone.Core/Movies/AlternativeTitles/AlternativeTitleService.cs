@@ -11,11 +11,11 @@ namespace NzbDrone.Core.Movies.AlternativeTitles
     public interface IAlternativeTitleService
     {
         List<AlternativeTitle> GetAllTitlesForMovieMetadata(int movieMetadataId);
-        AlternativeTitle AddAltTitle(AlternativeTitle title, MovieMetadata movie);
-        List<AlternativeTitle> AddAltTitles(List<AlternativeTitle> titles, MovieMetadata movie);
+        AlternativeTitle AddAltTitle(AlternativeTitle title, MediaMetadata movie);
+        List<AlternativeTitle> AddAltTitles(List<AlternativeTitle> titles, MediaMetadata movie);
         AlternativeTitle GetById(int id);
         List<AlternativeTitle> GetAllTitles();
-        List<AlternativeTitle> UpdateTitles(List<AlternativeTitle> titles, MovieMetadata movie);
+        List<AlternativeTitle> UpdateTitles(List<AlternativeTitle> titles, MediaMetadata movie);
     }
 
     public class AlternativeTitleService : IAlternativeTitleService, IHandleAsync<MoviesDeletedEvent>
@@ -41,13 +41,13 @@ namespace NzbDrone.Core.Movies.AlternativeTitles
             return _titleRepo.FindByMovieMetadataId(movieMetadataId).ToList();
         }
 
-        public AlternativeTitle AddAltTitle(AlternativeTitle title, MovieMetadata movie)
+        public AlternativeTitle AddAltTitle(AlternativeTitle title, MediaMetadata movie)
         {
             title.MovieMetadataId = movie.Id;
             return _titleRepo.Insert(title);
         }
 
-        public List<AlternativeTitle> AddAltTitles(List<AlternativeTitle> titles, MovieMetadata movie)
+        public List<AlternativeTitle> AddAltTitles(List<AlternativeTitle> titles, MediaMetadata movie)
         {
             titles.ForEach(t => t.MovieMetadataId = movie.Id);
             _titleRepo.InsertMany(titles);
@@ -69,7 +69,7 @@ namespace NzbDrone.Core.Movies.AlternativeTitles
             _titleRepo.Delete(title);
         }
 
-        public List<AlternativeTitle> UpdateTitles(List<AlternativeTitle> titles, MovieMetadata movieMetadata)
+        public List<AlternativeTitle> UpdateTitles(List<AlternativeTitle> titles, MediaMetadata movieMetadata)
         {
             int movieMetadataId = movieMetadata.Id;
 

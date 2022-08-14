@@ -9,14 +9,14 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
     [TestFixture]
     public class UpdateMovieFixture : CoreTest<MovieService>
     {
-        private Movie _fakeMovie;
-        private Movie _existingMovie;
+        private Media _fakeMovie;
+        private Media _existingMovie;
 
         [SetUp]
         public void Setup()
         {
-            _fakeMovie = Builder<Movie>.CreateNew().Build();
-            _existingMovie = Builder<Movie>.CreateNew().Build();
+            _fakeMovie = Builder<Media>.CreateNew().Build();
+            _existingMovie = Builder<Media>.CreateNew().Build();
         }
 
         private void GivenExistingSeries()
@@ -33,7 +33,7 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
 
             Subject.UpdateMovie(_fakeMovie);
 
-            Mocker.GetMock<IMovieRepository>()
+            Mocker.GetMock<IMediaRepository>()
                   .Verify(v => v.Update(_fakeMovie), Times.Once());
         }
     }

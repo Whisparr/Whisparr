@@ -5,11 +5,11 @@ namespace NzbDrone.Core.MediaFiles.Events
 {
     public class MovieFileRenamedEvent : IEvent
     {
-        public Movie Movie { get; private set; }
-        public MovieFile MovieFile { get; private set; }
+        public Media Movie { get; private set; }
+        public MediaFile MovieFile { get; private set; }
         public string OriginalPath { get; private set; }
 
-        public MovieFileRenamedEvent(Movie movie, MovieFile movieFile, string originalPath)
+        public MovieFileRenamedEvent(Media movie, MediaFile movieFile, string originalPath)
         {
             Movie = movie;
             MovieFile = movieFile;

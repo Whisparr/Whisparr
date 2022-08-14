@@ -10,14 +10,14 @@ namespace NzbDrone.Core.Test.MovieTests
     [TestFixture]
     public class ShouldRefreshMovieFixture : TestBase<ShouldRefreshMovie>
     {
-        private MovieMetadata _movie;
+        private MediaMetadata _movie;
 
         [SetUp]
         public void Setup()
         {
-            _movie = Builder<MovieMetadata>.CreateNew()
+            _movie = Builder<MediaMetadata>.CreateNew()
                                      .With(v => v.Status = MovieStatusType.InCinemas)
-                                     .With(m => m.PhysicalRelease = DateTime.Today.AddDays(-100))
+                                     .With(m => m.DigitalRelease = DateTime.Today.AddDays(-100))
                                      .Build();
         }
 
@@ -53,7 +53,7 @@ namespace NzbDrone.Core.Test.MovieTests
 
         private void GivenRecentlyReleased()
         {
-            _movie.PhysicalRelease = DateTime.Today.AddDays(-7);
+            _movie.DigitalRelease = DateTime.Today.AddDays(-7);
         }
 
         [Test]

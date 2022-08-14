@@ -15,7 +15,7 @@ using Whisparr.Http.REST;
 namespace Whisparr.Api.V3.Calendar
 {
     [V3ApiController]
-    public class CalendarController : RestControllerWithSignalR<MovieResource, Movie>
+    public class CalendarController : RestControllerWithSignalR<MovieResource, Media>
     {
         private readonly IMovieService _moviesService;
         private readonly IMovieTranslationService _movieTranslationService;
@@ -51,7 +51,7 @@ namespace Whisparr.Api.V3.Calendar
             return resources.OrderBy(e => e.InCinemas).ToList();
         }
 
-        protected MovieResource MapToResource(Movie movie)
+        protected MovieResource MapToResource(Media movie)
         {
             if (movie == null)
             {
@@ -60,13 +60,13 @@ namespace Whisparr.Api.V3.Calendar
 
             var availDelay = _configService.AvailabilityDelay;
             var translations = _movieTranslationService.GetAllTranslationsForMovieMetadata(movie.Id);
-            var translation = GetMovieTranslation(translations, movie.MovieMetadata);
+            var translation = GetMovieTranslation(translations, movie.MediaMetadata);
             var resource = movie.ToResource(availDelay, translation, _qualityUpgradableSpecification);
 
             return resource;
         }
 
-        private MovieTranslation GetMovieTranslation(List<MovieTranslation> translations, MovieMetadata movie)
+        private MovieTranslation GetMovieTranslation(List<MovieTranslation> translations, MediaMetadata movie)
         {
             if ((Language)_configService.MovieInfoLanguage == Language.Original)
             {

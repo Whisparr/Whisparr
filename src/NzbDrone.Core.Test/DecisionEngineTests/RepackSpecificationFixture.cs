@@ -14,7 +14,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
     public class RepackSpecificationFixture : CoreTest<RepackSpecification>
     {
         private ParsedMovieInfo _parsedMovieInfo;
-        private Movie _movie;
+        private Media _movie;
 
         [SetUp]
         public void Setup()
@@ -27,7 +27,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
                                                            .With(p => p.ReleaseGroup = "Whisparr")
                                                            .Build();
 
-            _movie = Builder<Movie>.CreateNew()
+            _movie = Builder<Media>.CreateNew()
                                         .With(e => e.MovieFileId = 0)
                                         .Build();
         }
@@ -67,7 +67,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         {
             _parsedMovieInfo.Quality.Revision.IsRepack = true;
             _movie.MovieFileId = 1;
-            _movie.MovieFile = Builder<MovieFile>.CreateNew()
+            _movie.MovieFile = Builder<MediaFile>.CreateNew()
                                                                 .With(e => e.Quality = new QualityModel(Quality.DVD))
                                                                 .With(e => e.ReleaseGroup = "Whisparr")
                                                                 .Build();
@@ -88,7 +88,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         {
             _parsedMovieInfo.Quality.Revision.IsRepack = true;
             _movie.MovieFileId = 1;
-            _movie.MovieFile = Builder<MovieFile>.CreateNew()
+            _movie.MovieFile = Builder<MediaFile>.CreateNew()
                                                  .With(e => e.Quality = new QualityModel(Quality.SDTV))
                                                  .With(e => e.ReleaseGroup = "Whisparr")
                                                  .Build();
@@ -109,7 +109,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         {
             _parsedMovieInfo.Quality.Revision.IsRepack = true;
             _movie.MovieFileId = 1;
-            _movie.MovieFile = Builder<MovieFile>.CreateNew()
+            _movie.MovieFile = Builder<MediaFile>.CreateNew()
                                                  .With(e => e.Quality = new QualityModel(Quality.SDTV))
                                                  .With(e => e.ReleaseGroup = "NotWhisparr")
                                                  .Build();
@@ -130,7 +130,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         {
             _parsedMovieInfo.Quality.Revision.IsRepack = true;
             _movie.MovieFileId = 1;
-            _movie.MovieFile = Builder<MovieFile>.CreateNew()
+            _movie.MovieFile = Builder<MediaFile>.CreateNew()
                                                  .With(e => e.Quality = new QualityModel(Quality.SDTV))
                                                  .With(e => e.ReleaseGroup = "")
                                                  .Build();
@@ -153,7 +153,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             _parsedMovieInfo.ReleaseGroup = null;
 
             _movie.MovieFileId = 1;
-            _movie.MovieFile = Builder<MovieFile>.CreateNew()
+            _movie.MovieFile = Builder<MediaFile>.CreateNew()
                                                  .With(e => e.Quality = new QualityModel(Quality.SDTV))
                                                  .With(e => e.ReleaseGroup = "Whisparr")
                                                  .Build();

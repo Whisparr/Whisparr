@@ -55,7 +55,7 @@ namespace NzbDrone.Core.Test.MediaFiles
                 .Build();
 
             var remoteMovie = Builder<RemoteMovie>.CreateNew()
-                .With(v => v.Movie = new Movie())
+                .With(v => v.Movie = new Media())
                 .Build();
 
             _trackedDownload = new TrackedDownload
@@ -70,7 +70,7 @@ namespace NzbDrone.Core.Test.MediaFiles
         {
             Mocker.GetMock<IParsingService>()
                   .Setup(s => s.GetMovie(It.IsAny<string>()))
-                  .Returns(Builder<Movie>.CreateNew().Build());
+                  .Returns(Builder<Media>.CreateNew().Build());
         }
 
         private void GivenSuccessfulImport()
@@ -81,7 +81,7 @@ namespace NzbDrone.Core.Test.MediaFiles
             imported.Add(new ImportDecision(localMovie));
 
             Mocker.GetMock<IMakeImportDecision>()
-                  .Setup(s => s.GetImportDecisions(It.IsAny<List<string>>(), It.IsAny<Movie>(), It.IsAny<DownloadClientItem>(), null, true, true))
+                  .Setup(s => s.GetImportDecisions(It.IsAny<List<string>>(), It.IsAny<Media>(), It.IsAny<DownloadClientItem>(), null, true, true))
                   .Returns(imported);
 
             Mocker.GetMock<IImportApprovedMovie>()
@@ -120,12 +120,12 @@ namespace NzbDrone.Core.Test.MediaFiles
         [Test]
         public void should_skip_if_no_series_found()
         {
-            Mocker.GetMock<IParsingService>().Setup(c => c.GetMovie("foldername")).Returns((Movie)null);
+            Mocker.GetMock<IParsingService>().Setup(c => c.GetMovie("foldername")).Returns((Media)null);
 
             Subject.ProcessRootFolder(new DirectoryInfo(_droneFactory));
 
             Mocker.GetMock<IMakeImportDecision>()
-                .Verify(c => c.GetImportDecisions(It.IsAny<List<string>>(), It.IsAny<Movie>(), It.IsAny<DownloadClientItem>(), It.IsAny<ParsedMovieInfo>(), It.IsAny<bool>()),
+                .Verify(c => c.GetImportDecisions(It.IsAny<List<string>>(), It.IsAny<Media>(), It.IsAny<DownloadClientItem>(), It.IsAny<ParsedMovieInfo>(), It.IsAny<bool>()),
                     Times.Never());
 
             VerifyNoImport();
@@ -221,7 +221,7 @@ namespace NzbDrone.Core.Test.MediaFiles
             imported.Add(new ImportDecision(localMovie));
 
             Mocker.GetMock<IMakeImportDecision>()
-                  .Setup(s => s.GetImportDecisions(It.IsAny<List<string>>(), It.IsAny<Movie>(), It.IsAny<DownloadClientItem>(), null, true))
+                  .Setup(s => s.GetImportDecisions(It.IsAny<List<string>>(), It.IsAny<Media>(), It.IsAny<DownloadClientItem>(), null, true))
                   .Returns(imported);
 
             Mocker.GetMock<IImportApprovedMovie>()
@@ -247,7 +247,7 @@ namespace NzbDrone.Core.Test.MediaFiles
             imported.Add(new ImportDecision(localMovie));
 
             Mocker.GetMock<IMakeImportDecision>()
-                  .Setup(s => s.GetImportDecisions(It.IsAny<List<string>>(), It.IsAny<Movie>(), It.IsAny<DownloadClientItem>(), null, true))
+                  .Setup(s => s.GetImportDecisions(It.IsAny<List<string>>(), It.IsAny<Media>(), It.IsAny<DownloadClientItem>(), null, true))
                   .Returns(imported);
 
             Mocker.GetMock<IImportApprovedMovie>()
@@ -255,7 +255,7 @@ namespace NzbDrone.Core.Test.MediaFiles
                   .Returns(imported.Select(i => new ImportResult(i)).ToList());
 
             Mocker.GetMock<IDetectSample>()
-                  .Setup(s => s.IsSample(It.IsAny<MovieMetadata>(),
+                  .Setup(s => s.IsSample(It.IsAny<MediaMetadata>(),
                       It.IsAny<string>()))
                   .Returns(DetectSampleResult.Sample);
 
@@ -316,7 +316,7 @@ namespace NzbDrone.Core.Test.MediaFiles
             imported.Add(new ImportDecision(localMovie));
 
             Mocker.GetMock<IMakeImportDecision>()
-                  .Setup(s => s.GetImportDecisions(It.IsAny<List<string>>(), It.IsAny<Movie>(), It.IsAny<DownloadClientItem>(), null, true))
+                  .Setup(s => s.GetImportDecisions(It.IsAny<List<string>>(), It.IsAny<Media>(), It.IsAny<DownloadClientItem>(), null, true))
                   .Returns(imported);
 
             Mocker.GetMock<IImportApprovedMovie>()
@@ -324,7 +324,7 @@ namespace NzbDrone.Core.Test.MediaFiles
                   .Returns(imported.Select(i => new ImportResult(i)).ToList());
 
             Mocker.GetMock<IDetectSample>()
-                  .Setup(s => s.IsSample(It.IsAny<MovieMetadata>(),
+                  .Setup(s => s.IsSample(It.IsAny<MediaMetadata>(),
                       It.IsAny<string>()))
                   .Returns(DetectSampleResult.Sample);
 
@@ -366,7 +366,7 @@ namespace NzbDrone.Core.Test.MediaFiles
             Subject.ProcessPath(fileName);
 
             Mocker.GetMock<IMakeImportDecision>()
-                  .Verify(s => s.GetImportDecisions(It.IsAny<List<string>>(), It.IsAny<Movie>(), It.IsAny<DownloadClientItem>(), It.IsAny<ParsedMovieInfo>(), true), Times.Once());
+                  .Verify(s => s.GetImportDecisions(It.IsAny<List<string>>(), It.IsAny<Media>(), It.IsAny<DownloadClientItem>(), It.IsAny<ParsedMovieInfo>(), true), Times.Once());
         }
 
         [Test]
@@ -390,7 +390,7 @@ namespace NzbDrone.Core.Test.MediaFiles
             var result = Subject.ProcessPath(fileName);
 
             Mocker.GetMock<IMakeImportDecision>()
-                  .Verify(s => s.GetImportDecisions(It.IsAny<List<string>>(), It.IsAny<Movie>(), It.IsAny<DownloadClientItem>(), null, true), Times.Once());
+                  .Verify(s => s.GetImportDecisions(It.IsAny<List<string>>(), It.IsAny<Media>(), It.IsAny<DownloadClientItem>(), null, true), Times.Once());
         }
 
         [Test]
@@ -423,7 +423,7 @@ namespace NzbDrone.Core.Test.MediaFiles
             imported.Add(new ImportDecision(localMovie));
 
             Mocker.GetMock<IMakeImportDecision>()
-                  .Setup(s => s.GetImportDecisions(It.IsAny<List<string>>(), It.IsAny<Movie>(), It.IsAny<DownloadClientItem>(), null, true))
+                  .Setup(s => s.GetImportDecisions(It.IsAny<List<string>>(), It.IsAny<Media>(), It.IsAny<DownloadClientItem>(), null, true))
                   .Returns(imported);
 
             Mocker.GetMock<IImportApprovedMovie>()
@@ -431,7 +431,7 @@ namespace NzbDrone.Core.Test.MediaFiles
                   .Returns(new List<ImportResult>());
 
             Mocker.GetMock<IDetectSample>()
-                  .Setup(s => s.IsSample(It.IsAny<MovieMetadata>(),
+                  .Setup(s => s.IsSample(It.IsAny<MediaMetadata>(),
                       It.IsAny<string>()))
                   .Returns(DetectSampleResult.Sample);
 

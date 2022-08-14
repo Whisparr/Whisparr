@@ -28,12 +28,12 @@ namespace NzbDrone.Core.Test.MetadataSource.SkyHook
             details.Title.Should().Be(title);
         }
 
-        private void ValidateMovie(MovieMetadata movie)
+        private void ValidateMovie(MediaMetadata movie)
         {
             movie.Should().NotBeNull();
             movie.Title.Should().NotBeNullOrWhiteSpace();
             movie.CleanTitle.Should().Be(Parser.Parser.CleanMovieTitle(movie.Title));
-            movie.SortTitle.Should().Be(MovieTitleNormalizer.Normalize(movie.Title, movie.TmdbId));
+            movie.SortTitle.Should().Be(MovieTitleNormalizer.Normalize(movie.Title, movie.ForiegnId));
             movie.Overview.Should().NotBeNullOrWhiteSpace();
 
             //movie.Images.Should().NotBeEmpty();
@@ -41,7 +41,7 @@ namespace NzbDrone.Core.Test.MetadataSource.SkyHook
             //movie.Studio.Should().NotBeNullOrWhiteSpace();
             //movie.Runtime.Should().BeGreaterThan(0);
             //series.TvRageId.Should().BeGreaterThan(0);
-            movie.TmdbId.Should().BeGreaterThan(0);
+            movie.ForiegnId.Should().BeGreaterThan(0);
         }
     }
 }

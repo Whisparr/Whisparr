@@ -57,7 +57,7 @@ namespace NzbDrone.Core.Notifications.Slack
             _proxy.SendPayload(payload, Settings);
         }
 
-        public override void OnMovieRename(Movie movie, List<RenamedMovieFile> renamedFiles)
+        public override void OnMovieRename(Media movie, List<RenamedMovieFile> renamedFiles)
         {
             var attachments = new List<Attachment>();
 

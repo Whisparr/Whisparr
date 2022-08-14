@@ -12,22 +12,22 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
     [TestFixture]
     public class FindByTitleFixture : CoreTest<MovieService>
     {
-        private List<Movie> _candidates;
+        private List<Media> _candidates;
 
         [SetUp]
         public void Setup()
         {
-            _candidates = Builder<Movie>.CreateListOfSize(3)
+            _candidates = Builder<Media>.CreateListOfSize(3)
                                         .TheFirst(1)
-                                        .With(x => x.MovieMetadata.Value.CleanTitle = "batman")
+                                        .With(x => x.MediaMetadata.Value.CleanTitle = "batman")
                                         .With(x => x.Year = 2000)
                                         .TheNext(1)
-                                        .With(x => x.MovieMetadata.Value.CleanTitle = "batman")
+                                        .With(x => x.MediaMetadata.Value.CleanTitle = "batman")
                                         .With(x => x.Year = 1999)
                                         .TheRest()
-                                        .With(x => x.MovieMetadata.Value.CleanTitle = "darkknight")
+                                        .With(x => x.MediaMetadata.Value.CleanTitle = "darkknight")
                                         .With(x => x.Year = 2008)
-                                        .With(x => x.MovieMetadata.Value.AlternativeTitles = new List<AlternativeTitle>
+                                        .With(x => x.MediaMetadata.Value.AlternativeTitles = new List<AlternativeTitle>
                                         {
                                             new AlternativeTitle
                                             {

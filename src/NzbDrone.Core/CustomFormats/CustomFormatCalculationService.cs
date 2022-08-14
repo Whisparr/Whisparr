@@ -14,8 +14,8 @@ namespace NzbDrone.Core.CustomFormats
 {
     public interface ICustomFormatCalculationService
     {
-        List<CustomFormat> ParseCustomFormat(ParsedMovieInfo movieInfo, Movie movie);
-        List<CustomFormat> ParseCustomFormat(MovieFile movieFile);
+        List<CustomFormat> ParseCustomFormat(ParsedMovieInfo movieInfo, Media movie);
+        List<CustomFormat> ParseCustomFormat(MediaFile movieFile);
         List<CustomFormat> ParseCustomFormat(Blocklist blocklist);
         List<CustomFormat> ParseCustomFormat(MovieHistory history);
     }
@@ -58,7 +58,7 @@ namespace NzbDrone.Core.CustomFormats
             return matches;
         }
 
-        public static List<CustomFormat> ParseCustomFormat(MovieFile movieFile, List<CustomFormat> allCustomFormats)
+        public static List<CustomFormat> ParseCustomFormat(MediaFile movieFile, List<CustomFormat> allCustomFormats)
         {
             var sceneName = string.Empty;
             if (movieFile.SceneName.IsNotNullOrWhiteSpace())
@@ -76,33 +76,32 @@ namespace NzbDrone.Core.CustomFormats
 
             var info = new ParsedMovieInfo
             {
-                MovieTitles = new List<string>() { movieFile.Movie.MovieMetadata.Value.Title },
+                MovieTitles = new List<string>() { movieFile.Movie.MediaMetadata.Value.Title },
                 SimpleReleaseTitle = sceneName.SimplifyReleaseTitle(),
                 Quality = movieFile.Quality,
                 Languages = movieFile.Languages,
                 ReleaseGroup = movieFile.ReleaseGroup,
                 Edition = movieFile.Edition,
-                Year = movieFile.Movie.MovieMetadata.Value.Year,
-                ImdbId = movieFile.Movie.MovieMetadata.Value.ImdbId,
+                Year = movieFile.Movie.MediaMetadata.Value.Year,
                 ExtraInfo = new Dictionary<string, object>
                 {
                     { "IndexerFlags", movieFile.IndexerFlags },
                     { "Size", movieFile.Size },
                     { "Filename", Path.GetFileName(movieFile.RelativePath) },
-                    { "OriginalLanguage", movieFile.Movie.MovieMetadata.Value.OriginalLanguage }
+                    { "OriginalLanguage", movieFile.Movie.MediaMetadata.Value.OriginalLanguage }
                 }
             };
 
             return ParseCustomFormat(info, allCustomFormats);
         }
 
-        public List<CustomFormat> ParseCustomFormat(ParsedMovieInfo movieInfo, Movie movie)
+        public List<CustomFormat> ParseCustomFormat(ParsedMovieInfo movieInfo, Media movie)
         {
             movieInfo = _parsingService.EnhanceMovieInfo(movieInfo, new List<object> { movie }) ?? movieInfo;
             return ParseCustomFormat(movieInfo, _formatService.All());
         }
 
-        public List<CustomFormat> ParseCustomFormat(MovieFile movieFile)
+        public List<CustomFormat> ParseCustomFormat(MediaFile movieFile)
         {
             return ParseCustomFormat(movieFile, _formatService.All());
         }
@@ -114,14 +113,13 @@ namespace NzbDrone.Core.CustomFormats
 
             var info = new ParsedMovieInfo
             {
-                MovieTitles = new List<string>() { movie.MovieMetadata.Value.Title },
+                MovieTitles = new List<string>() { movie.MediaMetadata.Value.Title },
                 SimpleReleaseTitle = parsed?.SimpleReleaseTitle ?? blocklist.SourceTitle.SimplifyReleaseTitle(),
                 Quality = blocklist.Quality,
                 Languages = blocklist.Languages,
                 ReleaseGroup = parsed?.ReleaseGroup,
                 Edition = parsed?.Edition,
-                Year = movie.MovieMetadata.Value.Year,
-                ImdbId = movie.MovieMetadata.Value.ImdbId,
+                Year = movie.MediaMetadata.Value.Year,
                 ExtraInfo = new Dictionary<string, object>
                 {
                     { "IndexerFlags", blocklist.IndexerFlags },
@@ -142,14 +140,13 @@ namespace NzbDrone.Core.CustomFormats
 
             var info = new ParsedMovieInfo
             {
-                MovieTitles = new List<string>() { movie.MovieMetadata.Value.Title },
+                MovieTitles = new List<string>() { movie.MediaMetadata.Value.Title },
                 SimpleReleaseTitle = parsed?.SimpleReleaseTitle ?? history.SourceTitle.SimplifyReleaseTitle(),
                 Quality = history.Quality,
                 Languages = history.Languages,
                 ReleaseGroup = parsed?.ReleaseGroup,
                 Edition = parsed?.Edition,
-                Year = movie.MovieMetadata.Value.Year,
-                ImdbId = movie.MovieMetadata.Value.ImdbId,
+                Year = movie.MediaMetadata.Value.Year,
                 ExtraInfo = new Dictionary<string, object>
                 {
                     { "IndexerFlags", flags },

@@ -19,18 +19,17 @@ namespace NzbDrone.Core.Notifications.Webhook
         {
         }
 
-        public WebhookMovie(Movie movie)
+        public WebhookMovie(Media movie)
         {
             Id = movie.Id;
             Title = movie.Title;
             Year = movie.Year;
-            ReleaseDate = movie.MovieMetadata.Value.PhysicalReleaseDate().ToString("yyyy-MM-dd");
+            ReleaseDate = movie.MediaMetadata.Value.PhysicalReleaseDate().ToString("yyyy-MM-dd");
             FolderPath = movie.Path;
-            TmdbId = movie.TmdbId;
-            ImdbId = movie.ImdbId;
+            TmdbId = movie.ForiegnId;
         }
 
-        public WebhookMovie(Movie movie, MovieFile movieFile)
+        public WebhookMovie(Media movie, MediaFile movieFile)
             : this(movie)
         {
             FilePath = Path.Combine(movie.Path, movieFile.RelativePath);

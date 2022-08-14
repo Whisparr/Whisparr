@@ -32,7 +32,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Wdtv
 
         public override string Name => "WDTV";
 
-        public override string GetFilenameAfterMove(Movie movie, MovieFile movieFile, MetadataFile metadataFile)
+        public override string GetFilenameAfterMove(Media movie, MediaFile movieFile, MetadataFile metadataFile)
         {
             var movieFilePath = Path.Combine(movie.Path, movieFile.RelativePath);
 
@@ -50,7 +50,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Wdtv
             return Path.Combine(movie.Path, metadataFile.RelativePath);
         }
 
-        public override MetadataFile FindMetadataFile(Movie movie, string path)
+        public override MetadataFile FindMetadataFile(Media movie, string path)
         {
             var filename = Path.GetFileName(path);
 
@@ -90,7 +90,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Wdtv
             return null;
         }
 
-        public override MetadataFileResult MovieMetadata(Movie movie, MovieFile movieFile)
+        public override MetadataFileResult MovieMetadata(Media movie, MediaFile movieFile)
         {
             if (!Settings.MovieMetadata)
             {
@@ -113,8 +113,8 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Wdtv
                 var details = new XElement("details");
                 details.Add(new XElement("id", movie.Id));
                 details.Add(new XElement("title", movie.Title));
-                details.Add(new XElement("genre", string.Join(" / ", movie.MovieMetadata.Value.Genres)));
-                details.Add(new XElement("overview", movie.MovieMetadata.Value.Overview));
+                details.Add(new XElement("genre", string.Join(" / ", movie.MediaMetadata.Value.Genres)));
+                details.Add(new XElement("overview", movie.MediaMetadata.Value.Overview));
 
                 doc.Add(details);
                 doc.Save(xw);
@@ -128,7 +128,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Wdtv
             return new MetadataFileResult(filename, xmlResult.Trim(Environment.NewLine.ToCharArray()));
         }
 
-        public override List<ImageFileResult> MovieImages(Movie movie)
+        public override List<ImageFileResult> MovieImages(Media movie)
         {
             if (!Settings.MovieImages)
             {
@@ -136,7 +136,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Wdtv
             }
 
             //Because we only support one image, attempt to get the Poster type, then if that fails grab the first
-            var image = movie.MovieMetadata.Value.Images.SingleOrDefault(c => c.CoverType == MediaCoverTypes.Poster) ?? movie.MovieMetadata.Value.Images.FirstOrDefault();
+            var image = movie.MediaMetadata.Value.Images.SingleOrDefault(c => c.CoverType == MediaCoverTypes.Poster) ?? movie.MediaMetadata.Value.Images.FirstOrDefault();
             if (image == null)
             {
                 _logger.Trace("Failed to find suitable Movie image for movie {0}.", movie.Title);

@@ -7,12 +7,12 @@ namespace NzbDrone.Core.ImportLists.ImportListMovies
     {
         public ImportListMovie()
         {
-            MovieMetadata = new MovieMetadata();
+            MovieMetadata = new MediaMetadata();
         }
 
         public int ListId { get; set; }
         public int MovieMetadataId { get; set; }
-        public LazyLoaded<MovieMetadata> MovieMetadata { get; set; }
+        public LazyLoaded<MediaMetadata> MovieMetadata { get; set; }
 
         public string Title
         {
@@ -20,16 +20,10 @@ namespace NzbDrone.Core.ImportLists.ImportListMovies
             set { MovieMetadata.Value.Title = value; }
         }
 
-        public int TmdbId
+        public int ForiegnId
         {
-            get { return MovieMetadata.Value.TmdbId; }
-            set { MovieMetadata.Value.TmdbId = value; }
-        }
-
-        public string ImdbId
-        {
-            get { return MovieMetadata.Value.ImdbId; }
-            set { MovieMetadata.Value.ImdbId = value; }
+            get { return MovieMetadata.Value.ForiegnId; }
+            set { MovieMetadata.Value.ForiegnId = value; }
         }
 
         public int Year

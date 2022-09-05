@@ -20,7 +20,7 @@ namespace NzbDrone.Common.Cloud
                 .SetHeader("Authorization", $"Bearer {AuthToken}")
                 .CreateFactory();
 
-            WhisparrMetadata = new HttpRequestBuilder("http://api.whisparr.com/v1/{route}")
+            WhisparrMetadata = new HttpRequestBuilder("https://api.whisparr.com/v1/{route}")
                 .CreateFactory();
         }
 

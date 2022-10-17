@@ -280,6 +280,29 @@ namespace NzbDrone.Core.Notifications.CustomScript
             ExecuteScript(environmentVariables);
         }
 
+        public override void OnManualInteractionRequired(ManualInteractionRequiredMessage message)
+        {
+            var series = message.Series;
+            var environmentVariables = new StringDictionary();
+
+            environmentVariables.Add("Whisparr_EventType", "ManualInteractionRequired");
+            environmentVariables.Add("Whisparr_InstanceName", _configFileProvider.InstanceName);
+            environmentVariables.Add("Whisparr_ApplicationUrl", _configService.ApplicationUrl);
+            environmentVariables.Add("Whisparr_Series_Id", series.Id.ToString());
+            environmentVariables.Add("Whisparr_Series_Title", series.Title);
+            environmentVariables.Add("Whisparr_Series_TitleSlug", series.TitleSlug);
+            environmentVariables.Add("Whisparr_Series_Path", series.Path);
+            environmentVariables.Add("Whisparr_Series_TvdbId", series.TvdbId.ToString());
+            environmentVariables.Add("Whisparr_Series_Year", series.Year.ToString());
+            environmentVariables.Add("Whisparr_Download_Client", message.DownloadClientName ?? string.Empty);
+            environmentVariables.Add("Whisparr_Download_Client_Type", message.DownloadClientType ?? string.Empty);
+            environmentVariables.Add("Whisparr_Download_Id", message.DownloadId ?? string.Empty);
+            environmentVariables.Add("Whisparr_Download_Size", message.TrackedDownload.DownloadItem.TotalSize.ToString());
+            environmentVariables.Add("Whisparr_Download_Title", message.TrackedDownload.DownloadItem.Title);
+
+            ExecuteScript(environmentVariables);
+        }
+
         public override ValidationResult Test()
         {
             var failures = new List<ValidationFailure>();

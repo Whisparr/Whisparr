@@ -38,7 +38,7 @@ namespace NzbDrone.Core.Notifications.Emby
         [FieldDefinition(3, Label = "ApiKey", Privacy = PrivacyLevel.ApiKey)]
         public string ApiKey { get; set; }
 
-        [FieldDefinition(4, Label = "NotificationsEmbySettingsSendNotifications", HelpText = "NotificationsEmbySettingsSendNotificationsHelpText", Type = FieldType.Checkbox)]
+        [FieldDefinition(4, Label = "Send Notifications", HelpText = "Have MediaBrowser send notifications to configured providers", Type = FieldType.Checkbox)]
         public bool Notify { get; set; }
 
         [FieldDefinition(5, Label = "NotificationsSettingsUpdateLibrary", HelpText = "NotificationsEmbySettingsUpdateLibraryHelpText", Type = FieldType.Checkbox)]

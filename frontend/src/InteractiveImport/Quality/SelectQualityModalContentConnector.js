@@ -31,8 +31,8 @@ function createMapStateToProps() {
 
 const mapDispatchToProps = {
   dispatchFetchQualityProfileSchema: fetchQualityProfileSchema,
-  dispatchReprocessInteractiveImportItems: reprocessInteractiveImportItems,
-  dispatchUpdateInteractiveImportItems: updateInteractiveImportItems
+  dispatchUpdateInteractiveImportItems: updateInteractiveImportItems,
+  dispatchReprocessInteractiveImportItems: reprocessInteractiveImportItems
 };
 
 class SelectQualityModalContentConnector extends Component {
@@ -97,8 +97,8 @@ SelectQualityModalContentConnector.propTypes = {
   error: PropTypes.object,
   items: PropTypes.arrayOf(PropTypes.object).isRequired,
   dispatchFetchQualityProfileSchema: PropTypes.func.isRequired,
-  dispatchReprocessInteractiveImportItems: PropTypes.func.isRequired,
   dispatchUpdateInteractiveImportItems: PropTypes.func.isRequired,
+  dispatchReprocessInteractiveImportItems: PropTypes.func.isRequired,
   onModalClose: PropTypes.func.isRequired
 };
 

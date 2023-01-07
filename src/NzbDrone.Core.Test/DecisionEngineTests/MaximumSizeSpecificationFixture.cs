@@ -1,4 +1,4 @@
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.DecisionEngine.Specifications;
@@ -9,12 +9,12 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
 {
     public class MaximumSizeSpecificationFixture : CoreTest<MaximumSizeSpecification>
     {
-        private RemoteMovie _remoteMovie;
+        private RemoteEpisode _remoteEpisode;
 
         [SetUp]
         public void Setup()
         {
-            _remoteMovie = new RemoteMovie { Release = new ReleaseInfo() };
+            _remoteEpisode = new RemoteEpisode() { Release = new ReleaseInfo() };
         }
 
         private void WithMaximumSize(int size)
@@ -24,7 +24,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
 
         private void WithSize(int size)
         {
-            _remoteMovie.Release.Size = size * 1024 * 1024;
+            _remoteEpisode.Release.Size = size * 1024 * 1024;
         }
 
         [Test]
@@ -33,7 +33,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             WithMaximumSize(0);
             WithSize(1000);
 
-            Subject.IsSatisfiedBy(_remoteMovie, null).Accepted.Should().BeTrue();
+            Subject.IsSatisfiedBy(_remoteEpisode, null).Accepted.Should().BeTrue();
         }
 
         [Test]
@@ -42,7 +42,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             WithMaximumSize(2000);
             WithSize(1999);
 
-            Subject.IsSatisfiedBy(_remoteMovie, null).Accepted.Should().BeTrue();
+            Subject.IsSatisfiedBy(_remoteEpisode, null).Accepted.Should().BeTrue();
         }
 
         [Test]
@@ -51,7 +51,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             WithMaximumSize(2000);
             WithSize(2000);
 
-            Subject.IsSatisfiedBy(_remoteMovie, null).Accepted.Should().BeTrue();
+            Subject.IsSatisfiedBy(_remoteEpisode, null).Accepted.Should().BeTrue();
         }
 
         [Test]
@@ -60,7 +60,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             WithMaximumSize(2000);
             WithSize(2001);
 
-            Subject.IsSatisfiedBy(_remoteMovie, null).Accepted.Should().BeFalse();
+            Subject.IsSatisfiedBy(_remoteEpisode, null).Accepted.Should().BeFalse();
         }
 
         [Test]
@@ -69,7 +69,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             WithMaximumSize(2000);
             WithSize(0);
 
-            Subject.IsSatisfiedBy(_remoteMovie, null).Accepted.Should().BeTrue();
+            Subject.IsSatisfiedBy(_remoteEpisode, null).Accepted.Should().BeTrue();
         }
     }
 }

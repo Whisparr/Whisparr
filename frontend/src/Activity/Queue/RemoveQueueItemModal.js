@@ -10,7 +10,6 @@ import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { inputTypes, kinds, sizes } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 
 class RemoveQueueItemModal extends Component {
 
@@ -82,25 +81,25 @@ class RemoveQueueItemModal extends Component {
           onModalClose={this.onModalClose}
         >
           <ModalHeader>
-            {translate('Remove')} - {sourceTitle}
+            Remove - {sourceTitle}
           </ModalHeader>
 
           <ModalBody>
             <div>
-              {translate('RemoveFromQueueText', [sourceTitle])}
+              Are you sure you want to remove '{sourceTitle}' from the queue?
             </div>
 
             {
               isPending ?
                 null :
                 <FormGroup>
-                  <FormLabel>{translate('RemoveFromDownloadClient')}</FormLabel>
+                  <FormLabel>Remove From Download Client</FormLabel>
 
                   <FormInputGroup
                     type={inputTypes.CHECK}
                     name="remove"
                     value={remove}
-                    helpTextWarning={translate('RemoveHelpTextWarning')}
+                    helpTextWarning="Removing will remove the download and the file(s) from the download client."
                     isDisabled={!canIgnore}
                     onChange={this.onRemoveChange}
                   />
@@ -108,12 +107,13 @@ class RemoveQueueItemModal extends Component {
             }
 
             <FormGroup>
-              <FormLabel>{translate('BlocklistRelease')}</FormLabel>
+              <FormLabel>Add Release To Blocklist</FormLabel>
+
               <FormInputGroup
                 type={inputTypes.CHECK}
                 name="blocklist"
                 value={blocklist}
-                helpText={translate('BlocklistHelpText')}
+                helpText="Starts a search for this episode again and prevents this release from being grabbed again"
                 onChange={this.onBlocklistChange}
               />
             </FormGroup>
@@ -122,7 +122,7 @@ class RemoveQueueItemModal extends Component {
 
           <ModalFooter>
             <Button onPress={this.onModalClose}>
-              {translate('Close')}
+              Close
             </Button>
 
             <Button

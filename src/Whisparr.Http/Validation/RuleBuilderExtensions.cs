@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using FluentValidation;
 using FluentValidation.Validators;
@@ -35,11 +35,6 @@ namespace Whisparr.Http.Validation
         public static IRuleBuilderOptions<T, int> IsValidRssSyncInterval<T>(this IRuleBuilder<T, int> ruleBuilder)
         {
             return ruleBuilder.SetValidator(new RssSyncIntervalValidator());
-        }
-
-        public static IRuleBuilderOptions<T, int> IsValidImportListSyncInterval<T>(this IRuleBuilder<T, int> ruleBuilder)
-        {
-            return ruleBuilder.SetValidator(new ImportListSyncIntervalValidator());
         }
     }
 }

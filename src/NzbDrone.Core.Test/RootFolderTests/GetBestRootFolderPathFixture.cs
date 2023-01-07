@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
@@ -22,27 +22,27 @@ namespace NzbDrone.Core.Test.RootFolderTests
         [Test]
         public void should_return_root_folder_that_is_parent_path()
         {
-            GivenRootFolders(@"C:\Test\Movies".AsOsAgnostic(), @"D:\Test\Movies".AsOsAgnostic());
-            Subject.GetBestRootFolderPath(@"C:\Test\Movies\Movie Title".AsOsAgnostic()).Should().Be(@"C:\Test\Movies".AsOsAgnostic());
+            GivenRootFolders(@"C:\Test\TV".AsOsAgnostic(), @"D:\Test\TV".AsOsAgnostic());
+            Subject.GetBestRootFolderPath(@"C:\Test\TV\Series Title".AsOsAgnostic()).Should().Be(@"C:\Test\TV".AsOsAgnostic());
         }
 
         [Test]
         public void should_return_root_folder_that_is_grandparent_path()
         {
-            GivenRootFolders(@"C:\Test\Movies".AsOsAgnostic(), @"D:\Test\Movies".AsOsAgnostic());
-            Subject.GetBestRootFolderPath(@"C:\Test\Movies\M\Movie Title".AsOsAgnostic()).Should().Be(@"C:\Test\Movies".AsOsAgnostic());
+            GivenRootFolders(@"C:\Test\TV".AsOsAgnostic(), @"D:\Test\TV".AsOsAgnostic());
+            Subject.GetBestRootFolderPath(@"C:\Test\TV\S\Series Title".AsOsAgnostic()).Should().Be(@"C:\Test\TV".AsOsAgnostic());
         }
 
         [Test]
         public void should_get_parent_path_from_diskProvider_if_matching_root_folder_is_not_found()
         {
-            var moviePath = @"T:\Test\Movies\Movie Title".AsOsAgnostic();
+            var seriesPath = @"T:\Test\TV\Series Title".AsOsAgnostic();
 
-            GivenRootFolders(@"C:\Test\Movies".AsOsAgnostic(), @"D:\Test\Movies".AsOsAgnostic());
-            Subject.GetBestRootFolderPath(moviePath);
+            GivenRootFolders(@"C:\Test\TV".AsOsAgnostic(), @"D:\Test\TV".AsOsAgnostic());
+            Subject.GetBestRootFolderPath(seriesPath);
 
             Mocker.GetMock<IDiskProvider>()
-                .Verify(v => v.GetParentFolder(moviePath), Times.Once);
+                .Verify(v => v.GetParentFolder(seriesPath), Times.Once);
         }
     }
 }

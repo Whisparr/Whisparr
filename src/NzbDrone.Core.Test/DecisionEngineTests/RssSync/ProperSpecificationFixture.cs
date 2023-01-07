@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using NUnit.Framework;
@@ -7,11 +8,11 @@ using NzbDrone.Core.DecisionEngine.Specifications;
 using NzbDrone.Core.DecisionEngine.Specifications.RssSync;
 using NzbDrone.Core.IndexerSearch.Definitions;
 using NzbDrone.Core.MediaFiles;
-using NzbDrone.Core.Movies;
 using NzbDrone.Core.Parser.Model;
-using NzbDrone.Core.Profiles;
+using NzbDrone.Core.Profiles.Qualities;
 using NzbDrone.Core.Qualities;
 using NzbDrone.Core.Test.Framework;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Test.DecisionEngineTests.RssSync
 {
@@ -19,27 +20,38 @@ namespace NzbDrone.Core.Test.DecisionEngineTests.RssSync
 
     public class ProperSpecificationFixture : CoreTest<ProperSpecification>
     {
-        private RemoteMovie _parseResultSingle;
-        private MediaFile _firstFile;
-        private MediaFile _secondFile;
+        private RemoteEpisode _parseResultMulti;
+        private RemoteEpisode _parseResultSingle;
+        private EpisodeFile _firstFile;
+        private EpisodeFile _secondFile;
 
         [SetUp]
         public void Setup()
         {
             Mocker.Resolve<UpgradableSpecification>();
 
-            _firstFile = new MediaFile { Quality = new QualityModel(Quality.Bluray1080p, new Revision(version: 1)), DateAdded = DateTime.Now };
-            _secondFile = new MediaFile { Quality = new QualityModel(Quality.Bluray1080p, new Revision(version: 1)), DateAdded = DateTime.Now };
+            _firstFile = new EpisodeFile { Quality = new QualityModel(Quality.Bluray1080p, new Revision(version: 1)), DateAdded = DateTime.Now };
+            _secondFile = new EpisodeFile { Quality = new QualityModel(Quality.Bluray1080p, new Revision(version: 1)), DateAdded = DateTime.Now };
 
-            var fakeSeries = Builder<Media>.CreateNew()
-                         .With(c => c.Profile = new Profile { Cutoff = Quality.Bluray1080p.Id })
-                         .With(c => c.MovieFile = _firstFile)
+            var singleEpisodeList = new List<Episode> { new Episode { EpisodeFile = _firstFile, EpisodeFileId = 1 }, new Episode { EpisodeFile = null } };
+            var doubleEpisodeList = new List<Episode> { new Episode { EpisodeFile = _firstFile, EpisodeFileId = 1 }, new Episode { EpisodeFile = _secondFile, EpisodeFileId = 1 }, new Episode { EpisodeFile = null } };
+
+            var fakeSeries = Builder<Series>.CreateNew()
+                         .With(c => c.QualityProfile = new QualityProfile { Cutoff = Quality.Bluray1080p.Id })
                          .Build();
 
-            _parseResultSingle = new RemoteMovie
+            _parseResultMulti = new RemoteEpisode
             {
-                Movie = fakeSeries,
-                ParsedMovieInfo = new ParsedMovieInfo { Quality = new QualityModel(Quality.DVD, new Revision(version: 2)) },
+                Series = fakeSeries,
+                ParsedEpisodeInfo = new ParsedEpisodeInfo { Quality = new QualityModel(Quality.DVD, new Revision(version: 2)) },
+                Episodes = doubleEpisodeList
+            };
+
+            _parseResultSingle = new RemoteEpisode
+            {
+                Series = fakeSeries,
+                ParsedEpisodeInfo = new ParsedEpisodeInfo { Quality = new QualityModel(Quality.DVD, new Revision(version: 2)) },
+                Episodes = singleEpisodeList
             };
         }
 
@@ -49,7 +61,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests.RssSync
         }
 
         [Test]
-        public void should_return_false_when_movieFile_was_added_more_than_7_days_ago()
+        public void should_return_false_when_episodeFile_was_added_more_than_7_days_ago()
         {
             _firstFile.Quality.Quality = Quality.DVD;
 
@@ -58,7 +70,27 @@ namespace NzbDrone.Core.Test.DecisionEngineTests.RssSync
         }
 
         [Test]
-        public void should_return_true_when_movieFile_was_added_more_than_7_days_ago_but_proper_is_for_better_quality()
+        public void should_return_false_when_first_episodeFile_was_added_more_than_7_days_ago()
+        {
+            _firstFile.Quality.Quality = Quality.DVD;
+            _secondFile.Quality.Quality = Quality.DVD;
+
+            _firstFile.DateAdded = DateTime.Today.AddDays(-30);
+            Subject.IsSatisfiedBy(_parseResultMulti, null).Accepted.Should().BeFalse();
+        }
+
+        [Test]
+        public void should_return_false_when_second_episodeFile_was_added_more_than_7_days_ago()
+        {
+            _firstFile.Quality.Quality = Quality.DVD;
+            _secondFile.Quality.Quality = Quality.DVD;
+
+            _secondFile.DateAdded = DateTime.Today.AddDays(-30);
+            Subject.IsSatisfiedBy(_parseResultMulti, null).Accepted.Should().BeFalse();
+        }
+
+        [Test]
+        public void should_return_true_when_episodeFile_was_added_more_than_7_days_ago_but_proper_is_for_better_quality()
         {
             WithFirstFileUpgradable();
 
@@ -72,7 +104,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests.RssSync
             WithFirstFileUpgradable();
 
             _firstFile.DateAdded = DateTime.Today.AddDays(-30);
-            Subject.IsSatisfiedBy(_parseResultSingle, new MovieSearchCriteria()).Accepted.Should().BeTrue();
+            Subject.IsSatisfiedBy(_parseResultSingle, new SingleEpisodeSearchCriteria()).Accepted.Should().BeTrue();
         }
 
         [Test]
@@ -89,7 +121,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests.RssSync
         }
 
         [Test]
-        public void should_return_true_when_movieFile_was_added_today()
+        public void should_return_true_when_episodeFile_was_added_today()
         {
             Mocker.GetMock<IConfigService>()
                   .Setup(s => s.DownloadPropersAndRepacks)
@@ -101,6 +133,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests.RssSync
             Subject.IsSatisfiedBy(_parseResultSingle, null).Accepted.Should().BeTrue();
         }
 
+        [Test]
         public void should_return_true_when_propers_are_not_preferred()
         {
             Mocker.GetMock<IConfigService>()

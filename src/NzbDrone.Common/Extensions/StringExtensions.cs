@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -172,6 +174,29 @@ namespace NzbDrone.Common.Extensions
             return source.Contains(value, StringComparer.InvariantCultureIgnoreCase);
         }
 
+        public static string ToUrlSlug(this string value)
+        {
+            // First to lower case
+            value = value.ToLowerInvariant();
+
+            // Remove all accents
+            value = value.RemoveAccent();
+
+            // Replace spaces
+            value = Regex.Replace(value, @"\s", "-", RegexOptions.Compiled);
+
+            // Remove invalid chars
+            value = Regex.Replace(value, @"[^a-z0-9\s-_]", "", RegexOptions.Compiled);
+
+            // Trim dashes from end
+            value = value.Trim('-', '_');
+
+            // Replace double occurrences of - or _
+            value = Regex.Replace(value, @"([-_]){2,}", "$1", RegexOptions.Compiled);
+
+            return value;
+        }
+
         public static string EncodeRFC3986(this string value)
         {
             // From Twitterizer http://www.twitterizer.net/
@@ -191,6 +216,31 @@ namespace NzbDrone.Common.Extensions
                 .Replace("*", "%2A")
                 .Replace("'", "%27")
                 .Replace("%7E", "~");
+        }
+
+        public static bool IsValidIpAddress(this string value)
+        {
+            if (!IPAddress.TryParse(value, out var parsedAddress))
+            {
+                return false;
+            }
+
+            if (parsedAddress.Equals(IPAddress.Parse("255.255.255.255")))
+            {
+                return false;
+            }
+
+            if (parsedAddress.IsIPv6Multicast)
+            {
+                return false;
+            }
+
+            return parsedAddress.AddressFamily == AddressFamily.InterNetwork || parsedAddress.AddressFamily == AddressFamily.InterNetworkV6;
+        }
+
+        public static string ToUrlHost(this string input)
+        {
+            return input.Contains(":") ? $"[{input}]" : input;
         }
     }
 }

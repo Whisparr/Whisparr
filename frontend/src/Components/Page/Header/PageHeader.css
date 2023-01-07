@@ -4,8 +4,8 @@
   align-items: center;
   flex: 0 0 auto;
   height: $headerHeight;
-  background-color: #1c1c1c;
-  color: $white;
+  background-color: var(--pageHeaderBackgroundColor);
+  color: var(--white);
 }
 
 .logoContainer {
@@ -15,14 +15,8 @@
   padding-left: 20px;
 }
 
-.logo {
-  vertical-align: middle;
-}
-
-.logoFull {
-  margin-left: 15px;
-  width: 120px;
-  height: 40px;
+.logoLink {
+  line-height: 0;
 }
 
 .logo {
@@ -43,30 +37,11 @@
   flex-grow: 1;
 }
 
-.translate {
-  composes: link from '~Components/Link/Link.css';
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 35px;
-  color: #fff;
-  text-align: center;
-  line-height: 60px;
-
-  &:hover {
-    color: $toobarButtonHoverColor;
-  }
-}
-
 .donate {
   composes: link from '~Components/Link/Link.css';
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
   width: 30px;
-  color: $themeRed;
+  color: var(--themeRed);
   text-align: center;
   line-height: 60px;
 
@@ -83,11 +58,8 @@
   .sidebarToggleContainer {
     display: flex;
   }
-}
 
-@media only screen and (max-width: $breakpointExtraSmall) {
-  .donate,
-  .translate {
+  .donate {
     display: none;
   }
 }

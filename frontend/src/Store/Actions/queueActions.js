@@ -1,12 +1,10 @@
 import _ from 'lodash';
-import moment from 'moment';
 import { createAction } from 'redux-actions';
 import { batchActions } from 'redux-batched-actions';
 import { sortDirections } from 'Helpers/Props';
 import { createThunk, handleThunks } from 'Store/thunks';
 import createAjaxRequest from 'Utilities/createAjaxRequest';
 import serverSideCollectionHandlers from 'Utilities/serverSideCollectionHandlers';
-import translate from 'Utilities/String/translate';
 import { set, updateItem } from './baseActions';
 import createFetchHandler from './Creators/createFetchHandler';
 import createHandleActions from './Creators/createHandleActions';
@@ -27,7 +25,7 @@ const paged = `${section}.paged`;
 
 export const defaultState = {
   options: {
-    includeUnknownMovieItems: true
+    includeUnknownSeriesItems: true
   },
 
   status: {
@@ -59,95 +57,108 @@ export const defaultState = {
     columns: [
       {
         name: 'status',
-        columnLabel: translate('Status'),
+        columnLabel: 'Status',
         isSortable: true,
         isVisible: true,
         isModifiable: false
       },
       {
-        name: 'movies.sortTitle',
-        label: translate('Movie'),
+        name: 'series.sortTitle',
+        label: 'Series',
         isSortable: true,
         isVisible: true
+      },
+      {
+        name: 'episode',
+        label: 'Episode',
+        isSortable: true,
+        isVisible: true
+      },
+      {
+        name: 'episodes.title',
+        label: 'Episode Title',
+        isSortable: true,
+        isVisible: true
+      },
+      {
+        name: 'episodes.airDateUtc',
+        label: 'Episode Air Date',
+        isSortable: true,
+        isVisible: false
       },
       {
         name: 'languages',
-        label: translate('Languages'),
+        label: 'Languages',
         isSortable: true,
-        isVisible: true
+        isVisible: false
       },
       {
         name: 'quality',
-        label: translate('Quality'),
+        label: 'Quality',
         isSortable: true,
         isVisible: true
       },
       {
         name: 'customFormats',
-        label: translate('Formats'),
+        label: 'Formats',
         isSortable: false,
         isVisible: true
       },
       {
         name: 'protocol',
-        label: translate('Protocol'),
+        label: 'Protocol',
         isSortable: true,
         isVisible: false
       },
       {
         name: 'indexer',
-        label: translate('Indexer'),
+        label: 'Indexer',
         isSortable: true,
         isVisible: false
       },
       {
         name: 'downloadClient',
-        label: translate('DownloadClient'),
-        isSortable: true,
-        isVisible: false
-      },
-      {
-        name: 'size',
-        label: translate('Size'),
+        label: 'Download Client',
         isSortable: true,
         isVisible: false
       },
       {
         name: 'title',
-        label: translate('ReleaseTitle'),
+        label: 'Release Title',
         isSortable: true,
         isVisible: false
       },
       {
+        name: 'size',
+        label: 'Size',
+        isSortable: true,
+        isVisibile: false
+      },
+      {
         name: 'outputPath',
-        label: translate('OutputPath'),
+        label: 'Output Path',
         isSortable: false,
         isVisible: false
       },
       {
         name: 'estimatedCompletionTime',
-        label: translate('Timeleft'),
+        label: 'Time Left',
         isSortable: true,
         isVisible: true
       },
       {
         name: 'progress',
-        label: translate('Progress'),
+        label: 'Progress',
         isSortable: true,
         isVisible: true
       },
       {
         name: 'actions',
-        columnLabel: translate('Actions'),
+        columnLabel: 'Actions',
         isVisible: true,
         isModifiable: false
       }
     ]
-  },
-  sortPredicates: {
-    estimatedCompletionTime: function(item, direction) {
-      return moment.duration(item.timeleft).asMilliseconds();
-    }
   }
 };
 
@@ -163,7 +174,7 @@ export const persistState = [
 // Helpers
 
 function fetchDataAugmenter(getState, payload, data) {
-  data.includeUnknownMovieItems = getState().queue.options.includeUnknownMovieItems;
+  data.includeUnknownSeriesItems = getState().queue.options.includeUnknownSeriesItems;
 }
 
 //
@@ -237,7 +248,12 @@ export const actionHandlers = handleThunks({
       params = getState().queue.details.params;
     }
 
-    fetchQueueDetailsHelper(getState, params, dispatch);
+    // Ensure there are params before trying to fetch the queue
+    // so we don't make a bad request to the server.
+
+    if (params && !_.isEmpty(params)) {
+      fetchQueueDetailsHelper(getState, params, dispatch);
+    }
   },
 
   ...createServerSideCollectionHandlers(
@@ -454,3 +470,4 @@ export const reducers = createHandleActions({
   })
 
 }, defaultState, section);
+

@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using Whisparr.Http.Exceptions;
 
 namespace Whisparr.Http.REST

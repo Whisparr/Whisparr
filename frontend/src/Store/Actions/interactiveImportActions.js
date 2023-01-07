@@ -4,7 +4,10 @@ import { batchActions } from 'redux-batched-actions';
 import { sortDirections } from 'Helpers/Props';
 import { createThunk, handleThunks } from 'Store/thunks';
 import createAjaxRequest from 'Utilities/createAjaxRequest';
+import updateSectionState from 'Utilities/State/updateSectionState';
+import naturalExpansion from 'Utilities/String/naturalExpansion';
 import { set, update, updateItem } from './baseActions';
+import createFetchHandler from './Creators/createFetchHandler';
 import createHandleActions from './Creators/createHandleActions';
 import createSetClientSideCollectionSortReducer from './Creators/Reducers/createSetClientSideCollectionSortReducer';
 
@@ -13,10 +16,11 @@ import createSetClientSideCollectionSortReducer from './Creators/Reducers/create
 
 export const section = 'interactiveImport';
 
-const MAXIMUM_RECENT_FOLDERS = 10;
-
+const episodesSection = `${section}.episodes`;
 let abortCurrentRequest = null;
 let currentIds = [];
+
+const MAXIMUM_RECENT_FOLDERS = 10;
 
 //
 // State
@@ -24,9 +28,9 @@ let currentIds = [];
 export const defaultState = {
   isFetching: false,
   isPopulated: false,
-  isReprocessing: false,
   error: null,
   items: [],
+  originalItems: [],
   sortKey: 'quality',
   sortDirection: sortDirections.DESCENDING,
   recentFolders: [],
@@ -35,22 +39,34 @@ export const defaultState = {
     relativePath: function(item, direction) {
       const relativePath = item.relativePath;
 
-      return relativePath.toLowerCase();
+      return naturalExpansion(relativePath.toLowerCase());
     },
 
-    movie: function(item, direction) {
-      const movie = item.movie;
+    series: function(item, direction) {
+      const series = item.series;
 
-      return movie ? movie.sortTitle : '';
+      return series ? series.sortTitle : '';
     },
 
     quality: function(item, direction) {
       return item.qualityWeight || 0;
     }
+  },
+
+  episodes: {
+    isFetching: false,
+    isReprocessing: false,
+    isPopulated: false,
+    error: null,
+    sortKey: 'episodeNumber',
+    sortDirection: sortDirections.ASCENDING,
+    items: []
   }
 };
 
 export const persistState = [
+  'interactiveImport.sortKey',
+  'interactiveImport.sortDirection',
   'interactiveImport.recentFolders',
   'interactiveImport.importMode'
 ];
@@ -68,6 +84,10 @@ export const ADD_RECENT_FOLDER = 'interactiveImport/addRecentFolder';
 export const REMOVE_RECENT_FOLDER = 'interactiveImport/removeRecentFolder';
 export const SET_INTERACTIVE_IMPORT_MODE = 'interactiveImport/setInteractiveImportMode';
 
+export const FETCH_INTERACTIVE_IMPORT_EPISODES = 'interactiveImport/fetchInteractiveImportEpisodes';
+export const SET_INTERACTIVE_IMPORT_EPISODES_SORT = 'interactiveImport/setInteractiveImportEpisodesSort';
+export const CLEAR_INTERACTIVE_IMPORT_EPISODES = 'interactiveImport/clearInteractiveImportEpisodes';
+
 //
 // Action Creators
 
@@ -80,6 +100,10 @@ export const clearInteractiveImport = createAction(CLEAR_INTERACTIVE_IMPORT);
 export const addRecentFolder = createAction(ADD_RECENT_FOLDER);
 export const removeRecentFolder = createAction(REMOVE_RECENT_FOLDER);
 export const setInteractiveImportMode = createAction(SET_INTERACTIVE_IMPORT_MODE);
+
+export const fetchInteractiveImportEpisodes = createThunk(FETCH_INTERACTIVE_IMPORT_EPISODES);
+export const setInteractiveImportEpisodesSort = createAction(SET_INTERACTIVE_IMPORT_EPISODES_SORT);
+export const clearInteractiveImportEpisodes = createAction(CLEAR_INTERACTIVE_IMPORT_EPISODES);
 
 //
 // Action Handlers
@@ -105,7 +129,8 @@ export const actionHandlers = handleThunks({
           section,
           isFetching: false,
           isPopulated: true,
-          error: null
+          error: null,
+          originalItems: data
         })
       ]));
     });
@@ -148,7 +173,9 @@ export const actionHandlers = handleThunks({
       return {
         id,
         path: item.path,
-        movieId: item.movie ? item.movie.id : undefined,
+        seriesId: item.series ? item.series.id : undefined,
+        seasonNumber: item.seasonNumber,
+        episodeIds: (item.episodes || []).map((e) => e.id),
         quality: item.quality,
         languages: item.languages,
         releaseGroup: item.releaseGroup,
@@ -191,7 +218,9 @@ export const actionHandlers = handleThunks({
         }))
       ));
     });
-  }
+  },
+
+  [FETCH_INTERACTIVE_IMPORT_EPISODES]: createFetchHandler('interactiveImport.episodes', '/episode')
 });
 
 //
@@ -270,6 +299,14 @@ export const reducers = createHandleActions({
 
   [SET_INTERACTIVE_IMPORT_MODE]: function(state, { payload }) {
     return Object.assign({}, state, { importMode: payload.importMode });
+  },
+
+  [SET_INTERACTIVE_IMPORT_EPISODES_SORT]: createSetClientSideCollectionSortReducer(episodesSection),
+
+  [CLEAR_INTERACTIVE_IMPORT_EPISODES]: (state) => {
+    return updateSectionState(state, episodesSection, {
+      ...defaultState.episodes
+    });
   }
 
 }, defaultState, section);

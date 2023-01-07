@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import createAllMoviesSelector from 'Store/Selectors/createAllMoviesSelector';
+import createAllSeriesSelector from 'Store/Selectors/createAllSeriesSelector';
 import TagDetailsModalContent from './TagDetailsModalContent';
 
 function findMatchingItems(ids, items) {
@@ -9,21 +9,21 @@ function findMatchingItems(ids, items) {
   });
 }
 
-function createUnorderedMatchingMoviesSelector() {
+function createUnorderedMatchingSeriesSelector() {
   return createSelector(
-    (state, { movieIds }) => movieIds,
-    createAllMoviesSelector(),
+    (state, { seriesIds }) => seriesIds,
+    createAllSeriesSelector(),
     findMatchingItems
   );
 }
 
-function createMatchingMoviesSelector() {
+function createMatchingSeriesSelector() {
   return createSelector(
-    createUnorderedMatchingMoviesSelector(),
-    (movies) => {
-      return movies.sort((movieA, movieB) => {
-        const sortTitleA = movieA.sortTitle;
-        const sortTitleB = movieB.sortTitle;
+    createUnorderedMatchingSeriesSelector(),
+    (series) => {
+      return series.sort((seriesA, seriesB) => {
+        const sortTitleA = seriesA.sortTitle;
+        const sortTitleB = seriesB.sortTitle;
 
         if (sortTitleA > sortTitleB) {
           return 1;
@@ -45,6 +45,14 @@ function createMatchingDelayProfilesSelector() {
   );
 }
 
+function createMatchingImportListsSelector() {
+  return createSelector(
+    (state, { importListIds }) => importListIds,
+    (state) => state.settings.importLists.items,
+    findMatchingItems
+  );
+}
+
 function createMatchingNotificationsSelector() {
   return createSelector(
     (state, { notificationIds }) => notificationIds,
@@ -53,18 +61,10 @@ function createMatchingNotificationsSelector() {
   );
 }
 
-function createMatchingRestrictionsSelector() {
+function createMatchingReleaseProfilesSelector() {
   return createSelector(
     (state, { restrictionIds }) => restrictionIds,
-    (state) => state.settings.restrictions.items,
-    findMatchingItems
-  );
-}
-
-function createMatchingImportListsSelector() {
-  return createSelector(
-    (state, { importListIds }) => importListIds,
-    (state) => state.settings.importLists.items,
+    (state) => state.settings.releaseProfiles.items,
     findMatchingItems
   );
 }
@@ -77,22 +77,32 @@ function createMatchingIndexersSelector() {
   );
 }
 
+function createMatchingAutoTagsSelector() {
+  return createSelector(
+    (state, { autoTagIds }) => autoTagIds,
+    (state) => state.settings.autoTaggings.items,
+    findMatchingItems
+  );
+}
+
 function createMapStateToProps() {
   return createSelector(
-    createMatchingMoviesSelector(),
+    createMatchingSeriesSelector(),
     createMatchingDelayProfilesSelector(),
-    createMatchingNotificationsSelector(),
-    createMatchingRestrictionsSelector(),
     createMatchingImportListsSelector(),
+    createMatchingNotificationsSelector(),
+    createMatchingReleaseProfilesSelector(),
     createMatchingIndexersSelector(),
-    (movies, delayProfiles, notifications, restrictions, importLists, indexers) => {
+    createMatchingAutoTagsSelector(),
+    (series, delayProfiles, importLists, notifications, releaseProfiles, indexers, autoTags) => {
       return {
-        movies,
+        series,
         delayProfiles,
-        notifications,
-        restrictions,
         importLists,
-        indexers
+        notifications,
+        releaseProfiles,
+        indexers,
+        autoTags
       };
     }
   );

@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Indexers;
-using NzbDrone.Core.Localization;
 using NzbDrone.Core.ThingiProvider.Events;
 
 namespace NzbDrone.Core.HealthCheck.Checks
@@ -15,10 +14,7 @@ namespace NzbDrone.Core.HealthCheck.Checks
         private readonly IIndexerFactory _providerFactory;
         private readonly IIndexerStatusService _providerStatusService;
 
-        public IndexerLongTermStatusCheck(IIndexerFactory providerFactory,
-                                          IIndexerStatusService providerStatusService,
-                                          ILocalizationService localizationService)
-            : base(localizationService)
+        public IndexerLongTermStatusCheck(IIndexerFactory providerFactory, IIndexerStatusService providerStatusService)
         {
             _providerFactory = providerFactory;
             _providerStatusService = providerStatusService;
@@ -45,13 +41,13 @@ namespace NzbDrone.Core.HealthCheck.Checks
             {
                 return new HealthCheck(GetType(),
                     HealthCheckResult.Error,
-                    _localizationService.GetLocalizedString("IndexerLongTermStatusCheckAllClientMessage"),
+                    "All indexers are unavailable due to failures for more than 6 hours",
                     "#indexers-are-unavailable-due-to-failures");
             }
 
             return new HealthCheck(GetType(),
                 HealthCheckResult.Warning,
-                string.Format(_localizationService.GetLocalizedString("IndexerLongTermStatusCheckSingleClientMessage"),
+                string.Format("Indexers unavailable due to failures for more than 6 hours: {0}",
                     string.Join(", ", backOffProviders.Select(v => v.Provider.Definition.Name))),
                 "#indexers-are-unavailable-due-to-failures");
         }

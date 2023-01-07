@@ -14,7 +14,6 @@ import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { inputTypes, kinds } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import styles from './EditSpecificationModalContent.css';
 
 function EditSpecificationModalContent(props) {
@@ -52,19 +51,19 @@ function EditSpecificationModalContent(props) {
             fields && fields.some((x) => x.label === 'Regular Expression') &&
               <Alert kind={kinds.INFO}>
                 <div>
-                  <div dangerouslySetInnerHTML={{ __html: translate('ThisConditionMatchesUsingRegularExpressions', ['<code>\\^$.|?*+()[{</code>', '<code>\\</code>']) }} />
-                  {translate('MoreDetails')} <Link to="https://www.regular-expressions.info/tutorial.html">{translate('LinkHere')}</Link>
+                  <div dangerouslySetInnerHTML={{ __html: 'This condition matches using Regular Expressions. Note that the characters <code>\\^$.|?*+()[{</code> have special meanings and need escaping with a <code>\\</code>' }} />
+                  {'More details'} <Link to="https://www.regular-expressions.info/tutorial.html">{'Here'}</Link>
                 </div>
                 <div>
-                  {translate('RegularExpressionsCanBeTested')}
-                  <Link to="http://regexstorm.net/tester">{translate('LinkHere')}</Link>
+                  {'Regular expressions can be tested '}
+                  <Link to="http://regexstorm.net/tester">Here</Link>
                 </div>
               </Alert>
           }
 
           <FormGroup>
             <FormLabel>
-              {translate('Name')}
+              Name
             </FormLabel>
 
             <FormInputGroup
@@ -92,28 +91,28 @@ function EditSpecificationModalContent(props) {
 
           <FormGroup>
             <FormLabel>
-              {translate('Negate')}
+              Negate
             </FormLabel>
 
             <FormInputGroup
               type={inputTypes.CHECK}
               name="negate"
               {...negate}
-              helpText={translate('NegateHelpText', [implementationName])}
+              helpText={`If checked, the custom format will not apply if this ${implementationName} condition matches.`}
               onChange={onInputChange}
             />
           </FormGroup>
 
           <FormGroup>
             <FormLabel>
-              {translate('Required')}
+              Required
             </FormLabel>
 
             <FormInputGroup
               type={inputTypes.CHECK}
               name="required"
               {...required}
-              helpText={translate('RequiredHelpText', [implementationName, implementationName])}
+              helpText={`This ${implementationName} condition must match for the custom format to apply.  Otherwise a single ${implementationName} match is sufficient.`}
               onChange={onInputChange}
             />
           </FormGroup>
@@ -127,21 +126,21 @@ function EditSpecificationModalContent(props) {
               kind={kinds.DANGER}
               onPress={onDeleteSpecificationPress}
             >
-              {translate('Delete')}
+              Delete
             </Button>
         }
 
         <Button
           onPress={onCancelPress}
         >
-          {translate('Cancel')}
+          Cancel
         </Button>
 
         <SpinnerErrorButton
           isSpinning={false}
           onPress={onSavePress}
         >
-          {translate('Save')}
+          Save
         </SpinnerErrorButton>
       </ModalFooter>
     </ModalContent>

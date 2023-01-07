@@ -19,9 +19,9 @@ namespace NzbDrone.Core.Test.Download.Pending.PendingReleaseServiceTests
             Mocker.GetMock<IPendingReleaseRepository>()
                               .Setup(v => v.All())
                               .Returns(new List<PendingRelease>
-                              {
-                                  new PendingRelease { Release = new ReleaseInfo { IndexerId = 1 } }
-                              });
+                                {
+                                      new PendingRelease { Release = new ReleaseInfo { IndexerId = 1 } }
+                                });
         }
 
         [Test]

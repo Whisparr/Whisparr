@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
 using Moq;
 using NUnit.Framework;
 using NzbDrone.Core.Blocklisting;
@@ -17,13 +18,14 @@ namespace NzbDrone.Core.Test.Blocklisting
         public void Setup()
         {
             _event = new DownloadFailedEvent
-            {
-                MovieId = 69,
-                Quality = new QualityModel(),
-                SourceTitle = "series.title.s01e01",
-                DownloadClient = "SabnzbdClient",
-                DownloadId = "Sabnzbd_nzo_2dfh73k"
-            };
+                     {
+                         SeriesId = 12345,
+                         EpisodeIds = new List<int> { 1 },
+                         Quality = new QualityModel(Quality.Bluray720p),
+                         SourceTitle = "series.title.s01e01",
+                         DownloadClient = "SabnzbdClient",
+                         DownloadId = "Sabnzbd_nzo_2dfh73k"
+                     };
 
             _event.Data.Add("publishedDate", DateTime.UtcNow.ToString("s") + "Z");
             _event.Data.Add("size", "1000");
@@ -38,7 +40,7 @@ namespace NzbDrone.Core.Test.Blocklisting
             Subject.Handle(_event);
 
             Mocker.GetMock<IBlocklistRepository>()
-                .Verify(v => v.Insert(It.Is<Blocklist>(b => b.MovieId == _event.MovieId)), Times.Once());
+                .Verify(v => v.Insert(It.Is<Blocklist>(b => b.EpisodeIds == _event.EpisodeIds)), Times.Once());
         }
 
         [Test]
@@ -50,7 +52,7 @@ namespace NzbDrone.Core.Test.Blocklisting
             _event.Data.Remove("protocol");
 
             Mocker.GetMock<IBlocklistRepository>()
-                .Verify(v => v.Insert(It.Is<Blocklist>(b => b.MovieId == _event.MovieId)), Times.Once());
+                .Verify(v => v.Insert(It.Is<Blocklist>(b => b.EpisodeIds == _event.EpisodeIds)), Times.Once());
         }
     }
 }

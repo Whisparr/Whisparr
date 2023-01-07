@@ -6,7 +6,11 @@ import FormInputGroup from 'Components/Form/FormInputGroup';
 import FormLabel from 'Components/Form/FormLabel';
 import { inputTypes, sizes } from 'Helpers/Props';
 import titleCase from 'Utilities/String/titleCase';
-import translate from 'Utilities/String/translate';
+
+const branchValues = [
+  'master',
+  'develop'
+];
 
 function UpdateSettings(props) {
   const {
@@ -38,44 +42,46 @@ function UpdateSettings(props) {
       value: titleCase(packageUpdateMechanism)
     });
   } else {
-    updateOptions.push({ key: 'builtIn', value: translate('BuiltIn') });
+    updateOptions.push({ key: 'builtIn', value: 'Built-In' });
   }
 
-  updateOptions.push({ key: 'script', value: translate('Script') });
+  updateOptions.push({ key: 'script', value: 'Script' });
 
   return (
-    <FieldSet legend={translate('Updates')}>
+    <FieldSet legend="Updates">
       <FormGroup
         advancedSettings={advancedSettings}
         isAdvanced={true}
       >
-        <FormLabel>{translate('Branch')}</FormLabel>
+        <FormLabel>Branch</FormLabel>
 
         <FormInputGroup
-          type={inputTypes.TEXT}
+          type={inputTypes.AUTO_COMPLETE}
           name="branch"
-          helpText={usingExternalUpdateMechanism ? translate('BranchUpdateMechanism') : translate('BranchUpdate')}
+          helpText={usingExternalUpdateMechanism ? 'Branch used by external update mechanism' : 'Branch to use to update Whisparr'}
           helpLink="https://wiki.servarr.com/whisparr/settings#updates"
           {...branch}
+          values={branchValues}
           onChange={onInputChange}
           readOnly={usingExternalUpdateMechanism}
         />
       </FormGroup>
 
       {
-        !isWindows &&
+        isWindows ?
+          null :
           <div>
             <FormGroup
               advancedSettings={advancedSettings}
               isAdvanced={true}
               size={sizes.MEDIUM}
             >
-              <FormLabel>{translate('Automatic')}</FormLabel>
+              <FormLabel>Automatic</FormLabel>
 
               <FormInputGroup
                 type={inputTypes.CHECK}
                 name="updateAutomatically"
-                helpText={translate('UpdateAutomaticallyHelpText')}
+                helpText="Automatically download and install updates. You will still be able to install from System: Updates"
                 onChange={onInputChange}
                 {...updateAutomatically}
               />
@@ -85,13 +91,13 @@ function UpdateSettings(props) {
               advancedSettings={advancedSettings}
               isAdvanced={true}
             >
-              <FormLabel>{translate('Mechanism')}</FormLabel>
+              <FormLabel>Mechanism</FormLabel>
 
               <FormInputGroup
                 type={inputTypes.SELECT}
                 name="updateMechanism"
                 values={updateOptions}
-                helpText={translate('UpdateMechanismHelpText')}
+                helpText="Use Whisparr's built-in updater or a script"
                 helpLink="https://wiki.servarr.com/whisparr/settings#updates"
                 onChange={onInputChange}
                 {...updateMechanism}
@@ -104,12 +110,12 @@ function UpdateSettings(props) {
                   advancedSettings={advancedSettings}
                   isAdvanced={true}
                 >
-                  <FormLabel>{translate('ScriptPath')}</FormLabel>
+                  <FormLabel>Script Path</FormLabel>
 
                   <FormInputGroup
                     type={inputTypes.TEXT}
                     name="updateScriptPath"
-                    helpText={translate('UpdateScriptPathHelpText')}
+                    helpText="Path to a custom script that takes an extracted update package and handle the remainder of the update process"
                     onChange={onInputChange}
                     {...updateScriptPath}
                   />

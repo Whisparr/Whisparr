@@ -5,7 +5,6 @@ import Icon from 'Components/Icon';
 import Link from 'Components/Link/Link';
 import ConfirmModal from 'Components/Modal/ConfirmModal';
 import { icons, kinds } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import EditImportListExclusionModalConnector from './EditImportListExclusionModalConnector';
 import styles from './ImportListExclusion.css';
 
@@ -18,35 +17,35 @@ class ImportListExclusion extends Component {
     super(props, context);
 
     this.state = {
-      isEditImportExclusionModalOpen: false,
-      isDeleteImportExclusionModalOpen: false
+      isEditImportListExclusionModalOpen: false,
+      isDeleteImportListExclusionModalOpen: false
     };
   }
 
   //
   // Listeners
 
-  onEditImportExclusionPress = () => {
-    this.setState({ isEditImportExclusionModalOpen: true });
+  onEditImportListExclusionPress = () => {
+    this.setState({ isEditImportListExclusionModalOpen: true });
   };
 
-  onEditImportExclusionModalClose = () => {
-    this.setState({ isEditImportExclusionModalOpen: false });
+  onEditImportListExclusionModalClose = () => {
+    this.setState({ isEditImportListExclusionModalOpen: false });
   };
 
-  onDeleteImportExclusionPress = () => {
+  onDeleteImportListExclusionPress = () => {
     this.setState({
-      isEditImportExclusionModalOpen: false,
-      isDeleteImportExclusionModalOpen: true
+      isEditImportListExclusionModalOpen: false,
+      isDeleteImportListExclusionModalOpen: true
     });
   };
 
-  onDeleteImportExclusionModalClose = () => {
-    this.setState({ isDeleteImportExclusionModalOpen: false });
+  onDeleteImportListExclusionModalClose = () => {
+    this.setState({ isDeleteImportListExclusionModalOpen: false });
   };
 
-  onConfirmDeleteImportExclusion = () => {
-    this.props.onConfirmDeleteImportExclusion(this.props.id);
+  onConfirmDeleteImportListExclusion = () => {
+    this.props.onConfirmDeleteImportListExclusion(this.props.id);
   };
 
   //
@@ -55,24 +54,22 @@ class ImportListExclusion extends Component {
   render() {
     const {
       id,
-      movieTitle,
-      tmdbId,
-      movieYear
+      title,
+      tvdbId
     } = this.props;
 
     return (
       <div
         className={classNames(
-          styles.importExclusion
+          styles.importListExclusion
         )}
       >
-        <div className={styles.tmdbId}>{tmdbId}</div>
-        <div className={styles.movieTitle}>{movieTitle}</div>
-        <div className={styles.movieYear}>{movieYear}</div>
+        <div className={styles.title}>{title}</div>
+        <div className={styles.tvdbId}>{tvdbId}</div>
 
         <div className={styles.actions}>
           <Link
-            onPress={this.onEditImportExclusionPress}
+            onPress={this.onEditImportListExclusionPress}
           >
             <Icon name={icons.EDIT} />
           </Link>
@@ -80,19 +77,19 @@ class ImportListExclusion extends Component {
 
         <EditImportListExclusionModalConnector
           id={id}
-          isOpen={this.state.isEditImportExclusionModalOpen}
-          onModalClose={this.onEditImportExclusionModalClose}
-          onDeleteImportExclusionPress={this.onDeleteImportExclusionPress}
+          isOpen={this.state.isEditImportListExclusionModalOpen}
+          onModalClose={this.onEditImportListExclusionModalClose}
+          onDeleteImportListExclusionPress={this.onDeleteImportListExclusionPress}
         />
 
         <ConfirmModal
-          isOpen={this.state.isDeleteImportExclusionModalOpen}
+          isOpen={this.state.isDeleteImportListExclusionModalOpen}
           kind={kinds.DANGER}
-          title={translate('DeleteImportListExclusion')}
-          message={translate('AreYouSureYouWantToDeleteThisImportListExclusion')}
-          confirmLabel={translate('Delete')}
-          onConfirm={this.onConfirmDeleteImportExclusion}
-          onCancel={this.onDeleteImportExclusionModalClose}
+          title="Delete Import List Exclusion"
+          message="Are you sure you want to delete this import list exclusion?"
+          confirmLabel="Delete"
+          onConfirm={this.onConfirmDeleteImportListExclusion}
+          onCancel={this.onDeleteImportListExclusionModalClose}
         />
       </div>
     );
@@ -101,10 +98,9 @@ class ImportListExclusion extends Component {
 
 ImportListExclusion.propTypes = {
   id: PropTypes.number.isRequired,
-  movieTitle: PropTypes.string.isRequired,
-  tmdbId: PropTypes.number.isRequired,
-  movieYear: PropTypes.number.isRequired,
-  onConfirmDeleteImportExclusion: PropTypes.func.isRequired
+  title: PropTypes.string.isRequired,
+  tvdbId: PropTypes.number.isRequired,
+  onConfirmDeleteImportListExclusion: PropTypes.func.isRequired
 };
 
 ImportListExclusion.defaultProps = {

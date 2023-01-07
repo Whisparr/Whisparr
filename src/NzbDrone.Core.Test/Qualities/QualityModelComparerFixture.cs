@@ -1,7 +1,7 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using FluentAssertions;
 using NUnit.Framework;
-using NzbDrone.Core.Profiles;
+using NzbDrone.Core.Profiles.Qualities;
 using NzbDrone.Core.Qualities;
 using NzbDrone.Core.Test.Framework;
 
@@ -12,61 +12,56 @@ namespace NzbDrone.Core.Test.Qualities
     {
         public QualityModelComparer Subject { get; set; }
 
-        [SetUp]
-        public void Setup()
-        {
-        }
-
         private void GivenDefaultProfile()
         {
-            Subject = new QualityModelComparer(new Profile { Items = QualityFixture.GetDefaultQualities() });
+            Subject = new QualityModelComparer(new QualityProfile { Items = QualityFixture.GetDefaultQualities() });
         }
 
         private void GivenCustomProfile()
         {
-            Subject = new QualityModelComparer(new Profile { Items = QualityFixture.GetDefaultQualities(Quality.Bluray720p, Quality.DVD) });
+            Subject = new QualityModelComparer(new QualityProfile { Items = QualityFixture.GetDefaultQualities(Quality.Bluray720p, Quality.DVD) });
         }
 
         private void GivenGroupedProfile()
         {
-            var profile = new Profile
-            {
-                Items = new List<ProfileQualityItem>
+            var profile = new QualityProfile
+                          {
+                              Items = new List<QualityProfileQualityItem>
                                       {
-                                          new ProfileQualityItem
+                                          new QualityProfileQualityItem
                                           {
                                               Allowed = false,
                                               Quality = Quality.SDTV
                                           },
-                                          new ProfileQualityItem
+                                          new QualityProfileQualityItem
                                           {
                                               Allowed = false,
                                               Quality = Quality.DVD
                                           },
-                                          new ProfileQualityItem
+                                          new QualityProfileQualityItem
                                           {
                                               Allowed = true,
-                                              Items = new List<ProfileQualityItem>
+                                              Items = new List<QualityProfileQualityItem>
                                                       {
-                                                          new ProfileQualityItem
+                                                          new QualityProfileQualityItem
                                                           {
                                                               Allowed = true,
                                                               Quality = Quality.HDTV720p
                                                           },
-                                                          new ProfileQualityItem
+                                                          new QualityProfileQualityItem
                                                           {
                                                               Allowed = true,
                                                               Quality = Quality.WEBDL720p
                                                           }
                                                       }
                                           },
-                                          new ProfileQualityItem
+                                          new QualityProfileQualityItem
                                           {
                                               Allowed = true,
                                               Quality = Quality.Bluray720p
                                           }
                                       }
-            };
+                          };
 
             Subject = new QualityModelComparer(profile);
         }

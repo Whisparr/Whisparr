@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -85,6 +85,11 @@ namespace NzbDrone.Core
             }
 
             return intList.Max();
+        }
+
+        public static int GetByteCount(this string input)
+        {
+            return Encoding.UTF8.GetByteCount(input);
         }
 
         public static string Truncate(this string s, int maxLength)

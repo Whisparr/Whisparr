@@ -29,7 +29,7 @@ namespace NzbDrone.Automation.Test.PageModel
 
         public void WaitForNoSpinner(int timeout = 30)
         {
-            //give the spinner some time to show up.
+            // give the spinner some time to show up.
             Thread.Sleep(200);
 
             var wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(timeout));
@@ -37,7 +37,7 @@ namespace NzbDrone.Automation.Test.PageModel
             {
                 try
                 {
-                    IWebElement element = d.FindElement(By.ClassName("followingBalls"));
+                    IWebElement element = d.FindElement(By.Id("followingBalls"));
                     return !element.Displayed;
                 }
                 catch (NoSuchElementException)
@@ -47,11 +47,13 @@ namespace NzbDrone.Automation.Test.PageModel
             });
         }
 
-        public IWebElement MovieNavIcon => Find(By.LinkText("Movies"));
+        public IWebElement SeriesNavIcon => Find(By.LinkText("Series"));
 
         public IWebElement CalendarNavIcon => Find(By.LinkText("Calendar"));
 
         public IWebElement ActivityNavIcon => Find(By.LinkText("Activity"));
+
+        public IWebElement WantedNavIcon => Find(By.LinkText("Wanted"));
 
         public IWebElement SettingNavIcon => Find(By.LinkText("Settings"));
 

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
+using MonoTorrent;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
 using NzbDrone.Core.Indexers.Exceptions;
@@ -14,13 +14,10 @@ namespace NzbDrone.Core.Indexers.Newznab
     {
         public const string ns = "{http://www.newznab.com/DTD/2010/feeds/attributes/}";
 
-        private readonly NewznabSettings _settings;
-
-        public NewznabRssParser(NewznabSettings settings)
+        public NewznabRssParser()
         {
             PreferredEnclosureMimeTypes = UsenetEnclosureMimeTypes;
             UseEnclosureUrl = true;
-            _settings = settings;
         }
 
         public static void CheckError(XDocument xdoc, IndexerResponse indexerResponse)
@@ -83,7 +80,8 @@ namespace NzbDrone.Core.Indexers.Newznab
         protected override ReleaseInfo ProcessItem(XElement item, ReleaseInfo releaseInfo)
         {
             releaseInfo = base.ProcessItem(item, releaseInfo);
-            releaseInfo.ImdbId = GetImdbId(item);
+
+            releaseInfo.TvdbId = GetTvdbId(item);
 
             return releaseInfo;
         }
@@ -124,55 +122,17 @@ namespace NzbDrone.Core.Indexers.Newznab
             return base.GetPublishDate(item);
         }
 
-        protected override string GetDownloadUrl(XElement item)
+        protected virtual int GetTvdbId(XElement item)
         {
-            var url = base.GetDownloadUrl(item);
+            var tvdbIdString = TryGetNewznabAttribute(item, "tvdbid");
+            int tvdbId;
 
-            if (!Uri.IsWellFormedUriString(url, UriKind.Absolute))
+            if (!tvdbIdString.IsNullOrWhiteSpace() && int.TryParse(tvdbIdString, out tvdbId))
             {
-                url = ParseUrl((string)item.Element("enclosure").Attribute("url"));
-            }
-
-            return url;
-        }
-
-        protected virtual int GetImdbId(XElement item)
-        {
-            var imdbIdString = TryGetNewznabAttribute(item, "imdb");
-            int imdbId;
-
-            if (!imdbIdString.IsNullOrWhiteSpace() && int.TryParse(imdbIdString, out imdbId))
-            {
-                return imdbId;
+                return tvdbId;
             }
 
             return 0;
-        }
-
-        protected virtual string GetImdbTitle(XElement item)
-        {
-            var imdbTitle = TryGetNewznabAttribute(item, "imdbtitle");
-            if (!imdbTitle.IsNullOrWhiteSpace())
-            {
-                return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(
-                    Parser.Parser.ReplaceGermanUmlauts(
-                        Parser.Parser.NormalizeTitle(imdbTitle).Replace(" ", ".")));
-            }
-
-            return string.Empty;
-        }
-
-        protected virtual int GetImdbYear(XElement item)
-        {
-            var imdbYearString = TryGetNewznabAttribute(item, "imdbyear");
-            int imdbYear;
-
-            if (!imdbYearString.IsNullOrWhiteSpace() && int.TryParse(imdbYearString, out imdbYear))
-            {
-                return imdbYear;
-            }
-
-            return 1900;
         }
 
         protected string TryGetNewznabAttribute(XElement item, string key, string defaultValue = "")

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import { fetchDelayProfiles, fetchImportLists, fetchIndexers, fetchNotifications, fetchRestrictions } from 'Store/Actions/settingsActions';
+import { fetchDelayProfiles, fetchImportLists, fetchIndexers, fetchNotifications, fetchReleaseProfiles } from 'Store/Actions/settingsActions';
 import { fetchTagDetails } from 'Store/Actions/tagActions';
 import Tags from './Tags';
 
@@ -27,9 +27,9 @@ function createMapStateToProps() {
 const mapDispatchToProps = {
   dispatchFetchTagDetails: fetchTagDetails,
   dispatchFetchDelayProfiles: fetchDelayProfiles,
-  dispatchFetchNotifications: fetchNotifications,
-  dispatchFetchRestrictions: fetchRestrictions,
   dispatchFetchImportLists: fetchImportLists,
+  dispatchFetchNotifications: fetchNotifications,
+  dispatchFetchReleaseProfiles: fetchReleaseProfiles,
   dispatchFetchIndexers: fetchIndexers
 };
 
@@ -42,17 +42,17 @@ class MetadatasConnector extends Component {
     const {
       dispatchFetchTagDetails,
       dispatchFetchDelayProfiles,
-      dispatchFetchNotifications,
-      dispatchFetchRestrictions,
       dispatchFetchImportLists,
+      dispatchFetchNotifications,
+      dispatchFetchReleaseProfiles,
       dispatchFetchIndexers
     } = this.props;
 
     dispatchFetchTagDetails();
     dispatchFetchDelayProfiles();
-    dispatchFetchNotifications();
-    dispatchFetchRestrictions();
     dispatchFetchImportLists();
+    dispatchFetchNotifications();
+    dispatchFetchReleaseProfiles();
     dispatchFetchIndexers();
   }
 
@@ -71,9 +71,9 @@ class MetadatasConnector extends Component {
 MetadatasConnector.propTypes = {
   dispatchFetchTagDetails: PropTypes.func.isRequired,
   dispatchFetchDelayProfiles: PropTypes.func.isRequired,
-  dispatchFetchNotifications: PropTypes.func.isRequired,
-  dispatchFetchRestrictions: PropTypes.func.isRequired,
   dispatchFetchImportLists: PropTypes.func.isRequired,
+  dispatchFetchNotifications: PropTypes.func.isRequired,
+  dispatchFetchReleaseProfiles: PropTypes.func.isRequired,
   dispatchFetchIndexers: PropTypes.func.isRequired
 };
 

@@ -9,8 +9,8 @@ import ModalBody from 'Components/Modal/ModalBody';
 import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
-import { inputTypes, kinds } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
+import { inputTypes, kinds, scrollDirections } from 'Helpers/Props';
+import styles from './SelectReleaseGroupModalContent.css';
 
 class SelectReleaseGroupModalContent extends Component {
 
@@ -45,6 +45,7 @@ class SelectReleaseGroupModalContent extends Component {
 
   render() {
     const {
+      modalTitle,
       onModalClose
     } = this.props;
 
@@ -55,18 +56,22 @@ class SelectReleaseGroupModalContent extends Component {
     return (
       <ModalContent onModalClose={onModalClose}>
         <ModalHeader>
-          {translate('ManualImportSetReleaseGroup')}
+          {modalTitle} - Set Release Group
         </ModalHeader>
 
-        <ModalBody>
+        <ModalBody
+          className={styles.modalBody}
+          scrollDirection={scrollDirections.NONE}
+        >
           <Form>
             <FormGroup>
-              <FormLabel>{translate('ReleaseGroup')}</FormLabel>
+              <FormLabel>Release Group</FormLabel>
 
               <FormInputGroup
                 type={inputTypes.TEXT}
                 name="releaseGroup"
                 value={releaseGroup}
+                autoFocus={true}
                 onChange={this.onReleaseGroupChange}
               />
             </FormGroup>
@@ -75,14 +80,14 @@ class SelectReleaseGroupModalContent extends Component {
 
         <ModalFooter>
           <Button onPress={onModalClose}>
-            {translate('Cancel')}
+            Cancel
           </Button>
 
           <Button
             kind={kinds.SUCCESS}
             onPress={this.onReleaseGroupSelect}
           >
-            {translate('SetReleaseGroup')}
+            Set Release Group
           </Button>
         </ModalFooter>
       </ModalContent>
@@ -92,6 +97,7 @@ class SelectReleaseGroupModalContent extends Component {
 
 SelectReleaseGroupModalContent.propTypes = {
   releaseGroup: PropTypes.string.isRequired,
+  modalTitle: PropTypes.string.isRequired,
   onReleaseGroupSelect: PropTypes.func.isRequired,
   onModalClose: PropTypes.func.isRequired
 };

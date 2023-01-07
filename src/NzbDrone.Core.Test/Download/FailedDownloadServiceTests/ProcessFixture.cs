@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using Moq;
@@ -8,9 +8,9 @@ using NzbDrone.Core.Download;
 using NzbDrone.Core.Download.TrackedDownloads;
 using NzbDrone.Core.History;
 using NzbDrone.Core.Messaging.Events;
-using NzbDrone.Core.Movies;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.Test.Framework;
+using NzbDrone.Core.Tv;
 using NzbDrone.Test.Common;
 
 namespace NzbDrone.Core.Test.Download.FailedDownloadServiceTests
@@ -19,7 +19,7 @@ namespace NzbDrone.Core.Test.Download.FailedDownloadServiceTests
     public class ProcessFixture : CoreTest<FailedDownloadService>
     {
         private TrackedDownload _trackedDownload;
-        private List<MovieHistory> _grabHistory;
+        private List<EpisodeHistory> _grabHistory;
 
         [SetUp]
         public void Setup()
@@ -30,29 +30,30 @@ namespace NzbDrone.Core.Test.Download.FailedDownloadServiceTests
                                                     .With(h => h.Title = "Drone.S01E01.HDTV")
                                                     .Build();
 
-            _grabHistory = Builder<MovieHistory>.CreateListOfSize(2).BuildList();
+            _grabHistory = Builder<EpisodeHistory>.CreateListOfSize(2).BuildList();
 
-            var remoteMovie = new RemoteMovie
+            var remoteEpisode = new RemoteEpisode
             {
-                Movie = new Media(),
+                Series = new Series(),
+                Episodes = new List<Episode> { new Episode { Id = 1 } }
             };
 
             _trackedDownload = Builder<TrackedDownload>.CreateNew()
                     .With(c => c.State = TrackedDownloadState.Downloading)
                     .With(c => c.DownloadItem = completed)
-                    .With(c => c.RemoteMovie = remoteMovie)
+                    .With(c => c.RemoteEpisode = remoteEpisode)
                     .Build();
 
             Mocker.GetMock<IHistoryService>()
-                  .Setup(s => s.Find(_trackedDownload.DownloadItem.DownloadId, MovieHistoryEventType.Grabbed))
+                  .Setup(s => s.Find(_trackedDownload.DownloadItem.DownloadId, EpisodeHistoryEventType.Grabbed))
                   .Returns(_grabHistory);
         }
 
         private void GivenNoGrabbedHistory()
         {
             Mocker.GetMock<IHistoryService>()
-                .Setup(s => s.Find(_trackedDownload.DownloadItem.DownloadId, MovieHistoryEventType.Grabbed))
-                .Returns(new List<MovieHistory>());
+                .Setup(s => s.Find(_trackedDownload.DownloadItem.DownloadId, EpisodeHistoryEventType.Grabbed))
+                .Returns(new List<EpisodeHistory>());
         }
 
         [Test]

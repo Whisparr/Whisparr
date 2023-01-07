@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using NzbDrone.Common.Messaging;
 
 namespace NzbDrone.Core.Update.History.Events

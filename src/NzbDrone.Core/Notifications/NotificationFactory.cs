@@ -14,9 +14,9 @@ namespace NzbDrone.Core.Notifications
         List<INotification> OnDownloadEnabled();
         List<INotification> OnUpgradeEnabled();
         List<INotification> OnRenameEnabled();
-        List<INotification> OnMovieAddedEnabled();
-        List<INotification> OnMovieDeleteEnabled();
-        List<INotification> OnMovieFileDeleteEnabled();
+        List<INotification> OnSeriesDeleteEnabled();
+        List<INotification> OnEpisodeFileDeleteEnabled();
+        List<INotification> OnEpisodeFileDeleteForUpgradeEnabled();
         List<INotification> OnHealthIssueEnabled();
         List<INotification> OnApplicationUpdateEnabled();
     }
@@ -48,24 +48,19 @@ namespace NzbDrone.Core.Notifications
             return GetAvailableProviders().Where(n => ((NotificationDefinition)n.Definition).OnRename).ToList();
         }
 
-        public List<INotification> OnMovieAddedEnabled()
+        public List<INotification> OnSeriesDeleteEnabled()
         {
-            return GetAvailableProviders().Where(n => ((NotificationDefinition)n.Definition).OnMovieAdded).ToList();
+            return GetAvailableProviders().Where(n => ((NotificationDefinition)n.Definition).OnSeriesDelete).ToList();
         }
 
-        public List<INotification> OnMovieDeleteEnabled()
+        public List<INotification> OnEpisodeFileDeleteEnabled()
         {
-            return GetAvailableProviders().Where(n => ((NotificationDefinition)n.Definition).OnMovieDelete).ToList();
+            return GetAvailableProviders().Where(n => ((NotificationDefinition)n.Definition).OnEpisodeFileDelete).ToList();
         }
 
-        public List<INotification> OnMovieFileDeleteEnabled()
+        public List<INotification> OnEpisodeFileDeleteForUpgradeEnabled()
         {
-            return GetAvailableProviders().Where(n => ((NotificationDefinition)n.Definition).OnMovieFileDelete).ToList();
-        }
-
-        public List<INotification> OnMovieFileDeleteForUpgradeEnabled()
-        {
-            return GetAvailableProviders().Where(n => ((NotificationDefinition)n.Definition).OnMovieFileDeleteForUpgrade).ToList();
+            return GetAvailableProviders().Where(n => ((NotificationDefinition)n.Definition).OnEpisodeFileDeleteForUpgrade).ToList();
         }
 
         public List<INotification> OnHealthIssueEnabled()
@@ -86,10 +81,9 @@ namespace NzbDrone.Core.Notifications
             definition.SupportsOnDownload = provider.SupportsOnDownload;
             definition.SupportsOnUpgrade = provider.SupportsOnUpgrade;
             definition.SupportsOnRename = provider.SupportsOnRename;
-            definition.SupportsOnMovieAdded = provider.SupportsOnMovieAdded;
-            definition.SupportsOnMovieDelete = provider.SupportsOnMovieDelete;
-            definition.SupportsOnMovieFileDelete = provider.SupportsOnMovieFileDelete;
-            definition.SupportsOnMovieFileDeleteForUpgrade = provider.SupportsOnMovieFileDeleteForUpgrade;
+            definition.SupportsOnSeriesDelete = provider.SupportsOnSeriesDelete;
+            definition.SupportsOnEpisodeFileDelete = provider.SupportsOnEpisodeFileDelete;
+            definition.SupportsOnEpisodeFileDeleteForUpgrade = provider.SupportsOnEpisodeFileDeleteForUpgrade;
             definition.SupportsOnHealthIssue = provider.SupportsOnHealthIssue;
             definition.SupportsOnApplicationUpdate = provider.SupportsOnApplicationUpdate;
         }

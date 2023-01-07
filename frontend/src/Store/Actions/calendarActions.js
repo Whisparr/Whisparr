@@ -7,7 +7,6 @@ import * as commandNames from 'Commands/commandNames';
 import { filterTypes } from 'Helpers/Props';
 import { createThunk, handleThunks } from 'Store/thunks';
 import createAjaxRequest from 'Utilities/createAjaxRequest';
-import translate from 'Utilities/String/translate';
 import { set, update } from './baseActions';
 import { executeCommandHelper } from './commandActions';
 import createHandleActions from './Creators/createHandleActions';
@@ -35,14 +34,18 @@ export const defaultState = {
   end: null,
   dates: [],
   dayCount: 7,
-  view: window.innerWidth > 768 ? 'month' : 'day',
+  view: window.innerWidth > 768 ? 'week' : 'day',
   error: null,
   items: [],
   searchMissingCommandId: null,
 
   options: {
-    showMovieInformation: true,
-    showCutoffUnmetIcon: false
+    collapseMultipleEpisodes: false,
+    showEpisodeInformation: true,
+    showFinaleIcon: false,
+    showSpecialIcon: false,
+    showCutoffUnmetIcon: false,
+    fullColorEvents: false
   },
 
   selectedFilterKey: 'monitored',
@@ -50,7 +53,7 @@ export const defaultState = {
   filters: [
     {
       key: 'all',
-      label: translate('All'),
+      label: 'All',
       filters: [
         {
           key: 'monitored',
@@ -61,7 +64,7 @@ export const defaultState = {
     },
     {
       key: 'monitored',
-      label: translate('MonitoredOnly'),
+      label: 'Monitored Only',
       filters: [
         {
           key: 'monitored',
@@ -346,11 +349,11 @@ export const actionHandlers = handleThunks({
   },
 
   [SEARCH_MISSING]: function(getState, payload, dispatch) {
-    const { movieIds } = payload;
+    const { episodeIds } = payload;
 
     const commandPayload = {
-      name: commandNames.MOVIE_SEARCH,
-      movieIds
+      name: commandNames.EPISODE_SEARCH,
+      episodeIds
     };
 
     executeCommandHelper(commandPayload, dispatch).then((data) => {

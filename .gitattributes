@@ -2,8 +2,10 @@
 * text=auto
 
 # Explicitly set bash scripts to have unix endings
+# when checked out on windows
 *.sh text eol=lf
-macOS/Whisparr text eol=lf
+distribution/debian/* text eol=lf
+distribution/osx/Whisparr text eol=lf
 
 # Custom for Visual Studio
 *.cs     diff=csharp

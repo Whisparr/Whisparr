@@ -10,7 +10,6 @@ using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Exceptions;
-using NzbDrone.Core.Organizer;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.RemotePathMappings;
 using NzbDrone.Core.Validation;
@@ -21,33 +20,30 @@ namespace NzbDrone.Core.Download.Clients.Nzbget
     {
         private readonly INzbgetProxy _proxy;
         private readonly string[] _successStatus = { "SUCCESS", "NONE" };
-        private readonly string[] _deleteFailedStatus = { "HEALTH", "DUPE", "SCAN", "COPY", "BAD" };
+        private readonly string[] _deleteFailedStatus =  { "HEALTH", "DUPE", "SCAN", "COPY", "BAD" };
 
         public Nzbget(INzbgetProxy proxy,
                       IHttpClient httpClient,
                       IConfigService configService,
-                      INamingConfigService namingConfigService,
                       IDiskProvider diskProvider,
                       IRemotePathMappingService remotePathMappingService,
                       IValidateNzbs nzbValidationService,
                       Logger logger)
-            : base(httpClient, configService, namingConfigService, diskProvider, remotePathMappingService, nzbValidationService, logger)
+            : base(httpClient, configService, diskProvider, remotePathMappingService, nzbValidationService, logger)
         {
             _proxy = proxy;
         }
 
-        protected override string AddFromNzbFile(RemoteMovie remoteMovie, string filename, byte[] fileContent)
+        protected override string AddFromNzbFile(RemoteEpisode remoteEpisode, string filename, byte[] fileContent)
         {
-            var category = Settings.MovieCategory;
-
-            var priority = remoteMovie.Movie.MediaMetadata.Value.IsRecentMovie ? Settings.RecentMoviePriority : Settings.OlderMoviePriority;
-
+            var category = Settings.TvCategory;
+            var priority = remoteEpisode.IsRecentEpisode() ? Settings.RecentTvPriority : Settings.OlderTvPriority;
             var addpaused = Settings.AddPaused;
             var response = _proxy.DownloadNzb(fileContent, filename, category, priority, addpaused, Settings);
 
             if (response == null)
             {
-                throw new DownloadClientRejectedReleaseException(remoteMovie.Release, "NZBGet rejected the NZB for an unknown reason");
+                throw new DownloadClientRejectedReleaseException(remoteEpisode.Release, "NZBGet rejected the NZB for an unknown reason");
             }
 
             return response;
@@ -192,7 +188,7 @@ namespace NzbDrone.Core.Download.Clients.Nzbget
 
         public override IEnumerable<DownloadClientItem> GetItems()
         {
-            return GetQueue().Concat(GetHistory()).Where(downloadClientItem => downloadClientItem.Category == Settings.MovieCategory);
+            return GetQueue().Concat(GetHistory()).Where(downloadClientItem => downloadClientItem.Category == Settings.TvCategory);
         }
 
         public override void RemoveItem(DownloadClientItem item, bool deleteData)
@@ -209,7 +205,7 @@ namespace NzbDrone.Core.Download.Clients.Nzbget
         {
             var config = _proxy.GetConfig(Settings);
 
-            var category = GetCategories(config).FirstOrDefault(v => v.Name == Settings.MovieCategory);
+            var category = GetCategories(config).FirstOrDefault(v => v.Name == Settings.TvCategory);
 
             var status = new DownloadClientInfo
             {
@@ -274,7 +270,7 @@ namespace NzbDrone.Core.Download.Clients.Nzbget
 
                 if (Version.Parse(version) < Version.Parse("12.0"))
                 {
-                    return new ValidationFailure(string.Empty, "NZBGet version too low, need 12.0 or higher");
+                    return new ValidationFailure(string.Empty, "Nzbget version too low, need 12.0 or higher");
                 }
             }
             catch (Exception ex)
@@ -296,12 +292,12 @@ namespace NzbDrone.Core.Download.Clients.Nzbget
             var config = _proxy.GetConfig(Settings);
             var categories = GetCategories(config);
 
-            if (!Settings.MovieCategory.IsNullOrWhiteSpace() && !categories.Any(v => v.Name == Settings.MovieCategory))
+            if (!Settings.TvCategory.IsNullOrWhiteSpace() && !categories.Any(v => v.Name == Settings.TvCategory))
             {
-                return new NzbDroneValidationFailure("MovieCategory", "Category does not exist")
+                return new NzbDroneValidationFailure("TvCategory", "Category does not exist")
                 {
                     InfoLink = _proxy.GetBaseUrl(Settings),
-                    DetailedDescription = "The category you entered doesn't exist in NZBGet. Go to NZBGet to create it."
+                    DetailedDescription = "The Category your entered doesn't exist in NzbGet. Go to NzbGet to create it."
                 };
             }
 

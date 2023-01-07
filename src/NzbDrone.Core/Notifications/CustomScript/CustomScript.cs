@@ -8,22 +8,33 @@ using NLog;
 using NzbDrone.Common.Disk;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Processes;
+using NzbDrone.Core.Configuration;
 using NzbDrone.Core.HealthCheck;
 using NzbDrone.Core.MediaFiles;
-using NzbDrone.Core.Movies;
+using NzbDrone.Core.MediaFiles.MediaInfo;
+using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.ThingiProvider;
+using NzbDrone.Core.Tv;
 using NzbDrone.Core.Validation;
 
 namespace NzbDrone.Core.Notifications.CustomScript
 {
     public class CustomScript : NotificationBase<CustomScriptSettings>
     {
+        private readonly IConfigFileProvider _configFileProvider;
+        private readonly IConfigService _configService;
         private readonly IDiskProvider _diskProvider;
         private readonly IProcessProvider _processProvider;
         private readonly Logger _logger;
 
-        public CustomScript(IDiskProvider diskProvider, IProcessProvider processProvider, Logger logger)
+        public CustomScript(IConfigFileProvider configFileProvider,
+            IConfigService configService,
+            IDiskProvider diskProvider,
+            IProcessProvider processProvider,
+            Logger logger)
         {
+            _configFileProvider = configFileProvider;
+            _configService = configService;
             _diskProvider = diskProvider;
             _processProvider = processProvider;
             _logger = logger;
@@ -37,146 +48,172 @@ namespace NzbDrone.Core.Notifications.CustomScript
 
         public override void OnGrab(GrabMessage message)
         {
-            var movie = message.Movie;
-            var remoteMovie = message.RemoteMovie;
-            var quality = message.Quality;
+            var series = message.Series;
+            var remoteEpisode = message.Episode;
+            var releaseGroup = remoteEpisode.ParsedEpisodeInfo.ReleaseGroup;
             var environmentVariables = new StringDictionary();
 
             environmentVariables.Add("Whisparr_EventType", "Grab");
-            environmentVariables.Add("Whisparr_Movie_Id", movie.Id.ToString());
-            environmentVariables.Add("Whisparr_Movie_Title", movie.Title);
-            environmentVariables.Add("Whisparr_Movie_Year", movie.Year.ToString());
-            environmentVariables.Add("Whisparr_Movie_TmdbId", movie.ForiegnId.ToString());
-            environmentVariables.Add("Whisparr_Movie_Digital_Release_Date", movie.MediaMetadata.Value.DigitalRelease.ToString() ?? string.Empty);
-            environmentVariables.Add("Whisparr_Release_Title", remoteMovie.Release.Title);
-            environmentVariables.Add("Whisparr_Release_Indexer", remoteMovie.Release.Indexer ?? string.Empty);
-            environmentVariables.Add("Whisparr_Release_Size", remoteMovie.Release.Size.ToString());
-            environmentVariables.Add("Whisparr_Release_ReleaseGroup", remoteMovie.ParsedMovieInfo.ReleaseGroup ?? string.Empty);
-            environmentVariables.Add("Whisparr_Release_Quality", quality.Quality.Name);
-            environmentVariables.Add("Whisparr_Release_QualityVersion", quality.Revision.Version.ToString());
-            environmentVariables.Add("Whisparr_IndexerFlags", remoteMovie.Release.IndexerFlags.ToString());
+            environmentVariables.Add("Whisparr_InstanceName", _configFileProvider.InstanceName);
+            environmentVariables.Add("Whisparr_ApplicationUrl", _configService.ApplicationUrl);
+            environmentVariables.Add("Whisparr_Series_Id", series.Id.ToString());
+            environmentVariables.Add("Whisparr_Series_Title", series.Title);
+            environmentVariables.Add("Whisparr_Series_TitleSlug", series.TitleSlug);
+            environmentVariables.Add("Whisparr_Series_TvdbId", series.TvdbId.ToString());
+            environmentVariables.Add("Whisparr_Series_ImdbId", series.ImdbId ?? string.Empty);
+            environmentVariables.Add("Whisparr_Release_EpisodeCount", remoteEpisode.Episodes.Count.ToString());
+            environmentVariables.Add("Whisparr_Release_SeasonNumber", remoteEpisode.Episodes.First().SeasonNumber.ToString());
+            environmentVariables.Add("Whisparr_Release_EpisodeNumbers", string.Join(",", remoteEpisode.Episodes.Select(e => e.EpisodeNumber)));
+            environmentVariables.Add("Whisparr_Release_AbsoluteEpisodeNumbers", string.Join(",", remoteEpisode.Episodes.Select(e => e.AbsoluteEpisodeNumber)));
+            environmentVariables.Add("Whisparr_Release_EpisodeAirDates", string.Join(",", remoteEpisode.Episodes.Select(e => e.AirDate)));
+            environmentVariables.Add("Whisparr_Release_EpisodeAirDatesUtc", string.Join(",", remoteEpisode.Episodes.Select(e => e.AirDateUtc)));
+            environmentVariables.Add("Whisparr_Release_EpisodeTitles", string.Join("|", remoteEpisode.Episodes.Select(e => e.Title)));
+            environmentVariables.Add("Whisparr_Release_EpisodeOverviews", string.Join("|", remoteEpisode.Episodes.Select(e => e.Overview)));
+            environmentVariables.Add("Whisparr_Release_Title", remoteEpisode.Release.Title);
+            environmentVariables.Add("Whisparr_Release_Indexer", remoteEpisode.Release.Indexer ?? string.Empty);
+            environmentVariables.Add("Whisparr_Release_Size", remoteEpisode.Release.Size.ToString());
+            environmentVariables.Add("Whisparr_Release_Quality", remoteEpisode.ParsedEpisodeInfo.Quality.Quality.Name);
+            environmentVariables.Add("Whisparr_Release_QualityVersion", remoteEpisode.ParsedEpisodeInfo.Quality.Revision.Version.ToString());
+            environmentVariables.Add("Whisparr_Release_ReleaseGroup", releaseGroup ?? string.Empty);
             environmentVariables.Add("Whisparr_Download_Client", message.DownloadClientName ?? string.Empty);
             environmentVariables.Add("Whisparr_Download_Client_Type", message.DownloadClientType ?? string.Empty);
             environmentVariables.Add("Whisparr_Download_Id", message.DownloadId ?? string.Empty);
+            environmentVariables.Add("Whisparr_Release_CustomFormat", string.Join("|", remoteEpisode.CustomFormats));
+            environmentVariables.Add("Whisparr_Release_CustomFormatScore", remoteEpisode.CustomFormatScore.ToString());
 
             ExecuteScript(environmentVariables);
         }
 
         public override void OnDownload(DownloadMessage message)
         {
-            var movie = message.Movie;
-            var movieFile = message.MovieFile;
+            var series = message.Series;
+            var episodeFile = message.EpisodeFile;
             var sourcePath = message.SourcePath;
             var environmentVariables = new StringDictionary();
 
             environmentVariables.Add("Whisparr_EventType", "Download");
-            environmentVariables.Add("Whisparr_IsUpgrade", message.OldMovieFiles.Any().ToString());
-            environmentVariables.Add("Whisparr_Movie_Id", movie.Id.ToString());
-            environmentVariables.Add("Whisparr_Movie_Title", movie.Title);
-            environmentVariables.Add("Whisparr_Movie_Year", movie.Year.ToString());
-            environmentVariables.Add("Whisparr_Movie_Path", movie.Path);
-            environmentVariables.Add("Whisparr_Movie_TmdbId", movie.ForiegnId.ToString());
-            environmentVariables.Add("Whisparr_Movie_Digital_Release_Date", movie.MediaMetadata.Value.DigitalRelease.ToString() ?? string.Empty);
-            environmentVariables.Add("Whisparr_MovieFile_Id", movieFile.Id.ToString());
-            environmentVariables.Add("Whisparr_MovieFile_RelativePath", movieFile.RelativePath);
-            environmentVariables.Add("Whisparr_MovieFile_Path", Path.Combine(movie.Path, movieFile.RelativePath));
-            environmentVariables.Add("Whisparr_MovieFile_Quality", movieFile.Quality.Quality.Name);
-            environmentVariables.Add("Whisparr_MovieFile_QualityVersion", movieFile.Quality.Revision.Version.ToString());
-            environmentVariables.Add("Whisparr_MovieFile_ReleaseGroup", movieFile.ReleaseGroup ?? string.Empty);
-            environmentVariables.Add("Whisparr_MovieFile_SceneName", movieFile.SceneName ?? string.Empty);
-            environmentVariables.Add("Whisparr_MovieFile_SourcePath", sourcePath);
-            environmentVariables.Add("Whisparr_MovieFile_SourceFolder", Path.GetDirectoryName(sourcePath));
+            environmentVariables.Add("Whisparr_InstanceName", _configFileProvider.InstanceName);
+            environmentVariables.Add("Whisparr_ApplicationUrl", _configService.ApplicationUrl);
+            environmentVariables.Add("Whisparr_IsUpgrade", message.OldFiles.Any().ToString());
+            environmentVariables.Add("Whisparr_Series_Id", series.Id.ToString());
+            environmentVariables.Add("Whisparr_Series_Title", series.Title);
+            environmentVariables.Add("Whisparr_Series_TitleSlug", series.TitleSlug);
+            environmentVariables.Add("Whisparr_Series_Path", series.Path);
+            environmentVariables.Add("Whisparr_Series_TvdbId", series.TvdbId.ToString());
+            environmentVariables.Add("Whisparr_Series_ImdbId", series.ImdbId ?? string.Empty);
+            environmentVariables.Add("Whisparr_EpisodeFile_Id", episodeFile.Id.ToString());
+            environmentVariables.Add("Whisparr_EpisodeFile_EpisodeCount", episodeFile.Episodes.Value.Count.ToString());
+            environmentVariables.Add("Whisparr_EpisodeFile_RelativePath", episodeFile.RelativePath);
+            environmentVariables.Add("Whisparr_EpisodeFile_Path", Path.Combine(series.Path, episodeFile.RelativePath));
+            environmentVariables.Add("Whisparr_EpisodeFile_EpisodeIds", string.Join(",", episodeFile.Episodes.Value.Select(e => e.Id)));
+            environmentVariables.Add("Whisparr_EpisodeFile_SeasonNumber", episodeFile.SeasonNumber.ToString());
+            environmentVariables.Add("Whisparr_EpisodeFile_EpisodeNumbers", string.Join(",", episodeFile.Episodes.Value.Select(e => e.EpisodeNumber)));
+            environmentVariables.Add("Whisparr_EpisodeFile_EpisodeAirDates", string.Join(",", episodeFile.Episodes.Value.Select(e => e.AirDate)));
+            environmentVariables.Add("Whisparr_EpisodeFile_EpisodeAirDatesUtc", string.Join(",", episodeFile.Episodes.Value.Select(e => e.AirDateUtc)));
+            environmentVariables.Add("Whisparr_EpisodeFile_EpisodeTitles", string.Join("|", episodeFile.Episodes.Value.Select(e => e.Title)));
+            environmentVariables.Add("Whisparr_EpisodeFile_EpisodeOverviews", string.Join("|", episodeFile.Episodes.Value.Select(e => e.Overview)));
+            environmentVariables.Add("Whisparr_EpisodeFile_Quality", episodeFile.Quality.Quality.Name);
+            environmentVariables.Add("Whisparr_EpisodeFile_QualityVersion", episodeFile.Quality.Revision.Version.ToString());
+            environmentVariables.Add("Whisparr_EpisodeFile_ReleaseGroup", episodeFile.ReleaseGroup ?? string.Empty);
+            environmentVariables.Add("Whisparr_EpisodeFile_SceneName", episodeFile.SceneName ?? string.Empty);
+            environmentVariables.Add("Whisparr_EpisodeFile_SourcePath", sourcePath);
+            environmentVariables.Add("Whisparr_EpisodeFile_SourceFolder", Path.GetDirectoryName(sourcePath));
             environmentVariables.Add("Whisparr_Download_Client", message.DownloadClientInfo?.Name ?? string.Empty);
             environmentVariables.Add("Whisparr_Download_Client_Type", message.DownloadClientInfo?.Type ?? string.Empty);
             environmentVariables.Add("Whisparr_Download_Id", message.DownloadId ?? string.Empty);
+            environmentVariables.Add("Whisparr_EpisodeFile_MediaInfo_AudioChannels", MediaInfoFormatter.FormatAudioChannels(episodeFile.MediaInfo).ToString());
+            environmentVariables.Add("Whisparr_EpisodeFile_MediaInfo_AudioCodec", MediaInfoFormatter.FormatAudioCodec(episodeFile.MediaInfo, null));
+            environmentVariables.Add("Whisparr_EpisodeFile_MediaInfo_AudioLanguages", episodeFile.MediaInfo.AudioLanguages.Distinct().ConcatToString(" / "));
+            environmentVariables.Add("Whisparr_EpisodeFile_MediaInfo_Languages", episodeFile.MediaInfo.AudioLanguages.ConcatToString(" / "));
+            environmentVariables.Add("Whisparr_EpisodeFile_MediaInfo_Height", episodeFile.MediaInfo.Height.ToString());
+            environmentVariables.Add("Whisparr_EpisodeFile_MediaInfo_Width", episodeFile.MediaInfo.Width.ToString());
+            environmentVariables.Add("Whisparr_EpisodeFile_MediaInfo_Subtitles", episodeFile.MediaInfo.Subtitles.ConcatToString(" / "));
+            environmentVariables.Add("Whisparr_EpisodeFile_MediaInfo_VideoCodec", MediaInfoFormatter.FormatVideoCodec(episodeFile.MediaInfo, null));
+            environmentVariables.Add("Whisparr_EpisodeFile_MediaInfo_VideoDynamicRangeType", MediaInfoFormatter.FormatVideoDynamicRangeType(episodeFile.MediaInfo));
 
-            if (message.OldMovieFiles.Any())
+            if (message.OldFiles.Any())
             {
-                environmentVariables.Add("Whisparr_DeletedRelativePaths", string.Join("|", message.OldMovieFiles.Select(e => e.RelativePath)));
-                environmentVariables.Add("Whisparr_DeletedPaths", string.Join("|", message.OldMovieFiles.Select(e => Path.Combine(movie.Path, e.RelativePath))));
+                environmentVariables.Add("Whisparr_DeletedRelativePaths", string.Join("|", message.OldFiles.Select(e => e.RelativePath)));
+                environmentVariables.Add("Whisparr_DeletedPaths", string.Join("|", message.OldFiles.Select(e => Path.Combine(series.Path, e.RelativePath))));
+                environmentVariables.Add("Whisparr_DeletedDateAdded", string.Join("|", message.OldFiles.Select(e => e.DateAdded)));
             }
 
             ExecuteScript(environmentVariables);
         }
 
-        public override void OnMovieRename(Media movie, List<RenamedMovieFile> renamedFiles)
+        public override void OnRename(Series series, List<RenamedEpisodeFile> renamedFiles)
         {
             var environmentVariables = new StringDictionary();
 
             environmentVariables.Add("Whisparr_EventType", "Rename");
-            environmentVariables.Add("Whisparr_Movie_Id", movie.Id.ToString());
-            environmentVariables.Add("Whisparr_Movie_Title", movie.Title);
-            environmentVariables.Add("Whisparr_Movie_Year", movie.Year.ToString());
-            environmentVariables.Add("Whisparr_Movie_Path", movie.Path);
-            environmentVariables.Add("Whisparr_Movie_TmdbId", movie.ForiegnId.ToString());
-            environmentVariables.Add("Whisparr_Movie_Digital_Release_Date", movie.MediaMetadata.Value.DigitalRelease.ToString() ?? string.Empty);
-            environmentVariables.Add("Whisparr_MovieFile_Ids", string.Join(",", renamedFiles.Select(e => e.MovieFile.Id)));
-            environmentVariables.Add("Whisparr_MovieFile_RelativePaths", string.Join("|", renamedFiles.Select(e => e.MovieFile.RelativePath)));
-            environmentVariables.Add("Whisparr_MovieFile_Paths", string.Join("|", renamedFiles.Select(e => e.MovieFile.Path)));
-            environmentVariables.Add("Whisparr_MovieFile_PreviousRelativePaths", string.Join("|", renamedFiles.Select(e => e.PreviousRelativePath)));
-            environmentVariables.Add("Whisparr_MovieFile_PreviousPaths", string.Join("|", renamedFiles.Select(e => e.PreviousPath)));
+            environmentVariables.Add("Whisparr_InstanceName", _configFileProvider.InstanceName);
+            environmentVariables.Add("Whisparr_ApplicationUrl", _configService.ApplicationUrl);
+            environmentVariables.Add("Whisparr_Series_Id", series.Id.ToString());
+            environmentVariables.Add("Whisparr_Series_Title", series.Title);
+            environmentVariables.Add("Whisparr_Series_TitleSlug", series.TitleSlug);
+            environmentVariables.Add("Whisparr_Series_Path", series.Path);
+            environmentVariables.Add("Whisparr_Series_TvdbId", series.TvdbId.ToString());
+            environmentVariables.Add("Whisparr_Series_ImdbId", series.ImdbId ?? string.Empty);
+            environmentVariables.Add("Whisparr_EpisodeFile_Ids", string.Join(",", renamedFiles.Select(e => e.EpisodeFile.Id)));
+            environmentVariables.Add("Whisparr_EpisodeFile_RelativePaths", string.Join("|", renamedFiles.Select(e => e.EpisodeFile.RelativePath)));
+            environmentVariables.Add("Whisparr_EpisodeFile_Paths", string.Join("|", renamedFiles.Select(e => e.EpisodeFile.Path)));
+            environmentVariables.Add("Whisparr_EpisodeFile_PreviousRelativePaths", string.Join("|", renamedFiles.Select(e => e.PreviousRelativePath)));
+            environmentVariables.Add("Whisparr_EpisodeFile_PreviousPaths", string.Join("|", renamedFiles.Select(e => e.PreviousPath)));
 
             ExecuteScript(environmentVariables);
         }
 
-        public override void OnMovieAdded(Media movie)
+        public override void OnEpisodeFileDelete(EpisodeDeleteMessage deleteMessage)
         {
+            var series = deleteMessage.Series;
+            var episodeFile = deleteMessage.EpisodeFile;
+
             var environmentVariables = new StringDictionary();
 
-            environmentVariables.Add("Radarr_EventType", "MovieAdded");
-            environmentVariables.Add("Radarr_Movie_Id", movie.Id.ToString());
-            environmentVariables.Add("Radarr_Movie_Title", movie.MediaMetadata.Value.Title);
-            environmentVariables.Add("Radarr_Movie_Year", movie.MediaMetadata.Value.Year.ToString());
-            environmentVariables.Add("Radarr_Movie_Path", movie.Path);
-            environmentVariables.Add("Radarr_Movie_TmdbId", movie.MediaMetadata.Value.ForiegnId.ToString());
-            environmentVariables.Add("Radarr_Movie_AddMethod", movie.AddOptions.AddMethod.ToString());
+            environmentVariables.Add("Whisparr_EventType", "EpisodeFileDelete");
+            environmentVariables.Add("Whisparr_InstanceName", _configFileProvider.InstanceName);
+            environmentVariables.Add("Whisparr_ApplicationUrl", _configService.ApplicationUrl);
+            environmentVariables.Add("Whisparr_EpisodeFile_DeleteReason", deleteMessage.Reason.ToString());
+            environmentVariables.Add("Whisparr_Series_Id", series.Id.ToString());
+            environmentVariables.Add("Whisparr_Series_Title", series.Title);
+            environmentVariables.Add("Whisparr_Series_TitleSlug", series.TitleSlug);
+            environmentVariables.Add("Whisparr_Series_Path", series.Path);
+            environmentVariables.Add("Whisparr_Series_TvdbId", series.TvdbId.ToString());
+            environmentVariables.Add("Whisparr_Series_ImdbId", series.ImdbId ?? string.Empty);
+            environmentVariables.Add("Whisparr_EpisodeFile_Id", episodeFile.Id.ToString());
+            environmentVariables.Add("Whisparr_EpisodeFile_EpisodeCount", episodeFile.Episodes.Value.Count.ToString());
+            environmentVariables.Add("Whisparr_EpisodeFile_RelativePath", episodeFile.RelativePath);
+            environmentVariables.Add("Whisparr_EpisodeFile_Path", Path.Combine(series.Path, episodeFile.RelativePath));
+            environmentVariables.Add("Whisparr_EpisodeFile_EpisodeIds", string.Join(",", episodeFile.Episodes.Value.Select(e => e.Id)));
+            environmentVariables.Add("Whisparr_EpisodeFile_SeasonNumber", episodeFile.SeasonNumber.ToString());
+            environmentVariables.Add("Whisparr_EpisodeFile_EpisodeNumbers", string.Join(",", episodeFile.Episodes.Value.Select(e => e.EpisodeNumber)));
+            environmentVariables.Add("Whisparr_EpisodeFile_EpisodeAirDates", string.Join(",", episodeFile.Episodes.Value.Select(e => e.AirDate)));
+            environmentVariables.Add("Whisparr_EpisodeFile_EpisodeAirDatesUtc", string.Join(",", episodeFile.Episodes.Value.Select(e => e.AirDateUtc)));
+            environmentVariables.Add("Whisparr_EpisodeFile_EpisodeTitles", string.Join("|", episodeFile.Episodes.Value.Select(e => e.Title)));
+            environmentVariables.Add("Whisparr_EpisodeFile_EpisodeOverviews", string.Join("|", episodeFile.Episodes.Value.Select(e => e.Overview)));
+            environmentVariables.Add("Whisparr_EpisodeFile_Quality", episodeFile.Quality.Quality.Name);
+            environmentVariables.Add("Whisparr_EpisodeFile_QualityVersion", episodeFile.Quality.Revision.Version.ToString());
+            environmentVariables.Add("Whisparr_EpisodeFile_ReleaseGroup", episodeFile.ReleaseGroup ?? string.Empty);
+            environmentVariables.Add("Whisparr_EpisodeFile_SceneName", episodeFile.SceneName ?? string.Empty);
 
             ExecuteScript(environmentVariables);
         }
 
-        public override void OnMovieFileDelete(MovieFileDeleteMessage deleteMessage)
+        public override void OnSeriesDelete(SeriesDeleteMessage deleteMessage)
         {
-            var movie = deleteMessage.Movie;
-            var movieFile = deleteMessage.MovieFile;
-
+            var series = deleteMessage.Series;
             var environmentVariables = new StringDictionary();
 
-            environmentVariables.Add("Whisparr_EventType", "MovieFileDelete");
-            environmentVariables.Add("Whisparr_MovieFile_DeleteReason", deleteMessage.Reason.ToString());
-            environmentVariables.Add("Whisparr_Movie_Id", movie.Id.ToString());
-            environmentVariables.Add("Whisparr_Movie_Title", movie.Title);
-            environmentVariables.Add("Whisparr_Movie_Year", movie.Year.ToString());
-            environmentVariables.Add("Whisparr_Movie_Path", movie.Path);
-            environmentVariables.Add("Whisparr_Movie_TmdbId", movie.ForiegnId.ToString());
-            environmentVariables.Add("Whisparr_MovieFile_Id", movieFile.Id.ToString());
-            environmentVariables.Add("Whisparr_MovieFile_RelativePath", movieFile.RelativePath);
-            environmentVariables.Add("Whisparr_MovieFile_Path", Path.Combine(movie.Path, movieFile.RelativePath));
-            environmentVariables.Add("Whisparr_MovieFile_Size", movieFile.Size.ToString());
-            environmentVariables.Add("Whisparr_MovieFile_Quality", movieFile.Quality.Quality.Name);
-            environmentVariables.Add("Whisparr_MovieFile_QualityVersion", movieFile.Quality.Revision.Version.ToString());
-            environmentVariables.Add("Whisparr_MovieFile_ReleaseGroup", movieFile.ReleaseGroup ?? string.Empty);
-            environmentVariables.Add("Whisparr_MovieFile_SceneName", movieFile.SceneName ?? string.Empty);
-
-            ExecuteScript(environmentVariables);
-        }
-
-        public override void OnMovieDelete(MovieDeleteMessage deleteMessage)
-        {
-            var movie = deleteMessage.Movie;
-            var environmentVariables = new StringDictionary();
-
-            environmentVariables.Add("Whisparr_EventType", "MovieDelete");
-            environmentVariables.Add("Whisparr_Movie_Id", movie.Id.ToString());
-            environmentVariables.Add("Whisparr_Movie_Title", movie.Title);
-            environmentVariables.Add("Whisparr_Movie_Year", movie.Year.ToString());
-            environmentVariables.Add("Whisparr_Movie_Path", movie.Path);
-            environmentVariables.Add("Whisparr_Movie_TmdbId", movie.ForiegnId.ToString());
-            environmentVariables.Add("Whisparr_Movie_DeletedFiles", deleteMessage.DeletedFiles.ToString());
-
-            if (deleteMessage.DeletedFiles && movie.MovieFile != null)
-            {
-                environmentVariables.Add("Whisparr_Movie_Folder_Size", movie.MovieFile.Size.ToString());
-            }
+            environmentVariables.Add("Whisparr_EventType", "SeriesDelete");
+            environmentVariables.Add("Whisparr_InstanceName", _configFileProvider.InstanceName);
+            environmentVariables.Add("Whisparr_ApplicationUrl", _configService.ApplicationUrl);
+            environmentVariables.Add("Whisparr_Series_Id", series.Id.ToString());
+            environmentVariables.Add("Whisparr_Series_Title", series.Title);
+            environmentVariables.Add("Whisparr_Series_TitleSlug", series.TitleSlug);
+            environmentVariables.Add("Whisparr_Series_Path", series.Path);
+            environmentVariables.Add("Whisparr_Series_TvdbId", series.TvdbId.ToString());
+            environmentVariables.Add("Whisparr_Series_ImdbId", series.ImdbId ?? string.Empty);
+            environmentVariables.Add("Whisparr_Series_DeletedFiles", deleteMessage.DeletedFiles.ToString());
 
             ExecuteScript(environmentVariables);
         }
@@ -186,6 +223,8 @@ namespace NzbDrone.Core.Notifications.CustomScript
             var environmentVariables = new StringDictionary();
 
             environmentVariables.Add("Whisparr_EventType", "HealthIssue");
+            environmentVariables.Add("Whisparr_InstanceName", _configFileProvider.InstanceName);
+            environmentVariables.Add("Whisparr_ApplicationUrl", _configService.ApplicationUrl);
             environmentVariables.Add("Whisparr_Health_Issue_Level", Enum.GetName(typeof(HealthCheckResult), healthCheck.Type));
             environmentVariables.Add("Whisparr_Health_Issue_Message", healthCheck.Message);
             environmentVariables.Add("Whisparr_Health_Issue_Type", healthCheck.Source.Name);
@@ -199,6 +238,8 @@ namespace NzbDrone.Core.Notifications.CustomScript
             var environmentVariables = new StringDictionary();
 
             environmentVariables.Add("Whisparr_EventType", "ApplicationUpdate");
+            environmentVariables.Add("Whisparr_InstanceName", _configFileProvider.InstanceName);
+            environmentVariables.Add("Whisparr_ApplicationUrl", _configService.ApplicationUrl);
             environmentVariables.Add("Whisparr_Update_Message", updateMessage.Message);
             environmentVariables.Add("Whisparr_Update_NewVersion", updateMessage.NewVersion.ToString());
             environmentVariables.Add("Whisparr_Update_PreviousVersion", updateMessage.PreviousVersion.ToString());
@@ -229,6 +270,8 @@ namespace NzbDrone.Core.Notifications.CustomScript
                 {
                     var environmentVariables = new StringDictionary();
                     environmentVariables.Add("Whisparr_EventType", "Test");
+                    environmentVariables.Add("Whisparr_InstanceName", _configFileProvider.InstanceName);
+                    environmentVariables.Add("Whisparr_ApplicationUrl", _configService.ApplicationUrl);
 
                     var processOutput = ExecuteScript(environmentVariables);
 

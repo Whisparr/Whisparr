@@ -3,26 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentValidation.Results;
 using NLog;
+using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Configuration;
-using NzbDrone.Core.ImportLists.ImportListMovies;
+using NzbDrone.Core.Indexers;
 using NzbDrone.Core.Parser;
+using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.ThingiProvider;
 
 namespace NzbDrone.Core.ImportLists
 {
-    public class ImportListFetchResult
-    {
-        public ImportListFetchResult()
-        {
-            Movies = new List<ImportListMovie>();
-        }
-
-        public List<ImportListMovie> Movies { get; set; }
-        public bool AnyFailure { get; set; }
-    }
-
     public abstract class ImportListBase<TSettings> : IImportList
-        where TSettings : IProviderConfig, new()
+        where TSettings : IImportListSettings, new()
     {
         protected readonly IImportListStatusService _importListStatusService;
         protected readonly IConfigService _configService;
@@ -32,12 +23,10 @@ namespace NzbDrone.Core.ImportLists
         public abstract string Name { get; }
 
         public abstract ImportListType ListType { get; }
-        public abstract bool Enabled { get; }
-        public abstract bool EnableAuto { get; }
 
-        public abstract ImportListFetchResult Fetch();
+        public abstract TimeSpan MinRefreshInterval { get; }
 
-        protected ImportListBase(IImportListStatusService importListStatusService, IConfigService configService, IParsingService parsingService, Logger logger)
+        public ImportListBase(IImportListStatusService importListStatusService, IConfigService configService, IParsingService parsingService, Logger logger)
         {
             _importListStatusService = importListStatusService;
             _configService = configService;
@@ -58,8 +47,7 @@ namespace NzbDrone.Core.ImportLists
                 yield return new ImportListDefinition
                 {
                     Name = GetType().Name,
-                    Enabled = config.Validate().IsValid && Enabled,
-                    EnableAuto = true,
+                    EnableAutomaticAdd = config.Validate().IsValid,
                     Implementation = GetType().Name,
                     Settings = config
                 };
@@ -73,19 +61,22 @@ namespace NzbDrone.Core.ImportLists
             return null;
         }
 
-        protected virtual List<ImportListMovie> CleanupListItems(IEnumerable<ImportListMovie> listMovies)
+        protected TSettings Settings => (TSettings)Definition.Settings;
+
+        public abstract IList<ImportListItemInfo> Fetch();
+
+        protected virtual IList<ImportListItemInfo> CleanupListItems(IEnumerable<ImportListItemInfo> releases)
         {
-            var result = listMovies.ToList();
+            var result = releases.DistinctBy(r => new { r.Title, r.TvdbId, r.ImdbId }).ToList();
 
             result.ForEach(c =>
             {
-                c.ListId = Definition.Id;
+                c.ImportListId = Definition.Id;
+                c.ImportList = Definition.Name;
             });
 
             return result;
         }
-
-        protected TSettings Settings => (TSettings)Definition.Settings;
 
         public ValidationResult Test()
         {

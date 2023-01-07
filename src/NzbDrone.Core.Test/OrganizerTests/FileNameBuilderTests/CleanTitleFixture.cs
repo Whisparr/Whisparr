@@ -5,32 +5,40 @@ using FluentAssertions;
 using NUnit.Framework;
 using NzbDrone.Core.CustomFormats;
 using NzbDrone.Core.MediaFiles;
-using NzbDrone.Core.Movies;
 using NzbDrone.Core.Organizer;
 using NzbDrone.Core.Qualities;
 using NzbDrone.Core.Test.Framework;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 {
     [TestFixture]
     public class CleanTitleFixture : CoreTest<FileNameBuilder>
     {
-        private Media _series;
-        private MediaFile _episodeFile;
+        private Series _series;
+        private Episode _episode;
+        private EpisodeFile _episodeFile;
         private NamingConfig _namingConfig;
 
         [SetUp]
         public void Setup()
         {
-            _series = Builder<Media>
-                .CreateNew()
-                .With(s => s.Title = "South Park")
-                .Build();
+            _series = Builder<Series>
+                    .CreateNew()
+                    .With(s => s.Title = "South Park")
+                    .Build();
 
-            _episodeFile = new MediaFile { Quality = new QualityModel(), ReleaseGroup = "SonarrTest" };
+            _episode = Builder<Episode>.CreateNew()
+                            .With(e => e.Title = "City Sushi")
+                            .With(e => e.SeasonNumber = 15)
+                            .With(e => e.EpisodeNumber = 6)
+                            .With(e => e.AbsoluteEpisodeNumber = 100)
+                            .Build();
+
+            _episodeFile = new EpisodeFile { Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "WhisparrTest" };
 
             _namingConfig = NamingConfig.Default;
-            _namingConfig.RenameMovies = true;
+            _namingConfig.RenameEpisodes = true;
 
             Mocker.GetMock<INamingConfigService>()
                   .Setup(c => c.GetConfig()).Returns(_namingConfig);
@@ -40,8 +48,8 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
                 .Returns<Quality>(v => Quality.DefaultQualityDefinitions.First(c => c.Quality == v));
 
             Mocker.GetMock<ICustomFormatService>()
-                .Setup(v => v.All())
-                .Returns(new List<CustomFormat>());
+                  .Setup(v => v.All())
+                  .Returns(new List<CustomFormat>());
         }
 
         [TestCase("Florence + the Machine", "Florence + the Machine")]
@@ -63,14 +71,31 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [TestCase("backslash \\ backlash", "backslash backlash")]
         [TestCase("I'm the Boss", "Im the Boss")]
 
-        //[TestCase("", "")]
+        // [TestCase("", "")]
         public void should_get_expected_title_back(string title, string expected)
         {
             _series.Title = title;
-            _namingConfig.StandardMovieFormat = "{Movie CleanTitle}";
+            _namingConfig.StandardEpisodeFormat = "{Series CleanTitle}";
 
-            Subject.BuildFileName(_series, _episodeFile)
+            Subject.BuildFileName(new List<Episode> { _episode }, _series, _episodeFile)
                    .Should().Be(expected);
+        }
+
+        [Test]
+        public void should_use_and_as_separator_for_multiple_episodes()
+        {
+            var episodes = Builder<Episode>.CreateListOfSize(2)
+                                           .TheFirst(1)
+                                           .With(e => e.Title = "Surrender Benson")
+                                           .TheNext(1)
+                                           .With(e => e.Title = "Imprisoned Lives")
+                                           .Build()
+                                           .ToList();
+
+            _namingConfig.StandardEpisodeFormat = "{Episode CleanTitle}";
+
+            Subject.BuildFileName(episodes, _series, _episodeFile)
+                   .Should().Be(episodes.First().Title + " and " + episodes.Last().Title);
         }
     }
 }

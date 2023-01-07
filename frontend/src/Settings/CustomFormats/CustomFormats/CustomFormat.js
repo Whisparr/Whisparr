@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import MiddleTruncate from 'react-middle-truncate';
 import Card from 'Components/Card';
 import Label from 'Components/Label';
 import IconButton from 'Components/Link/IconButton';
 import ConfirmModal from 'Components/Modal/ConfirmModal';
 import { icons, kinds } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import EditCustomFormatModalConnector from './EditCustomFormatModalConnector';
 import ExportCustomFormatModal from './ExportCustomFormatModal';
 import styles from './CustomFormat.css';
@@ -93,14 +93,14 @@ class CustomFormat extends Component {
           <div>
             <IconButton
               className={styles.cloneButton}
-              title={translate('CloneCustomFormat')}
+              title="Clone Custom Format"
               name={icons.CLONE}
               onPress={this.onCloneCustomFormatPress}
             />
 
             <IconButton
               className={styles.cloneButton}
-              title={translate('ExportCustomFormat')}
+              title="Export Custom Format"
               name={icons.EXPORT}
               onPress={this.onExportCustomFormatPress}
             />
@@ -124,10 +124,15 @@ class CustomFormat extends Component {
 
               return (
                 <Label
+                  className={styles.label}
                   key={index}
                   kind={kind}
                 >
-                  {item.name}
+                  <MiddleTruncate
+                    text={item.name}
+                    start={10}
+                    end={14}
+                  />
                 </Label>
               );
             })
@@ -150,15 +155,9 @@ class CustomFormat extends Component {
         <ConfirmModal
           isOpen={this.state.isDeleteCustomFormatModalOpen}
           kind={kinds.DANGER}
-          title={translate('DeleteCustomFormat')}
-          message={
-            <div>
-              <div>
-                {translate('AreYouSureYouWantToDeleteFormat', [name])}
-              </div>
-            </div>
-          }
-          confirmLabel={translate('Delete')}
+          title="Delete Custom Format"
+          message={`Are you sure you want to delete the custom format '${name}'?`}
+          confirmLabel="Delete"
           isSpinning={isDeleting}
           onConfirm={this.onConfirmDeleteCustomFormat}
           onCancel={this.onDeleteCustomFormatModalClose}

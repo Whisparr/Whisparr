@@ -14,7 +14,6 @@ import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { inputTypes, kinds } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import NotificationEventItems from './NotificationEventItems';
 import styles from './EditNotificationModalContent.css';
 
@@ -48,7 +47,7 @@ function EditNotificationModalContent(props) {
   return (
     <ModalContent onModalClose={onModalClose}>
       <ModalHeader>
-        {`${id ? translate('Edit') : translate('Add')} ${translate('Connection')} - ${implementationName}`}
+        {`${id ? 'Edit' : 'Add'} Connection - ${implementationName}`}
       </ModalHeader>
 
       <ModalBody>
@@ -60,7 +59,7 @@ function EditNotificationModalContent(props) {
         {
           !isFetching && !!error &&
             <div>
-              {translate('UnableToAddANewNotificationPleaseTryAgain')}
+              Unable to add a new notification, please try again.
             </div>
         }
 
@@ -78,7 +77,7 @@ function EditNotificationModalContent(props) {
               }
 
               <FormGroup>
-                <FormLabel>{translate('Name')}</FormLabel>
+                <FormLabel>Name</FormLabel>
 
                 <FormInputGroup
                   type={inputTypes.TEXT}
@@ -94,12 +93,12 @@ function EditNotificationModalContent(props) {
               />
 
               <FormGroup>
-                <FormLabel>{translate('Tags')}</FormLabel>
+                <FormLabel>Tags</FormLabel>
 
                 <FormInputGroup
                   type={inputTypes.TAG}
                   name="tags"
-                  helpText={translate('TagsHelpText')}
+                  helpText="Only send notifications for series with at least one matching tag"
                   {...tags}
                   onChange={onInputChange}
                 />
@@ -132,7 +131,7 @@ function EditNotificationModalContent(props) {
               kind={kinds.DANGER}
               onPress={onDeleteNotificationPress}
             >
-              {translate('Delete')}
+              Delete
             </Button>
         }
 
@@ -141,13 +140,13 @@ function EditNotificationModalContent(props) {
           error={saveError}
           onPress={onTestPress}
         >
-          {translate('Test')}
+          Test
         </SpinnerErrorButton>
 
         <Button
           onPress={onModalClose}
         >
-          {translate('Cancel')}
+          Cancel
         </Button>
 
         <SpinnerErrorButton
@@ -155,7 +154,7 @@ function EditNotificationModalContent(props) {
           error={saveError}
           onPress={onSavePress}
         >
-          {translate('Save')}
+          Save
         </SpinnerErrorButton>
       </ModalFooter>
     </ModalContent>

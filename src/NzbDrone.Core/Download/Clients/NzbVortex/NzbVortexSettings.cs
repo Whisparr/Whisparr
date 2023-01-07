@@ -1,4 +1,4 @@
-using FluentValidation;
+﻿using FluentValidation;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Annotations;
 using NzbDrone.Core.ThingiProvider;
@@ -31,9 +31,9 @@ namespace NzbDrone.Core.Download.Clients.NzbVortex
         {
             Host = "localhost";
             Port = 4321;
-            TvCategory = "Movies";
-            RecentMoviePriority = (int)NzbVortexPriority.Normal;
-            OlderMoviePriority = (int)NzbVortexPriority.Normal;
+            TvCategory = "TV Shows";
+            RecentTvPriority = (int)NzbVortexPriority.Normal;
+            OlderTvPriority = (int)NzbVortexPriority.Normal;
         }
 
         [FieldDefinition(0, Label = "Host", Type = FieldType.Textbox)]
@@ -51,11 +51,11 @@ namespace NzbDrone.Core.Download.Clients.NzbVortex
         [FieldDefinition(4, Label = "Group", Type = FieldType.Textbox, HelpText = "Adding a category specific to Whisparr avoids conflicts with unrelated non-Whisparr downloads. Using a category is optional, but strongly recommended.")]
         public string TvCategory { get; set; }
 
-        [FieldDefinition(5, Label = "Recent Priority", Type = FieldType.Select, SelectOptions = typeof(NzbVortexPriority), HelpText = "Priority to use when grabbing movies that released within the last 21 days")]
-        public int RecentMoviePriority { get; set; }
+        [FieldDefinition(5, Label = "Recent Priority", Type = FieldType.Select, SelectOptions = typeof(NzbVortexPriority), HelpText = "Priority to use when grabbing episodes that aired within the last 14 days")]
+        public int RecentTvPriority { get; set; }
 
-        [FieldDefinition(6, Label = "Older Priority", Type = FieldType.Select, SelectOptions = typeof(NzbVortexPriority), HelpText = "Priority to use when grabbing movies that released over 21 days ago")]
-        public int OlderMoviePriority { get; set; }
+        [FieldDefinition(6, Label = "Older Priority", Type = FieldType.Select, SelectOptions = typeof(NzbVortexPriority), HelpText = "Priority to use when grabbing episodes that aired over 14 days ago")]
+        public int OlderTvPriority { get; set; }
 
         public NzbDroneValidationResult Validate()
         {

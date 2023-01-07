@@ -5,14 +5,16 @@ using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using NzbDrone.Core.CustomFormats;
+using NzbDrone.Core.DecisionEngine;
 using NzbDrone.Core.DecisionEngine.Specifications;
+using NzbDrone.Core.Languages;
 using NzbDrone.Core.MediaFiles;
-using NzbDrone.Core.Movies;
 using NzbDrone.Core.Parser.Model;
-using NzbDrone.Core.Profiles;
+using NzbDrone.Core.Profiles.Qualities;
 using NzbDrone.Core.Qualities;
 using NzbDrone.Core.Test.CustomFormats;
 using NzbDrone.Core.Test.Framework;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Test.DecisionEngineTests
 {
@@ -22,8 +24,10 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
     {
         private UpgradeDiskSpecification _upgradeDisk;
 
-        private RemoteMovie _parseResultSingle;
-        private MediaFile _firstFile;
+        private RemoteEpisode _parseResultMulti;
+        private RemoteEpisode _parseResultSingle;
+        private EpisodeFile _firstFile;
+        private EpisodeFile _secondFile;
 
         [SetUp]
         public void Setup()
@@ -31,30 +35,44 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             Mocker.Resolve<UpgradableSpecification>();
             _upgradeDisk = Mocker.Resolve<UpgradeDiskSpecification>();
 
-            CustomFormatsFixture.GivenCustomFormats();
+            CustomFormatsTestHelpers.GivenCustomFormats();
 
-            _firstFile = new MediaFile { Quality = new QualityModel(Quality.Bluray1080p, new Revision(version: 2)), DateAdded = DateTime.Now };
+            _firstFile = new EpisodeFile { Quality = new QualityModel(Quality.Bluray1080p, new Revision(version: 2)), DateAdded = DateTime.Now, Languages = new List<Language> { Language.English } };
+            _secondFile = new EpisodeFile { Quality = new QualityModel(Quality.Bluray1080p, new Revision(version: 2)), DateAdded = DateTime.Now, Languages = new List<Language> { Language.English } };
 
-            var fakeSeries = Builder<Media>.CreateNew()
-                .With(c => c.Profile = new Profile
+            var singleEpisodeList = new List<Episode> { new Episode { EpisodeFile = _firstFile, EpisodeFileId = 1 }, new Episode { EpisodeFile = null } };
+            var doubleEpisodeList = new List<Episode> { new Episode { EpisodeFile = _firstFile, EpisodeFileId = 1 }, new Episode { EpisodeFile = _secondFile, EpisodeFileId = 1 }, new Episode { EpisodeFile = null } };
+
+            var fakeSeries = Builder<Series>.CreateNew()
+                .With(c => c.QualityProfile = new QualityProfile
                 {
-                    Cutoff = Quality.Bluray1080p.Id, Items = Qualities.QualityFixture.GetDefaultQualities(),
-                    FormatItems = CustomFormatsFixture.GetSampleFormatItems(),
-                    MinFormatScore = 0
+                    UpgradeAllowed = true,
+                    Cutoff = Quality.Bluray1080p.Id,
+                    Items = Qualities.QualityFixture.GetDefaultQualities(),
+                    FormatItems = CustomFormatsTestHelpers.GetSampleFormatItems("None"),
+                    MinFormatScore = 0,
                 })
-                .With(e => e.MovieFile = _firstFile)
                 .Build();
 
-            _parseResultSingle = new RemoteMovie
+            _parseResultMulti = new RemoteEpisode
             {
-                Movie = fakeSeries,
-                ParsedMovieInfo = new ParsedMovieInfo() { Quality = new QualityModel(Quality.DVD, new Revision(version: 2)) },
+                Series = fakeSeries,
+                ParsedEpisodeInfo = new ParsedEpisodeInfo { Quality = new QualityModel(Quality.DVD, new Revision(version: 2)), Languages = new List<Language> { Language.English } },
+                Episodes = doubleEpisodeList,
+                CustomFormats = new List<CustomFormat>()
+            };
+
+            _parseResultSingle = new RemoteEpisode
+            {
+                Series = fakeSeries,
+                ParsedEpisodeInfo = new ParsedEpisodeInfo { Quality = new QualityModel(Quality.DVD, new Revision(version: 2)), Languages = new List<Language> { Language.English } },
+                Episodes = singleEpisodeList,
                 CustomFormats = new List<CustomFormat>()
             };
 
             Mocker.GetMock<ICustomFormatCalculationService>()
-                .Setup(x => x.ParseCustomFormat(It.IsAny<MediaFile>()))
-                .Returns(new List<CustomFormat>());
+                  .Setup(x => x.ParseCustomFormat(It.IsAny<EpisodeFile>()))
+                  .Returns(new List<CustomFormat>());
         }
 
         private void WithFirstFileUpgradable()
@@ -62,37 +80,80 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             _firstFile.Quality = new QualityModel(Quality.SDTV);
         }
 
-        [Test]
-        public void should_return_true_if_movie_has_no_existing_file()
+        private void WithSecondFileUpgradable()
         {
-            _parseResultSingle.Movie.MovieFile = null;
+            _secondFile.Quality = new QualityModel(Quality.SDTV);
+        }
+
+        [Test]
+        public void should_return_true_if_episode_has_no_existing_file()
+        {
+            _parseResultSingle.Episodes.ForEach(c => c.EpisodeFileId = 0);
             _upgradeDisk.IsSatisfiedBy(_parseResultSingle, null).Accepted.Should().BeTrue();
         }
 
         [Test]
-        public void should_be_upgradable_if_only_movie_is_upgradable()
+        public void should_return_true_if_single_episode_doesnt_exist_on_disk()
+        {
+            _parseResultSingle.Episodes = new List<Episode>();
+
+            _upgradeDisk.IsSatisfiedBy(_parseResultSingle, null).Accepted.Should().BeTrue();
+        }
+
+        [Test]
+        public void should_be_upgradable_if_only_episode_is_upgradable()
         {
             WithFirstFileUpgradable();
             _upgradeDisk.IsSatisfiedBy(_parseResultSingle, null).Accepted.Should().BeTrue();
         }
 
         [Test]
+        public void should_be_upgradable_if_both_episodes_are_upgradable()
+        {
+            WithFirstFileUpgradable();
+            WithSecondFileUpgradable();
+            _upgradeDisk.IsSatisfiedBy(_parseResultMulti, null).Accepted.Should().BeTrue();
+        }
+
+        [Test]
+        public void should_be_not_upgradable_if_both_episodes_are_not_upgradable()
+        {
+            _upgradeDisk.IsSatisfiedBy(_parseResultMulti, null).Accepted.Should().BeFalse();
+        }
+
+        [Test]
+        public void should_be_not_upgradable_if_only_first_episodes_is_upgradable()
+        {
+            WithFirstFileUpgradable();
+            _upgradeDisk.IsSatisfiedBy(_parseResultMulti, null).Accepted.Should().BeFalse();
+        }
+
+        [Test]
+        public void should_be_not_upgradable_if_only_second_episodes_is_upgradable()
+        {
+            WithSecondFileUpgradable();
+            _upgradeDisk.IsSatisfiedBy(_parseResultMulti, null).Accepted.Should().BeFalse();
+        }
+
+        [Test]
         public void should_not_be_upgradable_if_qualities_are_the_same()
         {
-            Mocker.GetMock<ICustomFormatCalculationService>()
-                .Setup(x => x.ParseCustomFormat(It.IsAny<MediaFile>()))
-                .Returns(new List<CustomFormat>());
-
             _firstFile.Quality = new QualityModel(Quality.WEBDL1080p);
-            _parseResultSingle.ParsedMovieInfo.Quality = new QualityModel(Quality.WEBDL1080p);
+            _parseResultSingle.ParsedEpisodeInfo.Quality = new QualityModel(Quality.WEBDL1080p);
             _upgradeDisk.IsSatisfiedBy(_parseResultSingle, null).Accepted.Should().BeFalse();
         }
 
         [Test]
-        public void should_not_be_upgradable_if_revision_downgrade_if_propers_are_preferred()
+        public void should_not_be_upgradable_if_revision_downgrade_and_preferred_word_upgrade_if_propers_are_preferred()
         {
+            Mocker.GetMock<ICustomFormatCalculationService>()
+                  .Setup(s => s.ParseCustomFormat(It.IsAny<EpisodeFile>()))
+                  .Returns(new List<CustomFormat>());
+
+            _parseResultSingle.CustomFormatScore = 10;
+
             _firstFile.Quality = new QualityModel(Quality.WEBDL1080p, new Revision(2));
-            _parseResultSingle.ParsedMovieInfo.Quality = new QualityModel(Quality.WEBDL1080p);
+            _parseResultSingle.ParsedEpisodeInfo.Quality = new QualityModel(Quality.WEBDL1080p);
             _upgradeDisk.IsSatisfiedBy(_parseResultSingle, null).Accepted.Should().BeFalse();
         }
     }

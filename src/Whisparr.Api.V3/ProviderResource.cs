@@ -38,13 +38,11 @@ namespace Whisparr.Api.V3
                 Tags = definition.Tags,
                 Fields = SchemaBuilder.ToSchema(definition.Settings),
 
-                //whisparr/supported is an disambagation page. the # should be a header on the page with appropiate details/link
-                InfoLink = string.Format("https://wiki.servarr.com/whisparr/supported#{0}",
-                    definition.Implementation.ToLower())
+                InfoLink = $"https://wiki.servarr.com/whisparr/supported#{definition.Implementation.ToLower()}"
             };
         }
 
-        public virtual TProviderDefinition ToModel(TProviderResource resource)
+        public virtual TProviderDefinition ToModel(TProviderResource resource, TProviderDefinition existingDefinition)
         {
             if (resource == null)
             {
@@ -64,7 +62,7 @@ namespace Whisparr.Api.V3
             };
 
             var configContract = ReflectionExtensions.CoreAssembly.FindTypeByName(definition.ConfigContract);
-            definition.Settings = (IProviderConfig)SchemaBuilder.ReadFromSchema(resource.Fields, configContract);
+            definition.Settings = (IProviderConfig)SchemaBuilder.ReadFromSchema(resource.Fields, configContract, existingDefinition?.Settings);
 
             return definition;
         }

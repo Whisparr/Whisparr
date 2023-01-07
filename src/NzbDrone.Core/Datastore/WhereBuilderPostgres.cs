@@ -273,7 +273,9 @@ namespace NzbDrone.Core.Datastore
         {
             var list = expression.Object;
 
-            if (list != null && (list.Type == typeof(string)))
+            if (list != null &&
+                (list.Type == typeof(string) ||
+                (list.Type == typeof(List<string>) && !TryGetRightValue(list, out var _))))
             {
                 ParseStringContains(expression);
                 return;

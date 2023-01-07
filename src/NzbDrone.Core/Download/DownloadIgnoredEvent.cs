@@ -8,7 +8,8 @@ namespace NzbDrone.Core.Download
 {
     public class DownloadIgnoredEvent : IEvent
     {
-        public int MovieId { get; set; }
+        public int SeriesId { get; set; }
+        public List<int> EpisodeIds { get; set; }
         public List<Language> Languages { get; set; }
         public QualityModel Quality { get; set; }
         public string SourceTitle { get; set; }

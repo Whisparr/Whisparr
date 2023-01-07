@@ -4,7 +4,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using NzbDrone.Core.Datastore;
 using NzbDrone.Core.Datastore.Converters;
-using NzbDrone.Core.Movies;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Test.Datastore
 {
@@ -27,7 +27,7 @@ namespace NzbDrone.Core.Test.Datastore
 
         public class TypeWithNoMappableProperties
         {
-            public Media Movie { get; set; }
+            public Series Series { get; set; }
 
             public int ReadOnly { get; private set; }
             public int WriteOnly { private get; set; }

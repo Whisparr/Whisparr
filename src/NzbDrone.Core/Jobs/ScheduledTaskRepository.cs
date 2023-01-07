@@ -20,17 +20,17 @@ namespace NzbDrone.Core.Jobs
 
         public ScheduledTask GetDefinition(Type type)
         {
-            return Query(x => x.TypeName == type.FullName).Single();
+            return Query(c => c.TypeName == type.FullName).Single();
         }
 
         public void SetLastExecutionTime(int id, DateTime executionTime, DateTime startTime)
         {
             var task = new ScheduledTask
-            {
-                Id = id,
-                LastExecution = executionTime,
-                LastStartTime = startTime
-            };
+                {
+                    Id = id,
+                    LastExecution = executionTime,
+                    LastStartTime = startTime
+                };
 
             SetFields(task, scheduledTask => scheduledTask.LastExecution, scheduledTask => scheduledTask.LastStartTime);
         }

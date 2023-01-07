@@ -12,6 +12,7 @@ using NzbDrone.Core.Indexers.Exceptions;
 using NzbDrone.Core.IndexerSearch.Definitions;
 using NzbDrone.Core.Parser;
 using NzbDrone.Core.Parser.Model;
+using NzbDrone.Core.ThingiProvider;
 
 namespace NzbDrone.Core.Indexers
 {
@@ -48,7 +49,7 @@ namespace NzbDrone.Core.Indexers
             return FetchReleases(g => g.GetRecentRequests(), true);
         }
 
-        public override IList<ReleaseInfo> Fetch(MovieSearchCriteria searchCriteria)
+        public override IList<ReleaseInfo> Fetch(SingleEpisodeSearchCriteria searchCriteria)
         {
             if (!SupportsSearch)
             {
@@ -58,31 +59,24 @@ namespace NzbDrone.Core.Indexers
             return FetchReleases(g => g.GetSearchRequests(searchCriteria));
         }
 
-        protected IndexerPageableRequestChain GetRequestChain(SearchCriteriaBase searchCriteria = null)
+        public override IList<ReleaseInfo> Fetch(SeasonSearchCriteria searchCriteria)
         {
-            var generator = GetRequestGenerator();
-
-            //A func ensures cookies are always updated to the latest. This way, the first page could update the cookies and then can be reused by the second page.
-            generator.GetCookies = () =>
+            if (!SupportsSearch)
             {
-                var cookies = _indexerStatusService.GetIndexerCookies(Definition.Id);
-                var expiration = _indexerStatusService.GetIndexerCookiesExpirationDate(Definition.Id);
-                if (expiration < DateTime.Now)
-                {
-                    cookies = null;
-                }
+                return new List<ReleaseInfo>();
+            }
 
-                return cookies;
-            };
+            return FetchReleases(g => g.GetSearchRequests(searchCriteria));
+        }
 
-            var requests = searchCriteria == null ? generator.GetRecentRequests() : generator.GetSearchRequests(searchCriteria as MovieSearchCriteria);
-
-            generator.CookiesUpdater = (cookies, expiration) =>
+        public override IList<ReleaseInfo> Fetch(SpecialEpisodeSearchCriteria searchCriteria)
+        {
+            if (!SupportsSearch)
             {
-                _indexerStatusService.UpdateCookies(Definition.Id, cookies, expiration);
-            };
+                return new List<ReleaseInfo>();
+            }
 
-            return requests;
+            return FetchReleases(g => g.GetSearchRequests(searchCriteria));
         }
 
         protected virtual IList<ReleaseInfo> FetchReleases(Func<IIndexerRequestGenerator, IndexerPageableRequestChain> pageableRequestChainSelector, bool isRecent = false)
@@ -94,10 +88,6 @@ namespace NzbDrone.Core.Indexers
             {
                 var generator = GetRequestGenerator();
                 var parser = GetParser();
-                parser.CookiesUpdater = (cookies, expiration) =>
-                {
-                    _indexerStatusService.UpdateCookies(Definition.Id, cookies, expiration);
-                };
 
                 var pageableRequestChain = pageableRequestChainSelector(generator);
 
@@ -255,7 +245,7 @@ namespace NzbDrone.Core.Indexers
             {
                 _indexerStatusService.RecordFailure(Definition.Id);
                 ex.WithData("FeedUrl", url);
-                _logger.Error(ex, "An error occurred while processing indexer feed. {0}", url);
+                _logger.Error(ex, "An error occurred while processing feed. {0}", url);
             }
 
             return CleanupReleases(releases);
@@ -304,8 +294,6 @@ namespace NzbDrone.Core.Indexers
 
             request.HttpRequest.RateLimitKey = Definition.Id.ToString();
 
-            request.HttpRequest.AllowAutoRedirect = true;
-
             return new IndexerResponse(request, _httpClient.Execute(request.HttpRequest));
         }
 
@@ -319,10 +307,6 @@ namespace NzbDrone.Core.Indexers
             try
             {
                 var parser = GetParser();
-                parser.CookiesUpdater = (cookies, expiration) =>
-                {
-                    _indexerStatusService.UpdateCookies(Definition.Id, cookies, expiration);
-                };
                 var generator = GetRequestGenerator();
                 var firstRequest = generator.GetRecentRequests().GetAllTiers().FirstOrDefault()?.FirstOrDefault();
 
@@ -370,21 +354,6 @@ namespace NzbDrone.Core.Indexers
                 _logger.Warn(ex, "Unable to connect to indexer");
 
                 return new ValidationFailure(string.Empty, "Unable to connect to indexer. " + ex.Message);
-            }
-            catch (HttpException ex)
-            {
-                if (ex.Response.StatusCode == HttpStatusCode.BadRequest &&
-                    ex.Response.Content.Contains("not support the requested query"))
-                {
-                    _logger.Warn(ex, "Indexer does not support the query");
-                    return new ValidationFailure(string.Empty, "Indexer does not support the current query. Check if the categories and or searching for movies are supported. Check the log for more details.");
-                }
-                else
-                {
-                    _logger.Warn(ex, "Unable to connect to indexer");
-
-                    return new ValidationFailure(string.Empty, "Unable to connect to indexer, check the log for more details");
-                }
             }
             catch (Exception ex)
             {

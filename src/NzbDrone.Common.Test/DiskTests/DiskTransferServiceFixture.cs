@@ -14,8 +14,8 @@ namespace NzbDrone.Common.Test.DiskTests
     [TestFixture]
     public class DiskTransferServiceFixture : TestBase<DiskTransferService>
     {
-        private readonly string _sourcePath = @"C:\source\my.com.mkv".AsOsAgnostic();
-        private readonly string _targetPath = @"C:\target\my.com.mkv".AsOsAgnostic();
+        private readonly string _sourcePath = @"C:\source\my.video.mkv".AsOsAgnostic();
+        private readonly string _targetPath = @"C:\target\my.video.mkv".AsOsAgnostic();
         private readonly string _nfsFile = ".nfs01231232";
 
         private MockMount _sourceMount;
@@ -394,7 +394,7 @@ namespace NzbDrone.Common.Test.DiskTests
             var destination = new DirectoryInfo(GetTempFilePath());
             Subject.TransferFolder(source.FullName, destination.FullName, TransferMode.Copy);
 
-            //Delete Random File
+            // Delete Random File
             destination.GetFiles("*.*", SearchOption.AllDirectories).First().Delete();
 
             Subject.TransferFolder(source.FullName, destination.FullName, TransferMode.Copy);
@@ -433,6 +433,24 @@ namespace NzbDrone.Common.Test.DiskTests
 
             Subject.TransferFolder(original.FullName, source.FullName, TransferMode.Copy);
 
+            Assert.Throws<IOException>(() => Subject.TransferFolder(source.FullName, destination.FullName, TransferMode.Copy));
+        }
+
+        [Test]
+        public void CopyFolder_should_not_copy_casesensitive_folder()
+        {
+            PosixOnly();
+
+            WithRealDiskProvider();
+
+            var original = GetFilledTempFolder();
+            var root = new DirectoryInfo(GetTempFilePath());
+            var source = new DirectoryInfo(root.FullName + "A/series");
+            var destination = new DirectoryInfo(root.FullName + "A/Series");
+
+            Subject.TransferFolder(original.FullName, source.FullName, TransferMode.Copy);
+
+            // Note: Although technically possible top copy to different case, we're not allowing it
             Assert.Throws<IOException>(() => Subject.TransferFolder(source.FullName, destination.FullName, TransferMode.Copy));
         }
 
@@ -519,6 +537,27 @@ namespace NzbDrone.Common.Test.DiskTests
             Subject.TransferFolder(source.FullName, destination.FullName, TransferMode.Move);
 
             source.FullName.GetActualCasing().Should().Be(destination.FullName);
+        }
+
+        [Test]
+        [Platform(Exclude = "MacOsX")]
+        public void MoveFolder_should_rename_casesensitive_folder()
+        {
+            PosixOnly();
+
+            WithRealDiskProvider();
+
+            var original = GetFilledTempFolder();
+            var root = new DirectoryInfo(GetTempFilePath());
+            var source = new DirectoryInfo(root.FullName + "A/series");
+            var destination = new DirectoryInfo(root.FullName + "A/Series");
+
+            Subject.TransferFolder(original.FullName, source.FullName, TransferMode.Copy);
+
+            Subject.TransferFolder(source.FullName, destination.FullName, TransferMode.Move);
+
+            Directory.Exists(source.FullName).Should().Be(false);
+            Directory.Exists(destination.FullName).Should().Be(true);
         }
 
         [Test]
@@ -654,7 +693,7 @@ namespace NzbDrone.Common.Test.DiskTests
             Subject.TransferFolder(src, dst, TransferMode.Move);
 
             Mocker.GetMock<IDiskProvider>()
-                  .Verify(v => v.MoveFolder(src, dst, false), Times.Once());
+                  .Verify(v => v.MoveFolder(src, dst), Times.Once());
         }
 
         [Test]
@@ -672,7 +711,7 @@ namespace NzbDrone.Common.Test.DiskTests
             Subject.TransferFolder(src, dst, TransferMode.Move);
 
             Mocker.GetMock<IDiskProvider>()
-                  .Verify(v => v.MoveFolder(src, dst, false), Times.Never());
+                  .Verify(v => v.MoveFolder(src, dst), Times.Never());
         }
 
         [Test]
@@ -689,7 +728,7 @@ namespace NzbDrone.Common.Test.DiskTests
             Subject.TransferFolder(src, dst, TransferMode.Move);
 
             Mocker.GetMock<IDiskProvider>()
-                  .Verify(v => v.MoveFolder(src, dst, false), Times.Never());
+                  .Verify(v => v.MoveFolder(src, dst), Times.Never());
         }
 
         public DirectoryInfo GetFilledTempFolder()
@@ -793,8 +832,8 @@ namespace NzbDrone.Common.Test.DiskTests
                });
 
             Mocker.GetMock<IDiskProvider>()
-               .Setup(v => v.MoveFolder(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>()))
-               .Callback<string, string, bool>((s, d, b) =>
+               .Setup(v => v.MoveFolder(It.IsAny<string>(), It.IsAny<string>()))
+               .Callback<string, string>((s, d) =>
                {
                    WithExistingFolder(s, false);
                    WithExistingFolder(d);
@@ -818,7 +857,7 @@ namespace NzbDrone.Common.Test.DiskTests
 
             // Note: never returns anything.
             Mocker.GetMock<IDiskProvider>()
-               .Setup(v => v.GetFileInfos(It.IsAny<string>(), SearchOption.TopDirectoryOnly))
+               .Setup(v => v.GetFileInfos(It.IsAny<string>()))
                .Returns(new List<FileInfo>());
 
             Mocker.GetMock<IDiskProvider>()
@@ -840,8 +879,8 @@ namespace NzbDrone.Common.Test.DiskTests
                 .Callback<string>(v => Directory.CreateDirectory(v));
 
             Mocker.GetMock<IDiskProvider>()
-                .Setup(v => v.MoveFolder(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>()))
-                .Callback<string, string, bool>((v, r, b) => Directory.Move(v, r));
+                .Setup(v => v.MoveFolder(It.IsAny<string>(), It.IsAny<string>()))
+                .Callback<string, string>((v, r) => Directory.Move(v, r));
 
             Mocker.GetMock<IDiskProvider>()
                 .Setup(v => v.DeleteFolder(It.IsAny<string>(), It.IsAny<bool>()))
@@ -856,8 +895,8 @@ namespace NzbDrone.Common.Test.DiskTests
                 .Returns<string>(v => new DirectoryInfo(v).GetDirectories().ToList());
 
             Mocker.GetMock<IDiskProvider>()
-                .Setup(v => v.GetFileInfos(It.IsAny<string>(), SearchOption.TopDirectoryOnly))
-                .Returns<string, SearchOption>((v, _) => new DirectoryInfo(v).GetFiles().ToList());
+                .Setup(v => v.GetFileInfos(It.IsAny<string>()))
+                .Returns<string>(v => new DirectoryInfo(v).GetFiles().ToList());
 
             Mocker.GetMock<IDiskProvider>()
                 .Setup(v => v.GetFileSize(It.IsAny<string>()))

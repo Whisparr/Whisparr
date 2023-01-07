@@ -8,7 +8,7 @@ function RootFolderSelectInputSelectedValue(props) {
   const {
     value,
     freeSpace,
-    movieFolder,
+    seriesFolder,
     includeFreeSpace,
     isWindows,
     ...otherProps
@@ -27,10 +27,10 @@ function RootFolderSelectInputSelectedValue(props) {
         </div>
 
         {
-          movieFolder ?
-            <div className={styles.movieFolder}>
+          seriesFolder ?
+            <div className={styles.seriesFolder}>
               {slashCharacter}
-              {movieFolder}
+              {seriesFolder}
             </div> :
             null
         }
@@ -49,7 +49,7 @@ function RootFolderSelectInputSelectedValue(props) {
 RootFolderSelectInputSelectedValue.propTypes = {
   value: PropTypes.string,
   freeSpace: PropTypes.number,
-  movieFolder: PropTypes.string,
+  seriesFolder: PropTypes.string,
   isWindows: PropTypes.bool,
   includeFreeSpace: PropTypes.bool.isRequired
 };

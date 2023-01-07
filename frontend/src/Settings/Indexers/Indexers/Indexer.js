@@ -6,7 +6,6 @@ import IconButton from 'Components/Link/IconButton';
 import ConfirmModal from 'Components/Modal/ConfirmModal';
 import TagList from 'Components/TagList';
 import { icons, kinds } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import EditIndexerModalConnector from './EditIndexerModalConnector';
 import styles from './Indexer.css';
 
@@ -90,7 +89,7 @@ class Indexer extends Component {
 
           <IconButton
             className={styles.cloneButton}
-            title={translate('CloneIndexer')}
+            title="Clone Indexer"
             name={icons.CLONE}
             onPress={this.onCloneIndexerPress}
           />
@@ -101,28 +100,28 @@ class Indexer extends Component {
           {
             supportsRss && enableRss &&
               <Label kind={kinds.SUCCESS}>
-                {translate('RSS')}
+                RSS
               </Label>
           }
 
           {
             supportsSearch && enableAutomaticSearch &&
               <Label kind={kinds.SUCCESS}>
-                {translate('AutomaticSearch')}
+                Automatic Search
               </Label>
           }
 
           {
             supportsSearch && enableInteractiveSearch &&
               <Label kind={kinds.SUCCESS}>
-                {translate('InteractiveSearch')}
+                Interactive Search
               </Label>
           }
 
           {
             showPriority &&
               <Label kind={kinds.DEFAULT}>
-                {translate('Priority')}: {priority}
+                Priority: {priority}
               </Label>
           }
           {
@@ -131,7 +130,7 @@ class Indexer extends Component {
                 kind={kinds.DISABLED}
                 outline={true}
               >
-                {translate('Disabled')}
+                Disabled
               </Label>
           }
         </div>
@@ -151,9 +150,9 @@ class Indexer extends Component {
         <ConfirmModal
           isOpen={this.state.isDeleteIndexerModalOpen}
           kind={kinds.DANGER}
-          title={translate('DeleteIndexer')}
-          message={translate('DeleteIndexerMessageText', [name])}
-          confirmLabel={translate('Delete')}
+          title="Delete Indexer"
+          message={`Are you sure you want to delete the indexer '${name}'?`}
+          confirmLabel="Delete"
           onConfirm={this.onConfirmDeleteIndexer}
           onCancel={this.onDeleteIndexerModalClose}
         />
@@ -165,6 +164,7 @@ class Indexer extends Component {
 Indexer.propTypes = {
   id: PropTypes.number.isRequired,
   name: PropTypes.string.isRequired,
+  priority: PropTypes.number.isRequired,
   enableRss: PropTypes.bool.isRequired,
   enableAutomaticSearch: PropTypes.bool.isRequired,
   enableInteractiveSearch: PropTypes.bool.isRequired,
@@ -172,10 +172,9 @@ Indexer.propTypes = {
   tagList: PropTypes.arrayOf(PropTypes.object).isRequired,
   supportsRss: PropTypes.bool.isRequired,
   supportsSearch: PropTypes.bool.isRequired,
+  showPriority: PropTypes.bool.isRequired,
   onCloneIndexerPress: PropTypes.func.isRequired,
-  onConfirmDeleteIndexer: PropTypes.func.isRequired,
-  priority: PropTypes.number.isRequired,
-  showPriority: PropTypes.bool.isRequired
+  onConfirmDeleteIndexer: PropTypes.func.isRequired
 };
 
 export default Indexer;

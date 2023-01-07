@@ -14,7 +14,7 @@ namespace NzbDrone.Core.Notifications.Xbmc
         string UpdateLibrary(XbmcSettings settings, string path);
         void CleanLibrary(XbmcSettings settings);
         List<ActivePlayer> GetActivePlayers(XbmcSettings settings);
-        List<XbmcMovie> GetMovies(XbmcSettings settings);
+        List<TvShow> GetSeries(XbmcSettings settings);
     }
 
     public class XbmcJsonApiProxy : IXbmcJsonApiProxy
@@ -66,11 +66,11 @@ namespace NzbDrone.Core.Notifications.Xbmc
             return Json.Deserialize<ActivePlayersResult>(response).Result;
         }
 
-        public List<XbmcMovie> GetMovies(XbmcSettings settings)
+        public List<TvShow> GetSeries(XbmcSettings settings)
         {
-            var response = ProcessRequest(settings, "VideoLibrary.GetMovies", new List<string> { "file", "imdbnumber" });
+            var response = ProcessRequest(settings, "VideoLibrary.GetTvShows", new List<string> { "file", "imdbnumber" });
 
-            return Json.Deserialize<MovieResponse>(response).Result.Movies;
+            return Json.Deserialize<TvShowResponse>(response).Result.TvShows;
         }
 
         private string ProcessRequest(XbmcSettings settings, string method, params object[] parameters)

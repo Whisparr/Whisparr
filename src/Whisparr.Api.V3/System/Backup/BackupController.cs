@@ -41,8 +41,8 @@ namespace Whisparr.Api.V3.System.Backup
                 Id = GetBackupId(b),
                 Name = b.Name,
                 Path = $"/backup/{b.Type.ToString().ToLower()}/{b.Name}",
-                Type = b.Type,
                 Size = b.Size,
+                Type = b.Type,
                 Time = b.Time
             })
                                        .OrderByDescending(b => b.Time)

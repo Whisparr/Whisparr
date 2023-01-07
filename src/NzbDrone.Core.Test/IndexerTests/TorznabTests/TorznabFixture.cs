@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using FizzWare.NBuilder;
 using FluentAssertions;
-using FluentValidation.Results;
 using Moq;
 using NUnit.Framework;
 using NzbDrone.Common.Http;
@@ -26,14 +24,14 @@ namespace NzbDrone.Core.Test.IndexerTests.TorznabTests
         public void Setup()
         {
             Subject.Definition = new IndexerDefinition()
-            {
-                Name = "Torznab",
-                Settings = new TorznabSettings()
                 {
-                    BaseUrl = "http://indexer.local/",
-                    Categories = new int[] { 1 }
-                }
-            };
+                    Name = "Torznab",
+                    Settings = new TorznabSettings()
+                        {
+                            BaseUrl = "http://indexer.local/",
+                            Categories = new int[] { 1 }
+                        }
+                };
 
             _caps = new NewznabCapabilities
             {
@@ -69,6 +67,7 @@ namespace NzbDrone.Core.Test.IndexerTests.TorznabTests
             releaseInfo.Indexer.Should().Be(Subject.Definition.Name);
             releaseInfo.PublishDate.Should().Be(DateTime.Parse("2015/03/14 21:10:42"));
             releaseInfo.Size.Should().Be(2538463390);
+            releaseInfo.TvdbId.Should().Be(273181);
             releaseInfo.InfoHash.Should().Be("63e07ff523710ca268567dad344ce1e0e6b7e8a3");
             releaseInfo.Seeders.Should().Be(7);
             releaseInfo.Peers.Should().Be(7);
@@ -128,7 +127,7 @@ namespace NzbDrone.Core.Test.IndexerTests.TorznabTests
             releaseInfo.Indexer.Should().Be(Subject.Definition.Name);
             releaseInfo.PublishDate.Should().Be(DateTime.Parse("Wed, 17 May 2017 20:36:06 +0000").ToUniversalTime());
             releaseInfo.Size.Should().Be(316477946);
-            releaseInfo.TmdbId.Should().Be(0);
+            releaseInfo.TvdbId.Should().Be(0);
             releaseInfo.InfoHash.Should().Be("2d69a861bef5a9f2cdf791b7328e37b7953205e1");
             releaseInfo.Seeders.Should().BeNull();
             releaseInfo.Peers.Should().BeNull();

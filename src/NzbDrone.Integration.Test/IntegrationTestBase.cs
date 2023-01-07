@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -12,20 +13,23 @@ using NLog.Targets;
 using NUnit.Framework;
 using NzbDrone.Common.EnvironmentInfo;
 using NzbDrone.Common.Processes;
-using NzbDrone.Core.Movies.Commands;
+using NzbDrone.Common.Serializer;
 using NzbDrone.Core.Qualities;
+using NzbDrone.Core.Tv.Commands;
 using NzbDrone.Integration.Test.Client;
 using NzbDrone.SignalR;
 using NzbDrone.Test.Common.Categories;
 using RestSharp;
 using Whisparr.Api.V3.Blocklist;
+using Whisparr.Api.V3.Commands;
 using Whisparr.Api.V3.Config;
 using Whisparr.Api.V3.DownloadClient;
+using Whisparr.Api.V3.EpisodeFiles;
+using Whisparr.Api.V3.Episodes;
 using Whisparr.Api.V3.History;
-using Whisparr.Api.V3.MovieFiles;
-using Whisparr.Api.V3.Movies;
 using Whisparr.Api.V3.Profiles.Quality;
 using Whisparr.Api.V3.RootFolders;
+using Whisparr.Api.V3.Series;
 using Whisparr.Api.V3.System.Tasks;
 using Whisparr.Api.V3.Tags;
 
@@ -40,19 +44,22 @@ namespace NzbDrone.Integration.Test
         public CommandClient Commands;
         public ClientBase<TaskResource> Tasks;
         public DownloadClientClient DownloadClients;
+        public EpisodeClient Episodes;
         public ClientBase<HistoryResource> History;
         public ClientBase<HostConfigResource> HostConfig;
         public IndexerClient Indexers;
+        public IndexerClient Indexersv3;
         public LogsClient Logs;
         public ClientBase<NamingConfigResource> NamingConfig;
         public NotificationClient Notifications;
         public ClientBase<QualityProfileResource> Profiles;
         public ReleaseClient Releases;
+        public ReleasePushClient ReleasePush;
         public ClientBase<RootFolderResource> RootFolders;
-        public MovieClient Movies;
+        public SeriesClient Series;
         public ClientBase<TagResource> Tags;
-        public ClientBase<MovieResource> WantedMissing;
-        public ClientBase<MovieResource> WantedCutoffUnmet;
+        public ClientBase<EpisodeResource> WantedMissing;
+        public ClientBase<EpisodeResource> WantedCutoffUnmet;
 
         private List<SignalRMessage> _signalRReceived;
 
@@ -72,7 +79,7 @@ namespace NzbDrone.Integration.Test
 
         public string TempDirectory { get; private set; }
 
-        public abstract string MovieRootFolder { get; }
+        public abstract string SeriesRootFolder { get; }
 
         protected abstract string RootUrl { get; }
 
@@ -102,6 +109,7 @@ namespace NzbDrone.Integration.Test
             Commands = new CommandClient(RestClient, ApiKey);
             Tasks = new ClientBase<TaskResource>(RestClient, ApiKey, "system/task");
             DownloadClients = new DownloadClientClient(RestClient, ApiKey);
+            Episodes = new EpisodeClient(RestClient, ApiKey);
             History = new ClientBase<HistoryResource>(RestClient, ApiKey);
             HostConfig = new ClientBase<HostConfigResource>(RestClient, ApiKey, "config/host");
             Indexers = new IndexerClient(RestClient, ApiKey);
@@ -110,11 +118,12 @@ namespace NzbDrone.Integration.Test
             Notifications = new NotificationClient(RestClient, ApiKey);
             Profiles = new ClientBase<QualityProfileResource>(RestClient, ApiKey);
             Releases = new ReleaseClient(RestClient, ApiKey);
+            ReleasePush = new ReleasePushClient(RestClient, ApiKey);
             RootFolders = new ClientBase<RootFolderResource>(RestClient, ApiKey);
-            Movies = new MovieClient(RestClient, ApiKey);
+            Series = new SeriesClient(RestClient, ApiKey);
             Tags = new ClientBase<TagResource>(RestClient, ApiKey);
-            WantedMissing = new ClientBase<MovieResource>(RestClient, ApiKey, "wanted/missing");
-            WantedCutoffUnmet = new ClientBase<MovieResource>(RestClient, ApiKey, "wanted/cutoff");
+            WantedMissing = new ClientBase<EpisodeResource>(RestClient, ApiKey, "wanted/missing");
+            WantedCutoffUnmet = new ClientBase<EpisodeResource>(RestClient, ApiKey, "wanted/cutoff");
         }
 
         [OneTimeTearDown]
@@ -229,22 +238,24 @@ namespace NzbDrone.Integration.Test
             Assert.Fail("Timed on wait");
         }
 
-        public MovieResource EnsureMovie(int tmdbid, string movieTitle, bool? monitored = null)
+        public SeriesResource EnsureSeries(int tvdbId, string seriesTitle, bool? monitored = null)
         {
-            var result = Movies.All().FirstOrDefault(v => v.TmdbId == tmdbid);
+            var result = Series.All().FirstOrDefault(v => v.TvdbId == tvdbId);
 
             if (result == null)
             {
-                var lookup = Movies.Lookup("tmdb:" + tmdbid);
-                var movie = lookup.First();
-                movie.QualityProfileId = 1;
-                movie.Path = Path.Combine(MovieRootFolder, movie.Title);
-                movie.Monitored = true;
-                movie.AddOptions = new Core.Movies.AddMovieOptions();
-                Directory.CreateDirectory(movie.Path);
+                var lookup = Series.Lookup("tvdb:" + tvdbId);
+                var series = lookup.First();
+                series.QualityProfileId = 1;
+                series.Path = Path.Combine(SeriesRootFolder, series.Title);
+                series.Monitored = true;
+                series.Seasons.ForEach(v => v.Monitored = true);
+                series.AddOptions = new Core.Tv.AddSeriesOptions();
+                Directory.CreateDirectory(series.Path);
 
-                result = Movies.Post(movie);
+                result = Series.Post(series);
                 Commands.WaitAll();
+                WaitForCompletion(() => Episodes.GetEpisodesInSeries(result.Id).Count > 0);
             }
 
             if (monitored.HasValue)
@@ -256,9 +267,18 @@ namespace NzbDrone.Integration.Test
                     changed = true;
                 }
 
+                result.Seasons.ForEach(season =>
+                {
+                    if (season.Monitored != monitored.Value)
+                    {
+                        season.Monitored = monitored.Value;
+                        changed = true;
+                    }
+                });
+
                 if (changed)
                 {
-                    Movies.Put(result);
+                    Series.Put(result);
                 }
             }
 
@@ -267,40 +287,37 @@ namespace NzbDrone.Integration.Test
             return result;
         }
 
-        public void EnsureNoMovie(int tmdbid, string movieTitle)
+        public void EnsureNoSeries(int tvdbId, string seriesTitle)
         {
-            var result = Movies.All().FirstOrDefault(v => v.TmdbId == tmdbid);
+            var result = Series.All().FirstOrDefault(v => v.TvdbId == tvdbId);
 
             if (result != null)
             {
-                Movies.Delete(result.Id);
+                Series.Delete(result.Id);
             }
         }
 
-        public MovieFileResource EnsureMovieFile(MovieResource movie, Quality quality)
+        public EpisodeFileResource EnsureEpisodeFile(SeriesResource series, int season, int episode, Quality quality)
         {
-            var result = Movies.Get(movie.Id);
+            var result = Episodes.GetEpisodesInSeries(series.Id).Single(v => v.SeasonNumber == season && v.EpisodeNumber == episode);
 
-            if (result.MovieFile == null)
+            if (result.EpisodeFile == null)
             {
-                var path = Path.Combine(MovieRootFolder, movie.Title, string.Format("{0} ({1}) - {2}.strm", movie.Title, movie.Year, quality.Name));
+                var path = Path.Combine(SeriesRootFolder, series.Title, string.Format("Series.S{0}E{1}.{2}.mkv", season, episode, quality.Name));
 
                 Directory.CreateDirectory(Path.GetDirectoryName(path));
+                File.WriteAllText(path, "Fake Episode");
 
-                var sourcePath = Path.Combine(TestContext.CurrentContext.TestDirectory, "ApiTests", "Files", "H264_sample.mp4");
+                Commands.PostAndWait(new RefreshSeriesCommand(series.Id));
 
-                //File.Copy(sourcePath, path);
-                File.WriteAllText(path, "Fake Movie");
-
-                Commands.PostAndWait(new RefreshMovieCommand(new List<int> { movie.Id }));
                 Commands.WaitAll();
 
-                result = Movies.Get(movie.Id);
+                result = Episodes.GetEpisodesInSeries(series.Id).Single(v => v.SeasonNumber == season && v.EpisodeNumber == episode);
 
-                result.MovieFile.Should().NotBeNull();
+                result.EpisodeFileId.Should().NotBe(0);
             }
 
-            return result.MovieFile;
+            return result.EpisodeFile;
         }
 
         public QualityProfileResource EnsureProfileCutoff(int profileId, Quality cutoff, bool upgradeAllowed)

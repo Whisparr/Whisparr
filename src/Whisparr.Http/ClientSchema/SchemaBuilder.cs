@@ -13,6 +13,7 @@ namespace Whisparr.Http.ClientSchema
 {
     public static class SchemaBuilder
     {
+        private static readonly string PRIVATE_VALUE = "********";
         private static Dictionary<Type, FieldMapping[]> _mappings = new Dictionary<Type, FieldMapping[]>();
 
         public static List<Field> ToSchema(object model)
@@ -28,13 +29,19 @@ namespace Whisparr.Http.ClientSchema
                 var field = mapping.Field.Clone();
                 field.Value = mapping.GetterFunc(model);
 
+                if (field.Value != null && !field.Value.Equals(string.Empty) &&
+                    (field.Privacy == PrivacyLevel.ApiKey || field.Privacy == PrivacyLevel.Password))
+                {
+                    field.Value = PRIVATE_VALUE;
+                }
+
                 result.Add(field);
             }
 
             return result.OrderBy(r => r.Order).ToList();
         }
 
-        public static object ReadFromSchema(List<Field> fields, Type targetType)
+        public static object ReadFromSchema(List<Field> fields, Type targetType, object model)
         {
             Ensure.That(targetType, () => targetType).IsNotNull();
 
@@ -49,16 +56,23 @@ namespace Whisparr.Http.ClientSchema
 
                 if (field != null)
                 {
-                    mapping.SetterFunc(target, field.Value);
+                    // Use the Privacy property from the mapping's field as Privacy may not be set in the API request (nor is it required)
+                    if ((mapping.Field.Privacy == PrivacyLevel.ApiKey || mapping.Field.Privacy == PrivacyLevel.Password) &&
+                        (field.Value?.ToString()?.Equals(PRIVATE_VALUE) ?? false) &&
+                        model != null)
+                    {
+                        var existingValue = mapping.GetterFunc(model);
+
+                        mapping.SetterFunc(target, existingValue);
+                    }
+                    else
+                    {
+                        mapping.SetterFunc(target, field.Value);
+                    }
                 }
             }
 
             return target;
-        }
-
-        public static T ReadFromSchema<T>(List<Field> fields)
-        {
-            return (T)ReadFromSchema(fields, typeof(T));
         }
 
         // Ideally this function should begin a System.Linq.Expression expression tree since it's faster.
@@ -105,7 +119,7 @@ namespace Whisparr.Http.ClientSchema
                         Advanced = fieldAttribute.Advanced,
                         Type = fieldAttribute.Type.ToString().FirstCharToLower(),
                         Section = fieldAttribute.Section,
-                        Placeholder = fieldAttribute.Placeholder
+                        Privacy = fieldAttribute.Privacy
                     };
 
                     if (fieldAttribute.Type == FieldType.Select || fieldAttribute.Type == FieldType.TagSelect)
@@ -132,7 +146,7 @@ namespace Whisparr.Http.ClientSchema
                         Field = field,
                         PropertyType = propertyInfo.PropertyType,
                         GetterFunc = t => propertyInfo.GetValue(targetSelector(t), null),
-                        SetterFunc = (t, v) => propertyInfo.SetValue(targetSelector(t), valueConverter(v), null)
+                        SetterFunc = (t, v) => propertyInfo.SetValue(targetSelector(t), v?.GetType() == propertyInfo.PropertyType ? v : valueConverter(v), null)
                     });
                 }
                 else
@@ -253,7 +267,7 @@ namespace Whisparr.Http.ClientSchema
                     }
                     else
                     {
-                        return fieldValue.ToString().Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(p => p.Trim());
+                        return fieldValue.ToString().Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(v => v.Trim());
                     }
                 };
             }

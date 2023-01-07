@@ -18,6 +18,7 @@ namespace NzbDrone.Update
     {
         private readonly IInstallUpdateService _installUpdateService;
         private readonly IProcessProvider _processProvider;
+
         private static readonly Logger Logger = NzbDroneLogger.GetLogger(typeof(UpdateApp));
 
         public UpdateApp(IInstallUpdateService installUpdateService, IProcessProvider processProvider)
@@ -105,7 +106,7 @@ namespace NzbDrone.Update
                 throw new ArgumentOutOfRangeException("arg", "Invalid process ID");
             }
 
-            Logger.Debug("Whisparr process ID: {0}", id);
+            Logger.Debug("NzbDrone process ID: {0}", id);
             return id;
         }
 

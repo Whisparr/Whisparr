@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using NLog;
 using NzbDrone.Common.Extensions;
@@ -8,7 +8,7 @@ namespace NzbDrone.Core.Download.TrackedDownloads
 {
     public interface ITrackedDownloadAlreadyImported
     {
-        bool IsImported(TrackedDownload trackedDownload, List<MovieHistory> historyItems);
+        bool IsImported(TrackedDownload trackedDownload, List<EpisodeHistory> historyItems);
     }
 
     public class TrackedDownloadAlreadyImported : ITrackedDownloadAlreadyImported
@@ -20,9 +20,9 @@ namespace NzbDrone.Core.Download.TrackedDownloads
             _logger = logger;
         }
 
-        public bool IsImported(TrackedDownload trackedDownload, List<MovieHistory> historyItems)
+        public bool IsImported(TrackedDownload trackedDownload, List<EpisodeHistory> historyItems)
         {
-            _logger.Trace("Checking if all movies for '{0}' have been imported", trackedDownload.DownloadItem.Title);
+            _logger.Trace("Checking if all episodes for '{0}' have been imported", trackedDownload.DownloadItem.Title);
 
             if (historyItems.Empty())
             {
@@ -30,21 +30,24 @@ namespace NzbDrone.Core.Download.TrackedDownloads
                 return false;
             }
 
-            var movie = trackedDownload.RemoteMovie.Movie;
-
-            var lastHistoryItem = historyItems.FirstOrDefault(h => h.MovieId == movie.Id);
-
-            if (lastHistoryItem == null)
+            var allEpisodesImportedInHistory = trackedDownload.RemoteEpisode.Episodes.All(e =>
             {
-                _logger.Trace("No history for movie: {0}", movie.ToString());
-                return false;
-            }
+                var lastHistoryItem = historyItems.FirstOrDefault(h => h.EpisodeId == e.Id);
 
-            var allMoviesImportedInHistory = lastHistoryItem.EventType == MovieHistoryEventType.DownloadFolderImported;
-            _logger.Trace("Last event for movie: {0} is: {1}", movie, lastHistoryItem.EventType);
+                if (lastHistoryItem == null)
+                {
+                    _logger.Trace("No history for episode: S{0:00}E{1:00} [{2}]", e.SeasonNumber, e.EpisodeNumber, e.Id);
+                    return false;
+                }
 
-            _logger.Trace("All movies for '{0}' have been imported: {1}", trackedDownload.DownloadItem.Title, allMoviesImportedInHistory);
-            return allMoviesImportedInHistory;
+                _logger.Trace("Last event for episode: S{0:00}E{1:00} [{2}] is: {3}", e.SeasonNumber, e.EpisodeNumber, e.Id, lastHistoryItem.EventType);
+
+                return lastHistoryItem.EventType == EpisodeHistoryEventType.DownloadFolderImported;
+            });
+
+            _logger.Trace("All episodes for '{0}' have been imported: {1}", trackedDownload.DownloadItem.Title, allEpisodesImportedInHistory);
+
+            return allEpisodesImportedInHistory;
         }
     }
 }

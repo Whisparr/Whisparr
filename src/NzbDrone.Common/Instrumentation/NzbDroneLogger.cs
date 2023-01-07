@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
@@ -12,7 +13,7 @@ namespace NzbDrone.Common.Instrumentation
 {
     public static class NzbDroneLogger
     {
-        private const string FILE_LOG_LAYOUT = @"${date:format=yyyy-MM-dd HH\:mm\:ss.f}|${level}|${logger}|${message}${onexception:inner=${newline}${newline}[v${assembly-version}] ${exception:format=ToString}${newline}${exception:format=Data}${newline}}";
+        private const string FILE_LOG_LAYOUT = @"${date:format=yyyy-MM-dd HH\:mm\:ss.f}|${level}|${logger}|${message}${onexception:inner=${newline}${newline}[v${assembly-version}] ${exception:format=ToString}${newline}}";
 
         private static bool _isConfigured;
 
@@ -33,8 +34,6 @@ namespace NzbDrone.Common.Instrumentation
             GlobalExceptionHandlers.Register();
 
             var appFolderInfo = new AppFolderInfo(startupContext);
-
-            RegisterGlobalFilters();
 
             if (Debugger.IsAttached)
             {
@@ -77,13 +76,25 @@ namespace NzbDrone.Common.Instrumentation
                     : "https://05eec2d69d694ad08374fe934efd2dc6@sentry.servarr.com/38";
             }
 
-            var target = new SentryTarget(dsn)
+            Target target;
+            try
             {
-                Name = "sentryTarget",
-                Layout = "${message}"
-            };
+                target = new SentryTarget(dsn)
+                {
+                    Name = "sentryTarget",
+                    Layout = "${message}"
+                };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed to load dependency, may need an OS update: " + ex.ToString());
+                LogManager.GetLogger(nameof(NzbDroneLogger)).Debug(ex, "Failed to load dependency, may need an OS update");
 
-            var loggingRule = new LoggingRule("*", updateClient ? LogLevel.Trace : LogLevel.Debug, target);
+                // We still need the logging rules, so use a null target.
+                target = new NullTarget();
+            }
+
+            var loggingRule = new LoggingRule("*", updateClient ? LogLevel.Trace : LogLevel.Warn, target);
             LogManager.Configuration.AddTarget("sentryTarget", target);
             LogManager.Configuration.LoggingRules.Add(loggingRule);
 
@@ -96,22 +107,11 @@ namespace NzbDrone.Common.Instrumentation
         {
             DebuggerTarget target = new DebuggerTarget();
             target.Name = "debuggerLogger";
-            target.Layout = "[${level}] [${threadid}] ${logger}: ${message} ${onexception:inner=${newline}${newline}[v${assembly-version}] ${exception:format=ToString}${newline}${exception:format=Data}${newline}}";
+            target.Layout = "[${level}] [${threadid}] ${logger}: ${message} ${onexception:inner=${newline}${newline}[v${assembly-version}] ${exception:format=ToString}${newline}}";
 
             var loggingRule = new LoggingRule("*", LogLevel.Trace, target);
-
             LogManager.Configuration.AddTarget("debugger", target);
             LogManager.Configuration.LoggingRules.Add(loggingRule);
-        }
-
-        private static void RegisterGlobalFilters()
-        {
-            LogManager.Setup().LoadConfiguration(c =>
-            {
-                c.ForLogger("Microsoft.Hosting.Lifetime*").WriteToNil(LogLevel.Info);
-                c.ForLogger("System*").WriteToNil(LogLevel.Warn);
-                c.ForLogger("Microsoft*").WriteToNil(LogLevel.Warn);
-            });
         }
 
         private static void RegisterConsole()
@@ -121,7 +121,7 @@ namespace NzbDrone.Common.Instrumentation
             var coloredConsoleTarget = new ColoredConsoleTarget();
 
             coloredConsoleTarget.Name = "consoleLogger";
-            coloredConsoleTarget.Layout = "[${level}] ${logger}: ${message} ${onexception:inner=${newline}${newline}[v${assembly-version}] ${exception:format=ToString}${newline}${exception:format=Data}${newline}}";
+            coloredConsoleTarget.Layout = "[${level}] ${logger}: ${message} ${onexception:inner=${newline}${newline}[v${assembly-version}] ${exception:format=ToString}${newline}}";
 
             var loggingRule = new LoggingRule("*", level, coloredConsoleTarget);
 
@@ -131,9 +131,9 @@ namespace NzbDrone.Common.Instrumentation
 
         private static void RegisterAppFile(IAppFolderInfo appFolderInfo)
         {
-            RegisterAppFile(appFolderInfo, "appFileInfo", "whisparr.txt", 50, LogLevel.Info);
-            RegisterAppFile(appFolderInfo, "appFileDebug", "whisparr.debug.txt", 500, LogLevel.Off);
-            RegisterAppFile(appFolderInfo, "appFileTrace", "whisparr.trace.txt", 500, LogLevel.Off);
+            RegisterAppFile(appFolderInfo, "appFileInfo", "whisparr.txt", 5, LogLevel.Info);
+            RegisterAppFile(appFolderInfo, "appFileDebug", "whisparr.debug.txt", 50, LogLevel.Off);
+            RegisterAppFile(appFolderInfo, "appFileTrace", "whisparr.trace.txt", 50, LogLevel.Off);
         }
 
         private static void RegisterAppFile(IAppFolderInfo appFolderInfo, string name, string fileName, int maxArchiveFiles, LogLevel minLogLevel)

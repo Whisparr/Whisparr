@@ -6,10 +6,8 @@ import PageToolbarButton from 'Components/Page/Toolbar/PageToolbarButton';
 import PageToolbarSeparator from 'Components/Page/Toolbar/PageToolbarSeparator';
 import { icons } from 'Helpers/Props';
 import SettingsToolbarConnector from 'Settings/SettingsToolbarConnector';
-import translate from 'Utilities/String/translate';
 import IndexersConnector from './Indexers/IndexersConnector';
 import IndexerOptionsConnector from './Options/IndexerOptionsConnector';
-import RestrictionsConnector from './Restrictions/RestrictionsConnector';
 
 class IndexerSettings extends Component {
 
@@ -44,8 +42,8 @@ class IndexerSettings extends Component {
     }
   };
 
-  //
   // Render
+  //
 
   render() {
     const {
@@ -59,7 +57,7 @@ class IndexerSettings extends Component {
     } = this.state;
 
     return (
-      <PageContent title={translate('IndexerSettings')}>
+      <PageContent title="Indexer Settings">
         <SettingsToolbarConnector
           isSaving={isSaving}
           hasPendingChanges={hasPendingChanges}
@@ -68,7 +66,7 @@ class IndexerSettings extends Component {
               <PageToolbarSeparator />
 
               <PageToolbarButton
-                label={translate('TestAllIndexers')}
+                label="Test All Indexers"
                 iconName={icons.TEST}
                 isSpinning={isTestingAll}
                 onPress={dispatchTestAllIndexers}
@@ -85,8 +83,6 @@ class IndexerSettings extends Component {
             onChildMounted={this.onChildMounted}
             onChildStateChange={this.onChildStateChange}
           />
-
-          <RestrictionsConnector />
         </PageContentBody>
       </PageContent>
     );

@@ -1,4 +1,4 @@
-namespace NzbDrone.Core.Download.Clients.Sabnzbd
+﻿namespace NzbDrone.Core.Download.Clients.Sabnzbd
 {
     public enum SabnzbdDownloadStatus
     {

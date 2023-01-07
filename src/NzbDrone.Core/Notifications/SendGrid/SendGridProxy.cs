@@ -76,7 +76,6 @@ namespace NzbDrone.Core.Notifications.SendGrid
                 .Build();
 
             request.Headers.ContentType = "application/json";
-
             request.Method = method;
 
             return request;

@@ -26,6 +26,7 @@ namespace Whisparr.Api.V3.Logs
         }
 
         [HttpGet]
+        [Produces("application/json")]
         public List<LogFileResource> GetLogFilesResponse()
         {
             var result = new List<LogFileResource>();
@@ -51,6 +52,7 @@ namespace Whisparr.Api.V3.Logs
         }
 
         [HttpGet(@"{filename:regex([[-.a-zA-Z0-9]]+?\.txt)}")]
+        [Produces("text/plain")]
         public IActionResult GetLogFileResponse(string filename)
         {
             LogManager.Flush();

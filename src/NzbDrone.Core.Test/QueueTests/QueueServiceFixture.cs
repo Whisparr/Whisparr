@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using FizzWare.NBuilder;
@@ -6,10 +6,10 @@ using FluentAssertions;
 using NUnit.Framework;
 using NzbDrone.Core.Download;
 using NzbDrone.Core.Download.TrackedDownloads;
-using NzbDrone.Core.Movies;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.Queue;
 using NzbDrone.Core.Test.Framework;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Test.QueueTests
 {
@@ -28,18 +28,24 @@ namespace NzbDrone.Core.Test.QueueTests
                                         .With(v => v.DownloadClientInfo = downloadClientInfo)
                                         .Build();
 
-            var series = Builder<Media>.CreateNew()
+            var series = Builder<Series>.CreateNew()
                                         .Build();
 
-            var remoteEpisode = Builder<RemoteMovie>.CreateNew()
-                                                   .With(r => r.Movie = series)
-                                                   .With(r => r.ParsedMovieInfo = new ParsedMovieInfo())
+            var episodes = Builder<Episode>.CreateListOfSize(3)
+                                          .All()
+                                          .With(e => e.SeriesId = series.Id)
+                                          .Build();
+
+            var remoteEpisode = Builder<RemoteEpisode>.CreateNew()
+                                                   .With(r => r.Series = series)
+                                                   .With(r => r.Episodes = new List<Episode>(episodes))
+                                                   .With(r => r.ParsedEpisodeInfo = new ParsedEpisodeInfo())
                                                    .Build();
 
             _trackedDownloads = Builder<TrackedDownload>.CreateListOfSize(1)
                 .All()
                 .With(v => v.DownloadItem = downloadItem)
-                .With(v => v.RemoteMovie = remoteEpisode)
+                .With(v => v.RemoteEpisode = remoteEpisode)
                 .Build()
                 .ToList();
         }
@@ -51,13 +57,13 @@ namespace NzbDrone.Core.Test.QueueTests
 
             var queue = Subject.GetQueue();
 
-            queue.Should().HaveCount(1);
+            queue.Should().HaveCount(3);
 
             queue.All(v => v.Id > 0).Should().BeTrue();
 
             var distinct = queue.Select(v => v.Id).Distinct().ToArray();
 
-            distinct.Should().HaveCount(1);
+            distinct.Should().HaveCount(3);
         }
     }
 }

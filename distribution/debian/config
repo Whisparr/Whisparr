@@ -1,0 +1,17 @@
+#!/bin/sh -e
+
+. /usr/share/debconf/confmodule
+
+db_beginblock
+db_input high whisparr/owning_user || true
+db_input high whisparr/owning_group || true
+db_endblock
+db_go
+
+db_beginblock
+db_input low whisparr/owning_umask || true
+db_input low whisparr/config_directory || true
+db_endblock
+db_go
+
+exit 0

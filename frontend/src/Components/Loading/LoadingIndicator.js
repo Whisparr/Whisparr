@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
 import styles from './LoadingIndicator.css';
@@ -14,7 +13,7 @@ function LoadingIndicator({ className, rippleClassName, size }) {
       style={{ height }}
     >
       <div
-        className={classNames(styles.rippleContainer, 'followingBalls')}
+        className={styles.rippleContainer}
         style={{ width, height }}
       >
         <div

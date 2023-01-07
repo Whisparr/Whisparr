@@ -1,4 +1,4 @@
-namespace Whisparr.Http.Authentication
+﻿namespace Whisparr.Http.Authentication
 {
     public class LoginResource
     {

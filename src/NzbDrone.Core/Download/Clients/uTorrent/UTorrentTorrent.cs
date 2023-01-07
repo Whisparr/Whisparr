@@ -39,7 +39,7 @@ namespace NzbDrone.Core.Download.Clients.UTorrent
         public object Unknown28 { get; set; }
     }
 
-    internal class UTorrentTorrentJsonConverter : JsonConverter
+    public class UTorrentTorrentJsonConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType)
         {
@@ -78,6 +78,7 @@ namespace NzbDrone.Core.Download.Clients.UTorrent
             reader.Read();
 
             // Builds before 25406 don't return the remaining items.
+
             if (reader.TokenType != JsonToken.EndArray)
             {
                 result.DownloadUrl = (string)reader.Value;

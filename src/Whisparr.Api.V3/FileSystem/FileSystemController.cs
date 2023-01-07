@@ -26,12 +26,14 @@ namespace Whisparr.Api.V3.FileSystem
         }
 
         [HttpGet]
+        [Produces("application/json")]
         public IActionResult GetContents(string path, bool includeFiles = false, bool allowFoldersWithoutTrailingSlashes = false)
         {
             return Ok(_fileSystemLookupService.LookupContents(path, includeFiles, allowFoldersWithoutTrailingSlashes));
         }
 
         [HttpGet("type")]
+        [Produces("application/json")]
         public object GetEntityType(string path)
         {
             if (_diskProvider.FileExists(path))
@@ -39,11 +41,12 @@ namespace Whisparr.Api.V3.FileSystem
                 return new { type = "file" };
             }
 
-            //Return folder even if it doesn't exist on disk to avoid leaking anything from the UI about the underlying system
+            // Return folder even if it doesn't exist on disk to avoid leaking anything from the UI about the underlying system
             return new { type = "folder" };
         }
 
         [HttpGet("mediafiles")]
+        [Produces("application/json")]
         public object GetMediaFiles(string path)
         {
             if (!_diskProvider.FolderExists(path))

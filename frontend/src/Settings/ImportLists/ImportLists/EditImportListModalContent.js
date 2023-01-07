@@ -1,11 +1,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import SeriesMonitoringOptionsPopoverContent from 'AddSeries/SeriesMonitoringOptionsPopoverContent';
 import Alert from 'Components/Alert';
 import Form from 'Components/Form/Form';
 import FormGroup from 'Components/Form/FormGroup';
 import FormInputGroup from 'Components/Form/FormInputGroup';
 import FormLabel from 'Components/Form/FormLabel';
 import ProviderFieldFormGroup from 'Components/Form/ProviderFieldFormGroup';
+import Icon from 'Components/Icon';
 import Button from 'Components/Link/Button';
 import SpinnerErrorButton from 'Components/Link/SpinnerErrorButton';
 import LoadingIndicator from 'Components/Loading/LoadingIndicator';
@@ -13,16 +15,17 @@ import ModalBody from 'Components/Modal/ModalBody';
 import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
-import { inputTypes, kinds } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
+import Popover from 'Components/Tooltip/Popover';
+import { icons, inputTypes, kinds, tooltipPositions } from 'Helpers/Props';
+import formatShortTimeSpan from 'Utilities/Date/formatShortTimeSpan';
 import styles from './EditImportListModalContent.css';
 
 function EditImportListModalContent(props) {
+
   const {
     advancedSettings,
     isFetching,
     error,
-    rootFolderError,
     isSaving,
     isTesting,
     saveError,
@@ -38,55 +41,49 @@ function EditImportListModalContent(props) {
 
   const {
     id,
-    implementationName,
     name,
-    enabled,
-    enableAuto,
+    enableAutomaticAdd,
+    minRefreshInterval,
     shouldMonitor,
-    minimumAvailability,
-    qualityProfileId,
     rootFolderPath,
-    searchOnAdd,
+    qualityProfileId,
+    seasonFolder,
     tags,
-    fields,
-    message
+    fields
   } = item;
 
   return (
     <ModalContent onModalClose={onModalClose}>
       <ModalHeader>
-        {`${id ? translate('Edit') : translate('Add')} ${translate('List')} - ${implementationName}`}
+        {id ? 'Edit List' : 'Add List'}
       </ModalHeader>
 
       <ModalBody>
         {
-          isFetching &&
-            <LoadingIndicator />
+          isFetching ?
+            <LoadingIndicator /> :
+            null
         }
 
         {
-          !isFetching && (!!error || !!rootFolderError) &&
-            <div>
-              {translate('UnableToAddANewListPleaseTryAgain')}
-            </div>
+          !isFetching && !!error ?
+            <div>Unable to add a new list, please try again.</div> :
+            null
         }
 
         {
-          !isFetching && !error && !rootFolderError &&
-            <Form
-              {...otherProps}
-            >
-              {
-                !!message &&
-                  <Alert
-                    className={styles.message}
-                    kind={message.value.type}
-                  >
-                    {message.value.message}
-                  </Alert>
-              }
+          !isFetching && !error ?
+            <Form {...otherProps}>
+
+              <Alert
+                kind={kinds.INFO}
+                className={styles.message}
+              >
+                {`List will refresh every ${formatShortTimeSpan(minRefreshInterval.value)}`}
+              </Alert>
+
               <FormGroup>
-                <FormLabel>{translate('Name')}</FormLabel>
+                <FormLabel>Name</FormLabel>
 
                 <FormInputGroup
                   type={inputTypes.TEXT}
@@ -97,83 +94,49 @@ function EditImportListModalContent(props) {
               </FormGroup>
 
               <FormGroup>
-                <FormLabel>{translate('Enable')}</FormLabel>
+                <FormLabel>Enable Automatic Add</FormLabel>
 
                 <FormInputGroup
                   type={inputTypes.CHECK}
-                  name="enabled"
-                  helpText={translate('EnabledHelpText')}
-                  {...enabled}
+                  name="enableAutomaticAdd"
+                  helpText={'Add series to Whisparr when syncs are performed via the UI or by Whisparr'}
+                  {...enableAutomaticAdd}
                   onChange={onInputChange}
                 />
               </FormGroup>
 
               <FormGroup>
-                <FormLabel>{translate('EnableAutomaticAdd')}</FormLabel>
+                <FormLabel>
+                  Monitor
+
+                  <Popover
+                    anchor={
+                      <Icon
+                        className={styles.labelIcon}
+                        name={icons.INFO}
+                      />
+                    }
+                    title="Monitoring Options"
+                    body={<SeriesMonitoringOptionsPopoverContent />}
+                    position={tooltipPositions.RIGHT}
+                  />
+                </FormLabel>
 
                 <FormInputGroup
-                  type={inputTypes.CHECK}
-                  name="enableAuto"
-                  helpText={translate('EnableAutoHelpText')}
-                  {...enableAuto}
-                  onChange={onInputChange}
-                />
-              </FormGroup>
-
-              <FormGroup>
-                <FormLabel>{translate('AddMoviesMonitored')}</FormLabel>
-
-                <FormInputGroup
-                  type={inputTypes.CHECK}
+                  type={inputTypes.MONITOR_EPISODES_SELECT}
                   name="shouldMonitor"
-                  helpText={translate('ShouldMonitorHelpText')}
+                  onChange={onInputChange}
                   {...shouldMonitor}
-                  onChange={onInputChange}
-                />
-              </FormGroup>
-
-              {
-                shouldMonitor &&
-                  <FormGroup>
-                    <FormLabel>{translate('SearchOnAdd')}</FormLabel>
-
-                    <FormInputGroup
-                      type={inputTypes.CHECK}
-                      name="searchOnAdd"
-                      helpText={translate('SearchOnAddHelpText')}
-                      {...searchOnAdd}
-                      onChange={onInputChange}
-                    />
-                  </FormGroup>
-              }
-
-              <FormGroup>
-                <FormLabel>{translate('MinimumAvailability')}</FormLabel>
-                <FormInputGroup
-                  type={inputTypes.AVAILABILITY_SELECT}
-                  name="minimumAvailability"
-                  {...minimumAvailability}
-                  onChange={onInputChange}
                 />
               </FormGroup>
 
               <FormGroup>
-                <FormLabel>{translate('QualityProfile')}</FormLabel>
-
-                <FormInputGroup
-                  type={inputTypes.QUALITY_PROFILE_SELECT}
-                  name="qualityProfileId"
-                  {...qualityProfileId}
-                  onChange={onInputChange}
-                />
-              </FormGroup>
-
-              <FormGroup>
-                <FormLabel>{translate('Folder')}</FormLabel>
+                <FormLabel>Root Folder</FormLabel>
 
                 <FormInputGroup
                   type={inputTypes.ROOT_FOLDER_SELECT}
                   name="rootFolderPath"
+                  helpText={'Root Folder list items will be added to'}
                   {...rootFolderPath}
                   includeMissingValue={true}
                   onChange={onInputChange}
@@ -181,33 +144,63 @@ function EditImportListModalContent(props) {
               </FormGroup>
 
               <FormGroup>
-                <FormLabel>{translate('WhisparrTags')}</FormLabel>
+                <FormLabel>Quality Profile</FormLabel>
+
+                <FormInputGroup
+                  type={inputTypes.QUALITY_PROFILE_SELECT}
+                  name="qualityProfileId"
+                  helpText={'Quality Profile list items will be added with'}
+                  {...qualityProfileId}
+                  onChange={onInputChange}
+                />
+              </FormGroup>
+
+              <FormGroup>
+                <FormLabel>Season Folder</FormLabel>
+
+                <FormInputGroup
+                  type={inputTypes.CHECK}
+                  name="seasonFolder"
+                  onChange={onInputChange}
+                  {...seasonFolder}
+                />
+              </FormGroup>
+
+              <FormGroup>
+                <FormLabel>Whisparr Tags</FormLabel>
 
                 <FormInputGroup
                   type={inputTypes.TAG}
                   name="tags"
-                  helpText={translate('ListTagsHelpText')}
+                  helpText="Tags list items will be added with"
                   {...tags}
                   onChange={onInputChange}
                 />
               </FormGroup>
 
               {
-                fields.map((field) => {
-                  return (
-                    <ProviderFieldFormGroup
-                      key={field.name}
-                      advancedSettings={advancedSettings}
-                      provider="importList"
-                      providerData={item}
-                      {...field}
-                      onChange={onFieldChange}
-                    />
-                  );
-                })
+                !!fields && !!fields.length &&
+                  <div>
+                    {
+                      fields.map((field) => {
+                        return (
+                          <ProviderFieldFormGroup
+                            key={field.name}
+                            advancedSettings={advancedSettings}
+                            provider="importList"
+                            providerData={item}
+                            section="settings.importLists"
+                            {...field}
+                            onChange={onFieldChange}
+                          />
+                        );
+                      })
+                    }
+                  </div>
               }
 
-            </Form>
+            </Form> :
+            null
         }
       </ModalBody>
       <ModalFooter>
@@ -218,7 +211,7 @@ function EditImportListModalContent(props) {
               kind={kinds.DANGER}
               onPress={onDeleteImportListPress}
             >
-              {translate('Delete')}
+              Delete
             </Button>
         }
 
@@ -227,13 +220,13 @@ function EditImportListModalContent(props) {
           error={saveError}
           onPress={onTestPress}
         >
-          {translate('Test')}
+          Test
         </SpinnerErrorButton>
 
         <Button
           onPress={onModalClose}
         >
-          {translate('Cancel')}
+          Cancel
         </Button>
 
         <SpinnerErrorButton
@@ -241,7 +234,7 @@ function EditImportListModalContent(props) {
           error={saveError}
           onPress={onSavePress}
         >
-          {translate('Save')}
+          Save
         </SpinnerErrorButton>
       </ModalFooter>
     </ModalContent>
@@ -252,7 +245,6 @@ EditImportListModalContent.propTypes = {
   advancedSettings: PropTypes.bool.isRequired,
   isFetching: PropTypes.bool.isRequired,
   error: PropTypes.object,
-  rootFolderError: PropTypes.object,
   isSaving: PropTypes.bool.isRequired,
   isTesting: PropTypes.bool.isRequired,
   saveError: PropTypes.object,

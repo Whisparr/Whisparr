@@ -35,6 +35,8 @@ function getType({ type, selectOptionsProviderAction }) {
       return inputTypes.TEXT;
     case 'oAuth':
       return inputTypes.OAUTH;
+    case 'rootFolder':
+      return inputTypes.ROOT_FOLDER_SELECT;
     default:
       return inputTypes.TEXT;
   }
@@ -49,7 +51,6 @@ function getSelectValues(selectOptions) {
     result.push({
       key: option.value,
       value: option.name,
-      dividerAfter: option.dividerAfter,
       hint: option.hint
     });
 
@@ -64,7 +65,6 @@ function ProviderFieldFormGroup(props) {
     label,
     helpText,
     helpLink,
-    placeholder,
     value,
     type,
     advanced,
@@ -97,7 +97,6 @@ function ProviderFieldFormGroup(props) {
         label={label}
         helpText={helpText}
         helpLink={helpLink}
-        placeholder={placeholder}
         value={value}
         values={getSelectValues(selectOptions)}
         errors={errors}
@@ -123,7 +122,6 @@ ProviderFieldFormGroup.propTypes = {
   label: PropTypes.string.isRequired,
   helpText: PropTypes.string,
   helpLink: PropTypes.string,
-  placeholder: PropTypes.string,
   value: PropTypes.any,
   type: PropTypes.string.isRequired,
   advanced: PropTypes.bool.isRequired,

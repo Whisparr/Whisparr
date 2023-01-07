@@ -49,7 +49,7 @@ namespace NzbDrone.Core.Test.MediaCoverTests
         }
 
         [Test]
-        public void should_return_true_if_file_exists_and_same_size_and_not_corrupt()
+        public void should_return_ture_if_file_exists_and_same_size()
         {
             GivenExistingFileSize(100);
             _httpResponse.Headers.ContentLength = 100;

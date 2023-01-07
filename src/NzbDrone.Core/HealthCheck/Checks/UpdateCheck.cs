@@ -5,7 +5,6 @@ using NzbDrone.Common.EnvironmentInfo;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Configuration.Events;
-using NzbDrone.Core.Localization;
 using NzbDrone.Core.Update;
 
 namespace NzbDrone.Core.HealthCheck.Checks
@@ -17,21 +16,16 @@ namespace NzbDrone.Core.HealthCheck.Checks
         private readonly IAppFolderInfo _appFolderInfo;
         private readonly ICheckUpdateService _checkUpdateService;
         private readonly IConfigFileProvider _configFileProvider;
-        private readonly IOsInfo _osInfo;
 
         public UpdateCheck(IDiskProvider diskProvider,
                            IAppFolderInfo appFolderInfo,
                            ICheckUpdateService checkUpdateService,
-                           IConfigFileProvider configFileProvider,
-                           IOsInfo osInfo,
-                           ILocalizationService localizationService)
-            : base(localizationService)
+                           IConfigFileProvider configFileProvider)
         {
             _diskProvider = diskProvider;
             _appFolderInfo = appFolderInfo;
             _checkUpdateService = checkUpdateService;
             _configFileProvider = configFileProvider;
-            _osInfo = osInfo;
         }
 
         public override HealthCheck Check()
@@ -40,22 +34,21 @@ namespace NzbDrone.Core.HealthCheck.Checks
             var uiFolder = Path.Combine(startupFolder, "UI");
 
             if ((OsInfo.IsWindows || _configFileProvider.UpdateAutomatically) &&
-                _configFileProvider.UpdateMechanism == UpdateMechanism.BuiltIn &&
-                !_osInfo.IsDocker)
+                _configFileProvider.UpdateMechanism == UpdateMechanism.BuiltIn)
             {
                 if (OsInfo.IsOsx && startupFolder.GetAncestorFolders().Contains("AppTranslocation"))
                 {
                     return new HealthCheck(GetType(),
                         HealthCheckResult.Error,
-                        string.Format(_localizationService.GetLocalizedString("UpdateCheckStartupTranslocationMessage"), startupFolder),
-                        "#cannot-install-update-because-startup-folder-is-in-an-app-translocation-folder.");
+                        string.Format("Cannot install update because startup folder '{0}' is in an App Translocation folder.", startupFolder),
+                        "#cannot-install-update-because-startup-folder-is-in-an-app-translocation-folder");
                 }
 
                 if (!_diskProvider.FolderWritable(startupFolder))
                 {
                     return new HealthCheck(GetType(),
                         HealthCheckResult.Error,
-                        string.Format(_localizationService.GetLocalizedString("UpdateCheckStartupNotWritableMessage"), startupFolder, Environment.UserName),
+                        string.Format("Cannot install update because startup folder '{0}' is not writable by the user '{1}'.", startupFolder, Environment.UserName),
                         "#cannot-install-update-because-startup-folder-is-not-writable-by-the-user");
                 }
 
@@ -63,14 +56,17 @@ namespace NzbDrone.Core.HealthCheck.Checks
                 {
                     return new HealthCheck(GetType(),
                         HealthCheckResult.Error,
-                        string.Format(_localizationService.GetLocalizedString("UpdateCheckUINotWritableMessage"), uiFolder, Environment.UserName),
+                        string.Format("Cannot install update because UI folder '{0}' is not writable by the user '{1}'.", uiFolder, Environment.UserName),
                         "#cannot-install-update-because-ui-folder-is-not-writable-by-the-user");
                 }
             }
 
-            if (BuildInfo.BuildDateTime < DateTime.UtcNow.AddDays(-14) && _checkUpdateService.AvailableUpdate() != null)
+            if (BuildInfo.BuildDateTime < DateTime.UtcNow.AddDays(-14))
             {
-                return new HealthCheck(GetType(), HealthCheckResult.Warning, _localizationService.GetLocalizedString("UpdateAvailable"), "#new-update-is-available");
+                if (_checkUpdateService.AvailableUpdate() != null)
+                {
+                    return new HealthCheck(GetType(), HealthCheckResult.Warning, "New update is available");
+                }
             }
 
             return new HealthCheck(GetType());

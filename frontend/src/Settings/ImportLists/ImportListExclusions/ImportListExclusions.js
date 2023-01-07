@@ -5,7 +5,6 @@ import Icon from 'Components/Icon';
 import Link from 'Components/Link/Link';
 import PageSectionContent from 'Components/Page/PageSectionContent';
 import { icons } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import EditImportListExclusionModalConnector from './EditImportListExclusionModalConnector';
 import ImportListExclusion from './ImportListExclusion';
 import styles from './ImportListExclusions.css';
@@ -19,19 +18,19 @@ class ImportListExclusions extends Component {
     super(props, context);
 
     this.state = {
-      isAddImportExclusionModalOpen: false
+      isAddImportListExclusionModalOpen: false
     };
   }
 
   //
   // Listeners
 
-  onAddImportExclusionPress = () => {
-    this.setState({ isAddImportExclusionModalOpen: true });
+  onAddImportListExclusionPress = () => {
+    this.setState({ isAddImportListExclusionModalOpen: true });
   };
 
   onModalClose = () => {
-    this.setState({ isAddImportExclusionModalOpen: false });
+    this.setState({ isAddImportListExclusionModalOpen: false });
   };
 
   //
@@ -40,26 +39,19 @@ class ImportListExclusions extends Component {
   render() {
     const {
       items,
-      onConfirmDeleteImportExclusion,
+      onConfirmDeleteImportListExclusion,
       ...otherProps
     } = this.props;
 
     return (
-      <FieldSet legend={translate('ListExclusions')}>
+      <FieldSet legend="Import List Exclusions">
         <PageSectionContent
-          errorMessage={translate('UnableToLoadListExclusions')}
+          errorMessage="Unable to load Import List Exclusions"
           {...otherProps}
         >
           <div className={styles.importListExclusionsHeader}>
-            <div className={styles.tmdbId}>
-              TMDb Id
-            </div>
-            <div className={styles.title}>
-              {translate('Title')}
-            </div>
-            <div className={styles.movieYear}>
-              {translate('Year')}
-            </div>
+            <div className={styles.title}>Title</div>
+            <div className={styles.tvdbId}>TVDB ID</div>
           </div>
 
           <div>
@@ -71,24 +63,24 @@ class ImportListExclusions extends Component {
                     {...item}
                     {...otherProps}
                     index={index}
-                    onConfirmDeleteImportExclusion={onConfirmDeleteImportExclusion}
+                    onConfirmDeleteImportListExclusion={onConfirmDeleteImportListExclusion}
                   />
                 );
               })
             }
           </div>
 
-          <div className={styles.addImportExclusion}>
+          <div className={styles.addImportListExclusion}>
             <Link
               className={styles.addButton}
-              onPress={this.onAddImportExclusionPress}
+              onPress={this.onAddImportListExclusionPress}
             >
               <Icon name={icons.ADD} />
             </Link>
           </div>
 
           <EditImportListExclusionModalConnector
-            isOpen={this.state.isAddImportExclusionModalOpen}
+            isOpen={this.state.isAddImportListExclusionModalOpen}
             onModalClose={this.onModalClose}
           />
 
@@ -102,7 +94,7 @@ ImportListExclusions.propTypes = {
   isFetching: PropTypes.bool.isRequired,
   error: PropTypes.object,
   items: PropTypes.arrayOf(PropTypes.object).isRequired,
-  onConfirmDeleteImportExclusion: PropTypes.func.isRequired
+  onConfirmDeleteImportListExclusion: PropTypes.func.isRequired
 };
 
 export default ImportListExclusions;

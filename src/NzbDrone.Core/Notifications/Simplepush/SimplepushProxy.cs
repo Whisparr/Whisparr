@@ -1,7 +1,6 @@
 using System;
 using FluentValidation.Results;
 using NLog;
-using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
 
 namespace NzbDrone.Core.Notifications.Simplepush
@@ -29,9 +28,9 @@ namespace NzbDrone.Core.Notifications.Simplepush
             var requestBuilder = new HttpRequestBuilder(URL).Post();
 
             requestBuilder.AddFormParameter("key", settings.Key)
-                .AddFormParameter("event", settings.Event)
-                .AddFormParameter("title", title)
-                .AddFormParameter("msg", message);
+                          .AddFormParameter("event", settings.Event)
+                          .AddFormParameter("title", title)
+                          .AddFormParameter("msg", message);
 
             var request = requestBuilder.Build();
 

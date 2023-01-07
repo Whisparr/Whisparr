@@ -13,7 +13,8 @@ namespace NzbDrone.Core.Download
             Data = new Dictionary<string, string>();
         }
 
-        public int MovieId { get; set; }
+        public int SeriesId { get; set; }
+        public List<int> EpisodeIds { get; set; }
         public QualityModel Quality { get; set; }
         public string SourceTitle { get; set; }
         public string DownloadClient { get; set; }

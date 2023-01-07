@@ -10,7 +10,6 @@ import SpinnerIcon from 'Components/SpinnerIcon';
 import { forEach } from 'Helpers/elementChildren';
 import { align, icons } from 'Helpers/Props';
 import dimensions from 'Styles/Variables/dimensions';
-import translate from 'Utilities/String/translate';
 import styles from './PageToolbarSection.css';
 
 const BUTTON_WIDTH = parseInt(dimensions.toolbarButtonWidth);
@@ -162,7 +161,7 @@ class PageToolbarSection extends Component {
                       <ToolbarMenuButton
                         className={styles.overflowMenuButton}
                         iconName={icons.OVERFLOW}
-                        text={translate('More')}
+                        text="More"
                       />
 
                       <MenuContent>

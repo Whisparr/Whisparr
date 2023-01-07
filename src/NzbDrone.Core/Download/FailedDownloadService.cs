@@ -37,18 +37,18 @@ namespace NzbDrone.Core.Download
             var downloadId = history.DownloadId;
             if (downloadId.IsNullOrWhiteSpace())
             {
-                PublishDownloadFailedEvent(new List<MovieHistory> { history }, "Manually marked as failed");
+                PublishDownloadFailedEvent(new List<EpisodeHistory> { history }, "Manually marked as failed");
             }
             else
             {
-                var grabbedHistory = _historyService.Find(downloadId, MovieHistoryEventType.Grabbed).ToList();
+                var grabbedHistory = _historyService.Find(downloadId, EpisodeHistoryEventType.Grabbed).ToList();
                 PublishDownloadFailedEvent(grabbedHistory, "Manually marked as failed");
             }
         }
 
         public void MarkAsFailed(string downloadId)
         {
-            var history = _historyService.Find(downloadId, MovieHistoryEventType.Grabbed);
+            var history = _historyService.Find(downloadId, EpisodeHistoryEventType.Grabbed);
 
             if (history.Any())
             {
@@ -70,12 +70,12 @@ namespace NzbDrone.Core.Download
                 trackedDownload.DownloadItem.Status == DownloadItemStatus.Failed)
             {
                 var grabbedItems = _historyService
-                                   .Find(trackedDownload.DownloadItem.DownloadId, MovieHistoryEventType.Grabbed)
+                                   .Find(trackedDownload.DownloadItem.DownloadId, EpisodeHistoryEventType.Grabbed)
                                    .ToList();
 
                 if (grabbedItems.Empty())
                 {
-                    trackedDownload.Warn("Download wasn't grabbed by Whisparr, skipping");
+                    trackedDownload.Warn("Download wasn't grabbed by whisparr, skipping");
                     return;
                 }
 
@@ -91,7 +91,7 @@ namespace NzbDrone.Core.Download
             }
 
             var grabbedItems = _historyService
-                               .Find(trackedDownload.DownloadItem.DownloadId, MovieHistoryEventType.Grabbed)
+                               .Find(trackedDownload.DownloadItem.DownloadId, EpisodeHistoryEventType.Grabbed)
                                .ToList();
 
             if (grabbedItems.Empty())
@@ -114,16 +114,17 @@ namespace NzbDrone.Core.Download
             PublishDownloadFailedEvent(grabbedItems, failure, trackedDownload);
         }
 
-        private void PublishDownloadFailedEvent(List<MovieHistory> historyItems, string message, TrackedDownload trackedDownload = null)
+        private void PublishDownloadFailedEvent(List<EpisodeHistory> historyItems, string message, TrackedDownload trackedDownload = null)
         {
             var historyItem = historyItems.First();
 
             var downloadFailedEvent = new DownloadFailedEvent
             {
-                MovieId = historyItem.MovieId,
+                SeriesId = historyItem.SeriesId,
+                EpisodeIds = historyItems.Select(h => h.EpisodeId).ToList(),
                 Quality = historyItem.Quality,
                 SourceTitle = historyItem.SourceTitle,
-                DownloadClient = historyItem.Data.GetValueOrDefault(MovieHistory.DOWNLOAD_CLIENT),
+                DownloadClient = historyItem.Data.GetValueOrDefault(EpisodeHistory.DOWNLOAD_CLIENT),
                 DownloadId = historyItem.DownloadId,
                 Message = message,
                 Data = historyItem.Data,

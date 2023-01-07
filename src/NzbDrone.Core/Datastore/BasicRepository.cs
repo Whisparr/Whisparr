@@ -16,8 +16,8 @@ namespace NzbDrone.Core.Datastore
     {
         IEnumerable<TModel> All();
         int Count();
-        TModel Get(int id);
         TModel Find(int id);
+        TModel Get(int id);
         TModel Insert(TModel model);
         TModel Update(TModel model);
         TModel Upsert(TModel model);
@@ -71,9 +71,9 @@ namespace NzbDrone.Core.Datastore
 
         protected virtual List<TModel> Query(SqlBuilder builder) => _database.Query<TModel>(builder).ToList();
 
-        protected List<TModel> Query(Expression<Func<TModel, bool>> where) => Query(Builder().Where(where));
-
         protected virtual List<TModel> QueryDistinct(SqlBuilder builder) => _database.QueryDistinct<TModel>(builder).ToList();
+
+        protected List<TModel> Query(Expression<Func<TModel, bool>> where) => Query(Builder().Where(where));
 
         public int Count()
         {
@@ -88,21 +88,21 @@ namespace NzbDrone.Core.Datastore
             return Query(Builder());
         }
 
-        public TModel Get(int id)
+        public TModel Find(int id)
         {
             var model = Query(x => x.Id == id).FirstOrDefault();
+
+            return model;
+        }
+
+        public TModel Get(int id)
+        {
+            var model = Find(id);
 
             if (model == null)
             {
                 throw new ModelNotFoundException(typeof(TModel), id);
             }
-
-            return model;
-        }
-
-        public TModel Find(int id)
-        {
-            var model = Query(c => c.Id == id).SingleOrDefault();
 
             return model;
         }
@@ -454,24 +454,24 @@ namespace NzbDrone.Core.Datastore
             }
         }
 
-        protected void ModelCreated(TModel model)
+        protected void ModelCreated(TModel model, bool forcePublish = false)
         {
-            PublishModelEvent(model, ModelAction.Created);
+            PublishModelEvent(model, ModelAction.Created, forcePublish);
         }
 
-        protected void ModelUpdated(TModel model)
+        protected void ModelUpdated(TModel model, bool forcePublish = false)
         {
-            PublishModelEvent(model, ModelAction.Updated);
+            PublishModelEvent(model, ModelAction.Updated, forcePublish);
         }
 
-        protected void ModelDeleted(TModel model)
+        protected void ModelDeleted(TModel model, bool forcePublish = false)
         {
-            PublishModelEvent(model, ModelAction.Deleted);
+            PublishModelEvent(model, ModelAction.Deleted, forcePublish);
         }
 
-        private void PublishModelEvent(TModel model, ModelAction action)
+        private void PublishModelEvent(TModel model, ModelAction action, bool forcePublish)
         {
-            if (PublishModelEvents)
+            if (PublishModelEvents || forcePublish)
             {
                 _eventAggregator.PublishEvent(new ModelEvent<TModel>(model, action));
             }

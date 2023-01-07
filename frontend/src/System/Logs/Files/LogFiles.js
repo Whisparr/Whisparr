@@ -12,19 +12,18 @@ import PageToolbarSeparator from 'Components/Page/Toolbar/PageToolbarSeparator';
 import Table from 'Components/Table/Table';
 import TableBody from 'Components/Table/TableBody';
 import { icons } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import LogsNavMenu from '../LogsNavMenu';
 import LogFilesTableRow from './LogFilesTableRow';
 
 const columns = [
   {
     name: 'filename',
-    label: translate('Filename'),
+    label: 'Filename',
     isVisible: true
   },
   {
     name: 'lastWriteTime',
-    label: translate('LastWriteTime'),
+    label: 'Last Write Time',
     isVisible: true
   },
   {
@@ -51,7 +50,7 @@ class LogFiles extends Component {
     } = this.props;
 
     return (
-      <PageContent title={translate('LogFiles')}>
+      <PageContent title="Log Files">
         <PageToolbar>
           <PageToolbarSection>
             <LogsNavMenu current={currentLogView} />
@@ -59,7 +58,7 @@ class LogFiles extends Component {
             <PageToolbarSeparator />
 
             <PageToolbarButton
-              label={translate('Refresh')}
+              label="Refresh"
               iconName={icons.REFRESH}
               spinningName={icons.REFRESH}
               isSpinning={isFetching}
@@ -67,7 +66,7 @@ class LogFiles extends Component {
             />
 
             <PageToolbarButton
-              label={translate('Delete')}
+              label="Clear"
               iconName={icons.CLEAR}
               isSpinning={deleteFilesExecuting}
               onPress={onDeleteFilesPress}
@@ -83,7 +82,7 @@ class LogFiles extends Component {
             {
               currentLogView === 'Log Files' &&
                 <div>
-                  {translate('TheLogLevelDefault')} <Link to="/settings/general">{translate('GeneralSettings')}</Link>
+                  The log level defaults to 'Info' and can be changed in <Link to="/settings/general">General Settings</Link>
                 </div>
             }
           </Alert>
@@ -118,9 +117,7 @@ class LogFiles extends Component {
 
           {
             !isFetching && !items.length &&
-              <div>
-                {translate('NoLogFiles')}
-              </div>
+              <div>No log files</div>
           }
         </PageContentBody>
       </PageContent>

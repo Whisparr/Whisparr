@@ -1,7 +1,6 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using FluentValidation.Results;
 using NzbDrone.Common.Extensions;
-using NzbDrone.Core.Movies;
 
 namespace NzbDrone.Core.Notifications.Prowl
 {
@@ -19,27 +18,22 @@ namespace NzbDrone.Core.Notifications.Prowl
 
         public override void OnGrab(GrabMessage grabMessage)
         {
-            _prowlProxy.SendNotification(MOVIE_GRABBED_TITLE, grabMessage.Message, Settings);
+            _prowlProxy.SendNotification(EPISODE_GRABBED_TITLE, grabMessage.Message, Settings);
         }
 
         public override void OnDownload(DownloadMessage message)
         {
-            _prowlProxy.SendNotification(MOVIE_DOWNLOADED_TITLE, message.Message, Settings);
+            _prowlProxy.SendNotification(EPISODE_DOWNLOADED_TITLE, message.Message, Settings);
         }
 
-        public override void OnMovieAdded(Media movie)
+        public override void OnEpisodeFileDelete(EpisodeDeleteMessage deleteMessage)
         {
-            _prowlProxy.SendNotification(MOVIE_ADDED_TITLE, $"{movie.Title} added to library", Settings);
+            _prowlProxy.SendNotification(EPISODE_DELETED_TITLE, deleteMessage.Message, Settings);
         }
 
-        public override void OnMovieFileDelete(MovieFileDeleteMessage deleteMessage)
+        public override void OnSeriesDelete(SeriesDeleteMessage deleteMessage)
         {
-            _prowlProxy.SendNotification(MOVIE_FILE_DELETED_TITLE, deleteMessage.Message, Settings);
-        }
-
-        public override void OnMovieDelete(MovieDeleteMessage deleteMessage)
-        {
-            _prowlProxy.SendNotification(MOVIE_DELETED_TITLE, deleteMessage.Message, Settings);
+            _prowlProxy.SendNotification(SERIES_DELETED_TITLE, deleteMessage.Message, Settings);
         }
 
         public override void OnHealthIssue(HealthCheck.HealthCheck message)

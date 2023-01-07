@@ -1,11 +1,10 @@
-using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using FluentValidation;
+using FluentValidation.Results;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Annotations;
 using NzbDrone.Core.Indexers.Newznab;
-using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.Validation;
 
 namespace NzbDrone.Core.Indexers.Torznab
@@ -33,9 +32,9 @@ namespace NzbDrone.Core.Indexers.Torznab
         {
             RuleFor(c => c).Custom((c, context) =>
             {
-                if (c.Categories.Empty())
+                if (c.Categories.Empty() && c.AnimeCategories.Empty())
                 {
-                    context.AddFailure("'Categories' must be provided");
+                    context.AddFailure("Either 'Categories' or 'Anime Categories' must be provided");
                 }
             });
 
@@ -56,17 +55,13 @@ namespace NzbDrone.Core.Indexers.Torznab
         public TorznabSettings()
         {
             MinimumSeeders = IndexerDefaults.MINIMUM_SEEDERS;
-            RequiredFlags = new List<int>();
         }
 
-        [FieldDefinition(8, Type = FieldType.Number, Label = "Minimum Seeders", HelpText = "Minimum number of seeders required.", Advanced = true)]
+        [FieldDefinition(7, Type = FieldType.Number, Label = "Minimum Seeders", HelpText = "Minimum number of seeders required.", Advanced = true)]
         public int MinimumSeeders { get; set; }
 
-        [FieldDefinition(9)]
+        [FieldDefinition(8)]
         public SeedCriteriaSettings SeedCriteria { get; set; } = new SeedCriteriaSettings();
-
-        [FieldDefinition(10, Type = FieldType.TagSelect, SelectOptions = typeof(IndexerFlags), Label = "Required Flags", HelpText = "What indexer flags are required?", HelpLink = "https://wiki.servarr.com/whisparr/settings#indexer-flags", Advanced = true)]
-        public IEnumerable<int> RequiredFlags { get; set; }
 
         public override NzbDroneValidationResult Validate()
         {

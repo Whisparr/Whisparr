@@ -1,38 +1,40 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NLog;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Extras.Files;
-using NzbDrone.Core.Movies;
+using NzbDrone.Core.MediaFiles.EpisodeImport.Aggregation;
 using NzbDrone.Core.Parser;
+using NzbDrone.Core.Parser.Model;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Extras.Subtitles
 {
     public class ExistingSubtitleImporter : ImportExistingExtraFilesBase<SubtitleFile>
     {
         private readonly IExtraFileService<SubtitleFile> _subtitleFileService;
-        private readonly IParsingService _parsingService;
+        private readonly IAggregationService _aggregationService;
         private readonly Logger _logger;
 
         public ExistingSubtitleImporter(IExtraFileService<SubtitleFile> subtitleFileService,
-                                        IParsingService parsingService,
+                                        IAggregationService aggregationService,
                                         Logger logger)
             : base(subtitleFileService)
         {
             _subtitleFileService = subtitleFileService;
-            _parsingService = parsingService;
+            _aggregationService = aggregationService;
             _logger = logger;
         }
 
         public override int Order => 1;
 
-        public override IEnumerable<ExtraFile> ProcessFiles(Media movie, List<string> filesOnDisk, List<string> importedFiles)
+        public override IEnumerable<ExtraFile> ProcessFiles(Series series, List<string> filesOnDisk, List<string> importedFiles)
         {
-            _logger.Debug("Looking for existing subtitle files in {0}", movie.Path);
+            _logger.Debug("Looking for existing subtitle files in {0}", series.Path);
 
             var subtitleFiles = new List<SubtitleFile>();
-            var filterResult = FilterAndClean(movie, filesOnDisk, importedFiles);
+            var filterResult = FilterAndClean(series, filesOnDisk, importedFiles);
 
             foreach (var possibleSubtitleFile in filterResult.FilesOnDisk)
             {
@@ -40,22 +42,44 @@ namespace NzbDrone.Core.Extras.Subtitles
 
                 if (SubtitleFileExtensions.Extensions.Contains(extension))
                 {
-                    var minimalInfo = _parsingService.ParseMinimalPathMovieInfo(possibleSubtitleFile);
-
-                    if (minimalInfo == null)
+                    var localEpisode = new LocalEpisode
                     {
-                        _logger.Debug("Unable to parse subtitle file: {0}", possibleSubtitleFile);
+                        FileEpisodeInfo = Parser.Parser.ParsePath(possibleSubtitleFile),
+                        Series = series,
+                        Path = possibleSubtitleFile
+                    };
+
+                    try
+                    {
+                        _aggregationService.Augment(localEpisode, null);
+                    }
+                    catch (AugmentingFailedException)
+                    {
+                        _logger.Debug("Unable to parse extra file: {0}", possibleSubtitleFile);
+                        continue;
+                    }
+
+                    if (localEpisode.Episodes.Empty())
+                    {
+                        _logger.Debug("Cannot find related episodes for: {0}", possibleSubtitleFile);
+                        continue;
+                    }
+
+                    if (localEpisode.Episodes.DistinctBy(e => e.EpisodeFileId).Count() > 1)
+                    {
+                        _logger.Debug("Subtitle file: {0} does not match existing files.", possibleSubtitleFile);
                         continue;
                     }
 
                     var subtitleFile = new SubtitleFile
-                    {
-                        MovieId = movie.Id,
-                        MovieFileId = movie.MovieFileId,
-                        RelativePath = movie.Path.GetRelativePath(possibleSubtitleFile),
-                        Language = LanguageParser.ParseSubtitleLanguage(possibleSubtitleFile),
-                        Extension = extension
-                    };
+                                       {
+                                           SeriesId = series.Id,
+                                           SeasonNumber = localEpisode.SeasonNumber,
+                                           EpisodeFileId = localEpisode.Episodes.First().EpisodeFileId,
+                                           RelativePath = series.Path.GetRelativePath(possibleSubtitleFile),
+                                           Language = LanguageParser.ParseSubtitleLanguage(possibleSubtitleFile),
+                                           Extension = extension
+                                       };
 
                     subtitleFiles.Add(subtitleFile);
                 }
@@ -66,6 +90,7 @@ namespace NzbDrone.Core.Extras.Subtitles
 
             // Return files that were just imported along with files that were
             // previously imported so previously imported files aren't imported twice
+
             return subtitleFiles.Concat(filterResult.PreviouslyImported);
         }
     }

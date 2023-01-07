@@ -17,6 +17,7 @@ namespace Whisparr.Api.V3.Logs
         }
 
         [HttpGet]
+        [Produces("application/json")]
         public PagingResource<LogResource> GetLogs()
         {
             var pagingResource = Request.ReadPagingResourceFromRequest<LogResource>();

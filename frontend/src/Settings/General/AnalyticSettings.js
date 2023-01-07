@@ -5,7 +5,6 @@ import FormGroup from 'Components/Form/FormGroup';
 import FormInputGroup from 'Components/Form/FormInputGroup';
 import FormLabel from 'Components/Form/FormLabel';
 import { inputTypes, sizes } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 
 function AnalyticSettings(props) {
   const {
@@ -18,15 +17,15 @@ function AnalyticSettings(props) {
   } = settings;
 
   return (
-    <FieldSet legend={translate('Analytics')}>
+    <FieldSet legend="Analytics">
       <FormGroup size={sizes.MEDIUM}>
-        <FormLabel>{translate('SendAnonymousUsageData')}</FormLabel>
+        <FormLabel>Send Anonymous Usage Data</FormLabel>
 
         <FormInputGroup
           type={inputTypes.CHECK}
           name="analyticsEnabled"
-          helpText={translate('AnalyticsEnabledHelpText')}
-          helpTextWarning={translate('RestartRequiredHelpTextWarning')}
+          helpText="Send anonymous usage and error information to Whisparr's servers. This includes information on your browser, which Whisparr WebUI pages you use, error reporting as well as OS and runtime version. We will use this information to prioritize features and bug fixes."
+          helpTextWarning="Requires restart to take effect"
           onChange={onInputChange}
           {...analyticsEnabled}
         />

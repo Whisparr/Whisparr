@@ -7,6 +7,7 @@ using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Exceptions;
 using NzbDrone.Core.Notifications.Plex.PlexTv;
 using NzbDrone.Core.Parser;
+using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.Validation;
 
 namespace NzbDrone.Core.ImportLists.Plex
@@ -14,7 +15,9 @@ namespace NzbDrone.Core.ImportLists.Plex
     public class PlexImport : HttpImportListBase<PlexListSettings>
     {
         public readonly IPlexTvService _plexTvService;
+
         public override ImportListType ListType => ImportListType.Plex;
+        public override TimeSpan MinRefreshInterval => TimeSpan.FromHours(6);
 
         public PlexImport(IPlexTvService plexTvService,
                                   IHttpClient httpClient,
@@ -28,15 +31,14 @@ namespace NzbDrone.Core.ImportLists.Plex
         }
 
         public override string Name => "Plex Watchlist";
-        public override bool Enabled => true;
-        public override bool EnableAuto => false;
 
-        public override ImportListFetchResult Fetch()
+        public override IList<ImportListItemInfo> Fetch()
         {
             Settings.Validate().Filter("AccessToken").ThrowOnError();
 
-            var generator = GetRequestGenerator();
-            return FetchMovies(generator.GetMovies());
+            // var generator = GetRequestGenerator();
+
+            return FetchItems(g => g.GetListItems());
         }
 
         public override IParseImportListResponse GetParser()

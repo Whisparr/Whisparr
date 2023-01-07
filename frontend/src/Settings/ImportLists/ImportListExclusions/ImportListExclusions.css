@@ -5,15 +5,14 @@
 }
 
 .title {
-  flex: 0 0 600px;
+  flex: 0 1 600px;
 }
 
-.tmdbId,
-.movieYear {
+.tvdbId {
   flex: 0 0 70px;
 }
 
-.addImportExclusion {
+.addImportListExclusion {
   display: flex;
   justify-content: flex-end;
   padding-right: 10px;

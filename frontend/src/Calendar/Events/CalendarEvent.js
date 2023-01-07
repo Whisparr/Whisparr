@@ -2,129 +2,216 @@ import classNames from 'classnames';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import getStatusStyle from 'Calendar/getStatusStyle';
 import Icon from 'Components/Icon';
 import Link from 'Components/Link/Link';
+import EpisodeDetailsModal from 'Episode/EpisodeDetailsModal';
+import episodeEntities from 'Episode/episodeEntities';
 import { icons, kinds } from 'Helpers/Props';
-import getStatusStyle from 'Utilities/Movie/getStatusStyle';
-import translate from 'Utilities/String/translate';
+import formatTime from 'Utilities/Date/formatTime';
+import padNumber from 'Utilities/Number/padNumber';
 import CalendarEventQueueDetails from './CalendarEventQueueDetails';
 import styles from './CalendarEvent.css';
 
 class CalendarEvent extends Component {
 
   //
+  // Lifecycle
+
+  constructor(props, context) {
+    super(props, context);
+
+    this.state = {
+      isDetailsModalOpen: false
+    };
+  }
+
+  //
+  // Listeners
+
+  onPress = () => {
+    this.setState({ isDetailsModalOpen: true }, () => {
+      this.props.onEventModalOpenToggle(true);
+    });
+  };
+
+  onDetailsModalClose = () => {
+    this.setState({ isDetailsModalOpen: false }, () => {
+      this.props.onEventModalOpenToggle(false);
+    });
+  };
+
+  //
   // Render
 
   render() {
     const {
-      movieFile,
-      isAvailable,
-      inCinemas,
-      physicalRelease,
-      digitalRelease,
+      id,
+      series,
+      episodeFile,
       title,
-      titleSlug,
-      genres,
+      seasonNumber,
+      episodeNumber,
+      airDateUtc,
       monitored,
-      certification,
+      unverifiedSceneNumbering,
       hasFile,
       grabbed,
       queueItem,
-      showMovieInformation,
+      showEpisodeInformation,
+      showFinaleIcon,
+      showSpecialIcon,
       showCutoffUnmetIcon,
-      colorImpairedMode,
-      date
+      fullColorEvents,
+      timeFormat,
+      colorImpairedMode
     } = this.props;
 
+    if (!series) {
+      return null;
+    }
+
+    const startTime = moment(airDateUtc);
+    const endTime = moment(airDateUtc).add(series.runtime, 'minutes');
     const isDownloading = !!(queueItem || grabbed);
-    const isMonitored = monitored;
-    const statusStyle = getStatusStyle(null, isMonitored, hasFile, isAvailable, 'style', isDownloading);
-    const joinedGenres = genres.slice(0, 2).join(', ');
-    const link = `/movie/${titleSlug}`;
-    const eventType = [];
-
-    if (inCinemas && moment(date).isSame(moment(inCinemas), 'day')) {
-      eventType.push('Cinemas');
-    }
-
-    if (physicalRelease && moment(date).isSame(moment(physicalRelease), 'day')) {
-      eventType.push('Physical');
-    }
-
-    if (digitalRelease && moment(date).isSame(moment(digitalRelease), 'day')) {
-      eventType.push('Digital');
-    }
+    const isMonitored = series.monitored && monitored;
+    const statusStyle = getStatusStyle(hasFile, isDownloading, startTime, endTime, isMonitored);
+    const season = series.seasons.find((s) => s.seasonNumber === seasonNumber);
+    const seasonStatistics = season?.statistics || {};
 
     return (
-      <div>
+      <div
+        className={classNames(
+          styles.event,
+          styles[statusStyle],
+          colorImpairedMode && 'colorImpaired',
+          fullColorEvents && 'fullColor'
+        )}
+      >
         <Link
-          className={classNames(
-            styles.event,
-            styles.link,
-            styles[statusStyle],
-            colorImpairedMode && 'colorImpaired'
-          )}
-          // component="div"
-          to={link}
-        >
+          className={styles.underlay}
+          onPress={this.onPress}
+        />
+
+        <div className={styles.overlay} >
           <div className={styles.info}>
-            <div className={styles.movieTitle}>
-              {title}
+            <div className={styles.seriesTitle}>
+              {series.title}
             </div>
 
-            {
-              !!queueItem &&
-                <span className={styles.statusIcon}>
-                  <CalendarEventQueueDetails
-                    {...queueItem}
-                  />
-                </span>
-            }
+            <div className={styles.statusContainer}>
+              {
+                unverifiedSceneNumbering ?
+                  <Icon
+                    className={styles.statusIcon}
+                    name={icons.WARNING}
+                    title="Scene number hasn't been verified yet"
+                  /> :
+                  null
+              }
 
-            {
-              !queueItem && grabbed &&
-                <Icon
-                  className={styles.statusIcon}
-                  name={icons.DOWNLOADING}
-                  title={translate('MovieIsDownloading')}
-                />
-            }
+              {
+                queueItem ?
+                  <span className={styles.statusIcon}>
+                    <CalendarEventQueueDetails
+                      {...queueItem}
+                    />
+                  </span> :
+                  null
+              }
 
-            {
-              showCutoffUnmetIcon &&
-              !!movieFile &&
-              movieFile.qualityCutoffNotMet &&
-                <Icon
-                  className={styles.statusIcon}
-                  name={icons.MOVIE_FILE}
-                  kind={kinds.WARNING}
-                  title={translate('QualityCutoffHasNotBeenMet')}
-                />
-            }
+              {
+                !queueItem && grabbed ?
+                  <Icon
+                    className={styles.statusIcon}
+                    name={icons.DOWNLOADING}
+                    title="Episode is downloading"
+                  /> :
+                  null
+              }
+
+              {
+                showCutoffUnmetIcon &&
+                !!episodeFile &&
+                episodeFile.qualityCutoffNotMet ?
+                  <Icon
+                    className={styles.statusIcon}
+                    name={icons.EPISODE_FILE}
+                    kind={fullColorEvents ? kinds.DEFAULT : kinds.WARNING}
+                    title="Quality cutoff has not been met"
+                  /> :
+                  null
+              }
+
+              {
+                episodeNumber === 1 && seasonNumber > 0 ?
+                  <Icon
+                    className={styles.statusIcon}
+                    name={icons.INFO}
+                    kind={kinds.INFO}
+                    darken={fullColorEvents}
+                    title={seasonNumber === 1 ? 'Series premiere' : 'Season premiere'}
+                  /> :
+                  null
+              }
+
+              {
+                showFinaleIcon &&
+                episodeNumber !== 1 &&
+                seasonNumber > 0 &&
+                episodeNumber === seasonStatistics.totalEpisodeCount ?
+                  <Icon
+                    className={styles.statusIcon}
+                    name={icons.INFO}
+                    kind={fullColorEvents ? kinds.DEFAULT : kinds.WARNING}
+                    title={series.status === 'ended' ? 'Series finale' : 'Season finale'}
+                  /> :
+                  null
+              }
+
+              {
+                showSpecialIcon &&
+                (episodeNumber === 0 || seasonNumber === 0) ?
+                  <Icon
+                    className={styles.statusIcon}
+                    name={icons.INFO}
+                    kind={kinds.PINK}
+                    darken={fullColorEvents}
+                    title="Special"
+                  /> :
+                  null
+              }
+            </div>
           </div>
 
           {
-            showMovieInformation &&
-              <div className={styles.movieInfo}>
-                <div className={styles.genres}>
-                  {joinedGenres}
+            showEpisodeInformation ?
+              <div className={styles.episodeInfo}>
+                <div className={styles.episodeTitle}>
+                  {title}
                 </div>
-              </div>
-          }
 
-          {
-            showMovieInformation &&
-              <div className={styles.movieInfo}>
-                <div className={styles.genres}>
-                  {eventType.join(', ')}
-                </div>
                 <div>
-                  {certification}
+                  {seasonNumber}x{padNumber(episodeNumber, 2)}
                 </div>
-              </div>
+              </div> :
+              null
           }
-        </Link>
 
+          <div className={styles.airTime}>
+            {formatTime(airDateUtc, timeFormat)} - {formatTime(endTime.toISOString(), timeFormat, { includeMinuteZero: true })}
+          </div>
+        </div>
+
+        <EpisodeDetailsModal
+          isOpen={this.state.isDetailsModalOpen}
+          episodeId={id}
+          episodeEntity={episodeEntities.CALENDAR}
+          seriesId={series.id}
+          episodeTitle={title}
+          showOpenSeriesButton={true}
+          onModalClose={this.onDetailsModalClose}
+        />
       </div>
     );
   }
@@ -132,28 +219,26 @@ class CalendarEvent extends Component {
 
 CalendarEvent.propTypes = {
   id: PropTypes.number.isRequired,
-  genres: PropTypes.arrayOf(PropTypes.string).isRequired,
-  movieFile: PropTypes.object,
+  series: PropTypes.object.isRequired,
+  episodeFile: PropTypes.object,
   title: PropTypes.string.isRequired,
-  titleSlug: PropTypes.string.isRequired,
-  isAvailable: PropTypes.bool.isRequired,
-  inCinemas: PropTypes.string,
-  physicalRelease: PropTypes.string,
-  digitalRelease: PropTypes.string,
+  seasonNumber: PropTypes.number.isRequired,
+  episodeNumber: PropTypes.number.isRequired,
+  absoluteEpisodeNumber: PropTypes.number,
+  airDateUtc: PropTypes.string.isRequired,
   monitored: PropTypes.bool.isRequired,
-  certification: PropTypes.string,
+  unverifiedSceneNumbering: PropTypes.bool,
   hasFile: PropTypes.bool.isRequired,
   grabbed: PropTypes.bool,
   queueItem: PropTypes.object,
-  showMovieInformation: PropTypes.bool.isRequired,
+  showEpisodeInformation: PropTypes.bool.isRequired,
+  showFinaleIcon: PropTypes.bool.isRequired,
+  showSpecialIcon: PropTypes.bool.isRequired,
   showCutoffUnmetIcon: PropTypes.bool.isRequired,
+  fullColorEvents: PropTypes.bool.isRequired,
   timeFormat: PropTypes.string.isRequired,
   colorImpairedMode: PropTypes.bool.isRequired,
-  date: PropTypes.string.isRequired
-};
-
-CalendarEvent.defaultProps = {
-  genres: []
+  onEventModalOpenToggle: PropTypes.func.isRequired
 };
 
 export default CalendarEvent;

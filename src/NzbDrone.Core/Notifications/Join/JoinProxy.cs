@@ -17,6 +17,7 @@ namespace NzbDrone.Core.Notifications.Join
     public class JoinProxy : IJoinProxy
     {
         private const string URL = "https://joinjoaomgcd.appspot.com/_ah/api/messaging/v1/sendPush?";
+
         private readonly IHttpClient _httpClient;
         private readonly Logger _logger;
 
@@ -37,7 +38,7 @@ namespace NzbDrone.Core.Notifications.Join
             catch (JoinException ex)
             {
                 _logger.Error(ex, "Unable to send Join message.");
-                throw ex;
+                throw;
             }
         }
 
@@ -93,8 +94,8 @@ namespace NzbDrone.Core.Notifications.Join
             var request = requestBuilder.AddQueryParam("apikey", settings.ApiKey)
                           .AddQueryParam("title", title)
                           .AddQueryParam("text", message)
-                          .AddQueryParam("icon", "https://cdn.rawgit.com/Whisparr/Whisparr/develop/Logo/256.png") // Use the Whisparr logo.
-                          .AddQueryParam("smallicon", "https://cdn.rawgit.com/Whisparr/Whisparr/develop/Logo/96-Outline-White.png") // 96x96px with outline at 88x88px on a transparent background.
+                          .AddQueryParam("icon", "https://cdn.rawgit.com/Whisparr/Whisparr/main/Logo/256.png") // Use the Whisparr logo.
+                          .AddQueryParam("smallicon", "https://cdn.rawgit.com/Whisparr/Whisparr/main/Logo/96-Outline-White.png") // 96x96px with outline at 88x88px on a transparent background.
                           .AddQueryParam("priority", settings.Priority)
                           .Build();
 

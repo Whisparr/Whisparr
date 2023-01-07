@@ -7,7 +7,6 @@ import Measure from 'Components/Measure';
 import PageSectionContent from 'Components/Page/PageSectionContent';
 import Scroller from 'Components/Scroller/Scroller';
 import { icons, scrollDirections } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import DelayProfile from './DelayProfile';
 import DelayProfileDragPreview from './DelayProfileDragPreview';
 import DelayProfileDragSource from './DelayProfileDragSource';
@@ -68,9 +67,9 @@ class DelayProfiles extends Component {
 
     return (
       <Measure onMeasure={this.onMeasure}>
-        <FieldSet legend={translate('DelayProfiles')}>
+        <FieldSet legend="Delay Profiles">
           <PageSectionContent
-            errorMessage={translate('UnableToLoadDelayProfiles')}
+            errorMessage="Unable to load Delay Profiles"
             {...otherProps}
           >
             <Scroller
@@ -82,18 +81,10 @@ class DelayProfiles extends Component {
             >
               <div>
                 <div className={styles.delayProfilesHeader}>
-                  <div className={styles.column}>
-                    {translate('Protocol')}
-                  </div>
-                  <div className={styles.column}>
-                    {translate('UsenetDelay')}
-                  </div>
-                  <div className={styles.column}>
-                    {translate('TorrentDelay')}
-                  </div>
-                  <div className={styles.tags}>
-                    {translate('Tags')}
-                  </div>
+                  <div className={styles.column}>Preferred Protocol</div>
+                  <div className={styles.column}>Usenet Delay</div>
+                  <div className={styles.column}>Torrent Delay</div>
+                  <div className={styles.tags}>Tags</div>
                 </div>
 
                 <div className={styles.delayProfiles}>

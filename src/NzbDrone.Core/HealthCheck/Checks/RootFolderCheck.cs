@@ -1,34 +1,34 @@
+using System.Diagnostics;
 using System.Linq;
+using NLog;
 using NzbDrone.Common.Disk;
-using NzbDrone.Core.Localization;
 using NzbDrone.Core.MediaFiles.Events;
-using NzbDrone.Core.Movies;
-using NzbDrone.Core.Movies.Events;
 using NzbDrone.Core.RootFolders;
+using NzbDrone.Core.Tv;
+using NzbDrone.Core.Tv.Events;
 
 namespace NzbDrone.Core.HealthCheck.Checks
 {
-    [CheckOn(typeof(MoviesDeletedEvent))]
-    [CheckOn(typeof(MovieMovedEvent))]
-    [CheckOn(typeof(MoviesImportedEvent), CheckOnCondition.FailedOnly)]
-    [CheckOn(typeof(MovieImportFailedEvent), CheckOnCondition.SuccessfulOnly)]
+    [CheckOn(typeof(SeriesDeletedEvent))]
+    [CheckOn(typeof(SeriesMovedEvent))]
+    [CheckOn(typeof(EpisodeImportedEvent), CheckOnCondition.FailedOnly)]
+    [CheckOn(typeof(EpisodeImportFailedEvent), CheckOnCondition.SuccessfulOnly)]
     public class RootFolderCheck : HealthCheckBase
     {
-        private readonly IMovieService _movieService;
+        private readonly ISeriesService _seriesService;
         private readonly IDiskProvider _diskProvider;
         private readonly IRootFolderService _rootFolderService;
 
-        public RootFolderCheck(IMovieService movieService, IDiskProvider diskProvider, IRootFolderService rootFolderService, ILocalizationService localizationService)
-            : base(localizationService)
+        public RootFolderCheck(ISeriesService seriesService, IDiskProvider diskProvider, IRootFolderService rootFolderService)
         {
-            _movieService = movieService;
+            _seriesService = seriesService;
             _diskProvider = diskProvider;
             _rootFolderService = rootFolderService;
         }
 
         public override HealthCheck Check()
         {
-            var rootFolders = _movieService.AllMoviePaths()
+            var rootFolders = _seriesService.GetAllSeriesPaths()
                                                            .Select(s => _rootFolderService.GetBestRootFolderPath(s.Value))
                                                            .Distinct();
 
@@ -39,10 +39,10 @@ namespace NzbDrone.Core.HealthCheck.Checks
             {
                 if (missingRootFolders.Count == 1)
                 {
-                    return new HealthCheck(GetType(), HealthCheckResult.Error, string.Format(_localizationService.GetLocalizedString("RootFolderCheckSingleMessage"), missingRootFolders.First()), "#missing-root-folder");
+                    return new HealthCheck(GetType(), HealthCheckResult.Error, "Missing root folder: " + missingRootFolders.First(), "#missing-root-folder");
                 }
 
-                var message = string.Format(_localizationService.GetLocalizedString("RootFolderCheckMultipleMessage"), string.Join(" | ", missingRootFolders));
+                var message = string.Format("Multiple root folders are missing: {0}", string.Join(" | ", missingRootFolders));
                 return new HealthCheck(GetType(), HealthCheckResult.Error, message, "#missing-root-folder");
             }
 

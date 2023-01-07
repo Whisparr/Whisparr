@@ -10,7 +10,6 @@ import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { inputTypes, kinds, sizes } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import styles from './RemoveQueueItemsModal.css';
 
 class RemoveQueueItemsModal extends Component {
@@ -83,25 +82,25 @@ class RemoveQueueItemsModal extends Component {
           onModalClose={this.onModalClose}
         >
           <ModalHeader>
-            {selectedCount > 1 ? translate('RemoveSelectedItems') : translate('RemoveSelectedItem')}
+            Remove Selected Item{selectedCount > 1 ? 's' : ''}
           </ModalHeader>
 
           <ModalBody>
             <div className={styles.message}>
-              {selectedCount > 1 ? translate('AreYouSureYouWantToRemoveSelectedItemsFromQueue', selectedCount) : translate('AreYouSureYouWantToRemoveSelectedItemFromQueue')}
+              Are you sure you want to remove {selectedCount} item{selectedCount > 1 ? 's' : ''} from the queue?
             </div>
 
             {
               allPending ?
                 null :
                 <FormGroup>
-                  <FormLabel>{translate('RemoveFromDownloadClient')}</FormLabel>
+                  <FormLabel>Remove From Download Client</FormLabel>
 
                   <FormInputGroup
                     type={inputTypes.CHECK}
                     name="remove"
                     value={remove}
-                    helpTextWarning={translate('RemoveHelpTextWarning')}
+                    helpTextWarning="Removing will remove the download and the file(s) from the download client."
                     isDisabled={!canIgnore}
                     onChange={this.onRemoveChange}
                   />
@@ -110,14 +109,14 @@ class RemoveQueueItemsModal extends Component {
 
             <FormGroup>
               <FormLabel>
-                {selectedCount > 1 ? translate('BlocklistReleases') : translate('BlocklistRelease')}
+                Add Release{selectedCount > 1 ? 's' : ''} To Blocklist
               </FormLabel>
 
               <FormInputGroup
                 type={inputTypes.CHECK}
                 name="blocklist"
                 value={blocklist}
-                helpText={translate('BlocklistHelpText')}
+                helpText="Prevents Whisparr from automatically grabbing this release again"
                 onChange={this.onBlocklistChange}
               />
             </FormGroup>
@@ -126,7 +125,7 @@ class RemoveQueueItemsModal extends Component {
 
           <ModalFooter>
             <Button onPress={this.onModalClose}>
-              {translate('Close')}
+              Close
             </Button>
 
             <Button

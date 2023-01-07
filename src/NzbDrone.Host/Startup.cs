@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -19,11 +18,13 @@ using NzbDrone.Common.Serializer;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Datastore;
 using NzbDrone.Core.Instrumentation;
+using NzbDrone.Core.Lifecycle;
+using NzbDrone.Core.Messaging.Events;
+using NzbDrone.Host;
+using NzbDrone.Host.AccessControl;
 using NzbDrone.Http.Authentication;
 using NzbDrone.SignalR;
 using Whisparr.Api.V3.System;
-using Whisparr.Host;
-using Whisparr.Host.AccessControl;
 using Whisparr.Http;
 using Whisparr.Http.Authentication;
 using Whisparr.Http.ErrorManagement;
@@ -63,7 +64,7 @@ namespace NzbDrone.Host
 
             services.AddRouting(options => options.LowercaseUrls = true);
 
-            services.AddResponseCompression(options => options.EnableForHttps = true);
+            services.AddResponseCompression();
 
             services.AddCors(options =>
             {
@@ -171,6 +172,8 @@ namespace NzbDrone.Host
                 .PersistKeysToFileSystem(new DirectoryInfo(Configuration["dataProtectionFolder"]));
 
             services.AddSingleton<IAuthorizationPolicyProvider, UiAuthorizationPolicyProvider>();
+            services.AddSingleton<IAuthorizationHandler, UiAuthorizationHandler>();
+
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("SignalR", policy =>
@@ -186,21 +189,6 @@ namespace NzbDrone.Host
             });
 
             services.AddAppAuthentication();
-
-            services.PostConfigure<ApiBehaviorOptions>(options =>
-            {
-                var builtInFactory = options.InvalidModelStateResponseFactory;
-
-                options.InvalidModelStateResponseFactory = context =>
-                {
-                    var loggerFactory = context.HttpContext.RequestServices.GetRequiredService<ILoggerFactory>();
-                    var logger = loggerFactory.CreateLogger(context.ActionDescriptor.DisplayName);
-
-                    logger.LogError(STJson.ToJson(context.ModelState));
-
-                    return builtInFactory(context);
-                };
-            });
         }
 
         public void Configure(IApplicationBuilder app,
@@ -216,6 +204,7 @@ namespace NzbDrone.Host
                               IConfigFileProvider configFileProvider,
                               IRuntimeInfo runtimeInfo,
                               IFirewallAdapter firewallAdapter,
+                              IEventAggregator eventAggregator,
                               WhisparrErrorPipeline errorHandler)
         {
             initializeLogger.Initialize();
@@ -236,6 +225,8 @@ namespace NzbDrone.Host
             {
                 Console.CancelKeyPress += (sender, eventArgs) => NLog.LogManager.Configuration = null;
             }
+
+            eventAggregator.PublishEvent(new ApplicationStartingEvent());
 
             if (OsInfo.IsWindows && runtimeInfo.IsAdmin)
             {

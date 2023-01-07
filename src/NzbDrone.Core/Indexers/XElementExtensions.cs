@@ -25,7 +25,9 @@ namespace NzbDrone.Core.Indexers
         {
             var res = new XElement(
                root.Name.LocalName,
-               root.HasElements ? root.Elements().Select(StripNameSpace) : (object)root.Value);
+               root.HasElements ?
+                   root.Elements().Select(StripNameSpace) :
+                   (object)root.Value);
 
             res.ReplaceAttributes(
                 root.Attributes().Where(attr => (!attr.IsNamespaceDeclaration)));

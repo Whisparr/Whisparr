@@ -1,12 +1,10 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using FluentValidation.Results;
 using NLog;
 using NzbDrone.Common.Disk;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Indexers;
-using NzbDrone.Core.Organizer;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.RemotePathMappings;
 using NzbDrone.Core.ThingiProvider;
@@ -18,7 +16,6 @@ namespace NzbDrone.Core.Download
         where TSettings : IProviderConfig, new()
     {
         protected readonly IConfigService _configService;
-        protected readonly INamingConfigService _namingConfigService;
         protected readonly IDiskProvider _diskProvider;
         protected readonly IRemotePathMappingService _remotePathMappingService;
         protected readonly Logger _logger;
@@ -41,13 +38,11 @@ namespace NzbDrone.Core.Download
         protected TSettings Settings => (TSettings)Definition.Settings;
 
         protected DownloadClientBase(IConfigService configService,
-            INamingConfigService namingConfigService,
             IDiskProvider diskProvider,
             IRemotePathMappingService remotePathMappingService,
             Logger logger)
         {
             _configService = configService;
-            _namingConfigService = namingConfigService;
             _diskProvider = diskProvider;
             _remotePathMappingService = remotePathMappingService;
             _logger = logger;
@@ -63,7 +58,7 @@ namespace NzbDrone.Core.Download
             get;
         }
 
-        public abstract string Download(RemoteMovie remoteMovie);
+        public abstract string Download(RemoteEpisode remoteEpisode);
         public abstract IEnumerable<DownloadClientItem> GetItems();
 
         public virtual DownloadClientItem GetImportItem(DownloadClientItem item, DownloadClientItem previousImportAttempt)
@@ -155,7 +150,7 @@ namespace NzbDrone.Core.Download
 
         public virtual void MarkItemAsImported(DownloadClientItem downloadClientItem)
         {
-            throw new NotSupportedException(Name + " does not support marking items as imported");
+            throw new NotSupportedException(this.Name + " does not support marking items as imported");
         }
     }
 }

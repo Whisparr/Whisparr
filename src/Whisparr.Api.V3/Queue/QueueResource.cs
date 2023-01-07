@@ -7,15 +7,18 @@ using NzbDrone.Core.Indexers;
 using NzbDrone.Core.Languages;
 using NzbDrone.Core.Qualities;
 using Whisparr.Api.V3.CustomFormats;
-using Whisparr.Api.V3.Movies;
+using Whisparr.Api.V3.Episodes;
+using Whisparr.Api.V3.Series;
 using Whisparr.Http.REST;
 
 namespace Whisparr.Api.V3.Queue
 {
     public class QueueResource : RestResource
     {
-        public int? MovieId { get; set; }
-        public MovieResource Movie { get; set; }
+        public int? SeriesId { get; set; }
+        public int? EpisodeId { get; set; }
+        public SeriesResource Series { get; set; }
+        public EpisodeResource Episode { get; set; }
         public List<Language> Languages { get; set; }
         public QualityModel Quality { get; set; }
         public List<CustomFormatResource> CustomFormats { get; set; }
@@ -38,7 +41,7 @@ namespace Whisparr.Api.V3.Queue
 
     public static class QueueResourceMapper
     {
-        public static QueueResource ToResource(this NzbDrone.Core.Queue.Queue model, bool includeMovie)
+        public static QueueResource ToResource(this NzbDrone.Core.Queue.Queue model, bool includeSeries, bool includeEpisode)
         {
             if (model == null)
             {
@@ -48,11 +51,13 @@ namespace Whisparr.Api.V3.Queue
             return new QueueResource
             {
                 Id = model.Id,
-                MovieId = model.Movie?.Id,
-                Movie = includeMovie && model.Movie != null ? model.Movie.ToResource(0) : null,
+                SeriesId = model.Series?.Id,
+                EpisodeId = model.Episode?.Id,
+                Series = includeSeries && model.Series != null ? model.Series.ToResource() : null,
+                Episode = includeEpisode && model.Episode != null ? model.Episode.ToResource() : null,
                 Languages = model.Languages,
                 Quality = model.Quality,
-                CustomFormats = model.RemoteMovie?.CustomFormats?.ToResource(),
+                CustomFormats = model.RemoteEpisode?.CustomFormats?.ToResource(false),
                 Size = model.Size,
                 Title = model.Title,
                 Sizeleft = model.Sizeleft,
@@ -71,9 +76,9 @@ namespace Whisparr.Api.V3.Queue
             };
         }
 
-        public static List<QueueResource> ToResource(this IEnumerable<NzbDrone.Core.Queue.Queue> models, bool includeMovie)
+        public static List<QueueResource> ToResource(this IEnumerable<NzbDrone.Core.Queue.Queue> models, bool includeSeries, bool includeEpisode)
         {
-            return models.Select((m) => ToResource(m, includeMovie)).ToList();
+            return models.Select((m) => ToResource(m, includeSeries, includeEpisode)).ToList();
         }
     }
 }

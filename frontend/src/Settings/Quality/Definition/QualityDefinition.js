@@ -8,7 +8,6 @@ import Popover from 'Components/Tooltip/Popover';
 import { kinds, tooltipPositions } from 'Helpers/Props';
 import formatBytes from 'Utilities/Number/formatBytes';
 import roundNumber from 'Utilities/Number/roundNumber';
-import translate from 'Utilities/String/translate';
 import QualityDefinitionLimits from './QualityDefinitionLimits';
 import styles from './QualityDefinition.css';
 
@@ -48,11 +47,48 @@ class QualityDefinition extends Component {
   constructor(props, context) {
     super(props, context);
 
+    this._forceUpdateTimeout = null;
+
     this.state = {
       sliderMinSize: getSliderValue(props.minSize, slider.min),
       sliderMaxSize: getSliderValue(props.maxSize, slider.max),
       sliderPreferredSize: getSliderValue(props.preferredSize, (slider.max - 3))
     };
+  }
+
+  componentDidMount() {
+    // A hack to deal with a bug in the slider component until a fix for it
+    // lands and an updated version is available.
+    // See: https://github.com/mpowaga/react-slider/issues/115
+
+    this._forceUpdateTimeout = setTimeout(() => this.forceUpdate(), 1);
+  }
+
+  componentWillUnmount() {
+    if (this._forceUpdateTimeout) {
+      clearTimeout(this._forceUpdateTimeout);
+    }
+  }
+
+  //
+  // Control
+
+  trackRenderer(props, state) {
+    return (
+      <div
+        {...props}
+        className={styles.track}
+      />
+    );
+  }
+
+  thumbRenderer(props, state) {
+    return (
+      <div
+        {...props}
+        className={styles.thumb}
+      />
+    );
   }
 
   //
@@ -153,10 +189,10 @@ class QualityDefinition extends Component {
     const minSixty = `${formatBytes(minBytes * 60)}/h`;
 
     const preferredBytes = preferredSize * 1024 * 1024;
-    const preferredSixty = preferredBytes ? `${formatBytes(preferredBytes * 60)}/h` : translate('Unlimited');
+    const preferredSixty = preferredBytes ? `${formatBytes(preferredBytes * 60)}/h` : 'Unlimited';
 
     const maxBytes = maxSize && maxSize * 1024 * 1024;
-    const maxSixty = maxBytes ? `${formatBytes(maxBytes * 60)}/h` : translate('Unlimited');
+    const maxSixty = maxBytes ? `${formatBytes(maxBytes * 60)}/h` : 'Unlimited';
 
     return (
       <div className={styles.qualityDefinition}>
@@ -174,17 +210,17 @@ class QualityDefinition extends Component {
 
         <div className={styles.sizeLimit}>
           <ReactSlider
+            className={styles.slider}
             min={slider.min}
             max={slider.max}
             step={slider.step}
-            minDistance={MIN_DISTANCE * 3}
+            minDistance={3}
             value={[sliderMinSize, sliderPreferredSize, sliderMaxSize]}
             withTracks={true}
             allowCross={false}
             snapDragDisabled={true}
-            className={styles.slider}
-            trackClassName={styles.bar}
-            thumbClassName={styles.handle}
+            renderThumb={this.thumbRenderer}
+            renderTrack={this.trackRenderer}
             onChange={this.onSliderChange}
             onAfterChange={this.onAfterSliderChange}
           />
@@ -195,11 +231,11 @@ class QualityDefinition extends Component {
                 anchor={
                   <Label kind={kinds.INFO}>{minSixty}</Label>
                 }
-                title={translate('MinimumLimits')}
+                title="Minimum Limits"
                 body={
                   <QualityDefinitionLimits
                     bytes={minBytes}
-                    message={translate('NoMinimumForAnyRuntime')}
+                    message="No minimum for any runtime"
                   />
                 }
                 position={tooltipPositions.BOTTOM}
@@ -211,11 +247,11 @@ class QualityDefinition extends Component {
                 anchor={
                   <Label kind={kinds.SUCCESS}>{preferredSixty}</Label>
                 }
-                title={translate('PreferredSize')}
+                title="Preferred Size"
                 body={
                   <QualityDefinitionLimits
                     bytes={preferredBytes}
-                    message={translate('NoLimitForAnyRuntime')}
+                    message="No limit for any runtime"
                   />
                 }
                 position={tooltipPositions.BOTTOM}
@@ -227,11 +263,11 @@ class QualityDefinition extends Component {
                 anchor={
                   <Label kind={kinds.WARNING}>{maxSixty}</Label>
                 }
-                title={translate('MaximumLimits')}
+                title="Maximum Limits"
                 body={
                   <QualityDefinitionLimits
                     bytes={maxBytes}
-                    message={translate('NoLimitForAnyRuntime')}
+                    message="No limit for any runtime"
                   />
                 }
                 position={tooltipPositions.BOTTOM}
@@ -244,14 +280,14 @@ class QualityDefinition extends Component {
           advancedSettings &&
             <div className={styles.megabytesPerMinute}>
               <div>
-                {translate('Min')}
+                Min
 
                 <NumberInput
                   className={styles.sizeInput}
                   name={`${id}.min`}
                   value={minSize || MIN}
                   min={MIN}
-                  max={preferredSize ? preferredSize - MIN_DISTANCE : MAX - MIN_DISTANCE}
+                  max={preferredSize ? preferredSize - 5 : MAX - 5}
                   step={0.1}
                   isFloat={true}
                   onChange={this.onMinSizeChange}
@@ -259,14 +295,14 @@ class QualityDefinition extends Component {
               </div>
 
               <div>
-                {translate('Preferred')}
+                Preferred
 
                 <NumberInput
                   className={styles.sizeInput}
                   name={`${id}.min`}
-                  value={preferredSize || MAX - MIN_DISTANCE}
+                  value={preferredSize || MAX - 5}
                   min={MIN}
-                  max={maxSize ? maxSize - MIN_DISTANCE : MAX - MIN_DISTANCE}
+                  max={maxSize ? maxSize - 5 : MAX - 5}
                   step={0.1}
                   isFloat={true}
                   onChange={this.onPreferredSizeChange}
@@ -274,7 +310,7 @@ class QualityDefinition extends Component {
               </div>
 
               <div>
-                {translate('Max')}
+                Max
 
                 <NumberInput
                   className={styles.sizeInput}

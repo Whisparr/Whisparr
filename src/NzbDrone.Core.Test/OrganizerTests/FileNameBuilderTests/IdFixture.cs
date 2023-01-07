@@ -1,26 +1,31 @@
+using System.Collections.Generic;
+using System.Linq;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
-using NzbDrone.Core.Movies;
+using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.Organizer;
+using NzbDrone.Core.Qualities;
 using NzbDrone.Core.Test.Framework;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 {
     [TestFixture]
     public class IdFixture : CoreTest<FileNameBuilder>
     {
-        private Media _movie;
+        private Series _series;
         private NamingConfig _namingConfig;
 
         [SetUp]
         public void Setup()
         {
-            _movie = Builder<Media>
+            _series = Builder<Series>
                       .CreateNew()
-                      .With(s => s.Title = "Movie Title")
-                      .With(s => s.ForiegnId = 123456)
+                      .With(s => s.Title = "Series Title")
+                      .With(s => s.ImdbId = "tt12345")
+                      .With(s => s.TvdbId = 12345)
                       .Build();
 
             _namingConfig = NamingConfig.Default;
@@ -30,12 +35,21 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         }
 
         [Test]
-        public void should_add_tmdb_id()
+        public void should_add_imdb_id()
         {
-            _namingConfig.MovieFolderFormat = "{Movie Title} ({TmdbId})";
+            _namingConfig.SeriesFolderFormat = "{Series Title} ({ImdbId})";
 
-            Subject.GetMovieFolder(_movie)
-                   .Should().Be($"Movie Title ({_movie.ForiegnId})");
+            Subject.GetSeriesFolder(_series)
+                   .Should().Be($"Series Title ({_series.ImdbId})");
+        }
+
+        [Test]
+        public void should_add_tvdb_id()
+        {
+            _namingConfig.SeriesFolderFormat = "{Series Title} ({TvdbId})";
+
+            Subject.GetSeriesFolder(_series)
+                   .Should().Be($"Series Title ({_series.TvdbId})");
         }
     }
 }

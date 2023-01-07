@@ -1,15 +1,15 @@
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import { removeBlocklistItem } from 'Store/Actions/blocklistActions';
-import createMovieSelector from 'Store/Selectors/createMovieSelector';
+import createSeriesSelector from 'Store/Selectors/createSeriesSelector';
 import BlocklistRow from './BlocklistRow';
 
 function createMapStateToProps() {
   return createSelector(
-    createMovieSelector(),
-    (movie) => {
+    createSeriesSelector(),
+    (series) => {
       return {
-        movie
+        series
       };
     }
   );

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -7,19 +7,21 @@ using NzbDrone.Common.Disk;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.MediaFiles;
-using NzbDrone.Core.Movies;
+using NzbDrone.Core.Parser.Model;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Extras.Files
 {
     public interface IManageExtraFiles
     {
         int Order { get; }
-        IEnumerable<ExtraFile> CreateAfterMediaCoverUpdate(Media movie);
-        IEnumerable<ExtraFile> CreateAfterMovieScan(Media movie, List<MediaFile> movieFiles);
-        IEnumerable<ExtraFile> CreateAfterMovieImport(Media movie, MediaFile movieFile);
-        IEnumerable<ExtraFile> CreateAfterMovieFolder(Media movie, string movieFolder);
-        IEnumerable<ExtraFile> MoveFilesAfterRename(Media movie, List<MediaFile> movieFiles);
-        ExtraFile Import(Media movie, MediaFile movieFile, string path, string extension, bool readOnly);
+        IEnumerable<ExtraFile> CreateAfterMediaCoverUpdate(Series series);
+        IEnumerable<ExtraFile> CreateAfterSeriesScan(Series series, List<EpisodeFile> episodeFiles);
+        IEnumerable<ExtraFile> CreateAfterEpisodeImport(Series series, EpisodeFile episodeFile);
+        IEnumerable<ExtraFile> CreateAfterEpisodeFolder(Series series, string seriesFolder, string seasonFolder);
+        IEnumerable<ExtraFile> MoveFilesAfterRename(Series series, List<EpisodeFile> episodeFiles);
+        bool CanImportFile(LocalEpisode localEpisode, EpisodeFile episodeFile, string path, string extension, bool readOnly);
+        IEnumerable<ExtraFile> ImportFiles(LocalEpisode localEpisode, EpisodeFile episodeFile, List<string> files, bool isReadOnly);
     }
 
     public abstract class ExtraFileManager<TExtraFile> : IManageExtraFiles
@@ -42,18 +44,18 @@ namespace NzbDrone.Core.Extras.Files
         }
 
         public abstract int Order { get; }
-        public abstract IEnumerable<ExtraFile> CreateAfterMediaCoverUpdate(Media movie);
-        public abstract IEnumerable<ExtraFile> CreateAfterMovieScan(Media movie, List<MediaFile> movieFiles);
-        public abstract IEnumerable<ExtraFile> CreateAfterMovieImport(Media movie, MediaFile movieFile);
-        public abstract IEnumerable<ExtraFile> CreateAfterMovieFolder(Media movie, string movieFolder);
-        public abstract IEnumerable<ExtraFile> MoveFilesAfterRename(Media movie, List<MediaFile> movieFiles);
-        public abstract ExtraFile Import(Media movie, MediaFile movieFile, string path, string extension, bool readOnly);
+        public abstract IEnumerable<ExtraFile> CreateAfterMediaCoverUpdate(Series series);
+        public abstract IEnumerable<ExtraFile> CreateAfterSeriesScan(Series series, List<EpisodeFile> episodeFiles);
+        public abstract IEnumerable<ExtraFile> CreateAfterEpisodeImport(Series series, EpisodeFile episodeFile);
+        public abstract IEnumerable<ExtraFile> CreateAfterEpisodeFolder(Series series, string seriesFolder, string seasonFolder);
+        public abstract IEnumerable<ExtraFile> MoveFilesAfterRename(Series series, List<EpisodeFile> episodeFiles);
+        public abstract bool CanImportFile(LocalEpisode localEpisode, EpisodeFile episodeFile, string path, string extension, bool readOnly);
+        public abstract IEnumerable<ExtraFile> ImportFiles(LocalEpisode localEpisode, EpisodeFile episodeFile, List<string> files, bool isReadOnly);
 
-        protected TExtraFile ImportFile(Media movie, MediaFile movieFile, string path, bool readOnly, string extension, string fileNameSuffix = null)
+        protected TExtraFile ImportFile(Series series, EpisodeFile episodeFile, string path, bool readOnly, string extension, string fileNameSuffix = null)
         {
-            var movieFilePath = Path.Combine(movie.Path, movieFile.RelativePath);
-            var newFolder = Path.GetDirectoryName(movieFilePath);
-            var filenameBuilder = new StringBuilder(Path.GetFileNameWithoutExtension(movieFile.RelativePath));
+            var newFolder = Path.GetDirectoryName(Path.Combine(series.Path, episodeFile.RelativePath));
+            var filenameBuilder = new StringBuilder(Path.GetFileNameWithoutExtension(episodeFile.RelativePath));
 
             if (fileNameSuffix.IsNotNullOrWhiteSpace())
             {
@@ -63,13 +65,6 @@ namespace NzbDrone.Core.Extras.Files
             filenameBuilder.Append(extension);
 
             var newFileName = Path.Combine(newFolder, filenameBuilder.ToString());
-
-            if (newFileName == movieFilePath)
-            {
-                _logger.Debug("Extra file {0} not imported, due to naming interference with movie file", path);
-                return null;
-            }
-
             var transferMode = TransferMode.Move;
 
             if (readOnly)
@@ -81,17 +76,18 @@ namespace NzbDrone.Core.Extras.Files
 
             return new TExtraFile
             {
-                MovieId = movie.Id,
-                MovieFileId = movieFile.Id,
-                RelativePath = movie.Path.GetRelativePath(newFileName),
+                SeriesId = series.Id,
+                SeasonNumber = episodeFile.SeasonNumber,
+                EpisodeFileId = episodeFile.Id,
+                RelativePath = series.Path.GetRelativePath(newFileName),
                 Extension = extension
             };
         }
 
-        protected TExtraFile MoveFile(Media movie, MediaFile movieFile, TExtraFile extraFile, string fileNameSuffix = null)
+        protected TExtraFile MoveFile(Series series, EpisodeFile episodeFile, TExtraFile extraFile, string fileNameSuffix = null)
         {
-            var newFolder = Path.GetDirectoryName(Path.Combine(movie.Path, movieFile.RelativePath));
-            var filenameBuilder = new StringBuilder(Path.GetFileNameWithoutExtension(movieFile.RelativePath));
+            var newFolder = Path.GetDirectoryName(Path.Combine(series.Path, episodeFile.RelativePath));
+            var filenameBuilder = new StringBuilder(Path.GetFileNameWithoutExtension(episodeFile.RelativePath));
 
             if (fileNameSuffix.IsNotNullOrWhiteSpace())
             {
@@ -100,7 +96,7 @@ namespace NzbDrone.Core.Extras.Files
 
             filenameBuilder.Append(extraFile.Extension);
 
-            var existingFileName = Path.Combine(movie.Path, extraFile.RelativePath);
+            var existingFileName = Path.Combine(series.Path, extraFile.RelativePath);
             var newFileName = Path.Combine(newFolder, filenameBuilder.ToString());
 
             if (newFileName.PathNotEquals(existingFileName))
@@ -108,7 +104,7 @@ namespace NzbDrone.Core.Extras.Files
                 try
                 {
                     _diskProvider.MoveFile(existingFileName, newFileName);
-                    extraFile.RelativePath = movie.Path.GetRelativePath(newFileName);
+                    extraFile.RelativePath = series.Path.GetRelativePath(newFileName);
 
                     return extraFile;
                 }

@@ -1,15 +1,20 @@
 .itemContainer {
   display: flex;
   margin-bottom: 3px;
-  border-bottom: 1px solid $inputBorderColor;
+  border-bottom: 1px solid var(--inputBorderColor);
 
   &:last-child {
     margin-bottom: 0;
   }
 }
 
-.inputWrapper {
+.keyInputWrapper {
+  flex: 6 0 0;
+}
+
+.valueInputWrapper {
   flex: 1 0 0;
+  min-width: 40px;
 }
 
 .buttonWrapper {

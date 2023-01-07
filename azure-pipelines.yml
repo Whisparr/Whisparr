@@ -9,13 +9,13 @@ variables:
   testsFolder: './_tests'
   yarnCacheFolder: $(Pipeline.Workspace)/.yarn
   nugetCacheFolder: $(Pipeline.Workspace)/.nuget/packages  
-  majorVersion: '0.1.0'
+  majorVersion: '2.0.0'
   minorVersion: $[counter('minorVersion', 1)]
   whisparrVersion: '$(majorVersion).$(minorVersion)'
   buildName: '$(Build.SourceBranchName).$(whisparrVersion)'
   sentryOrg: 'servarr'
   sentryUrl: 'https://sentry.servarr.com'
-  dotnetVersion: '6.0.400'
+  dotnetVersion: '6.0.404'
   nodeVersion: '16.X'
   innoVersion: '6.2.0'
   windowsImage: 'windows-2022'
@@ -211,8 +211,8 @@ stages:
         displayName: Fetch Frontend
       - bash: |
           ./build.sh --packages --installer
-          cp setup/output/Whisparr.*win-x64.exe ${BUILD_ARTIFACTSTAGINGDIRECTORY}/Whisparr.${BUILDNAME}.windows-core-x64-installer.exe
-          cp setup/output/Whisparr.*win-x86.exe ${BUILD_ARTIFACTSTAGINGDIRECTORY}/Whisparr.${BUILDNAME}.windows-core-x86-installer.exe
+          cp distribution/windows/setup/output/Whisparr.*win-x64.exe ${BUILD_ARTIFACTSTAGINGDIRECTORY}/Whisparr.${BUILDNAME}.windows-core-x64-installer.exe
+          cp distribution/windows/setup/output/Whisparr.*win-x86.exe ${BUILD_ARTIFACTSTAGINGDIRECTORY}/Whisparr.${BUILDNAME}.windows-core-x86-installer.exe
         displayName: Create Installers
       - publish: $(Build.ArtifactStagingDirectory)
         artifact: 'WindowsInstaller'

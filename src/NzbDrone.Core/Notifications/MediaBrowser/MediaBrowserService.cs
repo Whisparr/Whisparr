@@ -1,16 +1,16 @@
-using System;
+﻿using System;
 using System.Net;
 using FluentValidation.Results;
 using NLog;
 using NzbDrone.Common.Http;
-using NzbDrone.Core.Movies;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Notifications.Emby
 {
     public interface IMediaBrowserService
     {
         void Notify(MediaBrowserSettings settings, string title, string message);
-        void UpdateMovies(MediaBrowserSettings settings, Media movie, string updateType);
+        void Update(MediaBrowserSettings settings, Series series, string updateType);
         ValidationFailure Test(MediaBrowserSettings settings);
     }
 
@@ -30,9 +30,9 @@ namespace NzbDrone.Core.Notifications.Emby
             _proxy.Notify(settings, title, message);
         }
 
-        public void UpdateMovies(MediaBrowserSettings settings, Media movie, string updateType)
+        public void Update(MediaBrowserSettings settings, Series series, string updateType)
         {
-            _proxy.UpdateMovies(settings, movie.Path, updateType);
+            _proxy.Update(settings, series.Path, updateType);
         }
 
         public ValidationFailure Test(MediaBrowserSettings settings)

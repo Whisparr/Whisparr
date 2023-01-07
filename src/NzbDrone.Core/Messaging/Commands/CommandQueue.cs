@@ -144,7 +144,7 @@ namespace NzbDrone.Core.Messaging.Commands
             }
         }
 
-        public bool TryGet(out CommandModel item)
+        private bool TryGet(out CommandModel item)
         {
             var rval = true;
             item = default(CommandModel);
@@ -160,25 +160,33 @@ namespace NzbDrone.Core.Messaging.Commands
                     var startedCommands = _items.Where(c => c.Status == CommandStatus.Started)
                                                 .ToList();
 
-                    var exclusiveTypes = startedCommands.Where(x => x.Body.IsTypeExclusive)
-                        .Select(x => x.Body.Name)
-                        .ToList();
+                    var localItem = _items.Where(c =>
+                                          {
+                                              // If an executing command requires disk access don't return a command that
+                                              // requires disk access. A lower priority or later queued task could be returned
+                                              // instead, but that will allow other tasks to execute while waiting for disk access.
+                                              if (startedCommands.Any(x => x.Body.RequiresDiskAccess))
+                                              {
+                                                  return c.Status == CommandStatus.Queued &&
+                                                         !c.Body.RequiresDiskAccess;
+                                              }
 
-                    var queuedCommands = _items.Where(c => c.Status == CommandStatus.Queued);
+                                              // If an executing command is long running then skip any exclusive commands until
+                                              // they complete. A lower priority or later queued task could be returned
+                                              // instead, but that will allow other tasks to execute while waiting for exclusive
+                                              // execution.
 
-                    if (startedCommands.Any(x => x.Body.RequiresDiskAccess))
-                    {
-                        queuedCommands = queuedCommands.Where(c => !c.Body.RequiresDiskAccess);
-                    }
+                                              if (startedCommands.Any(x => x.Body.IsLongRunning))
+                                              {
+                                                  return c.Status == CommandStatus.Queued &&
+                                                         !c.Body.IsExclusive;
+                                              }
 
-                    if (startedCommands.Any(x => x.Body.IsTypeExclusive))
-                    {
-                        queuedCommands = queuedCommands.Where(c => !exclusiveTypes.Any(x => x == c.Body.Name));
-                    }
-
-                    var localItem = queuedCommands.OrderByDescending(c => c.Priority)
-                        .ThenBy(c => c.QueuedAt)
-                        .FirstOrDefault();
+                                              return c.Status == CommandStatus.Queued;
+                                          })
+                                          .OrderByDescending(c => c.Priority)
+                                          .ThenBy(c => c.QueuedAt)
+                                          .FirstOrDefault();
 
                     // Nothing queued that meets the requirements
                     if (localItem == null)

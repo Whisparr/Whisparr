@@ -11,6 +11,7 @@ namespace Whisparr.Api.V3.Indexers
         public bool SupportsSearch { get; set; }
         public DownloadProtocol Protocol { get; set; }
         public int Priority { get; set; }
+        public int SeasonSearchMaximumSingleEpisodeAge { get; set; }
         public int DownloadClientId { get; set; }
     }
 
@@ -32,24 +33,26 @@ namespace Whisparr.Api.V3.Indexers
             resource.SupportsSearch = definition.SupportsSearch;
             resource.Protocol = definition.Protocol;
             resource.Priority = definition.Priority;
+            resource.SeasonSearchMaximumSingleEpisodeAge = definition.SeasonSearchMaximumSingleEpisodeAge;
             resource.DownloadClientId = definition.DownloadClientId;
 
             return resource;
         }
 
-        public override IndexerDefinition ToModel(IndexerResource resource)
+        public override IndexerDefinition ToModel(IndexerResource resource, IndexerDefinition existingDefinition)
         {
             if (resource == null)
             {
                 return null;
             }
 
-            var definition = base.ToModel(resource);
+            var definition = base.ToModel(resource, existingDefinition);
 
             definition.EnableRss = resource.EnableRss;
             definition.EnableAutomaticSearch = resource.EnableAutomaticSearch;
             definition.EnableInteractiveSearch = resource.EnableInteractiveSearch;
             definition.Priority = resource.Priority;
+            definition.SeasonSearchMaximumSingleEpisodeAge = resource.SeasonSearchMaximumSingleEpisodeAge;
             definition.DownloadClientId = resource.DownloadClientId;
 
             return definition;

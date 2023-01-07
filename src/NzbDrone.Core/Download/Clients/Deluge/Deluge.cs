@@ -9,7 +9,6 @@ using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.MediaFiles.TorrentInfo;
-using NzbDrone.Core.Organizer;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.RemotePathMappings;
 using NzbDrone.Core.Validation;
@@ -24,11 +23,10 @@ namespace NzbDrone.Core.Download.Clients.Deluge
                       ITorrentFileInfoReader torrentFileInfoReader,
                       IHttpClient httpClient,
                       IConfigService configService,
-                      INamingConfigService namingConfigService,
                       IDiskProvider diskProvider,
                       IRemotePathMappingService remotePathMappingService,
                       Logger logger)
-            : base(torrentFileInfoReader, httpClient, configService, namingConfigService, diskProvider, remotePathMappingService, logger)
+            : base(torrentFileInfoReader, httpClient, configService, diskProvider, remotePathMappingService, logger)
         {
             _proxy = proxy;
         }
@@ -36,23 +34,23 @@ namespace NzbDrone.Core.Download.Clients.Deluge
         public override void MarkItemAsImported(DownloadClientItem downloadClientItem)
         {
             // set post-import category
-            if (Settings.MovieImportedCategory.IsNotNullOrWhiteSpace() &&
-                Settings.MovieImportedCategory != Settings.MovieCategory)
+            if (Settings.TvImportedCategory.IsNotNullOrWhiteSpace() &&
+                Settings.TvImportedCategory != Settings.TvCategory)
             {
                 try
                 {
-                    _proxy.SetTorrentLabel(downloadClientItem.DownloadId.ToLower(), Settings.MovieImportedCategory, Settings);
+                    _proxy.SetTorrentLabel(downloadClientItem.DownloadId.ToLower(), Settings.TvImportedCategory, Settings);
                 }
                 catch (DownloadClientUnavailableException)
                 {
                     _logger.Warn("Failed to set torrent post-import label \"{0}\" for {1} in Deluge. Does the label exist?",
-                        Settings.MovieImportedCategory,
+                        Settings.TvImportedCategory,
                         downloadClientItem.Title);
                 }
             }
         }
 
-        protected override string AddFromMagnetLink(RemoteMovie remoteMovie, string hash, string magnetLink)
+        protected override string AddFromMagnetLink(RemoteEpisode remoteEpisode, string hash, string magnetLink)
         {
             var actualHash = _proxy.AddTorrentFromMagnet(magnetLink, Settings);
 
@@ -61,17 +59,17 @@ namespace NzbDrone.Core.Download.Clients.Deluge
                 throw new DownloadClientException("Deluge failed to add magnet " + magnetLink);
             }
 
-            _proxy.SetTorrentSeedingConfiguration(actualHash, remoteMovie.SeedConfiguration, Settings);
+            _proxy.SetTorrentSeedingConfiguration(actualHash, remoteEpisode.SeedConfiguration, Settings);
 
-            if (Settings.MovieCategory.IsNotNullOrWhiteSpace())
+            if (Settings.TvCategory.IsNotNullOrWhiteSpace())
             {
-                _proxy.SetTorrentLabel(actualHash, Settings.MovieCategory, Settings);
+                _proxy.SetTorrentLabel(actualHash, Settings.TvCategory, Settings);
             }
 
-            var isRecentMovie = remoteMovie.Movie.MediaMetadata.Value.IsRecentMovie;
+            var isRecentEpisode = remoteEpisode.IsRecentEpisode();
 
-            if ((isRecentMovie && Settings.RecentMoviePriority == (int)DelugePriority.First) ||
-                (!isRecentMovie && Settings.OlderMoviePriority == (int)DelugePriority.First))
+            if ((isRecentEpisode && Settings.RecentTvPriority == (int)DelugePriority.First) ||
+                (!isRecentEpisode && Settings.OlderTvPriority == (int)DelugePriority.First))
             {
                 _proxy.MoveTorrentToTopInQueue(actualHash, Settings);
             }
@@ -79,7 +77,7 @@ namespace NzbDrone.Core.Download.Clients.Deluge
             return actualHash.ToUpper();
         }
 
-        protected override string AddFromTorrentFile(RemoteMovie remoteMovie, string hash, string filename, byte[] fileContent)
+        protected override string AddFromTorrentFile(RemoteEpisode remoteEpisode, string hash, string filename, byte[] fileContent)
         {
             var actualHash = _proxy.AddTorrentFromFile(filename, fileContent, Settings);
 
@@ -88,17 +86,17 @@ namespace NzbDrone.Core.Download.Clients.Deluge
                 throw new DownloadClientException("Deluge failed to add torrent " + filename);
             }
 
-            _proxy.SetTorrentSeedingConfiguration(actualHash, remoteMovie.SeedConfiguration, Settings);
+            _proxy.SetTorrentSeedingConfiguration(actualHash, remoteEpisode.SeedConfiguration, Settings);
 
-            if (Settings.MovieCategory.IsNotNullOrWhiteSpace())
+            if (Settings.TvCategory.IsNotNullOrWhiteSpace())
             {
-                _proxy.SetTorrentLabel(actualHash, Settings.MovieCategory, Settings);
+                _proxy.SetTorrentLabel(actualHash, Settings.TvCategory, Settings);
             }
 
-            var isRecentMovie = remoteMovie.Movie.MediaMetadata.Value.IsRecentMovie;
+            var isRecentEpisode = remoteEpisode.IsRecentEpisode();
 
-            if ((isRecentMovie && Settings.RecentMoviePriority == (int)DelugePriority.First) ||
-                (!isRecentMovie && Settings.OlderMoviePriority == (int)DelugePriority.First))
+            if ((isRecentEpisode && Settings.RecentTvPriority == (int)DelugePriority.First) ||
+                (!isRecentEpisode && Settings.OlderTvPriority == (int)DelugePriority.First))
             {
                 _proxy.MoveTorrentToTopInQueue(actualHash, Settings);
             }
@@ -112,9 +110,9 @@ namespace NzbDrone.Core.Download.Clients.Deluge
         {
             IEnumerable<DelugeTorrent> torrents;
 
-            if (Settings.MovieCategory.IsNotNullOrWhiteSpace())
+            if (Settings.TvCategory.IsNotNullOrWhiteSpace())
             {
-                torrents = _proxy.GetTorrentsByLabel(Settings.MovieCategory, Settings);
+                torrents = _proxy.GetTorrentsByLabel(Settings.TvCategory, Settings);
             }
             else
             {
@@ -133,7 +131,7 @@ namespace NzbDrone.Core.Download.Clients.Deluge
                 var item = new DownloadClientItem();
                 item.DownloadId = torrent.Hash.ToUpper();
                 item.Title = torrent.Name;
-                item.Category = Settings.MovieCategory;
+                item.Category = Settings.TvCategory;
 
                 item.DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this);
 
@@ -198,21 +196,12 @@ namespace NzbDrone.Core.Download.Clients.Deluge
         public override DownloadClientInfo GetStatus()
         {
             var config = _proxy.GetConfig(Settings);
-            var label = _proxy.GetLabelOptions(Settings);
-            OsPath destDir;
 
-            if (label != null && label.ApplyMoveCompleted && label.MoveCompleted)
-            {
-                // if label exists and a label completed path exists and is enabled use it instead of global
-                destDir = new OsPath(label.MoveCompletedPath);
-            }
-            else if (config.GetValueOrDefault("move_completed", false).ToString() == "True")
+            var destDir = new OsPath(config.GetValueOrDefault("download_location") as string);
+
+            if (config.GetValueOrDefault("move_completed", false).ToString() == "True")
             {
                 destDir = new OsPath(config.GetValueOrDefault("move_completed_path") as string);
-            }
-            else
-            {
-                destDir = new OsPath(config.GetValueOrDefault("download_location") as string);
             }
 
             var status = new DownloadClientInfo
@@ -265,12 +254,12 @@ namespace NzbDrone.Core.Download.Clients.Deluge
                     case WebExceptionStatus.ConnectionClosed:
                         return new NzbDroneValidationFailure("UseSsl", "Verify SSL settings")
                         {
-                            DetailedDescription = "Please verify your SSL configuration on both Deluge and Whisparr."
+                            DetailedDescription = "Please verify your SSL configuration on both Deluge and NzbDrone."
                         };
                     case WebExceptionStatus.SecureChannelFailure:
                         return new NzbDroneValidationFailure("UseSsl", "Unable to connect through SSL")
                         {
-                            DetailedDescription = "Drone is unable to connect to Deluge using SSL. This problem could be computer related. Please try to configure both Whisparr and Deluge to not use SSL."
+                            DetailedDescription = "Drone is unable to connect to Deluge using SSL. This problem could be computer related. Please try to configure both drone and Deluge to not use SSL."
                         };
                     default:
                         return new NzbDroneValidationFailure(string.Empty, "Unknown exception: " + ex.Message);
@@ -291,7 +280,7 @@ namespace NzbDrone.Core.Download.Clients.Deluge
 
         private ValidationFailure TestCategory()
         {
-            if (Settings.MovieCategory.IsNullOrWhiteSpace() && Settings.MovieImportedCategory.IsNullOrWhiteSpace())
+            if (Settings.TvCategory.IsNullOrWhiteSpace() && Settings.TvImportedCategory.IsNullOrWhiteSpace())
             {
                 return null;
             }
@@ -300,7 +289,7 @@ namespace NzbDrone.Core.Download.Clients.Deluge
 
             if (!enabledPlugins.Contains("Label"))
             {
-                return new NzbDroneValidationFailure("MovieCategory", "Label plugin not activated")
+                return new NzbDroneValidationFailure("TvCategory", "Label plugin not activated")
                 {
                     DetailedDescription = "You must have the Label plugin enabled in Deluge to use categories."
                 };
@@ -308,28 +297,28 @@ namespace NzbDrone.Core.Download.Clients.Deluge
 
             var labels = _proxy.GetAvailableLabels(Settings);
 
-            if (Settings.MovieCategory.IsNotNullOrWhiteSpace() && !labels.Contains(Settings.MovieCategory))
+            if (Settings.TvCategory.IsNotNullOrWhiteSpace() && !labels.Contains(Settings.TvCategory))
             {
-                _proxy.AddLabel(Settings.MovieCategory, Settings);
+                _proxy.AddLabel(Settings.TvCategory, Settings);
                 labels = _proxy.GetAvailableLabels(Settings);
 
-                if (!labels.Contains(Settings.MovieCategory))
+                if (!labels.Contains(Settings.TvCategory))
                 {
-                    return new NzbDroneValidationFailure("MovieCategory", "Configuration of label failed")
+                    return new NzbDroneValidationFailure("TvCategory", "Configuration of label failed")
                     {
                         DetailedDescription = "Whisparr was unable to add the label to Deluge."
                     };
                 }
             }
 
-            if (Settings.MovieImportedCategory.IsNotNullOrWhiteSpace() && !labels.Contains(Settings.MovieImportedCategory))
+            if (Settings.TvImportedCategory.IsNotNullOrWhiteSpace() && !labels.Contains(Settings.TvImportedCategory))
             {
-                _proxy.AddLabel(Settings.MovieImportedCategory, Settings);
+                _proxy.AddLabel(Settings.TvImportedCategory, Settings);
                 labels = _proxy.GetAvailableLabels(Settings);
 
-                if (!labels.Contains(Settings.MovieImportedCategory))
+                if (!labels.Contains(Settings.TvImportedCategory))
                 {
-                    return new NzbDroneValidationFailure("MovieImportedCategory", "Configuration of label failed")
+                    return new NzbDroneValidationFailure("TvImportedCategory", "Configuration of label failed")
                     {
                         DetailedDescription = "Whisparr was unable to add the label to Deluge."
                     };

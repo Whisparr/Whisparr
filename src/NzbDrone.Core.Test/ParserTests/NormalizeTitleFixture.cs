@@ -8,13 +8,13 @@ namespace NzbDrone.Core.Test.ParserTests
     [TestFixture]
     public class NormalizeTitleFixture : CoreTest
     {
-        [TestCase("Conan", "conan")]
-        [TestCase("Castle (2009)", "castle2009")]
-        [TestCase("Parenthood.2010", "parenthood2010")]
-        [TestCase("Law_and_Order_SVU", "lawordersvu")]
+        [TestCase("Series", "series")]
+        [TestCase("Series (2009)", "series2009")]
+        [TestCase("Series.2010", "series2010")]
+        [TestCase("Series_and_Title_Whisparr", "seriestitlewhisparr")]
         public void should_normalize_series_title(string parsedSeriesName, string seriesName)
         {
-            var result = parsedSeriesName.CleanMovieTitle();
+            var result = parsedSeriesName.CleanSeriesTitle();
             result.Should().Be(seriesName);
         }
 
@@ -24,11 +24,9 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("test/test", "testtest")]
         [TestCase("90210", "90210")]
         [TestCase("24", "24")]
-        [TestCase("I'm a cyborg, but that's OK", "imcyborgbutthatsok")]
-        [TestCase("Im a cyborg, but thats ok", "imcyborgbutthatsok")]
         public void should_remove_special_characters_and_casing(string dirty, string clean)
         {
-            var result = dirty.CleanMovieTitle();
+            var result = dirty.CleanSeriesTitle();
             result.Should().Be(clean);
         }
 
@@ -37,22 +35,40 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("or")]
         [TestCase("an")]
         [TestCase("of")]
-        public void should_remove_common_words(string word)
+        public void should_remove_common_words_from_middle_of_title(string word)
         {
             var dirtyFormat = new[]
                             {
                                 "word.{0}.word",
                                 "word {0} word",
-                                "word-{0}-word",
-                                "word.word.{0}",
-                                "word-word-{0}",
-                                "word-word {0}",
+                                "word-{0}-word"
                             };
 
             foreach (var s in dirtyFormat)
             {
                 var dirty = string.Format(s, word);
-                dirty.CleanMovieTitle().Should().Be("wordword");
+                dirty.CleanSeriesTitle().Should().Be("wordword");
+            }
+        }
+
+        [TestCase("the")]
+        [TestCase("and")]
+        [TestCase("or")]
+        [TestCase("an")]
+        [TestCase("of")]
+        public void should_not_remove_common_words_from_end_of_title(string word)
+        {
+            var dirtyFormat = new[]
+                              {
+                                  "word.word.{0}",
+                                  "word-word-{0}",
+                                  "word-word {0}"
+                              };
+
+            foreach (var s in dirtyFormat)
+            {
+                var dirty = string.Format(s, word);
+                dirty.CleanSeriesTitle().Should().Be("wordword" + word.ToLower());
             }
         }
 
@@ -69,41 +85,7 @@ namespace NzbDrone.Core.Test.ParserTests
             foreach (var s in dirtyFormat)
             {
                 var dirty = string.Format(s, "a");
-                dirty.CleanMovieTitle().Should().Be("wordword");
-            }
-        }
-
-        [Test]
-        public void should_not_remove_a_when_at_start_of_acronym()
-        {
-            var dirtyFormat = new[]
-            {
-                "word.{0}.N.K.L.E.word",
-                "word {0} N K L E word",
-                "word-{0}-N-K-L-E-word",
-            };
-
-            foreach (var s in dirtyFormat)
-            {
-                var dirty = string.Format(s, "a");
-                dirty.CleanMovieTitle().Should().Be("wordankleword");
-            }
-        }
-
-        [Test]
-        public void should_not_remove_a_when_at_end_of_acronym()
-        {
-            var dirtyFormat = new[]
-            {
-                "word.N.K.L.E.{0}.word",
-                "word N K L E {0} word",
-                "word-N-K-L-E-{0}-word",
-            };
-
-            foreach (var s in dirtyFormat)
-            {
-                var dirty = string.Format(s, "a");
-                dirty.CleanMovieTitle().Should().Be("wordnkleaword");
+                dirty.CleanSeriesTitle().Should().Be("wordword");
             }
         }
 
@@ -128,16 +110,16 @@ namespace NzbDrone.Core.Test.ParserTests
             foreach (var s in dirtyFormat)
             {
                 var dirty = string.Format(s, word);
-                dirty.CleanMovieTitle().Should().Be("word" + word.ToLower() + "word");
+                dirty.CleanSeriesTitle().Should().Be("word" + word.ToLower() + "word");
             }
         }
 
-        [TestCase("The Office", "theoffice")]
-        [TestCase("The Tonight Show With Jay Leno", "thetonightshowwithjayleno")]
-        [TestCase("The.Daily.Show", "thedailyshow")]
+        [TestCase("The Series", "theseries")]
+        [TestCase("The Series Show With Whisparr Dev", "theseriesshowwithwhisparrdev")]
+        [TestCase("The.Series.Show", "theseriesshow")]
         public void should_not_remove_from_the_beginning_of_the_title(string parsedSeriesName, string seriesName)
         {
-            var result = parsedSeriesName.CleanMovieTitle();
+            var result = parsedSeriesName.CleanSeriesTitle();
             result.Should().Be(seriesName);
         }
 
@@ -159,14 +141,22 @@ namespace NzbDrone.Core.Test.ParserTests
             foreach (var s in dirtyFormat)
             {
                 var dirty = string.Format(s, word);
-                dirty.CleanMovieTitle().Should().Be(word + "wordword");
+                dirty.CleanSeriesTitle().Should().Be(word + "wordword");
             }
         }
 
         [Test]
         public void should_not_clean_trailing_a()
         {
-            "Tokyo Ghoul A".CleanMovieTitle().Should().Be("tokyoghoula");
+            "Series Title A".CleanSeriesTitle().Should().Be("seriestitlea");
+        }
+
+        [TestCase("3%", "3percent")]
+        [TestCase("Series Top & 100% Coding Developers", "seriestop100percentcodingdevelopers")]
+        [TestCase("Series Title What's Your F@%king Deal?!", "seriestitlewhatsyourfkingdeal")]
+        public void should_replace_percent_sign_with_percent_following_numbers(string input, string expected)
+        {
+            input.CleanSeriesTitle().Should().Be(expected);
         }
     }
 }

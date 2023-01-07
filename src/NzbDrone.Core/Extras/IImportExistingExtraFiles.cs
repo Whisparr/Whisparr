@@ -1,12 +1,12 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using NzbDrone.Core.Extras.Files;
-using NzbDrone.Core.Movies;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Extras
 {
     public interface IImportExistingExtraFiles
     {
         int Order { get; }
-        IEnumerable<ExtraFile> ProcessFiles(Media movie, List<string> filesOnDisk, List<string> importedFiles);
+        IEnumerable<ExtraFile> ProcessFiles(Series series, List<string> filesOnDisk, List<string> importedFiles);
     }
 }

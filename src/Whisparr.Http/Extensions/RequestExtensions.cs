@@ -15,10 +15,14 @@ namespace Whisparr.Http.Extensions
         // See src/Readarr.Api.V1/Queue/QueueModule.cs
         private static readonly HashSet<string> VALID_SORT_KEYS = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
-            "movies.sortname", //Workaround authors table properties not being added on isValidSortKey call
+            "series.sortname", // Workaround authors table properties not being added on isValidSortKey call
+            "episode.title", // Deprecated
+            "episode.airDateUtc", // Deprecated
+            "episode.language", // Deprecated
             "timeleft",
             "estimatedCompletionTime",
             "protocol",
+            "episode",
             "indexer",
             "downloadClient",
             "quality",
@@ -40,6 +44,11 @@ namespace Whisparr.Http.Extensions
         public static bool IsApiRequest(this HttpRequest request)
         {
             return request.Path.StartsWithSegments("/api", StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        public static bool IsFavIconRequest(this HttpRequest request)
+        {
+            return request.Path.Equals("/favicon.ico", StringComparison.InvariantCultureIgnoreCase);
         }
 
         public static bool GetBooleanQueryParameter(this HttpRequest request, string parameter, bool defaultValue = false)
@@ -162,39 +171,7 @@ namespace Whisparr.Http.Extensions
                 remoteIP = remoteIP.MapToIPv4();
             }
 
-            var remoteAddress = remoteIP.ToString();
-
-            // Only check if forwarded by a local network reverse proxy
-            if (remoteIP.IsLocalAddress())
-            {
-                var realIPHeader = request.Headers["X-Real-IP"];
-                if (realIPHeader.Any())
-                {
-                    return realIPHeader.First().ToString();
-                }
-
-                var forwardedForHeader = request.Headers["X-Forwarded-For"];
-                if (forwardedForHeader.Any())
-                {
-                    // Get the first address that was forwarded by a local IP to prevent remote clients faking another proxy
-                    foreach (var forwardedForAddress in forwardedForHeader.SelectMany(v => v.Split(',')).Select(v => v.Trim()).Reverse())
-                    {
-                        if (!IPAddress.TryParse(forwardedForAddress, out remoteIP))
-                        {
-                            return remoteAddress;
-                        }
-
-                        if (!remoteIP.IsLocalAddress())
-                        {
-                            return forwardedForAddress;
-                        }
-
-                        remoteAddress = forwardedForAddress;
-                    }
-                }
-            }
-
-            return remoteAddress;
+            return remoteIP.ToString();
         }
 
         public static void DisableCache(this IHeaderDictionary headers)

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using NLog;
 using NzbDrone.Common.Extensions;
@@ -6,22 +7,20 @@ using NzbDrone.Core.Download;
 using NzbDrone.Core.HealthCheck;
 using NzbDrone.Core.MediaFiles.Events;
 using NzbDrone.Core.Messaging.Events;
-using NzbDrone.Core.Movies;
-using NzbDrone.Core.Movies.Events;
 using NzbDrone.Core.Qualities;
 using NzbDrone.Core.ThingiProvider;
+using NzbDrone.Core.Tv;
+using NzbDrone.Core.Tv.Events;
 using NzbDrone.Core.Update.History.Events;
 
 namespace NzbDrone.Core.Notifications
 {
     public class NotificationService
-        : IHandle<MovieRenamedEvent>,
-          IHandle<MovieGrabbedEvent>,
-          IHandle<MovieFileImportedEvent>,
-          IHandle<MoviesDeletedEvent>,
-          IHandle<MovieAddedEvent>,
-          IHandle<MoviesImportedEvent>,
-          IHandle<MovieFileDeletedEvent>,
+        : IHandle<EpisodeGrabbedEvent>,
+          IHandle<EpisodeImportedEvent>,
+          IHandle<SeriesRenamedEvent>,
+          IHandle<SeriesDeletedEvent>,
+          IHandle<EpisodeFileDeletedEvent>,
           IHandle<HealthCheckFailedEvent>,
           IHandle<UpdateInstalledEvent>,
           IHandleAsync<DeleteCompletedEvent>,
@@ -38,7 +37,7 @@ namespace NzbDrone.Core.Notifications
             _logger = logger;
         }
 
-        private string GetMessage(Media movie, QualityModel quality)
+        private string GetMessage(Series series, List<Episode> episodes, QualityModel quality)
         {
             var qualityString = quality.Quality.ToString();
 
@@ -47,13 +46,20 @@ namespace NzbDrone.Core.Notifications
                 qualityString += " Proper";
             }
 
-            return string.Format("{0} ({1}) [{2}]",
-                                    movie.Title,
-                                    movie.Year,
+            var episodeNumbers = string.Concat(episodes.Select(e => e.EpisodeNumber)
+                                                       .Select(i => string.Format("x{0:00}", i)));
+
+            var episodeTitles = string.Join(" + ", episodes.Select(e => e.Title));
+
+            return string.Format("{0} - {1}{2} - {3} [{4}]",
+                                    series.Title,
+                                    episodes.First().SeasonNumber,
+                                    episodeNumbers,
+                                    episodeTitles,
                                     qualityString);
         }
 
-        private bool ShouldHandleMovie(ProviderDefinition definition, Media movie)
+        private bool ShouldHandleSeries(ProviderDefinition definition, Series series)
         {
             if (definition.Tags.Empty())
             {
@@ -61,14 +67,13 @@ namespace NzbDrone.Core.Notifications
                 return true;
             }
 
-            if (definition.Tags.Intersect(movie.Tags).Any())
+            if (definition.Tags.Intersect(series.Tags).Any())
             {
-                _logger.Debug("Notification and movie have one or more intersecting tags.");
+                _logger.Debug("Notification and series have one or more intersecting tags.");
                 return true;
             }
 
-            //TODO: this message could be more clear
-            _logger.Debug("{0} does not have any intersecting tags with {1}. Notification will not be sent", definition.Name, movie.Title);
+            _logger.Debug("{0} does not have any intersecting tags with {1}. Notification will not be sent.", definition.Name, series.Title);
             return false;
         }
 
@@ -87,14 +92,14 @@ namespace NzbDrone.Core.Notifications
             return false;
         }
 
-        public void Handle(MovieGrabbedEvent message)
+        public void Handle(EpisodeGrabbedEvent message)
         {
             var grabMessage = new GrabMessage
             {
-                Message = GetMessage(message.Movie.Movie, message.Movie.ParsedMovieInfo.Quality),
-                Quality = message.Movie.ParsedMovieInfo.Quality,
-                Movie = message.Movie.Movie,
-                RemoteMovie = message.Movie,
+                Message = GetMessage(message.Episode.Series, message.Episode.Episodes, message.Episode.ParsedEpisodeInfo.Quality),
+                Series = message.Episode.Series,
+                Quality = message.Episode.ParsedEpisodeInfo.Quality,
+                Episode = message.Episode,
                 DownloadClientType = message.DownloadClient,
                 DownloadClientName = message.DownloadClientName,
                 DownloadId = message.DownloadId
@@ -104,7 +109,7 @@ namespace NzbDrone.Core.Notifications
             {
                 try
                 {
-                    if (!ShouldHandleMovie(notification.Definition, message.Movie.Movie))
+                    if (!ShouldHandleSeries(notification.Definition, message.Episode.Series))
                     {
                         continue;
                     }
@@ -118,7 +123,7 @@ namespace NzbDrone.Core.Notifications
             }
         }
 
-        public void Handle(MovieFileImportedEvent message)
+        public void Handle(EpisodeImportedEvent message)
         {
             if (!message.NewDownload)
             {
@@ -127,11 +132,11 @@ namespace NzbDrone.Core.Notifications
 
             var downloadMessage = new DownloadMessage
             {
-                Message = GetMessage(message.MovieInfo.Movie, message.MovieInfo.Quality),
-                MovieFile = message.ImportedMovie,
-                Movie = message.MovieInfo.Movie,
-                OldMovieFiles = message.OldFiles,
-                SourcePath = message.MovieInfo.Path,
+                Message = GetMessage(message.EpisodeInfo.Series, message.EpisodeInfo.Episodes, message.EpisodeInfo.Quality),
+                Series = message.EpisodeInfo.Series,
+                EpisodeFile = message.ImportedEpisode,
+                OldFiles = message.OldFiles,
+                SourcePath = message.EpisodeInfo.Path,
                 DownloadClientInfo = message.DownloadClientInfo,
                 DownloadId = message.DownloadId
             };
@@ -140,9 +145,9 @@ namespace NzbDrone.Core.Notifications
             {
                 try
                 {
-                    if (ShouldHandleMovie(notification.Definition, message.MovieInfo.Movie))
+                    if (ShouldHandleSeries(notification.Definition, message.EpisodeInfo.Series))
                     {
-                        if (downloadMessage.OldMovieFiles.Empty() || ((NotificationDefinition)notification.Definition).OnUpgrade)
+                        if (downloadMessage.OldFiles.Empty() || ((NotificationDefinition)notification.Definition).OnUpgrade)
                         {
                             notification.OnDownload(downloadMessage);
                         }
@@ -155,54 +160,15 @@ namespace NzbDrone.Core.Notifications
             }
         }
 
-        public void Handle(MovieAddedEvent message)
-        {
-            foreach (var notification in _notificationFactory.OnMovieAddedEnabled())
-            {
-                try
-                {
-                    if (ShouldHandleMovie(notification.Definition, message.Movie))
-                    {
-                        notification.OnMovieAdded(message.Movie);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.Warn(ex, "Unable to send OnMovieAdded notification to: " + notification.Definition.Name);
-                }
-            }
-        }
-
-        public void Handle(MoviesImportedEvent message)
-        {
-            foreach (var notification in _notificationFactory.OnMovieAddedEnabled())
-            {
-                try
-                {
-                    foreach (var movie in message.Movies)
-                    {
-                        if (ShouldHandleMovie(notification.Definition, movie))
-                        {
-                            notification.OnMovieAdded(movie);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.Warn(ex, "Unable to send OnMovieAdded notification to: " + notification.Definition.Name);
-                }
-            }
-        }
-
-        public void Handle(MovieRenamedEvent message)
+        public void Handle(SeriesRenamedEvent message)
         {
             foreach (var notification in _notificationFactory.OnRenameEnabled())
             {
                 try
                 {
-                    if (ShouldHandleMovie(notification.Definition, message.Movie))
+                    if (ShouldHandleSeries(notification.Definition, message.Series))
                     {
-                        notification.OnMovieRename(message.Movie, message.RenamedFiles);
+                        notification.OnRename(message.Series, message.RenamedFiles);
                     }
                 }
                 catch (Exception ex)
@@ -232,51 +198,58 @@ namespace NzbDrone.Core.Notifications
             }
         }
 
-        public void Handle(MovieFileDeletedEvent message)
+        public void Handle(EpisodeFileDeletedEvent message)
         {
-            var deleteMessage = new MovieFileDeleteMessage();
-            deleteMessage.Message = GetMessage(message.MovieFile.Movie, message.MovieFile.Quality);
-            deleteMessage.MovieFile = message.MovieFile;
-            deleteMessage.Movie = message.MovieFile.Movie;
+            if (message.EpisodeFile.Episodes.Value.Empty())
+            {
+                _logger.Trace("Skipping notification for deleted file without an episode (episode metadata was removed)");
+
+                return;
+            }
+
+            var deleteMessage = new EpisodeDeleteMessage();
+            deleteMessage.Message = GetMessage(message.EpisodeFile.Series, message.EpisodeFile.Episodes, message.EpisodeFile.Quality);
+            deleteMessage.Series = message.EpisodeFile.Series;
+            deleteMessage.EpisodeFile = message.EpisodeFile;
             deleteMessage.Reason = message.Reason;
 
-            foreach (var notification in _notificationFactory.OnMovieFileDeleteEnabled())
+            foreach (var notification in _notificationFactory.OnEpisodeFileDeleteEnabled())
             {
                 try
                 {
-                    if (message.Reason != MediaFiles.DeleteMediaFileReason.Upgrade || ((NotificationDefinition)notification.Definition).OnMovieFileDeleteForUpgrade)
+                    if (message.Reason != MediaFiles.DeleteMediaFileReason.Upgrade || ((NotificationDefinition)notification.Definition).OnEpisodeFileDeleteForUpgrade)
                     {
-                        if (ShouldHandleMovie(notification.Definition, message.MovieFile.Movie))
+                        if (ShouldHandleSeries(notification.Definition, deleteMessage.EpisodeFile.Series))
                         {
-                            notification.OnMovieFileDelete(deleteMessage);
+                            notification.OnEpisodeFileDelete(deleteMessage);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    _logger.Warn(ex, "Unable to send OnMovieFileDelete notification to: " + notification.Definition.Name);
+                    _logger.Warn(ex, "Unable to send OnDelete notification to: " + notification.Definition.Name);
                 }
             }
         }
 
-        public void Handle(MoviesDeletedEvent message)
+        public void Handle(SeriesDeletedEvent message)
         {
-            foreach (Media movie in message.Movies)
+            foreach (var series in message.Series)
             {
-                var deleteMessage = new MovieDeleteMessage(movie, message.DeleteFiles);
+                var deleteMessage = new SeriesDeleteMessage(series, message.DeleteFiles);
 
-                foreach (var notification in _notificationFactory.OnMovieDeleteEnabled())
+                foreach (var notification in _notificationFactory.OnSeriesDeleteEnabled())
                 {
                     try
                     {
-                        if (ShouldHandleMovie(notification.Definition, deleteMessage.Movie))
+                        if (ShouldHandleSeries(notification.Definition, deleteMessage.Series))
                         {
-                            notification.OnMovieDelete(deleteMessage);
+                            notification.OnSeriesDelete(deleteMessage);
                         }
                     }
                     catch (Exception ex)
                     {
-                        _logger.Warn(ex, "Unable to send OnMovieDelete notification to: " + notification.Definition.Name);
+                        _logger.Warn(ex, "Unable to send OnDelete notification to: " + notification.Definition.Name);
                     }
                 }
             }
@@ -286,6 +259,7 @@ namespace NzbDrone.Core.Notifications
         {
             // Don't send health check notifications during the start up grace period,
             // once that duration expires they they'll be retested and fired off if necessary.
+
             if (message.IsInStartupGraceperiod)
             {
                 return;

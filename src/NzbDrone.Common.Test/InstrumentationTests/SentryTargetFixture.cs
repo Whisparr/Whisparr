@@ -20,21 +20,7 @@ namespace NzbDrone.Common.Test.InstrumentationTests
 
         private static Exception[] FilteredExceptions = new Exception[]
         {
-            new UnauthorizedAccessException(),
-            new AggregateException(new Exception[]
-            {
-                new UnauthorizedAccessException(),
-                new UnauthorizedAccessException()
-            })
-        };
-
-        private static Exception[] NonFilteredExceptions = new Exception[]
-        {
-            new AggregateException(new Exception[]
-            {
-                new UnauthorizedAccessException(),
-                new NotImplementedException()
-            })
+            new UnauthorizedAccessException()
         };
 
         [SetUp]
@@ -75,14 +61,6 @@ namespace NzbDrone.Common.Test.InstrumentationTests
         {
             var log = GivenLogEvent(LogLevel.Error, ex, "test");
             _subject.IsSentryMessage(log).Should().BeFalse();
-        }
-
-        [Test]
-        [TestCaseSource("NonFilteredExceptions")]
-        public void should_not_filter_event_for_filtered_exception_types(Exception ex)
-        {
-            var log = GivenLogEvent(LogLevel.Error, ex, "test");
-            _subject.IsSentryMessage(log).Should().BeTrue();
         }
 
         [Test]

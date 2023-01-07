@@ -5,8 +5,8 @@ using NzbDrone.Common.Crypto;
 using NzbDrone.Core.Download.TrackedDownloads;
 using NzbDrone.Core.Languages;
 using NzbDrone.Core.Messaging.Events;
-using NzbDrone.Core.Movies;
 using NzbDrone.Core.Qualities;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Queue
 {
@@ -44,23 +44,28 @@ namespace NzbDrone.Core.Queue
 
         private IEnumerable<Queue> MapQueue(TrackedDownload trackedDownload)
         {
-            if (trackedDownload.RemoteMovie != null && trackedDownload.RemoteMovie.Movie != null)
+            if (trackedDownload.RemoteEpisode?.Episodes != null && trackedDownload.RemoteEpisode.Episodes.Any())
             {
-                yield return MapMovie(trackedDownload, trackedDownload.RemoteMovie.Movie);
+                foreach (var episode in trackedDownload.RemoteEpisode.Episodes)
+                {
+                    yield return MapQueueItem(trackedDownload, episode);
+                }
             }
             else
             {
-                yield return MapMovie(trackedDownload, null);
+                yield return MapQueueItem(trackedDownload, null);
             }
         }
 
-        private Queue MapMovie(TrackedDownload trackedDownload, Media movie)
+        private Queue MapQueueItem(TrackedDownload trackedDownload, Episode episode)
         {
             var queue = new Queue
             {
-                Languages = trackedDownload.RemoteMovie?.ParsedMovieInfo.Languages ?? new List<Language> { Language.Unknown },
-                Quality = trackedDownload.RemoteMovie?.ParsedMovieInfo.Quality ?? new QualityModel(Quality.Unknown),
-                Title = trackedDownload.DownloadItem.Title,
+                Series = trackedDownload.RemoteEpisode?.Series,
+                Episode = episode,
+                Languages = trackedDownload.RemoteEpisode?.ParsedEpisodeInfo.Languages ?? new List<Language> { Language.Unknown },
+                Quality = trackedDownload.RemoteEpisode?.ParsedEpisodeInfo.Quality ?? new QualityModel(Quality.Unknown),
+                Title = Parser.Parser.RemoveFileExtension(trackedDownload.DownloadItem.Title),
                 Size = trackedDownload.DownloadItem.TotalSize,
                 Sizeleft = trackedDownload.DownloadItem.RemainingSize,
                 Timeleft = trackedDownload.DownloadItem.RemainingTime,
@@ -69,16 +74,15 @@ namespace NzbDrone.Core.Queue
                 TrackedDownloadState = trackedDownload.State,
                 StatusMessages = trackedDownload.StatusMessages.ToList(),
                 ErrorMessage = trackedDownload.DownloadItem.Message,
-                RemoteMovie = trackedDownload.RemoteMovie,
+                RemoteEpisode = trackedDownload.RemoteEpisode,
                 DownloadId = trackedDownload.DownloadItem.DownloadId,
                 Protocol = trackedDownload.Protocol,
-                Movie = movie,
                 DownloadClient = trackedDownload.DownloadItem.DownloadClientInfo.Name,
                 Indexer = trackedDownload.Indexer,
                 OutputPath = trackedDownload.DownloadItem.OutputPath.ToString()
             };
 
-            queue.Id = HashConverter.GetHashInt31($"trackedDownload-{trackedDownload.DownloadClient}-{trackedDownload.DownloadItem.DownloadId}");
+            queue.Id = HashConverter.GetHashInt31($"trackedDownload-{trackedDownload.DownloadClient}-{trackedDownload.DownloadItem.DownloadId}-ep{episode?.Id ?? 0}");
 
             if (queue.Timeleft.HasValue)
             {

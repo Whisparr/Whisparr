@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,15 +23,13 @@ namespace NzbDrone.Core.Download.Clients.Blackhole
         private readonly Logger _logger;
         private readonly IDiskProvider _diskProvider;
         private readonly IDiskScanService _diskScanService;
-        private readonly INamingConfigService _namingConfigService;
-        private readonly ICached<Dictionary<string, WatchFolderItem>> _watchFolderItemCache;
+        private readonly ICached<Dictionary<string, WatchFolderItem>>  _watchFolderItemCache;
 
-        public ScanWatchFolder(ICacheManager cacheManager, IDiskScanService diskScanService, INamingConfigService namingConfigService, IDiskProvider diskProvider, Logger logger)
+        public ScanWatchFolder(ICacheManager cacheManager, IDiskScanService diskScanService, IDiskProvider diskProvider, Logger logger)
         {
             _logger = logger;
             _diskProvider = diskProvider;
             _diskScanService = diskScanService;
-            _namingConfigService = namingConfigService;
             _watchFolderItemCache = cacheManager.GetCache<Dictionary<string, WatchFolderItem>>(GetType());
         }
 

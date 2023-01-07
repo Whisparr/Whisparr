@@ -1,3 +1,4 @@
+﻿using System;
 using NLog;
 using NzbDrone.Core.IndexerSearch.Definitions;
 using NzbDrone.Core.Parser.Model;
@@ -16,18 +17,18 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
         public SpecificationPriority Priority => SpecificationPriority.Default;
         public RejectionType Type => RejectionType.Permanent;
 
-        public virtual Decision IsSatisfiedBy(RemoteMovie subject, SearchCriteriaBase searchCriteria)
+        public virtual Decision IsSatisfiedBy(RemoteEpisode subject, SearchCriteriaBase searchCriteria)
         {
-            _logger.Debug("Checking if report meets quality requirements. {0}", subject.ParsedMovieInfo.Quality);
+            _logger.Debug("Checking if report meets quality requirements. {0}", subject.ParsedEpisodeInfo.Quality);
 
-            var profile = subject.Movie.Profile;
-            var qualityIndex = profile.GetIndex(subject.ParsedMovieInfo.Quality.Quality);
+            var profile = subject.Series.QualityProfile.Value;
+            var qualityIndex = profile.GetIndex(subject.ParsedEpisodeInfo.Quality.Quality);
             var qualityOrGroup = profile.Items[qualityIndex.Index];
 
             if (!qualityOrGroup.Allowed)
             {
-                _logger.Debug("Quality {0} rejected by Movie's quality profile", subject.ParsedMovieInfo.Quality);
-                return Decision.Reject("{0} is not wanted in profile", subject.ParsedMovieInfo.Quality.Quality);
+                _logger.Debug("Quality {0} rejected by Series' quality profile", subject.ParsedEpisodeInfo.Quality);
+                return Decision.Reject("{0} is not wanted in profile", subject.ParsedEpisodeInfo.Quality.Quality);
             }
 
             return Decision.Accept();

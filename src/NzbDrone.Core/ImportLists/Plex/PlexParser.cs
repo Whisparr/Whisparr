@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Serializer;
 using NzbDrone.Core.ImportLists.Exceptions;
-using NzbDrone.Core.ImportLists.ImportListMovies;
+using NzbDrone.Core.Notifications.Plex.PlexTv;
 using NzbDrone.Core.Notifications.Plex.Server;
+using NzbDrone.Core.Parser.Model;
 
 namespace NzbDrone.Core.ImportLists.Plex
 {
@@ -13,43 +13,43 @@ namespace NzbDrone.Core.ImportLists.Plex
     {
         private ImportListResponse _importResponse;
 
-        public PlexParser()
+        public virtual IList<ImportListItemInfo> ParseResponse(ImportListResponse importResponse)
         {
-        }
-
-        public virtual IList<ImportListMovie> ParseResponse(ImportListResponse importResponse)
-        {
-            List<PlexSectionItem> items;
+            List<PlexWatchlistItem> items;
 
             _importResponse = importResponse;
 
-            var movies = new List<ImportListMovie>();
+            var series = new List<ImportListItemInfo>();
 
             if (!PreProcess(_importResponse))
             {
-                return movies;
+                return series;
             }
 
-            items = Json.Deserialize<PlexResponse<PlexSectionResponse>>(_importResponse.Content)
+            items = Json.Deserialize<PlexResponse<PlexWatchlistRespone>>(_importResponse.Content)
                         .MediaContainer
                         .Items;
 
             foreach (var item in items)
             {
+                var tvdbIdString = FindGuid(item.Guids, "tvdb");
                 var tmdbIdString = FindGuid(item.Guids, "tmdb");
                 var imdbId = FindGuid(item.Guids, "imdb");
 
+                int.TryParse(tvdbIdString, out int tvdbId);
                 int.TryParse(tmdbIdString, out int tmdbId);
 
-                movies.AddIfNotNull(new ImportListMovie()
+                series.Add(new ImportListItemInfo
                 {
-                    ForiegnId = tmdbId,
+                    TvdbId = tvdbId,
+                    TmdbId = tmdbId,
+                    ImdbId = imdbId,
                     Title = item.Title,
                     Year = item.Year
                 });
             }
 
-            return movies;
+            return series;
         }
 
         protected virtual bool PreProcess(ImportListResponse importListResponse)
@@ -72,7 +72,7 @@ namespace NzbDrone.Core.ImportLists.Plex
         {
             var scheme = $"{prefix}://";
 
-            return guids?.FirstOrDefault((guid) => guid.Id.StartsWith(scheme))?.Id.Replace(scheme, "");
+            return guids.FirstOrDefault((guid) => guid.Id.StartsWith(scheme))?.Id.Replace(scheme, "");
         }
     }
 }

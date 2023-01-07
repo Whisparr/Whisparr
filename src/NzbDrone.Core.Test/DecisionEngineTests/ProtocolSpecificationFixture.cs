@@ -1,28 +1,28 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using NzbDrone.Core.DecisionEngine.Specifications;
 using NzbDrone.Core.Indexers;
-using NzbDrone.Core.Movies;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.Profiles.Delay;
 using NzbDrone.Core.Test.Framework;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Test.DecisionEngineTests
 {
     [TestFixture]
     public class ProtocolSpecificationFixture : CoreTest<ProtocolSpecification>
     {
-        private RemoteMovie _remoteEpisode;
+        private RemoteEpisode _remoteEpisode;
         private DelayProfile _delayProfile;
 
         [SetUp]
         public void Setup()
         {
-            _remoteEpisode = new RemoteMovie();
+            _remoteEpisode = new RemoteEpisode();
             _remoteEpisode.Release = new ReleaseInfo();
-            _remoteEpisode.Movie = new Media();
+            _remoteEpisode.Series = new Series();
 
             _delayProfile = new DelayProfile();
 

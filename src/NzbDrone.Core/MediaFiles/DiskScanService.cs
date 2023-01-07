@@ -10,33 +10,33 @@ using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Instrumentation.Extensions;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.MediaFiles.Commands;
+using NzbDrone.Core.MediaFiles.EpisodeImport;
 using NzbDrone.Core.MediaFiles.Events;
 using NzbDrone.Core.MediaFiles.MediaInfo;
-using NzbDrone.Core.MediaFiles.MovieImport;
 using NzbDrone.Core.Messaging.Commands;
 using NzbDrone.Core.Messaging.Events;
-using NzbDrone.Core.Movies;
 using NzbDrone.Core.RootFolders;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.MediaFiles
 {
     public interface IDiskScanService
     {
-        void Scan(Media movie);
+        void Scan(Series series);
         string[] GetVideoFiles(string path, bool allDirectories = true);
         string[] GetNonVideoFiles(string path, bool allDirectories = true);
-        List<string> FilterPaths(string basePath, IEnumerable<string> paths, bool filterExtras = true);
+        List<string> FilterPaths(string basePath, IEnumerable<string> files, bool filterExtras = true);
     }
 
     public class DiskScanService :
         IDiskScanService,
-        IExecute<RescanMovieCommand>
+        IExecute<RescanSeriesCommand>
     {
         private readonly IDiskProvider _diskProvider;
         private readonly IMakeImportDecision _importDecisionMaker;
-        private readonly IImportApprovedMovie _importApprovedMovies;
+        private readonly IImportApprovedEpisodes _importApprovedEpisodes;
         private readonly IConfigService _configService;
-        private readonly IMovieService _movieService;
+        private readonly ISeriesService _seriesService;
         private readonly IMediaFileService _mediaFileService;
         private readonly IMediaFileTableCleanupService _mediaFileTableCleanupService;
         private readonly IRootFolderService _rootFolderService;
@@ -46,9 +46,9 @@ namespace NzbDrone.Core.MediaFiles
 
         public DiskScanService(IDiskProvider diskProvider,
                                IMakeImportDecision importDecisionMaker,
-                               IImportApprovedMovie importApprovedMovies,
+                               IImportApprovedEpisodes importApprovedEpisodes,
                                IConfigService configService,
-                               IMovieService movieService,
+                               ISeriesService seriesService,
                                IMediaFileService mediaFileService,
                                IMediaFileTableCleanupService mediaFileTableCleanupService,
                                IRootFolderService rootFolderService,
@@ -58,9 +58,9 @@ namespace NzbDrone.Core.MediaFiles
         {
             _diskProvider = diskProvider;
             _importDecisionMaker = importDecisionMaker;
-            _importApprovedMovies = importApprovedMovies;
+            _importApprovedEpisodes = importApprovedEpisodes;
             _configService = configService;
-            _movieService = movieService;
+            _seriesService = seriesService;
             _mediaFileService = mediaFileService;
             _mediaFileTableCleanupService = mediaFileTableCleanupService;
             _rootFolderService = rootFolderService;
@@ -69,86 +69,87 @@ namespace NzbDrone.Core.MediaFiles
             _logger = logger;
         }
 
-        private static readonly Regex ExcludedExtrasSubFolderRegex = new Regex(@"(?:\\|\/|^)(?:extras|extrafanart|behind the scenes|deleted scenes|featurettes|interviews|scenes|sample[s]?|shorts|trailers)(?:\\|\/)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex ExcludedExtrasSubFolderRegex = new Regex(@"(?:\\|\/|^)(?:extras|extrafanart|behind the scenes|deleted scenes|featurettes|interviews|scenes|samples|shorts|trailers)(?:\\|\/)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         private static readonly Regex ExcludedSubFoldersRegex = new Regex(@"(?:\\|\/|^)(?:@eadir|\.@__thumb|plex versions|\.[^\\/]+)(?:\\|\/)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         private static readonly Regex ExcludedExtraFilesRegex = new Regex(@"(-(trailer|other|behindthescenes|deleted|featurette|interview|scene|short)\.[^.]+$)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         private static readonly Regex ExcludedFilesRegex = new Regex(@"^\._|^Thumbs\.db$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-        public void Scan(Media movie)
+        public void Scan(Series series)
         {
-            var rootFolder = _rootFolderService.GetBestRootFolderPath(movie.Path);
+            var rootFolder = _rootFolderService.GetBestRootFolderPath(series.Path);
 
-            var movieFolderExists = _diskProvider.FolderExists(movie.Path);
+            var seriesFolderExists = _diskProvider.FolderExists(series.Path);
 
-            if (!movieFolderExists)
+            if (!seriesFolderExists)
             {
                 if (!_diskProvider.FolderExists(rootFolder))
                 {
-                    _logger.Warn("Movie's root folder ({0}) doesn't exist.", rootFolder);
-                    _eventAggregator.PublishEvent(new MovieScanSkippedEvent(movie, MovieScanSkippedReason.RootFolderDoesNotExist));
+                    _logger.Warn("Series' root folder ({0}) doesn't exist.", rootFolder);
+                    _eventAggregator.PublishEvent(new SeriesScanSkippedEvent(series, SeriesScanSkippedReason.RootFolderDoesNotExist));
                     return;
                 }
 
                 if (_diskProvider.FolderEmpty(rootFolder))
                 {
-                    _logger.Warn("Movie's root folder ({0}) is empty. Rescan will not update movies as a failsafe.", rootFolder);
-                    _eventAggregator.PublishEvent(new MovieScanSkippedEvent(movie, MovieScanSkippedReason.RootFolderIsEmpty));
+                    _logger.Warn("Series' root folder ({0}) is empty.", rootFolder);
+                    _eventAggregator.PublishEvent(new SeriesScanSkippedEvent(series, SeriesScanSkippedReason.RootFolderIsEmpty));
                     return;
                 }
             }
 
-            _logger.ProgressInfo("Scanning disk for {0}", movie.Title);
+            _logger.ProgressInfo("Scanning {0}", series.Title);
 
-            if (!movieFolderExists)
+            if (!seriesFolderExists)
             {
-                if (_configService.CreateEmptyMovieFolders)
+                if (_configService.CreateEmptySeriesFolders)
                 {
                     if (_configService.DeleteEmptyFolders)
                     {
-                        _logger.Debug("Not creating missing movie folder: {0} because delete empty movie folders is enabled", movie.Path);
+                        _logger.Debug("Not creating missing series folder: {0} because delete empty series folders is enabled", series.Path);
                     }
                     else
                     {
-                        _logger.Debug("Creating missing movie folder: {0}", movie.Path);
+                        _logger.Debug("Creating missing series folder: {0}", series.Path);
 
-                        _diskProvider.CreateFolder(movie.Path);
-                        SetPermissions(movie.Path);
+                        _diskProvider.CreateFolder(series.Path);
+                        SetPermissions(series.Path);
                     }
                 }
                 else
                 {
-                    _logger.Debug("Movie's folder doesn't exist: {0}", movie.Path);
+                    _logger.Debug("Series folder doesn't exist: {0}", series.Path);
                 }
 
-                CleanMediaFiles(movie, new List<string>());
-                CompletedScanning(movie);
+                CleanMediaFiles(series, new List<string>());
+                CompletedScanning(series);
 
                 return;
             }
 
             var videoFilesStopwatch = Stopwatch.StartNew();
-            var mediaFileList = FilterPaths(movie.Path, GetVideoFiles(movie.Path)).ToList();
+            var mediaFileList = FilterPaths(series.Path, GetVideoFiles(series.Path)).ToList();
             videoFilesStopwatch.Stop();
-            _logger.Trace("Finished getting movie files for: {0} [{1}]", movie, videoFilesStopwatch.Elapsed);
+            _logger.Trace("Finished getting episode files for: {0} [{1}]", series, videoFilesStopwatch.Elapsed);
 
-            CleanMediaFiles(movie, mediaFileList);
+            CleanMediaFiles(series, mediaFileList);
 
-            var movieFiles = _mediaFileService.GetFilesByMovie(movie.Id);
-            var unmappedFiles = MediaFileService.FilterExistingFiles(mediaFileList, movieFiles, movie);
+            var seriesFiles = _mediaFileService.GetFilesBySeries(series.Id);
+            var unmappedFiles = MediaFileService.FilterExistingFiles(mediaFileList, seriesFiles, series);
 
             var decisionsStopwatch = Stopwatch.StartNew();
-            var decisions = _importDecisionMaker.GetImportDecisions(unmappedFiles, movie, false);
+            var decisions = _importDecisionMaker.GetImportDecisions(unmappedFiles, series, false);
             decisionsStopwatch.Stop();
-            _logger.Trace("Import decisions complete for: {0} [{1}]", movie, decisionsStopwatch.Elapsed);
-            _importApprovedMovies.Import(decisions, false);
+            _logger.Trace("Import decisions complete for: {0} [{1}]", series, decisionsStopwatch.Elapsed);
+            _importApprovedEpisodes.Import(decisions, false);
 
             // Update existing files that have a different file size
-            var fileInfoStopwatch = Stopwatch.StartNew();
-            var filesToUpdate = new List<MediaFile>();
 
-            foreach (var file in movieFiles)
+            var fileInfoStopwatch = Stopwatch.StartNew();
+            var filesToUpdate = new List<EpisodeFile>();
+
+            foreach (var file in seriesFiles)
             {
-                var path = Path.Combine(movie.Path, file.RelativePath);
+                var path = Path.Combine(series.Path, file.RelativePath);
                 var fileSize = _diskProvider.GetFileSize(path);
 
                 if (file.Size == fileSize)
@@ -158,7 +159,7 @@ namespace NzbDrone.Core.MediaFiles
 
                 file.Size = fileSize;
 
-                if (!_updateMediaInfoService.Update(file, movie))
+                if (!_updateMediaInfoService.Update(file, series))
                 {
                     filesToUpdate.Add(file);
                 }
@@ -171,22 +172,22 @@ namespace NzbDrone.Core.MediaFiles
             }
 
             fileInfoStopwatch.Stop();
-            _logger.Trace("Reprocessing existing files complete for: {0} [{1}]", movie, decisionsStopwatch.Elapsed);
+            _logger.Trace("Reprocessing existing files complete for: {0} [{1}]", series, decisionsStopwatch.Elapsed);
 
-            RemoveEmptyMovieFolder(movie.Path);
-            CompletedScanning(movie);
+            RemoveEmptySeriesFolder(series.Path);
+            CompletedScanning(series);
         }
 
-        private void CleanMediaFiles(Media movie, List<string> mediaFileList)
+        private void CleanMediaFiles(Series series, List<string> mediaFileList)
         {
-            _logger.Debug("{0} Cleaning up media files in DB", movie);
-            _mediaFileTableCleanupService.Clean(movie, mediaFileList);
+            _logger.Debug("{0} Cleaning up media files in DB", series);
+            _mediaFileTableCleanupService.Clean(series, mediaFileList);
         }
 
-        private void CompletedScanning(Media movie)
+        private void CompletedScanning(Series series)
         {
-            _logger.Info("Completed scanning disk for {0}", movie.Title);
-            _eventAggregator.PublishEvent(new MovieScannedEvent(movie));
+            _logger.Info("Completed scanning disk for {0}", series.Title);
+            _eventAggregator.PublishEvent(new SeriesScannedEvent(series));
         }
 
         public string[] GetVideoFiles(string path, bool allDirectories = true)
@@ -223,9 +224,9 @@ namespace NzbDrone.Core.MediaFiles
 
         public List<string> FilterPaths(string basePath, IEnumerable<string> paths, bool filterExtras = true)
         {
-            var filteredPaths =  paths.Where(path => !ExcludedSubFoldersRegex.IsMatch(basePath.GetRelativePath(path)))
-                                      .Where(path => !ExcludedFilesRegex.IsMatch(Path.GetFileName(path)))
-                                      .ToList();
+            var filteredPaths = paths.Where(path => !ExcludedSubFoldersRegex.IsMatch(basePath.GetRelativePath(path)))
+                        .Where(path => !ExcludedFilesRegex.IsMatch(Path.GetFileName(path)))
+                        .ToList();
 
             if (filterExtras)
             {
@@ -255,7 +256,7 @@ namespace NzbDrone.Core.MediaFiles
             }
         }
 
-        private void RemoveEmptyMovieFolder(string path)
+        private void RemoveEmptySeriesFolder(string path)
         {
             if (_configService.DeleteEmptyFolders)
             {
@@ -268,20 +269,20 @@ namespace NzbDrone.Core.MediaFiles
             }
         }
 
-        public void Execute(RescanMovieCommand message)
+        public void Execute(RescanSeriesCommand message)
         {
-            if (message.MovieId.HasValue)
+            if (message.SeriesId.HasValue)
             {
-                var movie = _movieService.GetMovie(message.MovieId.Value);
-                Scan(movie);
+                var series = _seriesService.GetSeries(message.SeriesId.Value);
+                Scan(series);
             }
             else
             {
-                var allMovies = _movieService.GetAllMovies();
+                var allSeries = _seriesService.GetAllSeries();
 
-                foreach (var movie in allMovies)
+                foreach (var series in allSeries)
                 {
-                    Scan(movie);
+                    Scan(series);
                 }
             }
         }

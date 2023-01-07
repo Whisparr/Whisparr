@@ -5,7 +5,6 @@ import FieldSet from 'Components/FieldSet';
 import Icon from 'Components/Icon';
 import PageSectionContent from 'Components/Page/PageSectionContent';
 import { icons } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import AddIndexerModal from './AddIndexerModal';
 import EditIndexerModalConnector from './EditIndexerModalConnector';
 import Indexer from './Indexer';
@@ -68,9 +67,9 @@ class Indexers extends Component {
     const showPriority = items.some((index) => index.priority !== 25);
 
     return (
-      <FieldSet legend={translate('Indexers')}>
+      <FieldSet legend="Indexers">
         <PageSectionContent
-          errorMessage={translate('UnableToLoadIndexers')}
+          errorMessage="Unable to load Indexers"
           {...otherProps}
         >
           <div className={styles.indexers}>

@@ -1,6 +1,6 @@
-using System;
-using System.Collections.Generic;
+﻿using System;
 using NzbDrone.Core.Indexers;
+using NzbDrone.Core.ThingiProvider;
 using NzbDrone.Core.Validation;
 
 namespace NzbDrone.Core.Test.IndexerTests
@@ -13,7 +13,5 @@ namespace NzbDrone.Core.Test.IndexerTests
         }
 
         public string BaseUrl { get; set; }
-
-        public IEnumerable<int> MultiLanguages { get; set; }
     }
 }

@@ -5,11 +5,12 @@ import { withRouter } from 'react-router-dom';
 import { createSelector } from 'reselect';
 import { saveDimensions, setIsSidebarVisible } from 'Store/Actions/appActions';
 import { fetchCustomFilters } from 'Store/Actions/customFilterActions';
-import { fetchMovies } from 'Store/Actions/movieActions';
-import { fetchImportLists, fetchIndexerFlags, fetchLanguages, fetchQualityProfiles, fetchUISettings } from 'Store/Actions/settingsActions';
+import { fetchSeries } from 'Store/Actions/seriesActions';
+import { fetchImportLists, fetchLanguages, fetchQualityProfiles, fetchUISettings } from 'Store/Actions/settingsActions';
 import { fetchStatus } from 'Store/Actions/systemActions';
 import { fetchTags } from 'Store/Actions/tagActions';
 import createDimensionsSelector from 'Store/Selectors/createDimensionsSelector';
+import createSystemStatusSelector from 'Store/Selectors/createSystemStatusSelector';
 import ErrorPage from './ErrorPage';
 import LoadingPage from './LoadingPage';
 import Page from './Page';
@@ -43,31 +44,31 @@ const selectAppProps = createSelector(
 );
 
 const selectIsPopulated = createSelector(
+  (state) => state.series.isPopulated,
   (state) => state.customFilters.isPopulated,
   (state) => state.tags.isPopulated,
   (state) => state.settings.ui.isPopulated,
   (state) => state.settings.qualityProfiles.isPopulated,
   (state) => state.settings.languages.isPopulated,
-  (state) => state.settings.indexerFlags.isPopulated,
   (state) => state.settings.importLists.isPopulated,
   (state) => state.system.status.isPopulated,
   (
+    seriesIsPopulated,
     customFiltersIsPopulated,
     tagsIsPopulated,
     uiSettingsIsPopulated,
     qualityProfilesIsPopulated,
     languagesIsPopulated,
-    indexerFlagsIsPopulated,
     importListsIsPopulated,
     systemStatusIsPopulated
   ) => {
     return (
+      seriesIsPopulated &&
       customFiltersIsPopulated &&
       tagsIsPopulated &&
       uiSettingsIsPopulated &&
       qualityProfilesIsPopulated &&
       languagesIsPopulated &&
-      indexerFlagsIsPopulated &&
       importListsIsPopulated &&
       systemStatusIsPopulated
     );
@@ -75,43 +76,43 @@ const selectIsPopulated = createSelector(
 );
 
 const selectErrors = createSelector(
+  (state) => state.series.error,
   (state) => state.customFilters.error,
   (state) => state.tags.error,
   (state) => state.settings.ui.error,
   (state) => state.settings.qualityProfiles.error,
   (state) => state.settings.languages.error,
-  (state) => state.settings.indexerFlags.error,
   (state) => state.settings.importLists.error,
   (state) => state.system.status.error,
   (
+    seriesError,
     customFiltersError,
     tagsError,
     uiSettingsError,
     qualityProfilesError,
     languagesError,
-    indexerFlagsError,
     importListsError,
     systemStatusError
   ) => {
     const hasError = !!(
+      seriesError ||
       customFiltersError ||
       tagsError ||
       uiSettingsError ||
       qualityProfilesError ||
       languagesError ||
-      indexerFlagsError ||
       importListsError ||
       systemStatusError
     );
 
     return {
       hasError,
+      seriesError,
       customFiltersError,
       tagsError,
       uiSettingsError,
       qualityProfilesError,
       languagesError,
-      indexerFlagsError,
       importListsError,
       systemStatusError
     };
@@ -125,18 +126,21 @@ function createMapStateToProps() {
     selectErrors,
     selectAppProps,
     createDimensionsSelector(),
+    createSystemStatusSelector(),
     (
       enableColorImpairedMode,
       isPopulated,
       errors,
       app,
-      dimensions
+      dimensions,
+      systemStatus
     ) => {
       return {
         ...app,
         ...errors,
         isPopulated,
         isSmallScreen: dimensions.isSmallScreen,
+        authenticationEnabled: systemStatus.authentication !== 'none',
         enableColorImpairedMode
       };
     }
@@ -145,8 +149,8 @@ function createMapStateToProps() {
 
 function createMapDispatchToProps(dispatch, props) {
   return {
-    dispatchFetchMovies() {
-      dispatch(fetchMovies());
+    dispatchFetchSeries() {
+      dispatch(fetchSeries());
     },
     dispatchFetchCustomFilters() {
       dispatch(fetchCustomFilters());
@@ -159,9 +163,6 @@ function createMapDispatchToProps(dispatch, props) {
     },
     dispatchFetchLanguages() {
       dispatch(fetchLanguages());
-    },
-    dispatchFetchIndexerFlags() {
-      dispatch(fetchIndexerFlags());
     },
     dispatchFetchImportLists() {
       dispatch(fetchImportLists());
@@ -196,12 +197,11 @@ class PageConnector extends Component {
 
   componentDidMount() {
     if (!this.props.isPopulated) {
-      this.props.dispatchFetchMovies();
+      this.props.dispatchFetchSeries();
       this.props.dispatchFetchCustomFilters();
       this.props.dispatchFetchTags();
       this.props.dispatchFetchQualityProfiles();
       this.props.dispatchFetchLanguages();
-      this.props.dispatchFetchIndexerFlags();
       this.props.dispatchFetchImportLists();
       this.props.dispatchFetchUISettings();
       this.props.dispatchFetchStatus();
@@ -222,11 +222,10 @@ class PageConnector extends Component {
     const {
       isPopulated,
       hasError,
-      dispatchFetchMovies,
+      dispatchFetchSeries,
       dispatchFetchTags,
       dispatchFetchQualityProfiles,
       dispatchFetchLanguages,
-      dispatchFetchIndexerFlags,
       dispatchFetchImportLists,
       dispatchFetchUISettings,
       dispatchFetchStatus,
@@ -261,12 +260,11 @@ PageConnector.propTypes = {
   isPopulated: PropTypes.bool.isRequired,
   hasError: PropTypes.bool.isRequired,
   isSidebarVisible: PropTypes.bool.isRequired,
-  dispatchFetchMovies: PropTypes.func.isRequired,
+  dispatchFetchSeries: PropTypes.func.isRequired,
   dispatchFetchCustomFilters: PropTypes.func.isRequired,
   dispatchFetchTags: PropTypes.func.isRequired,
   dispatchFetchQualityProfiles: PropTypes.func.isRequired,
   dispatchFetchLanguages: PropTypes.func.isRequired,
-  dispatchFetchIndexerFlags: PropTypes.func.isRequired,
   dispatchFetchImportLists: PropTypes.func.isRequired,
   dispatchFetchUISettings: PropTypes.func.isRequired,
   dispatchFetchStatus: PropTypes.func.isRequired,

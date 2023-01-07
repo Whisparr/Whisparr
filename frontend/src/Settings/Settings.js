@@ -2,13 +2,12 @@ import React from 'react';
 import Link from 'Components/Link/Link';
 import PageContent from 'Components/Page/PageContent';
 import PageContentBody from 'Components/Page/PageContentBody';
-import translate from 'Utilities/String/translate';
 import SettingsToolbarConnector from './SettingsToolbarConnector';
 import styles from './Settings.css';
 
 function Settings() {
   return (
-    <PageContent title={translate('Settings')}>
+    <PageContent title="Settings">
       <SettingsToolbarConnector
         hasPendingChanges={false}
       />
@@ -18,132 +17,143 @@ function Settings() {
           className={styles.link}
           to="/settings/mediamanagement"
         >
-          {translate('MediaManagement')}
+          Media Management
         </Link>
 
         <div className={styles.summary}>
-          {translate('MediaManagementSettingsSummary')}
+          Naming, file management settings and root folders
         </div>
 
         <Link
           className={styles.link}
           to="/settings/profiles"
         >
-          {translate('Profiles')}
+          Profiles
         </Link>
 
         <div className={styles.summary}>
-          {translate('ProfilesSettingsSummary')}
+          Quality, Language, Delay and Release profiles
         </div>
 
         <Link
           className={styles.link}
           to="/settings/quality"
         >
-          {translate('Quality')}
+          Quality
         </Link>
 
         <div className={styles.summary}>
-          {translate('QualitySettingsSummary')}
+          Quality sizes and naming
         </div>
 
         <Link
           className={styles.link}
           to="/settings/customformats"
         >
-          {translate('CustomFormats')}
+          Custom Formats
         </Link>
 
         <div className={styles.summary}>
-          {translate('CustomFormatsSettingsSummary')}
+          Custom Formats and Settings
         </div>
 
         <Link
           className={styles.link}
           to="/settings/indexers"
         >
-          {translate('Indexers')}
+          Indexers
         </Link>
 
         <div className={styles.summary}>
-          {translate('IndexersSettingsSummary')}
+          Indexers and indexer options
         </div>
 
         <Link
           className={styles.link}
           to="/settings/downloadclients"
         >
-          {translate('DownloadClients')}
+          Download Clients
         </Link>
 
         <div className={styles.summary}>
-          {translate('DownloadClientsSettingsSummary')}
+          Download clients, download handling and remote path mappings
         </div>
 
         <Link
           className={styles.link}
           to="/settings/importlists"
         >
-          {translate('Lists')}
+          Import Lists
         </Link>
 
         <div className={styles.summary}>
-          {translate('ListsSettingsSummary')}
+          Import from another Whisparr instance or Trakt lists and manage list exclusions
         </div>
 
         <Link
           className={styles.link}
           to="/settings/connect"
         >
-          {translate('Connect')}
+          Connect
         </Link>
 
         <div className={styles.summary}>
-          {translate('ConnectSettingsSummary')}
+          Notifications, connections to media servers/players and custom scripts
         </div>
 
         <Link
           className={styles.link}
           to="/settings/metadata"
         >
-          {translate('Metadata')}
+          Metadata
         </Link>
 
         <div className={styles.summary}>
-          {translate('MetadataSettingsSummary')}
+          Create metadata files when episodes are imported or series are refreshed
+        </div>
+
+        <Link
+          className={styles.link}
+          to="/settings/metadatasource"
+        >
+          Metadata Source
+        </Link>
+
+        <div className={styles.summary}>
+          Information on where Whisparr gets Series and Episode information
         </div>
 
         <Link
           className={styles.link}
           to="/settings/tags"
         >
-          {translate('Tags')}
+          Tags
         </Link>
 
         <div className={styles.summary}>
-          {translate('TagsSettingsSummary')}
+          See all tags and how they are used. Unused tags can be removed
         </div>
 
         <Link
           className={styles.link}
           to="/settings/general"
         >
-          {translate('General')}
+          General
         </Link>
 
         <div className={styles.summary}>
-          {translate('GeneralSettingsSummary')}
+          Port, SSL, username/password, proxy, analytics and updates
         </div>
 
         <Link
           className={styles.link}
           to="/settings/ui"
         >
-          {translate('UI')}
+          UI
         </Link>
 
         <div className={styles.summary}>
-          {translate('UISettingsSummary')}
+          Calendar, date and color impaired options
         </div>
       </PageContentBody>
     </PageContent>

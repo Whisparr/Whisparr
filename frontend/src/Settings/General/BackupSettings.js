@@ -5,7 +5,6 @@ import FormGroup from 'Components/Form/FormGroup';
 import FormInputGroup from 'Components/Form/FormInputGroup';
 import FormLabel from 'Components/Form/FormLabel';
 import { inputTypes } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 
 function BackupSettings(props) {
   const {
@@ -25,17 +24,17 @@ function BackupSettings(props) {
   }
 
   return (
-    <FieldSet legend={translate('Backups')}>
+    <FieldSet legend="Backups">
       <FormGroup
         advancedSettings={advancedSettings}
         isAdvanced={true}
       >
-        <FormLabel>{translate('Folder')}</FormLabel>
+        <FormLabel>Folder</FormLabel>
 
         <FormInputGroup
           type={inputTypes.PATH}
           name="backupFolder"
-          helpText={translate('BackupFolderHelpText')}
+          helpText="Relative paths will be under Whisparr's AppData directory"
           onChange={onInputChange}
           {...backupFolder}
         />
@@ -45,13 +44,13 @@ function BackupSettings(props) {
         advancedSettings={advancedSettings}
         isAdvanced={true}
       >
-        <FormLabel>{translate('Interval')}</FormLabel>
+        <FormLabel>Interval</FormLabel>
 
         <FormInputGroup
           type={inputTypes.NUMBER}
           name="backupInterval"
           unit="days"
-          helpText={translate('BackupIntervalHelpText')}
+          helpText="Interval between automatic backups"
           onChange={onInputChange}
           {...backupInterval}
         />
@@ -61,13 +60,13 @@ function BackupSettings(props) {
         advancedSettings={advancedSettings}
         isAdvanced={true}
       >
-        <FormLabel>{translate('Retention')}</FormLabel>
+        <FormLabel>Retention</FormLabel>
 
         <FormInputGroup
           type={inputTypes.NUMBER}
           name="backupRetention"
           unit="days"
-          helpText={translate('BackupRetentionHelpText')}
+          helpText="Automatic backups older than the retention period will be cleaned up automatically"
           onChange={onInputChange}
           {...backupRetention}
         />

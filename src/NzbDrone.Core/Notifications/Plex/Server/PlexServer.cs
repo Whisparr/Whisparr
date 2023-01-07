@@ -7,8 +7,8 @@ using NzbDrone.Common.Cache;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Exceptions;
 using NzbDrone.Core.MediaFiles;
-using NzbDrone.Core.Movies;
 using NzbDrone.Core.Notifications.Plex.PlexTv;
+using NzbDrone.Core.Tv;
 using NzbDrone.Core.Validation;
 
 namespace NzbDrone.Core.Notifications.Plex.Server
@@ -21,11 +21,11 @@ namespace NzbDrone.Core.Notifications.Plex.Server
 
         private class PlexUpdateQueue
         {
-            public Dictionary<int, Media> Pending { get; } = new Dictionary<int, Media>();
+            public Dictionary<int, Series> Pending { get; } = new Dictionary<int, Series>();
             public bool Refreshing { get; set; }
         }
 
-        private readonly ICached<PlexUpdateQueue> _pendingMoviesCache;
+        private readonly ICached<PlexUpdateQueue> _pendingSeriesCache;
 
         public PlexServer(IPlexServerService plexServerService, IPlexTvService plexTvService, ICacheManager cacheManager, Logger logger)
         {
@@ -33,7 +33,7 @@ namespace NzbDrone.Core.Notifications.Plex.Server
             _plexTvService = plexTvService;
             _logger = logger;
 
-            _pendingMoviesCache = cacheManager.GetRollingCache<PlexUpdateQueue>(GetType(), "pendingSeries", TimeSpan.FromDays(1));
+            _pendingSeriesCache = cacheManager.GetRollingCache<PlexUpdateQueue>(GetType(), "pendingSeries", TimeSpan.FromDays(1));
         }
 
         public override string Link => "https://www.plex.tv/";
@@ -41,43 +41,46 @@ namespace NzbDrone.Core.Notifications.Plex.Server
 
         public override void OnDownload(DownloadMessage message)
         {
-            UpdateIfEnabled(message.Movie);
+            UpdateIfEnabled(message.Series);
         }
 
-        public override void OnMovieRename(Media movie, List<RenamedMovieFile> renamedFiles)
+        public override void OnRename(Series series, List<RenamedEpisodeFile> renamedFiles)
         {
-            UpdateIfEnabled(movie);
+            UpdateIfEnabled(series);
         }
 
-        public override void OnMovieFileDelete(MovieFileDeleteMessage deleteMessage)
+        public override void OnEpisodeFileDelete(EpisodeDeleteMessage deleteMessage)
         {
-            UpdateIfEnabled(deleteMessage.Movie);
+            UpdateIfEnabled(deleteMessage.Series);
         }
 
-        public override void OnMovieDelete(MovieDeleteMessage deleteMessage)
+        public override void OnSeriesDelete(SeriesDeleteMessage deleteMessage)
         {
             if (deleteMessage.DeletedFiles)
             {
-                UpdateIfEnabled(deleteMessage.Movie);
+                UpdateIfEnabled(deleteMessage.Series);
             }
         }
 
-        private void UpdateIfEnabled(Media movie)
+        private void UpdateIfEnabled(Series series)
         {
+            _plexTvService.Ping(Settings.AuthToken);
+
             if (Settings.UpdateLibrary)
             {
-                _logger.Debug("Scheduling library update for movie {0} {1}", movie.Id, movie.Title);
-                var queue = _pendingMoviesCache.Get(Settings.Host, () => new PlexUpdateQueue());
+                _logger.Debug("Scheduling library update for series {0} {1}", series.Id, series.Title);
+                var queue = _pendingSeriesCache.Get(Settings.Host, () => new PlexUpdateQueue());
                 lock (queue)
                 {
-                    queue.Pending[movie.Id] = movie;
+                    queue.Pending[series.Id] = series;
                 }
             }
         }
 
         public override void ProcessQueue()
         {
-            PlexUpdateQueue queue = _pendingMoviesCache.Find(Settings.Host);
+            var queue = _pendingSeriesCache.Find(Settings.Host);
+
             if (queue == null)
             {
                 return;
@@ -97,7 +100,7 @@ namespace NzbDrone.Core.Notifications.Plex.Server
             {
                 while (true)
                 {
-                    List<Media> refreshingMovies;
+                    List<Series> refreshingSeries;
                     lock (queue)
                     {
                         if (queue.Pending.Empty())
@@ -106,14 +109,14 @@ namespace NzbDrone.Core.Notifications.Plex.Server
                             return;
                         }
 
-                        refreshingMovies = queue.Pending.Values.ToList();
+                        refreshingSeries = queue.Pending.Values.ToList();
                         queue.Pending.Clear();
                     }
 
                     if (Settings.UpdateLibrary)
                     {
-                        _logger.Debug("Performing library update for {0} movies", refreshingMovies.Count);
-                        _plexServerService.UpdateLibrary(refreshingMovies, Settings);
+                        _logger.Debug("Performing library update for {0} series", refreshingSeries.Count);
+                        _plexServerService.UpdateLibrary(refreshingSeries, Settings);
                     }
                 }
             }
@@ -130,6 +133,8 @@ namespace NzbDrone.Core.Notifications.Plex.Server
 
         public override ValidationResult Test()
         {
+            _plexTvService.Ping(Settings.AuthToken);
+
             var failures = new List<ValidationFailure>();
 
             failures.AddIfNotNull(_plexServerService.Test(Settings));
@@ -178,9 +183,9 @@ namespace NzbDrone.Core.Notifications.Plex.Server
                 var authToken = _plexTvService.GetAuthToken(Convert.ToInt32(query["pinId"]));
 
                 return new
-                {
-                    authToken
-                };
+                       {
+                           authToken
+                       };
             }
 
             return new { };

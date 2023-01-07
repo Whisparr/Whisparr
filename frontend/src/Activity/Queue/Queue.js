@@ -15,7 +15,6 @@ import TablePager from 'Components/Table/TablePager';
 import { align, icons } from 'Helpers/Props';
 import getRemovedItems from 'Utilities/Object/getRemovedItems';
 import hasDifferentItems from 'Utilities/Object/hasDifferentItems';
-import translate from 'Utilities/String/translate';
 import getSelectedIds from 'Utilities/Table/getSelectedIds';
 import removeOldSelectedState from 'Utilities/Table/removeOldSelectedState';
 import selectAll from 'Utilities/Table/selectAll';
@@ -56,14 +55,12 @@ class Queue extends Component {
   componentDidUpdate(prevProps) {
     const {
       items,
-      isFetching,
-      isMoviesFetching
+      isEpisodesFetching
     } = this.props;
 
     if (
-      (!isMoviesFetching && prevProps.isMoviesFetching) ||
-      (!isFetching && prevProps.isFetching) ||
-      (hasDifferentItems(prevProps.items, items) && !items.some((e) => e.movieId))
+      (!isEpisodesFetching && prevProps.isEpisodesFetching) ||
+      (hasDifferentItems(prevProps.items, items) && !items.some((e) => e.episodeId))
     ) {
       this.setState((state) => {
         return {
@@ -75,13 +72,23 @@ class Queue extends Component {
       return;
     }
 
+    const nextState = {};
+
+    if (prevProps.items !== items) {
+      nextState.items = items;
+    }
+
     const selectedIds = this.getSelectedIds();
     const isPendingSelected = _.some(this.props.items, (item) => {
       return selectedIds.indexOf(item.id) > -1 && item.status === 'delay';
     });
 
     if (isPendingSelected !== this.state.isPendingSelected) {
-      this.setState({ isPendingSelected });
+      nextState.isPendingSelected = isPendingSelected;
+    }
+
+    if (!_.isEmpty(nextState)) {
+      this.setState(nextState);
     }
   }
 
@@ -138,9 +145,9 @@ class Queue extends Component {
       isFetching,
       isPopulated,
       error,
-      isMoviesFetching,
-      isMoviesPopulated,
-      moviesError,
+      isEpisodesFetching,
+      isEpisodesPopulated,
+      episodesError,
       columns,
       totalRecords,
       isGrabbing,
@@ -159,19 +166,19 @@ class Queue extends Component {
       items
     } = this.state;
 
-    const isRefreshing = isFetching || isMoviesFetching || isRefreshMonitoredDownloadsExecuting;
-    const isAllPopulated = isPopulated && (isMoviesPopulated || !items.length || items.every((e) => !e.movieId));
-    const hasError = error || moviesError;
+    const isRefreshing = isFetching || isEpisodesFetching || isRefreshMonitoredDownloadsExecuting;
+    const isAllPopulated = isPopulated && (isEpisodesPopulated || !items.length || items.every((e) => !e.episodeId));
+    const hasError = error || episodesError;
     const selectedIds = this.getSelectedIds();
     const selectedCount = selectedIds.length;
     const disableSelectedActions = selectedCount === 0;
 
     return (
-      <PageContent title={translate('Queue')}>
+      <PageContent title="Queue">
         <PageToolbar>
           <PageToolbarSection>
             <PageToolbarButton
-              label={translate('Refresh')}
+              label="Refresh"
               iconName={icons.REFRESH}
               isSpinning={isRefreshing}
               onPress={onRefreshPress}
@@ -180,7 +187,7 @@ class Queue extends Component {
             <PageToolbarSeparator />
 
             <PageToolbarButton
-              label={translate('GrabSelected')}
+              label="Grab Selected"
               iconName={icons.DOWNLOAD}
               isDisabled={disableSelectedActions || !isPendingSelected}
               isSpinning={isGrabbing}
@@ -188,7 +195,7 @@ class Queue extends Component {
             />
 
             <PageToolbarButton
-              label={translate('RemoveSelected')}
+              label="Remove Selected"
               iconName={icons.REMOVE}
               isDisabled={disableSelectedActions}
               isSpinning={isRemoving}
@@ -205,7 +212,7 @@ class Queue extends Component {
               optionsComponent={QueueOptionsConnector}
             >
               <PageToolbarButton
-                label={translate('Options')}
+                label="Options"
                 iconName={icons.TABLE}
               />
             </TableOptionsModalWrapper>
@@ -214,26 +221,29 @@ class Queue extends Component {
 
         <PageContentBody>
           {
-            isRefreshing && !isAllPopulated &&
-              <LoadingIndicator />
+            isRefreshing && !isAllPopulated ?
+              <LoadingIndicator /> :
+              null
           }
 
           {
-            !isRefreshing && hasError &&
+            !isRefreshing && hasError ?
               <div>
-                {translate('FailedToLoadQueue')}
-              </div>
+                Failed to load Queue
+              </div> :
+              null
           }
 
           {
-            isAllPopulated && !hasError && !items.length &&
+            isAllPopulated && !hasError && !items.length ?
               <div>
-                {translate('QueueIsEmpty')}
-              </div>
+                Queue is empty
+              </div> :
+              null
           }
 
           {
-            isAllPopulated && !hasError && !!items.length &&
+            isAllPopulated && !hasError && !!items.length ?
               <div>
                 <Table
                   columns={columns}
@@ -250,7 +260,7 @@ class Queue extends Component {
                         return (
                           <QueueRowConnector
                             key={item.id}
-                            movieId={item.movieId}
+                            episodeId={item.episodeId}
                             isSelected={selectedState[item.id]}
                             columns={columns}
                             {...item}
@@ -268,7 +278,8 @@ class Queue extends Component {
                   isFetching={isRefreshing}
                   {...otherProps}
                 />
-              </div>
+              </div> :
+              null
           }
         </PageContentBody>
 
@@ -279,7 +290,7 @@ class Queue extends Component {
             selectedIds.every((id) => {
               const item = items.find((i) => i.id === id);
 
-              return !!(item && item.movieId);
+              return !!(item && item.seriesId && item.episodeId);
             })
           )}
           allPending={isConfirmRemoveModalOpen && (
@@ -305,10 +316,10 @@ Queue.propTypes = {
   isFetching: PropTypes.bool.isRequired,
   isPopulated: PropTypes.bool.isRequired,
   error: PropTypes.object,
-  isMoviesFetching: PropTypes.bool.isRequired,
-  isMoviesPopulated: PropTypes.bool.isRequired,
-  moviesError: PropTypes.object,
   items: PropTypes.arrayOf(PropTypes.object).isRequired,
+  isEpisodesFetching: PropTypes.bool.isRequired,
+  isEpisodesPopulated: PropTypes.bool.isRequired,
+  episodesError: PropTypes.object,
   columns: PropTypes.arrayOf(PropTypes.object).isRequired,
   totalRecords: PropTypes.number,
   isGrabbing: PropTypes.bool.isRequired,

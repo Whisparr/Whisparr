@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import FieldSet from 'Components/FieldSet';
 import PageSectionContent from 'Components/Page/PageSectionContent';
-import translate from 'Utilities/String/translate';
 import TagConnector from './TagConnector';
 import styles from './Tags.css';
 
@@ -14,18 +13,16 @@ function Tags(props) {
 
   if (!items.length) {
     return (
-      <div>
-        {translate('NoTagsHaveBeenAddedYet')}
-      </div>
+      <div>No tags have been added yet</div>
     );
   }
 
   return (
     <FieldSet
-      legend={translate('Tags')}
+      legend="Tags"
     >
       <PageSectionContent
-        errorMessage={translate('UnableToLoadTags')}
+        errorMessage="Unable to load Tags"
         {...otherProps}
       >
         <div className={styles.tags}>

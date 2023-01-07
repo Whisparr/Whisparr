@@ -12,7 +12,6 @@ import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { inputTypes } from 'Helpers/Props';
 import { firstDayOfWeekOptions, timeFormatOptions, weekColumnOptions } from 'Settings/UI/UISettings';
-import translate from 'Utilities/String/translate';
 
 class CalendarOptionsModalContent extends Component {
 
@@ -26,14 +25,16 @@ class CalendarOptionsModalContent extends Component {
       firstDayOfWeek,
       calendarWeekColumnHeader,
       timeFormat,
-      enableColorImpairedMode
+      enableColorImpairedMode,
+      fullColorEvents
     } = props;
 
     this.state = {
       firstDayOfWeek,
       calendarWeekColumnHeader,
       timeFormat,
-      enableColorImpairedMode
+      enableColorImpairedMode,
+      fullColorEvents
     };
   }
 
@@ -92,8 +93,12 @@ class CalendarOptionsModalContent extends Component {
 
   render() {
     const {
-      showMovieInformation,
+      collapseMultipleEpisodes,
+      showEpisodeInformation,
+      showFinaleIcon,
+      showSpecialIcon,
       showCutoffUnmetIcon,
+      fullColorEvents,
       onModalClose
     } = this.props;
 
@@ -107,42 +112,90 @@ class CalendarOptionsModalContent extends Component {
     return (
       <ModalContent onModalClose={onModalClose}>
         <ModalHeader>
-          {translate('CalendarOptions')}
+          Calendar Options
         </ModalHeader>
 
         <ModalBody>
-          <FieldSet legend={translate('Local')}>
+          <FieldSet legend="Local">
             <Form>
               <FormGroup>
-                <FormLabel>{translate('ShowMovieInformation')}</FormLabel>
+                <FormLabel>Collapse Multiple Episodes</FormLabel>
 
                 <FormInputGroup
                   type={inputTypes.CHECK}
-                  name="showMovieInformation"
-                  value={showMovieInformation}
-                  helpText={translate('ShowMovieInformationHelpText')}
+                  name="collapseMultipleEpisodes"
+                  value={collapseMultipleEpisodes}
+                  helpText="Collapse multiple episodes airing on the same day"
                   onChange={this.onOptionInputChange}
                 />
               </FormGroup>
 
               <FormGroup>
-                <FormLabel>{translate('IconForCutoffUnmet')}</FormLabel>
+                <FormLabel>Show Episode Information</FormLabel>
+
+                <FormInputGroup
+                  type={inputTypes.CHECK}
+                  name="showEpisodeInformation"
+                  value={showEpisodeInformation}
+                  helpText="Show episode title and number"
+                  onChange={this.onOptionInputChange}
+                />
+              </FormGroup>
+
+              <FormGroup>
+                <FormLabel>Icon for Finales</FormLabel>
+
+                <FormInputGroup
+                  type={inputTypes.CHECK}
+                  name="showFinaleIcon"
+                  value={showFinaleIcon}
+                  helpText="Show icon for series/season finales based on available episode information"
+                  onChange={this.onOptionInputChange}
+                />
+              </FormGroup>
+
+              <FormGroup>
+                <FormLabel>Icon for Specials</FormLabel>
+
+                <FormInputGroup
+                  type={inputTypes.CHECK}
+                  name="showSpecialIcon"
+                  value={showSpecialIcon}
+                  helpText="Show icon for special episodes (season 0)"
+                  onChange={this.onOptionInputChange}
+                />
+              </FormGroup>
+
+              <FormGroup>
+                <FormLabel>Icon for Cutoff Unmet</FormLabel>
 
                 <FormInputGroup
                   type={inputTypes.CHECK}
                   name="showCutoffUnmetIcon"
                   value={showCutoffUnmetIcon}
-                  helpText={translate('ShowCutoffUnmetIconHelpText')}
+                  helpText="Show icon for files when the cutoff hasn't been met"
+                  onChange={this.onOptionInputChange}
+                />
+              </FormGroup>
+
+              <FormGroup>
+                <FormLabel>Full Color Events</FormLabel>
+
+                <FormInputGroup
+                  type={inputTypes.CHECK}
+                  name="fullColorEvents"
+                  value={fullColorEvents}
+                  helpText="Altered style to color the entire event with the status color, instead of just the left edge. Does not apply to Agenda"
                   onChange={this.onOptionInputChange}
                 />
               </FormGroup>
             </Form>
           </FieldSet>
 
-          <FieldSet legend={translate('Global')}>
+          <FieldSet legend="Global">
             <Form>
               <FormGroup>
-                <FormLabel>{translate('FirstDayOfWeek')}</FormLabel>
+                <FormLabel>First Day of Week</FormLabel>
 
                 <FormInputGroup
                   type={inputTypes.SELECT}
@@ -154,7 +207,7 @@ class CalendarOptionsModalContent extends Component {
               </FormGroup>
 
               <FormGroup>
-                <FormLabel>{translate('WeekColumnHeader')}</FormLabel>
+                <FormLabel>Week Column Header</FormLabel>
 
                 <FormInputGroup
                   type={inputTypes.SELECT}
@@ -162,12 +215,12 @@ class CalendarOptionsModalContent extends Component {
                   values={weekColumnOptions}
                   value={calendarWeekColumnHeader}
                   onChange={this.onGlobalInputChange}
-                  helpText={translate('HelpText')}
+                  helpText="Shown above each column when week is the active view"
                 />
               </FormGroup>
 
               <FormGroup>
-                <FormLabel>{translate('TimeFormat')}</FormLabel>
+                <FormLabel>Time Format</FormLabel>
 
                 <FormInputGroup
                   type={inputTypes.SELECT}
@@ -176,25 +229,26 @@ class CalendarOptionsModalContent extends Component {
                   value={timeFormat}
                   onChange={this.onGlobalInputChange}
                 />
-              </FormGroup><FormGroup>
-                <FormLabel>{translate('EnableColorImpairedMode')}</FormLabel>
+              </FormGroup>
+
+              <FormGroup>
+                <FormLabel>Enable Color-Impaired Mode</FormLabel>
 
                 <FormInputGroup
                   type={inputTypes.CHECK}
                   name="enableColorImpairedMode"
                   value={enableColorImpairedMode}
-                  helpText={translate('EnableColorImpairedModeHelpText')}
+                  helpText="Altered style to allow color-impaired users to better distinguish color coded information"
                   onChange={this.onGlobalInputChange}
                 />
               </FormGroup>
-
             </Form>
           </FieldSet>
         </ModalBody>
 
         <ModalFooter>
           <Button onPress={onModalClose}>
-            {translate('Close')}
+            Close
           </Button>
         </ModalFooter>
       </ModalContent>
@@ -203,12 +257,16 @@ class CalendarOptionsModalContent extends Component {
 }
 
 CalendarOptionsModalContent.propTypes = {
-  showMovieInformation: PropTypes.bool.isRequired,
+  collapseMultipleEpisodes: PropTypes.bool.isRequired,
+  showEpisodeInformation: PropTypes.bool.isRequired,
+  showFinaleIcon: PropTypes.bool.isRequired,
+  showSpecialIcon: PropTypes.bool.isRequired,
   showCutoffUnmetIcon: PropTypes.bool.isRequired,
   firstDayOfWeek: PropTypes.number.isRequired,
   calendarWeekColumnHeader: PropTypes.string.isRequired,
   timeFormat: PropTypes.string.isRequired,
   enableColorImpairedMode: PropTypes.bool.isRequired,
+  fullColorEvents: PropTypes.bool.isRequired,
   dispatchSetCalendarOption: PropTypes.func.isRequired,
   dispatchSaveUISettings: PropTypes.func.isRequired,
   onModalClose: PropTypes.func.isRequired

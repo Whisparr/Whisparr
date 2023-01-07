@@ -8,7 +8,7 @@ namespace NzbDrone.Common.Http
 {
     public class HttpUri : IEquatable<HttpUri>
     {
-        private static readonly Regex RegexUri = new Regex(@"^(?:(?<scheme>[a-z]+):)?(?://(?<host>[-_A-Z0-9.]+)(?::(?<port>[0-9]{1,5}))?)?(?<path>(?:(?:(?<=^)|/+)[^/?#\r\n]+)+/*|/+)?(?:\?(?<query>[^#\r\n]*))?(?:\#(?<fragment>.*))?$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex RegexUri = new Regex(@"^(?:(?<scheme>[a-z]+):)?(?://(?<host>[-_A-Z0-9.]+|\[[[A-F0-9:]+\])(?::(?<port>[0-9]{1,5}))?)?(?<path>(?:(?:(?<=^)|/+)[^/?#\r\n]+)+/*|/+)?(?:\?(?<query>[^#\r\n]*))?(?:\#(?<fragment>.*))?$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         private readonly string _uri;
         public string FullUri => _uri;
@@ -27,7 +27,7 @@ namespace NzbDrone.Common.Http
             if (scheme.IsNotNullOrWhiteSpace())
             {
                 builder.Append(scheme);
-                builder.Append(':');
+                builder.Append(":");
             }
 
             if (host.IsNotNullOrWhiteSpace())
@@ -36,7 +36,7 @@ namespace NzbDrone.Common.Http
                 builder.Append(host);
                 if (port.HasValue)
                 {
-                    builder.Append(':');
+                    builder.Append(":");
                     builder.Append(port);
                 }
             }
@@ -70,6 +70,8 @@ namespace NzbDrone.Common.Http
 
         private void Parse()
         {
+            var parseSuccess = Uri.TryCreate(_uri, UriKind.RelativeOrAbsolute, out var uri);
+
             var match = RegexUri.Match(_uri);
 
             var scheme = match.Groups["scheme"];
@@ -79,7 +81,7 @@ namespace NzbDrone.Common.Http
             var query = match.Groups["query"];
             var fragment = match.Groups["fragment"];
 
-            if (!match.Success || (scheme.Success && !host.Success && path.Success))
+            if (!parseSuccess || (scheme.Success && !host.Success && path.Success))
             {
                 throw new ArgumentException("Uri didn't match expected pattern: " + _uri);
             }
@@ -200,11 +202,11 @@ namespace NzbDrone.Common.Http
             {
                 if (builder.Length != 0)
                 {
-                    builder.Append('&');
+                    builder.Append("&");
                 }
 
                 builder.Append(Uri.EscapeDataString(pair.Key));
-                builder.Append('=');
+                builder.Append("=");
                 builder.Append(Uri.EscapeDataString(pair.Value));
             }
 

@@ -22,7 +22,7 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
         private readonly List<FFProbePixelFormat> _pixelFormats;
 
         public const int MINIMUM_MEDIA_INFO_SCHEMA_REVISION = 8;
-        public const int CURRENT_MEDIA_INFO_SCHEMA_REVISION = 10;
+        public const int CURRENT_MEDIA_INFO_SCHEMA_REVISION = 8;
 
         private static readonly string[] ValidHdrColourPrimaries = { "bt2020" };
         private static readonly string[] HlgTransferFunctions = { "bt2020-10", "arib-std-b67" };
@@ -56,6 +56,7 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
             }
 
             // TODO: Cache media info by path, mtime and length so we don't need to read files multiple times
+
             try
             {
                 _logger.Debug("Getting media info from {0}", filename);
@@ -75,7 +76,6 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
                 mediaInfoModel.VideoCodecID = analysis.PrimaryVideoStream?.CodecTagString;
                 mediaInfoModel.VideoProfile = analysis.PrimaryVideoStream?.Profile;
                 mediaInfoModel.VideoBitrate = analysis.PrimaryVideoStream?.BitRate ?? 0;
-                mediaInfoModel.VideoMultiViewCount = 1;
                 mediaInfoModel.VideoBitDepth = GetPixelFormat(analysis.PrimaryVideoStream?.PixelFormat)?.Components.Min(x => x.BitDepth) ?? 8;
                 mediaInfoModel.VideoColourPrimaries = analysis.PrimaryVideoStream?.ColorPrimaries;
                 mediaInfoModel.VideoTransferCharacteristics = analysis.PrimaryVideoStream?.ColorTransfer;

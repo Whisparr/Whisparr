@@ -7,15 +7,18 @@ import TableRowCellButton from 'Components/Table/Cells/TableRowCellButton';
 import TableSelectCell from 'Components/Table/Cells/TableSelectCell';
 import TableRow from 'Components/Table/TableRow';
 import Popover from 'Components/Tooltip/Popover';
+import EpisodeFormats from 'Episode/EpisodeFormats';
+import EpisodeLanguages from 'Episode/EpisodeLanguages';
+import EpisodeQuality from 'Episode/EpisodeQuality';
 import { icons, kinds, tooltipPositions } from 'Helpers/Props';
+import SelectEpisodeModal from 'InteractiveImport/Episode/SelectEpisodeModal';
 import SelectLanguageModal from 'InteractiveImport/Language/SelectLanguageModal';
-import SelectMovieModal from 'InteractiveImport/Movie/SelectMovieModal';
 import SelectQualityModal from 'InteractiveImport/Quality/SelectQualityModal';
 import SelectReleaseGroupModal from 'InteractiveImport/ReleaseGroup/SelectReleaseGroupModal';
-import MovieLanguage from 'Movie/MovieLanguage';
-import MovieQuality from 'Movie/MovieQuality';
+import SelectSeasonModal from 'InteractiveImport/Season/SelectSeasonModal';
+import SelectSeriesModal from 'InteractiveImport/Series/SelectSeriesModal';
 import formatBytes from 'Utilities/Number/formatBytes';
-import translate from 'Utilities/String/translate';
+import hasDifferentItems from 'Utilities/Object/hasDifferentItems';
 import InteractiveImportRowCellPlaceholder from './InteractiveImportRowCellPlaceholder';
 import styles from './InteractiveImportRow.css';
 
@@ -28,7 +31,9 @@ class InteractiveImportRow extends Component {
     super(props, context);
 
     this.state = {
-      isSelectMovieModalOpen: false,
+      isSelectSeriesModalOpen: false,
+      isSelectSeasonModalOpen: false,
+      isSelectEpisodeModalOpen: false,
       isSelectReleaseGroupModalOpen: false,
       isSelectQualityModalOpen: false,
       isSelectLanguageModalOpen: false
@@ -37,25 +42,43 @@ class InteractiveImportRow extends Component {
 
   componentDidMount() {
     const {
+      allowSeriesChange,
       id,
-      movie,
+      series,
+      seasonNumber,
+      episodes,
       quality,
-      languages
+      languages,
+      episodeFileId,
+      columns
     } = this.props;
 
     if (
-      movie &&
+      allowSeriesChange &&
+      series &&
+      seasonNumber != null &&
+      episodes.length &&
       quality &&
       languages
     ) {
-      this.props.onSelectedChange({ id, value: true });
+      this.props.onSelectedChange({
+        id,
+        hasEpisodeFileId: !!episodeFileId,
+        value: true
+      });
     }
+
+    this.setState({
+      isSeriesColumnVisible: columns.find((c) => c.name === 'series').isVisible
+    });
   }
 
   componentDidUpdate(prevProps) {
     const {
       id,
-      movie,
+      series,
+      seasonNumber,
+      episodes,
       quality,
       languages,
       isSelected,
@@ -63,7 +86,9 @@ class InteractiveImportRow extends Component {
     } = this.props;
 
     if (
-      prevProps.movie === movie &&
+      prevProps.series === series &&
+      prevProps.seasonNumber === seasonNumber &&
+      !hasDifferentItems(prevProps.episodes, episodes) &&
       prevProps.quality === quality &&
       prevProps.languages === languages &&
       prevProps.isSelected === isSelected
@@ -72,7 +97,9 @@ class InteractiveImportRow extends Component {
     }
 
     const isValid = !!(
-      movie &&
+      series &&
+      seasonNumber != null &&
+      episodes.length &&
       quality &&
       languages
     );
@@ -90,19 +117,44 @@ class InteractiveImportRow extends Component {
   selectRowAfterChange = (value) => {
     const {
       id,
+      episodeFileId,
       isSelected
     } = this.props;
 
     if (!isSelected && value === true) {
-      this.props.onSelectedChange({ id, value });
+      this.props.onSelectedChange({
+        id,
+        hasEpisodeFileId: !!episodeFileId,
+        value
+      });
     }
   };
 
   //
   // Listeners
 
-  onSelectMoviePress = () => {
-    this.setState({ isSelectMovieModalOpen: true });
+  onSelectedChange = (result) => {
+    const {
+      episodeFileId,
+      onSelectedChange
+    } = this.props;
+
+    onSelectedChange({
+      ...result,
+      hasEpisodeFileId: !!episodeFileId
+    });
+  };
+
+  onSelectSeriesPress = () => {
+    this.setState({ isSelectSeriesModalOpen: true });
+  };
+
+  onSelectSeasonPress = () => {
+    this.setState({ isSelectSeasonModalOpen: true });
+  };
+
+  onSelectEpisodePress = () => {
+    this.setState({ isSelectEpisodeModalOpen: true });
   };
 
   onSelectReleaseGroupPress = () => {
@@ -117,8 +169,18 @@ class InteractiveImportRow extends Component {
     this.setState({ isSelectLanguageModalOpen: true });
   };
 
-  onSelectMovieModalClose = (changed) => {
-    this.setState({ isSelectMovieModalOpen: false });
+  onSelectSeriesModalClose = (changed) => {
+    this.setState({ isSelectSeriesModalOpen: false });
+    this.selectRowAfterChange(changed);
+  };
+
+  onSelectSeasonModalClose = (changed) => {
+    this.setState({ isSelectSeasonModalOpen: false });
+    this.selectRowAfterChange(changed);
+  };
+
+  onSelectEpisodeModalClose = (changed) => {
+    this.setState({ isSelectEpisodeModalOpen: false });
     this.selectRowAfterChange(changed);
   };
 
@@ -143,39 +205,56 @@ class InteractiveImportRow extends Component {
   render() {
     const {
       id,
-      allowMovieChange,
+      allowSeriesChange,
       relativePath,
-      movie,
+      series,
+      seasonNumber,
+      episodes,
       quality,
       languages,
       releaseGroup,
       size,
+      customFormats,
       rejections,
       isReprocessing,
       isSelected,
-      onSelectedChange
+      modalTitle
     } = this.props;
 
     const {
-      isSelectMovieModalOpen,
+      isSelectSeriesModalOpen,
+      isSelectSeasonModalOpen,
+      isSelectEpisodeModalOpen,
+      isSelectReleaseGroupModalOpen,
       isSelectQualityModalOpen,
-      isSelectLanguageModalOpen,
-      isSelectReleaseGroupModalOpen
+      isSelectLanguageModalOpen
     } = this.state;
 
-    const movieTitle = movie ? movie.title + ( movie.year > 0 ? ` (${movie.year})` : '') : '';
+    const seriesTitle = series ? series.title : '';
 
-    const showMoviePlaceholder = isSelected && !movie;
-    const showQualityPlaceholder = isSelected && !quality;
-    const showLanguagePlaceholder = isSelected && !languages && !isReprocessing;
+    const episodeInfo = episodes.map((episode) => {
+      return (
+        <div key={episode.id}>
+          {episode.episodeNumber}
+
+          {` - ${episode.title}`}
+        </div>
+      );
+    });
+
+    const showSeriesPlaceholder = isSelected && !series;
+    const showSeasonNumberPlaceholder = isSelected && !!series && isNaN(seasonNumber) && !isReprocessing;
+    const showEpisodeNumbersPlaceholder = isSelected && Number.isInteger(seasonNumber) && !episodes.length;
     const showReleaseGroupPlaceholder = isSelected && !releaseGroup;
+    const showQualityPlaceholder = isSelected && !quality;
+    const showLanguagePlaceholder = isSelected && !languages;
 
     return (
       <TableRow>
         <TableSelectCell
           id={id}
           isSelected={isSelected}
-          onSelectedChange={onSelectedChange}
+          onSelectedChange={this.onSelectedChange}
         />
 
         <TableRowCell
@@ -185,18 +264,50 @@ class InteractiveImportRow extends Component {
           {relativePath}
         </TableRowCell>
 
+        {
+          this.state.isSeriesColumnVisible ?
+            <TableRowCellButton
+              isDisabled={!allowSeriesChange}
+              title={allowSeriesChange ? 'Click to change series' : undefined}
+              onPress={this.onSelectSeriesPress}
+            >
+              {
+                showSeriesPlaceholder ? <InteractiveImportRowCellPlaceholder /> : seriesTitle
+              }
+            </TableRowCellButton> :
+            null
+        }
+
         <TableRowCellButton
-          isDisabled={!allowMovieChange}
-          title={allowMovieChange ? translate('ClickToChangeMovie') : undefined}
-          onPress={this.onSelectMoviePress}
+          isDisabled={!series}
+          title={series ? 'Click to change season' : undefined}
+          onPress={this.onSelectSeasonPress}
         >
           {
-            showMoviePlaceholder ? <InteractiveImportRowCellPlaceholder /> : movieTitle
+            showSeasonNumberPlaceholder ? <InteractiveImportRowCellPlaceholder /> : seasonNumber
+          }
+
+          {
+            isReprocessing && seasonNumber == null ?
+              <LoadingIndicator className={styles.reprocessing}
+                size={20}
+
+              /> : null
           }
         </TableRowCellButton>
 
         <TableRowCellButton
-          title={translate('ClickToChangeReleaseGroup')}
+          isDisabled={!series || isNaN(seasonNumber)}
+          title={series && !isNaN(seasonNumber) ? 'Click to change episode' : undefined}
+          onPress={this.onSelectEpisodePress}
+        >
+          {
+            showEpisodeNumbersPlaceholder ? <InteractiveImportRowCellPlaceholder /> : episodeInfo
+          }
+        </TableRowCellButton>
+
+        <TableRowCellButton
+          title="Click to change release group"
           onPress={this.onSelectReleaseGroupPress}
         >
           {
@@ -208,7 +319,7 @@ class InteractiveImportRow extends Component {
 
         <TableRowCellButton
           className={styles.quality}
-          title={translate('ClickToChangeQuality')}
+          title="Click to change quality"
           onPress={this.onSelectQualityPress}
         >
           {
@@ -218,7 +329,7 @@ class InteractiveImportRow extends Component {
 
           {
             !showQualityPlaceholder && !!quality &&
-              <MovieQuality
+              <EpisodeQuality
                 className={styles.label}
                 quality={quality}
               />
@@ -227,7 +338,7 @@ class InteractiveImportRow extends Component {
 
         <TableRowCellButton
           className={styles.language}
-          title={translate('ClickToChangeLanguage')}
+          title="Click to change language"
           onPress={this.onSelectLanguagePress}
         >
           {
@@ -236,20 +347,11 @@ class InteractiveImportRow extends Component {
           }
 
           {
-            !showLanguagePlaceholder && !!languages && !isReprocessing ?
-              <MovieLanguage
+            !showLanguagePlaceholder && !!languages &&
+              <EpisodeLanguages
                 className={styles.label}
                 languages={languages}
-              /> :
-              null
-          }
-
-          {
-            isReprocessing ?
-              <LoadingIndicator className={styles.reprocessing}
-                size={20}
-
-              /> : null
+              />
           }
         </TableRowCellButton>
 
@@ -259,7 +361,26 @@ class InteractiveImportRow extends Component {
 
         <TableRowCell>
           {
-            !!rejections.length &&
+            customFormats?.length ?
+              <Popover
+                anchor={
+                  <Icon name={icons.INTERACTIVE} />
+                }
+                title="Formats"
+                body={
+                  <div className={styles.customFormatTooltip}>
+                    <EpisodeFormats formats={customFormats} />
+                  </div>
+                }
+                position={tooltipPositions.LEFT}
+              /> :
+              null
+          }
+        </TableRowCell>
+
+        <TableRowCell>
+          {
+            rejections.length ?
               <Popover
                 anchor={
                   <Icon
@@ -267,7 +388,7 @@ class InteractiveImportRow extends Component {
                     kind={kinds.DANGER}
                   />
                 }
-                title={translate('ReleaseRejected')}
+                title="Release Rejected"
                 body={
                   <ul>
                     {
@@ -282,21 +403,42 @@ class InteractiveImportRow extends Component {
                   </ul>
                 }
                 position={tooltipPositions.LEFT}
-              />
+                canFlip={false}
+              /> :
+              null
           }
         </TableRowCell>
 
-        <SelectMovieModal
-          isOpen={isSelectMovieModalOpen}
+        <SelectSeriesModal
+          isOpen={isSelectSeriesModalOpen}
           ids={[id]}
+          modalTitle={modalTitle}
+          onModalClose={this.onSelectSeriesModalClose}
+        />
+
+        <SelectSeasonModal
+          isOpen={isSelectSeasonModalOpen}
+          ids={[id]}
+          seriesId={series && series.id}
+          modalTitle={modalTitle}
+          onModalClose={this.onSelectSeasonModalClose}
+        />
+
+        <SelectEpisodeModal
+          isOpen={isSelectEpisodeModalOpen}
+          ids={[id]}
+          seriesId={series && series.id}
+          seasonNumber={seasonNumber}
           relativePath={relativePath}
-          onModalClose={this.onSelectMovieModalClose}
+          modalTitle={modalTitle}
+          onModalClose={this.onSelectEpisodeModalClose}
         />
 
         <SelectReleaseGroupModal
           isOpen={isSelectReleaseGroupModalOpen}
           ids={[id]}
           releaseGroup={releaseGroup ?? ''}
+          modalTitle={modalTitle}
           onModalClose={this.onSelectReleaseGroupModalClose}
         />
 
@@ -306,6 +448,7 @@ class InteractiveImportRow extends Component {
           qualityId={quality ? quality.quality.id : 0}
           proper={quality ? quality.revision.version > 1 : false}
           real={quality ? quality.revision.real > 0 : false}
+          modalTitle={modalTitle}
           onModalClose={this.onSelectQualityModalClose}
         />
 
@@ -313,6 +456,7 @@ class InteractiveImportRow extends Component {
           isOpen={isSelectLanguageModalOpen}
           ids={[id]}
           languageIds={languages ? languages.map((l) => l.id) : []}
+          modalTitle={modalTitle}
           onModalClose={this.onSelectLanguageModalClose}
         />
       </TableRow>
@@ -323,18 +467,28 @@ class InteractiveImportRow extends Component {
 
 InteractiveImportRow.propTypes = {
   id: PropTypes.number.isRequired,
-  allowMovieChange: PropTypes.bool.isRequired,
+  allowSeriesChange: PropTypes.bool.isRequired,
   relativePath: PropTypes.string.isRequired,
-  movie: PropTypes.object,
+  series: PropTypes.object,
+  seasonNumber: PropTypes.number,
+  episodes: PropTypes.arrayOf(PropTypes.object).isRequired,
+  releaseGroup: PropTypes.string,
   quality: PropTypes.object,
   languages: PropTypes.arrayOf(PropTypes.object),
-  releaseGroup: PropTypes.string,
   size: PropTypes.number.isRequired,
+  customFormats: PropTypes.arrayOf(PropTypes.object),
   rejections: PropTypes.arrayOf(PropTypes.object).isRequired,
+  columns: PropTypes.arrayOf(PropTypes.object).isRequired,
+  episodeFileId: PropTypes.number,
   isReprocessing: PropTypes.bool,
   isSelected: PropTypes.bool,
+  modalTitle: PropTypes.string.isRequired,
   onSelectedChange: PropTypes.func.isRequired,
   onValidRowChange: PropTypes.func.isRequired
+};
+
+InteractiveImportRow.defaultProps = {
+  episodes: []
 };
 
 export default InteractiveImportRow;

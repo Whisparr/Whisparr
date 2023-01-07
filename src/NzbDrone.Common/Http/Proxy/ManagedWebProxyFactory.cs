@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Net;
 using NzbDrone.Common.Cache;
 using NzbDrone.Common.Extensions;

@@ -27,61 +27,61 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.DelugeTests
             Subject.Definition = new DownloadClientDefinition();
             Subject.Definition.Settings = new DelugeSettings()
             {
-                MovieCategory = null
+                TvCategory = null
             };
 
             _queued = new DelugeTorrent
-            {
-                Hash = "HASH",
-                IsFinished = false,
-                State = DelugeTorrentStatus.Queued,
-                Name = _title,
-                Size = 1000,
-                BytesDownloaded = 0,
-                Progress = 0.0,
-                DownloadPath = "somepath"
-            };
+                    {
+                        Hash = "HASH",
+                        IsFinished = false,
+                        State = DelugeTorrentStatus.Queued,
+                        Name = _title,
+                        Size = 1000,
+                        BytesDownloaded = 0,
+                        Progress = 0.0,
+                        DownloadPath = "somepath"
+                    };
 
             _downloading = new DelugeTorrent
-            {
-                Hash = "HASH",
-                IsFinished = false,
-                State = DelugeTorrentStatus.Downloading,
-                Name = _title,
-                Size = 1000,
-                BytesDownloaded = 100,
-                Progress = 10.0,
-                DownloadPath = "somepath"
-            };
+                    {
+                        Hash = "HASH",
+                        IsFinished = false,
+                        State = DelugeTorrentStatus.Downloading,
+                        Name = _title,
+                        Size = 1000,
+                        BytesDownloaded = 100,
+                        Progress = 10.0,
+                        DownloadPath = "somepath"
+                    };
 
             _failed = new DelugeTorrent
-            {
-                Hash = "HASH",
-                IsFinished = false,
-                State = DelugeTorrentStatus.Error,
-                Name = _title,
-                Size = 1000,
-                BytesDownloaded = 100,
-                Progress = 10.0,
-                Message = "Error",
-                DownloadPath = "somepath"
-            };
+                    {
+                        Hash = "HASH",
+                        IsFinished = false,
+                        State = DelugeTorrentStatus.Error,
+                        Name = _title,
+                        Size = 1000,
+                        BytesDownloaded = 100,
+                        Progress = 10.0,
+                        Message = "Error",
+                        DownloadPath = "somepath"
+                    };
 
             _completed = new DelugeTorrent
-            {
-                Hash = "HASH",
-                IsFinished = true,
-                State = DelugeTorrentStatus.Paused,
-                Name = _title,
-                Size = 1000,
-                BytesDownloaded = 1000,
-                Progress = 100.0,
-                DownloadPath = "somepath",
-                IsAutoManaged = true,
-                StopAtRatio = true,
-                StopRatio = 1.0,
-                Ratio = 1.5
-            };
+                    {
+                        Hash = "HASH",
+                        IsFinished = true,
+                        State = DelugeTorrentStatus.Paused,
+                        Name = _title,
+                        Size = 1000,
+                        BytesDownloaded = 1000,
+                        Progress = 100.0,
+                        DownloadPath = "somepath",
+                        IsAutoManaged = true,
+                        StopAtRatio = true,
+                        StopRatio = 1.0,
+                        Ratio = 1.5
+                    };
 
             Mocker.GetMock<ITorrentFileInfoReader>()
                   .Setup(s => s.GetHashFromTorrentFile(It.IsAny<byte[]>()))
@@ -89,7 +89,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.DelugeTests
 
             Mocker.GetMock<IHttpClient>()
                   .Setup(s => s.Get(It.IsAny<HttpRequest>()))
-                  .Returns<HttpRequest>(r => new HttpResponse(r, new HttpHeader(), Array.Empty<byte>()));
+                  .Returns<HttpRequest>(r => new HttpResponse(r, new HttpHeader(), new byte[0]));
         }
 
         protected void GivenFailedDownload()
@@ -204,9 +204,9 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.DelugeTests
         {
             GivenSuccessfulDownload();
 
-            var remoteMovie = CreateRemoteMovie();
+            var remoteEpisode = CreateRemoteEpisode();
 
-            var id = Subject.Download(remoteMovie);
+            var id = Subject.Download(remoteEpisode);
 
             id.Should().NotBeNullOrEmpty();
         }
@@ -216,10 +216,10 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.DelugeTests
         {
             GivenSuccessfulDownload();
 
-            var remoteMovie = CreateRemoteMovie();
-            remoteMovie.Release.DownloadUrl = magnetUrl;
+            var remoteEpisode = CreateRemoteEpisode();
+            remoteEpisode.Release.DownloadUrl = magnetUrl;
 
-            var id = Subject.Download(remoteMovie);
+            var id = Subject.Download(remoteEpisode);
 
             id.Should().Be(expectedHash);
         }

@@ -34,6 +34,7 @@ namespace Whisparr.Api.V3.Profiles.Delay
         }
 
         [RestPostById]
+        [Consumes("application/json")]
         public ActionResult<DelayProfileResource> Create(DelayProfileResource resource)
         {
             var model = resource.ToModel();
@@ -54,6 +55,7 @@ namespace Whisparr.Api.V3.Profiles.Delay
         }
 
         [RestPutById]
+        [Consumes("application/json")]
         public ActionResult<DelayProfileResource> Update(DelayProfileResource resource)
         {
             var model = resource.ToModel();
@@ -67,9 +69,18 @@ namespace Whisparr.Api.V3.Profiles.Delay
         }
 
         [HttpGet]
+        [Produces("application/json")]
         public List<DelayProfileResource> GetAll()
         {
             return _delayProfileService.All().ToResource();
+        }
+
+        [HttpPut("reorder/{id}")]
+        public List<DelayProfileResource> Reorder([FromRoute] int id, int? after)
+        {
+            ValidateId(id);
+
+            return _delayProfileService.Reorder(id, after).ToResource();
         }
     }
 }

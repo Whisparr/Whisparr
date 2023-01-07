@@ -1,4 +1,4 @@
-namespace NzbDrone.Core.Download.Clients.DownloadStation
+﻿namespace NzbDrone.Core.Download.Clients.DownloadStation
 {
     public enum DiskStationApi
     {
@@ -7,7 +7,6 @@ namespace NzbDrone.Core.Download.Clients.DownloadStation
         DownloadStationInfo,
         DownloadStationTask,
         DownloadStation2Task,
-        DownloadStation2SettingsLocation,
         FileStationList,
         DSMInfo,
     }

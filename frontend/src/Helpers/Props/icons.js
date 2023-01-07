@@ -22,21 +22,18 @@ import {
 import {
   faArrowCircleLeft as fasArrowCircleLeft,
   faArrowCircleRight as fasArrowCircleRight,
+  faAsterisk as fasAsterisk,
   faBackward as fasBackward,
-  faBan as fasBan,
   faBars as fasBars,
   faBolt as fasBolt,
   faBookmark as fasBookmark,
   faBookReader as fasBookReader,
   faBroadcastTower as fasBroadcastTower,
   faBug as fasBug,
-  faBuilding as fasBuilding,
-  faBullhorn as fasBullhorn,
   faCalendarAlt as fasCalendarAlt,
   faCaretDown as fasCaretDown,
   faCheck as fasCheck,
   faCheckCircle as fasCheckCircle,
-  faCheckSquare as fasCheckSquare,
   faChevronCircleDown as fasChevronCircleDown,
   faChevronCircleRight as fasChevronCircleRight,
   faChevronCircleUp as fasChevronCircleUp,
@@ -45,7 +42,6 @@ import {
   faCloudDownloadAlt as fasCloudDownloadAlt,
   faCog as fasCog,
   faCogs as fasCogs,
-  faCompactDisc as fasCompactDisc,
   faCopy as fasCopy,
   faDesktop as fasDesktop,
   faDownload as fasDownload,
@@ -58,16 +54,13 @@ import {
   faFastForward as fasFastForward,
   faFileExport as fasFileExport,
   faFileInvoice as farFileInvoice,
-  faFilm as fasFilm,
   faFilter as fasFilter,
-  faFlag as fasFlag,
   faFolderOpen as fasFolderOpen,
   faForward as fasForward,
   faHeart as fasHeart,
   faHistory as fasHistory,
   faHome as fasHome,
   faInfoCircle as fasInfoCircle,
-  faLanguage as fasLanguage,
   faLaptop as fasLaptop,
   faLevelUpAlt as fasLevelUpAlt,
   faMedkit as fasMedkit,
@@ -95,10 +88,7 @@ import {
   faTable as fasTable,
   faTags as fasTags,
   faTh as fasTh,
-  faTheaterMasks as fasTheaterMasks,
   faThList as fasThList,
-  faThumbsUp as fasThumbsUp,
-  faTicketAlt as fasTicketAlt,
   faTimes as fasTimes,
   faTimesCircle as fasTimesCircle,
   faTrashAlt as fasTrashAlt,
@@ -116,7 +106,6 @@ export const ACTIVITY = farClock;
 export const ADD = fasPlus;
 export const ALTERNATE_TITLES = farClone;
 export const ADVANCED_SETTINGS = fasCog;
-export const ANNOUNCED = fasBullhorn;
 export const ARROW_LEFT = fasArrowCircleLeft;
 export const ARROW_RIGHT = fasArrowCircleRight;
 export const BACKUP = farFileArchive;
@@ -127,7 +116,6 @@ export const CARET_DOWN = fasCaretDown;
 export const CHECK = fasCheck;
 export const CHECK_INDETERMINATE = fasMinus;
 export const CHECK_CIRCLE = fasCheckCircle;
-export const CHECK_SQUARE = fasCheckSquare;
 export const CIRCLE = fasCircle;
 export const CIRCLE_OUTLINE = farCircle;
 export const CLEAR = fasTrashAlt;
@@ -138,32 +126,28 @@ export const COLLAPSE = fasChevronCircleUp;
 export const COMPUTER = fasDesktop;
 export const DANGER = fasExclamationCircle;
 export const DELETE = fasTrashAlt;
-export const DISC = fasCompactDisc;
 export const DOWNLOAD = fasDownload;
 export const DOWNLOADED = fasDownload;
 export const DOWNLOADING = fasCloudDownloadAlt;
 export const DRIVE = farHdd;
 export const EDIT = fasWrench;
-export const MOVIE_FILE = farFileVideo;
+export const EPISODE_FILE = farFileVideo;
 export const EXPAND = fasChevronCircleDown;
 export const EXPAND_INDETERMINATE = fasChevronCircleRight;
 export const EXPORT = fasFileExport;
 export const EXTERNAL_LINK = fasExternalLinkAlt;
 export const FATAL = fasTimesCircle;
 export const FILE = farFile;
-export const FILM = fasFilm;
 export const FILTER = fasFilter;
-export const FLAG = fasFlag;
+export const FOOTNOTE = fasAsterisk;
 export const FOLDER = farFolder;
 export const FOLDER_OPEN = fasFolderOpen;
-export const GENRE = fasTheaterMasks;
 export const GROUP = farObjectGroup;
 export const HEALTH = fasMedkit;
 export const HEART = fasHeart;
 export const HISTORY = fasHistory;
 export const HOUSEKEEPING = fasHome;
 export const IGNORE = fasTimesCircle;
-export const IN_CINEMAS = fasTicketAlt;
 export const INFO = fasInfoCircle;
 export const INTERACTIVE = fasUser;
 export const KEYBOARD = farKeyboard;
@@ -184,12 +168,10 @@ export const PAGE_LAST = fasFastForward;
 export const PARENT = fasLevelUpAlt;
 export const PAUSED = fasPause;
 export const PENDING = farClock;
-export const PLAY = fasPlay;
 export const PROFILE = fasUser;
 export const POSTER = fasTh;
 export const QUEUED = fasCloud;
 export const QUICK = fasRocket;
-export const RECOMMENDED = fasThumbsUp;
 export const REFRESH = fasSync;
 export const REMOVE = fasTimes;
 export const RESTART = fasRedoAlt;
@@ -197,26 +179,25 @@ export const RESTORE = fasHistory;
 export const REORDER = fasBars;
 export const RSS = fasRss;
 export const SAVE = fasSave;
+export const SCENE_MAPPING = fasSitemap;
 export const SCHEDULED = farClock;
 export const SCORE = fasUserPlus;
 export const SEARCH = fasSearch;
-export const MOVIE_CONTINUING = fasPlay;
+export const SERIES_CONTINUING = fasPlay;
 export const SERIES_ENDED = fasStop;
-export const MOVIE_DELETED = fasExclamationTriangle;
+export const SERIES_DELETED = fasExclamationTriangle;
 export const SETTINGS = fasCogs;
 export const SHUTDOWN = fasPowerOff;
 export const SORT = fasSort;
 export const SORT_ASCENDING = fasSortUp;
 export const SORT_DESCENDING = fasSortDown;
 export const SPINNER = fasSpinner;
-export const STUDIO = fasBuilding;
 export const SUBTRACT = fasMinus;
 export const SYSTEM = fasLaptop;
 export const TABLE = fasTable;
 export const TAGS = fasTags;
 export const TBA = fasQuestionCircle;
 export const TEST = fasVial;
-export const TRANSLATE = fasLanguage;
 export const UNGROUP = farObjectUngroup;
 export const UNKNOWN = fasQuestion;
 export const UNMONITORED = farBookmark;
@@ -225,4 +206,3 @@ export const UNSAVED_SETTING = farDotCircle;
 export const VIEW = fasEye;
 export const WARNING = fasExclamationTriangle;
 export const WIKI = fasBookReader;
-export const BLOCKLIST = fasBan;

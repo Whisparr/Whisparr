@@ -5,7 +5,6 @@ import FormGroup from 'Components/Form/FormGroup';
 import FormInputGroup from 'Components/Form/FormInputGroup';
 import FormLabel from 'Components/Form/FormLabel';
 import { inputTypes, sizes } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 
 function HostSettings(props) {
   const {
@@ -21,6 +20,7 @@ function HostSettings(props) {
     port,
     urlBase,
     instanceName,
+    applicationUrl,
     enableSsl,
     sslPort,
     sslCertPath,
@@ -29,25 +29,25 @@ function HostSettings(props) {
   } = settings;
 
   return (
-    <FieldSet legend={translate('Host')}>
+    <FieldSet legend="Host">
       <FormGroup
         advancedSettings={advancedSettings}
         isAdvanced={true}
       >
-        <FormLabel>{translate('BindAddress')}</FormLabel>
+        <FormLabel>Bind Address</FormLabel>
 
         <FormInputGroup
           type={inputTypes.TEXT}
           name="bindAddress"
-          helpText={translate('BindAddressHelpText')}
-          helpTextWarning={translate('RestartRequiredHelpTextWarning')}
+          helpText="Valid IP address, localhost or '*' for all interfaces"
+          helpTextWarning="Requires restart to take effect"
           onChange={onInputChange}
           {...bindAddress}
         />
       </FormGroup>
 
       <FormGroup>
-        <FormLabel>{translate('PortNumber')}</FormLabel>
+        <FormLabel>Port Number</FormLabel>
 
         <FormInputGroup
           type={inputTypes.NUMBER}
@@ -55,20 +55,20 @@ function HostSettings(props) {
           min={1}
           max={65535}
           autocomplete="off"
-          helpTextWarning={translate('RestartRequiredHelpTextWarning')}
+          helpTextWarning="Requires restart to take effect"
           onChange={onInputChange}
           {...port}
         />
       </FormGroup>
 
       <FormGroup>
-        <FormLabel>{translate('URLBase')}</FormLabel>
+        <FormLabel>URL Base</FormLabel>
 
         <FormInputGroup
           type={inputTypes.TEXT}
           name="urlBase"
-          helpText={translate('UrlBaseHelpText')}
-          helpTextWarning={translate('RestartRequiredHelpTextWarning')}
+          helpText="For reverse proxy support, default is empty"
+          helpTextWarning="Requires restart to take effect"
           onChange={onInputChange}
           {...urlBase}
         />
@@ -78,13 +78,13 @@ function HostSettings(props) {
         advancedSettings={advancedSettings}
         isAdvanced={true}
       >
-        <FormLabel>{translate('InstanceName')}</FormLabel>
+        <FormLabel>Instance Name</FormLabel>
 
         <FormInputGroup
           type={inputTypes.TEXT}
           name="instanceName"
-          helpText={translate('InstanceNameHelpText')}
-          helpTextWarning={translate('RestartRequiredHelpTextWarning')}
+          helpText="Instance name in tab and for Syslog app name"
+          helpTextWarning="Requires restart to take effect"
           onChange={onInputChange}
           {...instanceName}
         />
@@ -93,14 +93,29 @@ function HostSettings(props) {
       <FormGroup
         advancedSettings={advancedSettings}
         isAdvanced={true}
+      >
+        <FormLabel>Application URL</FormLabel>
+
+        <FormInputGroup
+          type={inputTypes.TEXT}
+          name="applicationUrl"
+          helpText="This application's external URL including http(s)://, port and URL base"
+          onChange={onInputChange}
+          {...applicationUrl}
+        />
+      </FormGroup>
+
+      <FormGroup
+        advancedSettings={advancedSettings}
+        isAdvanced={true}
         size={sizes.MEDIUM}
       >
-        <FormLabel>{translate('EnableSSL')}</FormLabel>
+        <FormLabel>Enable SSL</FormLabel>
 
         <FormInputGroup
           type={inputTypes.CHECK}
           name="enableSsl"
-          helpText={translate('EnableSslHelpText')}
+          helpText=" Requires restart running as administrator to take effect"
           onChange={onInputChange}
           {...enableSsl}
         />
@@ -112,14 +127,14 @@ function HostSettings(props) {
             advancedSettings={advancedSettings}
             isAdvanced={true}
           >
-            <FormLabel>{translate('SSLPort')}</FormLabel>
+            <FormLabel>SSL Port</FormLabel>
 
             <FormInputGroup
               type={inputTypes.NUMBER}
               name="sslPort"
               min={1}
               max={65535}
-              helpTextWarning={translate('RestartRequiredHelpTextWarning')}
+              helpTextWarning="Requires restart to take effect"
               onChange={onInputChange}
               {...sslPort}
             />
@@ -133,13 +148,13 @@ function HostSettings(props) {
             advancedSettings={advancedSettings}
             isAdvanced={true}
           >
-            <FormLabel>{translate('SSLCertPath')}</FormLabel>
+            <FormLabel>SSL Cert Path</FormLabel>
 
             <FormInputGroup
               type={inputTypes.TEXT}
               name="sslCertPath"
-              helpText={translate('SSLCertPathHelpText')}
-              helpTextWarning={translate('RestartRequiredHelpTextWarning')}
+              helpText="Path to pfx file"
+              helpTextWarning="Requires restart to take effect"
               onChange={onInputChange}
               {...sslCertPath}
             />
@@ -153,13 +168,13 @@ function HostSettings(props) {
             advancedSettings={advancedSettings}
             isAdvanced={true}
           >
-            <FormLabel>{translate('SSLCertPassword')}</FormLabel>
+            <FormLabel>SSL Cert Password</FormLabel>
 
             <FormInputGroup
               type={inputTypes.PASSWORD}
               name="sslCertPassword"
-              helpText={translate('SSLCertPasswordHelpText')}
-              helpTextWarning={translate('RestartRequiredHelpTextWarning')}
+              helpText="Password for pfx file"
+              helpTextWarning="Requires restart to take effect"
               onChange={onInputChange}
               {...sslCertPassword}
             />
@@ -168,18 +183,19 @@ function HostSettings(props) {
       }
 
       {
-        isWindows && mode !== 'service' &&
+        isWindows && mode !== 'service' ?
           <FormGroup size={sizes.MEDIUM}>
-            <FormLabel>{translate('OpenBrowserOnStart')}</FormLabel>
+            <FormLabel>Open browser on start</FormLabel>
 
             <FormInputGroup
               type={inputTypes.CHECK}
               name="launchBrowser"
-              helpText={translate('LaunchBrowserHelpText')}
+              helpText=" Open a web browser and navigate to Whisparr homepage on app start."
               onChange={onInputChange}
               {...launchBrowser}
             />
-          </FormGroup>
+          </FormGroup> :
+          null
       }
 
     </FieldSet>

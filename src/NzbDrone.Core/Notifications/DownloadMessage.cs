@@ -1,16 +1,16 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using NzbDrone.Core.Download;
 using NzbDrone.Core.MediaFiles;
-using NzbDrone.Core.Movies;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Notifications
 {
     public class DownloadMessage
     {
         public string Message { get; set; }
-        public Media Movie { get; set; }
-        public MediaFile MovieFile { get; set; }
-        public List<MediaFile> OldMovieFiles { get; set; }
+        public Series Series { get; set; }
+        public EpisodeFile EpisodeFile { get; set; }
+        public List<EpisodeFile> OldFiles { get; set; }
         public string SourcePath { get; set; }
         public DownloadClientItemClientInfo DownloadClientInfo { get; set; }
         public string DownloadId { get; set; }

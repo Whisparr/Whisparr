@@ -1,12 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import PageContent from 'Components/Page/PageContent';
-import translate from 'Utilities/String/translate';
 import styles from './NotFound.css';
 
 function NotFound({ message }) {
   return (
-    <PageContent title={translate('MIA')}>
+    <PageContent title="MIA">
       <div className={styles.container}>
         <div className={styles.message}>
           {message}

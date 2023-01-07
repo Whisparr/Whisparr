@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using FizzWare.NBuilder;
@@ -35,7 +35,7 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
             Mocker.GetMock<IIndexerStatusRepository>()
                   .Verify(v => v.UpdateMany(
                           It.Is<List<IndexerStatus>>(i => i.All(
-                              s => s.DisabledTill.Value <= DateTime.UtcNow.AddMinutes(disabledTillTime)))));
+                              s => s.DisabledTill.Value < DateTime.UtcNow.AddMinutes(disabledTillTime)))));
         }
 
         [Test]

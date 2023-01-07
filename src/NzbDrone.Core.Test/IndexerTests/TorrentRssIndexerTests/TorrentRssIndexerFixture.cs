@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Linq;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using NzbDrone.Common.Http;
 using NzbDrone.Core.Indexers;
+using NzbDrone.Core.Indexers.Exceptions;
 using NzbDrone.Core.Indexers.TorrentRss;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.Test.Framework;

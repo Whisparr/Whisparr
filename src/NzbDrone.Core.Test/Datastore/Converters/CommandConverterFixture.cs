@@ -3,8 +3,8 @@ using FluentAssertions;
 using NUnit.Framework;
 using NzbDrone.Core.Datastore.Converters;
 using NzbDrone.Core.Messaging.Commands;
-using NzbDrone.Core.Movies.Commands;
 using NzbDrone.Core.Test.Framework;
+using NzbDrone.Core.Tv.Commands;
 
 namespace NzbDrone.Core.Test.Datastore.Converters
 {
@@ -22,7 +22,7 @@ namespace NzbDrone.Core.Test.Datastore.Converters
         [Test]
         public void should_return_json_string_when_saving_boolean_to_db()
         {
-            var command = new RefreshMovieCommand();
+            var command = new RefreshSeriesCommand();
 
             Subject.SetValue(_param, command);
             _param.Value.Should().BeOfType<string>();
@@ -38,9 +38,9 @@ namespace NzbDrone.Core.Test.Datastore.Converters
         [Test]
         public void should_return_command_when_getting_json_from_db()
         {
-            var data = "{\"name\": \"RefreshMovie\"}";
+            var data = "{\"name\": \"RefreshSeries\"}";
 
-            Subject.Parse(data).Should().BeOfType<RefreshMovieCommand>();
+            Subject.Parse(data).Should().BeOfType<RefreshSeriesCommand>();
         }
 
         [Test]

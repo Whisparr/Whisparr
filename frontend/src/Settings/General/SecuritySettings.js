@@ -9,18 +9,25 @@ import Icon from 'Components/Icon';
 import ClipboardButton from 'Components/Link/ClipboardButton';
 import ConfirmModal from 'Components/Modal/ConfirmModal';
 import { icons, inputTypes, kinds } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 
-const authenticationMethodOptions = [
-  { key: 'none', value: translate('None') },
-  { key: 'basic', value: translate('AuthBasic') },
-  { key: 'forms', value: translate('AuthForm') }
+export const authenticationRequiredWarning = 'To prevent remote access without authentication, Whisparr now requires authentication to be enabled. You can optionally disable authentication from local addresses.';
+
+export const authenticationMethodOptions = [
+  { key: 'none', value: 'None', isDisabled: true },
+  { key: 'external', value: 'External', isHidden: true },
+  { key: 'basic', value: 'Basic (Browser Popup)' },
+  { key: 'forms', value: 'Forms (Login Page)' }
+];
+
+export const authenticationRequiredOptions = [
+  { key: 'enabled', value: 'Enabled' },
+  { key: 'disabledForLocalAddresses', value: 'Disabled for Local Addresses' }
 ];
 
 const certificateValidationOptions = [
-  { key: 'enabled', value: translate('Enabled') },
-  { key: 'disabledForLocalAddresses', value: translate('CertValidationNoLocal') },
-  { key: 'disabled', value: translate('Disabled') }
+  { key: 'enabled', value: 'Enabled' },
+  { key: 'disabledForLocalAddresses', value: 'Disabled for Local Addresses' },
+  { key: 'disabled', value: 'Disabled' }
 ];
 
 class SecuritySettings extends Component {
@@ -68,6 +75,7 @@ class SecuritySettings extends Component {
 
     const {
       authenticationMethod,
+      authenticationRequired,
       username,
       password,
       apiKey,
@@ -77,24 +85,42 @@ class SecuritySettings extends Component {
     const authenticationEnabled = authenticationMethod && authenticationMethod.value !== 'none';
 
     return (
-      <FieldSet legend={translate('Security')}>
+      <FieldSet legend="Security">
         <FormGroup>
-          <FormLabel>{translate('Authentication')}</FormLabel>
+          <FormLabel>Authentication</FormLabel>
 
           <FormInputGroup
             type={inputTypes.SELECT}
             name="authenticationMethod"
             values={authenticationMethodOptions}
-            helpText={translate('AuthenticationMethodHelpText')}
+            helpText="Require Username and Password to access Whisparr"
+            helpTextWarning={authenticationRequiredWarning}
             onChange={onInputChange}
             {...authenticationMethod}
           />
         </FormGroup>
 
         {
-          authenticationEnabled &&
+          authenticationEnabled ?
             <FormGroup>
-              <FormLabel>{translate('Username')}</FormLabel>
+              <FormLabel>Authentication Required</FormLabel>
+
+              <FormInputGroup
+                type={inputTypes.SELECT}
+                name="authenticationRequired"
+                values={authenticationRequiredOptions}
+                helpText="Change which requests authentication is required for. Do not change unless you understand the risks."
+                onChange={onInputChange}
+                {...authenticationRequired}
+              />
+            </FormGroup> :
+            null
+        }
+
+        {
+          authenticationEnabled ?
+            <FormGroup>
+              <FormLabel>Username</FormLabel>
 
               <FormInputGroup
                 type={inputTypes.TEXT}
@@ -102,13 +128,14 @@ class SecuritySettings extends Component {
                 onChange={onInputChange}
                 {...username}
               />
-            </FormGroup>
+            </FormGroup> :
+            null
         }
 
         {
-          authenticationEnabled &&
+          authenticationEnabled ?
             <FormGroup>
-              <FormLabel>{translate('Password')}</FormLabel>
+              <FormLabel>Password</FormLabel>
 
               <FormInputGroup
                 type={inputTypes.PASSWORD}
@@ -116,17 +143,18 @@ class SecuritySettings extends Component {
                 onChange={onInputChange}
                 {...password}
               />
-            </FormGroup>
+            </FormGroup> :
+            null
         }
 
         <FormGroup>
-          <FormLabel>{translate('ApiKey')}</FormLabel>
+          <FormLabel>API Key</FormLabel>
 
           <FormInputGroup
             type={inputTypes.TEXT}
             name="apiKey"
             readOnly={true}
-            helpTextWarning={translate('RestartRequiredHelpTextWarning')}
+            helpTextWarning="Requires restart to take effect"
             buttons={[
               <ClipboardButton
                 key="copy"
@@ -152,13 +180,13 @@ class SecuritySettings extends Component {
         </FormGroup>
 
         <FormGroup>
-          <FormLabel>{translate('CertificateValidation')}</FormLabel>
+          <FormLabel>Certificate Validation</FormLabel>
 
           <FormInputGroup
             type={inputTypes.SELECT}
             name="certificateValidation"
             values={certificateValidationOptions}
-            helpText={translate('CertificateValidationHelpText')}
+            helpText="Change how strict HTTPS certification validation is. Do not change unless you understand the risks."
             onChange={onInputChange}
             {...certificateValidation}
           />
@@ -167,9 +195,9 @@ class SecuritySettings extends Component {
         <ConfirmModal
           isOpen={this.state.isConfirmApiKeyResetModalOpen}
           kind={kinds.DANGER}
-          title={translate('ResetAPIKey')}
-          message={translate('AreYouSureYouWantToResetYourAPIKey')}
-          confirmLabel={translate('Reset')}
+          title="Reset API Key"
+          message="Are you sure you want to reset your API Key?"
+          confirmLabel="Reset"
           onConfirm={this.onConfirmResetApiKey}
           onCancel={this.onCloseResetApiKeyModal}
         />

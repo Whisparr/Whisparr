@@ -3,11 +3,14 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import CalendarEventQueueDetails from 'Calendar/Events/CalendarEventQueueDetails';
+import getStatusStyle from 'Calendar/getStatusStyle';
 import Icon from 'Components/Icon';
 import Link from 'Components/Link/Link';
+import EpisodeDetailsModal from 'Episode/EpisodeDetailsModal';
+import episodeEntities from 'Episode/episodeEntities';
 import { icons, kinds } from 'Helpers/Props';
-import getStatusStyle from 'Utilities/Movie/getStatusStyle';
-import translate from 'Utilities/String/translate';
+import formatTime from 'Utilities/Date/formatTime';
+import padNumber from 'Utilities/Number/padNumber';
 import styles from './AgendaEvent.css';
 
 class AgendaEvent extends Component {
@@ -38,72 +41,50 @@ class AgendaEvent extends Component {
 
   render() {
     const {
-      movieFile,
+      id,
+      series,
+      episodeFile,
       title,
-      titleSlug,
-      genres,
-      isAvailable,
-      inCinemas,
-      digitalRelease,
-      physicalRelease,
+      seasonNumber,
+      episodeNumber,
+      absoluteEpisodeNumber,
+      airDateUtc,
       monitored,
+      unverifiedSceneNumbering,
       hasFile,
       grabbed,
       queueItem,
       showDate,
-      showMovieInformation,
+      showEpisodeInformation,
+      showFinaleIcon,
+      showSpecialIcon,
       showCutoffUnmetIcon,
+      timeFormat,
       longDateFormat,
-      colorImpairedMode,
-      cinemaDateParsed,
-      digitalDateParsed,
-      physicalDateParsed,
-      sortDate
+      colorImpairedMode
     } = this.props;
 
-    let startTime = null;
-    let releaseIcon = null;
-
-    if (physicalDateParsed === sortDate) {
-      startTime = physicalRelease;
-      releaseIcon = icons.DISC;
-    }
-
-    if (digitalDateParsed === sortDate) {
-      startTime = digitalRelease;
-      releaseIcon = icons.MOVIE_FILE;
-    }
-
-    if (cinemaDateParsed === sortDate) {
-      startTime = inCinemas;
-      releaseIcon = icons.IN_CINEMAS;
-    }
-
-    startTime = moment(startTime);
+    const startTime = moment(airDateUtc);
+    const endTime = moment(airDateUtc).add(series.runtime, 'minutes');
     const downloading = !!(queueItem || grabbed);
-    const isMonitored = monitored;
-    const statusStyle = getStatusStyle(null, isMonitored, hasFile, isAvailable, 'style', downloading);
-    const joinedGenres = genres.slice(0, 2).join(', ');
-    const link = `/movie/${titleSlug}`;
+    const isMonitored = series.monitored && monitored;
+    const statusStyle = getStatusStyle(hasFile, downloading, startTime, endTime, isMonitored);
+    const season = series.seasons.find((s) => s.seasonNumber === seasonNumber);
+    const seasonStatistics = season?.statistics || {};
 
     return (
-      <div>
+      <div className={styles.event}>
         <Link
-          className={classNames(
-            styles.event,
-            styles.link
-          )}
-          to={link}
-        >
-          <div className={styles.dateIcon}>
-            <Icon
-              name={releaseIcon}
-              kind={kinds.DEFAULT}
-            />
-          </div>
+          className={styles.underlay}
+          onPress={this.onPress}
+        />
 
+        <div className={styles.overlay}>
           <div className={styles.date}>
-            {(showDate) ? startTime.format(longDateFormat) : null}
+            {
+              showDate &&
+                startTime.format(longDateFormat)
+            }
           </div>
 
           <div
@@ -113,21 +94,46 @@ class AgendaEvent extends Component {
               colorImpairedMode && 'colorImpaired'
             )}
           >
-            <div className={styles.movieTitle}>
-              {title}
+            <div className={styles.time}>
+              {formatTime(airDateUtc, timeFormat)} - {formatTime(endTime.toISOString(), timeFormat, { includeMinuteZero: true })}
+            </div>
+
+            <div className={styles.seriesTitle}>
+              {series.title}
             </div>
 
             {
-              showMovieInformation &&
-                <div className={styles.genres}>
-                  {joinedGenres}
+              showEpisodeInformation &&
+                <div className={styles.seasonEpisodeNumber}>
+                  {seasonNumber}x{padNumber(episodeNumber, 2)}
+
+                  <div className={styles.episodeSeparator}> - </div>
                 </div>
+            }
+
+            <div className={styles.episodeTitle}>
+              {
+                showEpisodeInformation &&
+                title
+              }
+            </div>
+
+            {
+              unverifiedSceneNumbering ?
+                <Icon
+                  className={styles.statusIcon}
+                  name={icons.WARNING}
+                  title="Scene number hasn't been verified yet"
+                /> :
+                null
             }
 
             {
               !!queueItem &&
                 <span className={styles.statusIcon}>
                   <CalendarEventQueueDetails
+                    seasonNumber={seasonNumber}
+                    absoluteEpisodeNumber={absoluteEpisodeNumber}
                     {...queueItem}
                   />
                 </span>
@@ -138,23 +144,67 @@ class AgendaEvent extends Component {
                 <Icon
                   className={styles.statusIcon}
                   name={icons.DOWNLOADING}
-                  title={translate('MovieIsDownloading')}
+                  title="Episode is downloading"
                 />
             }
 
             {
               showCutoffUnmetIcon &&
-              !!movieFile &&
-              movieFile.qualityCutoffNotMet &&
+              !!episodeFile &&
+              episodeFile.qualityCutoffNotMet &&
                 <Icon
                   className={styles.statusIcon}
-                  name={icons.MOVIE_FILE}
+                  name={icons.EPISODE_FILE}
                   kind={kinds.WARNING}
-                  title={translate('QualityCutoffHasNotBeenMet')}
+                  title="Quality cutoff has not been met"
+                />
+            }
+
+            {
+              episodeNumber === 1 && seasonNumber > 0 &&
+                <Icon
+                  className={styles.statusIcon}
+                  name={icons.INFO}
+                  kind={kinds.INFO}
+                  title={seasonNumber === 1 ? 'Series Premiere' : 'Season Premiere'}
+                />
+            }
+
+            {
+              showFinaleIcon &&
+              episodeNumber !== 1 &&
+              seasonNumber > 0 &&
+              episodeNumber === seasonStatistics.totalEpisodeCount &&
+                <Icon
+                  className={styles.statusIcon}
+                  name={icons.INFO}
+                  kind={kinds.WARNING}
+                  title={series.status === 'ended' ? 'Series finale' : 'Season finale'}
+                />
+            }
+
+            {
+              showSpecialIcon &&
+              (episodeNumber === 0 || seasonNumber === 0) &&
+                <Icon
+                  className={styles.statusIcon}
+                  name={icons.INFO}
+                  kind={kinds.PINK}
+                  title="Special"
                 />
             }
           </div>
-        </Link>
+        </div>
+
+        <EpisodeDetailsModal
+          isOpen={this.state.isDetailsModalOpen}
+          episodeId={id}
+          episodeEntity={episodeEntities.CALENDAR}
+          seriesId={series.id}
+          episodeTitle={title}
+          showOpenSeriesButton={true}
+          onModalClose={this.onDetailsModalClose}
+        />
       </div>
     );
   }
@@ -162,32 +212,26 @@ class AgendaEvent extends Component {
 
 AgendaEvent.propTypes = {
   id: PropTypes.number.isRequired,
-  movieFile: PropTypes.object,
+  series: PropTypes.object.isRequired,
+  episodeFile: PropTypes.object,
   title: PropTypes.string.isRequired,
-  titleSlug: PropTypes.string.isRequired,
-  genres: PropTypes.arrayOf(PropTypes.string).isRequired,
-  isAvailable: PropTypes.bool.isRequired,
-  inCinemas: PropTypes.string,
-  digitalRelease: PropTypes.string,
-  physicalRelease: PropTypes.string,
+  seasonNumber: PropTypes.number.isRequired,
+  episodeNumber: PropTypes.number.isRequired,
+  absoluteEpisodeNumber: PropTypes.number,
+  airDateUtc: PropTypes.string.isRequired,
   monitored: PropTypes.bool.isRequired,
+  unverifiedSceneNumbering: PropTypes.bool,
   hasFile: PropTypes.bool.isRequired,
   grabbed: PropTypes.bool,
   queueItem: PropTypes.object,
   showDate: PropTypes.bool.isRequired,
-  showMovieInformation: PropTypes.bool.isRequired,
+  showEpisodeInformation: PropTypes.bool.isRequired,
+  showFinaleIcon: PropTypes.bool.isRequired,
+  showSpecialIcon: PropTypes.bool.isRequired,
   showCutoffUnmetIcon: PropTypes.bool.isRequired,
   timeFormat: PropTypes.string.isRequired,
   longDateFormat: PropTypes.string.isRequired,
-  colorImpairedMode: PropTypes.bool.isRequired,
-  cinemaDateParsed: PropTypes.number,
-  digitalDateParsed: PropTypes.number,
-  physicalDateParsed: PropTypes.number,
-  sortDate: PropTypes.number
-};
-
-AgendaEvent.defaultProps = {
-  genres: []
+  colorImpairedMode: PropTypes.bool.isRequired
 };
 
 export default AgendaEvent;

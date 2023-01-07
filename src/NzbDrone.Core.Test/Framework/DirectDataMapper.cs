@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -12,6 +12,7 @@ namespace NzbDrone.Core.Test.Framework
         List<Dictionary<string, object>> Query(string sql);
         List<T> Query<T>(string sql)
             where T : new();
+        T QueryScalar<T>(string sql);
     }
 
     public class DirectDataMapper : IDirectDataMapper
@@ -50,6 +51,13 @@ namespace NzbDrone.Core.Test.Framework
             var dataTable = GetDataTable(sql);
 
             return dataTable.Rows.Cast<DataRow>().Select(MapToObject<T>).ToList();
+        }
+
+        public T QueryScalar<T>(string sql)
+        {
+            var dataTable = GetDataTable(sql);
+
+            return dataTable.Rows.Cast<DataRow>().Select(d => MapValue(d, 0, typeof(T))).Cast<T>().FirstOrDefault();
         }
 
         protected Dictionary<string, object> MapToDictionary(DataRow dataRow)
@@ -116,6 +124,22 @@ namespace NzbDrone.Core.Test.Framework
             }
 
             return item;
+        }
+
+        private object MapValue(DataRow dataRow, int i, Type targetType)
+        {
+            if (dataRow.ItemArray[i] == DBNull.Value)
+            {
+                return null;
+            }
+            else if (dataRow.Table.Columns[i].DataType == typeof(string) && targetType != typeof(string))
+            {
+                return Json.Deserialize((string)dataRow.ItemArray[i], targetType);
+            }
+            else
+            {
+                return Convert.ChangeType(dataRow.ItemArray[i], targetType);
+            }
         }
     }
 }

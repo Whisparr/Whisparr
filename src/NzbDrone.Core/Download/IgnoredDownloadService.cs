@@ -1,4 +1,6 @@
+using System.Linq;
 using NLog;
+using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Download.TrackedDownloads;
 using NzbDrone.Core.Messaging.Events;
 
@@ -23,25 +25,28 @@ namespace NzbDrone.Core.Download
 
         public bool IgnoreDownload(TrackedDownload trackedDownload)
         {
-            var movie = trackedDownload.RemoteMovie.Movie;
+            var series = trackedDownload.RemoteEpisode.Series;
 
-            if (movie == null)
+            if (series == null)
             {
-                _logger.Warn("Unable to ignore download for unknown movie");
+                _logger.Warn("Unable to ignore download for unknown series");
                 return false;
             }
 
+            var episodes = trackedDownload.RemoteEpisode.Episodes;
+
             var downloadIgnoredEvent = new DownloadIgnoredEvent
-            {
-                MovieId = movie.Id,
-                Languages = trackedDownload.RemoteMovie.ParsedMovieInfo.Languages,
-                Quality = trackedDownload.RemoteMovie.ParsedMovieInfo.Quality,
-                SourceTitle = trackedDownload.DownloadItem.Title,
-                DownloadClientInfo = trackedDownload.DownloadItem.DownloadClientInfo,
-                DownloadId = trackedDownload.DownloadItem.DownloadId,
-                TrackedDownload = trackedDownload,
-                Message = "Manually ignored"
-            };
+                                      {
+                                          SeriesId = series.Id,
+                                          EpisodeIds = episodes.Select(e => e.Id).ToList(),
+                                          Languages = trackedDownload.RemoteEpisode.Languages,
+                                          Quality = trackedDownload.RemoteEpisode.ParsedEpisodeInfo.Quality,
+                                          SourceTitle = trackedDownload.DownloadItem.Title,
+                                          DownloadClientInfo = trackedDownload.DownloadItem.DownloadClientInfo,
+                                          DownloadId = trackedDownload.DownloadItem.DownloadId,
+                                          TrackedDownload = trackedDownload,
+                                          Message = "Manually ignored"
+                                      };
 
             _eventAggregator.PublishEvent(downloadIgnoredEvent);
             return true;

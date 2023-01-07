@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,7 @@ using NzbDrone.Core.DecisionEngine;
 using NzbDrone.Core.Download;
 using NzbDrone.Core.Indexers;
 using NzbDrone.Core.Parser.Model;
-using NzbDrone.Core.Profiles;
+using NzbDrone.Core.Profiles.Qualities;
 using Whisparr.Http;
 
 namespace Whisparr.Api.V3.Indexers
@@ -23,10 +24,12 @@ namespace Whisparr.Api.V3.Indexers
         private readonly IIndexerFactory _indexerFactory;
         private readonly Logger _logger;
 
+        private static readonly object PushLock = new object();
+
         public ReleasePushController(IMakeDownloadDecision downloadDecisionMaker,
                                  IProcessDownloadDecisions downloadDecisionProcessor,
                                  IIndexerFactory indexerFactory,
-                                 IProfileService qualityProfileService,
+                                 IQualityProfileService qualityProfileService,
                                  Logger logger)
             : base(qualityProfileService)
         {
@@ -42,6 +45,7 @@ namespace Whisparr.Api.V3.Indexers
         }
 
         [HttpPost]
+        [Consumes("application/json")]
         public ActionResult<List<ReleaseResource>> Create(ReleaseResource release)
         {
             _logger.Info("Release pushed: {0} - {1}", release.Title, release.DownloadUrl);
@@ -54,12 +58,17 @@ namespace Whisparr.Api.V3.Indexers
 
             ResolveIndexer(info);
 
-            var decisions = _downloadDecisionMaker.GetRssDecision(new List<ReleaseInfo> { info });
-            _downloadDecisionProcessor.ProcessDecisions(decisions);
+            List<DownloadDecision> decisions;
+
+            lock (PushLock)
+            {
+                decisions = _downloadDecisionMaker.GetRssDecision(new List<ReleaseInfo> { info });
+                _downloadDecisionProcessor.ProcessDecisions(decisions);
+            }
 
             var firstDecision = decisions.FirstOrDefault();
 
-            if (firstDecision?.RemoteMovie.ParsedMovieInfo == null)
+            if (firstDecision?.RemoteEpisode.ParsedEpisodeInfo == null)
             {
                 throw new ValidationException(new List<ValidationFailure> { new ValidationFailure("Title", "Unable to parse", release.Title) });
             }

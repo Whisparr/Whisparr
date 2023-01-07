@@ -8,7 +8,6 @@ import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import Scroller from 'Components/Scroller/Scroller';
 import { scrollDirections } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import styles from './LogsTableDetailsModal.css';
 
 function LogsTableDetailsModal(props) {
@@ -28,13 +27,11 @@ function LogsTableDetailsModal(props) {
         onModalClose={onModalClose}
       >
         <ModalHeader>
-          {translate('Details')}
+          Details
         </ModalHeader>
 
         <ModalBody>
-          <div>
-            {translate('Message')}
-          </div>
+          <div>Message</div>
 
           <Scroller
             className={styles.detailsText}
@@ -46,9 +43,7 @@ function LogsTableDetailsModal(props) {
           {
             !!exception &&
               <div>
-                <div>
-                  {translate('Exception')}
-                </div>
+                <div>Exception</div>
                 <Scroller
                   className={styles.detailsText}
                   scrollDirection={scrollDirections.HORIZONTAL}
@@ -61,7 +56,7 @@ function LogsTableDetailsModal(props) {
 
         <ModalFooter>
           <Button onPress={onModalClose}>
-            {translate('Close')}
+            Close
           </Button>
         </ModalFooter>
       </ModalContent>

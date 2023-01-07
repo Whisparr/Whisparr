@@ -13,11 +13,11 @@ import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { icons, inputTypes, kinds, sizes } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 
 function getUrls(state) {
   const {
     unmonitored,
+    premieresOnly,
     asAllDay,
     tags
   } = state;
@@ -26,6 +26,10 @@ function getUrls(state) {
 
   if (unmonitored) {
     icalUrl += 'unmonitored=true&';
+  }
+
+  if (premieresOnly) {
+    icalUrl += 'premieresOnly=true&';
   }
 
   if (asAllDay) {
@@ -57,6 +61,7 @@ class CalendarLinkModalContent extends Component {
 
     const defaultState = {
       unmonitored: false,
+      premieresOnly: false,
       asAllDay: false,
       tags: []
     };
@@ -100,6 +105,7 @@ class CalendarLinkModalContent extends Component {
 
     const {
       unmonitored,
+      premieresOnly,
       asAllDay,
       tags,
       iCalHttpUrl,
@@ -109,43 +115,55 @@ class CalendarLinkModalContent extends Component {
     return (
       <ModalContent onModalClose={onModalClose}>
         <ModalHeader>
-          {translate('WhisparrCalendarFeed')}
+          Whisparr Calendar Feed
         </ModalHeader>
 
         <ModalBody>
           <Form>
             <FormGroup>
-              <FormLabel>{translate('IncludeUnmonitored')}</FormLabel>
+              <FormLabel>Include Unmonitored</FormLabel>
 
               <FormInputGroup
                 type={inputTypes.CHECK}
                 name="unmonitored"
                 value={unmonitored}
-                helpText={translate('UnmonitoredHelpText')}
+                helpText="Include unmonitored episodes in the iCal feed"
                 onChange={this.onInputChange}
               />
             </FormGroup>
 
             <FormGroup>
-              <FormLabel>{translate('ShowAsAllDayEvents')}</FormLabel>
+              <FormLabel>Season Premieres Only</FormLabel>
+
+              <FormInputGroup
+                type={inputTypes.CHECK}
+                name="premieresOnly"
+                value={premieresOnly}
+                helpText="Only the first episode in a season will be in the feed"
+                onChange={this.onInputChange}
+              />
+            </FormGroup>
+
+            <FormGroup>
+              <FormLabel>Show as All-Day Events</FormLabel>
 
               <FormInputGroup
                 type={inputTypes.CHECK}
                 name="asAllDay"
                 value={asAllDay}
-                helpText={translate('AsAllDayHelpText')}
+                helpText="Events will appear as all-day events in your calendar"
                 onChange={this.onInputChange}
               />
             </FormGroup>
 
             <FormGroup>
-              <FormLabel>{translate('Tags')}</FormLabel>
+              <FormLabel>Tags</FormLabel>
 
               <FormInputGroup
                 type={inputTypes.TAG}
                 name="tags"
                 value={tags}
-                helpText={translate('TagsHelpText')}
+                helpText="Feed will only contain series with at least one matching tag"
                 onChange={this.onInputChange}
               />
             </FormGroup>
@@ -153,14 +171,14 @@ class CalendarLinkModalContent extends Component {
             <FormGroup
               size={sizes.LARGE}
             >
-              <FormLabel>{translate('ICalFeed')}</FormLabel>
+              <FormLabel>iCal Feed</FormLabel>
 
               <FormInputGroup
                 type={inputTypes.TEXT}
                 name="iCalHttpUrl"
                 value={iCalHttpUrl}
                 readOnly={true}
-                helpText={translate('ICalHttpUrlHelpText')}
+                helpText="Copy this URL to your client(s) or click to subscribe if your browser supports webcal"
                 buttons={[
                   <ClipboardButton
                     key="copy"
@@ -187,7 +205,7 @@ class CalendarLinkModalContent extends Component {
 
         <ModalFooter>
           <Button onPress={onModalClose}>
-            {translate('Close')}
+            Close
           </Button>
         </ModalFooter>
       </ModalContent>

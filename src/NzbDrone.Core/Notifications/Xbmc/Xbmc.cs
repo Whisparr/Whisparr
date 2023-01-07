@@ -5,7 +5,7 @@ using FluentValidation.Results;
 using NLog;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.MediaFiles;
-using NzbDrone.Core.Movies;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Notifications.Xbmc
 {
@@ -34,30 +34,30 @@ namespace NzbDrone.Core.Notifications.Xbmc
             const string header = "Whisparr - Downloaded";
 
             Notify(Settings, header, message.Message);
-            UpdateAndCleanMovie(message.Movie, message.OldMovieFiles.Any());
+            UpdateAndClean(message.Series, message.OldFiles.Any());
         }
 
-        public override void OnMovieRename(Media movie, List<RenamedMovieFile> renamedFiles)
+        public override void OnRename(Series series, List<RenamedEpisodeFile> renamedFiles)
         {
-            UpdateAndCleanMovie(movie);
+            UpdateAndClean(series);
         }
 
-        public override void OnMovieFileDelete(MovieFileDeleteMessage deleteMessage)
+        public override void OnEpisodeFileDelete(EpisodeDeleteMessage deleteMessage)
         {
             const string header = "Whisparr - Deleted";
 
             Notify(Settings, header, deleteMessage.Message);
-            UpdateAndCleanMovie(deleteMessage.Movie, true);
+            UpdateAndClean(deleteMessage.Series, true);
         }
 
-        public override void OnMovieDelete(MovieDeleteMessage deleteMessage)
+        public override void OnSeriesDelete(SeriesDeleteMessage deleteMessage)
         {
             if (deleteMessage.DeletedFiles)
             {
                 const string header = "Whisparr - Deleted";
 
                 Notify(Settings, header, deleteMessage.Message);
-                UpdateAndCleanMovie(deleteMessage.Movie, true);
+                UpdateAndClean(deleteMessage.Series, true);
             }
         }
 
@@ -98,13 +98,13 @@ namespace NzbDrone.Core.Notifications.Xbmc
             }
         }
 
-        private void UpdateAndCleanMovie(Media movie, bool clean = true)
+        private void UpdateAndClean(Series series, bool clean = true)
         {
             try
             {
                 if (Settings.UpdateLibrary)
                 {
-                    _xbmcService.UpdateMovie(Settings, movie);
+                    _xbmcService.Update(Settings, series);
                 }
 
                 if (clean && Settings.CleanLibrary)

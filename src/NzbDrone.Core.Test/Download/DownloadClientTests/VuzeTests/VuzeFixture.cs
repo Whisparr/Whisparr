@@ -67,22 +67,22 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.VuzeTests
         {
             GivenSuccessfulDownload();
 
-            var remoteMovie = CreateRemoteMovie();
+            var remoteEpisode = CreateRemoteEpisode();
 
-            var id = Subject.Download(remoteMovie);
+            var id = Subject.Download(remoteEpisode);
 
             id.Should().NotBeNullOrEmpty();
         }
 
         [Test]
-        public void Download_with_MovieDirectory_should_force_directory()
+        public void Download_with_TvDirectory_should_force_directory()
         {
-            GivenMovieDirectory();
+            GivenTvDirectory();
             GivenSuccessfulDownload();
 
-            var remoteMovie = CreateRemoteMovie();
+            var remoteEpisode = CreateRemoteEpisode();
 
-            var id = Subject.Download(remoteMovie);
+            var id = Subject.Download(remoteEpisode);
 
             id.Should().NotBeNullOrEmpty();
 
@@ -93,12 +93,12 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.VuzeTests
         [Test]
         public void Download_with_category_should_force_directory()
         {
-            GivenMovieCategory();
+            GivenTvCategory();
             GivenSuccessfulDownload();
 
-            var remoteMovie = CreateRemoteMovie();
+            var remoteEpisode = CreateRemoteEpisode();
 
-            var id = Subject.Download(remoteMovie);
+            var id = Subject.Download(remoteEpisode);
 
             id.Should().NotBeNullOrEmpty();
 
@@ -109,14 +109,14 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.VuzeTests
         [Test]
         public void Download_with_category_should_not_have_double_slashes()
         {
-            GivenMovieCategory();
+            GivenTvCategory();
             GivenSuccessfulDownload();
 
             _transmissionConfigItems["download-dir"] += "/";
 
-            var remoteMovie = CreateRemoteMovie();
+            var remoteEpisode = CreateRemoteEpisode();
 
-            var id = Subject.Download(remoteMovie);
+            var id = Subject.Download(remoteEpisode);
 
             id.Should().NotBeNullOrEmpty();
 
@@ -125,13 +125,13 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.VuzeTests
         }
 
         [Test]
-        public void Download_without_MovieDirectory_and_Category_should_use_default()
+        public void Download_without_TvDirectory_and_Category_should_use_default()
         {
             GivenSuccessfulDownload();
 
-            var remoteMovie = CreateRemoteMovie();
+            var remoteEpisode = CreateRemoteEpisode();
 
-            var id = Subject.Download(remoteMovie);
+            var id = Subject.Download(remoteEpisode);
 
             id.Should().NotBeNullOrEmpty();
 
@@ -144,10 +144,10 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.VuzeTests
         {
             GivenSuccessfulDownload();
 
-            var remoteMovie = CreateRemoteMovie();
-            remoteMovie.Release.DownloadUrl = magnetUrl;
+            var remoteEpisode = CreateRemoteEpisode();
+            remoteEpisode.Release.DownloadUrl = magnetUrl;
 
-            var id = Subject.Download(remoteMovie);
+            var id = Subject.Download(remoteEpisode);
 
             id.Should().Be(expectedHash);
         }
@@ -216,7 +216,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.VuzeTests
         [Test]
         public void should_exclude_items_not_in_category()
         {
-            GivenMovieCategory();
+            GivenTvCategory();
 
             _downloading.DownloadDir = @"C:/Downloads/Finished/transmission/whisparr";
 
@@ -235,7 +235,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.VuzeTests
         [Test]
         public void should_exclude_items_not_in_TvDirectory()
         {
-            GivenMovieDirectory();
+            GivenTvDirectory();
 
             _downloading.DownloadDir = @"C:/Downloads/Finished/whisparr/subdir";
 

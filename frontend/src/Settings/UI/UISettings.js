@@ -10,11 +10,13 @@ import PageContent from 'Components/Page/PageContent';
 import PageContentBody from 'Components/Page/PageContentBody';
 import { inputTypes } from 'Helpers/Props';
 import SettingsToolbarConnector from 'Settings/SettingsToolbarConnector';
+import themes from 'Styles/Themes';
+import titleCase from 'Utilities/String/titleCase';
 import translate from 'Utilities/String/translate';
 
 export const firstDayOfWeekOptions = [
-  { key: 0, value: translate('Sunday') },
-  { key: 1, value: translate('Monday') }
+  { key: 0, value: 'Sunday' },
+  { key: 1, value: 'Monday' }
 ];
 
 export const weekColumnOptions = [
@@ -43,11 +45,6 @@ export const timeFormatOptions = [
   { key: 'HH:mm', value: '17:00/17:30' }
 ];
 
-export const movieRuntimeFormatOptions = [
-  { key: 'hoursMinutes', value: '1h 15m' },
-  { key: 'minutes', value: '75 mins' }
-];
-
 class UISettings extends Component {
 
   //
@@ -65,10 +62,11 @@ class UISettings extends Component {
       ...otherProps
     } = this.props;
 
-    const uiLanguages = languages.filter((item) => item.value !== 'Original');
+    const themeOptions = Object.keys(themes)
+      .map((theme) => ({ key: theme, value: titleCase(theme) }));
 
     return (
-      <PageContent title={translate('UISettings')}>
+      <PageContent title="UI Settings">
         <SettingsToolbarConnector
           {...otherProps}
           onSavePress={onSavePress}
@@ -76,26 +74,26 @@ class UISettings extends Component {
 
         <PageContentBody>
           {
-            isFetching &&
-              <LoadingIndicator />
+            isFetching ?
+              <LoadingIndicator /> :
+              null
           }
 
           {
-            !isFetching && error &&
-              <div>
-                {translate('UnableToLoadUISettings')}
-              </div>
+            !isFetching && error ?
+              <div>Unable to load UI settings</div> :
+              null
           }
 
           {
-            hasSettings && !isFetching && !error &&
+            hasSettings && !isFetching && !error ?
               <Form
                 id="uiSettings"
                 {...otherProps}
               >
-                <FieldSet legend={translate('Calendar')}>
+                <FieldSet legend="Calendar">
                   <FormGroup>
-                    <FormLabel>{translate('SettingsFirstDayOfWeek')}</FormLabel>
+                    <FormLabel>First Day of Week</FormLabel>
 
                     <FormInputGroup
                       type={inputTypes.SELECT}
@@ -107,36 +105,24 @@ class UISettings extends Component {
                   </FormGroup>
 
                   <FormGroup>
-                    <FormLabel>{translate('SettingsWeekColumnHeader')}</FormLabel>
+                    <FormLabel>Week Column Header</FormLabel>
 
                     <FormInputGroup
                       type={inputTypes.SELECT}
                       name="calendarWeekColumnHeader"
                       values={weekColumnOptions}
                       onChange={onInputChange}
-                      helpText={translate('SettingsWeekColumnHeaderHelpText')}
+                      helpText="Shown above each column when week is the active view"
                       {...settings.calendarWeekColumnHeader}
                     />
                   </FormGroup>
                 </FieldSet>
 
-                <FieldSet legend={translate('Movies')}>
+                <FieldSet
+                  legend="Dates"
+                >
                   <FormGroup>
-                    <FormLabel>{translate('SettingsRuntimeFormat')}</FormLabel>
-
-                    <FormInputGroup
-                      type={inputTypes.SELECT}
-                      name="movieRuntimeFormat"
-                      values={movieRuntimeFormatOptions}
-                      onChange={onInputChange}
-                      {...settings.movieRuntimeFormat}
-                    />
-                  </FormGroup>
-                </FieldSet>
-
-                <FieldSet legend={translate('Dates')}>
-                  <FormGroup>
-                    <FormLabel>{translate('SettingsShortDateFormat')}</FormLabel>
+                    <FormLabel>Short Date Format</FormLabel>
 
                     <FormInputGroup
                       type={inputTypes.SELECT}
@@ -148,7 +134,7 @@ class UISettings extends Component {
                   </FormGroup>
 
                   <FormGroup>
-                    <FormLabel>{translate('SettingsLongDateFormat')}</FormLabel>
+                    <FormLabel>Long Date Format</FormLabel>
 
                     <FormInputGroup
                       type={inputTypes.SELECT}
@@ -160,7 +146,7 @@ class UISettings extends Component {
                   </FormGroup>
 
                   <FormGroup>
-                    <FormLabel>{translate('SettingsTimeFormat')}</FormLabel>
+                    <FormLabel>Time Format</FormLabel>
 
                     <FormInputGroup
                       type={inputTypes.SELECT}
@@ -172,24 +158,38 @@ class UISettings extends Component {
                   </FormGroup>
 
                   <FormGroup>
-                    <FormLabel>{translate('SettingsShowRelativeDates')}</FormLabel>
+                    <FormLabel>Show Relative Dates</FormLabel>
                     <FormInputGroup
                       type={inputTypes.CHECK}
                       name="showRelativeDates"
-                      helpText={translate('SettingsShowRelativeDatesHelpText')}
+                      helpText="Show relative (Today/Yesterday/etc) or absolute dates"
                       onChange={onInputChange}
                       {...settings.showRelativeDates}
                     />
                   </FormGroup>
                 </FieldSet>
 
-                <FieldSet legend={translate('Style')}>
+                <FieldSet
+                  legend="Style"
+                >
                   <FormGroup>
-                    <FormLabel>{translate('SettingsEnableColorImpairedMode')}</FormLabel>
+                    <FormLabel>Theme</FormLabel>
+                    <FormInputGroup
+                      type={inputTypes.SELECT}
+                      name="theme"
+                      helpText="Change Application UI Theme, 'Auto' Theme will use your OS Theme to set Light or Dark mode. Inspired by Theme.Park"
+                      values={themeOptions}
+                      onChange={onInputChange}
+                      {...settings.theme}
+                    />
+                  </FormGroup>
+
+                  <FormGroup>
+                    <FormLabel>Enable Color-Impaired Mode</FormLabel>
                     <FormInputGroup
                       type={inputTypes.CHECK}
                       name="enableColorImpairedMode"
-                      helpText={translate('SettingsEnableColorImpairedModeHelpText')}
+                      helpText="Altered style to allow color-impaired users to better distinguish color coded information"
                       onChange={onInputChange}
                       {...settings.enableColorImpairedMode}
                     />
@@ -198,32 +198,20 @@ class UISettings extends Component {
 
                 <FieldSet legend={translate('Language')}>
                   <FormGroup>
-                    <FormLabel>{translate('MovieInfoLanguage')}</FormLabel>
+                    <FormLabel>{translate('UI Language')}</FormLabel>
                     <FormInputGroup
-                      type={inputTypes.LANGUAGE_SELECT}
-                      name="movieInfoLanguage"
-                      values={languages}
-                      helpText={translate('MovieInfoLanguageHelpText')}
-                      helpTextWarning={translate('MovieInfoLanguageHelpTextWarning')}
-                      onChange={onInputChange}
-                      {...settings.movieInfoLanguage}
-                    />
-                  </FormGroup>
-
-                  <FormGroup>
-                    <FormLabel>{translate('UILanguage')}</FormLabel>
-                    <FormInputGroup
-                      type={inputTypes.LANGUAGE_SELECT}
+                      type={inputTypes.SELECT}
                       name="uiLanguage"
-                      values={uiLanguages}
-                      helpText={translate('UILanguageHelpText')}
-                      helpTextWarning={translate('UILanguageHelpTextWarning')}
+                      values={languages}
+                      helpText={translate('Language that Sonarr will use for UI')}
+                      helpTextWarning={translate('Browser Reload Required')}
                       onChange={onInputChange}
                       {...settings.uiLanguage}
                     />
                   </FormGroup>
                 </FieldSet>
-              </Form>
+              </Form> :
+              null
           }
         </PageContentBody>
       </PageContent>
@@ -237,8 +225,8 @@ UISettings.propTypes = {
   error: PropTypes.object,
   settings: PropTypes.object.isRequired,
   hasSettings: PropTypes.bool.isRequired,
-  onSavePress: PropTypes.func.isRequired,
   languages: PropTypes.arrayOf(PropTypes.object).isRequired,
+  onSavePress: PropTypes.func.isRequired,
   onInputChange: PropTypes.func.isRequired
 };
 

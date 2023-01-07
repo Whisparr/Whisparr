@@ -1,3 +1,4 @@
+﻿using Newtonsoft.Json;
 using NzbDrone.Core.Datastore;
 
 namespace NzbDrone.Core.Qualities
@@ -7,6 +8,7 @@ namespace NzbDrone.Core.Qualities
         public Quality Quality { get; set; }
 
         public string Title { get; set; }
+
         public string GroupName { get; set; }
         public int Weight { get; set; }
 

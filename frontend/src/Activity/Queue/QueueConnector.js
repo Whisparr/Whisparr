@@ -5,22 +5,25 @@ import { createSelector } from 'reselect';
 import * as commandNames from 'Commands/commandNames';
 import withCurrentPage from 'Components/withCurrentPage';
 import { executeCommand } from 'Store/Actions/commandActions';
+import { clearEpisodes, fetchEpisodes } from 'Store/Actions/episodeActions';
 import * as queueActions from 'Store/Actions/queueActions';
 import createCommandExecutingSelector from 'Store/Selectors/createCommandExecutingSelector';
+import hasDifferentItems from 'Utilities/Object/hasDifferentItems';
+import selectUniqueIds from 'Utilities/Object/selectUniqueIds';
 import { registerPagePopulator, unregisterPagePopulator } from 'Utilities/pagePopulator';
 import Queue from './Queue';
 
 function createMapStateToProps() {
   return createSelector(
-    (state) => state.movies,
+    (state) => state.episodes,
     (state) => state.queue.options,
     (state) => state.queue.paged,
     createCommandExecutingSelector(commandNames.REFRESH_MONITORED_DOWNLOADS),
-    (movies, options, queue, isRefreshMonitoredDownloadsExecuting) => {
+    (episodes, options, queue, isRefreshMonitoredDownloadsExecuting) => {
       return {
-        isMoviesFetching: movies.isFetching,
-        isMoviesPopulated: movies.isPopulated,
-        moviesError: movies.error,
+        isEpisodesFetching: episodes.isFetching,
+        isEpisodesPopulated: episodes.isPopulated,
+        episodesError: episodes.error,
         isRefreshMonitoredDownloadsExecuting,
         ...options,
         ...queue
@@ -31,6 +34,8 @@ function createMapStateToProps() {
 
 const mapDispatchToProps = {
   ...queueActions,
+  fetchEpisodes,
+  clearEpisodes,
   executeCommand
 };
 
@@ -59,9 +64,19 @@ class QueueConnector extends Component {
   }
 
   componentDidUpdate(prevProps) {
+    if (hasDifferentItems(prevProps.items, this.props.items)) {
+      const episodeIds = selectUniqueIds(this.props.items, 'episodeId');
+
+      if (episodeIds.length) {
+        this.props.fetchEpisodes({ episodeIds });
+      } else {
+        this.props.clearEpisodes();
+      }
+    }
+
     if (
-      this.props.includeUnknownMovieItems !==
-      prevProps.includeUnknownMovieItems
+      this.props.includeUnknownSeriesItems !==
+      prevProps.includeUnknownSeriesItems
     ) {
       this.repopulate();
     }
@@ -70,6 +85,7 @@ class QueueConnector extends Component {
   componentWillUnmount() {
     unregisterPagePopulator(this.repopulate);
     this.props.clearQueue();
+    this.props.clearEpisodes();
   }
 
   //
@@ -151,7 +167,7 @@ class QueueConnector extends Component {
 }
 
 QueueConnector.propTypes = {
-  includeUnknownMovieItems: PropTypes.bool.isRequired,
+  includeUnknownSeriesItems: PropTypes.bool.isRequired,
   useCurrentPage: PropTypes.bool.isRequired,
   items: PropTypes.arrayOf(PropTypes.object).isRequired,
   fetchQueue: PropTypes.func.isRequired,
@@ -166,6 +182,8 @@ QueueConnector.propTypes = {
   clearQueue: PropTypes.func.isRequired,
   grabQueueItems: PropTypes.func.isRequired,
   removeQueueItems: PropTypes.func.isRequired,
+  fetchEpisodes: PropTypes.func.isRequired,
+  clearEpisodes: PropTypes.func.isRequired,
   executeCommand: PropTypes.func.isRequired
 };
 

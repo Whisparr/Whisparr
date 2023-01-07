@@ -1,4 +1,4 @@
-using NzbDrone.Core.Datastore;
+﻿using NzbDrone.Core.Datastore;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.ThingiProvider.Status;
 

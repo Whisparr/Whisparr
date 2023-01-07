@@ -10,6 +10,7 @@ using NzbDrone.Common.Serializer;
 namespace NzbDrone.Core.Download.Clients.QBittorrent
 {
     // API https://github.com/qbittorrent/qBittorrent/wiki/WebUI-API-Documentation
+
     public class QBittorrentProxyV1 : IQBittorrentProxy
     {
         private readonly IHttpClient _httpClient;
@@ -86,10 +87,10 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
         public List<QBittorrentTorrent> GetTorrents(QBittorrentSettings settings)
         {
             var request = BuildRequest(settings).Resource("/query/torrents");
-            if (settings.MovieCategory.IsNotNullOrWhiteSpace())
+            if (settings.TvCategory.IsNotNullOrWhiteSpace())
             {
-                request.AddQueryParam("label", settings.MovieCategory);
-                request.AddQueryParam("category", settings.MovieCategory);
+                request.AddQueryParam("label", settings.TvCategory);
+                request.AddQueryParam("category", settings.TvCategory);
             }
 
             var response = ProcessRequest<List<QBittorrentTorrent>>(request, settings);
@@ -136,9 +137,9 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
                                                 .Post()
                                                 .AddFormParameter("urls", torrentUrl);
 
-            if (settings.MovieCategory.IsNotNullOrWhiteSpace())
+            if (settings.TvCategory.IsNotNullOrWhiteSpace())
             {
-                request.AddFormParameter("category", settings.MovieCategory);
+                request.AddFormParameter("category", settings.TvCategory);
             }
 
             // Note: ForceStart is handled by separate api call
@@ -166,9 +167,9 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
                                                 .Post()
                                                 .AddFormUpload("torrents", fileName, fileContent);
 
-            if (settings.MovieCategory.IsNotNullOrWhiteSpace())
+            if (settings.TvCategory.IsNotNullOrWhiteSpace())
             {
-                request.AddFormParameter("category", settings.MovieCategory);
+                request.AddFormParameter("category", settings.TvCategory);
             }
 
             // Note: ForceStart is handled by separate api call
@@ -383,9 +384,9 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
                     throw new DownloadClientUnavailableException("Failed to connect to qBittorrent, please check your settings.", ex);
                 }
 
-                // returns "Fails." on bad login
                 if (response.Content != "Ok.")
                 {
+                    // returns "Fails." on bad login
                     _logger.Debug("qbitTorrent authentication failed.");
                     throw new DownloadClientAuthenticationException("Failed to authenticate with qBittorrent.");
                 }

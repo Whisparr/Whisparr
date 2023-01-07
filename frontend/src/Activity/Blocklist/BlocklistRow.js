@@ -5,12 +5,11 @@ import RelativeDateCellConnector from 'Components/Table/Cells/RelativeDateCellCo
 import TableRowCell from 'Components/Table/Cells/TableRowCell';
 import TableSelectCell from 'Components/Table/Cells/TableSelectCell';
 import TableRow from 'Components/Table/TableRow';
+import EpisodeFormats from 'Episode/EpisodeFormats';
+import EpisodeLanguages from 'Episode/EpisodeLanguages';
+import EpisodeQuality from 'Episode/EpisodeQuality';
 import { icons, kinds } from 'Helpers/Props';
-import MovieFormats from 'Movie/MovieFormats';
-import MovieLanguage from 'Movie/MovieLanguage';
-import MovieQuality from 'Movie/MovieQuality';
-import MovieTitleLink from 'Movie/MovieTitleLink';
-import translate from 'Utilities/String/translate';
+import SeriesTitleLink from 'Series/SeriesTitleLink';
 import BlocklistDetailsModal from './BlocklistDetailsModal';
 import styles from './BlocklistRow.css';
 
@@ -44,11 +43,11 @@ class BlocklistRow extends Component {
   render() {
     const {
       id,
-      movie,
+      series,
       sourceTitle,
+      languages,
       quality,
       customFormats,
-      languages,
       date,
       protocol,
       indexer,
@@ -58,10 +57,6 @@ class BlocklistRow extends Component {
       onSelectedChange,
       onRemovePress
     } = this.props;
-
-    if (!movie) {
-      return null;
-    }
 
     return (
       <TableRow>
@@ -82,12 +77,12 @@ class BlocklistRow extends Component {
               return null;
             }
 
-            if (name === 'movies.sortTitle') {
+            if (name === 'series.sortTitle') {
               return (
                 <TableRowCell key={name}>
-                  <MovieTitleLink
-                    titleSlug={movie.titleSlug}
-                    title={movie.title}
+                  <SeriesTitleLink
+                    titleSlug={series.titleSlug}
+                    title={series.title}
                   />
                 </TableRowCell>
               );
@@ -103,8 +98,11 @@ class BlocklistRow extends Component {
 
             if (name === 'languages') {
               return (
-                <TableRowCell key={name}>
-                  <MovieLanguage
+                <TableRowCell
+                  key={name}
+                  className={styles.languages}
+                >
+                  <EpisodeLanguages
                     languages={languages}
                   />
                 </TableRowCell>
@@ -117,7 +115,7 @@ class BlocklistRow extends Component {
                   key={name}
                   className={styles.quality}
                 >
-                  <MovieQuality
+                  <EpisodeQuality
                     quality={quality}
                   />
                 </TableRowCell>
@@ -127,7 +125,7 @@ class BlocklistRow extends Component {
             if (name === 'customFormats') {
               return (
                 <TableRowCell key={name}>
-                  <MovieFormats
+                  <EpisodeFormats
                     formats={customFormats}
                   />
                 </TableRowCell>
@@ -166,7 +164,7 @@ class BlocklistRow extends Component {
                   />
 
                   <IconButton
-                    title={translate('RemoveFromBlocklist')}
+                    title="Remove from blocklist"
                     name={icons.REMOVE}
                     kind={kinds.DANGER}
                     onPress={onRemovePress}
@@ -195,11 +193,11 @@ class BlocklistRow extends Component {
 
 BlocklistRow.propTypes = {
   id: PropTypes.number.isRequired,
-  movie: PropTypes.object.isRequired,
+  series: PropTypes.object.isRequired,
   sourceTitle: PropTypes.string.isRequired,
+  languages: PropTypes.arrayOf(PropTypes.object).isRequired,
   quality: PropTypes.object.isRequired,
   customFormats: PropTypes.arrayOf(PropTypes.object).isRequired,
-  languages: PropTypes.arrayOf(PropTypes.object).isRequired,
   date: PropTypes.string.isRequired,
   protocol: PropTypes.string.isRequired,
   indexer: PropTypes.string,

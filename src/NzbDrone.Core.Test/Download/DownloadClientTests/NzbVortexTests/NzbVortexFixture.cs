@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
@@ -28,42 +28,42 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.NzbVortexTests
         {
             Subject.Definition = new DownloadClientDefinition();
             Subject.Definition.Settings = new NzbVortexSettings
-            {
-                Host = "127.0.0.1",
-                Port = 2222,
-                ApiKey = "1234-ABCD",
-                TvCategory = "tv",
-                RecentMoviePriority = (int)NzbgetPriority.High
-            };
+                                          {
+                                              Host = "127.0.0.1",
+                                              Port = 2222,
+                                              ApiKey = "1234-ABCD",
+                                              TvCategory = "tv",
+                                              RecentTvPriority = (int)NzbgetPriority.High
+                                          };
 
             _queued = new NzbVortexQueueItem
-            {
-                Id = RandomNumber,
-                DownloadedSize = 1000,
-                TotalDownloadSize = 10,
-                GroupName = "tv",
-                UiTitle = "Droned.1998.1080p.WEB-DL-DRONE"
-            };
+                {
+                    Id = RandomNumber,
+                    DownloadedSize = 1000,
+                    TotalDownloadSize = 10,
+                    GroupName = "tv",
+                    UiTitle = "Droned.S01E01.Pilot.1080p.WEB-DL-DRONE"
+                };
 
             _failed = new NzbVortexQueueItem
-            {
-                DownloadedSize = 1000,
-                TotalDownloadSize = 1000,
-                GroupName = "tv",
-                UiTitle = "Droned.1998.1080p.WEB-DL-DRONE",
-                DestinationPath = "somedirectory",
-                State = NzbVortexStateType.UncompressFailed,
-            };
+                {
+                    DownloadedSize = 1000,
+                    TotalDownloadSize = 1000,
+                    GroupName = "tv",
+                    UiTitle = "Droned.S01E01.Pilot.1080p.WEB-DL-DRONE",
+                    DestinationPath = "somedirectory",
+                    State =  NzbVortexStateType.UncompressFailed,
+                };
 
             _completed = new NzbVortexQueueItem
-            {
-                DownloadedSize = 1000,
-                TotalDownloadSize = 1000,
-                GroupName = "tv",
-                UiTitle = "Droned.1998.1080p.WEB-DL-DRONE",
-                DestinationPath = "/remote/mount/tv/Droned.1998.1080p.WEB-DL-DRONE",
-                State = NzbVortexStateType.Done
-            };
+                {
+                    DownloadedSize = 1000,
+                    TotalDownloadSize = 1000,
+                    GroupName = "tv",
+                    UiTitle = "Droned.S01E01.Pilot.1080p.WEB-DL-DRONE",
+                    DestinationPath = "/remote/mount/tv/Droned.S01E01.Pilot.1080p.WEB-DL-DRONE",
+                    State = NzbVortexStateType.Done
+                };
         }
 
         protected void GivenFailedDownload()
@@ -204,9 +204,9 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.NzbVortexTests
         {
             GivenSuccessfulDownload();
 
-            var remoteMovie = CreateRemoteMovie();
+            var remoteEpisode = CreateRemoteEpisode();
 
-            var id = Subject.Download(remoteMovie);
+            var id = Subject.Download(remoteEpisode);
 
             id.Should().NotBeNullOrEmpty();
         }
@@ -216,9 +216,9 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.NzbVortexTests
         {
             GivenFailedDownload();
 
-            var remoteMovie = CreateRemoteMovie();
+            var remoteEpisode = CreateRemoteEpisode();
 
-            Assert.Throws<DownloadClientException>(() => Subject.Download(remoteMovie));
+            Assert.Throws<DownloadClientException>(() => Subject.Download(remoteEpisode));
         }
 
         [Test]
@@ -238,13 +238,13 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.NzbVortexTests
         {
             Mocker.GetMock<IRemotePathMappingService>()
                   .Setup(v => v.RemapRemoteToLocal("127.0.0.1", It.IsAny<OsPath>()))
-                  .Returns(new OsPath(@"O:\mymount\Droned.1998.1080p.WEB-DL-DRONE".AsOsAgnostic()));
+                  .Returns(new OsPath(@"O:\mymount\Droned.S01E01.Pilot.1080p.WEB-DL-DRONE".AsOsAgnostic()));
 
             GivenQueue(_completed);
 
             var result = Subject.GetItems().Single();
 
-            result.OutputPath.Should().Be(@"O:\mymount\Droned.1998.1080p.WEB-DL-DRONE".AsOsAgnostic());
+            result.OutputPath.Should().Be(@"O:\mymount\Droned.S01E01.Pilot.1080p.WEB-DL-DRONE".AsOsAgnostic());
         }
 
         [Test]
@@ -256,14 +256,14 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.NzbVortexTests
 
             Mocker.GetMock<INzbVortexProxy>()
                   .Setup(s => s.GetFiles(It.IsAny<int>(), It.IsAny<NzbVortexSettings>()))
-                  .Returns(new List<NzbVortexFile> { new NzbVortexFile { FileName = "Droned.1998.1080p.WEB-DL-DRONE.mkv" } });
+                  .Returns(new List<NzbVortexFile> { new NzbVortexFile { FileName = "Droned.S01E01.Pilot.1080p.WEB-DL-DRONE.mkv" } });
 
             _completed.State = NzbVortexStateType.Done;
             GivenQueue(_completed);
 
             var result = Subject.GetItems().Single();
 
-            result.OutputPath.Should().Be(@"O:\mymount\Droned.1998.1080p.WEB-DL-DRONE.mkv".AsOsAgnostic());
+            result.OutputPath.Should().Be(@"O:\mymount\Droned.S01E01.Pilot.1080p.WEB-DL-DRONE.mkv".AsOsAgnostic());
         }
 
         [Test]
@@ -277,8 +277,8 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.NzbVortexTests
                   .Setup(s => s.GetFiles(It.IsAny<int>(), It.IsAny<NzbVortexSettings>()))
                   .Returns(new List<NzbVortexFile>
                            {
-                               new NzbVortexFile { FileName = "Droned.1998.1080p.WEB-DL-DRONE.mkv" },
-                               new NzbVortexFile { FileName = "Droned.1998.1080p.WEB-DL-DRONE.nfo" }
+                               new NzbVortexFile { FileName = "Droned.S01E01.Pilot.1080p.WEB-DL-DRONE.mkv" },
+                               new NzbVortexFile { FileName = "Droned.S01E01.Pilot.1080p.WEB-DL-DRONE.nfo" }
                            });
 
             _completed.State = NzbVortexStateType.Done;

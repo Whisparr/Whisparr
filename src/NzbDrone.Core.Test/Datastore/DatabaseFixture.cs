@@ -4,8 +4,8 @@ using Dapper;
 using FluentAssertions;
 using NUnit.Framework;
 using NzbDrone.Core.Datastore;
-using NzbDrone.Core.Movies;
 using NzbDrone.Core.Test.Framework;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Test.Datastore
 {
@@ -15,7 +15,7 @@ namespace NzbDrone.Core.Test.Datastore
         public void SingleOrDefault_should_return_null_on_empty_db()
         {
             Mocker.Resolve<IDatabase>()
-                .OpenConnection().Query<Media>("SELECT * FROM \"Movies\"")
+                .OpenConnection().Query<Series>("SELECT * FROM \"Series\"")
                 .SingleOrDefault()
                 .Should()
                 .BeNull();

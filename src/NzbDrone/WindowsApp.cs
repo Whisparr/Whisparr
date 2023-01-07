@@ -1,12 +1,12 @@
-using System;
+﻿using System;
 using System.Windows.Forms;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NLog;
 using NzbDrone.Common.EnvironmentInfo;
 using NzbDrone.Common.Instrumentation;
+using NzbDrone.Host;
 using NzbDrone.SysTray;
-using Whisparr.Host;
 
 namespace NzbDrone
 {
@@ -30,9 +30,9 @@ namespace NzbDrone
             }
             catch (Exception e)
             {
-                Logger.Fatal(e, "EPIC FAIL: " + e.Message);
+                Logger.Fatal(e, "EPIC FAIL");
                 var message = string.Format("{0}: {1}", e.GetType().Name, e.ToString());
-                MessageBox.Show(text: message, buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Error, caption: "Epic Fail!");
+                MessageBox.Show($"{e.GetType().Name}: {e.Message}", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Error, caption: "Epic Fail!");
             }
         }
     }

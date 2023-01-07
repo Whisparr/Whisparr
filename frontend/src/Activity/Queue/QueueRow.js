@@ -4,18 +4,19 @@ import ProtocolLabel from 'Activity/Queue/ProtocolLabel';
 import IconButton from 'Components/Link/IconButton';
 import SpinnerIconButton from 'Components/Link/SpinnerIconButton';
 import ProgressBar from 'Components/ProgressBar';
-// import RelativeDateCellConnector from 'Components/Table/Cells/RelativeDateCellConnector';
+import RelativeDateCellConnector from 'Components/Table/Cells/RelativeDateCellConnector';
 import TableRowCell from 'Components/Table/Cells/TableRowCell';
 import TableSelectCell from 'Components/Table/Cells/TableSelectCell';
 import TableRow from 'Components/Table/TableRow';
+import EpisodeFormats from 'Episode/EpisodeFormats';
+import EpisodeLanguages from 'Episode/EpisodeLanguages';
+import EpisodeQuality from 'Episode/EpisodeQuality';
+import EpisodeTitleLink from 'Episode/EpisodeTitleLink';
+import SeasonEpisodeNumber from 'Episode/SeasonEpisodeNumber';
 import { icons, kinds } from 'Helpers/Props';
 import InteractiveImportModal from 'InteractiveImport/InteractiveImportModal';
-import MovieFormats from 'Movie/MovieFormats';
-import MovieLanguage from 'Movie/MovieLanguage';
-import MovieQuality from 'Movie/MovieQuality';
-import MovieTitleLink from 'Movie/MovieTitleLink';
+import SeriesTitleLink from 'Series/SeriesTitleLink';
 import formatBytes from 'Utilities/Number/formatBytes';
-import translate from 'Utilities/String/translate';
 import QueueStatusCell from './QueueStatusCell';
 import RemoveQueueItemModal from './RemoveQueueItemModal';
 import TimeleftCell from './TimeleftCell';
@@ -85,10 +86,11 @@ class QueueRow extends Component {
       trackedDownloadState,
       statusMessages,
       errorMessage,
-      movie,
+      series,
+      episode,
+      languages,
       quality,
       customFormats,
-      languages,
       protocol,
       indexer,
       outputPath,
@@ -151,14 +153,14 @@ class QueueRow extends Component {
               );
             }
 
-            if (name === 'movies.sortTitle') {
+            if (name === 'series.sortTitle') {
               return (
                 <TableRowCell key={name}>
                   {
-                    movie ?
-                      <MovieTitleLink
-                        titleSlug={movie.titleSlug}
-                        title={movie.title}
+                    series ?
+                      <SeriesTitleLink
+                        titleSlug={series.titleSlug}
+                        title={series.title}
                       /> :
                       title
                   }
@@ -166,10 +168,66 @@ class QueueRow extends Component {
               );
             }
 
+            if (name === 'episode') {
+              return (
+                <TableRowCell key={name}>
+                  {
+                    episode ?
+                      <SeasonEpisodeNumber
+                        seasonNumber={episode.seasonNumber}
+                        episodeNumber={episode.episodeNumber}
+                        absoluteEpisodeNumber={episode.absoluteEpisodeNumber}
+                        alternateTitles={series.alternateTitles}
+                        sceneSeasonNumber={episode.sceneSeasonNumber}
+                        sceneEpisodeNumber={episode.sceneEpisodeNumber}
+                        sceneAbsoluteEpisodeNumber={episode.sceneAbsoluteEpisodeNumber}
+                        unverifiedSceneNumbering={episode.unverifiedSceneNumbering}
+                      /> :
+                      '-'
+                  }
+                </TableRowCell>
+              );
+            }
+
+            if (name === 'episodes.title') {
+              return (
+                <TableRowCell key={name}>
+                  {
+                    episode ?
+                      <EpisodeTitleLink
+                        episodeId={episode.id}
+                        seriesId={series.id}
+                        episodeFileId={episode.episodeFileId}
+                        episodeTitle={episode.title}
+                        showOpenSeriesButton={true}
+                      /> :
+                      '-'
+                  }
+                </TableRowCell>
+              );
+            }
+
+            if (name === 'episodes.airDateUtc') {
+              if (episode) {
+                return (
+                  <RelativeDateCellConnector
+                    key={name}
+                    date={episode.airDateUtc}
+                  />
+                );
+              }
+
+              return (
+                <TableRowCell key={name}>
+                  -
+                </TableRowCell>
+              );
+            }
+
             if (name === 'languages') {
               return (
                 <TableRowCell key={name}>
-                  <MovieLanguage
+                  <EpisodeLanguages
                     languages={languages}
                   />
                 </TableRowCell>
@@ -181,7 +239,7 @@ class QueueRow extends Component {
                 <TableRowCell key={name}>
                   {
                     quality ?
-                      <MovieQuality
+                      <EpisodeQuality
                         quality={quality}
                       /> :
                       null
@@ -193,7 +251,7 @@ class QueueRow extends Component {
             if (name === 'customFormats') {
               return (
                 <TableRowCell key={name}>
-                  <MovieFormats
+                  <EpisodeFormats
                     formats={customFormats}
                   />
                 </TableRowCell>
@@ -226,19 +284,17 @@ class QueueRow extends Component {
               );
             }
 
-            if (name === 'size') {
-              return (
-                <TableRowCell key={name}>
-                  {formatBytes(size)}
-                </TableRowCell>
-              );
-            }
-
             if (name === 'title') {
               return (
                 <TableRowCell key={name}>
                   {title}
                 </TableRowCell>
+              );
+            }
+
+            if (name === 'size') {
+              return (
+                <TableRowCell key={name}>{formatBytes(size)}</TableRowCell>
               );
             }
 
@@ -308,7 +364,7 @@ class QueueRow extends Component {
                   }
 
                   <SpinnerIconButton
-                    title={translate('RemoveFromQueue')}
+                    title="Remove from queue"
                     name={icons.REMOVE}
                     isSpinning={isRemoving}
                     onPress={this.onRemoveQueueItemPress}
@@ -331,7 +387,7 @@ class QueueRow extends Component {
         <RemoveQueueItemModal
           isOpen={isRemoveQueueItemModalOpen}
           sourceTitle={title}
-          canIgnore={!!movie}
+          canIgnore={!!series}
           isPending={isPending}
           onRemovePress={this.onRemoveQueueItemModalConfirmed}
           onModalClose={this.onRemoveQueueItemModalClose}
@@ -351,10 +407,11 @@ QueueRow.propTypes = {
   trackedDownloadState: PropTypes.string,
   statusMessages: PropTypes.arrayOf(PropTypes.object),
   errorMessage: PropTypes.string,
-  movie: PropTypes.object,
+  series: PropTypes.object,
+  episode: PropTypes.object,
+  languages: PropTypes.arrayOf(PropTypes.object).isRequired,
   quality: PropTypes.object.isRequired,
   customFormats: PropTypes.arrayOf(PropTypes.object),
-  languages: PropTypes.arrayOf(PropTypes.object).isRequired,
   protocol: PropTypes.string.isRequired,
   indexer: PropTypes.string,
   outputPath: PropTypes.string,

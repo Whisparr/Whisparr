@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Mono.Unix;
 using Mono.Unix.Native;
 using NLog;

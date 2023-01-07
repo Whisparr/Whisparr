@@ -29,7 +29,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.QBittorrentTests
                 Port = 2222,
                 Username = "admin",
                 Password = "pass",
-                MovieCategory = "movies-whisparr"
+                TvCategory = "tv"
             };
 
             Mocker.GetMock<ITorrentFileInfoReader>()
@@ -38,7 +38,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.QBittorrentTests
 
             Mocker.GetMock<IHttpClient>()
                   .Setup(s => s.Get(It.IsAny<HttpRequest>()))
-                  .Returns<HttpRequest>(r => new HttpResponse(r, new HttpHeader(), Array.Empty<byte>()));
+                  .Returns<HttpRequest>(r => new HttpResponse(r, new HttpHeader(), new byte[0]));
 
             Mocker.GetMock<IQBittorrentProxy>()
                   .Setup(s => s.GetConfig(It.IsAny<QBittorrentSettings>()))
@@ -56,17 +56,17 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.QBittorrentTests
 
             Mocker.GetMock<IHttpClient>()
                   .Setup(s => s.Get(It.IsAny<HttpRequest>()))
-                  .Returns<HttpRequest>(r => new HttpResponse(r, httpHeader, Array.Empty<byte>(), System.Net.HttpStatusCode.SeeOther));
+                  .Returns<HttpRequest>(r => new HttpResponse(r, httpHeader, new byte[0], System.Net.HttpStatusCode.SeeOther));
         }
 
         protected void GivenRedirectToTorrent()
         {
             var httpHeader = new HttpHeader();
-            httpHeader["Location"] = "http://test.whisparr.com/not-a-real-torrent.torrent";
+            httpHeader["Location"] = "http://test.whisparr.tv/not-a-real-torrent.torrent";
 
             Mocker.GetMock<IHttpClient>()
                   .Setup(s => s.Get(It.Is<HttpRequest>(h => h.Url.FullUri == _downloadUrl)))
-                  .Returns<HttpRequest>(r => new HttpResponse(r, httpHeader, Array.Empty<byte>(), System.Net.HttpStatusCode.Found));
+                  .Returns<HttpRequest>(r => new HttpResponse(r, httpHeader, new byte[0], System.Net.HttpStatusCode.Found));
         }
 
         protected void GivenFailedDownload()
@@ -103,8 +103,8 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.QBittorrentTests
 
         protected void GivenHighPriority()
         {
-            Subject.Definition.Settings.As<QBittorrentSettings>().OlderMoviePriority = (int)QBittorrentPriority.First;
-            Subject.Definition.Settings.As<QBittorrentSettings>().RecentMoviePriority = (int)QBittorrentPriority.First;
+            Subject.Definition.Settings.As<QBittorrentSettings>().OlderTvPriority = (int)QBittorrentPriority.First;
+            Subject.Definition.Settings.As<QBittorrentSettings>().RecentTvPriority = (int)QBittorrentPriority.First;
         }
 
         protected void GivenGlobalSeedLimits(float maxRatio, int maxSeedingTime = -1, QBittorrentMaxRatioAction maxRatioAction = QBittorrentMaxRatioAction.Pause)
@@ -288,6 +288,27 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.QBittorrentTests
         }
 
         [Test]
+        public void missingFiles_item_should_have_required_properties()
+        {
+            var torrent = new QBittorrentTorrent
+            {
+                Hash = "HASH",
+                Name = _title,
+                Size = 1000,
+                Progress = 0.7,
+                Eta = 8640000,
+                State = "missingFiles",
+                Label = "",
+                SavePath = ""
+            };
+            GivenTorrents(new List<QBittorrentTorrent> { torrent });
+
+            var item = Subject.GetItems().Single();
+            VerifyWarning(item);
+            item.RemainingTime.Should().NotHaveValue();
+        }
+
+        [Test]
         public void single_file_torrent_outputpath_should_have_sanitised_name()
         {
             var torrent = new QBittorrentTorrent
@@ -393,26 +414,6 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.QBittorrentTests
             result.OutputPath.FullPath.Should().Be(Path.Combine(torrent.SavePath, "Droned.S01.12"));
         }
 
-        public void missingFiles_item_should_have_required_properties()
-        {
-            var torrent = new QBittorrentTorrent
-            {
-                Hash = "HASH",
-                Name = _title,
-                Size = 1000,
-                Progress = 0.7,
-                Eta = 8640000,
-                State = "missingFiles",
-                Label = "",
-                SavePath = ""
-            };
-            GivenTorrents(new List<QBittorrentTorrent> { torrent });
-
-            var item = Subject.GetItems().Single();
-            VerifyWarning(item);
-            item.RemainingTime.Should().NotHaveValue();
-        }
-
         [Test]
         public void api_261_should_use_content_path()
         {
@@ -451,9 +452,9 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.QBittorrentTests
         {
             GivenSuccessfulDownload();
 
-            var remoteMovie = CreateRemoteMovie();
+            var remoteEpisode = CreateRemoteEpisode();
 
-            var id = Subject.Download(remoteMovie);
+            var id = Subject.Download(remoteEpisode);
 
             id.Should().NotBeNullOrEmpty();
         }
@@ -463,10 +464,10 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.QBittorrentTests
         {
             GivenSuccessfulDownload();
 
-            var remoteMovie = CreateRemoteMovie();
-            remoteMovie.Release.DownloadUrl = magnetUrl;
+            var remoteEpisode = CreateRemoteEpisode();
+            remoteEpisode.Release.DownloadUrl = magnetUrl;
 
-            var id = Subject.Download(remoteMovie);
+            var id = Subject.Download(remoteEpisode);
 
             id.Should().Be(expectedHash);
         }
@@ -478,10 +479,10 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.QBittorrentTests
                   .Setup(s => s.GetConfig(It.IsAny<QBittorrentSettings>()))
                   .Returns(new QBittorrentPreferences() { DhtEnabled = false });
 
-            var remoteMovie = CreateRemoteMovie();
-            remoteMovie.Release.DownloadUrl = "magnet:?xt=urn:btih:ZPBPA2P6ROZPKRHK44D5OW6NHXU5Z6KR";
+            var remoteEpisode = CreateRemoteEpisode();
+            remoteEpisode.Release.DownloadUrl = "magnet:?xt=urn:btih:ZPBPA2P6ROZPKRHK44D5OW6NHXU5Z6KR";
 
-            Assert.Throws<ReleaseDownloadException>(() => Subject.Download(remoteMovie));
+            Assert.Throws<ReleaseDownloadException>(() => Subject.Download(remoteEpisode));
         }
 
         [Test]
@@ -491,10 +492,10 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.QBittorrentTests
                   .Setup(s => s.GetConfig(It.IsAny<QBittorrentSettings>()))
                   .Returns(new QBittorrentPreferences() { DhtEnabled = false });
 
-            var remoteMovie = CreateRemoteMovie();
-            remoteMovie.Release.DownloadUrl = "magnet:?xt=urn:btih:ZPBPA2P6ROZPKRHK44D5OW6NHXU5Z6KR&tr=udp://abc";
+            var remoteEpisode = CreateRemoteEpisode();
+            remoteEpisode.Release.DownloadUrl = "magnet:?xt=urn:btih:ZPBPA2P6ROZPKRHK44D5OW6NHXU5Z6KR&tr=udp://abc";
 
-            Assert.DoesNotThrow(() => Subject.Download(remoteMovie));
+            Assert.DoesNotThrow(() => Subject.Download(remoteEpisode));
 
             Mocker.GetMock<IQBittorrentProxy>()
                   .Verify(s => s.AddTorrentFromUrl(It.IsAny<string>(), It.IsAny<TorrentSeedConfiguration>(), It.IsAny<QBittorrentSettings>()), Times.Once());
@@ -506,9 +507,9 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.QBittorrentTests
             GivenHighPriority();
             GivenSuccessfulDownload();
 
-            var remoteMovie = CreateRemoteMovie();
+            var remoteEpisode = CreateRemoteEpisode();
 
-            var id = Subject.Download(remoteMovie);
+            var id = Subject.Download(remoteEpisode);
 
             Mocker.GetMock<IQBittorrentProxy>()
                   .Verify(v => v.MoveTorrentToTopInQueue(It.IsAny<string>(), It.IsAny<QBittorrentSettings>()), Times.Once());
@@ -522,11 +523,11 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.QBittorrentTests
 
             Mocker.GetMock<IQBittorrentProxy>()
                   .Setup(v => v.MoveTorrentToTopInQueue(It.IsAny<string>(), It.IsAny<QBittorrentSettings>()))
-                  .Throws(new HttpException(new HttpResponse(new HttpRequest("http://me.local/"), new HttpHeader(), Array.Empty<byte>(), System.Net.HttpStatusCode.Forbidden)));
+                  .Throws(new HttpException(new HttpResponse(new HttpRequest("http://me.local/"), new HttpHeader(), new byte[0], System.Net.HttpStatusCode.Forbidden)));
 
-            var remoteMovie = CreateRemoteMovie();
+            var remoteEpisode = CreateRemoteEpisode();
 
-            var id = Subject.Download(remoteMovie);
+            var id = Subject.Download(remoteEpisode);
 
             id.Should().NotBeNullOrEmpty();
 
@@ -558,9 +559,9 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.QBittorrentTests
             GivenRedirectToMagnet();
             GivenSuccessfulDownload();
 
-            var remoteMovie = CreateRemoteMovie();
+            var remoteEpisode = CreateRemoteEpisode();
 
-            var id = Subject.Download(remoteMovie);
+            var id = Subject.Download(remoteEpisode);
 
             id.Should().NotBeNullOrEmpty();
         }
@@ -571,9 +572,9 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.QBittorrentTests
             GivenRedirectToTorrent();
             GivenSuccessfulDownload();
 
-            var remoteMovie = CreateRemoteMovie();
+            var remoteEpisode = CreateRemoteEpisode();
 
-            var id = Subject.Download(remoteMovie);
+            var id = Subject.Download(remoteEpisode);
 
             id.Should().NotBeNullOrEmpty();
         }
@@ -766,7 +767,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.QBittorrentTests
         [Test]
         public void should_get_category_from_the_category_if_set()
         {
-            const string category = "movies-whisparr";
+            const string category = "tv-whisparr";
             GivenGlobalSeedLimits(1.0f);
 
             var torrent = new QBittorrentTorrent
@@ -791,7 +792,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.QBittorrentTests
         [Test]
         public void should_get_category_from_the_label_if_the_category_is_not_available()
         {
-            const string category = "movies-whisparr";
+            const string category = "tv-whisparr";
             GivenGlobalSeedLimits(1.0f);
 
             var torrent = new QBittorrentTorrent
@@ -819,6 +820,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.QBittorrentTests
             // Let this stand as a lesson to never write temporary unit tests on your dev machine and claim it works.
             // Commit the tests and let it run with the official build on the official build agents.
             // (Also don't replace library versions in your build script)
+
             var json = "{ \"eta\": 18446744073709335000 }";
             var torrent = Newtonsoft.Json.JsonConvert.DeserializeObject<QBittorrentTorrent>(json);
             torrent.Eta.ToString().Should().Be("18446744073709335000");

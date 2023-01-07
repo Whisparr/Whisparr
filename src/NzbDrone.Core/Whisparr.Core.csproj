@@ -4,12 +4,11 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.123" />
-    <PackageReference Include="Equ" Version="2.3.0" />
-    <PackageReference Include="MailKit" Version="2.15.0" />
-    <PackageReference Include="Npgsql" Version="6.0.3" />
+    <PackageReference Include="MailKit" Version="2.10.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="6.0.6" />
     <PackageReference Include="Servarr.FFMpegCore" Version="4.7.0-26" />
-    <PackageReference Include="Servarr.FFprobe" Version="5.0.1.93" />
-    <PackageReference Include="System.Memory" Version="4.5.5" />
+    <PackageReference Include="Servarr.FFprobe" Version="5.1.2.106" />
+    <PackageReference Include="System.Memory" Version="4.5.4" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
@@ -17,12 +16,13 @@
     <PackageReference Include="Servarr.FluentMigrator.Runner.SQLite" Version="3.3.2.9" />
     <PackageReference Include="Servarr.FluentMigrator.Runner.Postgres" Version="3.3.2.9" />
     <PackageReference Include="FluentValidation" Version="8.6.2" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.4" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="NLog" Version="5.0.1" />
-    <PackageReference Include="System.Data.SQLite.Core.Servarr" Version="1.0.115.5-18" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+    <PackageReference Include="NLog" Version="4.7.14" />
     <PackageReference Include="MonoTorrent" Version="2.0.5" />
-    <PackageReference Include="System.Text.Json" Version="6.0.5" />
+    <PackageReference Include="System.Data.SQLite.Core.Servarr" Version="1.0.115.5-18" />
+    <PackageReference Include="System.Text.Json" Version="6.0.4" />
+    <PackageReference Include="Npgsql" Version="6.0.3" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NzbDrone.Common\Whisparr.Common.csproj" />
@@ -34,7 +34,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Localization\Core\**">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 </Project>

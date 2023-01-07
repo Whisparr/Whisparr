@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using NLog;
@@ -7,58 +8,116 @@ using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Instrumentation.Extensions;
 using NzbDrone.Common.TPL;
 using NzbDrone.Core.DecisionEngine;
+using NzbDrone.Core.Exceptions;
 using NzbDrone.Core.Indexers;
 using NzbDrone.Core.IndexerSearch.Definitions;
-using NzbDrone.Core.Movies;
-using NzbDrone.Core.Movies.Translations;
+using NzbDrone.Core.Parser;
 using NzbDrone.Core.Parser.Model;
-using NzbDrone.Core.Profiles;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.IndexerSearch
 {
     public interface ISearchForReleases
     {
-        List<DownloadDecision> MovieSearch(int movieId, bool userInvokedSearch, bool interactiveSearch);
-        List<DownloadDecision> MovieSearch(Media movie, bool userInvokedSearch, bool interactiveSearch);
+        List<DownloadDecision> EpisodeSearch(int episodeId, bool userInvokedSearch, bool interactiveSearch);
+        List<DownloadDecision> EpisodeSearch(Episode episode, bool userInvokedSearch, bool interactiveSearch);
+        List<DownloadDecision> SeasonSearch(int seriesId, int seasonNumber, bool missingOnly, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch);
+        List<DownloadDecision> SeasonSearch(int seriesId, int seasonNumber, List<Episode> episodes, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch);
     }
 
     public class ReleaseSearchService : ISearchForReleases
     {
         private readonly IIndexerFactory _indexerFactory;
+        private readonly ISeriesService _seriesService;
+        private readonly IEpisodeService _episodeService;
         private readonly IMakeDownloadDecision _makeDownloadDecision;
-        private readonly IMovieService _movieService;
-        private readonly IMovieTranslationService _movieTranslationService;
-        private readonly IProfileService _profileService;
         private readonly Logger _logger;
 
         public ReleaseSearchService(IIndexerFactory indexerFactory,
+                                ISeriesService seriesService,
+                                IEpisodeService episodeService,
                                 IMakeDownloadDecision makeDownloadDecision,
-                                IMovieService movieService,
-                                IMovieTranslationService movieTranslationService,
-                                IProfileService profileService,
                                 Logger logger)
         {
             _indexerFactory = indexerFactory;
+            _seriesService = seriesService;
+            _episodeService = episodeService;
             _makeDownloadDecision = makeDownloadDecision;
-            _movieService = movieService;
-            _movieTranslationService = movieTranslationService;
-            _profileService = profileService;
             _logger = logger;
         }
 
-        public List<DownloadDecision> MovieSearch(int movieId, bool userInvokedSearch, bool interactiveSearch)
+        public List<DownloadDecision> EpisodeSearch(int episodeId, bool userInvokedSearch, bool interactiveSearch)
         {
-            var movie = _movieService.GetMovie(movieId);
-            movie.MediaMetadata.Value.Translations = _movieTranslationService.GetAllTranslationsForMovieMetadata(movie.MovieMetadataId);
+            var episode = _episodeService.GetEpisode(episodeId);
 
-            return MovieSearch(movie, userInvokedSearch, interactiveSearch);
+            return EpisodeSearch(episode, userInvokedSearch, interactiveSearch);
         }
 
-        public List<DownloadDecision> MovieSearch(Media movie, bool userInvokedSearch, bool interactiveSearch)
+        public List<DownloadDecision> EpisodeSearch(Episode episode, bool userInvokedSearch, bool interactiveSearch)
+        {
+            var series = _seriesService.GetSeries(episode.SeriesId);
+
+            if (episode.SeasonNumber == 0)
+            {
+                // Search for special episodes in season 0
+                return SearchSpecial(series, new List<Episode> { episode }, false, userInvokedSearch, interactiveSearch);
+            }
+
+            return SearchSingle(series, episode, false, userInvokedSearch, interactiveSearch);
+        }
+
+        public List<DownloadDecision> SeasonSearch(int seriesId, int seasonNumber, bool missingOnly, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
+        {
+            var episodes = _episodeService.GetEpisodesBySeason(seriesId, seasonNumber);
+
+            if (missingOnly)
+            {
+                episodes = episodes.Where(e => !e.HasFile).ToList();
+            }
+
+            return SeasonSearch(seriesId, seasonNumber, episodes, monitoredOnly, userInvokedSearch, interactiveSearch);
+        }
+
+        public List<DownloadDecision> SeasonSearch(int seriesId, int seasonNumber, List<Episode> episodes, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
+        {
+            var series = _seriesService.GetSeries(seriesId);
+
+            var downloadDecisions = new List<DownloadDecision>();
+
+            if (seasonNumber == 0)
+            {
+                // search for special episodes in season 0
+                downloadDecisions.AddRange(SearchSpecial(series, episodes, monitoredOnly, userInvokedSearch, interactiveSearch));
+            }
+
+            if (episodes.Count == 1)
+            {
+                var searchSpec = Get<SingleEpisodeSearchCriteria>(series, episodes, monitoredOnly, userInvokedSearch, interactiveSearch);
+                searchSpec.SeasonNumber = seasonNumber;
+                searchSpec.EpisodeNumber = episodes.First().EpisodeNumber;
+
+                var decisions = Dispatch(indexer => indexer.Fetch(searchSpec), searchSpec);
+                downloadDecisions.AddRange(decisions);
+            }
+            else
+            {
+                var searchSpec = Get<SeasonSearchCriteria>(series, episodes, monitoredOnly, userInvokedSearch, interactiveSearch);
+                searchSpec.SeasonNumber = seasonNumber;
+
+                var decisions = Dispatch(indexer => indexer.Fetch(searchSpec), searchSpec);
+                downloadDecisions.AddRange(decisions);
+            }
+
+            return DeDupeDecisions(downloadDecisions);
+        }
+
+        private List<DownloadDecision> SearchSingle(Series series, Episode episode, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
         {
             var downloadDecisions = new List<DownloadDecision>();
 
-            var searchSpec = Get<MovieSearchCriteria>(movie, userInvokedSearch, interactiveSearch);
+            var searchSpec = Get<SingleEpisodeSearchCriteria>(series, episode, monitoredOnly, userInvokedSearch, interactiveSearch);
+            searchSpec.SeasonNumber = episode.SeasonNumber;
+            searchSpec.EpisodeNumber = episode.EpisodeNumber;
 
             var decisions = Dispatch(indexer => indexer.Fetch(searchSpec), searchSpec);
             downloadDecisions.AddRange(decisions);
@@ -66,32 +125,64 @@ namespace NzbDrone.Core.IndexerSearch
             return DeDupeDecisions(downloadDecisions);
         }
 
-        private TSpec Get<TSpec>(Media movie, bool userInvokedSearch, bool interactiveSearch)
-            where TSpec : SearchCriteriaBase, new()
+        private List<DownloadDecision> SearchSpecial(Series series, List<Episode> episodes, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
         {
-            var spec = new TSpec()
-            {
-                Movie = movie,
-                UserInvokedSearch = userInvokedSearch,
-                InteractiveSearch = interactiveSearch
-            };
+            var downloadDecisions = new List<DownloadDecision>();
 
-            var wantedLanguages = _profileService.GetAcceptableLanguages(movie.ProfileId);
-            var translations = _movieTranslationService.GetAllTranslationsForMovieMetadata(movie.MovieMetadataId);
+            var searchSpec = Get<SpecialEpisodeSearchCriteria>(series, episodes, monitoredOnly, userInvokedSearch, interactiveSearch);
 
-            var queryTranlations = new List<string>
-            {
-                movie.MediaMetadata.Value.Title,
-                movie.MediaMetadata.Value.OriginalTitle
-            };
+            // build list of queries for each episode in the form: "<series> <episode-title>"
+            searchSpec.EpisodeQueryTitles = episodes.Where(e => !string.IsNullOrWhiteSpace(e.Title))
+                                                    .SelectMany(e => searchSpec.CleanSceneTitles.Select(title => title + " " + SearchCriteriaBase.GetCleanSceneTitle(e.Title)))
+                                                    .ToArray();
 
-            //Add Translation of wanted languages to search query
-            foreach (var translation in translations.Where(a => wantedLanguages.Contains(a.Language)))
+            downloadDecisions.AddRange(Dispatch(indexer => indexer.Fetch(searchSpec), searchSpec));
+
+            // Search for each episode by season/episode number as well
+            foreach (var episode in episodes)
             {
-                queryTranlations.Add(translation.Title);
+                // Episode needs to be monitored if it's not an interactive search
+                if (!interactiveSearch && monitoredOnly && !episode.Monitored)
+                {
+                    continue;
+                }
+
+                downloadDecisions.AddRange(SearchSingle(series, episode, monitoredOnly, userInvokedSearch, interactiveSearch));
             }
 
-            spec.SceneTitles = queryTranlations.Distinct().Where(t => t.IsNotNullOrWhiteSpace()).ToList();
+            return DeDupeDecisions(downloadDecisions);
+        }
+
+        private TSpec Get<TSpec>(Series series, List<Episode> episodes, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
+            where TSpec : SearchCriteriaBase, new()
+        {
+            var spec = new TSpec();
+
+            spec.Series = series;
+            spec.Episodes = episodes;
+            spec.MonitoredEpisodesOnly = monitoredOnly;
+            spec.UserInvokedSearch = userInvokedSearch;
+            spec.InteractiveSearch = interactiveSearch;
+
+            if (!spec.SceneTitles.Contains(series.Title))
+            {
+                spec.SceneTitles.Add(series.Title);
+            }
+
+            return spec;
+        }
+
+        private TSpec Get<TSpec>(Series series, Episode episode, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
+            where TSpec : SearchCriteriaBase, new()
+        {
+            var spec = new TSpec();
+
+            spec.Series = series;
+
+            spec.Episodes = new List<Episode> { episode };
+            spec.MonitoredEpisodesOnly = monitoredOnly;
+            spec.UserInvokedSearch = userInvokedSearch;
+            spec.InteractiveSearch = interactiveSearch;
 
             return spec;
         }
@@ -103,7 +194,7 @@ namespace NzbDrone.Core.IndexerSearch
                 _indexerFactory.AutomaticSearchEnabled();
 
             // Filter indexers to untagged indexers and indexers with intersecting tags
-            indexers = indexers.Where(i => i.Definition.Tags.Empty() || i.Definition.Tags.Intersect(criteriaBase.Movie.Tags).Any()).ToList();
+            indexers = indexers.Where(i => i.Definition.Tags.Empty() || i.Definition.Tags.Intersect(criteriaBase.Series.Tags).Any()).ToList();
 
             var reports = new List<ReleaseInfo>();
 
@@ -138,13 +229,24 @@ namespace NzbDrone.Core.IndexerSearch
 
             _logger.Debug("Total of {0} reports were found for {1} from {2} indexers", reports.Count, criteriaBase, indexers.Count);
 
+            // Update the last search time for all episodes if at least 1 indexer was searched.
+            if (indexers.Any())
+            {
+                var lastSearchTime = DateTime.UtcNow;
+                _logger.Debug("Setting last search time to: {0}", lastSearchTime);
+
+                criteriaBase.Episodes.ForEach(e => e.LastSearchTime = lastSearchTime);
+                _episodeService.UpdateLastSearchTime(criteriaBase.Episodes);
+            }
+
             return _makeDownloadDecision.GetSearchDecision(reports, criteriaBase).ToList();
         }
 
         private List<DownloadDecision> DeDupeDecisions(List<DownloadDecision> decisions)
         {
             // De-dupe reports by guid so duplicate results aren't returned. Pick the one with the least rejections.
-            return decisions.GroupBy(d => d.RemoteMovie.Release.Guid).Select(d => d.OrderBy(v => v.Rejections.Count()).First()).ToList();
+
+            return decisions.GroupBy(d => d.RemoteEpisode.Release.Guid).Select(d => d.OrderBy(v => v.Rejections.Count()).First()).ToList();
         }
     }
 }

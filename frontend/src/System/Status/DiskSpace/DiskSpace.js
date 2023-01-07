@@ -9,23 +9,22 @@ import TableBody from 'Components/Table/TableBody';
 import TableRow from 'Components/Table/TableRow';
 import { kinds, sizes } from 'Helpers/Props';
 import formatBytes from 'Utilities/Number/formatBytes';
-import translate from 'Utilities/String/translate';
 import styles from './DiskSpace.css';
 
 const columns = [
   {
     name: 'path',
-    label: translate('Location'),
+    label: 'Location',
     isVisible: true
   },
   {
     name: 'freeSpace',
-    label: translate('FreeSpace'),
+    label: 'Free Space',
     isVisible: true
   },
   {
     name: 'totalSpace',
-    label: translate('TotalSpace'),
+    label: 'Total Space',
     isVisible: true
   },
   {
@@ -42,12 +41,11 @@ class DiskSpace extends Component {
   render() {
     const {
       isFetching,
-      items,
-      isSmallScreen
+      items
     } = this.props;
 
     return (
-      <FieldSet legend={translate('DiskSpace')}>
+      <FieldSet legend="Disk Space">
         {
           isFetching &&
             <LoadingIndicator />
@@ -66,7 +64,7 @@ class DiskSpace extends Component {
                       totalSpace
                     } = item;
 
-                    const diskUsage = Math.round(100 - freeSpace / totalSpace * 100);
+                    const diskUsage = (100 - freeSpace / totalSpace * 100);
                     let diskUsageKind = kinds.PRIMARY;
 
                     if (diskUsage > 90) {
@@ -99,8 +97,6 @@ class DiskSpace extends Component {
                             progress={diskUsage}
                             kind={diskUsageKind}
                             size={sizes.MEDIUM}
-                            showText={((!isSmallScreen && diskUsage >= 12) || (isSmallScreen && diskUsage >= 45))}
-                            text={`${diskUsage}%`}
                           />
                         </TableRowCell>
                       </TableRow>
@@ -118,8 +114,7 @@ class DiskSpace extends Component {
 
 DiskSpace.propTypes = {
   isFetching: PropTypes.bool.isRequired,
-  items: PropTypes.array.isRequired,
-  isSmallScreen: PropTypes.bool.isRequired
+  items: PropTypes.array.isRequired
 };
 
 export default DiskSpace;

@@ -4,11 +4,15 @@ import IconButton from 'Components/Link/IconButton';
 import RelativeDateCellConnector from 'Components/Table/Cells/RelativeDateCellConnector';
 import TableRowCell from 'Components/Table/Cells/TableRowCell';
 import TableRow from 'Components/Table/TableRow';
+import episodeEntities from 'Episode/episodeEntities';
+import EpisodeFormats from 'Episode/EpisodeFormats';
+import EpisodeLanguages from 'Episode/EpisodeLanguages';
+import EpisodeQuality from 'Episode/EpisodeQuality';
+import EpisodeTitleLink from 'Episode/EpisodeTitleLink';
+import SeasonEpisodeNumber from 'Episode/SeasonEpisodeNumber';
 import { icons } from 'Helpers/Props';
-import MovieFormats from 'Movie/MovieFormats';
-import MovieLanguage from 'Movie/MovieLanguage';
-import MovieQuality from 'Movie/MovieQuality';
-import MovieTitleLink from 'Movie/MovieTitleLink';
+import SeriesTitleLink from 'Series/SeriesTitleLink';
+import formatPreferredWordScore from 'Utilities/Number/formatPreferredWordScore';
 import HistoryDetailsModal from './Details/HistoryDetailsModal';
 import HistoryEventTypeCell from './HistoryEventTypeCell';
 import styles from './HistoryRow.css';
@@ -52,10 +56,12 @@ class HistoryRow extends Component {
 
   render() {
     const {
-      movie,
+      episodeId,
+      series,
+      episode,
+      languages,
       quality,
       customFormats,
-      languages,
       qualityCutoffNotMet,
       eventType,
       sourceTitle,
@@ -68,7 +74,7 @@ class HistoryRow extends Component {
       onMarkAsFailedPress
     } = this.props;
 
-    if (!movie) {
+    if (!episode) {
       return null;
     }
 
@@ -95,12 +101,42 @@ class HistoryRow extends Component {
               );
             }
 
-            if (name === 'movies.sortTitle') {
+            if (name === 'series.sortTitle') {
               return (
                 <TableRowCell key={name}>
-                  <MovieTitleLink
-                    titleSlug={movie.titleSlug}
-                    title={movie.title}
+                  <SeriesTitleLink
+                    titleSlug={series.titleSlug}
+                    title={series.title}
+                  />
+                </TableRowCell>
+              );
+            }
+
+            if (name === 'episode') {
+              return (
+                <TableRowCell key={name}>
+                  <SeasonEpisodeNumber
+                    seasonNumber={episode.seasonNumber}
+                    episodeNumber={episode.episodeNumber}
+                    absoluteEpisodeNumber={episode.absoluteEpisodeNumber}
+                    alternateTitles={series.alternateTitles}
+                    sceneSeasonNumber={episode.sceneSeasonNumber}
+                    sceneEpisodeNumber={episode.sceneEpisodeNumber}
+                    sceneAbsoluteEpisodeNumber={episode.sceneAbsoluteEpisodeNumber}
+                  />
+                </TableRowCell>
+              );
+            }
+
+            if (name === 'episodes.title') {
+              return (
+                <TableRowCell key={name}>
+                  <EpisodeTitleLink
+                    episodeId={episodeId}
+                    episodeEntity={episodeEntities.EPISODES}
+                    seriesId={series.id}
+                    episodeTitle={episode.title}
+                    showOpenSeriesButton={true}
                   />
                 </TableRowCell>
               );
@@ -109,9 +145,7 @@ class HistoryRow extends Component {
             if (name === 'languages') {
               return (
                 <TableRowCell key={name}>
-                  <MovieLanguage
-                    languages={languages}
-                  />
+                  <EpisodeLanguages languages={languages} />
                 </TableRowCell>
               );
             }
@@ -119,7 +153,7 @@ class HistoryRow extends Component {
             if (name === 'quality') {
               return (
                 <TableRowCell key={name}>
-                  <MovieQuality
+                  <EpisodeQuality
                     quality={quality}
                     isCutoffMet={qualityCutoffNotMet}
                   />
@@ -130,7 +164,7 @@ class HistoryRow extends Component {
             if (name === 'customFormats') {
               return (
                 <TableRowCell key={name}>
-                  <MovieFormats
+                  <EpisodeFormats
                     formats={customFormats}
                   />
                 </TableRowCell>
@@ -164,6 +198,17 @@ class HistoryRow extends Component {
                   className={styles.indexer}
                 >
                   {data.indexer}
+                </TableRowCell>
+              );
+            }
+
+            if (name === 'customFormatScore') {
+              return (
+                <TableRowCell
+                  key={name}
+                  className={styles.customFormatScore}
+                >
+                  {formatPreferredWordScore(data.customFormatScore)}
                 </TableRowCell>
               );
             }
@@ -225,12 +270,13 @@ class HistoryRow extends Component {
 }
 
 HistoryRow.propTypes = {
-  movieId: PropTypes.number,
-  movie: PropTypes.object.isRequired,
+  episodeId: PropTypes.number,
+  series: PropTypes.object.isRequired,
+  episode: PropTypes.object,
   languages: PropTypes.arrayOf(PropTypes.object).isRequired,
   quality: PropTypes.object.isRequired,
+  customFormats: PropTypes.arrayOf(PropTypes.object),
   qualityCutoffNotMet: PropTypes.bool.isRequired,
-  customFormats: PropTypes.arrayOf(PropTypes.object).isRequired,
   eventType: PropTypes.string.isRequired,
   sourceTitle: PropTypes.string.isRequired,
   date: PropTypes.string.isRequired,

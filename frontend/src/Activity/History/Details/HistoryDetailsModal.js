@@ -8,7 +8,6 @@ import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { kinds } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import HistoryDetails from './HistoryDetails';
 import styles from './HistoryDetailsModal.css';
 
@@ -19,11 +18,11 @@ function getHeaderTitle(eventType) {
     case 'downloadFailed':
       return 'Download Failed';
     case 'downloadFolderImported':
-      return 'Movie Imported';
-    case 'movieFileDeleted':
-      return 'Movie File Deleted';
-    case 'movieFileRenamed':
-      return 'Movie File Renamed';
+      return 'Episode Imported';
+    case 'episodeFileDeleted':
+      return 'Episode File Deleted';
+    case 'episodeFileRenamed':
+      return 'Episode File Renamed';
     case 'downloadIgnored':
       return 'Download Ignored';
     default:
@@ -80,7 +79,7 @@ function HistoryDetailsModal(props) {
           <Button
             onPress={onModalClose}
           >
-            {translate('Close')}
+            Close
           </Button>
         </ModalFooter>
       </ModalContent>

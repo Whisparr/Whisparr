@@ -11,7 +11,6 @@ using NzbDrone.Common.Http;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Download.Clients.DownloadStation.Proxies;
 using NzbDrone.Core.MediaFiles.TorrentInfo;
-using NzbDrone.Core.Organizer;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.RemotePathMappings;
 using NzbDrone.Core.ThingiProvider;
@@ -35,11 +34,10 @@ namespace NzbDrone.Core.Download.Clients.DownloadStation
                                       ITorrentFileInfoReader torrentFileInfoReader,
                                       IHttpClient httpClient,
                                       IConfigService configService,
-                                      INamingConfigService namingConfigService,
                                       IDiskProvider diskProvider,
                                       IRemotePathMappingService remotePathMappingService,
                                       Logger logger)
-            : base(torrentFileInfoReader, httpClient, configService, namingConfigService, diskProvider, remotePathMappingService, logger)
+            : base(torrentFileInfoReader, httpClient, configService, diskProvider, remotePathMappingService, logger)
         {
             _dsInfoProxy = dsInfoProxy;
             _dsTaskProxySelector = dsTaskProxySelector;
@@ -161,7 +159,7 @@ namespace NzbDrone.Core.Download.Clients.DownloadStation
             return finalPath;
         }
 
-        protected override string AddFromMagnetLink(RemoteMovie remoteMovie, string hash, string magnetLink)
+        protected override string AddFromMagnetLink(RemoteEpisode remoteEpisode, string hash, string magnetLink)
         {
             var hashedSerialNumber = _serialNumberProvider.GetSerialNumber(Settings);
 
@@ -171,7 +169,7 @@ namespace NzbDrone.Core.Download.Clients.DownloadStation
 
             if (item != null)
             {
-                _logger.Debug("{0} added correctly", remoteMovie);
+                _logger.Debug("{0} added correctly", remoteEpisode);
                 return CreateDownloadId(item.Id, hashedSerialNumber);
             }
 
@@ -180,7 +178,7 @@ namespace NzbDrone.Core.Download.Clients.DownloadStation
             throw new DownloadClientException("Failed to add magnet task to Download Station");
         }
 
-        protected override string AddFromTorrentFile(RemoteMovie remoteMovie, string hash, string filename, byte[] fileContent)
+        protected override string AddFromTorrentFile(RemoteEpisode remoteEpisode, string hash, string filename, byte[] fileContent)
         {
             var hashedSerialNumber = _serialNumberProvider.GetSerialNumber(Settings);
 
@@ -192,7 +190,7 @@ namespace NzbDrone.Core.Download.Clients.DownloadStation
 
             if (item != null)
             {
-                _logger.Debug("{0} added correctly", remoteMovie);
+                _logger.Debug("{0} added correctly", remoteEpisode);
                 return CreateDownloadId(item.Id, hashedSerialNumber);
             }
 
@@ -220,7 +218,7 @@ namespace NzbDrone.Core.Download.Clients.DownloadStation
 
         protected bool IsCompleted(DownloadStationTask torrent)
         {
-            return torrent.Status == DownloadStationTaskStatus.Seeding || IsFinished(torrent) || (torrent.Status == DownloadStationTaskStatus.Waiting && torrent.Size != 0 && GetRemainingSize(torrent) <= 0);
+            return torrent.Status == DownloadStationTaskStatus.Seeding || IsFinished(torrent) ||  (torrent.Status == DownloadStationTaskStatus.Waiting && torrent.Size != 0 && GetRemainingSize(torrent) <= 0);
         }
 
         protected string GetMessage(DownloadStationTask torrent)
@@ -353,6 +351,7 @@ namespace NzbDrone.Core.Download.Clients.DownloadStation
             }
             catch (DownloadClientAuthenticationException ex)
             {
+                // User could not have permission to access to downloadstation
                 _logger.Error(ex, ex.Message);
                 return new NzbDroneValidationFailure(string.Empty, ex.Message);
             }

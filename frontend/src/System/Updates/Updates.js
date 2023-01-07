@@ -11,7 +11,6 @@ import PageContentBody from 'Components/Page/PageContentBody';
 import { icons, kinds } from 'Helpers/Props';
 import formatDate from 'Utilities/Date/formatDate';
 import formatDateTime from 'Utilities/Date/formatDateTime';
-import translate from 'Utilities/String/translate';
 import UpdateChanges from './UpdateChanges';
 import styles from './Updates.css';
 
@@ -30,7 +29,6 @@ class Updates extends Component {
       items,
       isInstallingUpdate,
       updateMechanism,
-      isDocker,
       updateMechanismMessage,
       shortDateFormat,
       longDateFormat,
@@ -44,15 +42,15 @@ class Updates extends Component {
     const hasUpdateToInstall = hasUpdates && _.some(items, { installable: true, latest: true });
     const noUpdateToInstall = hasUpdates && !hasUpdateToInstall;
 
-    const externalUpdaterPrefix = translate('UnableToUpdateWhisparrDirectly');
+    const externalUpdaterPrefix = 'Unable to update Whisparr directly,';
     const externalUpdaterMessages = {
-      external: translate('ExternalUpdater'),
-      apt: translate('AptUpdater'),
-      docker: translate('DockerUpdater')
+      external: 'Whisparr is configured to use an external update mechanism',
+      apt: 'use apt to install the update',
+      docker: 'update the docker container to receive the update'
     };
 
     return (
-      <PageContent title={translate('Updates')}>
+      <PageContent title="Updates">
         <PageContentBody>
           {
             !isPopulated && !hasError &&
@@ -61,23 +59,21 @@ class Updates extends Component {
 
           {
             noUpdates &&
-              <div>
-                {translate('NoUpdatesAreAvailable')}
-              </div>
+              <div>No updates are available</div>
           }
 
           {
             hasUpdateToInstall &&
               <div className={styles.messageContainer}>
                 {
-                  (updateMechanism === 'builtIn' || updateMechanism === 'script') && !isDocker ?
+                  updateMechanism === 'builtIn' || updateMechanism === 'script' ?
                     <SpinnerButton
                       className={styles.updateAvailable}
                       kind={kinds.PRIMARY}
                       isSpinning={isInstallingUpdate}
                       onPress={onInstallLatestPress}
                     >
-                      {translate('InstallLatest')}
+                      Install Latest
                     </SpinnerButton> :
 
                     <Fragment>
@@ -113,7 +109,7 @@ class Updates extends Component {
                 />
 
                 <div className={styles.message}>
-                  {translate('OnLatestVersion')}
+                  The latest version of Whisparr is already installed
                 </div>
 
                 {
@@ -165,7 +161,7 @@ class Updates extends Component {
                                 kind={kinds.SUCCESS}
                                 title={formatDateTime(update.installedOn, longDateFormat, timeFormat)}
                               >
-                                {translate('CurrentlyInstalled')}
+                                Currently Installed
                               </Label> :
                               null
                           }
@@ -185,21 +181,19 @@ class Updates extends Component {
 
                         {
                           !hasChanges &&
-                            <div>
-                              {translate('MaintenanceRelease')}
-                            </div>
+                            <div>Maintenance release</div>
                         }
 
                         {
                           hasChanges &&
                             <div className={styles.changes}>
                               <UpdateChanges
-                                title={translate('New')}
+                                title="New"
                                 changes={update.changes.new}
                               />
 
                               <UpdateChanges
-                                title={translate('Fixed')}
+                                title="Fixed"
                                 changes={update.changes.fixed}
                               />
                             </div>
@@ -239,7 +233,6 @@ Updates.propTypes = {
   generalSettingsError: PropTypes.object,
   items: PropTypes.array.isRequired,
   isInstallingUpdate: PropTypes.bool.isRequired,
-  isDocker: PropTypes.bool.isRequired,
   updateMechanism: PropTypes.string,
   updateMechanismMessage: PropTypes.string,
   shortDateFormat: PropTypes.string.isRequired,

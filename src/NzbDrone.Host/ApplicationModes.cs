@@ -1,4 +1,4 @@
-﻿namespace Whisparr.Host
+namespace NzbDrone.Host
 {
     public enum ApplicationModes
     {

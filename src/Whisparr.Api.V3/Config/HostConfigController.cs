@@ -33,14 +33,14 @@ namespace Whisparr.Api.V3.Config
             _userService = userService;
 
             SharedValidator.RuleFor(c => c.BindAddress)
-                           .ValidIp4Address()
+                           .ValidIpAddress()
                            .NotListenAllIp4Address()
-                           .When(c => c.BindAddress != "*");
+                           .When(c => c.BindAddress != "*" && c.BindAddress != "localhost");
 
             SharedValidator.RuleFor(c => c.Port).ValidPort();
 
             SharedValidator.RuleFor(c => c.UrlBase).ValidUrlBase();
-            SharedValidator.RuleFor(c => c.InstanceName).ContainsWhisparr().When(c => c.InstanceName.IsNotNullOrWhiteSpace());
+            SharedValidator.RuleFor(c => c.InstanceName).StartsOrEndsWithWhisparr();
 
             SharedValidator.RuleFor(c => c.Username).NotEmpty().When(c => c.AuthenticationMethod != AuthenticationType.None);
             SharedValidator.RuleFor(c => c.Password).NotEmpty().When(c => c.AuthenticationMethod != AuthenticationType.None);

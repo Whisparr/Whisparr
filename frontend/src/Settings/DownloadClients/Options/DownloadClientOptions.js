@@ -8,7 +8,6 @@ import FormInputGroup from 'Components/Form/FormInputGroup';
 import FormLabel from 'Components/Form/FormLabel';
 import LoadingIndicator from 'Components/Loading/LoadingIndicator';
 import { inputTypes, kinds, sizes } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 
 function DownloadClientOptions(props) {
   const {
@@ -29,27 +28,26 @@ function DownloadClientOptions(props) {
 
       {
         !isFetching && error &&
-          <div>
-            {translate('UnableToLoadDownloadClientOptions')}
-          </div>
+          <div>Unable to load download client options</div>
       }
 
       {
         hasSettings && !isFetching && !error && advancedSettings &&
           <div>
-            <FieldSet legend={translate('CompletedDownloadHandling')}>
+            <FieldSet legend="Completed Download Handling">
+
               <Form>
                 <FormGroup
                   advancedSettings={advancedSettings}
                   isAdvanced={true}
                   size={sizes.MEDIUM}
                 >
-                  <FormLabel>{translate('Enable')}</FormLabel>
+                  <FormLabel>Enable</FormLabel>
 
                   <FormInputGroup
                     type={inputTypes.CHECK}
                     name="enableCompletedDownloadHandling"
-                    helpText={translate('EnableCompletedDownloadHandlingHelpText')}
+                    helpText="Automatically import completed downloads from download client"
                     onChange={onInputChange}
                     {...settings.enableCompletedDownloadHandling}
                   />
@@ -60,40 +58,20 @@ function DownloadClientOptions(props) {
                   isAdvanced={true}
                   size={sizes.MEDIUM}
                 >
-                  <FormLabel>{translate('CheckForFinishedDownloadsInterval')}</FormLabel>
-
-                  <FormInputGroup
-                    type={inputTypes.NUMBER}
-                    name="checkForFinishedDownloadInterval"
-                    min={1}
-                    max={120}
-                    unit="minutes"
-                    helpText={translate('RefreshMonitoredIntervalHelpText')}
-                    onChange={onInputChange}
-                    {...settings.checkForFinishedDownloadInterval}
-                  />
-                </FormGroup>
-              </Form>
-            </FieldSet>
-
-            <FieldSet
-              legend={translate('FailedDownloadHandling')}
-            >
-              <Form>
-                <FormGroup size={sizes.MEDIUM}>
-                  <FormLabel>{translate('Redownload')}</FormLabel>
+                  <FormLabel>Redownload Failed</FormLabel>
 
                   <FormInputGroup
                     type={inputTypes.CHECK}
                     name="autoRedownloadFailed"
-                    helpText={translate('AutoRedownloadFailedHelpText')}
+                    helpText="Automatically search for and attempt to download a different release"
                     onChange={onInputChange}
                     {...settings.autoRedownloadFailed}
                   />
                 </FormGroup>
               </Form>
+
               <Alert kind={kinds.INFO}>
-                {translate('RemoveDownloadsAlert')}
+                The Remove settings were moved to the individual Download Client settings in the table above.
               </Alert>
             </FieldSet>
           </div>

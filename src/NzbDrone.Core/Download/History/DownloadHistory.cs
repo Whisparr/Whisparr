@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using NzbDrone.Core.Datastore;
 using NzbDrone.Core.Indexers;
@@ -9,7 +9,7 @@ namespace NzbDrone.Core.Download.History
     public class DownloadHistory : ModelBase
     {
         public DownloadHistoryEventType EventType { get; set; }
-        public int MovieId { get; set; }
+        public int SeriesId { get; set; }
         public string DownloadId { get; set; }
         public string SourceTitle { get; set; }
         public DateTime Date { get; set; }

@@ -4,14 +4,15 @@ using System.Linq;
 using FluentValidation.Results;
 using NLog;
 using NzbDrone.Common.Disk;
-using NzbDrone.Core.Movies;
+using NzbDrone.Core.Notifications.Xbmc.Model;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Notifications.Xbmc
 {
     public interface IXbmcService
     {
         void Notify(XbmcSettings settings, string title, string message);
-        void UpdateMovie(XbmcSettings settings, Media movie);
+        void Update(XbmcSettings settings, Series series);
         void Clean(XbmcSettings settings);
         ValidationFailure Test(XbmcSettings settings, string message);
     }
@@ -33,7 +34,7 @@ namespace NzbDrone.Core.Notifications.Xbmc
             _proxy.Notify(settings, title, message);
         }
 
-        public void UpdateMovie(XbmcSettings settings, Media movie)
+        public void Update(XbmcSettings settings, Series series)
         {
             if (!settings.AlwaysUpdate)
             {
@@ -47,7 +48,7 @@ namespace NzbDrone.Core.Notifications.Xbmc
                 }
             }
 
-            UpdateMovieLibrary(settings, movie);
+            UpdateLibrary(settings, series);
         }
 
         public void Clean(XbmcSettings settings)
@@ -55,46 +56,48 @@ namespace NzbDrone.Core.Notifications.Xbmc
             _proxy.CleanLibrary(settings);
         }
 
-        public string GetMoviePath(XbmcSettings settings, Media movie)
+        public string GetSeriesPath(XbmcSettings settings, Series series)
         {
-            var allMovies = _proxy.GetMovies(settings);
+            var allSeries = _proxy.GetSeries(settings);
 
-            if (!allMovies.Any())
+            if (!allSeries.Any())
             {
-                _logger.Debug("No Movies returned from XBMC");
+                _logger.Debug("No TV shows returned from XBMC");
                 return null;
             }
 
-            var matchingMovies = allMovies.FirstOrDefault(s =>
+            var matchingSeries = allSeries.FirstOrDefault(s =>
             {
-                return s.Label == movie.Title;
+                var tvdbId = 0;
+                int.TryParse(s.ImdbNumber, out tvdbId);
+
+                return tvdbId == series.TvdbId || s.Label == series.Title;
             });
 
-            if (matchingMovies != null)
+            if (matchingSeries != null)
             {
-                return matchingMovies.File;
+                return matchingSeries.File;
             }
 
             return null;
         }
 
-        private void UpdateMovieLibrary(XbmcSettings settings, Media movie)
+        private void UpdateLibrary(XbmcSettings settings, Series series)
         {
             try
             {
-                var moviePath = GetMoviePath(settings, movie);
+                var seriesPath = GetSeriesPath(settings, series);
 
-                if (moviePath != null)
+                if (seriesPath != null)
                 {
-                    moviePath = new OsPath(moviePath).Directory.FullPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-                    _logger.Debug("Updating movie {0} (Path: {1}) on XBMC host: {2}", movie, moviePath, settings.Address);
+                    _logger.Debug("Updating series {0} (Path: {1}) on XBMC host: {2}", series, seriesPath, settings.Address);
                 }
                 else
                 {
-                    _logger.Debug("Movie {0} doesn't exist on XBMC host: {1}, Updating Entire Library", movie, settings.Address);
+                    _logger.Debug("Series {0} doesn't exist on XBMC host: {1}, Updating Entire Library", series, settings.Address);
                 }
 
-                var response = _proxy.UpdateLibrary(settings, moviePath);
+                var response = _proxy.UpdateLibrary(settings, seriesPath);
 
                 if (!response.Equals("OK", StringComparison.InvariantCultureIgnoreCase))
                 {

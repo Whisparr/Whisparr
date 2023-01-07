@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using FizzWare.NBuilder;
@@ -6,11 +7,9 @@ using Moq;
 using NUnit.Framework;
 using NzbDrone.Core.IndexerSearch.Definitions;
 using NzbDrone.Core.Languages;
-using NzbDrone.Core.Movies;
-using NzbDrone.Core.Movies.AlternativeTitles;
-using NzbDrone.Core.Movies.Translations;
 using NzbDrone.Core.Parser;
 using NzbDrone.Core.Parser.Model;
+using NzbDrone.Core.Tv;
 using NzbDrone.Test.Common;
 
 namespace NzbDrone.Core.Test.ParserTests.ParsingServiceTests
@@ -18,196 +17,148 @@ namespace NzbDrone.Core.Test.ParserTests.ParsingServiceTests
     [TestFixture]
     public class MapFixture : TestBase<ParsingService>
     {
-        private Media _movie;
-        private ParsedMovieInfo _parsedMovieInfo;
-        private ParsedMovieInfo _wrongYearInfo;
-        private ParsedMovieInfo _wrongTitleInfo;
-        private ParsedMovieInfo _romanTitleInfo;
-        private ParsedMovieInfo _alternativeTitleInfo;
-        private ParsedMovieInfo _translationTitleInfo;
-        private ParsedMovieInfo _umlautInfo;
-        private ParsedMovieInfo _umlautAltInfo;
-        private ParsedMovieInfo _multiLanguageInfo;
-        private ParsedMovieInfo _multiLanguageWithOriginalInfo;
-        private MovieSearchCriteria _movieSearchCriteria;
+        private Series _series;
+        private List<Episode> _episodes;
+        private ParsedEpisodeInfo _parsedEpisodeInfo;
+        private SingleEpisodeSearchCriteria _singleEpisodeSearchCriteria;
 
         [SetUp]
         public void Setup()
         {
-            _movie = Builder<Media>.CreateNew()
-                                   .With(m => m.Title = "Fack Ju Göthe 2")
-                                   .With(m => m.MediaMetadata.Value.CleanTitle = "fackjugoethe2")
-                                   .With(m => m.Year = 2015)
-                                   .With(m => m.MediaMetadata.Value.AlternativeTitles = new List<AlternativeTitle> { new AlternativeTitle("Fack Ju Göthe 2: Same same") })
-                                   .With(m => m.MediaMetadata.Value.Translations = new List<MovieTranslation> { new MovieTranslation { Title = "Translated Title", CleanTitle = "translatedtitle" } })
-                                   .With(m => m.MediaMetadata.Value.OriginalLanguage = Language.English)
-                                   .Build();
+            _series = Builder<Series>.CreateNew()
+                .With(s => s.Title = "30 Stone")
+                .With(s => s.CleanTitle = "stone")
+                .Build();
 
-            _parsedMovieInfo = new ParsedMovieInfo
+            _episodes = Builder<Episode>.CreateListOfSize(1)
+                                        .All()
+                                        .With(e => e.AirDate = DateTime.Today.ToString(Episode.AIR_DATE_FORMAT))
+                                        .Build()
+                                        .ToList();
+
+            _parsedEpisodeInfo = new ParsedEpisodeInfo
             {
-                MovieTitles = new List<string> { _movie.Title },
-                Languages = new List<Language> { Language.English },
-                Year = _movie.Year,
+                SeriesTitle = _series.Title,
+                SeriesTitleInfo = new SeriesTitleInfo(),
+                SeasonNumber = 1,
+                EpisodeNumbers = new[] { 1 },
+                Languages = new List<Language> { Language.English }
             };
 
-            _wrongYearInfo = new ParsedMovieInfo
+            _singleEpisodeSearchCriteria = new SingleEpisodeSearchCriteria
             {
-                MovieTitles = new List<string> { _movie.Title },
-                Languages = new List<Language> { Language.English },
-                Year = 1900,
-            };
-
-            _wrongTitleInfo = new ParsedMovieInfo
-            {
-                MovieTitles = new List<string> { "Other Title" },
-                Languages = new List<Language> { Language.English },
-                Year = 2015
-            };
-
-            _alternativeTitleInfo = new ParsedMovieInfo
-            {
-                MovieTitles = new List<string> { _movie.MediaMetadata.Value.AlternativeTitles.First().Title },
-                Languages = new List<Language> { Language.English },
-                Year = _movie.Year,
-            };
-
-            _translationTitleInfo = new ParsedMovieInfo
-            {
-                MovieTitles = new List<string> { _movie.MediaMetadata.Value.Translations.First().Title },
-                Languages = new List<Language> { Language.English },
-                Year = _movie.Year,
-            };
-
-            _romanTitleInfo = new ParsedMovieInfo
-            {
-                MovieTitles = new List<string> { "Fack Ju Göthe II" },
-                Languages = new List<Language> { Language.English },
-                Year = _movie.Year,
-            };
-
-            _umlautInfo = new ParsedMovieInfo
-            {
-                MovieTitles = new List<string> { "Fack Ju Goethe 2" },
-                Languages = new List<Language> { Language.English },
-                Year = _movie.Year
-            };
-
-            _umlautAltInfo = new ParsedMovieInfo
-            {
-                MovieTitles = new List<string> { "Fack Ju Goethe 2: Same same" },
-                Languages = new List<Language> { Language.English },
-                Year = _movie.Year
-            };
-
-            _multiLanguageInfo = new ParsedMovieInfo
-            {
-                MovieTitles = { _movie.Title },
-                Languages = new List<Language> { Language.Original, Language.French }
-            };
-
-            _multiLanguageWithOriginalInfo = new ParsedMovieInfo
-            {
-                MovieTitles = { _movie.Title },
-                Languages = new List<Language> { Language.Original, Language.French, Language.English }
-            };
-
-            _movieSearchCriteria = new MovieSearchCriteria
-            {
-                Movie = _movie
+                Series = _series,
+                EpisodeNumber = _episodes.First().EpisodeNumber,
+                SeasonNumber = _episodes.First().SeasonNumber,
+                Episodes = _episodes
             };
         }
 
-        private void GivenMatchByMovieTitle()
+        private void GivenMatchBySeriesTitle()
         {
-            Mocker.GetMock<IMovieService>()
+            Mocker.GetMock<ISeriesService>()
                   .Setup(s => s.FindByTitle(It.IsAny<string>()))
-                  .Returns(_movie);
+                  .Returns(_series);
+        }
+
+        private void GivenMatchByTvdbId()
+        {
+            Mocker.GetMock<ISeriesService>()
+                  .Setup(s => s.FindByTvdbId(It.IsAny<int>()))
+                  .Returns(_series);
+        }
+
+        private void GivenParseResultSeriesDoesntMatchSearchCriteria()
+        {
+            _parsedEpisodeInfo.SeriesTitle = "Another Name";
         }
 
         [Test]
-        public void should_lookup_Movie_by_name()
+        public void should_lookup_series_by_name()
         {
-            GivenMatchByMovieTitle();
+            GivenMatchBySeriesTitle();
 
-            Subject.Map(_parsedMovieInfo, null);
+            Subject.Map(_parsedEpisodeInfo, _series.TvdbId);
 
-            Mocker.GetMock<IMovieService>()
-                .Verify(v => v.FindByTitle(It.IsAny<List<string>>(), It.IsAny<int>(), It.IsAny<List<string>>(), null), Times.Once());
+            Mocker.GetMock<ISeriesService>()
+                  .Verify(v => v.FindByTitle(It.IsAny<string>()), Times.Once());
         }
 
         [Test]
-        public void should_use_search_criteria_movie_title()
+        public void should_use_tvdbid_when_series_title_lookup_fails()
         {
-            GivenMatchByMovieTitle();
+            GivenMatchByTvdbId();
 
-            Subject.Map(_parsedMovieInfo, _movieSearchCriteria);
+            Subject.Map(_parsedEpisodeInfo, _series.TvdbId);
 
-            Mocker.GetMock<IMovieService>()
+            Mocker.GetMock<ISeriesService>()
+                  .Verify(v => v.FindByTvdbId(It.IsAny<int>()), Times.Once());
+        }
+
+        [Test]
+        public void should_use_search_criteria_series_title()
+        {
+            GivenMatchBySeriesTitle();
+
+            Subject.Map(_parsedEpisodeInfo, _series.TvdbId, _singleEpisodeSearchCriteria);
+
+            Mocker.GetMock<ISeriesService>()
                   .Verify(v => v.FindByTitle(It.IsAny<string>()), Times.Never());
         }
 
         [Test]
-        public void should_not_match_with_wrong_year()
+        public void should_FindByTitle_when_search_criteria_matching_fails()
         {
-            GivenMatchByMovieTitle();
-            Subject.Map(_wrongYearInfo, _movieSearchCriteria).MappingResultType.Should().Be(MappingResultType.WrongYear);
+            GivenParseResultSeriesDoesntMatchSearchCriteria();
+
+            Subject.Map(_parsedEpisodeInfo, 10, _singleEpisodeSearchCriteria);
+
+            Mocker.GetMock<ISeriesService>()
+                  .Verify(v => v.FindByTitle(It.IsAny<string>()), Times.Once());
         }
 
         [Test]
-        public void should_not_match_wrong_title()
+        public void should_FindByTitle_using_year_when_FindByTitle_matching_fails()
         {
-            GivenMatchByMovieTitle();
-            Subject.Map(_wrongTitleInfo, _movieSearchCriteria).MappingResultType.Should().Be(MappingResultType.WrongTitle);
+            GivenParseResultSeriesDoesntMatchSearchCriteria();
+
+            _parsedEpisodeInfo.SeriesTitleInfo = new SeriesTitleInfo
+            {
+                Title = "Series Title 2017",
+                TitleWithoutYear = "Series Title",
+                Year = 2017
+            };
+
+            Mocker.GetMock<ISeriesService>()
+                  .Setup(s => s.FindByTitle(_parsedEpisodeInfo.SeriesTitleInfo.TitleWithoutYear, _parsedEpisodeInfo.SeriesTitleInfo.Year))
+                  .Returns(_series);
+
+            Subject.Map(_parsedEpisodeInfo, 10, _singleEpisodeSearchCriteria);
+
+            Mocker.GetMock<ISeriesService>()
+                  .Verify(v => v.FindByTitle(It.IsAny<string>(), It.IsAny<int>()), Times.Once());
         }
 
         [Test]
-        public void should_return_title_not_found_when_all_is_null()
+        public void should_FindByTvdbId_when_search_criteria_and_FindByTitle_matching_fails()
         {
-            Mocker.GetMock<IMovieService>()
-                .Setup(s => s.FindByTitle(It.IsAny<string>()))
-                .Returns((Media)null);
-            Subject.Map(_parsedMovieInfo, null).MappingResultType.Should()
-                .Be(MappingResultType.TitleNotFound);
+            GivenParseResultSeriesDoesntMatchSearchCriteria();
+
+            Subject.Map(_parsedEpisodeInfo, 10, _singleEpisodeSearchCriteria);
+
+            Mocker.GetMock<ISeriesService>()
+                  .Verify(v => v.FindByTvdbId(It.IsAny<int>()), Times.Once());
         }
 
         [Test]
-        public void should_match_alternative_title()
+        public void should_use_tvrageid_match_from_search_criteria_when_title_match_fails()
         {
-            Subject.Map(_alternativeTitleInfo, _movieSearchCriteria).Movie.Should().Be(_movieSearchCriteria.Movie);
-        }
+            GivenParseResultSeriesDoesntMatchSearchCriteria();
 
-        [Test]
-        public void should_match_translation_title()
-        {
-            Subject.Map(_translationTitleInfo, _movieSearchCriteria).Movie.Should().Be(_movieSearchCriteria.Movie);
-        }
+            Subject.Map(_parsedEpisodeInfo, _series.TvdbId, _singleEpisodeSearchCriteria);
 
-        [Test]
-        public void should_match_roman_title()
-        {
-            Subject.Map(_romanTitleInfo, _movieSearchCriteria).Movie.Should().Be(_movieSearchCriteria.Movie);
-        }
-
-        [Test]
-        public void should_match_umlauts()
-        {
-            Subject.Map(_umlautInfo, _movieSearchCriteria).Movie.Should().Be(_movieSearchCriteria.Movie);
-            Subject.Map(_umlautAltInfo, _movieSearchCriteria).Movie.Should().Be(_movieSearchCriteria.Movie);
-        }
-
-        [Test]
-        public void should_convert_original()
-        {
-            Subject.Map(_multiLanguageInfo, _movieSearchCriteria).RemoteMovie.ParsedMovieInfo.Languages.Should().Contain(Language.English);
-            Subject.Map(_multiLanguageInfo, _movieSearchCriteria).RemoteMovie.ParsedMovieInfo.Languages.Should().Contain(Language.French);
-        }
-
-        [Test]
-        public void should_remove_original_as_already_exists()
-        {
-            Subject.Map(_multiLanguageWithOriginalInfo, _movieSearchCriteria).RemoteMovie.ParsedMovieInfo.Languages.Should().Contain(Language.English);
-            Subject.Map(_multiLanguageWithOriginalInfo, _movieSearchCriteria).RemoteMovie.ParsedMovieInfo.Languages.Should().Contain(Language.French);
-            Subject.Map(_multiLanguageWithOriginalInfo, _movieSearchCriteria).RemoteMovie.ParsedMovieInfo.Languages.Should().NotContain(Language.Original);
+            Mocker.GetMock<ISeriesService>()
+                  .Verify(v => v.FindByTitle(It.IsAny<string>()), Times.Never());
         }
     }
 }

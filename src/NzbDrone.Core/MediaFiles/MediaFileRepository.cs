@@ -1,43 +1,50 @@
 using System.Collections.Generic;
+using System.Linq;
 using NzbDrone.Core.Datastore;
 using NzbDrone.Core.Messaging.Events;
 
 namespace NzbDrone.Core.MediaFiles
 {
-    public interface IMediaFileRepository : IBasicRepository<MediaFile>
+    public interface IMediaFileRepository : IBasicRepository<EpisodeFile>
     {
-        List<MediaFile> GetFilesByMovie(int movieId);
-        List<MediaFile> GetFilesWithoutMediaInfo();
-        void DeleteForMovies(List<int> movieIds);
-
-        List<MediaFile> GetFilesWithRelativePath(int movieId, string relativePath);
+        List<EpisodeFile> GetFilesBySeries(int seriesId);
+        List<EpisodeFile> GetFilesBySeason(int seriesId, int seasonNumber);
+        List<EpisodeFile> GetFilesWithoutMediaInfo();
+        List<EpisodeFile> GetFilesWithRelativePath(int seriesId, string relativePath);
+        void DeleteForSeries(List<int> seriesIds);
     }
 
-    public class MediaFileRepository : BasicRepository<MediaFile>, IMediaFileRepository
+    public class MediaFileRepository : BasicRepository<EpisodeFile>, IMediaFileRepository
     {
         public MediaFileRepository(IMainDatabase database, IEventAggregator eventAggregator)
             : base(database, eventAggregator)
         {
         }
 
-        public List<MediaFile> GetFilesByMovie(int movieId)
+        public List<EpisodeFile> GetFilesBySeries(int seriesId)
         {
-            return Query(x => x.MovieId == movieId);
+            return Query(c => c.SeriesId == seriesId).ToList();
         }
 
-        public List<MediaFile> GetFilesWithoutMediaInfo()
+        public List<EpisodeFile> GetFilesBySeason(int seriesId, int seasonNumber)
         {
-            return Query(x => x.MediaInfo == null);
+            return Query(c => c.SeriesId == seriesId && c.SeasonNumber == seasonNumber).ToList();
         }
 
-        public void DeleteForMovies(List<int> movieIds)
+        public List<EpisodeFile> GetFilesWithoutMediaInfo()
         {
-            Delete(x => movieIds.Contains(x.MovieId));
+            return Query(c => c.MediaInfo == null).ToList();
         }
 
-        public List<MediaFile> GetFilesWithRelativePath(int movieId, string relativePath)
+        public List<EpisodeFile> GetFilesWithRelativePath(int seriesId, string relativePath)
         {
-            return Query(c => c.MovieId == movieId && c.RelativePath == relativePath);
+            return Query(c => c.SeriesId == seriesId && c.RelativePath == relativePath)
+                        .ToList();
+        }
+
+        public void DeleteForSeries(List<int> seriesIds)
+        {
+            Delete(x => seriesIds.Contains(x.SeriesId));
         }
     }
 }

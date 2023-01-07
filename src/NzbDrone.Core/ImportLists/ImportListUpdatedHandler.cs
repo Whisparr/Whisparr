@@ -4,7 +4,7 @@ using NzbDrone.Core.ThingiProvider.Events;
 
 namespace NzbDrone.Core.ImportLists
 {
-    public class ImportListUpdatedHandler : IHandle<ProviderUpdatedEvent<IImportList>>, IHandle<ProviderAddedEvent<IImportList>>
+    public class ImportListUpdatedHandler : IHandle<ProviderUpdatedEvent<IImportList>>
     {
         private readonly IManageCommandQueue _commandQueueManager;
 
@@ -14,11 +14,6 @@ namespace NzbDrone.Core.ImportLists
         }
 
         public void Handle(ProviderUpdatedEvent<IImportList> message)
-        {
-            _commandQueueManager.Push(new ImportListSyncCommand(message.Definition.Id));
-        }
-
-        public void Handle(ProviderAddedEvent<IImportList> message)
         {
             _commandQueueManager.Push(new ImportListSyncCommand(message.Definition.Id));
         }

@@ -23,7 +23,7 @@ namespace NzbDrone.Core.Download
         private class CachedSeedConfiguration
         {
             public int IndexerId { get; set; }
-            public bool Movie { get; set; }
+            public bool FullSeason { get; set; }
         }
 
         private readonly ICached<CachedSeedConfiguration> _cacheDownloads;
@@ -53,7 +53,7 @@ namespace NzbDrone.Core.Download
                 return null;
             }
 
-            var seedConfig = _indexerSeedConfigProvider.GetSeedConfiguration(cachedConfig.IndexerId);
+            var seedConfig = _indexerSeedConfigProvider.GetSeedConfiguration(cachedConfig.IndexerId, cachedConfig.FullSeason);
 
             return seedConfig;
         }
@@ -68,13 +68,13 @@ namespace NzbDrone.Core.Download
                 return null;
             }
 
-            ParsedMovieInfo parsedMovieInfo = null;
+            ParsedEpisodeInfo parsedEpisodeInfo = null;
             if (historyItem.Release != null)
             {
-                parsedMovieInfo = Parser.Parser.ParseMovieTitle(historyItem.Release.Title);
+                parsedEpisodeInfo = Parser.Parser.ParseTitle(historyItem.Release.Title);
             }
 
-            if (parsedMovieInfo == null)
+            if (parsedEpisodeInfo == null)
             {
                 _logger.Debug("No parsed title in download history item for infohash {0}, unable to provide seed configuration", infoHash);
                 return null;
@@ -83,6 +83,7 @@ namespace NzbDrone.Core.Download
             return new CachedSeedConfiguration
             {
                 IndexerId = historyItem.IndexerId,
+                FullSeason = parsedEpisodeInfo.FullSeason
             };
         }
     }

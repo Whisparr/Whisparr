@@ -12,10 +12,31 @@ import TableBody from 'Components/Table/TableBody';
 import TableOptionsModalWrapper from 'Components/Table/TableOptions/TableOptionsModalWrapper';
 import TablePager from 'Components/Table/TablePager';
 import { align, icons } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
+import hasDifferentItems from 'Utilities/Object/hasDifferentItems';
 import HistoryRowConnector from './HistoryRowConnector';
 
 class History extends Component {
+
+  //
+  // Lifecycle
+
+  shouldComponentUpdate(nextProps) {
+    // Don't update when fetching has completed if items have changed,
+    // before episodes start fetching or when episodes start fetching.
+
+    if (
+      (
+        this.props.isFetching &&
+        nextProps.isPopulated &&
+        hasDifferentItems(this.props.items, nextProps.items)
+      ) ||
+      (!this.props.isEpisodesFetching && nextProps.isEpisodesFetching)
+    ) {
+      return false;
+    }
+
+    return true;
+  }
 
   //
   // Render
@@ -25,29 +46,29 @@ class History extends Component {
       isFetching,
       isPopulated,
       error,
-      isMoviesFetching,
-      isMoviesPopulated,
-      moviesError,
       items,
       columns,
       selectedFilterKey,
       filters,
       totalRecords,
+      isEpisodesFetching,
+      isEpisodesPopulated,
+      episodesError,
       onFilterSelect,
       onFirstPagePress,
       ...otherProps
     } = this.props;
 
-    const isFetchingAny = isFetching || isMoviesFetching;
-    const isAllPopulated = isPopulated && (isMoviesPopulated || !items.length);
-    const hasError = error || moviesError;
+    const isFetchingAny = isFetching || isEpisodesFetching;
+    const isAllPopulated = isPopulated && (isEpisodesPopulated || !items.length);
+    const hasError = error || episodesError;
 
     return (
-      <PageContent title={translate('History')}>
+      <PageContent title="History">
         <PageToolbar>
           <PageToolbarSection>
             <PageToolbarButton
-              label={translate('Refresh')}
+              label="Refresh"
               iconName={icons.REFRESH}
               isSpinning={isFetching}
               onPress={onFirstPagePress}
@@ -60,7 +81,7 @@ class History extends Component {
               columns={columns}
             >
               <PageToolbarButton
-                label={translate('Options')}
+                label="Options"
                 iconName={icons.TABLE}
               />
             </TableOptionsModalWrapper>
@@ -83,9 +104,7 @@ class History extends Component {
 
           {
             !isFetchingAny && hasError &&
-              <div>
-                {translate('UnableToLoadHistory')}
-              </div>
+              <div>Unable to load history</div>
           }
 
           {
@@ -94,7 +113,7 @@ class History extends Component {
 
             isPopulated && !hasError && !items.length &&
               <div>
-                {translate('NoHistory')}
+                No history found
               </div>
           }
 
@@ -122,7 +141,7 @@ class History extends Component {
 
                 <TablePager
                   totalRecords={totalRecords}
-                  isFetching={isFetching}
+                  isFetching={isFetchingAny}
                   onFirstPagePress={onFirstPagePress}
                   {...otherProps}
                 />
@@ -138,14 +157,14 @@ History.propTypes = {
   isFetching: PropTypes.bool.isRequired,
   isPopulated: PropTypes.bool.isRequired,
   error: PropTypes.object,
-  isMoviesFetching: PropTypes.bool.isRequired,
-  isMoviesPopulated: PropTypes.bool.isRequired,
-  moviesError: PropTypes.object,
   items: PropTypes.arrayOf(PropTypes.object).isRequired,
   columns: PropTypes.arrayOf(PropTypes.object).isRequired,
   selectedFilterKey: PropTypes.string.isRequired,
   filters: PropTypes.arrayOf(PropTypes.object).isRequired,
   totalRecords: PropTypes.number,
+  isEpisodesFetching: PropTypes.bool.isRequired,
+  isEpisodesPopulated: PropTypes.bool.isRequired,
+  episodesError: PropTypes.object,
   onFilterSelect: PropTypes.func.isRequired,
   onFirstPagePress: PropTypes.func.isRequired
 };

@@ -4,14 +4,15 @@ import { Redirect, Route } from 'react-router-dom';
 import BlocklistConnector from 'Activity/Blocklist/BlocklistConnector';
 import HistoryConnector from 'Activity/History/HistoryConnector';
 import QueueConnector from 'Activity/Queue/QueueConnector';
-import AddNewMovieConnector from 'AddMovie/AddNewMovie/AddNewMovieConnector';
-import ImportMovies from 'AddMovie/ImportMovie/ImportMovies';
+import AddNewSeriesConnector from 'AddSeries/AddNewSeries/AddNewSeriesConnector';
+import ImportSeries from 'AddSeries/ImportSeries/ImportSeries';
 import CalendarPageConnector from 'Calendar/CalendarPageConnector';
 import NotFound from 'Components/NotFound';
 import Switch from 'Components/Router/Switch';
-import DiscoverMovieConnector from 'DiscoverMovie/DiscoverMovieConnector';
-import MovieDetailsPageConnector from 'Movie/Details/MovieDetailsPageConnector';
-import MovieIndexConnector from 'Movie/Index/MovieIndexConnector';
+import SeasonPassConnector from 'SeasonPass/SeasonPassConnector';
+import SeriesDetailsPageConnector from 'Series/Details/SeriesDetailsPageConnector';
+import SeriesEditorConnector from 'Series/Editor/SeriesEditorConnector';
+import SeriesIndexConnector from 'Series/Index/SeriesIndexConnector';
 import CustomFormatSettingsConnector from 'Settings/CustomFormats/CustomFormatSettingsConnector';
 import DownloadClientSettingsConnector from 'Settings/DownloadClients/DownloadClientSettingsConnector';
 import GeneralSettingsConnector from 'Settings/General/GeneralSettingsConnector';
@@ -21,7 +22,7 @@ import MediaManagementConnector from 'Settings/MediaManagement/MediaManagementCo
 import MetadataSettings from 'Settings/Metadata/MetadataSettings';
 import NotificationSettings from 'Settings/Notifications/NotificationSettings';
 import Profiles from 'Settings/Profiles/Profiles';
-import Quality from 'Settings/Quality/Quality';
+import QualityConnector from 'Settings/Quality/QualityConnector';
 import Settings from 'Settings/Settings';
 import TagSettings from 'Settings/Tags/TagSettings';
 import UISettingsConnector from 'Settings/UI/UISettingsConnector';
@@ -32,6 +33,8 @@ import Status from 'System/Status/Status';
 import Tasks from 'System/Tasks/Tasks';
 import UpdatesConnector from 'System/Updates/UpdatesConnector';
 import getPathWithUrlBase from 'Utilities/getPathWithUrlBase';
+import CutoffUnmetConnector from 'Wanted/CutoffUnmet/CutoffUnmetConnector';
+import MissingConnector from 'Wanted/Missing/MissingConnector';
 
 function AppRoutes(props) {
   const {
@@ -41,13 +44,13 @@ function AppRoutes(props) {
   return (
     <Switch>
       {/*
-        Movies
+        Series
       */}
 
       <Route
         exact={true}
         path="/"
-        component={MovieIndexConnector}
+        component={SeriesIndexConnector}
       />
 
       {
@@ -69,22 +72,27 @@ function AppRoutes(props) {
 
       <Route
         path="/add/new"
-        component={AddNewMovieConnector}
+        component={AddNewSeriesConnector}
       />
 
       <Route
         path="/add/import"
-        component={ImportMovies}
+        component={ImportSeries}
       />
 
       <Route
-        path="/add/discover"
-        component={DiscoverMovieConnector}
+        path="/serieseditor"
+        component={SeriesEditorConnector}
       />
 
       <Route
-        path="/movie/:titleSlug"
-        component={MovieDetailsPageConnector}
+        path="/seasonpass"
+        component={SeasonPassConnector}
+      />
+
+      <Route
+        path="/series/:titleSlug"
+        component={SeriesDetailsPageConnector}
       />
 
       {/*
@@ -116,6 +124,20 @@ function AppRoutes(props) {
       />
 
       {/*
+        Wanted
+      */}
+
+      <Route
+        path="/wanted/missing"
+        component={MissingConnector}
+      />
+
+      <Route
+        path="/wanted/cutoffunmet"
+        component={CutoffUnmetConnector}
+      />
+
+      {/*
         Settings
       */}
 
@@ -137,7 +159,7 @@ function AppRoutes(props) {
 
       <Route
         path="/settings/quality"
-        component={Quality}
+        component={QualityConnector}
       />
 
       <Route

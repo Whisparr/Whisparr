@@ -5,7 +5,6 @@ import Icon from 'Components/Icon';
 import Link from 'Components/Link/Link';
 import ConfirmModal from 'Components/Modal/ConfirmModal';
 import { icons, kinds } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import EditRemotePathMappingModalConnector from './EditRemotePathMappingModalConnector';
 import styles from './RemotePathMapping.css';
 
@@ -88,9 +87,9 @@ class RemotePathMapping extends Component {
         <ConfirmModal
           isOpen={this.state.isDeleteRemotePathMappingModalOpen}
           kind={kinds.DANGER}
-          title={translate('DeleteDelayProfile')}
-          message={translate('AreYouSureYouWantToDeleteThisRemotePathMapping')}
-          confirmLabel={translate('Delete')}
+          title="Delete Delay Profile"
+          message="Are you sure you want to delete this remote path mapping?"
+          confirmLabel="Delete"
           onConfirm={this.onConfirmDeleteRemotePathMapping}
           onCancel={this.onDeleteRemotePathMappingModalClose}
         />

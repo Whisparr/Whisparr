@@ -1,7 +1,6 @@
 using FluentMigrator;
 using NzbDrone.Core.Datastore.Migration.Framework;
 using NzbDrone.Core.Languages;
-using NzbDrone.Core.Movies;
 
 namespace NzbDrone.Core.Datastore.Migration
 {
@@ -17,176 +16,345 @@ namespace NzbDrone.Core.Datastore.Migration
             Create.TableForModel("RootFolders")
                   .WithColumn("Path").AsString().Unique();
 
-            Create.TableForModel("Media")
-                .WithColumn("Path").AsString()
-                .WithColumn("Monitored").AsBoolean()
-                .WithColumn("MovieMetadataId").AsInt32().Unique()
-                .WithColumn("ProfileId").AsInt32()
-                .WithColumn("Added").AsDateTimeOffset().Nullable()
-                .WithColumn("Tags").AsString().Nullable()
-                .WithColumn("AddOptions").AsString().Nullable()
-                .WithColumn("MovieFileId").AsInt32().WithDefaultValue(0)
-                .WithColumn("MinimumAvailability").AsInt32().WithDefaultValue((int)MovieStatusType.Released);
+            Create.TableForModel("Series")
+                  .WithColumn("TvdbId").AsInt32().Unique()
+                  .WithColumn("TvRageId").AsInt32().Indexed()
+                  .WithColumn("TvMazeId").AsInt32().WithDefaultValue(0).Indexed()
+                  .WithColumn("ImdbId").AsString().Nullable()
+                  .WithColumn("Title").AsString()
+                  .WithColumn("TitleSlug").AsString().Nullable()
+                  .WithColumn("CleanTitle").AsString().Indexed()
+                  .WithColumn("Status").AsInt32()
+                  .WithColumn("Overview").AsString().Nullable()
+                  .WithColumn("AirTime").AsString().Nullable()
+                  .WithColumn("Images").AsString()
+                  .WithColumn("Path").AsString().Indexed()
+                  .WithColumn("Monitored").AsBoolean()
+                  .WithColumn("QualityProfileId").AsInt32()
+                  .WithColumn("SeasonFolder").AsBoolean()
+                  .WithColumn("LastInfoSync").AsDateTimeOffset().Nullable()
+                  .WithColumn("LastDiskSync").AsDateTimeOffset().Nullable()
+                  .WithColumn("Runtime").AsInt32()
+                  .WithColumn("Network").AsString().Nullable()
+                  .WithColumn("UseSceneNumbering").AsBoolean()
+                  .WithColumn("FirstAired").AsDateTimeOffset().Nullable()
+                  .WithColumn("NextAiring").AsDateTimeOffset().Nullable()
+                  .WithColumn("Year").AsInt32().Nullable()
+                  .WithColumn("Seasons").AsString().Nullable()
+                  .WithColumn("Actors").AsString().Nullable()
+                  .WithColumn("Ratings").AsString().Nullable()
+                  .WithColumn("Genres").AsString().Nullable()
+                  .WithColumn("Certification").AsString().Nullable()
+                  .WithColumn("SortTitle").AsString().Nullable()
+                  .WithColumn("Tags").AsString().Nullable()
+                  .WithColumn("Added").AsDateTimeOffset().Nullable()
+                  .WithColumn("AddOptions").AsString().Nullable()
+                  .WithColumn("OriginalLanguage").AsInt32().WithDefaultValue((int)Language.English);
 
-            Create.TableForModel("MediaMetadata")
-                .WithColumn("ForiegnId").AsInt32().Unique()
-                .WithColumn("Images").AsString()
-                .WithColumn("Genres").AsString().Nullable()
-                .WithColumn("Title").AsString()
-                .WithColumn("SortTitle").AsString().Nullable()
-                .WithColumn("CleanTitle").AsString().Nullable().Indexed()
-                .WithColumn("OriginalTitle").AsString().Nullable()
-                .WithColumn("CleanOriginalTitle").AsString().Nullable().Indexed()
-                .WithColumn("OriginalLanguage").AsInt32()
-                .WithColumn("Status").AsInt32()
-                .WithColumn("LastInfoSync").AsDateTimeOffset().Nullable()
-                .WithColumn("Runtime").AsInt32()
-                .WithColumn("DigitalRelease").AsDateTimeOffset().Nullable()
-                .WithColumn("Year").AsInt32().Nullable()
-                .WithColumn("SecondaryYear").AsInt32().Nullable()
-                .WithColumn("Ratings").AsString().Nullable()
-                .WithColumn("Recommendations").AsString()
-                .WithColumn("Certification").AsString().Nullable()
-                .WithColumn("YouTubeTrailerId").AsString().Nullable()
-                .WithColumn("Collection").AsString().Nullable()
-                .WithColumn("Studio").AsString().Nullable()
-                .WithColumn("Overview").AsString().Nullable()
-                .WithColumn("Website").AsString().Nullable()
-                .WithColumn("ReleaseType").AsInt32()
-                .WithColumn("Popularity").AsFloat().Nullable();
+            Create.TableForModel("Episodes")
+                  .WithColumn("Monitored").AsBoolean().Nullable()
+                  .WithColumn("SeriesId").AsInt32().Indexed()
+                  .WithColumn("SeasonNumber").AsInt32()
+                  .WithColumn("EpisodeNumber").AsInt32()
+                  .WithColumn("Title").AsString().Nullable()
+                  .WithColumn("Overview").AsString().Nullable()
+                  .WithColumn("EpisodeFileId").AsInt32().Nullable().Indexed()
+                  .WithColumn("AirDate").AsString().Nullable()
+                  .WithColumn("AbsoluteEpisodeNumber").AsInt32().Nullable()
+                  .WithColumn("SceneAbsoluteEpisodeNumber").AsInt32().Nullable()
+                  .WithColumn("SceneSeasonNumber").AsInt32().Nullable()
+                  .WithColumn("SceneEpisodeNumber").AsInt32().Nullable()
+                  .WithColumn("AirDateUtc").AsDateTimeOffset().Nullable()
+                  .WithColumn("Ratings").AsString().Nullable()
+                  .WithColumn("Images").AsString().Nullable()
+                  .WithColumn("UnverifiedSceneNumbering").AsBoolean().WithDefaultValue(false)
+                  .WithColumn("LastSearchTime").AsDateTimeOffset().Nullable()
+                  .WithColumn("AiredAfterSeasonNumber").AsInt32().Nullable()
+                  .WithColumn("AiredBeforeSeasonNumber").AsInt32().Nullable()
+                  .WithColumn("AiredBeforeEpisodeNumber").AsInt32().Nullable()
+                  .WithColumn("TvdbId").AsInt32().Nullable();
 
-            // Expand this out as needed, Should have a tie with credits
-            Create.TableForModel("Performers")
-                .WithColumn("Monitored").AsBoolean()
-                .WithColumn("ForeignId").AsInt32()
-                .WithColumn("Gender").AsInt32();
+            Create.Index().OnTable("Episodes").OnColumn("SeriesId").Ascending()
+                                              .OnColumn("SeasonNumber").Ascending()
+                                              .OnColumn("EpisodeNumber").Ascending();
 
-            // Expand this out as needed, Collection could be a site or movie collection
-            Create.TableForModel("Collection")
-                .WithColumn("Monitored").AsBoolean()
-                .WithColumn("ForeignId").AsInt32();
+            Create.Index().OnTable("Episodes").OnColumn("SeriesId").Ascending()
+                                              .OnColumn("AirDate").Ascending();
+
+            Create.TableForModel("EpisodeFiles")
+                  .WithColumn("SeriesId").AsInt32().Indexed()
+                  .WithColumn("Quality").AsString()
+                  .WithColumn("Size").AsInt64()
+                  .WithColumn("DateAdded").AsDateTimeOffset()
+                  .WithColumn("SeasonNumber").AsInt32()
+                  .WithColumn("SceneName").AsString().Nullable()
+                  .WithColumn("ReleaseGroup").AsString().Nullable()
+                  .WithColumn("MediaInfo").AsString().Nullable()
+                  .WithColumn("RelativePath").AsString().Nullable()
+                  .WithColumn("Languages").AsString().NotNullable().WithDefaultValue("[]")
+                  .WithColumn("OriginalFilePath").AsString().Nullable();
 
             Create.TableForModel("History")
-                .WithColumn("MovieId").AsInt32()
-                .WithColumn("SourceTitle").AsString()
-                .WithColumn("Date").AsDateTimeOffset()
-                .WithColumn("Quality").AsString()
-                .WithColumn("Data").AsString()
-                .WithColumn("EventType").AsInt32().Nullable()
-                .WithColumn("DownloadId").AsString().Nullable().Indexed()
-                .WithColumn("Languages").AsString().NotNullable().WithDefaultValue("[]");
+                  .WithColumn("EpisodeId").AsInt32()
+                  .WithColumn("SeriesId").AsInt32().Indexed()
+                  .WithColumn("SourceTitle").AsString()
+                  .WithColumn("Date").AsDateTimeOffset().Indexed()
+                  .WithColumn("Quality").AsString()
+                  .WithColumn("Data").AsString()
+                  .WithColumn("EventType").AsInt32().Nullable().Indexed()
+                  .WithColumn("DownloadId").AsString().Nullable()
+                  .WithColumn("Languages").AsString().NotNullable().WithDefaultValue("[]");
+
+            Create.Index().OnTable("History").OnColumn("EpisodeId").Ascending()
+                                             .OnColumn("Date").Descending();
+
+            Create.Index().OnTable("History").OnColumn("DownloadId").Ascending()
+                                             .OnColumn("Date").Descending();
+
+            Create.TableForModel("DownloadHistory")
+                  .WithColumn("EventType").AsInt32().NotNullable().Indexed()
+                  .WithColumn("SeriesId").AsInt32().NotNullable().Indexed()
+                  .WithColumn("DownloadId").AsString().NotNullable().Indexed()
+                  .WithColumn("SourceTitle").AsString().NotNullable()
+                  .WithColumn("Date").AsDateTimeOffset().NotNullable()
+                  .WithColumn("Protocol").AsInt32().Nullable()
+                  .WithColumn("IndexerId").AsInt32().Nullable()
+                  .WithColumn("DownloadClientId").AsInt32().Nullable()
+                  .WithColumn("Release").AsString().Nullable()
+                  .WithColumn("Data").AsString().Nullable();
 
             Create.TableForModel("Notifications")
-                .WithColumn("Name").AsString()
-                .WithColumn("OnGrab").AsBoolean()
-                .WithColumn("OnDownload").AsBoolean()
-                .WithColumn("Settings").AsString()
-                .WithColumn("Implementation").AsString()
-                .WithColumn("ConfigContract").AsString().Nullable()
-                .WithColumn("OnUpgrade").AsBoolean().Nullable()
-                .WithColumn("Tags").AsString().Nullable()
-                .WithColumn("OnRename").AsBoolean().NotNullable()
-                .WithColumn("OnHealthIssue").AsBoolean().WithDefaultValue(false)
-                .WithColumn("IncludeHealthWarnings").AsBoolean().WithDefaultValue(false)
-                .WithColumn("OnMovieDelete").AsBoolean().WithDefaultValue(false)
-                .WithColumn("OnMovieFileDelete").AsBoolean().WithDefaultValue(false)
-                .WithColumn("OnMovieFileDeleteForUpgrade").AsBoolean().WithDefaultValue(false)
-                .WithColumn("OnApplicationUpdate").AsBoolean().WithDefaultValue(false)
-                .WithColumn("OnMovieAdded").AsBoolean().WithDefaultValue(false);
+                  .WithColumn("Name").AsString()
+                  .WithColumn("OnGrab").AsBoolean()
+                  .WithColumn("OnDownload").AsBoolean()
+                  .WithColumn("Settings").AsString()
+                  .WithColumn("Implementation").AsString()
+                  .WithColumn("ConfigContract").AsString().Nullable()
+                  .WithColumn("OnUpgrade").AsBoolean().Nullable()
+                  .WithColumn("Tags").AsString().Nullable()
+                  .WithColumn("OnRename").AsBoolean()
+                  .WithColumn("OnHealthIssue").AsBoolean()
+                  .WithColumn("IncludeHealthWarnings").AsBoolean().WithDefaultValue(false)
+                  .WithColumn("OnSeriesDelete").AsBoolean().WithDefaultValue(false)
+                  .WithColumn("OnEpisodeFileDelete").AsBoolean().WithDefaultValue(false)
+                  .WithColumn("OnEpisodeFileDeleteForUpgrade").AsBoolean().WithDefaultValue(true)
+                  .WithColumn("OnApplicationUpdate").AsBoolean().WithDefaultValue(false);
+
+            Create.TableForModel("Blocklist")
+                  .WithColumn("SeriesId").AsInt32().Indexed()
+                  .WithColumn("EpisodeIds").AsString()
+                  .WithColumn("SourceTitle").AsString()
+                  .WithColumn("Quality").AsString()
+                  .WithColumn("Date").AsDateTimeOffset()
+                  .WithColumn("PublishedDate").AsDateTimeOffset().Nullable()
+                  .WithColumn("Size").AsInt64().Nullable()
+                  .WithColumn("Protocol").AsInt32().Nullable()
+                  .WithColumn("Indexer").AsString().Nullable()
+                  .WithColumn("Message").AsString().Nullable()
+                  .WithColumn("TorrentInfoHash").AsString().Nullable()
+                  .WithColumn("Languages").AsString().NotNullable().WithDefaultValue("[]");
 
             Create.TableForModel("ScheduledTasks")
-                .WithColumn("TypeName").AsString().Unique()
-                .WithColumn("Interval").AsDouble()
-                .WithColumn("LastExecution").AsDateTimeOffset()
-                .WithColumn("LastStartTime").AsDateTimeOffset().Nullable();
+                  .WithColumn("TypeName").AsString().Unique()
+                  .WithColumn("Interval").AsInt32()
+                  .WithColumn("LastExecution").AsDateTimeOffset()
+                  .WithColumn("LastStartTime").AsDateTimeOffset().Nullable();
 
             Create.TableForModel("Indexers")
-                .WithColumn("Name").AsString().Unique()
-                .WithColumn("Implementation").AsString()
-                .WithColumn("Settings").AsString().Nullable()
-                .WithColumn("ConfigContract").AsString().Nullable()
-                .WithColumn("EnableRss").AsBoolean().Nullable()
-                .WithColumn("EnableAutomaticSearch").AsBoolean().Nullable()
-                .WithColumn("EnableInteractiveSearch").AsBoolean().Nullable()
-                .WithColumn("Priority").AsInt32().NotNullable().WithDefaultValue(25)
-                .WithColumn("Tags").AsString().Nullable()
-                .WithColumn("DownloadClientId").AsInt32().WithDefaultValue(0);
+                  .WithColumn("EnableRss").AsBoolean().Nullable()
+                  .WithColumn("EnableAutomaticSearch").AsBoolean()
+                  .WithColumn("EnableInteractiveSearch").AsBoolean()
+                  .WithColumn("Name").AsString().Unique()
+                  .WithColumn("Implementation").AsString()
+                  .WithColumn("Settings").AsString().Nullable()
+                  .WithColumn("ConfigContract").AsString().Nullable()
+                  .WithColumn("Priority").AsInt32().NotNullable().WithDefaultValue(25)
+                  .WithColumn("Tags").AsString().Nullable()
+                  .WithColumn("DownloadClientId").AsInt32().WithDefaultValue(0)
+                  .WithColumn("SeasonSearchMaximumSingleEpisodeAge").AsInt32().NotNullable().WithDefaultValue(0);
 
-            Create.TableForModel("Profiles")
-                .WithColumn("Name").AsString().Unique()
-                .WithColumn("Cutoff").AsInt32()
-                .WithColumn("Items").AsString().NotNullable()
-                .WithColumn("Language").AsInt32().Nullable()
-                .WithColumn("UpgradeAllowed").AsBoolean().Nullable()
-                .WithColumn("MinFormatScore").AsInt32().WithDefaultValue(0)
-                .WithColumn("CutoffFormatScore").AsInt32().WithDefaultValue(0)
-                .WithColumn("FormatItems").AsString().WithDefaultValue("[{\"format\":0, \"allowed\":true}]");
-
-            Execute.Sql("UPDATE \"Profiles\" SET \"Language\" = 1");
-
-            Create.TableForModel("NamingConfig")
-                .WithColumn("MultiEpisodeStyle").AsInt32()
-                .WithColumn("ReplaceIllegalCharacters").AsBoolean().WithDefaultValue(true)
-                .WithColumn("StandardMovieFormat").AsString().Nullable()
-                .WithColumn("MovieFolderFormat").AsString().Nullable()
-                .WithColumn("ColonReplacementFormat").AsInt32().NotNullable().WithDefaultValue(0)
-                .WithColumn("RenameMovies").AsBoolean().WithDefaultValue(false);
-
-            Create.TableForModel("QualityDefinitions")
-                .WithColumn("Quality").AsInt32().Unique()
-                .WithColumn("Title").AsString().Unique()
-                .WithColumn("MinSize").AsDouble().Nullable()
-                .WithColumn("MaxSize").AsDouble().Nullable()
-                .WithColumn("PreferredSize").AsDouble().Nullable();
-
-            Create.TableForModel("Metadata")
-                .WithColumn("Enable").AsBoolean().NotNullable()
-                .WithColumn("Name").AsString().NotNullable()
-                .WithColumn("Implementation").AsString().NotNullable()
-                .WithColumn("Settings").AsString().NotNullable()
-                .WithColumn("ConfigContract").AsString().NotNullable();
+            Create.TableForModel("IndexerStatus")
+                  .WithColumn("ProviderId").AsInt32().NotNullable().Unique()
+                  .WithColumn("InitialFailure").AsDateTimeOffset().Nullable()
+                  .WithColumn("MostRecentFailure").AsDateTimeOffset().Nullable()
+                  .WithColumn("EscalationLevel").AsInt32().NotNullable()
+                  .WithColumn("DisabledTill").AsDateTimeOffset().Nullable()
+                  .WithColumn("LastRssSyncReleaseInfo").AsString().Nullable();
 
             Create.TableForModel("DownloadClients")
-                .WithColumn("Enable").AsBoolean().NotNullable()
-                .WithColumn("Name").AsString().NotNullable()
-                .WithColumn("Implementation").AsString().NotNullable()
-                .WithColumn("Settings").AsString().NotNullable()
-                .WithColumn("ConfigContract").AsString().NotNullable()
-                .WithColumn("Priority").AsInt32().WithDefaultValue(1)
-                .WithColumn("RemoveCompletedDownloads").AsBoolean().NotNullable().WithDefaultValue(true)
-                .WithColumn("RemoveFailedDownloads").AsBoolean().NotNullable().WithDefaultValue(true);
+                  .WithColumn("Enable").AsBoolean().NotNullable()
+                  .WithColumn("Name").AsString().NotNullable()
+                  .WithColumn("Implementation").AsString().NotNullable()
+                  .WithColumn("Settings").AsString().NotNullable()
+                  .WithColumn("ConfigContract").AsString().NotNullable()
+                  .WithColumn("Priority").AsInt32().WithDefaultValue(1)
+                  .WithColumn("RemoveCompletedDownloads").AsBoolean().NotNullable().WithDefaultValue(true)
+                  .WithColumn("RemoveFailedDownloads").AsBoolean().NotNullable().WithDefaultValue(true);
+
+            Create.TableForModel("DownloadClientStatus")
+                  .WithColumn("ProviderId").AsInt32().NotNullable().Unique()
+                  .WithColumn("InitialFailure").AsDateTimeOffset().Nullable()
+                  .WithColumn("MostRecentFailure").AsDateTimeOffset().Nullable()
+                  .WithColumn("EscalationLevel").AsInt32().NotNullable()
+                  .WithColumn("DisabledTill").AsDateTimeOffset().Nullable();
+
+            Create.TableForModel("QualityProfiles")
+                  .WithColumn("Name").AsString().Unique()
+                  .WithColumn("Cutoff").AsInt32()
+                  .WithColumn("Items").AsString()
+                  .WithColumn("UpgradeAllowed").AsBoolean().Nullable()
+                  .WithColumn("FormatItems").AsString().WithDefaultValue("[]")
+                  .WithColumn("MinFormatScore").AsInt32().WithDefaultValue(0)
+                  .WithColumn("CutoffFormatScore").AsInt32().WithDefaultValue(0);
+
+            Create.TableForModel("QualityDefinitions")
+                  .WithColumn("Quality").AsInt32().Unique()
+                  .WithColumn("Title").AsString().Unique()
+                  .WithColumn("MinSize").AsDouble().Nullable()
+                  .WithColumn("MaxSize").AsDouble().Nullable()
+                  .WithColumn("PreferredSize").AsDouble().Nullable();
+
+            Create.TableForModel("NamingConfig")
+                  .WithColumn("MultiEpisodeStyle").AsInt32()
+                  .WithColumn("RenameEpisodes").AsBoolean().Nullable()
+                  .WithColumn("StandardEpisodeFormat").AsString().Nullable()
+                  .WithColumn("SeasonFolderFormat").AsString().Nullable()
+                  .WithColumn("SeriesFolderFormat").AsString().Nullable()
+                  .WithColumn("ReplaceIllegalCharacters").AsBoolean().WithDefaultValue(true)
+                  .WithColumn("SpecialsFolderFormat").AsString().Nullable();
+
+            Create.TableForModel("Metadata")
+                  .WithColumn("Enable").AsBoolean().NotNullable()
+                  .WithColumn("Name").AsString().NotNullable()
+                  .WithColumn("Implementation").AsString().NotNullable()
+                  .WithColumn("Settings").AsString().NotNullable()
+                  .WithColumn("ConfigContract").AsString().NotNullable();
+
+            Create.TableForModel("MetadataFiles")
+                  .WithColumn("SeriesId").AsInt32().NotNullable()
+                  .WithColumn("Consumer").AsString().NotNullable()
+                  .WithColumn("Type").AsInt32().NotNullable()
+                  .WithColumn("RelativePath").AsString().NotNullable()
+                  .WithColumn("LastUpdated").AsDateTimeOffset().NotNullable()
+                  .WithColumn("SeasonNumber").AsInt32().Nullable()
+                  .WithColumn("EpisodeFileId").AsInt32().Nullable()
+                  .WithColumn("Hash").AsString().Nullable()
+                  .WithColumn("Added").AsDateTimeOffset().Nullable()
+                  .WithColumn("Extension").AsString();
+
+            Create.TableForModel("ExtraFiles")
+                  .WithColumn("SeriesId").AsInt32().NotNullable()
+                  .WithColumn("SeasonNumber").AsInt32().NotNullable()
+                  .WithColumn("EpisodeFileId").AsInt32().NotNullable()
+                  .WithColumn("RelativePath").AsString().NotNullable()
+                  .WithColumn("Extension").AsString().NotNullable()
+                  .WithColumn("Added").AsDateTimeOffset().NotNullable()
+                  .WithColumn("LastUpdated").AsDateTimeOffset().NotNullable();
+
+            Create.TableForModel("SubtitleFiles")
+                  .WithColumn("SeriesId").AsInt32().NotNullable()
+                  .WithColumn("SeasonNumber").AsInt32().NotNullable()
+                  .WithColumn("EpisodeFileId").AsInt32().NotNullable()
+                  .WithColumn("RelativePath").AsString().NotNullable()
+                  .WithColumn("Extension").AsString().NotNullable()
+                  .WithColumn("Added").AsDateTimeOffset().NotNullable()
+                  .WithColumn("LastUpdated").AsDateTimeOffset().NotNullable()
+                  .WithColumn("Language").AsInt32().NotNullable()
+                  .WithColumn("LanguageTags").AsString().Nullable();
 
             Create.TableForModel("PendingReleases")
-                .WithColumn("Title").AsString()
-                .WithColumn("Added").AsDateTimeOffset()
-                .WithColumn("Release").AsString()
-                .WithColumn("MovieId").AsInt32().WithDefaultValue(0)
-                .WithColumn("ParsedMovieInfo").AsString().Nullable()
-                .WithColumn("Reason").AsInt32().WithDefaultValue(0);
+                  .WithColumn("SeriesId").AsInt32()
+                  .WithColumn("Title").AsString()
+                  .WithColumn("Added").AsDateTimeOffset()
+                  .WithColumn("ParsedEpisodeInfo").AsString()
+                  .WithColumn("Release").AsString()
+                  .WithColumn("Reason").AsInt32().WithDefaultValue(0)
+                  .WithColumn("AdditionalInfo").AsString().Nullable();
 
             Create.TableForModel("RemotePathMappings")
-                .WithColumn("Host").AsString()
-                .WithColumn("RemotePath").AsString()
-                .WithColumn("LocalPath").AsString();
+                  .WithColumn("Host").AsString()
+                  .WithColumn("RemotePath").AsString()
+                  .WithColumn("LocalPath").AsString();
 
             Create.TableForModel("Tags")
-                .WithColumn("Label").AsString().Unique();
-
-            Create.TableForModel("Restrictions")
-                .WithColumn("Required").AsString().Nullable()
-                .WithColumn("Preferred").AsString().Nullable()
-                .WithColumn("Ignored").AsString().Nullable()
-                .WithColumn("Tags").AsString().NotNullable();
+                  .WithColumn("Label").AsString().Unique();
 
             Create.TableForModel("DelayProfiles")
-                .WithColumn("EnableUsenet").AsBoolean().NotNullable()
-                .WithColumn("EnableTorrent").AsBoolean().NotNullable()
-                .WithColumn("PreferredProtocol").AsInt32().NotNullable()
-                .WithColumn("UsenetDelay").AsInt32().NotNullable()
-                .WithColumn("TorrentDelay").AsInt32().NotNullable()
-                .WithColumn("Order").AsInt32().NotNullable()
-                .WithColumn("Tags").AsString().NotNullable()
-                .WithColumn("BypassIfHighestQuality").AsBoolean().WithDefaultValue(false);
+                  .WithColumn("EnableUsenet").AsBoolean().NotNullable()
+                  .WithColumn("EnableTorrent").AsBoolean().NotNullable()
+                  .WithColumn("PreferredProtocol").AsInt32().NotNullable()
+                  .WithColumn("UsenetDelay").AsInt32().NotNullable()
+                  .WithColumn("TorrentDelay").AsInt32().NotNullable()
+                  .WithColumn("Order").AsInt32().NotNullable()
+                  .WithColumn("Tags").AsString().NotNullable()
+                  .WithColumn("BypassIfHighestQuality").AsBoolean().WithDefaultValue(false);
+
+            Create.TableForModel("Users")
+                  .WithColumn("Identifier").AsString().NotNullable().Unique()
+                  .WithColumn("Username").AsString().NotNullable().Unique()
+                  .WithColumn("Password").AsString().NotNullable()
+                  .WithColumn("Salt").AsString().Nullable()
+                  .WithColumn("Iterations").AsInt32().Nullable();
+
+            Create.TableForModel("Commands")
+                  .WithColumn("Name").AsString().NotNullable()
+                  .WithColumn("Body").AsString().NotNullable()
+                  .WithColumn("Priority").AsInt32().NotNullable()
+                  .WithColumn("Status").AsInt32().NotNullable()
+                  .WithColumn("QueuedAt").AsDateTimeOffset().NotNullable()
+                  .WithColumn("StartedAt").AsDateTimeOffset().Nullable()
+                  .WithColumn("EndedAt").AsDateTimeOffset().Nullable()
+                  .WithColumn("Duration").AsString().Nullable()
+                  .WithColumn("Exception").AsString().Nullable()
+                  .WithColumn("Trigger").AsInt32().NotNullable();
+
+            Create.TableForModel("CustomFilters")
+                  .WithColumn("Type").AsString().NotNullable()
+                  .WithColumn("Label").AsString().NotNullable()
+                  .WithColumn("Filters").AsString().NotNullable();
+
+            Create.TableForModel("ReleaseProfiles")
+                  .WithColumn("Required").AsString().Nullable()
+                  .WithColumn("Ignored").AsString().Nullable()
+                  .WithColumn("Tags").AsString().NotNullable()
+                  .WithColumn("Enabled").AsBoolean().WithDefaultValue(true)
+                  .WithColumn("IndexerId").AsInt32().WithDefaultValue(0)
+                  .WithColumn("Name").AsString().Nullable().WithDefaultValue(null);
+
+            Create.TableForModel("ImportLists")
+                  .WithColumn("Name").AsString().Unique()
+                  .WithColumn("Implementation").AsString()
+                  .WithColumn("Settings").AsString().Nullable()
+                  .WithColumn("ConfigContract").AsString().Nullable()
+                  .WithColumn("EnableAutomaticAdd").AsBoolean().Nullable()
+                  .WithColumn("RootFolderPath").AsString()
+                  .WithColumn("ShouldMonitor").AsInt32()
+                  .WithColumn("QualityProfileId").AsInt32()
+                  .WithColumn("Tags").AsString().Nullable()
+                  .WithColumn("SeasonFolder").AsBoolean().WithDefaultValue(true);
+
+            Create.TableForModel("ImportListStatus")
+                  .WithColumn("ProviderId").AsInt32().NotNullable().Unique()
+                  .WithColumn("InitialFailure").AsDateTimeOffset().Nullable()
+                  .WithColumn("MostRecentFailure").AsDateTimeOffset().Nullable()
+                  .WithColumn("EscalationLevel").AsInt32().NotNullable()
+                  .WithColumn("DisabledTill").AsDateTimeOffset().Nullable()
+                  .WithColumn("LastInfoSync").AsDateTimeOffset().Nullable();
+
+            Create.TableForModel("ImportListExclusions")
+                  .WithColumn("TvdbId").AsString().NotNullable().Unique()
+                  .WithColumn("Title").AsString().NotNullable();
+
+            Create.TableForModel("CustomFormats")
+                  .WithColumn("Name").AsString().Unique()
+                  .WithColumn("Specifications").AsString().WithDefaultValue("[]")
+                  .WithColumn("IncludeCustomFormatWhenRenaming").AsBoolean().WithDefaultValue(false);
+
+            Create.TableForModel("AutoTagging")
+                  .WithColumn("Name").AsString().Unique()
+                  .WithColumn("Specifications").AsString().WithDefaultValue("[]")
+                  .WithColumn("RemoveTagsAutomatically").AsBoolean().WithDefaultValue(false)
+                  .WithColumn("Tags").AsString().WithDefaultValue("[]");
 
             Insert.IntoTable("DelayProfiles").Row(new
             {
@@ -198,210 +366,6 @@ namespace NzbDrone.Core.Datastore.Migration
                 Order = int.MaxValue,
                 Tags = "[]"
             });
-
-            Create.TableForModel("Users")
-                .WithColumn("Identifier").AsString().NotNullable().Unique()
-                .WithColumn("Username").AsString().NotNullable().Unique()
-                .WithColumn("Password").AsString().NotNullable();
-
-            Create.TableForModel("Commands")
-                .WithColumn("Name").AsString().NotNullable()
-                .WithColumn("Body").AsString().NotNullable()
-                .WithColumn("Priority").AsInt32().NotNullable()
-                .WithColumn("Status").AsInt32().NotNullable()
-                .WithColumn("QueuedAt").AsDateTimeOffset().NotNullable()
-                .WithColumn("StartedAt").AsDateTimeOffset().Nullable()
-                .WithColumn("EndedAt").AsDateTimeOffset().Nullable()
-                .WithColumn("Duration").AsString().Nullable()
-                .WithColumn("Exception").AsString().Nullable()
-                .WithColumn("Trigger").AsInt32().NotNullable();
-
-            Create.TableForModel("IndexerStatus")
-                .WithColumn("ProviderId").AsInt32().NotNullable().Unique()
-                .WithColumn("InitialFailure").AsDateTimeOffset().Nullable()
-                .WithColumn("MostRecentFailure").AsDateTimeOffset().Nullable()
-                .WithColumn("EscalationLevel").AsInt32().NotNullable()
-                .WithColumn("DisabledTill").AsDateTimeOffset().Nullable()
-                .WithColumn("LastRssSyncReleaseInfo").AsString().Nullable()
-                .WithColumn("Cookies").AsString().Nullable()
-                .WithColumn("CookiesExpirationDate").AsDateTimeOffset().Nullable();
-
-            Create.Index().OnTable("History").OnColumn("Date");
-
-            Create.TableForModel("MediaFiles")
-                  .WithColumn("MovieId").AsInt32()
-                  .WithColumn("Quality").AsString()
-                  .WithColumn("Size").AsInt64()
-                  .WithColumn("DateAdded").AsDateTimeOffset()
-                  .WithColumn("SceneName").AsString().Nullable()
-                  .WithColumn("MediaInfo").AsString().Nullable()
-                  .WithColumn("ReleaseGroup").AsString().Nullable()
-                  .WithColumn("RelativePath").AsString().Nullable()
-                  .WithColumn("Edition").AsString().Nullable()
-                  .WithColumn("Languages").AsString().NotNullable().WithDefaultValue("[]")
-                  .WithColumn("IndexerFlags").AsInt32().WithDefaultValue(0)
-                  .WithColumn("OriginalFilePath").AsString().Nullable();
-
-            Create.TableForModel("ImportLists")
-                    .WithColumn("Enabled").AsBoolean()
-                    .WithColumn("Name").AsString().Unique()
-                    .WithColumn("Implementation").AsString()
-                    .WithColumn("ConfigContract").AsString().Nullable()
-                    .WithColumn("Settings").AsString().Nullable()
-                    .WithColumn("EnableAuto").AsBoolean()
-                    .WithColumn("RootFolderPath").AsString()
-                    .WithColumn("ShouldMonitor").AsBoolean()
-                    .WithColumn("ProfileId").AsInt32()
-                    .WithColumn("MinimumAvailability").AsInt32().WithDefaultValue((int)MovieStatusType.Released)
-                    .WithColumn("Tags").AsString().Nullable()
-                    .WithColumn("SearchOnAdd").AsBoolean().WithDefaultValue(false);
-
-            Create.TableForModel("ImportExclusions")
-                    .WithColumn("TmdbId").AsInt64().NotNullable().Unique().PrimaryKey()
-                    .WithColumn("MovieTitle").AsString().Nullable()
-                    .WithColumn("MovieYear").AsInt64().Nullable().WithDefaultValue(0);
-
-            Create.TableForModel("AlternativeTitles")
-                      .WithColumn("MovieMetadataId").AsInt64().NotNullable()
-                      .WithColumn("Title").AsString().NotNullable()
-                      .WithColumn("CleanTitle").AsString().Unique()
-                      .WithColumn("SourceType").AsInt64().WithDefaultValue(0)
-                      .WithColumn("SourceId").AsInt64().WithDefaultValue(0)
-                      .WithColumn("Votes").AsInt64().WithDefaultValue(0)
-                      .WithColumn("VoteCount").AsInt64().WithDefaultValue(0)
-                      .WithColumn("Language").AsInt64().WithDefaultValue(0);
-
-            Create.TableForModel("ExtraFiles")
-                .WithColumn("MovieId").AsInt32().NotNullable()
-                .WithColumn("MovieFileId").AsInt32().NotNullable()
-                .WithColumn("RelativePath").AsString().NotNullable()
-                .WithColumn("Extension").AsString().NotNullable()
-                .WithColumn("Added").AsDateTimeOffset().NotNullable()
-                .WithColumn("LastUpdated").AsDateTimeOffset().NotNullable();
-
-            Create.TableForModel("SubtitleFiles")
-                .WithColumn("MovieId").AsInt32().NotNullable()
-                .WithColumn("MovieFileId").AsInt32().NotNullable()
-                .WithColumn("RelativePath").AsString().NotNullable()
-                .WithColumn("Extension").AsString().NotNullable()
-                .WithColumn("Added").AsDateTimeOffset().NotNullable()
-                .WithColumn("LastUpdated").AsDateTimeOffset().NotNullable()
-                .WithColumn("Language").AsInt32().NotNullable();
-
-            Create.TableForModel("MetadataFiles")
-                .WithColumn("MovieId").AsInt32().NotNullable()
-                .WithColumn("Consumer").AsString().NotNullable()
-                .WithColumn("Type").AsInt32().NotNullable()
-                .WithColumn("RelativePath").AsString().NotNullable()
-                .WithColumn("LastUpdated").AsDateTimeOffset().NotNullable()
-                .WithColumn("MovieFileId").AsInt32().Nullable()
-                .WithColumn("Hash").AsString().Nullable()
-                .WithColumn("Added").AsDateTimeOffset().Nullable()
-                .WithColumn("Extension").AsString().NotNullable();
-
-            Create.TableForModel("CustomFilters")
-                  .WithColumn("Type").AsString().NotNullable()
-                  .WithColumn("Label").AsString().NotNullable()
-                  .WithColumn("Filters").AsString().NotNullable();
-
-            Create.TableForModel("DownloadClientStatus")
-                    .WithColumn("ProviderId").AsInt32().NotNullable().Unique()
-                    .WithColumn("InitialFailure").AsDateTimeOffset().Nullable()
-                    .WithColumn("MostRecentFailure").AsDateTimeOffset().Nullable()
-                    .WithColumn("EscalationLevel").AsInt32().NotNullable()
-                    .WithColumn("DisabledTill").AsDateTimeOffset().Nullable();
-
-            Create.Index("IX_MediaFiles_MovieId").OnTable("MediaFiles").OnColumn("MovieId");
-            Create.Index("IX_AlternativeTitles_MovieId").OnTable("AlternativeTitles").OnColumn("MovieId");
-
-            Create.TableForModel("Credits")
-                    .WithColumn("MovieMetadataId").AsInt32()
-                    .WithColumn("CreditForeignId").AsString().Unique()
-                    .WithColumn("PerformerForeignId").AsInt32()
-                    .WithColumn("Name").AsString()
-                    .WithColumn("Images").AsString()
-                    .WithColumn("Character").AsString().Nullable()
-                    .WithColumn("Order").AsInt32()
-                    .WithColumn("Job").AsString().Nullable()
-                    .WithColumn("Department").AsString().Nullable()
-                    .WithColumn("Type").AsInt32();
-
-            Create.Index().OnTable("Credits").OnColumn("MovieMetadataId");
-
-            Create.TableForModel("DownloadHistory")
-                  .WithColumn("EventType").AsInt32().NotNullable()
-                  .WithColumn("MovieId").AsInt32().NotNullable()
-                  .WithColumn("DownloadId").AsString().NotNullable()
-                  .WithColumn("SourceTitle").AsString().NotNullable()
-                  .WithColumn("Date").AsDateTimeOffset().NotNullable()
-                  .WithColumn("Protocol").AsInt32().Nullable()
-                  .WithColumn("IndexerId").AsInt32().Nullable()
-                  .WithColumn("DownloadClientId").AsInt32().Nullable()
-                  .WithColumn("Release").AsString().Nullable()
-                  .WithColumn("Data").AsString().Nullable();
-
-            Create.Index().OnTable("DownloadHistory").OnColumn("EventType");
-            Create.Index().OnTable("DownloadHistory").OnColumn("MovieId");
-            Create.Index().OnTable("DownloadHistory").OnColumn("DownloadId");
-
-            Create.TableForModel("ImportListStatus")
-                .WithColumn("ProviderId").AsInt32().NotNullable().Unique()
-                .WithColumn("InitialFailure").AsDateTimeOffset().Nullable()
-                .WithColumn("MostRecentFailure").AsDateTimeOffset().Nullable()
-                .WithColumn("EscalationLevel").AsInt32().NotNullable()
-                .WithColumn("DisabledTill").AsDateTimeOffset().Nullable()
-                .WithColumn("LastSyncListInfo").AsString().Nullable();
-
-            //Manual SQL, Fluent Migrator doesn't support multi-column unique contraint on table creation, SQLite doesn't support adding it after creation
-            IfDatabase("sqlite").Execute.Sql("CREATE TABLE MovieTranslations(" +
-                "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                "MovieMetadataId INTEGER NOT NULL, " +
-                "Title TEXT, " +
-                "CleanTitle TEXT, " +
-                "Overview TEXT, " +
-                "Language INTEGER NOT NULL, " +
-                "Unique(\"MovieMetadataId\", \"Language\"));");
-
-            IfDatabase("postgres").Execute.Sql("CREATE TABLE \"MovieTranslations\"(" +
-                "\"Id\" SERIAL PRIMARY KEY , " +
-                "\"MovieMetadataId\" INTEGER NOT NULL, " +
-                "\"Title\" TEXT, " +
-                "\"CleanTitle\" TEXT, " +
-                "\"Overview\" TEXT, " +
-                "\"Language\" INTEGER NOT NULL, " +
-                "Unique(\"MovieMetadataId\", \"Language\"));");
-
-            // Prevent failure if two movies have same alt titles
-            Execute.Sql("DROP INDEX IF EXISTS \"IX_AlternativeTitles_CleanTitle\"");
-
-            Create.Index("IX_MovieTranslations_Language").OnTable("MovieTranslations").OnColumn("Language");
-            Create.Index("IX_MovieTranslations_MovieMetadataId").OnTable("MovieTranslations").OnColumn("MovieMetadataId");
-
-            Create.TableForModel("ImportListMovies")
-                .WithColumn("MovieMetadataId").AsInt32()
-                .WithColumn("ListId").AsInt32();
-
-            Create.Index().OnTable("AlternativeTitles").OnColumn("CleanTitle");
-            Create.Index().OnTable("MovieTranslations").OnColumn("CleanTitle");
-
-            Create.TableForModel("Blocklist")
-                .WithColumn("SourceTitle").AsString()
-                .WithColumn("Quality").AsString()
-                .WithColumn("Date").AsDateTimeOffset()
-                .WithColumn("PublishedDate").AsDateTimeOffset().Nullable()
-                .WithColumn("Size").AsInt64().Nullable()
-                .WithColumn("Protocol").AsInt32().Nullable()
-                .WithColumn("Indexer").AsString().Nullable()
-                .WithColumn("Message").AsString().Nullable()
-                .WithColumn("TorrentInfoHash").AsString().Nullable()
-                .WithColumn("MovieId").AsInt32().WithDefaultValue(0)
-                .WithColumn("Languages").AsString().NotNullable().WithDefaultValue("[]")
-                .WithColumn("IndexerFlags").AsInt32().WithDefaultValue(0);
-
-            Create.TableForModel("CustomFormats")
-                .WithColumn("Name").AsString().Unique()
-                .WithColumn("Specifications").AsString().WithDefaultValue("[]")
-                .WithColumn("IncludeCustomFormatWhenRenaming").AsBoolean().WithDefaultValue(false);
         }
 
         protected override void LogDbUpgrade()

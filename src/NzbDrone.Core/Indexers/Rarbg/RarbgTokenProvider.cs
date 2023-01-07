@@ -44,8 +44,7 @@ namespace NzbDrone.Core.Indexers.Rarbg
                     var response = _httpClient.Get<JObject>(requestBuilder.Build());
 
                     return response.Resource["token"].ToString();
-                },
-                TimeSpan.FromMinutes(14.0));
+                }, TimeSpan.FromMinutes(14.0));
         }
     }
 }

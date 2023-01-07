@@ -1,4 +1,4 @@
-using FluentValidation;
+﻿using FluentValidation;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Annotations;
 using NzbDrone.Core.ThingiProvider;
@@ -26,7 +26,7 @@ namespace NzbDrone.Core.Download.Clients.Sabnzbd
                                     .WithMessage("Password is required when API key is not configured")
                                     .When(c => string.IsNullOrWhiteSpace(c.ApiKey));
 
-            RuleFor(c => c.MovieCategory).NotEmpty()
+            RuleFor(c => c.TvCategory).NotEmpty()
                                       .WithMessage("A category is recommended")
                                       .AsWarning();
         }
@@ -40,9 +40,9 @@ namespace NzbDrone.Core.Download.Clients.Sabnzbd
         {
             Host = "localhost";
             Port = 8080;
-            MovieCategory = "movies";
-            RecentMoviePriority = (int)SabnzbdPriority.Default;
-            OlderMoviePriority = (int)SabnzbdPriority.Default;
+            TvCategory = "tv";
+            RecentTvPriority = (int)SabnzbdPriority.Default;
+            OlderTvPriority = (int)SabnzbdPriority.Default;
         }
 
         [FieldDefinition(0, Label = "Host", Type = FieldType.Textbox)]
@@ -67,13 +67,13 @@ namespace NzbDrone.Core.Download.Clients.Sabnzbd
         public string Password { get; set; }
 
         [FieldDefinition(7, Label = "Category", Type = FieldType.Textbox, HelpText = "Adding a category specific to Whisparr avoids conflicts with unrelated non-Whisparr downloads. Using a category is optional, but strongly recommended.")]
-        public string MovieCategory { get; set; }
+        public string TvCategory { get; set; }
 
-        [FieldDefinition(8, Label = "Recent Priority", Type = FieldType.Select, SelectOptions = typeof(SabnzbdPriority), HelpText = "Priority to use when grabbing movies that released within the last 21 days")]
-        public int RecentMoviePriority { get; set; }
+        [FieldDefinition(8, Label = "Recent Priority", Type = FieldType.Select, SelectOptions = typeof(SabnzbdPriority), HelpText = "Priority to use when grabbing episodes that aired within the last 14 days")]
+        public int RecentTvPriority { get; set; }
 
-        [FieldDefinition(9, Label = "Older Priority", Type = FieldType.Select, SelectOptions = typeof(SabnzbdPriority), HelpText = "Priority to use when grabbing movies that released over 21 days ago")]
-        public int OlderMoviePriority { get; set; }
+        [FieldDefinition(9, Label = "Older Priority", Type = FieldType.Select, SelectOptions = typeof(SabnzbdPriority), HelpText = "Priority to use when grabbing episodes that aired over 14 days ago")]
+        public int OlderTvPriority { get; set; }
 
         public NzbDroneValidationResult Validate()
         {

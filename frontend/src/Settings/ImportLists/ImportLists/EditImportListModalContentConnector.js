@@ -9,21 +9,11 @@ import EditImportListModalContent from './EditImportListModalContent';
 function createMapStateToProps() {
   return createSelector(
     (state) => state.settings.advancedSettings,
-    (state) => state.rootFolders,
     createProviderSettingsSelector('importLists'),
-    (advancedSettings, rootFolders, importList) => {
-      const {
-        isFetching,
-        isPopulated,
-        ...otherProps
-      } = importList;
-
+    (advancedSettings, importList) => {
       return {
         advancedSettings,
-        isFetching: rootFolders.isFetching || isFetching,
-        isPopulated: rootFolders.isPopulated && isPopulated,
-        rootFolderError: rootFolders.error,
-        ...otherProps
+        ...importList
       };
     }
   );

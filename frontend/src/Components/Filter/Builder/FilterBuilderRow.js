@@ -6,13 +6,11 @@ import { filterBuilderTypes, filterBuilderValueTypes, icons } from 'Helpers/Prop
 import BoolFilterBuilderRowValue from './BoolFilterBuilderRowValue';
 import DateFilterBuilderRowValue from './DateFilterBuilderRowValue';
 import FilterBuilderRowValueConnector from './FilterBuilderRowValueConnector';
-import ImportListFilterBuilderRowValueConnector from './ImportListFilterBuilderRowValueConnector';
 import IndexerFilterBuilderRowValueConnector from './IndexerFilterBuilderRowValueConnector';
-import MinimumAvailabilityFilterBuilderRowValue from './MinimumAvailabilityFilterBuilderRowValue';
 import ProtocolFilterBuilderRowValue from './ProtocolFilterBuilderRowValue';
 import QualityFilterBuilderRowValueConnector from './QualityFilterBuilderRowValueConnector';
 import QualityProfileFilterBuilderRowValueConnector from './QualityProfileFilterBuilderRowValueConnector';
-import ReleaseStatusFilterBuilderRowValue from './ReleaseStatusFilterBuilderRowValue';
+import SeriesStatusFilterBuilderRowValue from './SeriesStatusFilterBuilderRowValue';
 import TagFilterBuilderRowValueConnector from './TagFilterBuilderRowValueConnector';
 import styles from './FilterBuilderRow.css';
 
@@ -70,17 +68,11 @@ function getRowValueConnector(selectedFilterBuilderProp) {
     case filterBuilderValueTypes.QUALITY_PROFILE:
       return QualityProfileFilterBuilderRowValueConnector;
 
-    case filterBuilderValueTypes.RELEASE_STATUS:
-      return ReleaseStatusFilterBuilderRowValue;
-
-    case filterBuilderValueTypes.MINIMUM_AVAILABILITY:
-      return MinimumAvailabilityFilterBuilderRowValue;
+    case filterBuilderValueTypes.SERIES_STATUS:
+      return SeriesStatusFilterBuilderRowValue;
 
     case filterBuilderValueTypes.TAG:
       return TagFilterBuilderRowValueConnector;
-
-    case filterBuilderValueTypes.IMPORTLIST:
-      return ImportListFilterBuilderRowValueConnector;
 
     default:
       return FilterBuilderRowValueConnector;
@@ -214,7 +206,7 @@ class FilterBuilderRow extends Component {
         key: availablePropFilter.name,
         value: availablePropFilter.label
       };
-    });
+    }).sort((a, b) => a.value.localeCompare(b.value));
 
     const ValueComponent = getRowValueConnector(selectedFilterBuilderProp);
 

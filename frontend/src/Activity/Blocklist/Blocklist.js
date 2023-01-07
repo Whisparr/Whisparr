@@ -14,7 +14,6 @@ import TablePager from 'Components/Table/TablePager';
 import { align, icons, kinds } from 'Helpers/Props';
 import getRemovedItems from 'Utilities/Object/getRemovedItems';
 import hasDifferentItems from 'Utilities/Object/hasDifferentItems';
-import translate from 'Utilities/String/translate';
 import getSelectedIds from 'Utilities/Table/getSelectedIds';
 import removeOldSelectedState from 'Utilities/Table/removeOldSelectedState';
 import selectAll from 'Utilities/Table/selectAll';
@@ -116,11 +115,11 @@ class Blocklist extends Component {
     const selectedIds = this.getSelectedIds();
 
     return (
-      <PageContent title={translate('Blocklist')}>
+      <PageContent title="Blocklist">
         <PageToolbar>
           <PageToolbarSection>
             <PageToolbarButton
-              label={translate('RemoveSelected')}
+              label="Remove Selected"
               iconName={icons.REMOVE}
               isDisabled={!selectedIds.length}
               isSpinning={isRemoving}
@@ -128,7 +127,7 @@ class Blocklist extends Component {
             />
 
             <PageToolbarButton
-              label={translate('Clear')}
+              label="Clear"
               iconName={icons.CLEAR}
               isSpinning={isClearingBlocklistExecuting}
               onPress={onClearBlocklistPress}
@@ -141,7 +140,7 @@ class Blocklist extends Component {
               columns={columns}
             >
               <PageToolbarButton
-                label={translate('Options')}
+                label="Options"
                 iconName={icons.TABLE}
               />
             </TableOptionsModalWrapper>
@@ -156,15 +155,13 @@ class Blocklist extends Component {
 
           {
             !isFetching && !!error &&
-              <div>
-                {translate('UnableToLoadBlocklist')}
-              </div>
+              <div>Unable to load blocklist</div>
           }
 
           {
             isPopulated && !error && !items.length &&
               <div>
-                {translate('NoHistory')}
+                No history blocklist
               </div>
           }
 
@@ -208,9 +205,9 @@ class Blocklist extends Component {
         <ConfirmModal
           isOpen={isConfirmRemoveModalOpen}
           kind={kinds.DANGER}
-          title={translate('RemoveSelected')}
-          message={translate('AreYouSureYouWantToRemoveTheSelectedItemsFromBlocklist')}
-          confirmLabel={translate('RemoveSelected')}
+          title="Remove Selected"
+          message={'Are you sure you want to remove the selected items from the blocklist?'}
+          confirmLabel="Remove Selected"
           onConfirm={this.onRemoveSelectedConfirmed}
           onCancel={this.onConfirmRemoveModalClose}
         />

@@ -11,7 +11,6 @@ src/**/[Oo]bj/
 *.user
 *.sln.docstates
 .vs/
-.vscode/
 
 # Build results
 *_i.c
@@ -120,14 +119,18 @@ _output*
 _artifacts
 _rawPackage/
 _dotTrace*
-_tests/
+_tests*
+_publish*
+_temp*
 *.Result.xml
 coverage*.xml
 coverage*.json
 setup/Output/
 *.~is
 
-# VS outout folders
+UI/
+
+#VS outout folders
 bin
 obj
 output/*
@@ -145,7 +148,7 @@ Whisparr_*.gz
 gecko.zip
 geckodriver.exe
 
-# macOS metadata files
+#OS X metadata files
 ._*
 .DS_Store
 
@@ -155,42 +158,8 @@ _temp_*/**/*
 # Windows thumbnail cache files
 Thumbs.db
 
-# AppVeyor
-/tools/cake/
-/_artifacts/
-
-# Cake
-/tools/Addins/*
-packages.config.md5sum
-
-
-# Common IntelliJ Platform excludes
-
-# User specific
-**/.idea/**/workspace.xml
-**/.idea/**/tasks.xml
-**/.idea/shelf/*
-**/.idea/dictionaries
-**/.idea/.idea.Whisparr.Posix
-**/.idea/.idea.Whisparr.Windows
-
-# Sensitive or high-churn files
-**/.idea/**/dataSources/
-**/.idea/**/dataSources.ids
-**/.idea/**/dataSources.xml
-**/.idea/**/dataSources.local.xml
-**/.idea/**/sqlDataSources.xml
-**/.idea/**/dynamic.xml
-
-# Rider
-# Rider auto-generates .iml files, and contentModel.xml
-**/.idea/**/*.iml
-**/.idea/**/contentModel.xml
-**/.idea/**/modules.xml
-
-# ignore node_modules symlink
-node_modules
-node_modules.nosync
+src/.idea/
+/distribution/windows/setup/output/*
 
 # API doc generation
 .config/

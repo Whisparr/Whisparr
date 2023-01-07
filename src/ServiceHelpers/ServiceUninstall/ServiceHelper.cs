@@ -31,14 +31,14 @@ namespace ServiceUninstall
             }
 
             var startInfo = new ProcessStartInfo
-            {
-                FileName = WhisparrExe,
-                Arguments = arg,
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                CreateNoWindow = true
-            };
+                                {
+                                    FileName = WhisparrExe,
+                                    Arguments = arg,
+                                    UseShellExecute = false,
+                                    RedirectStandardOutput = true,
+                                    RedirectStandardError = true,
+                                    CreateNoWindow = true
+                                };
 
             var process = new Process { StartInfo = startInfo };
             process.OutputDataReceived += OnDataReceived;

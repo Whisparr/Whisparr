@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Moq;
 using NUnit.Framework;
 using NzbDrone.Common.Model;
@@ -31,7 +31,7 @@ namespace NzbDrone.Update.Test
         [Test]
         public void should_call_update_with_correct_path()
         {
-            var processPath = @"C:\Whisparr\whisparr.exe".AsOsAgnostic();
+            var processPath = @"C:\Whisparr\Whisparr.exe".AsOsAgnostic();
 
             Mocker.GetMock<IProcessProvider>().Setup(c => c.GetProcessById(12))
                 .Returns(new ProcessInfo() { StartPath = processPath });

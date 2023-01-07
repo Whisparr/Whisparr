@@ -1,11 +1,12 @@
 using System.Net;
 using NzbDrone.Common.Http;
+using NzbDrone.Common.Serializer;
 
 namespace NzbDrone.Core.Notifications.Gotify
 {
     public interface IGotifyProxy
     {
-        void SendNotification(string title, string message, GotifySettings settings);
+        void SendNotification(GotifyMessage payload, GotifySettings settings);
     }
 
     public class GotifyProxy : IGotifyProxy
@@ -17,16 +18,20 @@ namespace NzbDrone.Core.Notifications.Gotify
             _httpClient = httpClient;
         }
 
-        public void SendNotification(string title, string message, GotifySettings settings)
+        public void SendNotification(GotifyMessage payload, GotifySettings settings)
         {
             try
             {
-                var request = new HttpRequestBuilder(settings.Server).Resource("message").Post()
-                .AddQueryParam("token", settings.AppToken)
-                .AddFormParameter("title", title)
-                .AddFormParameter("message", message)
-                .AddFormParameter("priority", settings.Priority)
-                .Build();
+                var request = new HttpRequestBuilder(settings.Server)
+                    .Resource("message")
+                    .Post()
+                    .AddQueryParam("token", settings.AppToken)
+                    .Build();
+
+                request.Headers.ContentType = "application/json";
+
+                var json = payload.ToJson();
+                request.SetContent(payload.ToJson());
 
                 _httpClient.Execute(request);
             }
@@ -37,7 +42,7 @@ namespace NzbDrone.Core.Notifications.Gotify
                     throw new GotifyException("Unauthorized - AuthToken is invalid");
                 }
 
-                throw new GotifyException("Unable to connect to Gotify. Status Code: {0}", ex.Response.StatusCode);
+                throw new GotifyException("Unable to connect to Gotify. Status Code: {0}", ex);
             }
         }
     }

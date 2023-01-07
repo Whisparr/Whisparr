@@ -12,10 +12,10 @@ namespace NzbDrone.Core.MediaFiles
         {
             _fileExtensions = new Dictionary<string, Quality>(StringComparer.OrdinalIgnoreCase)
             {
-                //Unknown
+                // Unknown
                 { ".webm", Quality.Unknown },
 
-                //SDTV
+                // SDTV
                 { ".m4v", Quality.SDTV },
                 { ".3gp", Quality.SDTV },
                 { ".nsv", Quality.SDTV },
@@ -55,18 +55,17 @@ namespace NzbDrone.Core.MediaFiles
                 { ".flv", Quality.SDTV },
                 { ".wpl", Quality.SDTV },
 
-                //DVD
+                // DVD
                 { ".img", Quality.DVD },
                 { ".iso", Quality.DVD },
                 { ".vob", Quality.DVD },
 
-                //HD
-                { ".mkv", Quality.WEBDL720p },
-                { ".mk3d", Quality.WEBDL720p },
-                { ".ts", Quality.SDTV },
-                { ".wtv", Quality.SDTV },
+                // HD
+                { ".mkv", Quality.HDTV720p },
+                { ".ts", Quality.HDTV720p },
+                { ".wtv", Quality.HDTV720p },
 
-                //Bluray
+                // Bluray
                 { ".m2ts", Quality.Bluray720p }
             };
         }
@@ -75,9 +74,9 @@ namespace NzbDrone.Core.MediaFiles
 
         public static Quality GetQualityForExtension(string extension)
         {
-            if (_fileExtensions.TryGetValue(extension, out var quality))
+            if (_fileExtensions.ContainsKey(extension))
             {
-                return quality;
+                return _fileExtensions[extension];
             }
 
             return Quality.Unknown;

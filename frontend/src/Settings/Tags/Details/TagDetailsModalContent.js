@@ -8,8 +8,6 @@ import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { kinds } from 'Helpers/Props';
-import split from 'Utilities/String/split';
-import translate from 'Utilities/String/translate';
 import TagDetailsDelayProfile from './TagDetailsDelayProfile';
 import styles from './TagDetailsModalContent.css';
 
@@ -17,12 +15,13 @@ function TagDetailsModalContent(props) {
   const {
     label,
     isTagUsed,
-    movies,
+    series,
     delayProfiles,
-    notifications,
-    restrictions,
     importLists,
+    notifications,
+    releaseProfiles,
     indexers,
+    autoTags,
     onModalClose,
     onDeleteTagPress
   } = props;
@@ -30,22 +29,20 @@ function TagDetailsModalContent(props) {
   return (
     <ModalContent onModalClose={onModalClose}>
       <ModalHeader>
-        {translate('TagDetails', [label])}
+        Tag Details - {label}
       </ModalHeader>
 
       <ModalBody>
         {
           !isTagUsed &&
-            <div>
-              {translate('TagIsNotUsedAndCanBeDeleted')}
-            </div>
+            <div>Tag is not used and can be deleted</div>
         }
 
         {
-          movies.length ?
-            <FieldSet legend={translate('Movies')}>
+          series.length ?
+            <FieldSet legend="Series">
               {
-                movies.map((item) => {
+                series.map((item) => {
                   return (
                     <div key={item.id}>
                       {item.title}
@@ -59,7 +56,7 @@ function TagDetailsModalContent(props) {
 
         {
           delayProfiles.length ?
-            <FieldSet legend={translate('DelayProfile')}>
+            <FieldSet legend="Delay Profile">
               {
                 delayProfiles.map((item) => {
                   const {
@@ -89,7 +86,7 @@ function TagDetailsModalContent(props) {
 
         {
           notifications.length ?
-            <FieldSet legend={translate('Connections')}>
+            <FieldSet legend="Connections">
               {
                 notifications.map((item) => {
                   return (
@@ -104,10 +101,26 @@ function TagDetailsModalContent(props) {
         }
 
         {
-          restrictions.length ?
-            <FieldSet legend={translate('Restrictions')}>
+          importLists.length ?
+            <FieldSet legend="Import Lists">
               {
-                restrictions.map((item) => {
+                importLists.map((item) => {
+                  return (
+                    <div key={item.id}>
+                      {item.name}
+                    </div>
+                  );
+                })
+              }
+            </FieldSet> :
+            null
+        }
+
+        {
+          releaseProfiles.length ?
+            <FieldSet legend="Release Profiles">
+              {
+                releaseProfiles.map((item) => {
                   return (
                     <div
                       key={item.id}
@@ -115,7 +128,7 @@ function TagDetailsModalContent(props) {
                     >
                       <div>
                         {
-                          split(item.required).map((r) => {
+                          item.required.map((r) => {
                             return (
                               <Label
                                 key={r}
@@ -130,7 +143,7 @@ function TagDetailsModalContent(props) {
 
                       <div>
                         {
-                          split(item.ignored).map((i) => {
+                          item.ignored.map((i) => {
                             return (
                               <Label
                                 key={i}
@@ -152,7 +165,7 @@ function TagDetailsModalContent(props) {
 
         {
           indexers.length ?
-            <FieldSet legend={translate('Indexers')}>
+            <FieldSet legend="Indexers">
               {
                 indexers.map((item) => {
                   return (
@@ -167,10 +180,10 @@ function TagDetailsModalContent(props) {
         }
 
         {
-          !!importLists.length &&
-            <FieldSet legend={translate('Lists')}>
+          autoTags.length ?
+            <FieldSet legend="Auto Tagging">
               {
-                importLists.map((item) => {
+                autoTags.map((item) => {
                   return (
                     <div key={item.id}>
                       {item.name}
@@ -178,7 +191,8 @@ function TagDetailsModalContent(props) {
                   );
                 })
               }
-            </FieldSet>
+            </FieldSet> :
+            null
         }
       </ModalBody>
 
@@ -187,18 +201,18 @@ function TagDetailsModalContent(props) {
           <Button
             className={styles.deleteButton}
             kind={kinds.DANGER}
-            title={isTagUsed ? translate('TagCannotBeDeletedWhileInUse') : undefined}
+            title={isTagUsed ? 'Cannot be deleted while in use' : undefined}
             isDisabled={isTagUsed}
             onPress={onDeleteTagPress}
           >
-            {translate('Delete')}
+            Delete
           </Button>
         }
 
         <Button
           onPress={onModalClose}
         >
-          {translate('Close')}
+          Close
         </Button>
       </ModalFooter>
     </ModalContent>
@@ -208,12 +222,13 @@ function TagDetailsModalContent(props) {
 TagDetailsModalContent.propTypes = {
   label: PropTypes.string.isRequired,
   isTagUsed: PropTypes.bool.isRequired,
-  movies: PropTypes.arrayOf(PropTypes.object).isRequired,
+  series: PropTypes.arrayOf(PropTypes.object).isRequired,
   delayProfiles: PropTypes.arrayOf(PropTypes.object).isRequired,
-  notifications: PropTypes.arrayOf(PropTypes.object).isRequired,
-  restrictions: PropTypes.arrayOf(PropTypes.object).isRequired,
   importLists: PropTypes.arrayOf(PropTypes.object).isRequired,
+  notifications: PropTypes.arrayOf(PropTypes.object).isRequired,
+  releaseProfiles: PropTypes.arrayOf(PropTypes.object).isRequired,
   indexers: PropTypes.arrayOf(PropTypes.object).isRequired,
+  autoTags: PropTypes.arrayOf(PropTypes.object).isRequired,
   onModalClose: PropTypes.func.isRequired,
   onDeleteTagPress: PropTypes.func.isRequired
 };

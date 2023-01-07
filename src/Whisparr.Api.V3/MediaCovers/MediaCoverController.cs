@@ -25,10 +25,10 @@ namespace Whisparr.Api.V3.MediaCovers
             _mimeTypeProvider = new FileExtensionContentTypeProvider();
         }
 
-        [HttpGet(@"{movieId:int}/{filename:regex((.+)\.(jpg|png|gif))}")]
-        public IActionResult GetMediaCover(int movieId, string filename)
+        [HttpGet(@"{seriesId:int}/{filename:regex((.+)\.(jpg|png|gif))}")]
+        public IActionResult GetMediaCover(int seriesId, string filename)
         {
-            var filePath = Path.Combine(_appFolderInfo.GetAppDataPath(), "MediaCover", movieId.ToString(), filename);
+            var filePath = Path.Combine(_appFolderInfo.GetAppDataPath(), "MediaCover", seriesId.ToString(), filename);
 
             if (!_diskProvider.FileExists(filePath) || _diskProvider.GetFileSize(filePath) == 0)
             {

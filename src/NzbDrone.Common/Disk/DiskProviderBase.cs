@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using NLog;
 using NzbDrone.Common.EnsureThat;
 using NzbDrone.Common.EnvironmentInfo;
@@ -130,8 +132,8 @@ namespace NzbDrone.Common.Disk
             try
             {
                 var testPath = Path.Combine(path, "whisparr_write_test.txt");
-                var testContent = string.Format("This file was created to verify if '{0}' is writable. It should've been automatically deleted. Feel free to delete it.", path);
-                WriteAllText(testPath, testContent);
+                var testContent = $"This file was created to verify if '{path}' is writable. It should've been automatically deleted. Feel free to delete it.";
+                File.WriteAllText(testPath, testContent);
                 File.Delete(testPath);
                 return true;
             }
@@ -254,7 +256,7 @@ namespace NzbDrone.Common.Disk
             MoveFileInternal(source, destination);
         }
 
-        public void MoveFolder(string source, string destination, bool overwrite = false)
+        public void MoveFolder(string source, string destination)
         {
             Ensure.That(source, () => source).IsValidPath();
             Ensure.That(destination, () => destination).IsValidPath();
@@ -264,6 +266,11 @@ namespace NzbDrone.Common.Disk
 
         protected virtual void MoveFileInternal(string source, string destination)
         {
+            if (File.Exists(destination))
+            {
+                throw new FileAlreadyExistsException("File already exists", destination);
+            }
+
             File.Move(source, destination);
         }
 
@@ -300,26 +307,12 @@ namespace NzbDrone.Common.Disk
         {
             Ensure.That(filename, () => filename).IsValidPath();
             RemoveReadOnly(filename);
-
-            // File.WriteAllText is broken on net core when writing to some CIFS mounts
-            // This workaround from https://github.com/dotnet/runtime/issues/42790#issuecomment-700362617
-            using (var fs = new FileStream(filename, FileMode.Create, FileAccess.Write, FileShare.None))
-            {
-                using (var writer = new StreamWriter(fs))
-                {
-                    writer.Write(contents);
-                }
-            }
+            File.WriteAllText(filename, contents);
         }
 
         public void FolderSetLastWriteTime(string path, DateTime dateTime)
         {
             Ensure.That(path, () => path).IsValidPath();
-
-            if (dateTime.Before(DateTimeExtensions.Epoch))
-            {
-                dateTime = DateTimeExtensions.Epoch;
-            }
 
             Directory.SetLastWriteTimeUtc(path, dateTime);
         }
@@ -327,11 +320,6 @@ namespace NzbDrone.Common.Disk
         public void FileSetLastWriteTime(string path, DateTime dateTime)
         {
             Ensure.That(path, () => path).IsValidPath();
-
-            if (dateTime.Before(DateTimeExtensions.Epoch))
-            {
-                dateTime = DateTimeExtensions.Epoch;
-            }
 
             File.SetLastWriteTime(path, dateTime);
         }
@@ -382,20 +370,6 @@ namespace NzbDrone.Common.Disk
                 {
                     var newAttributes = attributes & ~FileAttributes.ReadOnly;
                     File.SetAttributes(path, newAttributes);
-                }
-            }
-        }
-
-        private static void RemoveReadOnlyFolder(string path)
-        {
-            if (Directory.Exists(path))
-            {
-                var dirInfo = new DirectoryInfo(path);
-
-                if (dirInfo.Attributes.HasFlag(FileAttributes.ReadOnly))
-                {
-                    var newAttributes = dirInfo.Attributes & ~FileAttributes.ReadOnly;
-                    dirInfo.Attributes = newAttributes;
                 }
             }
         }
@@ -504,20 +478,13 @@ namespace NzbDrone.Common.Disk
             return di.GetDirectories().ToList();
         }
 
-        public FileInfo GetFileInfo(string path)
-        {
-            Ensure.That(path, () => path).IsValidPath();
-
-            return new FileInfo(path);
-        }
-
-        public List<FileInfo> GetFileInfos(string path, SearchOption searchOption = SearchOption.TopDirectoryOnly)
+        public List<FileInfo> GetFileInfos(string path)
         {
             Ensure.That(path, () => path).IsValidPath();
 
             var di = new DirectoryInfo(path);
 
-            return di.GetFiles("*", searchOption).ToList();
+            return di.GetFiles().ToList();
         }
 
         public void RemoveEmptySubfolders(string path)

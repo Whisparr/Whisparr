@@ -256,11 +256,11 @@ namespace NzbDrone.Common.OAuth
             sb.Append(!basic && !secure ? qualified : "");
             sb.Append(url.AbsolutePath);
 
-            return sb.ToString(); //.ToLower();
+            return sb.ToString(); // .ToLower();
         }
 
         /// <summary>
-        /// Creates a request elements concatentation value to send with a request.
+        /// Creates a request elements concatenation value to send with a request.
         /// This is also known as the signature base.
         /// </summary>
         /// <seealso href="http://oauth.net/core/1.0#rfc.section.9.1.3"/>

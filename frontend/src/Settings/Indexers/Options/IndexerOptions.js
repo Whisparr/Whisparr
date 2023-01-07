@@ -7,7 +7,6 @@ import FormInputGroup from 'Components/Form/FormInputGroup';
 import FormLabel from 'Components/Form/FormLabel';
 import LoadingIndicator from 'Components/Loading/LoadingIndicator';
 import { inputTypes } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 
 function IndexerOptions(props) {
   const {
@@ -20,7 +19,7 @@ function IndexerOptions(props) {
   } = props;
 
   return (
-    <FieldSet legend={translate('Options')}>
+    <FieldSet legend="Options">
       {
         isFetching &&
           <LoadingIndicator />
@@ -28,79 +27,51 @@ function IndexerOptions(props) {
 
       {
         !isFetching && error &&
-          <div>
-            {translate('UnableToLoadIndexerOptions')}
-          </div>
+          <div>Unable to load indexer options</div>
       }
 
       {
         hasSettings && !isFetching && !error &&
           <Form>
             <FormGroup>
-              <FormLabel>{translate('MinimumAge')}</FormLabel>
+              <FormLabel>Minimum Age</FormLabel>
 
               <FormInputGroup
                 type={inputTypes.NUMBER}
                 name="minimumAge"
                 min={0}
                 unit="minutes"
-                helpText={translate('MinimumAgeHelpText')}
+                helpText="Usenet only: Minimum age in minutes of NZBs before they are grabbed. Use this to give new releases time to propagate to your usenet provider."
                 onChange={onInputChange}
                 {...settings.minimumAge}
               />
             </FormGroup>
 
             <FormGroup>
-              <FormLabel>{translate('Retention')}</FormLabel>
+              <FormLabel>Retention</FormLabel>
 
               <FormInputGroup
                 type={inputTypes.NUMBER}
                 name="retention"
                 min={0}
                 unit="days"
-                helpText={translate('RetentionHelpText')}
+                helpText="Usenet only: Set to zero to set for unlimited retention"
                 onChange={onInputChange}
                 {...settings.retention}
               />
             </FormGroup>
 
             <FormGroup>
-              <FormLabel>{translate('MaximumSize')}</FormLabel>
+              <FormLabel>Maximum Size</FormLabel>
 
               <FormInputGroup
                 type={inputTypes.NUMBER}
                 name="maximumSize"
                 min={0}
                 unit="MB"
-                helpText={translate('MaximumSizeHelpText')}
+                helpText="Maximum size for a release to be grabbed in MB. Set to zero to set to unlimited"
                 onChange={onInputChange}
                 {...settings.maximumSize}
-              />
-            </FormGroup>
-
-            <FormGroup>
-              <FormLabel>{translate('PreferIndexerFlags')}</FormLabel>
-
-              <FormInputGroup
-                type={inputTypes.CHECK}
-                name="preferIndexerFlags"
-                helpText={translate('PreferIndexerFlagsHelpText')}
-                helpLink="https://wiki.servarr.com/whisparr/settings#indexer-flags"
-                onChange={onInputChange}
-                {...settings.preferIndexerFlags}
-              />
-            </FormGroup>
-
-            <FormGroup>
-              <FormLabel>{translate('AvailabilityDelay')}</FormLabel>
-
-              <FormInputGroup
-                type={inputTypes.NUMBER}
-                name="availabilityDelay"
-                unit="days"
-                helpText={translate('AvailabilityDelayHelpText')}
-                onChange={onInputChange}
-                {...settings.availabilityDelay}
               />
             </FormGroup>
 
@@ -108,7 +79,7 @@ function IndexerOptions(props) {
               advancedSettings={advancedSettings}
               isAdvanced={true}
             >
-              <FormLabel>{translate('RSSSyncInterval')}</FormLabel>
+              <FormLabel>RSS Sync Interval</FormLabel>
 
               <FormInputGroup
                 type={inputTypes.NUMBER}
@@ -116,41 +87,11 @@ function IndexerOptions(props) {
                 min={0}
                 max={120}
                 unit="minutes"
-                helpText={translate('RssSyncHelpText')}
-                helpTextWarning={translate('RSSSyncIntervalHelpTextWarning')}
-                helpLink="https://wiki.servarr.com/whisparr/faq#how-does-whisparr-work"
+                helpText="Interval in minutes. Set to zero to disable (this will stop all automatic release grabbing)"
+                helpTextWarning="This will apply to all indexers, please follow the rules set forth by them"
+                helpLink="https://wiki.servarr.com/whisparr/faq#how-does-whisparr-find-episodes"
                 onChange={onInputChange}
                 {...settings.rssSyncInterval}
-              />
-            </FormGroup>
-
-            <FormGroup
-              advancedSettings={advancedSettings}
-              isAdvanced={true}
-            >
-              <FormLabel>{translate('WhitelistedSubtitleTags')}</FormLabel>
-
-              <FormInputGroup
-                type={inputTypes.TEXT_TAG}
-                name="whitelistedHardcodedSubs"
-                helpText={translate('WhitelistedHardcodedSubsHelpText')}
-                onChange={onInputChange}
-                {...settings.whitelistedHardcodedSubs}
-              />
-            </FormGroup>
-
-            <FormGroup
-              advancedSettings={advancedSettings}
-              isAdvanced={true}
-            >
-              <FormLabel>{translate('AllowHardcodedSubs')}</FormLabel>
-
-              <FormInputGroup
-                type={inputTypes.CHECK}
-                name="allowHardcodedSubs"
-                helpText={translate('AllowHardcodedSubsHelpText')}
-                onChange={onInputChange}
-                {...settings.allowHardcodedSubs}
               />
             </FormGroup>
           </Form>

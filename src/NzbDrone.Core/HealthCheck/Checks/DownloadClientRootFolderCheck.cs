@@ -5,14 +5,12 @@ using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Datastore.Events;
 using NzbDrone.Core.Download;
 using NzbDrone.Core.Download.Clients;
-using NzbDrone.Core.Localization;
 using NzbDrone.Core.RemotePathMappings;
 using NzbDrone.Core.RootFolders;
 using NzbDrone.Core.ThingiProvider.Events;
 
 namespace NzbDrone.Core.HealthCheck.Checks
 {
-    [CheckOn(typeof(ProviderAddedEvent<IDownloadClient>))]
     [CheckOn(typeof(ProviderUpdatedEvent<IDownloadClient>))]
     [CheckOn(typeof(ProviderDeletedEvent<IDownloadClient>))]
     [CheckOn(typeof(ModelEvent<RootFolder>))]
@@ -26,9 +24,7 @@ namespace NzbDrone.Core.HealthCheck.Checks
 
         public DownloadClientRootFolderCheck(IProvideDownloadClient downloadClientProvider,
                                       IRootFolderService rootFolderService,
-                                      Logger logger,
-                                      ILocalizationService localizationService)
-            : base(localizationService)
+                                      Logger logger)
         {
             _downloadClientProvider = downloadClientProvider;
             _rootFolderService = rootFolderService;
@@ -46,11 +42,12 @@ namespace NzbDrone.Core.HealthCheck.Checks
                 {
                     var status = client.GetStatus();
                     var folders = status.OutputRootFolders;
+
                     foreach (var folder in folders)
                     {
                         if (rootFolders.Any(r => r.Path.PathEquals(folder.FullPath)))
                         {
-                            return new HealthCheck(GetType(), HealthCheckResult.Warning, string.Format(_localizationService.GetLocalizedString("DownloadClientCheckDownloadingToRoot"), client.Definition.Name, folder.FullPath), "#downloads-in-root-folder");
+                            return new HealthCheck(GetType(), HealthCheckResult.Warning, string.Format("Download client {0} places downloads in the root folder {1}. You should not download to a root folder.", client.Definition.Name, folder.FullPath), "#downloads-in-root-folder");
                         }
                     }
                 }
@@ -60,7 +57,7 @@ namespace NzbDrone.Core.HealthCheck.Checks
                 }
                 catch (Exception ex)
                 {
-                    _logger.Error(ex, "Unknown error occured in DownloadClientRootFolderCheck HealthCheck");
+                    _logger.Error(ex, "Unknown error occurred in DownloadClientRootFolderCheck HealthCheck");
                 }
             }
 

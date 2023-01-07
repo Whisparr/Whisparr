@@ -42,8 +42,7 @@ namespace NzbDrone.Core.Test.Framework
             {
                 BeforeMigration = m =>
                 {
-                    var migration = m as TMigration;
-                    if (beforeMigration != null && migration is TMigration)
+                    if (beforeMigration != null && m is TMigration migration)
                     {
                         beforeMigration(migration);
                     }

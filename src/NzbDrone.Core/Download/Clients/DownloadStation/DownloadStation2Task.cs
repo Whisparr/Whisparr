@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 using NzbDrone.Common.Serializer;
 
@@ -25,7 +25,7 @@ namespace NzbDrone.Core.Download.Clients.DownloadStation
 
         public override string ToString()
         {
-            return Title;
+            return this.Title;
         }
     }
 }

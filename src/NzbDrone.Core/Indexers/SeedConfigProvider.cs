@@ -1,5 +1,7 @@
-using System;
+﻿using System;
+using System.Linq;
 using NzbDrone.Common.Cache;
+using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Datastore;
 using NzbDrone.Core.Download.Clients;
 using NzbDrone.Core.Messaging.Events;
@@ -10,8 +12,8 @@ namespace NzbDrone.Core.Indexers
 {
     public interface ISeedConfigProvider
     {
-        TorrentSeedConfiguration GetSeedConfiguration(RemoteMovie release);
-        TorrentSeedConfiguration GetSeedConfiguration(int indexerId);
+        TorrentSeedConfiguration GetSeedConfiguration(RemoteEpisode release);
+        TorrentSeedConfiguration GetSeedConfiguration(int indexerId, bool fullSeason);
     }
 
     public class SeedConfigProvider : ISeedConfigProvider, IHandle<ProviderUpdatedEvent<IIndexer>>
@@ -25,22 +27,22 @@ namespace NzbDrone.Core.Indexers
             _cache = cacheManager.GetRollingCache<SeedCriteriaSettings>(GetType(), "criteriaByIndexer", TimeSpan.FromHours(1));
         }
 
-        public TorrentSeedConfiguration GetSeedConfiguration(RemoteMovie remoteMovie)
+        public TorrentSeedConfiguration GetSeedConfiguration(RemoteEpisode remoteEpisode)
         {
-            if (remoteMovie.Release.DownloadProtocol != DownloadProtocol.Torrent)
+            if (remoteEpisode.Release.DownloadProtocol != DownloadProtocol.Torrent)
             {
                 return null;
             }
 
-            if (remoteMovie.Release.IndexerId == 0)
+            if (remoteEpisode.Release.IndexerId == 0)
             {
                 return null;
             }
 
-            return GetSeedConfiguration(remoteMovie.Release.IndexerId);
+            return GetSeedConfiguration(remoteEpisode.Release.IndexerId, remoteEpisode.ParsedEpisodeInfo.FullSeason);
         }
 
-        public TorrentSeedConfiguration GetSeedConfiguration(int indexerId)
+        public TorrentSeedConfiguration GetSeedConfiguration(int indexerId, bool fullSeason)
         {
             if (indexerId == 0)
             {
@@ -59,8 +61,7 @@ namespace NzbDrone.Core.Indexers
                 Ratio = seedCriteria.SeedRatio
             };
 
-            var seedTime = seedCriteria.SeedTime;
-
+            var seedTime = fullSeason ? seedCriteria.SeasonPackSeedTime : seedCriteria.SeedTime;
             if (seedTime.HasValue)
             {
                 seedConfig.SeedTime = TimeSpan.FromMinutes(seedTime.Value);

@@ -3,9 +3,11 @@ using System.Linq;
 using NzbDrone.Common.Crypto;
 using NzbDrone.Core.DecisionEngine;
 using NzbDrone.Core.Languages;
-using NzbDrone.Core.MediaFiles.MovieImport.Manual;
+using NzbDrone.Core.MediaFiles.EpisodeImport.Manual;
 using NzbDrone.Core.Qualities;
-using Whisparr.Api.V3.Movies;
+using Whisparr.Api.V3.CustomFormats;
+using Whisparr.Api.V3.Episodes;
+using Whisparr.Api.V3.Series;
 using Whisparr.Http.REST;
 
 namespace Whisparr.Api.V3.ManualImport
@@ -17,12 +19,16 @@ namespace Whisparr.Api.V3.ManualImport
         public string FolderName { get; set; }
         public string Name { get; set; }
         public long Size { get; set; }
-        public MovieResource Movie { get; set; }
+        public SeriesResource Series { get; set; }
+        public int? SeasonNumber { get; set; }
+        public List<EpisodeResource> Episodes { get; set; }
+        public int? EpisodeFileId { get; set; }
+        public string ReleaseGroup { get; set; }
         public QualityModel Quality { get; set; }
         public List<Language> Languages { get; set; }
-        public string ReleaseGroup { get; set; }
         public int QualityWeight { get; set; }
         public string DownloadId { get; set; }
+        public List<CustomFormatResource> CustomFormats { get; set; }
         public IEnumerable<Rejection> Rejections { get; set; }
     }
 
@@ -43,12 +49,16 @@ namespace Whisparr.Api.V3.ManualImport
                 FolderName = model.FolderName,
                 Name = model.Name,
                 Size = model.Size,
-                Movie = model.Movie.ToResource(0),
+                Series = model.Series.ToResource(),
+                SeasonNumber = model.SeasonNumber,
+                Episodes = model.Episodes.ToResource(),
+                EpisodeFileId = model.EpisodeFileId,
+                ReleaseGroup = model.ReleaseGroup,
                 Quality = model.Quality,
                 Languages = model.Languages,
-                ReleaseGroup = model.ReleaseGroup,
+                CustomFormats = model.CustomFormats.ToResource(false),
 
-                //QualityWeight
+                // QualityWeight
                 DownloadId = model.DownloadId,
                 Rejections = model.Rejections
             };

@@ -20,9 +20,9 @@ using NzbDrone.Core.Indexers;
 using NzbDrone.Core.Lifecycle;
 using NzbDrone.Core.Messaging.Commands;
 using NzbDrone.Core.Messaging.Events;
+using NzbDrone.Host;
 using NzbDrone.SignalR;
 using NzbDrone.Test.Common;
-using Whisparr.Host;
 using IServiceProvider = System.IServiceProvider;
 
 namespace NzbDrone.App.Test
@@ -83,11 +83,10 @@ namespace NzbDrone.App.Test
         }
 
         [Test]
-        [Ignore("Shit appveyor")]
-        public void should_return_same_instance_of_singletons()
+        public void should_return_same_instance_via_resolve_and_resolveall()
         {
-            var first = (DownloadMonitoringService)_container.GetRequiredService<IHandle<ApplicationShutdownRequested>>();
-            var second = _container.GetServices<IHandle<TrackedDownloadsRemovedEvent>>().OfType<ApplicationShutdownRequested>().Single();
+            var first = (DownloadMonitoringService)_container.GetRequiredService<IHandle<TrackedDownloadsRemovedEvent>>();
+            var second = _container.GetServices<IHandle<TrackedDownloadsRemovedEvent>>().OfType<DownloadMonitoringService>().Single();
 
             first.Should().BeSameAs(second);
         }
@@ -95,8 +94,8 @@ namespace NzbDrone.App.Test
         [Test]
         public void should_return_same_instance_of_singletons_by_different_same_interface()
         {
-            var first = _container.GetServices<IHandle<MovieGrabbedEvent>>().OfType<DownloadMonitoringService>().Single();
-            var second = _container.GetServices<IHandle<MovieGrabbedEvent>>().OfType<DownloadMonitoringService>().Single();
+            var first = _container.GetServices<IHandle<EpisodeGrabbedEvent>>().OfType<DownloadMonitoringService>().Single();
+            var second = _container.GetServices<IHandle<EpisodeGrabbedEvent>>().OfType<DownloadMonitoringService>().Single();
 
             first.Should().BeSameAs(second);
         }
@@ -104,7 +103,7 @@ namespace NzbDrone.App.Test
         [Test]
         public void should_return_same_instance_of_singletons_by_different_interfaces()
         {
-            var first = _container.GetServices<IHandle<MovieGrabbedEvent>>().OfType<DownloadMonitoringService>().Single();
+            var first = _container.GetServices<IHandle<EpisodeGrabbedEvent>>().OfType<DownloadMonitoringService>().Single();
             var second = (DownloadMonitoringService)_container.GetRequiredService<IExecute<RefreshMonitoredDownloadsCommand>>();
 
             first.Should().BeSameAs(second);

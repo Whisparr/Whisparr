@@ -9,7 +9,7 @@ import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { kinds } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
+import SeasonNumber from 'Season/SeasonNumber';
 import getSelectedIds from 'Utilities/Table/getSelectedIds';
 import selectAll from 'Utilities/Table/selectAll';
 import toggleSelected from 'Utilities/Table/toggleSelected';
@@ -75,8 +75,9 @@ class OrganizePreviewModalContent extends Component {
       isPopulated,
       error,
       items,
-      renameMovies,
-      standardMovieFormat,
+      seasonNumber,
+      renameEpisodes,
+      episodeFormat,
       path,
       onModalClose
     } = this.props;
@@ -92,7 +93,7 @@ class OrganizePreviewModalContent extends Component {
     return (
       <ModalContent onModalClose={onModalClose}>
         <ModalHeader>
-          {translate('OrganizeAndRename')}
+          Organize & Rename {seasonNumber != null && <SeasonNumber seasonNumber={seasonNumber} />}
         </ModalHeader>
 
         <ModalBody>
@@ -103,18 +104,16 @@ class OrganizePreviewModalContent extends Component {
 
           {
             !isFetching && error &&
-              <div>
-                {translate('ErrorLoadingPreviews')}
-              </div>
+              <div>Error loading previews</div>
           }
 
           {
             !isFetching && isPopulated && !items.length &&
               <div>
                 {
-                  renameMovies ?
-                    <div>{translate('OrganizeModalSuccess')}</div> :
-                    <div>{translate('OrganizeModalDisabled')}</div>
+                  renameEpisodes ?
+                    <div>Success! My work is done, no files to rename.</div> :
+                    <div>Renaming is disabled, nothing to rename</div>
                 }
               </div>
           }
@@ -124,16 +123,16 @@ class OrganizePreviewModalContent extends Component {
               <div>
                 <Alert>
                   <div>
-                    {translate('OrganizeModalAllPathsRelative')}
+                    All paths are relative to:
                     <span className={styles.path}>
                       {path}
                     </span>
                   </div>
 
                   <div>
-                    {translate('OrganizeModalNamingPattern')}
-                    <span className={styles.standardMovieFormat}>
-                      {standardMovieFormat}
+                    Naming pattern:
+                    <span className={styles.episodeFormat}>
+                      {episodeFormat}
                     </span>
                   </div>
                 </Alert>
@@ -143,11 +142,11 @@ class OrganizePreviewModalContent extends Component {
                     items.map((item) => {
                       return (
                         <OrganizePreviewRow
-                          key={item.movieFileId}
-                          id={item.movieFileId}
+                          key={item.episodeFileId}
+                          id={item.episodeFileId}
                           existingPath={item.existingPath}
                           newPath={item.newPath}
-                          isSelected={selectedState[item.movieFileId]}
+                          isSelected={selectedState[item.episodeFileId]}
                           onSelectedChange={this.onSelectedChange}
                         />
                       );
@@ -173,14 +172,14 @@ class OrganizePreviewModalContent extends Component {
           <Button
             onPress={onModalClose}
           >
-            {translate('Cancel')}
+            Cancel
           </Button>
 
           <Button
             kind={kinds.PRIMARY}
             onPress={this.onOrganizePress}
           >
-            {translate('Organize')}
+            Organize
           </Button>
         </ModalFooter>
       </ModalContent>
@@ -193,9 +192,10 @@ OrganizePreviewModalContent.propTypes = {
   isPopulated: PropTypes.bool.isRequired,
   error: PropTypes.object,
   items: PropTypes.arrayOf(PropTypes.object).isRequired,
+  seasonNumber: PropTypes.number,
   path: PropTypes.string.isRequired,
-  renameMovies: PropTypes.bool,
-  standardMovieFormat: PropTypes.string,
+  renameEpisodes: PropTypes.bool,
+  episodeFormat: PropTypes.string,
   onOrganizePress: PropTypes.func.isRequired,
   onModalClose: PropTypes.func.isRequired
 };

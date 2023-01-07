@@ -8,6 +8,7 @@ using NzbDrone.Core.Languages;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.Qualities;
 using Whisparr.Api.V3.CustomFormats;
+using Whisparr.Api.V3.Series;
 using Whisparr.Http.REST;
 
 namespace Whisparr.Api.V3.Indexers
@@ -16,8 +17,6 @@ namespace Whisparr.Api.V3.Indexers
     {
         public string Guid { get; set; }
         public QualityModel Quality { get; set; }
-        public List<CustomFormatResource> CustomFormats { get; set; }
-        public int CustomFormatScore { get; set; }
         public int QualityWeight { get; set; }
         public int Age { get; set; }
         public double AgeHours { get; set; }
@@ -29,23 +28,33 @@ namespace Whisparr.Api.V3.Indexers
         public string SubGroup { get; set; }
         public string ReleaseHash { get; set; }
         public string Title { get; set; }
+        public bool FullSeason { get; set; }
         public bool SceneSource { get; set; }
-        public List<string> MovieTitles { get; set; }
+        public int SeasonNumber { get; set; }
         public List<Language> Languages { get; set; }
+        public int LanguageWeight { get; set; }
+        public string AirDate { get; set; }
+        public string SeriesTitle { get; set; }
+        public int[] EpisodeNumbers { get; set; }
+        public int[] AbsoluteEpisodeNumbers { get; set; }
+        public int? MappedSeasonNumber { get; set; }
+        public int[] MappedEpisodeNumbers { get; set; }
+        public int[] MappedAbsoluteEpisodeNumbers { get; set; }
         public bool Approved { get; set; }
         public bool TemporarilyRejected { get; set; }
         public bool Rejected { get; set; }
-        public int TmdbId { get; set; }
-        public int ImdbId { get; set; }
+        public int TvdbId { get; set; }
+        public int TvRageId { get; set; }
         public IEnumerable<string> Rejections { get; set; }
         public DateTime PublishDate { get; set; }
         public string CommentUrl { get; set; }
         public string DownloadUrl { get; set; }
         public string InfoUrl { get; set; }
+        public bool EpisodeRequested { get; set; }
         public bool DownloadAllowed { get; set; }
         public int ReleaseWeight { get; set; }
-        public IEnumerable<string> IndexerFlags { get; set; }
-        public string Edition { get; set; }
+        public List<CustomFormatResource> CustomFormats { get; set; }
+        public int CustomFormatScore { get; set; }
 
         public string MagnetUrl { get; set; }
         public string InfoHash { get; set; }
@@ -53,61 +62,81 @@ namespace Whisparr.Api.V3.Indexers
         public int? Leechers { get; set; }
         public DownloadProtocol Protocol { get; set; }
 
+        public bool IsDaily { get; set; }
+        public bool IsAbsoluteNumbering { get; set; }
+        public bool IsPossibleSpecialEpisode { get; set; }
+        public bool Special { get; set; }
+
         // Sent when queuing an unknown release
+
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public int? MovieId { get; set; }
+        public int? SeriesId { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public int? EpisodeId { get; set; }
     }
 
     public static class ReleaseResourceMapper
     {
         public static ReleaseResource ToResource(this DownloadDecision model)
         {
-            var releaseInfo = model.RemoteMovie.Release;
-            var parsedMovieInfo = model.RemoteMovie.ParsedMovieInfo;
-            var remoteMovie = model.RemoteMovie;
-            var torrentInfo = (model.RemoteMovie.Release as TorrentInfo) ?? new TorrentInfo();
-            var indexerFlags = torrentInfo.IndexerFlags.ToString().Split(new string[] { ", " }, StringSplitOptions.None).Where(x => x != "0");
+            var releaseInfo = model.RemoteEpisode.Release;
+            var parsedEpisodeInfo = model.RemoteEpisode.ParsedEpisodeInfo;
+            var remoteEpisode = model.RemoteEpisode;
+            var torrentInfo = (model.RemoteEpisode.Release as TorrentInfo) ?? new TorrentInfo();
 
             // TODO: Clean this mess up. don't mix data from multiple classes, use sub-resources instead? (Got a huge Deja Vu, didn't we talk about this already once?)
             return new ReleaseResource
             {
                 Guid = releaseInfo.Guid,
-                Quality = parsedMovieInfo.Quality,
-                CustomFormats = remoteMovie.CustomFormats.ToResource(),
-                CustomFormatScore = remoteMovie.CustomFormatScore,
+                Quality = parsedEpisodeInfo.Quality,
 
-                //QualityWeight
+                // QualityWeight
                 Age = releaseInfo.Age,
                 AgeHours = releaseInfo.AgeHours,
                 AgeMinutes = releaseInfo.AgeMinutes,
                 Size = releaseInfo.Size,
                 IndexerId = releaseInfo.IndexerId,
                 Indexer = releaseInfo.Indexer,
-                ReleaseGroup = parsedMovieInfo.ReleaseGroup,
-                ReleaseHash = parsedMovieInfo.ReleaseHash,
+                ReleaseGroup = parsedEpisodeInfo.ReleaseGroup,
+                ReleaseHash = parsedEpisodeInfo.ReleaseHash,
                 Title = releaseInfo.Title,
-                MovieTitles = parsedMovieInfo.MovieTitles,
-                Languages = parsedMovieInfo.Languages,
+                FullSeason = parsedEpisodeInfo.FullSeason,
+                SeasonNumber = parsedEpisodeInfo.SeasonNumber,
+                Languages = remoteEpisode.Languages,
+                AirDate = parsedEpisodeInfo.AirDate,
+                SeriesTitle = parsedEpisodeInfo.SeriesTitle,
+                EpisodeNumbers = parsedEpisodeInfo.EpisodeNumbers,
+                AbsoluteEpisodeNumbers = parsedEpisodeInfo.AbsoluteEpisodeNumbers,
+                MappedSeasonNumber = remoteEpisode.Episodes.FirstOrDefault()?.SeasonNumber,
+                MappedEpisodeNumbers = remoteEpisode.Episodes.Select(v => v.EpisodeNumber).ToArray(),
+                MappedAbsoluteEpisodeNumbers = remoteEpisode.Episodes.Where(v => v.AbsoluteEpisodeNumber.HasValue).Select(v => v.AbsoluteEpisodeNumber.Value).ToArray(),
                 Approved = model.Approved,
                 TemporarilyRejected = model.TemporarilyRejected,
                 Rejected = model.Rejected,
-                TmdbId = releaseInfo.TmdbId,
-                ImdbId = releaseInfo.ImdbId,
+                TvdbId = releaseInfo.TvdbId,
                 Rejections = model.Rejections.Select(r => r.Reason).ToList(),
                 PublishDate = releaseInfo.PublishDate,
                 CommentUrl = releaseInfo.CommentUrl,
                 DownloadUrl = releaseInfo.DownloadUrl,
                 InfoUrl = releaseInfo.InfoUrl,
-                DownloadAllowed = remoteMovie.DownloadAllowed,
-                Edition = parsedMovieInfo.Edition,
+                EpisodeRequested = remoteEpisode.EpisodeRequested,
+                DownloadAllowed = remoteEpisode.DownloadAllowed,
 
-                //ReleaseWeight
+                // ReleaseWeight
+                CustomFormatScore = remoteEpisode.CustomFormatScore,
+                CustomFormats = remoteEpisode.CustomFormats?.ToResource(false),
+
                 MagnetUrl = torrentInfo.MagnetUrl,
                 InfoHash = torrentInfo.InfoHash,
                 Seeders = torrentInfo.Seeders,
                 Leechers = (torrentInfo.Peers.HasValue && torrentInfo.Seeders.HasValue) ? (torrentInfo.Peers.Value - torrentInfo.Seeders.Value) : (int?)null,
                 Protocol = releaseInfo.DownloadProtocol,
-                IndexerFlags = indexerFlags
+
+                IsDaily = parsedEpisodeInfo.IsDaily,
+                IsAbsoluteNumbering = parsedEpisodeInfo.IsAbsoluteNumbering,
+                IsPossibleSpecialEpisode = parsedEpisodeInfo.IsPossibleSpecialEpisode,
+                Special = parsedEpisodeInfo.Special,
             };
         }
 
@@ -139,8 +168,7 @@ namespace Whisparr.Api.V3.Indexers
             model.IndexerId = resource.IndexerId;
             model.Indexer = resource.Indexer;
             model.DownloadProtocol = resource.Protocol;
-            model.TmdbId = resource.TmdbId;
-            model.ImdbId = resource.ImdbId;
+            model.TvdbId = resource.TvdbId;
             model.PublishDate = resource.PublishDate.ToUniversalTime();
 
             return model;

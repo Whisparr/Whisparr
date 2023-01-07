@@ -1,11 +1,14 @@
 .page {
   composes: page from '~./Page.css';
+
+  background-color: var(--pageBackground);
 }
 
-.logo {
+.logoFull {
   margin-top: 50px;
   margin-right: auto;
   margin-left: auto;
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
+  opacity: 0.65;
 }

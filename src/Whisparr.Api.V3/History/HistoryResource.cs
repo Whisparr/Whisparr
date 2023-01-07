@@ -5,14 +5,16 @@ using NzbDrone.Core.History;
 using NzbDrone.Core.Languages;
 using NzbDrone.Core.Qualities;
 using Whisparr.Api.V3.CustomFormats;
-using Whisparr.Api.V3.Movies;
+using Whisparr.Api.V3.Episodes;
+using Whisparr.Api.V3.Series;
 using Whisparr.Http.REST;
 
 namespace Whisparr.Api.V3.History
 {
     public class HistoryResource : RestResource
     {
-        public int MovieId { get; set; }
+        public int EpisodeId { get; set; }
+        public int SeriesId { get; set; }
         public string SourceTitle { get; set; }
         public List<Language> Languages { get; set; }
         public QualityModel Quality { get; set; }
@@ -21,16 +23,17 @@ namespace Whisparr.Api.V3.History
         public DateTime Date { get; set; }
         public string DownloadId { get; set; }
 
-        public MovieHistoryEventType EventType { get; set; }
+        public EpisodeHistoryEventType EventType { get; set; }
 
         public Dictionary<string, string> Data { get; set; }
 
-        public MovieResource Movie { get; set; }
+        public EpisodeResource Episode { get; set; }
+        public SeriesResource Series { get; set; }
     }
 
     public static class HistoryResourceMapper
     {
-        public static HistoryResource ToResource(this MovieHistory model, ICustomFormatCalculationService formatCalculator)
+        public static HistoryResource ToResource(this EpisodeHistory model, ICustomFormatCalculationService formatCalculator)
         {
             if (model == null)
             {
@@ -41,19 +44,23 @@ namespace Whisparr.Api.V3.History
             {
                 Id = model.Id,
 
-                MovieId = model.MovieId,
+                EpisodeId = model.EpisodeId,
+                SeriesId = model.SeriesId,
                 SourceTitle = model.SourceTitle,
                 Languages = model.Languages,
                 Quality = model.Quality,
-                CustomFormats = formatCalculator.ParseCustomFormat(model).ToResource(),
+                CustomFormats = formatCalculator.ParseCustomFormat(model, model.Series).ToResource(false),
 
-                //QualityCutoffNotMet
+                // QualityCutoffNotMet
                 Date = model.Date,
                 DownloadId = model.DownloadId,
 
                 EventType = model.EventType,
 
                 Data = model.Data
+
+                // Episode
+                // Series
             };
         }
     }

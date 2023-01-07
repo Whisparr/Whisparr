@@ -3,154 +3,154 @@ using System.Linq;
 using NLog;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Instrumentation.Extensions;
-using NzbDrone.Core.Configuration;
-using NzbDrone.Core.ImportLists.ImportExclusions;
-using NzbDrone.Core.ImportLists.ImportListMovies;
+using NzbDrone.Core.ImportLists.Exclusions;
 using NzbDrone.Core.Messaging.Commands;
-using NzbDrone.Core.Movies;
+using NzbDrone.Core.MetadataSource;
+using NzbDrone.Core.Parser.Model;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.ImportLists
 {
     public class ImportListSyncService : IExecute<ImportListSyncCommand>
     {
-        private readonly Logger _logger;
         private readonly IImportListFactory _importListFactory;
+        private readonly IImportListExclusionService _importListExclusionService;
         private readonly IFetchAndParseImportList _listFetcherAndParser;
-        private readonly IMovieService _movieService;
-        private readonly IAddMovieService _addMovieService;
-        private readonly IConfigService _configService;
-        private readonly IImportExclusionsService _exclusionService;
+        private readonly ISearchForNewSeries _seriesSearchService;
+        private readonly ISeriesService _seriesService;
+        private readonly IAddSeriesService _addSeriesService;
+        private readonly Logger _logger;
 
         public ImportListSyncService(IImportListFactory importListFactory,
-                                      IFetchAndParseImportList listFetcherAndParser,
-                                      IMovieService movieService,
-                                      IAddMovieService addMovieService,
-                                      IConfigService configService,
-                                      IImportExclusionsService exclusionService,
-                                      Logger logger)
+                              IImportListExclusionService importListExclusionService,
+                              IFetchAndParseImportList listFetcherAndParser,
+                              ISearchForNewSeries seriesSearchService,
+                              ISeriesService seriesService,
+                              IAddSeriesService addSeriesService,
+                              Logger logger)
         {
             _importListFactory = importListFactory;
+            _importListExclusionService = importListExclusionService;
             _listFetcherAndParser = listFetcherAndParser;
-            _movieService = movieService;
-            _addMovieService = addMovieService;
-            _exclusionService = exclusionService;
+            _seriesSearchService = seriesSearchService;
+            _seriesService = seriesService;
+            _addSeriesService = addSeriesService;
             _logger = logger;
-            _configService = configService;
+        }
+
+        private void SyncAll()
+        {
+            _logger.ProgressInfo("Starting Import List Sync");
+
+            var rssReleases = _listFetcherAndParser.Fetch();
+
+            var reports = rssReleases.ToList();
+
+            ProcessReports(reports);
         }
 
         private void SyncList(ImportListDefinition definition)
         {
             _logger.ProgressInfo(string.Format("Starting Import List Refresh for List {0}", definition.Name));
 
-            var result = _listFetcherAndParser.FetchSingleList(definition);
+            var rssReleases = _listFetcherAndParser.FetchSingleList(definition);
 
-            ProcessReports(result);
+            var reports = rssReleases.ToList();
+
+            ProcessReports(reports);
         }
 
-        private void SyncAll()
+        private void ProcessReports(List<ImportListItemInfo> reports)
         {
-            var result = _listFetcherAndParser.Fetch();
+            var seriesToAdd = new List<Series>();
 
-            if (_importListFactory.Enabled().Where(a => ((ImportListDefinition)a.Definition).EnableAuto).Empty())
+            _logger.ProgressInfo("Processing {0} list items", reports.Count);
+
+            var reportNumber = 1;
+
+            var listExclusions = _importListExclusionService.All();
+            var importLists = _importListFactory.All();
+            var existingTvdbIds = _seriesService.AllSeriesTvdbIds();
+
+            foreach (var report in reports)
             {
-                _logger.Info("No auto enabled lists, skipping sync and cleaning");
-                return;
-            }
+                _logger.ProgressTrace("Processing list item {0}/{1}", reportNumber, reports.Count);
 
-            if (!result.AnyFailure)
-            {
-                CleanLibrary(result.Movies.ToList());
-            }
+                reportNumber++;
 
-            ProcessReports(result);
-        }
+                var importList = importLists.Single(x => x.Id == report.ImportListId);
 
-        private void ProcessMovieReport(ImportListDefinition importList, ImportListMovie report, List<ImportExclusion> listExclusions, List<int> dbMovies, List<Media> moviesToAdd)
-        {
-            if (report.ForiegnId == 0 || !importList.EnableAuto)
-            {
-                return;
-            }
-
-            // Check to see if movie in DB
-            if (dbMovies.Contains(report.ForiegnId))
-            {
-                _logger.Debug("{0} [{1}] Rejected, Movie Exists in DB", report.ForiegnId, report.Title);
-                return;
-            }
-
-            // Check to see if movie excluded
-            var excludedMovie = listExclusions.Where(s => s.TmdbId == report.ForiegnId).SingleOrDefault();
-
-            if (excludedMovie != null)
-            {
-                _logger.Debug("{0} [{1}] Rejected due to list exlcusion", report.ForiegnId, report.Title);
-                return;
-            }
-
-            // Append Artist if not already in DB or already on add list
-            if (moviesToAdd.All(s => s.ForiegnId != report.ForiegnId))
-            {
-                var monitored = importList.ShouldMonitor;
-
-                moviesToAdd.Add(new Media
+                // Map by IMDbId if we have it
+                if (report.TvdbId <= 0 && report.ImdbId.IsNotNullOrWhiteSpace())
                 {
-                    Monitored = monitored,
-                    RootFolderPath = importList.RootFolderPath,
-                    ProfileId = importList.ProfileId,
-                    MinimumAvailability = importList.MinimumAvailability,
-                    Tags = importList.Tags,
-                    ForiegnId = report.ForiegnId,
-                    Title = report.Title,
-                    Year = report.Year,
-                    AddOptions = new AddMovieOptions
+                    var mappedSeries = _seriesSearchService.SearchForNewSeriesByImdbId(report.ImdbId)
+                        .FirstOrDefault();
+
+                    if (mappedSeries != null)
                     {
-                        SearchForMovie = monitored && importList.SearchOnAdd,
-                        AddMethod = AddMovieMethod.List
+                        report.TvdbId = mappedSeries.TvdbId;
+                        report.Title = mappedSeries?.Title;
                     }
-                });
-            }
-        }
-
-        private void ProcessReports(ImportListFetchResult listFetchResult)
-        {
-            listFetchResult.Movies = listFetchResult.Movies.DistinctBy(x =>
-            {
-                if (x.ForiegnId != 0)
-                {
-                    return x.ForiegnId.ToString();
                 }
 
-                return x.Title;
-            }).ToList();
-
-            var listedMovies = listFetchResult.Movies.ToList();
-
-            var importExclusions = _exclusionService.GetAllExclusions();
-            var dbMovies = _movieService.AllMovieTmdbIds();
-            var moviesToAdd = new List<Media>();
-
-            var groupedMovies = listedMovies.GroupBy(x => x.ListId);
-
-            foreach (var list in groupedMovies)
-            {
-                var importList = _importListFactory.Get(list.Key);
-
-                foreach (var movie in list)
+                // Map TVDb if we only have a series name
+                if (report.TvdbId <= 0 && report.Title.IsNotNullOrWhiteSpace())
                 {
-                    if (movie.ForiegnId != 0)
+                    var mappedSeries = _seriesSearchService.SearchForNewSeries(report.Title)
+                        .FirstOrDefault();
+
+                    if (mappedSeries != null)
                     {
-                        ProcessMovieReport(importList, movie, importExclusions, dbMovies, moviesToAdd);
+                        report.TvdbId = mappedSeries.TvdbId;
+                        report.Title = mappedSeries?.Title;
                     }
+                }
+
+                // Check to see if series excluded
+                var excludedSeries = listExclusions.Where(s => s.TvdbId == report.TvdbId).SingleOrDefault();
+
+                if (excludedSeries != null)
+                {
+                    _logger.Debug("{0} [{1}] Rejected due to list exclusion", report.TvdbId, report.Title);
+                    continue;
+                }
+
+                // Break if Series Exists in DB
+                if (existingTvdbIds.Any(x => x == report.TvdbId))
+                {
+                    _logger.Debug("{0} [{1}] Rejected, Series Exists in DB", report.TvdbId, report.Title);
+                    continue;
+                }
+
+                // Append Series if not already in DB or already on add list
+                if (seriesToAdd.All(s => s.TvdbId != report.TvdbId))
+                {
+                    var monitored = importList.ShouldMonitor != MonitorTypes.None;
+
+                    seriesToAdd.Add(new Series
+                    {
+                        TvdbId = report.TvdbId,
+                        Title = report.Title,
+                        Year = report.Year,
+                        Monitored = monitored,
+                        RootFolderPath = importList.RootFolderPath,
+                        QualityProfileId = importList.QualityProfileId,
+                        SeasonFolder = importList.SeasonFolder,
+                        Tags = importList.Tags,
+                        AddOptions = new AddSeriesOptions
+                                     {
+                                         SearchForMissingEpisodes = monitored,
+                                         Monitor = importList.ShouldMonitor
+                                     }
+                    });
                 }
             }
 
-            if (moviesToAdd.Any())
-            {
-                _logger.Info($"Adding {moviesToAdd.Count} movies from your auto enabled lists to library");
-            }
+            _addSeriesService.AddSeries(seriesToAdd, true);
 
-            _addMovieService.AddMovies(moviesToAdd, true);
+            var message = string.Format("Import List Sync Completed. Items found: {0}, Series added: {1}", reports.Count, seriesToAdd.Count);
+
+            _logger.ProgressInfo(message);
         }
 
         public void Execute(ImportListSyncCommand message)
@@ -163,50 +163,6 @@ namespace NzbDrone.Core.ImportLists
             {
                 SyncAll();
             }
-        }
-
-        private void CleanLibrary(List<ImportListMovie> listMovies)
-        {
-            var moviesToUpdate = new List<Media>();
-
-            if (_configService.ListSyncLevel == "disabled")
-            {
-                return;
-            }
-
-            // TODO use AllMovieTmdbIds here?
-            var moviesInLibrary = _movieService.GetAllMovies();
-            foreach (var movie in moviesInLibrary)
-            {
-                var movieExists = listMovies.Any(c => c.ForiegnId == movie.ForiegnId);
-
-                if (!movieExists)
-                {
-                    switch (_configService.ListSyncLevel)
-                    {
-                        case "logOnly":
-                            _logger.Info("{0} was in your library, but not found in your lists --> You might want to unmonitor or remove it", movie);
-                            break;
-                        case "keepAndUnmonitor":
-                            _logger.Info("{0} was in your library, but not found in your lists --> Keeping in library but Unmonitoring it", movie);
-                            movie.Monitored = false;
-                            moviesToUpdate.Add(movie);
-                            break;
-                        case "removeAndKeep":
-                            _logger.Info("{0} was in your library, but not found in your lists --> Removing from library (keeping files)", movie);
-                            _movieService.DeleteMovie(movie.Id, false);
-                            break;
-                        case "removeAndDelete":
-                            _logger.Info("{0} was in your library, but not found in your lists --> Removing from library and deleting files", movie);
-                            _movieService.DeleteMovie(movie.Id, true);
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-
-            _movieService.UpdateMovie(moviesToUpdate, true);
         }
     }
 }

@@ -5,14 +5,15 @@ using NzbDrone.Core.Indexers;
 using NzbDrone.Core.Languages;
 using NzbDrone.Core.Qualities;
 using Whisparr.Api.V3.CustomFormats;
-using Whisparr.Api.V3.Movies;
+using Whisparr.Api.V3.Series;
 using Whisparr.Http.REST;
 
 namespace Whisparr.Api.V3.Blocklist
 {
     public class BlocklistResource : RestResource
     {
-        public int MovieId { get; set; }
+        public int SeriesId { get; set; }
+        public List<int> EpisodeIds { get; set; }
         public string SourceTitle { get; set; }
         public List<Language> Languages { get; set; }
         public QualityModel Quality { get; set; }
@@ -22,7 +23,7 @@ namespace Whisparr.Api.V3.Blocklist
         public string Indexer { get; set; }
         public string Message { get; set; }
 
-        public MovieResource Movie { get; set; }
+        public SeriesResource Series { get; set; }
     }
 
     public static class BlocklistResourceMapper
@@ -38,17 +39,18 @@ namespace Whisparr.Api.V3.Blocklist
             {
                 Id = model.Id,
 
-                MovieId = model.MovieId,
+                SeriesId = model.SeriesId,
+                EpisodeIds = model.EpisodeIds,
                 SourceTitle = model.SourceTitle,
                 Languages = model.Languages,
                 Quality = model.Quality,
-                CustomFormats = formatCalculator.ParseCustomFormat(model).ToResource(),
+                CustomFormats = formatCalculator.ParseCustomFormat(model, model.Series).ToResource(false),
                 Date = model.Date,
                 Protocol = model.Protocol,
                 Indexer = model.Indexer,
                 Message = model.Message,
 
-                Movie = model.Movie.ToResource(0)
+                Series = model.Series.ToResource()
             };
         }
     }

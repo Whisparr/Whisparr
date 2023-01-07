@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using FluentValidation.Results;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.MediaFiles;
-using NzbDrone.Core.Movies;
 using NzbDrone.Core.Notifications.Slack.Payloads;
+using NzbDrone.Core.Tv;
 using NzbDrone.Core.Validation;
 
 namespace NzbDrone.Core.Notifications.Slack
@@ -26,15 +25,15 @@ namespace NzbDrone.Core.Notifications.Slack
         public override void OnGrab(GrabMessage message)
         {
             var attachments = new List<Attachment>
-                            {
-                                new Attachment
-                                {
-                                    Fallback = message.Message,
-                                    Title = message.Movie.Title,
-                                    Text = message.Message,
-                                    Color = "warning"
-                                }
-                            };
+                              {
+                                  new Attachment
+                                  {
+                                      Fallback = message.Message,
+                                      Title = message.Series.Title,
+                                      Text = message.Message,
+                                      Color = "warning"
+                                  }
+                              };
             var payload = CreatePayload($"Grabbed: {message.Message}", attachments);
 
             _proxy.SendPayload(payload, Settings);
@@ -43,66 +42,62 @@ namespace NzbDrone.Core.Notifications.Slack
         public override void OnDownload(DownloadMessage message)
         {
             var attachments = new List<Attachment>
-                                {
-                                    new Attachment
-                                    {
-                                        Fallback = message.Message,
-                                        Title = message.Movie.Title,
-                                        Text = message.Message,
-                                        Color = "good"
-                                    }
-                                };
+                              {
+                                  new Attachment
+                                  {
+                                      Fallback = message.Message,
+                                      Title = message.Series.Title,
+                                      Text = message.Message,
+                                      Color = "good"
+                                  }
+                              };
             var payload = CreatePayload($"Imported: {message.Message}", attachments);
 
             _proxy.SendPayload(payload, Settings);
         }
 
-        public override void OnMovieRename(Media movie, List<RenamedMovieFile> renamedFiles)
+        public override void OnRename(Series series, List<RenamedEpisodeFile> renamedFiles)
         {
-            var attachments = new List<Attachment>();
-
-            foreach (RenamedMovieFile renamedFile in renamedFiles)
-            {
-                attachments.Add(new Attachment
-                {
-                    Title = movie.Title,
-                    Text = renamedFile.PreviousRelativePath + " renamed to " + renamedFile.MovieFile.RelativePath,
-                });
-            }
+            var attachments = new List<Attachment>
+                              {
+                                  new Attachment
+                                  {
+                                      Title = series.Title,
+                                  }
+                              };
 
             var payload = CreatePayload("Renamed", attachments);
 
             _proxy.SendPayload(payload, Settings);
         }
 
-        public override void OnMovieFileDelete(MovieFileDeleteMessage deleteMessage)
+        public override void OnEpisodeFileDelete(EpisodeDeleteMessage deleteMessage)
         {
             var attachments = new List<Attachment>
                               {
                                   new Attachment
                                   {
-                                      Title = deleteMessage.Movie.Title,
-                                      Text = Path.Combine(deleteMessage.Movie.Path, deleteMessage.MovieFile.RelativePath)
+                                      Title = GetTitle(deleteMessage.Series, deleteMessage.EpisodeFile.Episodes),
                                   }
                               };
 
-            var payload = CreatePayload("Movie File Deleted", attachments);
+            var payload = CreatePayload("Episode Deleted", attachments);
 
             _proxy.SendPayload(payload, Settings);
         }
 
-        public override void OnMovieDelete(MovieDeleteMessage deleteMessage)
+        public override void OnSeriesDelete(SeriesDeleteMessage deleteMessage)
         {
             var attachments = new List<Attachment>
                               {
                                   new Attachment
                                   {
-                                      Title = deleteMessage.Movie.Title,
+                                      Title = deleteMessage.Series.Title,
                                       Text = deleteMessage.DeletedFilesMessage
                                   }
                               };
 
-            var payload = CreatePayload("Movie Deleted", attachments);
+            var payload = CreatePayload("Series Deleted", attachments);
 
             _proxy.SendPayload(payload, Settings);
         }
@@ -155,7 +150,6 @@ namespace NzbDrone.Core.Notifications.Slack
             try
             {
                 var message = $"Test message from Whisparr posted at {DateTime.Now}";
-
                 var payload = CreatePayload(message);
 
                 _proxy.SendPayload(payload, Settings);
@@ -199,6 +193,16 @@ namespace NzbDrone.Core.Notifications.Slack
             }
 
             return payload;
+        }
+
+        private string GetTitle(Series series, List<Episode> episodes)
+        {
+            var episodeNumbers = string.Concat(episodes.Select(e => e.EpisodeNumber)
+                                                       .Select(i => string.Format("x{0:00}", i)));
+
+            var episodeTitles = string.Join(" + ", episodes.Select(e => e.Title));
+
+            return $"{series.Title} - {episodes.First().SeasonNumber}{episodeNumbers} - {episodeTitles}";
         }
     }
 }

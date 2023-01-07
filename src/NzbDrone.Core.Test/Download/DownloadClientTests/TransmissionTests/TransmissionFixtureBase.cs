@@ -99,7 +99,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.TransmissionTests
 
             Mocker.GetMock<IHttpClient>()
                   .Setup(s => s.Get(It.IsAny<HttpRequest>()))
-                  .Returns<HttpRequest>(r => new HttpResponse(r, new HttpHeader(), Array.Empty<byte>()));
+                  .Returns<HttpRequest>(r => new HttpResponse(r, new HttpHeader(), new byte[0]));
 
             _transmissionConfigItems = new Dictionary<string, object>();
 
@@ -112,14 +112,14 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.TransmissionTests
                   .Returns(() => Json.Deserialize<TransmissionConfig>(_transmissionConfigItems.ToJson()));
         }
 
-        protected void GivenMovieCategory()
+        protected void GivenTvCategory()
         {
-            _settings.MovieCategory = "whisparr";
+            _settings.TvCategory = "whisparr";
         }
 
-        protected void GivenMovieDirectory()
+        protected void GivenTvDirectory()
         {
-            _settings.MovieDirectory = @"C:/Downloads/Finished/whisparr";
+            _settings.TvDirectory = @"C:/Downloads/Finished/whisparr";
         }
 
         protected void GivenFailedDownload()

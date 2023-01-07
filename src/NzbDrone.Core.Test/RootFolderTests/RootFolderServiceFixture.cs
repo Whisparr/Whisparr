@@ -7,11 +7,9 @@ using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using NzbDrone.Common.Disk;
-using NzbDrone.Common.EnvironmentInfo;
-using NzbDrone.Core.Configuration;
-using NzbDrone.Core.Movies;
 using NzbDrone.Core.RootFolders;
 using NzbDrone.Core.Test.Framework;
+using NzbDrone.Core.Tv;
 using NzbDrone.Test.Common;
 
 namespace NzbDrone.Core.Test.RootFolderTests
@@ -46,8 +44,8 @@ namespace NzbDrone.Core.Test.RootFolderTests
         [TestCase("//server//folder")]
         public void should_be_able_to_add_root_dir(string path)
         {
-            Mocker.GetMock<IMediaRepository>()
-                  .Setup(s => s.AllMoviePaths())
+            Mocker.GetMock<ISeriesRepository>()
+                  .Setup(s => s.AllSeriesPaths())
                   .Returns(new Dictionary<int, string>());
 
             var root = new RootFolder { Path = path.AsOsAgnostic() };
@@ -110,15 +108,10 @@ namespace NzbDrone.Core.Test.RootFolderTests
         [TestCase(".grab")]
         public void should_get_root_folder_with_subfolders_excluding_special_sub_folders(string subFolder)
         {
+            var rootFolderPath = @"C:\Test\TV".AsOsAgnostic();
             var rootFolder = Builder<RootFolder>.CreateNew()
-                                                .With(r => r.Path = @"C:\Test\TV")
+                                                .With(r => r.Path = rootFolderPath)
                                                 .Build();
-            if (OsInfo.IsNotWindows)
-            {
-                rootFolder = Builder<RootFolder>.CreateNew()
-                                                .With(r => r.Path = @"/Test/TV")
-                                                .Build();
-            }
 
             var subFolders = new[]
                         {
@@ -128,19 +121,14 @@ namespace NzbDrone.Core.Test.RootFolderTests
                             subFolder
                         };
 
-            var folders = subFolders.Select(f => Path.Combine(@"C:\Test\TV", f)).ToArray();
-
-            if (OsInfo.IsNotWindows)
-            {
-                folders = subFolders.Select(f => Path.Combine(@"/Test/TV", f)).ToArray();
-            }
+            var folders = subFolders.Select(f => Path.Combine(rootFolderPath, f)).ToArray();
 
             Mocker.GetMock<IRootFolderRepository>()
                   .Setup(s => s.Get(It.IsAny<int>()))
                   .Returns(rootFolder);
 
-            Mocker.GetMock<IMediaRepository>()
-                  .Setup(s => s.AllMoviePaths())
+            Mocker.GetMock<ISeriesRepository>()
+                  .Setup(s => s.AllSeriesPaths())
                   .Returns(new Dictionary<int, string>());
 
             Mocker.GetMock<IDiskProvider>()
@@ -151,108 +139,6 @@ namespace NzbDrone.Core.Test.RootFolderTests
 
             unmappedFolders.Count.Should().BeGreaterThan(0);
             unmappedFolders.Should().NotContain(u => u.Name == subFolder);
-        }
-
-        [TestCase("")]
-        [TestCase(null)]
-        public void should_handle_non_configured_recycle_bin(string recycleBinPath)
-        {
-            var rootFolder = Builder<RootFolder>.CreateNew()
-                .With(r => r.Path = @"C:\Test\TV")
-                .Build();
-            if (OsInfo.IsNotWindows)
-            {
-                rootFolder = Builder<RootFolder>.CreateNew()
-                    .With(r => r.Path = @"/Test/TV")
-                    .Build();
-            }
-
-            var subFolders = new[]
-            {
-                "Series1",
-                "Series2",
-                "Series3"
-            };
-
-            var folders = subFolders.Select(f => Path.Combine(@"C:\Test\TV", f)).ToArray();
-
-            if (OsInfo.IsNotWindows)
-            {
-                folders = subFolders.Select(f => Path.Combine(@"/Test/TV", f)).ToArray();
-            }
-
-            Mocker.GetMock<IConfigService>()
-                .Setup(s => s.RecycleBin)
-                .Returns(recycleBinPath);
-
-            Mocker.GetMock<IRootFolderRepository>()
-                .Setup(s => s.Get(It.IsAny<int>()))
-                .Returns(rootFolder);
-
-            Mocker.GetMock<IMediaRepository>()
-                .Setup(s => s.AllMoviePaths())
-                .Returns(new Dictionary<int, string>());
-
-            Mocker.GetMock<IDiskProvider>()
-                .Setup(s => s.GetDirectories(rootFolder.Path))
-                .Returns(folders);
-
-            var unmappedFolders = Subject.Get(rootFolder.Id, true).UnmappedFolders;
-
-            unmappedFolders.Count.Should().Be(3);
-        }
-
-        [Test]
-        public void should_exclude_recycle_bin()
-        {
-            var rootFolder = Builder<RootFolder>.CreateNew()
-                .With(r => r.Path = @"C:\Test\TV")
-                .Build();
-
-            if (OsInfo.IsNotWindows)
-            {
-                rootFolder = Builder<RootFolder>.CreateNew()
-                    .With(r => r.Path = @"/Test/TV")
-                    .Build();
-            }
-
-            var subFolders = new[]
-            {
-                "Series1",
-                "Series2",
-                "Series3",
-                "BIN"
-            };
-
-            var folders = subFolders.Select(f => Path.Combine(@"C:\Test\TV", f)).ToArray();
-
-            if (OsInfo.IsNotWindows)
-            {
-                folders = subFolders.Select(f => Path.Combine(@"/Test/TV", f)).ToArray();
-            }
-
-            var recycleFolder = Path.Combine(OsInfo.IsNotWindows ? @"/Test/TV" : @"C:\Test\TV", "BIN");
-
-            Mocker.GetMock<IConfigService>()
-                .Setup(s => s.RecycleBin)
-                .Returns(recycleFolder);
-
-            Mocker.GetMock<IRootFolderRepository>()
-                .Setup(s => s.Get(It.IsAny<int>()))
-                .Returns(rootFolder);
-
-            Mocker.GetMock<IMediaRepository>()
-                .Setup(s => s.AllMoviePaths())
-                .Returns(new Dictionary<int, string>());
-
-            Mocker.GetMock<IDiskProvider>()
-                .Setup(s => s.GetDirectories(rootFolder.Path))
-                .Returns(folders);
-
-            var unmappedFolders = Subject.Get(rootFolder.Id, true).UnmappedFolders;
-
-            unmappedFolders.Count.Should().Be(3);
-            unmappedFolders.Should().NotContain(u => u.Name == "BIN");
         }
     }
 }

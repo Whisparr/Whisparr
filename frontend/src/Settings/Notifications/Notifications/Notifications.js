@@ -5,7 +5,6 @@ import FieldSet from 'Components/FieldSet';
 import Icon from 'Components/Icon';
 import PageSectionContent from 'Components/Page/PageSectionContent';
 import { icons } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import AddNotificationModal from './AddNotificationModal';
 import EditNotificationModalConnector from './EditNotificationModalConnector';
 import Notification from './Notification';
@@ -59,9 +58,9 @@ class Notifications extends Component {
     } = this.state;
 
     return (
-      <FieldSet legend={translate('Connections')}>
+      <FieldSet legend="Connections">
         <PageSectionContent
-          errorMessage={translate('UnableToLoadNotifications')}
+          errorMessage="Unable to load Notifications"
           {...otherProps}
         >
           <div className={styles.notifications}>

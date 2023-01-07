@@ -5,7 +5,7 @@ import FieldSet from 'Components/FieldSet';
 import Icon from 'Components/Icon';
 import PageSectionContent from 'Components/Page/PageSectionContent';
 import { icons } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
+import sortByName from 'Utilities/Array/sortByName';
 import AddImportListModal from './AddImportListModal';
 import EditImportListModalConnector from './EditImportListModalConnector';
 import ImportList from './ImportList';
@@ -32,10 +32,10 @@ class ImportLists extends Component {
     this.setState({ isAddImportListModalOpen: true });
   };
 
-  onAddImportListModalClose = ({ importListSelected = false } = {}) => {
+  onAddImportListModalClose = ({ listSelected = false } = {}) => {
     this.setState({
       isAddImportListModalOpen: false,
-      isEditImportListModalOpen: importListSelected
+      isEditImportListModalOpen: listSelected
     });
   };
 
@@ -59,14 +59,16 @@ class ImportLists extends Component {
     } = this.state;
 
     return (
-      <FieldSet legend={translate('Lists')}>
+      <FieldSet
+        legend="Import Lists"
+      >
         <PageSectionContent
-          errorMessage={translate('UnableToLoadLists')}
+          errorMessage="Unable to load Lists"
           {...otherProps}
         >
-          <div className={styles.importLists}>
+          <div className={styles.lists}>
             {
-              items.map((item) => {
+              items.sort(sortByName).map((item) => {
                 return (
                   <ImportList
                     key={item.id}
@@ -78,7 +80,7 @@ class ImportLists extends Component {
             }
 
             <Card
-              className={styles.addImportList}
+              className={styles.addList}
               onPress={this.onAddImportListPress}
             >
               <div className={styles.center}>

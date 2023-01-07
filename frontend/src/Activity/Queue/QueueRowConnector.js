@@ -3,22 +3,25 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import { grabQueueItem, removeQueueItem } from 'Store/Actions/queueActions';
-import createMovieSelector from 'Store/Selectors/createMovieSelector';
+import createEpisodeSelector from 'Store/Selectors/createEpisodeSelector';
+import createSeriesSelector from 'Store/Selectors/createSeriesSelector';
 import createUISettingsSelector from 'Store/Selectors/createUISettingsSelector';
 import QueueRow from './QueueRow';
 
 function createMapStateToProps() {
   return createSelector(
-    createMovieSelector(),
+    createSeriesSelector(),
+    createEpisodeSelector(),
     createUISettingsSelector(),
-    (movie, uiSettings) => {
+    (series, episode, uiSettings) => {
       const result = {
         showRelativeDates: uiSettings.showRelativeDates,
         shortDateFormat: uiSettings.shortDateFormat,
         timeFormat: uiSettings.timeFormat
       };
 
-      result.movie = movie;
+      result.series = series;
+      result.episode = episode;
 
       return result;
     }
@@ -59,7 +62,7 @@ class QueueRowConnector extends Component {
 
 QueueRowConnector.propTypes = {
   id: PropTypes.number.isRequired,
-  movie: PropTypes.object,
+  episode: PropTypes.object,
   grabQueueItem: PropTypes.func.isRequired,
   removeQueueItem: PropTypes.func.isRequired
 };

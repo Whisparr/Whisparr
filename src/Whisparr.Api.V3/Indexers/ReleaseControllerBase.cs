@@ -1,16 +1,16 @@
 using System;
 using System.Collections.Generic;
 using NzbDrone.Core.DecisionEngine;
-using NzbDrone.Core.Profiles;
+using NzbDrone.Core.Profiles.Qualities;
 using Whisparr.Http.REST;
 
 namespace Whisparr.Api.V3.Indexers
 {
     public abstract class ReleaseControllerBase : RestController<ReleaseResource>
     {
-        private readonly Profile _qualityProfile;
+        private readonly QualityProfile _qualityProfile;
 
-        public ReleaseControllerBase(IProfileService qualityProfileService)
+        public ReleaseControllerBase(IQualityProfileService qualityProfileService)
         {
             _qualityProfile = qualityProfileService.GetDefaultProfile(string.Empty);
         }

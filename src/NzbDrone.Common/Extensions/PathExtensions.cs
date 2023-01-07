@@ -13,7 +13,6 @@ namespace NzbDrone.Common.Extensions
     {
         private const string APP_CONFIG_FILE = "config.xml";
         private const string DB = "whisparr.db";
-        private const string DB_OLD = "nzbdrone.db";
         private const string DB_RESTORE = "whisparr.restore";
         private const string LOG_DB = "logs.db";
         private const string NLOG_CONFIG_FILE = "nlog.config";
@@ -35,7 +34,7 @@ namespace NzbDrone.Common.Extensions
 
             var info = new FileInfo(path.Trim());
 
-            //UNC
+            // UNC
             if (OsInfo.IsWindows && info.FullName.StartsWith(@"\\"))
             {
                 return info.FullName.TrimEnd('/', '\\', ' ');
@@ -168,7 +167,7 @@ namespace NzbDrone.Common.Extensions
             var parentDirInfo = dirInfo.Parent;
             if (parentDirInfo == null)
             {
-                //Drive letter
+                // Drive letter
                 return dirInfo.Name.ToUpper();
             }
 
@@ -267,19 +266,14 @@ namespace NzbDrone.Common.Extensions
             return substring.Substring(0, lastSeparatorIndex);
         }
 
-        public static string ProcessNameToExe(this string processName, PlatformType runtime)
+        public static string ProcessNameToExe(this string processName)
         {
-            if (OsInfo.IsWindows || runtime != PlatformType.NetCore)
+            if (OsInfo.IsWindows)
             {
                 processName += ".exe";
             }
 
             return processName;
-        }
-
-        public static string ProcessNameToExe(this string processName)
-        {
-            return processName.ProcessNameToExe(PlatformInfo.Platform);
         }
 
         public static string GetAppDataPath(this IAppFolderInfo appFolderInfo)
@@ -337,11 +331,6 @@ namespace NzbDrone.Common.Extensions
             return Path.Combine(GetUpdateBackUpAppDataFolder(appFolderInfo), DB);
         }
 
-        public static string GetV0UpdateBackupDatabase(this IAppFolderInfo appFolderInfo)
-        {
-            return Path.Combine(GetUpdateBackUpAppDataFolder(appFolderInfo), DB_OLD);
-        }
-
         public static string GetUpdatePackageFolder(this IAppFolderInfo appFolderInfo)
         {
             return Path.Combine(GetUpdateSandboxFolder(appFolderInfo), UPDATE_PACKAGE_FOLDER_NAME);
@@ -352,19 +341,14 @@ namespace NzbDrone.Common.Extensions
             return Path.Combine(GetUpdatePackageFolder(appFolderInfo), UPDATE_CLIENT_FOLDER_NAME);
         }
 
-        public static string GetUpdateClientExePath(this IAppFolderInfo appFolderInfo, PlatformType runtime)
+        public static string GetUpdateClientExePath(this IAppFolderInfo appFolderInfo)
         {
-            return Path.Combine(GetUpdateSandboxFolder(appFolderInfo), UPDATE_CLIENT_EXE_NAME).ProcessNameToExe(runtime);
+            return Path.Combine(GetUpdateSandboxFolder(appFolderInfo), UPDATE_CLIENT_EXE_NAME).ProcessNameToExe();
         }
 
         public static string GetDatabase(this IAppFolderInfo appFolderInfo)
         {
             return Path.Combine(GetAppDataPath(appFolderInfo), DB);
-        }
-
-        public static string GetV0Database(this IAppFolderInfo appFolderInfo)
-        {
-            return Path.Combine(GetAppDataPath(appFolderInfo), DB_OLD);
         }
 
         public static string GetDatabaseRestore(this IAppFolderInfo appFolderInfo)

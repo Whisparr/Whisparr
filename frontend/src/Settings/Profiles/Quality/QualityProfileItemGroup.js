@@ -7,7 +7,6 @@ import Icon from 'Components/Icon';
 import Label from 'Components/Label';
 import IconButton from 'Components/Link/IconButton';
 import { icons } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import QualityProfileItemDragSource from './QualityProfileItemDragSource';
 import styles from './QualityProfileItemGroup.css';
 
@@ -78,7 +77,7 @@ class QualityProfileItemGroup extends Component {
                 <IconButton
                   className={styles.deleteGroupButton}
                   name={icons.UNGROUP}
-                  title={translate('Ungroup')}
+                  title="Ungroup"
                   onPress={this.onDeleteGroupPress}
                 />
 
@@ -134,7 +133,7 @@ class QualityProfileItemGroup extends Component {
                 <Icon
                   className={styles.dragIcon}
                   name={icons.REORDER}
-                  title={translate('Reorder')}
+                  title="Reorder"
                 />
               </div>
             )

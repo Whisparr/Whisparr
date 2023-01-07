@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using System.Threading;
-using Microsoft.Extensions.Configuration;
 using NLog;
 using Npgsql;
 using NUnit.Framework;
@@ -10,6 +8,7 @@ using NzbDrone.Core.Datastore.Migration.Framework;
 using NzbDrone.Core.Indexers.Newznab;
 using NzbDrone.Test.Common;
 using NzbDrone.Test.Common.Datastore;
+using Whisparr.Api.V3.Indexers;
 using Whisparr.Http.ClientSchema;
 
 namespace NzbDrone.Integration.Test
@@ -21,7 +20,7 @@ namespace NzbDrone.Integration.Test
 
         protected NzbDroneRunner _runner;
 
-        public override string MovieRootFolder => GetTempDirectory("MovieRootFolder");
+        public override string SeriesRootFolder => GetTempDirectory("SeriesRootFolder");
 
         protected int Port { get; private set; }
 

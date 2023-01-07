@@ -1,10 +1,15 @@
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
 using NzbDrone.Common.Cache;
 using NzbDrone.Common.Messaging;
 using NzbDrone.Core.HealthCheck;
 using NzbDrone.Core.Test.Framework;
+using NzbDrone.Core.Tv.Events;
 
 namespace NzbDrone.Core.Test.HealthCheck
 {
@@ -19,10 +24,6 @@ namespace NzbDrone.Core.Test.HealthCheck
 
             Mocker.SetConstant<IEnumerable<IProvideHealthCheck>>(new[] { _healthCheck });
             Mocker.SetConstant<ICacheManager>(Mocker.Resolve<CacheManager>());
-
-            Mocker.GetMock<IServerSideNotificationService>()
-                .Setup(v => v.GetServerChecks())
-                .Returns(new List<Core.HealthCheck.HealthCheck>());
         }
 
         [Test]

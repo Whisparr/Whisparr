@@ -16,6 +16,11 @@ namespace NzbDrone.Core.Test.MediaCoverTests
         [SetUp]
         public void SetUp()
         {
+            if (PlatformInfo.GetVersion() < new Version(5, 8))
+            {
+                Assert.Inconclusive("Not supported on Mono < 5.8");
+            }
+
             Mocker.GetMock<IDiskProvider>()
                   .Setup(v => v.FileExists(It.IsAny<string>()))
                   .Returns<string>(s => File.Exists(s));

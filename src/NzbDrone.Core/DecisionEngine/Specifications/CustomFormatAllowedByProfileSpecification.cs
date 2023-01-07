@@ -9,14 +9,14 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
         public SpecificationPriority Priority => SpecificationPriority.Default;
         public RejectionType Type => RejectionType.Permanent;
 
-        public virtual Decision IsSatisfiedBy(RemoteMovie subject, SearchCriteriaBase searchCriteria)
+        public virtual Decision IsSatisfiedBy(RemoteEpisode subject, SearchCriteriaBase searchCriteria)
         {
-            var minScore = subject.Movie.Profile.MinFormatScore;
+            var minScore = subject.Series.QualityProfile.Value.MinFormatScore;
             var score = subject.CustomFormatScore;
 
             if (score < minScore)
             {
-                return Decision.Reject("Custom Formats {0} have score {1} below Movie's minimum {2}", subject.CustomFormats.ConcatToString(), score, minScore);
+                return Decision.Reject("Custom Formats {0} have score {1} below Series profile minimum {2}", subject.CustomFormats.ConcatToString(), score, minScore);
             }
 
             return Decision.Accept();

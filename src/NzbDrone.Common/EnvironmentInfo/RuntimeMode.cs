@@ -1,4 +1,4 @@
-namespace NzbDrone.Common.EnvironmentInfo
+﻿namespace NzbDrone.Common.EnvironmentInfo
 {
     public enum RuntimeMode
     {

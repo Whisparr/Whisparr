@@ -2,9 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Link from 'Components/Link/Link';
 import { inputTypes } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import AutoCompleteInput from './AutoCompleteInput';
-import AvailabilitySelectInput from './AvailabilitySelectInput';
 import CaptchaInputConnector from './CaptchaInputConnector';
 import CheckInput from './CheckInput';
 import DeviceInputConnector from './DeviceInputConnector';
@@ -12,10 +10,9 @@ import DownloadClientSelectInputConnector from './DownloadClientSelectInputConne
 import EnhancedSelectInput from './EnhancedSelectInput';
 import EnhancedSelectInputConnector from './EnhancedSelectInputConnector';
 import FormInputHelpText from './FormInputHelpText';
-import IndexerFlagsSelectInputConnector from './IndexerFlagsSelectInputConnector';
+import IndexerSelectInputConnector from './IndexerSelectInputConnector';
 import KeyValueListInput from './KeyValueListInput';
-import LanguageSelectInputConnector from './LanguageSelectInputConnector';
-import MovieMonitoredSelectInput from './MovieMonitoredSelectInput';
+import MonitorEpisodesSelectInput from './MonitorEpisodesSelectInput';
 import NumberInput from './NumberInput';
 import OAuthInputConnector from './OAuthInputConnector';
 import PasswordInput from './PasswordInput';
@@ -35,9 +32,6 @@ function getComponent(type) {
     case inputTypes.AUTO_COMPLETE:
       return AutoCompleteInput;
 
-    case inputTypes.AVAILABILITY_SELECT:
-      return AvailabilitySelectInput;
-
     case inputTypes.CAPTCHA:
       return CaptchaInputConnector;
 
@@ -49,6 +43,9 @@ function getComponent(type) {
 
     case inputTypes.KEY_VALUE_LIST:
       return KeyValueListInput;
+
+    case inputTypes.MONITOR_EPISODES_SELECT:
+      return MonitorEpisodesSelectInput;
 
     case inputTypes.NUMBER:
       return NumberInput;
@@ -65,26 +62,21 @@ function getComponent(type) {
     case inputTypes.QUALITY_PROFILE_SELECT:
       return QualityProfileSelectInputConnector;
 
-    case inputTypes.MOVIE_MONITORED_SELECT:
-      return MovieMonitoredSelectInput;
-
-    case inputTypes.ROOT_FOLDER_SELECT:
-      return RootFolderSelectInputConnector;
-
-    case inputTypes.INDEXER_FLAGS_SELECT:
-      return IndexerFlagsSelectInputConnector;
+    case inputTypes.INDEXER_SELECT:
+      return IndexerSelectInputConnector;
 
     case inputTypes.DOWNLOAD_CLIENT_SELECT:
       return DownloadClientSelectInputConnector;
 
-    case inputTypes.LANGUAGE_SELECT:
-      return LanguageSelectInputConnector;
+    case inputTypes.ROOT_FOLDER_SELECT:
+      return RootFolderSelectInputConnector;
 
     case inputTypes.SELECT:
       return EnhancedSelectInput;
 
     case inputTypes.DYNAMIC_SELECT:
       return EnhancedSelectInputConnector;
+
     case inputTypes.TAG:
       return TagInputConnector;
 
@@ -176,7 +168,7 @@ function FormInputGroup(props) {
           <Icon
           name={icons.UNSAVED_SETTING}
           className={styles.pendingChangesIcon}
-          title={translate('ChangeHasNotBeenSavedYet')}
+          title="Change has not been saved yet"
           />
           }
         </div> */}
@@ -219,7 +211,7 @@ function FormInputGroup(props) {
           <Link
             to={helpLink}
           >
-            {translate('MoreInfo')}
+            More Info
           </Link>
       }
 

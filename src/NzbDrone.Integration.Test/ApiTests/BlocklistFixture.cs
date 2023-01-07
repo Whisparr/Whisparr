@@ -1,24 +1,25 @@
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
-using Whisparr.Api.V3.Movies;
+using Whisparr.Api.V3.Blocklist;
+using Whisparr.Api.V3.Series;
 
 namespace NzbDrone.Integration.Test.ApiTests
 {
     [TestFixture]
     public class BlocklistFixture : IntegrationTest
     {
-        private MovieResource _movie;
+        private SeriesResource _series;
 
         [Test]
         [Ignore("Adding to blocklist not supported")]
         public void should_be_able_to_add_to_blocklist()
         {
-            _movie = EnsureMovie(11, "The Blocklist");
+            _series = EnsureSeries(266189, "The Blacklist");
 
-            Blocklist.Post(new Whisparr.Api.V3.Blocklist.BlocklistResource
+            Blocklist.Post(new BlocklistResource
             {
-                MovieId = _movie.Id,
-                SourceTitle = "Blocklist.S01E01.Brought.To.You.By-BoomBoxHD"
+                SeriesId = _series.Id,
+                SourceTitle = "Blacklist.S01E01.Brought.To.You.By-BoomBoxHD"
             });
         }
 

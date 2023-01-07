@@ -1,4 +1,4 @@
-using NzbDrone.Core.ThingiProvider.Status;
+﻿using NzbDrone.Core.ThingiProvider.Status;
 
 namespace NzbDrone.Core.Download
 {

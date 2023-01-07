@@ -1,9 +1,10 @@
+import React from 'react';
 import { createAction } from 'redux-actions';
-import { filterTypes, sortDirections } from 'Helpers/Props';
+import Icon from 'Components/Icon';
+import { filterTypes, icons, sortDirections } from 'Helpers/Props';
 import { createThunk, handleThunks } from 'Store/thunks';
 import createAjaxRequest from 'Utilities/createAjaxRequest';
 import serverSideCollectionHandlers from 'Utilities/serverSideCollectionHandlers';
-import translate from 'Utilities/String/translate';
 import { updateItem } from './baseActions';
 import createHandleActions from './Creators/createHandleActions';
 import createServerSideCollectionHandlers from './Creators/createServerSideCollectionHandlers';
@@ -30,63 +31,80 @@ export const defaultState = {
   columns: [
     {
       name: 'eventType',
-      columnLabel: translate('EventType'),
+      columnLabel: 'Event Type',
       isVisible: true,
       isModifiable: false
     },
     {
-      name: 'movies.sortTitle',
-      label: translate('Movie'),
+      name: 'series.sortTitle',
+      label: 'Series',
       isSortable: true,
+      isVisible: true
+    },
+    {
+      name: 'episode',
+      label: 'Episode',
+      isVisible: true
+    },
+    {
+      name: 'episodes.title',
+      label: 'Episode Title',
       isVisible: true
     },
     {
       name: 'languages',
-      label: translate('Languages'),
-      isSortable: true,
-      isVisible: true
+      label: 'Languages',
+      isVisible: false
     },
     {
       name: 'quality',
-      label: translate('Quality'),
-      isSortable: true,
+      label: 'Quality',
       isVisible: true
     },
     {
       name: 'customFormats',
-      label: translate('Formats'),
+      label: 'Formats',
       isSortable: false,
       isVisible: true
     },
     {
       name: 'date',
-      label: translate('Date'),
+      label: 'Date',
       isSortable: true,
       isVisible: true
     },
     {
       name: 'downloadClient',
-      label: translate('DownloadClient'),
+      label: 'Download Client',
       isVisible: false
     },
     {
       name: 'indexer',
-      label: translate('Indexer'),
+      label: 'Indexer',
       isVisible: false
     },
     {
       name: 'releaseGroup',
-      label: translate('ReleaseGroup'),
+      label: 'Release Group',
       isVisible: false
     },
     {
       name: 'sourceTitle',
-      label: translate('SourceTitle'),
+      label: 'Source Title',
+      isVisible: false
+    },
+    {
+      name: 'customFormatScore',
+      columnLabel: 'Custom Format Score',
+      label: React.createElement(Icon, {
+        name: icons.SCORE,
+        title: 'Custom format score'
+      }),
       isVisible: false
     },
     {
       name: 'details',
-      columnLabel: translate('Details'),
+      columnLabel: 'Details',
       isVisible: true,
       isModifiable: false
     }
@@ -97,12 +115,12 @@ export const defaultState = {
   filters: [
     {
       key: 'all',
-      label: translate('All'),
+      label: 'All',
       filters: []
     },
     {
       key: 'grabbed',
-      label: translate('Grabbed'),
+      label: 'Grabbed',
       filters: [
         {
           key: 'eventType',
@@ -113,7 +131,7 @@ export const defaultState = {
     },
     {
       key: 'imported',
-      label: translate('Imported'),
+      label: 'Imported',
       filters: [
         {
           key: 'eventType',
@@ -124,7 +142,7 @@ export const defaultState = {
     },
     {
       key: 'failed',
-      label: translate('Failed'),
+      label: 'Failed',
       filters: [
         {
           key: 'eventType',
@@ -135,7 +153,18 @@ export const defaultState = {
     },
     {
       key: 'deleted',
-      label: translate('Deleted'),
+      label: 'Deleted',
+      filters: [
+        {
+          key: 'eventType',
+          value: '5',
+          type: filterTypes.EQUAL
+        }
+      ]
+    },
+    {
+      key: 'renamed',
+      label: 'Renamed',
       filters: [
         {
           key: 'eventType',
@@ -145,23 +174,12 @@ export const defaultState = {
       ]
     },
     {
-      key: 'renamed',
-      label: translate('Renamed'),
-      filters: [
-        {
-          key: 'eventType',
-          value: '8',
-          type: filterTypes.EQUAL
-        }
-      ]
-    },
-    {
       key: 'ignored',
-      label: translate('Ignored'),
+      label: 'Ignored',
       filters: [
         {
           key: 'eventType',
-          value: '9',
+          value: '7',
           type: filterTypes.EQUAL
         }
       ]

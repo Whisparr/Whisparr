@@ -51,7 +51,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.Blackhole
                 .Returns(() => new FileStream(GetTempFilePath(), FileMode.Create));
 
             Mocker.GetMock<IDiskScanService>().Setup(c => c.FilterPaths(It.IsAny<string>(), It.IsAny<IEnumerable<string>>(), It.IsAny<bool>()))
-                  .Returns<string, IEnumerable<string>, bool>((b, s, e) => s.ToList());
+                  .Returns<string, IEnumerable<string>, bool>((b, s, c) => s.ToList());
         }
 
         protected void GivenFailedDownload()
@@ -117,9 +117,9 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.Blackhole
         [Test]
         public void Download_should_download_file_if_it_doesnt_exist()
         {
-            var remoteMovie = CreateRemoteMovie();
+            var remoteEpisode = CreateRemoteEpisode();
 
-            Subject.Download(remoteMovie);
+            Subject.Download(remoteEpisode);
 
             Mocker.GetMock<IHttpClient>().Verify(c => c.Get(It.Is<HttpRequest>(v => v.Url.FullUri == _downloadUrl)), Times.Once());
             Mocker.GetMock<IDiskProvider>().Verify(c => c.OpenWriteStream(_filePath), Times.Once());
@@ -132,10 +132,10 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.Blackhole
             var illegalTitle = "Saturday Night Live - S38E08 - Jeremy Renner/Maroon 5 [SDTV]";
             var expectedFilename = Path.Combine(_blackholeFolder, "Saturday Night Live - S38E08 - Jeremy Renner+Maroon 5 [SDTV]" + Path.GetExtension(_filePath));
 
-            var remoteMovie = CreateRemoteMovie();
-            remoteMovie.Release.Title = illegalTitle;
+            var remoteEpisode = CreateRemoteEpisode();
+            remoteEpisode.Release.Title = illegalTitle;
 
-            Subject.Download(remoteMovie);
+            Subject.Download(remoteEpisode);
 
             Mocker.GetMock<IHttpClient>().Verify(c => c.Get(It.Is<HttpRequest>(v => v.Url.FullUri == _downloadUrl)), Times.Once());
             Mocker.GetMock<IDiskProvider>().Verify(c => c.OpenWriteStream(expectedFilename), Times.Once());

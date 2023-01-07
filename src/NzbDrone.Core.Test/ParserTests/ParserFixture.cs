@@ -1,10 +1,8 @@
 using System.Linq;
 using FluentAssertions;
-using FluentAssertions.Execution;
 using NUnit.Framework;
-using NzbDrone.Core.Languages;
 using NzbDrone.Core.Parser;
-using NzbDrone.Core.Parser.Model;
+using NzbDrone.Core.Qualities;
 using NzbDrone.Core.Test.Framework;
 
 namespace NzbDrone.Core.Test.ParserTests
@@ -12,237 +10,88 @@ namespace NzbDrone.Core.Test.ParserTests
     [TestFixture]
     public class ParserFixture : CoreTest
     {
-        /*Fucked-up hall of shame,
-         * WWE.Wrestlemania.27.PPV.HDTV.XviD-KYR
-         * Unreported.World.Chinas.Lost.Sons.WS.PDTV.XviD-FTP
-         * [TestCase("Big Time Rush 1x01 to 10 480i DD2 0 Sianto", "Big Time Rush", 1, new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }, 10)]
-         * [TestCase("Desparate Housewives - S07E22 - 7x23 - And Lots of Security.. [HDTV-720p].mkv", "Desparate Housewives", 7, new[] { 22, 23 }, 2)]
-         * [TestCase("S07E22 - 7x23 - And Lots of Security.. [HDTV-720p].mkv", "", 7, new[] { 22, 23 }, 2)]
-         * (Game of Thrones s03 e - "Game of Thrones Season 3 Episode 10"
-         * The.Man.of.Steel.1994-05.33.hybrid.DreamGirl-Novus-HD
-         * Superman.-.The.Man.of.Steel.1994-06.34.hybrid.DreamGirl-Novus-HD
-         * Superman.-.The.Man.of.Steel.1994-05.33.hybrid.DreamGirl-Novus-HD
-         * Constantine S1-E1-WEB-DL-1080p-NZBgeek
-         * [TestCase("Valana la Movie FRENCH BluRay 720p 2016 kjhlj", "Valana la Movie")]  Removed 2021-12-19 as this / the regex for this was breaking all movies w/ french in title
-         */
+        [TestCase("Series Title - 4x05 - Title", "seriestitle")]
+        [TestCase("Series & Title - 4x05 - Title", "seriestitle")]
+        [TestCase("Bad Format", "badformat")]
+        [TestCase("Mad Series - Season 1 [Bluray720p]", "madseries")]
+        [TestCase("Mad Series - Season 1 [Bluray1080p]", "madseries")]
+        [TestCase("The Daily Series -", "thedailyseries")]
+        [TestCase("The Series Bros. (2006)", "theseriesbros2006")]
+        [TestCase("Series (2011)", "series2011")]
+        [TestCase("Series Time S02 720p HDTV x264 CRON", "seriestime")]
+        [TestCase("Series Title 0", "seriestitle0")]
+        [TestCase("Series of the Day", "seriesday")]
+        [TestCase("Series of the Day 2", "seriesday2")]
+        [TestCase("[ www.Torrenting.com ] - Series.S03E14.720p.HDTV.X264-DIMENSION", "series")]
+        [TestCase("www.Torrenting.com - Series.S03E14.720p.HDTV.X264-DIMENSION", "series")]
+        [TestCase("Series S02E09 HDTV x264-2HD [eztv]-[rarbg.com]", "series")]
+        [TestCase("Series.911.S01.DVDRip.DD2.0.x264-DEEP", "series 911")]
+        [TestCase("www.Torrenting.org - Series.S03E14.720p.HDTV.X264-DIMENSION", "series")]
+        public void should_parse_series_name(string postTitle, string title)
+        {
+            var result = Parser.Parser.ParseSeriesName(postTitle).CleanSeriesTitle();
+            result.Should().Be(title.CleanSeriesTitle());
+        }
+
+        [TestCase("Series S03E14 720p HDTV X264-DIMENSION", "Series")]
+        [TestCase("Series.S03E14.720p.HDTV.X264-DIMENSION", "Series")]
+        [TestCase("Series-S03E14-720p-HDTV-X264-DIMENSION", "Series")]
+        [TestCase("Series_S03E14_720p_HDTV_X264-DIMENSION", "Series")]
+        [TestCase("Series 2022 S03E14 720p HDTV X264-DIMENSION", "Series", 2022)]
+        [TestCase("Series (2022) S03E14 720p HDTV X264-DIMENSION", "Series", 2022)]
+        [TestCase("Series.2022.S03E14.720p.HDTV.X264-DIMENSION", "Series", 2022)]
+        [TestCase("Series-2022-S03E14-720p-HDTV-X264-DIMENSION", "Series", 2022)]
+        [TestCase("Series_2022_S03E14_720p_HDTV_X264-DIMENSION", "Series", 2022)]
+        [TestCase("1234 S03E14 720p HDTV X264-DIMENSION", "1234")]
+        [TestCase("1234.S03E14.720p.HDTV.X264-DIMENSION", "1234")]
+        [TestCase("1234-S03E14-720p-HDTV-X264-DIMENSION", "1234")]
+        [TestCase("1234_S03E14_720p_HDTV_X264-DIMENSION", "1234")]
+        [TestCase("1234 2022 S03E14 720p HDTV X264-DIMENSION", "1234", 2022)]
+        [TestCase("1234 (2022) S03E14 720p HDTV X264-DIMENSION", "1234", 2022)]
+        [TestCase("1234.2022.S03E14.720p.HDTV.X264-DIMENSION", "1234", 2022)]
+        [TestCase("1234-2022-S03E14-720p-HDTV-X264-DIMENSION", "1234", 2022)]
+        [TestCase("1234_2022_S03E14_720p_HDTV_X264-DIMENSION", "1234", 2022)]
+        public void should_parse_series_title_info(string postTitle, string titleWithoutYear, int year = 0)
+        {
+            var seriesTitleInfo = Parser.Parser.ParseTitle(postTitle).SeriesTitleInfo;
+            seriesTitleInfo.TitleWithoutYear.Should().Be(titleWithoutYear);
+            seriesTitleInfo.Year.Should().Be(year);
+        }
 
         [Test]
         public void should_remove_accents_from_title()
         {
-            const string title = "Carniv\u00E0le";
+            const string title = "Seri\u00E0es";
 
-            title.CleanMovieTitle().Should().Be("carnivale");
+            title.CleanSeriesTitle().Should().Be("seriaes");
         }
 
-        [TestCase("The.Movie.from.U.N.C.L.E.2015.1080p.BluRay.x264-SPARKS", "The Movie from U.N.C.L.E.")]
-        [TestCase("1776.1979.EXTENDED.720p.BluRay.X264-AMIABLE", "1776")]
-        [TestCase("MY MOVIE (2016) [R][Action, Horror][720p.WEB-DL.AVC.8Bit.6ch.AC3].mkv", "MY MOVIE")]
-        [TestCase("R.I.P.D.2013.720p.BluRay.x264-SPARKS", "R.I.P.D.")]
-        [TestCase("V.H.S.2.2013.LIMITED.720p.BluRay.x264-GECKOS", "V.H.S. 2")]
-        [TestCase("This Is A Movie (1999) [IMDB #] <Genre, Genre, Genre> {ACTORS} !DIRECTOR +MORE_SILLY_STUFF_NO_ONE_NEEDS ?", "This Is A Movie")]
-        [TestCase("We Are the Movie!.2013.720p.H264.mkv", "We Are the Movie!")]
-        [TestCase("(500).Days.Of.Movie.(2009).DTS.1080p.BluRay.x264.NLsubs", "(500) Days Of Movie")]
-        [TestCase("To.Live.and.Movie.in.L.A.1985.1080p.BluRay", "To Live and Movie in L.A.")]
-        [TestCase("A.I.Artificial.Movie.(2001)", "A.I. Artificial Movie")]
-        [TestCase("A.Movie.Name.(1998)", "A Movie Name")]
-        [TestCase("www.Torrenting.com - Movie.2008.720p.X264-DIMENSION", "Movie")]
-        [TestCase("Movie: The Movie World 2013", "Movie: The Movie World")]
-        [TestCase("Movie.The.Final.Chapter.2016", "Movie The Final Chapter")]
-        [TestCase("Der.Movie.James.German.Bluray.FuckYou.Pso.Why.cant.you.follow.scene.rules.1998", "Der Movie James")]
-        [TestCase("Movie.German.DL.AC3.Dubbed..BluRay.x264-PsO", "Movie")]
-        [TestCase("Valana la Movie TRUEFRENCH BluRay 720p 2016 kjhlj", "Valana la Movie")]
-        [TestCase("Mission Movie: Rogue Movie (2015)�[XviD - Ita Ac3 - SoftSub Ita]azione, spionaggio, thriller *Prima Visione* Team mulnic Tom Cruise", "Mission Movie: Rogue Movie")]
-        [TestCase("Movie.Movie.2000.FRENCH..BluRay.-AiRLiNE", "Movie Movie")]
-        [TestCase("My Movie 1999 German Bluray", "My Movie")]
-        [TestCase("Leaving Movie by Movie (1897) [DVD].mp4", "Leaving Movie by Movie")]
-        [TestCase("Movie.2018.1080p.AMZN.WEB-DL.DD5.1.H.264-NTG", "Movie")]
-        [TestCase("Movie.Title.Imax.2018.1080p.AMZN.WEB-DL.DD5.1.H.264-NTG", "Movie Title")]
-        [TestCase("World.Movie.Z.EXTENDED.2013.German.DL.1080p.BluRay.AVC-XANOR", "World Movie Z")]
-        [TestCase("World.Movie.Z.2.EXTENDED.2013.German.DL.1080p.BluRay.AVC-XANOR", "World Movie Z 2")]
-        [TestCase("G.I.Movie.Movie.2013.THEATRiCAL.COMPLETE.BLURAY-GLiMMER", "G.I. Movie Movie")]
-        [TestCase("www.Torrenting.org - Movie.2008.720p.X264-DIMENSION", "Movie")]
-        [TestCase("The.French.Movie.2013.720p.BluRay.x264 - ROUGH[PublicHD]", "The French Movie")]
-        [TestCase("40.Years.Old.Temptations.Of.A.Married.Women.XXX.2017.DVDRIP.x264-group", "40 Years Old Temptations Of A Married Women")]
-        [TestCase("40.Years.Old.Temptations.Of.A.Married.Women.XXX.DVDRIP.x264-group", "40 Years Old Temptations Of A Married Women")]
-        public void should_parse_movie_title(string postTitle, string title)
+        [TestCase("Sonar TV - Series Title : 02 Road From Code [S04].mp4")]
+        public void should_clean_up_invalid_path_characters(string postTitle)
         {
-            Parser.Parser.ParseMovieTitle(postTitle).PrimaryMovieTitle.Should().Be(title);
+            Parser.Parser.ParseTitle(postTitle);
         }
 
-        [TestCase("Movie.Aufbruch.nach.Pandora.Extended.2009.German.DTS.720p.BluRay.x264-SoW", "Movie Aufbruch nach Pandora", "Extended", 2009)]
-        [TestCase("Drop.Movie.1994.German.AC3D.DL.720p.BluRay.x264-KLASSiGERHD", "Drop Movie", "", 1994)]
-        [TestCase("Kick.Movie.2.2013.German.DTS.DL.720p.BluRay.x264-Pate", "Kick Movie 2", "", 2013)]
-        [TestCase("Movie.Hills.2019.German.DL.AC3.Dubbed.1080p.BluRay.x264-muhHD", "Movie Hills", "", 2019)]
-        [TestCase("96.Hours.Movie.3.EXTENDED.2014.German.DL.1080p.BluRay.x264-ENCOUNTERS", "96 Hours Movie 3", "EXTENDED", 2014)]
-        [TestCase("Movie.War.Q.EXTENDED.CUT.2013.German.DL.1080p.BluRay.x264-HQX", "Movie War Q", "EXTENDED CUT", 2013)]
-        [TestCase("Sin.Movie.2005.RECUT.EXTENDED.German.DL.1080p.BluRay.x264-DETAiLS", "Sin Movie", "RECUT EXTENDED", 2005)]
-        [TestCase("2.Movie.in.L.A.1996.GERMAN.DL.720p.WEB.H264-SOV", "2 Movie in L.A.", "", 1996)]
-        [TestCase("8.2019.GERMAN.720p.BluRay.x264-UNiVERSUM", "8", "", 2019)]
-        [TestCase("Life.Movie.2014.German.DL.PAL.DVDR-ETM", "Life Movie", "", 2014)]
-        [TestCase("Joe.Movie.2.EXTENDED.EDITION.2015.German.DL.PAL.DVDR-ETM", "Joe Movie 2", "EXTENDED EDITION", 2015)]
-        [TestCase("Movie.EXTENDED.2011.HDRip.AC3.German.XviD-POE", "Movie", "EXTENDED", 2011)]
-
-        //Special cases (see description)
-        [TestCase("Movie.Klasse.von.1999.1990.German.720p.HDTV.x264-NORETAiL", "Movie Klasse von 1999", "", 1990, Description = "year in the title")]
-        [TestCase("Movie.Squad.2016.EXTENDED.German.DL.AC3.BDRip.x264-hqc", "Movie Squad", "EXTENDED", 2016, Description = "edition after year")]
-        [TestCase("Movie.and.Movie.2010.Extended.Cut.German.DTS.DL.720p.BluRay.x264-HDS", "Movie and Movie", "Extended Cut", 2010, Description = "edition after year")]
-        [TestCase("Der.Movie.James.German.Bluray.FuckYou.Pso.Why.cant.you.follow.scene.rules.1998", "Der Movie James", "", 1998, Description = "year at the end")]
-        [TestCase("Der.Movie.Eine.Unerwartete.Reise.Extended.German.720p.BluRay.x264-EXQUiSiTE", "Der Movie Eine Unerwartete Reise", "Extended", 0, Description = "no year & edition")]
-        [TestCase("Movie.Weg.des.Kriegers.EXTENDED.German.720p.BluRay.x264-EXQUiSiTE", "Movie Weg des Kriegers", "EXTENDED", 0, Description = "no year & edition")]
-        [TestCase("Die.Unfassbaren.Movie.Name.EXTENDED.German.DTS.720p.BluRay.x264-RHD", "Die Unfassbaren Movie Name", "EXTENDED", 0, Description = "no year & edition")]
-        [TestCase("Die Unfassbaren Movie Name EXTENDED German DTS 720p BluRay x264-RHD", "Die Unfassbaren Movie Name", "EXTENDED", 0, Description = "no year & edition & without dots")]
-        [TestCase("Passengers.German.DL.AC3.Dubbed..BluRay.x264-PsO", "Passengers", "", 0, Description = "no year")]
-        [TestCase("Das.A.Team.Der.Film.Extended.Cut.German.720p.BluRay.x264-ANCIENT", "Das A Team Der Film", "Extended Cut", 0, Description = "no year")]
-        [TestCase("Cars.2.German.DL.720p.BluRay.x264-EmpireHD", "Cars 2", "", 0, Description = "no year")]
-        [TestCase("Die.fantastische.Reise.des.Dr.Dolittle.2020.German.DL.LD.1080p.WEBRip.x264-PRD", "Die fantastische Reise des Dr. Dolittle", "", 2020, Description = "dot after dr")]
-        [TestCase("Der.Film.deines.Lebens.German.2011.PAL.DVDR-ETM", "Der Film deines Lebens", "", 2011, Description = "year at wrong position")]
-        [TestCase("Kick.Ass.2.2013.German.DTS.DL.720p.BluRay.x264-Pate_", "Kick Ass 2", "", 2013, Description = "underscore at the end")]
-        public void should_parse_german_movie(string postTitle, string title, string edition, int year)
+        [TestCase("[scnzbefnet][509103] 2.Developers.Series.S03E18.720p.HDTV.X264-DIMENSION", "2 Developers Series")]
+        public void should_remove_request_info_from_title(string postTitle, string title)
         {
-            ParsedMovieInfo movie = Parser.Parser.ParseMovieTitle(postTitle);
-            using (new AssertionScope())
-            {
-                movie.PrimaryMovieTitle.Should().Be(title);
-                movie.Edition.Should().Be(edition);
-                movie.Year.Should().Be(year);
-            }
+            Parser.Parser.ParseTitle(postTitle).SeriesTitle.Should().Be(title);
         }
 
-        [TestCase("L'hypothèse.du.movie.volé.AKA.The.Hypothesis.of.the.Movie.Title.1978.1080p.CINET.WEB-DL.AAC2.0.x264-Cinefeel.mkv",
-            new string[]
-            {
-                "L'hypothèse du movie volé AKA The Hypothesis of the Movie Title",
-                "L'hypothèse du movie volé",
-                "The Hypothesis of the Movie Title"
-            })]
-        [TestCase("Skjegg.AKA.Rox.Beard.1965.CD1.CRiTERiON.DVDRip.XviD-KG.avi",
-            new string[]
-            {
-                "Skjegg AKA Rox Beard",
-                "Skjegg",
-                "Rox Beard"
-            })]
-        [TestCase("Kjeller.chitai.AKA.Basement.of.Shame.1956.1080p.BluRay.x264.FLAC.1.0.mkv",
-            new string[]
-            {
-                "Kjeller chitai AKA Basement of Shame",
-                "Kjeller chitai",
-                "Basement of Shame"
-            })]
-        [TestCase("Whisparr.Under.Water.(aka.Beneath.the.Code.Freeze).1997.DVDRip.x264.CG-Grzechsin.mkv",
-            new string[]
-            {
-                "Whisparr Under Water (aka Beneath the Code Freeze)",
-                "Whisparr Under Water",
-                "Beneath the Code Freeze"
-            })]
-        [TestCase("Whisparr.prodavet. AKA.Whisparr.Shift.2005.DVDRip.x264-HANDJOB.mkv",
-            new string[]
-            {
-                "Whisparr prodavet  AKA Whisparr Shift",
-                "Whisparr prodavet",
-                "Whisparr Shift"
-            })]
-        [TestCase("AKA.2002.DVDRip.x264-HANDJOB.mkv",
-            new string[]
-            {
-                "AKA"
-            })]
-        [TestCase("KillRoyWasHere.2000.BluRay.1080p.DTS.x264.dxva-EuReKA.mkv",
-            new string[]
-            {
-                "KillRoyWasHere"
-            })]
-        [TestCase("Aka Rox (2008).avi",
-            new string[]
-            {
-                "Aka Rox"
-            })]
-        [TestCase("Return Earth to Normal 'em High aka World 2 (2022) 1080p.mp4",
-            new string[]
-            {
-                "Return Earth to Normal 'em High aka World 2",
-                "Return Earth to Normal 'em High",
-                "World 2"
-            })]
-        public void should_parse_movie_alternative_titles(string postTitle, string[] parsedTitles)
+        [TestCase("Series.S01E02.Chained.Title.mkv")]
+        [TestCase("Show - S01E01 - Title.avi")]
+        public void should_parse_quality_from_extension(string title)
         {
-            var movieInfo = Parser.Parser.ParseMovieTitle(postTitle, true);
-
-            movieInfo.MovieTitles.Count.Should().Be(parsedTitles.Length);
-
-            for (var i = 0; i < movieInfo.MovieTitles.Count; i += 1)
-            {
-                movieInfo.MovieTitles[i].Should().Be(parsedTitles[i]);
-            }
+            Parser.Parser.ParseTitle(title).Quality.Quality.Should().NotBe(Quality.Unknown);
+            Parser.Parser.ParseTitle(title).Quality.SourceDetectionSource.Should().Be(QualityDetectionSource.Extension);
+            Parser.Parser.ParseTitle(title).Quality.ResolutionDetectionSource.Should().Be(QualityDetectionSource.Extension);
         }
 
-        [TestCase("(1995) Movie Name", "Movie Name")]
-        public void should_parse_movie_folder_name(string postTitle, string title)
+        [TestCase("Series.S01E02.Chained.Title.mkv", "Series.S01E02.Chained.Title")]
+        public void should_parse_releasetitle(string path, string releaseTitle)
         {
-            Parser.Parser.ParseMovieTitle(postTitle, true).PrimaryMovieTitle.Should().Be(title);
-        }
-
-        [TestCase("1776.1979.EXTENDED.720p.BluRay.X264-AMIABLE", 1979)]
-        [TestCase("Movie Name FRENCH BluRay 720p 2016 kjhlj", 2016)]
-        [TestCase("Der.Movie.German.Bluray.FuckYou.Pso.Why.cant.you.follow.scene.rules.1998", 1998)]
-        [TestCase("Movie Name (1897) [DVD].mp4", 1897)]
-        public void should_parse_movie_year(string postTitle, int year)
-        {
-            Parser.Parser.ParseMovieTitle(postTitle).Year.Should().Be(year);
-        }
-
-        [TestCase("Movie Name (2016) {tmdbid-43074}", 43074)]
-        [TestCase("Movie Name (2016) [tmdb-43074]", 43074)]
-        [TestCase("Movie Name (2016) {tmdb-43074}", 43074)]
-        [TestCase("Movie Name (2016) {tmdb-2020}", 2020)]
-        public void should_parse_tmdb_id(string postTitle, int tmdbId)
-        {
-            Parser.Parser.ParseMovieTitle(postTitle).TmdbId.Should().Be(tmdbId);
-        }
-
-        [TestCase("The.Italian.Movie.2025.720p.BluRay.X264-AMIABLE")]
-        [TestCase("The.French.Movie.2013.720p.BluRay.x264 - ROUGH[PublicHD]")]
-        public void should_not_parse_wrong_language_in_title(string postTitle)
-        {
-            var parsed = Parser.Parser.ParseMovieTitle(postTitle, true);
-            parsed.Languages.Count.Should().Be(1);
-            parsed.Languages.First().Should().Be(Language.Unknown);
-        }
-
-        [TestCase("The.Movie.Name.2016.German.DTS.DL.720p.BluRay.x264-MULTiPLEX")]
-        public void should_not_parse_multi_language_in_releasegroup(string postTitle)
-        {
-            var parsed = Parser.Parser.ParseMovieTitle(postTitle, true);
-            parsed.Languages.Count.Should().Be(1);
-            parsed.Languages.First().Should().Be(Language.German);
-        }
-
-        [TestCase("The.Movie.Name.2016.German.Multi.DTS.DL.720p.BluRay.x264-MULTiPLEX")]
-        public void should_parse_multi_language(string postTitle)
-        {
-            var parsed = Parser.Parser.ParseMovieTitle(postTitle, true);
-            parsed.Languages.Count.Should().Be(1);
-            parsed.Languages.Should().Contain(Language.German);
-        }
-
-        [TestCase("That Italian Movie 2008 [tt1234567] 720p BluRay X264", "tt1234567")]
-        [TestCase("That Italian Movie 2008 [tt12345678] 720p BluRay X264", "tt12345678")]
-        public void should_parse_imdb_in_title(string postTitle, string imdb)
-        {
-            var parsed = Parser.Parser.ParseMovieTitle(postTitle, true);
-            parsed.ImdbId.Should().Be(imdb);
-        }
-
-        [TestCase("asfd", null)]
-        [TestCase("123", "tt0000123")]
-        [TestCase("1234567", "tt1234567")]
-        [TestCase("tt1234567", "tt1234567")]
-        [TestCase("tt12345678", "tt12345678")]
-        [TestCase("12345678", "tt12345678")]
-        public void should_normalize_imdbid(string imdbid, string normalized)
-        {
-            Parser.Parser.NormalizeImdbId(imdbid).Should().BeEquivalentTo(normalized);
+            var result = Parser.Parser.ParseTitle(path);
+            result.ReleaseTitle.Should().Be(releaseTitle);
         }
     }
 }

@@ -1,5 +1,6 @@
 using FluentValidation;
 using Newtonsoft.Json;
+using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Annotations;
 using NzbDrone.Core.ThingiProvider;
 using NzbDrone.Core.Validation;
@@ -36,14 +37,14 @@ namespace NzbDrone.Core.Notifications.Emby
         [FieldDefinition(3, Label = "API Key", Privacy = PrivacyLevel.ApiKey)]
         public string ApiKey { get; set; }
 
-        [FieldDefinition(4, Label = "Send Notifications", HelpText = "Have MediaBrowser send notfications to configured providers", Type = FieldType.Checkbox)]
+        [FieldDefinition(4, Label = "Send Notifications", HelpText = "Have MediaBrowser send notifications to configured providers", Type = FieldType.Checkbox)]
         public bool Notify { get; set; }
 
-        [FieldDefinition(5, Label = "Update Library", HelpText = "Update Library on Import, Rename or Delete?", Type = FieldType.Checkbox)]
+        [FieldDefinition(5, Label = "Update Library", HelpText = "Update Library on Import, Rename, or Delete?", Type = FieldType.Checkbox)]
         public bool UpdateLibrary { get; set; }
 
         [JsonIgnore]
-        public string Address => $"{Host}:{Port}";
+        public string Address => $"{Host.ToUrlHost()}:{Port}";
 
         public bool IsValid => !string.IsNullOrWhiteSpace(Host) && Port > 0;
 

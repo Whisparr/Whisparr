@@ -37,7 +37,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.HadoukenTests
                 DownloadedBytes = 0,
                 Progress = 0.0,
                 SavePath = "somepath",
-                Label = "whisparr"
+                Label = "whisparr-tv"
             };
 
             _downloading = new HadoukenTorrent
@@ -50,7 +50,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.HadoukenTests
                 DownloadedBytes = 100,
                 Progress = 10.0,
                 SavePath = "somepath",
-                Label = "whisparr"
+                Label = "whisparr-tv"
             };
 
             _failed = new HadoukenTorrent
@@ -64,7 +64,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.HadoukenTests
                 DownloadedBytes = 100,
                 Progress = 10.0,
                 SavePath = "somepath",
-                Label = "whisparr"
+                Label = "whisparr-tv"
             };
 
             _completed = new HadoukenTorrent
@@ -77,7 +77,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.HadoukenTests
                 DownloadedBytes = 1000,
                 Progress = 100.0,
                 SavePath = "somepath",
-                Label = "whisparr"
+                Label = "whisparr-tv"
             };
 
             Mocker.GetMock<ITorrentFileInfoReader>()
@@ -86,7 +86,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.HadoukenTests
 
             Mocker.GetMock<IHttpClient>()
                   .Setup(s => s.Get(It.IsAny<HttpRequest>()))
-                  .Returns<HttpRequest>(r => new HttpResponse(r, new HttpHeader(), Array.Empty<byte>()));
+                  .Returns<HttpRequest>(r => new HttpResponse(r, new HttpHeader(), new byte[0]));
         }
 
         protected void GivenFailedDownload()
@@ -200,9 +200,9 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.HadoukenTests
         {
             GivenSuccessfulDownload();
 
-            var remoteMovie = CreateRemoteMovie();
+            var remoteEpisode = CreateRemoteEpisode();
 
-            var id = Subject.Download(remoteMovie);
+            var id = Subject.Download(remoteEpisode);
 
             id.Should().NotBeNullOrEmpty();
         }
@@ -238,7 +238,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.HadoukenTests
                 DownloadedBytes = 1000,
                 Progress = 100.0,
                 SavePath = "somepath",
-                Label = "whisparr"
+                Label = "whisparr-tv"
             };
 
             var torrents = new HadoukenTorrent[] { torrent };
@@ -265,7 +265,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.HadoukenTests
                 DownloadedBytes = 1000,
                 Progress = 100.0,
                 SavePath = "somepath",
-                Label = "whisparr-other"
+                Label = "whisparr-tv-other"
             };
 
             var torrents = new HadoukenTorrent[] { torrent };
@@ -279,14 +279,14 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.HadoukenTests
         [Test]
         public void Download_from_magnet_link_should_return_hash_uppercase()
         {
-            var remoteMovie = CreateRemoteMovie();
+            var remoteEpisode = CreateRemoteEpisode();
 
-            remoteMovie.Release.DownloadUrl = "magnet:?xt=urn:btih:a45129e59d8750f9da982f53552b1e4f0457ee9f";
+            remoteEpisode.Release.DownloadUrl = "magnet:?xt=urn:btih:a45129e59d8750f9da982f53552b1e4f0457ee9f";
 
             Mocker.GetMock<IHadoukenProxy>()
                .Setup(v => v.AddTorrentUri(It.IsAny<HadoukenSettings>(), It.IsAny<string>()));
 
-            var result = Subject.Download(remoteMovie);
+            var result = Subject.Download(remoteEpisode);
 
             Assert.IsFalse(result.Any(c => char.IsLower(c)));
         }
@@ -294,13 +294,13 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.HadoukenTests
         [Test]
         public void Download_from_torrent_file_should_return_hash_uppercase()
         {
-            var remoteMovie = CreateRemoteMovie();
+            var remoteEpisode = CreateRemoteEpisode();
 
             Mocker.GetMock<IHadoukenProxy>()
                .Setup(v => v.AddTorrentFile(It.IsAny<HadoukenSettings>(), It.IsAny<byte[]>()))
                .Returns("hash");
 
-            var result = Subject.Download(remoteMovie);
+            var result = Subject.Download(remoteEpisode);
 
             Assert.IsFalse(result.Any(c => char.IsLower(c)));
         }

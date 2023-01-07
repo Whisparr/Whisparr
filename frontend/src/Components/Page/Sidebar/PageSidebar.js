@@ -10,7 +10,6 @@ import { icons } from 'Helpers/Props';
 import locationShape from 'Helpers/Props/Shapes/locationShape';
 import dimensions from 'Styles/Variables/dimensions';
 import HealthStatusConnector from 'System/Status/Health/HealthStatusConnector';
-import translate from 'Utilities/String/translate';
 import MessagesConnector from './Messages/MessagesConnector';
 import PageSidebarItem from './PageSidebarItem';
 import styles from './PageSidebar.css';
@@ -20,104 +19,124 @@ const SIDEBAR_WIDTH = parseInt(dimensions.sidebarWidth);
 
 const links = [
   {
-    iconName: icons.MOVIE_CONTINUING,
-    title: translate('Movies'),
+    iconName: icons.SERIES_CONTINUING,
+    title: 'Series',
     to: '/',
-    alias: '/movies',
+    alias: '/series',
     children: [
       {
-        title: translate('AddNew'),
+        title: 'Add New',
         to: '/add/new'
       },
       {
-        title: translate('ImportLibrary'),
+        title: 'Library Import',
         to: '/add/import'
       },
       {
-        title: translate('Discover'),
-        to: '/add/discover'
+        title: 'Mass Editor',
+        to: '/serieseditor'
+      },
+      {
+        title: 'Season Pass',
+        to: '/seasonpass'
       }
     ]
   },
 
   {
     iconName: icons.CALENDAR,
-    title: translate('Calendar'),
+    title: 'Calendar',
     to: '/calendar'
   },
 
   {
     iconName: icons.ACTIVITY,
-    title: translate('Activity'),
+    title: 'Activity',
     to: '/activity/queue',
     children: [
       {
-        title: translate('Queue'),
+        title: 'Queue',
         to: '/activity/queue',
         statusComponent: QueueStatusConnector
       },
       {
-        title: translate('History'),
+        title: 'History',
         to: '/activity/history'
       },
       {
-        title: translate('Blocklist'),
+        title: 'Blocklist',
         to: '/activity/blocklist'
       }
     ]
   },
 
   {
+    iconName: icons.WARNING,
+    title: 'Wanted',
+    to: '/wanted/missing',
+    children: [
+      {
+        title: 'Missing',
+        to: '/wanted/missing'
+      },
+      {
+        title: 'Cutoff Unmet',
+        to: '/wanted/cutoffunmet'
+      }
+    ]
+  },
+
+  {
     iconName: icons.SETTINGS,
-    title: translate('Settings'),
+    title: 'Settings',
     to: '/settings',
     children: [
       {
-        title: translate('MediaManagement'),
+        title: 'Media Management',
         to: '/settings/mediamanagement'
       },
       {
-        title: translate('Profiles'),
+        title: 'Profiles',
         to: '/settings/profiles'
       },
       {
-        title: translate('Quality'),
+        title: 'Quality',
         to: '/settings/quality'
       },
       {
-        title: translate('CustomFormats'),
+        title: 'Custom Formats',
         to: '/settings/customformats'
       },
       {
-        title: translate('Indexers'),
+        title: 'Indexers',
         to: '/settings/indexers'
       },
       {
-        title: translate('DownloadClients'),
+        title: 'Download Clients',
         to: '/settings/downloadclients'
       },
       {
-        title: translate('Lists'),
+        title: 'Import Lists',
         to: '/settings/importlists'
       },
       {
-        title: translate('Connect'),
+        title: 'Connect',
         to: '/settings/connect'
       },
       {
-        title: translate('Metadata'),
+        title: 'Metadata',
         to: '/settings/metadata'
       },
       {
-        title: translate('Tags'),
+        title: 'Tags',
         to: '/settings/tags'
       },
       {
-        title: translate('General'),
+        title: 'General',
         to: '/settings/general'
       },
       {
-        title: translate('UI'),
+        title: 'UI',
         to: '/settings/ui'
       }
     ]
@@ -125,32 +144,32 @@ const links = [
 
   {
     iconName: icons.SYSTEM,
-    title: translate('System'),
+    title: 'System',
     to: '/system/status',
     children: [
       {
-        title: translate('Status'),
+        title: 'Status',
         to: '/system/status',
         statusComponent: HealthStatusConnector
       },
       {
-        title: translate('Tasks'),
+        title: 'Tasks',
         to: '/system/tasks'
       },
       {
-        title: translate('Backup'),
+        title: 'Backup',
         to: '/system/backup'
       },
       {
-        title: translate('Updates'),
+        title: 'Updates',
         to: '/system/updates'
       },
       {
-        title: translate('Events'),
+        title: 'Events',
         to: '/system/events'
       },
       {
-        title: translate('LogFiles'),
+        title: 'Log Files',
         to: '/system/logs/files'
       }
     ]
@@ -482,7 +501,7 @@ class PageSidebar extends Component {
                               key={child.to}
                               title={child.title}
                               to={child.to}
-                              isActive={pathname.startsWith(child.to)}
+                              isActive={pathname === child.to}
                               isParentItem={false}
                               isChildItem={true}
                               statusComponent={child.statusComponent}

@@ -1,7 +1,8 @@
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using FluentValidation;
 using NzbDrone.Core.Annotations;
-using NzbDrone.Core.Languages;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.Validation;
 
@@ -30,13 +31,12 @@ namespace NzbDrone.Core.Indexers.FileList
 
             Categories = new int[]
             {
-                (int)FileListCategories.Movie_HD,
-                (int)FileListCategories.Movie_SD,
-                (int)FileListCategories.Movie_4K
+                (int)FileListCategories.TV_SD,
+                (int)FileListCategories.TV_HD,
+                (int)FileListCategories.TV_4K
             };
 
-            MultiLanguages = new List<int>();
-            RequiredFlags = new List<int>();
+            AnimeCategories = new int[0];
         }
 
         [FieldDefinition(0, Label = "Username", Privacy = PrivacyLevel.UserName)]
@@ -45,20 +45,17 @@ namespace NzbDrone.Core.Indexers.FileList
         [FieldDefinition(1, Label = "Passkey", Privacy = PrivacyLevel.ApiKey)]
         public string Passkey { get; set; }
 
-        [FieldDefinition(2, Type = FieldType.Select, SelectOptions = typeof(RealLanguageFieldConverter), Label = "Multi Languages", HelpText = "What languages are normally in a multi release on this indexer?", Advanced = true)]
-        public IEnumerable<int> MultiLanguages { get; set; }
-
         [FieldDefinition(3, Label = "API URL", Advanced = true, HelpText = "Do not change this unless you know what you're doing. Since your API key will be sent to that host.")]
         public string BaseUrl { get; set; }
 
-        [FieldDefinition(4, Label = "Categories", Type = FieldType.Select, SelectOptions = typeof(FileListCategories), HelpText = "Categories for use in search and feeds. If unspecified, all options are used.")]
+        [FieldDefinition(4, Label = "Categories", Type = FieldType.Select, SelectOptions = typeof(FileListCategories), HelpText = "Categories for use in search and feeds, leave blank to disable standard/daily shows")]
         public IEnumerable<int> Categories { get; set; }
 
-        [FieldDefinition(5, Type = FieldType.Number, Label = "Minimum Seeders", HelpText = "Minimum number of seeders required.", Advanced = true)]
-        public int MinimumSeeders { get; set; }
+        [FieldDefinition(5, Label = "Anime Categories", Type = FieldType.Select, SelectOptions = typeof(FileListCategories), HelpText = "Categories for use in search and feeds, leave blank to disable anime")]
+        public IEnumerable<int> AnimeCategories { get; set; }
 
-        [FieldDefinition(6, Type = FieldType.TagSelect, SelectOptions = typeof(IndexerFlags), Label = "Required Flags", HelpText = "What indexer flags are required?", HelpLink = "https://wiki.servarr.com/whisparr/settings#indexer-flags", Advanced = true)]
-        public IEnumerable<int> RequiredFlags { get; set; }
+        [FieldDefinition(6, Type = FieldType.Number, Label = "Minimum Seeders", HelpText = "Minimum number of seeders required.", Advanced = true)]
+        public int MinimumSeeders { get; set; }
 
         [FieldDefinition(7)]
         public SeedCriteriaSettings SeedCriteria { get; set; } = new SeedCriteriaSettings();
@@ -72,24 +69,16 @@ namespace NzbDrone.Core.Indexers.FileList
     public enum FileListCategories
     {
         [FieldOption]
-        Movie_SD = 1,
+        Anime = 24,
         [FieldOption]
-        Movie_DVD = 2,
+        Animation = 15,
         [FieldOption]
-        Movie_DVDRO = 3,
+        TV_4K = 27,
         [FieldOption]
-        Movie_HD = 4,
+        TV_HD = 21,
         [FieldOption]
-        Movie_HDRO = 19,
+        TV_SD = 23,
         [FieldOption]
-        Movie_BluRay = 20,
-        [FieldOption]
-        Movie_BluRay4K = 26,
-        [FieldOption]
-        Movie_3D = 25,
-        [FieldOption]
-        Movie_4K = 6,
-        [FieldOption]
-        Xxx = 7
+        Sport = 13
     }
 }

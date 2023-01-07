@@ -33,7 +33,7 @@ namespace NzbDrone.Common.Disk
         void CloneFile(string source, string destination, bool overwrite = false);
         void CopyFile(string source, string destination, bool overwrite = false);
         void MoveFile(string source, string destination, bool overwrite = false);
-        void MoveFolder(string source, string destination, bool overwrite = false);
+        void MoveFolder(string source, string destination);
         bool TryRenameFile(string source, string destination);
         bool TryCreateHardLink(string source, string destination);
         bool TryCreateRefLink(string source, string destination);
@@ -53,8 +53,7 @@ namespace NzbDrone.Common.Disk
         List<IMount> GetMounts();
         IMount GetMount(string path);
         List<DirectoryInfo> GetDirectoryInfos(string path);
-        FileInfo GetFileInfo(string path);
-        List<FileInfo> GetFileInfos(string path, SearchOption searchOption = SearchOption.TopDirectoryOnly);
+        List<FileInfo> GetFileInfos(string path);
         void RemoveEmptySubfolders(string path);
         void SaveStream(Stream stream, string path);
         bool IsValidFolderPermissionMask(string mask);

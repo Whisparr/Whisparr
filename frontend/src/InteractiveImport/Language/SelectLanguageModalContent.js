@@ -11,7 +11,6 @@ import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { inputTypes, kinds, sizes } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import styles from './SelectLanguageModalContent.css';
 
 class SelectLanguageModalContent extends Component {
@@ -67,6 +66,7 @@ class SelectLanguageModalContent extends Component {
       isPopulated,
       error,
       items,
+      modalTitle,
       onModalClose
     } = this.props;
 
@@ -77,7 +77,7 @@ class SelectLanguageModalContent extends Component {
     return (
       <ModalContent onModalClose={onModalClose}>
         <ModalHeader>
-          {translate('ManualImportSelectLanguage')}
+          {modalTitle}
         </ModalHeader>
 
         <ModalBody>
@@ -89,7 +89,7 @@ class SelectLanguageModalContent extends Component {
           {
             !isFetching && !!error &&
               <div>
-                {translate('UnableToLoadLanguages')}
+                Unable To Load Languages
               </div>
           }
 
@@ -121,14 +121,14 @@ class SelectLanguageModalContent extends Component {
 
         <ModalFooter>
           <Button onPress={onModalClose}>
-            {translate('Cancel')}
+            Cancel
           </Button>
 
           <Button
             kind={kinds.SUCCESS}
             onPress={this.onLanguageSelect}
           >
-            {translate('SelectLanguages')}
+            Select Languages
           </Button>
         </ModalFooter>
       </ModalContent>
@@ -142,6 +142,7 @@ SelectLanguageModalContent.propTypes = {
   isPopulated: PropTypes.bool.isRequired,
   error: PropTypes.object,
   items: PropTypes.arrayOf(PropTypes.object).isRequired,
+  modalTitle: PropTypes.string.isRequired,
   onLanguageSelect: PropTypes.func.isRequired,
   onModalClose: PropTypes.func.isRequired
 };

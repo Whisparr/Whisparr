@@ -10,18 +10,17 @@ import ModalHeader from 'Components/Modal/ModalHeader';
 import Table from 'Components/Table/Table';
 import TableBody from 'Components/Table/TableBody';
 import { icons, kinds, sizes } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import RecentFolderRow from './RecentFolderRow';
 import styles from './InteractiveImportSelectFolderModalContent.css';
 
 const recentFoldersColumns = [
   {
     name: 'folder',
-    label: translate('Folder')
+    label: 'Folder'
   },
   {
     name: 'lastUsed',
-    label: translate('LastUsed')
+    label: 'Last Used'
   },
   {
     name: 'actions',
@@ -68,6 +67,7 @@ class InteractiveImportSelectFolderModalContent extends Component {
     const {
       recentFolders,
       onRemoveRecentFolderPress,
+      modalTitle,
       onModalClose
     } = this.props;
 
@@ -76,7 +76,7 @@ class InteractiveImportSelectFolderModalContent extends Component {
     return (
       <ModalContent onModalClose={onModalClose}>
         <ModalHeader>
-          {translate('ManualImport')} - {translate('SelectFolder')}
+          {modalTitle} - Select Folder
         </ModalHeader>
 
         <ModalBody>
@@ -125,7 +125,7 @@ class InteractiveImportSelectFolderModalContent extends Component {
                   name={icons.QUICK}
                 />
 
-                {translate('QuickImport')}
+                Move Automatically
               </Button>
             </div>
 
@@ -142,7 +142,7 @@ class InteractiveImportSelectFolderModalContent extends Component {
                   name={icons.INTERACTIVE}
                 />
 
-                {translate('InteractiveImport')}
+                Interactive Import
               </Button>
             </div>
           </div>
@@ -150,7 +150,7 @@ class InteractiveImportSelectFolderModalContent extends Component {
 
         <ModalFooter>
           <Button onPress={onModalClose}>
-            {translate('Cancel')}
+            Cancel
           </Button>
         </ModalFooter>
       </ModalContent>
@@ -160,6 +160,7 @@ class InteractiveImportSelectFolderModalContent extends Component {
 
 InteractiveImportSelectFolderModalContent.propTypes = {
   recentFolders: PropTypes.arrayOf(PropTypes.object).isRequired,
+  modalTitle: PropTypes.string.isRequired,
   onQuickImportPress: PropTypes.func.isRequired,
   onInteractiveImportPress: PropTypes.func.isRequired,
   onRemoveRecentFolderPress: PropTypes.func.isRequired,

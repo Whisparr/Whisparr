@@ -10,7 +10,6 @@ import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { kinds } from 'Helpers/Props';
 import titleCase from 'Utilities/String/titleCase';
-import translate from 'Utilities/String/translate';
 import AddImportListItem from './AddImportListItem';
 import styles from './AddImportListModalContent.css';
 
@@ -32,47 +31,42 @@ class AddImportListModalContent extends Component {
     return (
       <ModalContent onModalClose={onModalClose}>
         <ModalHeader>
-          {translate('AddList')}
+          Add List
         </ModalHeader>
 
         <ModalBody>
           {
-            isSchemaFetching &&
-              <LoadingIndicator />
+            isSchemaFetching ?
+              <LoadingIndicator /> :
+              null
           }
 
           {
-            !isSchemaFetching && !!schemaError &&
-              <div>
-                {translate('UnableToAddANewListPleaseTryAgain')}
-              </div>
+            !isSchemaFetching && !!schemaError ?
+              <div>Unable to add a new list, please try again.</div> :
+              null
           }
 
           {
-            isSchemaPopulated && !schemaError &&
+            isSchemaPopulated && !schemaError ?
               <div>
 
                 <Alert kind={kinds.INFO}>
-                  <div>
-                    {translate('WhisparrSupportsAnyRSSMovieListsAsWellAsTheOneStatedBelow')}
-                  </div>
-                  <div>
-                    {translate('ForMoreInformationOnTheIndividualImportListsClinkOnTheInfoButtons')}
-                  </div>
+                  <div>Whisparr supports multiple lists for importing Series into the database.</div>
+                  <div>For more information on the individual lists, click on the info buttons.</div>
                 </Alert>
-
                 {
                   Object.keys(listGroups).map((key) => {
                     return (
                       <FieldSet legend={`${titleCase(key)} List`} key={key}>
-                        <div className={styles.importLists}>
+                        <div className={styles.lists}>
                           {
-                            listGroups[key].map((importList) => {
+                            listGroups[key].map((list) => {
                               return (
                                 <AddImportListItem
-                                  key={importList.implementation}
-                                  implementation={importList.implementation}
-                                  {...importList}
+                                  key={list.implementation}
+                                  implementation={list.implementation}
+                                  {...list}
                                   onImportListSelect={onImportListSelect}
                                 />
                               );
@@ -83,14 +77,15 @@ class AddImportListModalContent extends Component {
                     );
                   })
                 }
-              </div>
+              </div> :
+              null
           }
         </ModalBody>
         <ModalFooter>
           <Button
             onPress={onModalClose}
           >
-            {translate('Close')}
+            Close
           </Button>
         </ModalFooter>
       </ModalContent>

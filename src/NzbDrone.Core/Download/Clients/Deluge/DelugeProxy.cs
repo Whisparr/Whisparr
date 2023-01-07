@@ -19,7 +19,6 @@ namespace NzbDrone.Core.Download.Clients.Deluge
         string[] GetAvailablePlugins(DelugeSettings settings);
         string[] GetEnabledPlugins(DelugeSettings settings);
         string[] GetAvailableLabels(DelugeSettings settings);
-        DelugeLabel GetLabelOptions(DelugeSettings settings);
         void SetTorrentLabel(string hash, string label, DelugeSettings settings);
         void SetTorrentConfiguration(string hash, string key, object value, DelugeSettings settings);
         void SetTorrentSeedingConfiguration(string hash, TorrentSeedConfiguration seedConfiguration, DelugeSettings settings);
@@ -82,7 +81,7 @@ namespace NzbDrone.Core.Download.Clients.Deluge
             var filter = new Dictionary<string, object>();
 
             // TODO: get_torrents_status returns the files as well, which starts to cause deluge timeouts when you get enough season packs.
-            //var response = ProcessRequest<Dictionary<String, DelugeTorrent>>(settings, "core.get_torrents_status", filter, new String[0]);
+            // var response = ProcessRequest<Dictionary<String, DelugeTorrent>>(settings, "core.get_torrents_status", filter, new String[0]);
             var response = ProcessRequest<DelugeUpdateUIResult>(settings, "web.update_ui", RequiredProperties, filter);
 
             return GetTorrents(response);
@@ -93,7 +92,7 @@ namespace NzbDrone.Core.Download.Clients.Deluge
             var filter = new Dictionary<string, object>();
             filter.Add("label", label);
 
-            //var response = ProcessRequest<Dictionary<String, DelugeTorrent>>(settings, "core.get_torrents_status", filter, new String[0]);
+            // var response = ProcessRequest<Dictionary<String, DelugeTorrent>>(settings, "core.get_torrents_status", filter, new String[0]);
             var response = ProcessRequest<DelugeUpdateUIResult>(settings, "web.update_ui", RequiredProperties, filter);
 
             return GetTorrents(response);
@@ -102,10 +101,10 @@ namespace NzbDrone.Core.Download.Clients.Deluge
         public string AddTorrentFromMagnet(string magnetLink, DelugeSettings settings)
         {
             var options = new
-            {
-                add_paused = settings.AddPaused,
-                remove_at_ratio = false
-            };
+                          {
+                              add_paused = settings.AddPaused,
+                              remove_at_ratio = false
+                          };
 
             var response = ProcessRequest<string>(settings, "core.add_torrent_magnet", magnetLink, options);
 
@@ -115,10 +114,10 @@ namespace NzbDrone.Core.Download.Clients.Deluge
         public string AddTorrentFromFile(string filename, byte[] fileContent, DelugeSettings settings)
         {
             var options = new
-            {
-                add_paused = settings.AddPaused,
-                remove_at_ratio = false
-            };
+                          {
+                              add_paused = settings.AddPaused,
+                              remove_at_ratio = false
+                          };
 
             var response = ProcessRequest<string>(settings, "core.add_torrent_file", filename, fileContent, options);
 
@@ -154,13 +153,6 @@ namespace NzbDrone.Core.Download.Clients.Deluge
         public string[] GetAvailableLabels(DelugeSettings settings)
         {
             var response = ProcessRequest<string[]>(settings, "label.get_labels");
-
-            return response;
-        }
-
-        public DelugeLabel GetLabelOptions(DelugeSettings settings)
-        {
-            var response = ProcessRequest<DelugeLabel>(settings, "label.get_options", settings.MovieCategory);
 
             return response;
         }
@@ -362,7 +354,7 @@ namespace NzbDrone.Core.Download.Clients.Deluge
         {
             if (result.Torrents == null)
             {
-                return Array.Empty<DelugeTorrent>();
+                return new DelugeTorrent[0];
             }
 
             return result.Torrents.Values.ToArray();

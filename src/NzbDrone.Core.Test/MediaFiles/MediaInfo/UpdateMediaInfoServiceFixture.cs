@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using Moq;
@@ -8,8 +8,8 @@ using NzbDrone.Core.Configuration;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.MediaFiles.Events;
 using NzbDrone.Core.MediaFiles.MediaInfo;
-using NzbDrone.Core.Movies;
 using NzbDrone.Core.Test.Framework;
+using NzbDrone.Core.Tv;
 using NzbDrone.Test.Common;
 
 namespace NzbDrone.Core.Test.MediaFiles.MediaInfo
@@ -17,16 +17,16 @@ namespace NzbDrone.Core.Test.MediaFiles.MediaInfo
     [TestFixture]
     public class UpdateMediaInfoServiceFixture : CoreTest<UpdateMediaInfoService>
     {
-        private Media _movie;
+        private Series _series;
 
         [SetUp]
         public void Setup()
         {
-            _movie = new Media
-            {
-                Id = 1,
-                Path = @"C:\movie".AsOsAgnostic()
-            };
+            _series = new Series
+                      {
+                          Id = 1,
+                          Path = @"C:\series".AsOsAgnostic()
+                      };
 
             Mocker.GetMock<IConfigService>()
                   .SetupGet(s => s.EnableMediaInfo)
@@ -57,7 +57,7 @@ namespace NzbDrone.Core.Test.MediaFiles.MediaInfo
         [Test]
         public void should_skip_up_to_date_media_info()
         {
-            var movieFiles = Builder<MediaFile>.CreateListOfSize(3)
+            var episodeFiles = Builder<EpisodeFile>.CreateListOfSize(3)
                 .All()
                 .With(v => v.RelativePath = "media.mkv")
                 .TheFirst(1)
@@ -65,25 +65,25 @@ namespace NzbDrone.Core.Test.MediaFiles.MediaInfo
                 .BuildList();
 
             Mocker.GetMock<IMediaFileService>()
-                  .Setup(v => v.GetFilesByMovie(1))
-                  .Returns(movieFiles);
+                  .Setup(v => v.GetFilesBySeries(1))
+                  .Returns(episodeFiles);
 
             GivenFileExists();
             GivenSuccessfulScan();
 
-            Subject.Handle(new MovieScannedEvent(_movie));
+            Subject.Handle(new SeriesScannedEvent(_series));
 
             Mocker.GetMock<IVideoFileInfoReader>()
-                  .Verify(v => v.GetMediaInfo(Path.Combine(_movie.Path, "media.mkv")), Times.Exactly(2));
+                  .Verify(v => v.GetMediaInfo(Path.Combine(_series.Path, "media.mkv")), Times.Exactly(2));
 
             Mocker.GetMock<IMediaFileService>()
-                  .Verify(v => v.Update(It.IsAny<MediaFile>()), Times.Exactly(2));
+                  .Verify(v => v.Update(It.IsAny<EpisodeFile>()), Times.Exactly(2));
         }
 
         [Test]
         public void should_skip_not_yet_date_media_info()
         {
-            var movieFiles = Builder<MediaFile>.CreateListOfSize(3)
+            var episodeFiles = Builder<EpisodeFile>.CreateListOfSize(3)
                 .All()
                 .With(v => v.RelativePath = "media.mkv")
                 .TheFirst(1)
@@ -91,25 +91,25 @@ namespace NzbDrone.Core.Test.MediaFiles.MediaInfo
                 .BuildList();
 
             Mocker.GetMock<IMediaFileService>()
-                  .Setup(v => v.GetFilesByMovie(1))
-                  .Returns(movieFiles);
+                  .Setup(v => v.GetFilesBySeries(1))
+                  .Returns(episodeFiles);
 
             GivenFileExists();
             GivenSuccessfulScan();
 
-            Subject.Handle(new MovieScannedEvent(_movie));
+            Subject.Handle(new SeriesScannedEvent(_series));
 
             Mocker.GetMock<IVideoFileInfoReader>()
-                  .Verify(v => v.GetMediaInfo(Path.Combine(_movie.Path, "media.mkv")), Times.Exactly(2));
+                  .Verify(v => v.GetMediaInfo(Path.Combine(_series.Path, "media.mkv")), Times.Exactly(2));
 
             Mocker.GetMock<IMediaFileService>()
-                  .Verify(v => v.Update(It.IsAny<MediaFile>()), Times.Exactly(2));
+                  .Verify(v => v.Update(It.IsAny<EpisodeFile>()), Times.Exactly(2));
         }
 
         [Test]
         public void should_update_outdated_media_info()
         {
-            var movieFiles = Builder<MediaFile>.CreateListOfSize(3)
+            var episodeFiles = Builder<EpisodeFile>.CreateListOfSize(3)
                 .All()
                 .With(v => v.RelativePath = "media.mkv")
                 .TheFirst(1)
@@ -117,48 +117,48 @@ namespace NzbDrone.Core.Test.MediaFiles.MediaInfo
                 .BuildList();
 
             Mocker.GetMock<IMediaFileService>()
-                  .Setup(v => v.GetFilesByMovie(1))
-                  .Returns(movieFiles);
+                  .Setup(v => v.GetFilesBySeries(1))
+                  .Returns(episodeFiles);
 
             GivenFileExists();
             GivenSuccessfulScan();
 
-            Subject.Handle(new MovieScannedEvent(_movie));
+            Subject.Handle(new SeriesScannedEvent(_series));
 
             Mocker.GetMock<IVideoFileInfoReader>()
-                  .Verify(v => v.GetMediaInfo(Path.Combine(_movie.Path, "media.mkv")), Times.Exactly(3));
+                  .Verify(v => v.GetMediaInfo(Path.Combine(_series.Path, "media.mkv")), Times.Exactly(3));
 
             Mocker.GetMock<IMediaFileService>()
-                  .Verify(v => v.Update(It.IsAny<MediaFile>()), Times.Exactly(3));
+                  .Verify(v => v.Update(It.IsAny<EpisodeFile>()), Times.Exactly(3));
         }
 
         [Test]
         public void should_ignore_missing_files()
         {
-            var movieFiles = Builder<MediaFile>.CreateListOfSize(2)
+            var episodeFiles = Builder<EpisodeFile>.CreateListOfSize(2)
                    .All()
                    .With(v => v.RelativePath = "media.mkv")
                    .BuildList();
 
             Mocker.GetMock<IMediaFileService>()
-                  .Setup(v => v.GetFilesByMovie(1))
-                  .Returns(movieFiles);
+                  .Setup(v => v.GetFilesBySeries(1))
+                  .Returns(episodeFiles);
 
             GivenSuccessfulScan();
 
-            Subject.Handle(new MovieScannedEvent(_movie));
+            Subject.Handle(new SeriesScannedEvent(_series));
 
             Mocker.GetMock<IVideoFileInfoReader>()
                   .Verify(v => v.GetMediaInfo("media.mkv"), Times.Never());
 
             Mocker.GetMock<IMediaFileService>()
-                  .Verify(v => v.Update(It.IsAny<MediaFile>()), Times.Never());
+                  .Verify(v => v.Update(It.IsAny<EpisodeFile>()), Times.Never());
         }
 
         [Test]
         public void should_continue_after_failure()
         {
-            var movieFiles = Builder<MediaFile>.CreateListOfSize(2)
+            var episodeFiles = Builder<EpisodeFile>.CreateListOfSize(2)
                    .All()
                    .With(v => v.RelativePath = "media.mkv")
                    .TheFirst(1)
@@ -166,26 +166,26 @@ namespace NzbDrone.Core.Test.MediaFiles.MediaInfo
                    .BuildList();
 
             Mocker.GetMock<IMediaFileService>()
-                  .Setup(v => v.GetFilesByMovie(1))
-                  .Returns(movieFiles);
+                  .Setup(v => v.GetFilesBySeries(1))
+                  .Returns(episodeFiles);
 
             GivenFileExists();
             GivenSuccessfulScan();
-            GivenFailedScan(Path.Combine(_movie.Path, "media2.mkv"));
+            GivenFailedScan(Path.Combine(_series.Path, "media2.mkv"));
 
-            Subject.Handle(new MovieScannedEvent(_movie));
+            Subject.Handle(new SeriesScannedEvent(_series));
 
             Mocker.GetMock<IVideoFileInfoReader>()
-                  .Verify(v => v.GetMediaInfo(Path.Combine(_movie.Path, "media.mkv")), Times.Exactly(1));
+                  .Verify(v => v.GetMediaInfo(Path.Combine(_series.Path, "media.mkv")), Times.Exactly(1));
 
             Mocker.GetMock<IMediaFileService>()
-                  .Verify(v => v.Update(It.IsAny<MediaFile>()), Times.Exactly(1));
+                  .Verify(v => v.Update(It.IsAny<EpisodeFile>()), Times.Exactly(1));
         }
 
         [Test]
         public void should_not_update_files_if_media_info_disabled()
         {
-            var movieFiles = Builder<MediaFile>.CreateListOfSize(2)
+            var episodeFiles = Builder<EpisodeFile>.CreateListOfSize(2)
                 .All()
                 .With(v => v.RelativePath = "media.mkv")
                 .TheFirst(1)
@@ -193,8 +193,8 @@ namespace NzbDrone.Core.Test.MediaFiles.MediaInfo
                 .BuildList();
 
             Mocker.GetMock<IMediaFileService>()
-                .Setup(v => v.GetFilesByMovie(1))
-                .Returns(movieFiles);
+                .Setup(v => v.GetFilesBySeries(1))
+                .Returns(episodeFiles);
 
             Mocker.GetMock<IConfigService>()
                 .SetupGet(s => s.EnableMediaInfo)
@@ -203,19 +203,19 @@ namespace NzbDrone.Core.Test.MediaFiles.MediaInfo
             GivenFileExists();
             GivenSuccessfulScan();
 
-            Subject.Handle(new MovieScannedEvent(_movie));
+            Subject.Handle(new SeriesScannedEvent(_series));
 
             Mocker.GetMock<IVideoFileInfoReader>()
                 .Verify(v => v.GetMediaInfo(It.IsAny<string>()), Times.Never());
 
             Mocker.GetMock<IMediaFileService>()
-                .Verify(v => v.Update(It.IsAny<MediaFile>()), Times.Never());
+                .Verify(v => v.Update(It.IsAny<EpisodeFile>()), Times.Never());
         }
 
         [Test]
         public void should_not_update_if_media_info_disabled()
         {
-            var movieFile = Builder<MediaFile>.CreateNew()
+            var episodeFile = Builder<EpisodeFile>.CreateNew()
                 .With(v => v.RelativePath = "media.mkv")
                 .Build();
 
@@ -226,19 +226,19 @@ namespace NzbDrone.Core.Test.MediaFiles.MediaInfo
             GivenFileExists();
             GivenSuccessfulScan();
 
-            Subject.Update(movieFile, _movie);
+            Subject.Update(episodeFile, _series);
 
             Mocker.GetMock<IVideoFileInfoReader>()
                 .Verify(v => v.GetMediaInfo(It.IsAny<string>()), Times.Never());
 
             Mocker.GetMock<IMediaFileService>()
-                .Verify(v => v.Update(It.IsAny<MediaFile>()), Times.Never());
+                .Verify(v => v.Update(It.IsAny<EpisodeFile>()), Times.Never());
         }
 
         [Test]
         public void should_update_media_info()
         {
-            var movieFile = Builder<MediaFile>.CreateNew()
+            var episodeFile = Builder<EpisodeFile>.CreateNew()
                 .With(v => v.RelativePath = "media.mkv")
                 .With(e => e.MediaInfo = new MediaInfoModel { SchemaRevision = 3 })
                 .Build();
@@ -246,46 +246,46 @@ namespace NzbDrone.Core.Test.MediaFiles.MediaInfo
             GivenFileExists();
             GivenSuccessfulScan();
 
-            Subject.Update(movieFile, _movie);
+            Subject.Update(episodeFile, _series);
 
             Mocker.GetMock<IVideoFileInfoReader>()
-                .Verify(v => v.GetMediaInfo(Path.Combine(_movie.Path, "media.mkv")), Times.Once());
+                .Verify(v => v.GetMediaInfo(Path.Combine(_series.Path, "media.mkv")), Times.Once());
 
             Mocker.GetMock<IMediaFileService>()
-                .Verify(v => v.Update(movieFile), Times.Once());
+                .Verify(v => v.Update(episodeFile), Times.Once());
         }
 
         [Test]
         public void should_not_update_media_info_if_new_info_is_null()
         {
-            var movieFile = Builder<MediaFile>.CreateNew()
+            var episodeFile = Builder<EpisodeFile>.CreateNew()
                 .With(v => v.RelativePath = "media.mkv")
                 .With(e => e.MediaInfo = new MediaInfoModel { SchemaRevision = 3 })
                 .Build();
 
             GivenFileExists();
-            GivenFailedScan(Path.Combine(_movie.Path, "media.mkv"));
+            GivenFailedScan(Path.Combine(_series.Path, "media.mkv"));
 
-            Subject.Update(movieFile, _movie);
+            Subject.Update(episodeFile, _series);
 
-            movieFile.MediaInfo.Should().NotBeNull();
+            episodeFile.MediaInfo.Should().NotBeNull();
         }
 
         [Test]
-        public void should_not_save_movie_file_if_new_info_is_null()
+        public void should_not_save_episode_file_if_new_info_is_null()
         {
-            var movieFile = Builder<MediaFile>.CreateNew()
+            var episodeFile = Builder<EpisodeFile>.CreateNew()
                 .With(v => v.RelativePath = "media.mkv")
                 .With(e => e.MediaInfo = new MediaInfoModel { SchemaRevision = 3 })
                 .Build();
 
             GivenFileExists();
-            GivenFailedScan(Path.Combine(_movie.Path, "media.mkv"));
+            GivenFailedScan(Path.Combine(_series.Path, "media.mkv"));
 
-            Subject.Update(movieFile, _movie);
+            Subject.Update(episodeFile, _series);
 
             Mocker.GetMock<IMediaFileService>()
-                .Verify(v => v.Update(movieFile), Times.Never());
+                .Verify(v => v.Update(episodeFile), Times.Never());
         }
     }
 }

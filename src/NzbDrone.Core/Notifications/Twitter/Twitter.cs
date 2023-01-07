@@ -1,8 +1,7 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using FluentValidation.Results;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Exceptions;
-using NzbDrone.Core.Movies;
 using NzbDrone.Core.Validation;
 
 namespace NzbDrone.Core.Notifications.Twitter
@@ -21,27 +20,22 @@ namespace NzbDrone.Core.Notifications.Twitter
 
         public override void OnGrab(GrabMessage message)
         {
-            _twitterService.SendNotification($"[Whisparr] Grabbed: {message.Message}", Settings);
+            _twitterService.SendNotification($"Grabbed: {message.Message}", Settings);
         }
 
         public override void OnDownload(DownloadMessage message)
         {
-            _twitterService.SendNotification($"[Whisparr] Imported: {message.Message}", Settings);
+            _twitterService.SendNotification($"Imported: {message.Message}", Settings);
         }
 
-        public override void OnMovieAdded(Media movie)
+        public override void OnEpisodeFileDelete(EpisodeDeleteMessage deleteMessage)
         {
-            _twitterService.SendNotification($"[Radarr] Added: {movie.Title}", Settings);
+            _twitterService.SendNotification($"Episode Deleted: {deleteMessage.Message}", Settings);
         }
 
-        public override void OnMovieFileDelete(MovieFileDeleteMessage deleteMessage)
+        public override void OnSeriesDelete(SeriesDeleteMessage deleteMessage)
         {
-            _twitterService.SendNotification($"Movie File Deleted: {deleteMessage.Message}", Settings);
-        }
-
-        public override void OnMovieDelete(MovieDeleteMessage deleteMessage)
-        {
-            _twitterService.SendNotification($"Movie Deleted: {deleteMessage.Message}", Settings);
+            _twitterService.SendNotification($"Series Deleted: {deleteMessage.Message}", Settings);
         }
 
         public override void OnHealthIssue(HealthCheck.HealthCheck healthCheck)

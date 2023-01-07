@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using FluentMigrator.Model;
@@ -206,7 +206,7 @@ namespace NzbDrone.Core.Datastore.Migration.Framework
             {
                 table.Indexes = ReadIndexes(table.SchemaName, table.Name);
 
-                //table.ForeignKeys = ReadForeignKeys(table.SchemaName, table.Name);
+                // table.ForeignKeys = ReadForeignKeys(table.SchemaName, table.Name);
             }
 
             return tables;

@@ -3,9 +3,9 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Languages;
-using NzbDrone.Core.MediaFiles.MovieImport.Manual;
+using NzbDrone.Core.MediaFiles.EpisodeImport.Manual;
 using NzbDrone.Core.Qualities;
-using Whisparr.Api.V3.Movies;
+using Whisparr.Api.V3.Episodes;
 using Whisparr.Http;
 
 namespace Whisparr.Api.V3.ManualImport
@@ -21,21 +21,32 @@ namespace Whisparr.Api.V3.ManualImport
         }
 
         [HttpGet]
-        public List<ManualImportResource> GetMediaFiles(string folder, string downloadId, int? movieId, bool filterExistingFiles = true)
+        [Produces("application/json")]
+        public List<ManualImportResource> GetMediaFiles(string folder, string downloadId, int? seriesId, int? seasonNumber, bool filterExistingFiles = true)
         {
-            return _manualImportService.GetMediaFiles(folder, downloadId, movieId, filterExistingFiles).ToResource().Select(AddQualityWeight).ToList();
+            if (seriesId.HasValue)
+            {
+                return _manualImportService.GetMediaFiles(seriesId.Value, seasonNumber).ToResource().Select(AddQualityWeight).ToList();
+            }
+
+            return _manualImportService.GetMediaFiles(folder, downloadId, seriesId, filterExistingFiles).ToResource().Select(AddQualityWeight).ToList();
         }
 
         [HttpPost]
+        [Consumes("application/json")]
         public object ReprocessItems([FromBody] List<ManualImportReprocessResource> items)
         {
             foreach (var item in items)
             {
-                var processedItem = _manualImportService.ReprocessItem(item.Path, item.DownloadId, item.MovieId, item.ReleaseGroup, item.Quality, item.Languages);
+                var processedItem = _manualImportService.ReprocessItem(item.Path, item.DownloadId, item.SeriesId, item.SeasonNumber, item.EpisodeIds ?? new List<int>(), item.ReleaseGroup, item.Quality, item.Languages);
 
-                item.Movie = processedItem.Movie.ToResource(0);
+                item.SeasonNumber = processedItem.SeasonNumber;
+                item.Episodes = processedItem.Episodes.ToResource();
                 item.Rejections = processedItem.Rejections;
-                if (item.Languages.Single() == Language.Unknown)
+
+                // Only set the language/quality if they're unknown and languages were returned.
+                // Languages won't be returned when reprocessing if the season/episode isn't filled in yet and we don't want to return no languages to the client.
+                if ((item.Languages.SingleOrDefault() ?? Language.Unknown) == Language.Unknown && processedItem.Languages.Any())
                 {
                     item.Languages = processedItem.Languages;
                 }
@@ -49,6 +60,9 @@ namespace Whisparr.Api.V3.ManualImport
                 {
                     item.ReleaseGroup = processedItem.ReleaseGroup;
                 }
+
+                // Clear episode IDs in favour of the full episode
+                item.EpisodeIds = null;
             }
 
             return items;

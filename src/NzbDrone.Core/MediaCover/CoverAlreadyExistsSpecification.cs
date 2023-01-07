@@ -1,4 +1,3 @@
-﻿using NLog;
 using NzbDrone.Common.Disk;
 using NzbDrone.Common.Http;
 
@@ -13,13 +12,11 @@ namespace NzbDrone.Core.MediaCover
     {
         private readonly IDiskProvider _diskProvider;
         private readonly IHttpClient _httpClient;
-        private readonly Logger _logger;
 
-        public CoverAlreadyExistsSpecification(IDiskProvider diskProvider, IHttpClient httpClient, Logger logger)
+        public CoverAlreadyExistsSpecification(IDiskProvider diskProvider, IHttpClient httpClient)
         {
             _diskProvider = diskProvider;
             _httpClient = httpClient;
-            _logger = logger;
         }
 
         public bool AlreadyExists(string url, string path)

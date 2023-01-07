@@ -3,23 +3,22 @@ import React from 'react';
 import LoadingIndicator from 'Components/Loading/LoadingIndicator';
 import Table from 'Components/Table/Table';
 import TableBody from 'Components/Table/TableBody';
-import translate from 'Utilities/String/translate';
 import RootFolderRowConnector from './RootFolderRowConnector';
 
 const rootFolderColumns = [
   {
     name: 'path',
-    label: translate('Path'),
+    label: 'Path',
     isVisible: true
   },
   {
     name: 'freeSpace',
-    label: translate('FreeSpace'),
+    label: 'Free Space',
     isVisible: true
   },
   {
     name: 'unmappedFolders',
-    label: translate('UnmappedFolders'),
+    label: 'Unmapped Folders',
     isVisible: true
   },
   {
@@ -44,9 +43,7 @@ function RootFolders(props) {
 
   if (!isFetching && !!error) {
     return (
-      <div>
-        {translate('UnableToLoadRootFolders')}
-      </div>
+      <div>Unable to load root folders</div>
     );
   }
 

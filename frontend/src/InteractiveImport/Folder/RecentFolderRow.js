@@ -5,7 +5,6 @@ import RelativeDateCellConnector from 'Components/Table/Cells/RelativeDateCellCo
 import TableRowCell from 'Components/Table/Cells/TableRowCell';
 import TableRowButton from 'Components/Table/TableRowButton';
 import { icons } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import styles from './RecentFolderRow.css';
 
 class RecentFolderRow extends Component {
@@ -45,7 +44,7 @@ class RecentFolderRow extends Component {
 
         <TableRowCell className={styles.actions}>
           <IconButton
-            title={translate('Remove')}
+            title="Remove"
             name={icons.REMOVE}
             onPress={this.onRemovePress}
           />

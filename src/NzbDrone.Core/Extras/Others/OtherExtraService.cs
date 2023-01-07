@@ -1,4 +1,6 @@
+﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using NLog;
 using NzbDrone.Common.Disk;
@@ -6,14 +8,17 @@ using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Extras.Files;
 using NzbDrone.Core.MediaFiles;
-using NzbDrone.Core.Movies;
+using NzbDrone.Core.Parser.Model;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Extras.Others
 {
     public class OtherExtraService : ExtraFileManager<OtherExtraFile>
     {
+        private readonly IDiskProvider _diskProvider;
         private readonly IOtherExtraFileService _otherExtraFileService;
         private readonly IMediaFileAttributeService _mediaFileAttributeService;
+        private readonly Logger _logger;
 
         public OtherExtraService(IConfigService configService,
                                  IDiskProvider diskProvider,
@@ -23,44 +28,46 @@ namespace NzbDrone.Core.Extras.Others
                                  Logger logger)
             : base(configService, diskProvider, diskTransferService, logger)
         {
+            _diskProvider = diskProvider;
             _otherExtraFileService = otherExtraFileService;
             _mediaFileAttributeService = mediaFileAttributeService;
+            _logger = logger;
         }
 
         public override int Order => 2;
 
-        public override IEnumerable<ExtraFile> CreateAfterMediaCoverUpdate(Media movie)
+        public override IEnumerable<ExtraFile> CreateAfterMediaCoverUpdate(Series series)
         {
             return Enumerable.Empty<ExtraFile>();
         }
 
-        public override IEnumerable<ExtraFile> CreateAfterMovieScan(Media movie, List<MediaFile> movieFiles)
+        public override IEnumerable<ExtraFile> CreateAfterSeriesScan(Series series, List<EpisodeFile> episodeFiles)
         {
             return Enumerable.Empty<ExtraFile>();
         }
 
-        public override IEnumerable<ExtraFile> CreateAfterMovieImport(Media movie, MediaFile movieFile)
+        public override IEnumerable<ExtraFile> CreateAfterEpisodeImport(Series series, EpisodeFile episodeFile)
         {
             return Enumerable.Empty<ExtraFile>();
         }
 
-        public override IEnumerable<ExtraFile> CreateAfterMovieFolder(Media movie, string movieFolder)
+        public override IEnumerable<ExtraFile> CreateAfterEpisodeFolder(Series series, string seriesFolder, string seasonFolder)
         {
             return Enumerable.Empty<ExtraFile>();
         }
 
-        public override IEnumerable<ExtraFile> MoveFilesAfterRename(Media movie, List<MediaFile> movieFiles)
+        public override IEnumerable<ExtraFile> MoveFilesAfterRename(Series series, List<EpisodeFile> episodeFiles)
         {
-            var extraFiles = _otherExtraFileService.GetFilesByMovie(movie.Id);
+            var extraFiles = _otherExtraFileService.GetFilesBySeries(series.Id);
             var movedFiles = new List<OtherExtraFile>();
 
-            foreach (var movieFile in movieFiles)
+            foreach (var episodeFile in episodeFiles)
             {
-                var extraFilesForMovieFile = extraFiles.Where(m => m.MovieFileId == movieFile.Id).ToList();
+                var extraFilesForEpisodeFile = extraFiles.Where(m => m.EpisodeFileId == episodeFile.Id).ToList();
 
-                foreach (var extraFile in extraFilesForMovieFile)
+                foreach (var extraFile in extraFilesForEpisodeFile)
                 {
-                    movedFiles.AddIfNotNull(MoveFile(movie, movieFile, extraFile));
+                    movedFiles.AddIfNotNull(MoveFile(series, episodeFile, extraFile));
                 }
             }
 
@@ -69,17 +76,79 @@ namespace NzbDrone.Core.Extras.Others
             return movedFiles;
         }
 
-        public override ExtraFile Import(Media movie, MediaFile movieFile, string path, string extension, bool readOnly)
+        public override bool CanImportFile(LocalEpisode localEpisode, EpisodeFile episodeFile, string path, string extension, bool readOnly)
         {
-            var extraFile = ImportFile(movie, movieFile, path, readOnly, extension, null);
+            return true;
+        }
 
-            if (extraFile != null)
+        public override IEnumerable<ExtraFile> ImportFiles(LocalEpisode localEpisode, EpisodeFile episodeFile, List<string> files, bool isReadOnly)
+        {
+            var importedFiles = new List<ExtraFile>();
+            var filteredFiles = files.Where(f => CanImportFile(localEpisode, episodeFile, f, Path.GetExtension(f), isReadOnly)).ToList();
+            var sourcePath = localEpisode.Path;
+            var sourceFolder = _diskProvider.GetParentFolder(sourcePath);
+            var sourceFileName = Path.GetFileNameWithoutExtension(sourcePath);
+            var matchingFiles = new List<string>();
+            var hasNfo = false;
+
+            foreach (var file in filteredFiles)
             {
-                _mediaFileAttributeService.SetFilePermissions(path);
-                _otherExtraFileService.Upsert(extraFile);
+                try
+                {
+                    // Filter out duplicate NFO files
+                    if (file.EndsWith(".nfo", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        if (hasNfo)
+                        {
+                            continue;
+                        }
+
+                        hasNfo = true;
+                    }
+
+                    // Filename match
+                    if (Path.GetFileNameWithoutExtension(file).StartsWith(sourceFileName, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        matchingFiles.Add(file);
+                        continue;
+                    }
+
+                    // Season and episode match
+                    var fileEpisodeInfo = Parser.Parser.ParsePath(file) ?? new ParsedEpisodeInfo();
+
+                    if (fileEpisodeInfo.EpisodeNumbers.Length == 0)
+                    {
+                        continue;
+                    }
+
+                    if (fileEpisodeInfo.SeasonNumber == localEpisode.FileEpisodeInfo.SeasonNumber &&
+                        fileEpisodeInfo.EpisodeNumbers.SequenceEqual(localEpisode.FileEpisodeInfo.EpisodeNumbers))
+                    {
+                        matchingFiles.Add(file);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.Warn(ex, "Failed to import extra file: {0}", file);
+                }
             }
 
-            return extraFile;
+            foreach (string file in matchingFiles)
+            {
+                try
+                {
+                    var extraFile = ImportFile(localEpisode.Series, episodeFile, file, isReadOnly, Path.GetExtension(file), null);
+                    _mediaFileAttributeService.SetFilePermissions(file);
+                    _otherExtraFileService.Upsert(extraFile);
+                    importedFiles.Add(extraFile);
+                }
+                catch (Exception ex)
+                {
+                    _logger.Warn(ex, "Failed to import extra file: {0}", file);
+                }
+            }
+
+            return importedFiles;
         }
     }
 }

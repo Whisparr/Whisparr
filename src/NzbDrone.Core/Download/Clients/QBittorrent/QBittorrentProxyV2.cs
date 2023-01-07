@@ -10,6 +10,7 @@ using NzbDrone.Common.Serializer;
 namespace NzbDrone.Core.Download.Clients.QBittorrent
 {
     // API https://github.com/qbittorrent/qBittorrent/wiki/Web-API-Documentation
+
     public class QBittorrentProxyV2 : IQBittorrentProxy
     {
         private readonly IHttpClient _httpClient;
@@ -43,6 +44,11 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
                 if (response.StatusCode == HttpStatusCode.Forbidden)
                 {
                     return true;
+                }
+
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    throw new DownloadClientException("Failed to connect to qBittorrent. Check your settings and qBittorrent configuration.", new HttpException(response));
                 }
 
                 if (response.HasHttpError)
@@ -91,9 +97,9 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
         public List<QBittorrentTorrent> GetTorrents(QBittorrentSettings settings)
         {
             var request = BuildRequest(settings).Resource("/api/v2/torrents/info");
-            if (settings.MovieCategory.IsNotNullOrWhiteSpace())
+            if (settings.TvCategory.IsNotNullOrWhiteSpace())
             {
-                request.AddQueryParam("category", settings.MovieCategory);
+                request.AddQueryParam("category", settings.TvCategory);
             }
 
             var response = ProcessRequest<List<QBittorrentTorrent>>(request, settings);
@@ -236,9 +242,9 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
 
         private void AddTorrentDownloadFormParameters(HttpRequestBuilder request, QBittorrentSettings settings)
         {
-            if (settings.MovieCategory.IsNotNullOrWhiteSpace())
+            if (settings.TvCategory.IsNotNullOrWhiteSpace())
             {
-                request.AddFormParameter("category", settings.MovieCategory);
+                request.AddFormParameter("category", settings.TvCategory);
             }
 
             // Note: ForceStart is handled by separate api call
@@ -433,9 +439,9 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
                     throw new DownloadClientUnavailableException("Failed to connect to qBittorrent, please check your settings.", ex);
                 }
 
-                // returns "Fails." on bad login
                 if (response.Content != "Ok.")
                 {
+                    // returns "Fails." on bad login
                     _logger.Debug("qbitTorrent authentication failed.");
                     throw new DownloadClientAuthenticationException("Failed to authenticate with qBittorrent.");
                 }

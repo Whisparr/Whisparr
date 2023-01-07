@@ -19,8 +19,6 @@ namespace NzbDrone.Core.Indexers.Rarbg
         public int? leechers { get; set; }
         public long size { get; set; }
         public DateTime pubdate { get; set; }
-
-        //This is named episode_info for movies as well as shows
         public RarbgTorrentInfo episode_info { get; set; }
         public int? ranked { get; set; }
         public string info_page { get; set; }
@@ -31,6 +29,5 @@ namespace NzbDrone.Core.Indexers.Rarbg
         public string imdb { get; set; }
         public int? tvrage { get; set; }
         public int? tvdb { get; set; }
-        public int? themoviedb { get; set; }
     }
 }

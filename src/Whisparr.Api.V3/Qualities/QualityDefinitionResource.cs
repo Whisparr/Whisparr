@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using NzbDrone.Core.Qualities;
 using Whisparr.Http.REST;
@@ -30,13 +30,9 @@ namespace Whisparr.Api.V3.Qualities
             return new QualityDefinitionResource
             {
                 Id = model.Id,
-
                 Quality = model.Quality,
-
                 Title = model.Title,
-
                 Weight = model.Weight,
-
                 MinSize = model.MinSize,
                 MaxSize = model.MaxSize,
                 PreferredSize = model.PreferredSize
@@ -53,13 +49,9 @@ namespace Whisparr.Api.V3.Qualities
             return new QualityDefinition
             {
                 Id = resource.Id,
-
                 Quality = resource.Quality,
-
                 Title = resource.Title,
-
                 Weight = resource.Weight,
-
                 MinSize = resource.MinSize,
                 MaxSize = resource.MaxSize,
                 PreferredSize = resource.PreferredSize

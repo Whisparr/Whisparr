@@ -14,19 +14,18 @@ import Scroller from 'Components/Scroller/Scroller';
 import Table from 'Components/Table/Table';
 import TableBody from 'Components/Table/TableBody';
 import { kinds, scrollDirections } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import FileBrowserRow from './FileBrowserRow';
 import styles from './FileBrowserModalContent.css';
 
 const columns = [
   {
     name: 'type',
-    label: translate('Type'),
+    label: 'Type',
     isVisible: true
   },
   {
     name: 'name',
-    label: translate('Name'),
+    label: 'Name',
     isVisible: true
   }
 ];
@@ -129,15 +128,13 @@ class FileBrowserModalContent extends Component {
                 className={styles.mappedDrivesWarning}
                 kind={kinds.WARNING}
               >
-                <Link to="https://wiki.servarr.com/whisparr/faq#why-cant-whisparr-see-my-files-on-a-remote-server">
-                  {translate('MappedDrivesRunningAsService')}
-                </Link> .
+                Mapped network drives are not available when running as a Windows Service, see the <Link className={styles.faqLink} to="https://wiki.servarr.com/whisparr/faq#why-cant-whisparr-see-my-files-on-a-remote-server">FAQ</Link> for more information.
               </Alert>
           }
 
           <PathInput
             className={styles.pathInput}
-            placeholder={translate('StartTypingOrSelectAPathBelow')}
+            placeholder="Start typing or select a path below"
             hasFileBrowser={false}
             {...otherProps}
             value={this.state.currentPath}
@@ -151,9 +148,7 @@ class FileBrowserModalContent extends Component {
           >
             {
               !!error &&
-                <div>
-                  {translate('ErrorLoadingContents')}
-                </div>
+                <div>Error loading contents</div>
             }
 
             {
@@ -228,13 +223,13 @@ class FileBrowserModalContent extends Component {
           <Button
             onPress={onModalClose}
           >
-            {translate('Cancel')}
+            Cancel
           </Button>
 
           <Button
             onPress={this.onOkPress}
           >
-            {translate('Ok')}
+            Ok
           </Button>
         </ModalFooter>
       </ModalContent>

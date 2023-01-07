@@ -7,7 +7,7 @@ using NzbDrone.Common.EnvironmentInfo;
 using NzbDrone.Core.ImportLists;
 using NzbDrone.Core.Test.Framework;
 
-namespace NzbDrone.Core.Test.ImportList
+namespace NzbDrone.Core.Test.ImportListTests
 {
     public class ImportListStatusServiceFixture : CoreTest<ImportListStatusService>
     {
@@ -19,31 +19,31 @@ namespace NzbDrone.Core.Test.ImportList
             _epoch = DateTime.UtcNow;
 
             Mocker.GetMock<IRuntimeInfo>()
-                .SetupGet(v => v.StartTime)
-                .Returns(_epoch - TimeSpan.FromHours(1));
+                  .SetupGet(v => v.StartTime)
+                  .Returns(_epoch - TimeSpan.FromHours(1));
         }
 
         private void WithStatus(ImportListStatus status)
         {
             Mocker.GetMock<IImportListStatusRepository>()
-                .Setup(v => v.FindByProviderId(1))
-                .Returns(status);
+                  .Setup(v => v.FindByProviderId(1))
+                  .Returns(status);
 
             Mocker.GetMock<IImportListStatusRepository>()
-                .Setup(v => v.All())
-                .Returns(new[] { status });
+                  .Setup(v => v.All())
+                  .Returns(new[] { status });
         }
 
         private void VerifyUpdate()
         {
             Mocker.GetMock<IImportListStatusRepository>()
-                .Verify(v => v.Upsert(It.IsAny<ImportListStatus>()), Times.Once());
+                  .Verify(v => v.Upsert(It.IsAny<ImportListStatus>()), Times.Once());
         }
 
         private void VerifyNoUpdate()
         {
             Mocker.GetMock<IImportListStatusRepository>()
-                .Verify(v => v.Upsert(It.IsAny<ImportListStatus>()), Times.Never());
+                  .Verify(v => v.Upsert(It.IsAny<ImportListStatus>()), Times.Never());
         }
 
         [Test]

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FluentValidation;
 using FluentValidation.Results;
 using NLog;
 using NzbDrone.Common.Extensions;
@@ -33,7 +34,7 @@ namespace NzbDrone.Core.Indexers.Newznab
 
         public override IParseIndexerResponse GetParser()
         {
-            return new NewznabRssParser(Settings);
+            return new NewznabRssParser();
         }
 
         public override IEnumerable<ProviderDefinition> DefaultDefinitions
@@ -42,17 +43,15 @@ namespace NzbDrone.Core.Indexers.Newznab
             {
                 yield return GetDefinition("DOGnzb", GetSettings("https://api.dognzb.cr"));
                 yield return GetDefinition("DrunkenSlug", GetSettings("https://api.drunkenslug.com"));
-                yield return GetDefinition("Nzb-Tortuga", GetSettings("https://www.nzb-tortuga.com"));
                 yield return GetDefinition("Nzb.su", GetSettings("https://api.nzb.su"));
                 yield return GetDefinition("NZBCat", GetSettings("https://nzb.cat"));
-                yield return GetDefinition("NZBFinder.ws", GetSettings("https://nzbfinder.ws", categories: new[] { 2030, 2040, 2045, 2050, 2060, 2070, 2080, 2090 }));
+                yield return GetDefinition("NZBFinder.ws", GetSettings("https://nzbfinder.ws", categories: new[] { 5010, 5030, 5040, 5045, 5090 }));
                 yield return GetDefinition("NZBgeek", GetSettings("https://api.nzbgeek.info"));
                 yield return GetDefinition("nzbplanet.net", GetSettings("https://api.nzbplanet.net"));
-                yield return GetDefinition("omgwtfnzbs", GetSettings("https://api.omgwtfnzbs.me", categories: new[] { 2000, 2020, 2030, 2040, 2045, 2050, 2070 }));
                 yield return GetDefinition("OZnzb.com", GetSettings("https://api.oznzb.com"));
                 yield return GetDefinition("SimplyNZBs", GetSettings("https://simplynzbs.com"));
                 yield return GetDefinition("Tabula Rasa", GetSettings("https://www.tabula-rasa.pw", apiPath: @"/api/v1/api"));
-                yield return GetDefinition("Usenet Crawler", GetSettings("https://www.usenet-crawler.com"));
+                yield return GetDefinition("AnimeTosho Usenet", GetSettings("https://feed.animetosho.org", apiPath: @"/nabapi", categories: new int[0], animeCategories: new[] { 5070 }));
             }
         }
 
@@ -65,26 +64,31 @@ namespace NzbDrone.Core.Indexers.Newznab
         private IndexerDefinition GetDefinition(string name, NewznabSettings settings)
         {
             return new IndexerDefinition
-            {
-                EnableRss = false,
-                EnableAutomaticSearch = false,
-                EnableInteractiveSearch = false,
-                Name = name,
-                Implementation = GetType().Name,
-                Settings = settings,
-                Protocol = DownloadProtocol.Usenet,
-                SupportsRss = SupportsRss,
-                SupportsSearch = SupportsSearch
-            };
+                   {
+                       EnableRss = false,
+                       EnableAutomaticSearch = false,
+                       EnableInteractiveSearch = false,
+                       Name = name,
+                       Implementation = GetType().Name,
+                       Settings = settings,
+                       Protocol = DownloadProtocol.Usenet,
+                       SupportsRss = SupportsRss,
+                       SupportsSearch = SupportsSearch
+                   };
         }
 
-        private NewznabSettings GetSettings(string url, string apiPath = null, int[] categories = null)
+        private NewznabSettings GetSettings(string url, string apiPath = null, int[] categories = null, int[] animeCategories = null)
         {
             var settings = new NewznabSettings { BaseUrl = url };
 
             if (categories != null)
             {
                 settings.Categories = categories;
+            }
+
+            if (animeCategories != null)
+            {
+                settings.AnimeCategories = animeCategories;
             }
 
             if (apiPath.IsNotNullOrWhiteSpace())
@@ -106,44 +110,25 @@ namespace NzbDrone.Core.Indexers.Newznab
             failures.AddIfNotNull(TestCapabilities());
         }
 
-        protected static List<int> CategoryIds(List<NewznabCategory> categories)
-        {
-            var l = categories.Select(c => c.Id).ToList();
-
-            foreach (var category in categories)
-            {
-                if (category.Subcategories != null)
-                {
-                    l.AddRange(CategoryIds(category.Subcategories));
-                }
-            }
-
-            return l;
-        }
-
         protected virtual ValidationFailure TestCapabilities()
         {
             try
             {
                 var capabilities = _capabilitiesProvider.GetCapabilities(Settings);
 
-                var notSupported = Settings.Categories.Except(CategoryIds(capabilities.Categories));
-
-                if (notSupported.Any())
-                {
-                    _logger.Warn($"{Definition.Name} does not support the following categories: {string.Join(", ", notSupported)}. You should probably remove them.");
-                    if (notSupported.Count() == Settings.Categories.Count())
-                    {
-                        return new ValidationFailure(string.Empty, $"This indexer does not support any of the selected categories! (You may need to turn on advanced settings to see them)");
-                    }
-                }
-
                 if (capabilities.SupportedSearchParameters != null && capabilities.SupportedSearchParameters.Contains("q"))
                 {
                     return null;
                 }
 
-                return new ValidationFailure(string.Empty, "This indexer does not support searching for movies :(. Tell your indexer staff to enable this or force add the indexer by disabling search, adding the indexer and then enabling it again.");
+                if (capabilities.SupportedTvSearchParameters != null &&
+                    new[] { "q", "tvdbid", "rid" }.Any(v => capabilities.SupportedTvSearchParameters.Contains(v)) &&
+                    new[] { "season", "ep" }.All(v => capabilities.SupportedTvSearchParameters.Contains(v)))
+                {
+                    return null;
+                }
+
+                return new ValidationFailure(string.Empty, "Indexer does not support required search parameters");
             }
             catch (Exception ex)
             {

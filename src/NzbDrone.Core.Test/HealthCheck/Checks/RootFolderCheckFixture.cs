@@ -5,36 +5,27 @@ using Moq;
 using NUnit.Framework;
 using NzbDrone.Common.Disk;
 using NzbDrone.Core.HealthCheck.Checks;
-using NzbDrone.Core.Localization;
-using NzbDrone.Core.Movies;
 using NzbDrone.Core.Test.Framework;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Test.HealthCheck.Checks
 {
     [TestFixture]
     public class RootFolderCheckFixture : CoreTest<RootFolderCheck>
     {
-        [SetUp]
-        public void Setup()
-        {
-            Mocker.GetMock<ILocalizationService>()
-                  .Setup(s => s.GetLocalizedString(It.IsAny<string>()))
-                  .Returns("Some Warning Message");
-        }
-
         private void GivenMissingRootFolder()
         {
-            var movies = Builder<Media>.CreateListOfSize(1)
+            var series = Builder<Series>.CreateListOfSize(1)
                                         .Build()
                                         .ToList();
 
-            Mocker.GetMock<IMovieService>()
-                  .Setup(s => s.AllMoviePaths())
-                  .Returns(movies.ToDictionary(x => x.Id, x => x.Path));
+            Mocker.GetMock<ISeriesService>()
+                  .Setup(s => s.GetAllSeriesPaths())
+                  .Returns(series.ToDictionary(s => s.Id, s => s.Path));
 
             Mocker.GetMock<IDiskProvider>()
-                  .Setup(s => s.GetParentFolder(movies.First().Path))
-                  .Returns(@"C:\Movies");
+                  .Setup(s => s.GetParentFolder(series.First().Path))
+                  .Returns(@"C:\TV");
 
             Mocker.GetMock<IDiskProvider>()
                   .Setup(s => s.FolderExists(It.IsAny<string>()))
@@ -42,17 +33,17 @@ namespace NzbDrone.Core.Test.HealthCheck.Checks
         }
 
         [Test]
-        public void should_not_return_error_when_no_movie()
+        public void should_not_return_error_when_no_series()
         {
-            Mocker.GetMock<IMovieService>()
-                  .Setup(s => s.AllMoviePaths())
+            Mocker.GetMock<ISeriesService>()
+                  .Setup(s => s.GetAllSeriesPaths())
                   .Returns(new Dictionary<int, string>());
 
             Subject.Check().ShouldBeOk();
         }
 
         [Test]
-        public void should_return_error_if_movie_parent_is_missing()
+        public void should_return_error_if_series_parent_is_missing()
         {
             GivenMissingRootFolder();
 

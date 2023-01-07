@@ -1,19 +1,19 @@
-﻿using NzbDrone.Common.Http;
+using NzbDrone.Common.Http;
 
 namespace NzbDrone.Core.ImportLists
 {
     public class ImportListResponse
     {
-        private readonly ImportListRequest _importList;
+        private readonly ImportListRequest _importListRequest;
         private readonly HttpResponse _httpResponse;
 
-        public ImportListResponse(ImportListRequest importList, HttpResponse httpResponse)
+        public ImportListResponse(ImportListRequest importListRequest, HttpResponse httpResponse)
         {
-            _importList = importList;
+            _importListRequest = importListRequest;
             _httpResponse = httpResponse;
         }
 
-        public ImportListRequest Request => _importList;
+        public ImportListRequest Request => _importListRequest;
 
         public HttpRequest HttpRequest => _httpResponse.Request;
 

@@ -17,13 +17,13 @@ function getIconName(name) {
       return icons.SEARCH;
     case 'Housekeeping':
       return icons.HOUSEKEEPING;
-    case 'RefreshMovie':
+    case 'RefreshSeries':
       return icons.REFRESH;
     case 'RssSync':
       return icons.RSS;
     case 'SeasonSearch':
       return icons.SEARCH;
-    case 'MovieSearch':
+    case 'SeriesSearch':
       return icons.SEARCH;
     case 'UpdateSceneMapping':
       return icons.REFRESH;

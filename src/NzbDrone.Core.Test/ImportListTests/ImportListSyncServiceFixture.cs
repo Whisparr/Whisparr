@@ -1,386 +1,156 @@
 using System.Collections.Generic;
 using System.Linq;
-using FizzWare.NBuilder;
 using Moq;
 using NUnit.Framework;
-using NzbDrone.Core.Configuration;
 using NzbDrone.Core.ImportLists;
-using NzbDrone.Core.ImportLists.ImportExclusions;
-using NzbDrone.Core.ImportLists.ImportListMovies;
-using NzbDrone.Core.Movies;
+using NzbDrone.Core.ImportLists.Exclusions;
+using NzbDrone.Core.MetadataSource;
+using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.Test.Framework;
+using NzbDrone.Core.Tv;
 
-namespace NzbDrone.Core.Test.ImportList
+namespace NzbDrone.Core.Test.ImportListTests
 {
-    [TestFixture]
     public class ImportListSyncServiceFixture : CoreTest<ImportListSyncService>
     {
-        private ImportListFetchResult _importListFetch;
-        private List<ImportListMovie> _list1Movies;
-        private List<ImportListMovie> _list2Movies;
-
-        private List<Media> _existingMovies;
-        private List<IImportList> _importLists;
-        private ImportListSyncCommand _commandAll;
-        private ImportListSyncCommand _commandSingle;
+        private List<ImportListItemInfo> _importListReports;
 
         [SetUp]
-        public void Setup()
+        public void SetUp()
         {
-            _importLists = new List<IImportList>();
-
-            _list1Movies = Builder<ImportListMovie>.CreateListOfSize(5)
-                .Build().ToList();
-
-            _existingMovies = Builder<Media>.CreateListOfSize(3)
-                .TheFirst(1)
-                .With(s => s.ForiegnId = 6)
-                .TheNext(1)
-                .With(s => s.ForiegnId = 7)
-                .TheNext(1)
-                .With(s => s.ForiegnId = 8)
-                .Build().ToList();
-
-            _list2Movies = Builder<ImportListMovie>.CreateListOfSize(3)
-                .TheFirst(1)
-                .With(s => s.ForiegnId = 6)
-                .TheNext(1)
-                .With(s => s.ForiegnId = 7)
-                .TheNext(1)
-                .With(s => s.ForiegnId = 8)
-                .Build().ToList();
-
-            _importListFetch = new ImportListFetchResult
+            var importListItem1 = new ImportListItemInfo
             {
-                Movies = _list1Movies,
-                AnyFailure = false
+                Title = "Breaking Bad"
             };
 
-            _commandAll = new ImportListSyncCommand
-            {
-            };
+            _importListReports = new List<ImportListItemInfo> { importListItem1 };
 
-            _commandSingle = new ImportListSyncCommand
-            {
-                DefinitionId = 1
-            };
+            Mocker.GetMock<ISeriesService>()
+                  .Setup(v => v.AllSeriesTvdbIds())
+                  .Returns(new List<int>());
+
+            Mocker.GetMock<ISearchForNewSeries>()
+                  .Setup(v => v.SearchForNewSeries(It.IsAny<string>()))
+                  .Returns(new List<Series>());
+
+            Mocker.GetMock<ISearchForNewSeries>()
+                  .Setup(v => v.SearchForNewSeriesByImdbId(It.IsAny<string>()))
+                  .Returns(new List<Series>());
 
             Mocker.GetMock<IImportListFactory>()
-                  .Setup(v => v.Enabled())
-                  .Returns(_importLists);
-
-            Mocker.GetMock<IImportExclusionsService>()
-                  .Setup(v => v.GetAllExclusions())
-                  .Returns(new List<ImportExclusion>());
-
-            Mocker.GetMock<IMovieService>()
-                  .Setup(v => v.MovieExists(It.IsAny<Media>()))
-                  .Returns(false);
-
-            Mocker.GetMock<IMovieService>()
-                  .Setup(v => v.AllMovieTmdbIds())
-                  .Returns(new List<int>());
+                  .Setup(v => v.All())
+                  .Returns(new List<ImportListDefinition> { new ImportListDefinition { ShouldMonitor = MonitorTypes.All } });
 
             Mocker.GetMock<IFetchAndParseImportList>()
                   .Setup(v => v.Fetch())
-                  .Returns(_importListFetch);
+                  .Returns(_importListReports);
+
+            Mocker.GetMock<IImportListExclusionService>()
+                  .Setup(v => v.All())
+                  .Returns(new List<ImportListExclusion>());
         }
 
-        private void GivenListFailure()
+        private void WithTvdbId()
         {
-            _importListFetch.AnyFailure = true;
+            _importListReports.First().TvdbId = 81189;
         }
 
-        private void GivenCleanLevel(string cleanLevel)
+        private void WithImdbId()
         {
-            Mocker.GetMock<IConfigService>()
-                  .SetupGet(v => v.ListSyncLevel)
-                  .Returns(cleanLevel);
+            _importListReports.First().ImdbId = "tt0496424";
         }
 
-        private void GivenList(int id, bool enabledAuto)
+        private void WithExistingSeries()
         {
-            var importListDefinition = new ImportListDefinition { Id = id, EnableAuto = enabledAuto };
+            Mocker.GetMock<ISeriesService>()
+                  .Setup(v => v.AllSeriesTvdbIds())
+                  .Returns(new List<int> { _importListReports.First().TvdbId });
+        }
 
+        private void WithExcludedSeries()
+        {
+            Mocker.GetMock<IImportListExclusionService>()
+                  .Setup(v => v.All())
+                  .Returns(new List<ImportListExclusion>
+                    {
+                      new ImportListExclusion
+                        {
+                          TvdbId = 81189
+                        }
+                    });
+        }
+
+        private void WithMonitorType(MonitorTypes monitor)
+        {
             Mocker.GetMock<IImportListFactory>()
-                  .Setup(v => v.Get(id))
-                  .Returns(importListDefinition);
-
-            CreateListResult(id, enabledAuto);
-        }
-
-        private Mock<IImportList> CreateListResult(int id, bool enabledAuto)
-        {
-            var importListDefinition = new ImportListDefinition { Id = id, EnableAuto = enabledAuto };
-
-            var mockImportList = new Mock<IImportList>();
-            mockImportList.SetupGet(s => s.Definition).Returns(importListDefinition);
-            mockImportList.SetupGet(s => s.Enabled).Returns(true);
-            mockImportList.SetupGet(s => s.EnableAuto).Returns(enabledAuto);
-
-            _importLists.Add(mockImportList.Object);
-
-            return mockImportList;
+                  .Setup(v => v.All())
+                  .Returns(new List<ImportListDefinition> { new ImportListDefinition { ShouldMonitor = monitor } });
         }
 
         [Test]
-        public void should_not_clean_library_if_config_value_disable()
+        public void should_search_if_series_title_and_no_series_id()
         {
-            _importListFetch.Movies.ForEach(m => m.ListId = 1);
-            GivenList(1, true);
-            GivenCleanLevel("disabled");
+            Subject.Execute(new ImportListSyncCommand());
 
-            Subject.Execute(_commandAll);
-
-            Mocker.GetMock<IMovieService>()
-                  .Verify(v => v.GetAllMovies(), Times.Never());
-
-            Mocker.GetMock<IMovieService>()
-                  .Verify(v => v.UpdateMovie(new List<Media>(), true), Times.Never());
+            Mocker.GetMock<ISearchForNewSeries>()
+                  .Verify(v => v.SearchForNewSeries(It.IsAny<string>()), Times.Once());
         }
 
         [Test]
-        public void should_log_only_on_clean_library_if_config_value_logonly()
+        public void should_not_search_if_series_title_and_series_id()
         {
-            _importListFetch.Movies.ForEach(m => m.ListId = 1);
-            GivenList(1, true);
-            GivenCleanLevel("logOnly");
+            WithTvdbId();
+            Subject.Execute(new ImportListSyncCommand());
 
-            Mocker.GetMock<IMovieService>()
-                  .Setup(v => v.GetAllMovies())
-                  .Returns(_existingMovies);
-
-            Subject.Execute(_commandAll);
-
-            Mocker.GetMock<IMovieService>()
-                  .Verify(v => v.GetAllMovies(), Times.Once());
-
-            Mocker.GetMock<IMovieService>()
-                  .Verify(v => v.DeleteMovie(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<bool>()), Times.Never());
-
-            Mocker.GetMock<IMovieService>()
-                  .Verify(v => v.UpdateMovie(new List<Media>(), true), Times.Once());
+            Mocker.GetMock<ISearchForNewSeries>()
+                  .Verify(v => v.SearchForNewSeries(It.IsAny<string>()), Times.Never());
         }
 
         [Test]
-        public void should_unmonitor_on_clean_library_if_config_value_keepAndUnmonitor()
+        public void should_search_by_imdb_if_series_title_and_series_imdb()
         {
-            _importListFetch.Movies.ForEach(m => m.ListId = 1);
-            GivenList(1, true);
-            GivenCleanLevel("keepAndUnmonitor");
+            WithImdbId();
+            Subject.Execute(new ImportListSyncCommand());
 
-            Mocker.GetMock<IMovieService>()
-                  .Setup(v => v.GetAllMovies())
-                  .Returns(_existingMovies);
-
-            Subject.Execute(_commandAll);
-
-            Mocker.GetMock<IMovieService>()
-                  .Verify(v => v.GetAllMovies(), Times.Once());
-
-            Mocker.GetMock<IMovieService>()
-                  .Verify(v => v.DeleteMovie(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<bool>()), Times.Never());
-
-            Mocker.GetMock<IMovieService>()
-                  .Verify(v => v.UpdateMovie(It.Is<List<Media>>(s => s.Count == 3 && s.All(m => !m.Monitored)), true), Times.Once());
+            Mocker.GetMock<ISearchForNewSeries>()
+                  .Verify(v => v.SearchForNewSeriesByImdbId(It.IsAny<string>()), Times.Once());
         }
 
         [Test]
-        public void should_not_clean_on_clean_library_if_tmdb_match()
+        public void should_not_add_if_existing_series()
         {
-            _importListFetch.Movies.ForEach(m => m.ListId = 1);
-            _importListFetch.Movies[0].ForiegnId = 6;
+            WithTvdbId();
+            WithExistingSeries();
 
-            GivenList(1, true);
-            GivenCleanLevel("keepAndUnmonitor");
+            Subject.Execute(new ImportListSyncCommand());
 
-            Mocker.GetMock<IMovieService>()
-                  .Setup(v => v.GetAllMovies())
-                  .Returns(_existingMovies);
+            Mocker.GetMock<IAddSeriesService>()
+                  .Verify(v => v.AddSeries(It.Is<List<Series>>(t => t.Count == 0), It.IsAny<bool>()));
+        }
 
-            Subject.Execute(_commandAll);
+        [TestCase(MonitorTypes.None, false)]
+        [TestCase(MonitorTypes.All, true)]
+        public void should_add_if_not_existing_series(MonitorTypes monitor, bool expectedSeriesMonitored)
+        {
+            WithTvdbId();
+            WithMonitorType(monitor);
 
-            Mocker.GetMock<IMovieService>()
-                  .Verify(v => v.UpdateMovie(It.Is<List<Media>>(s => s.Count == 2 && s.All(m => !m.Monitored)), true), Times.Once());
+            Subject.Execute(new ImportListSyncCommand());
+
+            Mocker.GetMock<IAddSeriesService>()
+                  .Verify(v => v.AddSeries(It.Is<List<Series>>(t => t.Count == 1 && t.First().Monitored == expectedSeriesMonitored), It.IsAny<bool>()));
         }
 
         [Test]
-        public void should_delete_movies_not_files_on_clean_library_if_config_value_logonly()
+        public void should_not_add_if_excluded_series()
         {
-            _importListFetch.Movies.ForEach(m => m.ListId = 1);
-            GivenList(1, true);
-            GivenCleanLevel("removeAndKeep");
+            WithTvdbId();
+            WithExcludedSeries();
 
-            Mocker.GetMock<IMovieService>()
-                  .Setup(v => v.GetAllMovies())
-                  .Returns(_existingMovies);
+            Subject.Execute(new ImportListSyncCommand());
 
-            Subject.Execute(_commandAll);
-
-            Mocker.GetMock<IMovieService>()
-                  .Verify(v => v.GetAllMovies(), Times.Once());
-
-            Mocker.GetMock<IMovieService>()
-                  .Verify(v => v.DeleteMovie(It.IsAny<int>(), false, It.IsAny<bool>()), Times.Exactly(3));
-
-            Mocker.GetMock<IMovieService>()
-                  .Verify(v => v.DeleteMovie(It.IsAny<int>(), true, It.IsAny<bool>()), Times.Never());
-
-            Mocker.GetMock<IMovieService>()
-                  .Verify(v => v.UpdateMovie(new List<Media>(), true), Times.Once());
-        }
-
-        [Test]
-        public void should_delete_movies_and_files_on_clean_library_if_config_value_logonly()
-        {
-            _importListFetch.Movies.ForEach(m => m.ListId = 1);
-            GivenList(1, true);
-            GivenCleanLevel("removeAndDelete");
-
-            Mocker.GetMock<IMovieService>()
-                  .Setup(v => v.GetAllMovies())
-                  .Returns(_existingMovies);
-
-            Subject.Execute(_commandAll);
-
-            Mocker.GetMock<IMovieService>()
-                  .Verify(v => v.GetAllMovies(), Times.Once());
-
-            Mocker.GetMock<IMovieService>()
-                  .Verify(v => v.DeleteMovie(It.IsAny<int>(), false, It.IsAny<bool>()), Times.Never());
-
-            Mocker.GetMock<IMovieService>()
-                  .Verify(v => v.DeleteMovie(It.IsAny<int>(), true, It.IsAny<bool>()), Times.Exactly(3));
-
-            Mocker.GetMock<IMovieService>()
-                  .Verify(v => v.UpdateMovie(new List<Media>(), true), Times.Once());
-        }
-
-        [Test]
-        public void should_not_clean_if_list_failures()
-        {
-            _importListFetch.Movies.ForEach(m => m.ListId = 1);
-            GivenListFailure();
-
-            GivenList(1, true);
-            GivenCleanLevel("disabled");
-
-            Subject.Execute(_commandAll);
-
-            Mocker.GetMock<IMovieService>()
-                  .Verify(v => v.UpdateMovie(new List<Media>(), true), Times.Never());
-        }
-
-        [Test]
-        public void should_add_new_movies_from_single_list_to_library()
-        {
-            _importListFetch.Movies.ForEach(m => m.ListId = 1);
-            GivenList(1, true);
-            GivenCleanLevel("disabled");
-
-            Subject.Execute(_commandAll);
-
-            Mocker.GetMock<IAddMovieService>()
-                  .Verify(v => v.AddMovies(It.Is<List<Media>>(s => s.Count == 5), true), Times.Once());
-        }
-
-        [Test]
-        public void should_add_new_movies_from_multiple_list_to_library()
-        {
-            _list2Movies.ForEach(m => m.ListId = 2);
-            _importListFetch.Movies.ForEach(m => m.ListId = 1);
-            _importListFetch.Movies.AddRange(_list2Movies);
-
-            GivenList(1, true);
-            GivenList(2, true);
-
-            GivenCleanLevel("disabled");
-
-            Subject.Execute(_commandAll);
-
-            Mocker.GetMock<IAddMovieService>()
-                  .Verify(v => v.AddMovies(It.Is<List<Media>>(s => s.Count == 8), true), Times.Once());
-        }
-
-        [Test]
-        public void should_add_new_movies_from_enabled_lists_to_library()
-        {
-            _list2Movies.ForEach(m => m.ListId = 2);
-            _importListFetch.Movies.ForEach(m => m.ListId = 1);
-            _importListFetch.Movies.AddRange(_list2Movies);
-
-            GivenList(1, true);
-            GivenList(2, false);
-
-            GivenCleanLevel("disabled");
-
-            Subject.Execute(_commandAll);
-
-            Mocker.GetMock<IAddMovieService>()
-                  .Verify(v => v.AddMovies(It.Is<List<Media>>(s => s.Count == 5), true), Times.Once());
-        }
-
-        [Test]
-        public void should_not_add_duplicate_movies_from_seperate_lists()
-        {
-            _list2Movies.ForEach(m => m.ListId = 2);
-            _importListFetch.Movies.ForEach(m => m.ListId = 1);
-            _importListFetch.Movies.AddRange(_list2Movies);
-            _importListFetch.Movies[0].ForiegnId = 4;
-
-            GivenList(1, true);
-            GivenList(2, true);
-
-            GivenCleanLevel("disabled");
-
-            Subject.Execute(_commandAll);
-
-            Mocker.GetMock<IAddMovieService>()
-                  .Verify(v => v.AddMovies(It.Is<List<Media>>(s => s.Count == 7), true), Times.Once());
-        }
-
-        [Test]
-        public void should_not_add_movie_from_on_exclusion_list()
-        {
-            _list2Movies.ForEach(m => m.ListId = 2);
-            _importListFetch.Movies.ForEach(m => m.ListId = 1);
-            _importListFetch.Movies.AddRange(_list2Movies);
-
-            GivenList(1, true);
-            GivenList(2, true);
-
-            GivenCleanLevel("disabled");
-
-            Mocker.GetMock<IImportExclusionsService>()
-                  .Setup(v => v.GetAllExclusions())
-                  .Returns(new List<ImportExclusion> { new ImportExclusion { TmdbId = _existingMovies[0].ForiegnId } });
-
-            Subject.Execute(_commandAll);
-
-            Mocker.GetMock<IAddMovieService>()
-                  .Verify(v => v.AddMovies(It.Is<List<Media>>(s => s.Count == 7 && !s.Any(m => m.ForiegnId == _existingMovies[0].ForiegnId)), true), Times.Once());
-        }
-
-        [Test]
-        public void should_not_add_movie_that_exists_in_library()
-        {
-            _list2Movies.ForEach(m => m.ListId = 2);
-            _importListFetch.Movies.ForEach(m => m.ListId = 1);
-            _importListFetch.Movies.AddRange(_list2Movies);
-
-            GivenList(1, true);
-            GivenList(2, true);
-
-            GivenCleanLevel("disabled");
-
-            Mocker.GetMock<IMovieService>()
-                 .Setup(v => v.AllMovieTmdbIds())
-                 .Returns(new List<int> { _existingMovies[0].ForiegnId });
-
-            Subject.Execute(_commandAll);
-
-            Mocker.GetMock<IAddMovieService>()
-                  .Verify(v => v.AddMovies(It.Is<List<Media>>(s => s.Count == 7 && !s.Any(m => m.ForiegnId == _existingMovies[0].ForiegnId)), true), Times.Once());
+            Mocker.GetMock<IAddSeriesService>()
+                  .Verify(v => v.AddSeries(It.Is<List<Series>>(t => t.Count == 0), It.IsAny<bool>()));
         }
     }
 }

@@ -19,7 +19,7 @@ namespace NzbDrone.Common.Instrumentation.Sentry
     public class SentryTarget : TargetWithLayout
     {
         // don't report uninformative SQLite exceptions
-        // busy/locked are benign https://forums.sonarr.tv/t/owin-sqlite-error-5-database-is-locked/5423/11
+        // busy/locked are benign https://forums.whisparr.tv/t/owin-sqlite-error-5-database-is-locked/5423/11
         // The others will be user configuration problems and silt up Sentry
         private static readonly HashSet<SQLiteErrorCode> FilteredSQLiteErrors = new HashSet<SQLiteErrorCode>
         {
@@ -99,9 +99,6 @@ namespace NzbDrone.Common.Instrumentation.Sentry
                                       o.Dsn = dsn;
                                       o.AttachStacktrace = true;
                                       o.MaxBreadcrumbs = 200;
-                                      o.SendDefaultPii = false;
-                                      o.Debug = false;
-                                      o.DiagnosticLevel = SentryLevel.Debug;
                                       o.Release = BuildInfo.Release;
                                       o.BeforeSend = x => SentryCleanser.CleanseEvent(x);
                                       o.BeforeBreadcrumb = x => SentryCleanser.CleanseBreadcrumb(x);
@@ -113,9 +110,10 @@ namespace NzbDrone.Common.Instrumentation.Sentry
             _debounce = new SentryDebounce();
 
             // initialize to true and reconfigure later
-            // Otherwise it will default to false and any errors occuring
+            // Otherwise it will default to false and any errors occurring
             // before config file gets read will not be filtered
             FilterEvents = true;
+
             SentryEnabled = true;
         }
 
@@ -136,7 +134,6 @@ namespace NzbDrone.Common.Instrumentation.Sentry
 
                 scope.SetTag("culture", Thread.CurrentThread.CurrentCulture.Name);
                 scope.SetTag("branch", BuildInfo.Branch);
-                scope.SetTag("runtime_identifier", System.Runtime.InteropServices.RuntimeInformation.RuntimeIdentifier);
             });
         }
 
@@ -144,7 +141,6 @@ namespace NzbDrone.Common.Instrumentation.Sentry
         {
             SentrySdk.ConfigureScope(scope =>
             {
-                scope.SetTag("is_docker", $"{osInfo.IsDocker}");
             });
         }
 
@@ -165,9 +161,7 @@ namespace NzbDrone.Common.Instrumentation.Sentry
 
         private void OnError(Exception ex)
         {
-            var webException = ex as WebException;
-
-            if (webException != null)
+            if (ex is WebException webException)
             {
                 var response = webException.Response as HttpWebResponse;
                 var statusCode = response?.StatusCode;
@@ -229,48 +223,21 @@ namespace NzbDrone.Common.Instrumentation.Sentry
             {
                 if (FilterEvents)
                 {
-                    var exceptions = new List<Exception>();
-
-                    var aggEx = logEvent.Exception as AggregateException;
-
-                    if (aggEx != null && aggEx.InnerExceptions.Count > 0)
+                    var sqlEx = logEvent.Exception as SQLiteException;
+                    if (sqlEx != null && FilteredSQLiteErrors.Contains(sqlEx.ResultCode))
                     {
-                        exceptions.AddRange(aggEx.InnerExceptions);
-                    }
-                    else
-                    {
-                        exceptions.Add(logEvent.Exception);
+                        return false;
                     }
 
-                    // If any are sentry then send to sentry
-                    foreach (var ex in exceptions)
+                    if (FilteredExceptionTypeNames.Contains(logEvent.Exception.GetType().Name))
                     {
-                        var isSentry = true;
-
-                        var sqlEx = ex as SQLiteException;
-                        if (sqlEx != null && !FilteredSQLiteErrors.Contains(sqlEx.ResultCode))
-                        {
-                            isSentry = false;
-                        }
-
-                        if (FilteredExceptionTypeNames.Contains(ex.GetType().Name))
-                        {
-                            isSentry = false;
-                        }
-
-                        if (FilteredExceptionMessages.Any(x => ex.Message.Contains(x)))
-                        {
-                            isSentry = false;
-                        }
-
-                        if (isSentry)
-                        {
-                            return true;
-                        }
+                        return false;
                     }
 
-                    // The exception or aggregate exception children were not sentry exceptions
-                    return false;
+                    if (FilteredExceptionMessages.Any(x => logEvent.Exception.Message.Contains(x)))
+                    {
+                        return false;
+                    }
                 }
 
                 return true;

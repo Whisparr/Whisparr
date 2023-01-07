@@ -1,5 +1,8 @@
+using System;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
+using NzbDrone.Common.Cache;
 using NzbDrone.Common.EnvironmentInfo;
 using NzbDrone.Common.Http;
 using NzbDrone.Core.Configuration;
@@ -11,7 +14,7 @@ namespace NzbDrone.Core.Notifications.Plex.PlexTv
         PlexTvPinUrlResponse GetPinUrl();
         PlexTvSignInUrlResponse GetSignInUrl(string callbackUrl, int pinId, string pinCode);
         string GetAuthToken(int pinId);
-
+        void Ping(string authToken);
         HttpRequest GetWatchlist(string authToken);
     }
 
@@ -19,11 +22,13 @@ namespace NzbDrone.Core.Notifications.Plex.PlexTv
     {
         private readonly IPlexTvProxy _proxy;
         private readonly IConfigService _configService;
+        private readonly ICached<bool> _cache;
 
-        public PlexTvService(IPlexTvProxy proxy, IConfigService configService)
+        public PlexTvService(IPlexTvProxy proxy, IConfigService configService, ICacheManager cacheManager)
         {
             _proxy = proxy;
             _configService = configService;
+            _cache = cacheManager.GetCache<bool>(GetType());
         }
 
         public PlexTvPinUrlResponse GetPinUrl()
@@ -45,10 +50,10 @@ namespace NzbDrone.Core.Notifications.Plex.PlexTv
             var request = requestBuilder.Build();
 
             return new PlexTvPinUrlResponse
-            {
-                Url = request.Url.ToString(),
-                Headers = request.Headers.ToDictionary(h => h.Key, h => h.Value)
-            };
+                   {
+                       Url = request.Url.ToString(),
+                       Headers = request.Headers.ToDictionary(h => h.Key, h => h.Value)
+                   };
         }
 
         public PlexTvSignInUrlResponse GetSignInUrl(string callbackUrl, int pinId, string pinCode)
@@ -70,10 +75,10 @@ namespace NzbDrone.Core.Notifications.Plex.PlexTv
             var request = requestBuilder.Build();
 
             return new PlexTvSignInUrlResponse
-            {
-                OauthUrl = request.Url.ToString(),
-                PinId = pinId
-            };
+                   {
+                       OauthUrl = request.Url.ToString(),
+                       PinId = pinId
+                   };
         }
 
         public string GetAuthToken(int pinId)
@@ -83,8 +88,16 @@ namespace NzbDrone.Core.Notifications.Plex.PlexTv
             return authToken;
         }
 
+        public void Ping(string authToken)
+        {
+            // Ping plex.tv if we haven't done so in the last 24 hours for this auth token.
+            _cache.Get(authToken, () => _proxy.Ping(_configService.PlexClientIdentifier, authToken), TimeSpan.FromHours(24));
+        }
+
         public HttpRequest GetWatchlist(string authToken)
         {
+            Ping(authToken);
+
             var clientIdentifier = _configService.PlexClientIdentifier;
 
             var requestBuilder = new HttpRequestBuilder("https://metadata.provider.plex.tv/library/sections/watchlist/all")
@@ -97,7 +110,7 @@ namespace NzbDrone.Core.Notifications.Plex.PlexTv
                                  .AddQueryParam("includeFields", "title,type,year,ratingKey")
                                  .AddQueryParam("includeElements", "Guid")
                                  .AddQueryParam("sort", "watchlistedAt:desc")
-                                 .AddQueryParam("type", (int)PlexMediaType.Movie);
+                                 .AddQueryParam("type", (int)PlexMediaType.Show);
 
             if (!string.IsNullOrWhiteSpace(authToken))
             {

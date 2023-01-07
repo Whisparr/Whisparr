@@ -7,7 +7,7 @@ import DescriptionListItemTitle from 'Components/DescriptionList/DescriptionList
 import Link from 'Components/Link/Link';
 import formatDateTime from 'Utilities/Date/formatDateTime';
 import formatAge from 'Utilities/Number/formatAge';
-import translate from 'Utilities/String/translate';
+import formatPreferredWordScore from 'Utilities/Number/formatPreferredWordScore';
 import styles from './HistoryDetails.css';
 
 function HistoryDetails(props) {
@@ -23,6 +23,8 @@ function HistoryDetails(props) {
     const {
       indexer,
       releaseGroup,
+      seriesMatchType,
+      customFormatScore,
       nzbInfoUrl,
       downloadClient,
       downloadClientName,
@@ -39,29 +41,50 @@ function HistoryDetails(props) {
       <DescriptionList>
         <DescriptionListItem
           descriptionClassName={styles.description}
-          title={translate('Name')}
+          title="Name"
           data={sourceTitle}
         />
 
         {
-          !!indexer &&
+          indexer ?
             <DescriptionListItem
-              title={translate('Indexer')}
+              title="Indexer"
               data={indexer}
-            />
+            /> :
+            null
         }
 
         {
-          !!releaseGroup &&
+          releaseGroup ?
             <DescriptionListItem
               descriptionClassName={styles.description}
-              title={translate('ReleaseGroup')}
+              title="Release Group"
               data={releaseGroup}
-            />
+            /> :
+            null
         }
 
         {
-          !!nzbInfoUrl &&
+          customFormatScore && customFormatScore !== '0' ?
+            <DescriptionListItem
+              title="Custom Format Score"
+              data={formatPreferredWordScore(customFormatScore)}
+            /> :
+            null
+        }
+
+        {
+          seriesMatchType ?
+            <DescriptionListItem
+              descriptionClassName={styles.description}
+              title="Series Match Type"
+              data={seriesMatchType}
+            /> :
+            null
+        }
+
+        {
+          nzbInfoUrl ?
             <span>
               <DescriptionListItemTitle>
                 Info URL
@@ -70,40 +93,44 @@ function HistoryDetails(props) {
               <DescriptionListItemDescription>
                 <Link to={nzbInfoUrl}>{nzbInfoUrl}</Link>
               </DescriptionListItemDescription>
-            </span>
+            </span> :
+            null
         }
 
         {
           downloadClientNameInfo ?
             <DescriptionListItem
-              title={translate('DownloadClient')}
+              title="Download Client"
               data={downloadClientNameInfo}
             /> :
             null
         }
 
         {
-          !!downloadId &&
+          downloadId ?
             <DescriptionListItem
-              title={translate('GrabID')}
+              title="Grab ID"
               data={downloadId}
-            />
+            /> :
+            null
         }
 
         {
-          !!indexer &&
+          age || ageHours || ageMinutes ?
             <DescriptionListItem
-              title={translate('AgeWhenGrabbed')}
+              title="Age (when grabbed)"
               data={formatAge(age, ageHours, ageMinutes)}
-            />
+            /> :
+            null
         }
 
         {
-          !!publishedDate &&
+          publishedDate ?
             <DescriptionListItem
-              title={translate('PublishedDate')}
+              title="Published Date"
               data={formatDateTime(publishedDate, shortDateFormat, timeFormat, { includeSeconds: true })}
-            />
+            /> :
+            null
         }
       </DescriptionList>
     );
@@ -118,16 +145,17 @@ function HistoryDetails(props) {
       <DescriptionList>
         <DescriptionListItem
           descriptionClassName={styles.description}
-          title={translate('Name')}
+          title="Name"
           data={sourceTitle}
         />
 
         {
-          !!message &&
+          message ?
             <DescriptionListItem
-              title={translate('Message')}
+              title="Message"
               data={message}
-            />
+            /> :
+            null
         }
       </DescriptionList>
     );
@@ -135,6 +163,7 @@ function HistoryDetails(props) {
 
   if (eventType === 'downloadFolderImported') {
     const {
+      customFormatScore,
       droppedPath,
       importedPath
     } = data;
@@ -143,47 +172,59 @@ function HistoryDetails(props) {
       <DescriptionList>
         <DescriptionListItem
           descriptionClassName={styles.description}
-          title={translate('Name')}
+          title="Name"
           data={sourceTitle}
         />
 
         {
-          !!droppedPath &&
+          droppedPath ?
             <DescriptionListItem
               descriptionClassName={styles.description}
-              title={translate('Source')}
+              title="Source"
               data={droppedPath}
-            />
+            /> :
+            null
         }
 
         {
-          !!importedPath &&
+          importedPath ?
             <DescriptionListItem
               descriptionClassName={styles.description}
-              title={translate('ImportedTo')}
+              title="Imported To"
               data={importedPath}
-            />
+            /> :
+            null
+        }
+
+        {
+          customFormatScore && customFormatScore !== '0' ?
+            <DescriptionListItem
+              title="Custom Format Score"
+              data={formatPreferredWordScore(customFormatScore)}
+            /> :
+            null
         }
       </DescriptionList>
     );
   }
 
-  if (eventType === 'movieFileDeleted') {
+  if (eventType === 'episodeFileDeleted') {
     const {
-      reason
+      reason,
+      customFormatScore
     } = data;
 
     let reasonMessage = '';
 
     switch (reason) {
       case 'Manual':
-        reasonMessage = translate('FileWasDeletedByViaUI');
+        reasonMessage = 'File was deleted by via UI';
         break;
       case 'MissingFromDisk':
-        reasonMessage = translate('MissingFromDisk');
+        reasonMessage = 'Whisparr was unable to find the file on disk so the file was unlinked from the episode in the database';
         break;
       case 'Upgrade':
-        reasonMessage = translate('FileWasDeletedByUpgrade');
+        reasonMessage = 'File was deleted to import an upgrade';
         break;
       default:
         reasonMessage = '';
@@ -192,19 +233,28 @@ function HistoryDetails(props) {
     return (
       <DescriptionList>
         <DescriptionListItem
-          title={translate('Name')}
+          title="Name"
           data={sourceTitle}
         />
 
         <DescriptionListItem
-          title={translate('Reason')}
+          title="Reason"
           data={reasonMessage}
         />
+
+        {
+          customFormatScore && customFormatScore !== '0' ?
+            <DescriptionListItem
+              title="Custom Format Score"
+              data={formatPreferredWordScore(customFormatScore)}
+            /> :
+            null
+        }
       </DescriptionList>
     );
   }
 
-  if (eventType === 'movieFileRenamed') {
+  if (eventType === 'episodeFileRenamed') {
     const {
       sourcePath,
       sourceRelativePath,
@@ -215,22 +265,22 @@ function HistoryDetails(props) {
     return (
       <DescriptionList>
         <DescriptionListItem
-          title={translate('SourcePath')}
+          title="Source Path"
           data={sourcePath}
         />
 
         <DescriptionListItem
-          title={translate('SourceRelativePath')}
+          title="Source Relative Path"
           data={sourceRelativePath}
         />
 
         <DescriptionListItem
-          title={translate('DestinationPath')}
+          title="Destination Path"
           data={path}
         />
 
         <DescriptionListItem
-          title={translate('DestinationRelativePath')}
+          title="Destination Relative Path"
           data={relativePath}
         />
       </DescriptionList>
@@ -246,16 +296,17 @@ function HistoryDetails(props) {
       <DescriptionList>
         <DescriptionListItem
           descriptionClassName={styles.description}
-          title={translate('Name')}
+          title="Name"
           data={sourceTitle}
         />
 
         {
-          !!message &&
+          message ?
             <DescriptionListItem
-              title={translate('Message')}
+              title="Message"
               data={message}
-            />
+            /> :
+            null
         }
       </DescriptionList>
     );
@@ -265,7 +316,7 @@ function HistoryDetails(props) {
     <DescriptionList>
       <DescriptionListItem
         descriptionClassName={styles.description}
-        title={translate('Name')}
+        title="Name"
         data={sourceTitle}
       />
     </DescriptionList>

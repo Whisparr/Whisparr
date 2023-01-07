@@ -1,3 +1,4 @@
+using System;
 using NzbDrone.Common.Messaging;
 
 namespace NzbDrone.Core.HealthCheck

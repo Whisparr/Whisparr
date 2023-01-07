@@ -1,6 +1,5 @@
 using FluentValidation;
 using NzbDrone.Core.Annotations;
-using NzbDrone.Core.ThingiProvider;
 using NzbDrone.Core.Validation;
 
 namespace NzbDrone.Core.ImportLists.Plex
@@ -15,7 +14,7 @@ namespace NzbDrone.Core.ImportLists.Plex
         }
     }
 
-    public class PlexListSettings : IProviderConfig
+    public class PlexListSettings : IImportListSettings
     {
         protected virtual PlexListSettingsValidator Validator => new PlexListSettingsValidator();
 
@@ -25,6 +24,8 @@ namespace NzbDrone.Core.ImportLists.Plex
         }
 
         public virtual string Scope => "";
+
+        public string BaseUrl { get; set; }
 
         [FieldDefinition(0, Label = "Access Token", Type = FieldType.Textbox, Hidden = HiddenType.Hidden)]
         public string AccessToken { get; set; }

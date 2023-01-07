@@ -4,14 +4,16 @@ import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import { fetchRootFolders } from 'Store/Actions/rootFolderActions';
 import { deleteImportList, fetchImportLists } from 'Store/Actions/settingsActions';
-import createSortedSectionSelector from 'Store/Selectors/createSortedSectionSelector';
-import sortByName from 'Utilities/Array/sortByName';
 import ImportLists from './ImportLists';
 
 function createMapStateToProps() {
   return createSelector(
-    createSortedSectionSelector('settings.importLists', sortByName),
-    (importLists) => importLists
+    (state) => state.settings.importLists,
+    (importLists) => {
+      return {
+        ...importLists
+      };
+    }
   );
 }
 
@@ -21,7 +23,7 @@ const mapDispatchToProps = {
   fetchRootFolders
 };
 
-class ImportListsConnector extends Component {
+class ListsConnector extends Component {
 
   //
   // Lifecycle
@@ -51,10 +53,10 @@ class ImportListsConnector extends Component {
   }
 }
 
-ImportListsConnector.propTypes = {
+ListsConnector.propTypes = {
   fetchImportLists: PropTypes.func.isRequired,
   deleteImportList: PropTypes.func.isRequired,
   fetchRootFolders: PropTypes.func.isRequired
 };
 
-export default connect(createMapStateToProps, mapDispatchToProps)(ImportListsConnector);
+export default connect(createMapStateToProps, mapDispatchToProps)(ListsConnector);

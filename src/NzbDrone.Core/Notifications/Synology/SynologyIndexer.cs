@@ -1,10 +1,10 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using FluentValidation.Results;
 using NzbDrone.Common.EnvironmentInfo;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.MediaFiles;
-using NzbDrone.Core.Movies;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Notifications.Synology
 {
@@ -24,45 +24,45 @@ namespace NzbDrone.Core.Notifications.Synology
         {
             if (Settings.UpdateLibrary)
             {
-                foreach (var oldFile in message.OldMovieFiles)
+                foreach (var oldFile in message.OldFiles)
                 {
-                    var fullPath = Path.Combine(message.Movie.Path, oldFile.RelativePath);
+                    var fullPath = Path.Combine(message.Series.Path, oldFile.RelativePath);
 
                     _indexerProxy.DeleteFile(fullPath);
                 }
 
                 {
-                    var fullPath = Path.Combine(message.Movie.Path, message.MovieFile.RelativePath);
+                    var fullPath = Path.Combine(message.Series.Path, message.EpisodeFile.RelativePath);
 
                     _indexerProxy.AddFile(fullPath);
                 }
             }
         }
 
-        public override void OnMovieRename(Media movie, List<RenamedMovieFile> renamedFiles)
+        public override void OnRename(Series series, List<RenamedEpisodeFile> renamedFiles)
         {
             if (Settings.UpdateLibrary)
             {
-                _indexerProxy.UpdateFolder(movie.Path);
+                _indexerProxy.UpdateFolder(series.Path);
             }
         }
 
-        public override void OnMovieFileDelete(MovieFileDeleteMessage deleteMessage)
+        public override void OnEpisodeFileDelete(EpisodeDeleteMessage deleteMessage)
         {
             if (Settings.UpdateLibrary)
             {
-                var fullPath = Path.Combine(deleteMessage.Movie.Path, deleteMessage.MovieFile.RelativePath);
+                var fullPath = Path.Combine(deleteMessage.Series.Path, deleteMessage.EpisodeFile.RelativePath);
                 _indexerProxy.DeleteFile(fullPath);
             }
         }
 
-        public override void OnMovieDelete(MovieDeleteMessage deleteMessage)
+        public override void OnSeriesDelete(SeriesDeleteMessage deleteMessage)
         {
             if (deleteMessage.DeletedFiles)
             {
                 if (Settings.UpdateLibrary)
                 {
-                    _indexerProxy.DeleteFolder(deleteMessage.Movie.Path);
+                    _indexerProxy.DeleteFolder(deleteMessage.Series.Path);
                 }
             }
         }

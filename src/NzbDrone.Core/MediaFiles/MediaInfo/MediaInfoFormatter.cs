@@ -153,10 +153,10 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
                 return "WMA";
             }
 
-            Logger.ForDebugEvent()
+            Logger.Debug()
                   .Message("Unknown audio format: '{0}' in '{1}'.", mediaInfo.RawStreamData, sceneName)
                   .WriteSentryWarn("UnknownAudioFormatFFProbe", mediaInfo.ContainerFormat, mediaInfo.AudioFormat, audioCodecID)
-                  .Log();
+                  .Write();
 
             return mediaInfo.AudioFormat;
         }
@@ -262,10 +262,10 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
                 return "";
             }
 
-            Logger.ForDebugEvent()
+            Logger.Debug()
                   .Message("Unknown video format: '{0}' in '{1}'.", mediaInfo.RawStreamData, sceneName)
                   .WriteSentryWarn("UnknownVideoFormatFFProbe", mediaInfo.ContainerFormat, videoFormat, videoCodecID)
-                  .Log();
+                  .Write();
 
             return result;
         }
@@ -327,6 +327,8 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
                     return "HLG";
                 case HdrFormat.Pq10:
                     return "PQ";
+                case HdrFormat.UnknownHdr:
+                    return "HDR";
             }
 
             return "";

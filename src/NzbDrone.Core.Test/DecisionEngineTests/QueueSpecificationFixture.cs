@@ -7,23 +7,27 @@ using NUnit.Framework;
 using NzbDrone.Core.CustomFormats;
 using NzbDrone.Core.DecisionEngine.Specifications;
 using NzbDrone.Core.Download.TrackedDownloads;
-using NzbDrone.Core.Movies;
+using NzbDrone.Core.Languages;
+using NzbDrone.Core.Parser;
 using NzbDrone.Core.Parser.Model;
-using NzbDrone.Core.Profiles;
+using NzbDrone.Core.Profiles.Qualities;
 using NzbDrone.Core.Qualities;
 using NzbDrone.Core.Queue;
 using NzbDrone.Core.Test.CustomFormats;
 using NzbDrone.Core.Test.Framework;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Test.DecisionEngineTests
 {
     [TestFixture]
     public class QueueSpecificationFixture : CoreTest<QueueSpecification>
     {
-        private Media _movie;
-        private RemoteMovie _remoteMovie;
+        private Series _series;
+        private Episode _episode;
+        private RemoteEpisode _remoteEpisode;
 
-        private Media _otherMovie;
+        private Series _otherSeries;
+        private Episode _otherEpisode;
 
         private ReleaseInfo _releaseInfo;
 
@@ -32,34 +36,46 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         {
             Mocker.Resolve<UpgradableSpecification>();
 
-            CustomFormatsFixture.GivenCustomFormats();
+            CustomFormatsTestHelpers.GivenCustomFormats();
 
-            _movie = Builder<Media>.CreateNew()
-                                     .With(e => e.Profile = new Profile
-                                     {
-                                         Items = Qualities.QualityFixture.GetDefaultQualities(),
-                                         FormatItems = CustomFormatsFixture.GetSampleFormatItems(),
-                                         MinFormatScore = 0,
-                                         UpgradeAllowed = true
-                                     })
+            _series = Builder<Series>.CreateNew()
+                                     .With(e => e.QualityProfile = new QualityProfile
+                                                                {
+                                                                    UpgradeAllowed = true,
+                                                                    Items = Qualities.QualityFixture.GetDefaultQualities(),
+                                                                    FormatItems = CustomFormatsTestHelpers.GetSampleFormatItems(),
+                                                                    MinFormatScore = 0
+                                                                })
                                      .Build();
 
-            _otherMovie = Builder<Media>.CreateNew()
+            _episode = Builder<Episode>.CreateNew()
+                                       .With(e => e.SeriesId = _series.Id)
+                                       .Build();
+
+            _otherSeries = Builder<Series>.CreateNew()
                                           .With(s => s.Id = 2)
                                           .Build();
 
-            _releaseInfo = Builder<ReleaseInfo>.CreateNew()
-                                   .Build();
+            _otherEpisode = Builder<Episode>.CreateNew()
+                                            .With(e => e.SeriesId = _otherSeries.Id)
+                                            .With(e => e.Id = 2)
+                                            .With(e => e.SeasonNumber = 2)
+                                            .With(e => e.EpisodeNumber = 2)
+                                            .Build();
 
-            _remoteMovie = Builder<RemoteMovie>.CreateNew()
-                .With(r => r.Movie = _movie)
-                .With(r => r.ParsedMovieInfo = new ParsedMovieInfo { Quality = new QualityModel(Quality.DVD) })
-                .With(x => x.CustomFormats = new List<CustomFormat>())
-                .Build();
+            _releaseInfo = Builder<ReleaseInfo>.CreateNew()
+                                               .Build();
+
+            _remoteEpisode = Builder<RemoteEpisode>.CreateNew()
+                                                   .With(r => r.Series = _series)
+                                                   .With(r => r.Episodes = new List<Episode> { _episode })
+                                                   .With(r => r.ParsedEpisodeInfo = new ParsedEpisodeInfo { Quality = new QualityModel(Quality.DVD), Languages = new List<Language> { Language.Spanish } })
+                                                   .With(r => r.CustomFormats = new List<CustomFormat>())
+                                                   .Build();
 
             Mocker.GetMock<ICustomFormatCalculationService>()
-                .Setup(x => x.ParseCustomFormat(It.IsAny<ParsedMovieInfo>(), _movie))
-                .Returns(new List<CustomFormat>());
+                  .Setup(x => x.ParseCustomFormat(It.IsAny<RemoteEpisode>(), It.IsAny<long>()))
+                  .Returns(new List<CustomFormat>());
         }
 
         private void GivenEmptyQueue()
@@ -69,11 +85,18 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
                 .Returns(new List<Queue.Queue>());
         }
 
-        private void GivenQueue(IEnumerable<RemoteMovie> remoteMovies, TrackedDownloadState trackedDownloadState = TrackedDownloadState.Downloading)
+        private void GivenQueueFormats(List<CustomFormat> formats)
         {
-            var queue = remoteMovies.Select(remoteMovie => new Queue.Queue
+            Mocker.GetMock<ICustomFormatCalculationService>()
+                  .Setup(x => x.ParseCustomFormat(It.IsAny<RemoteEpisode>(), It.IsAny<long>()))
+                  .Returns(formats);
+        }
+
+        private void GivenQueue(IEnumerable<RemoteEpisode> remoteEpisodes, TrackedDownloadState trackedDownloadState = TrackedDownloadState.Downloading)
+        {
+            var queue = remoteEpisodes.Select(remoteEpisode => new Queue.Queue
             {
-                RemoteMovie = remoteMovie,
+                RemoteEpisode = remoteEpisode,
                 TrackedDownloadState = trackedDownloadState
             });
 
@@ -86,123 +109,344 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         public void should_return_true_when_queue_is_empty()
         {
             GivenEmptyQueue();
-            Subject.IsSatisfiedBy(_remoteMovie, null).Accepted.Should().BeTrue();
+            Subject.IsSatisfiedBy(_remoteEpisode, null).Accepted.Should().BeTrue();
         }
 
         [Test]
-        public void should_return_true_when_movie_doesnt_match()
+        public void should_return_true_when_series_doesnt_match()
         {
-            var remoteMovie = Builder<RemoteMovie>.CreateNew()
-                                                       .With(r => r.Movie = _otherMovie)
-                                                       .Build();
+            var remoteEpisode = Builder<RemoteEpisode>.CreateNew()
+                                                      .With(r => r.Series = _otherSeries)
+                                                      .With(r => r.Episodes = new List<Episode> { _episode })
+                                                      .With(r => r.Release = _releaseInfo)
+                                                      .With(r => r.CustomFormats = new List<CustomFormat>())
+                                                      .Build();
 
-            GivenQueue(new List<RemoteMovie> { remoteMovie });
-            Subject.IsSatisfiedBy(_remoteMovie, null).Accepted.Should().BeTrue();
+            GivenQueue(new List<RemoteEpisode> { remoteEpisode });
+            Subject.IsSatisfiedBy(_remoteEpisode, null).Accepted.Should().BeTrue();
+        }
+
+        [Test]
+        public void should_return_false_if_everything_is_the_same()
+        {
+            _series.QualityProfile.Value.Cutoff = Quality.Bluray1080p.Id;
+
+            var remoteEpisode = Builder<RemoteEpisode>.CreateNew()
+                .With(r => r.Series = _series)
+                .With(r => r.Episodes = new List<Episode> { _episode })
+                .With(r => r.ParsedEpisodeInfo = new ParsedEpisodeInfo
+                {
+                    Quality = new QualityModel(Quality.DVD),
+                    Languages = new List<Language> { Language.Spanish }
+                })
+                .With(r => r.CustomFormats = new List<CustomFormat>())
+                .With(r => r.Release = _releaseInfo)
+                .Build();
+
+            GivenQueue(new List<RemoteEpisode> { remoteEpisode });
+
+            Subject.IsSatisfiedBy(_remoteEpisode, null).Accepted.Should().BeFalse();
         }
 
         [Test]
         public void should_return_true_when_quality_in_queue_is_lower()
         {
-            _movie.Profile.Cutoff = Quality.Bluray1080p.Id;
+            _series.QualityProfile.Value.Cutoff = Quality.Bluray1080p.Id;
 
-            var remoteMovie = Builder<RemoteMovie>.CreateNew()
-                .With(r => r.Movie = _movie)
-                .With(r => r.ParsedMovieInfo = new ParsedMovieInfo
-                {
-                    Quality = new QualityModel(Quality.SDTV)
-                })
-                .With(x => x.CustomFormats = new List<CustomFormat>())
-                .Build();
+            var remoteEpisode = Builder<RemoteEpisode>.CreateNew()
+                                                      .With(r => r.Series = _series)
+                                                      .With(r => r.Episodes = new List<Episode> { _episode })
+                                                      .With(r => r.ParsedEpisodeInfo = new ParsedEpisodeInfo
+                                                                                       {
+                                                                                           Quality = new QualityModel(Quality.SDTV),
+                                                                                           Languages = new List<Language> { Language.Spanish }
+                                                                                       })
+                                                      .With(r => r.Release = _releaseInfo)
+                                                      .With(r => r.CustomFormats = new List<CustomFormat>())
+                                                      .Build();
 
-            GivenQueue(new List<RemoteMovie> { remoteMovie });
-            Subject.IsSatisfiedBy(_remoteMovie, null).Accepted.Should().BeTrue();
+            GivenQueue(new List<RemoteEpisode> { remoteEpisode });
+            Subject.IsSatisfiedBy(_remoteEpisode, null).Accepted.Should().BeTrue();
         }
 
         [Test]
-        public void should_return_false_when_qualities_are_the_same()
+        public void should_return_true_when_quality_in_queue_is_lower_but_language_is_higher()
         {
-            var remoteMovie = Builder<RemoteMovie>.CreateNew()
-                                                      .With(r => r.Movie = _movie)
-                                                      .With(r => r.ParsedMovieInfo = new ParsedMovieInfo
+            _series.QualityProfile.Value.Cutoff = Quality.Bluray1080p.Id;
+
+            var remoteEpisode = Builder<RemoteEpisode>.CreateNew()
+                                                      .With(r => r.Series = _series)
+                                                      .With(r => r.Episodes = new List<Episode> { _episode })
+                                                      .With(r => r.ParsedEpisodeInfo = new ParsedEpisodeInfo
                                                       {
-                                                          Quality = new QualityModel(Quality.DVD)
+                                                          Quality = new QualityModel(Quality.SDTV),
+                                                          Languages = new List<Language> { Language.English }
                                                       })
+                                                      .With(r => r.Release = _releaseInfo)
+                                                      .With(r => r.CustomFormats = new List<CustomFormat>())
                                                       .Build();
 
-            GivenQueue(new List<RemoteMovie> { remoteMovie });
-            Subject.IsSatisfiedBy(_remoteMovie, null).Accepted.Should().BeFalse();
+            GivenQueue(new List<RemoteEpisode> { remoteEpisode });
+            Subject.IsSatisfiedBy(_remoteEpisode, null).Accepted.Should().BeTrue();
+        }
+
+        [Test]
+        public void should_return_true_when_episode_doesnt_match()
+        {
+            var remoteEpisode = Builder<RemoteEpisode>.CreateNew()
+                                                      .With(r => r.Series = _series)
+                                                      .With(r => r.Episodes = new List<Episode> { _otherEpisode })
+                                                      .With(r => r.ParsedEpisodeInfo = new ParsedEpisodeInfo
+                                                                                       {
+                                                                                           Quality = new QualityModel(Quality.DVD)
+                                                                                       })
+                                                      .With(r => r.Release = _releaseInfo)
+                                                      .With(r => r.CustomFormats = new List<CustomFormat>())
+                                                      .Build();
+
+            GivenQueue(new List<RemoteEpisode> { remoteEpisode });
+            Subject.IsSatisfiedBy(_remoteEpisode, null).Accepted.Should().BeTrue();
+        }
+
+        [Test]
+        public void should_return_true_when_qualities_are_the_same_and_languages_are_the_same_with_higher_custom_format_score()
+        {
+            _remoteEpisode.CustomFormats = new List<CustomFormat> { new CustomFormat("My Format", new ResolutionSpecification { Value = (int)Resolution.R1080p }) { Id = 1 } };
+
+            var lowFormat = new List<CustomFormat> { new CustomFormat("Bad Format", new ResolutionSpecification { Value = (int)Resolution.R1080p }) { Id = 2 } };
+
+            CustomFormatsTestHelpers.GivenCustomFormats(_remoteEpisode.CustomFormats.First(), lowFormat.First());
+
+            _series.QualityProfile.Value.FormatItems = CustomFormatsTestHelpers.GetSampleFormatItems("My Format");
+
+            GivenQueueFormats(lowFormat);
+
+            var remoteEpisode = Builder<RemoteEpisode>.CreateNew()
+                .With(r => r.Series = _series)
+                .With(r => r.Episodes = new List<Episode> { _episode })
+                .With(r => r.ParsedEpisodeInfo = new ParsedEpisodeInfo
+                {
+                    Quality = new QualityModel(Quality.DVD),
+                    Languages = new List<Language> { Language.Spanish },
+                })
+                .With(r => r.Release = _releaseInfo)
+                .With(r => r.CustomFormats = lowFormat)
+                .Build();
+
+            GivenQueue(new List<RemoteEpisode> { remoteEpisode });
+            Subject.IsSatisfiedBy(_remoteEpisode, null).Accepted.Should().BeTrue();
+        }
+
+        [Test]
+        public void should_return_false_when_qualities_are_the_same_and_languages_are_the_same()
+        {
+            var remoteEpisode = Builder<RemoteEpisode>.CreateNew()
+                                                      .With(r => r.Series = _series)
+                                                      .With(r => r.Episodes = new List<Episode> { _episode })
+                                                      .With(r => r.ParsedEpisodeInfo = new ParsedEpisodeInfo
+                                                                                       {
+                                                                                           Quality = new QualityModel(Quality.DVD),
+                                                                                           Languages = new List<Language> { Language.Spanish },
+                                                                                       })
+                                                      .With(r => r.Release = _releaseInfo)
+                                                      .With(r => r.CustomFormats = new List<CustomFormat>())
+                                                      .Build();
+
+            GivenQueue(new List<RemoteEpisode> { remoteEpisode });
+            Subject.IsSatisfiedBy(_remoteEpisode, null).Accepted.Should().BeFalse();
         }
 
         [Test]
         public void should_return_false_when_quality_in_queue_is_better()
         {
-            _movie.Profile.Cutoff = Quality.Bluray1080p.Id;
+            _series.QualityProfile.Value.Cutoff = Quality.Bluray1080p.Id;
 
-            var remoteMovie = Builder<RemoteMovie>.CreateNew()
-                                                      .With(r => r.Movie = _movie)
-                                                      .With(r => r.ParsedMovieInfo = new ParsedMovieInfo
-                                                      {
-                                                          Quality = new QualityModel(Quality.HDTV720p)
-                                                      })
+            var remoteEpisode = Builder<RemoteEpisode>.CreateNew()
+                                                      .With(r => r.Series = _series)
+                                                      .With(r => r.Episodes = new List<Episode> { _episode })
+                                                      .With(r => r.ParsedEpisodeInfo = new ParsedEpisodeInfo
+                                                                                       {
+                                                                                           Quality = new QualityModel(Quality.HDTV720p),
+                                                                                           Languages = new List<Language> { Language.English }
+                                                                                       })
+                                                      .With(r => r.Release = _releaseInfo)
+                                                      .With(r => r.CustomFormats = new List<CustomFormat>())
                                                       .Build();
 
-            GivenQueue(new List<RemoteMovie> { remoteMovie });
-            Subject.IsSatisfiedBy(_remoteMovie, null).Accepted.Should().BeFalse();
+            GivenQueue(new List<RemoteEpisode> { remoteEpisode });
+            Subject.IsSatisfiedBy(_remoteEpisode, null).Accepted.Should().BeFalse();
         }
 
         [Test]
-        public void should_return_false_if_quality_in_queue_meets_cutoff()
+        public void should_return_false_if_matching_multi_episode_is_in_queue()
         {
-            _movie.Profile.Cutoff = _remoteMovie.ParsedMovieInfo.Quality.Quality.Id;
-
-            var remoteMovie = Builder<RemoteMovie>.CreateNew()
-                                                      .With(r => r.Movie = _movie)
-                                                      .With(r => r.ParsedMovieInfo = new ParsedMovieInfo
+            var remoteEpisode = Builder<RemoteEpisode>.CreateNew()
+                                                      .With(r => r.Series = _series)
+                                                      .With(r => r.Episodes = new List<Episode> { _episode, _otherEpisode })
+                                                      .With(r => r.ParsedEpisodeInfo = new ParsedEpisodeInfo
                                                       {
-                                                          Quality = new QualityModel(Quality.HDTV720p)
+                                                          Quality = new QualityModel(Quality.HDTV720p),
+                                                          Languages = new List<Language> { Language.English }
                                                       })
+                                                      .With(r => r.Release = _releaseInfo)
+                                                      .With(r => r.CustomFormats = new List<CustomFormat>())
                                                       .Build();
 
-            GivenQueue(new List<RemoteMovie> { remoteMovie });
-
-            Subject.IsSatisfiedBy(_remoteMovie, null).Accepted.Should().BeFalse();
+            GivenQueue(new List<RemoteEpisode> { remoteEpisode });
+            Subject.IsSatisfiedBy(_remoteEpisode, null).Accepted.Should().BeFalse();
         }
 
         [Test]
-        public void should_return_false_when_quality_is_better_and_upgrade_allowed_is_false_for_quality_profile()
+        public void should_return_false_if_multi_episode_has_one_episode_in_queue()
         {
-            _movie.Profile.Cutoff = Quality.Bluray1080p.Id;
-            _movie.Profile.UpgradeAllowed = false;
+            var remoteEpisode = Builder<RemoteEpisode>.CreateNew()
+                                                      .With(r => r.Series = _series)
+                                                      .With(r => r.Episodes = new List<Episode> { _episode })
+                                                      .With(r => r.ParsedEpisodeInfo = new ParsedEpisodeInfo
+                                                      {
+                                                          Quality = new QualityModel(Quality.HDTV720p),
+                                                          Languages = new List<Language> { Language.English }
+                                                      })
+                                                      .With(r => r.Release = _releaseInfo)
+                                                      .With(r => r.CustomFormats = new List<CustomFormat>())
+                                                      .Build();
 
-            var remoteMovie = Builder<RemoteMovie>.CreateNew()
-                .With(r => r.Movie = _movie)
-                .With(r => r.ParsedMovieInfo = new ParsedMovieInfo
+            _remoteEpisode.Episodes.Add(_otherEpisode);
+
+            GivenQueue(new List<RemoteEpisode> { remoteEpisode });
+            Subject.IsSatisfiedBy(_remoteEpisode, null).Accepted.Should().BeFalse();
+        }
+
+        [Test]
+        public void should_return_false_if_multi_part_episode_is_already_in_queue()
+        {
+            var remoteEpisode = Builder<RemoteEpisode>.CreateNew()
+                                                      .With(r => r.Series = _series)
+                                                      .With(r => r.Episodes = new List<Episode> { _episode, _otherEpisode })
+                                                      .With(r => r.ParsedEpisodeInfo = new ParsedEpisodeInfo
+                                                      {
+                                                          Quality = new QualityModel(Quality.HDTV720p),
+                                                          Languages = new List<Language> { Language.English }
+                                                      })
+                                                      .With(r => r.Release = _releaseInfo)
+                                                      .With(r => r.CustomFormats = new List<CustomFormat>())
+                                                      .Build();
+
+            _remoteEpisode.Episodes.Add(_otherEpisode);
+
+            GivenQueue(new List<RemoteEpisode> { remoteEpisode });
+            Subject.IsSatisfiedBy(_remoteEpisode, null).Accepted.Should().BeFalse();
+        }
+
+        [Test]
+        public void should_return_false_if_multi_part_episode_has_two_episodes_in_queue()
+        {
+            var remoteEpisodes = Builder<RemoteEpisode>.CreateListOfSize(2)
+                                                       .All()
+                                                       .With(r => r.Series = _series)
+                                                       .With(r => r.CustomFormats = new List<CustomFormat>())
+                                                       .With(r => r.ParsedEpisodeInfo = new ParsedEpisodeInfo
+                                                                                        {
+                                                                                            Quality =
+                                                                                                new QualityModel(
+                                                                                                Quality.HDTV720p),
+                                                                                            Languages = new List<Language> { Language.English }
+                                                                                        })
+                                                       .With(r => r.Release = _releaseInfo)
+                                                       .TheFirst(1)
+                                                       .With(r => r.Episodes = new List<Episode> { _episode })
+                                                       .TheNext(1)
+                                                       .With(r => r.Episodes = new List<Episode> { _otherEpisode })
+                                                       .Build();
+
+            _remoteEpisode.Episodes.Add(_otherEpisode);
+            GivenQueue(remoteEpisodes);
+            Subject.IsSatisfiedBy(_remoteEpisode, null).Accepted.Should().BeFalse();
+        }
+
+        [Test]
+        public void should_return_false_if_quality_and_language_in_queue_meets_cutoff()
+        {
+            _series.QualityProfile.Value.Cutoff = _remoteEpisode.ParsedEpisodeInfo.Quality.Quality.Id;
+
+            var remoteEpisode = Builder<RemoteEpisode>.CreateNew()
+                                                      .With(r => r.Series = _series)
+                                                      .With(r => r.Episodes = new List<Episode> { _episode })
+                                                      .With(r => r.ParsedEpisodeInfo = new ParsedEpisodeInfo
+                                                      {
+                                                          Quality = new QualityModel(Quality.HDTV720p),
+                                                          Languages = new List<Language> { Language.Spanish }
+                                                      })
+                                                      .With(r => r.Release = _releaseInfo)
+                                                      .With(r => r.CustomFormats = new List<CustomFormat>())
+                                                      .Build();
+
+            GivenQueue(new List<RemoteEpisode> { remoteEpisode });
+
+            Subject.IsSatisfiedBy(_remoteEpisode, null).Accepted.Should().BeFalse();
+        }
+
+        [Test]
+        public void should_return_false_when_quality_are_the_same_language_is_better_and_upgrade_allowed_is_false_for_language_profile()
+        {
+            var remoteEpisode = Builder<RemoteEpisode>.CreateNew()
+                .With(r => r.Series = _series)
+                .With(r => r.Episodes = new List<Episode> { _episode })
+                .With(r => r.ParsedEpisodeInfo = new ParsedEpisodeInfo
                 {
-                    Quality = new QualityModel(Quality.Bluray1080p)
+                    Quality = new QualityModel(Quality.DVD),
+                    Languages = new List<Language> { Language.English }
                 })
+                .With(r => r.Release = _releaseInfo)
+                .With(r => r.CustomFormats = new List<CustomFormat>())
                 .Build();
 
-            GivenQueue(new List<RemoteMovie> { remoteMovie });
-            Subject.IsSatisfiedBy(_remoteMovie, null).Accepted.Should().BeFalse();
+            GivenQueue(new List<RemoteEpisode> { remoteEpisode });
+            Subject.IsSatisfiedBy(_remoteEpisode, null).Accepted.Should().BeFalse();
+        }
+
+        [Test]
+        public void should_return_false_when_quality_is_better_languages_are_the_same_and_upgrade_allowed_is_false_for_quality_profile()
+        {
+            _series.QualityProfile.Value.Cutoff = Quality.Bluray1080p.Id;
+            _series.QualityProfile.Value.UpgradeAllowed = false;
+
+            var remoteEpisode = Builder<RemoteEpisode>.CreateNew()
+                .With(r => r.Series = _series)
+                .With(r => r.Episodes = new List<Episode> { _episode })
+                .With(r => r.ParsedEpisodeInfo = new ParsedEpisodeInfo
+                {
+                    Quality = new QualityModel(Quality.Bluray1080p),
+                    Languages = new List<Language> { Language.Spanish }
+                })
+                .With(r => r.Release = _releaseInfo)
+                .With(r => r.CustomFormats = new List<CustomFormat>())
+                .Build();
+
+            GivenQueue(new List<RemoteEpisode> { remoteEpisode });
+            Subject.IsSatisfiedBy(_remoteEpisode, null).Accepted.Should().BeFalse();
         }
 
         [Test]
         public void should_return_true_if_everything_is_the_same_for_failed_pending()
         {
-            _movie.Profile.Cutoff = Quality.Bluray1080p.Id;
+            _series.QualityProfile.Value.Cutoff = Quality.Bluray1080p.Id;
 
-            var remoteMovie = Builder<RemoteMovie>.CreateNew()
-                .With(r => r.Movie = _movie)
-                .With(r => r.ParsedMovieInfo = new ParsedMovieInfo
+            var remoteEpisode = Builder<RemoteEpisode>.CreateNew()
+                .With(r => r.Series = _series)
+                .With(r => r.Episodes = new List<Episode> { _episode })
+                .With(r => r.ParsedEpisodeInfo = new ParsedEpisodeInfo
                 {
-                    Quality = new QualityModel(Quality.DVD)
+                    Quality = new QualityModel(Quality.DVD),
+                    Languages = new List<Language> { Language.Spanish }
                 })
                 .With(r => r.Release = _releaseInfo)
+                .With(r => r.CustomFormats = new List<CustomFormat>())
                 .Build();
 
-            GivenQueue(new List<RemoteMovie> { remoteMovie }, TrackedDownloadState.FailedPending);
+            GivenQueue(new List<RemoteEpisode> { remoteEpisode }, TrackedDownloadState.FailedPending);
 
-            Subject.IsSatisfiedBy(_remoteMovie, null).Accepted.Should().BeTrue();
+            Subject.IsSatisfiedBy(_remoteEpisode, null).Accepted.Should().BeTrue();
         }
     }
 }

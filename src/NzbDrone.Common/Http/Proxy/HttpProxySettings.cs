@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using NzbDrone.Common.Extensions;
 
 namespace NzbDrone.Common.Http.Proxy

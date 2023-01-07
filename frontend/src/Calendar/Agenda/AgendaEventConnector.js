@@ -1,22 +1,22 @@
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import createMovieFileSelector from 'Store/Selectors/createMovieFileSelector';
-import createMovieSelector from 'Store/Selectors/createMovieSelector';
+import createEpisodeFileSelector from 'Store/Selectors/createEpisodeFileSelector';
 import createQueueItemSelector from 'Store/Selectors/createQueueItemSelector';
+import createSeriesSelector from 'Store/Selectors/createSeriesSelector';
 import createUISettingsSelector from 'Store/Selectors/createUISettingsSelector';
 import AgendaEvent from './AgendaEvent';
 
 function createMapStateToProps() {
   return createSelector(
     (state) => state.calendar.options,
-    createMovieSelector(),
-    createMovieFileSelector(),
+    createSeriesSelector(),
+    createEpisodeFileSelector(),
     createQueueItemSelector(),
     createUISettingsSelector(),
-    (calendarOptions, movie, movieFile, queueItem, uiSettings) => {
+    (calendarOptions, series, episodeFile, queueItem, uiSettings) => {
       return {
-        movie,
-        movieFile,
+        series,
+        episodeFile,
         queueItem,
         ...calendarOptions,
         timeFormat: uiSettings.timeFormat,

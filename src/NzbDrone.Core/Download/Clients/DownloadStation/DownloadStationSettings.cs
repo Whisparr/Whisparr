@@ -1,4 +1,4 @@
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using FluentValidation;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Annotations;
@@ -45,7 +45,7 @@ namespace NzbDrone.Core.Download.Clients.DownloadStation
         [FieldDefinition(4, Label = "Password", Type = FieldType.Password, Privacy = PrivacyLevel.Password)]
         public string Password { get; set; }
 
-        [FieldDefinition(5, Label = "Category", Type = FieldType.Textbox, HelpText = "Adding a category specific to Whisparr avoids conflicts with unrelated non-Whisparr downloads. Using a category is optional, but strongly recommended. Creates a [category] subdirectory in the output directory.")]
+        [FieldDefinition(5, Label = "Category", Type = FieldType.Textbox, HelpText = "Adding a category specific to Whisparr avoids conflicts with unrelated non-Whisparr downloads. Using a category is optional, but strongly recommended.. Creates a [category] subdirectory in the output directory.")]
         public string TvCategory { get; set; }
 
         [FieldDefinition(6, Label = "Directory", Type = FieldType.Textbox, HelpText = "Optional shared folder to put downloads into, leave blank to use the default Download Station location")]
@@ -53,8 +53,8 @@ namespace NzbDrone.Core.Download.Clients.DownloadStation
 
         public DownloadStationSettings()
         {
-            Host = "127.0.0.1";
-            Port = 5000;
+            this.Host = "127.0.0.1";
+            this.Port = 5000;
         }
 
         public NzbDroneValidationResult Validate()

@@ -1,4 +1,4 @@
-using FluentAssertions;
+﻿using FluentAssertions;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.HealthCheck;
 
@@ -32,22 +32,17 @@ namespace NzbDrone.Core.Test.HealthCheck.Checks
 
             if (wikiFragment.IsNotNullOrWhiteSpace())
             {
-                result.WikiUrl.ToString().Should().Contain(wikiFragment);
+                result.WikiUrl.Fragment.Should().Be(wikiFragment);
             }
         }
 
-        public static void ShouldBeError(this Core.HealthCheck.HealthCheck result, string message = null, string wikiFragment = null)
+        public static void ShouldBeError(this Core.HealthCheck.HealthCheck result, string message = null)
         {
             result.Type.Should().Be(HealthCheckResult.Error);
 
             if (message.IsNotNullOrWhiteSpace())
             {
                 result.Message.Should().Contain(message);
-            }
-
-            if (wikiFragment.IsNotNullOrWhiteSpace())
-            {
-                result.WikiUrl.ToString().Should().Contain(wikiFragment);
             }
         }
     }

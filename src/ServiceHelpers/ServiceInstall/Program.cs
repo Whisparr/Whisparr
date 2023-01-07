@@ -1,4 +1,4 @@
-﻿namespace ServiceInstall
+namespace ServiceInstall
 {
     public static class Program
     {

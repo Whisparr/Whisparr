@@ -3,8 +3,8 @@ using NUnit.Framework;
 using NzbDrone.Common;
 using NzbDrone.Common.EnvironmentInfo;
 using NzbDrone.Common.Processes;
+using NzbDrone.Host;
 using NzbDrone.Test.Common;
-using Whisparr.Host;
 
 namespace NzbDrone.App.Test
 {
@@ -27,6 +27,7 @@ namespace NzbDrone.App.Test
 
             Mocker.GetMock<IProcessProvider>()
                   .Setup(c => c.SpawnNewProcess("sc.exe", It.IsAny<string>(), null, true));
+
             Mocker.GetMock<IRuntimeInfo>().SetupGet(c => c.IsUserInteractive).Returns(true);
 
             Subject.Route(ApplicationModes.InstallService);

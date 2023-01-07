@@ -9,12 +9,11 @@ import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { icons, kinds } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import styles from './RestoreBackupModalContent.css';
 
 function getErrorMessage(error) {
   if (!error || !error.responseJSON || !error.responseJSON.message) {
-    return translate('ErrorRestoringBackup');
+    return 'Error restoring backup';
   }
 
   return error.responseJSON.message;
@@ -146,7 +145,7 @@ class RestoreBackupModalContent extends Component {
 
         <ModalBody>
           {
-            !!id && translate('WouldYouLikeToRestoreBackup', [name])
+            !!id && `Would you like to restore the backup '${name}'?`
           }
 
           {
@@ -168,9 +167,7 @@ class RestoreBackupModalContent extends Component {
                 />
               </div>
 
-              <div>
-                {translate('Restore')}
-              </div>
+              <div>Restore</div>
             </div>
 
             <div className={styles.step}>
@@ -181,9 +178,7 @@ class RestoreBackupModalContent extends Component {
                 />
               </div>
 
-              <div>
-                {translate('Restart')}
-              </div>
+              <div>Restart</div>
             </div>
 
             <div className={styles.step}>
@@ -194,20 +189,18 @@ class RestoreBackupModalContent extends Component {
                 />
               </div>
 
-              <div>
-                {translate('Reload')}
-              </div>
+              <div>Reload</div>
             </div>
           </div>
         </ModalBody>
 
         <ModalFooter>
           <div className={styles.additionalInfo}>
-            {translate('RestartReloadNote')}
+            Note: Whisparr will automatically restart and reload the UI during the restore process.
           </div>
 
           <Button onPress={onModalClose}>
-            {translate('Cancel')}
+            Cancel
           </Button>
 
           <SpinnerButton
@@ -216,7 +209,7 @@ class RestoreBackupModalContent extends Component {
             isSpinning={isRestoring}
             onPress={this.onRestorePress}
           >
-            {translate('Restore')}
+            Restore
           </SpinnerButton>
         </ModalFooter>
       </ModalContent>

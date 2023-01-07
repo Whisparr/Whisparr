@@ -6,9 +6,9 @@ using FluentAssertions;
 using NUnit.Framework;
 using NzbDrone.Core.Blocklisting;
 using NzbDrone.Core.Languages;
-using NzbDrone.Core.Movies;
 using NzbDrone.Core.Qualities;
 using NzbDrone.Core.Test.Framework;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Test.Blocklisting
 {
@@ -16,28 +16,29 @@ namespace NzbDrone.Core.Test.Blocklisting
     public class BlocklistRepositoryFixture : DbTest<BlocklistRepository, Blocklist>
     {
         private Blocklist _blocklist;
-        private Media _movie1;
-        private Media _movie2;
+        private Series _series1;
+        private Series _series2;
 
         [SetUp]
         public void Setup()
         {
             _blocklist = new Blocklist
-            {
-                MovieId = 1234,
-                Quality = new QualityModel(),
-                Languages = new List<Language>(),
-                SourceTitle = "movie.title.1998",
-                Date = DateTime.UtcNow
-            };
+                     {
+                         SeriesId = 12345,
+                         EpisodeIds = new List<int> { 1 },
+                         Quality = new QualityModel(Quality.Bluray720p),
+                         Languages = new List<Language> { Language.English },
+                         SourceTitle = "series.title.s01e01",
+                         Date = DateTime.UtcNow
+                     };
 
-            _movie1 = Builder<Media>.CreateNew()
-                         .With(s => s.Id = 7)
-                         .Build();
+            _series1 = Builder<Series>.CreateNew()
+                                      .With(s => s.Id = 7)
+                                      .Build();
 
-            _movie2 = Builder<Media>.CreateNew()
-                                     .With(s => s.Id = 8)
-                                     .Build();
+            _series2 = Builder<Series>.CreateNew()
+                                      .With(s => s.Id = 8)
+                                      .Build();
         }
 
         [Test]
@@ -48,11 +49,11 @@ namespace NzbDrone.Core.Test.Blocklisting
         }
 
         [Test]
-        public void should_should_have_movie_id()
+        public void should_should_have_episode_ids()
         {
             Subject.Insert(_blocklist);
 
-            Subject.All().First().MovieId.Should().Be(_blocklist.MovieId);
+            Subject.All().First().EpisodeIds.Should().Contain(_blocklist.EpisodeIds);
         }
 
         [Test]
@@ -60,32 +61,32 @@ namespace NzbDrone.Core.Test.Blocklisting
         {
             Subject.Insert(_blocklist);
 
-            Subject.BlocklistedByTitle(_blocklist.MovieId, _blocklist.SourceTitle.ToUpperInvariant()).Should().HaveCount(1);
+            Subject.BlocklistedByTitle(_blocklist.SeriesId, _blocklist.SourceTitle.ToUpperInvariant()).Should().HaveCount(1);
         }
 
         [Test]
-        public void should_delete_blocklists_by_movieId()
+        public void should_delete_blocklists_by_seriesId()
         {
             var blocklistItems = Builder<Blocklist>.CreateListOfSize(5)
                 .TheFirst(1)
-                .With(c => c.MovieId = _movie2.Id)
+                .With(c => c.SeriesId = _series2.Id)
                 .TheRest()
-                .With(c => c.MovieId = _movie1.Id)
+                .With(c => c.SeriesId = _series1.Id)
                 .All()
                 .With(c => c.Quality = new QualityModel())
                 .With(c => c.Languages = new List<Language>())
-                .With(c => c.Id = 0)
+                .With(c => c.EpisodeIds = new List<int> { 1 })
                 .BuildListOfNew();
 
             Db.InsertMany(blocklistItems);
 
-            Subject.DeleteForMovies(new List<int> { _movie1.Id });
+            Subject.DeleteForSeriesIds(new List<int> { _series1.Id });
 
-            var removedMovieBlocklists = Subject.BlocklistedByMovie(_movie1.Id);
-            var nonRemovedMovieBlocklists = Subject.BlocklistedByMovie(_movie2.Id);
+            var removedSeriesBlocklists = Subject.BlocklistedBySeries(_series1.Id);
+            var nonRemovedSeriesBlocklists = Subject.BlocklistedBySeries(_series2.Id);
 
-            removedMovieBlocklists.Should().HaveCount(0);
-            nonRemovedMovieBlocklists.Should().HaveCount(1);
+            removedSeriesBlocklists.Should().HaveCount(0);
+            nonRemovedSeriesBlocklists.Should().HaveCount(1);
         }
     }
 }

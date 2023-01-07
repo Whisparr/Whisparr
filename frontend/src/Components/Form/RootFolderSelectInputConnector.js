@@ -77,7 +77,7 @@ class RootFolderSelectInputConnector extends Component {
   //
   // Lifecycle
 
-  UNSAFE_componentWillMount() {
+  componentWillMount() {
     const {
       value,
       values,
@@ -164,8 +164,7 @@ RootFolderSelectInputConnector.propTypes = {
 };
 
 RootFolderSelectInputConnector.defaultProps = {
-  includeNoChange: false,
-  value: ''
+  includeNoChange: false
 };
 
 export default connect(createMapStateToProps, createMapDispatchToProps)(RootFolderSelectInputConnector);

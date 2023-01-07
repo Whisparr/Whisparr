@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using FluentValidation;
 using Newtonsoft.Json;
 using NzbDrone.Core.Annotations;
@@ -12,7 +12,7 @@ namespace NzbDrone.Core.Download.Clients.Blackhole
     {
         public TorrentBlackholeSettingsValidator()
         {
-            //Todo: Validate that the path actually exists
+            // Todo: Validate that the path actually exists
             RuleFor(c => c.TorrentFolder).IsValidPath();
             RuleFor(c => c.MagnetFileExtension).NotEmpty();
         }
@@ -36,7 +36,7 @@ namespace NzbDrone.Core.Download.Clients.Blackhole
 
         [DefaultValue(false)]
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
-        [FieldDefinition(2, Label = "Save Magnet Files", Type = FieldType.Checkbox, HelpText = "Save a .magnet file with the magnet link if no .torrent file is available (only useful if the download client supports .magnet files)")]
+        [FieldDefinition(2, Label = "Save Magnet Files", Type = FieldType.Checkbox, HelpText = "Save the magnet link if no .torrent file is available (only useful if the download client supports magnets saved to a file)")]
         public bool SaveMagnetFiles { get; set; }
 
         [FieldDefinition(3, Label = "Save Magnet Files", Type = FieldType.Textbox, HelpText = "Extension to use for magnet links, defaults to '.magnet'")]

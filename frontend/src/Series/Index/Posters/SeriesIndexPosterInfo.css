@@ -1,0 +1,5 @@
+.info {
+  background-color: var(--seriesBackgroundColor);
+  text-align: center;
+  font-size: $smallFontSize;
+}

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -89,8 +89,6 @@ namespace NzbDrone.Core.Indexers
 
             return releases;
         }
-
-        public Action<IDictionary<string, string>, DateTime?> CookiesUpdater { get; set; }
 
         protected virtual XDocument LoadXmlDocument(IndexerResponse indexerResponse)
         {
@@ -194,7 +192,7 @@ namespace NzbDrone.Core.Indexers
 
             if (dateString.IsNullOrWhiteSpace())
             {
-                throw new UnsupportedFeedException("Rss feed must have a pubDate element with a valid publish date.");
+                throw new UnsupportedFeedException("Each item in the RSS feed must have a pubDate element with a valid publish date.");
             }
 
             return XElementExtensions.ParseDate(dateString);

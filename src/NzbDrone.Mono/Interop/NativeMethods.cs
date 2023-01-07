@@ -1,4 +1,4 @@
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using Mono.Unix.Native;
 
 namespace NzbDrone.Mono.Interop

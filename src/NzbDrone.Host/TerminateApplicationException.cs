@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Whisparr.Host
+namespace NzbDrone.Host
 {
     public class TerminateApplicationException : ApplicationException
     {

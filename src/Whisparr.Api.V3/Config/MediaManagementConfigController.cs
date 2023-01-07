@@ -14,7 +14,7 @@ namespace Whisparr.Api.V3.Config
                                            PathExistsValidator pathExistsValidator,
                                            FolderChmodValidator folderChmodValidator,
                                            FolderWritableValidator folderWritableValidator,
-                                           MoviePathValidator moviePathValidator,
+                                           SeriesPathValidator seriesPathValidator,
                                            StartupFolderValidator startupFolderValidator,
                                            SystemFolderValidator systemFolderValidator,
                                            RootFolderAncestorValidator rootFolderAncestorValidator,
@@ -31,7 +31,7 @@ namespace Whisparr.Api.V3.Config
                                                       .SetValidator(rootFolderAncestorValidator)
                                                       .SetValidator(startupFolderValidator)
                                                       .SetValidator(systemFolderValidator)
-                                                      .SetValidator(moviePathValidator)
+                                                      .SetValidator(seriesPathValidator)
                                                       .When(c => !string.IsNullOrWhiteSpace(c.RecycleBin));
 
             SharedValidator.RuleFor(c => c.MinimumFreeSpaceWhenImporting).GreaterThanOrEqualTo(100);

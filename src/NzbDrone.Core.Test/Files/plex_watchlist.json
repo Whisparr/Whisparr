@@ -8,38 +8,36 @@
     "size": 3,
     "Metadata": [
       {
-        "type": "movie",
-        "title": "Arrival",
-        "year": 2016,
+        "type": "show",
+        "title": "30 Rock",
+        "year": 2006,
         "Guid": [
           {
-            "id": "imdb://tt2543164"
+            "id": "tvdb://79488"
           }
         ]
       },
       {
-        "type": "movie",
-        "title": "The Last Witch Hunter",
-        "year": 2015,
+        "type": "show",
+        "title": "Anthony Bourdain: No Reservations",
+        "year": 2005,
         "Guid": [
           {
-            "id": "imdb://tt1618442"
+            "id": "imdb://tt0475900"
           },
           {
-            "id": "tmdb://274854"
+            "id": "tmdb://4533"
+          },
+          {
+            "id": "tvdb://79668"
           }
         ]
       },
       {
-        "type": "movie",
-        "title": "Avengers: Endgame",
-        "year": 2019,
+        "type": "show",
+        "title": "Series Title",
+        "year": 2021,
         "Guid": []
-      },
-      {
-        "type": "movie",
-        "title": "Avengers",
-        "year": 2005
       }
     ]
   }

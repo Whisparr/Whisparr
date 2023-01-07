@@ -1,25 +1,20 @@
 using System;
+using System.Linq;
 using System.Text.Json.Serialization;
 using NzbDrone.Core.Datastore;
 
 namespace NzbDrone.Core.Qualities
 {
-    public class QualityModel : IEmbeddedDocument, IEquatable<QualityModel>
+    public class QualityModel : IEmbeddedDocument, IEquatable<QualityModel>, IComparable
     {
         public Quality Quality { get; set; }
-
         public Revision Revision { get; set; }
-
-        public string HardcodedSubs { get; set; }
 
         [JsonIgnore]
         public QualityDetectionSource SourceDetectionSource { get; set; }
 
         [JsonIgnore]
         public QualityDetectionSource ResolutionDetectionSource { get; set; }
-
-        [JsonIgnore]
-        public QualityDetectionSource ModifierDetectionSource { get; set; }
 
         [JsonIgnore]
         public QualityDetectionSource RevisionDetectionSource { get; set; }
@@ -42,14 +37,53 @@ namespace NzbDrone.Core.Qualities
 
         public override int GetHashCode()
         {
-            // Overflow is fine, just wrap
             unchecked
             {
+                // Overflow is fine, just wrap
                 int hash = 17;
                 hash = (hash * 23) + Revision.GetHashCode();
                 hash = (hash * 23) + Quality.GetHashCode();
                 return hash;
             }
+        }
+
+        public int CompareTo(object obj)
+        {
+            var other = (QualityModel)obj;
+            var definition = Quality.DefaultQualityDefinitions.First(q => q.Quality == Quality);
+            var otherDefinition = Quality.DefaultQualityDefinitions.First(q => q.Quality == other.Quality);
+
+            if (definition.Weight > otherDefinition.Weight)
+            {
+                return 1;
+            }
+
+            if (definition.Weight < otherDefinition.Weight)
+            {
+                return -1;
+            }
+
+            if (Revision.Real > other.Revision.Real)
+            {
+                return 1;
+            }
+
+            if (Revision.Real < other.Revision.Real)
+            {
+                return -1;
+            }
+
+            if (Revision.Version > other.Revision.Version)
+            {
+                return 1;
+            }
+
+            if (Revision.Version < other.Revision.Version)
+            {
+                return -1;
+            }
+
+            return 0;
         }
 
         public bool Equals(QualityModel other)
@@ -64,7 +98,7 @@ namespace NzbDrone.Core.Qualities
                 return true;
             }
 
-            return other.Quality.Id.Equals(Quality.Id) && other.Revision.Equals(Revision);
+            return other.Quality.Equals(Quality) && other.Revision.Equals(Revision);
         }
 
         public override bool Equals(object obj)

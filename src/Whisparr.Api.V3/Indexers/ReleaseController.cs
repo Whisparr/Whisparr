@@ -4,14 +4,16 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
 using NzbDrone.Common.Cache;
+using NzbDrone.Common.Extensions;
 using NzbDrone.Core.DecisionEngine;
 using NzbDrone.Core.Download;
 using NzbDrone.Core.Exceptions;
 using NzbDrone.Core.Indexers;
 using NzbDrone.Core.IndexerSearch;
-using NzbDrone.Core.Movies;
+using NzbDrone.Core.Parser;
 using NzbDrone.Core.Parser.Model;
-using NzbDrone.Core.Profiles;
+using NzbDrone.Core.Profiles.Qualities;
+using NzbDrone.Core.Tv;
 using NzbDrone.Core.Validation;
 using Whisparr.Http;
 using HttpStatusCode = System.Net.HttpStatusCode;
@@ -26,19 +28,23 @@ namespace Whisparr.Api.V3.Indexers
         private readonly IMakeDownloadDecision _downloadDecisionMaker;
         private readonly IPrioritizeDownloadDecision _prioritizeDownloadDecision;
         private readonly IDownloadService _downloadService;
-        private readonly IMovieService _movieService;
+        private readonly ISeriesService _seriesService;
+        private readonly IEpisodeService _episodeService;
+        private readonly IParsingService _parsingService;
         private readonly Logger _logger;
 
-        private readonly ICached<RemoteMovie> _remoteMovieCache;
+        private readonly ICached<RemoteEpisode> _remoteEpisodeCache;
 
         public ReleaseController(IFetchAndParseRss rssFetcherAndParser,
                              ISearchForReleases releaseSearchService,
                              IMakeDownloadDecision downloadDecisionMaker,
                              IPrioritizeDownloadDecision prioritizeDownloadDecision,
                              IDownloadService downloadService,
-                             IMovieService movieService,
+                             ISeriesService seriesService,
+                             IEpisodeService episodeService,
+                             IParsingService parsingService,
                              ICacheManager cacheManager,
-                             IProfileService qualityProfileService,
+                             IQualityProfileService qualityProfileService,
                              Logger logger)
             : base(qualityProfileService)
         {
@@ -47,21 +53,24 @@ namespace Whisparr.Api.V3.Indexers
             _downloadDecisionMaker = downloadDecisionMaker;
             _prioritizeDownloadDecision = prioritizeDownloadDecision;
             _downloadService = downloadService;
-            _movieService = movieService;
+            _seriesService = seriesService;
+            _episodeService = episodeService;
+            _parsingService = parsingService;
             _logger = logger;
 
             PostValidator.RuleFor(s => s.IndexerId).ValidId();
             PostValidator.RuleFor(s => s.Guid).NotEmpty();
 
-            _remoteMovieCache = cacheManager.GetCache<RemoteMovie>(GetType(), "remoteMovies");
+            _remoteEpisodeCache = cacheManager.GetCache<RemoteEpisode>(GetType(), "remoteEpisodes");
         }
 
         [HttpPost]
+        [Consumes("application/json")]
         public object DownloadRelease(ReleaseResource release)
         {
-            var remoteMovie = _remoteMovieCache.Find(GetCacheKey(release));
+            var remoteEpisode = _remoteEpisodeCache.Find(GetCacheKey(release));
 
-            if (remoteMovie == null)
+            if (remoteEpisode == null)
             {
                 _logger.Debug("Couldn't find requested release in cache, cache timeout probably expired.");
 
@@ -70,21 +79,53 @@ namespace Whisparr.Api.V3.Indexers
 
             try
             {
-                if (remoteMovie.Movie == null)
+                if (remoteEpisode.Series == null)
                 {
-                    if (release.MovieId.HasValue)
+                    if (release.EpisodeId.HasValue)
                     {
-                        var movie = _movieService.GetMovie(release.MovieId.Value);
+                        var episode = _episodeService.GetEpisode(release.EpisodeId.Value);
 
-                        remoteMovie.Movie = movie;
+                        remoteEpisode.Series = _seriesService.GetSeries(episode.SeriesId);
+                        remoteEpisode.Episodes = new List<Episode> { episode };
+                    }
+                    else if (release.SeriesId.HasValue)
+                    {
+                        var series = _seriesService.GetSeries(release.SeriesId.Value);
+                        var episodes = _parsingService.GetEpisodes(remoteEpisode.ParsedEpisodeInfo, series, true);
+
+                        if (episodes.Empty())
+                        {
+                            throw new NzbDroneClientException(HttpStatusCode.NotFound, "Unable to parse episodes in the release");
+                        }
+
+                        remoteEpisode.Series = series;
+                        remoteEpisode.Episodes = episodes;
                     }
                     else
                     {
-                        throw new NzbDroneClientException(HttpStatusCode.NotFound, "Unable to find matching movie");
+                        throw new NzbDroneClientException(HttpStatusCode.NotFound, "Unable to find matching series and episodes");
                     }
                 }
+                else if (remoteEpisode.Episodes.Empty())
+                {
+                    var episodes = _parsingService.GetEpisodes(remoteEpisode.ParsedEpisodeInfo, remoteEpisode.Series, true);
 
-                _downloadService.DownloadReport(remoteMovie);
+                    if (episodes.Empty() && release.EpisodeId.HasValue)
+                    {
+                        var episode = _episodeService.GetEpisode(release.EpisodeId.Value);
+
+                        episodes = new List<Episode> { episode };
+                    }
+
+                    remoteEpisode.Episodes = episodes;
+                }
+
+                if (remoteEpisode.Episodes.Empty())
+                {
+                    throw new NzbDroneClientException(HttpStatusCode.NotFound, "Unable to parse episodes in the release");
+                }
+
+                _downloadService.DownloadReport(remoteEpisode);
             }
             catch (ReleaseDownloadException ex)
             {
@@ -96,22 +137,28 @@ namespace Whisparr.Api.V3.Indexers
         }
 
         [HttpGet]
-        public List<ReleaseResource> GetReleases(int? movieId)
+        [Produces("application/json")]
+        public List<ReleaseResource> GetReleases(int? seriesId, int? episodeId, int? seasonNumber)
         {
-            if (movieId.HasValue)
+            if (episodeId.HasValue)
             {
-                return GetMovieReleases(movieId.Value);
+                return GetEpisodeReleases(episodeId.Value);
+            }
+
+            if (seriesId.HasValue && seasonNumber.HasValue)
+            {
+                return GetSeasonReleases(seriesId.Value, seasonNumber.Value);
             }
 
             return GetRss();
         }
 
-        private List<ReleaseResource> GetMovieReleases(int movieId)
+        private List<ReleaseResource> GetEpisodeReleases(int episodeId)
         {
             try
             {
-                var decisions = _releaseSearchService.MovieSearch(movieId, true, true);
-                var prioritizedDecisions = _prioritizeDownloadDecision.PrioritizeDecisionsForMovies(decisions);
+                var decisions = _releaseSearchService.EpisodeSearch(episodeId, true, true);
+                var prioritizedDecisions = _prioritizeDownloadDecision.PrioritizeDecisions(decisions);
 
                 return MapDecisions(prioritizedDecisions);
             }
@@ -121,17 +168,36 @@ namespace Whisparr.Api.V3.Indexers
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, "Movie search failed: " + ex.Message);
+                _logger.Error(ex, "Episode search failed: " + ex.Message);
+                throw new NzbDroneClientException(HttpStatusCode.InternalServerError, ex.Message);
             }
+        }
 
-            return new List<ReleaseResource>();
+        private List<ReleaseResource> GetSeasonReleases(int seriesId, int seasonNumber)
+        {
+            try
+            {
+                var decisions = _releaseSearchService.SeasonSearch(seriesId, seasonNumber, false, false, true, true);
+                var prioritizedDecisions = _prioritizeDownloadDecision.PrioritizeDecisions(decisions);
+
+                return MapDecisions(prioritizedDecisions);
+            }
+            catch (SearchFailedException ex)
+            {
+                throw new NzbDroneClientException(HttpStatusCode.BadRequest, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Season search failed: " + ex.Message);
+                throw new NzbDroneClientException(HttpStatusCode.InternalServerError, ex.Message);
+            }
         }
 
         private List<ReleaseResource> GetRss()
         {
             var reports = _rssFetcherAndParser.Fetch();
             var decisions = _downloadDecisionMaker.GetRssDecision(reports);
-            var prioritizedDecisions = _prioritizeDownloadDecision.PrioritizeDecisionsForMovies(decisions);
+            var prioritizedDecisions = _prioritizeDownloadDecision.PrioritizeDecisions(decisions);
 
             return MapDecisions(prioritizedDecisions);
         }
@@ -139,7 +205,7 @@ namespace Whisparr.Api.V3.Indexers
         protected override ReleaseResource MapDecision(DownloadDecision decision, int initialWeight)
         {
             var resource = base.MapDecision(decision, initialWeight);
-            _remoteMovieCache.Set(GetCacheKey(resource), decision.RemoteMovie, TimeSpan.FromMinutes(30));
+            _remoteEpisodeCache.Set(GetCacheKey(resource), decision.RemoteEpisode, TimeSpan.FromMinutes(30));
 
             return resource;
         }

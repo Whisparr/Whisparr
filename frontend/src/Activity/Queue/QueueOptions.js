@@ -4,7 +4,6 @@ import FormGroup from 'Components/Form/FormGroup';
 import FormInputGroup from 'Components/Form/FormInputGroup';
 import FormLabel from 'Components/Form/FormLabel';
 import { inputTypes } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 
 class QueueOptions extends Component {
 
@@ -15,18 +14,18 @@ class QueueOptions extends Component {
     super(props, context);
 
     this.state = {
-      includeUnknownMovieItems: props.includeUnknownMovieItems
+      includeUnknownSeriesItems: props.includeUnknownSeriesItems
     };
   }
 
   componentDidUpdate(prevProps) {
     const {
-      includeUnknownMovieItems
+      includeUnknownSeriesItems
     } = this.props;
 
-    if (includeUnknownMovieItems !== prevProps.includeUnknownMovieItems) {
+    if (includeUnknownSeriesItems !== prevProps.includeUnknownSeriesItems) {
       this.setState({
-        includeUnknownMovieItems
+        includeUnknownSeriesItems
       });
     }
   }
@@ -49,19 +48,19 @@ class QueueOptions extends Component {
 
   render() {
     const {
-      includeUnknownMovieItems
+      includeUnknownSeriesItems
     } = this.state;
 
     return (
       <Fragment>
         <FormGroup>
-          <FormLabel>{translate('ShowUnknownMovieItems')}</FormLabel>
+          <FormLabel>Show Unknown Series Items</FormLabel>
 
           <FormInputGroup
             type={inputTypes.CHECK}
-            name="includeUnknownMovieItems"
-            value={includeUnknownMovieItems}
-            helpText={translate('IncludeUnknownMovieItemsHelpText')}
+            name="includeUnknownSeriesItems"
+            value={includeUnknownSeriesItems}
+            helpText="Show items without a series in the queue, this could include removed series, movies or anything else in Whisparr's category"
             onChange={this.onOptionChange}
           />
         </FormGroup>
@@ -71,7 +70,7 @@ class QueueOptions extends Component {
 }
 
 QueueOptions.propTypes = {
-  includeUnknownMovieItems: PropTypes.bool.isRequired,
+  includeUnknownSeriesItems: PropTypes.bool.isRequired,
   onOptionChange: PropTypes.func.isRequired
 };
 

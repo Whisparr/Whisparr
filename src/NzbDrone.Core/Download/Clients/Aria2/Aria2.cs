@@ -9,7 +9,6 @@ using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.MediaFiles.TorrentInfo;
-using NzbDrone.Core.Organizer;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.RemotePathMappings;
 using NzbDrone.Core.Validation;
@@ -26,16 +25,15 @@ namespace NzbDrone.Core.Download.Clients.Aria2
                         ITorrentFileInfoReader torrentFileInfoReader,
                         IHttpClient httpClient,
                         IConfigService configService,
-                        INamingConfigService namingConfigService,
                         IDiskProvider diskProvider,
                         IRemotePathMappingService remotePathMappingService,
                         Logger logger)
-            : base(torrentFileInfoReader, httpClient, configService, namingConfigService, diskProvider, remotePathMappingService, logger)
+            : base(torrentFileInfoReader, httpClient, configService, diskProvider, remotePathMappingService, logger)
         {
             _proxy = proxy;
         }
 
-        protected override string AddFromMagnetLink(RemoteMovie remoteEpisode, string hash, string magnetLink)
+        protected override string AddFromMagnetLink(RemoteEpisode remoteEpisode, string hash, string magnetLink)
         {
             var gid = _proxy.AddMagnet(Settings, magnetLink);
 
@@ -54,7 +52,7 @@ namespace NzbDrone.Core.Download.Clients.Aria2
             return hash;
         }
 
-        protected override string AddFromTorrentFile(RemoteMovie remoteEpisode, string hash, string filename, byte[] fileContent)
+        protected override string AddFromTorrentFile(RemoteEpisode remoteEpisode, string hash, string filename, byte[] fileContent)
         {
             var gid = _proxy.AddTorrent(Settings, fileContent);
 
@@ -79,6 +77,7 @@ namespace NzbDrone.Core.Download.Clients.Aria2
             {
                 var firstFile = torrent.Files?.FirstOrDefault();
 
+                // skip metadata download
                 if (firstFile?.Path?.Contains("[METADATA]") == true)
                 {
                     continue;

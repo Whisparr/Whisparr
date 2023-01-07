@@ -8,15 +8,17 @@ import ConfirmModal from 'Components/Modal/ConfirmModal';
 import TableRowCell from 'Components/Table/Cells/TableRowCell';
 import TableRow from 'Components/Table/TableRow';
 import Popover from 'Components/Tooltip/Popover';
+import Tooltip from 'Components/Tooltip/Tooltip';
+import EpisodeFormats from 'Episode/EpisodeFormats';
+import EpisodeLanguages from 'Episode/EpisodeLanguages';
+import EpisodeQuality from 'Episode/EpisodeQuality';
 import { icons, kinds, tooltipPositions } from 'Helpers/Props';
-import MovieFormats from 'Movie/MovieFormats';
-import MovieLanguage from 'Movie/MovieLanguage';
-import MovieQuality from 'Movie/MovieQuality';
 import formatDateTime from 'Utilities/Date/formatDateTime';
 import formatAge from 'Utilities/Number/formatAge';
 import formatBytes from 'Utilities/Number/formatBytes';
-import translate from 'Utilities/String/translate';
+import formatPreferredWordScore from 'Utilities/Number/formatPreferredWordScore';
 import Peers from './Peers';
+import ReleaseSceneIndicator from './ReleaseSceneIndicator';
 import styles from './InteractiveSearchRow.css';
 
 function getDownloadIcon(isGrabbing, isGrabbed, grabError) {
@@ -35,12 +37,12 @@ function getDownloadTooltip(isGrabbing, isGrabbed, grabError) {
   if (isGrabbing) {
     return '';
   } else if (isGrabbed) {
-    return translate('AddedToDownloadQueue');
+    return 'Added to download queue';
   } else if (grabError) {
     return grabError;
   }
 
-  return translate('AddToDownloadQueue');
+  return 'Add to download queue';
 }
 
 class InteractiveSearchRow extends Component {
@@ -114,20 +116,25 @@ class InteractiveSearchRow extends Component {
       seeders,
       leechers,
       quality,
-      customFormats,
-      customFormatScore,
       languages,
-      indexerFlags,
+      customFormatScore,
+      customFormats,
+      sceneMapping,
+      seasonNumber,
+      episodeNumbers,
+      absoluteEpisodeNumbers,
+      mappedSeasonNumber,
+      mappedEpisodeNumbers,
+      mappedAbsoluteEpisodeNumbers,
       rejections,
+      episodeRequested,
       downloadAllowed,
+      isDaily,
       isGrabbing,
       isGrabbed,
       longDateFormat,
       timeFormat,
-      grabError,
-      historyGrabbedData,
-      historyFailedData,
-      blocklistData
+      grabError
     } = this.props;
 
     return (
@@ -145,90 +152,26 @@ class InteractiveSearchRow extends Component {
           {formatAge(age, ageHours, ageMinutes)}
         </TableRowCell>
 
-        <TableRowCell className={styles.download}>
-          <SpinnerIconButton
-            name={getDownloadIcon(isGrabbing, isGrabbed, grabError)}
-            kind={grabError ? kinds.DANGER : kinds.DEFAULT}
-            title={getDownloadTooltip(isGrabbing, isGrabbed, grabError)}
-            isDisabled={isGrabbed}
-            isSpinning={isGrabbing}
-            onPress={downloadAllowed ? this.onGrabPress : this.onConfirmGrabPress}
-          />
-        </TableRowCell>
-
-        <TableRowCell className={styles.rejected}>
-          {
-            !!rejections.length &&
-              <Popover
-                anchor={
-                  <Icon
-                    name={icons.DANGER}
-                    kind={kinds.DANGER}
-                  />
-                }
-                title={translate('ReleaseRejected')}
-                body={
-                  <ul>
-                    {
-                      rejections.map((rejection, index) => {
-                        return (
-                          <li key={index}>
-                            {rejection}
-                          </li>
-                        );
-                      })
-                    }
-                  </ul>
-                }
-                position={tooltipPositions.BOTTOM}
-              />
-          }
-        </TableRowCell>
-
         <TableRowCell className={styles.title}>
-          <Link
-            to={infoUrl}
-            title={title}
-          >
-            <div>
-              {title}
-            </div>
+          <Link to={infoUrl}>
+            {title}
           </Link>
+          <ReleaseSceneIndicator
+            className={styles.sceneMapping}
+            seasonNumber={mappedSeasonNumber}
+            episodeNumbers={mappedEpisodeNumbers}
+            absoluteEpisodeNumbers={mappedAbsoluteEpisodeNumbers}
+            sceneSeasonNumber={seasonNumber}
+            sceneEpisodeNumbers={episodeNumbers}
+            sceneAbsoluteEpisodeNumbers={absoluteEpisodeNumbers}
+            sceneMapping={sceneMapping}
+            episodeRequested={episodeRequested}
+            isDaily={isDaily}
+          />
         </TableRowCell>
 
         <TableRowCell className={styles.indexer}>
           {indexer}
-        </TableRowCell>
-
-        <TableRowCell className={styles.history}>
-          {
-            historyGrabbedData?.date && !historyFailedData?.date &&
-              <Icon
-                name={icons.DOWNLOADING}
-                kind={kinds.DEFAULT}
-                title={`${translate('Grabbed')}: ${formatDateTime(historyGrabbedData.date, longDateFormat, timeFormat, { includeSeconds: true })}`}
-              />
-          }
-
-          {
-            historyFailedData?.date &&
-              <Icon
-                className={styles.failed}
-                name={icons.DOWNLOADING}
-                kind={kinds.DANGER}
-                title={`${translate('Failed')}: ${formatDateTime(historyFailedData.date, longDateFormat, timeFormat, { includeSeconds: true })}`}
-              />
-          }
-
-          {
-            blocklistData?.date &&
-              <Icon
-                className={historyGrabbedData || historyFailedData ? styles.blocklist : ''}
-                name={icons.BLOCKLIST}
-                kind={kinds.DANGER}
-                title={`${translate('Blocklisted')}: ${formatDateTime(blocklistData.date, longDateFormat, timeFormat, { includeSeconds: true })}`}
-              />
-          }
         </TableRowCell>
 
         <TableRowCell className={styles.size}>
@@ -245,64 +188,69 @@ class InteractiveSearchRow extends Component {
           }
         </TableRowCell>
 
-        <TableRowCell className={styles.language}>
-          <MovieLanguage
-            languages={languages}
-          />
+        <TableRowCell className={styles.languages}>
+          <EpisodeLanguages languages={languages} />
         </TableRowCell>
 
         <TableRowCell className={styles.quality}>
-          <MovieQuality
-            quality={quality}
-          />
-        </TableRowCell>
-
-        <TableRowCell className={styles.customFormat}>
-          <MovieFormats
-            formats={customFormats}
-          />
+          <EpisodeQuality quality={quality} />
         </TableRowCell>
 
         <TableRowCell className={styles.customFormatScore}>
-          {customFormatScore > 0 && `+${customFormatScore}`}
-          {customFormatScore < 0 && customFormatScore}
+          <Tooltip
+            anchor={
+              formatPreferredWordScore(customFormatScore, customFormats.length)
+            }
+            tooltip={<EpisodeFormats formats={customFormats} />}
+            position={tooltipPositions.BOTTOM}
+          />
         </TableRowCell>
 
-        <TableRowCell className={styles.indexerFlags}>
+        <TableRowCell className={styles.rejected}>
           {
-            !!indexerFlags.length &&
+            !!rejections.length &&
               <Popover
                 anchor={
                   <Icon
-                    name={icons.FLAG}
-                    kind={kinds.PRIMARY}
+                    name={icons.DANGER}
+                    kind={kinds.DANGER}
                   />
                 }
-                title={translate('IndexerFlags')}
+                title="Release Rejected"
                 body={
                   <ul>
                     {
-                      indexerFlags.map((flag, index) => {
+                      rejections.map((rejection, index) => {
                         return (
                           <li key={index}>
-                            {flag}
+                            {rejection}
                           </li>
                         );
                       })
                     }
                   </ul>
                 }
-                position={tooltipPositions.BOTTOM}
+                position={tooltipPositions.LEFT}
               />
           }
+        </TableRowCell>
+
+        <TableRowCell className={styles.download}>
+          <SpinnerIconButton
+            name={getDownloadIcon(isGrabbing, isGrabbed, grabError)}
+            kind={grabError ? kinds.DANGER : kinds.DEFAULT}
+            title={getDownloadTooltip(isGrabbing, isGrabbed, grabError)}
+            isSpinning={isGrabbing}
+            onPress={downloadAllowed ? this.onGrabPress : this.onConfirmGrabPress}
+          />
         </TableRowCell>
 
         <ConfirmModal
           isOpen={this.state.isConfirmGrabModalOpen}
           kind={kinds.WARNING}
-          title={translate('GrabRelease')}
-          message={translate('GrabReleaseMessageText', [title])}
-          confirmLabel={translate('Grab')}
+          title="Grab Release"
+          message={`Whisparr was unable to determine which series and episode this release was for. Whisparr may be unable to automatically import this release. Do you want to grab '${title}'?`}
+          confirmLabel="Grab"
           onConfirm={this.onGrabConfirm}
           onCancel={this.onGrabCancel}
         />
@@ -326,22 +274,27 @@ InteractiveSearchRow.propTypes = {
   seeders: PropTypes.number,
   leechers: PropTypes.number,
   quality: PropTypes.object.isRequired,
-  customFormats: PropTypes.arrayOf(PropTypes.object).isRequired,
-  customFormatScore: PropTypes.number.isRequired,
   languages: PropTypes.arrayOf(PropTypes.object).isRequired,
+  customFormats: PropTypes.arrayOf(PropTypes.object),
+  customFormatScore: PropTypes.number.isRequired,
+  sceneMapping: PropTypes.object,
+  seasonNumber: PropTypes.number,
+  episodeNumbers: PropTypes.arrayOf(PropTypes.number),
+  absoluteEpisodeNumbers: PropTypes.arrayOf(PropTypes.number),
+  mappedSeasonNumber: PropTypes.number,
+  mappedEpisodeNumbers: PropTypes.arrayOf(PropTypes.number),
+  mappedAbsoluteEpisodeNumbers: PropTypes.arrayOf(PropTypes.number),
   rejections: PropTypes.arrayOf(PropTypes.string).isRequired,
-  indexerFlags: PropTypes.arrayOf(PropTypes.string).isRequired,
+  episodeRequested: PropTypes.bool.isRequired,
   downloadAllowed: PropTypes.bool.isRequired,
+  isDaily: PropTypes.bool.isRequired,
   isGrabbing: PropTypes.bool.isRequired,
   isGrabbed: PropTypes.bool.isRequired,
   grabError: PropTypes.string,
   longDateFormat: PropTypes.string.isRequired,
   timeFormat: PropTypes.string.isRequired,
   searchPayload: PropTypes.object.isRequired,
-  onGrabPress: PropTypes.func.isRequired,
-  historyFailedData: PropTypes.object,
-  historyGrabbedData: PropTypes.object,
-  blocklistData: PropTypes.object
+  onGrabPress: PropTypes.func.isRequired
 };
 
 InteractiveSearchRow.defaultProps = {

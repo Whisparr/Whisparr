@@ -13,7 +13,6 @@ import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { inputTypes, kinds } from 'Helpers/Props';
 import { stringSettingShape } from 'Helpers/Props/Shapes/settingShape';
-import translate from 'Utilities/String/translate';
 import styles from './EditRemotePathMappingModalContent.css';
 
 function EditRemotePathMappingModalContent(props) {
@@ -41,7 +40,7 @@ function EditRemotePathMappingModalContent(props) {
   return (
     <ModalContent onModalClose={onModalClose}>
       <ModalHeader>
-        {id ? translate('EditRemotePathMapping') : translate('AddRemotePathMapping')}
+        {id ? 'Edit Remote Path Mapping' : 'Add Remote Path Mapping'}
       </ModalHeader>
 
       <ModalBody className={styles.body}>
@@ -52,21 +51,19 @@ function EditRemotePathMappingModalContent(props) {
 
         {
           !isFetching && !!error &&
-            <div>
-              {translate('UnableToAddANewRemotePathMappingPleaseTryAgain')}
-            </div>
+            <div>Unable to add a new remote path mapping, please try again.</div>
         }
 
         {
           !isFetching && !error &&
             <Form {...otherProps}>
               <FormGroup>
-                <FormLabel>{translate('Host')}</FormLabel>
+                <FormLabel>Host</FormLabel>
 
                 <FormInputGroup
                   type={inputTypes.SELECT}
                   name="host"
-                  helpText={translate('SettingsRemotePathMappingHostHelpText')}
+                  helpText="The same host you specified for the remote Download Client"
                   {...host}
                   values={downloadClientHosts}
                   onChange={onInputChange}
@@ -74,24 +71,24 @@ function EditRemotePathMappingModalContent(props) {
               </FormGroup>
 
               <FormGroup>
-                <FormLabel>{translate('SettingsRemotePathMappingRemotePath')}</FormLabel>
+                <FormLabel>Remote Path</FormLabel>
 
                 <FormInputGroup
                   type={inputTypes.TEXT}
                   name="remotePath"
-                  helpText={translate('SettingsRemotePathMappingRemotePathHelpText')}
+                  helpText="Root path to the directory that the Download Client accesses"
                   {...remotePath}
                   onChange={onInputChange}
                 />
               </FormGroup>
 
               <FormGroup>
-                <FormLabel>{translate('SettingsRemotePathMappingLocalPath')}</FormLabel>
+                <FormLabel>Local Path</FormLabel>
 
                 <FormInputGroup
                   type={inputTypes.PATH}
                   name="localPath"
-                  helpText={translate('SettingsRemotePathMappingLocalPathHelpText')}
+                  helpText="Path that Whisparr should use to access the remote path locally"
                   {...localPath}
                   onChange={onInputChange}
                 />
@@ -108,14 +105,14 @@ function EditRemotePathMappingModalContent(props) {
               kind={kinds.DANGER}
               onPress={onDeleteRemotePathMappingPress}
             >
-              {translate('Delete')}
+              Delete
             </Button>
         }
 
         <Button
           onPress={onModalClose}
         >
-          {translate('Cancel')}
+          Cancel
         </Button>
 
         <SpinnerErrorButton
@@ -123,7 +120,7 @@ function EditRemotePathMappingModalContent(props) {
           error={saveError}
           onPress={onSavePress}
         >
-          {translate('Save')}
+          Save
         </SpinnerErrorButton>
       </ModalFooter>
     </ModalContent>

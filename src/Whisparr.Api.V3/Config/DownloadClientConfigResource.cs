@@ -1,4 +1,4 @@
-using NzbDrone.Core.Configuration;
+﻿using NzbDrone.Core.Configuration;
 using Whisparr.Http.REST;
 
 namespace Whisparr.Api.V3.Config
@@ -8,8 +8,6 @@ namespace Whisparr.Api.V3.Config
         public string DownloadClientWorkingFolders { get; set; }
 
         public bool EnableCompletedDownloadHandling { get; set; }
-        public int CheckForFinishedDownloadInterval { get; set; }
-
         public bool AutoRedownloadFailed { get; set; }
     }
 
@@ -22,8 +20,6 @@ namespace Whisparr.Api.V3.Config
                 DownloadClientWorkingFolders = model.DownloadClientWorkingFolders,
 
                 EnableCompletedDownloadHandling = model.EnableCompletedDownloadHandling,
-                CheckForFinishedDownloadInterval = model.CheckForFinishedDownloadInterval,
-
                 AutoRedownloadFailed = model.AutoRedownloadFailed
             };
         }

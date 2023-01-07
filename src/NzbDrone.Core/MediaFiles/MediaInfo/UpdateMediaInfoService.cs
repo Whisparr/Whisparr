@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NLog;
@@ -5,16 +6,16 @@ using NzbDrone.Common.Disk;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.MediaFiles.Events;
 using NzbDrone.Core.Messaging.Events;
-using NzbDrone.Core.Movies;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.MediaFiles.MediaInfo
 {
     public interface IUpdateMediaInfo
     {
-        bool Update(MediaFile movieFile, Media movie);
+        bool Update(EpisodeFile episodeFile, Series series);
     }
 
-    public class UpdateMediaInfoService : IUpdateMediaInfo, IHandle<MovieScannedEvent>
+    public class UpdateMediaInfoService : IUpdateMediaInfo, IHandle<SeriesScannedEvent>
     {
         private readonly IDiskProvider _diskProvider;
         private readonly IMediaFileService _mediaFileService;
@@ -35,7 +36,7 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
             _logger = logger;
         }
 
-        public void Handle(MovieScannedEvent message)
+        public void Handle(SeriesScannedEvent message)
         {
             if (!_configService.EnableMediaInfo)
             {
@@ -43,18 +44,18 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
                 return;
             }
 
-            var allMediaFiles = _mediaFileService.GetFilesByMovie(message.Movie.Id);
+            var allMediaFiles = _mediaFileService.GetFilesBySeries(message.Series.Id);
             var filteredMediaFiles = allMediaFiles.Where(c =>
                 c.MediaInfo == null ||
                 c.MediaInfo.SchemaRevision < VideoFileInfoReader.MINIMUM_MEDIA_INFO_SCHEMA_REVISION).ToList();
 
             foreach (var mediaFile in filteredMediaFiles)
             {
-                UpdateMediaInfo(mediaFile, message.Movie);
+                UpdateMediaInfo(mediaFile, message.Series);
             }
         }
 
-        public bool Update(MediaFile movieFile, Media movie)
+        public bool Update(EpisodeFile episodeFile, Series series)
         {
             if (!_configService.EnableMediaInfo)
             {
@@ -62,12 +63,12 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
                 return false;
             }
 
-            return UpdateMediaInfo(movieFile, movie);
+            return UpdateMediaInfo(episodeFile, series);
         }
 
-        private bool UpdateMediaInfo(MediaFile movieFile, Media movie)
+        private bool UpdateMediaInfo(EpisodeFile episodeFile, Series series)
         {
-            var path = Path.Combine(movie.Path, movieFile.RelativePath);
+            var path = Path.Combine(series.Path, episodeFile.RelativePath);
 
             if (!_diskProvider.FileExists(path))
             {
@@ -82,8 +83,8 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
                 return false;
             }
 
-            movieFile.MediaInfo = updatedMediaInfo;
-            _mediaFileService.Update(movieFile);
+            episodeFile.MediaInfo = updatedMediaInfo;
+            _mediaFileService.Update(episodeFile);
             _logger.Debug("Updated MediaInfo for '{0}'", path);
 
             return true;

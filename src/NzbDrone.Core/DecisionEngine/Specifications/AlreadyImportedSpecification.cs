@@ -27,7 +27,7 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
         public SpecificationPriority Priority => SpecificationPriority.Database;
         public RejectionType Type => RejectionType.Permanent;
 
-        public Decision IsSatisfiedBy(RemoteMovie subject, SearchCriteriaBase searchCriteria)
+        public Decision IsSatisfiedBy(RemoteEpisode subject, SearchCriteriaBase searchCriteria)
         {
             var cdhEnabled = _configService.EnableCompletedDownloadHandling;
 
@@ -37,32 +37,30 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
                 return Decision.Accept();
             }
 
-            var movie = subject.Movie;
-
             _logger.Debug("Performing already imported check on report");
-            if (movie != null)
+            foreach (var episode in subject.Episodes)
             {
-                if (!movie.HasFile)
+                if (!episode.HasFile)
                 {
-                    _logger.Debug("Skipping already imported check for movie without file");
-                    return Decision.Accept();
+                    _logger.Debug("Skipping already imported check for episode without file");
+                    continue;
                 }
 
-                var historyForMovie = _historyService.GetByMovieId(movie.Id, null);
-                var lastGrabbed = historyForMovie.FirstOrDefault(h => h.EventType == MovieHistoryEventType.Grabbed);
+                var historyForEpisode = _historyService.FindByEpisodeId(episode.Id);
+                var lastGrabbed = historyForEpisode.FirstOrDefault(h => h.EventType == EpisodeHistoryEventType.Grabbed);
 
                 if (lastGrabbed == null)
                 {
-                    return Decision.Accept();
+                    continue;
                 }
 
-                var imported = historyForMovie.FirstOrDefault(h =>
-                    h.EventType == MovieHistoryEventType.DownloadFolderImported &&
+                var imported = historyForEpisode.FirstOrDefault(h =>
+                    h.EventType == EpisodeHistoryEventType.DownloadFolderImported &&
                     h.DownloadId == lastGrabbed.DownloadId);
 
                 if (imported == null)
                 {
-                    return Decision.Accept();
+                    continue;
                 }
 
                 // This is really only a guard against redownloading the same release over
@@ -70,7 +68,7 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
                 // match skip this check.
                 if (lastGrabbed.Quality.Equals(imported.Quality))
                 {
-                    return Decision.Accept();
+                    continue;
                 }
 
                 var release = subject.Release;
@@ -88,6 +86,7 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
 
                 // Only based on title because a release with the same title on another indexer/released at
                 // a different time very likely has the exact same content and we don't need to also try it.
+
                 if (release.Title.Equals(lastGrabbed.SourceTitle, StringComparison.InvariantCultureIgnoreCase))
                 {
                     _logger.Debug("Has same release name as a grabbed and imported release");

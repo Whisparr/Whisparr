@@ -5,7 +5,6 @@ import DescriptionListItem from 'Components/DescriptionList/DescriptionListItem'
 import FieldSet from 'Components/FieldSet';
 import InlineMarkdown from 'Components/Markdown/InlineMarkdown';
 import titleCase from 'Utilities/String/titleCase';
-import translate from 'Utilities/String/translate';
 import StartTime from './StartTime';
 import styles from './About.css';
 
@@ -22,7 +21,6 @@ class About extends Component {
       isNetCore,
       isDocker,
       runtimeVersion,
-      migrationVersion,
       databaseVersion,
       databaseType,
       appData,
@@ -34,17 +32,17 @@ class About extends Component {
     } = this.props;
 
     return (
-      <FieldSet legend={translate('About')}>
+      <FieldSet legend="About">
         <DescriptionList className={styles.descriptionList}>
           <DescriptionListItem
-            title={translate('Version')}
+            title="Version"
             data={version}
           />
 
           {
             packageVersion &&
               <DescriptionListItem
-                title={translate('PackageVersion')}
+                title="Package Version"
                 data={(packageAuthor ? <span> {packageVersion} {' by '} <InlineMarkdown data={packageAuthor} /> </span> : packageVersion)}
               />
           }
@@ -52,7 +50,7 @@ class About extends Component {
           {
             isNetCore &&
               <DescriptionListItem
-                title={translate('NetCore')}
+                title=".Net Version"
                 data={`Yes (${runtimeVersion})`}
               />
           }
@@ -60,38 +58,33 @@ class About extends Component {
           {
             isDocker &&
               <DescriptionListItem
-                title={translate('Docker')}
+                title="Docker"
                 data={'Yes'}
               />
           }
 
           <DescriptionListItem
-            title={translate('DBMigration')}
-            data={migrationVersion}
-          />
-
-          <DescriptionListItem
-            title={translate('Database')}
+            title="Database"
             data={`${titleCase(databaseType)} ${databaseVersion}`}
           />
 
           <DescriptionListItem
-            title={translate('AppDataDirectory')}
+            title="AppData directory"
             data={appData}
           />
 
           <DescriptionListItem
-            title={translate('StartupDirectory')}
+            title="Startup directory"
             data={startupPath}
           />
 
           <DescriptionListItem
-            title={translate('Mode')}
+            title="Mode"
             data={titleCase(mode)}
           />
 
           <DescriptionListItem
-            title={translate('Uptime')}
+            title="Uptime"
             data={
               <StartTime
                 startTime={startTime}
@@ -114,7 +107,6 @@ About.propTypes = {
   isNetCore: PropTypes.bool.isRequired,
   runtimeVersion: PropTypes.string.isRequired,
   isDocker: PropTypes.bool.isRequired,
-  migrationVersion: PropTypes.number.isRequired,
   databaseType: PropTypes.string.isRequired,
   databaseVersion: PropTypes.string.isRequired,
   appData: PropTypes.string.isRequired,

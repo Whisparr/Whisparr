@@ -16,10 +16,10 @@ namespace NzbDrone.Core.Download.Clients.Transmission
 
             RuleFor(c => c.UrlBase).ValidUrlBase();
 
-            RuleFor(c => c.MovieCategory).Matches(@"^\.?[-a-z]*$", RegexOptions.IgnoreCase).WithMessage("Allowed characters a-z and -");
+            RuleFor(c => c.TvCategory).Matches(@"^\.?[-a-z]*$", RegexOptions.IgnoreCase).WithMessage("Allowed characters a-z and -");
 
-            RuleFor(c => c.MovieCategory).Empty()
-                .When(c => c.MovieDirectory.IsNotNullOrWhiteSpace())
+            RuleFor(c => c.TvCategory).Empty()
+                .When(c => c.TvDirectory.IsNotNullOrWhiteSpace())
                 .WithMessage("Cannot use Category and Directory");
         }
     }
@@ -53,17 +53,17 @@ namespace NzbDrone.Core.Download.Clients.Transmission
         [FieldDefinition(5, Label = "Password", Type = FieldType.Password, Privacy = PrivacyLevel.Password)]
         public string Password { get; set; }
 
-        [FieldDefinition(6, Label = "Category", Type = FieldType.Textbox, HelpText = "Adding a category specific to Whisparr avoids conflicts with unrelated non-Whisparr downloads. Using a category is optional, but strongly recommended. Creates a [category] subdirectory in the output directory.")]
-        public string MovieCategory { get; set; }
+        [FieldDefinition(6, Label = "Category", Type = FieldType.Textbox, HelpText = "Adding a category specific to Whisparr avoids conflicts with unrelated non-Whisparr downloads. Using a category is optional, but strongly recommended.. Creates a [category] subdirectory in the output directory.")]
+        public string TvCategory { get; set; }
 
         [FieldDefinition(7, Label = "Directory", Type = FieldType.Textbox, Advanced = true, HelpText = "Optional location to put downloads in, leave blank to use the default Transmission location")]
-        public string MovieDirectory { get; set; }
+        public string TvDirectory { get; set; }
 
-        [FieldDefinition(8, Label = "Recent Priority", Type = FieldType.Select, SelectOptions = typeof(TransmissionPriority), HelpText = "Priority to use when grabbing movies that released within the last 21 days")]
-        public int RecentMoviePriority { get; set; }
+        [FieldDefinition(8, Label = "Recent Priority", Type = FieldType.Select, SelectOptions = typeof(TransmissionPriority), HelpText = "Priority to use when grabbing episodes that aired within the last 14 days")]
+        public int RecentTvPriority { get; set; }
 
-        [FieldDefinition(9, Label = "Older Priority", Type = FieldType.Select, SelectOptions = typeof(TransmissionPriority), HelpText = "Priority to use when grabbing movies that released over 21 days ago")]
-        public int OlderMoviePriority { get; set; }
+        [FieldDefinition(9, Label = "Older Priority", Type = FieldType.Select, SelectOptions = typeof(TransmissionPriority), HelpText = "Priority to use when grabbing episodes that aired over 14 days ago")]
+        public int OlderTvPriority { get; set; }
 
         [FieldDefinition(10, Label = "Add Paused", Type = FieldType.Checkbox)]
         public bool AddPaused { get; set; }

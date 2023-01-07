@@ -50,19 +50,19 @@ namespace NzbDrone.Core.Instrumentation
 
             var rules = LogManager.Configuration.LoggingRules;
 
-            //Console
+            // Console
             SetMinimumLogLevel(rules, "consoleLogger", minimumConsoleLogLevel);
 
-            //Log Files
+            // Log Files
             SetMinimumLogLevel(rules, "appFileInfo", minimumLogLevel <= LogLevel.Info ? LogLevel.Info : LogLevel.Off);
             SetMinimumLogLevel(rules, "appFileDebug", minimumLogLevel <= LogLevel.Debug ? LogLevel.Debug : LogLevel.Off);
             SetMinimumLogLevel(rules, "appFileTrace", minimumLogLevel <= LogLevel.Trace ? LogLevel.Trace : LogLevel.Off);
             SetLogRotation();
 
-            //Log Sql
+            // Log Sql
             SqlBuilderExtensions.LogSql = _configFileProvider.LogSql;
 
-            //Sentry
+            // Sentry
             ReconfigureSentry();
 
             LogManager.ReconfigExistingLoggers();
@@ -117,6 +117,7 @@ namespace NzbDrone.Core.Instrumentation
             syslogTarget.MessageSend.Protocol = ProtocolType.Udp;
             syslogTarget.MessageSend.Udp.Port = syslogPort;
             syslogTarget.MessageSend.Udp.Server = syslogServer;
+            syslogTarget.MessageSend.Udp.ReconnectInterval = 500;
             syslogTarget.MessageCreation.Rfc = RfcNumber.Rfc5424;
             syslogTarget.MessageCreation.Rfc5424.AppName = _configFileProvider.InstanceName;
 

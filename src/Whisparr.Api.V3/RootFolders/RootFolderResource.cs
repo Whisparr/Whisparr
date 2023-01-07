@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.RootFolders;
@@ -48,9 +48,9 @@ namespace Whisparr.Api.V3.RootFolders
 
                 Path = resource.Path
 
-                //Accessible
-                //FreeSpace
-                //UnmappedFolders
+                // Accessible
+                // FreeSpace
+                // UnmappedFolders
             };
         }
 

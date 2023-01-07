@@ -1,78 +1,80 @@
 using System.IO;
+using System.Linq;
 using NLog;
 using NzbDrone.Common.Disk;
 using NzbDrone.Common.Extensions;
-using NzbDrone.Core.MediaFiles.MovieImport;
+using NzbDrone.Core.MediaFiles.EpisodeImport;
 using NzbDrone.Core.Parser.Model;
 
 namespace NzbDrone.Core.MediaFiles
 {
     public interface IUpgradeMediaFiles
     {
-        MovieFileMoveResult UpgradeMovieFile(MediaFile movieFile, LocalMovie localMovie, bool copyOnly = false);
+        EpisodeFileMoveResult UpgradeEpisodeFile(EpisodeFile episodeFile, LocalEpisode localEpisode, bool copyOnly = false);
     }
 
     public class UpgradeMediaFileService : IUpgradeMediaFiles
     {
         private readonly IRecycleBinProvider _recycleBinProvider;
         private readonly IMediaFileService _mediaFileService;
-        private readonly IMoveMovieFiles _movieFileMover;
-        private readonly IRenameMovieFileService _movieFileRenamer;
+        private readonly IMoveEpisodeFiles _episodeFileMover;
         private readonly IDiskProvider _diskProvider;
         private readonly Logger _logger;
 
         public UpgradeMediaFileService(IRecycleBinProvider recycleBinProvider,
                                        IMediaFileService mediaFileService,
-                                       IMoveMovieFiles movieFileMover,
+                                       IMoveEpisodeFiles episodeFileMover,
                                        IDiskProvider diskProvider,
-                                       IRenameMovieFileService movieFileRenamer,
                                        Logger logger)
         {
             _recycleBinProvider = recycleBinProvider;
             _mediaFileService = mediaFileService;
-            _movieFileMover = movieFileMover;
+            _episodeFileMover = episodeFileMover;
             _diskProvider = diskProvider;
-            _movieFileRenamer = movieFileRenamer;
             _logger = logger;
         }
 
-        public MovieFileMoveResult UpgradeMovieFile(MediaFile movieFile, LocalMovie localMovie, bool copyOnly = false)
+        public EpisodeFileMoveResult UpgradeEpisodeFile(EpisodeFile episodeFile, LocalEpisode localEpisode, bool copyOnly = false)
         {
-            _logger.Trace("Upgrading existing movie file.");
-            var moveFileResult = new MovieFileMoveResult();
+            var moveFileResult = new EpisodeFileMoveResult();
+            var existingFiles = localEpisode.Episodes
+                                            .Where(e => e.EpisodeFileId > 0)
+                                            .Select(e => e.EpisodeFile.Value)
+                                            .Where(e => e != null)
+                                            .GroupBy(e => e.Id)
+                                            .ToList();
 
-            var existingFile = localMovie.Movie.MovieFileId > 0 ? localMovie.Movie.MovieFile : null;
+            var rootFolder = _diskProvider.GetParentFolder(localEpisode.Series.Path);
 
-            var rootFolder = _diskProvider.GetParentFolder(localMovie.Movie.Path);
-
-            // If there are existing movie files and the root folder is missing, throw, so the old file isn't left behind during the import process.
-            if (existingFile != null && !_diskProvider.FolderExists(rootFolder))
+            // If there are existing episode files and the root folder is missing, throw, so the old file isn't left behind during the import process.
+            if (existingFiles.Any() && !_diskProvider.FolderExists(rootFolder))
             {
                 throw new RootFolderNotFoundException($"Root folder '{rootFolder}' was not found.");
             }
 
-            if (existingFile != null)
+            foreach (var existingFile in existingFiles)
             {
-                var movieFilePath = Path.Combine(localMovie.Movie.Path, existingFile.RelativePath);
-                var subfolder = rootFolder.GetRelativePath(_diskProvider.GetParentFolder(movieFilePath));
+                var file = existingFile.First();
+                var episodeFilePath = Path.Combine(localEpisode.Series.Path, file.RelativePath);
+                var subfolder = rootFolder.GetRelativePath(_diskProvider.GetParentFolder(episodeFilePath));
 
-                if (_diskProvider.FileExists(movieFilePath))
+                if (_diskProvider.FileExists(episodeFilePath))
                 {
-                    _logger.Debug("Removing existing movie file: {0}", existingFile);
-                    _recycleBinProvider.DeleteFile(movieFilePath, subfolder);
+                    _logger.Debug("Removing existing episode file: {0}", file);
+                    _recycleBinProvider.DeleteFile(episodeFilePath, subfolder);
                 }
 
-                moveFileResult.OldFiles.Add(existingFile);
-                _mediaFileService.Delete(existingFile, DeleteMediaFileReason.Upgrade);
+                moveFileResult.OldFiles.Add(file);
+                _mediaFileService.Delete(file, DeleteMediaFileReason.Upgrade);
             }
 
             if (copyOnly)
             {
-                moveFileResult.MovieFile = _movieFileMover.CopyMovieFile(movieFile, localMovie);
+                moveFileResult.EpisodeFile = _episodeFileMover.CopyEpisodeFile(episodeFile, localEpisode);
             }
             else
             {
-                moveFileResult.MovieFile = _movieFileMover.MoveMovieFile(movieFile, localMovie);
+                moveFileResult.EpisodeFile = _episodeFileMover.MoveEpisodeFile(episodeFile, localEpisode);
             }
 
             return moveFileResult;

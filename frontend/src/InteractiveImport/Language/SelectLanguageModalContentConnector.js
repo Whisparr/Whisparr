@@ -4,12 +4,12 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import { reprocessInteractiveImportItems, updateInteractiveImportItems } from 'Store/Actions/interactiveImportActions';
-import { fetchLanguages } from 'Store/Actions/settingsActions';
+import createLanguagesSelector from 'Store/Selectors/createLanguagesSelector';
 import SelectLanguageModalContent from './SelectLanguageModalContent';
 
 function createMapStateToProps() {
   return createSelector(
-    (state) => state.settings.languages,
+    createLanguagesSelector(),
     (languages) => {
       const {
         isFetching,
@@ -32,21 +32,11 @@ function createMapStateToProps() {
 }
 
 const mapDispatchToProps = {
-  dispatchFetchLanguages: fetchLanguages,
-  dispatchReprocessInteractiveImportItems: reprocessInteractiveImportItems,
-  dispatchUpdateInteractiveImportItems: updateInteractiveImportItems
+  dispatchUpdateInteractiveImportItems: updateInteractiveImportItems,
+  dispatchReprocessInteractiveImportItems: reprocessInteractiveImportItems
 };
 
 class SelectLanguageModalContentConnector extends Component {
-
-  //
-  // Lifecycle
-
-  componentDidMount = () => {
-    if (!this.props.isPopulated) {
-      this.props.dispatchFetchLanguages();
-    }
-  };
 
   //
   // Listeners
@@ -98,7 +88,6 @@ SelectLanguageModalContentConnector.propTypes = {
   isPopulated: PropTypes.bool.isRequired,
   error: PropTypes.object,
   items: PropTypes.arrayOf(PropTypes.object).isRequired,
-  dispatchFetchLanguages: PropTypes.func.isRequired,
   dispatchUpdateInteractiveImportItems: PropTypes.func.isRequired,
   dispatchReprocessInteractiveImportItems: PropTypes.func.isRequired,
   onModalClose: PropTypes.func.isRequired

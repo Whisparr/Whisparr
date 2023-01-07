@@ -73,7 +73,7 @@ namespace NzbDrone.Core.Indexers
         {
             if (InfoHashElementName.IsNotNullOrWhiteSpace())
             {
-                return item.FindDecendants(InfoHashElementName).FirstOrDefault()?.Value;
+                return item.FindDecendants(InfoHashElementName).FirstOrDefault().Value;
             }
 
             var magnetUrl = GetMagnetUrl(item);
@@ -96,7 +96,7 @@ namespace NzbDrone.Core.Indexers
         {
             if (MagnetElementName.IsNotNullOrWhiteSpace())
             {
-                var magnetURL = item.FindDecendants(MagnetElementName).FirstOrDefault()?.Value;
+                var magnetURL = item.FindDecendants(MagnetElementName).FirstOrDefault().Value;
                 if (magnetURL.IsNotNullOrWhiteSpace() && magnetURL.StartsWith("magnet:"))
                 {
                     return magnetURL;
@@ -118,6 +118,7 @@ namespace NzbDrone.Core.Indexers
         {
             // safe to always use the element if it's present (and valid)
             // fall back to description if ParseSeedersInDescription is enabled
+
             if (ParseSeedersInDescription && item.Element("description") != null)
             {
                 var matchSeeders = ParseSeedersRegex.Match(item.Element("description").Value);

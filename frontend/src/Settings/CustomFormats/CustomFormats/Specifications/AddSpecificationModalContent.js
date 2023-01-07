@@ -9,7 +9,6 @@ import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { kinds } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import AddSpecificationItem from './AddSpecificationItem';
 import styles from './AddSpecificationModalContent.css';
 
@@ -43,7 +42,7 @@ class AddSpecificationModalContent extends Component {
           {
             !isSchemaFetching && !!schemaError &&
               <div>
-                {translate('UnableToAddANewConditionPleaseTryAgain')}
+                {'Unable to add a new condition, please try again.'}
               </div>
           }
 
@@ -53,11 +52,11 @@ class AddSpecificationModalContent extends Component {
 
                 <Alert kind={kinds.INFO}>
                   <div>
-                    {translate('WhisparrSupportsCustomConditionsAgainstTheReleasePropertiesBelow')}
+                    {'Whisparr supports custom conditions against the release properties below.'}
                   </div>
                   <div>
-                    {translate('VisitGithubCustomFormatsAphrodite')}
-                    <Link to="https://wiki.servarr.com/whisparr/settings#custom-formats-2">{translate('Wiki')}</Link>
+                    {'Visit the wiki for more details: '}
+                    <Link to="https://wiki.servarr.com/whisparr/settings#custom-formats-2">{'Wiki'}</Link>
                   </div>
                 </Alert>
 
@@ -82,7 +81,7 @@ class AddSpecificationModalContent extends Component {
           <Button
             onPress={onModalClose}
           >
-            {translate('Close')}
+            Close
           </Button>
         </ModalFooter>
       </ModalContent>

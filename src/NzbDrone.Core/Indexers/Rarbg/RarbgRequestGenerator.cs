@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using NzbDrone.Common.EnvironmentInfo;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
@@ -22,18 +20,46 @@ namespace NzbDrone.Core.Indexers.Rarbg
         public virtual IndexerPageableRequestChain GetRecentRequests()
         {
             var pageableRequests = new IndexerPageableRequestChain();
+
             pageableRequests.Add(GetPagedRequests("list", null, null));
+
             return pageableRequests;
         }
 
-        public IndexerPageableRequestChain GetSearchRequests(MovieSearchCriteria searchCriteria)
+        public virtual IndexerPageableRequestChain GetSearchRequests(SingleEpisodeSearchCriteria searchCriteria)
         {
             var pageableRequests = new IndexerPageableRequestChain();
-            pageableRequests.Add(GetMovieRequest(searchCriteria));
+
+            pageableRequests.Add(GetPagedRequests("search", searchCriteria.Series.TvdbId, "S{0:00}E{1:00}", searchCriteria.SeasonNumber, searchCriteria.EpisodeNumber));
+
             return pageableRequests;
         }
 
-        private IEnumerable<IndexerRequest> GetPagedRequests(string mode, int? imdbId, string query, params object[] args)
+        public virtual IndexerPageableRequestChain GetSearchRequests(SeasonSearchCriteria searchCriteria)
+        {
+            var pageableRequests = new IndexerPageableRequestChain();
+
+            pageableRequests.Add(GetPagedRequests("search", searchCriteria.Series.TvdbId, "S{0:00}", searchCriteria.SeasonNumber));
+
+            return pageableRequests;
+        }
+
+        public virtual IndexerPageableRequestChain GetSearchRequests(SpecialEpisodeSearchCriteria searchCriteria)
+        {
+            var pageableRequests = new IndexerPageableRequestChain();
+
+            foreach (var queryTitle in searchCriteria.EpisodeQueryTitles)
+            {
+                var query = queryTitle.Replace('+', ' ');
+                query = System.Web.HttpUtility.UrlEncode(query);
+
+                pageableRequests.Add(GetPagedRequests("search", searchCriteria.Series.TvdbId, query));
+            }
+
+            return pageableRequests;
+        }
+
+        private IEnumerable<IndexerRequest> GetPagedRequests(string mode, int? tvdbId, string query, params object[] args)
         {
             var requestBuilder = new HttpRequestBuilder(Settings.BaseUrl)
                 .Resource("/pubapi_v2.php")
@@ -47,9 +73,9 @@ namespace NzbDrone.Core.Indexers.Rarbg
 
             requestBuilder.AddQueryParam("mode", mode);
 
-            if (imdbId.HasValue)
+            if (tvdbId.HasValue)
             {
-                requestBuilder.AddQueryParam("search_imdb", imdbId.Value);
+                requestBuilder.AddQueryParam("search_tvdb", tvdbId.Value);
             }
 
             if (query.IsNotNullOrWhiteSpace())
@@ -62,48 +88,7 @@ namespace NzbDrone.Core.Indexers.Rarbg
                 requestBuilder.AddQueryParam("ranked", "0");
             }
 
-            var categoryParam = string.Join(";", Settings.Categories.Distinct());
-
-            requestBuilder.AddQueryParam("category", categoryParam);
-            requestBuilder.AddQueryParam("limit", "100");
-            requestBuilder.AddQueryParam("token", _tokenProvider.GetToken(Settings));
-            requestBuilder.AddQueryParam("format", "json_extended");
-            requestBuilder.AddQueryParam("app_id", "Whisparr");
-
-            yield return new IndexerRequest(requestBuilder.Build());
-        }
-
-        private IEnumerable<IndexerRequest> GetMovieRequest(MovieSearchCriteria searchCriteria)
-        {
-            var requestBuilder = new HttpRequestBuilder(Settings.BaseUrl)
-                .Resource("/pubapi_v2.php")
-                .Accept(HttpAccept.Json);
-
-            if (Settings.CaptchaToken.IsNotNullOrWhiteSpace())
-            {
-                requestBuilder.UseSimplifiedUserAgent = true;
-                requestBuilder.SetCookie("cf_clearance", Settings.CaptchaToken);
-            }
-
-            requestBuilder.AddQueryParam("mode", "search");
-
-            if (searchCriteria.Movie.MediaMetadata.Value.ForiegnId > 0)
-            {
-                requestBuilder.AddQueryParam("search_themoviedb", searchCriteria.Movie.ForiegnId);
-            }
-            else
-            {
-                requestBuilder.AddQueryParam("search_string", $"{searchCriteria.Movie.Title} {searchCriteria.Movie.Year}");
-            }
-
-            if (!Settings.RankedOnly)
-            {
-                requestBuilder.AddQueryParam("ranked", "0");
-            }
-
-            var categoryParam = string.Join(";", Settings.Categories.Distinct());
-
-            requestBuilder.AddQueryParam("category", categoryParam);
+            requestBuilder.AddQueryParam("category", "18;41;49");
             requestBuilder.AddQueryParam("limit", "100");
             requestBuilder.AddQueryParam("token", _tokenProvider.GetToken(Settings));
             requestBuilder.AddQueryParam("format", "json_extended");
@@ -111,8 +96,5 @@ namespace NzbDrone.Core.Indexers.Rarbg
 
             yield return new IndexerRequest(requestBuilder.Build());
         }
-
-        public Func<IDictionary<string, string>> GetCookies { get; set; }
-        public Action<IDictionary<string, string>, DateTime?> CookiesUpdater { get; set; }
     }
 }

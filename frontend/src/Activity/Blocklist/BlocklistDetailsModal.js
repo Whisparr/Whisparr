@@ -8,7 +8,6 @@ import ModalBody from 'Components/Modal/ModalBody';
 import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
-import translate from 'Utilities/String/translate';
 
 class BlocklistDetailsModal extends Component {
 
@@ -40,19 +39,19 @@ class BlocklistDetailsModal extends Component {
           <ModalBody>
             <DescriptionList>
               <DescriptionListItem
-                title={translate('Name')}
+                title="Name"
                 data={sourceTitle}
               />
 
               <DescriptionListItem
-                title={translate('Protocol')}
+                title="Protocol"
                 data={protocol}
               />
 
               {
                 !!message &&
                   <DescriptionListItem
-                    title={translate('Indexer')}
+                    title="Indexer"
                     data={indexer}
                   />
               }
@@ -60,7 +59,7 @@ class BlocklistDetailsModal extends Component {
               {
                 !!message &&
                   <DescriptionListItem
-                    title={translate('Message')}
+                    title="Message"
                     data={message}
                   />
               }
@@ -69,7 +68,7 @@ class BlocklistDetailsModal extends Component {
 
           <ModalFooter>
             <Button onPress={onModalClose}>
-              {translate('Close')}
+              Close
             </Button>
           </ModalFooter>
         </ModalContent>

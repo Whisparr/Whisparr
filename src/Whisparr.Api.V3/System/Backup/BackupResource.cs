@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using NzbDrone.Core.Backup;
 using Whisparr.Http.REST;
 

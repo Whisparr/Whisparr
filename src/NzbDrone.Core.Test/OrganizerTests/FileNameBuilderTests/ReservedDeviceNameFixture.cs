@@ -1,14 +1,20 @@
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Threading;
 using FizzWare.NBuilder;
 using FluentAssertions;
+using Moq;
 using NUnit.Framework;
 using NzbDrone.Core.CustomFormats;
 using NzbDrone.Core.MediaFiles;
-using NzbDrone.Core.Movies;
+using NzbDrone.Core.MediaFiles.MediaInfo;
 using NzbDrone.Core.Organizer;
 using NzbDrone.Core.Qualities;
 using NzbDrone.Core.Test.Framework;
+using NzbDrone.Core.Tv;
+using NzbDrone.Test.Common;
 
 namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 {
@@ -16,54 +22,71 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
     public class ReservedDeviceNameFixture : CoreTest<FileNameBuilder>
     {
-        private Media _movie;
-        private MediaFile _movieFile;
+        private Series _series;
+        private Episode _episode1;
+        private EpisodeFile _episodeFile;
         private NamingConfig _namingConfig;
 
         [SetUp]
         public void Setup()
         {
-            _movie = Builder<Media>
+            _series = Builder<Series>
                     .CreateNew()
+                    .With(s => s.Title = "South Park")
                     .Build();
 
             _namingConfig = NamingConfig.Default;
-            _namingConfig.RenameMovies = true;
+            _namingConfig.RenameEpisodes = true;
 
             Mocker.GetMock<INamingConfigService>()
                   .Setup(c => c.GetConfig()).Returns(_namingConfig);
 
-            _movieFile = new MediaFile { Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "WhisparrTest" };
+            _episode1 = Builder<Episode>.CreateNew()
+                            .With(e => e.Title = "City Sushi")
+                            .With(e => e.SeasonNumber = 15)
+                            .With(e => e.EpisodeNumber = 6)
+                            .With(e => e.AbsoluteEpisodeNumber = 100)
+                            .Build();
+
+            _episodeFile = new EpisodeFile { Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "WhisparrTest" };
 
             Mocker.GetMock<IQualityDefinitionService>()
                 .Setup(v => v.Get(Moq.It.IsAny<Quality>()))
                 .Returns<Quality>(v => Quality.DefaultQualityDefinitions.First(c => c.Quality == v));
 
             Mocker.GetMock<ICustomFormatService>()
-                .Setup(v => v.All())
-                .Returns(new List<CustomFormat>());
+                  .Setup(v => v.All())
+                  .Returns(new List<CustomFormat>());
         }
 
-        [TestCase("Con Game", 2021, "Con_Game (2021)")]
-        [TestCase("Com1 Sat", 2021, "Com1_Sat (2021)")]
-        public void should_replace_reserved_device_name_in_movies_folder(string title, int year, string expected)
+        [TestCase("Con Game", "Con_Game")]
+        [TestCase("Com1 Sat", "Com1_Sat")]
+        public void should_replace_reserved_device_name_in_series_folder(string title, string expected)
         {
-            _movie.Title = title;
-            _movie.Year = year;
-            _namingConfig.MovieFolderFormat = "{Movie.Title} ({Release Year})";
+            _series.Title = title;
+            _namingConfig.SeriesFolderFormat = "{Series.Title}";
 
-            Subject.GetMovieFolder(_movie).Should().Be($"{expected}");
+            Subject.GetSeriesFolder(_series).Should().Be($"{expected}");
         }
 
-        [TestCase("Con Game", 2021, "Con_Game (2021)")]
-        [TestCase("Com1 Sat", 2021, "Com1_Sat (2021)")]
-        public void should_replace_reserved_device_name_in_file_name(string title, int year, string expected)
+        [TestCase("Con Game", "Con_Game")]
+        [TestCase("Com1 Sat", "Com1_Sat")]
+        public void should_replace_reserved_device_name_in_season_folder(string title, string expected)
         {
-            _movie.Title = title;
-            _movie.Year = year;
-            _namingConfig.StandardMovieFormat = "{Movie.Title} ({Release Year})";
+            _series.Title = title;
+            _namingConfig.SeasonFolderFormat = "{Series.Title} - Season {Season:00}";
 
-            Subject.BuildFileName(_movie, _movieFile).Should().Be($"{expected}");
+            Subject.GetSeasonFolder(_series, 1).Should().Be($"{expected} - Season 01");
+        }
+
+        [TestCase("Con Game", "Con_Game")]
+        [TestCase("Com1 Sat", "Com1_Sat")]
+        public void should_replace_reserved_device_name_in_file_name(string title, string expected)
+        {
+            _series.Title = title;
+            _namingConfig.StandardEpisodeFormat = "{Series.Title} - S{Season:00}E{Episode:00}";
+
+            Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile).Should().Be($"{expected} - S15E06");
         }
     }
 }

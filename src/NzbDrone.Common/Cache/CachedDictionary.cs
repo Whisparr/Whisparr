@@ -33,7 +33,7 @@ namespace NzbDrone.Common.Cache
         }
 
         public void RefreshIfExpired(TimeSpan ttl)
-        {
+    {
             if (IsExpired(ttl))
             {
                 Refresh();

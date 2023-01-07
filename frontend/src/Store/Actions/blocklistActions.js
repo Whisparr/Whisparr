@@ -4,7 +4,6 @@ import { sortDirections } from 'Helpers/Props';
 import { createThunk, handleThunks } from 'Store/thunks';
 import createAjaxRequest from 'Utilities/createAjaxRequest';
 import serverSideCollectionHandlers from 'Utilities/serverSideCollectionHandlers';
-import translate from 'Utilities/String/translate';
 import { set, updateItem } from './baseActions';
 import createHandleActions from './Creators/createHandleActions';
 import createRemoveItemHandler from './Creators/createRemoveItemHandler';
@@ -32,50 +31,48 @@ export const defaultState = {
 
   columns: [
     {
-      name: 'movies.sortTitle',
-      label: translate('MovieTitle'),
+      name: 'series.sortTitle',
+      label: 'Series Title',
       isSortable: true,
       isVisible: true
     },
     {
       name: 'sourceTitle',
-      label: translate('SourceTitle'),
+      label: 'Source Title',
       isSortable: true,
       isVisible: true
     },
     {
       name: 'languages',
-      label: translate('Languages'),
-      isSortable: true,
-      isVisible: true
+      label: 'Languages',
+      isVisible: false
     },
     {
       name: 'quality',
-      label: translate('Quality'),
-      isSortable: true,
+      label: 'Quality',
       isVisible: true
     },
     {
       name: 'customFormats',
-      label: translate('Formats'),
+      label: 'Formats',
       isSortable: false,
       isVisible: true
     },
     {
       name: 'date',
-      label: translate('Date'),
+      label: 'Date',
       isSortable: true,
       isVisible: true
     },
     {
       name: 'indexer',
-      label: translate('Indexer'),
+      label: 'Indexer',
       isSortable: true,
       isVisible: false
     },
     {
       name: 'actions',
-      columnLabel: translate('Actions'),
+      columnLabel: 'Actions',
       isVisible: true,
       isModifiable: false
     }

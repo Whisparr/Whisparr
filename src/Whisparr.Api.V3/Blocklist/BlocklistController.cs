@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Core.Blocklisting;
 using NzbDrone.Core.CustomFormats;
@@ -17,25 +15,20 @@ namespace Whisparr.Api.V3.Blocklist
         private readonly ICustomFormatCalculationService _formatCalculator;
 
         public BlocklistController(IBlocklistService blocklistService,
-                               ICustomFormatCalculationService formatCalculator)
+                                   ICustomFormatCalculationService formatCalculator)
         {
             _blocklistService = blocklistService;
             _formatCalculator = formatCalculator;
         }
 
         [HttpGet]
+        [Produces("application/json")]
         public PagingResource<BlocklistResource> GetBlocklist()
         {
             var pagingResource = Request.ReadPagingResourceFromRequest<BlocklistResource>();
             var pagingSpec = pagingResource.MapToPagingSpec<BlocklistResource, NzbDrone.Core.Blocklisting.Blocklist>("date", SortDirection.Descending);
 
             return pagingSpec.ApplyToPage(_blocklistService.Paged, model => BlocklistResourceMapper.MapToResource(model, _formatCalculator));
-        }
-
-        [HttpGet("movie")]
-        public List<BlocklistResource> GetMovieBlocklist(int movieId)
-        {
-            return _blocklistService.GetByMovieId(movieId).Select(h => BlocklistResourceMapper.MapToResource(h, _formatCalculator)).ToList();
         }
 
         [RestDeleteById]
@@ -45,6 +38,7 @@ namespace Whisparr.Api.V3.Blocklist
         }
 
         [HttpDelete("bulk")]
+        [Produces("application/json")]
         public object Remove([FromBody] BlocklistBulkResource resource)
         {
             _blocklistService.Delete(resource.Ids);

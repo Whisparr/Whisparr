@@ -11,7 +11,7 @@ using NzbDrone.Core.Download.Pending;
 using NzbDrone.Core.Download.TrackedDownloads;
 using NzbDrone.Core.Languages;
 using NzbDrone.Core.Messaging.Events;
-using NzbDrone.Core.Profiles;
+using NzbDrone.Core.Profiles.Qualities;
 using NzbDrone.Core.Qualities;
 using NzbDrone.Core.Queue;
 using NzbDrone.SignalR;
@@ -39,7 +39,7 @@ namespace Whisparr.Api.V3.Queue
         public QueueController(IBroadcastSignalRMessage broadcastSignalRMessage,
                            IQueueService queueService,
                            IPendingReleaseService pendingReleaseService,
-                           ProfileService qualityProfileService,
+                           IQualityProfileService qualityProfileService,
                            ITrackedDownloadService trackedDownloadService,
                            IFailedDownloadService failedDownloadService,
                            IIgnoredDownloadService ignoredDownloadService,
@@ -66,27 +66,60 @@ namespace Whisparr.Api.V3.Queue
         [RestDeleteById]
         public void RemoveAction(int id, bool removeFromClient = true, bool blocklist = false)
         {
-            var trackedDownload = Remove(id, removeFromClient, blocklist);
+            var pendingRelease = _pendingReleaseService.FindPendingQueueItem(id);
 
-            if (trackedDownload != null)
+            if (pendingRelease != null)
             {
-                _trackedDownloadService.StopTracking(trackedDownload.DownloadItem.DownloadId);
+                Remove(pendingRelease);
+
+                return;
             }
+
+            var trackedDownload = GetTrackedDownload(id);
+
+            if (trackedDownload == null)
+            {
+                throw new NotFoundException();
+            }
+
+            Remove(trackedDownload, removeFromClient, blocklist);
+            _trackedDownloadService.StopTracking(trackedDownload.DownloadItem.DownloadId);
         }
 
         [HttpDelete("bulk")]
         public object RemoveMany([FromBody] QueueBulkResource resource, [FromQuery] bool removeFromClient = true, [FromQuery] bool blocklist = false)
         {
             var trackedDownloadIds = new List<string>();
+            var pendingToRemove = new List<NzbDrone.Core.Queue.Queue>();
+            var trackedToRemove = new List<TrackedDownload>();
 
             foreach (var id in resource.Ids)
             {
-                var trackedDownload = Remove(id, removeFromClient, blocklist);
+                var pendingRelease = _pendingReleaseService.FindPendingQueueItem(id);
+
+                if (pendingRelease != null)
+                {
+                    pendingToRemove.Add(pendingRelease);
+                    continue;
+                }
+
+                var trackedDownload = GetTrackedDownload(id);
 
                 if (trackedDownload != null)
                 {
-                    trackedDownloadIds.Add(trackedDownload.DownloadItem.DownloadId);
+                    trackedToRemove.Add(trackedDownload);
                 }
+            }
+
+            foreach (var pendingRelease in pendingToRemove.DistinctBy(p => p.Id))
+            {
+                Remove(pendingRelease);
+            }
+
+            foreach (var trackedDownload in trackedToRemove.DistinctBy(t => t.DownloadItem.DownloadId))
+            {
+                Remove(trackedDownload, removeFromClient, blocklist);
+                trackedDownloadIds.Add(trackedDownload.DownloadItem.DownloadId);
             }
 
             _trackedDownloadService.StopTracking(trackedDownloadIds);
@@ -95,21 +128,22 @@ namespace Whisparr.Api.V3.Queue
         }
 
         [HttpGet]
-        public PagingResource<QueueResource> GetQueue(bool includeUnknownMovieItems = false, bool includeMovie = false)
+        [Produces("application/json")]
+        public PagingResource<QueueResource> GetQueue(bool includeUnknownSeriesItems = false, bool includeSeries = false, bool includeEpisode = false)
         {
             var pagingResource = Request.ReadPagingResourceFromRequest<QueueResource>();
             var pagingSpec = pagingResource.MapToPagingSpec<QueueResource, NzbDrone.Core.Queue.Queue>("timeleft", SortDirection.Ascending);
 
-            return pagingSpec.ApplyToPage((spec) => GetQueue(spec, includeUnknownMovieItems), (q) => MapToResource(q, includeMovie));
+            return pagingSpec.ApplyToPage((spec) => GetQueue(spec, includeUnknownSeriesItems), (q) => MapToResource(q, includeSeries, includeEpisode));
         }
 
-        private PagingSpec<NzbDrone.Core.Queue.Queue> GetQueue(PagingSpec<NzbDrone.Core.Queue.Queue> pagingSpec, bool includeUnknownMovieItems)
+        private PagingSpec<NzbDrone.Core.Queue.Queue> GetQueue(PagingSpec<NzbDrone.Core.Queue.Queue> pagingSpec, bool includeUnknownSeriesItems)
         {
             var ascending = pagingSpec.SortDirection == SortDirection.Ascending;
             var orderByFunc = GetOrderByFunc(pagingSpec);
 
             var queue = _queueService.GetQueue();
-            var filteredQueue = includeUnknownMovieItems ? queue : queue.Where(q => q.Movie != null);
+            var filteredQueue = includeUnknownSeriesItems ? queue : queue.Where(q => q.Series != null);
             var pending = _pendingReleaseService.GetPendingQueue();
             var fullQueue = filteredQueue.Concat(pending).ToList();
             IOrderedEnumerable<NzbDrone.Core.Queue.Queue> ordered;
@@ -182,10 +216,19 @@ namespace Whisparr.Api.V3.Queue
             {
                 case "status":
                     return q => q.Status;
-                case "movies.sortTitle":
-                    return q => q.Movie?.MediaMetadata.Value.SortTitle ?? string.Empty;
+                case "series.sortTitle":
+                    return q => q.Series?.SortTitle ?? q.Title;
                 case "title":
                     return q => q.Title;
+                case "episode":
+                    return q => q.Episode;
+                case "episode.airDateUtc":
+                case "episodes.airDateUtc":
+                    return q => q.Episode?.AirDateUtc ?? DateTime.MinValue;
+                case "episode.title":
+                case "episodes.title":
+                    return q => q.Episode?.Title ?? string.Empty;
+                case "language":
                 case "languages":
                     return q => q.Languages;
                 case "quality":
@@ -198,29 +241,14 @@ namespace Whisparr.Api.V3.Queue
             }
         }
 
-        private TrackedDownload Remove(int id, bool removeFromClient, bool blocklist)
+        private void Remove(NzbDrone.Core.Queue.Queue pendingRelease)
         {
-            var pendingRelease = _pendingReleaseService.FindPendingQueueItem(id);
+            _blocklistService.Block(pendingRelease.RemoteEpisode, "Pending release manually blocklisted");
+            _pendingReleaseService.RemovePendingQueueItems(pendingRelease.Id);
+        }
 
-            if (pendingRelease != null)
-            {
-                if (blocklist)
-                {
-                    _blocklistService.Block(pendingRelease.RemoteMovie, "Pending release manually blocklisted");
-                }
-
-                _pendingReleaseService.RemovePendingQueueItems(pendingRelease.Id);
-
-                return null;
-            }
-
-            var trackedDownload = GetTrackedDownload(id);
-
-            if (trackedDownload == null)
-            {
-                throw new NotFoundException();
-            }
-
+        private TrackedDownload Remove(TrackedDownload trackedDownload, bool removeFromClient, bool blocklist)
+        {
             if (removeFromClient)
             {
                 var downloadClient = _downloadClientProvider.Get(trackedDownload.DownloadClient);
@@ -268,9 +296,9 @@ namespace Whisparr.Api.V3.Queue
             return trackedDownload;
         }
 
-        private QueueResource MapToResource(NzbDrone.Core.Queue.Queue queueItem, bool includeMovie)
+        private QueueResource MapToResource(NzbDrone.Core.Queue.Queue queueItem, bool includeSeries, bool includeEpisode)
         {
-            return queueItem.ToResource(includeMovie);
+            return queueItem.ToResource(includeSeries, includeEpisode);
         }
 
         [NonAction]

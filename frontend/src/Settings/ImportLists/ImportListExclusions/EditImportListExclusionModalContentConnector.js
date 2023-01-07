@@ -3,21 +3,20 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import { saveImportExclusion, setImportExclusionValue } from 'Store/Actions/settingsActions';
+import { saveImportListExclusion, setImportListExclusionValue } from 'Store/Actions/settingsActions';
 import selectSettings from 'Store/Selectors/selectSettings';
 import EditImportListExclusionModalContent from './EditImportListExclusionModalContent';
 
-const newImportExclusion = {
-  movieTitle: '',
-  tmdbId: 0,
-  movieYear: 0
+const newImportListExclusion = {
+  title: '',
+  tvdbId: 0
 };
 
-function createImportExclusionSelector() {
+function createImportListExclusionSelector() {
   return createSelector(
     (state, { id }) => id,
-    (state) => state.settings.importExclusions,
-    (id, importExclusions) => {
+    (state) => state.settings.importListExclusions,
+    (id, importListExclusions) => {
       const {
         isFetching,
         error,
@@ -25,9 +24,9 @@ function createImportExclusionSelector() {
         saveError,
         pendingChanges,
         items
-      } = importExclusions;
+      } = importListExclusions;
 
-      const mapping = id ? _.find(items, { id }) : newImportExclusion;
+      const mapping = id ? _.find(items, { id }) : newImportListExclusion;
       const settings = selectSettings(mapping, pendingChanges, saveError);
 
       return {
@@ -45,31 +44,31 @@ function createImportExclusionSelector() {
 
 function createMapStateToProps() {
   return createSelector(
-    createImportExclusionSelector(),
-    (importExclusion) => {
+    createImportListExclusionSelector(),
+    (importListExclusion) => {
       return {
-        ...importExclusion
+        ...importListExclusion
       };
     }
   );
 }
 
 const mapDispatchToProps = {
-  setImportExclusionValue,
-  saveImportExclusion
+  setImportListExclusionValue,
+  saveImportListExclusion
 };
 
-class EditImportExclusionModalContentConnector extends Component {
+class EditImportListExclusionModalContentConnector extends Component {
 
   //
   // Lifecycle
 
   componentDidMount() {
     if (!this.props.id) {
-      Object.keys(newImportExclusion).forEach((name) => {
-        this.props.setImportExclusionValue({
+      Object.keys(newImportListExclusion).forEach((name) => {
+        this.props.setImportListExclusionValue({
           name,
-          value: newImportExclusion[name]
+          value: newImportListExclusion[name]
         });
       });
     }
@@ -85,11 +84,11 @@ class EditImportExclusionModalContentConnector extends Component {
   // Listeners
 
   onInputChange = ({ name, value }) => {
-    this.props.setImportExclusionValue({ name, value });
+    this.props.setImportListExclusionValue({ name, value });
   };
 
   onSavePress = () => {
-    this.props.saveImportExclusion({ id: this.props.id });
+    this.props.saveImportListExclusion({ id: this.props.id });
   };
 
   //
@@ -106,14 +105,14 @@ class EditImportExclusionModalContentConnector extends Component {
   }
 }
 
-EditImportExclusionModalContentConnector.propTypes = {
+EditImportListExclusionModalContentConnector.propTypes = {
   id: PropTypes.number,
   isSaving: PropTypes.bool.isRequired,
   saveError: PropTypes.object,
   item: PropTypes.object.isRequired,
-  setImportExclusionValue: PropTypes.func.isRequired,
-  saveImportExclusion: PropTypes.func.isRequired,
+  setImportListExclusionValue: PropTypes.func.isRequired,
+  saveImportListExclusion: PropTypes.func.isRequired,
   onModalClose: PropTypes.func.isRequired
 };
 
-export default connect(createMapStateToProps, mapDispatchToProps)(EditImportExclusionModalContentConnector);
+export default connect(createMapStateToProps, mapDispatchToProps)(EditImportListExclusionModalContentConnector);

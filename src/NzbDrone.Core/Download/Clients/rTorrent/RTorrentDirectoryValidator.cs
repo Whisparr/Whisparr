@@ -1,4 +1,4 @@
-using FluentValidation;
+﻿using FluentValidation;
 using FluentValidation.Results;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Download.Clients.RTorrent;
@@ -17,12 +17,12 @@ namespace NzbDrone.Core.Download.Clients.rTorrent
                                           PathExistsValidator pathExistsValidator,
                                           MappedNetworkDriveValidator mappedNetworkDriveValidator)
         {
-            RuleFor(c => c.MovieDirectory).Cascade(CascadeMode.StopOnFirstFailure)
+            RuleFor(c => c.TvDirectory).Cascade(CascadeMode.StopOnFirstFailure)
                                        .IsValidPath()
                                        .SetValidator(rootFolderValidator)
                                        .SetValidator(mappedNetworkDriveValidator)
                                        .SetValidator(pathExistsValidator)
-                                       .When(c => c.MovieDirectory.IsNotNullOrWhiteSpace())
+                                       .When(c => c.TvDirectory.IsNotNullOrWhiteSpace())
                                        .When(c => c.Host == "localhost" || c.Host == "127.0.0.1");
         }
     }

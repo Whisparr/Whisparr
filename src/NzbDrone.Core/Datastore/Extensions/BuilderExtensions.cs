@@ -25,7 +25,7 @@ namespace NzbDrone.Core.Datastore
 
         public static SqlBuilder SelectDistinct(this SqlBuilder builder, params Type[] types)
         {
-            return builder.Select("DISTINCT " + types.Select(x => TableMapping.Mapper.TableNameMapping(x) + ".*").Join(", "));
+            return builder.Select("DISTINCT " + types.Select(x => $"\"{TableMapping.Mapper.TableNameMapping(x)}\".*").Join(", "));
         }
 
         public static SqlBuilder SelectCount(this SqlBuilder builder)
@@ -43,6 +43,13 @@ namespace NzbDrone.Core.Datastore
         public static SqlBuilder Where<TModel>(this SqlBuilder builder, Expression<Func<TModel, bool>> filter)
         {
             var wb = GetWhereBuilder(builder.DatabaseType, filter, true, builder.Sequence);
+
+            return builder.Where(wb.ToString(), wb.Parameters);
+        }
+
+        public static SqlBuilder WherePostgres<TModel>(this SqlBuilder builder, Expression<Func<TModel, bool>> filter)
+        {
+            var wb = new WhereBuilderPostgres(filter, true, builder.Sequence);
 
             return builder.Where(wb.ToString(), wb.Parameters);
         }
@@ -162,11 +169,14 @@ namespace NzbDrone.Core.Datastore
             }
 
             var templates = dynamicParams.GetType().GetField("templates", BindingFlags.NonPublic | BindingFlags.Instance);
-            if (templates != null && templates.GetValue(dynamicParams) is List<object> list)
+            if (templates != null)
             {
-                foreach (var objProps in list.Select(obj => obj.GetPropertyValuePairs().ToList()))
+                if (templates.GetValue(dynamicParams) is List<object> list)
                 {
-                    objProps.ForEach(p => argsDictionary.Add(p.Key, p.Value));
+                    foreach (var objProps in list.Select(obj => obj.GetPropertyValuePairs().ToList()))
+                    {
+                        objProps.ForEach(p => argsDictionary.Add(p.Key, p.Value));
+                    }
                 }
             }
 

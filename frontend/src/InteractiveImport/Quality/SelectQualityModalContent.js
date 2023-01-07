@@ -11,7 +11,6 @@ import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { inputTypes, kinds } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 
 class SelectQualityModalContent extends Component {
 
@@ -62,6 +61,7 @@ class SelectQualityModalContent extends Component {
       isPopulated,
       error,
       items,
+      modalTitle,
       onModalClose
     } = this.props;
 
@@ -81,7 +81,7 @@ class SelectQualityModalContent extends Component {
     return (
       <ModalContent onModalClose={onModalClose}>
         <ModalHeader>
-          {translate('ManualImportSelectQuality')}
+          {modalTitle} - Select Quality
         </ModalHeader>
 
         <ModalBody>
@@ -92,16 +92,14 @@ class SelectQualityModalContent extends Component {
 
           {
             !isFetching && !!error &&
-              <div>
-                {translate('UnableToLoadQualities')}
-              </div>
+              <div>Unable to load qualities</div>
           }
 
           {
             isPopulated && !error &&
               <Form>
                 <FormGroup>
-                  <FormLabel>{translate('Quality')}</FormLabel>
+                  <FormLabel>Quality</FormLabel>
 
                   <FormInputGroup
                     type={inputTypes.SELECT}
@@ -113,7 +111,7 @@ class SelectQualityModalContent extends Component {
                 </FormGroup>
 
                 <FormGroup>
-                  <FormLabel>{translate('Proper')}</FormLabel>
+                  <FormLabel>Proper</FormLabel>
 
                   <FormInputGroup
                     type={inputTypes.CHECK}
@@ -124,7 +122,7 @@ class SelectQualityModalContent extends Component {
                 </FormGroup>
 
                 <FormGroup>
-                  <FormLabel>{translate('Real')}</FormLabel>
+                  <FormLabel>Real</FormLabel>
 
                   <FormInputGroup
                     type={inputTypes.CHECK}
@@ -139,14 +137,14 @@ class SelectQualityModalContent extends Component {
 
         <ModalFooter>
           <Button onPress={onModalClose}>
-            {translate('Cancel')}
+            Cancel
           </Button>
 
           <Button
             kind={kinds.SUCCESS}
             onPress={this.onQualitySelect}
           >
-            {translate('SelectQuality')}
+            Select Quality
           </Button>
         </ModalFooter>
       </ModalContent>
@@ -162,6 +160,7 @@ SelectQualityModalContent.propTypes = {
   isPopulated: PropTypes.bool.isRequired,
   error: PropTypes.object,
   items: PropTypes.arrayOf(PropTypes.object).isRequired,
+  modalTitle: PropTypes.string.isRequired,
   onQualitySelect: PropTypes.func.isRequired,
   onModalClose: PropTypes.func.isRequired
 };

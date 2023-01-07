@@ -39,7 +39,7 @@ namespace NzbDrone.Core.Backup
 
         private string _backupTempFolder;
 
-        public static readonly Regex BackupFileRegex = new Regex(@"(nzbdrone|whisparr)_backup_v?[._0-9]+\.zip", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        public static readonly Regex BackupFileRegex = new Regex(@"(nzbdrone|whisparr)_backup_(v[0-9.]+_)?[._0-9]+\.zip", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         public BackupService(IMainDatabase maindDb,
                              IMakeDatabaseBackup makeDatabaseBackup,
@@ -104,12 +104,12 @@ namespace NzbDrone.Core.Backup
                 if (_diskProvider.FolderExists(folder))
                 {
                     backups.AddRange(GetBackupFiles(folder).Select(b => new Backup
-                    {
-                        Name = Path.GetFileName(b),
-                        Type = backupType,
-                        Size = _diskProvider.GetFileSize(b),
-                        Time = _diskProvider.FileGetLastWrite(b)
-                    }));
+                                                                        {
+                                                                            Name = Path.GetFileName(b),
+                                                                            Type = backupType,
+                                                                            Size = _diskProvider.GetFileSize(b),
+                                                                            Time = _diskProvider.FileGetLastWrite(b)
+                                                                        }));
                 }
             }
 
@@ -188,12 +188,9 @@ namespace NzbDrone.Core.Backup
 
         private void BackupDatabase()
         {
-            if (_maindDb.DatabaseType == DatabaseType.SQLite)
-            {
-                _logger.ProgressDebug("Backing up database");
+            _logger.ProgressDebug("Backing up database");
 
-                _makeDatabaseBackup.BackupDatabase(_maindDb, _backupTempFolder);
-            }
+            _makeDatabaseBackup.BackupDatabase(_maindDb, _backupTempFolder);
         }
 
         private void BackupConfigFile()

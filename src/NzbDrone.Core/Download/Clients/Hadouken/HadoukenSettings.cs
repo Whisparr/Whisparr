@@ -1,4 +1,4 @@
-using FluentValidation;
+﻿using FluentValidation;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Annotations;
 using NzbDrone.Core.ThingiProvider;
@@ -30,7 +30,7 @@ namespace NzbDrone.Core.Download.Clients.Hadouken
         {
             Host = "localhost";
             Port = 7070;
-            Category = "whisparr";
+            Category = "whisparr-tv";
         }
 
         [FieldDefinition(0, Label = "Host", Type = FieldType.Textbox)]

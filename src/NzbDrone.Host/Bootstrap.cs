@@ -22,10 +22,9 @@ using NzbDrone.Common.Instrumentation;
 using NzbDrone.Common.Instrumentation.Extensions;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Datastore.Extensions;
-using NzbDrone.Host;
 using PostgresOptions = NzbDrone.Core.Datastore.PostgresOptions;
 
-namespace Whisparr.Host
+namespace NzbDrone.Host
 {
     public static class Bootstrap
     {

@@ -2,12 +2,11 @@ import React from 'react';
 import PageContent from 'Components/Page/PageContent';
 import PageContentBody from 'Components/Page/PageContentBody';
 import SettingsToolbarConnector from 'Settings/SettingsToolbarConnector';
-import translate from 'Utilities/String/translate';
 import NotificationsConnector from './Notifications/NotificationsConnector';
 
 function NotificationSettings() {
   return (
-    <PageContent title={translate('ConnectSettings')}>
+    <PageContent title="Connect Settings">
       <SettingsToolbarConnector
         showSave={false}
       />

@@ -1,0 +1,20 @@
+# This file is owned by the whisparr package, DO NOT MODIFY MANUALLY
+# Instead use 'dpkg-reconfigure -plow whisparr' to modify User/Group/UMask/-data
+# Or use systemd built-in override functionality using 'systemctl edit whisparr'
+[Unit]
+Description=Whisparr Daemon
+After=network.target
+
+[Service]
+User=whisparr
+Group=whisparr
+UMask=002
+
+Type=simple
+ExecStart=/usr/lib/whisparr/bin/Whisparr -nobrowser -data=/var/lib/whisparr
+TimeoutStopSec=20
+KillMode=process
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

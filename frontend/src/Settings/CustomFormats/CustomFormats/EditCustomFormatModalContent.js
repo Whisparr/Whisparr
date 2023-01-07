@@ -15,7 +15,6 @@ import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { icons, inputTypes, kinds } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import ImportCustomFormatModal from './ImportCustomFormatModal';
 import AddSpecificationModal from './Specifications/AddSpecificationModal';
 import EditSpecificationModalConnector from './Specifications/EditSpecificationModalConnector';
@@ -100,7 +99,7 @@ class EditCustomFormatModalContent extends Component {
       <ModalContent onModalClose={onModalClose}>
 
         <ModalHeader>
-          {id ? translate('EditCustomFormat') : translate('AddCustomFormat')}
+          {id ? 'Edit Custom Format' : 'Add Custom Format'}
         </ModalHeader>
 
         <ModalBody>
@@ -113,7 +112,7 @@ class EditCustomFormatModalContent extends Component {
             {
               !isFetching && !!error &&
                 <div>
-                  {translate('UnableToAddANewCustomFormatPleaseTryAgain')}
+                  {'Unable to add a new custom format, please try again.'}
                 </div>
             }
 
@@ -125,7 +124,7 @@ class EditCustomFormatModalContent extends Component {
                   >
                     <FormGroup>
                       <FormLabel>
-                        {translate('Name')}
+                        Name
                       </FormLabel>
 
                       <FormInputGroup
@@ -137,19 +136,19 @@ class EditCustomFormatModalContent extends Component {
                     </FormGroup>
 
                     <FormGroup>
-                      <FormLabel>{translate('IncludeCustomFormatWhenRenaming')}</FormLabel>
+                      <FormLabel>{'Include Custom Format when Renaming'}</FormLabel>
 
                       <FormInputGroup
                         type={inputTypes.CHECK}
                         name="includeCustomFormatWhenRenaming"
-                        helpText={translate('IncludeCustomFormatWhenRenamingHelpText')}
+                        helpText={'Include in {Custom Formats} renaming format'}
                         {...includeCustomFormatWhenRenaming}
                         onChange={onInputChange}
                       />
                     </FormGroup>
                   </Form>
 
-                  <FieldSet legend={translate('Conditions')}>
+                  <FieldSet legend={'Conditions'}>
                     <div className={styles.customFormats}>
                       {
                         specifications.map((tag) => {
@@ -206,7 +205,7 @@ class EditCustomFormatModalContent extends Component {
                   kind={kinds.DANGER}
                   onPress={onDeleteCustomFormatPress}
                 >
-                  {translate('Delete')}
+                  Delete
                 </Button>
             }
 
@@ -214,14 +213,14 @@ class EditCustomFormatModalContent extends Component {
               className={styles.deleteButton}
               onPress={this.onImportPress}
             >
-              {translate('Import')}
+              Import
             </Button>
           </div>
 
           <Button
             onPress={onModalClose}
           >
-            {translate('Cancel')}
+            Cancel
           </Button>
 
           <SpinnerErrorButton
@@ -229,7 +228,7 @@ class EditCustomFormatModalContent extends Component {
             error={saveError}
             onPress={onSavePress}
           >
-            {translate('Save')}
+            Save
           </SpinnerErrorButton>
         </ModalFooter>
       </ModalContent>

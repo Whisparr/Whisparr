@@ -1,34 +1,28 @@
-import $ from 'jquery';
+import createAjaxRequest from 'Utilities/createAjaxRequest';
 
 function getTranslations() {
-  let localization = null;
-  const ajaxOptions = {
-    async: false,
-    type: 'GET',
+  return createAjaxRequest({
     global: false,
     dataType: 'json',
-    url: `${window.Whisparr.apiRoot}/localization`,
-    success: function(data) {
-      localization = data.Strings;
-    }
-  };
-
-  ajaxOptions.headers = ajaxOptions.headers || {};
-  ajaxOptions.headers['X-Api-Key'] = window.Whisparr.apiKey;
-
-  $.ajax(ajaxOptions);
-  return localization;
+    url: '/localization'
+  }).request;
 }
 
-const translations = getTranslations();
+let translations = {};
 
-export default function translate(key, args = '') {
-  if (args) {
-    const translatedKey = translate(key);
-    return translatedKey.replace(/\{(\d+)\}/g, (match, index) => {
-      return args[index];
-    });
+getTranslations().then((data) => {
+  translations = data.strings;
+});
+
+export default function translate(key, tokens) {
+  const translation = translations[key] || key;
+
+  if (tokens) {
+    return translation.replace(
+      /\{([a-z0-9]+?)\}/gi,
+      (match, tokenMatch) => String(tokens[tokenMatch]) ?? match
+    );
   }
 
-  return translations[key] || key;
+  return translation;
 }

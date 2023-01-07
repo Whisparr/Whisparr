@@ -3,34 +3,43 @@ using System.IO;
 using System.Linq;
 using FluentValidation.Results;
 using NzbDrone.Common.Extensions;
+using NzbDrone.Core.Configuration;
 using NzbDrone.Core.MediaFiles;
-using NzbDrone.Core.Movies;
+using NzbDrone.Core.Tv;
 using NzbDrone.Core.Validation;
 
 namespace NzbDrone.Core.Notifications.Webhook
 {
     public class Webhook : NotificationBase<WebhookSettings>
     {
+        private readonly IConfigFileProvider _configFileProvider;
+        private readonly IConfigService _configService;
         private readonly IWebhookProxy _proxy;
 
-        public Webhook(IWebhookProxy proxy)
+        public Webhook(IConfigFileProvider configFileProvider,
+            IConfigService configService,
+            IWebhookProxy proxy)
         {
+            _configFileProvider = configFileProvider;
+            _configService = configService;
             _proxy = proxy;
         }
 
-        public override string Link => "https://wiki.servarr.com/whisparr/settings#connect";
+        public override string Link => "https://wiki.servarr.com/whisparr/settings#connections";
 
         public override void OnGrab(GrabMessage message)
         {
-            var remoteMovie = message.RemoteMovie;
+            var remoteEpisode = message.Episode;
             var quality = message.Quality;
 
             var payload = new WebhookGrabPayload
             {
                 EventType = WebhookEventType.Grab,
-                Movie = new WebhookMovie(message.Movie),
-                RemoteMovie = new WebhookRemoteMovie(remoteMovie),
-                Release = new WebhookRelease(quality, remoteMovie),
+                InstanceName = _configFileProvider.InstanceName,
+                ApplicationUrl = _configService.ApplicationUrl,
+                Series = new WebhookSeries(message.Series),
+                Episodes = remoteEpisode.Episodes.ConvertAll(x => new WebhookEpisode(x)),
+                Release = new WebhookRelease(quality, remoteEpisode),
                 DownloadClient = message.DownloadClientName,
                 DownloadClientType = message.DownloadClientType,
                 DownloadId = message.DownloadId
@@ -41,74 +50,71 @@ namespace NzbDrone.Core.Notifications.Webhook
 
         public override void OnDownload(DownloadMessage message)
         {
-            var movieFile = message.MovieFile;
+            var episodeFile = message.EpisodeFile;
 
             var payload = new WebhookImportPayload
             {
                 EventType = WebhookEventType.Download,
-                Movie = new WebhookMovie(message.Movie),
-                RemoteMovie = new WebhookRemoteMovie(message.Movie),
-                MovieFile = new WebhookMovieFile(movieFile),
-                IsUpgrade = message.OldMovieFiles.Any(),
+                InstanceName = _configFileProvider.InstanceName,
+                ApplicationUrl = _configService.ApplicationUrl,
+                Series = new WebhookSeries(message.Series),
+                Episodes = episodeFile.Episodes.Value.ConvertAll(x => new WebhookEpisode(x)),
+                EpisodeFile = new WebhookEpisodeFile(episodeFile),
+                IsUpgrade = message.OldFiles.Any(),
                 DownloadClient = message.DownloadClientInfo?.Name,
                 DownloadClientType = message.DownloadClientInfo?.Type,
                 DownloadId = message.DownloadId
             };
 
-            if (message.OldMovieFiles.Any())
+            if (message.OldFiles.Any())
             {
-                payload.DeletedFiles = message.OldMovieFiles.ConvertAll(x =>
-                    new WebhookMovieFile(x)
-                    {
-                        Path = Path.Combine(message.Movie.Path, x.RelativePath)
-                    });
+                payload.DeletedFiles = message.OldFiles.ConvertAll(x => new WebhookEpisodeFile(x)
+                {
+                    Path = Path.Combine(message.Series.Path, x.RelativePath)
+                });
             }
 
             _proxy.SendWebhook(payload, Settings);
         }
 
-        public override void OnMovieRename(Media movie, List<RenamedMovieFile> renamedFiles)
+        public override void OnRename(Series series, List<RenamedEpisodeFile> renamedFiles)
         {
             var payload = new WebhookRenamePayload
             {
                 EventType = WebhookEventType.Rename,
-                Movie = new WebhookMovie(movie),
-                RenamedMovieFiles = renamedFiles.ConvertAll(x => new WebhookRenamedMovieFile(x))
+                InstanceName = _configFileProvider.InstanceName,
+                ApplicationUrl = _configService.ApplicationUrl,
+                Series = new WebhookSeries(series),
+                RenamedEpisodeFiles = renamedFiles.ConvertAll(x => new WebhookRenamedEpisodeFile(x))
             };
 
             _proxy.SendWebhook(payload, Settings);
         }
 
-        public override void OnMovieAdded(Media movie)
+        public override void OnEpisodeFileDelete(EpisodeDeleteMessage deleteMessage)
         {
-            var payload = new WebhookRenamePayload
+            var payload = new WebhookEpisodeDeletePayload
             {
-                EventType = WebhookEventType.MovieAdded,
-                Movie = new WebhookMovie(movie)
-            };
-
-            _proxy.SendWebhook(payload, Settings);
-        }
-
-        public override void OnMovieFileDelete(MovieFileDeleteMessage deleteMessage)
-        {
-            var payload = new WebhookMovieFileDeletePayload
-            {
-                EventType = WebhookEventType.MovieFileDelete,
-                Movie = new WebhookMovie(deleteMessage.Movie),
-                MovieFile = new WebhookMovieFile(deleteMessage.MovieFile),
+                EventType = WebhookEventType.EpisodeFileDelete,
+                InstanceName = _configFileProvider.InstanceName,
+                ApplicationUrl = _configService.ApplicationUrl,
+                Series = new WebhookSeries(deleteMessage.Series),
+                Episodes = deleteMessage.EpisodeFile.Episodes.Value.ConvertAll(x => new WebhookEpisode(x)),
+                EpisodeFile = deleteMessage.EpisodeFile,
                 DeleteReason = deleteMessage.Reason
             };
 
             _proxy.SendWebhook(payload, Settings);
         }
 
-        public override void OnMovieDelete(MovieDeleteMessage deleteMessage)
+        public override void OnSeriesDelete(SeriesDeleteMessage deleteMessage)
         {
-            var payload = new WebhookMovieDeletePayload
+            var payload = new WebhookSeriesDeletePayload
             {
-                EventType = WebhookEventType.MovieDelete,
-                Movie = new WebhookMovie(deleteMessage.Movie),
+                EventType = WebhookEventType.SeriesDelete,
+                InstanceName = _configFileProvider.InstanceName,
+                ApplicationUrl = _configService.ApplicationUrl,
+                Series = new WebhookSeries(deleteMessage.Series),
                 DeletedFiles = deleteMessage.DeletedFiles
             };
 
@@ -118,13 +124,15 @@ namespace NzbDrone.Core.Notifications.Webhook
         public override void OnHealthIssue(HealthCheck.HealthCheck healthCheck)
         {
             var payload = new WebhookHealthPayload
-                          {
-                              EventType = WebhookEventType.Health,
-                              Level = healthCheck.Type,
-                              Message = healthCheck.Message,
-                              Type = healthCheck.Source.Name,
-                              WikiUrl = healthCheck.WikiUrl?.ToString()
-                          };
+            {
+                EventType = WebhookEventType.Health,
+                InstanceName = _configFileProvider.InstanceName,
+                ApplicationUrl = _configService.ApplicationUrl,
+                Level = healthCheck.Type,
+                Message = healthCheck.Message,
+                Type = healthCheck.Source.Name,
+                WikiUrl = healthCheck.WikiUrl?.ToString()
+            };
 
             _proxy.SendWebhook(payload, Settings);
         }
@@ -134,6 +142,8 @@ namespace NzbDrone.Core.Notifications.Webhook
             var payload = new WebhookApplicationUpdatePayload
             {
                 EventType = WebhookEventType.ApplicationUpdate,
+                InstanceName = _configFileProvider.InstanceName,
+                ApplicationUrl = _configService.ApplicationUrl,
                 Message = updateMessage.Message,
                 PreviousVersion = updateMessage.PreviousVersion.ToString(),
                 NewVersion = updateMessage.NewVersion.ToString()
@@ -160,29 +170,24 @@ namespace NzbDrone.Core.Notifications.Webhook
                 var payload = new WebhookGrabPayload
                 {
                     EventType = WebhookEventType.Test,
-                    Movie = new WebhookMovie
+                    InstanceName = _configFileProvider.InstanceName,
+                    ApplicationUrl = _configService.ApplicationUrl,
+                    Series = new WebhookSeries()
                     {
                         Id = 1,
                         Title = "Test Title",
-                        Year = 1970,
-                        FolderPath = "C:\\testpath",
-                        ReleaseDate = "1970-01-01"
+                        Path = "C:\\testpath",
+                        TvdbId = 1234
                     },
-                    RemoteMovie = new WebhookRemoteMovie
+                    Episodes = new List<WebhookEpisode>()
                     {
-                        TmdbId = 1234,
-                        ImdbId = "5678",
-                        Title = "Test title",
-                        Year = 1970
-                    },
-                    Release = new WebhookRelease
-                    {
-                        Indexer = "Test Indexer",
-                        Quality = "Test Quality",
-                        QualityVersion = 1,
-                        ReleaseGroup = "Test Group",
-                        ReleaseTitle = "Test Title",
-                        Size = 9999999
+                        new WebhookEpisode()
+                        {
+                            Id = 123,
+                            EpisodeNumber = 1,
+                            SeasonNumber = 1,
+                            Title = "Test title"
+                        }
                     }
                 };
 

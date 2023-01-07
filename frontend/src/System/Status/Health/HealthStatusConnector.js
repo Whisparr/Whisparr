@@ -4,19 +4,17 @@ import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import PageSidebarStatus from 'Components/Page/Sidebar/PageSidebarStatus';
 import { fetchHealth } from 'Store/Actions/systemActions';
-import createHealthCheckSelector from 'Store/Selectors/createHealthCheckSelector';
 
 function createMapStateToProps() {
   return createSelector(
     (state) => state.app,
-    createHealthCheckSelector(),
     (state) => state.system.health,
-    (app, items, health) => {
-      const count = items.length;
+    (app, health) => {
+      const count = health.items.length;
       let errors = false;
       let warnings = false;
 
-      items.forEach((item) => {
+      health.items.forEach((item) => {
         if (item.type === 'error') {
           errors = true;
         }

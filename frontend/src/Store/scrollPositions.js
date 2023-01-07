@@ -1,6 +1,5 @@
 const scrollPositions = {
-  movieIndex: 0,
-  discoverMovie: 0
+  seriesIndex: 0
 };
 
 export default scrollPositions;

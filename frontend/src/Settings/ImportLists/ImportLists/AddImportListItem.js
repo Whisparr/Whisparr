@@ -5,7 +5,6 @@ import Link from 'Components/Link/Link';
 import Menu from 'Components/Menu/Menu';
 import MenuContent from 'Components/Menu/MenuContent';
 import { sizes } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import AddImportListPresetMenuItem from './AddImportListPresetMenuItem';
 import styles from './AddImportListItem.css';
 
@@ -34,11 +33,11 @@ class AddImportListItem extends Component {
       onImportListSelect
     } = this.props;
 
-    const hasPresets = !!presets && !!presets.length;
+    const hasPresets = !!(presets && presets.length);
 
     return (
       <div
-        className={styles.importList}
+        className={styles.list}
       >
         <Link
           className={styles.underlay}
@@ -56,9 +55,9 @@ class AddImportListItem extends Component {
                 <span>
                   <Button
                     size={sizes.SMALL}
-                    onPress={this.onImportListSelect}
+                    onPress={this.onListSelect}
                   >
-                    {translate('Custom')}
+                    Custom
                   </Button>
 
                   <Menu className={styles.presetsMenu}>
@@ -66,7 +65,7 @@ class AddImportListItem extends Component {
                       className={styles.presetsMenuButton}
                       size={sizes.SMALL}
                     >
-                      {translate('Presets')}
+                      Presets
                     </Button>
 
                     <MenuContent>
@@ -91,7 +90,7 @@ class AddImportListItem extends Component {
               to={infoLink}
               size={sizes.SMALL}
             >
-              {translate('MoreInfo')}
+              More info
             </Button>
           </div>
         </div>

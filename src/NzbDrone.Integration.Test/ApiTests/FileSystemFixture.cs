@@ -5,7 +5,6 @@ using System.Net;
 using System.Reflection;
 using FluentAssertions;
 using NUnit.Framework;
-using NzbDrone.Common;
 using NzbDrone.Common.Disk;
 using NzbDrone.Integration.Test.Client;
 using RestSharp;
@@ -62,7 +61,7 @@ namespace NzbDrone.Integration.Test.ApiTests
             result.Directories.Should().NotBeNullOrEmpty();
             result.Files.Should().NotBeNullOrEmpty();
 
-            result.Files.Should().Contain(v => PathEqualityComparer.Instance.Equals(v.Path, _file) && v.Type == FileSystemEntityType.File);
+            result.Files.Should().Contain(v => v.Path == _file && v.Type == FileSystemEntityType.File);
         }
 
         [Test]

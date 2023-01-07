@@ -45,8 +45,8 @@ namespace NzbDrone.Core.Test.IndexerTests.NyaaTests
 
             torrentInfo.Title.Should().Be("[TSRaws] Futsuu no Joshikousei ga [Locodol] Yattemita. #07 (TBS).ts");
             torrentInfo.DownloadProtocol.Should().Be(DownloadProtocol.Torrent);
-            torrentInfo.DownloadUrl.Should().Be("http://www.nyaa.si/?page=download&tid=587750");
-            torrentInfo.InfoUrl.Should().Be("http://www.nyaa.si/?page=view&tid=587750");
+            torrentInfo.DownloadUrl.Should().Be("https://www.nyaa.se/?page=download&tid=587750");
+            torrentInfo.InfoUrl.Should().Be("https://www.nyaa.se/?page=view&tid=587750");
             torrentInfo.CommentUrl.Should().BeNullOrEmpty();
             torrentInfo.Indexer.Should().Be(Subject.Definition.Name);
             torrentInfo.PublishDate.Should().Be(DateTime.Parse("2014/08/14 18:10:36"));
@@ -80,7 +80,7 @@ namespace NzbDrone.Core.Test.IndexerTests.NyaaTests
             torrentInfo.CommentUrl.Should().BeNullOrEmpty();
             torrentInfo.Indexer.Should().Be(Subject.Definition.Name);
             torrentInfo.PublishDate.Should().Be(DateTime.Parse("Tue, 24 Aug 2021 22:18:46"));
-            torrentInfo.Size.Should().Be(639211930); //609.6 MiB
+            torrentInfo.Size.Should().Be(639211930); // 609.6 MiB
             torrentInfo.MagnetUrl.Should().Be(null);
             torrentInfo.Seeders.Should().Be(4);
             torrentInfo.Peers.Should().Be(3 + 4);

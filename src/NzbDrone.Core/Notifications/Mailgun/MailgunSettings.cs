@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using FluentValidation;
 using NzbDrone.Core.Annotations;
@@ -23,13 +22,13 @@ namespace NzbDrone.Core.Notifications.Mailgun
 
       public MailgunSettings()
       {
-          Recipients = Array.Empty<string>();
+          Recipients = new string[] { };
       }
 
       [FieldDefinition(0, Label = "API Key", HelpText = "The API key generated from MailGun")]
       public string ApiKey { get; set; }
 
-      [FieldDefinition(1, Label = "Use EU Endpoint?", HelpText = "Use the EU MailGun endpoint", Type = FieldType.Checkbox)]
+      [FieldDefinition(1, Label = "Use EU Endpoint?", HelpText = "You can choose to use the EU MailGun endpoint with this", Type = FieldType.Checkbox)]
       public bool UseEuEndpoint { get; set; }
 
       [FieldDefinition(2, Label = "From Address")]
@@ -38,7 +37,7 @@ namespace NzbDrone.Core.Notifications.Mailgun
       [FieldDefinition(3, Label = "Sender Domain")]
       public string SenderDomain { get; set; }
 
-      [FieldDefinition(4, Label = "Recipient Address(es)", Type = FieldType.Tag, Placeholder = "example@email.com,example1@email.com")]
+      [FieldDefinition(4, Label = "Recipient Address(es)", Type = FieldType.Tag)]
       public IEnumerable<string> Recipients { get; set; }
 
       public NzbDroneValidationResult Validate()

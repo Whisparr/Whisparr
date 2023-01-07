@@ -1,13 +1,6 @@
 import * as sentry from '@sentry/browser';
-import * as Integrations from '@sentry/integrations';
 import _ from 'lodash';
 import parseUrl from 'Utilities/String/parseUrl';
-
-const IgnoreErrors = [
-  // Innocuous browser errors
-  /ResizeObserver loop limit exceeded/,
-  /ResizeObserver loop completed with undelivered notifications/
-];
 
 function cleanseUrl(url) {
   const properties = parseUrl(url);
@@ -15,14 +8,8 @@ function cleanseUrl(url) {
   return `${properties.pathname}${properties.search}`;
 }
 
-function shouldIgnoreException(s) {
-  return s && IgnoreErrors.find((pattern) => pattern.test(s));
-}
-
-function cleanseData(event, hint) {
-  const result = _.cloneDeep(event);
-
-  const error = hint && hint.originalException;
+function cleanseData(data) {
+  const result = _.cloneDeep(data);
 
   result.transaction = cleanseUrl(result.transaction);
 
@@ -38,14 +25,6 @@ function cleanseData(event, hint) {
     });
   }
 
-  if (
-    error &&
-    error.message &&
-    shouldIgnoreException(error.message)
-  ) {
-    return null;
-  }
-
   result.request.url = cleanseUrl(result.request.url);
 
   return result;
@@ -53,13 +32,6 @@ function cleanseData(event, hint) {
 
 function identity(stuff) {
   return stuff;
-}
-
-function stripUrlBase(frame) {
-  if (frame.filename && window.Whisparr.urlBase) {
-    frame.filename = frame.filename.replace(window.Whisparr.urlBase, '');
-  }
-  return frame;
 }
 
 function createMiddleware() {
@@ -92,7 +64,6 @@ export default function createSentryMiddleware() {
     branch,
     version,
     release,
-    userHash,
     isProduction
   } = window.Whisparr;
 
@@ -100,25 +71,20 @@ export default function createSentryMiddleware() {
     return;
   }
 
-  const dsn = isProduction ? 'https://a9b74cc29e0745958559b151d25a43a2@sentry.servarr.com/39' :
-    'https://a9b74cc29e0745958559b151d25a43a2@sentry.servarr.com/39';
+  const dsn = isProduction ? 'https://b80ca60625b443c38b242e0d21681eb7@sentry.whisparr.tv/13' :
+    'https://8dbaacdfe2ff4caf97dc7945aecf9ace@sentry.whisparr.tv/12';
 
   sentry.init({
     dsn,
-    environment: branch,
+    environment: isProduction ? 'production' : 'development',
     release,
     sendDefaultPii: true,
-    beforeSend: cleanseData,
-    integrations: [
-      new Integrations.RewriteFrames({ iteratee: stripUrlBase }),
-      new Integrations.Dedupe()
-    ]
+    beforeSend: cleanseData
   });
 
   sentry.configureScope((scope) => {
-    scope.setUser({ username: userHash });
+    scope.setTag('branch', branch);
     scope.setTag('version', version);
-    scope.setTag('production', isProduction);
   });
 
   return createMiddleware();

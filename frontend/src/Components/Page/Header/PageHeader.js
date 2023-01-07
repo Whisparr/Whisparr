@@ -4,10 +4,9 @@ import keyboardShortcuts, { shortcuts } from 'Components/keyboardShortcuts';
 import IconButton from 'Components/Link/IconButton';
 import Link from 'Components/Link/Link';
 import { icons } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import KeyboardShortcutsModal from './KeyboardShortcutsModal';
-import MovieSearchInputConnector from './MovieSearchInputConnector';
 import PageHeaderActionsMenuConnector from './PageHeaderActionsMenuConnector';
+import SeriesSearchInputConnector from './SeriesSearchInputConnector';
 import styles from './PageHeader.css';
 
 class PageHeader extends Component {
@@ -54,14 +53,11 @@ class PageHeader extends Component {
         <div className={styles.logoContainer}>
           <Link
             className={styles.logoLink}
-            to={{
-              pathname: '/',
-              state: { restoreScrollPosition: true }
-            }}
+            to={'/'}
           >
             <img
               className={styles.logo}
-              src={`${window.Whisparr.urlBase}/Content/Images/logo.png`}
+              src={`${window.Whisparr.urlBase}/Content/Images/logo.svg`}
             />
           </Link>
         </div>
@@ -74,21 +70,14 @@ class PageHeader extends Component {
           />
         </div>
 
-        <MovieSearchInputConnector />
+        <SeriesSearchInputConnector />
 
         <div className={styles.right}>
           <IconButton
             className={styles.donate}
             name={icons.HEART}
-            to="https://whisparr.com/donate"
+            to="https://whisparr.tv/donate.html"
             size={14}
-          />
-          <IconButton
-            className={styles.translate}
-            title={translate('SuggestTranslationChange')}
-            name={icons.TRANSLATE}
-            to="https://translate.servarr.com/projects/whisparr/whisparr/"
-            size={24}
           />
           <PageHeaderActionsMenuConnector
             onKeyboardShortcutsPress={this.onOpenKeyboardShortcutsModal}

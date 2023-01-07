@@ -4,7 +4,7 @@ import Card from 'Components/Card';
 import Label from 'Components/Label';
 import ConfirmModal from 'Components/Modal/ConfirmModal';
 import { kinds } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
+import formatShortTimeSpan from 'Utilities/Date/formatShortTimeSpan';
 import EditImportListModalConnector from './EditImportListModalConnector';
 import styles from './ImportList.css';
 
@@ -55,13 +55,13 @@ class ImportList extends Component {
     const {
       id,
       name,
-      enabled,
-      enableAuto
+      enableAutomaticAdd,
+      minRefreshInterval
     } = this.props;
 
     return (
       <Card
-        className={styles.importList}
+        className={styles.list}
         overlayContent={true}
         onPress={this.onEditImportListPress}
       >
@@ -70,30 +70,19 @@ class ImportList extends Component {
         </div>
 
         <div className={styles.enabled}>
-
           {
-            enabled &&
+            enableAutomaticAdd &&
               <Label kind={kinds.SUCCESS}>
-                {translate('Enabled')}
+                Automatic Add
               </Label>
           }
 
-          {
-            enableAuto &&
-              <Label kind={kinds.SUCCESS}>
-                {translate('Auto')}
-              </Label>
-          }
+        </div>
 
-          {
-            !enabled && !enableAuto &&
-              <Label
-                kind={kinds.DISABLED}
-                outline={true}
-              >
-                {translate('Disabled')}
-              </Label>
-          }
+        <div className={styles.enabled}>
+          <Label kind={kinds.INFO} title='List Refresh Interval'>
+            {`Refresh: ${formatShortTimeSpan(minRefreshInterval)}`}
+          </Label>
         </div>
 
         <EditImportListModalConnector
@@ -106,9 +95,9 @@ class ImportList extends Component {
         <ConfirmModal
           isOpen={this.state.isDeleteImportListModalOpen}
           kind={kinds.DANGER}
-          title={translate('DeleteList')}
-          message={translate('DeleteListMessageText', [name])}
-          confirmLabel={translate('Delete')}
+          title="Delete Import List"
+          message={`Are you sure you want to delete the list '${name}'?`}
+          confirmLabel="Delete"
           onConfirm={this.onConfirmDeleteImportList}
           onCancel={this.onDeleteImportListModalClose}
         />
@@ -120,8 +109,8 @@ class ImportList extends Component {
 ImportList.propTypes = {
   id: PropTypes.number.isRequired,
   name: PropTypes.string.isRequired,
-  enabled: PropTypes.bool.isRequired,
-  enableAuto: PropTypes.bool.isRequired,
+  enableAutomaticAdd: PropTypes.bool.isRequired,
+  minRefreshInterval: PropTypes.string.isRequired,
   onConfirmDeleteImportList: PropTypes.func.isRequired
 };
 

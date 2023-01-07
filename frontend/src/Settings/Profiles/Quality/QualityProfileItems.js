@@ -7,7 +7,6 @@ import Icon from 'Components/Icon';
 import Button from 'Components/Link/Button';
 import Measure from 'Components/Measure';
 import { icons, kinds, sizes } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import QualityProfileItemDragPreview from './QualityProfileItemDragPreview';
 import QualityProfileItemDragSource from './QualityProfileItemDragSource';
 import styles from './QualityProfileItems.css';
@@ -70,12 +69,12 @@ class QualityProfileItems extends Component {
     return (
       <FormGroup size={sizes.EXTRA_SMALL}>
         <FormLabel size={sizes.SMALL}>
-          {translate('Qualities')}
+          Qualities
         </FormLabel>
 
         <div>
           <FormInputHelpText
-            text={translate('QualitiesHelpText')}
+            text="Qualities higher in the list are more preferred. Qualities within the same group are equal. Only checked qualities are wanted"
           />
 
           {
@@ -116,7 +115,7 @@ class QualityProfileItems extends Component {
               />
 
               {
-                editGroups ? translate('DoneEditingGroups') : translate('EditGroups')
+                editGroups ? 'Done Editing Groups' : 'Edit Groups'
               }
             </div>
           </Button>

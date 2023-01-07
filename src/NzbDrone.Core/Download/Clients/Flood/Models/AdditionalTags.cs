@@ -4,8 +4,8 @@ namespace NzbDrone.Core.Download.Clients.Flood.Models
 {
     public enum AdditionalTags
     {
-        [FieldOption(Hint = "Big Buck Bunny Series")]
-        Collection = 0,
+        [FieldOption(Hint = "big-buck-bunny")]
+        TitleSlug = 0,
 
         [FieldOption(Hint = "Bluray-2160p")]
         Quality = 1,
@@ -23,6 +23,6 @@ namespace NzbDrone.Core.Download.Clients.Flood.Models
         Indexer = 5,
 
         [FieldOption(Hint = "C-SPAN")]
-        Studio = 6
+        Network = 6
     }
 }

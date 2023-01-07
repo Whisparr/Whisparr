@@ -4,18 +4,20 @@ namespace NzbDrone.Core.ImportLists.Exceptions
 {
     public class ImportListException : NzbDroneException
     {
+        private readonly ImportListResponse _importListResponse;
+
         public ImportListException(ImportListResponse response, string message, params object[] args)
             : base(message, args)
         {
-            Response = response;
+            _importListResponse = response;
         }
 
         public ImportListException(ImportListResponse response, string message)
             : base(message)
         {
-            Response = response;
+            _importListResponse = response;
         }
 
-        public ImportListResponse Response { get; private set; }
+        public ImportListResponse Response => _importListResponse;
     }
 }

@@ -46,7 +46,7 @@ namespace NzbDrone.Common.Test.Http
             // Use mirrors for tests that use two hosts
             var candidates = new[] { "httpbin1.servarr.com" };
 
-            // httpbin.org is broken right now, occassionally redirecting to https if it's unavailable.
+            // httpbin.org is broken right now, occasionally redirecting to https if it's unavailable.
             _httpBinHost = mainHost;
             _httpBinHosts = candidates.Where(IsTestSiteAvailable).ToArray();
 
@@ -60,6 +60,7 @@ namespace NzbDrone.Common.Test.Http
             try
             {
                 var res = _httpClient.GetAsync($"https://{site}/get").GetAwaiter().GetResult();
+
                 if (res.StatusCode != HttpStatusCode.OK)
                 {
                     return false;
@@ -99,14 +100,15 @@ namespace NzbDrone.Common.Test.Http
             Mocker.SetConstant<ICacheManager>(Mocker.Resolve<CacheManager>());
             Mocker.SetConstant<ICreateManagedWebProxy>(Mocker.Resolve<ManagedWebProxyFactory>());
             Mocker.SetConstant<ICertificateValidationService>(new X509CertificateValidationService(Mocker.GetMock<IConfigService>().Object, TestLogger));
+
             Mocker.SetConstant<IRateLimitService>(Mocker.Resolve<RateLimitService>());
-            Mocker.SetConstant<IEnumerable<IHttpRequestInterceptor>>(Array.Empty<IHttpRequestInterceptor>());
+            Mocker.SetConstant<IEnumerable<IHttpRequestInterceptor>>(new IHttpRequestInterceptor[0]);
             Mocker.SetConstant<IHttpDispatcher>(Mocker.Resolve<TDispatcher>());
 
             // Used for manual testing of socks proxies.
             // Mocker.GetMock<IHttpProxySettingsProvider>()
-            //       .Setup(v => v.GetProxySettings(It.IsAny<HttpUri>()))
-            //       .Returns(new HttpProxySettings(ProxyType.Socks5, "127.0.0.1", 5476, "", false));
+            //      .Setup(v => v.GetProxySettings(It.IsAny<HttpRequest>()))
+            //      .Returns(new HttpProxySettings(ProxyType.Socks5, "127.0.0.1", 5476, "", false));
 
             // Roundrobin over the two servers, to reduce the chance of hitting the ratelimiter.
             _httpBinHost2 = _httpBinHosts[_httpBinRandom++ % _httpBinHosts.Length];
@@ -146,7 +148,7 @@ namespace NzbDrone.Common.Test.Http
             var request = new HttpRequest($"https://expired.badssl.com");
 
             Assert.Throws<HttpRequestException>(() => Subject.Execute(request));
-            ExceptionVerification.ExpectedErrors(1);
+            ExceptionVerification.ExpectedErrors(2);
         }
 
         [Test]
@@ -202,7 +204,6 @@ namespace NzbDrone.Common.Test.Http
         public void should_execute_get_using_gzip()
         {
             var request = new HttpRequest($"https://{_httpBinHost}/gzip");
-
             var response = Subject.Get<HttpBinResource>(request);
 
             response.Resource.Headers["Accept-Encoding"].ToString().Should().Contain("gzip");
@@ -212,10 +213,10 @@ namespace NzbDrone.Common.Test.Http
         }
 
         [Test]
+        [Platform(Exclude = "MacOsX", Reason = "Azure agent update prevents brotli on OSX")]
         public void should_execute_get_using_brotli()
         {
             var request = new HttpRequest($"https://{_httpBinHost}/brotli");
-
             var response = Subject.Get<HttpBinResource>(request);
 
             response.Resource.Headers["Accept-Encoding"].ToString().Should().Contain("br");
@@ -250,6 +251,16 @@ namespace NzbDrone.Common.Test.Http
             Assert.Throws<HttpException>(() => Subject.Get<HttpBinResource>(request));
 
             ExceptionVerification.IgnoreWarns();
+        }
+
+        [Test]
+        public void should_log_unsuccessful_status_codes()
+        {
+            var request = new HttpRequest($"https://{_httpBinHost}/status/{HttpStatusCode.NotFound}");
+
+            var exception = Assert.Throws<HttpException>(() => Subject.Get<HttpBinResource>(request));
+
+            ExceptionVerification.ExpectedWarns(1);
         }
 
         [Test]
@@ -303,14 +314,14 @@ namespace NzbDrone.Common.Test.Http
         public void should_follow_redirects_to_https()
         {
             var request = new HttpRequestBuilder($"https://{_httpBinHost}/redirect-to")
-                .AddQueryParam("url", $"https://radarr.video/")
+                .AddQueryParam("url", $"https://whisparr.tv/")
                 .Build();
             request.AllowAutoRedirect = true;
 
             var response = Subject.Get(request);
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            response.Content.Should().Contain("Radarr");
+            response.Content.Should().Contain("Whisparr");
 
             ExceptionVerification.ExpectedErrors(0);
         }
@@ -356,13 +367,16 @@ namespace NzbDrone.Common.Test.Http
         {
             var file = GetTempFilePath();
 
-            var url = "https://radarr.video/img/slider/moviedetails.png";
+            var url = "https://whisparr.tv/img/slider/seriesdetails.png";
 
             Subject.DownloadFile(url, file);
 
+            File.Exists(file).Should().BeTrue();
+            File.Exists(file + ".part").Should().BeFalse();
+
             var fileInfo = new FileInfo(file);
-            fileInfo.Exists.Should().BeTrue();
-            fileInfo.Length.Should().Be(270964);
+
+            fileInfo.Length.Should().Be(114770);
         }
 
         [Test]
@@ -371,7 +385,7 @@ namespace NzbDrone.Common.Test.Http
             var file = GetTempFilePath();
 
             var request = new HttpRequestBuilder($"https://{_httpBinHost}/redirect-to")
-                .AddQueryParam("url", $"https://radarr.video/img/slider/moviedetails.png")
+                .AddQueryParam("url", $"https://whisparr.tv/img/slider/seriesdetails.png")
                 .Build();
 
             Subject.DownloadFile(request.Url.FullUri, file);
@@ -380,7 +394,7 @@ namespace NzbDrone.Common.Test.Http
 
             var fileInfo = new FileInfo(file);
             fileInfo.Exists.Should().BeTrue();
-            fileInfo.Length.Should().Be(270964);
+            fileInfo.Length.Should().Be(114770);
         }
 
         [Test]
@@ -388,9 +402,10 @@ namespace NzbDrone.Common.Test.Http
         {
             var file = GetTempFilePath();
 
-            Assert.Throws<HttpException>(() => Subject.DownloadFile("https://download.sonarr.tv/wrongpath", file));
+            Assert.Throws<HttpException>(() => Subject.DownloadFile("https://download.whisparr.tv/wrongpath", file));
 
             File.Exists(file).Should().BeFalse();
+            File.Exists(file + ".part").Should().BeFalse();
 
             ExceptionVerification.ExpectedWarns(1);
         }
@@ -402,13 +417,13 @@ namespace NzbDrone.Common.Test.Http
 
             using (var fileStream = new FileStream(file, FileMode.Create))
             {
-                var request = new HttpRequest($"http://{_httpBinHost}/redirect/1");
+                var request = new HttpRequest($"https://{_httpBinHost}/redirect/1");
                 request.AllowAutoRedirect = false;
                 request.ResponseStream = fileStream;
 
                 var response = Subject.Get(request);
 
-                response.StatusCode.Should().Be(HttpStatusCode.Moved);
+                response.StatusCode.Should().Be(HttpStatusCode.Redirect);
             }
 
             ExceptionVerification.ExpectedErrors(1);
@@ -445,7 +460,7 @@ namespace NzbDrone.Common.Test.Http
             var oldRequest = new HttpRequest($"https://{_httpBinHost2}/get");
             oldRequest.Cookies["my"] = "cookie";
 
-            var oldClient = new HttpClient(Array.Empty<IHttpRequestInterceptor>(), Mocker.Resolve<ICacheManager>(), Mocker.Resolve<IRateLimitService>(), Mocker.Resolve<IHttpDispatcher>(), Mocker.Resolve<Logger>());
+            var oldClient = new HttpClient(new IHttpRequestInterceptor[0], Mocker.Resolve<ICacheManager>(), Mocker.Resolve<IRateLimitService>(), Mocker.Resolve<IHttpDispatcher>(), Mocker.GetMock<IUserAgentBuilder>().Object, Mocker.Resolve<Logger>());
 
             oldClient.Should().NotBeSameAs(Subject);
 
@@ -838,6 +853,17 @@ namespace NzbDrone.Common.Test.Http
             finally
             {
             }
+        }
+
+        [Test]
+        public void should_correctly_use_basic_auth()
+        {
+            var request = new HttpRequest($"https://{_httpBinHost}/basic-auth/username/password");
+            request.Credentials = new BasicNetworkCredential("username", "password");
+
+            var response = Subject.Execute(request);
+
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
     }
 

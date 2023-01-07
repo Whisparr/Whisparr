@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Data.SQLite;
 using Npgsql;
 using NzbDrone.Common.EnvironmentInfo;
@@ -44,7 +44,7 @@ namespace NzbDrone.Core.Datastore
             var connectionBuilder = new SQLiteConnectionStringBuilder();
 
             connectionBuilder.DataSource = dbPath;
-            connectionBuilder.CacheSize = (int)-20000;
+            connectionBuilder.CacheSize = (int)-10000;
             connectionBuilder.DateTimeKind = DateTimeKind.Utc;
             connectionBuilder.JournalMode = OsInfo.IsOsx ? SQLiteJournalModeEnum.Truncate : SQLiteJournalModeEnum.Wal;
             connectionBuilder.Pooling = true;

@@ -1,4 +1,6 @@
-﻿namespace NzbDrone.Core.Download.Clients.QBittorrent
+﻿using Newtonsoft.Json;
+
+namespace NzbDrone.Core.Download.Clients.QBittorrent
 {
     public class QBittorrentLabel
     {

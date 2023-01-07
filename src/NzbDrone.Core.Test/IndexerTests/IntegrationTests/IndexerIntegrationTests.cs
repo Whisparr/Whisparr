@@ -4,28 +4,31 @@ using FluentAssertions;
 using NUnit.Framework;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Indexers;
+using NzbDrone.Core.Indexers.Nyaa;
 using NzbDrone.Core.IndexerSearch.Definitions;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.Test.Framework;
+using NzbDrone.Core.ThingiProvider;
 using NzbDrone.Test.Common.Categories;
 
 namespace NzbDrone.Core.Test.IndexerTests.IntegrationTests
 {
     [IntegrationTest]
-    [Ignore("Nyaa is down!")]
     public class IndexerIntegrationTests : CoreTest
     {
-        private MovieSearchCriteria _singleSearchCriteria;
+        private SingleEpisodeSearchCriteria _singleSearchCriteria;
 
         [SetUp]
         public void SetUp()
         {
             UseRealHttp();
 
-            _singleSearchCriteria = new MovieSearchCriteria()
-            {
-                SceneTitles = new List<string> { "Person of Interest" },
-            };
+            _singleSearchCriteria = new SingleEpisodeSearchCriteria()
+                {
+                    SceneTitles = new List<string> { "Person of Interest" },
+                    SeasonNumber = 1,
+                    EpisodeNumber = 1
+                };
         }
 
         private void ValidateTorrentResult(IList<ReleaseInfo> reports, bool hasSize = false, bool hasInfoUrl = false, bool hasMagnet = false)

@@ -42,6 +42,7 @@ namespace Whisparr.Api.V3
         }
 
         [HttpGet]
+        [Produces("application/json")]
         public List<TProviderResource> GetAll()
         {
             var providerDefinitions = _providerFactory.All().OrderBy(p => p.ImplementationName);
@@ -59,6 +60,7 @@ namespace Whisparr.Api.V3
         }
 
         [RestPostById]
+        [Consumes("application/json")]
         public ActionResult<TProviderResource> CreateProvider(TProviderResource providerResource)
         {
             var providerDefinition = GetDefinition(providerResource, true, false, false);
@@ -74,6 +76,7 @@ namespace Whisparr.Api.V3
         }
 
         [RestPutById]
+        [Consumes("application/json")]
         public ActionResult<TProviderResource> UpdateProvider(TProviderResource providerResource)
         {
             var providerDefinition = GetDefinition(providerResource, true, false, false);
@@ -92,7 +95,8 @@ namespace Whisparr.Api.V3
 
         private TProviderDefinition GetDefinition(TProviderResource providerResource, bool validate, bool includeWarnings, bool forceValidate)
         {
-            var definition = _resourceMapper.ToModel(providerResource);
+            var existingDefinition = providerResource.Id > 0 ? _providerFactory.Find(providerResource.Id) : null;
+            var definition = _resourceMapper.ToModel(providerResource, existingDefinition);
 
             if (validate && (definition.Enable || forceValidate))
             {
@@ -106,10 +110,12 @@ namespace Whisparr.Api.V3
         public object DeleteProvider(int id)
         {
             _providerFactory.Delete(id);
+
             return new { };
         }
 
         [HttpGet("schema")]
+        [Produces("application/json")]
         public List<TProviderResource> GetTemplates()
         {
             var defaultDefinitions = _providerFactory.GetDefaultDefinitions().OrderBy(p => p.ImplementationName).ToList();
@@ -133,6 +139,7 @@ namespace Whisparr.Api.V3
 
         [SkipValidation(true, false)]
         [HttpPost("test")]
+        [Consumes("application/json")]
         public object Test([FromBody] TProviderResource providerResource)
         {
             var providerDefinition = GetDefinition(providerResource, true, true, true);
@@ -152,12 +159,15 @@ namespace Whisparr.Api.V3
 
             foreach (var definition in providerDefinitions)
             {
-                var validationResult = _providerFactory.Test(definition);
+                var validationFailures = new List<ValidationFailure>();
+
+                validationFailures.AddRange(definition.Settings.Validate().Errors);
+                validationFailures.AddRange(_providerFactory.Test(definition).Errors);
 
                 result.Add(new ProviderTestAllResult
                 {
                     Id = definition.Id,
-                    ValidationFailures = validationResult.Errors.ToList()
+                    ValidationFailures = validationFailures
                 });
             }
 
@@ -166,6 +176,7 @@ namespace Whisparr.Api.V3
 
         [SkipValidation]
         [HttpPost("action/{name}")]
+        [Consumes("application/json")]
         public IActionResult RequestAction(string name, [FromBody] TProviderResource resource)
         {
             var providerDefinition = GetDefinition(resource, false, false, false);

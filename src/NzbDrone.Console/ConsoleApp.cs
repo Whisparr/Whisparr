@@ -8,8 +8,9 @@ using NLog;
 using NzbDrone.Common.EnvironmentInfo;
 using NzbDrone.Common.Exceptions;
 using NzbDrone.Common.Instrumentation;
-using Whisparr.Host;
-using Whisparr.Host.AccessControl;
+using NzbDrone.Host;
+using NzbDrone.Host.AccessControl;
+using NzbDrone.RuntimePatches;
 
 namespace NzbDrone.Console
 {
@@ -27,6 +28,7 @@ namespace NzbDrone.Console
 
         public static void Main(string[] args)
         {
+            RuntimePatcher.Initialize();
             StartupContext startupArgs = null;
 
             try
@@ -55,7 +57,7 @@ namespace NzbDrone.Console
             {
                 System.Console.WriteLine("");
                 System.Console.WriteLine("");
-                Logger.Fatal(ex.Message + " This can happen if another instance of Whisparr is already running another application is using the same port (default: 6969) or the user has insufficient permissions");
+                Logger.Fatal(ex.Message + ". This can happen if another instance of Whisparr is already running another application is using the same port (default: 6969) or the user has insufficient permissions");
                 Exit(ExitCodes.RecoverableFailure, startupArgs);
             }
             catch (IOException ex)
@@ -84,6 +86,7 @@ namespace NzbDrone.Console
                 System.Console.WriteLine("");
                 System.Console.WriteLine("");
                 Logger.Fatal(ex, "EPIC FAIL!");
+                System.Console.WriteLine("EPIC FAIL! " + ex.ToString());
                 Exit(ExitCodes.UnknownFailure, startupArgs);
             }
 
@@ -115,7 +118,8 @@ namespace NzbDrone.Console
                     for (int i = 0; i < 3600; i++)
                     {
                         System.Threading.Thread.Sleep(1000);
-                        if (!System.Console.IsInputRedirected && System.Console.KeyAvailable)
+
+                        if (System.Console.KeyAvailable)
                         {
                             break;
                         }

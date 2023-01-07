@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Whisparr.Http.REST;
 
 namespace Whisparr.Api.V3.System.Tasks

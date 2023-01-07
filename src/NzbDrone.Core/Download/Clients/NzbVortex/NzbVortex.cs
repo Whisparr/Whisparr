@@ -8,7 +8,6 @@ using NzbDrone.Common.Disk;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
 using NzbDrone.Core.Configuration;
-using NzbDrone.Core.Organizer;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.RemotePathMappings;
 using NzbDrone.Core.Validation;
@@ -22,21 +21,20 @@ namespace NzbDrone.Core.Download.Clients.NzbVortex
         public NzbVortex(INzbVortexProxy proxy,
                        IHttpClient httpClient,
                        IConfigService configService,
-                       INamingConfigService namingConfigService,
                        IDiskProvider diskProvider,
                        IRemotePathMappingService remotePathMappingService,
                        IValidateNzbs nzbValidationService,
                        Logger logger)
-            : base(httpClient, configService, namingConfigService, diskProvider, remotePathMappingService, nzbValidationService, logger)
+            : base(httpClient, configService, diskProvider, remotePathMappingService, nzbValidationService, logger)
         {
             _proxy = proxy;
         }
 
-        protected override string AddFromNzbFile(RemoteMovie remoteMovie, string filename, byte[] fileContents)
+        protected override string AddFromNzbFile(RemoteEpisode remoteEpisode, string filename, byte[] fileContent)
         {
-            var priority = remoteMovie.Movie.MediaMetadata.Value.IsRecentMovie ? Settings.RecentMoviePriority : Settings.OlderMoviePriority;
+            var priority = remoteEpisode.IsRecentEpisode() ? Settings.RecentTvPriority : Settings.OlderTvPriority;
 
-            var response = _proxy.DownloadNzb(fileContents, filename, priority, Settings);
+            var response = _proxy.DownloadNzb(fileContent, filename, priority, Settings);
 
             if (response == null)
             {
@@ -50,17 +48,7 @@ namespace NzbDrone.Core.Download.Clients.NzbVortex
 
         public override IEnumerable<DownloadClientItem> GetItems()
         {
-            List<NzbVortexQueueItem> vortexQueue;
-
-            try
-            {
-                vortexQueue = _proxy.GetQueue(30, Settings);
-            }
-            catch (DownloadClientException ex)
-            {
-                _logger.Warn("Couldn't get download queue. {0}", ex.Message);
-                return Enumerable.Empty<DownloadClientItem>();
-            }
+            var vortexQueue = _proxy.GetQueue(30, Settings);
 
             var queueItems = new List<DownloadClientItem>();
 
@@ -85,22 +73,22 @@ namespace NzbDrone.Core.Download.Clients.NzbVortex
                 else
                 {
                     switch (vortexQueueItem.State)
-                    {
-                        case NzbVortexStateType.Waiting:
-                            queueItem.Status = DownloadItemStatus.Queued;
-                            break;
-                        case NzbVortexStateType.Done:
-                            queueItem.Status = DownloadItemStatus.Completed;
-                            break;
-                        case NzbVortexStateType.UncompressFailed:
-                        case NzbVortexStateType.CheckFailedDataCorrupt:
-                        case NzbVortexStateType.BadlyEncoded:
-                            queueItem.Status = DownloadItemStatus.Failed;
-                            break;
-                        default:
-                            queueItem.Status = DownloadItemStatus.Downloading;
-                            break;
-                    }
+                {
+                    case NzbVortexStateType.Waiting:
+                        queueItem.Status = DownloadItemStatus.Queued;
+                        break;
+                    case NzbVortexStateType.Done:
+                        queueItem.Status = DownloadItemStatus.Completed;
+                        break;
+                    case NzbVortexStateType.UncompressFailed:
+                    case NzbVortexStateType.CheckFailedDataCorrupt:
+                    case NzbVortexStateType.BadlyEncoded:
+                        queueItem.Status = DownloadItemStatus.Failed;
+                        break;
+                    default:
+                        queueItem.Status = DownloadItemStatus.Downloading;
+                        break;
+                }
                 }
 
                 queueItem.OutputPath = GetOutputPath(vortexQueueItem, queueItem);
@@ -198,7 +186,7 @@ namespace NzbDrone.Core.Download.Clients.NzbVortex
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, ex.Message);
+                _logger.Error(ex, "Unable to connect to NZBVortex");
                 return new ValidationFailure("Host", "Unable to connect to NZBVortex");
             }
 

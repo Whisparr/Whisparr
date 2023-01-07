@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Mono.Unix;
 using Mono.Unix.Native;
 using NLog;
@@ -111,7 +111,6 @@ namespace NzbDrone.Mono.Disk
                 {
                     // If the path does not exist, or it was a symlink then we need to concat the remaining dir components and start over (or return)
                     var count = lastIndex - i - 1;
-
                     if (count > 0)
                     {
                         realPath = string.Concat(realPath, UnixPath.DirectorySeparatorChar, string.Join(UnixPath.DirectorySeparatorChar.ToString(), dirs, i + 1, lastIndex - i - 1));

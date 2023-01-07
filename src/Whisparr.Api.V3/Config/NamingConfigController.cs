@@ -29,8 +29,13 @@ namespace Whisparr.Api.V3.Config
             _filenameValidationService = filenameValidationService;
             _filenameBuilder = filenameBuilder;
 
-            SharedValidator.RuleFor(c => c.StandardMovieFormat).ValidMovieFormat();
-            SharedValidator.RuleFor(c => c.MovieFolderFormat).ValidMovieFolderFormat();
+            SharedValidator.RuleFor(c => c.MultiEpisodeStyle).InclusiveBetween(0, 5);
+            SharedValidator.RuleFor(c => c.StandardEpisodeFormat).ValidEpisodeFormat();
+            SharedValidator.RuleFor(c => c.DailyEpisodeFormat).ValidDailyEpisodeFormat();
+            SharedValidator.RuleFor(c => c.AnimeEpisodeFormat).ValidAnimeEpisodeFormat();
+            SharedValidator.RuleFor(c => c.SeriesFolderFormat).ValidSeriesFolderFormat();
+            SharedValidator.RuleFor(c => c.SeasonFolderFormat).ValidSeasonFolderFormat();
+            SharedValidator.RuleFor(c => c.SpecialsFolderFormat).ValidSpecialsFolderFormat();
         }
 
         protected override NamingConfigResource GetResourceById(int id)
@@ -44,7 +49,7 @@ namespace Whisparr.Api.V3.Config
             var nameSpec = _namingConfigService.GetConfig();
             var resource = nameSpec.ToResource();
 
-            if (resource.StandardMovieFormat.IsNotNullOrWhiteSpace())
+            if (resource.StandardEpisodeFormat.IsNotNullOrWhiteSpace())
             {
                 var basicConfig = _filenameBuilder.GetBasicNamingConfig(nameSpec);
                 basicConfig.AddToResource(resource);
@@ -75,26 +80,44 @@ namespace Whisparr.Api.V3.Config
             var nameSpec = config.ToModel();
             var sampleResource = new NamingExampleResource();
 
-            var movieSampleResult = _filenameSampleService.GetMovieSample(nameSpec);
+            var singleEpisodeSampleResult = _filenameSampleService.GetStandardSample(nameSpec);
+            var multiEpisodeSampleResult = _filenameSampleService.GetMultiEpisodeSample(nameSpec);
 
-            sampleResource.MovieExample = nameSpec.StandardMovieFormat.IsNullOrWhiteSpace()
-                ? "Invalid Format"
-                : movieSampleResult.FileName;
+            sampleResource.SingleEpisodeExample = _filenameValidationService.ValidateStandardFilename(singleEpisodeSampleResult) != null
+                    ? null
+                    : singleEpisodeSampleResult.FileName;
 
-            sampleResource.MovieFolderExample = nameSpec.MovieFolderFormat.IsNullOrWhiteSpace()
-                ? "Invalid format"
-                : _filenameSampleService.GetMovieFolderSample(nameSpec);
+            sampleResource.MultiEpisodeExample = _filenameValidationService.ValidateStandardFilename(multiEpisodeSampleResult) != null
+                    ? null
+                    : multiEpisodeSampleResult.FileName;
+
+            sampleResource.SeriesFolderExample = nameSpec.SeriesFolderFormat.IsNullOrWhiteSpace()
+                ? null
+                : _filenameSampleService.GetSeriesFolderSample(nameSpec);
+
+            sampleResource.SeasonFolderExample = nameSpec.SeasonFolderFormat.IsNullOrWhiteSpace()
+                ? null
+                : _filenameSampleService.GetSeasonFolderSample(nameSpec);
+
+            sampleResource.SpecialsFolderExample = nameSpec.SpecialsFolderFormat.IsNullOrWhiteSpace()
+                ? null
+                : _filenameSampleService.GetSpecialsFolderSample(nameSpec);
 
             return sampleResource;
         }
 
         private void ValidateFormatResult(NamingConfig nameSpec)
         {
-            var movieSampleResult = _filenameSampleService.GetMovieSample(nameSpec);
+            var singleEpisodeSampleResult = _filenameSampleService.GetStandardSample(nameSpec);
+            var multiEpisodeSampleResult = _filenameSampleService.GetMultiEpisodeSample(nameSpec);
 
-            var standardMovieValidationResult = _filenameValidationService.ValidateMovieFilename(movieSampleResult);
+            var singleEpisodeValidationResult = _filenameValidationService.ValidateStandardFilename(singleEpisodeSampleResult);
+            var multiEpisodeValidationResult = _filenameValidationService.ValidateStandardFilename(multiEpisodeSampleResult);
 
             var validationFailures = new List<ValidationFailure>();
+
+            validationFailures.AddIfNotNull(singleEpisodeValidationResult);
+            validationFailures.AddIfNotNull(multiEpisodeValidationResult);
 
             if (validationFailures.Any())
             {

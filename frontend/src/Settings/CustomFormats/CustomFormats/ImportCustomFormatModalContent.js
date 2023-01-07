@@ -12,7 +12,6 @@ import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { inputTypes, sizes } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import styles from './ImportCustomFormatModalContent.css';
 
 class ImportCustomFormatModalContent extends Component {
@@ -83,7 +82,7 @@ class ImportCustomFormatModalContent extends Component {
       <ModalContent onModalClose={onModalClose}>
 
         <ModalHeader>
-          {translate('ImportCustomFormat')}
+          Import Custom Format
         </ModalHeader>
 
         <ModalBody>
@@ -96,7 +95,7 @@ class ImportCustomFormatModalContent extends Component {
             {
               !isFetching && !!error &&
                 <div>
-                  {translate('UnableToLoadCustomFormats')}
+                  Unable to load custom formats
                 </div>
             }
 
@@ -105,7 +104,7 @@ class ImportCustomFormatModalContent extends Component {
                 <Form>
                   <FormGroup size={sizes.MEDIUM}>
                     <FormLabel>
-                      {translate('CustomFormatJSON')}
+                      Custom Format JSON
                     </FormLabel>
                     <FormInputGroup
                       key={0}
@@ -126,14 +125,14 @@ class ImportCustomFormatModalContent extends Component {
           <Button
             onPress={onModalClose}
           >
-            {translate('Cancel')}
+            Cancel
           </Button>
           <SpinnerErrorButton
             onPress={this.onImportPress}
             isSpinning={isSpinning}
             error={parseError}
           >
-            {translate('Import')}
+            Import
           </SpinnerErrorButton>
         </ModalFooter>
       </ModalContent>

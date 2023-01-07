@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using NLog;
@@ -71,6 +71,7 @@ namespace NzbDrone.Core.Download.Clients.Hadouken
         {
             var baseUrl = HttpRequestBuilder.BuildBaseUrl(settings.UseSsl, settings.Host, settings.Port, settings.UrlBase);
             baseUrl = HttpUri.CombinePath(baseUrl, "api");
+
             var requestBuilder = new JsonRpcRequestBuilder(baseUrl, method, parameters);
             requestBuilder.LogResponseContent = true;
             requestBuilder.NetworkCredential = new BasicNetworkCredential(settings.Username, settings.Password);
@@ -111,7 +112,7 @@ namespace NzbDrone.Core.Download.Clients.Hadouken
         {
             if (torrentsRaw == null)
             {
-                return Array.Empty<HadoukenTorrent>();
+                return new HadoukenTorrent[0];
             }
 
             var torrents = new List<HadoukenTorrent>();

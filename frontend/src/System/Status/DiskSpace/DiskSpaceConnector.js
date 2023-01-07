@@ -3,14 +3,12 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import { fetchDiskSpace } from 'Store/Actions/systemActions';
-import createDimensionsSelector from 'Store/Selectors/createDimensionsSelector';
 import DiskSpace from './DiskSpace';
 
 function createMapStateToProps() {
   return createSelector(
     (state) => state.system.diskSpace,
-    createDimensionsSelector(),
-    (diskSpace, dimensions) => {
+    (diskSpace) => {
       const {
         isFetching,
         items
@@ -18,8 +16,7 @@ function createMapStateToProps() {
 
       return {
         isFetching,
-        items,
-        isSmallScreen: dimensions.isSmallScreen
+        items
       };
     }
   );

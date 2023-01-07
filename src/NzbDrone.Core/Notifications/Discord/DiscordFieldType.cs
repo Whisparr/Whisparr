@@ -11,9 +11,7 @@ namespace NzbDrone.Core.Notifications.Discord
         Links,
         Release,
         Poster,
-        Fanart,
-        CustomFormats,
-        CustomFormatScore
+        Fanart
     }
 
     public enum DiscordImportFieldType

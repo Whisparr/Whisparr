@@ -1,18 +1,18 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net6.0</TargetFrameworks>
   </PropertyGroup>
   <!--
-       The netstandard veresion here doesn't work in net framework
+       The netstandard version here doesn't work in net framework
        See https://github.com/xamarin/XamarinComponents/issues/282
   -->
   <ItemGroup>
-    <PackageReference Include="Mono.Posix.NETStandard" Version="5.20.1.34-servarr20" />
+    <PackageReference Include="Mono.Posix.NETStandard" Version="5.20.1.34-servarr24" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NzbDrone.Common.Test\Whisparr.Common.Test.csproj" />
-    <ProjectReference Include="..\NzbDrone.Test.Common\Whisparr.Test.Common.csproj" />
     <ProjectReference Include="..\NzbDrone.Mono\Whisparr.Mono.csproj" />
+    <ProjectReference Include="..\NzbDrone.Test.Common\Whisparr.Test.Common.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Files\**\*.*">

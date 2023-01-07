@@ -1,11 +1,17 @@
-using NzbDrone.Core.Organizer;
+﻿using NzbDrone.Core.Organizer;
 
 namespace Whisparr.Api.V3.Config
 {
     public class NamingExampleResource
     {
-        public string MovieExample { get; set; }
-        public string MovieFolderExample { get; set; }
+        public string SingleEpisodeExample { get; set; }
+        public string MultiEpisodeExample { get; set; }
+        public string DailyEpisodeExample { get; set; }
+        public string AnimeEpisodeExample { get; set; }
+        public string AnimeMultiEpisodeExample { get; set; }
+        public string SeriesFolderExample { get; set; }
+        public string SeasonFolderExample { get; set; }
+        public string SpecialsFolderExample { get; set; }
     }
 
     public static class NamingConfigResourceMapper
@@ -16,21 +22,29 @@ namespace Whisparr.Api.V3.Config
             {
                 Id = model.Id,
 
-                RenameMovies = model.RenameMovies,
+                RenameEpisodes = model.RenameEpisodes,
                 ReplaceIllegalCharacters = model.ReplaceIllegalCharacters,
-                ColonReplacementFormat = model.ColonReplacementFormat,
-                StandardMovieFormat = model.StandardMovieFormat,
-                MovieFolderFormat = model.MovieFolderFormat,
+                MultiEpisodeStyle = model.MultiEpisodeStyle,
+                StandardEpisodeFormat = model.StandardEpisodeFormat,
+                DailyEpisodeFormat = model.DailyEpisodeFormat,
+                AnimeEpisodeFormat = model.AnimeEpisodeFormat,
+                SeriesFolderFormat = model.SeriesFolderFormat,
+                SeasonFolderFormat = model.SeasonFolderFormat,
+                SpecialsFolderFormat = model.SpecialsFolderFormat
 
-                //IncludeQuality
-                //ReplaceSpaces
-                //Separator
-                //NumberStyle
+                // IncludeSeriesTitle
+                // IncludeEpisodeTitle
+                // IncludeQuality
+                // ReplaceSpaces
+                // Separator
+                // NumberStyle
             };
         }
 
         public static void AddToResource(this BasicNamingConfig basicNamingConfig, NamingConfigResource resource)
         {
+            resource.IncludeSeriesTitle = basicNamingConfig.IncludeSeriesTitle;
+            resource.IncludeEpisodeTitle = basicNamingConfig.IncludeEpisodeTitle;
             resource.IncludeQuality = basicNamingConfig.IncludeQuality;
             resource.ReplaceSpaces = basicNamingConfig.ReplaceSpaces;
             resource.Separator = basicNamingConfig.Separator;
@@ -43,11 +57,15 @@ namespace Whisparr.Api.V3.Config
             {
                 Id = resource.Id,
 
-                RenameMovies = resource.RenameMovies,
+                RenameEpisodes = resource.RenameEpisodes,
                 ReplaceIllegalCharacters = resource.ReplaceIllegalCharacters,
-                ColonReplacementFormat = resource.ColonReplacementFormat,
-                StandardMovieFormat = resource.StandardMovieFormat,
-                MovieFolderFormat = resource.MovieFolderFormat,
+                MultiEpisodeStyle = resource.MultiEpisodeStyle,
+                StandardEpisodeFormat = resource.StandardEpisodeFormat,
+                DailyEpisodeFormat = resource.DailyEpisodeFormat,
+                AnimeEpisodeFormat = resource.AnimeEpisodeFormat,
+                SeriesFolderFormat = resource.SeriesFolderFormat,
+                SeasonFolderFormat = resource.SeasonFolderFormat,
+                SpecialsFolderFormat = resource.SpecialsFolderFormat
             };
         }
     }

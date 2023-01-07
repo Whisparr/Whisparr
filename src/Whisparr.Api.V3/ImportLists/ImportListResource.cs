@@ -1,19 +1,19 @@
+using System;
 using NzbDrone.Core.ImportLists;
-using NzbDrone.Core.Movies;
+using NzbDrone.Core.Tv;
 
 namespace Whisparr.Api.V3.ImportLists
 {
     public class ImportListResource : ProviderResource<ImportListResource>
     {
-        public bool Enabled { get; set; }
-        public bool EnableAuto { get; set; }
-        public bool ShouldMonitor { get; set; }
+        public bool EnableAutomaticAdd { get; set; }
+        public MonitorTypes ShouldMonitor { get; set; }
         public string RootFolderPath { get; set; }
         public int QualityProfileId { get; set; }
-        public bool SearchOnAdd { get; set; }
-        public MovieStatusType MinimumAvailability { get; set; }
+        public bool SeasonFolder { get; set; }
         public ImportListType ListType { get; set; }
         public int ListOrder { get; set; }
+        public TimeSpan MinRefreshInterval { get; set; }
     }
 
     public class ImportListResourceMapper : ProviderResourceMapper<ImportListResource, ImportListDefinition>
@@ -27,36 +27,34 @@ namespace Whisparr.Api.V3.ImportLists
 
             var resource = base.ToResource(definition);
 
-            resource.Enabled = definition.Enabled;
-            resource.EnableAuto = definition.EnableAuto;
+            resource.EnableAutomaticAdd = definition.EnableAutomaticAdd;
             resource.ShouldMonitor = definition.ShouldMonitor;
-            resource.SearchOnAdd = definition.SearchOnAdd;
             resource.RootFolderPath = definition.RootFolderPath;
-            resource.QualityProfileId = definition.ProfileId;
-            resource.MinimumAvailability = definition.MinimumAvailability;
+            resource.QualityProfileId = definition.QualityProfileId;
+            resource.SeasonFolder = definition.SeasonFolder;
             resource.ListType = definition.ListType;
             resource.ListOrder = (int)definition.ListType;
+            resource.MinRefreshInterval = definition.MinRefreshInterval;
 
             return resource;
         }
 
-        public override ImportListDefinition ToModel(ImportListResource resource)
+        public override ImportListDefinition ToModel(ImportListResource resource, ImportListDefinition existingDefinition)
         {
             if (resource == null)
             {
                 return null;
             }
 
-            var definition = base.ToModel(resource);
+            var definition = base.ToModel(resource, existingDefinition);
 
-            definition.Enabled = resource.Enabled;
-            definition.EnableAuto = resource.EnableAuto;
+            definition.EnableAutomaticAdd = resource.EnableAutomaticAdd;
             definition.ShouldMonitor = resource.ShouldMonitor;
-            definition.SearchOnAdd = resource.SearchOnAdd;
             definition.RootFolderPath = resource.RootFolderPath;
-            definition.ProfileId = resource.QualityProfileId;
-            definition.MinimumAvailability = resource.MinimumAvailability;
+            definition.QualityProfileId = resource.QualityProfileId;
+            definition.SeasonFolder = resource.SeasonFolder;
             definition.ListType = resource.ListType;
+            definition.MinRefreshInterval = resource.MinRefreshInterval;
 
             return definition;
         }

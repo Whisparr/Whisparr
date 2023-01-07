@@ -7,7 +7,6 @@ using NzbDrone.Common.Processes;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Lifecycle;
 using NzbDrone.Core.Messaging.Events;
-using Whisparr.Host;
 
 namespace NzbDrone.Host
 {

@@ -1,7 +1,7 @@
+﻿using System;
 using System.Linq;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Download;
-using NzbDrone.Core.Localization;
 using NzbDrone.Core.ThingiProvider.Events;
 
 namespace NzbDrone.Core.HealthCheck.Checks
@@ -14,8 +14,7 @@ namespace NzbDrone.Core.HealthCheck.Checks
         private readonly IDownloadClientFactory _providerFactory;
         private readonly IDownloadClientStatusService _providerStatusService;
 
-        public DownloadClientStatusCheck(IDownloadClientFactory providerFactory, IDownloadClientStatusService providerStatusService, ILocalizationService localizationService)
-            : base(localizationService)
+        public DownloadClientStatusCheck(IDownloadClientFactory providerFactory, IDownloadClientStatusService providerStatusService)
         {
             _providerFactory = providerFactory;
             _providerStatusService = providerStatusService;
@@ -37,10 +36,10 @@ namespace NzbDrone.Core.HealthCheck.Checks
 
             if (backOffProviders.Count == enabledProviders.Count)
             {
-                return new HealthCheck(GetType(), HealthCheckResult.Error, _localizationService.GetLocalizedString("DownloadClientStatusCheckAllClientMessage"), "#download-clients-are-unavailable-due-to-failures");
+                return new HealthCheck(GetType(), HealthCheckResult.Error, "All download clients are unavailable due to failures", "#download-clients-are-unavailable-due-to-failures");
             }
 
-            return new HealthCheck(GetType(), HealthCheckResult.Warning, string.Format(_localizationService.GetLocalizedString("DownloadClientStatusCheckSingleClientMessage"), string.Join(", ", backOffProviders.Select(v => v.Provider.Definition.Name))), "#download-clients-are-unavailable-due-to-failures");
+            return new HealthCheck(GetType(), HealthCheckResult.Warning, string.Format("Download clients unavailable due to failures: {0}", string.Join(", ", backOffProviders.Select(v => v.Provider.Definition.Name))), "#download-clients-are-unavailable-due-to-failures");
         }
     }
 }

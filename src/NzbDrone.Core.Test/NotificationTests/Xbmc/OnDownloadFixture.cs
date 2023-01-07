@@ -4,10 +4,10 @@ using FizzWare.NBuilder;
 using Moq;
 using NUnit.Framework;
 using NzbDrone.Core.MediaFiles;
-using NzbDrone.Core.Movies;
 using NzbDrone.Core.Notifications;
 using NzbDrone.Core.Notifications.Xbmc;
 using NzbDrone.Core.Test.Framework;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Test.NotificationTests.Xbmc
 {
@@ -19,40 +19,40 @@ namespace NzbDrone.Core.Test.NotificationTests.Xbmc
         [SetUp]
         public void Setup()
         {
-            var movie = Builder<Media>.CreateNew()
+            var series = Builder<Series>.CreateNew()
                                         .Build();
 
-            var movieFile = Builder<MediaFile>.CreateNew()
+            var episodeFile = Builder<EpisodeFile>.CreateNew()
                                                    .Build();
 
             _downloadMessage = Builder<DownloadMessage>.CreateNew()
-                                                       .With(d => d.Movie = movie)
-                                                       .With(d => d.MovieFile = movieFile)
-                                                       .With(d => d.OldMovieFiles = new List<MediaFile>())
+                                                       .With(d => d.Series = series)
+                                                       .With(d => d.EpisodeFile = episodeFile)
+                                                       .With(d => d.OldFiles = new List<EpisodeFile>())
                                                        .Build();
 
             Subject.Definition = new NotificationDefinition();
             Subject.Definition.Settings = new XbmcSettings
-            {
-                UpdateLibrary = true
-            };
+                                          {
+                                              UpdateLibrary = true
+                                          };
         }
 
         private void GivenOldFiles()
         {
-            _downloadMessage.OldMovieFiles = Builder<MediaFile>.CreateListOfSize(1)
-                                                               .Build()
-                                                               .ToList();
+            _downloadMessage.OldFiles = Builder<EpisodeFile>.CreateListOfSize(1)
+                                                            .Build()
+                                                            .ToList();
 
             Subject.Definition.Settings = new XbmcSettings
-            {
-                UpdateLibrary = true,
-                CleanLibrary = true
-            };
+                                          {
+                                              UpdateLibrary = true,
+                                              CleanLibrary = true
+                                          };
         }
 
         [Test]
-        public void should_not_clean_if_no_movie_was_replaced()
+        public void should_not_clean_if_no_episode_was_replaced()
         {
             Subject.OnDownload(_downloadMessage);
 
@@ -60,7 +60,7 @@ namespace NzbDrone.Core.Test.NotificationTests.Xbmc
         }
 
         [Test]
-        public void should_clean_if_movie_was_replaced()
+        public void should_clean_if_episode_was_replaced()
         {
             GivenOldFiles();
             Subject.OnDownload(_downloadMessage);

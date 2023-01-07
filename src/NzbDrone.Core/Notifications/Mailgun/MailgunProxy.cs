@@ -7,13 +7,14 @@ namespace NzbDrone.Core.Notifications.Mailgun
 {
     public interface IMailgunProxy
     {
-        void SendNotification(string title, string message, MailgunSettings settings);
+        void SendNotification(string tittle, string message, MailgunSettings settings);
     }
 
     public class MailgunProxy : IMailgunProxy
     {
         private const string BaseUrlEu = "https://api.eu.mailgun.net/v3";
         private const string BaseUrlUs = "https://api.mailgun.net/v3";
+
         private readonly IHttpClient _httpClient;
         private readonly Logger _logger;
 
@@ -34,11 +35,9 @@ namespace NzbDrone.Core.Notifications.Mailgun
             {
                 if (ex.Response.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    _logger.Error("Unathorized - ApiKey is invalid");
-                    throw new MailgunException("Unauthorized - ApiKey is invalid");
+                    throw new MailgunException("Unauthorised - ApiKey is invalid");
                 }
 
-                _logger.Error(ex, "Unable to connect to Mailgun. Status code: " + ex.Message);
                 throw new MailgunException("Unable to connect to Mailgun. Status code: {0}", ex);
             }
         }

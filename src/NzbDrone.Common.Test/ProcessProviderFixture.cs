@@ -14,6 +14,7 @@ using NzbDrone.Test.Dummy;
 
 namespace NzbDrone.Common.Test
 {
+    [NonParallelizable]
     [TestFixture]
     public class ProcessProviderFixture : TestBase<ProcessProvider>
     {
@@ -21,10 +22,10 @@ namespace NzbDrone.Common.Test
         public void Setup()
         {
             Process.GetProcessesByName(DummyApp.DUMMY_PROCCESS_NAME).ToList().ForEach(c =>
-            {
-                c.Kill();
-                c.WaitForExit();
-            });
+                {
+                    c.Kill();
+                    c.WaitForExit();
+                });
 
             Process.GetProcessesByName(DummyApp.DUMMY_PROCCESS_NAME).Should().BeEmpty();
         }
@@ -65,7 +66,7 @@ namespace NzbDrone.Common.Test
 
         [Test]
         [Retry(3)]
-        public void should_be_able_to_start_process()
+        public void Should_be_able_to_start_process()
         {
             var process = StartDummyProcess();
 
@@ -80,24 +81,6 @@ namespace NzbDrone.Common.Test
             process.Kill();
             process.WaitForExit();
             process.HasExited.Should().BeTrue();
-        }
-
-        [Test]
-        [Platform(Exclude = "MacOsX")]
-        [Retry(3)]
-        public void exists_should_find_running_process()
-        {
-            var process = StartDummyProcess();
-
-            Thread.Sleep(500);
-
-            Subject.Exists(DummyApp.DUMMY_PROCCESS_NAME).Should()
-                   .BeTrue("expected one dummy process to be already running");
-
-            process.Kill();
-            process.WaitForExit();
-
-            Subject.Exists(DummyApp.DUMMY_PROCCESS_NAME).Should().BeFalse();
         }
 
         [Test]
@@ -150,8 +133,8 @@ namespace NzbDrone.Common.Test
         }
 
         [Test]
-        [Retry(3)]
         [Platform(Exclude = "MacOsX")]
+        [Retry(3)]
         public void kill_all_should_kill_all_process_with_name()
         {
             var dummy1 = StartDummyProcess();
@@ -197,7 +180,6 @@ namespace NzbDrone.Common.Test
         }
 
         [Test]
-        [Retry(3)]
         public void ToString_on_new_processInfo()
         {
             Console.WriteLine(new ProcessInfo().ToString());

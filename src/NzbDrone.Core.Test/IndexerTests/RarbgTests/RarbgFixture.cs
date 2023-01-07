@@ -20,10 +20,10 @@ namespace NzbDrone.Core.Test.IndexerTests.RarbgTests
         public void Setup()
         {
             Subject.Definition = new IndexerDefinition()
-            {
-                Name = "Rarbg",
-                Settings = new RarbgSettings()
-            };
+                {
+                    Name = "Rarbg",
+                    Settings = new RarbgSettings()
+                };
 
             Mocker.GetMock<IRarbgTokenProvider>()
                 .Setup(v => v.GetToken(It.IsAny<RarbgSettings>()))
@@ -57,6 +57,7 @@ namespace NzbDrone.Core.Test.IndexerTests.RarbgTests
             torrentInfo.MagnetUrl.Should().BeNull();
             torrentInfo.Peers.Should().Be(304 + 200);
             torrentInfo.Seeders.Should().Be(304);
+            torrentInfo.TvdbId.Should().Be(268156);
         }
 
         [Test]

@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using DryIoc;
 using DryIoc.Microsoft.DependencyInjection;
 using FluentAssertions;
@@ -14,8 +14,8 @@ using NzbDrone.Core.Datastore;
 using NzbDrone.Core.Datastore.Extensions;
 using NzbDrone.Core.Lifecycle;
 using NzbDrone.Core.Messaging.Events;
+using NzbDrone.Host;
 using NzbDrone.Test.Common;
-using Whisparr.Host;
 
 namespace NzbDrone.Common.Test
 {

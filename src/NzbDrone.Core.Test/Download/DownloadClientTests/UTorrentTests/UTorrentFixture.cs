@@ -25,65 +25,65 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.UTorrentTests
         {
             Subject.Definition = new DownloadClientDefinition();
             Subject.Definition.Settings = new UTorrentSettings
-            {
-                Host = "127.0.0.1",
-                Port = 2222,
-                Username = "admin",
-                Password = "pass",
-                MovieCategory = "movie"
-            };
+                                          {
+                                              Host = "127.0.0.1",
+                                              Port = 2222,
+                                              Username = "admin",
+                                              Password = "pass",
+                                              TvCategory = "tv"
+                                          };
 
             _queued = new UTorrentTorrent
-            {
-                Hash = "HASH",
-                Status = UTorrentTorrentStatus.Queued | UTorrentTorrentStatus.Loaded,
-                Name = _title,
-                Size = 1000,
-                Remaining = 1000,
-                Progress = 0,
-                Label = "movie",
-                DownloadUrl = _downloadUrl,
-                RootDownloadPath = "somepath"
-            };
+                    {
+                        Hash = "HASH",
+                        Status = UTorrentTorrentStatus.Queued | UTorrentTorrentStatus.Loaded,
+                        Name = _title,
+                        Size = 1000,
+                        Remaining = 1000,
+                        Progress = 0,
+                        Label = "tv",
+                        DownloadUrl = _downloadUrl,
+                        RootDownloadPath = "somepath"
+                    };
 
             _downloading = new UTorrentTorrent
-            {
-                Hash = "HASH",
-                Status = UTorrentTorrentStatus.Started | UTorrentTorrentStatus.Loaded,
-                Name = _title,
-                Size = 1000,
-                Remaining = 100,
-                Progress = 0.9,
-                Label = "movie",
-                DownloadUrl = _downloadUrl,
-                RootDownloadPath = "somepath"
-            };
+                    {
+                        Hash = "HASH",
+                        Status = UTorrentTorrentStatus.Started | UTorrentTorrentStatus.Loaded,
+                        Name = _title,
+                        Size = 1000,
+                        Remaining = 100,
+                        Progress = 0.9,
+                        Label = "tv",
+                        DownloadUrl = _downloadUrl,
+                        RootDownloadPath = "somepath"
+                    };
 
             _failed = new UTorrentTorrent
-            {
-                Hash = "HASH",
-                Status = UTorrentTorrentStatus.Error,
-                Name = _title,
-                Size = 1000,
-                Remaining = 100,
-                Progress = 0.9,
-                Label = "movie",
-                DownloadUrl = _downloadUrl,
-                RootDownloadPath = "somepath"
-            };
+                    {
+                        Hash = "HASH",
+                        Status = UTorrentTorrentStatus.Error,
+                        Name = _title,
+                        Size = 1000,
+                        Remaining = 100,
+                        Progress = 0.9,
+                        Label = "tv",
+                        DownloadUrl = _downloadUrl,
+                        RootDownloadPath = "somepath"
+                    };
 
             _completed = new UTorrentTorrent
-            {
-                Hash = "HASH",
-                Status = UTorrentTorrentStatus.Checked | UTorrentTorrentStatus.Loaded,
-                Name = _title,
-                Size = 1000,
-                Remaining = 0,
-                Progress = 1.0,
-                Label = "movie",
-                DownloadUrl = _downloadUrl,
-                RootDownloadPath = "somepath"
-            };
+                    {
+                        Hash = "HASH",
+                        Status = UTorrentTorrentStatus.Checked | UTorrentTorrentStatus.Loaded,
+                        Name = _title,
+                        Size = 1000,
+                        Remaining = 0,
+                        Progress = 1.0,
+                        Label = "tv",
+                        DownloadUrl = _downloadUrl,
+                        RootDownloadPath = "somepath"
+                    };
 
             Mocker.GetMock<ITorrentFileInfoReader>()
                   .Setup(s => s.GetHashFromTorrentFile(It.IsAny<byte[]>()))
@@ -91,7 +91,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.UTorrentTests
 
             Mocker.GetMock<IHttpClient>()
                   .Setup(s => s.Get(It.IsAny<HttpRequest>()))
-                  .Returns<HttpRequest>(r => new HttpResponse(r, new HttpHeader(), Array.Empty<byte>()));
+                  .Returns<HttpRequest>(r => new HttpResponse(r, new HttpHeader(), new byte[0]));
         }
 
         protected void GivenRedirectToMagnet()
@@ -101,17 +101,17 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.UTorrentTests
 
             Mocker.GetMock<IHttpClient>()
                   .Setup(s => s.Get(It.IsAny<HttpRequest>()))
-                  .Returns<HttpRequest>(r => new HttpResponse(r, httpHeader, Array.Empty<byte>(), System.Net.HttpStatusCode.SeeOther));
+                  .Returns<HttpRequest>(r => new HttpResponse(r, httpHeader, new byte[0], System.Net.HttpStatusCode.SeeOther));
         }
 
         protected void GivenRedirectToTorrent()
         {
             var httpHeader = new HttpHeader();
-            httpHeader["Location"] = "http://test.whisparr.com/not-a-real-torrent.torrent";
+            httpHeader["Location"] = "http://test.whisparr.tv/not-a-real-torrent.torrent";
 
             Mocker.GetMock<IHttpClient>()
                   .Setup(s => s.Get(It.Is<HttpRequest>(h => h.Url.ToString() == _downloadUrl)))
-                  .Returns<HttpRequest>(r => new HttpResponse(r, httpHeader, Array.Empty<byte>(), System.Net.HttpStatusCode.Found));
+                  .Returns<HttpRequest>(r => new HttpResponse(r, httpHeader, new byte[0], System.Net.HttpStatusCode.Found));
         }
 
         protected void GivenFailedDownload()
@@ -232,9 +232,9 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.UTorrentTests
         {
             GivenSuccessfulDownload();
 
-            var remoteMovie = CreateRemoteMovie();
+            var remoteEpisode = CreateRemoteEpisode();
 
-            var id = Subject.Download(remoteMovie);
+            var id = Subject.Download(remoteEpisode);
 
             id.Should().NotBeNullOrEmpty();
         }
@@ -256,10 +256,10 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.UTorrentTests
         {
             GivenSuccessfulDownload();
 
-            var remoteMovie = CreateRemoteMovie();
-            remoteMovie.Release.DownloadUrl = magnetUrl;
+            var remoteEpisode = CreateRemoteEpisode();
+            remoteEpisode.Release.DownloadUrl = magnetUrl;
 
-            var id = Subject.Download(remoteMovie);
+            var id = Subject.Download(remoteEpisode);
 
             id.Should().Be(expectedHash);
         }
@@ -332,7 +332,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.UTorrentTests
 
             result.IsLocalhost.Should().BeTrue();
             result.OutputRootFolders.Should().NotBeNull();
-            result.OutputRootFolders.First().Should().Be(@"C:\Downloads\Finished\utorrent\movie".AsOsAgnostic());
+            result.OutputRootFolders.First().Should().Be(@"C:\Downloads\Finished\utorrent\tv".AsOsAgnostic());
         }
 
         [Test]
@@ -355,9 +355,9 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.UTorrentTests
             GivenRedirectToMagnet();
             GivenSuccessfulDownload();
 
-            var remoteMovie = CreateRemoteMovie();
+            var remoteEpisode = CreateRemoteEpisode();
 
-            var id = Subject.Download(remoteMovie);
+            var id = Subject.Download(remoteEpisode);
 
             id.Should().NotBeNullOrEmpty();
         }
@@ -368,9 +368,9 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.UTorrentTests
             GivenRedirectToTorrent();
             GivenSuccessfulDownload();
 
-            var remoteMovie = CreateRemoteMovie();
+            var remoteEpisode = CreateRemoteEpisode();
 
-            var id = Subject.Download(remoteMovie);
+            var id = Subject.Download(remoteEpisode);
 
             id.Should().NotBeNullOrEmpty();
         }

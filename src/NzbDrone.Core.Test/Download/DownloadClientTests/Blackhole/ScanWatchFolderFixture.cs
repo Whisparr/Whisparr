@@ -18,7 +18,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.Blackhole
     [TestFixture]
     public class ScanWatchFolderFixture : CoreTest<ScanWatchFolder>
     {
-        protected readonly string _title = "Droned.1998.1080p.WEB-DL-DRONE";
+        protected readonly string _title = "Droned.S01E01.Pilot.1080p.WEB-DL-DRONE";
         protected string _completedDownloadFolder = @"c:\blackhole\completed".AsOsAgnostic();
 
         protected void GivenCompletedItem()
@@ -37,7 +37,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.Blackhole
                 .Returns(1000000);
 
             Mocker.GetMock<IDiskScanService>().Setup(c => c.FilterPaths(It.IsAny<string>(), It.IsAny<IEnumerable<string>>(), It.IsAny<bool>()))
-                  .Returns<string, IEnumerable<string>, bool>((b, s, e) => s.ToList());
+                  .Returns<string, IEnumerable<string>, bool>((b, s, c) => s.ToList());
         }
 
         protected void GivenChangedItem()

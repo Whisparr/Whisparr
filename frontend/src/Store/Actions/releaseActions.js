@@ -3,7 +3,6 @@ import { filterBuilderTypes, filterBuilderValueTypes, filterTypePredicates, filt
 import { createThunk, handleThunks } from 'Store/thunks';
 import sortByName from 'Utilities/Array/sortByName';
 import createAjaxRequest from 'Utilities/createAjaxRequest';
-import translate from 'Utilities/String/translate';
 import createFetchHandler from './Creators/createFetchHandler';
 import createHandleActions from './Creators/createHandleActions';
 import createSetClientSideCollectionFilterReducer from './Creators/Reducers/createSetClientSideCollectionFilterReducer';
@@ -13,6 +12,8 @@ import createSetClientSideCollectionSortReducer from './Creators/Reducers/create
 // Variables
 
 export const section = 'releases';
+export const episodeSection = 'releases.episode';
+export const seasonSection = 'releases.season';
 
 let abortCurrentRequest = null;
 
@@ -46,17 +47,6 @@ export const defaultState = {
       return item.languages[0].id;
     },
 
-    indexerFlags: function(item, direction) {
-      const indexerFlags = item.indexerFlags;
-      const releaseWeight = item.releaseWeight;
-
-      if (indexerFlags.length === 0) {
-        return releaseWeight + 1000000;
-      }
-
-      return releaseWeight;
-    },
-
     rejections: function(item, direction) {
       const rejections = item.rejections;
       const releaseWeight = item.releaseWeight;
@@ -72,8 +62,30 @@ export const defaultState = {
   filters: [
     {
       key: 'all',
-      label: translate('All'),
+      label: 'All',
       filters: []
+    },
+    {
+      key: 'season-pack',
+      label: 'Season Pack',
+      filters: [
+        {
+          key: 'fullSeason',
+          value: true,
+          type: filterTypes.EQUAL
+        }
+      ]
+    },
+    {
+      key: 'not-season-pack',
+      label: 'Not Season Pack',
+      filters: [
+        {
+          key: 'fullSeason',
+          value: false,
+          type: filterTypes.EQUAL
+        }
+      ]
     }
   ],
 
@@ -101,14 +113,6 @@ export const defaultState = {
       return predicate(languages, filterValue);
     },
 
-    peers: function(item, value, type) {
-      const predicate = filterTypePredicates[type];
-      const seeders = item.seeders || 0;
-      const leechers = item.leechers || 0;
-
-      return predicate(seeders + leechers, value);
-    },
-
     rejectionCount: function(item, value, type) {
       const rejectionCount = item.rejections.length;
 
@@ -134,57 +138,86 @@ export const defaultState = {
         default:
           return false;
       }
+    },
+
+    peers: function(item, value, type) {
+      const seeders = item.seeders || 0;
+      const leechers = item.leechers || 0;
+      const peers = seeders + leechers;
+
+      switch (type) {
+        case filterTypes.EQUAL:
+          return peers === value;
+
+        case filterTypes.GREATER_THAN:
+          return peers > value;
+
+        case filterTypes.GREATER_THAN_OR_EQUAL:
+          return peers >= value;
+
+        case filterTypes.LESS_THAN:
+          return peers < value;
+
+        case filterTypes.LESS_THAN_OR_EQUAL:
+          return peers <= value;
+
+        case filterTypes.NOT_EQUAL:
+          return peers !== value;
+
+        default:
+          return false;
+      }
     }
   },
 
   filterBuilderProps: [
     {
       name: 'title',
-      label: translate('Title'),
+      label: 'Title',
       type: filterBuilderTypes.STRING
     },
     {
       name: 'age',
-      label: translate('Age'),
+      label: 'Age',
       type: filterBuilderTypes.NUMBER
     },
     {
       name: 'protocol',
-      label: translate('Protocol'),
+      label: 'Protocol',
       type: filterBuilderTypes.EXACT,
       valueType: filterBuilderValueTypes.PROTOCOL
     },
     {
       name: 'indexerId',
-      label: translate('Indexer'),
+      label: 'Indexer',
       type: filterBuilderTypes.EXACT,
       valueType: filterBuilderValueTypes.INDEXER
     },
     {
       name: 'size',
-      label: translate('Size'),
+      label: 'Size',
       type: filterBuilderTypes.NUMBER,
       valueType: filterBuilderValueTypes.BYTES
     },
     {
       name: 'seeders',
-      label: translate('Seeders'),
+      label: 'Seeders',
       type: filterBuilderTypes.NUMBER
     },
     {
       name: 'peers',
-      label: translate('Peers'),
+      label: 'Peers',
       type: filterBuilderTypes.NUMBER
     },
     {
       name: 'quality',
-      label: translate('Quality'),
+      label: 'Quality',
       type: filterBuilderTypes.EXACT,
       valueType: filterBuilderValueTypes.QUALITY
     },
     {
       name: 'languages',
-      label: translate('Languages'),
+      label: 'Languages',
       type: filterBuilderTypes.ARRAY,
       optionsSelector: function(items) {
         const genreList = items.reduce((acc, release) => {
@@ -202,18 +235,36 @@ export const defaultState = {
       }
     },
     {
-      name: 'rejectionCount',
-      label: translate('RejectionCount'),
+      name: 'customFormatScore',
+      label: 'Custom Format Score',
       type: filterBuilderTypes.NUMBER
+    },
+    {
+      name: 'rejectionCount',
+      label: 'Rejection Count',
+      type: filterBuilderTypes.NUMBER
+    },
+    {
+      name: 'fullSeason',
+      label: 'Season Pack',
+      type: filterBuilderTypes.EXACT,
+      valueType: filterBuilderValueTypes.BOOL
     }
   ],
-  selectedFilterKey: 'all'
 
+  episode: {
+    selectedFilterKey: 'all'
+  },
+
+  season: {
+    selectedFilterKey: 'season-pack'
+  }
 };
 
 export const persistState = [
-  'releases.customFilters',
-  'releases.selectedFilterKey'
+  'releases.selectedFilterKey',
+  'releases.episode.customFilters',
+  'releases.season.customFilters'
 ];
 
 //
@@ -225,7 +276,8 @@ export const SET_RELEASES_SORT = 'releases/setReleasesSort';
 export const CLEAR_RELEASES = 'releases/clearReleases';
 export const GRAB_RELEASE = 'releases/grabRelease';
 export const UPDATE_RELEASE = 'releases/updateRelease';
-export const SET_RELEASES_FILTER = 'releases/setMovieReleasesFilter';
+export const SET_EPISODE_RELEASES_FILTER = 'releases/setEpisodeReleasesFilter';
+export const SET_SEASON_RELEASES_FILTER = 'releases/setSeasonReleasesFilter';
 
 //
 // Action Creators
@@ -236,7 +288,8 @@ export const setReleasesSort = createAction(SET_RELEASES_SORT);
 export const clearReleases = createAction(CLEAR_RELEASES);
 export const grabRelease = createThunk(GRAB_RELEASE);
 export const updateRelease = createAction(UPDATE_RELEASE);
-export const setReleasesFilter = createAction(SET_RELEASES_FILTER);
+export const setEpisodeReleasesFilter = createAction(SET_EPISODE_RELEASES_FILTER);
+export const setSeasonReleasesFilter = createAction(SET_SEASON_RELEASES_FILTER);
 
 //
 // Helpers
@@ -301,7 +354,13 @@ export const actionHandlers = handleThunks({
 export const reducers = createHandleActions({
 
   [CLEAR_RELEASES]: (state) => {
-    return Object.assign({}, state, defaultState);
+    const {
+      episode,
+      season,
+      ...otherDefaultState
+    } = defaultState;
+
+    return Object.assign({}, state, otherDefaultState);
   },
 
   [UPDATE_RELEASE]: (state, { payload }) => {
@@ -311,6 +370,7 @@ export const reducers = createHandleActions({
     const index = items.findIndex((item) => item.guid === guid);
 
     // Don't try to update if there isnt a matching item (the user closed the modal)
+
     if (index >= 0) {
       const item = Object.assign({}, items[index], payload);
 
@@ -321,7 +381,8 @@ export const reducers = createHandleActions({
     return newState;
   },
 
-  [SET_RELEASES_FILTER]: createSetClientSideCollectionFilterReducer(section),
-  [SET_RELEASES_SORT]: createSetClientSideCollectionSortReducer(section)
+  [SET_RELEASES_SORT]: createSetClientSideCollectionSortReducer(section),
+  [SET_EPISODE_RELEASES_FILTER]: createSetClientSideCollectionFilterReducer(episodeSection),
+  [SET_SEASON_RELEASES_FILTER]: createSetClientSideCollectionFilterReducer(seasonSection)
 
 }, defaultState, section);

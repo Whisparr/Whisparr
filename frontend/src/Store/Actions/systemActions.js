@@ -4,7 +4,6 @@ import { setAppValue } from 'Store/Actions/appActions';
 import { createThunk, handleThunks } from 'Store/thunks';
 import createAjaxRequest from 'Utilities/createAjaxRequest';
 import serverSideCollectionHandlers from 'Utilities/serverSideCollectionHandlers';
-import translate from 'Utilities/String/translate';
 import { pingServer } from './appActions';
 import { set } from './baseActions';
 import createFetchHandler from './Creators/createFetchHandler';
@@ -82,34 +81,34 @@ export const defaultState = {
     columns: [
       {
         name: 'level',
-        columnLabel: translate('Level'),
+        columnLabel: 'Level',
         isSortable: false,
         isVisible: true,
         isModifiable: false
       },
       {
         name: 'time',
-        label: translate('Time'),
+        label: 'Time',
         isSortable: true,
         isVisible: true,
         isModifiable: false
       },
       {
         name: 'logger',
-        label: translate('Component'),
+        label: 'Component',
         isSortable: false,
         isVisible: true,
         isModifiable: false
       },
       {
         name: 'message',
-        label: translate('Message'),
+        label: 'Message',
         isVisible: true,
         isModifiable: false
       },
       {
         name: 'actions',
-        columnLabel: translate('Actions'),
+        columnLabel: 'Actions',
         isSortable: true,
         isVisible: true,
         isModifiable: false
@@ -121,12 +120,12 @@ export const defaultState = {
     filters: [
       {
         key: 'all',
-        label: translate('All'),
+        label: 'All',
         filters: []
       },
       {
         key: 'info',
-        label: translate('Info'),
+        label: 'Info',
         filters: [
           {
             key: 'level',
@@ -137,7 +136,7 @@ export const defaultState = {
       },
       {
         key: 'warn',
-        label: translate('Warn'),
+        label: 'Warn',
         filters: [
           {
             key: 'level',
@@ -148,7 +147,7 @@ export const defaultState = {
       },
       {
         key: 'error',
-        label: translate('Error'),
+        label: 'Error',
         filters: [
           {
             key: 'level',

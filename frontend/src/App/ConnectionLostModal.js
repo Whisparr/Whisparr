@@ -7,7 +7,6 @@ import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { kinds } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import styles from './ConnectionLostModal.css';
 
 function ConnectionLostModal(props) {
@@ -23,16 +22,16 @@ function ConnectionLostModal(props) {
     >
       <ModalContent onModalClose={onModalClose}>
         <ModalHeader>
-          {translate('ConnectionLost')}
+          Connection Lost
         </ModalHeader>
 
         <ModalBody>
           <div>
-            {translate('ConnectionLostMessage')}
+            Whisparr has lost its connection to the backend and will need to be reloaded to restore functionality.
           </div>
 
           <div className={styles.automatic}>
-            {translate('ConnectionLostAutomaticMessage')}
+            Whisparr will try to connect automatically, or you can click reload below.
           </div>
         </ModalBody>
         <ModalFooter>
@@ -40,7 +39,7 @@ function ConnectionLostModal(props) {
             kind={kinds.PRIMARY}
             onPress={onModalClose}
           >
-            {translate('Reload')}
+            Reload
           </Button>
         </ModalFooter>
       </ModalContent>

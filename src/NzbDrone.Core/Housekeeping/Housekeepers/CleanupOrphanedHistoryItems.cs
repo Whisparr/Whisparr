@@ -14,19 +14,33 @@ namespace NzbDrone.Core.Housekeeping.Housekeepers
 
         public void Clean()
         {
-            CleanupOrphanedByMovie();
+            CleanupOrphanedBySeries();
+            CleanupOrphanedByEpisode();
         }
 
-        private void CleanupOrphanedByMovie()
+        private void CleanupOrphanedBySeries()
         {
             using (var mapper = _database.OpenConnection())
             {
                 mapper.Execute(@"DELETE FROM ""History""
                                      WHERE ""Id"" IN (
                                      SELECT ""History"".""Id"" FROM ""History""
-                                     LEFT OUTER JOIN ""Movies""
-                                     ON ""History"".""MovieId"" = ""Movies"".""Id""
-                                     WHERE ""Movies"".""Id"" IS NULL)");
+                                     LEFT OUTER JOIN ""Series""
+                                     ON ""History"".""SeriesId"" = ""Series"".""Id""
+                                     WHERE ""Series"".""Id"" IS NULL)");
+            }
+        }
+
+        private void CleanupOrphanedByEpisode()
+        {
+            using (var mapper = _database.OpenConnection())
+            {
+                mapper.Execute(@"DELETE FROM ""History""
+                                     WHERE ""Id"" IN (
+                                     SELECT ""History"".""Id"" FROM ""History""
+                                     LEFT OUTER JOIN ""Episodes""
+                                     ON ""History"".""EpisodeId"" = ""Episodes"".""Id""
+                                     WHERE ""Episodes"".""Id"" IS NULL)");
             }
         }
     }

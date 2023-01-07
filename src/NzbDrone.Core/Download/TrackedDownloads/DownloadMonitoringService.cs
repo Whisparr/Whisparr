@@ -13,8 +13,8 @@ namespace NzbDrone.Core.Download.TrackedDownloads
 {
     public class DownloadMonitoringService : IExecute<RefreshMonitoredDownloadsCommand>,
                                              IExecute<CheckForFinishedDownloadCommand>,
-                                             IHandle<MovieGrabbedEvent>,
-                                             IHandle<MovieFileImportedEvent>,
+                                             IHandle<EpisodeGrabbedEvent>,
+                                             IHandle<EpisodeImportedEvent>,
                                              IHandle<DownloadsProcessedEvent>,
                                              IHandle<TrackedDownloadsRemovedEvent>
     {
@@ -97,6 +97,7 @@ namespace NzbDrone.Core.Download.TrackedDownloads
             catch (Exception ex)
             {
                 // TODO: Stop tracking items for the offline client
+
                 _downloadClientStatusService.RecordFailure(downloadClient.Definition.Id);
                 _logger.Warn(ex, "Unable to retrieve queue and history items from " + downloadClient.Definition.Name);
             }
@@ -112,24 +113,26 @@ namespace NzbDrone.Core.Download.TrackedDownloads
 
         private TrackedDownload ProcessClientItem(IDownloadClient downloadClient, DownloadClientItem downloadItem)
         {
+            TrackedDownload trackedDownload = null;
+
             try
             {
-                var trackedDownload = _trackedDownloadService.TrackDownload((DownloadClientDefinition)downloadClient.Definition, downloadItem);
+                trackedDownload =
+                    _trackedDownloadService.TrackDownload((DownloadClientDefinition)downloadClient.Definition,
+                        downloadItem);
 
                 if (trackedDownload != null && trackedDownload.State == TrackedDownloadState.Downloading)
                 {
                     _failedDownloadService.Check(trackedDownload);
                     _completedDownloadService.Check(trackedDownload);
                 }
-
-                return trackedDownload;
             }
             catch (Exception e)
             {
                 _logger.Error(e, "Couldn't process tracked download {0}", downloadItem.Title);
             }
 
-            return null;
+            return trackedDownload;
         }
 
         private bool DownloadIsTrackable(TrackedDownload trackedDownload)
@@ -162,12 +165,12 @@ namespace NzbDrone.Core.Download.TrackedDownloads
             Refresh();
         }
 
-        public void Handle(MovieGrabbedEvent message)
+        public void Handle(EpisodeGrabbedEvent message)
         {
             _refreshDebounce.Execute();
         }
 
-        public void Handle(MovieFileImportedEvent message)
+        public void Handle(EpisodeImportedEvent message)
         {
             _refreshDebounce.Execute();
         }
@@ -182,6 +185,7 @@ namespace NzbDrone.Core.Download.TrackedDownloads
         public void Handle(TrackedDownloadsRemovedEvent message)
         {
             var trackedDownloads = _trackedDownloadService.GetTrackedDownloads().Where(t => t.IsTrackable && DownloadIsTrackable(t)).ToList();
+
             _eventAggregator.PublishEvent(new TrackedDownloadRefreshedEvent(trackedDownloads));
         }
     }

@@ -10,36 +10,65 @@ namespace NzbDrone.Core.Indexers.FileList
     public class FileListRequestGenerator : IIndexerRequestGenerator
     {
         public FileListSettings Settings { get; set; }
-        public Func<IDictionary<string, string>> GetCookies { get; set; }
-        public Action<IDictionary<string, string>, DateTime?> CookiesUpdater { get; set; }
 
         public virtual IndexerPageableRequestChain GetRecentRequests()
         {
             var pageableRequests = new IndexerPageableRequestChain();
-            pageableRequests.Add(GetRequest("latest-torrents", ""));
+
+            pageableRequests.Add(GetRequest("latest-torrents", Settings.Categories.Concat(Settings.AnimeCategories), ""));
+
             return pageableRequests;
         }
 
-        public virtual IndexerPageableRequestChain GetSearchRequests(MovieSearchCriteria searchCriteria)
+        public IndexerPageableRequestChain GetSearchRequests(SingleEpisodeSearchCriteria searchCriteria)
         {
             var pageableRequests = new IndexerPageableRequestChain();
 
-            foreach (var queryTitle in searchCriteria.CleanSceneTitles)
-            {
-                var titleYearSearchQuery = string.Format("{0}+{1}", queryTitle, searchCriteria.Movie.Year);
-                pageableRequests.Add(GetRequest("search-torrents", string.Format("&type=name&query={0}", titleYearSearchQuery.Trim())));
-            }
+            AddNameRequests(pageableRequests, searchCriteria, "search-torrents", Settings.Categories, $"&season={searchCriteria.SeasonNumber}&episode={searchCriteria.EpisodeNumber}");
 
             return pageableRequests;
         }
 
-        private IEnumerable<IndexerRequest> GetRequest(string searchType, string parameters)
+        public IndexerPageableRequestChain GetSearchRequests(SeasonSearchCriteria searchCriteria)
         {
-            var categoriesQuery = string.Join(",", Settings.Categories.Distinct());
+            var pageableRequests = new IndexerPageableRequestChain();
 
-            var baseUrl = string.Format("{0}/api.php?action={1}&category={2}&username={3}&passkey={4}{5}", Settings.BaseUrl.TrimEnd('/'), searchType, categoriesQuery, Settings.Username.Trim(), Settings.Passkey.Trim(), parameters);
+            AddNameRequests(pageableRequests, searchCriteria, "search-torrents", Settings.Categories, $"&season={searchCriteria.SeasonNumber}");
 
-            yield return new IndexerRequest(baseUrl, HttpAccept.Json);
+            return pageableRequests;
+        }
+
+        public IndexerPageableRequestChain GetSearchRequests(SpecialEpisodeSearchCriteria searchCriteria)
+        {
+            return new IndexerPageableRequestChain();
+        }
+
+        private void AddImdbRequests(IndexerPageableRequestChain chain, SearchCriteriaBase searchCriteria, string searchType, IEnumerable<int> categories, string parameters)
+        {
+            if (searchCriteria.Series.ImdbId.IsNotNullOrWhiteSpace())
+            {
+                chain.Add(GetRequest(searchType, categories, string.Format("&type=imdb&query={0}{1}", searchCriteria.Series.ImdbId, parameters)));
+            }
+        }
+
+        private void AddNameRequests(IndexerPageableRequestChain chain, SearchCriteriaBase searchCriteria, string searchType, IEnumerable<int> categories, string parameters)
+        {
+            foreach (var sceneTitle in searchCriteria.SceneTitles)
+            {
+                chain.Add(GetRequest(searchType, categories, string.Format("&type=name&query={0}{1}", Uri.EscapeDataString(sceneTitle.Trim()), parameters)));
+            }
+        }
+
+        private IEnumerable<IndexerRequest> GetRequest(string searchType, IEnumerable<int> categories, string parameters)
+        {
+            var categoriesQuery = string.Join(",", categories.Distinct());
+
+            var baseUrl = string.Format("{0}/api.php?action={1}&category={2}{3}", Settings.BaseUrl.TrimEnd('/'), searchType, categoriesQuery, parameters);
+
+            var request = new IndexerRequest(baseUrl, HttpAccept.Json);
+            request.HttpRequest.Credentials = new BasicNetworkCredential(Settings.Username.Trim(), Settings.Passkey.Trim());
+
+            yield return request;
         }
     }
 }

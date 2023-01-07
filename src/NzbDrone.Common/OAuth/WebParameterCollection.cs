@@ -16,7 +16,7 @@ namespace NzbDrone.Common.OAuth
             {
                 var parameters = this.Where(p => p.Name.Equals(name));
 
-                if (!parameters.Any())
+                if (parameters.Count() == 0)
                 {
                     return null;
                 }

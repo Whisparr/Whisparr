@@ -9,15 +9,15 @@ function getIconName(eventType) {
   switch (eventType) {
     case 'grabbed':
       return icons.DOWNLOADING;
-    case 'movieFolderImported':
+    case 'seriesFolderImported':
       return icons.DRIVE;
     case 'downloadFolderImported':
       return icons.DOWNLOADED;
     case 'downloadFailed':
       return icons.DOWNLOADING;
-    case 'movieFileDeleted':
+    case 'episodeFileDeleted':
       return icons.DELETE;
-    case 'movieFileRenamed':
+    case 'episodeFileRenamed':
       return icons.ORGANIZE;
     case 'downloadIgnored':
       return icons.IGNORE;
@@ -38,19 +38,19 @@ function getIconKind(eventType) {
 function getTooltip(eventType, data) {
   switch (eventType) {
     case 'grabbed':
-      return `Movie grabbed from ${data.indexer} and sent to ${data.downloadClient}`;
-    case 'movieFolderImported':
-      return 'Movie imported from movie folder';
+      return `Episode grabbed from ${data.indexer} and sent to ${data.downloadClient}`;
+    case 'seriesFolderImported':
+      return 'Episode imported from series folder';
     case 'downloadFolderImported':
-      return 'Movie downloaded successfully and picked up from download client';
+      return 'Episode downloaded successfully and picked up from download client';
     case 'downloadFailed':
-      return 'Movie download failed';
-    case 'movieFileDeleted':
-      return 'Movie file deleted';
-    case 'movieFileRenamed':
-      return 'Movie file renamed';
+      return 'Episode download failed';
+    case 'episodeFileDeleted':
+      return 'Episode file deleted';
+    case 'episodeFileRenamed':
+      return 'Episode file renamed';
     case 'downloadIgnored':
-      return 'Movie Download Ignored';
+      return 'Episode Download Ignored';
     default:
       return 'Unknown event';
   }

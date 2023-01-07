@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import LoadingIndicator from 'Components/Loading/LoadingIndicator';
 import Measure from 'Components/Measure';
 import FilterMenu from 'Components/Menu/FilterMenu';
 import PageContent from 'Components/Page/PageContent';
@@ -10,9 +9,7 @@ import PageToolbarButton from 'Components/Page/Toolbar/PageToolbarButton';
 import PageToolbarSection from 'Components/Page/Toolbar/PageToolbarSection';
 import PageToolbarSeparator from 'Components/Page/Toolbar/PageToolbarSeparator';
 import { align, icons } from 'Helpers/Props';
-import NoMovie from 'Movie/NoMovie';
-import getErrorMessage from 'Utilities/Object/getErrorMessage';
-import translate from 'Utilities/String/translate';
+import NoSeries from 'Series/NoSeries';
 import CalendarConnector from './CalendarConnector';
 import CalendarLinkModal from './iCal/CalendarLinkModal';
 import LegendConnector from './Legend/LegendConnector';
@@ -64,11 +61,11 @@ class CalendarPage extends Component {
 
   onSearchMissingPress = () => {
     const {
-      missingMovieIds,
+      missingEpisodeIds,
       onSearchMissingPress
     } = this.props;
 
-    onSearchMissingPress(missingMovieIds);
+    onSearchMissingPress(missingEpisodeIds);
   };
 
   //
@@ -78,11 +75,8 @@ class CalendarPage extends Component {
     const {
       selectedFilterKey,
       filters,
-      hasMovie,
-      movieError,
-      movieIsFetching,
-      movieIsPopulated,
-      missingMovieIds,
+      hasSeries,
+      missingEpisodeIds,
       isRssSyncExecuting,
       isSearchingForMissing,
       useCurrentPage,
@@ -96,13 +90,14 @@ class CalendarPage extends Component {
     } = this.state;
 
     const isMeasured = this.state.width > 0;
+    const PageComponent = hasSeries ? CalendarConnector : NoSeries;
 
     return (
-      <PageContent title={translate('Calendar')}>
+      <PageContent title="Calendar">
         <PageToolbar>
           <PageToolbarSection>
             <PageToolbarButton
-              label={translate('iCalLink')}
+              label="iCal Link"
               iconName={icons.CALENDAR}
               onPress={this.onGetCalendarLinkPress}
             />
@@ -110,16 +105,16 @@ class CalendarPage extends Component {
             <PageToolbarSeparator />
 
             <PageToolbarButton
-              label={translate('RSSSync')}
+              label="RSS Sync"
               iconName={icons.RSS}
               isSpinning={isRssSyncExecuting}
               onPress={onRssSyncPress}
             />
 
             <PageToolbarButton
-              label={translate('SearchForMissing')}
+              label="Search for Missing"
               iconName={icons.SEARCH}
-              isDisabled={!missingMovieIds.length}
+              isDisabled={!missingEpisodeIds.length}
               isSpinning={isSearchingForMissing}
               onPress={this.onSearchMissingPress}
             />
@@ -127,14 +122,14 @@ class CalendarPage extends Component {
 
           <PageToolbarSection alignContent={align.RIGHT}>
             <PageToolbarButton
-              label={translate('Options')}
+              label="Options"
               iconName={icons.POSTER}
               onPress={this.onOptionsPress}
             />
 
             <FilterMenu
               alignMenu={align.RIGHT}
-              isDisabled={!hasMovie}
+              isDisabled={!hasSeries}
               selectedFilterKey={selectedFilterKey}
               filters={filters}
               customFilters={[]}
@@ -147,41 +142,21 @@ class CalendarPage extends Component {
           className={styles.calendarPageBody}
           innerClassName={styles.calendarInnerPageBody}
         >
-          {
-            movieIsFetching && !movieIsPopulated &&
-              <LoadingIndicator />
-          }
+          <Measure
+            whitelist={['width']}
+            onMeasure={this.onMeasure}
+          >
+            {
+              isMeasured ?
+                <PageComponent
+                  useCurrentPage={useCurrentPage}
+                /> :
+                <div />
+            }
+          </Measure>
 
           {
-            movieError &&
-              <div className={styles.errorMessage}>
-                {getErrorMessage(movieError, 'Failed to load movies from API')}
-              </div>
-          }
-
-          {
-            !movieError && movieIsPopulated && hasMovie &&
-              <Measure
-                whitelist={['width']}
-                onMeasure={this.onMeasure}
-              >
-                {
-                  isMeasured ?
-                    <CalendarConnector
-                      useCurrentPage={useCurrentPage}
-                    /> :
-                    <div />
-                }
-              </Measure>
-          }
-
-          {
-            !movieError && movieIsPopulated && !hasMovie &&
-              <NoMovie />
-          }
-
-          {
-            hasMovie && !movieError &&
+            hasSeries &&
               <LegendConnector />
           }
         </PageContentBody>
@@ -203,11 +178,8 @@ class CalendarPage extends Component {
 CalendarPage.propTypes = {
   selectedFilterKey: PropTypes.string.isRequired,
   filters: PropTypes.arrayOf(PropTypes.object).isRequired,
-  hasMovie: PropTypes.bool.isRequired,
-  movieError: PropTypes.object,
-  movieIsFetching: PropTypes.bool.isRequired,
-  movieIsPopulated: PropTypes.bool.isRequired,
-  missingMovieIds: PropTypes.arrayOf(PropTypes.number).isRequired,
+  hasSeries: PropTypes.bool.isRequired,
+  missingEpisodeIds: PropTypes.arrayOf(PropTypes.number).isRequired,
   isRssSyncExecuting: PropTypes.bool.isRequired,
   isSearchingForMissing: PropTypes.bool.isRequired,
   useCurrentPage: PropTypes.bool.isRequired,

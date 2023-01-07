@@ -4,33 +4,32 @@ import FieldSet from 'Components/FieldSet';
 import LoadingIndicator from 'Components/Loading/LoadingIndicator';
 import Table from 'Components/Table/Table';
 import TableBody from 'Components/Table/TableBody';
-import translate from 'Utilities/String/translate';
 import ScheduledTaskRowConnector from './ScheduledTaskRowConnector';
 
 const columns = [
   {
     name: 'name',
-    label: translate('Name'),
+    label: 'Name',
     isVisible: true
   },
   {
     name: 'interval',
-    label: translate('Interval'),
+    label: 'Interval',
     isVisible: true
   },
   {
     name: 'lastExecution',
-    label: translate('LastExecution'),
+    label: 'Last Execution',
     isVisible: true
   },
   {
     name: 'lastDuration',
-    label: translate('LastDuration'),
+    label: 'Last Duration',
     isVisible: true
   },
   {
     name: 'nextExecution',
-    label: translate('NextExecution'),
+    label: 'Next Execution',
     isVisible: true
   },
   {
@@ -47,7 +46,7 @@ function ScheduledTasks(props) {
   } = props;
 
   return (
-    <FieldSet legend={translate('Scheduled')}>
+    <FieldSet legend="Scheduled">
       {
         isFetching && !isPopulated &&
           <LoadingIndicator />

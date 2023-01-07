@@ -4,7 +4,6 @@ import DescriptionListItemDescription from 'Components/DescriptionList/Descripti
 import DescriptionListItemTitle from 'Components/DescriptionList/DescriptionListItemTitle';
 import FieldSet from 'Components/FieldSet';
 import Link from 'Components/Link/Link';
-import translate from 'Utilities/String/translate';
 
 class MoreInfo extends Component {
 
@@ -13,46 +12,55 @@ class MoreInfo extends Component {
 
   render() {
     return (
-      <FieldSet legend={translate('MoreInfo')}>
+      <FieldSet legend="More Info">
         <DescriptionList>
-          <DescriptionListItemTitle>
-            {translate('HomePage')}
-          </DescriptionListItemTitle>
+          <DescriptionListItemTitle>Home page</DescriptionListItemTitle>
           <DescriptionListItemDescription>
-            <Link to="https://whisparr.com/">whisparr.com</Link>
+            <Link to="https://whisparr.tv/">whisparr.tv</Link>
           </DescriptionListItemDescription>
 
-          <DescriptionListItemTitle>
-            {translate('Wiki')}
-          </DescriptionListItemTitle>
+          <DescriptionListItemTitle>Wiki</DescriptionListItemTitle>
           <DescriptionListItemDescription>
-            <Link to="https://wiki.servarr.com/whisparr">{translate('Wiki')}</Link>
+            <Link to="https://wiki.servarr.com/whisparr">wiki.servarr.com/whisparr</Link>
           </DescriptionListItemDescription>
 
-          <DescriptionListItemTitle>
-            {translate('Reddit')}
-          </DescriptionListItemTitle>
+          <DescriptionListItemTitle>Forums</DescriptionListItemTitle>
           <DescriptionListItemDescription>
-            <Link to="https://www.reddit.com/r/Whisparr/">/r/Whisparr</Link>
+            <Link to="https://forums.whisparr.tv/">forums.whisparr.tv</Link>
           </DescriptionListItemDescription>
 
-          <DescriptionListItemTitle>
-            {translate('Discord')}
-          </DescriptionListItemTitle>
+          <DescriptionListItemTitle>Twitter</DescriptionListItemTitle>
           <DescriptionListItemDescription>
-            <Link to="https://whisparr.com/discord">whisparr.com/discord</Link>
+            <Link to="https://twitter.com/whisparrtv">@whisparrtv</Link>
           </DescriptionListItemDescription>
 
-          <DescriptionListItemTitle>
-            {translate('Source')}
-          </DescriptionListItemTitle>
+          <DescriptionListItemTitle>Discord</DescriptionListItemTitle>
+          <DescriptionListItemDescription>
+            <Link to="https://discord.gg/73QUuf3bgA">discord.gg/73QUuf3bgA</Link>
+          </DescriptionListItemDescription>
+
+          <DescriptionListItemTitle>IRC</DescriptionListItemTitle>
+          <DescriptionListItemDescription>
+            <Link to="irc://irc.libera.chat/#whisparr">#whisparr on Libera</Link>
+          </DescriptionListItemDescription>
+          <DescriptionListItemDescription>
+            <Link to="https://web.libera.chat/?channels=#whisparr">Libera webchat</Link>
+          </DescriptionListItemDescription>
+
+          <DescriptionListItemTitle>Donations</DescriptionListItemTitle>
+          <DescriptionListItemDescription>
+            <Link to="https://whisparr.tv/donate">whisparr.tv/donate</Link>
+          </DescriptionListItemDescription>
+
+          <DescriptionListItemTitle>Source</DescriptionListItemTitle>
           <DescriptionListItemDescription>
             <Link to="https://github.com/Whisparr/Whisparr/">github.com/Whisparr/Whisparr</Link>
           </DescriptionListItemDescription>
 
-          <DescriptionListItemTitle>
-            {translate('FeatureRequests')}
-          </DescriptionListItemTitle>
+          <DescriptionListItemTitle>Feature Requests</DescriptionListItemTitle>
+          <DescriptionListItemDescription>
+            <Link to="https://forums.whisparr.tv/">forums.whisparr.tv</Link>
+          </DescriptionListItemDescription>
           <DescriptionListItemDescription>
             <Link to="https://github.com/Whisparr/Whisparr/issues">github.com/Whisparr/Whisparr/issues</Link>
           </DescriptionListItemDescription>

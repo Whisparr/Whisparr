@@ -8,7 +8,6 @@ import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { kinds } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 
 function PendingChangesModal(props) {
   const {
@@ -20,7 +19,7 @@ function PendingChangesModal(props) {
 
   useEffect(() => {
     bindShortcut('enter', onConfirm);
-  }, [onConfirm]);
+  }, [bindShortcut, onConfirm]);
 
   return (
     <Modal
@@ -28,10 +27,10 @@ function PendingChangesModal(props) {
       onModalClose={onCancel}
     >
       <ModalContent onModalClose={onCancel}>
-        <ModalHeader>{translate('UnsavedChanges')}</ModalHeader>
+        <ModalHeader>Unsaved Changes</ModalHeader>
 
         <ModalBody>
-          {translate('PendingChangesMessage')}
+          You have unsaved changes, are you sure you want to leave this page?
         </ModalBody>
 
         <ModalFooter>
@@ -39,7 +38,7 @@ function PendingChangesModal(props) {
             kind={kinds.DEFAULT}
             onPress={onCancel}
           >
-            {translate('PendingChangesStayReview')}
+            Stay and review changes
           </Button>
 
           <Button
@@ -47,7 +46,7 @@ function PendingChangesModal(props) {
             kind={kinds.DANGER}
             onPress={onConfirm}
           >
-            {translate('PendingChangesDiscardChanges')}
+            Discard changes and leave
           </Button>
         </ModalFooter>
       </ModalContent>

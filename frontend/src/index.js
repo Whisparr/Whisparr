@@ -6,6 +6,7 @@ import App from './App/App';
 
 import './preload';
 import './polyfills';
+import 'Diag/ConsoleApi';
 import 'Styles/globals.css';
 import './index.css';
 

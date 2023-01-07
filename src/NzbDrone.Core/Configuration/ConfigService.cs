@@ -5,12 +5,11 @@ using System.Linq;
 using NLog;
 using NzbDrone.Common.EnsureThat;
 using NzbDrone.Common.Http.Proxy;
-using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Configuration.Events;
 using NzbDrone.Core.Languages;
 using NzbDrone.Core.MediaFiles;
+using NzbDrone.Core.MediaFiles.EpisodeImport;
 using NzbDrone.Core.Messaging.Events;
-using NzbDrone.Core.MetadataSource.SkyHook.Resource;
 using NzbDrone.Core.Qualities;
 using NzbDrone.Core.Security;
 
@@ -18,7 +17,7 @@ namespace NzbDrone.Core.Configuration
 {
     public enum ConfigKey
     {
-        DownloadedMoviesFolder
+        DownloadedEpisodesFolder
     }
 
     public class ConfigService : IConfigService
@@ -81,10 +80,10 @@ namespace NzbDrone.Core.Configuration
             return _repository.Get(key.ToLower()) != null;
         }
 
-        public bool AutoUnmonitorPreviouslyDownloadedMovies
+        public bool AutoUnmonitorPreviouslyDownloadedEpisodes
         {
-            get { return GetValueBoolean("AutoUnmonitorPreviouslyDownloadedMovies"); }
-            set { SetValue("AutoUnmonitorPreviouslyDownloadedMovies", value); }
+            get { return GetValueBoolean("AutoUnmonitorPreviouslyDownloadedEpisodes"); }
+            set { SetValue("AutoUnmonitorPreviouslyDownloadedEpisodes", value); }
         }
 
         public int Retention
@@ -107,41 +106,9 @@ namespace NzbDrone.Core.Configuration
 
         public int RssSyncInterval
         {
-            get { return GetValueInt("RssSyncInterval", 60); }
+            get { return GetValueInt("RssSyncInterval", 15); }
 
             set { SetValue("RssSyncInterval", value); }
-        }
-
-        public int AvailabilityDelay
-        {
-            get { return GetValueInt("AvailabilityDelay", 0); }
-            set { SetValue("AvailabilityDelay", value); }
-        }
-
-        public int ImportListSyncInterval
-        {
-            get { return GetValueInt("ImportListSyncInterval", 24); }
-
-            set { SetValue("ImportListSyncInterval", value); }
-        }
-
-        public string ListSyncLevel
-        {
-            get { return GetValue("ListSyncLevel", "disabled"); }
-            set { SetValue("ListSyncLevel", value); }
-        }
-
-        public string ImportExclusions
-        {
-            get { return GetValue("ImportExclusions", string.Empty); }
-            set { SetValue("ImportExclusions", value); }
-        }
-
-        public TMDbCountryCode CertificationCountry
-        {
-            get { return GetValueEnum("CertificationCountry", TMDbCountryCode.US); }
-
-            set { SetValue("CertificationCountry", value); }
         }
 
         public int MaximumSize
@@ -171,27 +138,6 @@ namespace NzbDrone.Core.Configuration
             set { SetValue("EnableCompletedDownloadHandling", value); }
         }
 
-        public bool PreferIndexerFlags
-        {
-            get { return GetValueBoolean("PreferIndexerFlags", false); }
-
-            set { SetValue("PreferIndexerFlags", value); }
-        }
-
-        public bool AllowHardcodedSubs
-        {
-            get { return GetValueBoolean("AllowHardcodedSubs", false); }
-
-            set { SetValue("AllowHardcodedSubs", value); }
-        }
-
-        public string WhitelistedHardcodedSubs
-        {
-            get { return GetValue("WhitelistedHardcodedSubs", ""); }
-
-            set { SetValue("WhitelistedHardcodedSubs", value); }
-        }
-
         public bool AutoRedownloadFailed
         {
             get { return GetValueBoolean("AutoRedownloadFailed", true); }
@@ -199,11 +145,11 @@ namespace NzbDrone.Core.Configuration
             set { SetValue("AutoRedownloadFailed", value); }
         }
 
-        public bool CreateEmptyMovieFolders
+        public bool CreateEmptySeriesFolders
         {
-            get { return GetValueBoolean("CreateEmptyMovieFolders", false); }
+            get { return GetValueBoolean("CreateEmptySeriesFolders", false); }
 
-            set { SetValue("CreateEmptyMovieFolders", value); }
+            set { SetValue("CreateEmptySeriesFolders", value); }
         }
 
         public bool DeleteEmptyFolders
@@ -224,13 +170,6 @@ namespace NzbDrone.Core.Configuration
         {
             get { return GetValue("DownloadClientWorkingFolders", "_UNPACK_|_FAILED_"); }
             set { SetValue("DownloadClientWorkingFolders", value); }
-        }
-
-        public int CheckForFinishedDownloadInterval
-        {
-            get { return GetValueInt("CheckForFinishedDownloadInterval", 1); }
-
-            set { SetValue("CheckForFinishedDownloadInterval", value); }
         }
 
         public int DownloadClientHistoryLimit
@@ -282,18 +221,18 @@ namespace NzbDrone.Core.Configuration
             set { SetValue("ExtraFileExtensions", value); }
         }
 
-        public bool AutoRenameFolders
-        {
-            get { return GetValueBoolean("AutoRenameFolders", false); }
-
-            set { SetValue("AutoRenameFolders", value); }
-        }
-
         public RescanAfterRefreshType RescanAfterRefresh
         {
             get { return GetValueEnum("RescanAfterRefresh", RescanAfterRefreshType.Always); }
 
             set { SetValue("RescanAfterRefresh", value); }
+        }
+
+        public EpisodeTitleRequiredType EpisodeTitleRequired
+        {
+            get { return GetValueEnum("EpisodeTitleRequired", EpisodeTitleRequiredType.Always); }
+
+            set { SetValue("EpisodeTitleRequired", value); }
         }
 
         public bool SetPermissionsLinux
@@ -331,13 +270,6 @@ namespace NzbDrone.Core.Configuration
             set { SetValue("CalendarWeekColumnHeader", value); }
         }
 
-        public MovieRuntimeFormatType MovieRuntimeFormat
-        {
-            get { return GetValueEnum("MovieRuntimeFormat", MovieRuntimeFormatType.HoursMinutes); }
-
-            set { SetValue("MovieRuntimeFormat", value); }
-        }
-
         public string ShortDateFormat
         {
             get { return GetValue("ShortDateFormat", "MMM D YYYY"); }
@@ -371,13 +303,6 @@ namespace NzbDrone.Core.Configuration
             get { return GetValueBoolean("EnableColorImpairedMode", false); }
 
             set { SetValue("EnableColorImpairedMode", value); }
-        }
-
-        public int MovieInfoLanguage
-        {
-            get { return GetValueInt("MovieInfoLanguage", (int)Language.English); }
-
-            set { SetValue("MovieInfoLanguage", value); }
         }
 
         public int UILanguage
@@ -428,6 +353,8 @@ namespace NzbDrone.Core.Configuration
 
         public CertificateValidationType CertificateValidation =>
             GetValueEnum("CertificateValidation", CertificateValidationType.Enabled);
+
+        public string ApplicationUrl => GetValue("ApplicationUrl", string.Empty);
 
         private string GetValue(string key)
         {

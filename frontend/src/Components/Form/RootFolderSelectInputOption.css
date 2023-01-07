@@ -15,23 +15,21 @@
 
 .value {
   display: flex;
-  max-width: 500px;
 }
 
-.movieFolder {
-  @add-mixin truncate;
-
-  color: $disabledColor;
+.seriesFolder {
+  flex: 0 0 auto;
+  color: var(--disabledColor);
 }
 
 .freeSpace {
   margin-left: 15px;
-  color: $darkGray;
+  color: var(--darkGray);
   font-size: $smallFontSize;
 }
 
 .isMissing {
   margin-left: 15px;
-  color: $dangerColor;
+  color: var(--dangerColor);
   font-size: $smallFontSize;
 }

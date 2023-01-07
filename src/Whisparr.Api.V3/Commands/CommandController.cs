@@ -49,6 +49,8 @@ namespace Whisparr.Api.V3.Commands
         }
 
         [RestPostById]
+        [Consumes("application/json")]
+        [Produces("application/json")]
         public ActionResult<CommandResource> StartCommand(CommandResource commandResource)
         {
             var commandType =
@@ -74,6 +76,7 @@ namespace Whisparr.Api.V3.Commands
         }
 
         [HttpGet]
+        [Produces("application/json")]
         public List<CommandResource> GetStartedCommands()
         {
             return _commandQueueManager.All()

@@ -1,10 +1,11 @@
-using FluentAssertions;
+﻿using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using NzbDrone.Common.Http;
 using NzbDrone.Core.Indexers.Exceptions;
 using NzbDrone.Core.Indexers.TorrentRss;
 using NzbDrone.Core.Test.Framework;
+using NzbDrone.Test.Common;
 
 namespace NzbDrone.Core.Test.IndexerTests.TorrentRssIndexerTests
 {
@@ -37,14 +38,14 @@ namespace NzbDrone.Core.Test.IndexerTests.TorrentRssIndexerTests
             var settings = Subject.Detect(_indexerSettings);
 
             settings.Should().BeEquivalentTo(new TorrentRssIndexerParserSettings
-            {
-                UseEZTVFormat = true,
-                UseEnclosureUrl = false,
-                UseEnclosureLength = false,
-                ParseSizeInDescription = false,
-                ParseSeedersInDescription = false,
-                SizeElementName = null
-            });
+                {
+                    UseEZTVFormat = true,
+                    UseEnclosureUrl = false,
+                    UseEnclosureLength = false,
+                    ParseSizeInDescription = false,
+                    ParseSeedersInDescription = false,
+                    SizeElementName = null
+                });
         }
 
         [Test]
@@ -283,7 +284,7 @@ namespace NzbDrone.Core.Test.IndexerTests.TorrentRssIndexerTests
 
             var ex = Assert.Throws<UnsupportedFeedException>(() => Subject.Detect(_indexerSettings));
 
-            ex.Message.Should().Contain("Rss feed must have a pubDate");
+            ex.Message.Should().Contain("RSS feed must have a pubDate");
         }
 
         [TestCase("Torrentleech/Torrentleech.xml")]

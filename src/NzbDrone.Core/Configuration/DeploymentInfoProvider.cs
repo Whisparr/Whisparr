@@ -1,6 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using NzbDrone.Common.Disk;
 using NzbDrone.Common.EnvironmentInfo;
 using NzbDrone.Common.Extensions;
@@ -34,7 +38,7 @@ namespace NzbDrone.Core.Configuration
             var releaseInfoPath = Path.Combine(bin, "release_info");
 
             PackageUpdateMechanism = UpdateMechanism.BuiltIn;
-            DefaultBranch = "master";
+            DefaultBranch = "main";
 
             if (Path.GetFileName(bin) == "bin" && diskProvider.FileExists(packageInfoPath))
             {

@@ -1,5 +1,5 @@
+using System.Linq;
 using NLog;
-using NzbDrone.Common.Extensions;
 using NzbDrone.Core.CustomFormats;
 using NzbDrone.Core.IndexerSearch.Definitions;
 using NzbDrone.Core.Parser.Model;
@@ -24,28 +24,26 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
         public SpecificationPriority Priority => SpecificationPriority.Default;
         public RejectionType Type => RejectionType.Permanent;
 
-        public virtual Decision IsSatisfiedBy(RemoteMovie subject, SearchCriteriaBase searchCriteria)
+        public virtual Decision IsSatisfiedBy(RemoteEpisode subject, SearchCriteriaBase searchCriteria)
         {
-            var qualityProfile = subject.Movie.Profile;
+            var qualityProfile = subject.Series.QualityProfile.Value;
 
-            if (subject.Movie.MovieFileId != 0)
+            foreach (var file in subject.Episodes.Where(c => c.EpisodeFileId != 0).Select(c => c.EpisodeFile.Value))
             {
-                var file = subject.Movie.MovieFile;
-
                 if (file == null)
                 {
                     _logger.Debug("File is no longer available, skipping this file.");
-                    return Decision.Accept();
+                    continue;
                 }
 
-                file.Movie = subject.Movie;
-                var customFormats = _formatService.ParseCustomFormat(file);
-                _logger.Debug("Comparing file quality with report. Existing file is {0} [{1}]", file.Quality, customFormats.ConcatToString());
+                var fileCustomFormats = _formatService.ParseCustomFormat(file, subject.Series);
+
+                _logger.Debug("Comparing file quality with report. Existing file is {0}", file.Quality);
 
                 if (!_upgradableSpecification.IsUpgradeAllowed(qualityProfile,
                                                                file.Quality,
-                                                               customFormats,
-                                                               subject.ParsedMovieInfo.Quality,
+                                                               fileCustomFormats,
+                                                               subject.ParsedEpisodeInfo.Quality,
                                                                subject.CustomFormats))
                 {
                     _logger.Debug("Upgrading is not allowed by the quality profile");

@@ -36,6 +36,7 @@ namespace Whisparr.Api.V3.Queue
         }
 
         [HttpGet]
+        [Produces("application/json")]
         public QueueStatusResource GetQueueStatus()
         {
             _broadcastDebounce.Pause();
@@ -46,12 +47,12 @@ namespace Whisparr.Api.V3.Queue
             var resource = new QueueStatusResource
             {
                 TotalCount = queue.Count + pending.Count,
-                Count = queue.Count(q => q.Movie != null) + pending.Count,
-                UnknownCount = queue.Count(q => q.Movie == null),
-                Errors = queue.Any(q => q.Movie != null && q.TrackedDownloadStatus == TrackedDownloadStatus.Error),
-                Warnings = queue.Any(q => q.Movie != null && q.TrackedDownloadStatus == TrackedDownloadStatus.Warning),
-                UnknownErrors = queue.Any(q => q.Movie == null && q.TrackedDownloadStatus == TrackedDownloadStatus.Error),
-                UnknownWarnings = queue.Any(q => q.Movie == null && q.TrackedDownloadStatus == TrackedDownloadStatus.Warning)
+                Count = queue.Count(q => q.Series != null) + pending.Count,
+                UnknownCount = queue.Count(q => q.Series == null),
+                Errors = queue.Any(q => q.Series != null && q.TrackedDownloadStatus == TrackedDownloadStatus.Error),
+                Warnings = queue.Any(q => q.Series != null && q.TrackedDownloadStatus == TrackedDownloadStatus.Warning),
+                UnknownErrors = queue.Any(q => q.Series == null && q.TrackedDownloadStatus == TrackedDownloadStatus.Error),
+                UnknownWarnings = queue.Any(q => q.Series == null && q.TrackedDownloadStatus == TrackedDownloadStatus.Warning)
             };
 
             _broadcastDebounce.Resume();

@@ -22,21 +22,20 @@ namespace NzbDrone.Core.Download.Clients.Blackhole
         public UsenetBlackhole(IScanWatchFolder scanWatchFolder,
                                IHttpClient httpClient,
                                IConfigService configService,
-                               INamingConfigService namingConfigService,
                                IDiskProvider diskProvider,
                                IRemotePathMappingService remotePathMappingService,
                                IValidateNzbs nzbValidationService,
                                Logger logger)
-            : base(httpClient, configService, namingConfigService, diskProvider, remotePathMappingService, nzbValidationService, logger)
+            : base(httpClient, configService, diskProvider, remotePathMappingService, nzbValidationService, logger)
         {
             _scanWatchFolder = scanWatchFolder;
 
             ScanGracePeriod = TimeSpan.FromSeconds(30);
         }
 
-        protected override string AddFromNzbFile(RemoteMovie remoteMovie, string filename, byte[] fileContent)
+        protected override string AddFromNzbFile(RemoteEpisode remoteEpisode, string filename, byte[] fileContent)
         {
-            var title = remoteMovie.Release.Title;
+            var title = remoteEpisode.Release.Title;
 
             title = FileNameBuilder.CleanFileName(title);
 
@@ -62,7 +61,7 @@ namespace NzbDrone.Core.Download.Clients.Blackhole
                 {
                     DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this),
                     DownloadId = Definition.Name + "_" + item.DownloadId,
-                    Category = "Whisparr",
+                    Category = "whisparr",
                     Title = item.Title,
 
                     TotalSize = item.TotalSize,

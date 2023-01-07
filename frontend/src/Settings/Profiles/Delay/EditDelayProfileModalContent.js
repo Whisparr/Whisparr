@@ -14,8 +14,14 @@ import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { inputTypes, kinds } from 'Helpers/Props';
 import { boolSettingShape, numberSettingShape, tagSettingShape } from 'Helpers/Props/Shapes/settingShape';
-import translate from 'Utilities/String/translate';
 import styles from './EditDelayProfileModalContent.css';
+
+const protocolOptions = [
+  { key: 'preferUsenet', value: 'Prefer Usenet' },
+  { key: 'preferTorrent', value: 'Prefer Torrent' },
+  { key: 'onlyUsenet', value: 'Only Usenet' },
+  { key: 'onlyTorrent', value: 'Only Torrent' }
+];
 
 function EditDelayProfileModalContent(props) {
   const {
@@ -26,7 +32,6 @@ function EditDelayProfileModalContent(props) {
     saveError,
     item,
     protocol,
-    protocolOptions,
     onInputChange,
     onProtocolChange,
     onSavePress,
@@ -47,34 +52,34 @@ function EditDelayProfileModalContent(props) {
   return (
     <ModalContent onModalClose={onModalClose}>
       <ModalHeader>
-        {id ? translate('EditDelayProfile') : translate('AddDelayProfile')}
+        {id ? 'Edit Delay Profile' : 'Add Delay Profile'}
       </ModalHeader>
 
       <ModalBody>
         {
-          isFetching &&
-            <LoadingIndicator />
+          isFetching ?
+            <LoadingIndicator /> :
+            null
         }
 
         {
-          !isFetching && !!error &&
-            <div>
-              {translate('UnableToAddANewQualityProfilePleaseTryAgain')}
-            </div>
+          !isFetching && !!error ?
+            <div>Unable to add a new quality profile, please try again.</div> :
+            null
         }
 
         {
-          !isFetching && !error &&
+          !isFetching && !error ?
             <Form {...otherProps}>
               <FormGroup>
-                <FormLabel>{translate('Protocol')}</FormLabel>
+                <FormLabel>Preferred Protocol</FormLabel>
 
                 <FormInputGroup
                   type={inputTypes.SELECT}
                   name="protocol"
                   value={protocol}
                   values={protocolOptions}
-                  helpText={translate('ProtocolHelpText')}
+                  helpText="Choose which protocol(s) to use and which one is preferred when choosing between otherwise equal releases"
                   onChange={onProtocolChange}
                 />
               </FormGroup>
@@ -82,14 +87,14 @@ function EditDelayProfileModalContent(props) {
               {
                 enableUsenet.value &&
                   <FormGroup>
-                    <FormLabel>{translate('UsenetDelay')}</FormLabel>
+                    <FormLabel>Usenet Delay</FormLabel>
 
                     <FormInputGroup
                       type={inputTypes.NUMBER}
                       name="usenetDelay"
                       unit="minutes"
                       {...usenetDelay}
-                      helpText={translate('UsenetDelayHelpText')}
+                      helpText="Delay in minutes to wait before grabbing a release from Usenet"
                       onChange={onInputChange}
                     />
                   </FormGroup>
@@ -98,14 +103,14 @@ function EditDelayProfileModalContent(props) {
               {
                 enableTorrent.value &&
                   <FormGroup>
-                    <FormLabel>{translate('TorrentDelay')}</FormLabel>
+                    <FormLabel>Torrent Delay</FormLabel>
 
                     <FormInputGroup
                       type={inputTypes.NUMBER}
                       name="torrentDelay"
                       unit="minutes"
                       {...torrentDelay}
-                      helpText={translate('TorrentDelayHelpText')}
+                      helpText="Delay in minutes to wait before grabbing a torrent"
                       onChange={onInputChange}
                     />
                   </FormGroup>
@@ -113,13 +118,13 @@ function EditDelayProfileModalContent(props) {
 
               {
                 <FormGroup>
-                  <FormLabel>{translate('BypassDelayIfHighestQuality')}</FormLabel>
+                  <FormLabel>Bypass if Highest Quality</FormLabel>
 
                   <FormInputGroup
                     type={inputTypes.CHECK}
                     name="bypassIfHighestQuality"
                     {...bypassIfHighestQuality}
-                    helpText={translate('BypassDelayIfHighestQualityHelpText')}
+                    helpText="Bypass delay when release has the highest enabled quality in the quality profile with the preferred protocol"
                     onChange={onInputChange}
                   />
                 </FormGroup>
@@ -128,40 +133,42 @@ function EditDelayProfileModalContent(props) {
               {
                 id === 1 ?
                   <Alert>
-                    {translate('DefaultDelayProfile')}
+                    This is the default profile. It applies to all series that don't have an explicit profile.
                   </Alert> :
 
                   <FormGroup>
-                    <FormLabel>{translate('Tags')}</FormLabel>
+                    <FormLabel>Tags</FormLabel>
 
                     <FormInputGroup
                       type={inputTypes.TAG}
                       name="tags"
                       {...tags}
-                      helpText={translate('TagsHelpText')}
+                      helpText="Applies to series with at least one matching tag"
                       onChange={onInputChange}
                     />
                   </FormGroup>
               }
-            </Form>
+            </Form> :
+            null
         }
       </ModalBody>
       <ModalFooter>
         {
-          id && id > 1 &&
+          id && id > 1 ?
             <Button
               className={styles.deleteButton}
               kind={kinds.DANGER}
               onPress={onDeleteDelayProfilePress}
             >
-              {translate('Delete')}
-            </Button>
+              Delete
+            </Button> :
+            null
         }
 
         <Button
           onPress={onModalClose}
         >
-          {translate('Cancel')}
+          Cancel
         </Button>
 
         <SpinnerErrorButton
@@ -169,7 +176,7 @@ function EditDelayProfileModalContent(props) {
           error={saveError}
           onPress={onSavePress}
         >
-          {translate('Save')}
+          Save
         </SpinnerErrorButton>
       </ModalFooter>
     </ModalContent>
@@ -193,7 +200,6 @@ EditDelayProfileModalContent.propTypes = {
   saveError: PropTypes.object,
   item: PropTypes.shape(delayProfileShape).isRequired,
   protocol: PropTypes.string.isRequired,
-  protocolOptions: PropTypes.arrayOf(PropTypes.object).isRequired,
   onInputChange: PropTypes.func.isRequired,
   onProtocolChange: PropTypes.func.isRequired,
   onSavePress: PropTypes.func.isRequired,

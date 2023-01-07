@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using NLog;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.IndexerSearch.Definitions;
@@ -9,13 +10,13 @@ namespace NzbDrone.Core.DecisionEngine.Specifications.RssSync
 {
     public class ProperSpecification : IDecisionEngineSpecification
     {
-        private readonly UpgradableSpecification _qualityUpgradableSpecification;
+        private readonly UpgradableSpecification _upgradableSpecification;
         private readonly IConfigService _configService;
         private readonly Logger _logger;
 
-        public ProperSpecification(UpgradableSpecification qualityUpgradableSpecification, IConfigService configService, Logger logger)
+        public ProperSpecification(UpgradableSpecification upgradableSpecification, IConfigService configService, Logger logger)
         {
-            _qualityUpgradableSpecification = qualityUpgradableSpecification;
+            _upgradableSpecification = upgradableSpecification;
             _configService = configService;
             _logger = logger;
         }
@@ -23,7 +24,7 @@ namespace NzbDrone.Core.DecisionEngine.Specifications.RssSync
         public SpecificationPriority Priority => SpecificationPriority.Default;
         public RejectionType Type => RejectionType.Permanent;
 
-        public virtual Decision IsSatisfiedBy(RemoteMovie subject, SearchCriteriaBase searchCriteria)
+        public virtual Decision IsSatisfiedBy(RemoteEpisode subject, SearchCriteriaBase searchCriteria)
         {
             if (searchCriteria != null)
             {
@@ -38,25 +39,21 @@ namespace NzbDrone.Core.DecisionEngine.Specifications.RssSync
                 return Decision.Accept();
             }
 
-            if (subject.Movie.MovieFile == null)
+            foreach (var file in subject.Episodes.Where(c => c.EpisodeFileId != 0).Select(c => c.EpisodeFile.Value))
             {
-                return Decision.Accept();
-            }
-
-            var file = subject.Movie.MovieFile;
-
-            if (_qualityUpgradableSpecification.IsRevisionUpgrade(file.Quality, subject.ParsedMovieInfo.Quality))
-            {
-                if (downloadPropersAndRepacks == ProperDownloadTypes.DoNotUpgrade)
+                if (_upgradableSpecification.IsRevisionUpgrade(file.Quality, subject.ParsedEpisodeInfo.Quality))
                 {
-                    _logger.Debug("Auto downloading of propers is disabled");
-                    return Decision.Reject("Proper downloading is disabled");
-                }
+                    if (downloadPropersAndRepacks == ProperDownloadTypes.DoNotUpgrade)
+                    {
+                        _logger.Debug("Auto downloading of propers is disabled");
+                        return Decision.Reject("Proper downloading is disabled");
+                    }
 
-                if (file.DateAdded < DateTime.Today.AddDays(-7))
-                {
-                    _logger.Debug("Proper for old file, rejecting: {0}", subject);
-                    return Decision.Reject("Proper for old file");
+                    if (file.DateAdded < DateTime.Today.AddDays(-7))
+                    {
+                        _logger.Debug("Proper for old file, rejecting: {0}", subject);
+                        return Decision.Reject("Proper for old file");
+                    }
                 }
             }
 

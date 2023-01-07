@@ -10,9 +10,6 @@ namespace NzbDrone.Core.Test.Languages
     {
         public static object[] FromIntCases =
             {
-                new object[] { -2, Language.Original },
-                new object[] { -1, Language.Any },
-                new object[] { 0, Language.Unknown },
                 new object[] { 1, Language.English },
                 new object[] { 2, Language.French },
                 new object[] { 3, Language.Spanish },
@@ -38,22 +35,19 @@ namespace NzbDrone.Core.Test.Languages
                 new object[] { 23, Language.Hebrew },
                 new object[] { 24, Language.Lithuanian },
                 new object[] { 25, Language.Czech },
-                new object[] { 26, Language.Hindi },
-                new object[] { 27, Language.Romanian },
-                new object[] { 28, Language.Thai },
-                new object[] { 29, Language.Bulgarian },
-                new object[] { 30, Language.PortugueseBR },
-                new object[] { 31, Language.Arabic },
-                new object[] { 32, Language.Ukrainian },
-                new object[] { 33, Language.Persian },
-                new object[] { 34, Language.Bengali },
+                new object[] { 26, Language.Arabic },
+                new object[] { 27, Language.Hindi },
+                new object[] { 28, Language.Bulgarian },
+                new object[] { 29, Language.Malayalam },
+                new object[] { 30, Language.Ukrainian },
+                new object[] { 31, Language.Slovak },
+                new object[] { 32, Language.Thai },
+                new object[] { 33, Language.PortugueseBrazil },
+                new object[] { 34, Language.SpanishLatino }
             };
 
         public static object[] ToIntCases =
             {
-                new object[] { Language.Original, -2 },
-                new object[] { Language.Any, -1 },
-                new object[] { Language.Unknown, 0 },
                 new object[] { Language.English, 1 },
                 new object[] { Language.French, 2 },
                 new object[] { Language.Spanish, 3 },
@@ -79,15 +73,15 @@ namespace NzbDrone.Core.Test.Languages
                 new object[] { Language.Hebrew, 23 },
                 new object[] { Language.Lithuanian, 24 },
                 new object[] { Language.Czech, 25 },
-                new object[] { Language.Hindi, 26 },
-                new object[] { Language.Romanian, 27 },
-                new object[] { Language.Thai, 28 },
-                new object[] { Language.Bulgarian, 29 },
-                new object[] { Language.PortugueseBR, 30 },
-                new object[] { Language.Arabic, 31 },
-                new object[] { Language.Ukrainian, 32 },
-                new object[] { Language.Persian, 33 },
-                new object[] { Language.Bengali, 34 },
+                new object[] { Language.Arabic, 26 },
+                new object[] { Language.Hindi, 27 },
+                new object[] { Language.Bulgarian, 28 },
+                new object[] { Language.Malayalam, 29 },
+                new object[] { Language.Ukrainian, 30 },
+                new object[] { Language.Slovak, 31 },
+                new object[] { Language.Thai, 32 },
+                new object[] { Language.PortugueseBrazil, 33 },
+                new object[] { Language.SpanishLatino, 34 }
             };
 
         [Test]

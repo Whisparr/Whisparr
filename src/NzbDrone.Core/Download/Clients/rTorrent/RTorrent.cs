@@ -12,7 +12,6 @@ using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Download.Clients.rTorrent;
 using NzbDrone.Core.Exceptions;
 using NzbDrone.Core.MediaFiles.TorrentInfo;
-using NzbDrone.Core.Organizer;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.RemotePathMappings;
 using NzbDrone.Core.ThingiProvider;
@@ -31,13 +30,12 @@ namespace NzbDrone.Core.Download.Clients.RTorrent
                         ITorrentFileInfoReader torrentFileInfoReader,
                         IHttpClient httpClient,
                         IConfigService configService,
-                        INamingConfigService namingConfigService,
                         IDiskProvider diskProvider,
                         IRemotePathMappingService remotePathMappingService,
                         IDownloadSeedConfigProvider downloadSeedConfigProvider,
                         IRTorrentDirectoryValidator rTorrentDirectoryValidator,
                         Logger logger)
-            : base(torrentFileInfoReader, httpClient, configService, namingConfigService, diskProvider, remotePathMappingService, logger)
+            : base(torrentFileInfoReader, httpClient, configService, diskProvider, remotePathMappingService, logger)
         {
             _proxy = proxy;
             _rTorrentDirectoryValidator = rTorrentDirectoryValidator;
@@ -47,15 +45,19 @@ namespace NzbDrone.Core.Download.Clients.RTorrent
         public override void MarkItemAsImported(DownloadClientItem downloadClientItem)
         {
             // Set post-import label
-            if (Settings.MovieImportedCategory.IsNotNullOrWhiteSpace() && Settings.MovieImportedCategory != Settings.MovieCategory)
+            if (Settings.TvImportedCategory.IsNotNullOrWhiteSpace() &&
+                Settings.TvImportedCategory != Settings.TvCategory)
             {
                 try
                 {
-                    _proxy.SetTorrentLabel(downloadClientItem.DownloadId.ToLower(), Settings.MovieImportedCategory, Settings);
+                    _proxy.SetTorrentLabel(downloadClientItem.DownloadId.ToLower(), Settings.TvImportedCategory, Settings);
                 }
                 catch (Exception ex)
                 {
-                    _logger.Warn(ex, "Failed to set torrent post-import label \"{0}\" for {1} in rTorrent. Does the label exist?", Settings.MovieImportedCategory, downloadClientItem.Title);
+                    _logger.Warn(ex,
+                        "Failed to set torrent post-import label \"{0}\" for {1} in rTorrent. Does the label exist?",
+                        Settings.TvImportedCategory,
+                        downloadClientItem.Title);
                 }
             }
 
@@ -66,15 +68,18 @@ namespace NzbDrone.Core.Download.Clients.RTorrent
             }
             catch (Exception ex)
             {
-                _logger.Warn(ex, "Failed to set torrent post-import view \"{0}\" for {1} in rTorrent.", _imported_view, downloadClientItem.Title);
+                _logger.Warn(ex,
+                    "Failed to set torrent post-import view \"{0}\" for {1} in rTorrent.",
+                    _imported_view,
+                    downloadClientItem.Title);
             }
         }
 
-        protected override string AddFromMagnetLink(RemoteMovie remoteMovie, string hash, string magnetLink)
+        protected override string AddFromMagnetLink(RemoteEpisode remoteEpisode, string hash, string magnetLink)
         {
-            var priority = (RTorrentPriority)(remoteMovie.Movie.MediaMetadata.Value.IsRecentMovie ? Settings.RecentMoviePriority : Settings.OlderMoviePriority);
+            var priority = (RTorrentPriority)(remoteEpisode.IsRecentEpisode() ? Settings.RecentTvPriority : Settings.OlderTvPriority);
 
-            _proxy.AddTorrentFromUrl(magnetLink, Settings.MovieCategory, priority, Settings.MovieDirectory, Settings);
+            _proxy.AddTorrentFromUrl(magnetLink, Settings.TvCategory, priority, Settings.TvDirectory, Settings);
 
             var tries = 10;
             var retryDelay = 500;
@@ -90,11 +95,11 @@ namespace NzbDrone.Core.Download.Clients.RTorrent
             return hash;
         }
 
-        protected override string AddFromTorrentFile(RemoteMovie remoteMovie, string hash, string filename, byte[] fileContent)
+        protected override string AddFromTorrentFile(RemoteEpisode remoteEpisode, string hash, string filename, byte[] fileContent)
         {
-            var priority = (RTorrentPriority)(remoteMovie.Movie.MediaMetadata.Value.IsRecentMovie ? Settings.RecentMoviePriority : Settings.OlderMoviePriority);
+            var priority = (RTorrentPriority)(remoteEpisode.IsRecentEpisode() ? Settings.RecentTvPriority : Settings.OlderTvPriority);
 
-            _proxy.AddTorrentFromFile(filename, fileContent, Settings.MovieCategory, priority, Settings.MovieDirectory, Settings);
+            _proxy.AddTorrentFromFile(filename, fileContent, Settings.TvCategory, priority, Settings.TvDirectory, Settings);
 
             var tries = 10;
             var retryDelay = 500;
@@ -102,7 +107,7 @@ namespace NzbDrone.Core.Download.Clients.RTorrent
             {
                 _logger.Debug("rTorrent didn't add the torrent within {0} seconds: {1}.", tries * retryDelay / 1000, filename);
 
-                throw new ReleaseDownloadException(remoteMovie.Release, "Downloading torrent failed");
+                throw new ReleaseDownloadException(remoteEpisode.Release, "Downloading torrent failed");
             }
 
             return hash;
@@ -110,7 +115,7 @@ namespace NzbDrone.Core.Download.Clients.RTorrent
 
         public override string Name => "rTorrent";
 
-        public override ProviderMessage Message => new ProviderMessage($"Whisparr will handle automatic removal of torrents based on the current seed criteria in Settings->Indexers. After importing it will also set \"{_imported_view}\" as an rTorrent view, which can be used in rTorrent scripts to customize behavior.", ProviderMessageType.Info);
+        public override ProviderMessage Message => new ProviderMessage($"rTorrent will not pause torrents when they meet the seed criteria. Whisparr will handle automatic removal of torrents based on the current seed criteria in Settings->Indexers only when Remove Completed is enabled.  After importing it will also set \"{_imported_view}\" as an rTorrent view, which can be used in rTorrent scripts to customize behavior.", ProviderMessageType.Info);
 
         public override IEnumerable<DownloadClientItem> GetItems()
         {
@@ -122,7 +127,7 @@ namespace NzbDrone.Core.Download.Clients.RTorrent
             foreach (RTorrentTorrent torrent in torrents)
             {
                 // Don't concern ourselves with categories other than specified
-                if (Settings.MovieCategory.IsNotNullOrWhiteSpace() && torrent.Category != Settings.MovieCategory)
+                if (Settings.TvCategory.IsNotNullOrWhiteSpace() && torrent.Category != Settings.TvCategory)
                 {
                     continue;
                 }
@@ -200,6 +205,7 @@ namespace NzbDrone.Core.Download.Clients.RTorrent
         public override DownloadClientInfo GetStatus()
         {
             // XXX: This function's correctness has not been considered
+
             var status = new DownloadClientInfo
             {
                 IsLocalhost = Settings.Host == "127.0.0.1" || Settings.Host == "localhost"

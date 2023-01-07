@@ -1,22 +1,17 @@
-import _ from 'lodash';
 import { createSelector } from 'reselect';
-import createAllMoviesSelector from './createAllMoviesSelector';
+import createAllSeriesSelector from './createAllSeriesSelector';
 
 function createProfileInUseSelector(profileProp) {
   return createSelector(
     (state, { id }) => id,
-    createAllMoviesSelector(),
+    createAllSeriesSelector(),
     (state) => state.settings.importLists.items,
-    (id, movies, lists) => {
+    (id, series, lists) => {
       if (!id) {
         return false;
       }
 
-      if (_.some(movies, { [profileProp]: id }) || _.some(lists, { [profileProp]: id })) {
-        return true;
-      }
-
-      return false;
+      return series.some((s) => s[profileProp] === id) || lists.some((list) => list[profileProp] === id);
     }
   );
 }

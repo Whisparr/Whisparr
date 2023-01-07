@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using NLog;
 using NzbDrone.Common.Disk;
@@ -7,6 +7,8 @@ using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.MediaFiles.Commands;
 using NzbDrone.Core.Messaging.Commands;
+using NzbDrone.Core.Messaging.Events;
+using NzbDrone.Core.Tv.Events;
 
 namespace NzbDrone.Core.MediaFiles
 {
@@ -179,16 +181,7 @@ namespace NzbDrone.Core.MediaFiles
                     continue;
                 }
 
-                try
-                {
-                    _diskProvider.DeleteFile(file);
-                }
-                catch (UnauthorizedAccessException ex)
-                {
-                    //Handle and log permissions errors, move to next file
-                    _logger.Error(ex.Message);
-                    continue;
-                }
+                _diskProvider.DeleteFile(file);
             }
 
             _diskProvider.RemoveEmptySubfolders(_configService.RecycleBin);

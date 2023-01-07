@@ -11,7 +11,7 @@ namespace NzbDrone.Core.Languages
             return Language.All
                 .OrderBy(l => l.Id > 0).ThenBy(l => l.Name)
                 .ToList()
-                .ConvertAll(v => new SelectOption { Value = v.Id, Name = v.Name, DividerAfter = v.Id == Language.Unknown.Id });
+                .ConvertAll(v => new SelectOption { Value = v.Id, Name = v.Name });
         }
     }
 }

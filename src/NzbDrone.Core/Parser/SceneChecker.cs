@@ -1,43 +1,32 @@
-namespace NzbDrone.Core.Parser
+﻿namespace NzbDrone.Core.Parser
 {
     public static class SceneChecker
     {
-        //This method should prefer false negatives over false positives.
-        //It's better not to use a title that might be scene than to use one that isn't scene
-        public static string GetSceneTitle(string title)
+        // This method should prefer false negatives over false positives.
+        // It's better not to use a title that might be scene than to use one that isn't scene
+        public static bool IsSceneTitle(string title)
         {
-            if (title == null)
-            {
-                return null;
-            }
-
             if (!title.Contains("."))
             {
-                return null;
+                return false;
             }
 
             if (title.Contains(" "))
             {
-                return null;
+                return false;
             }
 
-            var parsedTitle = Parser.ParseMovieTitle(title);
+            var parsedTitle = Parser.ParseTitle(title);
 
             if (parsedTitle == null ||
                 parsedTitle.ReleaseGroup == null ||
                 parsedTitle.Quality.Quality == Qualities.Quality.Unknown ||
-                string.IsNullOrWhiteSpace(parsedTitle.PrimaryMovieTitle) ||
-                string.IsNullOrWhiteSpace(parsedTitle.ReleaseTitle))
+                string.IsNullOrWhiteSpace(parsedTitle.SeriesTitle))
             {
-                return null;
+                return false;
             }
 
-            return parsedTitle.ReleaseTitle;
-        }
-
-        public static bool IsSceneTitle(string title)
-        {
-            return GetSceneTitle(title) != null;
+            return true;
         }
     }
 }

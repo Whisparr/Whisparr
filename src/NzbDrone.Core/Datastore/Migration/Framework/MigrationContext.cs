@@ -8,6 +8,7 @@ namespace NzbDrone.Core.Datastore.Migration.Framework
 
         public MigrationType MigrationType { get; private set; }
         public long? DesiredVersion { get; set; }
+
         public Action<NzbDroneMigrationBase> BeforeMigration { get; set; }
 
         public MigrationContext(MigrationType migrationType, long? desiredVersion = null)

@@ -9,7 +9,7 @@ namespace NzbDrone.Core.Notifications.Notifiarr
     {
         public NotifiarrSettingsValidator()
         {
-            RuleFor(c => c.APIKey).NotEmpty();
+            RuleFor(c => c.ApiKey).NotEmpty();
         }
     }
 
@@ -18,9 +18,7 @@ namespace NzbDrone.Core.Notifications.Notifiarr
         private static readonly NotifiarrSettingsValidator Validator = new NotifiarrSettingsValidator();
 
         [FieldDefinition(0, Label = "API Key", Privacy = PrivacyLevel.ApiKey, HelpText = "Your API key from your profile", HelpLink = "https://notifiarr.com")]
-        public string APIKey { get; set; }
-        [FieldDefinition(1, Label = "Instance Name", Advanced = true, HelpText = "Unique name for this instance", HelpLink = "https://notifiarr.com")]
-        public string InstanceName { get; set; }
+        public string ApiKey { get; set; }
 
         public NzbDroneValidationResult Validate()
         {

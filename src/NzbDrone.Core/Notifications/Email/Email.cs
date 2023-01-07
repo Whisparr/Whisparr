@@ -8,7 +8,7 @@ using MimeKit;
 using NLog;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http.Dispatchers;
-using NzbDrone.Core.Movies;
+using NzbDrone.Core.Security;
 
 namespace NzbDrone.Core.Notifications.Email
 {
@@ -31,35 +31,28 @@ namespace NzbDrone.Core.Notifications.Email
         {
             var body = $"{grabMessage.Message} sent to queue.";
 
-            SendEmail(Settings, MOVIE_GRABBED_TITLE_BRANDED, body);
+            SendEmail(Settings, EPISODE_GRABBED_TITLE_BRANDED, body);
         }
 
         public override void OnDownload(DownloadMessage message)
         {
             var body = $"{message.Message} Downloaded and sorted.";
 
-            SendEmail(Settings, MOVIE_DOWNLOADED_TITLE_BRANDED, body);
+            SendEmail(Settings, EPISODE_DOWNLOADED_TITLE_BRANDED, body);
         }
 
-        public override void OnMovieAdded(Media movie)
-        {
-            var body = $"{movie.Title} added to library.";
-
-            SendEmail(Settings, MOVIE_ADDED_TITLE_BRANDED, body);
-        }
-
-        public override void OnMovieFileDelete(MovieFileDeleteMessage deleteMessage)
+        public override void OnEpisodeFileDelete(EpisodeDeleteMessage deleteMessage)
         {
             var body = $"{deleteMessage.Message} deleted.";
 
-            SendEmail(Settings, MOVIE_FILE_DELETED_TITLE_BRANDED, body);
+            SendEmail(Settings, EPISODE_DELETED_TITLE_BRANDED, body);
         }
 
-        public override void OnMovieDelete(MovieDeleteMessage deleteMessage)
+        public override void OnSeriesDelete(SeriesDeleteMessage deleteMessage)
         {
             var body = $"{deleteMessage.Message}";
 
-            SendEmail(Settings, MOVIE_DELETED_TITLE_BRANDED, body);
+            SendEmail(Settings, SERIES_DELETED_TITLE_BRANDED, body);
         }
 
         public override void OnHealthIssue(HealthCheck.HealthCheck message)
@@ -83,30 +76,13 @@ namespace NzbDrone.Core.Notifications.Email
             return new ValidationResult(failures);
         }
 
-        public ValidationFailure Test(EmailSettings settings)
-        {
-            const string body = "Success! You have properly configured your email notification settings";
-
-            try
-            {
-                SendEmail(settings, "Whisparr - Test Notification", body);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex, "Unable to send test email");
-                return new ValidationFailure("Server", "Unable to send test email");
-            }
-
-            return null;
-        }
-
         private void SendEmail(EmailSettings settings, string subject, string body, bool htmlBody = false)
         {
             var email = new MimeMessage();
 
             email.From.Add(ParseAddress("From", settings.From));
             email.To.AddRange(settings.To.Select(x => ParseAddress("To", x)));
-            email.Cc.AddRange(settings.CC.Select(x => ParseAddress("CC", x)));
+            email.Cc.AddRange(settings.Cc.Select(x => ParseAddress("CC", x)));
             email.Bcc.AddRange(settings.Bcc.Select(x => ParseAddress("BCC", x)));
 
             email.Subject = subject;
@@ -129,7 +105,7 @@ namespace NzbDrone.Core.Notifications.Email
                 throw;
             }
 
-            _logger.Debug("Finished sending email. Subject: {0}", email.Subject);
+            _logger.Debug("Finished sending email. Subject: {0}", subject);
         }
 
         private void Send(MimeMessage email, EmailSettings settings)
@@ -175,6 +151,23 @@ namespace NzbDrone.Core.Notifications.Email
 
                 _logger.Debug("Disconnecting from mail server");
             }
+        }
+
+        public ValidationFailure Test(EmailSettings settings)
+        {
+            const string body = "Success! You have properly configured your email notification settings";
+
+            try
+            {
+                SendEmail(settings, "Whisparr - Test Notification", body);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Unable to send test email");
+                return new ValidationFailure("Server", "Unable to send test email");
+            }
+
+            return null;
         }
 
         private MailboxAddress ParseAddress(string type, string address)

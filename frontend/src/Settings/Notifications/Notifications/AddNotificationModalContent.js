@@ -6,7 +6,6 @@ import ModalBody from 'Components/Modal/ModalBody';
 import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
-import translate from 'Utilities/String/translate';
 import AddNotificationItem from './AddNotificationItem';
 import styles from './AddNotificationModalContent.css';
 
@@ -28,7 +27,7 @@ class AddNotificationModalContent extends Component {
     return (
       <ModalContent onModalClose={onModalClose}>
         <ModalHeader>
-          {translate('AddNotification')}
+          Add Notification
         </ModalHeader>
 
         <ModalBody>
@@ -39,9 +38,7 @@ class AddNotificationModalContent extends Component {
 
           {
             !isSchemaFetching && !!schemaError &&
-              <div>
-                {translate('UnableToAddANewNotificationPleaseTryAgain')}
-              </div>
+              <div>Unable to add a new notification, please try again.</div>
           }
 
           {
@@ -68,7 +65,7 @@ class AddNotificationModalContent extends Component {
           <Button
             onPress={onModalClose}
           >
-            {translate('Close')}
+            Close
           </Button>
         </ModalFooter>
       </ModalContent>

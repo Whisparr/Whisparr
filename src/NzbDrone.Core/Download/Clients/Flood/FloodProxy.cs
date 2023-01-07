@@ -129,7 +129,7 @@ namespace NzbDrone.Core.Download.Clients.Flood
                 body.Add("destination", settings.Destination);
             }
 
-            if (!settings.AddPaused)
+            if (settings.StartOnAdd)
             {
                 body.Add("start", true);
             }
@@ -154,7 +154,7 @@ namespace NzbDrone.Core.Download.Clients.Flood
                 body.Add("destination", settings.Destination);
             }
 
-            if (!settings.AddPaused)
+            if (settings.StartOnAdd)
             {
                 body.Add("start", true);
             }

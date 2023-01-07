@@ -4,7 +4,6 @@ import React from 'react';
 import Icon from 'Components/Icon';
 import Link from 'Components/Link/Link';
 import { icons } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import styles from './AdvancedSettingsButton.css';
 
 function AdvancedSettingsButton(props) {
@@ -16,7 +15,7 @@ function AdvancedSettingsButton(props) {
   return (
     <Link
       className={styles.button}
-      title={advancedSettings ? translate('ShownClickToHide') : translate('HiddenClickToShow')}
+      title={advancedSettings ? 'Shown, click to hide' : 'Hidden, click to show'}
       onPress={onAdvancedSettingsPress}
     >
       <Icon
@@ -45,7 +44,7 @@ function AdvancedSettingsButton(props) {
 
       <div className={styles.labelContainer}>
         <div className={styles.label}>
-          {advancedSettings ? translate('HideAdvanced') : translate('ShowAdvanced')}
+          {advancedSettings ? 'Hide Advanced' : 'Show Advanced'}
         </div>
       </div>
     </Link>

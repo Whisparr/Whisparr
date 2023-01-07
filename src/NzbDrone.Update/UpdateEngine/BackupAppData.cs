@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using NLog;
 using NzbDrone.Common.Disk;
 using NzbDrone.Common.EnvironmentInfo;
@@ -46,16 +46,7 @@ namespace NzbDrone.Update.UpdateEngine
             try
             {
                 _diskTransferService.TransferFile(_appFolderInfo.GetConfigPath(), _appFolderInfo.GetUpdateBackupConfigFile(), TransferMode.Copy);
-
-                //Backup new db if exists, else try old then fail
-                if (_diskProvider.FileExists(_appFolderInfo.GetDatabase()))
-                {
-                    _diskTransferService.TransferFile(_appFolderInfo.GetDatabase(), _appFolderInfo.GetUpdateBackupDatabase(), TransferMode.Copy);
-                }
-                else
-                {
-                    _diskTransferService.TransferFile(_appFolderInfo.GetV0Database(), _appFolderInfo.GetV0UpdateBackupDatabase(), TransferMode.Copy);
-                }
+                _diskTransferService.TransferFile(_appFolderInfo.GetDatabase(), _appFolderInfo.GetUpdateBackupDatabase(), TransferMode.Copy);
             }
             catch (Exception e)
             {

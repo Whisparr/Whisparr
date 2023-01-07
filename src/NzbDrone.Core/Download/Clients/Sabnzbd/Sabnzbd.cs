@@ -10,7 +10,6 @@ using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Exceptions;
-using NzbDrone.Core.Organizer;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.RemotePathMappings;
 using NzbDrone.Core.Validation;
@@ -24,12 +23,11 @@ namespace NzbDrone.Core.Download.Clients.Sabnzbd
         public Sabnzbd(ISabnzbdProxy proxy,
                        IHttpClient httpClient,
                        IConfigService configService,
-                       INamingConfigService namingConfigService,
                        IDiskProvider diskProvider,
                        IRemotePathMappingService remotePathMappingService,
                        IValidateNzbs nzbValidationService,
                        Logger logger)
-            : base(httpClient, configService, namingConfigService, diskProvider, remotePathMappingService, nzbValidationService, logger)
+            : base(httpClient, configService, diskProvider, remotePathMappingService, nzbValidationService, logger)
         {
             _proxy = proxy;
         }
@@ -37,16 +35,16 @@ namespace NzbDrone.Core.Download.Clients.Sabnzbd
         // patch can be a number (releases) or 'x' (git)
         private static readonly Regex VersionRegex = new Regex(@"(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+|x)", RegexOptions.Compiled);
 
-        protected override string AddFromNzbFile(RemoteMovie remoteMovie, string filename, byte[] fileContent)
+        protected override string AddFromNzbFile(RemoteEpisode remoteEpisode, string filename, byte[] fileContent)
         {
-            var category = Settings.MovieCategory;
-            var priority = remoteMovie.Movie.MediaMetadata.Value.IsRecentMovie ? Settings.RecentMoviePriority : Settings.OlderMoviePriority;
+            var category = Settings.TvCategory;
+            var priority = remoteEpisode.IsRecentEpisode() ? Settings.RecentTvPriority : Settings.OlderTvPriority;
 
             var response = _proxy.DownloadNzb(fileContent, filename, category, priority, Settings);
 
             if (response == null || response.Ids.Empty())
             {
-                throw new DownloadClientRejectedReleaseException(remoteMovie.Release, "SABnzbd rejected the NZB for an unknown reason");
+                throw new DownloadClientRejectedReleaseException(remoteEpisode.Release, "SABnzbd rejected the NZB for an unknown reason");
             }
 
             return response.Ids.First();
@@ -107,7 +105,7 @@ namespace NzbDrone.Core.Download.Clients.Sabnzbd
 
         private IEnumerable<DownloadClientItem> GetHistory()
         {
-            var sabHistory = _proxy.GetHistory(0, _configService.DownloadClientHistoryLimit, Settings.MovieCategory, Settings);
+            var sabHistory = _proxy.GetHistory(0, _configService.DownloadClientHistoryLimit, Settings.TvCategory, Settings);
 
             var historyItems = new List<DownloadClientItem>();
 
@@ -187,7 +185,7 @@ namespace NzbDrone.Core.Download.Clients.Sabnzbd
         {
             foreach (var downloadClientItem in GetQueue().Concat(GetHistory()))
             {
-                if (downloadClientItem.Category == Settings.MovieCategory || (downloadClientItem.Category == "*" && Settings.MovieCategory.IsNullOrWhiteSpace()))
+                if (downloadClientItem.Category == Settings.TvCategory || (downloadClientItem.Category == "*" && Settings.TvCategory.IsNullOrWhiteSpace()))
                 {
                     yield return downloadClientItem;
                 }
@@ -248,7 +246,7 @@ namespace NzbDrone.Core.Download.Clients.Sabnzbd
             var config = _proxy.GetConfig(Settings);
             var categories = GetCategories(config).ToArray();
 
-            var category = categories.FirstOrDefault(v => v.Name == Settings.MovieCategory);
+            var category = categories.FirstOrDefault(v => v.Name == Settings.TvCategory);
 
             if (category == null)
             {
@@ -262,6 +260,19 @@ namespace NzbDrone.Core.Download.Clients.Sabnzbd
 
             if (category != null)
             {
+                if (config.Misc.enable_tv_sorting && ContainsCategory(config.Misc.tv_categories, Settings.TvCategory))
+                {
+                    status.SortingMode = "TV";
+                }
+                else if (config.Misc.enable_movie_sorting && ContainsCategory(config.Misc.movie_categories, Settings.TvCategory))
+                {
+                    status.SortingMode = "Movie";
+                }
+                else if (config.Misc.enable_date_sorting && ContainsCategory(config.Misc.date_categories, Settings.TvCategory))
+                {
+                    status.SortingMode = "Date";
+                }
+
                 status.OutputRootFolders = new List<OsPath> { _remotePathMappingService.RemapRemoteToLocal(Settings.Host, category.FullPath) };
             }
 
@@ -364,7 +375,7 @@ namespace NzbDrone.Core.Download.Clients.Sabnzbd
 
                 if (rawVersion.Equals("develop", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    return new NzbDroneValidationFailure("Version", "SABnzbd develop version, assuming version 3.0.0 or higher.")
+                    return new NzbDroneValidationFailure("Version", "Sabnzbd develop version, assuming version 3.0.0 or higher.")
                     {
                         IsWarning = true,
                         DetailedDescription = "Whisparr may not be able to support new features added to SABnzbd when running develop versions."
@@ -422,10 +433,10 @@ namespace NzbDrone.Core.Download.Clients.Sabnzbd
             var config = _proxy.GetConfig(Settings);
             if (config.Misc.pre_check && !HasVersion(1, 1))
             {
-                return new NzbDroneValidationFailure("", "Disable 'Check before download' option in SABnzbd")
+                return new NzbDroneValidationFailure("", "Disable 'Check before download' option in Sabnbzd")
                 {
                     InfoLink = _proxy.GetBaseUrl(Settings, "config/switches/"),
-                    DetailedDescription = "Using Check before download affects Whisparr ability to track new downloads. Also SABnzbd recommends 'Abort jobs that cannot be completed' instead since it's more effective."
+                    DetailedDescription = "Using Check before download affects Whisparr ability to track new downloads. Also Sabnzbd recommends 'Abort jobs that cannot be completed' instead since it's more effective."
                 };
             }
 
@@ -435,55 +446,55 @@ namespace NzbDrone.Core.Download.Clients.Sabnzbd
         private ValidationFailure TestCategory()
         {
             var config = _proxy.GetConfig(Settings);
-            var category = GetCategories(config).FirstOrDefault((SabnzbdCategory v) => v.Name == Settings.MovieCategory);
+            var category = GetCategories(config).FirstOrDefault((SabnzbdCategory v) => v.Name == Settings.TvCategory);
 
             if (category != null)
             {
                 if (category.Dir.EndsWith("*"))
                 {
-                    return new NzbDroneValidationFailure("MovieCategory", "Enable Job folders")
+                    return new NzbDroneValidationFailure("TvCategory", "Enable Job folders")
                     {
                         InfoLink = _proxy.GetBaseUrl(Settings, "config/categories/"),
-                        DetailedDescription = "Whisparr prefers each download to have a separate folder. With * appended to the Folder/Path SABnzbd will not create these job folders. Go to SABnzbd to fix it."
+                        DetailedDescription = "Whisparr prefers each download to have a separate folder. With * appended to the Folder/Path Sabnzbd will not create these job folders. Go to Sabnzbd to fix it."
                     };
                 }
             }
             else
             {
-                if (!Settings.MovieCategory.IsNullOrWhiteSpace())
+                if (!Settings.TvCategory.IsNullOrWhiteSpace())
                 {
-                    return new NzbDroneValidationFailure("MovieCategory", "Category does not exist")
+                    return new NzbDroneValidationFailure("TvCategory", "Category does not exist")
                     {
                         InfoLink = _proxy.GetBaseUrl(Settings, "config/categories/"),
-                        DetailedDescription = "The category you entered doesn't exist in SABnzbd. Go to SABnzbd to create it."
+                        DetailedDescription = "The Category your entered doesn't exist in Sabnzbd. Go to Sabnzbd to create it."
                     };
                 }
             }
 
-            if (config.Misc.enable_tv_sorting && ContainsCategory(config.Misc.tv_categories, Settings.MovieCategory))
+            if (config.Misc.enable_tv_sorting && ContainsCategory(config.Misc.tv_categories, Settings.TvCategory))
             {
-                return new NzbDroneValidationFailure("MovieCategory", "Disable TV Sorting")
+                return new NzbDroneValidationFailure("TvCategory", "Disable TV Sorting")
                 {
                     InfoLink = _proxy.GetBaseUrl(Settings, "config/sorting/"),
-                    DetailedDescription = "You must disable SABnzbd TV Sorting for the category Whisparr uses to prevent import issues. Go to SABnzbd to fix it."
+                    DetailedDescription = "You must disable Sabnzbd TV Sorting for the category Whisparr uses to prevent import issues. Go to Sabnzbd to fix it."
                 };
             }
 
-            if (config.Misc.enable_movie_sorting && ContainsCategory(config.Misc.movie_categories, Settings.MovieCategory))
+            if (config.Misc.enable_movie_sorting && ContainsCategory(config.Misc.movie_categories, Settings.TvCategory))
             {
-                return new NzbDroneValidationFailure("MovieCategory", "Disable Movie Sorting")
+                return new NzbDroneValidationFailure("TvCategory", "Disable Movie Sorting")
                 {
                     InfoLink = _proxy.GetBaseUrl(Settings, "config/sorting/"),
-                    DetailedDescription = "You must disable SABnzbd Movie Sorting for the category Whisparr uses to prevent import issues. Go to SABnzbd to fix it."
+                    DetailedDescription = "You must disable Sabnzbd Movie Sorting for the category Whisparr uses to prevent import issues. Go to Sabnzbd to fix it."
                 };
             }
 
-            if (config.Misc.enable_date_sorting && ContainsCategory(config.Misc.date_categories, Settings.MovieCategory))
+            if (config.Misc.enable_date_sorting && ContainsCategory(config.Misc.date_categories, Settings.TvCategory))
             {
-                return new NzbDroneValidationFailure("MovieCategory", "Disable Date Sorting")
+                return new NzbDroneValidationFailure("TvCategory", "Disable Date Sorting")
                 {
                     InfoLink = _proxy.GetBaseUrl(Settings, "config/sorting/"),
-                    DetailedDescription = "You must disable SABnzbd Date Sorting for the category Whisparr uses to prevent import issues. Go to SABnzbd to fix it."
+                    DetailedDescription = "You must disable Sabnzbd Date Sorting for the category Whisparr uses to prevent import issues. Go to Sabnzbd to fix it."
                 };
             }
 

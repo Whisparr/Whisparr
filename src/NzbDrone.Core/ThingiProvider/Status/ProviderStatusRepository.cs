@@ -1,4 +1,7 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using NzbDrone.Core.Datastore;
 using NzbDrone.Core.Messaging.Events;
 
@@ -20,7 +23,7 @@ namespace NzbDrone.Core.ThingiProvider.Status
 
         public TModel FindByProviderId(int providerId)
         {
-            return Query(x => x.ProviderId == providerId).SingleOrDefault();
+            return Query(c => c.ProviderId == providerId).SingleOrDefault();
         }
     }
 }

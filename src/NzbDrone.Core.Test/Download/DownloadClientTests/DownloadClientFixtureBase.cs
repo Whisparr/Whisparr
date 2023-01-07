@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
@@ -7,19 +8,19 @@ using NzbDrone.Common.Http;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Download;
 using NzbDrone.Core.IndexerSearch.Definitions;
-using NzbDrone.Core.Movies;
 using NzbDrone.Core.Parser;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.RemotePathMappings;
 using NzbDrone.Core.Test.Framework;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Test.Download.DownloadClientTests
 {
     public abstract class DownloadClientFixtureBase<TSubject> : CoreTest<TSubject>
         where TSubject : class, IDownloadClient
     {
-        protected readonly string _title = "Droned.1998.1080p.WEB-DL-DRONE";
-        protected readonly string _downloadUrl = "http://somewhere.com/Droned.1998.1080p.WEB-DL-DRONE.ext";
+        protected readonly string _title = "Droned.S01E01.Pilot.1080p.WEB-DL-DRONE";
+        protected readonly string _downloadUrl = "http://somewhere.com/Droned.S01E01.Pilot.1080p.WEB-DL-DRONE.ext";
 
         [SetUp]
         public void SetupBase()
@@ -29,31 +30,34 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests
                 .Returns(30);
 
             Mocker.GetMock<IParsingService>()
-                .Setup(s => s.Map(It.IsAny<ParsedMovieInfo>(), (SearchCriteriaBase)null))
-                .Returns(() => new MappingResult { RemoteMovie = CreateRemoteMovie(), MappingResultType = MappingResultType.Success });
+                .Setup(s => s.Map(It.IsAny<ParsedEpisodeInfo>(), It.IsAny<int>(), (SearchCriteriaBase)null))
+                .Returns(() => CreateRemoteEpisode());
 
             Mocker.GetMock<IHttpClient>()
                   .Setup(s => s.Get(It.IsAny<HttpRequest>()))
-                  .Returns<HttpRequest>(r => new HttpResponse(r, new HttpHeader(), Array.Empty<byte>()));
+                  .Returns<HttpRequest>(r => new HttpResponse(r, new HttpHeader(), new byte[0]));
 
             Mocker.GetMock<IRemotePathMappingService>()
                 .Setup(v => v.RemapRemoteToLocal(It.IsAny<string>(), It.IsAny<OsPath>()))
                 .Returns<string, OsPath>((h, r) => r);
         }
 
-        protected virtual RemoteMovie CreateRemoteMovie()
+        protected virtual RemoteEpisode CreateRemoteEpisode()
         {
-            var remoteMovie = new RemoteMovie();
-            remoteMovie.Release = new ReleaseInfo();
-            remoteMovie.Release.Title = _title;
-            remoteMovie.Release.DownloadUrl = _downloadUrl;
-            remoteMovie.Release.DownloadProtocol = Subject.Protocol;
+            var remoteEpisode = new RemoteEpisode();
+            remoteEpisode.Release = new ReleaseInfo();
+            remoteEpisode.Release.Title = _title;
+            remoteEpisode.Release.DownloadUrl = _downloadUrl;
+            remoteEpisode.Release.DownloadProtocol = Subject.Protocol;
 
-            remoteMovie.ParsedMovieInfo = new ParsedMovieInfo();
+            remoteEpisode.ParsedEpisodeInfo = new ParsedEpisodeInfo();
+            remoteEpisode.ParsedEpisodeInfo.FullSeason = false;
 
-            remoteMovie.Movie = new Media();
+            remoteEpisode.Episodes = new List<Episode>();
 
-            return remoteMovie;
+            remoteEpisode.Series = new Series();
+
+            return remoteEpisode;
         }
 
         protected void VerifyIdentifiable(DownloadClientItem downloadClientItem)
@@ -70,8 +74,8 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests
             VerifyIdentifiable(downloadClientItem);
             downloadClientItem.RemainingSize.Should().NotBe(0);
 
-            //downloadClientItem.RemainingTime.Should().NotBe(TimeSpan.Zero);
-            //downloadClientItem.OutputPath.Should().NotBeNullOrEmpty();
+            // downloadClientItem.RemainingTime.Should().NotBe(TimeSpan.Zero);
+            // downloadClientItem.OutputPath.Should().NotBeNullOrEmpty();
             downloadClientItem.Status.Should().Be(DownloadItemStatus.Queued);
         }
 
@@ -81,8 +85,8 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests
 
             downloadClientItem.RemainingSize.Should().NotBe(0);
 
-            //downloadClientItem.RemainingTime.Should().NotBe(TimeSpan.Zero);
-            //downloadClientItem.OutputPath.Should().NotBeNullOrEmpty();
+            // downloadClientItem.RemainingTime.Should().NotBe(TimeSpan.Zero);
+            // downloadClientItem.OutputPath.Should().NotBeNullOrEmpty();
             downloadClientItem.Status.Should().Be(DownloadItemStatus.Paused);
         }
 
@@ -92,8 +96,8 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests
 
             downloadClientItem.RemainingSize.Should().NotBe(0);
 
-            //downloadClientItem.RemainingTime.Should().NotBe(TimeSpan.Zero);
-            //downloadClientItem.OutputPath.Should().NotBeNullOrEmpty();
+            // downloadClientItem.RemainingTime.Should().NotBe(TimeSpan.Zero);
+            // downloadClientItem.OutputPath.Should().NotBeNullOrEmpty();
             downloadClientItem.Status.Should().Be(DownloadItemStatus.Downloading);
         }
 
@@ -101,8 +105,8 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests
         {
             VerifyIdentifiable(downloadClientItem);
 
-            //downloadClientItem.RemainingTime.Should().NotBe(TimeSpan.Zero);
-            //downloadClientItem.OutputPath.Should().NotBeNullOrEmpty();
+            // downloadClientItem.RemainingTime.Should().NotBe(TimeSpan.Zero);
+            // downloadClientItem.OutputPath.Should().NotBeNullOrEmpty();
             downloadClientItem.Status.Should().Be(DownloadItemStatus.Downloading);
         }
 
@@ -114,7 +118,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests
             downloadClientItem.RemainingSize.Should().Be(0);
             downloadClientItem.RemainingTime.Should().Be(TimeSpan.Zero);
 
-            //downloadClientItem.OutputPath.Should().NotBeNullOrEmpty();
+            // downloadClientItem.OutputPath.Should().NotBeNullOrEmpty();
             downloadClientItem.Status.Should().Be(DownloadItemStatus.Completed);
         }
 

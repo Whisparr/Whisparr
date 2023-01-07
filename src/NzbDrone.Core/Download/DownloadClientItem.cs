@@ -13,7 +13,6 @@ namespace NzbDrone.Core.Download
         public string DownloadId { get; set; }
         public string Category { get; set; }
         public string Title { get; set; }
-
         public long TotalSize { get; set; }
         public long RemainingSize { get; set; }
         public TimeSpan? RemainingTime { get; set; }
@@ -39,7 +38,8 @@ namespace NzbDrone.Core.Download
         public int Id { get; set; }
         public string Name { get; set; }
 
-        public static DownloadClientItemClientInfo FromDownloadClient<TSettings>(DownloadClientBase<TSettings> downloadClient)
+        public static DownloadClientItemClientInfo FromDownloadClient<TSettings>(
+            DownloadClientBase<TSettings> downloadClient)
             where TSettings : IProviderConfig, new()
         {
             return new DownloadClientItemClientInfo

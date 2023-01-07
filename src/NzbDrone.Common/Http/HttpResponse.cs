@@ -55,11 +55,12 @@ namespace NzbDrone.Common.Http
                                        StatusCode == HttpStatusCode.Found ||
                                        StatusCode == HttpStatusCode.TemporaryRedirect ||
                                        StatusCode == HttpStatusCode.RedirectMethod ||
-                                       StatusCode == HttpStatusCode.SeeOther;
+                                       StatusCode == HttpStatusCode.SeeOther ||
+                                       StatusCode == HttpStatusCode.PermanentRedirect;
 
         public string[] GetCookieHeaders()
         {
-            return Headers.GetValues("Set-Cookie") ?? Array.Empty<string>();
+            return Headers.GetValues("Set-Cookie") ?? new string[0];
         }
 
         public Dictionary<string, string> GetCookies()

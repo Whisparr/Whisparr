@@ -1,4 +1,4 @@
-using NzbDrone.Common.EnvironmentInfo;
+﻿using NzbDrone.Common.EnvironmentInfo;
 using NzbDrone.Core.Configuration;
 
 namespace NzbDrone.Core.Update

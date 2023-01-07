@@ -10,10 +10,10 @@ namespace NzbDrone.Core.Indexers.Newznab
         public static List<FieldSelectOption> GetFieldSelectOptions(List<NewznabCategory> categories)
         {
             // Categories not relevant for Whisparr
-            var ignoreCategories = new[] { 1000, 3000, 4000, 7000 };
+            var ignoreCategories = new[] { 1000, 3000, 4000, 6000, 7000 };
 
             // And maybe relevant for specific users
-            var unimportantCategories = new[] { 0, 2000, 5000 };
+            var unimportantCategories = new[] { 0, 2000 };
 
             var result = new List<FieldSelectOption>();
 
@@ -23,16 +23,19 @@ namespace NzbDrone.Core.Indexers.Newznab
                 categories = new List<NewznabCategory>();
                 categories.Add(new NewznabCategory
                 {
-                    Id = 6000,
-                    Name = "XXX",
+                    Id = 5000,
+                    Name = "TV",
                     Subcategories = new List<NewznabCategory>
                     {
-                        new NewznabCategory { Id = 6010, Name = "DVD" },
-                        new NewznabCategory { Id = 6020, Name = "WMV" },
-                        new NewznabCategory { Id = 6030, Name = "XVid" },
-                        new NewznabCategory { Id = 6040, Name = "x264" },
-                        new NewznabCategory { Id = 6050, Name = "Pack" },
-                        new NewznabCategory { Id = 6070, Name = "Other" }
+                        new NewznabCategory { Id = 5070, Name = "Anime" },
+                        new NewznabCategory { Id = 5080, Name = "Documentary" },
+                        new NewznabCategory { Id = 5020, Name = "Foreign" },
+                        new NewznabCategory { Id = 5040, Name = "HD" },
+                        new NewznabCategory { Id = 5045, Name = "UHD" },
+                        new NewznabCategory { Id = 5050, Name = "Other" },
+                        new NewznabCategory { Id = 5030, Name = "SD" },
+                        new NewznabCategory { Id = 5060, Name = "Sport" },
+                        new NewznabCategory { Id = 5010, Name = "WEB-DL" }
                     }
                 });
             }

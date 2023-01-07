@@ -40,8 +40,9 @@ namespace NzbDrone.Core.Indexers.Torznab
         {
             get
             {
-                yield return GetDefinition("Jackett", GetSettings("http://localhost:9117/api/v2.0/indexers/YOURINDEXER/results/torznab/"));
                 yield return GetDefinition("HD4Free.xyz", GetSettings("http://hd4free.xyz"));
+                yield return GetDefinition("AnimeTosho Torrents", GetSettings("https://feed.animetosho.org", apiPath: @"/nabapi", categories: new int[0], animeCategories: new[] { 5070 }));
+                yield return GetDefinition("Nyaa Pantsu", GetSettings("https://nyaa.pantsu.cat", apiPath: @"/feed/torznab", categories: new int[0], animeCategories: new[] { 5070 }));
             }
         }
 
@@ -67,13 +68,18 @@ namespace NzbDrone.Core.Indexers.Torznab
             };
         }
 
-        private TorznabSettings GetSettings(string url, string apiPath = null, int[] categories = null)
+        private TorznabSettings GetSettings(string url, string apiPath = null, int[] categories = null, int[] animeCategories = null)
         {
             var settings = new TorznabSettings { BaseUrl = url };
 
             if (categories != null)
             {
                 settings.Categories = categories;
+            }
+
+            if (animeCategories != null)
+            {
+                settings.AnimeCategories = animeCategories;
             }
 
             if (apiPath.IsNotNullOrWhiteSpace())
@@ -96,44 +102,25 @@ namespace NzbDrone.Core.Indexers.Torznab
             failures.AddIfNotNull(TestCapabilities());
         }
 
-        protected static List<int> CategoryIds(List<NewznabCategory> categories)
-        {
-            var l = categories.Select(c => c.Id).ToList();
-
-            foreach (var category in categories)
-            {
-                if (category.Subcategories != null)
-                {
-                    l.AddRange(CategoryIds(category.Subcategories));
-                }
-            }
-
-            return l;
-        }
-
         protected virtual ValidationFailure TestCapabilities()
         {
             try
             {
                 var capabilities = _capabilitiesProvider.GetCapabilities(Settings);
 
-                var notSupported = Settings.Categories.Except(CategoryIds(capabilities.Categories));
-
-                if (notSupported.Any())
-                {
-                    _logger.Warn($"{Definition.Name} does not support the following categories: {string.Join(", ", notSupported)}. You should probably remove them.");
-                    if (notSupported.Count() == Settings.Categories.Count())
-                    {
-                        return new ValidationFailure(string.Empty, $"This indexer does not support any of the selected categories! (You may need to turn on advanced settings to see them)");
-                    }
-                }
-
                 if (capabilities.SupportedSearchParameters != null && capabilities.SupportedSearchParameters.Contains("q"))
                 {
                     return null;
                 }
 
-                return new ValidationFailure(string.Empty, "This indexer does not support searching for movies :(. Tell your indexer staff to enable this or force add the indexer by disabling search, adding the indexer and then enabling it again.");
+                if (capabilities.SupportedTvSearchParameters != null &&
+                    new[] { "q", "tvdbid", "rid" }.Any(v => capabilities.SupportedTvSearchParameters.Contains(v)) &&
+                    new[] { "season", "ep" }.All(v => capabilities.SupportedTvSearchParameters.Contains(v)))
+                {
+                    return null;
+                }
+
+                return new ValidationFailure(string.Empty, "Indexer does not support required search parameters");
             }
             catch (Exception ex)
             {
@@ -145,10 +132,10 @@ namespace NzbDrone.Core.Indexers.Torznab
 
         protected virtual ValidationFailure JackettAll()
         {
-            if (Settings.ApiPath.Contains("/torznab/all", StringComparison.InvariantCultureIgnoreCase) ||
-                Settings.ApiPath.Contains("/api/v2.0/indexers/all/results/torznab", StringComparison.InvariantCultureIgnoreCase) ||
-                Settings.BaseUrl.Contains("/torznab/all", StringComparison.InvariantCultureIgnoreCase) ||
-                Settings.BaseUrl.Contains("/api/v2.0/indexers/all/results/torznab", StringComparison.InvariantCultureIgnoreCase))
+            if (Settings.ApiPath.Contains("/torznab/all") ||
+                Settings.ApiPath.Contains("/api/v2.0/indexers/all/results/torznab") ||
+                Settings.BaseUrl.Contains("/torznab/all") ||
+                Settings.BaseUrl.Contains("/api/v2.0/indexers/all/results/torznab"))
             {
                 return new NzbDroneValidationFailure("ApiPath", "Jackett's all endpoint is not supported, please add indexers individually")
                 {

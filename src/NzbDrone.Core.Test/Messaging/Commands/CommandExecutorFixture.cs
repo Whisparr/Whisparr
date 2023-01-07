@@ -1,4 +1,6 @@
-﻿using System;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading;
 using Moq;
 using NUnit.Framework;
@@ -95,9 +97,9 @@ namespace NzbDrone.Core.Test.Messaging.Commands
             GivenCommandQueue();
             var commandA = new CommandA();
             var commandModel = new CommandModel
-            {
-                Body = commandA
-            };
+                               {
+                                   Body = commandA
+                               };
 
             Subject.Handle(new ApplicationStartedEvent());
 

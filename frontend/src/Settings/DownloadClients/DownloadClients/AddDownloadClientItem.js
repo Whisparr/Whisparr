@@ -5,7 +5,6 @@ import Link from 'Components/Link/Link';
 import Menu from 'Components/Menu/Menu';
 import MenuContent from 'Components/Menu/MenuContent';
 import { sizes } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import AddDownloadClientPresetMenuItem from './AddDownloadClientPresetMenuItem';
 import styles from './AddDownloadClientItem.css';
 
@@ -58,7 +57,7 @@ class AddDownloadClientItem extends Component {
                     size={sizes.SMALL}
                     onPress={this.onDownloadClientSelect}
                   >
-                    {translate('Custom')}
+                    Custom
                   </Button>
 
                   <Menu className={styles.presetsMenu}>
@@ -66,7 +65,7 @@ class AddDownloadClientItem extends Component {
                       className={styles.presetsMenuButton}
                       size={sizes.SMALL}
                     >
-                      {translate('Presets')}
+                      Presets
                     </Button>
 
                     <MenuContent>
@@ -91,7 +90,7 @@ class AddDownloadClientItem extends Component {
               to={infoLink}
               size={sizes.SMALL}
             >
-              {translate('MoreInfo')}
+              More info
             </Button>
           </div>
         </div>

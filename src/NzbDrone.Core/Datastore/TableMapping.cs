@@ -4,6 +4,7 @@ using System.Linq;
 using Dapper;
 using NzbDrone.Common.Reflection;
 using NzbDrone.Core.Authentication;
+using NzbDrone.Core.AutoTagging.Specifications;
 using NzbDrone.Core.Blocklisting;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.CustomFilters;
@@ -18,29 +19,27 @@ using NzbDrone.Core.Extras.Others;
 using NzbDrone.Core.Extras.Subtitles;
 using NzbDrone.Core.History;
 using NzbDrone.Core.ImportLists;
-using NzbDrone.Core.ImportLists.ImportExclusions;
-using NzbDrone.Core.ImportLists.ImportListMovies;
+using NzbDrone.Core.ImportLists.Exclusions;
 using NzbDrone.Core.Indexers;
 using NzbDrone.Core.Instrumentation;
 using NzbDrone.Core.Jobs;
 using NzbDrone.Core.Languages;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.Messaging.Commands;
-using NzbDrone.Core.Movies;
-using NzbDrone.Core.Movies.AlternativeTitles;
-using NzbDrone.Core.Movies.Credits;
-using NzbDrone.Core.Movies.Translations;
 using NzbDrone.Core.Notifications;
 using NzbDrone.Core.Organizer;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.Profiles;
 using NzbDrone.Core.Profiles.Delay;
+using NzbDrone.Core.Profiles.Qualities;
+using NzbDrone.Core.Profiles.Releases;
 using NzbDrone.Core.Qualities;
 using NzbDrone.Core.RemotePathMappings;
-using NzbDrone.Core.Restrictions;
 using NzbDrone.Core.RootFolders;
+using NzbDrone.Core.SeriesStats;
 using NzbDrone.Core.Tags;
 using NzbDrone.Core.ThingiProvider;
+using NzbDrone.Core.Tv;
 using NzbDrone.Core.Update.History;
 using static Dapper.SqlMapper;
 
@@ -79,6 +78,7 @@ namespace NzbDrone.Core.Datastore
             Mapper.Entity<ImportListDefinition>("ImportLists").RegisterModel()
                   .Ignore(x => x.ImplementationName)
                   .Ignore(i => i.ListType)
+                  .Ignore(i => i.MinRefreshInterval)
                   .Ignore(i => i.Enable);
 
             Mapper.Entity<NotificationDefinition>("Notifications").RegisterModel()
@@ -87,10 +87,9 @@ namespace NzbDrone.Core.Datastore
                   .Ignore(i => i.SupportsOnDownload)
                   .Ignore(i => i.SupportsOnUpgrade)
                   .Ignore(i => i.SupportsOnRename)
-                  .Ignore(i => i.SupportsOnMovieAdded)
-                  .Ignore(i => i.SupportsOnMovieDelete)
-                  .Ignore(i => i.SupportsOnMovieFileDelete)
-                  .Ignore(i => i.SupportsOnMovieFileDeleteForUpgrade)
+                  .Ignore(i => i.SupportsOnSeriesDelete)
+                  .Ignore(i => i.SupportsOnEpisodeFileDelete)
+                  .Ignore(i => i.SupportsOnEpisodeFileDeleteForUpgrade)
                   .Ignore(i => i.SupportsOnHealthIssue)
                   .Ignore(i => i.SupportsOnApplicationUpdate);
 
@@ -103,31 +102,24 @@ namespace NzbDrone.Core.Datastore
                   .Ignore(d => d.Protocol)
                   .Ignore(d => d.Tags);
 
-            Mapper.Entity<MovieHistory>("History").RegisterModel();
+            Mapper.Entity<EpisodeHistory>("History").RegisterModel();
 
-            Mapper.Entity<MediaFile>("MediaFiles").RegisterModel()
+            Mapper.Entity<Series>("Series").RegisterModel()
+                  .Ignore(s => s.RootFolderPath)
+                  .HasOne(s => s.QualityProfile, s => s.QualityProfileId);
+
+            Mapper.Entity<EpisodeFile>("EpisodeFiles").RegisterModel()
+                  .HasOne(f => f.Series, f => f.SeriesId)
+                  .LazyLoad(x => x.Episodes,
+                            (db, parent) => db.Query<Episode>(new SqlBuilder(db.DatabaseType)).Where(c => c.EpisodeFileId == parent.Id).ToList(),
+                            t => t.Id > 0)
                   .Ignore(f => f.Path);
 
-            Mapper.Entity<Media>("Media").RegisterModel()
-                  .Ignore(s => s.RootFolderPath)
-                  .Ignore(s => s.Title)
-                  .Ignore(s => s.Year)
-                  .Ignore(s => s.ForiegnId)
-                  .HasOne(a => a.MediaMetadata, a => a.MovieMetadataId);
-
-            Mapper.Entity<ImportListMovie>("ImportListMovies").RegisterModel()
-                  .Ignore(s => s.Title)
-                  .Ignore(s => s.Year)
-                  .Ignore(s => s.ForiegnId)
-                  .HasOne(a => a.MovieMetadata, a => a.MovieMetadataId);
-
-            Mapper.Entity<AlternativeTitle>("AlternativeTitles").RegisterModel();
-
-            Mapper.Entity<MovieTranslation>("MovieTranslations").RegisterModel();
-
-            Mapper.Entity<Credit>("Credits").RegisterModel();
-
-            Mapper.Entity<ImportExclusion>("ImportExclusions").RegisterModel();
+            Mapper.Entity<Episode>("Episodes").RegisterModel()
+                  .Ignore(e => e.SeriesTitle)
+                  .Ignore(e => e.Series)
+                  .Ignore(e => e.HasFile)
+                  .HasOne(s => s.EpisodeFile, s => s.EpisodeFileId);
 
             Mapper.Entity<QualityDefinition>("QualityDefinitions").RegisterModel()
                   .Ignore(d => d.GroupName)
@@ -135,7 +127,7 @@ namespace NzbDrone.Core.Datastore
 
             Mapper.Entity<CustomFormat>("CustomFormats").RegisterModel();
 
-            Mapper.Entity<Profile>("Profiles").RegisterModel();
+            Mapper.Entity<QualityProfile>("QualityProfiles").RegisterModel();
             Mapper.Entity<Log>("Logs").RegisterModel();
             Mapper.Entity<NamingConfig>("NamingConfig").RegisterModel();
             Mapper.Entity<Blocklist>("Blocklist").RegisterModel();
@@ -144,16 +136,16 @@ namespace NzbDrone.Core.Datastore
             Mapper.Entity<OtherExtraFile>("ExtraFiles").RegisterModel();
 
             Mapper.Entity<PendingRelease>("PendingReleases").RegisterModel()
-                  .Ignore(e => e.RemoteMovie);
+                  .Ignore(e => e.RemoteEpisode);
 
             Mapper.Entity<RemotePathMapping>("RemotePathMappings").RegisterModel();
             Mapper.Entity<Tag>("Tags").RegisterModel();
-            Mapper.Entity<Restriction>("Restrictions").RegisterModel();
+            Mapper.Entity<ReleaseProfile>("ReleaseProfiles").RegisterModel();
 
             Mapper.Entity<DelayProfile>("DelayProfiles").RegisterModel();
             Mapper.Entity<User>("Users").RegisterModel();
             Mapper.Entity<CommandModel>("Commands").RegisterModel()
-                  .Ignore(c => c.Message);
+                .Ignore(c => c.Message);
 
             Mapper.Entity<IndexerStatus>("IndexerStatus").RegisterModel();
             Mapper.Entity<DownloadClientStatus>("DownloadClientStatus").RegisterModel();
@@ -164,9 +156,9 @@ namespace NzbDrone.Core.Datastore
             Mapper.Entity<DownloadHistory>("DownloadHistory").RegisterModel();
 
             Mapper.Entity<UpdateHistory>("UpdateHistory").RegisterModel();
+            Mapper.Entity<ImportListExclusion>("ImportListExclusions").RegisterModel();
 
-            Mapper.Entity<MediaMetadata>("MediaMetadata").RegisterModel()
-                .Ignore(s => s.Translations);
+            Mapper.Entity<AutoTagging.AutoTag>("AutoTagging").RegisterModel();
         }
 
         private static void RegisterMappers()
@@ -176,11 +168,11 @@ namespace NzbDrone.Core.Datastore
 
             SqlMapper.RemoveTypeMap(typeof(DateTime));
             SqlMapper.AddTypeHandler(new DapperUtcConverter());
-            SqlMapper.AddTypeHandler(new DapperTimeSpanConverter());
             SqlMapper.AddTypeHandler(new DapperQualityIntConverter());
-            SqlMapper.AddTypeHandler(new EmbeddedDocumentConverter<List<ProfileQualityItem>>(new QualityIntConverter()));
+            SqlMapper.AddTypeHandler(new EmbeddedDocumentConverter<List<QualityProfileQualityItem>>(new QualityIntConverter()));
             SqlMapper.AddTypeHandler(new EmbeddedDocumentConverter<List<ProfileFormatItem>>(new CustomFormatIntConverter()));
             SqlMapper.AddTypeHandler(new EmbeddedDocumentConverter<List<ICustomFormatSpecification>>(new CustomFormatSpecificationListConverter()));
+            SqlMapper.AddTypeHandler(new EmbeddedDocumentConverter<List<IAutoTaggingSpecification>>(new AutoTaggingSpecificationConverter()));
             SqlMapper.AddTypeHandler(new EmbeddedDocumentConverter<QualityModel>(new QualityIntConverter()));
             SqlMapper.AddTypeHandler(new EmbeddedDocumentConverter<Dictionary<string, string>>());
             SqlMapper.AddTypeHandler(new EmbeddedDocumentConverter<IDictionary<string, string>>());
@@ -189,11 +181,10 @@ namespace NzbDrone.Core.Datastore
             SqlMapper.AddTypeHandler(new EmbeddedDocumentConverter<KeyValuePair<string, int>>());
             SqlMapper.AddTypeHandler(new DapperLanguageIntConverter());
             SqlMapper.AddTypeHandler(new EmbeddedDocumentConverter<List<Language>>(new LanguageIntConverter()));
-            SqlMapper.AddTypeHandler(new EmbeddedDocumentConverter<List<string>>());
-            SqlMapper.AddTypeHandler(new EmbeddedDocumentConverter<ParsedMovieInfo>(new QualityIntConverter(), new LanguageIntConverter()));
+            SqlMapper.AddTypeHandler(new StringListConverter<List<string>>());
+            SqlMapper.AddTypeHandler(new EmbeddedDocumentConverter<ParsedEpisodeInfo>(new QualityIntConverter(), new LanguageIntConverter()));
             SqlMapper.AddTypeHandler(new EmbeddedDocumentConverter<ReleaseInfo>());
-            SqlMapper.AddTypeHandler(new EmbeddedDocumentConverter<Ratings>());
-            SqlMapper.AddTypeHandler(new EmbeddedDocumentConverter<List<MovieTranslation>>());
+            SqlMapper.AddTypeHandler(new EmbeddedDocumentConverter<PendingReleaseAdditionalInfo>());
             SqlMapper.AddTypeHandler(new EmbeddedDocumentConverter<HashSet<int>>());
             SqlMapper.AddTypeHandler(new OsPathConverter());
             SqlMapper.RemoveTypeMap(typeof(Guid));

@@ -2,12 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
-using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Annotations;
 using NzbDrone.Core.CustomFormats;
-using NzbDrone.Core.Validation;
 using Whisparr.Http;
 using Whisparr.Http.REST;
 using Whisparr.Http.REST.Attributes;
@@ -29,6 +27,7 @@ namespace Whisparr.Api.V3.CustomFormats
             SharedValidator.RuleFor(c => c.Name).NotEmpty();
             SharedValidator.RuleFor(c => c.Name)
                 .Must((v, c) => !_formatService.All().Any(f => f.Name == c && f.Id != v.Id)).WithMessage("Must be unique.");
+            SharedValidator.RuleFor(c => c.Specifications).NotEmpty();
             SharedValidator.RuleFor(c => c).Custom((customFormat, context) =>
             {
                 if (!customFormat.Specifications.Any())
@@ -45,35 +44,32 @@ namespace Whisparr.Api.V3.CustomFormats
 
         protected override CustomFormatResource GetResourceById(int id)
         {
-            return _formatService.GetById(id).ToResource();
+            return _formatService.GetById(id).ToResource(true);
         }
 
         [RestPostById]
+        [Consumes("application/json")]
         public ActionResult<CustomFormatResource> Create(CustomFormatResource customFormatResource)
         {
             var model = customFormatResource.ToModel(_specifications);
-
-            Validate(model);
-
             return Created(_formatService.Insert(model).Id);
         }
 
         [RestPutById]
+        [Consumes("application/json")]
         public ActionResult<CustomFormatResource> Update(CustomFormatResource resource)
         {
             var model = resource.ToModel(_specifications);
-
-            Validate(model);
-
             _formatService.Update(model);
 
             return Accepted(model.Id);
         }
 
         [HttpGet]
+        [Produces("application/json")]
         public List<CustomFormatResource> GetAll()
         {
-            return _formatService.All().ToResource();
+            return _formatService.All().ToResource(true);
         }
 
         [RestDeleteById]
@@ -95,25 +91,6 @@ namespace Whisparr.Api.V3.CustomFormats
             }
 
             return schema;
-        }
-
-        private void Validate(CustomFormat definition)
-        {
-            foreach (var spec in definition.Specifications)
-            {
-                var validationResult = spec.Validate();
-                VerifyValidationResult(validationResult);
-            }
-        }
-
-        protected void VerifyValidationResult(ValidationResult validationResult)
-        {
-            var result = new NzbDroneValidationResult(validationResult.Errors);
-
-            if (!result.IsValid)
-            {
-                throw new ValidationException(result.Errors);
-            }
         }
 
         private IEnumerable<ICustomFormatSpecification> GetPresets()

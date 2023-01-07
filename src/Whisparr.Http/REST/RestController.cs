@@ -6,6 +6,8 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
+using NLog;
+using NzbDrone.Common.Instrumentation;
 using NzbDrone.Core.Datastore;
 using Whisparr.Http.REST.Attributes;
 using Whisparr.Http.Validation;
@@ -16,6 +18,9 @@ namespace Whisparr.Http.REST
         where TResource : RestResource, new()
     {
         private static readonly List<Type> VALIDATE_ID_ATTRIBUTES = new List<Type> { typeof(RestPutByIdAttribute), typeof(RestDeleteByIdAttribute) };
+        private static readonly Type DEPRECATED_ATTRIBUTE = typeof(ObsoleteAttribute);
+
+        private readonly Logger _logger;
 
         protected ResourceValidator<TResource> PostValidator { get; private set; }
         protected ResourceValidator<TResource> PutValidator { get; private set; }
@@ -31,6 +36,8 @@ namespace Whisparr.Http.REST
 
         protected RestController()
         {
+            _logger = NzbDroneLogger.GetLogger(this);
+
             PostValidator = new ResourceValidator<TResource>();
             PutValidator = new ResourceValidator<TResource>();
             SharedValidator = new ResourceValidator<TResource>();
@@ -39,6 +46,7 @@ namespace Whisparr.Http.REST
         }
 
         [RestGetById]
+        [Produces("application/json")]
         public ActionResult<TResource> GetResourceByIdWithErrorHandler(int id)
         {
             try
@@ -69,17 +77,30 @@ namespace Whisparr.Http.REST
 
                 foreach (var resource in resourceArgs)
                 {
+                    // Map route Id to body resource if not set in request
+                    if (Request.Method == "PUT" && resource.Id == 0 && context.RouteData.Values.TryGetValue("id", out var routeId))
+                    {
+                        resource.Id = Convert.ToInt32(routeId);
+                    }
+
                     ValidateResource(resource, skipValidate, skipShared);
                 }
             }
 
             var attributes = descriptor.MethodInfo.CustomAttributes;
-            if (attributes.Any(x => VALIDATE_ID_ATTRIBUTES.Contains(x.GetType())) && !skipValidate)
+            if (attributes.Any(x => VALIDATE_ID_ATTRIBUTES.Contains(x.AttributeType)) && !skipValidate)
             {
                 if (context.ActionArguments.TryGetValue("id", out var idObj))
                 {
                     ValidateId((int)idObj);
                 }
+            }
+
+            var controllerAttributes = descriptor.ControllerTypeInfo.CustomAttributes;
+            if (controllerAttributes.Any(x => x.AttributeType == DEPRECATED_ATTRIBUTE) || attributes.Any(x => x.AttributeType == DEPRECATED_ATTRIBUTE))
+            {
+                _logger.Warn("API call made to deprecated endpoint from {0}", Request.Headers.UserAgent.ToString());
+                Response.Headers.Add("Deprecation", "true");
             }
 
             base.OnActionExecuting(context);

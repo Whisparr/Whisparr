@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,36 +5,131 @@ using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Blocklisting;
 using NzbDrone.Core.History;
 using NzbDrone.Core.MediaFiles;
-using NzbDrone.Core.Movies;
-using NzbDrone.Core.Parser;
 using NzbDrone.Core.Parser.Model;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.CustomFormats
 {
     public interface ICustomFormatCalculationService
     {
-        List<CustomFormat> ParseCustomFormat(ParsedMovieInfo movieInfo, Media movie);
-        List<CustomFormat> ParseCustomFormat(MediaFile movieFile);
-        List<CustomFormat> ParseCustomFormat(Blocklist blocklist);
-        List<CustomFormat> ParseCustomFormat(MovieHistory history);
+        List<CustomFormat> ParseCustomFormat(RemoteEpisode remoteEpisode, long size);
+        List<CustomFormat> ParseCustomFormat(EpisodeFile episodeFile, Series series);
+        List<CustomFormat> ParseCustomFormat(EpisodeFile episodeFile);
+        List<CustomFormat> ParseCustomFormat(Blocklist blocklist, Series series);
+        List<CustomFormat> ParseCustomFormat(EpisodeHistory history, Series series);
+        List<CustomFormat> ParseCustomFormat(LocalEpisode localEpisode);
     }
 
     public class CustomFormatCalculationService : ICustomFormatCalculationService
     {
         private readonly ICustomFormatService _formatService;
-        private readonly IParsingService _parsingService;
-        private readonly IMovieService _movieService;
 
-        public CustomFormatCalculationService(ICustomFormatService formatService,
-                                              IParsingService parsingService,
-                                              IMovieService movieService)
+        public CustomFormatCalculationService(ICustomFormatService formatService)
         {
             _formatService = formatService;
-            _parsingService = parsingService;
-            _movieService = movieService;
         }
 
-        public static List<CustomFormat> ParseCustomFormat(ParsedMovieInfo movieInfo, List<CustomFormat> allCustomFormats)
+        public List<CustomFormat> ParseCustomFormat(RemoteEpisode remoteEpisode, long size)
+        {
+            var input = new CustomFormatInput
+            {
+                EpisodeInfo = remoteEpisode.ParsedEpisodeInfo,
+                Series = remoteEpisode.Series,
+                Size = size,
+                Languages = remoteEpisode.Languages
+            };
+
+            return ParseCustomFormat(input);
+        }
+
+        public List<CustomFormat> ParseCustomFormat(EpisodeFile episodeFile, Series series)
+        {
+            return ParseCustomFormat(episodeFile, series, _formatService.All());
+        }
+
+        public List<CustomFormat> ParseCustomFormat(EpisodeFile episodeFile)
+        {
+            return ParseCustomFormat(episodeFile, episodeFile.Series.Value, _formatService.All());
+        }
+
+        public List<CustomFormat> ParseCustomFormat(Blocklist blocklist, Series series)
+        {
+            var parsed = Parser.Parser.ParseTitle(blocklist.SourceTitle);
+
+            var episodeInfo = new ParsedEpisodeInfo
+            {
+                SeriesTitle = series.Title,
+                ReleaseTitle = parsed?.ReleaseTitle ?? blocklist.SourceTitle,
+                Quality = blocklist.Quality,
+                Languages = blocklist.Languages,
+                ReleaseGroup = parsed?.ReleaseGroup
+            };
+
+            var input = new CustomFormatInput
+            {
+                EpisodeInfo = episodeInfo,
+                Series = series,
+                Size = blocklist.Size ?? 0,
+                Languages = blocklist.Languages
+            };
+
+            return ParseCustomFormat(input);
+        }
+
+        public List<CustomFormat> ParseCustomFormat(EpisodeHistory history, Series series)
+        {
+            var parsed = Parser.Parser.ParseTitle(history.SourceTitle);
+
+            long.TryParse(history.Data.GetValueOrDefault("size"), out var size);
+
+            var episodeInfo = new ParsedEpisodeInfo
+            {
+                SeriesTitle = series.Title,
+                ReleaseTitle = parsed?.ReleaseTitle ?? history.SourceTitle,
+                Quality = history.Quality,
+                Languages = history.Languages,
+                ReleaseGroup = parsed?.ReleaseGroup,
+            };
+
+            var input = new CustomFormatInput
+            {
+                EpisodeInfo = episodeInfo,
+                Series = series,
+                Size = size,
+                Languages = history.Languages
+            };
+
+            return ParseCustomFormat(input);
+        }
+
+        public List<CustomFormat> ParseCustomFormat(LocalEpisode localEpisode)
+        {
+            var episodeInfo = new ParsedEpisodeInfo
+            {
+                SeriesTitle = localEpisode.Series.Title,
+                ReleaseTitle = localEpisode.SceneName,
+                Quality = localEpisode.Quality,
+                Languages = localEpisode.Languages,
+                ReleaseGroup = localEpisode.ReleaseGroup
+            };
+
+            var input = new CustomFormatInput
+            {
+                EpisodeInfo = episodeInfo,
+                Series = localEpisode.Series,
+                Size = localEpisode.Size,
+                Languages = localEpisode.Languages
+            };
+
+            return ParseCustomFormat(input);
+        }
+
+        private List<CustomFormat> ParseCustomFormat(CustomFormatInput input)
+        {
+            return ParseCustomFormat(input, _formatService.All());
+        }
+
+        private static List<CustomFormat> ParseCustomFormat(CustomFormatInput input, List<CustomFormat> allCustomFormats)
         {
             var matches = new List<CustomFormat>();
 
@@ -45,7 +139,7 @@ namespace NzbDrone.Core.CustomFormats
                     .GroupBy(t => t.GetType())
                     .Select(g => new SpecificationMatchesGroup
                     {
-                        Matches = g.ToDictionary(t => t, t => t.IsSatisfiedBy(movieInfo))
+                        Matches = g.ToDictionary(t => t, t => t.IsSatisfiedBy(input))
                     })
                     .ToList();
 
@@ -58,103 +152,41 @@ namespace NzbDrone.Core.CustomFormats
             return matches;
         }
 
-        public static List<CustomFormat> ParseCustomFormat(MediaFile movieFile, List<CustomFormat> allCustomFormats)
+        private static List<CustomFormat> ParseCustomFormat(EpisodeFile episodeFile, Series series, List<CustomFormat> allCustomFormats)
         {
             var sceneName = string.Empty;
-            if (movieFile.SceneName.IsNotNullOrWhiteSpace())
+            if (episodeFile.SceneName.IsNotNullOrWhiteSpace())
             {
-                sceneName = movieFile.SceneName;
+                sceneName = episodeFile.SceneName;
             }
-            else if (movieFile.OriginalFilePath.IsNotNullOrWhiteSpace())
+            else if (episodeFile.OriginalFilePath.IsNotNullOrWhiteSpace())
             {
-                sceneName = movieFile.OriginalFilePath;
+                sceneName = episodeFile.OriginalFilePath;
             }
-            else if (movieFile.RelativePath.IsNotNullOrWhiteSpace())
+            else if (episodeFile.RelativePath.IsNotNullOrWhiteSpace())
             {
-                sceneName = Path.GetFileName(movieFile.RelativePath);
+                sceneName = Path.GetFileName(episodeFile.RelativePath);
             }
 
-            var info = new ParsedMovieInfo
+            var episodeInfo = new ParsedEpisodeInfo
             {
-                MovieTitles = new List<string>() { movieFile.Movie.MediaMetadata.Value.Title },
-                SimpleReleaseTitle = sceneName.SimplifyReleaseTitle(),
-                Quality = movieFile.Quality,
-                Languages = movieFile.Languages,
-                ReleaseGroup = movieFile.ReleaseGroup,
-                Edition = movieFile.Edition,
-                Year = movieFile.Movie.MediaMetadata.Value.Year,
-                ExtraInfo = new Dictionary<string, object>
-                {
-                    { "IndexerFlags", movieFile.IndexerFlags },
-                    { "Size", movieFile.Size },
-                    { "Filename", Path.GetFileName(movieFile.RelativePath) },
-                    { "OriginalLanguage", movieFile.Movie.MediaMetadata.Value.OriginalLanguage }
-                }
+                SeriesTitle = series.Title,
+                ReleaseTitle = sceneName,
+                Quality = episodeFile.Quality,
+                Languages = episodeFile.Languages,
+                ReleaseGroup = episodeFile.ReleaseGroup
             };
 
-            return ParseCustomFormat(info, allCustomFormats);
-        }
-
-        public List<CustomFormat> ParseCustomFormat(ParsedMovieInfo movieInfo, Media movie)
-        {
-            movieInfo = _parsingService.EnhanceMovieInfo(movieInfo, new List<object> { movie }) ?? movieInfo;
-            return ParseCustomFormat(movieInfo, _formatService.All());
-        }
-
-        public List<CustomFormat> ParseCustomFormat(MediaFile movieFile)
-        {
-            return ParseCustomFormat(movieFile, _formatService.All());
-        }
-
-        public List<CustomFormat> ParseCustomFormat(Blocklist blocklist)
-        {
-            var movie = _movieService.GetMovie(blocklist.MovieId);
-            var parsed = _parsingService.ParseMovieInfo(blocklist.SourceTitle, null);
-
-            var info = new ParsedMovieInfo
+            var input = new CustomFormatInput
             {
-                MovieTitles = new List<string>() { movie.MediaMetadata.Value.Title },
-                SimpleReleaseTitle = parsed?.SimpleReleaseTitle ?? blocklist.SourceTitle.SimplifyReleaseTitle(),
-                Quality = blocklist.Quality,
-                Languages = blocklist.Languages,
-                ReleaseGroup = parsed?.ReleaseGroup,
-                Edition = parsed?.Edition,
-                Year = movie.MediaMetadata.Value.Year,
-                ExtraInfo = new Dictionary<string, object>
-                {
-                    { "IndexerFlags", blocklist.IndexerFlags },
-                    { "Size", blocklist.Size }
-                }
+                EpisodeInfo = episodeInfo,
+                Series = series,
+                Size = episodeFile.Size,
+                Languages = episodeFile.Languages,
+                Filename = Path.GetFileName(episodeFile.RelativePath)
             };
 
-            return ParseCustomFormat(info, movie);
-        }
-
-        public List<CustomFormat> ParseCustomFormat(MovieHistory history)
-        {
-            var movie = _movieService.GetMovie(history.MovieId);
-            var parsed = _parsingService.ParseMovieInfo(history.SourceTitle, null);
-
-            Enum.TryParse(history.Data.GetValueOrDefault("indexerFlags"), true, out IndexerFlags flags);
-            long.TryParse(history.Data.GetValueOrDefault("size"), out var size);
-
-            var info = new ParsedMovieInfo
-            {
-                MovieTitles = new List<string>() { movie.MediaMetadata.Value.Title },
-                SimpleReleaseTitle = parsed?.SimpleReleaseTitle ?? history.SourceTitle.SimplifyReleaseTitle(),
-                Quality = history.Quality,
-                Languages = history.Languages,
-                ReleaseGroup = parsed?.ReleaseGroup,
-                Edition = parsed?.Edition,
-                Year = movie.MediaMetadata.Value.Year,
-                ExtraInfo = new Dictionary<string, object>
-                {
-                    { "IndexerFlags", flags },
-                    { "Size", size }
-                }
-            };
-
-            return ParseCustomFormat(info, movie);
+            return ParseCustomFormat(input, allCustomFormats);
         }
     }
 }

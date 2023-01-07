@@ -1,9 +1,12 @@
-namespace NzbDrone.Core.Extras.Metadata
+﻿namespace NzbDrone.Core.Extras.Metadata
 {
     public enum MetadataType
     {
         Unknown = 0,
-        MovieMetadata = 1,
-        MovieImage = 2
+        SeriesMetadata = 1,
+        EpisodeMetadata = 2,
+        SeriesImage = 3,
+        SeasonImage = 4,
+        EpisodeImage = 5
     }
 }

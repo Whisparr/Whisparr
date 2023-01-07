@@ -6,6 +6,7 @@ using NzbDrone.Core.CustomFormats;
 using NzbDrone.Core.History;
 using NzbDrone.Core.IndexerSearch.Definitions;
 using NzbDrone.Core.Parser.Model;
+using NzbDrone.Core.Profiles.Releases;
 
 namespace NzbDrone.Core.DecisionEngine.Specifications.RssSync
 {
@@ -33,7 +34,7 @@ namespace NzbDrone.Core.DecisionEngine.Specifications.RssSync
         public SpecificationPriority Priority => SpecificationPriority.Database;
         public RejectionType Type => RejectionType.Permanent;
 
-        public virtual Decision IsSatisfiedBy(RemoteMovie subject, SearchCriteriaBase searchCriteria)
+        public virtual Decision IsSatisfiedBy(RemoteEpisode subject, SearchCriteriaBase searchCriteria)
         {
             if (searchCriteria != null)
             {
@@ -44,48 +45,56 @@ namespace NzbDrone.Core.DecisionEngine.Specifications.RssSync
             var cdhEnabled = _configService.EnableCompletedDownloadHandling;
 
             _logger.Debug("Performing history status check on report");
-            _logger.Debug("Checking current status of movie [{0}] in history", subject.Movie.Id);
-            var mostRecent = _historyService.MostRecentForMovie(subject.Movie.Id);
-
-            if (mostRecent != null && mostRecent.EventType == MovieHistoryEventType.Grabbed)
+            foreach (var episode in subject.Episodes)
             {
-                var customFormats = _formatService.ParseCustomFormat(mostRecent);
+                _logger.Debug("Checking current status of episode [{0}] in history", episode.Id);
+                var mostRecent = _historyService.MostRecentForEpisode(episode.Id);
 
-                var cutoffUnmet = _upgradableSpecification.CutoffNotMet(subject.Movie.Profile,
-                                                                        mostRecent.Quality,
-                                                                        customFormats,
-                                                                        subject.ParsedMovieInfo.Quality);
-
-                var upgradeable = _upgradableSpecification.IsUpgradable(subject.Movie.Profile,
-                                                                        mostRecent.Quality,
-                                                                        customFormats,
-                                                                        subject.ParsedMovieInfo.Quality,
-                                                                        subject.CustomFormats);
-
-                var recent = mostRecent.Date.After(DateTime.UtcNow.AddHours(-12));
-                if (!recent && cdhEnabled)
+                if (mostRecent != null && mostRecent.EventType == EpisodeHistoryEventType.Grabbed)
                 {
-                    return Decision.Accept();
-                }
+                    var recent = mostRecent.Date.After(DateTime.UtcNow.AddHours(-12));
 
-                if (!cutoffUnmet)
-                {
-                    if (recent)
+                    if (!recent && cdhEnabled)
                     {
-                        return Decision.Reject("Recent grab event in history already meets cutoff: {0}", mostRecent.Quality);
+                        continue;
                     }
 
-                    return Decision.Reject("CDH is disabled and grab event in history already meets cutoff: {0}", mostRecent.Quality);
-                }
+                    var customFormats = _formatService.ParseCustomFormat(mostRecent, subject.Series);
 
-                if (!upgradeable)
-                {
-                    if (recent)
+                    // The series will be the same as the one in history since it's the same episode.
+                    // Instead of fetching the series from the DB reuse the known series.
+                    var cutoffUnmet = _upgradableSpecification.CutoffNotMet(
+                        subject.Series.QualityProfile,
+                        mostRecent.Quality,
+                        customFormats,
+                        subject.ParsedEpisodeInfo.Quality);
+
+                    var upgradeable = _upgradableSpecification.IsUpgradable(
+                        subject.Series.QualityProfile,
+                        mostRecent.Quality,
+                        customFormats,
+                        subject.ParsedEpisodeInfo.Quality,
+                        subject.CustomFormats);
+
+                    if (!cutoffUnmet)
                     {
-                        return Decision.Reject("Recent grab event in history is of equal or higher quality: {0}", mostRecent.Quality);
+                        if (recent)
+                        {
+                            return Decision.Reject("Recent grab event in history already meets cutoff: {0}", mostRecent.Quality);
+                        }
+
+                        return Decision.Reject("CDH is disabled and grab event in history already meets cutoff: {0}", mostRecent.Quality);
                     }
 
-                    return Decision.Reject("CDH is disabled and grab event in history is of equal or higher quality: {0}", mostRecent.Quality);
+                    if (!upgradeable)
+                    {
+                        if (recent)
+                        {
+                            return Decision.Reject("Recent grab event in history is of equal or higher quality: {0}", mostRecent.Quality);
+                        }
+
+                        return Decision.Reject("CDH is disabled and grab event in history is of equal or higher quality: {0}", mostRecent.Quality);
+                    }
                 }
             }
 

@@ -3,19 +3,23 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import withCurrentPage from 'Components/withCurrentPage';
+import { clearEpisodes, fetchEpisodes } from 'Store/Actions/episodeActions';
+import { clearEpisodeFiles } from 'Store/Actions/episodeFileActions';
 import * as historyActions from 'Store/Actions/historyActions';
+import hasDifferentItems from 'Utilities/Object/hasDifferentItems';
+import selectUniqueIds from 'Utilities/Object/selectUniqueIds';
 import { registerPagePopulator, unregisterPagePopulator } from 'Utilities/pagePopulator';
 import History from './History';
 
 function createMapStateToProps() {
   return createSelector(
     (state) => state.history,
-    (state) => state.movies,
-    (history, movies) => {
+    (state) => state.episodes,
+    (history, episodes) => {
       return {
-        isMoviesFetching: movies.isFetching,
-        isMoviesPopulated: movies.isPopulated,
-        moviesError: movies.error,
+        isEpisodesFetching: episodes.isFetching,
+        isEpisodesPopulated: episodes.isPopulated,
+        episodesError: episodes.error,
         ...history
       };
     }
@@ -23,7 +27,10 @@ function createMapStateToProps() {
 }
 
 const mapDispatchToProps = {
-  ...historyActions
+  ...historyActions,
+  fetchEpisodes,
+  clearEpisodes,
+  clearEpisodeFiles
 };
 
 class HistoryConnector extends Component {
@@ -47,9 +54,23 @@ class HistoryConnector extends Component {
     }
   }
 
+  componentDidUpdate(prevProps) {
+    if (hasDifferentItems(prevProps.items, this.props.items)) {
+      const episodeIds = selectUniqueIds(this.props.items, 'episodeId');
+
+      if (episodeIds.length) {
+        this.props.fetchEpisodes({ episodeIds });
+      } else {
+        this.props.clearEpisodes();
+      }
+    }
+  }
+
   componentWillUnmount() {
     unregisterPagePopulator(this.repopulate);
     this.props.clearHistory();
+    this.props.clearEpisodes();
+    this.props.clearEpisodeFiles();
   }
 
   //
@@ -130,7 +151,10 @@ HistoryConnector.propTypes = {
   setHistorySort: PropTypes.func.isRequired,
   setHistoryFilter: PropTypes.func.isRequired,
   setHistoryTableOption: PropTypes.func.isRequired,
-  clearHistory: PropTypes.func.isRequired
+  clearHistory: PropTypes.func.isRequired,
+  fetchEpisodes: PropTypes.func.isRequired,
+  clearEpisodes: PropTypes.func.isRequired,
+  clearEpisodeFiles: PropTypes.func.isRequired
 };
 
 export default withCurrentPage(

@@ -1,6 +1,8 @@
-﻿using System.Linq;
+using System.Linq;
 using NLog;
+using NLog.Fluent;
 using NzbDrone.Common.EnvironmentInfo;
+using NzbDrone.Common.Instrumentation.Extensions;
 using NzbDrone.Common.Instrumentation.Sentry;
 
 namespace NzbDrone.Common.Instrumentation

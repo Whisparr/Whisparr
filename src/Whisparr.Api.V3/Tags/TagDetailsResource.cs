@@ -9,11 +9,12 @@ namespace Whisparr.Api.V3.Tags
     {
         public string Label { get; set; }
         public List<int> DelayProfileIds { get; set; }
+        public List<int> ImportListIds { get; set; }
         public List<int> NotificationIds { get; set; }
         public List<int> RestrictionIds { get; set; }
-        public List<int> ImportListIds { get; set; }
-        public List<int> MovieIds { get; set; }
         public List<int> IndexerIds { get; set; }
+        public List<int> AutoTagIds { get; set; }
+        public List<int> SeriesIds { get; set; }
     }
 
     public static class TagDetailsResourceMapper
@@ -30,11 +31,12 @@ namespace Whisparr.Api.V3.Tags
                 Id = model.Id,
                 Label = model.Label,
                 DelayProfileIds = model.DelayProfileIds,
+                ImportListIds = model.ImportListIds,
                 NotificationIds = model.NotificationIds,
                 RestrictionIds = model.RestrictionIds,
-                ImportListIds = model.ImportListIds,
-                MovieIds = model.MovieIds,
-                IndexerIds = model.IndexerIds
+                IndexerIds = model.IndexerIds,
+                AutoTagIds = model.AutoTagIds,
+                SeriesIds = model.SeriesIds
             };
         }
 

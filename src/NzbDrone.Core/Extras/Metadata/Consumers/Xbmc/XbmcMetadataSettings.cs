@@ -1,6 +1,5 @@
 using FluentValidation;
 using NzbDrone.Core.Annotations;
-using NzbDrone.Core.Languages;
 using NzbDrone.Core.ThingiProvider;
 using NzbDrone.Core.Validation;
 
@@ -19,27 +18,31 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
 
         public XbmcMetadataSettings()
         {
-            MovieMetadata = true;
-            MovieMetadataURL = false;
-            MovieMetadataLanguage = (int)Language.English;
-            MovieImages = true;
-            UseMovieNfo = false;
+            SeriesMetadata = true;
+            SeriesMetadataUrl = false;
+            EpisodeMetadata = true;
+            SeriesImages = true;
+            SeasonImages = true;
+            EpisodeImages = true;
         }
 
-        [FieldDefinition(0, Label = "Movie Metadata", Type = FieldType.Checkbox)]
-        public bool MovieMetadata { get; set; }
+        [FieldDefinition(0, Label = "Series Metadata", Type = FieldType.Checkbox, Section = MetadataSectionType.Metadata, HelpText = "tvshow.nfo with full series metadata")]
+        public bool SeriesMetadata { get; set; }
 
-        [FieldDefinition(1, Label = "Movie Metadata URL", Type = FieldType.Checkbox, HelpText = "Whisparr will write the tmdb/imdb url in the .nfo file", Advanced = true)]
-        public bool MovieMetadataURL { get; set; }
+        [FieldDefinition(1, Label = "Series Metadata URL", Type = FieldType.Checkbox, Section = MetadataSectionType.Metadata, HelpText = "tvshow.nfo with TheTVDB show URL (can be combined with 'Series Metadata')", Advanced = true)]
+        public bool SeriesMetadataUrl { get; set; }
 
-        [FieldDefinition(2, Label = "Metadata Language", Type = FieldType.Select, SelectOptions = typeof(RealLanguageFieldConverter), HelpText = "Whisparr will write metadata in the selected language if available")]
-        public int MovieMetadataLanguage { get; set; }
+        [FieldDefinition(2, Label = "Episode Metadata", Type = FieldType.Checkbox, Section = MetadataSectionType.Metadata, HelpText = "<filename>.nfo")]
+        public bool EpisodeMetadata { get; set; }
 
-        [FieldDefinition(3, Label = "Movie Images", Type = FieldType.Checkbox)]
-        public bool MovieImages { get; set; }
+        [FieldDefinition(3, Label = "Series Images", Type = FieldType.Checkbox, Section = MetadataSectionType.Image, HelpText = "fanart.jpg, poster.jpg, banner.jpg")]
+        public bool SeriesImages { get; set; }
 
-        [FieldDefinition(4, Label = "Use Movie.nfo", Type = FieldType.Checkbox, HelpText = "Whisparr will write metadata to movie.nfo instead of the default <movie-filename>.nfo")]
-        public bool UseMovieNfo { get; set; }
+        [FieldDefinition(4, Label = "Season Images", Type = FieldType.Checkbox, Section = MetadataSectionType.Image, HelpText = "season##-poster.jpg, season##-banner.jpg, season-specials-poster.jpg, season-specials-banner.jpg")]
+        public bool SeasonImages { get; set; }
+
+        [FieldDefinition(5, Label = "Episode Images", Type = FieldType.Checkbox, Section = MetadataSectionType.Image, HelpText = "<filename>-thumb.jpg")]
+        public bool EpisodeImages { get; set; }
 
         public bool IsValid => true;
 

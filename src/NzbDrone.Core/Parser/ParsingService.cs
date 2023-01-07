@@ -1,353 +1,515 @@
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using NLog;
-using NzbDrone.Core.DecisionEngine;
+using NLog.Fluent;
+using NzbDrone.Common.Extensions;
+using NzbDrone.Common.Instrumentation.Extensions;
 using NzbDrone.Core.IndexerSearch.Definitions;
 using NzbDrone.Core.Languages;
-using NzbDrone.Core.Movies;
-using NzbDrone.Core.Parser.Augmenters;
+using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.Parser.Model;
-using NzbDrone.Core.Parser.RomanNumerals;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Parser
 {
     public interface IParsingService
     {
-        Media GetMovie(string title);
-        MappingResult Map(ParsedMovieInfo parsedMovieInfo, SearchCriteriaBase searchCriteria = null);
-        ParsedMovieInfo ParseMovieInfo(string title, List<object> helpers);
-        ParsedMovieInfo EnhanceMovieInfo(ParsedMovieInfo parsedMovieInfo, List<object> helpers = null);
-        ParsedMovieInfo ParseMinimalMovieInfo(string path, bool isDir = false);
-        ParsedMovieInfo ParseMinimalPathMovieInfo(string path);
+        Series GetSeries(string title);
+        RemoteEpisode Map(ParsedEpisodeInfo parsedEpisodeInfo, int tvdbId, SearchCriteriaBase searchCriteria = null);
+        RemoteEpisode Map(ParsedEpisodeInfo parsedEpisodeInfo, Series series);
+        RemoteEpisode Map(ParsedEpisodeInfo parsedEpisodeInfo, int seriesId, IEnumerable<int> episodeIds);
+        List<Episode> GetEpisodes(ParsedEpisodeInfo parsedEpisodeInfo, Series series, bool sceneSource, SearchCriteriaBase searchCriteria = null);
+        ParsedEpisodeInfo ParseSpecialEpisodeTitle(ParsedEpisodeInfo parsedEpisodeInfo, string releaseTitle, int tvdbId, SearchCriteriaBase searchCriteria = null);
+        ParsedEpisodeInfo ParseSpecialEpisodeTitle(ParsedEpisodeInfo parsedEpisodeInfo, string releaseTitle, Series series);
     }
 
     public class ParsingService : IParsingService
     {
-        private static HashSet<ArabicRomanNumeral> _arabicRomanNumeralMappings;
-
-        private readonly IMovieService _movieService;
-        private readonly IEnumerable<IAugmentParsedMovieInfo> _augmenters;
+        private readonly IEpisodeService _episodeService;
+        private readonly ISeriesService _seriesService;
         private readonly Logger _logger;
 
-        public ParsingService(IMovieService movieService,
-                              IEnumerable<IAugmentParsedMovieInfo> augmenters,
+        public ParsingService(IEpisodeService episodeService,
+                              ISeriesService seriesService,
                               Logger logger)
         {
-            _movieService = movieService;
-            _augmenters = augmenters;
+            _episodeService = episodeService;
+            _seriesService = seriesService;
             _logger = logger;
-
-            if (_arabicRomanNumeralMappings == null)
-            {
-                _arabicRomanNumeralMappings = RomanNumeralParser.GetArabicRomanNumeralsMapping();
-            }
         }
 
-        public ParsedMovieInfo ParseMovieInfo(string title, List<object> helpers)
+        public Series GetSeries(string title)
         {
-            var result = Parser.ParseMovieTitle(title);
+            var parsedEpisodeInfo = Parser.ParseTitle(title);
 
-            if (result == null)
+            if (parsedEpisodeInfo == null)
             {
-                return null;
+                return _seriesService.FindByTitle(title);
             }
 
-            result = EnhanceMovieInfo(result, helpers);
+            var series = _seriesService.FindByTitle(parsedEpisodeInfo.SeriesTitle);
 
-            return result;
+            if (series == null && parsedEpisodeInfo.SeriesTitleInfo.AllTitles != null)
+            {
+                series = GetSeriesByAllTitles(parsedEpisodeInfo);
+            }
+
+            if (series == null)
+            {
+                series = _seriesService.FindByTitle(parsedEpisodeInfo.SeriesTitleInfo.TitleWithoutYear,
+                                                    parsedEpisodeInfo.SeriesTitleInfo.Year);
+            }
+
+            return series;
         }
 
-        public ParsedMovieInfo EnhanceMovieInfo(ParsedMovieInfo minimalInfo, List<object> helpers = null)
+        private Series GetSeriesByAllTitles(ParsedEpisodeInfo parsedEpisodeInfo)
         {
-            if (helpers != null)
-            {
-                var augmenters = _augmenters.Where(a => helpers.Any(t => a.HelperType.IsInstanceOfType(t)) || a.HelperType == null);
+            Series foundSeries = null;
+            int? foundTvdbId = null;
 
-                foreach (var augmenter in augmenters)
+            // Match each title individually, they must all resolve to the same tvdbid
+            foreach (var title in parsedEpisodeInfo.SeriesTitleInfo.AllTitles)
+            {
+                var series = _seriesService.FindByTitle(title);
+                var tvdbId = series?.TvdbId;
+
+                if (!tvdbId.HasValue)
                 {
-                    minimalInfo = augmenter.AugmentMovieInfo(minimalInfo,
-                        helpers.FirstOrDefault(h => augmenter.HelperType.IsInstanceOfType(h)));
+                    _logger.Trace("Title {0} not matching any series.", title);
+                    return null;
+                }
+
+                if (foundTvdbId.HasValue && tvdbId != foundTvdbId)
+                {
+                    _logger.Trace("Title {0} both matches tvdbid {1} and {2}, no series selected.", parsedEpisodeInfo.SeriesTitle, foundTvdbId, tvdbId);
+                    return null;
+                }
+
+                if (foundSeries == null)
+                {
+                    foundSeries = series;
+                }
+
+                foundTvdbId = tvdbId;
+            }
+
+            if (foundSeries == null && foundTvdbId.HasValue)
+            {
+                foundSeries = _seriesService.FindByTvdbId(foundTvdbId.Value);
+            }
+
+            return foundSeries;
+        }
+
+        public RemoteEpisode Map(ParsedEpisodeInfo parsedEpisodeInfo, int tvdbId, SearchCriteriaBase searchCriteria = null)
+        {
+            return Map(parsedEpisodeInfo, tvdbId, null, searchCriteria);
+        }
+
+        public RemoteEpisode Map(ParsedEpisodeInfo parsedEpisodeInfo, Series series)
+        {
+            return Map(parsedEpisodeInfo, 0, series, null);
+        }
+
+        public RemoteEpisode Map(ParsedEpisodeInfo parsedEpisodeInfo, int seriesId, IEnumerable<int> episodeIds)
+        {
+            return new RemoteEpisode
+                   {
+                       ParsedEpisodeInfo = parsedEpisodeInfo,
+                       Series = _seriesService.GetSeries(seriesId),
+                       Episodes = _episodeService.GetEpisodes(episodeIds)
+                   };
+        }
+
+        private RemoteEpisode Map(ParsedEpisodeInfo parsedEpisodeInfo, int tvdbId, Series series, SearchCriteriaBase searchCriteria)
+        {
+            var remoteEpisode = new RemoteEpisode
+            {
+                ParsedEpisodeInfo = parsedEpisodeInfo,
+                MappedSeasonNumber = parsedEpisodeInfo.SeasonNumber
+            };
+
+            // For now we just detect tvdb vs scene, but we can do multiple 'origins' in the future.
+            var sceneSource = true;
+
+            if (series == null)
+            {
+                var seriesMatch = FindSeries(parsedEpisodeInfo, tvdbId, searchCriteria);
+
+                if (seriesMatch != null)
+                {
+                    series = seriesMatch.Series;
+                    remoteEpisode.SeriesMatchType = seriesMatch.MatchType;
                 }
             }
 
-            return minimalInfo;
-        }
-
-        public ParsedMovieInfo ParseMinimalMovieInfo(string file, bool isDir = false)
-        {
-            return Parser.ParseMovieTitle(file, isDir);
-        }
-
-        public ParsedMovieInfo ParseMinimalPathMovieInfo(string path)
-        {
-            var fileInfo = new FileInfo(path);
-
-            var result = ParseMinimalMovieInfo(fileInfo.Name, true);
-
-            if (result == null)
+            if (series != null)
             {
-                _logger.Debug("Attempting to parse movie info using directory and file names. {0}", fileInfo.Directory.Name);
-                result = ParseMinimalMovieInfo(fileInfo.Directory.Name + " " + fileInfo.Name);
+                remoteEpisode.Series = series;
+
+                remoteEpisode.Episodes = GetEpisodes(parsedEpisodeInfo, series, remoteEpisode.MappedSeasonNumber, sceneSource, searchCriteria);
             }
 
-            if (result == null)
+            remoteEpisode.Languages = parsedEpisodeInfo.Languages;
+
+            if (remoteEpisode.Episodes == null)
             {
-                _logger.Debug("Attempting to parse movie info using directory name. {0}", fileInfo.Directory.Name);
-                result = ParseMinimalMovieInfo(fileInfo.Directory.Name + fileInfo.Extension);
+                remoteEpisode.Episodes = new List<Episode>();
             }
 
-            return result;
+            if (searchCriteria != null)
+            {
+                var requestedEpisodes = searchCriteria.Episodes.ToDictionaryIgnoreDuplicates(v => v.Id);
+                remoteEpisode.EpisodeRequested = remoteEpisode.Episodes.Any(v => requestedEpisodes.ContainsKey(v.Id));
+            }
+
+            return remoteEpisode;
         }
 
-        public Media GetMovie(string title)
+        public List<Episode> GetEpisodes(ParsedEpisodeInfo parsedEpisodeInfo, Series series, bool sceneSource, SearchCriteriaBase searchCriteria = null)
         {
-            var parsedMovieInfo = Parser.ParseMovieTitle(title);
-
-            if (parsedMovieInfo == null)
+            if (sceneSource)
             {
-                return _movieService.FindByTitle(title);
+                var remoteEpisode = Map(parsedEpisodeInfo, 0, series, searchCriteria);
+
+                return remoteEpisode.Episodes;
             }
 
-            if (TryGetMovieByTitleAndOrYear(parsedMovieInfo, out var result) && result.MappingResultType == MappingResultType.Success)
+            return GetEpisodes(parsedEpisodeInfo, series, parsedEpisodeInfo.SeasonNumber, sceneSource, searchCriteria);
+        }
+
+        private List<Episode> GetEpisodes(ParsedEpisodeInfo parsedEpisodeInfo, Series series, int mappedSeasonNumber, bool sceneSource, SearchCriteriaBase searchCriteria)
+        {
+            if (parsedEpisodeInfo.FullSeason)
             {
-                return result.Movie;
+                if (series.UseSceneNumbering && sceneSource)
+                {
+                    var episodes = _episodeService.GetEpisodesBySceneSeason(series.Id, mappedSeasonNumber);
+
+                    // If episodes were found by the scene season number return them, otherwise fallback to look-up by season number
+                    if (episodes.Any())
+                    {
+                        return episodes;
+                    }
+                }
+
+                return _episodeService.GetEpisodesBySeason(series.Id, mappedSeasonNumber);
+            }
+
+            if (parsedEpisodeInfo.IsDaily)
+            {
+                var episodeInfo = GetDailyEpisode(series, parsedEpisodeInfo.AirDate, parsedEpisodeInfo.DailyPart, searchCriteria);
+
+                if (episodeInfo != null)
+                {
+                    return new List<Episode> { episodeInfo };
+                }
+
+                return new List<Episode>();
+            }
+
+            if (parsedEpisodeInfo.IsAbsoluteNumbering)
+            {
+                return GetAnimeEpisodes(series, parsedEpisodeInfo, mappedSeasonNumber, sceneSource, searchCriteria);
+            }
+
+            if (parsedEpisodeInfo.IsPossibleSceneSeasonSpecial)
+            {
+                var parsedSpecialEpisodeInfo = ParseSpecialEpisodeTitle(parsedEpisodeInfo, parsedEpisodeInfo.ReleaseTitle, series);
+
+                if (parsedSpecialEpisodeInfo != null)
+                {
+                    // Use the season number and disable scene source since the season/episode numbers that were returned are not scene numbers
+                    return GetStandardEpisodes(series, parsedSpecialEpisodeInfo, parsedSpecialEpisodeInfo.SeasonNumber, false, searchCriteria);
+                }
+            }
+
+            return GetStandardEpisodes(series, parsedEpisodeInfo, mappedSeasonNumber, sceneSource, searchCriteria);
+        }
+
+        public ParsedEpisodeInfo ParseSpecialEpisodeTitle(ParsedEpisodeInfo parsedEpisodeInfo, string releaseTitle, int tvdbId, SearchCriteriaBase searchCriteria = null)
+        {
+            if (searchCriteria != null)
+            {
+                if (tvdbId != 0 && tvdbId == searchCriteria.Series.TvdbId)
+                {
+                    return ParseSpecialEpisodeTitle(parsedEpisodeInfo, releaseTitle, searchCriteria.Series);
+                }
+            }
+
+            var series = GetSeries(releaseTitle);
+
+            if (series == null)
+            {
+                series = _seriesService.FindByTitleInexact(releaseTitle);
+            }
+
+            if (series == null && tvdbId > 0)
+            {
+                series = _seriesService.FindByTvdbId(tvdbId);
+            }
+
+            if (series == null)
+            {
+                _logger.Debug("No matching series {0}", releaseTitle);
+                return null;
+            }
+
+            return ParseSpecialEpisodeTitle(parsedEpisodeInfo, releaseTitle, series);
+        }
+
+        public ParsedEpisodeInfo ParseSpecialEpisodeTitle(ParsedEpisodeInfo parsedEpisodeInfo, string releaseTitle, Series series)
+        {
+            // SxxE00 episodes are sometimes mapped via TheXEM, don't use episode title parsing in that case.
+            if (parsedEpisodeInfo != null && parsedEpisodeInfo.IsPossibleSceneSeasonSpecial && series.UseSceneNumbering)
+            {
+                if (_episodeService.FindEpisodesBySceneNumbering(series.Id, parsedEpisodeInfo.SeasonNumber, 0).Any())
+                {
+                    return parsedEpisodeInfo;
+                }
+            }
+
+            // find special episode in series season 0
+            var episode = _episodeService.FindEpisodeByTitle(series.Id, 0, releaseTitle);
+
+            if (episode != null)
+            {
+                // create parsed info from tv episode
+                var info = new ParsedEpisodeInfo
+                {
+                    ReleaseTitle = releaseTitle,
+                    SeriesTitle = series.Title,
+                    SeriesTitleInfo = new SeriesTitleInfo
+                        {
+                            Title = series.Title
+                        },
+                    SeasonNumber = episode.SeasonNumber,
+                    EpisodeNumbers = new int[1] { episode.EpisodeNumber },
+                    FullSeason = false,
+                    Quality = QualityParser.ParseQuality(releaseTitle),
+                    ReleaseGroup = Parser.ParseReleaseGroup(releaseTitle),
+                    Languages = LanguageParser.ParseLanguages(releaseTitle),
+                    Special = true
+                };
+
+                _logger.Debug("Found special episode {0} for title '{1}'", info, releaseTitle);
+                return info;
             }
 
             return null;
         }
 
-        public MappingResult Map(ParsedMovieInfo parsedMovieInfo, SearchCriteriaBase searchCriteria = null)
+        private FindSeriesResult FindSeries(ParsedEpisodeInfo parsedEpisodeInfo, int tvdbId, SearchCriteriaBase searchCriteria)
         {
-            var result = GetMovie(parsedMovieInfo, searchCriteria);
-
-            if (result == null)
-            {
-                result = new MappingResult { MappingResultType = MappingResultType.Unknown };
-                result.Movie = null;
-            }
-
-            //Use movie language as fallback if we could't parse a language (more accurate than just using English)
-            if (parsedMovieInfo.Languages.Count <= 1 && parsedMovieInfo.Languages.First() == Language.Unknown && result.Movie != null)
-            {
-                parsedMovieInfo.Languages = new List<Language> { result.Movie.MediaMetadata.Value.OriginalLanguage };
-                _logger.Debug("Language couldn't be parsed from release, fallback to movie original language: {0}", result.Movie.MediaMetadata.Value.OriginalLanguage.Name);
-            }
-
-            if (parsedMovieInfo.Languages.Contains(Language.Original))
-            {
-                parsedMovieInfo.Languages.Remove(Language.Original);
-
-                if (result.Movie != null && !parsedMovieInfo.Languages.Contains(result.Movie.MediaMetadata.Value.OriginalLanguage))
-                {
-                    parsedMovieInfo.Languages.Add(result.Movie.MediaMetadata.Value.OriginalLanguage);
-                }
-                else
-                {
-                    parsedMovieInfo.Languages.Add(Language.Unknown);
-                }
-            }
-
-            result.RemoteMovie.ParsedMovieInfo = parsedMovieInfo;
-
-            return result;
-        }
-
-        private MappingResult GetMovie(ParsedMovieInfo parsedMovieInfo, SearchCriteriaBase searchCriteria)
-        {
-            MappingResult result = null;
+            Series series = null;
 
             if (searchCriteria != null)
             {
-                if (TryGetMovieBySearchCriteria(parsedMovieInfo, searchCriteria, out result))
+                if (searchCriteria.Series.CleanTitle == parsedEpisodeInfo.SeriesTitle.CleanSeriesTitle())
                 {
-                    return result;
+                    return new FindSeriesResult(searchCriteria.Series, SeriesMatchType.Title);
                 }
-            }
-            else
-            {
-                if (TryGetMovieByTitleAndOrYear(parsedMovieInfo, out result))
+
+                if (tvdbId > 0 && tvdbId == searchCriteria.Series.TvdbId)
                 {
-                    return result;
+                    _logger.Debug()
+                           .Message("Found matching series by TVDB ID {0}, an alias may be needed for: {1}", tvdbId, parsedEpisodeInfo.SeriesTitle)
+                           .Property("TvdbId", tvdbId)
+                           .Property("ParsedEpisodeInfo", parsedEpisodeInfo)
+                           .WriteSentryWarn("TvdbIdMatch", tvdbId.ToString(), parsedEpisodeInfo.SeriesTitle)
+                           .Write();
+
+                    return new FindSeriesResult(searchCriteria.Series, SeriesMatchType.Id);
                 }
             }
 
-            // nothing found up to here => logging that and returning null
-            _logger.Debug($"No matching movie for titles {string.Join(", ", parsedMovieInfo.MovieTitles)} ({parsedMovieInfo.Year})");
+            var matchType = SeriesMatchType.Unknown;
+            series = _seriesService.FindByTitle(parsedEpisodeInfo.SeriesTitle);
+
+            if (series != null)
+            {
+                matchType = SeriesMatchType.Title;
+            }
+
+            if (series == null && parsedEpisodeInfo.SeriesTitleInfo.AllTitles != null)
+            {
+                series = GetSeriesByAllTitles(parsedEpisodeInfo);
+                matchType = SeriesMatchType.Title;
+            }
+
+            if (series == null && parsedEpisodeInfo.SeriesTitleInfo.Year > 0)
+            {
+                series = _seriesService.FindByTitle(parsedEpisodeInfo.SeriesTitleInfo.TitleWithoutYear, parsedEpisodeInfo.SeriesTitleInfo.Year);
+                matchType = SeriesMatchType.Title;
+            }
+
+            if (series == null && tvdbId > 0)
+            {
+                series = _seriesService.FindByTvdbId(tvdbId);
+
+                if (series != null)
+                {
+                    _logger.Debug()
+                           .Message("Found matching series by TVDB ID {0}, an alias may be needed for: {1}", tvdbId, parsedEpisodeInfo.SeriesTitle)
+                           .Property("TvdbId", tvdbId)
+                           .Property("ParsedEpisodeInfo", parsedEpisodeInfo)
+                           .WriteSentryWarn("TvdbIdMatch", tvdbId.ToString(), parsedEpisodeInfo.SeriesTitle)
+                           .Write();
+
+                    matchType = SeriesMatchType.Id;
+                }
+            }
+
+            if (series == null)
+            {
+                _logger.Debug("No matching series {0}", parsedEpisodeInfo.SeriesTitle);
+                return null;
+            }
+
+            return new FindSeriesResult(series, matchType);
+        }
+
+        private Episode GetDailyEpisode(Series series, string airDate, int? part, SearchCriteriaBase searchCriteria)
+        {
+            Episode episodeInfo = null;
+
+            if (searchCriteria != null)
+            {
+                episodeInfo = searchCriteria.Episodes.SingleOrDefault(
+                    e => e.AirDate == airDate);
+            }
+
+            if (episodeInfo == null)
+            {
+                episodeInfo = _episodeService.FindEpisode(series.Id, airDate, part);
+            }
+
+            return episodeInfo;
+        }
+
+        private List<Episode> GetAnimeEpisodes(Series series, ParsedEpisodeInfo parsedEpisodeInfo, int seasonNumber, bool sceneSource, SearchCriteriaBase searchCriteria)
+        {
+            var result = new List<Episode>();
+            foreach (var absoluteEpisodeNumber in parsedEpisodeInfo.AbsoluteEpisodeNumbers)
+            {
+                var episodes = new List<Episode>();
+
+                if (parsedEpisodeInfo.Special)
+                {
+                    var episode = _episodeService.FindEpisode(series.Id, 0, absoluteEpisodeNumber);
+                    episodes.AddIfNotNull(episode);
+                }
+                else if (sceneSource)
+                {
+                    // Is there a reason why we excluded season 1 from this handling before?
+                    // Might have something to do with the scene name to season number check
+                    // If this needs to be reverted tests will need to be added
+                    if (parsedEpisodeInfo.SeasonNumber > 1 && parsedEpisodeInfo.EpisodeNumbers.Empty())
+                    {
+                        episodes = _episodeService.FindEpisodesBySceneNumbering(series.Id, parsedEpisodeInfo.SeasonNumber, absoluteEpisodeNumber);
+
+                        if (episodes.Empty())
+                        {
+                            var episode = _episodeService.FindEpisode(series.Id, parsedEpisodeInfo.SeasonNumber, absoluteEpisodeNumber);
+                            episodes.AddIfNotNull(episode);
+                        }
+                    }
+                    else
+                    {
+                        episodes = _episodeService.FindEpisodesBySceneNumbering(series.Id, absoluteEpisodeNumber);
+
+                        // Don't allow multiple results without a scene name mapping.
+                        if (episodes.Count > 1)
+                        {
+                            episodes.Clear();
+                        }
+                    }
+                }
+
+                if (episodes.Empty())
+                {
+                    var episode = _episodeService.FindEpisode(series.Id, absoluteEpisodeNumber);
+                    episodes.AddIfNotNull(episode);
+                }
+
+                foreach (var episode in episodes)
+                {
+                    _logger.Debug("Using absolute episode number {0} for: {1} - TVDB: {2}x{3:00}",
+                                absoluteEpisodeNumber,
+                                series.Title,
+                                episode.SeasonNumber,
+                                episode.EpisodeNumber);
+
+                    result.Add(episode);
+                }
+            }
+
             return result;
         }
 
-        private bool TryGetMovieByTitleAndOrYear(ParsedMovieInfo parsedMovieInfo, out MappingResult result)
+        private List<Episode> GetStandardEpisodes(Series series, ParsedEpisodeInfo parsedEpisodeInfo, int mappedSeasonNumber, bool sceneSource, SearchCriteriaBase searchCriteria)
         {
-            var candidates = _movieService.FindByTitleCandidates(parsedMovieInfo.MovieTitles, out var otherTitles);
+            var result = new List<Episode>();
 
-            Media movieByTitleAndOrYear;
-            if (parsedMovieInfo.Year > 1800)
+            if (parsedEpisodeInfo.EpisodeNumbers == null)
             {
-                movieByTitleAndOrYear = _movieService.FindByTitle(parsedMovieInfo.MovieTitles, parsedMovieInfo.Year, otherTitles, candidates);
-                if (movieByTitleAndOrYear != null)
-                {
-                    result = new MappingResult { Movie = movieByTitleAndOrYear };
-                    return true;
-                }
+                return new List<Episode>();
+            }
 
-                // Only default to not using year when one is parsed if only one movie candidate exists
-                if (candidates != null && candidates.Count == 1)
+            foreach (var episodeNumber in parsedEpisodeInfo.EpisodeNumbers)
+            {
+                if (series.UseSceneNumbering && sceneSource)
                 {
-                    movieByTitleAndOrYear = _movieService.FindByTitle(parsedMovieInfo.MovieTitles, null, otherTitles, candidates);
-                    if (movieByTitleAndOrYear != null)
+                    List<Episode> episodes = new List<Episode>();
+
+                    if (searchCriteria != null)
                     {
-                        result = new MappingResult { Movie = movieByTitleAndOrYear, MappingResultType = MappingResultType.WrongYear };
-                        return false;
+                        episodes = searchCriteria.Episodes.Where(e => e.SceneSeasonNumber == parsedEpisodeInfo.SeasonNumber &&
+                                                                      e.SceneEpisodeNumber == episodeNumber).ToList();
+                    }
+
+                    if (!episodes.Any())
+                    {
+                        episodes = _episodeService.FindEpisodesBySceneNumbering(series.Id, mappedSeasonNumber, episodeNumber);
+                    }
+
+                    if (episodes != null && episodes.Any())
+                    {
+                        _logger.Debug("Using Scene to TVDB Mapping for: {0} - Scene: {1}x{2:00} - TVDB: {3}",
+                                    series.Title,
+                                    episodes.First().SceneSeasonNumber,
+                                    episodes.First().SceneEpisodeNumber,
+                                    string.Join(", ", episodes.Select(e => string.Format("{0}x{1:00}", e.SeasonNumber, e.EpisodeNumber))));
+
+                        result.AddRange(episodes);
+                        continue;
                     }
                 }
 
-                result = new MappingResult { Movie = movieByTitleAndOrYear, MappingResultType = MappingResultType.TitleNotFound };
-                return false;
-            }
+                Episode episodeInfo = null;
 
-            movieByTitleAndOrYear = _movieService.FindByTitle(parsedMovieInfo.MovieTitles, null, otherTitles, candidates);
-            if (movieByTitleAndOrYear != null)
-            {
-                result = new MappingResult { Movie = movieByTitleAndOrYear };
-                return true;
-            }
-
-            result = new MappingResult { Movie = movieByTitleAndOrYear, MappingResultType = MappingResultType.TitleNotFound };
-            return false;
-        }
-
-        private bool TryGetMovieBySearchCriteria(ParsedMovieInfo parsedMovieInfo, SearchCriteriaBase searchCriteria, out MappingResult result)
-        {
-            Media possibleMovie = null;
-
-            var possibleTitles = new List<string>();
-
-            possibleTitles.Add(searchCriteria.Movie.MediaMetadata.Value.CleanTitle);
-            possibleTitles.AddRange(searchCriteria.Movie.MediaMetadata.Value.AlternativeTitles.Select(t => t.CleanTitle));
-            possibleTitles.AddRange(searchCriteria.Movie.MediaMetadata.Value.Translations.Select(t => t.CleanTitle));
-
-            var cleanTitle = parsedMovieInfo.PrimaryMovieTitle.CleanMovieTitle();
-
-            foreach (var title in possibleTitles)
-            {
-                if (title == cleanTitle)
+                if (searchCriteria != null)
                 {
-                    possibleMovie = searchCriteria.Movie;
+                    episodeInfo = searchCriteria.Episodes.SingleOrDefault(e => e.SeasonNumber == mappedSeasonNumber && e.EpisodeNumber == episodeNumber);
                 }
 
-                foreach (var numeralMapping in _arabicRomanNumeralMappings)
+                if (episodeInfo == null)
                 {
-                    var arabicNumeral = numeralMapping.ArabicNumeralAsString;
-                    var romanNumeral = numeralMapping.RomanNumeralLowerCase;
+                    episodeInfo = _episodeService.FindEpisode(series.Id, mappedSeasonNumber, episodeNumber);
+                }
 
-                    //_logger.Debug(cleanTitle);
-                    if (title.Replace(arabicNumeral, romanNumeral) == cleanTitle)
-                    {
-                        possibleMovie = searchCriteria.Movie;
-                    }
-
-                    if (title == cleanTitle.Replace(arabicNumeral, romanNumeral))
-                    {
-                        possibleMovie = searchCriteria.Movie;
-                    }
+                if (episodeInfo != null)
+                {
+                    result.Add(episodeInfo);
+                }
+                else
+                {
+                    _logger.Debug("Unable to find {0}", parsedEpisodeInfo);
                 }
             }
 
-            if (possibleMovie != null)
-            {
-                if (parsedMovieInfo.Year < 1800 || possibleMovie.MediaMetadata.Value.Year == parsedMovieInfo.Year || possibleMovie.MediaMetadata.Value.SecondaryYear == parsedMovieInfo.Year)
-                {
-                    result = new MappingResult { Movie = possibleMovie, MappingResultType = MappingResultType.Success };
-                    return true;
-                }
-
-                result = new MappingResult { Movie = possibleMovie, MappingResultType = MappingResultType.WrongYear };
-                return false;
-            }
-
-            result = new MappingResult { Movie = searchCriteria.Movie, MappingResultType = MappingResultType.WrongTitle };
-
-            return false;
+            return result;
         }
-    }
-
-    public class MappingResult
-    {
-        public string Message
-        {
-            get
-            {
-                switch (MappingResultType)
-                {
-                    case MappingResultType.Success:
-                        return $"Successfully mapped release name {ReleaseName} to movie {Movie}";
-                    case MappingResultType.NotParsable:
-                        return $"Failed to find movie title in release name {ReleaseName}";
-                    case MappingResultType.TitleNotFound:
-                        return $"Could not find {RemoteMovie.ParsedMovieInfo.PrimaryMovieTitle}";
-                    case MappingResultType.WrongYear:
-                        return $"Failed to map movie, expected year {RemoteMovie.Movie.MediaMetadata.Value.Year}, but found {RemoteMovie.ParsedMovieInfo.Year}";
-                    case MappingResultType.WrongTitle:
-                        var comma = RemoteMovie.Movie.MediaMetadata.Value.AlternativeTitles.Count > 0 ? ", " : "";
-                        return
-                            $"Failed to map movie, found title(s) {string.Join(", ", RemoteMovie.ParsedMovieInfo.MovieTitles)}, expected one of: {RemoteMovie.Movie.MediaMetadata.Value.Title}{comma}{string.Join(", ", RemoteMovie.Movie.MediaMetadata.Value.AlternativeTitles)}";
-                    default:
-                        return $"Failed to map movie for unknown reasons";
-                }
-            }
-        }
-
-        public RemoteMovie RemoteMovie;
-        public MappingResultType MappingResultType { get; set; }
-        public Media Movie
-        {
-            get
-            {
-                return RemoteMovie.Movie;
-            }
-            set
-            {
-                ParsedMovieInfo parsedInfo = null;
-                if (RemoteMovie != null)
-                {
-                    parsedInfo = RemoteMovie.ParsedMovieInfo;
-                }
-
-                RemoteMovie = new RemoteMovie
-                {
-                    Movie = value,
-                    ParsedMovieInfo = parsedInfo
-                };
-            }
-        }
-
-        public string ReleaseName { get; set; }
-
-        public override string ToString()
-        {
-            return string.Format(Message, RemoteMovie.Movie);
-        }
-
-        public Rejection ToRejection()
-        {
-            switch (MappingResultType)
-            {
-                case MappingResultType.Success:
-                    return null;
-                default:
-                    return new Rejection(Message);
-            }
-        }
-    }
-
-    public enum MappingResultType
-    {
-        Unknown = -1,
-        Success = 0,
-        WrongYear = 2,
-        WrongTitle = 3,
-        TitleNotFound = 4,
-        NotParsable = 5,
     }
 }

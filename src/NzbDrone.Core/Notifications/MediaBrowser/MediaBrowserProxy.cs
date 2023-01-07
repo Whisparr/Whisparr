@@ -22,16 +22,16 @@ namespace NzbDrone.Core.Notifications.Emby
             request.Headers.ContentType = "application/json";
 
             request.SetContent(new
-            {
-                Name = title,
-                Description = message,
-                ImageUrl = "https://raw.github.com/Whisparr/Whisparr/develop/Logo/64.png"
-            }.ToJson());
+                           {
+                               Name = title,
+                               Description = message,
+                               ImageUrl = "https://raw.github.com/NzbDrone/NzbDrone/develop/Logo/64.png"
+                           }.ToJson());
 
             ProcessRequest(request, settings);
         }
 
-        public void UpdateMovies(MediaBrowserSettings settings, string moviePath, string updateType)
+        public void Update(MediaBrowserSettings settings, string seriesPath, string updateType)
         {
             var path = "/Library/Media/Updated";
             var request = BuildRequest(path, settings);
@@ -43,7 +43,7 @@ namespace NzbDrone.Core.Notifications.Emby
                 {
                     new
                     {
-                        Path = moviePath,
+                        Path = seriesPath,
                         UpdateType = updateType
                     }
                 }
@@ -76,7 +76,7 @@ namespace NzbDrone.Core.Notifications.Emby
         {
             _logger.Debug("Looking for error in response: {0}", response);
 
-            //TODO: actually check for the error
+            // TODO: actually check for the error
         }
     }
 }

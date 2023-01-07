@@ -1,30 +1,27 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using FluentValidation.Results;
 using NzbDrone.Core.MediaFiles;
-using NzbDrone.Core.Movies;
 using NzbDrone.Core.ThingiProvider;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Notifications
 {
     public abstract class NotificationBase<TSettings> : INotification
         where TSettings : IProviderConfig, new()
     {
-        protected const string MOVIE_GRABBED_TITLE = "Movie Grabbed";
-        protected const string MOVIE_DOWNLOADED_TITLE = "Movie Downloaded";
-        protected const string MOVIE_UPGRADED_TITLE = "Movie Upgraded";
-        protected const string MOVIE_ADDED_TITLE = "Movie Added";
-        protected const string MOVIE_DELETED_TITLE = "Movie Deleted";
-        protected const string MOVIE_FILE_DELETED_TITLE = "Movie File Deleted";
+        protected const string EPISODE_GRABBED_TITLE = "Episode Grabbed";
+        protected const string EPISODE_DOWNLOADED_TITLE = "Episode Downloaded";
+        protected const string EPISODE_DELETED_TITLE = "Episode Deleted";
+        protected const string SERIES_DELETED_TITLE = "Series Deleted";
         protected const string HEALTH_ISSUE_TITLE = "Health Check Failure";
         protected const string APPLICATION_UPDATE_TITLE = "Application Updated";
 
-        protected const string MOVIE_GRABBED_TITLE_BRANDED = "Whisparr - " + MOVIE_GRABBED_TITLE;
-        protected const string MOVIE_ADDED_TITLE_BRANDED = "Whisparr - " + MOVIE_ADDED_TITLE;
-        protected const string MOVIE_DOWNLOADED_TITLE_BRANDED = "Whisparr - " + MOVIE_DOWNLOADED_TITLE;
-        protected const string MOVIE_DELETED_TITLE_BRANDED = "Whisparr - " + MOVIE_DELETED_TITLE;
-        protected const string MOVIE_FILE_DELETED_TITLE_BRANDED = "Whisparr - " + MOVIE_FILE_DELETED_TITLE;
+        protected const string EPISODE_GRABBED_TITLE_BRANDED = "Whisparr - " + EPISODE_GRABBED_TITLE;
+        protected const string EPISODE_DOWNLOADED_TITLE_BRANDED = "Whisparr - " + EPISODE_DOWNLOADED_TITLE;
+        protected const string EPISODE_DELETED_TITLE_BRANDED = "Whisparr - " + EPISODE_DELETED_TITLE;
+        protected const string SERIES_DELETED_TITLE_BRANDED = "Whisparr - " + SERIES_DELETED_TITLE;
         protected const string HEALTH_ISSUE_TITLE_BRANDED = "Whisparr - " + HEALTH_ISSUE_TITLE;
         protected const string APPLICATION_UPDATE_TITLE_BRANDED = "Whisparr - " + APPLICATION_UPDATE_TITLE;
 
@@ -49,19 +46,15 @@ namespace NzbDrone.Core.Notifications
         {
         }
 
-        public virtual void OnMovieRename(Media movie, List<RenamedMovieFile> renamedFiles)
+        public virtual void OnRename(Series series, List<RenamedEpisodeFile> renamedFiles)
         {
         }
 
-        public virtual void OnMovieAdded(Media movie)
+        public virtual void OnEpisodeFileDelete(EpisodeDeleteMessage deleteMessage)
         {
         }
 
-        public virtual void OnMovieFileDelete(MovieFileDeleteMessage deleteMessage)
-        {
-        }
-
-        public virtual void OnMovieDelete(MovieDeleteMessage deleteMessage)
+        public virtual void OnSeriesDelete(SeriesDeleteMessage deleteMessage)
         {
         }
 
@@ -78,13 +71,12 @@ namespace NzbDrone.Core.Notifications
         }
 
         public bool SupportsOnGrab => HasConcreteImplementation("OnGrab");
-        public bool SupportsOnRename => HasConcreteImplementation("OnMovieRename");
+        public bool SupportsOnRename => HasConcreteImplementation("OnRename");
         public bool SupportsOnDownload => HasConcreteImplementation("OnDownload");
         public bool SupportsOnUpgrade => SupportsOnDownload;
-        public bool SupportsOnMovieAdded => HasConcreteImplementation("OnMovieAdded");
-        public bool SupportsOnMovieDelete => HasConcreteImplementation("OnMovieDelete");
-        public bool SupportsOnMovieFileDelete => HasConcreteImplementation("OnMovieFileDelete");
-        public bool SupportsOnMovieFileDeleteForUpgrade => SupportsOnMovieFileDelete;
+        public bool SupportsOnSeriesDelete => HasConcreteImplementation("OnSeriesDelete");
+        public bool SupportsOnEpisodeFileDelete => HasConcreteImplementation("OnEpisodeFileDelete");
+        public bool SupportsOnEpisodeFileDeleteForUpgrade => SupportsOnEpisodeFileDelete;
         public bool SupportsOnHealthIssue => HasConcreteImplementation("OnHealthIssue");
         public bool SupportsOnApplicationUpdate => HasConcreteImplementation("OnApplicationUpdate");
 

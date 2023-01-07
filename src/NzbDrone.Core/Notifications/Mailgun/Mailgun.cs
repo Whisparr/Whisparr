@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using FluentValidation.Results;
 using NLog;
-using NzbDrone.Core.Movies;
 
 namespace NzbDrone.Core.Notifications.Mailgun
 {
@@ -22,31 +21,26 @@ namespace NzbDrone.Core.Notifications.Mailgun
 
         public override void OnGrab(GrabMessage grabMessage)
         {
-            _proxy.SendNotification(MOVIE_GRABBED_TITLE, grabMessage.Message, Settings);
+            _proxy.SendNotification(EPISODE_GRABBED_TITLE, grabMessage.Message, Settings);
         }
 
         public override void OnDownload(DownloadMessage downloadMessage)
         {
-            _proxy.SendNotification(downloadMessage.OldMovieFiles.Count > 0 ? MOVIE_UPGRADED_TITLE : MOVIE_DOWNLOADED_TITLE, downloadMessage.Message, Settings);
+            _proxy.SendNotification(EPISODE_DOWNLOADED_TITLE, downloadMessage.Message, Settings);
         }
 
-        public override void OnMovieAdded(Media movie)
-        {
-            _proxy.SendNotification(MOVIE_ADDED_TITLE, $"{movie.Title} added to library", Settings);
-        }
-
-        public override void OnMovieFileDelete(MovieFileDeleteMessage deleteMessage)
+        public override void OnEpisodeFileDelete(EpisodeDeleteMessage deleteMessage)
         {
             var body = $"{deleteMessage.Message} deleted.";
 
-            _proxy.SendNotification(MOVIE_FILE_DELETED_TITLE, body, Settings);
+            _proxy.SendNotification(EPISODE_DELETED_TITLE, body, Settings);
         }
 
-        public override void OnMovieDelete(MovieDeleteMessage deleteMessage)
+        public override void OnSeriesDelete(SeriesDeleteMessage deleteMessage)
         {
             var body = $"{deleteMessage.Message}";
 
-            _proxy.SendNotification(MOVIE_DELETED_TITLE, body, Settings);
+            _proxy.SendNotification(SERIES_DELETED_TITLE, body, Settings);
         }
 
         public override void OnHealthIssue(HealthCheck.HealthCheck healthCheckMessage)
@@ -69,7 +63,7 @@ namespace NzbDrone.Core.Notifications.Mailgun
                 const string body = "This is a test message from Whisparr, though Mailgun.";
 
                 _proxy.SendNotification(title, body, Settings);
-                _logger.Info("Successsfully sent email though Mailgun.");
+                _logger.Info("Successfully sent email though Mailgun.");
             }
             catch (Exception ex)
             {

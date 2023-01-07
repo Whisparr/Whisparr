@@ -9,24 +9,24 @@ using NzbDrone.Core.Exceptions;
 using NzbDrone.Core.MediaFiles.Events;
 using NzbDrone.Core.Messaging;
 using NzbDrone.Core.Messaging.Events;
-using NzbDrone.Core.Movies;
-using NzbDrone.Core.Movies.Events;
+using NzbDrone.Core.Tv;
+using NzbDrone.Core.Tv.Events;
 
 namespace NzbDrone.Core.MediaFiles
 {
     public interface IDeleteMediaFiles
     {
-        void DeleteMovieFile(Media movie, MediaFile movieFile);
+        void DeleteEpisodeFile(Series series, EpisodeFile episodeFile);
     }
 
     public class MediaFileDeletionService : IDeleteMediaFiles,
-                                            IHandleAsync<MoviesDeletedEvent>,
-                                            IHandle<MovieFileDeletedEvent>
+                                            IHandleAsync<SeriesDeletedEvent>,
+                                            IHandle<EpisodeFileDeletedEvent>
     {
         private readonly IDiskProvider _diskProvider;
         private readonly IRecycleBinProvider _recycleBinProvider;
         private readonly IMediaFileService _mediaFileService;
-        private readonly IMovieService _movieService;
+        private readonly ISeriesService _seriesService;
         private readonly IConfigService _configService;
         private readonly IEventAggregator _eventAggregator;
         private readonly Logger _logger;
@@ -34,7 +34,7 @@ namespace NzbDrone.Core.MediaFiles
         public MediaFileDeletionService(IDiskProvider diskProvider,
                                         IRecycleBinProvider recycleBinProvider,
                                         IMediaFileService mediaFileService,
-                                        IMovieService movieService,
+                                        ISeriesService seriesService,
                                         IConfigService configService,
                                         IEventAggregator eventAggregator,
                                         Logger logger)
@@ -42,34 +42,34 @@ namespace NzbDrone.Core.MediaFiles
             _diskProvider = diskProvider;
             _recycleBinProvider = recycleBinProvider;
             _mediaFileService = mediaFileService;
-            _movieService = movieService;
+            _seriesService = seriesService;
             _configService = configService;
             _eventAggregator = eventAggregator;
             _logger = logger;
         }
 
-        public void DeleteMovieFile(Media movie, MediaFile movieFile)
+        public void DeleteEpisodeFile(Series series, EpisodeFile episodeFile)
         {
-            var fullPath = Path.Combine(movie.Path, movieFile.RelativePath);
-            var rootFolder = _diskProvider.GetParentFolder(movie.Path);
+            var fullPath = Path.Combine(series.Path, episodeFile.RelativePath);
+            var rootFolder = _diskProvider.GetParentFolder(series.Path);
 
             if (!_diskProvider.FolderExists(rootFolder))
             {
-                _logger.Warn("Movie's root folder ({0}) doesn't exist.", rootFolder);
-                throw new NzbDroneClientException(HttpStatusCode.Conflict, "Movie's root folder ({0}) doesn't exist.", rootFolder);
+                _logger.Warn("Series' root folder ({0}) doesn't exist.", rootFolder);
+                throw new NzbDroneClientException(HttpStatusCode.Conflict, "Series' root folder ({0}) doesn't exist.", rootFolder);
             }
 
             if (_diskProvider.GetDirectories(rootFolder).Empty())
             {
-                _logger.Warn("Movie's root folder ({0}) is empty. Rescan will not update movies as a failsafe.", rootFolder);
-                throw new NzbDroneClientException(HttpStatusCode.Conflict, "Movie's root folder ({0}) is empty. Rescan will not update movies as a failsafe.", rootFolder);
+                _logger.Warn("Series' root folder ({0}) is empty.", rootFolder);
+                throw new NzbDroneClientException(HttpStatusCode.Conflict, "Series' root folder ({0}) is empty.", rootFolder);
             }
 
-            if (_diskProvider.FolderExists(movie.Path) && _diskProvider.FileExists(fullPath))
+            if (_diskProvider.FolderExists(series.Path) && _diskProvider.FileExists(fullPath))
             {
-                _logger.Info("Deleting movie file: {0}", fullPath);
+                _logger.Info("Deleting episode file: {0}", fullPath);
 
-                var subfolder = _diskProvider.GetParentFolder(movie.Path).GetRelativePath(_diskProvider.GetParentFolder(fullPath));
+                var subfolder = _diskProvider.GetParentFolder(series.Path).GetRelativePath(_diskProvider.GetParentFolder(fullPath));
 
                 try
                 {
@@ -77,65 +77,65 @@ namespace NzbDrone.Core.MediaFiles
                 }
                 catch (Exception e)
                 {
-                    _logger.Error(e, "Unable to delete movie file");
-                    throw new NzbDroneClientException(HttpStatusCode.InternalServerError, "Unable to delete movie file");
+                    _logger.Error(e, "Unable to delete episode file");
+                    throw new NzbDroneClientException(HttpStatusCode.InternalServerError, "Unable to delete episode file");
                 }
             }
 
-            // Delete the movie file from the database to clean it up even if the file was already deleted
-            _mediaFileService.Delete(movieFile, DeleteMediaFileReason.Manual);
+            // Delete the episode file from the database to clean it up even if the file was already deleted
+            _mediaFileService.Delete(episodeFile, DeleteMediaFileReason.Manual);
 
             _eventAggregator.PublishEvent(new DeleteCompletedEvent());
         }
 
-        public void HandleAsync(MoviesDeletedEvent message)
+        public void HandleAsync(SeriesDeletedEvent message)
         {
             if (message.DeleteFiles)
             {
-                var allMovies = _movieService.GetAllMovies();
+                var allSeries = _seriesService.GetAllSeriesPaths();
 
-                foreach (var movie in message.Movies)
+                foreach (var series in message.Series)
                 {
-                    foreach (var s in allMovies)
+                    foreach (var s in allSeries)
                     {
-                        if (s.Id == movie.Id)
+                        if (s.Key == series.Id)
                         {
                             continue;
                         }
 
-                        if (movie.Path.IsParentPath(s.Path))
+                        if (series.Path.IsParentPath(s.Value))
                         {
-                            _logger.Error("Movie path: '{0}' is a parent of another movie, not deleting files.", movie.Path);
+                            _logger.Error("Series path: '{0}' is a parent of another series, not deleting files.", series.Path);
                             return;
                         }
 
-                        if (movie.Path.PathEquals(s.Path))
+                        if (series.Path.PathEquals(s.Value))
                         {
-                            _logger.Error("Movie path: '{0}' is the same as another movie, not deleting files.", movie.Path);
+                            _logger.Error("Series path: '{0}' is the same as another series, not deleting files.", series.Path);
                             return;
                         }
                     }
 
-                    if (_diskProvider.FolderExists(movie.Path))
+                    if (_diskProvider.FolderExists(series.Path))
                     {
-                        _recycleBinProvider.DeleteFolder(movie.Path);
+                        _recycleBinProvider.DeleteFolder(series.Path);
                     }
-                }
 
-                _eventAggregator.PublishEvent(new DeleteCompletedEvent());
+                    _eventAggregator.PublishEvent(new DeleteCompletedEvent());
+                }
             }
         }
 
         [EventHandleOrder(EventHandleOrder.Last)]
-        public void Handle(MovieFileDeletedEvent message)
+        public void Handle(EpisodeFileDeletedEvent message)
         {
             if (_configService.DeleteEmptyFolders)
             {
-                var movie = message.MovieFile.Movie;
-                var moviePath = movie.Path;
-                var folder = message.MovieFile.Path.GetParentPath();
+                var series = message.EpisodeFile.Series.Value;
+                var seriesPath = series.Path;
+                var folder = message.EpisodeFile.Path.GetParentPath();
 
-                while (moviePath.IsParentPath(folder))
+                while (seriesPath.IsParentPath(folder))
                 {
                     if (_diskProvider.FolderExists(folder))
                     {
@@ -145,11 +145,11 @@ namespace NzbDrone.Core.MediaFiles
                     folder = folder.GetParentPath();
                 }
 
-                _diskProvider.RemoveEmptySubfolders(moviePath);
+                _diskProvider.RemoveEmptySubfolders(seriesPath);
 
-                if (_diskProvider.FolderEmpty(moviePath))
+                if (_diskProvider.FolderEmpty(seriesPath))
                 {
-                    _diskProvider.DeleteFolder(moviePath, true);
+                    _diskProvider.DeleteFolder(seriesPath, true);
                 }
             }
         }

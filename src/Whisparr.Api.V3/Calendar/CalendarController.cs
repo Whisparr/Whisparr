@@ -2,82 +2,37 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using NzbDrone.Core.Configuration;
+using NzbDrone.Core.CustomFormats;
 using NzbDrone.Core.DecisionEngine.Specifications;
-using NzbDrone.Core.Languages;
-using NzbDrone.Core.Movies;
-using NzbDrone.Core.Movies.Translations;
+using NzbDrone.Core.Tv;
 using NzbDrone.SignalR;
-using Whisparr.Api.V3.Movies;
+using Whisparr.Api.V3.Episodes;
 using Whisparr.Http;
-using Whisparr.Http.REST;
 
 namespace Whisparr.Api.V3.Calendar
 {
     [V3ApiController]
-    public class CalendarController : RestControllerWithSignalR<MovieResource, Media>
+    public class CalendarController : EpisodeControllerWithSignalR
     {
-        private readonly IMovieService _moviesService;
-        private readonly IMovieTranslationService _movieTranslationService;
-        private readonly IUpgradableSpecification _qualityUpgradableSpecification;
-        private readonly IConfigService _configService;
-
         public CalendarController(IBroadcastSignalRMessage signalR,
-                            IMovieService moviesService,
-                            IMovieTranslationService movieTranslationService,
+                            IEpisodeService episodeService,
+                            ISeriesService seriesService,
                             IUpgradableSpecification qualityUpgradableSpecification,
-                            IConfigService configService)
-            : base(signalR)
+                            ICustomFormatCalculationService formatCalculator)
+            : base(episodeService, seriesService, qualityUpgradableSpecification, formatCalculator, signalR)
         {
-            _moviesService = moviesService;
-            _movieTranslationService = movieTranslationService;
-            _qualityUpgradableSpecification = qualityUpgradableSpecification;
-            _configService = configService;
-        }
-
-        protected override MovieResource GetResourceById(int id)
-        {
-            throw new NotImplementedException();
         }
 
         [HttpGet]
-        public List<MovieResource> GetCalendar(DateTime? start, DateTime? end, bool unmonitored = false, bool includeArtist = false)
+        [Produces("application/json")]
+        public List<EpisodeResource> GetCalendar(DateTime? start, DateTime? end, bool unmonitored = false, bool includeSeries = false, bool includeEpisodeFile = false, bool includeEpisodeImages = false)
         {
             var startUse = start ?? DateTime.Today;
             var endUse = end ?? DateTime.Today.AddDays(2);
 
-            var resources = _moviesService.GetMoviesBetweenDates(startUse, endUse, unmonitored).Select(MapToResource);
+            var resources = MapToResource(_episodeService.EpisodesBetweenDates(startUse, endUse, unmonitored), includeSeries, includeEpisodeFile, includeEpisodeImages);
 
-            return resources.OrderBy(e => e.InCinemas).ToList();
-        }
-
-        protected MovieResource MapToResource(Media movie)
-        {
-            if (movie == null)
-            {
-                return null;
-            }
-
-            var availDelay = _configService.AvailabilityDelay;
-            var translations = _movieTranslationService.GetAllTranslationsForMovieMetadata(movie.Id);
-            var translation = GetMovieTranslation(translations, movie.MediaMetadata);
-            var resource = movie.ToResource(availDelay, translation, _qualityUpgradableSpecification);
-
-            return resource;
-        }
-
-        private MovieTranslation GetMovieTranslation(List<MovieTranslation> translations, MediaMetadata movie)
-        {
-            if ((Language)_configService.MovieInfoLanguage == Language.Original)
-            {
-                return new MovieTranslation
-                {
-                    Title = movie.OriginalTitle,
-                    Overview = movie.Overview
-                };
-            }
-
-            return translations.FirstOrDefault(t => t.Language == (Language)_configService.MovieInfoLanguage && t.MovieMetadataId == movie.Id);
+            return resources.OrderBy(e => e.AirDateUtc).ToList();
         }
     }
 }

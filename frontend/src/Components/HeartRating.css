@@ -1,5 +1,8 @@
-.image {
-  align-content: center;
+.heart {
   margin-right: 5px;
-  vertical-align: -0.125em;
+  color: var(--themeRed);
+}
+
+.rating {
+  margin-right: 15px;
 }

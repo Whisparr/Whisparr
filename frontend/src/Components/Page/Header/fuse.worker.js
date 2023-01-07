@@ -5,6 +5,7 @@ const fuseOptions = {
   includeMatches: true,
   ignoreLocation: true,
   threshold: 0.3,
+  maxPatternLength: 32,
   minMatchCharLength: 1,
   keys: [
     'title',
@@ -13,16 +14,16 @@ const fuseOptions = {
   ]
 };
 
-function getSuggestions(movies, value) {
+function getSuggestions(series, value) {
   const limit = 10;
   let suggestions = [];
 
   if (value.length === 1) {
-    for (let i = 0; i < movies.length; i++) {
-      const s = movies[i];
+    for (let i = 0; i < series.length; i++) {
+      const s = series[i];
       if (s.firstCharacter === value.toLowerCase()) {
         suggestions.push({
-          item: movies[i],
+          item: series[i],
           indices: [
             [0, 0]
           ],
@@ -40,7 +41,7 @@ function getSuggestions(movies, value) {
       }
     }
   } else {
-    const fuse = new Fuse(movies, fuseOptions);
+    const fuse = new Fuse(series, fuseOptions);
     suggestions = fuse.search(value, { limit });
   }
 
@@ -53,11 +54,11 @@ onmessage = function(e) {
   }
 
   const {
-    movies,
+    series,
     value
   } = e.data;
 
-  const suggestions = getSuggestions(movies, value);
+  const suggestions = getSuggestions(series, value);
 
   const results = {
     value,

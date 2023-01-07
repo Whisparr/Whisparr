@@ -48,23 +48,6 @@ namespace NzbDrone.Core.Indexers.Torznab
             throw new TorznabException("Torznab error detected: {0}", errorMessage);
         }
 
-        protected override ReleaseInfo ProcessItem(XElement item, ReleaseInfo releaseInfo)
-        {
-            var torrentInfo = base.ProcessItem(item, releaseInfo) as TorrentInfo;
-
-            if (torrentInfo != null)
-            {
-                if (GetImdbId(item) != null)
-                {
-                    torrentInfo.ImdbId = int.Parse(GetImdbId(item).Substring(2));
-                }
-
-                torrentInfo.IndexerFlags = GetFlags(item);
-            }
-
-            return torrentInfo;
-        }
-
         protected override bool PostProcess(IndexerResponse indexerResponse, List<XElement> items, List<ReleaseInfo> releases)
         {
             var enclosureTypes = items.SelectMany(GetEnclosures).Select(v => v.Type).Distinct().ToArray();
@@ -81,6 +64,15 @@ namespace NzbDrone.Core.Indexers.Torznab
             }
 
             return true;
+        }
+
+        protected override ReleaseInfo ProcessItem(XElement item, ReleaseInfo releaseInfo)
+        {
+            var torrentInfo = base.ProcessItem(item, releaseInfo) as TorrentInfo;
+
+            torrentInfo.TvdbId = GetTvdbId(item);
+
+            return torrentInfo;
         }
 
         protected override string GetInfoUrl(XElement item)
@@ -125,10 +117,17 @@ namespace NzbDrone.Core.Indexers.Torznab
             return url;
         }
 
-        protected virtual string GetImdbId(XElement item)
+        protected virtual int GetTvdbId(XElement item)
         {
-            var imdbIdString = TryGetTorznabAttribute(item, "imdbid");
-            return !imdbIdString.IsNullOrWhiteSpace() ? imdbIdString.Substring(2) : null;
+            var tvdbIdString = TryGetTorznabAttribute(item, "tvdbid");
+            int tvdbId;
+
+            if (!tvdbIdString.IsNullOrWhiteSpace() && int.TryParse(tvdbIdString, out tvdbId))
+            {
+                return tvdbId;
+            }
+
+            return 0;
         }
 
         protected override string GetInfoHash(XElement item)
@@ -173,53 +172,16 @@ namespace NzbDrone.Core.Indexers.Torznab
             return base.GetPeers(item);
         }
 
-        protected IndexerFlags GetFlags(XElement item)
-        {
-            IndexerFlags flags = 0;
-
-            var downloadFactor = TryGetFloatTorznabAttribute(item, "downloadvolumefactor", 1);
-
-            var uploadFactor = TryGetFloatTorznabAttribute(item, "uploadvolumefactor", 1);
-
-            if (uploadFactor == 2)
-            {
-                flags |= IndexerFlags.G_DoubleUpload;
-            }
-
-            if (downloadFactor == 0.5)
-            {
-                flags |= IndexerFlags.G_Halfleech;
-            }
-
-            if (downloadFactor == 0.0)
-            {
-                flags |= IndexerFlags.G_Freeleech;
-            }
-
-            return flags;
-        }
-
         protected string TryGetTorznabAttribute(XElement item, string key, string defaultValue = "")
         {
-            var attr = item.Elements(ns + "attr").FirstOrDefault(e => e.Attribute("name").Value.Equals(key, StringComparison.CurrentCultureIgnoreCase));
-
-            if (attr != null)
+            var attrElement = item.Elements(ns + "attr").FirstOrDefault(e => e.Attribute("name").Value.Equals(key, StringComparison.OrdinalIgnoreCase));
+            if (attrElement != null)
             {
-                return attr.Attribute("value").Value;
-            }
-
-            return defaultValue;
-        }
-
-        protected float TryGetFloatTorznabAttribute(XElement item, string key, float defaultValue = 0)
-        {
-            var attr = TryGetTorznabAttribute(item, key, defaultValue.ToString());
-
-            float result = 0;
-
-            if (float.TryParse(attr, out result))
-            {
-                return result;
+                var attrValue = attrElement.Attribute("value");
+                if (attrValue != null)
+                {
+                    return attrValue.Value;
+                }
             }
 
             return defaultValue;

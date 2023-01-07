@@ -1,7 +1,5 @@
-import migrateBlacklistToBlocklist from './migrateBlacklistToBlocklist';
-import migratePreDbToReleased from './migratePreDbToReleased';
+import migrateAddSeriesDefaults from './migrateAddSeriesDefaults';
 
 export default function migrate(persistedState) {
-  migrateBlacklistToBlocklist(persistedState);
-  migratePreDbToReleased(persistedState);
+  migrateAddSeriesDefaults(persistedState);
 }

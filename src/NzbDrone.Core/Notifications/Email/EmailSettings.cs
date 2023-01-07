@@ -16,13 +16,13 @@ namespace NzbDrone.Core.Notifications.Email
             RuleFor(c => c.Port).InclusiveBetween(1, 65535);
             RuleFor(c => c.From).NotEmpty();
             RuleForEach(c => c.To).EmailAddress();
-            RuleForEach(c => c.CC).EmailAddress();
+            RuleForEach(c => c.Cc).EmailAddress();
             RuleForEach(c => c.Bcc).EmailAddress();
 
             // Only require one of three send fields to be set
-            RuleFor(c => c.To).NotEmpty().Unless(c => c.Bcc.Any() || c.CC.Any());
-            RuleFor(c => c.CC).NotEmpty().Unless(c => c.To.Any() || c.Bcc.Any());
-            RuleFor(c => c.Bcc).NotEmpty().Unless(c => c.To.Any() || c.CC.Any());
+            RuleFor(c => c.To).NotEmpty().Unless(c => c.Bcc.Any() || c.Cc.Any());
+            RuleFor(c => c.Cc).NotEmpty().Unless(c => c.To.Any() || c.Bcc.Any());
+            RuleFor(c => c.Bcc).NotEmpty().Unless(c => c.To.Any() || c.Cc.Any());
         }
     }
 
@@ -32,13 +32,14 @@ namespace NzbDrone.Core.Notifications.Email
 
         public EmailSettings()
         {
-            Port = 567;
+            Port = 587;
+
             To = Array.Empty<string>();
-            CC = Array.Empty<string>();
+            Cc = Array.Empty<string>();
             Bcc = Array.Empty<string>();
         }
 
-        [FieldDefinition(0, Label = "Server", HelpText = "Hostname or IP of Email server", Placeholder = "smtp.gmail.com")]
+        [FieldDefinition(0, Label = "Server", HelpText = "Hostname or IP of Email server")]
         public string Server { get; set; }
 
         [FieldDefinition(1, Label = "Port")]
@@ -53,16 +54,16 @@ namespace NzbDrone.Core.Notifications.Email
         [FieldDefinition(4, Label = "Password", Type = FieldType.Password, Privacy = PrivacyLevel.Password)]
         public string Password { get; set; }
 
-        [FieldDefinition(5, Label = "From Address", Placeholder = "example@email.com")]
+        [FieldDefinition(5, Label = "From Address")]
         public string From { get; set; }
 
-        [FieldDefinition(6, Label = "Recipient Address(es)", HelpText = "Comma separated list of email recipients", Placeholder = "example@email.com,example1@email.com")]
+        [FieldDefinition(6, Label = "Recipient Address(es)", HelpText = "Comma separated list of email recipients")]
         public IEnumerable<string> To { get; set; }
 
-        [FieldDefinition(7, Label = "CC Address(es)", HelpText = "Comma separated list of email cc recipients", Placeholder = "example@email.com,example1@email.com", Advanced = true)]
-        public IEnumerable<string> CC { get; set; }
+        [FieldDefinition(7, Label = "CC Address(es)", HelpText = "Comma separated list of email cc recipients", Advanced = true)]
+        public IEnumerable<string> Cc { get; set; }
 
-        [FieldDefinition(8, Label = "BCC Address(es)", HelpText = "Comma separated list of email bcc recipients", Placeholder = "example@email.com,example1@email.com", Advanced = true)]
+        [FieldDefinition(8, Label = "BCC Address(es)", HelpText = "Comma separated list of email bcc recipients", Advanced = true)]
         public IEnumerable<string> Bcc { get; set; }
 
         public NzbDroneValidationResult Validate()

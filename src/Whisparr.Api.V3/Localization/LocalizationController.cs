@@ -1,29 +1,42 @@
-using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
-using NzbDrone.Common.Serializer;
 using NzbDrone.Core.Localization;
 using Whisparr.Http;
+using Whisparr.Http.REST;
 
 namespace Whisparr.Api.V3.Localization
 {
     [V3ApiController]
-    public class LocalizationController : Controller
+    public class LocalizationController : RestController<LocalizationResource>
     {
         private readonly ILocalizationService _localizationService;
-        private readonly JsonSerializerOptions _serializerSettings;
 
         public LocalizationController(ILocalizationService localizationService)
         {
             _localizationService = localizationService;
-            _serializerSettings = STJson.GetSerializerSettings();
-            _serializerSettings.DictionaryKeyPolicy = null;
-            _serializerSettings.PropertyNamingPolicy = null;
+        }
+
+        protected override LocalizationResource GetResourceById(int id)
+        {
+            return GetLocalization();
         }
 
         [HttpGet]
-        public string GetLocalizationDictionary()
+        [Produces("application/json")]
+        public LocalizationResource GetLocalization()
         {
-            return JsonSerializer.Serialize(_localizationService.GetLocalizationDictionary().ToResource(), _serializerSettings);
+            return _localizationService.GetLocalizationDictionary().ToResource();
+        }
+
+        [HttpGet("language")]
+        [Produces("application/json")]
+        public LanguageResource GetLanguage()
+        {
+            var identifier = _localizationService.GetLanguageIdentifier();
+
+            return new LanguageResource
+            {
+                Identifier = identifier
+            };
         }
     }
 }

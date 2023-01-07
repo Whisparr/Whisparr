@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using NLog;
 using NzbDrone.Common.Disk;
-using NzbDrone.Core.Movies;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.DiskSpace
 {
@@ -16,22 +16,22 @@ namespace NzbDrone.Core.DiskSpace
 
     public class DiskSpaceService : IDiskSpaceService
     {
-        private readonly IMovieService _movieService;
+        private readonly ISeriesService _seriesService;
         private readonly IDiskProvider _diskProvider;
         private readonly Logger _logger;
 
         private static readonly Regex _regexSpecialDrive = new Regex("^/var/lib/(docker|rancher|kubelet)(/|$)|^/(boot|etc)(/|$)|/docker(/var)?/aufs(/|$)", RegexOptions.Compiled);
 
-        public DiskSpaceService(IMovieService movieService, IDiskProvider diskProvider, Logger logger)
+        public DiskSpaceService(ISeriesService seriesService, IDiskProvider diskProvider, Logger logger)
         {
-            _movieService = movieService;
+            _seriesService = seriesService;
             _diskProvider = diskProvider;
             _logger = logger;
         }
 
         public List<DiskSpace> GetFreeSpace()
         {
-            var importantRootFolders = GetMoviesRootPaths().Distinct().ToList();
+            var importantRootFolders = GetSeriesRootPaths().Distinct().ToList();
 
             var optionalRootFolders = GetFixedDisksRootPaths().Except(importantRootFolders).Distinct().ToList();
 
@@ -40,9 +40,9 @@ namespace NzbDrone.Core.DiskSpace
             return diskSpace;
         }
 
-        private IEnumerable<string> GetMoviesRootPaths()
+        private IEnumerable<string> GetSeriesRootPaths()
         {
-            return _movieService.AllMoviePaths()
+            return _seriesService.GetAllSeriesPaths()
                 .Where(s => _diskProvider.FolderExists(s.Value))
                 .Select(s => _diskProvider.GetPathRoot(s.Value))
                 .Distinct();
@@ -73,11 +73,11 @@ namespace NzbDrone.Core.DiskSpace
                     }
 
                     diskSpace = new DiskSpace
-                    {
-                        Path = path,
-                        FreeSpace = freeSpace.Value,
-                        TotalSpace = totalSpace.Value
-                    };
+                                {
+                                    Path = path,
+                                    FreeSpace = freeSpace.Value,
+                                    TotalSpace = totalSpace.Value
+                                };
 
                     diskSpace.Label = _diskProvider.GetVolumeLabel(path);
                 }

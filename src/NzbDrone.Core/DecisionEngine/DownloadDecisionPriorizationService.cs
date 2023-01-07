@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using NzbDrone.Core.Configuration;
-using NzbDrone.Core.Parser;
 using NzbDrone.Core.Profiles.Delay;
 using NzbDrone.Core.Qualities;
 
@@ -9,7 +8,7 @@ namespace NzbDrone.Core.DecisionEngine
 {
     public interface IPrioritizeDownloadDecision
     {
-        List<DownloadDecision> PrioritizeDecisionsForMovies(List<DownloadDecision> decisions);
+        List<DownloadDecision> PrioritizeDecisions(List<DownloadDecision> decisions);
     }
 
     public class DownloadDecisionPriorizationService : IPrioritizeDownloadDecision
@@ -25,15 +24,15 @@ namespace NzbDrone.Core.DecisionEngine
             _qualityDefinitionService = qualityDefinitionService;
         }
 
-        public List<DownloadDecision> PrioritizeDecisionsForMovies(List<DownloadDecision> decisions)
+        public List<DownloadDecision> PrioritizeDecisions(List<DownloadDecision> decisions)
         {
-            return decisions.Where(c => c.RemoteMovie.MappingResult == MappingResultType.Success)
-                            .GroupBy(c => c.RemoteMovie.Movie.Id, (movieId, downloadDecisions) =>
-                            {
-                                return downloadDecisions.OrderByDescending(decision => decision, new DownloadDecisionComparer(_configService, _delayProfileService, _qualityDefinitionService));
-                            })
+            return decisions.Where(c => c.RemoteEpisode.Series != null)
+                            .GroupBy(c => c.RemoteEpisode.Series.Id, (seriesId, downloadDecisions) =>
+                                {
+                                    return downloadDecisions.OrderByDescending(decision => decision, new DownloadDecisionComparer(_configService, _delayProfileService, _qualityDefinitionService));
+                                })
                             .SelectMany(c => c)
-                            .Union(decisions.Where(c => c.RemoteMovie.MappingResult != MappingResultType.Success))
+                            .Union(decisions.Where(c => c.RemoteEpisode.Series == null))
                             .ToList();
         }
     }

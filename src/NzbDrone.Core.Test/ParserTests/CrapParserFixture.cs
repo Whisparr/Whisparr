@@ -31,9 +31,11 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("qrdSD3rYzWb7cPdVIGSn4E7")]
         [TestCase("QZC4HDl7ncmzyUj9amucWe1ddKU1oFMZDd8r0dEDUsTd")]
         [TestCase("abc.xyz.af6021c37f7852")]
+        [TestCase("e096aeb3c2c0483a96f5b32fc6d10ff5")]
+        [TestCase("_unpack e096aeb3c2c0483a96f5b32fc6d10ff5.mkv")]
         public void should_not_parse_crap(string title)
         {
-            Parser.Parser.ParseMovieTitle(title).Should().BeNull();
+            Parser.Parser.ParseTitle(title).Should().BeNull();
             ExceptionVerification.IgnoreWarns();
         }
 
@@ -48,11 +50,11 @@ namespace NzbDrone.Core.Test.ParserTests
             var success = 0;
             for (int i = 0; i < repetitions; i++)
             {
-                var hashData = hashAlgo.ComputeHash(Encoding.Default.GetBytes(hash));
+                var hashData = hashAlgo.ComputeHash(System.Text.Encoding.Default.GetBytes(hash));
 
                 hash = BitConverter.ToString(hashData).Replace("-", "");
 
-                if (Parser.Parser.ParseMovieTitle(hash) == null)
+                if (Parser.Parser.ParseTitle(hash) == null)
                 {
                     success++;
                 }
@@ -80,7 +82,7 @@ namespace NzbDrone.Core.Test.ParserTests
                     hash.Append(charset[hashAlgo.Next() % charset.Length]);
                 }
 
-                if (Parser.Parser.ParseMovieTitle(hash.ToString()) == null)
+                if (Parser.Parser.ParseTitle(hash.ToString()) == null)
                 {
                     success++;
                 }
@@ -89,16 +91,22 @@ namespace NzbDrone.Core.Test.ParserTests
             success.Should().Be(repetitions);
         }
 
-        [TestCase("thebiggestmovie1618finale")]
+        [TestCase("theseriestitle1618finale")]
         public void should_not_parse_file_name_without_proper_spacing(string fileName)
         {
-            Parser.Parser.ParseMovieTitle(fileName).Should().BeNull();
+            Parser.Parser.ParseTitle(fileName).Should().BeNull();
         }
 
-        [TestCase("Big Movie (S01E18) Complete 360p HDTV AAC H.264-NEXT")]
+        [TestCase("Series Title (2018) Complete 360p HDTV AAC H.264-NEXT")]
         public void should_not_parse_invalid_release_name(string fileName)
         {
-            Parser.Parser.ParseMovieTitle(fileName).Should().BeNull();
+            Parser.Parser.ParseTitle(fileName).Should().BeNull();
+        }
+
+        [TestCase("Specials/Series - Episode Title (part 1)")]
+        public void should_not_parse_special_with_part_number(string fileName)
+        {
+            Parser.Parser.ParseTitle(fileName).Should().BeNull();
         }
     }
 }

@@ -1,25 +1,21 @@
-using System.Collections.Generic;
-using NzbDrone.Core.Movies;
+using System;
 using NzbDrone.Core.ThingiProvider;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.ImportLists
 {
     public class ImportListDefinition : ProviderDefinition
     {
-        public ImportListDefinition()
-        {
-            Tags = new HashSet<int>();
-        }
-
-        public bool Enabled { get; set; }
-        public bool EnableAuto { get; set; }
-        public bool ShouldMonitor { get; set; }
-        public MovieStatusType MinimumAvailability { get; set; }
-        public int ProfileId { get; set; }
+        public bool EnableAutomaticAdd { get; set; }
+        public MonitorTypes ShouldMonitor { get; set; }
+        public int QualityProfileId { get; set; }
+        public bool SeasonFolder { get; set; }
         public string RootFolderPath { get; set; }
-        public bool SearchOnAdd { get; set; }
-        public override bool Enable => Enabled;
 
+        public override bool Enable => EnableAutomaticAdd;
+
+        public ImportListStatus Status { get; set; }
         public ImportListType ListType { get; set; }
+        public TimeSpan MinRefreshInterval { get; set; }
     }
 }

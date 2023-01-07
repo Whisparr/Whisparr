@@ -1,52 +1,31 @@
 import Mousetrap from 'mousetrap';
 import React, { Component } from 'react';
 import getDisplayName from 'Helpers/getDisplayName';
-import translate from 'Utilities/String/translate';
 
 export const shortcuts = {
   OPEN_KEYBOARD_SHORTCUTS_MODAL: {
     key: '?',
-    name: translate('OpenThisModal')
+    name: 'Open This Modal'
   },
 
   CLOSE_MODAL: {
     key: 'Esc',
-    name: translate('CloseCurrentModal')
+    name: 'Close Current Modal'
   },
 
   ACCEPT_CONFIRM_MODAL: {
     key: 'Enter',
-    name: translate('AcceptConfirmationModal')
+    name: 'Accept Confirmation Modal'
   },
 
-  MOVIE_SEARCH_INPUT: {
+  SERIES_SEARCH_INPUT: {
     key: 's',
-    name: translate('FocusSearchBox')
+    name: 'Focus Search Box'
   },
 
   SAVE_SETTINGS: {
     key: 'mod+s',
-    name: translate('SaveSettings')
-  },
-
-  SCROLL_TOP: {
-    key: 'mod+home',
-    name: translate('MovieIndexScrollTop')
-  },
-
-  SCROLL_BOTTOM: {
-    key: 'mod+end',
-    name: translate('MovieIndexScrollBottom')
-  },
-
-  DETAILS_NEXT: {
-    key: '→',
-    name: translate('MovieDetailsNextMovie')
-  },
-
-  DETAILS_PREVIOUS: {
-    key: '←',
-    name: translate('MovieDetailsPreviousMovie')
+    name: 'Save Settings'
   }
 };
 

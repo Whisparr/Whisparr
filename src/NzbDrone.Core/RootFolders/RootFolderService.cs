@@ -7,8 +7,7 @@ using NLog;
 using NzbDrone.Common;
 using NzbDrone.Common.Disk;
 using NzbDrone.Common.Extensions;
-using NzbDrone.Core.Configuration;
-using NzbDrone.Core.Movies;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.RootFolders
 {
@@ -26,8 +25,7 @@ namespace NzbDrone.Core.RootFolders
     {
         private readonly IRootFolderRepository _rootFolderRepository;
         private readonly IDiskProvider _diskProvider;
-        private readonly IMediaRepository _movieRepository;
-        private readonly IConfigService _configService;
+        private readonly ISeriesRepository _seriesRepository;
         private readonly Logger _logger;
 
         private static readonly HashSet<string> SpecialFolders = new HashSet<string>
@@ -45,14 +43,12 @@ namespace NzbDrone.Core.RootFolders
 
         public RootFolderService(IRootFolderRepository rootFolderRepository,
                                  IDiskProvider diskProvider,
-                                 IMediaRepository movieRepository,
-                                 IConfigService configService,
+                                 ISeriesRepository seriesRepository,
                                  Logger logger)
         {
             _rootFolderRepository = rootFolderRepository;
             _diskProvider = diskProvider;
-            _movieRepository = movieRepository;
-            _configService = configService;
+            _seriesRepository = seriesRepository;
             _logger = logger;
         }
 
@@ -66,8 +62,7 @@ namespace NzbDrone.Core.RootFolders
         public List<RootFolder> AllWithUnmappedFolders()
         {
             var rootFolders = _rootFolderRepository.All().ToList();
-
-            var moviePaths = _movieRepository.AllMoviePaths();
+            var seriesPaths = _seriesRepository.AllSeriesPaths();
 
             rootFolders.ForEach(folder =>
             {
@@ -75,11 +70,11 @@ namespace NzbDrone.Core.RootFolders
                 {
                     if (folder.Path.IsPathValid())
                     {
-                        GetDetails(folder, moviePaths, true);
+                        GetDetails(folder, seriesPaths, true);
                     }
                 }
 
-                //We don't want an exception to prevent the root folders from loading in the UI, so they can still be deleted
+                // We don't want an exception to prevent the root folders from loading in the UI, so they can still be deleted
                 catch (Exception ex)
                 {
                     _logger.Error(ex, "Unable to get free space and unmapped folders for root folder {0}", folder.Path);
@@ -115,10 +110,9 @@ namespace NzbDrone.Core.RootFolders
             }
 
             _rootFolderRepository.Insert(rootFolder);
+            var seriesPaths = _seriesRepository.AllSeriesPaths();
 
-            var moviePaths = _movieRepository.AllMoviePaths();
-
-            GetDetails(rootFolder, moviePaths, true);
+            GetDetails(rootFolder, seriesPaths, true);
 
             return rootFolder;
         }
@@ -128,7 +122,7 @@ namespace NzbDrone.Core.RootFolders
             _rootFolderRepository.Delete(id);
         }
 
-        private List<UnmappedFolder> GetUnmappedFolders(string path, Dictionary<int, string> moviePaths)
+        private List<UnmappedFolder> GetUnmappedFolders(string path, Dictionary<int, string> seriesPaths)
         {
             _logger.Debug("Generating list of unmapped folders");
 
@@ -145,22 +139,13 @@ namespace NzbDrone.Core.RootFolders
                 return results;
             }
 
-            var possibleMovieFolders = _diskProvider.GetDirectories(path).ToList();
-            var unmappedFolders = possibleMovieFolders.Except(moviePaths.Select(s => s.Value), PathEqualityComparer.Instance).ToList();
+            var possibleSeriesFolders = _diskProvider.GetDirectories(path).ToList();
+            var unmappedFolders = possibleSeriesFolders.Except(seriesPaths.Select(s => s.Value), PathEqualityComparer.Instance).ToList();
 
-            var recycleBinPath = _configService.RecycleBin;
-
-            foreach (var unmappedFolder in unmappedFolders)
+            foreach (string unmappedFolder in unmappedFolders)
             {
                 var di = new DirectoryInfo(unmappedFolder.Normalize());
-
-                if ((!di.Attributes.HasFlag(FileAttributes.System) && !di.Attributes.HasFlag(FileAttributes.Hidden)) || di.Attributes.ToString() == "-1")
-                {
-                    if (string.IsNullOrWhiteSpace(recycleBinPath) || di.FullName.PathNotEquals(recycleBinPath))
-                    {
-                        results.Add(new UnmappedFolder { Name = di.Name, Path = di.FullName });
-                    }
-                }
+                results.Add(new UnmappedFolder { Name = di.Name, Path = di.FullName });
             }
 
             var setToRemove = SpecialFolders;
@@ -173,9 +158,9 @@ namespace NzbDrone.Core.RootFolders
         public RootFolder Get(int id, bool timeout)
         {
             var rootFolder = _rootFolderRepository.Get(id);
-            var moviePaths = _movieRepository.AllMoviePaths();
+            var seriesPaths = _seriesRepository.AllSeriesPaths();
 
-            GetDetails(rootFolder, moviePaths, timeout);
+            GetDetails(rootFolder, seriesPaths, timeout);
 
             return rootFolder;
         }
@@ -194,7 +179,7 @@ namespace NzbDrone.Core.RootFolders
             return possibleRootFolder.Path;
         }
 
-        private void GetDetails(RootFolder rootFolder, Dictionary<int, string> moviePaths, bool timeout)
+        private void GetDetails(RootFolder rootFolder, Dictionary<int, string> seriesPaths, bool timeout)
         {
             Task.Run(() =>
             {
@@ -203,7 +188,7 @@ namespace NzbDrone.Core.RootFolders
                     rootFolder.Accessible = true;
                     rootFolder.FreeSpace = _diskProvider.GetAvailableSpace(rootFolder.Path);
                     rootFolder.TotalSpace = _diskProvider.GetTotalSize(rootFolder.Path);
-                    rootFolder.UnmappedFolders = GetUnmappedFolders(rootFolder.Path, moviePaths);
+                    rootFolder.UnmappedFolders = GetUnmappedFolders(rootFolder.Path, seriesPaths);
                 }
             }).Wait(timeout ? 5000 : -1);
         }

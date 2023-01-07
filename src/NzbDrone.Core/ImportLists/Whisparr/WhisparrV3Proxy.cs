@@ -11,8 +11,9 @@ namespace NzbDrone.Core.ImportLists.Whisparr
 {
     public interface IWhisparrV3Proxy
     {
-        List<WhisparrMovie> GetMovies(WhisparrSettings settings);
-        List<WhisparrProfile> GetProfiles(WhisparrSettings settings);
+        List<WhisparrSeries> GetSeries(WhisparrSettings settings);
+        List<WhisparrProfile> GetQualityProfiles(WhisparrSettings settings);
+        List<WhisparrProfile> GetLanguageProfiles(WhisparrSettings settings);
         List<WhisparrTag> GetTags(WhisparrSettings settings);
         ValidationFailure Test(WhisparrSettings settings);
     }
@@ -28,14 +29,19 @@ namespace NzbDrone.Core.ImportLists.Whisparr
             _logger = logger;
         }
 
-        public List<WhisparrMovie> GetMovies(WhisparrSettings settings)
+        public List<WhisparrSeries> GetSeries(WhisparrSettings settings)
         {
-            return Execute<WhisparrMovie>("/api/v3/movie", settings);
+            return Execute<WhisparrSeries>("/api/v3/series", settings);
         }
 
-        public List<WhisparrProfile> GetProfiles(WhisparrSettings settings)
+        public List<WhisparrProfile> GetQualityProfiles(WhisparrSettings settings)
         {
             return Execute<WhisparrProfile>("/api/v3/qualityprofile", settings);
+        }
+
+        public List<WhisparrProfile> GetLanguageProfiles(WhisparrSettings settings)
+        {
+            return Execute<WhisparrProfile>("/api/v3/languageprofile", settings);
         }
 
         public List<WhisparrTag> GetTags(WhisparrSettings settings)
@@ -47,7 +53,7 @@ namespace NzbDrone.Core.ImportLists.Whisparr
         {
             try
             {
-                GetMovies(settings);
+                GetSeries(settings);
             }
             catch (HttpException ex)
             {

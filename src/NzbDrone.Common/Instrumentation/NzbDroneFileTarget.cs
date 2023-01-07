@@ -1,16 +1,13 @@
-using System;
-using System.Text;
-using NLog;
+﻿using NLog;
 using NLog.Targets;
 
 namespace NzbDrone.Common.Instrumentation
 {
     public class NzbDroneFileTarget : FileTarget
     {
-        protected override void RenderFormattedMessage(LogEventInfo logEvent, StringBuilder target)
+        protected override string GetFormattedMessage(LogEventInfo logEvent)
         {
-            var result = CleanseLogMessage.Cleanse(Layout.Render(logEvent));
-            target.Append(result);
+            return CleanseLogMessage.Cleanse(Layout.Render(logEvent));
         }
     }
 }

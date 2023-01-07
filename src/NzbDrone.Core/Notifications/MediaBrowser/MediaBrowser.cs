@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using FluentValidation.Results;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.MediaFiles;
-using NzbDrone.Core.Movies;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Notifications.Emby
 {
@@ -16,13 +16,13 @@ namespace NzbDrone.Core.Notifications.Emby
         }
 
         public override string Link => "https://emby.media/";
-        public override string Name => "Emby";
+        public override string Name => "Emby / Jellyfin";
 
         public override void OnGrab(GrabMessage grabMessage)
         {
             if (Settings.Notify)
             {
-                _mediaBrowserService.Notify(Settings, MOVIE_GRABBED_TITLE_BRANDED, grabMessage.Message);
+                _mediaBrowserService.Notify(Settings, EPISODE_GRABBED_TITLE_BRANDED, grabMessage.Message);
             }
         }
 
@@ -30,20 +30,46 @@ namespace NzbDrone.Core.Notifications.Emby
         {
             if (Settings.Notify)
             {
-                _mediaBrowserService.Notify(Settings, MOVIE_DOWNLOADED_TITLE_BRANDED, message.Message);
+                _mediaBrowserService.Notify(Settings, EPISODE_DOWNLOADED_TITLE_BRANDED, message.Message);
             }
 
             if (Settings.UpdateLibrary)
             {
-                _mediaBrowserService.UpdateMovies(Settings, message.Movie, "Created");
+                _mediaBrowserService.Update(Settings, message.Series, "Created");
             }
         }
 
-        public override void OnMovieRename(Media movie, List<RenamedMovieFile> renamedFiles)
+        public override void OnRename(Series series, List<RenamedEpisodeFile> renamedFiles)
         {
             if (Settings.UpdateLibrary)
             {
-                _mediaBrowserService.UpdateMovies(Settings, movie, "Modified");
+                _mediaBrowserService.Update(Settings, series, "Modified");
+            }
+        }
+
+        public override void OnEpisodeFileDelete(EpisodeDeleteMessage deleteMessage)
+        {
+            if (Settings.Notify)
+            {
+                _mediaBrowserService.Notify(Settings, EPISODE_DELETED_TITLE_BRANDED, deleteMessage.Message);
+            }
+
+            if (Settings.UpdateLibrary)
+            {
+                _mediaBrowserService.Update(Settings, deleteMessage.Series, "Deleted");
+            }
+        }
+
+        public override void OnSeriesDelete(SeriesDeleteMessage deleteMessage)
+        {
+            if (Settings.Notify)
+            {
+                _mediaBrowserService.Notify(Settings, SERIES_DELETED_TITLE_BRANDED, deleteMessage.Message);
+            }
+
+            if (Settings.UpdateLibrary)
+            {
+                _mediaBrowserService.Update(Settings, deleteMessage.Series, "Deleted");
             }
         }
 
@@ -60,35 +86,6 @@ namespace NzbDrone.Core.Notifications.Emby
             if (Settings.Notify)
             {
                 _mediaBrowserService.Notify(Settings, APPLICATION_UPDATE_TITLE_BRANDED, updateMessage.Message);
-            }
-        }
-
-        public override void OnMovieDelete(MovieDeleteMessage deleteMessage)
-        {
-            if (deleteMessage.DeletedFiles)
-            {
-                if (Settings.Notify)
-                {
-                    _mediaBrowserService.Notify(Settings, MOVIE_DELETED_TITLE_BRANDED, deleteMessage.Message);
-                }
-
-                if (Settings.UpdateLibrary)
-                {
-                    _mediaBrowserService.UpdateMovies(Settings, deleteMessage.Movie, "Deleted");
-                }
-            }
-        }
-
-        public override void OnMovieFileDelete(MovieFileDeleteMessage deleteMessage)
-        {
-            if (Settings.Notify)
-            {
-                _mediaBrowserService.Notify(Settings, MOVIE_FILE_DELETED_TITLE_BRANDED, deleteMessage.Message);
-            }
-
-            if (Settings.UpdateLibrary)
-            {
-                _mediaBrowserService.UpdateMovies(Settings, deleteMessage.Movie, "Deleted");
             }
         }
 

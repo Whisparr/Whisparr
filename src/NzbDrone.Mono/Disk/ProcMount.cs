@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using Mono.Unix;
 using NzbDrone.Common.Disk;
 using NzbDrone.Common.Extensions;

@@ -15,7 +15,6 @@ import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { inputTypes } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import TableOptionsColumn from './TableOptionsColumn';
 import TableOptionsColumnDragPreview from './TableOptionsColumnDragPreview';
 import TableOptionsColumnDragSource from './TableOptionsColumnDragSource';
@@ -137,7 +136,7 @@ class TableOptionsModal extends Component {
             isOpen ?
               <ModalContent onModalClose={onModalClose}>
                 <ModalHeader>
-                  {translate('TableOptions')}
+                  Table Options
                 </ModalHeader>
 
                 <ModalBody>
@@ -145,13 +144,13 @@ class TableOptionsModal extends Component {
                     {
                       hasPageSize ?
                         <FormGroup>
-                          <FormLabel>{translate('PageSize')}</FormLabel>
+                          <FormLabel>Page Size</FormLabel>
 
                           <FormInputGroup
                             type={inputTypes.NUMBER}
                             name="pageSize"
                             value={pageSize || 0}
-                            helpText={translate('PageSizeHelpText')}
+                            helpText="Number of items to show on each page"
                             errors={pageSizeError ? [{ message: pageSizeError }] : undefined}
                             onChange={this.onPageSizeChange}
                           />
@@ -169,11 +168,11 @@ class TableOptionsModal extends Component {
                     {
                       canModifyColumns ?
                         <FormGroup>
-                          <FormLabel>{translate('Columns')}</FormLabel>
+                          <FormLabel>Columns</FormLabel>
 
                           <div>
                             <FormInputHelpText
-                              text={translate('TableOptionsColumnsMessage')}
+                              text="Choose which columns are visible and which order they appear in"
                             />
 
                             <div className={styles.columns}>
@@ -192,7 +191,7 @@ class TableOptionsModal extends Component {
                                       <TableOptionsColumnDragSource
                                         key={name}
                                         name={name}
-                                        label={label || columnLabel}
+                                        label={columnLabel || label}
                                         isVisible={isVisible}
                                         isModifiable={true}
                                         index={index}
@@ -210,7 +209,7 @@ class TableOptionsModal extends Component {
                                     <TableOptionsColumn
                                       key={name}
                                       name={name}
-                                      label={label || columnLabel}
+                                      label={columnLabel || label}
                                       isVisible={isVisible}
                                       index={index}
                                       isModifiable={false}
@@ -232,7 +231,7 @@ class TableOptionsModal extends Component {
                   <Button
                     onPress={onModalClose}
                   >
-                    {translate('Close')}
+                    Close
                   </Button>
                 </ModalFooter>
               </ModalContent> :

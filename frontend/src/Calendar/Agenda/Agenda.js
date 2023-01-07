@@ -6,50 +6,21 @@ import styles from './Agenda.css';
 
 function Agenda(props) {
   const {
-    items,
-    start,
-    end
+    items
   } = props;
-
-  const startDateParsed = Date.parse(start);
-  const endDateParsed = Date.parse(end);
-
-  items.forEach((item) => {
-    const cinemaDateParsed = Date.parse(item.inCinemas);
-    const digitalDateParsed = Date.parse(item.digitalRelease);
-    const physicalDateParsed = Date.parse(item.physicalRelease);
-    const dates = [];
-
-    if (cinemaDateParsed > 0 && cinemaDateParsed >= startDateParsed && cinemaDateParsed <= endDateParsed) {
-      dates.push(cinemaDateParsed);
-    }
-    if (digitalDateParsed > 0 && digitalDateParsed >= startDateParsed && digitalDateParsed <= endDateParsed) {
-      dates.push(digitalDateParsed);
-    }
-    if (physicalDateParsed > 0 && physicalDateParsed >= startDateParsed && physicalDateParsed <= endDateParsed) {
-      dates.push(physicalDateParsed);
-    }
-
-    item.sortDate = Math.min(...dates);
-    item.cinemaDateParsed = cinemaDateParsed;
-    item.digitalDateParsed = digitalDateParsed;
-    item.physicalDateParsed = physicalDateParsed;
-  });
-
-  items.sort((a, b) => ((a.sortDate > b.sortDate) ? 1 : -1));
 
   return (
     <div className={styles.agenda}>
       {
         items.map((item, index) => {
-          const momentDate = moment(item.inCinemas);
+          const momentDate = moment(item.airDateUtc);
           const showDate = index === 0 ||
-            !moment(items[index - 1].inCinemas).isSame(momentDate, 'day');
+            !moment(items[index - 1].airDateUtc).isSame(momentDate, 'day');
 
           return (
             <AgendaEventConnector
               key={item.id}
-              movieId={item.id}
+              episodeId={item.id}
               showDate={showDate}
               {...item}
             />
@@ -61,9 +32,7 @@ function Agenda(props) {
 }
 
 Agenda.propTypes = {
-  items: PropTypes.arrayOf(PropTypes.object).isRequired,
-  start: PropTypes.string.isRequired,
-  end: PropTypes.string.isRequired
+  items: PropTypes.arrayOf(PropTypes.object).isRequired
 };
 
 export default Agenda;

@@ -29,12 +29,13 @@ namespace Whisparr.Api.V3.Queue
                 throw new NotFoundException();
             }
 
-            _downloadService.DownloadReport(pendingRelease.RemoteMovie);
+            _downloadService.DownloadReport(pendingRelease.RemoteEpisode);
 
             return new { };
         }
 
         [HttpPost("grab/bulk")]
+        [Consumes("application/json")]
         public object Grab([FromBody] QueueBulkResource resource)
         {
             foreach (var id in resource.Ids)
@@ -46,7 +47,7 @@ namespace Whisparr.Api.V3.Queue
                     throw new NotFoundException();
                 }
 
-                _downloadService.DownloadReport(pendingRelease.RemoteMovie);
+                _downloadService.DownloadReport(pendingRelease.RemoteEpisode);
             }
 
             return new { };

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using FizzWare.NBuilder;
@@ -28,53 +28,53 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.NzbgetTests
         {
             Subject.Definition = new DownloadClientDefinition();
             Subject.Definition.Settings = new NzbgetSettings
-            {
-                Host = "127.0.0.1",
-                Port = 2222,
-                Username = "admin",
-                Password = "pass",
-                MovieCategory = "movie",
-                RecentMoviePriority = (int)NzbgetPriority.High
-            };
+                                          {
+                                              Host = "127.0.0.1",
+                                              Port = 2222,
+                                              Username = "admin",
+                                              Password = "pass",
+                                              TvCategory = "tv",
+                                              RecentTvPriority = (int)NzbgetPriority.High
+                                          };
 
             _queued = new NzbgetQueueItem
-            {
-                FileSizeLo = 1000,
-                RemainingSizeLo = 10,
-                Category = "movie",
-                NzbName = "Droned.1998.1080p.WEB-DL-DRONE",
-                Parameters = new List<NzbgetParameter> { new NzbgetParameter { Name = "drone", Value = "id" } }
-            };
+                {
+                    FileSizeLo = 1000,
+                    RemainingSizeLo = 10,
+                    Category = "tv",
+                    NzbName = "Droned.S01E01.Pilot.1080p.WEB-DL-DRONE",
+                    Parameters = new List<NzbgetParameter> { new NzbgetParameter { Name = "drone", Value = "id" } }
+                };
 
             _failed = new NzbgetHistoryItem
-            {
-                FileSizeLo = 1000,
-                Category = "movie",
-                Name = "Droned.1998.1080p.WEB-DL-DRONE",
-                DestDir = "somedirectory",
-                Parameters = new List<NzbgetParameter> { new NzbgetParameter { Name = "drone", Value = "id" } },
-                ParStatus = "Some Error",
-                UnpackStatus = "NONE",
-                MoveStatus = "NONE",
-                ScriptStatus = "NONE",
-                DeleteStatus = "NONE",
-                MarkStatus = "NONE"
-            };
+                {
+                    FileSizeLo = 1000,
+                    Category = "tv",
+                    Name = "Droned.S01E01.Pilot.1080p.WEB-DL-DRONE",
+                    DestDir = "somedirectory",
+                    Parameters = new List<NzbgetParameter> { new NzbgetParameter { Name = "drone", Value = "id" } },
+                    ParStatus = "Some Error",
+                    UnpackStatus = "NONE",
+                    MoveStatus = "NONE",
+                    ScriptStatus = "NONE",
+                    DeleteStatus = "NONE",
+                    MarkStatus = "NONE"
+                };
 
             _completed = new NzbgetHistoryItem
-            {
-                FileSizeLo = 1000,
-                Category = "movie",
-                Name = "Droned.1998.1080p.WEB-DL-DRONE",
-                DestDir = "/remote/mount/tv/Droned.1998.1080p.WEB-DL-DRONE",
-                Parameters = new List<NzbgetParameter> { new NzbgetParameter { Name = "drone", Value = "id" } },
-                ParStatus = "SUCCESS",
-                UnpackStatus = "NONE",
-                MoveStatus = "SUCCESS",
-                ScriptStatus = "NONE",
-                DeleteStatus = "NONE",
-                MarkStatus = "NONE"
-            };
+                {
+                    FileSizeLo = 1000,
+                    Category = "tv",
+                    Name = "Droned.S01E01.Pilot.1080p.WEB-DL-DRONE",
+                    DestDir = "/remote/mount/tv/Droned.S01E01.Pilot.1080p.WEB-DL-DRONE",
+                    Parameters = new List<NzbgetParameter> { new NzbgetParameter { Name = "drone", Value = "id" } },
+                    ParStatus = "SUCCESS",
+                    UnpackStatus = "NONE",
+                    MoveStatus = "SUCCESS",
+                    ScriptStatus = "NONE",
+                    DeleteStatus = "NONE",
+                    MarkStatus = "NONE"
+                };
 
             _downloadClientItem = Builder<DownloadClientItem>
                                   .CreateNew()
@@ -94,8 +94,8 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.NzbgetTests
                 .Returns("14.0");
 
             _configItems = new Dictionary<string, string>();
-            _configItems.Add("Category1.Name", "movie");
-            _configItems.Add("Category1.DestDir", @"/remote/mount/movie");
+            _configItems.Add("Category1.Name", "tv");
+            _configItems.Add("Category1.DestDir", @"/remote/mount/tv");
 
             Mocker.GetMock<INzbgetProxy>()
                 .Setup(v => v.GetConfig(It.IsAny<NzbgetSettings>()))
@@ -328,6 +328,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.NzbgetTests
         {
             // TODO: We would love to have a way to distinguish between scripts reporting video corruption, or some internal script error.
             // That way we could return Warning instead of Failed to notify the user to take action.
+
             _completed.ScriptStatus = "FAILURE";
 
             GivenQueue(null);
@@ -343,9 +344,9 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.NzbgetTests
         {
             GivenSuccessfulDownload();
 
-            var remoteMovie = CreateRemoteMovie();
+            var remoteEpisode = CreateRemoteEpisode();
 
-            var id = Subject.Download(remoteMovie);
+            var id = Subject.Download(remoteEpisode);
 
             id.Should().NotBeNullOrEmpty();
         }
@@ -355,9 +356,9 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.NzbgetTests
         {
             GivenFailedDownload();
 
-            var remoteMovie = CreateRemoteMovie();
+            var remoteEpisode = CreateRemoteEpisode();
 
-            Assert.Throws<DownloadClientRejectedReleaseException>(() => Subject.Download(remoteMovie));
+            Assert.Throws<DownloadClientRejectedReleaseException>(() => Subject.Download(remoteEpisode));
         }
 
         [Test]
@@ -380,7 +381,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.NzbgetTests
 
             result.IsLocalhost.Should().BeTrue();
             result.OutputRootFolders.Should().NotBeNull();
-            result.OutputRootFolders.First().Should().Be(@"/remote/mount/movie");
+            result.OutputRootFolders.First().Should().Be(@"/remote/mount/tv");
         }
 
         [Test]
@@ -402,14 +403,14 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.NzbgetTests
         {
             Mocker.GetMock<IRemotePathMappingService>()
                 .Setup(v => v.RemapRemoteToLocal("127.0.0.1", It.IsAny<OsPath>()))
-                .Returns(new OsPath(@"O:\mymount\Droned.1998.1080p.WEB-DL-DRONE".AsOsAgnostic()));
+                .Returns(new OsPath(@"O:\mymount\Droned.S01E01.Pilot.1080p.WEB-DL-DRONE".AsOsAgnostic()));
 
             GivenQueue(null);
             GivenHistory(_completed);
 
             var result = Subject.GetItems().Single();
 
-            result.OutputPath.Should().Be(@"O:\mymount\Droned.1998.1080p.WEB-DL-DRONE".AsOsAgnostic());
+            result.OutputPath.Should().Be(@"O:\mymount\Droned.S01E01.Pilot.1080p.WEB-DL-DRONE".AsOsAgnostic());
         }
 
         [Test]

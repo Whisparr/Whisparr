@@ -1,4 +1,4 @@
-using Whisparr.Http.REST;
+﻿using Whisparr.Http.REST;
 
 namespace Whisparr.Api.V3.DiskSpace
 {

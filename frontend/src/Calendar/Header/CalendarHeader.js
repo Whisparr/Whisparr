@@ -10,7 +10,6 @@ import MenuButton from 'Components/Menu/MenuButton';
 import MenuContent from 'Components/Menu/MenuContent';
 import ViewMenuItem from 'Components/Menu/ViewMenuItem';
 import { align, icons } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import CalendarHeaderViewButton from './CalendarHeaderViewButton';
 import styles from './CalendarHeader.css';
 
@@ -24,7 +23,7 @@ function getTitle(time, start, end, view, longDateFormat) {
   } else if (view === 'month') {
     return timeMoment.format('MMMM YYYY');
   } else if (view === 'agenda') {
-    return `Agenda: ${startMoment.format('MMM D')} - ${endMoment.format('MMM D')}`;
+    return 'Agenda';
   }
 
   let startFormat = 'MMM D YYYY';
@@ -168,7 +167,7 @@ class CalendarHeader extends Component {
                           selectedView={view}
                           onPress={this.onViewChange}
                         >
-                          {translate('Month')}
+                          Month
                         </ViewMenuItem>
                     }
 
@@ -177,7 +176,7 @@ class CalendarHeader extends Component {
                       selectedView={view}
                       onPress={this.onViewChange}
                     >
-                      {translate('Week')}
+                      Week
                     </ViewMenuItem>
 
                     <ViewMenuItem
@@ -185,7 +184,7 @@ class CalendarHeader extends Component {
                       selectedView={view}
                       onPress={this.onViewChange}
                     >
-                      {translate('Forecast')}
+                      Forecast
                     </ViewMenuItem>
 
                     <ViewMenuItem
@@ -193,7 +192,7 @@ class CalendarHeader extends Component {
                       selectedView={view}
                       onPress={this.onViewChange}
                     >
-                      {translate('Day')}
+                      Day
                     </ViewMenuItem>
 
                     <ViewMenuItem
@@ -201,7 +200,7 @@ class CalendarHeader extends Component {
                       selectedView={view}
                       onPress={this.onViewChange}
                     >
-                      {translate('Agenda')}
+                      Agenda
                     </ViewMenuItem>
                   </MenuContent>
                 </Menu> :

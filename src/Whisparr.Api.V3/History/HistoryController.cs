@@ -7,8 +7,9 @@ using NzbDrone.Core.Datastore;
 using NzbDrone.Core.DecisionEngine.Specifications;
 using NzbDrone.Core.Download;
 using NzbDrone.Core.History;
-using NzbDrone.Core.Movies;
-using Whisparr.Api.V3.Movies;
+using NzbDrone.Core.Tv;
+using Whisparr.Api.V3.Episodes;
+using Whisparr.Api.V3.Series;
 using Whisparr.Http;
 using Whisparr.Http.Extensions;
 
@@ -18,59 +19,67 @@ namespace Whisparr.Api.V3.History
     public class HistoryController : Controller
     {
         private readonly IHistoryService _historyService;
-        private readonly IMovieService _movieService;
         private readonly ICustomFormatCalculationService _formatCalculator;
         private readonly IUpgradableSpecification _upgradableSpecification;
         private readonly IFailedDownloadService _failedDownloadService;
+        private readonly ISeriesService _seriesService;
 
         public HistoryController(IHistoryService historyService,
-                             IMovieService movieService,
                              ICustomFormatCalculationService formatCalculator,
                              IUpgradableSpecification upgradableSpecification,
-                             IFailedDownloadService failedDownloadService)
+                             IFailedDownloadService failedDownloadService,
+                             ISeriesService seriesService)
         {
             _historyService = historyService;
-            _movieService = movieService;
             _formatCalculator = formatCalculator;
             _upgradableSpecification = upgradableSpecification;
             _failedDownloadService = failedDownloadService;
+            _seriesService = seriesService;
         }
 
-        protected HistoryResource MapToResource(MovieHistory model, bool includeMovie)
+        protected HistoryResource MapToResource(EpisodeHistory model, bool includeSeries, bool includeEpisode)
         {
-            if (model.Movie == null)
-            {
-                model.Movie = _movieService.GetMovie(model.MovieId);
-            }
-
             var resource = model.ToResource(_formatCalculator);
 
-            if (includeMovie)
+            if (includeSeries)
             {
-                resource.Movie = model.Movie.ToResource(0);
+                resource.Series = model.Series.ToResource();
             }
 
-            if (model.Movie != null)
+            if (includeEpisode)
             {
-                resource.QualityCutoffNotMet = _upgradableSpecification.QualityCutoffNotMet(model.Movie.Profile, model.Quality);
+                resource.Episode = model.Episode.ToResource();
+            }
+
+            if (model.Series != null)
+            {
+                resource.QualityCutoffNotMet = _upgradableSpecification.QualityCutoffNotMet(model.Series.QualityProfile.Value, model.Quality);
             }
 
             return resource;
         }
 
         [HttpGet]
-        public PagingResource<HistoryResource> GetHistory(bool includeMovie)
+        [Produces("application/json")]
+        public PagingResource<HistoryResource> GetHistory(bool includeSeries, bool includeEpisode)
         {
             var pagingResource = Request.ReadPagingResourceFromRequest<HistoryResource>();
-            var pagingSpec = pagingResource.MapToPagingSpec<HistoryResource, MovieHistory>("date", SortDirection.Descending);
+            var pagingSpec = pagingResource.MapToPagingSpec<HistoryResource, EpisodeHistory>("date", SortDirection.Descending);
 
             var eventTypeFilter = pagingResource.Filters.FirstOrDefault(f => f.Key == "eventType");
+            var episodeIdFilter = pagingResource.Filters.FirstOrDefault(f => f.Key == "episodeId");
             var downloadIdFilter = pagingResource.Filters.FirstOrDefault(f => f.Key == "downloadId");
 
             if (eventTypeFilter != null)
             {
-                var filterValue = (MovieHistoryEventType)Convert.ToInt32(eventTypeFilter.Value);
+                var filterValue = (EpisodeHistoryEventType)Convert.ToInt32(eventTypeFilter.Value);
                 pagingSpec.FilterExpressions.Add(v => v.EventType == filterValue);
+            }
+
+            if (episodeIdFilter != null)
+            {
+                var episodeId = Convert.ToInt32(episodeIdFilter.Value);
+                pagingSpec.FilterExpressions.Add(h => h.EpisodeId == episodeId);
             }
 
             if (downloadIdFilter != null)
@@ -79,19 +88,38 @@ namespace Whisparr.Api.V3.History
                 pagingSpec.FilterExpressions.Add(h => h.DownloadId == downloadId);
             }
 
-            return pagingSpec.ApplyToPage(_historyService.Paged, h => MapToResource(h, includeMovie));
+            return pagingSpec.ApplyToPage(_historyService.Paged, h => MapToResource(h, includeSeries, includeEpisode));
         }
 
         [HttpGet("since")]
-        public List<HistoryResource> GetHistorySince(DateTime date, MovieHistoryEventType? eventType = null, bool includeMovie = false)
+        [Produces("application/json")]
+        public List<HistoryResource> GetHistorySince(DateTime date, EpisodeHistoryEventType? eventType = null, bool includeSeries = false, bool includeEpisode = false)
         {
-            return _historyService.Since(date, eventType).Select(h => MapToResource(h, includeMovie)).ToList();
+            return _historyService.Since(date, eventType).Select(h => MapToResource(h, includeSeries, includeEpisode)).ToList();
         }
 
-        [HttpGet("movie")]
-        public List<HistoryResource> GetMovieHistory(int movieId, MovieHistoryEventType? eventType = null, bool includeMovie = false)
+        [HttpGet("series")]
+        [Produces("application/json")]
+        public List<HistoryResource> GetSeriesHistory(int seriesId, int? seasonNumber, EpisodeHistoryEventType? eventType = null, bool includeSeries = false, bool includeEpisode = false)
         {
-            return _historyService.GetByMovieId(movieId, eventType).Select(h => MapToResource(h, includeMovie)).ToList();
+            var series = _seriesService.GetSeries(seriesId);
+
+            if (seasonNumber.HasValue)
+            {
+                return _historyService.GetBySeason(seriesId, seasonNumber.Value, eventType).Select(h =>
+                {
+                    h.Series = series;
+
+                    return MapToResource(h, includeSeries, includeEpisode);
+                }).ToList();
+            }
+
+            return _historyService.GetBySeries(seriesId, eventType).Select(h =>
+            {
+                h.Series = series;
+
+                return MapToResource(h, includeSeries, includeEpisode);
+            }).ToList();
         }
 
         [HttpPost("failed/{id}")]

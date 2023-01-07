@@ -1,23 +1,21 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using FluentValidation.Results;
 using NLog;
 using NzbDrone.Common.Cache;
-using NzbDrone.Common.Disk;
 using NzbDrone.Common.Extensions;
-using NzbDrone.Core.Movies;
+using NzbDrone.Core.Tv;
 using NzbDrone.Core.Validation;
 
 namespace NzbDrone.Core.Notifications.Plex.Server
 {
     public interface IPlexServerService
     {
-        void UpdateLibrary(Media movie, PlexServerSettings settings);
-        void UpdateLibrary(IEnumerable<Media> movie, PlexServerSettings settings);
+        void UpdateLibrary(Series series, PlexServerSettings settings);
+        void UpdateLibrary(IEnumerable<Series> series, PlexServerSettings settings);
         ValidationFailure Test(PlexServerSettings settings);
     }
 
@@ -25,7 +23,6 @@ namespace NzbDrone.Core.Notifications.Plex.Server
     {
         private readonly ICached<Version> _versionCache;
         private readonly ICached<bool> _partialUpdateCache;
-        private readonly ICached<bool> _pathScanCache;
         private readonly IPlexServerProxy _plexServerProxy;
         private readonly Logger _logger;
 
@@ -33,17 +30,16 @@ namespace NzbDrone.Core.Notifications.Plex.Server
         {
             _versionCache = cacheManager.GetCache<Version>(GetType(), "versionCache");
             _partialUpdateCache = cacheManager.GetCache<bool>(GetType(), "partialUpdateCache");
-            _pathScanCache = cacheManager.GetCache<bool>(GetType(), "pathScanCache");
             _plexServerProxy = plexServerProxy;
             _logger = logger;
         }
 
-        public void UpdateLibrary(Media movie, PlexServerSettings settings)
+        public void UpdateLibrary(Series series, PlexServerSettings settings)
         {
-            UpdateLibrary(new[] { movie }, settings);
+            UpdateLibrary(new[] { series }, settings);
         }
 
-        public void UpdateLibrary(IEnumerable<Media> multipleMovies, PlexServerSettings settings)
+        public void UpdateLibrary(IEnumerable<Series> multipleSeries, PlexServerSettings settings)
         {
             try
             {
@@ -55,51 +51,31 @@ namespace NzbDrone.Core.Notifications.Plex.Server
 
                 var sections = GetSections(settings);
                 var partialUpdates = _partialUpdateCache.Get(settings.Host, () => PartialUpdatesAllowed(settings, version), TimeSpan.FromHours(2));
-                var pathScanCache = _pathScanCache.Get(settings.Host, () => PathUpdatesAllowed(settings, version), TimeSpan.FromHours(2));
 
-                var pathsUpdated = true;
-
-                if (pathScanCache)
+                if (partialUpdates)
                 {
-                    foreach (var movie in multipleMovies)
-                    {
-                        pathsUpdated &= UpdatePath(movie, sections, settings);
+                    var partiallyUpdated = true;
 
-                        if (!pathsUpdated)
+                    foreach (var series in multipleSeries)
+                    {
+                        partiallyUpdated &= UpdatePartialSection(series, sections, settings);
+
+                        if (!partiallyUpdated)
                         {
                             break;
                         }
                     }
-                }
 
-                // If we couldn't path update then try partial and full update
-                if (!pathScanCache || (pathScanCache && !pathsUpdated))
-                {
-                    if (partialUpdates)
+                    // Only update complete sections if all partial updates failed
+                    if (!partiallyUpdated)
                     {
-                        var partiallyUpdated = true;
-
-                        foreach (var movie in multipleMovies)
-                        {
-                            partiallyUpdated &= UpdatePartialSection(movie, sections, settings);
-
-                            if (!partiallyUpdated)
-                            {
-                                break;
-                            }
-                        }
-
-                        // Only update complete sections if all partial updates failed
-                        if (!partiallyUpdated)
-                        {
-                            _logger.Debug("Unable to update partial section, updating all Movie sections");
-                            sections.ForEach(s => UpdateSection(s.Id, settings));
-                        }
-                    }
-                    else
-                    {
+                        _logger.Debug("Unable to update partial section, updating all TV sections");
                         sections.ForEach(s => UpdateSection(s.Id, settings));
                     }
+                }
+                else
+                {
+                    sections.ForEach(s => UpdateSection(s.Id, settings));
                 }
 
                 _logger.Debug("Finished sending Update Request to Plex Server (took {0} ms)", watch.ElapsedMilliseconds);
@@ -115,7 +91,7 @@ namespace NzbDrone.Core.Notifications.Plex.Server
         {
             _logger.Debug("Getting sections from Plex host: {0}", settings.Host);
 
-            return _plexServerProxy.GetMovieSections(settings).ToList();
+            return _plexServerProxy.GetTvSections(settings).ToList();
         }
 
         private bool PartialUpdatesAllowed(PlexServerSettings settings, Version version)
@@ -138,31 +114,6 @@ namespace NzbDrone.Core.Notifications.Plex.Server
             catch (Exception ex)
             {
                 _logger.Warn(ex, "Unable to check if partial updates are allowed");
-            }
-
-            return false;
-        }
-
-        private bool PathUpdatesAllowed(PlexServerSettings settings, Version version)
-        {
-            try
-            {
-                if (version >= new Version(1, 20, 0, 3125))
-                {
-                    var preferences = GetPreferences(settings);
-                    var partialScanPreference = preferences.SingleOrDefault(p => p.Id.Equals("FSEventLibraryPartialScanEnabled"));
-
-                    if (partialScanPreference == null)
-                    {
-                        return false;
-                    }
-
-                    return Convert.ToBoolean(partialScanPreference.Value);
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.Warn(ex, "Unable to check if path updates are allowed");
             }
 
             return false;
@@ -200,47 +151,31 @@ namespace NzbDrone.Core.Notifications.Plex.Server
             _plexServerProxy.Update(sectionId, settings);
         }
 
-        private bool UpdatePartialSection(Media movie, List<PlexSection> sections, PlexServerSettings settings)
+        private bool UpdatePartialSection(Series series, List<PlexSection> sections, PlexServerSettings settings)
         {
             var partiallyUpdated = false;
 
             foreach (var section in sections)
             {
+                var metadataId = GetMetadataId(section.Id, series, section.Language, settings);
+
+                if (metadataId.IsNotNullOrWhiteSpace())
+                {
+                    _logger.Debug("Updating Plex host: {0}, Section: {1}, Series: {2}", settings.Host, section.Id, series);
+                    _plexServerProxy.UpdateSeries(metadataId, settings);
+
+                    partiallyUpdated = true;
+                }
             }
 
             return partiallyUpdated;
         }
 
-        private bool UpdatePath(Media movie, List<PlexSection> sections, PlexServerSettings settings)
+        private string GetMetadataId(int sectionId, Series series, string language, PlexServerSettings settings)
         {
-            var pathUpdated = false;
+            _logger.Debug("Getting metadata from Plex host: {0} for series: {1}", settings.Host, series);
 
-            var movieLocation = new OsPath(movie.Path);
-            var mappedPath = movieLocation;
-
-            if (settings.MapTo.IsNotNullOrWhiteSpace())
-            {
-                mappedPath = new OsPath(settings.MapTo) + (movieLocation - new OsPath(settings.MapFrom));
-
-                _logger.Trace("Mapping Path from {0} to {1} for partial scan", movieLocation, mappedPath);
-            }
-
-            var matchingSection = sections.FirstOrDefault(section => section.Locations.Any(location => location.Path.IsParentPath(mappedPath.FullPath)));
-
-            if (matchingSection != null)
-            {
-                _logger.Debug("Updating Path on Plex host: {0}, Section: {1}, Path: {2}", settings.Host, matchingSection.Id, mappedPath);
-
-                _plexServerProxy.UpdatePath(mappedPath.FullPath, matchingSection.Id, settings);
-
-                pathUpdated = true;
-            }
-            else
-            {
-                _logger.Debug("Unable to update path, mapped movie path {0} is not a child of any plex libraries: {1}", mappedPath, sections.SelectMany(s => s.Locations.Select(l => l.Path)).Join(", "));
-            }
-
-            return pathUpdated;
+            return _plexServerProxy.GetMetadataId(sectionId, series.TvdbId, language, settings);
         }
 
         public ValidationFailure Test(PlexServerSettings settings)
@@ -253,7 +188,7 @@ namespace NzbDrone.Core.Notifications.Plex.Server
 
                 if (sections.Empty())
                 {
-                    return new ValidationFailure("Host", "At least one Movie library is required");
+                    return new ValidationFailure("Host", "At least one TV library is required");
                 }
             }
             catch (PlexAuthenticationException ex)

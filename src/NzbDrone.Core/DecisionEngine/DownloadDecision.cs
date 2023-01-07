@@ -6,8 +6,7 @@ namespace NzbDrone.Core.DecisionEngine
 {
     public class DownloadDecision
     {
-        public RemoteMovie RemoteMovie { get; private set; }
-
+        public RemoteEpisode RemoteEpisode { get; private set; }
         public IEnumerable<Rejection> Rejections { get; private set; }
 
         public bool Approved => !Rejections.Any();
@@ -28,9 +27,9 @@ namespace NzbDrone.Core.DecisionEngine
             }
         }
 
-        public DownloadDecision(RemoteMovie movie, params Rejection[] rejections)
+        public DownloadDecision(RemoteEpisode episode, params Rejection[] rejections)
         {
-            RemoteMovie = movie;
+            RemoteEpisode = episode;
             Rejections = rejections.ToList();
         }
 
@@ -38,10 +37,10 @@ namespace NzbDrone.Core.DecisionEngine
         {
             if (Approved)
             {
-                return "[OK] " + RemoteMovie;
+                return "[OK] " + RemoteEpisode;
             }
 
-            return "[Rejected " + Rejections.Count() + "]" + RemoteMovie;
+            return "[Rejected " + Rejections.Count() + "]" + RemoteEpisode;
         }
     }
 }

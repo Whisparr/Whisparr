@@ -6,9 +6,10 @@ import { createSelector } from 'reselect';
 import { setAppValue, setVersion } from 'Store/Actions/appActions';
 import { removeItem, update, updateItem } from 'Store/Actions/baseActions';
 import { fetchCommands, finishCommand, updateCommand } from 'Store/Actions/commandActions';
-import { fetchMovies } from 'Store/Actions/movieActions';
 import { fetchQueue, fetchQueueDetails } from 'Store/Actions/queueActions';
 import { fetchRootFolders } from 'Store/Actions/rootFolderActions';
+import { fetchSeries } from 'Store/Actions/seriesActions';
+import { fetchQualityDefinitions } from 'Store/Actions/settingsActions';
 import { fetchHealth } from 'Store/Actions/systemActions';
 import { fetchTagDetails, fetchTags } from 'Store/Actions/tagActions';
 import { repopulatePage } from 'Utilities/pagePopulator';
@@ -46,10 +47,11 @@ const mapDispatchToProps = {
   dispatchUpdateItem: updateItem,
   dispatchRemoveItem: removeItem,
   dispatchFetchHealth: fetchHealth,
+  dispatchFetchQualityDefinitions: fetchQualityDefinitions,
   dispatchFetchQueue: fetchQueue,
   dispatchFetchQueueDetails: fetchQueueDetails,
   dispatchFetchRootFolders: fetchRootFolders,
-  dispatchFetchMovies: fetchMovies,
+  dispatchFetchSeries: fetchSeries,
   dispatchFetchTags: fetchTags,
   dispatchFetchTagDetails: fetchTagDetails
 };
@@ -165,7 +167,7 @@ class SignalRConnector extends Component {
     const resource = body.resource;
     const status = resource.status;
 
-    // Both sucessful and failed commands need to be
+    // Both successful and failed commands need to be
     // completed, otherwise they spin until they timeout.
 
     if (status === 'completed' || status === 'failed') {
@@ -175,14 +177,24 @@ class SignalRConnector extends Component {
     }
   };
 
-  handleMoviefile = (body) => {
-    const section = 'movieFiles';
+  handleEpisode = (body) => {
+    if (body.action === 'updated') {
+      this.props.dispatchUpdateItem({
+        section: 'episodes',
+        updateOnly: true,
+        ...body.resource
+      });
+    }
+  };
+
+  handleEpisodefile = (body) => {
+    const section = 'episodeFiles';
 
     if (body.action === 'updated') {
       this.props.dispatchUpdateItem({ section, ...body.resource });
 
       // Repopulate the page to handle recently imported file
-      repopulatePage('movieFileUpdated');
+      repopulatePage('episodeFileUpdated');
     } else if (body.action === 'deleted') {
       this.props.dispatchRemoveItem({ section, id: body.resource.id });
     }
@@ -192,15 +204,19 @@ class SignalRConnector extends Component {
     this.props.dispatchFetchHealth();
   };
 
-  handleMovie = (body) => {
+  handleSeries = (body) => {
     const action = body.action;
-    const section = 'movies';
+    const section = 'series';
 
     if (action === 'updated') {
       this.props.dispatchUpdateItem({ section, ...body.resource });
     } else if (action === 'deleted') {
       this.props.dispatchRemoveItem({ section, id: body.resource.id });
     }
+  };
+
+  handleQualitydefinition = () => {
+    this.props.dispatchFetchQualityDefinitions();
   };
 
   handleQueue = () => {
@@ -221,6 +237,26 @@ class SignalRConnector extends Component {
     const version = body.version;
 
     this.props.dispatchSetVersion({ version });
+  };
+
+  handleWantedCutoff = (body) => {
+    if (body.action === 'updated') {
+      this.props.dispatchUpdateItem({
+        section: 'cutoffUnmet',
+        updateOnly: true,
+        ...body.resource
+      });
+    }
+  };
+
+  handleWantedMissing = (body) => {
+    if (body.action === 'updated') {
+      this.props.dispatchUpdateItem({
+        section: 'missing',
+        updateOnly: true,
+        ...body.resource
+      });
+    }
   };
 
   handleSystemTask = () => {
@@ -273,7 +309,7 @@ class SignalRConnector extends Component {
 
     const {
       dispatchFetchCommands,
-      dispatchFetchMovies,
+      dispatchFetchSeries,
       dispatchSetAppValue
     } = this.props;
 
@@ -286,7 +322,7 @@ class SignalRConnector extends Component {
 
     // Repopulate the page (if a repopulator is set) to ensure things
     // are in sync after reconnecting.
-    dispatchFetchMovies();
+    dispatchFetchSeries();
     dispatchFetchCommands();
     repopulatePage();
   };
@@ -322,10 +358,11 @@ SignalRConnector.propTypes = {
   dispatchUpdateItem: PropTypes.func.isRequired,
   dispatchRemoveItem: PropTypes.func.isRequired,
   dispatchFetchHealth: PropTypes.func.isRequired,
+  dispatchFetchQualityDefinitions: PropTypes.func.isRequired,
   dispatchFetchQueue: PropTypes.func.isRequired,
   dispatchFetchQueueDetails: PropTypes.func.isRequired,
   dispatchFetchRootFolders: PropTypes.func.isRequired,
-  dispatchFetchMovies: PropTypes.func.isRequired,
+  dispatchFetchSeries: PropTypes.func.isRequired,
   dispatchFetchTags: PropTypes.func.isRequired,
   dispatchFetchTagDetails: PropTypes.func.isRequired
 };

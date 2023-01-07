@@ -1,30 +1,30 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using NLog;
 using NzbDrone.Common.Disk;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Extras.Metadata.Files;
-using NzbDrone.Core.Movies;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Housekeeping.Housekeepers
 {
     public class DeleteBadMediaCovers : IHousekeepingTask
     {
         private readonly IMetadataFileService _metaFileService;
-        private readonly IMovieService _movieService;
+        private readonly ISeriesService _seriesService;
         private readonly IDiskProvider _diskProvider;
         private readonly IConfigService _configService;
         private readonly Logger _logger;
 
         public DeleteBadMediaCovers(IMetadataFileService metaFileService,
-                                    IMovieService movieService,
+                                    ISeriesService seriesService,
                                     IDiskProvider diskProvider,
                                     IConfigService configService,
                                     Logger logger)
         {
             _metaFileService = metaFileService;
-            _movieService = movieService;
+            _seriesService = seriesService;
             _diskProvider = diskProvider;
             _configService = configService;
             _logger = logger;
@@ -37,18 +37,18 @@ namespace NzbDrone.Core.Housekeeping.Housekeepers
                 return;
             }
 
-            var movies = _movieService.GetAllMovies();
+            var series = _seriesService.GetAllSeries();
 
-            foreach (var movie in movies)
+            foreach (var show in series)
             {
-                var images = _metaFileService.GetFilesByMovie(movie.Id)
+                var images = _metaFileService.GetFilesBySeries(show.Id)
                     .Where(c => c.LastUpdated > new DateTime(2014, 12, 27) && c.RelativePath.EndsWith(".jpg", StringComparison.InvariantCultureIgnoreCase));
 
                 foreach (var image in images)
                 {
                     try
                     {
-                        var path = Path.Combine(movie.Path, image.RelativePath);
+                        var path = Path.Combine(show.Path, image.RelativePath);
                         if (!IsValid(path))
                         {
                             _logger.Debug("Deleting invalid image file " + path);

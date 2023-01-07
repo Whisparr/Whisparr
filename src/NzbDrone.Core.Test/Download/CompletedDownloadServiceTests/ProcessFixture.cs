@@ -1,18 +1,20 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using NzbDrone.Common.Disk;
+using NzbDrone.Core.DecisionEngine;
 using NzbDrone.Core.Download;
 using NzbDrone.Core.Download.TrackedDownloads;
 using NzbDrone.Core.History;
 using NzbDrone.Core.MediaFiles;
-using NzbDrone.Core.MediaFiles.MovieImport;
-using NzbDrone.Core.Movies;
+using NzbDrone.Core.MediaFiles.EpisodeImport;
+using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.Parser;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.Test.Framework;
+using NzbDrone.Core.Tv;
 using NzbDrone.Test.Common;
 
 namespace NzbDrone.Core.Test.Download.CompletedDownloadServiceTests
@@ -31,12 +33,12 @@ namespace NzbDrone.Core.Test.Download.CompletedDownloadServiceTests
                                                     .With(h => h.Title = "Drone.S01E01.HDTV")
                                                     .Build();
 
-            var remoteMovie = BuildRemoteMovie();
+            var remoteEpisode = BuildRemoteEpisode();
 
             _trackedDownload = Builder<TrackedDownload>.CreateNew()
                     .With(c => c.State = TrackedDownloadState.Downloading)
                     .With(c => c.DownloadItem = completed)
-                    .With(c => c.RemoteMovie = remoteMovie)
+                    .With(c => c.RemoteEpisode = remoteEpisode)
                     .Build();
 
             Mocker.GetMock<IDownloadClient>()
@@ -53,18 +55,19 @@ namespace NzbDrone.Core.Test.Download.CompletedDownloadServiceTests
 
             Mocker.GetMock<IHistoryService>()
                   .Setup(s => s.MostRecentForDownloadId(_trackedDownload.DownloadItem.DownloadId))
-                  .Returns(new MovieHistory());
+                  .Returns(new EpisodeHistory());
 
             Mocker.GetMock<IParsingService>()
-                  .Setup(s => s.GetMovie("Drone.S01E01.HDTV"))
-                  .Returns(remoteMovie.Movie);
+                  .Setup(s => s.GetSeries("Drone.S01E01.HDTV"))
+                  .Returns(remoteEpisode.Series);
         }
 
-        private RemoteMovie BuildRemoteMovie()
+        private RemoteEpisode BuildRemoteEpisode()
         {
-            return new RemoteMovie
+            return new RemoteEpisode
             {
-                Movie = new Media(),
+                Series = new Series(),
+                Episodes = new List<Episode> { new Episode { Id = 1 } }
             };
         }
 
@@ -72,14 +75,14 @@ namespace NzbDrone.Core.Test.Download.CompletedDownloadServiceTests
         {
             Mocker.GetMock<IHistoryService>()
                 .Setup(s => s.MostRecentForDownloadId(_trackedDownload.DownloadItem.DownloadId))
-                .Returns((MovieHistory)null);
+                .Returns((EpisodeHistory)null);
         }
 
-        private void GivenMovieMatch()
+        private void GivenSeriesMatch()
         {
             Mocker.GetMock<IParsingService>()
-                  .Setup(s => s.GetMovie(It.IsAny<string>()))
-                  .Returns(_trackedDownload.RemoteMovie.Movie);
+                  .Setup(s => s.GetSeries(It.IsAny<string>()))
+                  .Returns(_trackedDownload.RemoteEpisode.Series);
         }
 
         private void GivenABadlyNamedDownload()
@@ -88,15 +91,15 @@ namespace NzbDrone.Core.Test.Download.CompletedDownloadServiceTests
             _trackedDownload.DownloadItem.Title = "Droned Pilot"; // Set a badly named download
             Mocker.GetMock<IHistoryService>()
                   .Setup(s => s.MostRecentForDownloadId(It.Is<string>(i => i == "1234")))
-                  .Returns(new MovieHistory() { SourceTitle = "Droned S01E01" });
+                  .Returns(new EpisodeHistory() { SourceTitle = "Droned S01E01" });
 
             Mocker.GetMock<IParsingService>()
-                  .Setup(s => s.GetMovie(It.IsAny<string>()))
-                  .Returns((Media)null);
+                  .Setup(s => s.GetSeries(It.IsAny<string>()))
+                  .Returns((Series)null);
 
             Mocker.GetMock<IParsingService>()
-                  .Setup(s => s.GetMovie("Droned S01E01"))
-                  .Returns(BuildRemoteMovie().Movie);
+                  .Setup(s => s.GetSeries("Droned S01E01"))
+                  .Returns(BuildRemoteEpisode().Series);
         }
 
         [TestCase(DownloadItemStatus.Downloading)]
@@ -129,7 +132,7 @@ namespace NzbDrone.Core.Test.Download.CompletedDownloadServiceTests
         {
             _trackedDownload.DownloadItem.Category = "tv";
             GivenNoGrabbedHistory();
-            GivenMovieMatch();
+            GivenSeriesMatch();
 
             Subject.Check(_trackedDownload);
 
@@ -151,11 +154,11 @@ namespace NzbDrone.Core.Test.Download.CompletedDownloadServiceTests
         {
             GivenABadlyNamedDownload();
 
-            Mocker.GetMock<IDownloadedMovieImportService>()
-                  .Setup(v => v.ProcessPath(It.IsAny<string>(), It.IsAny<ImportMode>(), It.IsAny<Media>(), It.IsAny<DownloadClientItem>()))
+            Mocker.GetMock<IDownloadedEpisodesImportService>()
+                  .Setup(v => v.ProcessPath(It.IsAny<string>(), It.IsAny<ImportMode>(), It.IsAny<Series>(), It.IsAny<DownloadClientItem>()))
                   .Returns(new List<ImportResult>
                            {
-                               new ImportResult(new ImportDecision(new LocalMovie { Path = @"C:\TestPath\Droned.S01E01.mkv" }))
+                               new ImportResult(new ImportDecision(new LocalEpisode { Path = @"C:\TestPath\Droned.S01E01.mkv" }))
                            });
 
             Mocker.GetMock<IHistoryService>()
@@ -170,8 +173,8 @@ namespace NzbDrone.Core.Test.Download.CompletedDownloadServiceTests
         public void should_not_process_when_there_is_a_title_mismatch()
         {
             Mocker.GetMock<IParsingService>()
-                  .Setup(s => s.GetMovie("Drone.S01E01.HDTV"))
-                  .Returns((Media)null);
+                  .Setup(s => s.GetSeries("Drone.S01E01.HDTV"))
+                  .Returns((Series)null);
 
             Subject.Check(_trackedDownload);
 

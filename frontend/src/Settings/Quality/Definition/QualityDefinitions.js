@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import FieldSet from 'Components/FieldSet';
 import PageSectionContent from 'Components/Page/PageSectionContent';
-import translate from 'Utilities/String/translate';
 import QualityDefinitionConnector from './QualityDefinitionConnector';
 import styles from './QualityDefinitions.css';
 
@@ -19,26 +18,20 @@ class QualityDefinitions extends Component {
     } = this.props;
 
     return (
-      <FieldSet legend={translate('QualityDefinitions')}>
+      <FieldSet legend="Quality Definitions">
         <PageSectionContent
-          errorMessage={translate('UnableToLoadQualityDefinitions')}
+          errorMessage="Unable to load Quality Definitions"
           {...otherProps}
         >
           <div className={styles.header}>
-            <div className={styles.quality}>
-              {translate('Quality')}
-            </div>
-            <div className={styles.title}>
-              {translate('Title')}
-            </div>
-            <div className={styles.sizeLimit}>
-              {translate('SizeLimit')}
-            </div>
+            <div className={styles.quality}>Quality</div>
+            <div className={styles.title}>Title</div>
+            <div className={styles.sizeLimit}>Size Limit</div>
 
             {
               advancedSettings ?
                 <div className={styles.megabytesPerMinute}>
-                  {translate('MegabytesPerMinute')}
+                  Megabytes Per Minute
                 </div> :
                 null
             }
@@ -60,7 +53,7 @@ class QualityDefinitions extends Component {
 
           <div className={styles.sizeLimitHelpTextContainer}>
             <div className={styles.sizeLimitHelpText}>
-              {translate('QualityLimitsHelpText')}
+              Limits are automatically adjusted for the series runtime and number of episodes in the file.
             </div>
           </div>
         </PageSectionContent>

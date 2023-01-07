@@ -9,8 +9,7 @@ using NzbDrone.Core.Test.Framework;
 
 namespace NzbDrone.Core.Test.ImportList.Plex
 {
-    [TestFixture]
-    public class PlexParserFixture : CoreTest<PlexParser>
+    public class PlexTest : CoreTest<PlexParser>
     {
         private ImportListResponse CreateResponse(string url, string content)
         {
@@ -27,11 +26,12 @@ namespace NzbDrone.Core.Test.ImportList.Plex
 
             var result = Subject.ParseResponse(CreateResponse("https://metadata.provider.plex.tv/library/sections/watchlist/all", json));
 
-            result.First().Title.Should().Be("Arrival");
-            result.First().Year.Should().Be(2016);
-            result.First().ForiegnId.Should().Be(0);
+            result.First().Title.Should().Be("30 Rock");
+            result.First().Year.Should().Be(2006);
+            result.First().TvdbId.Should().Be(79488);
 
-            result[1].ForiegnId.Should().Be(274854);
+            result[1].TmdbId.Should().Be(4533);
+            result[1].ImdbId.Should().Be("tt0475900");
         }
     }
 }

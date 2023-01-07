@@ -36,16 +36,19 @@ namespace NzbDrone.Common.Http
         private readonly ICached<CookieContainer> _cookieContainerCache;
         private readonly List<IHttpRequestInterceptor> _requestInterceptors;
         private readonly IHttpDispatcher _httpDispatcher;
+        private readonly IUserAgentBuilder _userAgentBuilder;
 
         public HttpClient(IEnumerable<IHttpRequestInterceptor> requestInterceptors,
             ICacheManager cacheManager,
             IRateLimitService rateLimitService,
             IHttpDispatcher httpDispatcher,
+            IUserAgentBuilder userAgentBuilder,
             Logger logger)
         {
             _requestInterceptors = requestInterceptors.ToList();
             _rateLimitService = rateLimitService;
             _httpDispatcher = httpDispatcher;
+            _userAgentBuilder = userAgentBuilder;
             _logger = logger;
 
             ServicePointManager.DefaultConnectionLimit = 12;
@@ -134,7 +137,7 @@ namespace NzbDrone.Common.Http
                 response = interceptor.PostResponse(response);
             }
 
-            if (request.LogResponseContent)
+            if (request.LogResponseContent && response.ResponseData != null)
             {
                 _logger.Trace("Response content ({0} bytes): {1}", response.ResponseData.Length, response.Content);
             }
@@ -258,7 +261,6 @@ namespace NzbDrone.Common.Http
                 }
 
                 stopWatch.Stop();
-
                 if (File.Exists(fileName))
                 {
                     File.Delete(fileName);

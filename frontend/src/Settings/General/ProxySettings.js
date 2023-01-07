@@ -5,7 +5,6 @@ import FormGroup from 'Components/Form/FormGroup';
 import FormInputGroup from 'Components/Form/FormInputGroup';
 import FormLabel from 'Components/Form/FormLabel';
 import { inputTypes, sizes } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 
 function ProxySettings(props) {
   const {
@@ -25,15 +24,15 @@ function ProxySettings(props) {
   } = settings;
 
   const proxyTypeOptions = [
-    { key: 'http', value: translate('HttpHttps') },
-    { key: 'socks4', value: translate('Socks4') },
-    { key: 'socks5', value: translate('Socks5') }
+    { key: 'http', value: 'HTTP(S)' },
+    { key: 'socks4', value: 'Socks4' },
+    { key: 'socks5', value: 'Socks5 (Support TOR)' }
   ];
 
   return (
-    <FieldSet legend={translate('Proxy')}>
+    <FieldSet legend="Proxy">
       <FormGroup size={sizes.MEDIUM}>
-        <FormLabel>{translate('UseProxy')}</FormLabel>
+        <FormLabel>Use Proxy</FormLabel>
 
         <FormInputGroup
           type={inputTypes.CHECK}
@@ -47,7 +46,7 @@ function ProxySettings(props) {
         proxyEnabled.value &&
           <div>
             <FormGroup>
-              <FormLabel>{translate('ProxyType')}</FormLabel>
+              <FormLabel>Proxy Type</FormLabel>
 
               <FormInputGroup
                 type={inputTypes.SELECT}
@@ -59,7 +58,7 @@ function ProxySettings(props) {
             </FormGroup>
 
             <FormGroup>
-              <FormLabel>{translate('Hostname')}</FormLabel>
+              <FormLabel>Hostname</FormLabel>
 
               <FormInputGroup
                 type={inputTypes.TEXT}
@@ -71,7 +70,7 @@ function ProxySettings(props) {
             </FormGroup>
 
             <FormGroup>
-              <FormLabel>{translate('Port')}</FormLabel>
+              <FormLabel>Port</FormLabel>
 
               <FormInputGroup
                 type={inputTypes.NUMBER}
@@ -84,43 +83,43 @@ function ProxySettings(props) {
             </FormGroup>
 
             <FormGroup>
-              <FormLabel>{translate('Username')}</FormLabel>
+              <FormLabel>Username</FormLabel>
 
               <FormInputGroup
                 type={inputTypes.TEXT}
                 name="proxyUsername"
-                helpText={translate('ProxyUsernameHelpText')}
+                helpText="You only need to enter a username and password if one is required. Leave them blank otherwise."
                 onChange={onInputChange}
                 {...proxyUsername}
               />
             </FormGroup>
 
             <FormGroup>
-              <FormLabel>{translate('Password')}</FormLabel>
+              <FormLabel>Password</FormLabel>
 
               <FormInputGroup
                 type={inputTypes.PASSWORD}
                 name="proxyPassword"
-                helpText={translate('ProxyPasswordHelpText')}
+                helpText="You only need to enter a username and password if one is required. Leave them blank otherwise."
                 onChange={onInputChange}
                 {...proxyPassword}
               />
             </FormGroup>
 
             <FormGroup>
-              <FormLabel>{translate('IgnoredAddresses')}</FormLabel>
+              <FormLabel>Ignored Addresses</FormLabel>
 
               <FormInputGroup
                 type={inputTypes.TEXT}
                 name="proxyBypassFilter"
-                helpText={translate('ProxyBypassFilterHelpText')}
+                helpText="Use ',' as a separator, and '*.' as a wildcard for subdomains"
                 onChange={onInputChange}
                 {...proxyBypassFilter}
               />
             </FormGroup>
 
             <FormGroup size={sizes.MEDIUM}>
-              <FormLabel>{translate('BypassProxyForLocalAddresses')}</FormLabel>
+              <FormLabel>Bypass Proxy for Local Addresses</FormLabel>
 
               <FormInputGroup
                 type={inputTypes.CHECK}

@@ -1,6 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using NLog;
 using NLog.Fluent;
 
@@ -10,46 +8,47 @@ namespace NzbDrone.Common.Instrumentation.Extensions
     {
         public static readonly Logger SentryLogger = LogManager.GetLogger("Sentry");
 
-        public static LogEventBuilder SentryFingerprint(this LogEventBuilder logBuilder, params string[] fingerprint)
+        public static LogBuilder SentryFingerprint(this LogBuilder logBuilder, params string[] fingerprint)
         {
             return logBuilder.Property("Sentry", fingerprint);
         }
 
-        public static LogEventBuilder WriteSentryDebug(this LogEventBuilder logBuilder, params string[] fingerprint)
+        public static LogBuilder WriteSentryDebug(this LogBuilder logBuilder, params string[] fingerprint)
         {
             return LogSentryMessage(logBuilder, LogLevel.Debug, fingerprint);
         }
 
-        public static LogEventBuilder WriteSentryInfo(this LogEventBuilder logBuilder, params string[] fingerprint)
+        public static LogBuilder WriteSentryInfo(this LogBuilder logBuilder, params string[] fingerprint)
         {
             return LogSentryMessage(logBuilder, LogLevel.Info, fingerprint);
         }
 
-        public static LogEventBuilder WriteSentryWarn(this LogEventBuilder logBuilder, params string[] fingerprint)
+        public static LogBuilder WriteSentryWarn(this LogBuilder logBuilder, params string[] fingerprint)
         {
             return LogSentryMessage(logBuilder, LogLevel.Warn, fingerprint);
         }
 
-        public static LogEventBuilder WriteSentryError(this LogEventBuilder logBuilder, params string[] fingerprint)
+        public static LogBuilder WriteSentryError(this LogBuilder logBuilder, params string[] fingerprint)
         {
             return LogSentryMessage(logBuilder, LogLevel.Error, fingerprint);
         }
 
-        private static LogEventBuilder LogSentryMessage(LogEventBuilder logBuilder, LogLevel level, string[] fingerprint)
+        private static LogBuilder LogSentryMessage(LogBuilder logBuilder, LogLevel level, string[] fingerprint)
         {
-            SentryLogger.ForLogEvent(level)
-                        .CopyLogEvent(logBuilder.LogEvent)
+            SentryLogger.Log(level)
+                        .CopyLogEvent(logBuilder.LogEventInfo)
                         .SentryFingerprint(fingerprint)
-                        .Log();
+                        .Write();
 
-            return logBuilder.Property<string>("Sentry", null);
+            return logBuilder.Property("Sentry", null);
         }
 
-        private static LogEventBuilder CopyLogEvent(this LogEventBuilder logBuilder, LogEventInfo logEvent)
+        private static LogBuilder CopyLogEvent(this LogBuilder logBuilder, LogEventInfo logEvent)
         {
-            return logBuilder.TimeStamp(logEvent.TimeStamp)
+            return logBuilder.LoggerName(logEvent.LoggerName)
+                             .TimeStamp(logEvent.TimeStamp)
                              .Message(logEvent.Message, logEvent.Parameters)
-                             .Properties(logEvent.Properties.Select(p => new KeyValuePair<string, object>(p.Key.ToString(), p.Value)))
+                             .Properties(logEvent.Properties.ToDictionary(v => v.Key, v => v.Value))
                              .Exception(logEvent.Exception);
         }
     }

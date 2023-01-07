@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 using NzbDrone.Common.EnsureThat;
 using NzbDrone.Test.Common;
 

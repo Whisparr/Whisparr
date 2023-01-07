@@ -5,8 +5,8 @@ using FluentValidation.Results;
 using NLog;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Configuration;
-using NzbDrone.Core.ImportLists.ImportListMovies;
 using NzbDrone.Core.Parser;
+using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.Validation;
 
 namespace NzbDrone.Core.ImportLists.Whisparr
@@ -15,10 +15,9 @@ namespace NzbDrone.Core.ImportLists.Whisparr
     {
         private readonly IWhisparrV3Proxy _whisparrV3Proxy;
         public override string Name => "Whisparr";
-        public override bool Enabled => true;
-        public override bool EnableAuto => false;
 
         public override ImportListType ListType => ImportListType.Program;
+        public override TimeSpan MinRefreshInterval => TimeSpan.FromMinutes(5);
 
         public WhisparrImport(IWhisparrV3Proxy whisparrV3Proxy,
                             IImportListStatusService importListStatusService,
@@ -30,25 +29,24 @@ namespace NzbDrone.Core.ImportLists.Whisparr
             _whisparrV3Proxy = whisparrV3Proxy;
         }
 
-        public override ImportListFetchResult Fetch()
+        public override IList<ImportListItemInfo> Fetch()
         {
-            var movies = new List<ImportListMovie>();
-            var anyFailure = false;
+            var series = new List<ImportListItemInfo>();
 
             try
             {
-                var remoteMovies = _whisparrV3Proxy.GetMovies(Settings);
+                var remoteSeries = _whisparrV3Proxy.GetSeries(Settings);
 
-                foreach (var remoteMovie in remoteMovies)
+                foreach (var item in remoteSeries)
                 {
-                    if ((!Settings.ProfileIds.Any() || Settings.ProfileIds.Contains(remoteMovie.QualityProfileId)) &&
-                        (!Settings.TagIds.Any() || Settings.TagIds.Any(x => remoteMovie.Tags.Any(y => y == x))))
+                    if ((!Settings.ProfileIds.Any() || Settings.ProfileIds.Contains(item.QualityProfileId)) &&
+                        (!Settings.LanguageProfileIds.Any() || Settings.LanguageProfileIds.Contains(item.LanguageProfileId)) &&
+                        (!Settings.TagIds.Any() || Settings.TagIds.Any(tagId => item.Tags.Any(itemTagId => itemTagId == tagId))))
                     {
-                        movies.Add(new ImportListMovie
+                        series.Add(new ImportListItemInfo
                         {
-                            ForiegnId = remoteMovie.TmdbId,
-                            Title = remoteMovie.Title,
-                            Year = remoteMovie.Year
+                            TvdbId = item.TvdbId,
+                            Title = item.Title
                         });
                     }
                 }
@@ -57,11 +55,10 @@ namespace NzbDrone.Core.ImportLists.Whisparr
             }
             catch
             {
-                anyFailure = true;
                 _importListStatusService.RecordFailure(Definition.Id);
             }
 
-            return new ImportListFetchResult { Movies = CleanupListItems(movies), AnyFailure = anyFailure };
+            return CleanupListItems(series);
         }
 
         public override object RequestAction(string action, IDictionary<string, string> query)
@@ -75,35 +72,52 @@ namespace NzbDrone.Core.ImportLists.Whisparr
                 };
             }
 
-            Settings.Validate().Filter("ApiKey").ThrowOnError();
-
             if (action == "getProfiles")
             {
-                var devices = _whisparrV3Proxy.GetProfiles(Settings);
+                Settings.Validate().Filter("ApiKey").ThrowOnError();
+
+                var profiles = _whisparrV3Proxy.GetQualityProfiles(Settings);
 
                 return new
                 {
-                    options = devices.OrderBy(d => d.Name, StringComparer.InvariantCultureIgnoreCase)
-                                            .Select(d => new
-                                            {
-                                                Value = d.Id,
-                                                Name = d.Name
-                                            })
+                    options = profiles.OrderBy(d => d.Name, StringComparer.InvariantCultureIgnoreCase)
+                                      .Select(d => new
+                                      {
+                                          value = d.Id,
+                                          name = d.Name
+                                      })
+                };
+            }
+
+            if (action == "getLanguageProfiles")
+            {
+                Settings.Validate().Filter("ApiKey").ThrowOnError();
+
+                var langProfiles = _whisparrV3Proxy.GetLanguageProfiles(Settings);
+
+                return new
+                {
+                    options = langProfiles.OrderBy(d => d.Name, StringComparer.InvariantCultureIgnoreCase)
+                                          .Select(d => new
+                                          {
+                                              value = d.Id,
+                                              name = d.Name
+                                          })
                 };
             }
 
             if (action == "getTags")
             {
-                var devices = _whisparrV3Proxy.GetTags(Settings);
+                var tags = _whisparrV3Proxy.GetTags(Settings);
 
                 return new
                 {
-                    options = devices.OrderBy(d => d.Label, StringComparer.InvariantCultureIgnoreCase)
-                                            .Select(d => new
-                                            {
-                                                Value = d.Id,
-                                                Name = d.Label
-                                            })
+                    options = tags.OrderBy(d => d.Label, StringComparer.InvariantCultureIgnoreCase)
+                        .Select(d => new
+                        {
+                            value = d.Id,
+                            name = d.Label
+                        })
                 };
             }
 
@@ -113,17 +127,6 @@ namespace NzbDrone.Core.ImportLists.Whisparr
         protected override void Test(List<ValidationFailure> failures)
         {
             failures.AddIfNotNull(_whisparrV3Proxy.Test(Settings));
-        }
-
-        private static MediaCover.MediaCover MapImage(MediaCover.MediaCover arg, string baseUrl)
-        {
-            var newImage = new MediaCover.MediaCover
-            {
-                Url = string.Format("{0}{1}", baseUrl, arg.Url),
-                CoverType = arg.CoverType
-            };
-
-            return newImage;
         }
     }
 }

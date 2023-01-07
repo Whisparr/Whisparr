@@ -2,10 +2,10 @@ using NLog;
 using NzbDrone.Common;
 using NzbDrone.Common.EnvironmentInfo;
 using NzbDrone.Common.Processes;
-using Whisparr.Host.AccessControl;
+using NzbDrone.Host.AccessControl;
 using IServiceProvider = NzbDrone.Common.IServiceProvider;
 
-namespace Whisparr.Host
+namespace NzbDrone.Host
 {
     public interface IUtilityModeRouter
     {
@@ -77,7 +77,7 @@ namespace Whisparr.Host
 
                 case ApplicationModes.RegisterUrl:
                     {
-                        _logger.Debug("Regiser URL selected");
+                        _logger.Debug("Register URL selected");
                         _remoteAccessAdapter.MakeAccessible(false);
 
                         break;

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using NzbDrone.Core.Datastore;
 using NzbDrone.Core.Messaging.Events;

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using NzbDrone.Core.Update;
@@ -40,9 +40,9 @@ namespace Whisparr.Api.V3.Update
                 FileName = model.FileName,
                 Url = model.Url,
 
-                //Installed
-                //Installable
-                //Latest
+                // Installed
+                // Installable
+                // Latest
                 Changes = model.Changes,
                 Hash = model.Hash,
             };

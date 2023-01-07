@@ -75,6 +75,12 @@ class TagInput extends Component {
   //
   // Listeners
 
+  onTagEdit = ({ value, ...otherProps }) => {
+    this.setState({ value });
+
+    this.props.onTagDelete(otherProps);
+  };
+
   onInputContainerPress = () => {
     this._autosuggestRef.input.focus();
   };
@@ -188,6 +194,7 @@ class TagInput extends Component {
     const {
       tags,
       kind,
+      canEdit,
       tagComponent,
       onTagDelete
     } = this.props;
@@ -199,8 +206,10 @@ class TagInput extends Component {
         kind={kind}
         inputProps={inputProps}
         isFocused={this.state.isFocused}
+        canEdit={canEdit}
         tagComponent={tagComponent}
         onTagDelete={onTagDelete}
+        onTagEdit={this.onTagEdit}
         onInputContainerPress={this.onInputContainerPress}
       />
     );
@@ -210,6 +219,8 @@ class TagInput extends Component {
     const {
       className,
       inputContainerClassName,
+      hasError,
+      hasWarning,
       ...otherProps
     } = this.props;
 
@@ -226,7 +237,9 @@ class TagInput extends Component {
         className={styles.internalInput}
         inputContainerClassName={classNames(
           inputContainerClassName,
-          isFocused && styles.isFocused
+          isFocused && styles.isFocused,
+          hasError && styles.hasError,
+          hasWarning && styles.hasWarning
         )}
         value={value}
         suggestions={suggestions}
@@ -258,6 +271,7 @@ TagInput.propTypes = {
   placeholder: PropTypes.string.isRequired,
   delimiters: PropTypes.arrayOf(PropTypes.string).isRequired,
   minQueryLength: PropTypes.number.isRequired,
+  canEdit: PropTypes.bool,
   hasError: PropTypes.bool,
   hasWarning: PropTypes.bool,
   tagComponent: PropTypes.elementType.isRequired,
@@ -273,6 +287,7 @@ TagInput.defaultProps = {
   placeholder: '',
   delimiters: ['Tab', 'Enter', ' ', ','],
   minQueryLength: 1,
+  canEdit: false,
   tagComponent: TagInputTag
 };
 

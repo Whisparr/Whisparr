@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Net;
 using FizzWare.NBuilder;
@@ -21,7 +21,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests
         private string _pneumaticFolder;
         private string _strmFolder;
         private string _nzbPath;
-        private RemoteMovie _remoteMovie;
+        private RemoteEpisode _remoteEpisode;
         private DownloadClientItem _downloadClientItem;
 
         [SetUp]
@@ -32,12 +32,13 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests
             _nzbPath = Path.Combine(_pneumaticFolder, _title + ".nzb").AsOsAgnostic();
             _strmFolder = @"d:\unsorted tv\".AsOsAgnostic();
 
-            _remoteMovie = new RemoteMovie();
-            _remoteMovie.Release = new ReleaseInfo();
-            _remoteMovie.Release.Title = _title;
-            _remoteMovie.Release.DownloadUrl = _nzbUrl;
+            _remoteEpisode = new RemoteEpisode();
+            _remoteEpisode.Release = new ReleaseInfo();
+            _remoteEpisode.Release.Title = _title;
+            _remoteEpisode.Release.DownloadUrl = _nzbUrl;
 
-            _remoteMovie.ParsedMovieInfo = new ParsedMovieInfo();
+            _remoteEpisode.ParsedEpisodeInfo = new ParsedEpisodeInfo();
+            _remoteEpisode.ParsedEpisodeInfo.FullSeason = false;
 
             _downloadClientItem = Builder<DownloadClientItem>
                                   .CreateNew().With(d => d.DownloadId = "_Droned.S01E01.Pilot.1080p.WEB-DL-DRONE_0")
@@ -59,7 +60,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests
         [Test]
         public void should_download_file_if_it_doesnt_exist()
         {
-            Subject.Download(_remoteMovie);
+            Subject.Download(_remoteEpisode);
 
             Mocker.GetMock<IHttpClient>().Verify(c => c.DownloadFile(_nzbUrl, _nzbPath), Times.Once());
         }
@@ -69,7 +70,16 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests
         {
             WithFailedDownload();
 
-            Assert.Throws<WebException>(() => Subject.Download(_remoteMovie));
+            Assert.Throws<WebException>(() => Subject.Download(_remoteEpisode));
+        }
+
+        [Test]
+        public void should_throw_if_full_season_download()
+        {
+            _remoteEpisode.Release.Title = "30 Rock - Season 1";
+            _remoteEpisode.ParsedEpisodeInfo.FullSeason = true;
+
+            Assert.Throws<NotSupportedException>(() => Subject.Download(_remoteEpisode));
         }
 
         [Test]
@@ -83,9 +93,9 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests
         {
             var illegalTitle = "Saturday Night Live - S38E08 - Jeremy Renner/Maroon 5 [SDTV]";
             var expectedFilename = Path.Combine(_pneumaticFolder, "Saturday Night Live - S38E08 - Jeremy Renner+Maroon 5 [SDTV].nzb");
-            _remoteMovie.Release.Title = illegalTitle;
+            _remoteEpisode.Release.Title = illegalTitle;
 
-            Subject.Download(_remoteMovie);
+            Subject.Download(_remoteEpisode);
 
             Mocker.GetMock<IHttpClient>().Verify(c => c.DownloadFile(It.IsAny<string>(), expectedFilename), Times.Once());
         }

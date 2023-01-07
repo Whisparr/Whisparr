@@ -18,6 +18,7 @@ namespace NzbDrone.Core.Notifications.Telegram
     public class TelegramProxy : ITelegramProxy
     {
         private const string URL = "https://api.telegram.org";
+
         private readonly IHttpClient _httpClient;
         private readonly Logger _logger;
 
@@ -29,7 +30,7 @@ namespace NzbDrone.Core.Notifications.Telegram
 
         public void SendNotification(string title, string message, TelegramSettings settings)
         {
-            //Format text to add the title before and bold using markdown
+            // Format text to add the title before and bold using markdown
             var text = $"<b>{HttpUtility.HtmlEncode(title)}</b>\n{HttpUtility.HtmlEncode(message)}";
 
             var requestBuilder = new HttpRequestBuilder(URL).Resource("bot{token}/sendmessage").Post();

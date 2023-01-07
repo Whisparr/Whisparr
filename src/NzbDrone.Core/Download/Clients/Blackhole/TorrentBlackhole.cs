@@ -12,6 +12,7 @@ using NzbDrone.Core.MediaFiles.TorrentInfo;
 using NzbDrone.Core.Organizer;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.RemotePathMappings;
+using NzbDrone.Core.ThingiProvider;
 
 namespace NzbDrone.Core.Download.Clients.Blackhole
 {
@@ -27,25 +28,24 @@ namespace NzbDrone.Core.Download.Clients.Blackhole
                                 ITorrentFileInfoReader torrentFileInfoReader,
                                 IHttpClient httpClient,
                                 IConfigService configService,
-                                INamingConfigService namingConfigService,
                                 IDiskProvider diskProvider,
                                 IRemotePathMappingService remotePathMappingService,
                                 Logger logger)
-            : base(torrentFileInfoReader, httpClient, configService, namingConfigService, diskProvider, remotePathMappingService, logger)
+            : base(torrentFileInfoReader, httpClient, configService, diskProvider, remotePathMappingService, logger)
         {
             _scanWatchFolder = scanWatchFolder;
 
             ScanGracePeriod = TimeSpan.FromSeconds(30);
         }
 
-        protected override string AddFromMagnetLink(RemoteMovie remoteMovie, string hash, string magnetLink)
+        protected override string AddFromMagnetLink(RemoteEpisode remoteEpisode, string hash, string magnetLink)
         {
             if (!Settings.SaveMagnetFiles)
             {
                 throw new NotSupportedException("Blackhole does not support magnet links.");
             }
 
-            var title = remoteMovie.Release.Title;
+            var title = remoteEpisode.Release.Title;
 
             title = FileNameBuilder.CleanFileName(title);
 
@@ -62,9 +62,9 @@ namespace NzbDrone.Core.Download.Clients.Blackhole
             return null;
         }
 
-        protected override string AddFromTorrentFile(RemoteMovie remoteMovie, string hash, string filename, byte[] fileContent)
+        protected override string AddFromTorrentFile(RemoteEpisode remoteEpisode, string hash, string filename, byte[] fileContent)
         {
-            var title = remoteMovie.Release.Title;
+            var title = remoteEpisode.Release.Title;
 
             title = FileNameBuilder.CleanFileName(title);
 

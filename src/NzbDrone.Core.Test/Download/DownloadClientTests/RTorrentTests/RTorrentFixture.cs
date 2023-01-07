@@ -21,30 +21,30 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.RTorrentTests
             Subject.Definition = new DownloadClientDefinition();
             Subject.Definition.Settings = new RTorrentSettings()
             {
-                MovieCategory = null
+                TvCategory = null
             };
 
             _downloading = new RTorrentTorrent
-            {
-                Hash = "HASH",
-                IsFinished = false,
-                IsOpen = true,
-                IsActive = true,
-                Name = _title,
-                TotalSize = 1000,
-                RemainingSize = 500,
-                Path = "somepath"
-            };
+                    {
+                        Hash = "HASH",
+                        IsFinished = false,
+                        IsOpen = true,
+                        IsActive = true,
+                        Name = _title,
+                        TotalSize = 1000,
+                        RemainingSize = 500,
+                        Path = "somepath"
+                    };
 
             _completed = new RTorrentTorrent
-            {
-                Hash = "HASH",
-                IsFinished = true,
-                Name = _title,
-                TotalSize = 1000,
-                RemainingSize = 0,
-                Path = "somepath"
-            };
+                    {
+                        Hash = "HASH",
+                        IsFinished = true,
+                        Name = _title,
+                        TotalSize = 1000,
+                        RemainingSize = 0,
+                        Path = "somepath"
+                    };
 
             Mocker.GetMock<ITorrentFileInfoReader>()
                   .Setup(s => s.GetHashFromTorrentFile(It.IsAny<byte[]>()))
@@ -115,7 +115,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.RTorrentTests
         {
             GivenSuccessfulDownload();
 
-            var remoteEpisode = CreateRemoteMovie();
+            var remoteEpisode = CreateRemoteEpisode();
 
             var id = Subject.Download(remoteEpisode);
 

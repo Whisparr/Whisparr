@@ -7,26 +7,24 @@ using NzbDrone.Core.Download;
 using NzbDrone.Core.Indexers;
 using NzbDrone.Core.Messaging.Commands;
 using NzbDrone.Core.Messaging.Events;
-using NzbDrone.Core.Movies.Events;
 using NzbDrone.Core.Parser.Model;
+using NzbDrone.Core.Tv.Events;
 
 namespace NzbDrone.Core.Blocklisting
 {
     public interface IBlocklistService
     {
-        bool Blocklisted(int movieId, ReleaseInfo release);
+        bool Blocklisted(int seriesId, ReleaseInfo release);
         PagingSpec<Blocklist> Paged(PagingSpec<Blocklist> pagingSpec);
-        List<Blocklist> GetByMovieId(int movieId);
-        void Block(RemoteMovie remoteMovie, string message);
+        void Block(RemoteEpisode remoteEpisode, string message);
         void Delete(int id);
         void Delete(List<int> ids);
     }
 
     public class BlocklistService : IBlocklistService,
-
                                     IExecute<ClearBlocklistCommand>,
                                     IHandle<DownloadFailedEvent>,
-                                    IHandleAsync<MoviesDeletedEvent>
+                                    IHandleAsync<SeriesDeletedEvent>
     {
         private readonly IBlocklistRepository _blocklistRepository;
 
@@ -35,9 +33,9 @@ namespace NzbDrone.Core.Blocklisting
             _blocklistRepository = blocklistRepository;
         }
 
-        public bool Blocklisted(int movieId, ReleaseInfo release)
+        public bool Blocklisted(int seriesId, ReleaseInfo release)
         {
-            var blocklistedByTitle = _blocklistRepository.BlocklistedByTitle(movieId, release.Title);
+            var blocklistedByTitle = _blocklistRepository.BlocklistedByTitle(seriesId, release.Title);
 
             if (release.DownloadProtocol == DownloadProtocol.Torrent)
             {
@@ -54,7 +52,7 @@ namespace NzbDrone.Core.Blocklisting
                                              .Any(b => SameTorrent(b, torrentInfo));
                 }
 
-                var blocklistedByTorrentInfohash = _blocklistRepository.BlocklistedByTorrentInfoHash(movieId, torrentInfo.InfoHash);
+                var blocklistedByTorrentInfohash = _blocklistRepository.BlocklistedByTorrentInfoHash(seriesId, torrentInfo.InfoHash);
 
                 return blocklistedByTorrentInfohash.Any(b => SameTorrent(b, torrentInfo));
             }
@@ -68,28 +66,24 @@ namespace NzbDrone.Core.Blocklisting
             return _blocklistRepository.GetPaged(pagingSpec);
         }
 
-        public List<Blocklist> GetByMovieId(int movieId)
-        {
-            return _blocklistRepository.BlocklistedByMovie(movieId);
-        }
-
-        public void Block(RemoteMovie remoteMovie, string message)
+        public void Block(RemoteEpisode remoteEpisode, string message)
         {
             var blocklist = new Blocklist
                             {
-                                MovieId = remoteMovie.Movie.Id,
-                                SourceTitle =  remoteMovie.Release.Title,
-                                Quality = remoteMovie.ParsedMovieInfo.Quality,
+                                SeriesId = remoteEpisode.Series.Id,
+                                EpisodeIds = remoteEpisode.Episodes.Select(e => e.Id).ToList(),
+                                SourceTitle =  remoteEpisode.Release.Title,
+                                Quality = remoteEpisode.ParsedEpisodeInfo.Quality,
                                 Date = DateTime.UtcNow,
-                                PublishedDate = remoteMovie.Release.PublishDate,
-                                Size = remoteMovie.Release.Size,
-                                Indexer = remoteMovie.Release.Indexer,
-                                Protocol = remoteMovie.Release.DownloadProtocol,
+                                PublishedDate = remoteEpisode.Release.PublishDate,
+                                Size = remoteEpisode.Release.Size,
+                                Indexer = remoteEpisode.Release.Indexer,
+                                Protocol = remoteEpisode.Release.DownloadProtocol,
                                 Message = message,
-                                Languages = remoteMovie.ParsedMovieInfo.Languages
+                                Languages = remoteEpisode.ParsedEpisodeInfo.Languages
                             };
 
-            if (remoteMovie.Release is TorrentInfo torrentRelease)
+            if (remoteEpisode.Release is TorrentInfo torrentRelease)
             {
                 blocklist.TorrentInfoHash = torrentRelease.InfoHash;
             }
@@ -175,31 +169,27 @@ namespace NzbDrone.Core.Blocklisting
         public void Handle(DownloadFailedEvent message)
         {
             var blocklist = new Blocklist
-            {
-                MovieId = message.MovieId,
-                SourceTitle = message.SourceTitle,
-                Quality = message.Quality,
-                Date = DateTime.UtcNow,
-                PublishedDate = DateTime.Parse(message.Data.GetValueOrDefault("publishedDate")),
-                Size = long.Parse(message.Data.GetValueOrDefault("size", "0")),
-                Indexer = message.Data.GetValueOrDefault("indexer"),
-                Protocol = (DownloadProtocol)Convert.ToInt32(message.Data.GetValueOrDefault("protocol")),
-                Message = message.Message,
-                TorrentInfoHash = message.Data.GetValueOrDefault("torrentInfoHash"),
-                Languages = message.Languages
-            };
-
-            if (Enum.TryParse(message.Data.GetValueOrDefault("indexerFlags"), true, out IndexerFlags flags))
-            {
-                blocklist.IndexerFlags = flags;
-            }
+                            {
+                                SeriesId = message.SeriesId,
+                                EpisodeIds = message.EpisodeIds,
+                                SourceTitle = message.SourceTitle,
+                                Quality = message.Quality,
+                                Date = DateTime.UtcNow,
+                                PublishedDate = DateTime.Parse(message.Data.GetValueOrDefault("publishedDate")),
+                                Size = long.Parse(message.Data.GetValueOrDefault("size", "0")),
+                                Indexer = message.Data.GetValueOrDefault("indexer"),
+                                Protocol = (DownloadProtocol)Convert.ToInt32(message.Data.GetValueOrDefault("protocol")),
+                                Message = message.Message,
+                                TorrentInfoHash = message.Data.GetValueOrDefault("torrentInfoHash"),
+                                Languages = message.Languages
+                            };
 
             _blocklistRepository.Insert(blocklist);
         }
 
-        public void HandleAsync(MoviesDeletedEvent message)
+        public void HandleAsync(SeriesDeletedEvent message)
         {
-            _blocklistRepository.DeleteForMovies(message.Movies.Select(m => m.Id).ToList());
+            _blocklistRepository.DeleteForSeriesIds(message.Series.Select(m => m.Id).ToList());
         }
     }
 }

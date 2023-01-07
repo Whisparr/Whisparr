@@ -10,6 +10,7 @@ using NzbDrone.Common.Cache;
 using NzbDrone.Common.Disk;
 using NzbDrone.Common.EnvironmentInfo;
 using NzbDrone.Common.Extensions;
+using NzbDrone.Common.Instrumentation;
 using NzbDrone.Core.Authentication;
 using NzbDrone.Core.Configuration.Events;
 using NzbDrone.Core.Datastore;
@@ -23,7 +24,6 @@ namespace NzbDrone.Core.Configuration
     public interface IConfigFileProvider : IHandleAsync<ApplicationStartedEvent>,
                                            IExecute<ResetApiKeyCommand>
     {
-        XDocument LoadConfigFile();
         Dictionary<string, object> GetConfigDictionary();
         void SaveConfigDictionary(Dictionary<string, object> configValues);
 
@@ -33,6 +33,7 @@ namespace NzbDrone.Core.Configuration
         bool EnableSsl { get; }
         bool LaunchBrowser { get; }
         AuthenticationType AuthenticationMethod { get; }
+        AuthenticationRequiredType AuthenticationRequired { get; }
         bool AnalyticsEnabled { get; }
         string LogLevel { get; }
         string ConsoleLogLevel { get; }
@@ -52,6 +53,7 @@ namespace NzbDrone.Core.Configuration
         string SyslogServer { get; }
         int SyslogPort { get; }
         string SyslogLevel { get; }
+        string Theme { get; }
         string PostgresHost { get; }
         int PostgresPort { get; }
         string PostgresUser { get; }
@@ -191,18 +193,24 @@ namespace NzbDrone.Core.Configuration
             }
         }
 
+        public AuthenticationRequiredType AuthenticationRequired => GetValueEnum("AuthenticationRequired", AuthenticationRequiredType.Enabled);
+
         public bool AnalyticsEnabled => GetValueBoolean("AnalyticsEnabled", true, persist: false);
 
-        public string Branch => GetValue("Branch", "master").ToLowerInvariant();
+        public string Branch => GetValue("Branch", "main").ToLowerInvariant();
 
         public string LogLevel => GetValue("LogLevel", "info").ToLowerInvariant();
         public string ConsoleLogLevel => GetValue("ConsoleLogLevel", string.Empty, persist: false);
+
+        public string Theme => GetValue("Theme", "auto", persist: false);
+
         public string PostgresHost => _postgresOptions?.Host ?? GetValue("PostgresHost", string.Empty, persist: false);
         public string PostgresUser => _postgresOptions?.User ?? GetValue("PostgresUser", string.Empty, persist: false);
         public string PostgresPassword => _postgresOptions?.Password ?? GetValue("PostgresPassword", string.Empty, persist: false);
         public string PostgresMainDb => _postgresOptions?.MainDb ?? GetValue("PostgresMainDb", "whisparr-main", persist: false);
         public string PostgresLogDb => _postgresOptions?.LogDb ?? GetValue("PostgresLogDb", "whisparr-log", persist: false);
         public int PostgresPort => (_postgresOptions?.Port ?? 0) != 0 ? _postgresOptions.Port : GetValueInt("PostgresPort", 5432, persist: false);
+
         public bool LogSql => GetValueBoolean("LogSql", false, persist: false);
         public int LogRotate => GetValueInt("LogRotate", 50, persist: false);
         public bool FilterSentryEvents => GetValueBoolean("FilterSentryEvents", true, persist: false);
@@ -220,12 +228,26 @@ namespace NzbDrone.Core.Configuration
                     return urlBase;
                 }
 
-                return "/" + urlBase.Trim('/').ToLower();
+                return "/" + urlBase;
             }
         }
 
         public string UiFolder => BuildInfo.IsDebug ? Path.Combine("..", "UI") : "UI";
-        public string InstanceName => GetValue("InstanceName", BuildInfo.AppName);
+
+        public string InstanceName
+        {
+            get
+            {
+                var instanceName = GetValue("InstanceName", BuildInfo.AppName);
+
+                if (instanceName.StartsWith(BuildInfo.AppName) || instanceName.EndsWith(BuildInfo.AppName))
+                {
+                    return instanceName;
+                }
+
+                return BuildInfo.AppName;
+            }
+        }
 
         public bool UpdateAutomatically => GetValueBoolean("UpdateAutomatically", false, false);
 
@@ -237,7 +259,7 @@ namespace NzbDrone.Core.Configuration
 
         public int SyslogPort => GetValueInt("SyslogPort", 514, persist: false);
 
-        public string SyslogLevel => GetValue("SyslogLevel", LogLevel, false).ToLowerInvariant();
+        public string SyslogLevel => GetValue("SyslogLevel", LogLevel, persist: false).ToLowerInvariant();
 
         public int GetValueInt(string key, int defaultValue, bool persist = true)
         {
@@ -270,13 +292,13 @@ namespace NzbDrone.Core.Configuration
                         return valueHolder.First().Value.Trim();
                     }
 
-                    //Save the value
+                    // Save the value
                     if (persist)
                     {
                         SetValue(key, defaultValue);
                     }
 
-                    //return the default value
+                    // return the default value
                     return defaultValue.ToString();
                 });
         }
@@ -339,7 +361,7 @@ namespace NzbDrone.Core.Configuration
             SaveConfigFile(xDoc);
         }
 
-        public XDocument LoadConfigFile()
+        private XDocument LoadConfigFile()
         {
             try
             {

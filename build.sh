@@ -21,7 +21,7 @@ UpdateVersionNumber()
         echo "Updating Version Info"
         sed -i'' -e "s/<AssemblyVersion>[0-9.*]\+<\/AssemblyVersion>/<AssemblyVersion>$WHISPARRVERSION<\/AssemblyVersion>/g" src/Directory.Build.props
         sed -i'' -e "s/<AssemblyConfiguration>[\$()A-Za-z-]\+<\/AssemblyConfiguration>/<AssemblyConfiguration>${BUILD_SOURCEBRANCHNAME}<\/AssemblyConfiguration>/g" src/Directory.Build.props
-        sed -i'' -e "s/<string>10.0.0.0<\/string>/<string>$WHISPARRVERSION<\/string>/g" macOS/Whisparr.app/Contents/Info.plist
+        sed -i'' -e "s/<string>10.0.0.0<\/string>/<string>$WHISPARRVERSION<\/string>/g" distribution/macOS/Whisparr.app/Contents/Info.plist
     fi
 }
 
@@ -184,7 +184,7 @@ PackageMacOSApp()
 
     rm -rf $folder
     mkdir -p $folder
-    cp -r macOS/Whisparr.app $folder
+    cp -r distribution/macOS/Whisparr.app $folder
     mkdir -p $folder/Whisparr.app/Contents/MacOS
 
     echo "Copying Binaries"
@@ -246,7 +246,7 @@ BuildInstaller()
     local framework="$1"
     local runtime="$2"
     
-    ./_inno/ISCC.exe setup/whisparr.iss "//DFramework=$framework" "//DRuntime=$runtime"
+    ./_inno/ISCC.exe distribution/windows/setup/whisparr.iss "//DFramework=$framework" "//DRuntime=$runtime"
 }
 
 InstallInno()

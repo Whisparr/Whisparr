@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using NLog;
 using NzbDrone.Common.Cache;
 using NzbDrone.Common.Http;
@@ -97,7 +98,7 @@ namespace NzbDrone.Core.Download.Clients.Nzbget
             var editResult = EditQueue("GroupSetParameter", 0, "drone=" + droneId, item.NzbId, settings);
             if (editResult)
             {
-                _logger.Debug("NZBGet download drone parameter set to: {0}", droneId);
+                _logger.Debug("Nzbget download drone parameter set to: {0}", droneId);
             }
 
             return droneId;
@@ -124,7 +125,7 @@ namespace NzbDrone.Core.Download.Clients.Nzbget
 
             if (editResult)
             {
-                _logger.Debug("NZBGet download drone parameter set to: {0}", droneId);
+                _logger.Debug("Nzbget download drone parameter set to: {0}", droneId);
             }
 
             return droneId;
@@ -184,19 +185,19 @@ namespace NzbDrone.Core.Download.Clients.Nzbget
             {
                 if (!EditQueue("GroupFinalDelete", 0, "", queueItem.NzbId, settings))
                 {
-                    _logger.Warn("Failed to remove item from NZBGet, {0} [{1}]", queueItem.NzbName, queueItem.NzbId);
+                    _logger.Warn("Failed to remove item from nzbget queue, {0} [{1}]", queueItem.NzbName, queueItem.NzbId);
                 }
             }
             else if (historyItem != null)
             {
                 if (!EditQueue("HistoryDelete", 0, "", historyItem.Id, settings))
                 {
-                    _logger.Warn("Failed to remove item from NZBGet history, {0} [{1}]", historyItem.Name, historyItem.Id);
+                    _logger.Warn("Failed to remove item from nzbget history, {0} [{1}]", historyItem.Name, historyItem.Id);
                 }
             }
             else
             {
-                _logger.Warn("Unable to remove item from NZBGet, Unknown ID: {0}", id);
+                _logger.Warn("Unable to remove item from nzbget, Unknown ID: {0}", id);
                 return;
             }
         }
@@ -245,9 +246,9 @@ namespace NzbDrone.Core.Download.Clients.Nzbget
                     throw new DownloadClientAuthenticationException("Authentication failed for NzbGet, please check your settings", ex);
                 }
 
-                throw new DownloadClientException("Unable to connect to NZBGet. " + ex.Message, ex);
+                throw new DownloadClientException("Unable to connect to NzbGet. " + ex.Message, ex);
             }
-            catch (WebException ex)
+            catch (HttpRequestException ex)
             {
                 throw new DownloadClientUnavailableException("Unable to connect to NzbGet. " + ex.Message, ex);
             }
@@ -256,7 +257,7 @@ namespace NzbDrone.Core.Download.Clients.Nzbget
 
             if (result.Error != null)
             {
-                throw new DownloadClientException("Error response received from NZBGet: {0}", result.Error.ToString());
+                throw new DownloadClientException("Error response received from nzbget: {0}", result.Error.ToString());
             }
 
             return result.Result;

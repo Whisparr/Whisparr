@@ -7,9 +7,9 @@ using NzbDrone.Core.Extras.Metadata.Files;
 using NzbDrone.Core.Housekeeping.Housekeepers;
 using NzbDrone.Core.Languages;
 using NzbDrone.Core.MediaFiles;
-using NzbDrone.Core.Movies;
 using NzbDrone.Core.Qualities;
 using NzbDrone.Core.Test.Framework;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
 {
@@ -17,10 +17,10 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
     public class CleanupOrphanedMetadataFilesFixture : DbTest<CleanupOrphanedMetadataFiles, MetadataFile>
     {
         [Test]
-        public void should_delete_metadata_files_that_dont_have_a_coresponding_movie()
+        public void should_delete_metadata_files_that_dont_have_a_coresponding_series()
         {
             var metadataFile = Builder<MetadataFile>.CreateNew()
-                                                    .With(m => m.MovieFileId = null)
+                                                    .With(m => m.EpisodeFileId = null)
                                                     .BuildNew();
 
             Db.Insert(metadataFile);
@@ -29,16 +29,16 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
         }
 
         [Test]
-        public void should_not_delete_metadata_files_that_have_a_coresponding_movie()
+        public void should_not_delete_metadata_files_that_have_a_coresponding_series()
         {
-            var movie = Builder<Media>.CreateNew()
-                                      .BuildNew();
+            var series = Builder<Series>.CreateNew()
+                                        .BuildNew();
 
-            Db.Insert(movie);
+            Db.Insert(series);
 
             var metadataFile = Builder<MetadataFile>.CreateNew()
-                                                    .With(m => m.MovieId = movie.Id)
-                                                    .With(m => m.MovieFileId = null)
+                                                    .With(m => m.SeriesId = series.Id)
+                                                    .With(m => m.EpisodeFileId = null)
                                                     .BuildNew();
 
             Db.Insert(metadataFile);
@@ -47,16 +47,16 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
         }
 
         [Test]
-        public void should_delete_metadata_files_that_dont_have_a_coresponding_movie_file()
+        public void should_delete_metadata_files_that_dont_have_a_coresponding_episode_file()
         {
-            var movie = Builder<Media>.CreateNew()
-                                      .BuildNew();
+            var series = Builder<Series>.CreateNew()
+                                        .BuildNew();
 
-            Db.Insert(movie);
+            Db.Insert(series);
 
             var metadataFile = Builder<MetadataFile>.CreateNew()
-                                                    .With(m => m.MovieId = movie.Id)
-                                                    .With(m => m.MovieFileId = 10)
+                                                    .With(m => m.SeriesId = series.Id)
+                                                    .With(m => m.EpisodeFileId = 10)
                                                     .BuildNew();
 
             Db.Insert(metadataFile);
@@ -65,22 +65,22 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
         }
 
         [Test]
-        public void should_not_delete_metadata_files_that_have_a_coresponding_movie_file()
+        public void should_not_delete_metadata_files_that_have_a_coresponding_episode_file()
         {
-            var movie = Builder<Media>.CreateNew()
-                                      .BuildNew();
+            var series = Builder<Series>.CreateNew()
+                                        .BuildNew();
 
-            var movieFile = Builder<MediaFile>.CreateNew()
-                                                  .With(h => h.Quality = new QualityModel())
-                                                  .With(h => h.Languages = new List<Language>())
-                                                  .BuildNew();
+            var episodeFile = Builder<EpisodeFile>.CreateNew()
+                .With(h => h.Quality = new QualityModel())
+                .With(h => h.Languages = new List<Language> { Language.English })
+                .BuildNew();
 
-            Db.Insert(movie);
-            Db.Insert(movieFile);
+            Db.Insert(series);
+            Db.Insert(episodeFile);
 
             var metadataFile = Builder<MetadataFile>.CreateNew()
-                                                    .With(m => m.MovieId = movie.Id)
-                                                    .With(m => m.MovieFileId = movieFile.Id)
+                                                    .With(m => m.SeriesId = series.Id)
+                                                    .With(m => m.EpisodeFileId = episodeFile.Id)
                                                     .BuildNew();
 
             Db.Insert(metadataFile);
@@ -89,17 +89,17 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
         }
 
         [Test]
-        public void should_delete_movie_metadata_files_that_have_moviefileid_of_zero()
+        public void should_delete_episode_metadata_files_that_have_episodefileid_of_zero()
         {
-            var movie = Builder<Media>.CreateNew()
-                                      .BuildNew();
+            var series = Builder<Series>.CreateNew()
+                                        .BuildNew();
 
-            Db.Insert(movie);
+            Db.Insert(series);
 
             var metadataFile = Builder<MetadataFile>.CreateNew()
-                                                 .With(m => m.MovieId = movie.Id)
-                                                 .With(m => m.Type = MetadataType.MovieMetadata)
-                                                 .With(m => m.MovieFileId = 0)
+                                                 .With(m => m.SeriesId = series.Id)
+                                                 .With(m => m.Type = MetadataType.EpisodeMetadata)
+                                                 .With(m => m.EpisodeFileId = 0)
                                                  .BuildNew();
 
             Db.Insert(metadataFile);
@@ -108,17 +108,17 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
         }
 
         [Test]
-        public void should_delete_movie_image_files_that_have_moviefileid_of_zero()
+        public void should_delete_episode_image_files_that_have_episodefileid_of_zero()
         {
-            var movie = Builder<Media>.CreateNew()
-                                      .BuildNew();
+            var series = Builder<Series>.CreateNew()
+                                        .BuildNew();
 
-            Db.Insert(movie);
+            Db.Insert(series);
 
             var metadataFile = Builder<MetadataFile>.CreateNew()
-                                                    .With(m => m.MovieId = movie.Id)
-                                                    .With(m => m.Type = MetadataType.MovieImage)
-                                                    .With(m => m.MovieFileId = 0)
+                                                    .With(m => m.SeriesId = series.Id)
+                                                    .With(m => m.Type = MetadataType.EpisodeImage)
+                                                    .With(m => m.EpisodeFileId = 0)
                                                     .BuildNew();
 
             Db.Insert(metadataFile);

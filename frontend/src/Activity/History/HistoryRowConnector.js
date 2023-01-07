@@ -3,17 +3,20 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import { fetchHistory, markAsFailed } from 'Store/Actions/historyActions';
-import createMovieSelector from 'Store/Selectors/createMovieSelector';
+import createEpisodeSelector from 'Store/Selectors/createEpisodeSelector';
+import createSeriesSelector from 'Store/Selectors/createSeriesSelector';
 import createUISettingsSelector from 'Store/Selectors/createUISettingsSelector';
 import HistoryRow from './HistoryRow';
 
 function createMapStateToProps() {
   return createSelector(
-    createMovieSelector(),
+    createSeriesSelector(),
+    createEpisodeSelector(),
     createUISettingsSelector(),
-    (movie, uiSettings) => {
+    (series, episode, uiSettings) => {
       return {
-        movie,
+        series,
+        episode,
         shortDateFormat: uiSettings.shortDateFormat,
         timeFormat: uiSettings.timeFormat
       };

@@ -1,12 +1,17 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using FizzWare.NBuilder;
 using FluentAssertions;
+using FluentAssertions.Equivalency;
 using NUnit.Framework;
+using NzbDrone.Core.Datastore;
 using NzbDrone.Core.History;
 using NzbDrone.Core.Languages;
+using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.Qualities;
 using NzbDrone.Core.Test.Framework;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Test.Datastore
 {
@@ -16,43 +21,86 @@ namespace NzbDrone.Core.Test.Datastore
         [SetUp]
         public void Setup()
         {
-            // This is kinda hacky here, since we are kinda testing if the QualityDef converter works as well.
+            AssertionOptions.AssertEquivalencyUsing(options =>
+            {
+                options.Using<DateTime>(ctx => ctx.Subject.Should().BeCloseTo(ctx.Expectation.ToUniversalTime())).WhenTypeIs<DateTime>();
+                options.Using<DateTime?>(ctx => ctx.Subject.Should().BeCloseTo(ctx.Expectation.Value.ToUniversalTime())).WhenTypeIs<DateTime?>();
+                return options;
+            });
+        }
+
+        [Test]
+        public void one_to_one()
+        {
+            var episodeFile = Builder<EpisodeFile>.CreateNew()
+                .With(c => c.Languages = new List<Language> { Language.English })
+                .With(c => c.Quality = new QualityModel())
+                .BuildNew();
+
+            Db.Insert(episodeFile);
+
+            var episode = Builder<Episode>.CreateNew()
+                                          .With(c => c.EpisodeFileId = episodeFile.Id)
+                                          .BuildNew();
+
+            Db.Insert(episode);
+
+            var loadedEpisodeFile = Db.Single<Episode>().EpisodeFile.Value;
+
+            loadedEpisodeFile.Should().NotBeNull();
+            loadedEpisodeFile.Should().BeEquivalentTo(episodeFile,
+                options => options
+                    .IncludingAllRuntimeProperties()
+                    .Excluding(c => c.DateAdded)
+                    .Excluding(c => c.Path)
+                    .Excluding(c => c.Series)
+                    .Excluding(c => c.Episodes));
+        }
+
+        [Test]
+        public void one_to_one_should_not_query_db_if_foreign_key_is_zero()
+        {
+            var episode = Builder<Episode>.CreateNew()
+                                          .With(c => c.EpisodeFileId = 0)
+                                          .BuildNew();
+
+            Db.Insert(episode);
+
+            Db.Single<Episode>().EpisodeFile.Value.Should().BeNull();
         }
 
         [Test]
         public void embedded_document_as_json()
         {
             var quality = new QualityModel { Quality = Quality.Bluray720p, Revision = new Revision(version: 2) };
-            var languages = new List<Language> { Language.English };
 
-            var history = Builder<MovieHistory>.CreateNew()
-                            .With(c => c.Id = 0)
-                            .With(c => c.Quality = quality)
-                            .With(c => c.Languages = languages)
-                            .Build();
+            var history = Builder<EpisodeHistory>.CreateNew()
+                .With(c => c.Languages = new List<Language> { Language.English })
+                .With(c => c.Id = 0)
+                .With(c => c.Quality = quality)
+                .Build();
 
             Db.Insert(history);
 
-            var loadedQuality = Db.Single<MovieHistory>().Quality;
+            var loadedQuality = Db.Single<EpisodeHistory>().Quality;
             loadedQuality.Should().Be(quality);
         }
 
         [Test]
         public void embedded_list_of_document_with_json()
         {
-            var languages = new List<Language> { Language.English };
+            var history = Builder<EpisodeHistory>.CreateListOfSize(2)
+                .All()
+                .With(c => c.Id = 0)
+                .With(c => c.Languages = new List<Language> { Language.English })
+                .Build().ToList();
 
-            var history = Builder<MovieHistory>.CreateListOfSize(2)
-                            .All().With(c => c.Id = 0)
-                            .With(c => c.Languages = languages)
-                            .Build().ToList();
-
-            history[0].Quality = new QualityModel { Quality = Quality.HDTV1080p, Revision = new Revision(version: 2) };
-            history[1].Quality = new QualityModel { Quality = Quality.Bluray720p, Revision = new Revision(version: 2) };
+            history[0].Quality = new QualityModel(Quality.HDTV1080p, new Revision(version: 2));
+            history[1].Quality = new QualityModel(Quality.Bluray720p, new Revision(version: 2));
 
             Db.InsertMany(history);
 
-            var returnedHistory = Db.All<MovieHistory>();
+            var returnedHistory = Db.All<EpisodeHistory>();
 
             returnedHistory[0].Quality.Quality.Should().Be(Quality.HDTV1080p);
         }

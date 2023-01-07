@@ -5,32 +5,39 @@ using FluentAssertions;
 using NUnit.Framework;
 using NzbDrone.Core.CustomFormats;
 using NzbDrone.Core.MediaFiles;
-using NzbDrone.Core.Movies;
 using NzbDrone.Core.Organizer;
 using NzbDrone.Core.Qualities;
 using NzbDrone.Core.Test.Framework;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 {
     [TestFixture]
     public class TitleTheFixture : CoreTest<FileNameBuilder>
     {
-        private Media _movie;
-        private MediaFile _movieFile;
+        private Series _series;
+        private Episode _episode;
+        private EpisodeFile _episodeFile;
         private NamingConfig _namingConfig;
 
         [SetUp]
         public void Setup()
         {
-            _movie = Builder<Media>
+            _series = Builder<Series>
                     .CreateNew()
-                    .With(e => e.Title = "Batman")
                     .Build();
 
-            _movieFile = new MediaFile { Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "WhisparrTest" };
+            _episode = Builder<Episode>.CreateNew()
+                            .With(e => e.Title = "City Sushi")
+                            .With(e => e.SeasonNumber = 15)
+                            .With(e => e.EpisodeNumber = 6)
+                            .With(e => e.AbsoluteEpisodeNumber = 100)
+                            .Build();
+
+            _episodeFile = new EpisodeFile { Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "WhisparrTest" };
 
             _namingConfig = NamingConfig.Default;
-            _namingConfig.RenameMovies = true;
+            _namingConfig.RenameEpisodes = true;
 
             Mocker.GetMock<INamingConfigService>()
                   .Setup(c => c.GetConfig()).Returns(_namingConfig);
@@ -40,8 +47,8 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
                 .Returns<Quality>(v => Quality.DefaultQualityDefinitions.First(c => c.Quality == v));
 
             Mocker.GetMock<ICustomFormatService>()
-                .Setup(v => v.All())
-                .Returns(new List<CustomFormat>());
+                  .Setup(v => v.All())
+                  .Returns(new List<CustomFormat>());
         }
 
         [TestCase("The Mist", "Mist, The")]
@@ -53,13 +60,13 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [TestCase("The Sixth Sense 2 (Thai)", "Sixth Sense 2, The (Thai)")]
         [TestCase("The Amazing Race (Latin America)", "Amazing Race, The (Latin America)")]
         [TestCase("The Rat Pack (A&E)", "Rat Pack, The (A&E)")]
-        [TestCase("The Climax: I (Almost) Got Away With It (2016)", "Climax I (Almost) Got Away With It, The (2016)")]
+        [TestCase("The Climax: I (Almost) Got Away With It (2016)", "Climax - I (Almost) Got Away With It, The (2016)")]
         public void should_get_expected_title_back(string title, string expected)
         {
-            _movie.Title = title;
-            _namingConfig.StandardMovieFormat = "{Movie TitleThe}";
+            _series.Title = title;
+            _namingConfig.StandardEpisodeFormat = "{Series TitleThe}";
 
-            Subject.BuildFileName(_movie, _movieFile)
+            Subject.BuildFileName(new List<Episode> { _episode }, _series, _episodeFile)
                    .Should().Be(expected);
         }
 
@@ -69,10 +76,10 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [TestCase("3%")]
         public void should_not_change_title(string title)
         {
-            _movie.Title = title;
-            _namingConfig.StandardMovieFormat = "{Movie TitleThe}";
+            _series.Title = title;
+            _namingConfig.StandardEpisodeFormat = "{Series TitleThe}";
 
-            Subject.BuildFileName(_movie, _movieFile)
+            Subject.BuildFileName(new List<Episode> { _episode }, _series, _episodeFile)
                    .Should().Be(title);
         }
     }

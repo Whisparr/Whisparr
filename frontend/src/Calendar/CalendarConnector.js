@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import * as commandNames from 'Commands/commandNames';
 import * as calendarActions from 'Store/Actions/calendarActions';
-import { clearMovieFiles, fetchMovieFiles } from 'Store/Actions/movieFileActions';
+import { clearEpisodeFiles, fetchEpisodeFiles } from 'Store/Actions/episodeFileActions';
 import { clearQueueDetails, fetchQueueDetails } from 'Store/Actions/queueActions';
 import createCommandExecutingSelector from 'Store/Selectors/createCommandExecutingSelector';
 import hasDifferentItems from 'Utilities/Object/hasDifferentItems';
@@ -18,11 +18,11 @@ function createMapStateToProps() {
   return createSelector(
     (state) => state.calendar,
     (state) => state.settings.ui.item.firstDayOfWeek,
-    createCommandExecutingSelector(commandNames.REFRESH_MOVIE),
-    (calendar, firstDayOfWeek, isRefreshingMovie) => {
+    createCommandExecutingSelector(commandNames.REFRESH_SERIES),
+    (calendar, firstDayOfWeek, isRefreshingSeries) => {
       return {
         ...calendar,
-        isRefreshingMovie,
+        isRefreshingSeries,
         firstDayOfWeek
       };
     }
@@ -31,8 +31,8 @@ function createMapStateToProps() {
 
 const mapDispatchToProps = {
   ...calendarActions,
-  fetchMovieFiles,
-  clearMovieFiles,
+  fetchEpisodeFiles,
+  clearEpisodeFiles,
   fetchQueueDetails,
   clearQueueDetails
 };
@@ -71,19 +71,20 @@ class CalendarConnector extends Component {
       items,
       time,
       view,
-      isRefreshingMovie,
+      isRefreshingSeries,
       firstDayOfWeek
     } = this.props;
 
     if (hasDifferentItems(prevProps.items, items)) {
-      const movieFileIds = selectUniqueIds(items, 'movieFileId');
-
-      if (movieFileIds.length) {
-        this.props.fetchMovieFiles({ movieFileIds });
-      }
+      const episodeIds = selectUniqueIds(items, 'id');
+      const episodeFileIds = selectUniqueIds(items, 'episodeFileId');
 
       if (items.length) {
-        this.props.fetchQueueDetails();
+        this.props.fetchQueueDetails({ episodeIds });
+      }
+
+      if (episodeFileIds.length) {
+        this.props.fetchEpisodeFiles({ episodeFileIds });
       }
     }
 
@@ -95,7 +96,7 @@ class CalendarConnector extends Component {
       this.props.fetchCalendar({ time, view });
     }
 
-    if (prevProps.isRefreshingMovie && !isRefreshingMovie) {
+    if (prevProps.isRefreshingSeries && !isRefreshingSeries) {
       this.props.fetchCalendar({ time, view });
     }
   }
@@ -104,7 +105,7 @@ class CalendarConnector extends Component {
     unregisterPagePopulator(this.repopulate);
     this.props.clearCalendar();
     this.props.clearQueueDetails();
-    this.props.clearMovieFiles();
+    this.props.clearEpisodeFiles();
     this.clearUpdateTimeout();
   }
 
@@ -179,15 +180,15 @@ CalendarConnector.propTypes = {
   view: PropTypes.string.isRequired,
   firstDayOfWeek: PropTypes.number.isRequired,
   items: PropTypes.arrayOf(PropTypes.object).isRequired,
-  isRefreshingMovie: PropTypes.bool.isRequired,
+  isRefreshingSeries: PropTypes.bool.isRequired,
   setCalendarView: PropTypes.func.isRequired,
   gotoCalendarToday: PropTypes.func.isRequired,
   gotoCalendarPreviousRange: PropTypes.func.isRequired,
   gotoCalendarNextRange: PropTypes.func.isRequired,
   clearCalendar: PropTypes.func.isRequired,
   fetchCalendar: PropTypes.func.isRequired,
-  fetchMovieFiles: PropTypes.func.isRequired,
-  clearMovieFiles: PropTypes.func.isRequired,
+  fetchEpisodeFiles: PropTypes.func.isRequired,
+  clearEpisodeFiles: PropTypes.func.isRequired,
   fetchQueueDetails: PropTypes.func.isRequired,
   clearQueueDetails: PropTypes.func.isRequired
 };

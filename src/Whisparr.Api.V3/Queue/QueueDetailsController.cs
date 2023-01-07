@@ -32,18 +32,24 @@ namespace Whisparr.Api.V3.Queue
         }
 
         [HttpGet]
-        public List<QueueResource> GetQueue(int? movieId, bool includeMovie = false)
+        [Produces("application/json")]
+        public List<QueueResource> GetQueue(int? seriesId, [FromQuery]List<int> episodeIds, bool includeSeries = false, bool includeEpisode = false)
         {
             var queue = _queueService.GetQueue();
             var pending = _pendingReleaseService.GetPendingQueue();
             var fullQueue = queue.Concat(pending);
 
-            if (movieId.HasValue)
+            if (seriesId.HasValue)
             {
-                return fullQueue.Where(q => q.Movie?.Id == movieId.Value).ToResource(includeMovie);
+                return fullQueue.Where(q => q.Series?.Id == seriesId).ToResource(includeSeries, includeEpisode);
             }
 
-            return fullQueue.ToResource(includeMovie);
+            if (episodeIds.Any())
+            {
+                return fullQueue.Where(q => q.Episode != null && episodeIds.Contains(q.Episode.Id)).ToResource(includeSeries, includeEpisode);
+            }
+
+            return fullQueue.ToResource(includeSeries, includeEpisode);
         }
 
         [NonAction]

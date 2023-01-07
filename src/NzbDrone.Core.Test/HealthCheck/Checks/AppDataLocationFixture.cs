@@ -1,8 +1,6 @@
-using Moq;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using NzbDrone.Common.EnvironmentInfo;
 using NzbDrone.Core.HealthCheck.Checks;
-using NzbDrone.Core.Localization;
 using NzbDrone.Core.Test.Framework;
 using NzbDrone.Test.Common;
 
@@ -11,14 +9,6 @@ namespace NzbDrone.Core.Test.HealthCheck.Checks
     [TestFixture]
     public class AppDataLocationFixture : CoreTest<AppDataLocationCheck>
     {
-        [SetUp]
-        public void Setup()
-        {
-            Mocker.GetMock<ILocalizationService>()
-                  .Setup(s => s.GetLocalizedString(It.IsAny<string>()))
-                  .Returns("Some Warning Message");
-        }
-
         [Test]
         public void should_return_warning_when_app_data_is_child_of_startup_folder()
         {

@@ -58,22 +58,22 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.TransmissionTests
         {
             GivenSuccessfulDownload();
 
-            var remoteMovie = CreateRemoteMovie();
+            var remoteEpisode = CreateRemoteEpisode();
 
-            var id = Subject.Download(remoteMovie);
+            var id = Subject.Download(remoteEpisode);
 
             id.Should().NotBeNullOrEmpty();
         }
 
         [Test]
-        public void Download_with_MovieDirectory_should_force_directory()
+        public void Download_with_TvDirectory_should_force_directory()
         {
-            GivenMovieDirectory();
+            GivenTvDirectory();
             GivenSuccessfulDownload();
 
-            var remoteMovie = CreateRemoteMovie();
+            var remoteEpisode = CreateRemoteEpisode();
 
-            var id = Subject.Download(remoteMovie);
+            var id = Subject.Download(remoteEpisode);
 
             id.Should().NotBeNullOrEmpty();
 
@@ -84,12 +84,12 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.TransmissionTests
         [Test]
         public void Download_with_category_should_force_directory()
         {
-            GivenMovieCategory();
+            GivenTvCategory();
             GivenSuccessfulDownload();
 
-            var remoteMovie = CreateRemoteMovie();
+            var remoteEpisode = CreateRemoteEpisode();
 
-            var id = Subject.Download(remoteMovie);
+            var id = Subject.Download(remoteEpisode);
 
             id.Should().NotBeNullOrEmpty();
 
@@ -100,14 +100,14 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.TransmissionTests
         [Test]
         public void Download_with_category_should_not_have_double_slashes()
         {
-            GivenMovieCategory();
+            GivenTvCategory();
             GivenSuccessfulDownload();
 
             _transmissionConfigItems["download-dir"] += "/";
 
-            var remoteMovie = CreateRemoteMovie();
+            var remoteEpisode = CreateRemoteEpisode();
 
-            var id = Subject.Download(remoteMovie);
+            var id = Subject.Download(remoteEpisode);
 
             id.Should().NotBeNullOrEmpty();
 
@@ -120,9 +120,9 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.TransmissionTests
         {
             GivenSuccessfulDownload();
 
-            var remoteMovie = CreateRemoteMovie();
+            var remoteEpisode = CreateRemoteEpisode();
 
-            var id = Subject.Download(remoteMovie);
+            var id = Subject.Download(remoteEpisode);
 
             id.Should().NotBeNullOrEmpty();
 
@@ -135,10 +135,10 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.TransmissionTests
         {
             GivenSuccessfulDownload();
 
-            var remoteMovie = CreateRemoteMovie();
-            remoteMovie.Release.DownloadUrl = magnetUrl;
+            var remoteEpisode = CreateRemoteEpisode();
+            remoteEpisode.Release.DownloadUrl = magnetUrl;
 
-            var id = Subject.Download(remoteMovie);
+            var id = Subject.Download(remoteEpisode);
 
             id.Should().Be(expectedHash);
         }
@@ -207,7 +207,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.TransmissionTests
         [Test]
         public void should_exclude_items_not_in_category()
         {
-            GivenMovieCategory();
+            GivenTvCategory();
 
             _downloading.DownloadDir = @"C:/Downloads/Finished/transmission/whisparr";
 
@@ -226,7 +226,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.TransmissionTests
         [Test]
         public void should_exclude_items_not_in_TvDirectory()
         {
-            GivenMovieDirectory();
+            GivenTvDirectory();
 
             _downloading.DownloadDir = @"C:/Downloads/Finished/whisparr/subdir";
 
@@ -387,7 +387,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.TransmissionTests
         public void should_not_be_removable_if_overridden_max_idletime_not_reached_and_paused()
         {
             GivenGlobalSeedLimits(null, 20);
-            PrepareClientToReturnCompletedItem(true, ratio: 2.0, seedingTime: 30, idleLimit: 40);
+            PrepareClientToReturnCompletedItem(true,  ratio: 2.0, seedingTime: 30, idleLimit: 40);
 
             var item = Subject.GetItems().Single();
             item.CanBeRemoved.Should().BeFalse();

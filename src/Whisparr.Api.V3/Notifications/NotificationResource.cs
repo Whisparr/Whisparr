@@ -9,20 +9,18 @@ namespace Whisparr.Api.V3.Notifications
         public bool OnDownload { get; set; }
         public bool OnUpgrade { get; set; }
         public bool OnRename { get; set; }
-        public bool OnMovieAdded { get; set; }
-        public bool OnMovieDelete { get; set; }
-        public bool OnMovieFileDelete { get; set; }
-        public bool OnMovieFileDeleteForUpgrade { get; set; }
+        public bool OnSeriesDelete { get; set; }
+        public bool OnEpisodeFileDelete { get; set; }
+        public bool OnEpisodeFileDeleteForUpgrade { get; set; }
         public bool OnHealthIssue { get; set; }
         public bool OnApplicationUpdate { get; set; }
         public bool SupportsOnGrab { get; set; }
         public bool SupportsOnDownload { get; set; }
         public bool SupportsOnUpgrade { get; set; }
         public bool SupportsOnRename { get; set; }
-        public bool SupportsOnMovieAdded { get; set; }
-        public bool SupportsOnMovieDelete { get; set; }
-        public bool SupportsOnMovieFileDelete { get; set; }
-        public bool SupportsOnMovieFileDeleteForUpgrade { get; set; }
+        public bool SupportsOnSeriesDelete { get; set; }
+        public bool SupportsOnEpisodeFileDelete { get; set; }
+        public bool SupportsOnEpisodeFileDeleteForUpgrade { get; set; }
         public bool SupportsOnHealthIssue { get; set; }
         public bool SupportsOnApplicationUpdate { get; set; }
         public bool IncludeHealthWarnings { get; set; }
@@ -44,20 +42,18 @@ namespace Whisparr.Api.V3.Notifications
             resource.OnDownload = definition.OnDownload;
             resource.OnUpgrade = definition.OnUpgrade;
             resource.OnRename = definition.OnRename;
-            resource.OnMovieAdded = definition.OnMovieAdded;
-            resource.OnMovieDelete = definition.OnMovieDelete;
-            resource.OnMovieFileDelete = definition.OnMovieFileDelete;
-            resource.OnMovieFileDeleteForUpgrade = definition.OnMovieFileDeleteForUpgrade;
+            resource.OnSeriesDelete = definition.OnSeriesDelete;
+            resource.OnEpisodeFileDelete = definition.OnEpisodeFileDelete;
+            resource.OnEpisodeFileDeleteForUpgrade = definition.OnEpisodeFileDeleteForUpgrade;
             resource.OnHealthIssue = definition.OnHealthIssue;
             resource.OnApplicationUpdate = definition.OnApplicationUpdate;
             resource.SupportsOnGrab = definition.SupportsOnGrab;
             resource.SupportsOnDownload = definition.SupportsOnDownload;
             resource.SupportsOnUpgrade = definition.SupportsOnUpgrade;
             resource.SupportsOnRename = definition.SupportsOnRename;
-            resource.SupportsOnMovieAdded = definition.SupportsOnMovieAdded;
-            resource.SupportsOnMovieDelete = definition.SupportsOnMovieDelete;
-            resource.SupportsOnMovieFileDelete = definition.SupportsOnMovieFileDelete;
-            resource.SupportsOnMovieFileDeleteForUpgrade = definition.SupportsOnMovieFileDeleteForUpgrade;
+            resource.SupportsOnSeriesDelete = definition.SupportsOnSeriesDelete;
+            resource.SupportsOnEpisodeFileDelete = definition.SupportsOnEpisodeFileDelete;
+            resource.SupportsOnEpisodeFileDeleteForUpgrade = definition.SupportsOnEpisodeFileDeleteForUpgrade;
             resource.SupportsOnHealthIssue = definition.SupportsOnHealthIssue;
             resource.IncludeHealthWarnings = definition.IncludeHealthWarnings;
             resource.SupportsOnApplicationUpdate = definition.SupportsOnApplicationUpdate;
@@ -65,33 +61,31 @@ namespace Whisparr.Api.V3.Notifications
             return resource;
         }
 
-        public override NotificationDefinition ToModel(NotificationResource resource)
+        public override NotificationDefinition ToModel(NotificationResource resource, NotificationDefinition existingDefinition)
         {
             if (resource == null)
             {
                 return default(NotificationDefinition);
             }
 
-            var definition = base.ToModel(resource);
+            var definition = base.ToModel(resource, existingDefinition);
 
             definition.OnGrab = resource.OnGrab;
             definition.OnDownload = resource.OnDownload;
             definition.OnUpgrade = resource.OnUpgrade;
             definition.OnRename = resource.OnRename;
-            definition.OnMovieAdded = resource.OnMovieAdded;
-            definition.OnMovieDelete = resource.OnMovieDelete;
-            definition.OnMovieFileDelete = resource.OnMovieFileDelete;
-            definition.OnMovieFileDeleteForUpgrade = resource.OnMovieFileDeleteForUpgrade;
+            definition.OnSeriesDelete = resource.OnSeriesDelete;
+            definition.OnEpisodeFileDelete = resource.OnEpisodeFileDelete;
+            definition.OnEpisodeFileDeleteForUpgrade = resource.OnEpisodeFileDeleteForUpgrade;
             definition.OnHealthIssue = resource.OnHealthIssue;
             definition.OnApplicationUpdate = resource.OnApplicationUpdate;
             definition.SupportsOnGrab = resource.SupportsOnGrab;
             definition.SupportsOnDownload = resource.SupportsOnDownload;
             definition.SupportsOnUpgrade = resource.SupportsOnUpgrade;
             definition.SupportsOnRename = resource.SupportsOnRename;
-            definition.SupportsOnMovieAdded = resource.SupportsOnMovieAdded;
-            definition.SupportsOnMovieDelete = resource.SupportsOnMovieDelete;
-            definition.SupportsOnMovieFileDelete = resource.SupportsOnMovieFileDelete;
-            definition.SupportsOnMovieFileDeleteForUpgrade = resource.SupportsOnMovieFileDeleteForUpgrade;
+            definition.SupportsOnSeriesDelete = resource.SupportsOnSeriesDelete;
+            definition.SupportsOnEpisodeFileDelete = resource.SupportsOnEpisodeFileDelete;
+            definition.SupportsOnEpisodeFileDeleteForUpgrade = resource.SupportsOnEpisodeFileDeleteForUpgrade;
             definition.SupportsOnHealthIssue = resource.SupportsOnHealthIssue;
             definition.IncludeHealthWarnings = resource.IncludeHealthWarnings;
             definition.SupportsOnApplicationUpdate = resource.SupportsOnApplicationUpdate;

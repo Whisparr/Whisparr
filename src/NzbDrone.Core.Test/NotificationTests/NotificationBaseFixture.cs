@@ -1,12 +1,12 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using FluentAssertions;
 using FluentValidation.Results;
 using NUnit.Framework;
 using NzbDrone.Core.MediaFiles;
-using NzbDrone.Core.Movies;
 using NzbDrone.Core.Notifications;
 using NzbDrone.Core.ThingiProvider;
+using NzbDrone.Core.Tv;
 using NzbDrone.Core.Validation;
 using NzbDrone.Test.Common;
 
@@ -59,24 +59,19 @@ namespace NzbDrone.Core.Test.NotificationTests
                 TestLogger.Info("OnDownload was called");
             }
 
-            public override void OnMovieRename(Media movie, List<RenamedMovieFile> renamedFiles)
+            public override void OnRename(Series series, List<RenamedEpisodeFile> renamedFiles)
             {
                 TestLogger.Info("OnRename was called");
             }
 
-            public override void OnMovieAdded(Media movie)
+            public override void OnEpisodeFileDelete(EpisodeDeleteMessage message)
             {
-                TestLogger.Info("OnMovieAdded was called");
+                TestLogger.Info("Episode OnDelete was called");
             }
 
-            public override void OnMovieFileDelete(MovieFileDeleteMessage message)
+            public override void OnSeriesDelete(SeriesDeleteMessage deleteMessage)
             {
-                TestLogger.Info("OnMovieFileDelete was called");
-            }
-
-            public override void OnMovieDelete(MovieDeleteMessage deleteMessage)
-            {
-                TestLogger.Info("OnMovieDelete was called");
+                TestLogger.Info("Series OnDelete was called");
             }
 
             public override void OnHealthIssue(NzbDrone.Core.HealthCheck.HealthCheck artist)
@@ -122,10 +117,9 @@ namespace NzbDrone.Core.Test.NotificationTests
             notification.SupportsOnDownload.Should().BeTrue();
             notification.SupportsOnUpgrade.Should().BeTrue();
             notification.SupportsOnRename.Should().BeTrue();
-            notification.SupportsOnMovieAdded.Should().BeTrue();
-            notification.SupportsOnMovieDelete.Should().BeTrue();
-            notification.SupportsOnMovieFileDelete.Should().BeTrue();
-            notification.SupportsOnMovieFileDeleteForUpgrade.Should().BeTrue();
+            notification.SupportsOnSeriesDelete.Should().BeTrue();
+            notification.SupportsOnEpisodeFileDelete.Should().BeTrue();
+            notification.SupportsOnEpisodeFileDeleteForUpgrade.Should().BeTrue();
             notification.SupportsOnHealthIssue.Should().BeTrue();
             notification.SupportsOnApplicationUpdate.Should().BeTrue();
         }
@@ -139,10 +133,9 @@ namespace NzbDrone.Core.Test.NotificationTests
             notification.SupportsOnDownload.Should().BeFalse();
             notification.SupportsOnUpgrade.Should().BeFalse();
             notification.SupportsOnRename.Should().BeFalse();
-            notification.SupportsOnMovieAdded.Should().BeFalse();
-            notification.SupportsOnMovieDelete.Should().BeFalse();
-            notification.SupportsOnMovieFileDelete.Should().BeFalse();
-            notification.SupportsOnMovieFileDeleteForUpgrade.Should().BeFalse();
+            notification.SupportsOnSeriesDelete.Should().BeFalse();
+            notification.SupportsOnEpisodeFileDelete.Should().BeFalse();
+            notification.SupportsOnEpisodeFileDeleteForUpgrade.Should().BeFalse();
             notification.SupportsOnHealthIssue.Should().BeFalse();
             notification.SupportsOnApplicationUpdate.Should().BeFalse();
         }

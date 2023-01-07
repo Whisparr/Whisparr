@@ -12,7 +12,7 @@ import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { inputTypes, kinds } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
+import { numberSettingShape, stringSettingShape } from 'Helpers/Props/Shapes/settingShape';
 import styles from './EditImportListExclusionModalContent.css';
 
 function EditImportListExclusionModalContent(props) {
@@ -26,20 +26,19 @@ function EditImportListExclusionModalContent(props) {
     onInputChange,
     onSavePress,
     onModalClose,
-    onDeleteImportExclusionPress,
+    onDeleteImportListExclusionPress,
     ...otherProps
   } = props;
 
   const {
-    movieTitle = '',
-    tmdbId,
-    movieYear
+    title,
+    tvdbId
   } = item;
 
   return (
     <ModalContent onModalClose={onModalClose}>
       <ModalHeader>
-        {id ? translate('EditListExclusion') : translate('AddListExclusion')}
+        {id ? 'Edit Import List Exclusion' : 'Add Import List Exclusion'}
       </ModalHeader>
 
       <ModalBody className={styles.body}>
@@ -50,9 +49,7 @@ function EditImportListExclusionModalContent(props) {
 
         {
           !isFetching && !!error &&
-            <div>
-              {translate('UnableToAddANewListExclusionPleaseTryAgain')}
-            </div>
+            <div>Unable to add a new import list exclusion, please try again.</div>
         }
 
         {
@@ -61,41 +58,28 @@ function EditImportListExclusionModalContent(props) {
               {...otherProps}
             >
               <FormGroup>
-                <FormLabel>{translate('TMDBId')}</FormLabel>
-
-                <FormInputGroup
-                  type={inputTypes.NUMBER}
-                  name="tmdbId"
-                  helpText={translate('TmdbIdHelpText')}
-                  {...tmdbId}
-                  onChange={onInputChange}
-                />
-              </FormGroup>
-
-              <FormGroup>
-                <FormLabel>{translate('MovieTitle')}</FormLabel>
+                <FormLabel>Title</FormLabel>
 
                 <FormInputGroup
                   type={inputTypes.TEXT}
-                  name="movieTitle"
-                  helpText={translate('MovieTitleHelpText')}
-                  {...movieTitle}
+                  name="title"
+                  helpText="The name of the series to exclude"
+                  {...title}
                   onChange={onInputChange}
                 />
               </FormGroup>
 
               <FormGroup>
-                <FormLabel>{translate('MovieYear')}</FormLabel>
+                <FormLabel>TVDB ID</FormLabel>
 
                 <FormInputGroup
-                  type={inputTypes.NUMBER}
-                  name="movieYear"
-                  helpText={translate('MovieYearHelpText')}
-                  {...movieYear}
+                  type={inputTypes.TEXT}
+                  name="tvdbId"
+                  helpText="The TVDB ID of the series to exclude"
+                  {...tvdbId}
                   onChange={onInputChange}
                 />
               </FormGroup>
-
             </Form>
         }
       </ModalBody>
@@ -106,16 +90,16 @@ function EditImportListExclusionModalContent(props) {
             <Button
               className={styles.deleteButton}
               kind={kinds.DANGER}
-              onPress={onDeleteImportExclusionPress}
+              onPress={onDeleteImportListExclusionPress}
             >
-              {translate('Delete')}
+              Delete
             </Button>
         }
 
         <Button
           onPress={onModalClose}
         >
-          {translate('Cancel')}
+          Cancel
         </Button>
 
         <SpinnerErrorButton
@@ -123,12 +107,17 @@ function EditImportListExclusionModalContent(props) {
           error={saveError}
           onPress={onSavePress}
         >
-          {translate('Save')}
+          Save
         </SpinnerErrorButton>
       </ModalFooter>
     </ModalContent>
   );
 }
+
+const ImportListExclusionShape = {
+  title: PropTypes.shape(stringSettingShape).isRequired,
+  tvdbId: PropTypes.shape(numberSettingShape).isRequired
+};
 
 EditImportListExclusionModalContent.propTypes = {
   id: PropTypes.number,
@@ -136,11 +125,11 @@ EditImportListExclusionModalContent.propTypes = {
   error: PropTypes.object,
   isSaving: PropTypes.bool.isRequired,
   saveError: PropTypes.object,
-  item: PropTypes.object.isRequired,
+  item: PropTypes.shape(ImportListExclusionShape).isRequired,
   onInputChange: PropTypes.func.isRequired,
   onSavePress: PropTypes.func.isRequired,
   onModalClose: PropTypes.func.isRequired,
-  onDeleteImportExclusionPress: PropTypes.func
+  onDeleteImportListExclusionPress: PropTypes.func
 };
 
 export default EditImportListExclusionModalContent;

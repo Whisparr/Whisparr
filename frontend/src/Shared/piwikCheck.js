@@ -6,6 +6,6 @@ if (window.Whisparr.analytics) {
   g.type = 'text/javascript';
   g.async = true;
   g.defer = true;
-  g.src = '//piwik.sonarr.tv/piwik.js';
+  g.src = '//piwik.whisparr.tv/piwik.js';
   s.parentNode.insertBefore(g, s);
 }

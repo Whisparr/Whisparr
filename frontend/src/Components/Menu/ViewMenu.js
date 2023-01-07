@@ -3,7 +3,6 @@ import React from 'react';
 import Menu from 'Components/Menu/Menu';
 import ToolbarMenuButton from 'Components/Menu/ToolbarMenuButton';
 import { icons } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 
 function ViewMenu(props) {
   const {
@@ -18,7 +17,7 @@ function ViewMenu(props) {
     >
       <ToolbarMenuButton
         iconName={icons.VIEW}
-        text={translate('View')}
+        text="View"
         isDisabled={isDisabled}
       />
       {children}

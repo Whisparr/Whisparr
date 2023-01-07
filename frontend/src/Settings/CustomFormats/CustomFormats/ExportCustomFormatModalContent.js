@@ -8,7 +8,6 @@ import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { kinds } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import styles from './ExportCustomFormatModalContent.css';
 
 class ExportCustomFormatModalContent extends Component {
@@ -29,7 +28,7 @@ class ExportCustomFormatModalContent extends Component {
       <ModalContent onModalClose={onModalClose}>
 
         <ModalHeader>
-          {translate('ExportCustomFormat')}
+          Export Custom Format
         </ModalHeader>
 
         <ModalBody>
@@ -42,7 +41,7 @@ class ExportCustomFormatModalContent extends Component {
             {
               !isFetching && !!error &&
                 <div>
-                  {translate('UnableToLoadCustomFormats')}
+                  Unable to load custom formats
                 </div>
             }
 
@@ -60,13 +59,13 @@ class ExportCustomFormatModalContent extends Component {
           <ClipboardButton
             className={styles.button}
             value={json}
-            title={translate('CopyToClipboard')}
+            title="Copy to clipboard"
             kind={kinds.DEFAULT}
           />
           <Button
             onPress={onModalClose}
           >
-            {translate('Close')}
+            Close
           </Button>
         </ModalFooter>
       </ModalContent>

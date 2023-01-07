@@ -4,11 +4,13 @@ import React, { Component } from 'react';
 import SelectInput from 'Components/Form/SelectInput';
 import Icon from 'Components/Icon';
 import Button from 'Components/Link/Button';
+import SpinnerButton from 'Components/Link/SpinnerButton';
 import LoadingIndicator from 'Components/Loading/LoadingIndicator';
 import Menu from 'Components/Menu/Menu';
 import MenuButton from 'Components/Menu/MenuButton';
 import MenuContent from 'Components/Menu/MenuContent';
 import SelectedMenuItem from 'Components/Menu/SelectedMenuItem';
+import ConfirmModal from 'Components/Modal/ConfirmModal';
 import ModalBody from 'Components/Modal/ModalBody';
 import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
@@ -16,12 +18,13 @@ import ModalHeader from 'Components/Modal/ModalHeader';
 import Table from 'Components/Table/Table';
 import TableBody from 'Components/Table/TableBody';
 import { align, icons, kinds, scrollDirections } from 'Helpers/Props';
+import SelectEpisodeModal from 'InteractiveImport/Episode/SelectEpisodeModal';
 import SelectLanguageModal from 'InteractiveImport/Language/SelectLanguageModal';
-import SelectMovieModal from 'InteractiveImport/Movie/SelectMovieModal';
 import SelectQualityModal from 'InteractiveImport/Quality/SelectQualityModal';
 import SelectReleaseGroupModal from 'InteractiveImport/ReleaseGroup/SelectReleaseGroupModal';
+import SelectSeasonModal from 'InteractiveImport/Season/SelectSeasonModal';
+import SelectSeriesModal from 'InteractiveImport/Series/SelectSeriesModal';
 import getErrorMessage from 'Utilities/Object/getErrorMessage';
-import translate from 'Utilities/String/translate';
 import getSelectedIds from 'Utilities/Table/getSelectedIds';
 import selectAll from 'Utilities/Table/selectAll';
 import toggleSelected from 'Utilities/Table/toggleSelected';
@@ -31,36 +34,55 @@ import styles from './InteractiveImportModalContent.css';
 const columns = [
   {
     name: 'relativePath',
-    label: translate('RelativePath'),
+    label: 'Relative Path',
     isSortable: true,
     isVisible: true
   },
   {
-    name: 'movie',
-    label: translate('Movie'),
+    name: 'series',
+    label: 'Series',
     isSortable: true,
+    isVisible: true
+  },
+  {
+    name: 'season',
+    label: 'Season',
+    isVisible: true
+  },
+  {
+    name: 'episodes',
+    label: 'Episode(s)',
     isVisible: true
   },
   {
     name: 'releaseGroup',
-    label: translate('ReleaseGroup'),
+    label: 'Release Group',
     isVisible: true
   },
   {
     name: 'quality',
-    label: translate('Quality'),
+    label: 'Quality',
     isSortable: true,
     isVisible: true
   },
   {
     name: 'languages',
-    label: translate('Languages'),
+    label: 'Languages',
     isSortable: true,
     isVisible: true
   },
   {
     name: 'size',
-    label: translate('Size'),
+    label: 'Size',
+    isSortable: true,
+    isVisible: true
+  },
+  {
+    name: 'customFormats',
+    label: React.createElement(Icon, {
+      name: icons.INTERACTIVE,
+      title: 'Custom Format'
+    }),
     isSortable: true,
     isVisible: true
   },
@@ -76,21 +98,23 @@ const columns = [
 ];
 
 const filterExistingFilesOptions = {
-  ALL: translate('All'),
-  NEW: translate('New')
+  ALL: 'all',
+  NEW: 'new'
 };
 
 const importModeOptions = [
-  { key: 'chooseImportMode', value: translate('ChooseImportMode'), disabled: true },
-  { key: 'move', value: translate('MoveFiles') },
-  { key: 'copy', value: translate('HardlinkCopyFiles') }
+  { key: 'chooseImportMode', value: 'Choose Import Mode', disabled: true },
+  { key: 'move', value: 'Move Files' },
+  { key: 'copy', value: 'Hardlink/Copy Files' }
 ];
 
 const SELECT = 'select';
-const MOVIE = 'movie';
-const LANGUAGE = 'language';
-const QUALITY = 'quality';
+const SERIES = 'series';
+const SEASON = 'season';
+const EPISODE = 'episode';
 const RELEASE_GROUP = 'releaseGroup';
+const QUALITY = 'quality';
+const LANGUAGE = 'language';
 
 class InteractiveImportModalContent extends Component {
 
@@ -100,14 +124,35 @@ class InteractiveImportModalContent extends Component {
   constructor(props, context) {
     super(props, context);
 
+    const instanceColumns = _.cloneDeep(columns);
+
+    if (!props.showSeries) {
+      instanceColumns.find((c) => c.name === 'series').isVisible = false;
+    }
+
     this.state = {
       allSelected: false,
       allUnselected: false,
       lastToggled: null,
       selectedState: {},
       invalidRowsSelected: [],
-      selectModalOpen: null
+      withoutEpisodeFileIdRowsSelected: [],
+      selectModalOpen: null,
+      columns: instanceColumns,
+      isConfirmDeleteModalOpen: false
     };
+  }
+
+  componentDidUpdate(prevProps) {
+    const {
+      isDeleting,
+      deleteError,
+      onModalClose
+    } = this.props;
+
+    if (!isDeleting && prevProps.isDeleting && !deleteError) {
+      onModalClose();
+    }
   }
 
   //
@@ -124,9 +169,14 @@ class InteractiveImportModalContent extends Component {
     this.setState(selectAll(this.state.selectedState, value));
   };
 
-  onSelectedChange = ({ id, value, shiftKey = false }) => {
+  onSelectedChange = ({ id, value, hasEpisodeFileId, shiftKey = false }) => {
     this.setState((state) => {
-      return toggleSelected(state, this.props.items, id, value, shiftKey);
+      return {
+        ...toggleSelected(state, this.props.items, id, value, shiftKey),
+        withoutEpisodeFileIdRowsSelected: hasEpisodeFileId || !value ?
+          _.without(state.withoutEpisodeFileIdRowsSelected, id) :
+          [...state.withoutEpisodeFileIdRowsSelected, id]
+      };
     });
   };
 
@@ -142,6 +192,19 @@ class InteractiveImportModalContent extends Component {
         invalidRowsSelected: [...state.invalidRowsSelected, id]
       };
     });
+  };
+
+  onDeleteSelectedPress = () => {
+    this.setState({ isConfirmDeleteModalOpen: true });
+  };
+
+  onConfirmDelete = () => {
+    this.setState({ isConfirmDeleteModalOpen: false });
+    this.props.onDeleteSelectedPress(this.getSelectedIds());
+  };
+
+  onConfirmDeleteModalClose = () => {
+    this.setState({ isConfirmDeleteModalOpen: false });
   };
 
   onImportSelectedPress = () => {
@@ -180,8 +243,10 @@ class InteractiveImportModalContent extends Component {
   render() {
     const {
       downloadId,
-      allowMovieChange,
+      allowSeriesChange,
+      autoSelectRow,
       showFilterExistingFiles,
+      showDelete,
       showImportMode,
       filterExistingFiles,
       title,
@@ -194,6 +259,8 @@ class InteractiveImportModalContent extends Component {
       sortDirection,
       importMode,
       interactiveImportErrorMessage,
+      isDeleting,
+      modalTitle,
       onSortPress,
       onModalClose
     } = this.props;
@@ -203,30 +270,47 @@ class InteractiveImportModalContent extends Component {
       allUnselected,
       selectedState,
       invalidRowsSelected,
-      selectModalOpen
+      withoutEpisodeFileIdRowsSelected,
+      selectModalOpen,
+      isConfirmDeleteModalOpen
     } = this.state;
 
     const selectedIds = this.getSelectedIds();
-    const errorMessage = getErrorMessage(error, translate('UnableToLoadManualImportItems'));
+
+    const orderedSelectedIds = items.reduce((acc, file) => {
+      if (selectedIds.includes(file.id)) {
+        acc.push(file.id);
+      }
+
+      return acc;
+    }, []);
+
+    const selectedItem = selectedIds.length ?
+      items.find((file) => file.id === selectedIds[0]) :
+      null;
+
+    const errorMessage = getErrorMessage(error, 'Unable to load manual import items');
 
     const bulkSelectOptions = [
-      { key: SELECT, value: translate('SelectDotDot'), disabled: true },
-      { key: LANGUAGE, value: translate('SelectLanguage') },
-      { key: QUALITY, value: translate('SelectQuality') },
-      { key: RELEASE_GROUP, value: translate('SelectReleaseGroup') }
+      { key: SELECT, value: 'Select...', disabled: true },
+      { key: SEASON, value: 'Select Season' },
+      { key: EPISODE, value: 'Select Episode(s)' },
+      { key: QUALITY, value: 'Select Quality' },
+      { key: RELEASE_GROUP, value: 'Select Release Group' },
+      { key: LANGUAGE, value: 'Select Language' }
     ];
 
-    if (allowMovieChange) {
+    if (allowSeriesChange) {
       bulkSelectOptions.splice(1, 0, {
-        key: MOVIE,
-        value: translate('SelectMovie')
+        key: SERIES,
+        value: 'Select Series'
       });
     }
 
     return (
       <ModalContent onModalClose={onModalClose}>
         <ModalHeader>
-          {translate('ManualImport')} - {title || folder}
+          {modalTitle} - {title || folder}
         </ModalHeader>
 
         <ModalBody scrollDirection={scrollDirections.BOTH}>
@@ -242,7 +326,7 @@ class InteractiveImportModalContent extends Component {
 
                     <div className={styles.filterText}>
                       {
-                        filterExistingFiles ? translate('UnmappedFilesOnly') : translate('AllFiles')
+                        filterExistingFiles ? 'Unmapped Files Only' : 'All Files'
                       }
                     </div>
                   </MenuButton>
@@ -253,7 +337,7 @@ class InteractiveImportModalContent extends Component {
                       isSelected={!filterExistingFiles}
                       onPress={this.onFilterExistingFilesChange}
                     >
-                      {translate('AllFiles')}
+                      All Files
                     </SelectedMenuItem>
 
                     <SelectedMenuItem
@@ -261,7 +345,7 @@ class InteractiveImportModalContent extends Component {
                       isSelected={filterExistingFiles}
                       onPress={this.onFilterExistingFilesChange}
                     >
-                      {translate('UnmappedFilesOnly')}
+                      Unmapped Files Only
                     </SelectedMenuItem>
                   </MenuContent>
                 </Menu>
@@ -281,7 +365,7 @@ class InteractiveImportModalContent extends Component {
           {
             isPopulated && !!items.length && !isFetching && !isFetching &&
               <Table
-                columns={columns}
+                columns={this.state.columns}
                 horizontalScroll={true}
                 selectAll={true}
                 allSelected={allSelected}
@@ -299,7 +383,10 @@ class InteractiveImportModalContent extends Component {
                           key={item.id}
                           isSelected={selectedState[item.id]}
                           {...item}
-                          allowMovieChange={allowMovieChange}
+                          allowSeriesChange={allowSeriesChange}
+                          autoSelectRow={autoSelectRow}
+                          columns={this.state.columns}
+                          modalTitle={modalTitle}
                           onSelectedChange={this.onSelectedChange}
                           onValidRowChange={this.onValidRowChange}
                         />
@@ -312,12 +399,26 @@ class InteractiveImportModalContent extends Component {
 
           {
             isPopulated && !items.length && !isFetching &&
-              translate('NoVideoFilesFoundSelectedFolder')
+              'No video files were found in the selected folder'
           }
         </ModalBody>
 
         <ModalFooter className={styles.footer}>
           <div className={styles.leftButtons}>
+            {
+              showDelete ?
+                <SpinnerButton
+                  className={styles.deleteButton}
+                  kind={kinds.DANGER}
+                  isSpinning={isDeleting}
+                  isDisabled={!selectedIds.length || !!withoutEpisodeFileIdRowsSelected.length}
+                  onPress={this.onDeleteSelectedPress}
+                >
+                  Delete
+                </SpinnerButton> :
+                null
+            }
+
             {
               !downloadId && showImportMode ?
                 <SelectInput
@@ -342,7 +443,7 @@ class InteractiveImportModalContent extends Component {
 
           <div className={styles.rightButtons}>
             <Button onPress={onModalClose}>
-              {translate('Cancel')}
+              Cancel
             </Button>
 
             {
@@ -355,14 +456,40 @@ class InteractiveImportModalContent extends Component {
               isDisabled={!selectedIds.length || !!invalidRowsSelected.length}
               onPress={this.onImportSelectedPress}
             >
-              {translate('Import')}
+              Import
             </Button>
           </div>
         </ModalFooter>
 
-        <SelectMovieModal
-          isOpen={selectModalOpen === MOVIE}
+        <SelectSeriesModal
+          isOpen={selectModalOpen === SERIES}
           ids={selectedIds}
+          modalTitle={modalTitle}
+          onModalClose={this.onSelectModalClose}
+        />
+
+        <SelectSeasonModal
+          isOpen={selectModalOpen === SEASON}
+          ids={selectedIds}
+          seriesId={selectedItem && selectedItem.series && selectedItem.series.id}
+          modalTitle={modalTitle}
+          onModalClose={this.onSelectModalClose}
+        />
+
+        <SelectEpisodeModal
+          isOpen={selectModalOpen === EPISODE}
+          ids={orderedSelectedIds}
+          seriesId={selectedItem && selectedItem.series && selectedItem.series.id}
+          seasonNumber={selectedItem && selectedItem.seasonNumber}
+          modalTitle={modalTitle}
+          onModalClose={this.onSelectModalClose}
+        />
+
+        <SelectReleaseGroupModal
+          isOpen={selectModalOpen === RELEASE_GROUP}
+          ids={selectedIds}
+          releaseGroup=""
+          modalTitle={modalTitle}
           onModalClose={this.onSelectModalClose}
         />
 
@@ -370,6 +497,7 @@ class InteractiveImportModalContent extends Component {
           isOpen={selectModalOpen === LANGUAGE}
           ids={selectedIds}
           languageIds={[0]}
+          modalTitle={modalTitle}
           onModalClose={this.onSelectModalClose}
         />
 
@@ -379,14 +507,18 @@ class InteractiveImportModalContent extends Component {
           qualityId={0}
           proper={false}
           real={false}
+          modalTitle={modalTitle}
           onModalClose={this.onSelectModalClose}
         />
 
-        <SelectReleaseGroupModal
-          isOpen={selectModalOpen === RELEASE_GROUP}
-          ids={selectedIds}
-          releaseGroup=""
-          onModalClose={this.onSelectModalClose}
+        <ConfirmModal
+          isOpen={isConfirmDeleteModalOpen}
+          kind={kinds.DANGER}
+          title="Delete Selected Episode Files"
+          message={'Are you sure you want to delete the selected episode files?'}
+          confirmLabel="Delete"
+          onConfirm={this.onConfirmDelete}
+          onCancel={this.onConfirmDeleteModalClose}
         />
       </ModalContent>
     );
@@ -395,7 +527,10 @@ class InteractiveImportModalContent extends Component {
 
 InteractiveImportModalContent.propTypes = {
   downloadId: PropTypes.string,
-  allowMovieChange: PropTypes.bool.isRequired,
+  showSeries: PropTypes.bool.isRequired,
+  allowSeriesChange: PropTypes.bool.isRequired,
+  autoSelectRow: PropTypes.bool.isRequired,
+  showDelete: PropTypes.bool.isRequired,
   showImportMode: PropTypes.bool.isRequired,
   showFilterExistingFiles: PropTypes.bool.isRequired,
   filterExistingFiles: PropTypes.bool.isRequired,
@@ -409,16 +544,23 @@ InteractiveImportModalContent.propTypes = {
   sortKey: PropTypes.string,
   sortDirection: PropTypes.string,
   interactiveImportErrorMessage: PropTypes.string,
+  isDeleting: PropTypes.bool.isRequired,
+  deleteError: PropTypes.object,
+  modalTitle: PropTypes.string.isRequired,
   onSortPress: PropTypes.func.isRequired,
   onFilterExistingFilesChange: PropTypes.func.isRequired,
   onImportModeChange: PropTypes.func.isRequired,
+  onDeleteSelectedPress: PropTypes.func.isRequired,
   onImportSelectedPress: PropTypes.func.isRequired,
   onModalClose: PropTypes.func.isRequired
 };
 
 InteractiveImportModalContent.defaultProps = {
-  allowMovieChange: true,
+  showSeries: true,
+  allowSeriesChange: true,
+  autoSelectRow: true,
   showFilterExistingFiles: false,
+  showDelete: false,
   showImportMode: true,
   importMode: 'move'
 };

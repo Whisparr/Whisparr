@@ -11,7 +11,7 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
 {
     public class NewznabRequestGeneratorFixture : CoreTest<NewznabRequestGenerator>
     {
-        private MovieSearchCriteria _movieSearchCriteria;
+        private SingleEpisodeSearchCriteria _singleEpisodeSearchCriteria;
         private NewznabCapabilities _capabilities;
 
         [SetUp]
@@ -21,13 +21,16 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
             {
                 BaseUrl = "http://127.0.0.1:1234/",
                 Categories = new[] { 1, 2 },
+                AnimeCategories = new[] { 3, 4 },
                 ApiKey = "abcd",
             };
 
-            _movieSearchCriteria = new MovieSearchCriteria
+            _singleEpisodeSearchCriteria = new SingleEpisodeSearchCriteria
             {
-                Movie = new Movies.Media { Title = "Star Wars", Year = 1977, ForiegnId = 11 },
-                SceneTitles = new List<string> { "Star Wars" }
+                Series = new Tv.Series { TvdbId = 20, ImdbId = "t40" },
+                SceneTitles = new List<string> { "Monkey Island" },
+                SeasonNumber = 1,
+                EpisodeNumber = 2
             };
 
             _capabilities = new NewznabCapabilities();
@@ -46,13 +49,13 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
 
             var page = results.GetAllTiers().First().First();
 
-            page.Url.Query.Should().Contain("&cat=1,2&");
+            page.Url.Query.Should().Contain("&cat=1,2,3,4&");
         }
 
         [Test]
         public void should_not_have_duplicate_categories()
         {
-            Subject.Settings.Categories = new[] { 1, 2, 2, 3 };
+            Subject.Settings.Categories = new[] { 1, 2, 3 };
 
             var results = Subject.GetRecentRequests();
 
@@ -60,76 +63,217 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
 
             var page = results.GetAllTiers().First().First();
 
-            page.Url.FullUri.Should().Contain("&cat=1,2,3&");
+            page.Url.FullUri.Should().Contain("&cat=1,2,3,4&");
         }
 
         [Test]
-        public void should_return_subsequent_pages()
+        public void should_not_search_by_rid_if_not_supported()
         {
-            var results = Subject.GetSearchRequests(_movieSearchCriteria);
+            _capabilities.SupportedTvSearchParameters = new[] { "q", "season", "ep" };
 
-            results.GetAllTiers().Should().HaveCount(2);
+            var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
 
-            var pages = results.GetAllTiers().First().Take(3).ToList();
+            results.GetAllTiers().Should().HaveCount(1);
 
-            pages[0].Url.FullUri.Should().Contain("&offset=0&");
-            pages[1].Url.FullUri.Should().Contain("&offset=100&");
-            pages[2].Url.FullUri.Should().Contain("&offset=200&");
+            var page = results.GetAllTiers().First().First();
+
+            page.Url.Query.Should().NotContain("rid=10");
+            page.Url.Query.Should().Contain("q=Monkey");
         }
 
         [Test]
-        public void should_not_get_unlimited_pages()
+        public void should_search_by_rid_if_supported()
         {
-            var results = Subject.GetSearchRequests(_movieSearchCriteria);
+            var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
+            results.GetTier(0).Should().HaveCount(1);
 
-            results.GetAllTiers().Should().HaveCount(2);
+            var page = results.GetAllTiers().First().First();
 
-            var pages = results.GetAllTiers().First().Take(500).ToList();
+            page.Url.Query.Should().Contain("rid=10");
+        }
 
-            pages.Count.Should().BeLessThan(500);
+        [Test]
+        public void should_not_search_by_tvdbid_if_not_supported()
+        {
+            _capabilities.SupportedTvSearchParameters = new[] { "q", "season", "ep" };
+
+            var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
+            results.GetTier(0).Should().HaveCount(1);
+
+            var page = results.GetAllTiers().First().First();
+
+            page.Url.Query.Should().NotContain("rid=10");
+            page.Url.Query.Should().Contain("q=Monkey");
+        }
+
+        [Test]
+        public void should_search_by_tvdbid_if_supported()
+        {
+            _capabilities.SupportedTvSearchParameters = new[] { "q", "tvdbid", "season", "ep" };
+
+            var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
+            results.GetTier(0).Should().HaveCount(1);
+
+            var page = results.GetAllTiers().First().First();
+
+            page.Url.Query.Should().Contain("tvdbid=20");
+        }
+
+        [Test]
+        public void should_search_by_tvmaze_if_supported()
+        {
+            _capabilities.SupportedTvSearchParameters = new[] { "q", "tvmazeid", "season", "ep" };
+
+            var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
+            results.GetTier(0).Should().HaveCount(1);
+
+            var page = results.GetAllTiers().First().First();
+
+            page.Url.Query.Should().Contain("tvmazeid=30");
+        }
+
+        [Test]
+        public void should_search_by_imdbid_if_supported()
+        {
+            _capabilities.SupportedTvSearchParameters = new[] { "q", "imdbid", "season", "ep" };
+
+            var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
+            results.GetTier(0).Should().HaveCount(1);
+
+            var page = results.GetAllTiers().First().First();
+
+            page.Url.Query.Should().Contain("imdbid=t40");
+        }
+
+        [Test]
+        public void should_prefer_search_by_tvdbid_if_rid_supported()
+        {
+            _capabilities.SupportedTvSearchParameters = new[] { "q", "tvdbid", "rid", "season", "ep" };
+
+            var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
+            results.GetTier(0).Should().HaveCount(1);
+
+            var page = results.GetAllTiers().First().First();
+
+            page.Url.Query.Should().Contain("tvdbid=20");
+            page.Url.Query.Should().NotContain("rid=10");
+        }
+
+        [Test]
+        public void should_use_aggregrated_id_search_if_supported()
+        {
+            _capabilities.SupportedTvSearchParameters = new[] { "q", "tvdbid", "rid", "season", "ep" };
+            _capabilities.SupportsAggregateIdSearch = true;
+
+            var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
+            results.GetTier(0).Should().HaveCount(1);
+
+            var page = results.GetTier(0).First().First();
+
+            page.Url.Query.Should().Contain("tvdbid=20");
+            page.Url.Query.Should().Contain("rid=10");
+        }
+
+        [Test]
+        public void should_not_use_aggregrated_id_search_if_no_ids_supported()
+        {
+            _capabilities.SupportedTvSearchParameters = new[] { "q", "season", "ep" };
+            _capabilities.SupportsAggregateIdSearch = true; // Turns true if indexer supplies supportedParams.
+
+            var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
+            results.Tiers.Should().Be(1);
+            results.GetTier(0).Should().HaveCount(1);
+
+            var page = results.GetTier(0).First().First();
+
+            page.Url.Query.Should().Contain("q=");
+        }
+
+        [Test]
+        public void should_fallback_to_title()
+        {
+            _capabilities.SupportedTvSearchParameters = new[] { "q", "title", "tvdbid", "rid", "season", "ep" };
+            _capabilities.SupportsAggregateIdSearch = true;
+
+            var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
+            results.Tiers.Should().Be(2);
+
+            var pageTier2 = results.GetTier(1).First().First();
+
+            pageTier2.Url.Query.Should().NotContain("tvdbid=20");
+            pageTier2.Url.Query.Should().NotContain("rid=10");
+            pageTier2.Url.Query.Should().NotContain("q=");
+            pageTier2.Url.Query.Should().Contain("title=Monkey%20Island");
+        }
+
+        [Test]
+        public void should_url_encode_title()
+        {
+            _capabilities.SupportedTvSearchParameters = new[] { "q", "title", "tvdbid", "rid", "season", "ep" };
+            _capabilities.SupportsAggregateIdSearch = true;
+
+            _singleEpisodeSearchCriteria.SceneTitles[0] = "Elith & Little";
+
+            var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
+            results.Tiers.Should().Be(2);
+
+            var pageTier2 = results.GetTier(1).First().First();
+
+            pageTier2.Url.Query.Should().NotContain("tvdbid=20");
+            pageTier2.Url.Query.Should().NotContain("rid=10");
+            pageTier2.Url.Query.Should().NotContain("q=");
+            pageTier2.Url.Query.Should().Contain("title=Elith%20%26%20Little");
+        }
+
+        [Test]
+        public void should_fallback_to_q()
+        {
+            _capabilities.SupportedTvSearchParameters = new[] { "q", "tvdbid", "rid", "season", "ep" };
+            _capabilities.SupportsAggregateIdSearch = true;
+
+            var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
+            results.Tiers.Should().Be(2);
+
+            var pageTier2 = results.GetTier(1).First().First();
+
+            pageTier2.Url.Query.Should().NotContain("tvdbid=20");
+            pageTier2.Url.Query.Should().NotContain("rid=10");
+            pageTier2.Url.Query.Should().Contain("q=");
         }
 
         [Test]
         public void should_encode_raw_title()
         {
-            _capabilities.SupportedSearchParameters = new[] { "q" };
-            _capabilities.TextSearchEngine = "raw";
+            _capabilities.SupportedTvSearchParameters = new[] { "q", "season", "ep" };
+            _capabilities.TvTextSearchEngine = "raw";
+            _singleEpisodeSearchCriteria.SceneTitles[0] = "Edith & Little";
 
-            MovieSearchCriteria movieRawSearchCriteria = new MovieSearchCriteria
-            {
-                Movie = new Movies.Media { Title = "Some Movie & Title: Words", Year = 2021, ForiegnId = 123 },
-                SceneTitles = new List<string> { "Some Movie & Title: Words" }
-            };
+            var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
+            results.Tiers.Should().Be(1);
 
-            var results = Subject.GetSearchRequests(movieRawSearchCriteria);
+            var pageTier = results.GetTier(0).First().First();
 
-            var page = results.GetTier(0).First().First();
-
-            page.Url.Query.Should().Contain("q=Some%20Movie%20%26%20Title%3A%20Words");
-            page.Url.Query.Should().NotContain(" & ");
-            page.Url.Query.Should().Contain("%26");
+            pageTier.Url.Query.Should().Contain("q=Edith%20%26%20Little");
+            pageTier.Url.Query.Should().NotContain(" & ");
+            pageTier.Url.Query.Should().Contain("%26");
         }
 
         [Test]
         public void should_use_clean_title_and_encode()
         {
-            _capabilities.SupportedSearchParameters = new[] { "q" };
-            _capabilities.TextSearchEngine = "sphinx";
+            _capabilities.SupportedTvSearchParameters = new[] { "q", "season", "ep" };
+            _capabilities.TvTextSearchEngine = "sphinx";
+            _singleEpisodeSearchCriteria.SceneTitles[0] = "Edith & Little";
 
-            MovieSearchCriteria movieRawSearchCriteria = new MovieSearchCriteria
-            {
-                Movie = new Movies.Media { Title = "Some Movie & Title: Words", Year = 2021, ForiegnId = 123 },
-                SceneTitles = new List<string> { "Some Movie & Title: Words" }
-            };
+            var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
+            results.Tiers.Should().Be(1);
 
-            var results = Subject.GetSearchRequests(movieRawSearchCriteria);
+            var pageTier = results.GetTier(0).First().First();
 
-            var page = results.GetTier(0).First().First();
-
-            page.Url.Query.Should().Contain("q=Some%20Movie%20and%20Title%20Words%202021");
-            page.Url.Query.Should().Contain("and");
-            page.Url.Query.Should().NotContain(" & ");
-            page.Url.Query.Should().NotContain("%26");
+            pageTier.Url.Query.Should().Contain("q=Edith%20and%20Little");
+            pageTier.Url.Query.Should().Contain("and");
+            pageTier.Url.Query.Should().NotContain(" & ");
+            pageTier.Url.Query.Should().NotContain("%26");
         }
     }
 }

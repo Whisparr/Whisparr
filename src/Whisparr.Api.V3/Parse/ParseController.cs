@@ -1,9 +1,9 @@
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Common.Extensions;
-using NzbDrone.Core.Configuration;
+using NzbDrone.Core.Download.Aggregation;
 using NzbDrone.Core.Parser;
-using Whisparr.Api.V3.Movies;
+using Whisparr.Api.V3.Episodes;
+using Whisparr.Api.V3.Series;
 using Whisparr.Http;
 
 namespace Whisparr.Api.V3.Parse
@@ -12,25 +12,27 @@ namespace Whisparr.Api.V3.Parse
     public class ParseController : Controller
     {
         private readonly IParsingService _parsingService;
-        private readonly IConfigService _configService;
+        private readonly IRemoteEpisodeAggregationService _aggregationService;
 
-        public ParseController(IParsingService parsingService, IConfigService configService)
+        public ParseController(IParsingService parsingService,
+                               IRemoteEpisodeAggregationService aggregationService)
         {
             _parsingService = parsingService;
-            _configService = configService;
+            _aggregationService = aggregationService;
         }
 
         [HttpGet]
-        public ParseResource Parse(string title)
+        [Produces("application/json")]
+        public ParseResource Parse(string title, string path)
         {
             if (title.IsNullOrWhiteSpace())
             {
                 return null;
             }
 
-            var parsedMovieInfo = _parsingService.ParseMovieInfo(title, new List<object>());
+            var parsedEpisodeInfo = path.IsNotNullOrWhiteSpace() ? Parser.ParsePath(path) : Parser.ParseTitle(title);
 
-            if (parsedMovieInfo == null)
+            if (parsedEpisodeInfo == null)
             {
                 return new ParseResource
                 {
@@ -38,15 +40,18 @@ namespace Whisparr.Api.V3.Parse
                 };
             }
 
-            var remoteMovie = _parsingService.Map(parsedMovieInfo);
+            var remoteEpisode = _parsingService.Map(parsedEpisodeInfo, 0);
 
-            if (remoteMovie != null)
+            _aggregationService.Augment(remoteEpisode);
+
+            if (remoteEpisode != null)
             {
                 return new ParseResource
                 {
                     Title = title,
-                    ParsedMovieInfo = remoteMovie.RemoteMovie.ParsedMovieInfo,
-                    Movie = remoteMovie.Movie.ToResource(_configService.AvailabilityDelay)
+                    ParsedEpisodeInfo = remoteEpisode.ParsedEpisodeInfo,
+                    Series = remoteEpisode.Series.ToResource(),
+                    Episodes = remoteEpisode.Episodes.ToResource()
                 };
             }
             else
@@ -54,7 +59,7 @@ namespace Whisparr.Api.V3.Parse
                 return new ParseResource
                 {
                     Title = title,
-                    ParsedMovieInfo = parsedMovieInfo
+                    ParsedEpisodeInfo = parsedEpisodeInfo
                 };
             }
         }

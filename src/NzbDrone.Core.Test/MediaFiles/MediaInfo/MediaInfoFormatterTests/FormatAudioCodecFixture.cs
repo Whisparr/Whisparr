@@ -1,4 +1,4 @@
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
 using NzbDrone.Core.MediaFiles.MediaInfo;
 using NzbDrone.Test.Common;
@@ -8,7 +8,7 @@ namespace NzbDrone.Core.Test.MediaFiles.MediaInfo.MediaInfoFormatterTests
     [TestFixture]
     public class FormatAudioCodecFixture : TestBase
     {
-        private static string sceneName = "My.Series.S01E01-Sonarr";
+        private static string sceneName = "My.Series.S01E01-Whisparr";
 
         [TestCase("mp2, ,  ", "droned.s01e03.swedish.720p.hdtv.x264-prince", "MP2")]
         [TestCase("vorbis, ,  ", "DB Super HDTV", "Vorbis")]
@@ -34,7 +34,6 @@ namespace NzbDrone.Core.Test.MediaFiles.MediaInfo.MediaInfoFormatterTests
         [TestCase("ac3, ,  ", "DD5.1", "AC3")]
         [TestCase("adpcm_ima_qt, ,  ", "Custom?", "PCM")]
         [TestCase("adpcm_ms, ,  ", "Custom", "PCM")]
-
         public void should_format_audio_format(string audioFormatPack, string sceneName, string expectedFormat)
         {
             var split = audioFormatPack.Split(new string[] { ", " }, System.StringSplitOptions.None);

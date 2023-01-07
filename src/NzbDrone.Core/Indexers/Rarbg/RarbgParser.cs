@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -31,10 +30,12 @@ namespace NzbDrone.Core.Indexers.Rarbg
 
             if (jsonResponse.Resource.error_code.HasValue)
             {
-                if (jsonResponse.Resource.error_code == 20 || jsonResponse.Resource.error_code == 8
-                    || jsonResponse.Resource.error_code == 9 || jsonResponse.Resource.error_code == 10)
+                if (jsonResponse.Resource.error_code == 5 || jsonResponse.Resource.error_code == 8
+                    || jsonResponse.Resource.error_code == 9 || jsonResponse.Resource.error_code == 10
+                    || jsonResponse.Resource.error_code == 13 || jsonResponse.Resource.error_code == 14
+                    || jsonResponse.Resource.error_code == 20)
                 {
-                    // No results or imdbid not found
+                    // No results, rate limit, tvdbid not found/invalid, or imdbid not found/invalid
                     return results;
                 }
 
@@ -61,14 +62,9 @@ namespace NzbDrone.Core.Indexers.Rarbg
 
                 if (torrent.episode_info != null)
                 {
-                    if (torrent.episode_info.imdb != null)
+                    if (torrent.episode_info.tvdb != null)
                     {
-                        torrentInfo.ImdbId = int.Parse(torrent.episode_info.imdb.Substring(2));
-                    }
-
-                    if (torrent.episode_info.themoviedb != null)
-                    {
-                        torrentInfo.TmdbId = torrent.episode_info.themoviedb.Value;
+                        torrentInfo.TvdbId = torrent.episode_info.tvdb.Value;
                     }
                 }
 
@@ -77,8 +73,6 @@ namespace NzbDrone.Core.Indexers.Rarbg
 
             return results;
         }
-
-        public Action<IDictionary<string, string>, DateTime?> CookiesUpdater { get; set; }
 
         private string GetGuid(RarbgTorrent torrent)
         {

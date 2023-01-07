@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -13,13 +13,13 @@ namespace NzbDrone.Common.TPL
         private static bool _currentThreadIsProcessingItems;
 
         /// <summary>The list of tasks to be executed.</summary>
-        private readonly LinkedList<Task> _tasks = new LinkedList<Task>();
+        private readonly LinkedList<Task> _tasks = new LinkedList<Task>(); // protected by lock(_tasks)
 
         /// <summary>The maximum concurrency level allowed by this scheduler.</summary>
         private readonly int _maxDegreeOfParallelism;
 
         /// <summary>Whether the scheduler is currently processing work items.</summary>
-        private int _delegatesQueuedOrRunning = 0;
+        private int _delegatesQueuedOrRunning = 0; // protected by lock(_tasks)
 
         /// <summary>
         /// Initializes an instance of the LimitedConcurrencyLevelTaskScheduler class with the
@@ -30,7 +30,7 @@ namespace NzbDrone.Common.TPL
         {
             if (maxDegreeOfParallelism < 1)
             {
-                throw new ArgumentOutOfRangeException("maxDegreeOfParallelism");
+                throw new ArgumentOutOfRangeException(nameof(maxDegreeOfParallelism));
             }
 
             _maxDegreeOfParallelism = maxDegreeOfParallelism;

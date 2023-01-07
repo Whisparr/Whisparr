@@ -97,16 +97,16 @@ class BlocklistConnector extends Component {
     this.props.setBlocklistSort({ sortKey });
   };
 
+  onClearBlocklistPress = () => {
+    this.props.executeCommand({ name: commandNames.CLEAR_BLOCKLIST });
+  };
+
   onTableOptionChange = (payload) => {
     this.props.setBlocklistTableOption(payload);
 
     if (payload.pageSize) {
       this.props.gotoBlocklistFirstPage();
     }
-  };
-
-  onClearBlocklistPress = () => {
-    this.props.executeCommand({ name: commandNames.CLEAR_BLOCKLIST });
   };
 
   //

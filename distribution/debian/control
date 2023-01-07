@@ -1,0 +1,18 @@
+Section: web
+Priority: optional
+Maintainer: Whisparr <hello@whisparr.tv>
+Source: whisparr
+Homepage: https://whisparr.tv
+Vcs-Git: git@github.com:Whisparr/Whisparr.git
+Vcs-Browser: https://github.com/Whisparr/Whisparr
+Build-Depends: debhelper (>= 9),
+  dh-systemd (>= 1.5)
+
+Package: whisparr
+Architecture: all
+Provides: nzbdrone
+Conflicts: nzbdrone
+Replaces: nzbdrone
+Depends: adduser, libsqlite3-0 (>= 3.7), ${cli:Depends}, ${misc:Depends}
+Suggests: sqlite3 (>= 3.7)
+Description: Internet PVR

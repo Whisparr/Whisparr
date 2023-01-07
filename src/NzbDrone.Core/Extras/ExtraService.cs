@@ -5,126 +5,106 @@ using System.Linq;
 using NLog;
 using NzbDrone.Common.Disk;
 using NzbDrone.Core.Configuration;
+using NzbDrone.Core.Datastore;
 using NzbDrone.Core.Extras.Files;
 using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.MediaFiles.Events;
 using NzbDrone.Core.Messaging.Events;
-using NzbDrone.Core.Movies;
 using NzbDrone.Core.Parser.Model;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Extras
 {
     public interface IExtraService
     {
-        void ImportMovie(LocalMovie localMovie, MediaFile movieFile, bool isReadOnly);
+        void ImportEpisode(LocalEpisode localEpisode, EpisodeFile episodeFile, bool isReadOnly);
     }
 
     public class ExtraService : IExtraService,
                                 IHandle<MediaCoversUpdatedEvent>,
-                                IHandle<MovieFolderCreatedEvent>,
-                                IHandle<MovieScannedEvent>,
-                                IHandle<MovieRenamedEvent>
+                                IHandle<EpisodeFolderCreatedEvent>,
+                                IHandle<SeriesScannedEvent>,
+                                IHandle<SeriesRenamedEvent>
     {
         private readonly IMediaFileService _mediaFileService;
-        private readonly IMovieService _movieService;
+        private readonly IEpisodeService _episodeService;
         private readonly IDiskProvider _diskProvider;
         private readonly IConfigService _configService;
         private readonly List<IManageExtraFiles> _extraFileManagers;
-        private readonly Logger _logger;
 
         public ExtraService(IMediaFileService mediaFileService,
-                            IMovieService movieService,
+                            IEpisodeService episodeService,
                             IDiskProvider diskProvider,
                             IConfigService configService,
                             IEnumerable<IManageExtraFiles> extraFileManagers,
                             Logger logger)
         {
             _mediaFileService = mediaFileService;
-            _movieService = movieService;
+            _episodeService = episodeService;
             _diskProvider = diskProvider;
             _configService = configService;
             _extraFileManagers = extraFileManagers.OrderBy(e => e.Order).ToList();
-            _logger = logger;
         }
 
-        public void ImportMovie(LocalMovie localMovie, MediaFile movieFile, bool isReadOnly)
+        public void ImportEpisode(LocalEpisode localEpisode, EpisodeFile episodeFile, bool isReadOnly)
         {
-            ImportExtraFiles(localMovie, movieFile, isReadOnly);
+            ImportExtraFiles(localEpisode, episodeFile, isReadOnly);
 
-            CreateAfterMovieImport(localMovie.Movie, movieFile);
+            CreateAfterEpisodeImport(localEpisode.Series, episodeFile);
         }
 
-        public void ImportExtraFiles(LocalMovie localMovie, MediaFile movieFile, bool isReadOnly)
+        private void ImportExtraFiles(LocalEpisode localEpisode, EpisodeFile episodeFile, bool isReadOnly)
         {
             if (!_configService.ImportExtraFiles)
             {
                 return;
             }
 
-            var sourcePath = localMovie.Path;
-            var sourceFolder = _diskProvider.GetParentFolder(sourcePath);
-            var sourceFileName = Path.GetFileNameWithoutExtension(sourcePath);
-            var files = _diskProvider.GetFiles(sourceFolder, SearchOption.AllDirectories).Where(f => f != localMovie.Path);
+            var folderSearchOption = localEpisode.FolderEpisodeInfo == null
+                ? SearchOption.TopDirectoryOnly
+                : SearchOption.AllDirectories;
 
             var wantedExtensions = _configService.ExtraFileExtensions.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                                                                     .Select(e => e.Trim(' ', '.'))
+                                                                     .Select(e => e.Trim(' ', '.')
+                                                                     .Insert(0, "."))
                                                                      .ToList();
 
-            var matchingFilenames = files.Where(f => Path.GetFileNameWithoutExtension(f).StartsWith(sourceFileName, StringComparison.InvariantCultureIgnoreCase)).ToList();
-            var filteredFilenames = new List<string>();
-            var hasNfo = false;
+            var sourceFolder = _diskProvider.GetParentFolder(localEpisode.Path);
+            var files = _diskProvider.GetFiles(sourceFolder, folderSearchOption);
+            var managedFiles = _extraFileManagers.Select((i) => new List<string>()).ToArray();
 
-            foreach (var matchingFilename in matchingFilenames)
+            foreach (var file in files)
             {
-                // Filter out duplicate NFO files
-                if (matchingFilename.EndsWith(".nfo", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    if (hasNfo)
-                    {
-                        continue;
-                    }
-
-                    hasNfo = true;
-                }
-
-                filteredFilenames.Add(matchingFilename);
-            }
-
-            foreach (var matchingFilename in filteredFilenames)
-            {
-                var matchingExtension = wantedExtensions.FirstOrDefault(e => matchingFilename.EndsWith(e));
+                var extension = Path.GetExtension(file);
+                var matchingExtension = wantedExtensions.FirstOrDefault(e => e.Equals(extension));
 
                 if (matchingExtension == null)
                 {
                     continue;
                 }
 
-                try
+                for (int i = 0; i < _extraFileManagers.Count; i++)
                 {
-                    foreach (var extraFileManager in _extraFileManagers)
+                    if (_extraFileManagers[i].CanImportFile(localEpisode, episodeFile, file, extension, isReadOnly))
                     {
-                        var extension = Path.GetExtension(matchingFilename);
-                        var extraFile = extraFileManager.Import(localMovie.Movie, movieFile, matchingFilename, extension, isReadOnly);
-
-                        if (extraFile != null)
-                        {
-                            break;
-                        }
+                        managedFiles[i].Add(file);
+                        break;
                     }
                 }
-                catch (Exception ex)
-                {
-                    _logger.Warn(ex, "Failed to import extra file: {0}", matchingFilename);
-                }
+            }
+
+            for (int i = 0; i < _extraFileManagers.Count; i++)
+            {
+                _extraFileManagers[i].ImportFiles(localEpisode, episodeFile, managedFiles[i], isReadOnly);
             }
         }
 
-        private void CreateAfterMovieImport(Media movie, MediaFile movieFile)
+        private void CreateAfterEpisodeImport(Series series, EpisodeFile episodeFile)
         {
             foreach (var extraFileManager in _extraFileManagers)
             {
-                extraFileManager.CreateAfterMovieImport(movie, movieFile);
+                extraFileManager.CreateAfterEpisodeImport(series, episodeFile);
             }
         }
 
@@ -132,57 +112,59 @@ namespace NzbDrone.Core.Extras
         {
             if (message.Updated)
             {
-                var movie = message.Movie;
+                var series = message.Series;
 
                 foreach (var extraFileManager in _extraFileManagers)
                 {
-                    extraFileManager.CreateAfterMediaCoverUpdate(movie);
+                    extraFileManager.CreateAfterMediaCoverUpdate(series);
                 }
             }
         }
 
-        public void Handle(MovieScannedEvent message)
+        public void Handle(SeriesScannedEvent message)
         {
-            var movie = message.Movie;
-            var movieFiles = GetMovieFiles(movie.Id);
+            var series = message.Series;
+            var episodeFiles = GetEpisodeFiles(series.Id);
 
             foreach (var extraFileManager in _extraFileManagers)
             {
-                extraFileManager.CreateAfterMovieScan(movie, movieFiles);
+                extraFileManager.CreateAfterSeriesScan(series, episodeFiles);
             }
         }
 
-        public void Handle(MovieFolderCreatedEvent message)
+        public void Handle(EpisodeFolderCreatedEvent message)
         {
-            var movie = message.Movie;
+            var series = message.Series;
 
             foreach (var extraFileManager in _extraFileManagers)
             {
-                extraFileManager.CreateAfterMovieFolder(movie, message.MovieFolder);
+                extraFileManager.CreateAfterEpisodeFolder(series, message.SeriesFolder, message.SeasonFolder);
             }
         }
 
-        public void Handle(MovieRenamedEvent message)
+        public void Handle(SeriesRenamedEvent message)
         {
-            var movie = message.Movie;
-            var movieFiles = GetMovieFiles(movie.Id);
+            var series = message.Series;
+            var episodeFiles = GetEpisodeFiles(series.Id);
 
             foreach (var extraFileManager in _extraFileManagers)
             {
-                extraFileManager.MoveFilesAfterRename(movie, movieFiles);
+                extraFileManager.MoveFilesAfterRename(series, episodeFiles);
             }
         }
 
-        private List<MediaFile> GetMovieFiles(int movieId)
+        private List<EpisodeFile> GetEpisodeFiles(int seriesId)
         {
-            var movieFiles = _mediaFileService.GetFilesByMovie(movieId);
+            var episodeFiles = _mediaFileService.GetFilesBySeries(seriesId);
+            var episodes = _episodeService.GetEpisodeBySeries(seriesId);
 
-            foreach (var movieFile in movieFiles)
+            foreach (var episodeFile in episodeFiles)
             {
-                movieFile.Movie = _movieService.GetMovie(movieId);
+                var localEpisodeFile = episodeFile;
+                episodeFile.Episodes = new List<Episode>(episodes.Where(e => e.EpisodeFileId == localEpisodeFile.Id));
             }
 
-            return movieFiles;
+            return episodeFiles;
         }
     }
 }

@@ -1,16 +1,16 @@
 using System.Collections.Generic;
 using NzbDrone.Core.Datastore;
 using NzbDrone.Core.Messaging.Events;
-using NzbDrone.Core.Movies;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Blocklisting
 {
     public interface IBlocklistRepository : IBasicRepository<Blocklist>
     {
-        List<Blocklist> BlocklistedByTitle(int movieId, string sourceTitle);
-        List<Blocklist> BlocklistedByTorrentInfoHash(int movieId, string torrentInfoHash);
-        List<Blocklist> BlocklistedByMovie(int movieId);
-        void DeleteForMovies(List<int> movieIds);
+        List<Blocklist> BlocklistedByTitle(int seriesId, string sourceTitle);
+        List<Blocklist> BlocklistedByTorrentInfoHash(int seriesId, string torrentInfoHash);
+        List<Blocklist> BlocklistedBySeries(int seriesId);
+        void DeleteForSeriesIds(List<int> seriesIds);
     }
 
     public class BlocklistRepository : BasicRepository<Blocklist>, IBlocklistRepository
@@ -20,30 +20,30 @@ namespace NzbDrone.Core.Blocklisting
         {
         }
 
-        public List<Blocklist> BlocklistedByTitle(int movieId, string sourceTitle)
+        public List<Blocklist> BlocklistedByTitle(int seriesId, string sourceTitle)
         {
-            return Query(x => x.MovieId == movieId && x.SourceTitle.Contains(sourceTitle));
+            return Query(e => e.SeriesId == seriesId && e.SourceTitle.Contains(sourceTitle));
         }
 
-        public List<Blocklist> BlocklistedByTorrentInfoHash(int movieId, string torrentInfoHash)
+        public List<Blocklist> BlocklistedByTorrentInfoHash(int seriesId, string torrentInfoHash)
         {
-            return Query(x => x.MovieId == movieId && x.TorrentInfoHash.Contains(torrentInfoHash));
+            return Query(e => e.SeriesId == seriesId && e.TorrentInfoHash.Contains(torrentInfoHash));
         }
 
-        public List<Blocklist> BlocklistedByMovie(int movieId)
+        public List<Blocklist> BlocklistedBySeries(int seriesId)
         {
-            return Query(x => x.MovieId == movieId);
+            return Query(b => b.SeriesId == seriesId);
         }
 
-        public void DeleteForMovies(List<int> movieIds)
+        public void DeleteForSeriesIds(List<int> seriesIds)
         {
-            Delete(x => movieIds.Contains(x.MovieId));
+            Delete(x => seriesIds.Contains(x.SeriesId));
         }
 
-        protected override SqlBuilder PagedBuilder() => new SqlBuilder(_database.DatabaseType).Join<Blocklist, Media>((b, m) => b.MovieId == m.Id);
-        protected override IEnumerable<Blocklist> PagedQuery(SqlBuilder sql) => _database.QueryJoined<Blocklist, Media>(sql, (bl, movie) =>
+        protected override SqlBuilder PagedBuilder() => new SqlBuilder(_database.DatabaseType).Join<Blocklist, Series>((b, m) => b.SeriesId == m.Id);
+        protected override IEnumerable<Blocklist> PagedQuery(SqlBuilder sql) => _database.QueryJoined<Blocklist, Series>(sql, (bl, movie) =>
                     {
-                        bl.Movie = movie;
+                        bl.Series = movie;
                         return bl;
                     });
     }

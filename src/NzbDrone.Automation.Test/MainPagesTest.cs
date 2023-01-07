@@ -18,15 +18,15 @@ namespace NzbDrone.Automation.Test
         }
 
         [Test]
-        public void movie_page()
+        public void series_page()
         {
-            _page.MovieNavIcon.Click();
+            _page.SeriesNavIcon.Click();
             _page.WaitForNoSpinner();
 
             var imageName = MethodBase.GetCurrentMethod().Name;
             TakeScreenshot(imageName);
 
-            _page.Find(By.CssSelector("div[class*='MovieIndex']")).Should().NotBeNull();
+            _page.Find(By.CssSelector("div[class*='SeriesIndex']")).Should().NotBeNull();
         }
 
         [Test]
@@ -56,6 +56,16 @@ namespace NzbDrone.Automation.Test
         }
 
         [Test]
+        public void wanted_page()
+        {
+            _page.WantedNavIcon.Click();
+            _page.WaitForNoSpinner();
+
+            _page.Find(By.LinkText("Missing")).Should().NotBeNull();
+            _page.Find(By.LinkText("Cutoff Unmet")).Should().NotBeNull();
+        }
+
+        [Test]
         public void system_page()
         {
             _page.SystemNavIcon.Click();
@@ -68,17 +78,17 @@ namespace NzbDrone.Automation.Test
         }
 
         [Test]
-        public void add_movie_page()
+        public void add_series_page()
         {
-            _page.MovieNavIcon.Click();
+            _page.SeriesNavIcon.Click();
             _page.WaitForNoSpinner();
+
             _page.Find(By.LinkText("Add New")).Click();
-            _page.WaitForNoSpinner();
 
             var imageName = MethodBase.GetCurrentMethod().Name;
             TakeScreenshot(imageName);
 
-            _page.Find(By.CssSelector("input[class*='AddNewMovie-searchInput']")).Should().NotBeNull();
+            _page.Find(By.CssSelector("input[class*='AddNewSeries-searchInput']")).Should().NotBeNull();
         }
     }
 }

@@ -3,111 +3,138 @@ using System.Collections.Generic;
 using System.Linq;
 using NzbDrone.Core.Datastore;
 using NzbDrone.Core.Messaging.Events;
-using NzbDrone.Core.Movies;
-using NzbDrone.Core.Profiles;
 using NzbDrone.Core.Qualities;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.History
 {
-    public interface IHistoryRepository : IBasicRepository<MovieHistory>
+    public interface IHistoryRepository : IBasicRepository<EpisodeHistory>
     {
-        List<QualityModel> GetBestQualityInHistory(int movieId);
-        MovieHistory MostRecentForDownloadId(string downloadId);
-        List<MovieHistory> FindByDownloadId(string downloadId);
-        List<MovieHistory> FindDownloadHistory(int movieId, QualityModel quality);
-        List<MovieHistory> GetByMovieId(int movieId, MovieHistoryEventType? eventType);
-        void DeleteForMovies(List<int> movieIds);
-        MovieHistory MostRecentForMovie(int movieId);
-        List<MovieHistory> Since(DateTime date, MovieHistoryEventType? eventType);
+        EpisodeHistory MostRecentForEpisode(int episodeId);
+        List<EpisodeHistory> FindByEpisodeId(int episodeId);
+        EpisodeHistory MostRecentForDownloadId(string downloadId);
+        List<EpisodeHistory> FindByDownloadId(string downloadId);
+        List<EpisodeHistory> GetBySeries(int seriesId, EpisodeHistoryEventType? eventType);
+        List<EpisodeHistory> GetBySeason(int seriesId, int seasonNumber, EpisodeHistoryEventType? eventType);
+        List<EpisodeHistory> FindDownloadHistory(int idSeriesId, QualityModel quality);
+        void DeleteForSeries(List<int> seriesIds);
+        List<EpisodeHistory> Since(DateTime date, EpisodeHistoryEventType? eventType);
     }
 
-    public class HistoryRepository : BasicRepository<MovieHistory>, IHistoryRepository
+    public class HistoryRepository : BasicRepository<EpisodeHistory>, IHistoryRepository
     {
         public HistoryRepository(IMainDatabase database, IEventAggregator eventAggregator)
             : base(database, eventAggregator)
         {
         }
 
-        public List<QualityModel> GetBestQualityInHistory(int movieId)
+        public EpisodeHistory MostRecentForEpisode(int episodeId)
         {
-            var history = Query(x => x.MovieId == movieId);
-
-            return history.Select(h => h.Quality).ToList();
+            return Query(h => h.EpisodeId == episodeId)
+                        .OrderByDescending(h => h.Date)
+                        .FirstOrDefault();
         }
 
-        public MovieHistory MostRecentForDownloadId(string downloadId)
+        public List<EpisodeHistory> FindByEpisodeId(int episodeId)
         {
-            return FindByDownloadId(downloadId)
-                .OrderByDescending(h => h.Date)
-                .FirstOrDefault();
+            return Query(h => h.EpisodeId == episodeId)
+                        .OrderByDescending(h => h.Date)
+                        .ToList();
         }
 
-        public List<MovieHistory> FindByDownloadId(string downloadId)
+        public EpisodeHistory MostRecentForDownloadId(string downloadId)
         {
-            return Query(x => x.DownloadId == downloadId);
+            return Query(h => h.DownloadId == downloadId)
+             .OrderByDescending(h => h.Date)
+             .FirstOrDefault();
         }
 
-        public List<MovieHistory> FindDownloadHistory(int movieId, QualityModel quality)
+        public List<EpisodeHistory> FindByDownloadId(string downloadId)
         {
-            var allowed = new[] { (int)MovieHistoryEventType.Grabbed, (int)MovieHistoryEventType.DownloadFailed, (int)MovieHistoryEventType.DownloadFolderImported };
-
-            return Query(h => h.MovieId == movieId &&
-                         h.Quality == quality &&
-                         allowed.Contains((int)h.EventType));
+            return Query(h => h.DownloadId == downloadId);
         }
 
-        public List<MovieHistory> GetByMovieId(int movieId, MovieHistoryEventType? eventType)
+        public List<EpisodeHistory> GetBySeries(int seriesId, EpisodeHistoryEventType? eventType)
         {
-            var builder = new SqlBuilder(_database.DatabaseType)
-                .Join<MovieHistory, Media>((h, m) => h.MovieId == m.Id)
-                .Join<Media, Profile>((m, p) => m.ProfileId == p.Id)
-                .Where<MovieHistory>(h => h.MovieId == movieId);
+            var builder = Builder().Join<EpisodeHistory, Series>((h, a) => h.SeriesId == a.Id)
+                                   .Join<EpisodeHistory, Episode>((h, a) => h.EpisodeId == a.Id)
+                                   .Where<EpisodeHistory>(h => h.SeriesId == seriesId);
 
             if (eventType.HasValue)
             {
-                builder.Where<MovieHistory>(h => h.EventType == eventType);
+                builder.Where<EpisodeHistory>(h => h.EventType == eventType);
             }
 
-            return PagedQuery(builder).OrderByDescending(h => h.Date).ToList();
+            return Query(builder).OrderByDescending(h => h.Date).ToList();
         }
 
-        public void DeleteForMovies(List<int> movieIds)
+        public List<EpisodeHistory> GetBySeason(int seriesId, int seasonNumber, EpisodeHistoryEventType? eventType)
         {
-            Delete(c => movieIds.Contains(c.MovieId));
+            var builder = Builder()
+                .Join<EpisodeHistory, Episode>((h, a) => h.EpisodeId == a.Id)
+                .Join<EpisodeHistory, Series>((h, a) => h.SeriesId == a.Id)
+                .Where<EpisodeHistory>(h => h.SeriesId == seriesId && h.Episode.SeasonNumber == seasonNumber);
+
+            if (eventType.HasValue)
+            {
+                builder.Where<EpisodeHistory>(h => h.EventType == eventType);
+            }
+
+            return _database.QueryJoined<EpisodeHistory, Episode>(
+                builder,
+                (history, episode) =>
+                {
+                    history.Episode = episode;
+                    return history;
+                }).OrderByDescending(h => h.Date).ToList();
+        }
+
+        public List<EpisodeHistory> FindDownloadHistory(int idSeriesId, QualityModel quality)
+        {
+            return Query(h =>
+                 h.SeriesId == idSeriesId &&
+                 h.Quality == quality &&
+                 (h.EventType == EpisodeHistoryEventType.Grabbed ||
+                 h.EventType == EpisodeHistoryEventType.DownloadFailed ||
+                 h.EventType == EpisodeHistoryEventType.DownloadFolderImported))
+                 .ToList();
+        }
+
+        public void DeleteForSeries(List<int> seriesIds)
+        {
+            Delete(c => seriesIds.Contains(c.SeriesId));
         }
 
         protected override SqlBuilder PagedBuilder() => new SqlBuilder(_database.DatabaseType)
-            .Join<MovieHistory, Media>((h, m) => h.MovieId == m.Id)
-            .Join<Media, Profile>((m, p) => m.ProfileId == p.Id);
+            .Join<EpisodeHistory, Series>((h, a) => h.SeriesId == a.Id)
+            .Join<EpisodeHistory, Episode>((h, a) => h.EpisodeId == a.Id);
 
-        protected override IEnumerable<MovieHistory> PagedQuery(SqlBuilder sql) =>
-            _database.QueryJoined<MovieHistory, Media, Profile>(sql, (hist, movie, profile) =>
-                    {
-                        hist.Movie = movie;
-                        hist.Movie.Profile = profile;
-                        return hist;
-                    });
+        protected override IEnumerable<EpisodeHistory> PagedQuery(SqlBuilder builder) =>
+            _database.QueryJoined<EpisodeHistory, Series, Episode>(builder, (history, series, episode) =>
+            {
+                history.Series = series;
+                history.Episode = episode;
+                return history;
+            });
 
-        public MovieHistory MostRecentForMovie(int movieId)
+        public List<EpisodeHistory> Since(DateTime date, EpisodeHistoryEventType? eventType)
         {
-            return Query(x => x.MovieId == movieId)
-                .OrderByDescending(h => h.Date)
-                .FirstOrDefault();
-        }
-
-        public List<MovieHistory> Since(DateTime date, MovieHistoryEventType? eventType)
-        {
-            var builder = new SqlBuilder(_database.DatabaseType)
-                .Join<MovieHistory, Media>((h, m) => h.MovieId == m.Id)
-                .Join<Media, Profile>((m, p) => m.ProfileId == p.Id)
-                .Where<MovieHistory>(x => x.Date >= date);
+            var builder = Builder()
+                .Join<EpisodeHistory, Series>((h, a) => h.SeriesId == a.Id)
+                .Join<EpisodeHistory, Episode>((h, a) => h.EpisodeId == a.Id)
+                .Where<EpisodeHistory>(x => x.Date >= date);
 
             if (eventType.HasValue)
             {
-                builder.Where<MovieHistory>(h => h.EventType == eventType);
+                builder.Where<EpisodeHistory>(h => h.EventType == eventType);
             }
 
-            return PagedQuery(builder).OrderBy(h => h.Date).ToList();
+            return _database.QueryJoined<EpisodeHistory, Series, Episode>(builder, (history, series, episode) =>
+            {
+                history.Series = series;
+                history.Episode = episode;
+                return history;
+            }).OrderBy(h => h.Date).ToList();
         }
     }
 }

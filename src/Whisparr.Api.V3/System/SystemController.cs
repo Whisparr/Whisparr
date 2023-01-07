@@ -54,9 +54,10 @@ namespace Whisparr.Api.V3.System
         }
 
         [HttpGet("status")]
-        public object GetStatus()
+        [Produces("application/json")]
+        public SystemResource GetStatus()
         {
-            return new
+            return new SystemResource
             {
                 AppName = BuildInfo.AppName,
                 InstanceName = _configFileProvider.InstanceName,
@@ -70,7 +71,7 @@ namespace Whisparr.Api.V3.System
                 AppData = _appFolderInfo.GetAppDataPath(),
                 OsName = _osInfo.Name,
                 OsVersion = _osInfo.Version,
-                IsNetCore = PlatformInfo.IsNetCore,
+                IsNetCore = true,
                 IsLinux = OsInfo.IsLinux,
                 IsOsx = OsInfo.IsOsx,
                 IsWindows = OsInfo.IsWindows,
@@ -83,7 +84,7 @@ namespace Whisparr.Api.V3.System
                 MigrationVersion = _database.Migration,
                 UrlBase = _configFileProvider.UrlBase,
                 RuntimeVersion = _platformInfo.Version,
-                RuntimeName = PlatformInfo.Platform,
+                RuntimeName = PlatformInfo.PlatformName,
                 StartTime = _runtimeInfo.StartTime,
                 PackageVersion = _deploymentInfoProvider.PackageVersion,
                 PackageAuthor = _deploymentInfoProvider.PackageAuthor,
@@ -93,6 +94,7 @@ namespace Whisparr.Api.V3.System
         }
 
         [HttpGet("routes")]
+        [Produces("application/json")]
         public IActionResult GetRoutes()
         {
             using (var sw = new StringWriter())
@@ -104,6 +106,7 @@ namespace Whisparr.Api.V3.System
         }
 
         [HttpGet("routes/duplicate")]
+        [Produces("application/json")]
         public object DuplicateRoutes()
         {
             return _detector.GetDuplicateEndpoints(_endpointData);

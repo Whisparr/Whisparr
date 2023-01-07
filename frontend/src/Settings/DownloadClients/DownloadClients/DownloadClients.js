@@ -5,7 +5,6 @@ import FieldSet from 'Components/FieldSet';
 import Icon from 'Components/Icon';
 import PageSectionContent from 'Components/Page/PageSectionContent';
 import { icons } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import AddDownloadClientModal from './AddDownloadClientModal';
 import DownloadClient from './DownloadClient';
 import EditDownloadClientModalConnector from './EditDownloadClientModalConnector';
@@ -59,9 +58,9 @@ class DownloadClients extends Component {
     } = this.state;
 
     return (
-      <FieldSet legend={translate('DownloadClients')}>
+      <FieldSet legend="Download Clients">
         <PageSectionContent
-          errorMessage={translate('UnableToLoadDownloadClients')}
+          errorMessage="Unable to load download clients"
           {...otherProps}
         >
           <div className={styles.downloadClients}>

@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using NUnit.Framework;
@@ -19,6 +19,7 @@ namespace NzbDrone.Windows.Test.DiskProviderTests
         protected override void SetWritePermissions(string path, bool writable)
         {
             // Remove Write permissions, we're owner and have Delete permissions, so we can still clean it up.
+
             var owner = WindowsIdentity.GetCurrent().Owner;
             var accessControlType = writable ? AccessControlType.Allow : AccessControlType.Deny;
 

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using NzbDrone.Common.Http;
 using NzbDrone.Core.IndexerSearch.Definitions;
@@ -23,6 +22,40 @@ namespace NzbDrone.Core.Indexers.Nyaa
             var pageableRequests = new IndexerPageableRequestChain();
 
             pageableRequests.Add(GetPagedRequests(MaxPages, null));
+
+            return pageableRequests;
+        }
+
+        public virtual IndexerPageableRequestChain GetSearchRequests(SingleEpisodeSearchCriteria searchCriteria)
+        {
+            return new IndexerPageableRequestChain();
+        }
+
+        public virtual IndexerPageableRequestChain GetSearchRequests(SeasonSearchCriteria searchCriteria)
+        {
+            var pageableRequests = new IndexerPageableRequestChain();
+
+            if (Settings.AnimeStandardFormatSearch && searchCriteria.SeasonNumber > 0)
+            {
+                foreach (var queryTitle in searchCriteria.SceneTitles)
+                {
+                    var searchTitle = PrepareQuery(queryTitle);
+
+                    pageableRequests.Add(GetPagedRequests(MaxPages, $"{searchTitle}+s{searchCriteria.SeasonNumber:00}"));
+                }
+            }
+
+            return pageableRequests;
+        }
+
+        public virtual IndexerPageableRequestChain GetSearchRequests(SpecialEpisodeSearchCriteria searchCriteria)
+        {
+            var pageableRequests = new IndexerPageableRequestChain();
+
+            foreach (var queryTitle in searchCriteria.EpisodeQueryTitles)
+            {
+                pageableRequests.Add(GetPagedRequests(MaxPages, PrepareQuery(queryTitle)));
+            }
 
             return pageableRequests;
         }
@@ -55,20 +88,5 @@ namespace NzbDrone.Core.Indexers.Nyaa
         {
             return query.Replace(' ', '+');
         }
-
-        public IndexerPageableRequestChain GetSearchRequests(MovieSearchCriteria searchCriteria)
-        {
-            var pageableRequests = new IndexerPageableRequestChain();
-
-            foreach (var queryTitle in searchCriteria.SceneTitles)
-            {
-                pageableRequests.Add(GetPagedRequests(MaxPages, PrepareQuery(string.Format("{0} {1}", queryTitle, searchCriteria.Movie.Year))));
-            }
-
-            return pageableRequests;
-        }
-
-        public Func<IDictionary<string, string>> GetCookies { get; set; }
-        public Action<IDictionary<string, string>, DateTime?> CookiesUpdater { get; set; }
     }
 }

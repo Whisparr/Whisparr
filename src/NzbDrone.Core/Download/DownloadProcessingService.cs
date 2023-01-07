@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NLog;
 using NzbDrone.Core.Configuration;
@@ -48,8 +49,8 @@ namespace NzbDrone.Core.Download
         {
             var enableCompletedDownloadHandling = _configService.EnableCompletedDownloadHandling;
             var trackedDownloads = _trackedDownloadService.GetTrackedDownloads()
-                                              .Where(t => t.IsTrackable)
-                                              .ToList();
+                                                          .Where(t => t.IsTrackable)
+                                                          .ToList();
 
             foreach (var trackedDownload in trackedDownloads)
             {

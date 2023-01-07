@@ -1,8 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Xml.Linq;
 using NLog;
@@ -37,12 +37,12 @@ namespace NzbDrone.Test.Common
             Port = port;
         }
 
-        public void Start()
+        public void Start(bool enableAuth = false)
         {
             AppData = Path.Combine(TestContext.CurrentContext.TestDirectory, "_intg_" + TestBase.GetUID());
             Directory.CreateDirectory(AppData);
 
-            GenerateConfigFile();
+            GenerateConfigFile(enableAuth);
 
             string consoleExe;
             if (OsInfo.IsWindows)
@@ -166,7 +166,7 @@ namespace NzbDrone.Test.Common
             }
         }
 
-        private void GenerateConfigFile()
+        private void GenerateConfigFile(bool enableAuth)
         {
             var configFile = Path.Combine(AppData, "config.xml");
 
@@ -179,6 +179,8 @@ namespace NzbDrone.Test.Common
                              new XElement(nameof(ConfigFileProvider.ApiKey), apiKey),
                              new XElement(nameof(ConfigFileProvider.LogLevel), "trace"),
                              new XElement(nameof(ConfigFileProvider.AnalyticsEnabled), false),
+                             new XElement(nameof(ConfigFileProvider.AuthenticationMethod), enableAuth ? "Forms" : "None"),
+                             new XElement(nameof(ConfigFileProvider.AuthenticationRequired), "DisabledForLocalAddresses"),
                              new XElement(nameof(ConfigFileProvider.Port), Port)));
 
             var data = xDoc.ToString();

@@ -6,22 +6,22 @@ import * as commandNames from 'Commands/commandNames';
 import { executeCommand } from 'Store/Actions/commandActions';
 import { fetchOrganizePreview } from 'Store/Actions/organizePreviewActions';
 import { fetchNamingSettings } from 'Store/Actions/settingsActions';
-import createMovieSelector from 'Store/Selectors/createMovieSelector';
+import createSeriesSelector from 'Store/Selectors/createSeriesSelector';
 import OrganizePreviewModalContent from './OrganizePreviewModalContent';
 
 function createMapStateToProps() {
   return createSelector(
     (state) => state.organizePreview,
     (state) => state.settings.naming,
-    createMovieSelector(),
-    (organizePreview, naming, movie) => {
+    createSeriesSelector(),
+    (organizePreview, naming, series) => {
       const props = { ...organizePreview };
       props.isFetching = organizePreview.isFetching || naming.isFetching;
       props.isPopulated = organizePreview.isPopulated && naming.isPopulated;
       props.error = organizePreview.error || naming.error;
-      props.renameMovies = naming.item.renameMovies;
-      props.standardMovieFormat = naming.item.standardMovieFormat;
-      props.path = movie.path;
+      props.renameEpisodes = naming.item.renameEpisodes;
+      props.episodeFormat = naming.item.StandardEpisodeFormat;
+      props.path = series.path;
 
       return props;
     }
@@ -41,11 +41,13 @@ class OrganizePreviewModalContentConnector extends Component {
 
   componentDidMount() {
     const {
-      movieId
+      seriesId,
+      seasonNumber
     } = this.props;
 
     this.props.fetchOrganizePreview({
-      movieId
+      seriesId,
+      seasonNumber
     });
 
     this.props.fetchNamingSettings();
@@ -57,7 +59,7 @@ class OrganizePreviewModalContentConnector extends Component {
   onOrganizePress = (files) => {
     this.props.executeCommand({
       name: commandNames.RENAME_FILES,
-      movieId: this.props.movieId,
+      seriesId: this.props.seriesId,
       files
     });
 
@@ -78,7 +80,8 @@ class OrganizePreviewModalContentConnector extends Component {
 }
 
 OrganizePreviewModalContentConnector.propTypes = {
-  movieId: PropTypes.number.isRequired,
+  seriesId: PropTypes.number.isRequired,
+  seasonNumber: PropTypes.number,
   fetchOrganizePreview: PropTypes.func.isRequired,
   fetchNamingSettings: PropTypes.func.isRequired,
   executeCommand: PropTypes.func.isRequired,

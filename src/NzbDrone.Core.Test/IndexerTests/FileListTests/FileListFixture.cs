@@ -36,19 +36,19 @@ namespace NzbDrone.Core.Test.IndexerTests.FileListTests
 
             var releases = Subject.FetchRecent();
 
-            releases.Should().HaveCount(4);
+            releases.Should().HaveCount(2);
             releases.First().Should().BeOfType<TorrentInfo>();
 
             var torrentInfo = releases.First() as TorrentInfo;
 
-            torrentInfo.Title.Should().Be("Storming.Juno.2010.1080p.BluRay.x264-GUACAMOLE");
+            torrentInfo.Title.Should().Be("Mankind.Divided.2019.S01E01.1080p.WEB-DL");
             torrentInfo.DownloadProtocol.Should().Be(DownloadProtocol.Torrent);
-            torrentInfo.DownloadUrl.Should().Be("https://filelist.io/download.php?id=665873&passkey=somepass");
-            torrentInfo.InfoUrl.Should().Be("https://filelist.io/details.php?id=665873");
+            torrentInfo.DownloadUrl.Should().Be("https://filelist.io/download.php?id=1234&passkey=somepass");
+            torrentInfo.InfoUrl.Should().Be("https://filelist.io/details.php?id=1234");
             torrentInfo.CommentUrl.Should().BeNullOrEmpty();
             torrentInfo.Indexer.Should().Be(Subject.Definition.Name);
-            torrentInfo.PublishDate.Should().Be(DateTime.Parse("2020-01-25 22:20:19"));
-            torrentInfo.Size.Should().Be(8300512414);
+            torrentInfo.PublishDate.Should().Be(DateTime.Parse("2019-01-22 22:20:19").ToUniversalTime());
+            torrentInfo.Size.Should().Be(830512414);
             torrentInfo.InfoHash.Should().Be(null);
             torrentInfo.MagnetUrl.Should().Be(null);
             torrentInfo.Peers.Should().Be(2 + 12);

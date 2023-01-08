@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -149,7 +149,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Wdtv
                     details.Add(new XElement("episode_number", episode.EpisodeNumber.ToString("00")));
                     details.Add(new XElement("firstaired", episode.AirDate));
                     details.Add(new XElement("genre", string.Join(" / ", series.Genres)));
-                    details.Add(new XElement("actor", string.Join(" / ", series.Actors.ConvertAll(c => c.Name + " - " + c.Character))));
+                    details.Add(new XElement("actor", string.Join(" / ", episode.Actors.ConvertAll(c => c.Name + " - " + c.Character))));
                     details.Add(new XElement("overview", episode.Overview));
 
                     // Todo: get guest stars, writer and director

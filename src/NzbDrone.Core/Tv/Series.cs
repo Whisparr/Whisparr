@@ -13,7 +13,6 @@ namespace NzbDrone.Core.Tv
         {
             Images = new List<MediaCover.MediaCover>();
             Genres = new List<string>();
-            Actors = new List<Actor>();
             Seasons = new List<Season>();
             Tags = new HashSet<int>();
             OriginalLanguage = Language.English;
@@ -40,7 +39,6 @@ namespace NzbDrone.Core.Tv
         public int Year { get; set; }
         public Ratings Ratings { get; set; }
         public List<string> Genres { get; set; }
-        public List<Actor> Actors { get; set; }
         public string Certification { get; set; }
         public string RootFolderPath { get; set; }
         public DateTime Added { get; set; }

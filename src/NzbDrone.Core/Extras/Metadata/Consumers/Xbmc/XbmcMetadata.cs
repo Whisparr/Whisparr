@@ -197,20 +197,6 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
 
                     tvShow.Add(new XElement("studio", series.Network));
 
-                    foreach (var actor in series.Actors)
-                    {
-                        var xmlActor = new XElement("actor",
-                            new XElement("name", actor.Name),
-                            new XElement("role", actor.Character));
-
-                        if (actor.Images.Any())
-                        {
-                            xmlActor.Add(new XElement("thumb", actor.Images.First().Url));
-                        }
-
-                        tvShow.Add(xmlActor);
-                    }
-
                     var doc = new XDocument(tvShow);
                     doc.Save(xw);
 

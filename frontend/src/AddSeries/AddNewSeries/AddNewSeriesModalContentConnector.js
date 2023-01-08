@@ -55,7 +55,7 @@ class AddNewSeriesModalContentConnector extends Component {
 
   onAddSeriesPress = () => {
     const {
-      tvdbId,
+      tpdbId,
       rootFolderPath,
       monitor,
       qualityProfileId,
@@ -66,7 +66,7 @@ class AddNewSeriesModalContentConnector extends Component {
     } = this.props;
 
     this.props.addSeries({
-      tvdbId,
+      tpdbId,
       rootFolderPath: rootFolderPath.value,
       monitor: monitor.value,
       qualityProfileId: qualityProfileId.value,
@@ -92,7 +92,7 @@ class AddNewSeriesModalContentConnector extends Component {
 }
 
 AddNewSeriesModalContentConnector.propTypes = {
-  tvdbId: PropTypes.number.isRequired,
+  tpdbId: PropTypes.number.isRequired,
   rootFolderPath: PropTypes.object,
   monitor: PropTypes.object.isRequired,
   qualityProfileId: PropTypes.object,

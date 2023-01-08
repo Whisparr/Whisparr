@@ -8,7 +8,7 @@ import styles from './ImportSeriesSearchResult.css';
 
 function ImportSeriesSearchResult(props) {
   const {
-    tvdbId,
+    tpdbId,
     title,
     year,
     network,
@@ -16,7 +16,7 @@ function ImportSeriesSearchResult(props) {
     onPress
   } = props;
 
-  const onPressCallback = useCallback(() => onPress(tvdbId), [tvdbId, onPress]);
+  const onPressCallback = useCallback(() => onPress(tpdbId), [tpdbId, onPress]);
 
   return (
     <div className={styles.container}>
@@ -33,11 +33,11 @@ function ImportSeriesSearchResult(props) {
       </Link>
 
       <Link
-        className={styles.tvdbLink}
-        to={`http://www.thetvdb.com/?tab=series&id=${tvdbId}`}
+        className={styles.tpdbLink}
+        to={`http://www.thetpdb.com/?tab=series&id=${tpdbId}`}
       >
         <Icon
-          className={styles.tvdbLinkIcon}
+          className={styles.tpdbLinkIcon}
           name={icons.EXTERNAL_LINK}
           size={16}
         />
@@ -47,7 +47,7 @@ function ImportSeriesSearchResult(props) {
 }
 
 ImportSeriesSearchResult.propTypes = {
-  tvdbId: PropTypes.number.isRequired,
+  tpdbId: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   year: PropTypes.number.isRequired,
   network: PropTypes.string,

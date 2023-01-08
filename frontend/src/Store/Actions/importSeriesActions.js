@@ -221,7 +221,7 @@ export const actionHandlers = handleThunks({
 
       // Make sure we have a selected series and
       // the same series hasn't been added yet.
-      if (selectedSeries && !acc.some((a) => a.tvdbId === selectedSeries.tvdbId)) {
+      if (selectedSeries && !acc.some((a) => a.tpdbId === selectedSeries.tpdbId)) {
         const newSeries = getNewSeries(_.cloneDeep(selectedSeries), item);
         newSeries.path = item.path;
 

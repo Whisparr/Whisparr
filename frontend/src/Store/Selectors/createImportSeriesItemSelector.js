@@ -11,7 +11,7 @@ function createImportSeriesItemSelector() {
     (id, addSeries, importSeries, series) => {
       const item = _.find(importSeries.items, { id }) || {};
       const selectedSeries = item && item.selectedSeries;
-      const isExistingSeries = !!selectedSeries && _.some(series, { tvdbId: selectedSeries.tvdbId });
+      const isExistingSeries = !!selectedSeries && _.some(series, { tpdbId: selectedSeries.tpdbId });
 
       return {
         defaultMonitor: addSeries.defaults.monitor,

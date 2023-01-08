@@ -4,10 +4,10 @@ import createAllSeriesSelector from './createAllSeriesSelector';
 
 function createExistingSeriesSelector() {
   return createSelector(
-    (state, { tvdbId }) => tvdbId,
+    (state, { tpdbId }) => tpdbId,
     createAllSeriesSelector(),
-    (tvdbId, series) => {
-      return _.some(series, { tvdbId });
+    (tpdbId, series) => {
+      return _.some(series, { tpdbId });
     }
   );
 }

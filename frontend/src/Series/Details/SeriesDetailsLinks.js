@@ -7,78 +7,29 @@ import styles from './SeriesDetailsLinks.css';
 
 function SeriesDetailsLinks(props) {
   const {
-    tvdbId,
-    tvMazeId,
-    imdbId
+    tpdbId
   } = props;
 
   return (
     <div className={styles.links}>
       <Link
         className={styles.link}
-        to={`http://www.thetvdb.com/?tab=series&id=${tvdbId}`}
+        to={`http://www.thetpdb.com/?tab=series&id=${tpdbId}`}
       >
         <Label
           className={styles.linkLabel}
           kind={kinds.INFO}
           size={sizes.LARGE}
         >
-          The TVDB
+          TPDB
         </Label>
       </Link>
-
-      <Link
-        className={styles.link}
-        to={`http://trakt.tv/search/tvdb/${tvdbId}?id_type=show`}
-      >
-        <Label
-          className={styles.linkLabel}
-          kind={kinds.INFO}
-          size={sizes.LARGE}
-        >
-          Trakt
-        </Label>
-      </Link>
-
-      {
-        !!tvMazeId &&
-          <Link
-            className={styles.link}
-            to={`http://www.tvmaze.com/shows/${tvMazeId}/_`}
-          >
-            <Label
-              className={styles.linkLabel}
-              kind={kinds.INFO}
-              size={sizes.LARGE}
-            >
-              TV Maze
-            </Label>
-          </Link>
-      }
-
-      {
-        !!imdbId &&
-          <Link
-            className={styles.link}
-            to={`http://imdb.com/title/${imdbId}/`}
-          >
-            <Label
-              className={styles.linkLabel}
-              kind={kinds.INFO}
-              size={sizes.LARGE}
-            >
-              IMDB
-            </Label>
-          </Link>
-      }
     </div>
   );
 }
 
 SeriesDetailsLinks.propTypes = {
-  tvdbId: PropTypes.number.isRequired,
-  tvMazeId: PropTypes.number,
-  imdbId: PropTypes.string
+  tpdbId: PropTypes.number.isRequired,
 };
 
 export default SeriesDetailsLinks;

@@ -128,6 +128,10 @@ const links = [
         to: '/settings/metadata'
       },
       {
+        title: 'Metadata Source',
+        to: '/settings/metadatasource'
+      },
+      {
         title: 'Tags',
         to: '/settings/tags'
       },

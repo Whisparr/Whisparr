@@ -13,7 +13,7 @@ export function getSeriesStatusDetails(status) {
     statusDetails = {
       icon: icons.SERIES_DELETED,
       title: 'Deleted',
-      message: 'Series was deleted from TheTVDB'
+      message: 'Series was deleted from TheTPDB'
     };
   } else if (status === 'ended') {
     statusDetails = {

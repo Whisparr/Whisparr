@@ -32,7 +32,7 @@ function EditImportListExclusionModalContent(props) {
 
   const {
     title,
-    tvdbId
+    tpdbId
   } = item;
 
   return (
@@ -70,13 +70,13 @@ function EditImportListExclusionModalContent(props) {
               </FormGroup>
 
               <FormGroup>
-                <FormLabel>TVDB ID</FormLabel>
+                <FormLabel>TPDB ID</FormLabel>
 
                 <FormInputGroup
                   type={inputTypes.TEXT}
-                  name="tvdbId"
-                  helpText="The TVDB ID of the series to exclude"
-                  {...tvdbId}
+                  name="tpdbId"
+                  helpText="The TPDB ID of the series to exclude"
+                  {...tpdbId}
                   onChange={onInputChange}
                 />
               </FormGroup>
@@ -116,7 +116,7 @@ function EditImportListExclusionModalContent(props) {
 
 const ImportListExclusionShape = {
   title: PropTypes.shape(stringSettingShape).isRequired,
-  tvdbId: PropTypes.shape(numberSettingShape).isRequired
+  tpdbId: PropTypes.shape(numberSettingShape).isRequired
 };
 
 EditImportListExclusionModalContent.propTypes = {

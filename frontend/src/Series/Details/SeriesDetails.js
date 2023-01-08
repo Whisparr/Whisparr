@@ -174,9 +174,7 @@ class SeriesDetails extends Component {
   render() {
     const {
       id,
-      tvdbId,
-      tvMazeId,
-      imdbId,
+      tpdbId,
       title,
       runtime,
       ratings,
@@ -544,9 +542,7 @@ class SeriesDetails extends Component {
                     }
                     tooltip={
                       <SeriesDetailsLinks
-                        tvdbId={tvdbId}
-                        tvMazeId={tvMazeId}
-                        imdbId={imdbId}
+                        tpdbId={tpdbId}
                       />
                     }
                     kind={kinds.INVERSE}
@@ -691,9 +687,7 @@ class SeriesDetails extends Component {
 
 SeriesDetails.propTypes = {
   id: PropTypes.number.isRequired,
-  tvdbId: PropTypes.number.isRequired,
-  tvMazeId: PropTypes.number,
-  imdbId: PropTypes.string,
+  tpdbId: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   runtime: PropTypes.number.isRequired,
   ratings: PropTypes.object.isRequired,

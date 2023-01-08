@@ -21,9 +21,9 @@ function SceneInfo(props) {
     const altSceneSeasonNumber = sceneSeasonNumber === undefined ? seasonNumber : sceneSeasonNumber;
     const altSceneEpisodeNumber = sceneEpisodeNumber === undefined ? episodeNumber : sceneEpisodeNumber;
 
-    const mappingSeasonNumber = alternateTitle.sceneOrigin === 'tvdb' ? seasonNumber : altSceneSeasonNumber;
+    const mappingSeasonNumber = alternateTitle.sceneOrigin === 'tpdb' ? seasonNumber : altSceneSeasonNumber;
     const altSeasonNumber = (alternateTitle.sceneSeasonNumber !== -1 && alternateTitle.sceneSeasonNumber !== undefined) ? alternateTitle.sceneSeasonNumber : mappingSeasonNumber;
-    const altEpisodeNumber = alternateTitle.sceneOrigin === 'tvdb' ? episodeNumber : altSceneEpisodeNumber;
+    const altEpisodeNumber = alternateTitle.sceneOrigin === 'tpdb' ? episodeNumber : altSceneEpisodeNumber;
 
     if (altEpisodeNumber !== altSceneEpisodeNumber) {
       suffix = `S${padNumber(altSeasonNumber, 2)}E${padNumber(altEpisodeNumber, 2)}`;

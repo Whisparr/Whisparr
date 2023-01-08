@@ -9,7 +9,7 @@ export default function MetadataAttribution() {
         className={styles.attribution}
         to="/settings/metadatasource"
       >
-        Metadata is provided by TheTVDB
+        Metadata is provided by The Porn Database
       </Link>
     </div>
   );

@@ -72,7 +72,7 @@ function ReleaseSceneIndicator(props) {
   const messages = [];
 
   const isMixed = (sceneOrigin === 'mixed');
-  const isUnknown = (sceneOrigin === 'unknown' || sceneOrigin === 'unknown:tvdb');
+  const isUnknown = (sceneOrigin === 'unknown' || sceneOrigin === 'unknown:tpdb');
 
   let level = styles.levelNone;
 
@@ -84,8 +84,8 @@ function ReleaseSceneIndicator(props) {
     messages.push(<div key="unknown">Numbering varies for this episode and release does not match any known mappings.</div>);
     if (sceneOrigin === 'unknown') {
       messages.push(<div key="origin">Assuming Scene numbering.</div>);
-    } else if (sceneOrigin === 'unknown:tvdb') {
-      messages.push(<div key="origin">Assuming TheTVDB numbering.</div>);
+    } else if (sceneOrigin === 'unknown:tpdb') {
+      messages.push(<div key="origin">Assuming TheTPDB numbering.</div>);
     }
   } else if (mappingDifferent) {
     level = styles.levelMapped;
@@ -141,7 +141,7 @@ function ReleaseSceneIndicator(props) {
           <DescriptionListItem
             titleClassName={styles.title}
             descriptionClassName={styles.description}
-            title="TheTVDB"
+            title="TheTPDB"
             data={mappedNumber ?? 'unknown'}
           />
       }

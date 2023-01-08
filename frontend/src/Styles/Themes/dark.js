@@ -1,4 +1,4 @@
-const whisparrBlue = '#35c5f4';
+const whisparrPink = '#ff69b4';
 const darkGray = '#888';
 const mediumGray = '#999';
 const gray = '#adadad';
@@ -25,7 +25,7 @@ module.exports = {
   infoColor: '#5d9cec',
   purple,
   pink,
-  whisparrBlue,
+  whisparrPink,
   helpTextColor: '#909293',
   darkGray,
   gray,
@@ -34,8 +34,8 @@ module.exports = {
 
   // Theme Colors
 
-  themeBlue: whisparrBlue,
-  themeAlternateBlue: '#2193b5',
+  themePink: whisparrPink,
+  themeAlternatePink: '#c4337c',
   themeRed: '#c4273c',
   themeDarkColor: '#494949',
   themeLightColor: '#595959',
@@ -132,14 +132,14 @@ module.exports = {
   //
   // Menu
   menuItemColor: '#e1e2e3',
-  menuItemHoverColor: whisparrBlue,
+  menuItemHoverColor: whisparrPink,
   menuItemHoverBackgroundColor: '#606060',
 
   //
   // Toolbar
 
-  toobarButtonHoverColor: whisparrBlue,
-  toobarButtonSelectedColor: whisparrBlue,
+  toobarButtonHoverColor: whisparrPink,
+  toobarButtonSelectedColor: whisparrPink,
 
   //
   // Scroller

@@ -115,9 +115,9 @@ export const actionHandlers = handleThunks({
   [ADD_SERIES]: function(getState, payload, dispatch) {
     dispatch(set({ section, isAdding: true }));
 
-    const tvdbId = payload.tvdbId;
+    const tpdbId = payload.tpdbId;
     const items = getState().addSeries.items;
-    const newSeries = getNewSeries(_.cloneDeep(_.find(items, { tvdbId })), payload);
+    const newSeries = getNewSeries(_.cloneDeep(_.find(items, { tpdbId })), payload);
 
     const promise = createAjaxRequest({
       url: '/series',

@@ -24,6 +24,7 @@ import {
   faArrowCircleRight as fasArrowCircleRight,
   faAsterisk as fasAsterisk,
   faBackward as fasBackward,
+  faBan as fasBan,
   faBars as fasBars,
   faBolt as fasBolt,
   faBookmark as fasBookmark,

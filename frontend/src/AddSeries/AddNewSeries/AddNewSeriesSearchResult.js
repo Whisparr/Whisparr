@@ -40,7 +40,7 @@ class AddNewSeriesSearchResult extends Component {
     this.setState({ isNewAddSeriesModalOpen: false });
   };
 
-  onTVDBLinkPress = (event) => {
+  onTPDBLinkPress = (event) => {
     event.stopPropagation();
   };
 
@@ -49,7 +49,7 @@ class AddNewSeriesSearchResult extends Component {
 
   render() {
     const {
-      tvdbId,
+      tpdbId,
       title,
       titleSlug,
       year,
@@ -125,12 +125,12 @@ class AddNewSeriesSearchResult extends Component {
                 }
 
                 <Link
-                  className={styles.tvdbLink}
-                  to={`http://www.thetvdb.com/?tab=series&id=${tvdbId}`}
-                  onPress={this.onTVDBLinkPress}
+                  className={styles.tpdbLink}
+                  to={`http://www.thetpdb.com/?tab=series&id=${tpdbId}`}
+                  onPress={this.onTPDBLinkPress}
                 >
                   <Icon
-                    className={styles.tvdbLinkIcon}
+                    className={styles.tpdbLinkIcon}
                     name={icons.EXTERNAL_LINK}
                     size={28}
                   />
@@ -195,7 +195,7 @@ class AddNewSeriesSearchResult extends Component {
 
         <AddNewSeriesModal
           isOpen={isNewAddSeriesModalOpen && !isExistingSeries}
-          tvdbId={tvdbId}
+          tpdbId={tpdbId}
           title={title}
           year={year}
           overview={overview}
@@ -209,7 +209,7 @@ class AddNewSeriesSearchResult extends Component {
 }
 
 AddNewSeriesSearchResult.propTypes = {
-  tvdbId: PropTypes.number.isRequired,
+  tpdbId: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   titleSlug: PropTypes.string.isRequired,
   year: PropTypes.number.isRequired,

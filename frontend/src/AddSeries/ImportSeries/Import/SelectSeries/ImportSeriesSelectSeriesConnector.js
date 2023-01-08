@@ -37,13 +37,13 @@ class ImportSeriesSelectSeriesConnector extends Component {
     });
   };
 
-  onSeriesSelect = (tvdbId) => {
+  onSeriesSelect = (tpdbId) => {
     const {
       id,
       items
     } = this.props;
 
-    const selectedSeries = items.find((item) => item.tvdbId === tvdbId);
+    const selectedSeries = items.find((item) => item.tpdbId === tpdbId);
 
     this.props.setImportSeriesValue({
       id,

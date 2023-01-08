@@ -67,7 +67,7 @@ class ImportSeriesTable extends Component {
       const isSelected = selectedState[id];
 
       const isExistingSeries = !!selectedSeries &&
-        _.some(prevProps.allSeries, { tvdbId: selectedSeries.tvdbId });
+        _.some(prevProps.allSeries, { tpdbId: selectedSeries.tpdbId });
 
       // Props doesn't have a selected series or
       // the selected series is an existing series.

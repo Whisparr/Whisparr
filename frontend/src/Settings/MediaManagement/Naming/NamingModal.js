@@ -54,9 +54,7 @@ const seriesTokens = [
 ];
 
 const seriesIdTokens = [
-  { token: '{ImdbId}', example: 'tt12345' },
-  { token: '{TvdbId}', example: '12345' },
-  { token: '{TvMazeId}', example: '54321' }
+  { token: '{tpdbId}', example: '12345' }
 ];
 
 const seasonTokens = [

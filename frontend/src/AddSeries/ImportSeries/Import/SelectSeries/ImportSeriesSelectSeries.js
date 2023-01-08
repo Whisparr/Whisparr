@@ -96,10 +96,10 @@ class ImportSeriesSelectSeries extends Component {
     this.props.onSearchInputChange(this.state.term);
   };
 
-  onSeriesSelect = (tvdbId) => {
+  onSeriesSelect = (tpdbId) => {
     this.setState({ isOpen: false });
 
-    this.props.onSeriesSelect(tvdbId);
+    this.props.onSeriesSelect(tpdbId);
   };
 
   //
@@ -254,8 +254,8 @@ class ImportSeriesSelectSeries extends Component {
                             items.map((item) => {
                               return (
                                 <ImportSeriesSearchResultConnector
-                                  key={item.tvdbId}
-                                  tvdbId={item.tvdbId}
+                                  key={item.tpdbId}
+                                  tpdbId={item.tpdbId}
                                   title={item.title}
                                   year={item.year}
                                   network={item.network}

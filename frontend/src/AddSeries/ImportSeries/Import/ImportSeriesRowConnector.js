@@ -23,7 +23,7 @@ function createMapStateToProps() {
     createAllSeriesSelector(),
     (item, series) => {
       const selectedSeries = item && item.selectedSeries;
-      const isExistingSeries = !!selectedSeries && _.some(series, { tvdbId: selectedSeries.tvdbId });
+      const isExistingSeries = !!selectedSeries && _.some(series, { tpdbId: selectedSeries.tpdbId });
 
       return {
         ...item,

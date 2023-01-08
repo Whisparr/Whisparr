@@ -5,7 +5,7 @@ function filterAlternateTitles(alternateTitles, seriesTitle, useSceneNumbering, 
 
   if (alternateTitles) {
     alternateTitles.forEach((alternateTitle) => {
-      if (alternateTitle.sceneOrigin === 'unknown' || alternateTitle.sceneOrigin === 'unknown:tvdb') {
+      if (alternateTitle.sceneOrigin === 'unknown' || alternateTitle.sceneOrigin === 'unknown:tpdb') {
         return;
       }
 
@@ -33,8 +33,8 @@ function filterAlternateTitles(alternateTitles, seriesTitle, useSceneNumbering, 
 
       // Apply the alternative mapping (release to scene)
       const mappedAltSeasonNumber = hasAltSeasonNumber ? alternateTitle.seasonNumber : alternateTitle.sceneSeasonNumber;
-      // Select scene or tvdb on the episode
-      const mappedSeasonNumber = alternateTitle.sceneOrigin === 'tvdb' ? seasonNumber : sceneSeasonNumber;
+      // Select scene or tpdb on the episode
+      const mappedSeasonNumber = alternateTitle.sceneOrigin === 'tpdb' ? seasonNumber : sceneSeasonNumber;
 
       if (mappedSeasonNumber !== undefined && mappedSeasonNumber === mappedAltSeasonNumber) {
         seasonTitles.push(alternateTitle);

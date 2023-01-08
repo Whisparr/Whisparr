@@ -51,7 +51,7 @@ class ImportListExclusions extends Component {
         >
           <div className={styles.importListExclusionsHeader}>
             <div className={styles.title}>Title</div>
-            <div className={styles.tvdbId}>TVDB ID</div>
+            <div className={styles.tpdbId}>TPDB ID</div>
           </div>
 
           <div>

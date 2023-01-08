@@ -11,6 +11,7 @@ namespace NzbDrone.Core.Tv
         public Episode()
         {
             Images = new List<MediaCover.MediaCover>();
+            Actors = new List<Actor>();
         }
 
         public const string AIR_DATE_FORMAT = "yyyy-MM-dd";
@@ -35,6 +36,7 @@ namespace NzbDrone.Core.Tv
         public bool UnverifiedSceneNumbering { get; set; }
         public Ratings Ratings { get; set; }
         public List<MediaCover.MediaCover> Images { get; set; }
+        public List<Actor> Actors { get; set; }
         public DateTime? LastSearchTime { get; set; }
 
         public string SeriesTitle { get; private set; }

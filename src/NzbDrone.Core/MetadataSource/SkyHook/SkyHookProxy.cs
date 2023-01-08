@@ -193,7 +193,6 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 series.Certification = show.ContentRating.ToUpper();
             }
 
-            series.Actors = new List<Actor>();
             series.Seasons = show.Seasons.Select(MapSeason).ToList();
             series.Images = show.Images.Select(MapImage).ToList();
             series.Monitored = true;
@@ -209,13 +208,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 Character = arg.Character
             };
 
-            if (arg.Image != null)
-            {
-                newActor.Images = new List<MediaCover.MediaCover>
-                {
-                    new MediaCover.MediaCover(MediaCoverTypes.Headshot, arg.Image)
-                };
-            }
+            newActor.Images = arg.Images.Select(MapImage).ToList();
 
             return newActor;
         }
@@ -235,6 +228,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
 
             episode.AirDate = oracleEpisode.ReleaseDate.ToString();
             episode.AirDateUtc = oracleEpisode.ReleaseDate;
+            episode.Actors = oracleEpisode.Credits.Select(MapActors).ToList();
 
             episode.Ratings = new Ratings();
 

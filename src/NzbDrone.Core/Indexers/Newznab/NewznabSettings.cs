@@ -1,11 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using FluentValidation;
-using FluentValidation.Results;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Annotations;
-using NzbDrone.Core.ThingiProvider;
 using NzbDrone.Core.Validation;
 
 namespace NzbDrone.Core.Indexers.Newznab
@@ -39,9 +37,9 @@ namespace NzbDrone.Core.Indexers.Newznab
         {
             RuleFor(c => c).Custom((c, context) =>
             {
-                if (c.Categories.Empty() && c.AnimeCategories.Empty())
+                if (c.Categories.Empty())
                 {
-                    context.AddFailure("Either 'Categories' or 'Anime Categories' must be provided");
+                    context.AddFailure("'Categories' must be provided");
                 }
             });
 
@@ -60,8 +58,7 @@ namespace NzbDrone.Core.Indexers.Newznab
         public NewznabSettings()
         {
             ApiPath = "/api";
-            Categories = new[] { 5030, 5040 };
-            AnimeCategories = Enumerable.Empty<int>();
+            Categories = new[] { 6000, 6010, 6020, 6030, 6040, 6045, 6050, 6070, 6080, 6090 };
         }
 
         [FieldDefinition(0, Label = "URL")]
@@ -75,12 +72,6 @@ namespace NzbDrone.Core.Indexers.Newznab
 
         [FieldDefinition(3, Label = "Categories", Type = FieldType.Select, SelectOptionsProviderAction = "newznabCategories", HelpText = "Drop down list, leave blank to disable standard/daily shows")]
         public IEnumerable<int> Categories { get; set; }
-
-        [FieldDefinition(4, Label = "Anime Categories", Type = FieldType.Select, SelectOptionsProviderAction = "newznabCategories", HelpText = "Drop down list, leave blank to disable anime")]
-        public IEnumerable<int> AnimeCategories { get; set; }
-
-        [FieldDefinition(5, Label = "Anime Standard Format Search", Type = FieldType.Checkbox, HelpText = "Also search for anime using the standard numbering")]
-        public bool AnimeStandardFormatSearch { get; set; }
 
         [FieldDefinition(6, Label = "Additional Parameters", HelpText = "Additional Newznab parameters", Advanced = true)]
         public string AdditionalParameters { get; set; }

@@ -21,7 +21,6 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
             {
                 BaseUrl = "http://127.0.0.1:1234/",
                 Categories = new[] { 1, 2 },
-                AnimeCategories = new[] { 3, 4 },
                 ApiKey = "abcd",
             };
 
@@ -69,7 +68,7 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
         [Test]
         public void should_not_search_by_rid_if_not_supported()
         {
-            _capabilities.SupportedTvSearchParameters = new[] { "q", "season", "ep" };
+            _capabilities.SupportedSearchParameters = new[] { "q" };
 
             var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
 
@@ -82,20 +81,9 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
         }
 
         [Test]
-        public void should_search_by_rid_if_supported()
-        {
-            var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
-            results.GetTier(0).Should().HaveCount(1);
-
-            var page = results.GetAllTiers().First().First();
-
-            page.Url.Query.Should().Contain("rid=10");
-        }
-
-        [Test]
         public void should_not_search_by_tvdbid_if_not_supported()
         {
-            _capabilities.SupportedTvSearchParameters = new[] { "q", "season", "ep" };
+            _capabilities.SupportedSearchParameters = new[] { "q" };
 
             var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
             results.GetTier(0).Should().HaveCount(1);
@@ -109,7 +97,7 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
         [Test]
         public void should_search_by_tvdbid_if_supported()
         {
-            _capabilities.SupportedTvSearchParameters = new[] { "q", "tvdbid", "season", "ep" };
+            _capabilities.SupportedSearchParameters = new[] { "q" };
 
             var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
             results.GetTier(0).Should().HaveCount(1);
@@ -122,7 +110,7 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
         [Test]
         public void should_search_by_tvmaze_if_supported()
         {
-            _capabilities.SupportedTvSearchParameters = new[] { "q", "tvmazeid", "season", "ep" };
+            _capabilities.SupportedSearchParameters = new[] { "q" };
 
             var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
             results.GetTier(0).Should().HaveCount(1);
@@ -133,51 +121,9 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
         }
 
         [Test]
-        public void should_search_by_imdbid_if_supported()
-        {
-            _capabilities.SupportedTvSearchParameters = new[] { "q", "imdbid", "season", "ep" };
-
-            var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
-            results.GetTier(0).Should().HaveCount(1);
-
-            var page = results.GetAllTiers().First().First();
-
-            page.Url.Query.Should().Contain("imdbid=t40");
-        }
-
-        [Test]
-        public void should_prefer_search_by_tvdbid_if_rid_supported()
-        {
-            _capabilities.SupportedTvSearchParameters = new[] { "q", "tvdbid", "rid", "season", "ep" };
-
-            var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
-            results.GetTier(0).Should().HaveCount(1);
-
-            var page = results.GetAllTiers().First().First();
-
-            page.Url.Query.Should().Contain("tvdbid=20");
-            page.Url.Query.Should().NotContain("rid=10");
-        }
-
-        [Test]
-        public void should_use_aggregrated_id_search_if_supported()
-        {
-            _capabilities.SupportedTvSearchParameters = new[] { "q", "tvdbid", "rid", "season", "ep" };
-            _capabilities.SupportsAggregateIdSearch = true;
-
-            var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
-            results.GetTier(0).Should().HaveCount(1);
-
-            var page = results.GetTier(0).First().First();
-
-            page.Url.Query.Should().Contain("tvdbid=20");
-            page.Url.Query.Should().Contain("rid=10");
-        }
-
-        [Test]
         public void should_not_use_aggregrated_id_search_if_no_ids_supported()
         {
-            _capabilities.SupportedTvSearchParameters = new[] { "q", "season", "ep" };
+            _capabilities.SupportedSearchParameters = new[] { "q" };
             _capabilities.SupportsAggregateIdSearch = true; // Turns true if indexer supplies supportedParams.
 
             var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
@@ -192,7 +138,7 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
         [Test]
         public void should_fallback_to_title()
         {
-            _capabilities.SupportedTvSearchParameters = new[] { "q", "title", "tvdbid", "rid", "season", "ep" };
+            _capabilities.SupportedSearchParameters = new[] { "q" };
             _capabilities.SupportsAggregateIdSearch = true;
 
             var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
@@ -209,7 +155,7 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
         [Test]
         public void should_url_encode_title()
         {
-            _capabilities.SupportedTvSearchParameters = new[] { "q", "title", "tvdbid", "rid", "season", "ep" };
+            _capabilities.SupportedSearchParameters = new[] { "q" };
             _capabilities.SupportsAggregateIdSearch = true;
 
             _singleEpisodeSearchCriteria.SceneTitles[0] = "Elith & Little";
@@ -228,7 +174,7 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
         [Test]
         public void should_fallback_to_q()
         {
-            _capabilities.SupportedTvSearchParameters = new[] { "q", "tvdbid", "rid", "season", "ep" };
+            _capabilities.SupportedSearchParameters = new[] { "q" };
             _capabilities.SupportsAggregateIdSearch = true;
 
             var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
@@ -244,8 +190,8 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
         [Test]
         public void should_encode_raw_title()
         {
-            _capabilities.SupportedTvSearchParameters = new[] { "q", "season", "ep" };
-            _capabilities.TvTextSearchEngine = "raw";
+            _capabilities.SupportedSearchParameters = new[] { "q" };
+            _capabilities.TextSearchEngine = "raw";
             _singleEpisodeSearchCriteria.SceneTitles[0] = "Edith & Little";
 
             var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
@@ -261,8 +207,8 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
         [Test]
         public void should_use_clean_title_and_encode()
         {
-            _capabilities.SupportedTvSearchParameters = new[] { "q", "season", "ep" };
-            _capabilities.TvTextSearchEngine = "sphinx";
+            _capabilities.SupportedSearchParameters = new[] { "q" };
+            _capabilities.TextSearchEngine = "sphinx";
             _singleEpisodeSearchCriteria.SceneTitles[0] = "Edith & Little";
 
             var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);

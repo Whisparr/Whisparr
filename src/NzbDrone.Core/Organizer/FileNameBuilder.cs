@@ -787,20 +787,6 @@ namespace NzbDrone.Core.Organizer
             return ReplaceSeasonTokens(pattern, episodes.First().SeasonNumber);
         }
 
-        private string FormatAbsoluteNumberTokens(string basePattern, string formatPattern, List<Episode> episodes)
-        {
-            var pattern = string.Empty;
-
-            for (int i = 0; i < episodes.Count; i++)
-            {
-                var patternToReplace = i == 0 ? basePattern : formatPattern;
-
-                pattern += AbsoluteEpisodeRegex.Replace(patternToReplace, match => ReplaceNumberToken(match.Groups["absolute"].Value, episodes[i].AbsoluteEpisodeNumber.Value));
-            }
-
-            return ReplaceSeasonTokens(pattern, episodes.First().SeasonNumber);
-        }
-
         private string FormatRangeNumberTokens(string seasonEpisodePattern, string formatPattern, List<Episode> episodes)
         {
             var eps = new List<Episode> { episodes.First() };

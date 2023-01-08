@@ -77,15 +77,6 @@ namespace NzbDrone.Core.Indexers.Newznab
             return true;
         }
 
-        protected override ReleaseInfo ProcessItem(XElement item, ReleaseInfo releaseInfo)
-        {
-            releaseInfo = base.ProcessItem(item, releaseInfo);
-
-            releaseInfo.TvdbId = GetTvdbId(item);
-
-            return releaseInfo;
-        }
-
         protected override string GetInfoUrl(XElement item)
         {
             return ParseUrl(item.TryGetValue("comments").TrimEnd("#comments"));
@@ -120,19 +111,6 @@ namespace NzbDrone.Core.Indexers.Newznab
             }
 
             return base.GetPublishDate(item);
-        }
-
-        protected virtual int GetTvdbId(XElement item)
-        {
-            var tvdbIdString = TryGetNewznabAttribute(item, "tvdbid");
-            int tvdbId;
-
-            if (!tvdbIdString.IsNullOrWhiteSpace() && int.TryParse(tvdbIdString, out tvdbId))
-            {
-                return tvdbId;
-            }
-
-            return 0;
         }
 
         protected string TryGetNewznabAttribute(XElement item, string key, string defaultValue = "")

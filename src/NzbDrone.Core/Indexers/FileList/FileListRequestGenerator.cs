@@ -15,7 +15,7 @@ namespace NzbDrone.Core.Indexers.FileList
         {
             var pageableRequests = new IndexerPageableRequestChain();
 
-            pageableRequests.Add(GetRequest("latest-torrents", Settings.Categories.Concat(Settings.AnimeCategories), ""));
+            pageableRequests.Add(GetRequest("latest-torrents", Settings.Categories, ""));
 
             return pageableRequests;
         }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Xml;
 using FluentAssertions;
 using Moq;
@@ -106,7 +106,6 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
             var caps = Subject.GetCapabilities(_settings);
 
             caps.TextSearchEngine.Should().Be("sphinx");
-            caps.TvTextSearchEngine.Should().Be("sphinx");
         }
 
         [Test]
@@ -118,7 +117,6 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
             var caps = Subject.GetCapabilities(_settings);
 
             caps.TextSearchEngine.Should().Be("raw");
-            caps.TvTextSearchEngine.Should().Be("raw2");
         }
     }
 }

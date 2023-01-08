@@ -86,11 +86,6 @@ namespace NzbDrone.Core.Indexers.Newznab
                 settings.Categories = categories;
             }
 
-            if (animeCategories != null)
-            {
-                settings.AnimeCategories = animeCategories;
-            }
-
             if (apiPath.IsNotNullOrWhiteSpace())
             {
                 settings.ApiPath = apiPath;
@@ -117,13 +112,6 @@ namespace NzbDrone.Core.Indexers.Newznab
                 var capabilities = _capabilitiesProvider.GetCapabilities(Settings);
 
                 if (capabilities.SupportedSearchParameters != null && capabilities.SupportedSearchParameters.Contains("q"))
-                {
-                    return null;
-                }
-
-                if (capabilities.SupportedTvSearchParameters != null &&
-                    new[] { "q", "tvdbid", "rid" }.Any(v => capabilities.SupportedTvSearchParameters.Contains(v)) &&
-                    new[] { "season", "ep" }.All(v => capabilities.SupportedTvSearchParameters.Contains(v)))
                 {
                     return null;
                 }

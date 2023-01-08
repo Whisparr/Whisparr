@@ -57,13 +57,7 @@ namespace NzbDrone.Core.IndexerSearch
         {
             var series = _seriesService.GetSeries(episode.SeriesId);
 
-            if (episode.SeasonNumber == 0)
-            {
-                // Search for special episodes in season 0
-                return SearchSpecial(series, new List<Episode> { episode }, false, userInvokedSearch, interactiveSearch);
-            }
-
-            return SearchSingle(series, episode, false, userInvokedSearch, interactiveSearch);
+            return SearchSpecial(series, new List<Episode> { episode }, false, userInvokedSearch, interactiveSearch);
         }
 
         public List<DownloadDecision> SeasonSearch(int seriesId, int seasonNumber, bool missingOnly, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
@@ -84,43 +78,7 @@ namespace NzbDrone.Core.IndexerSearch
 
             var downloadDecisions = new List<DownloadDecision>();
 
-            if (seasonNumber == 0)
-            {
-                // search for special episodes in season 0
-                downloadDecisions.AddRange(SearchSpecial(series, episodes, monitoredOnly, userInvokedSearch, interactiveSearch));
-            }
-
-            if (episodes.Count == 1)
-            {
-                var searchSpec = Get<SingleEpisodeSearchCriteria>(series, episodes, monitoredOnly, userInvokedSearch, interactiveSearch);
-                searchSpec.SeasonNumber = seasonNumber;
-                searchSpec.EpisodeNumber = episodes.First().EpisodeNumber;
-
-                var decisions = Dispatch(indexer => indexer.Fetch(searchSpec), searchSpec);
-                downloadDecisions.AddRange(decisions);
-            }
-            else
-            {
-                var searchSpec = Get<SeasonSearchCriteria>(series, episodes, monitoredOnly, userInvokedSearch, interactiveSearch);
-                searchSpec.SeasonNumber = seasonNumber;
-
-                var decisions = Dispatch(indexer => indexer.Fetch(searchSpec), searchSpec);
-                downloadDecisions.AddRange(decisions);
-            }
-
-            return DeDupeDecisions(downloadDecisions);
-        }
-
-        private List<DownloadDecision> SearchSingle(Series series, Episode episode, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
-        {
-            var downloadDecisions = new List<DownloadDecision>();
-
-            var searchSpec = Get<SingleEpisodeSearchCriteria>(series, episode, monitoredOnly, userInvokedSearch, interactiveSearch);
-            searchSpec.SeasonNumber = episode.SeasonNumber;
-            searchSpec.EpisodeNumber = episode.EpisodeNumber;
-
-            var decisions = Dispatch(indexer => indexer.Fetch(searchSpec), searchSpec);
-            downloadDecisions.AddRange(decisions);
+            downloadDecisions.AddRange(SearchSpecial(series, episodes, monitoredOnly, userInvokedSearch, interactiveSearch));
 
             return DeDupeDecisions(downloadDecisions);
         }
@@ -138,18 +96,6 @@ namespace NzbDrone.Core.IndexerSearch
 
             downloadDecisions.AddRange(Dispatch(indexer => indexer.Fetch(searchSpec), searchSpec));
 
-            // Search for each episode by season/episode number as well
-            foreach (var episode in episodes)
-            {
-                // Episode needs to be monitored if it's not an interactive search
-                if (!interactiveSearch && monitoredOnly && !episode.Monitored)
-                {
-                    continue;
-                }
-
-                downloadDecisions.AddRange(SearchSingle(series, episode, monitoredOnly, userInvokedSearch, interactiveSearch));
-            }
-
             return DeDupeDecisions(downloadDecisions);
         }
 
@@ -157,6 +103,7 @@ namespace NzbDrone.Core.IndexerSearch
             where TSpec : SearchCriteriaBase, new()
         {
             var spec = new TSpec();
+            spec.SceneTitles = new List<string> { series.Title };
 
             spec.Series = series;
             spec.Episodes = episodes;
@@ -168,21 +115,6 @@ namespace NzbDrone.Core.IndexerSearch
             {
                 spec.SceneTitles.Add(series.Title);
             }
-
-            return spec;
-        }
-
-        private TSpec Get<TSpec>(Series series, Episode episode, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
-            where TSpec : SearchCriteriaBase, new()
-        {
-            var spec = new TSpec();
-
-            spec.Series = series;
-
-            spec.Episodes = new List<Episode> { episode };
-            spec.MonitoredEpisodesOnly = monitoredOnly;
-            spec.UserInvokedSearch = userInvokedSearch;
-            spec.InteractiveSearch = interactiveSearch;
 
             return spec;
         }

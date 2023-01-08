@@ -66,15 +66,6 @@ namespace NzbDrone.Core.Indexers.Torznab
             return true;
         }
 
-        protected override ReleaseInfo ProcessItem(XElement item, ReleaseInfo releaseInfo)
-        {
-            var torrentInfo = base.ProcessItem(item, releaseInfo) as TorrentInfo;
-
-            torrentInfo.TvdbId = GetTvdbId(item);
-
-            return torrentInfo;
-        }
-
         protected override string GetInfoUrl(XElement item)
         {
             return ParseUrl(item.TryGetValue("comments").TrimEnd("#comments"));
@@ -115,19 +106,6 @@ namespace NzbDrone.Core.Indexers.Torznab
             }
 
             return url;
-        }
-
-        protected virtual int GetTvdbId(XElement item)
-        {
-            var tvdbIdString = TryGetTorznabAttribute(item, "tvdbid");
-            int tvdbId;
-
-            if (!tvdbIdString.IsNullOrWhiteSpace() && int.TryParse(tvdbIdString, out tvdbId))
-            {
-                return tvdbId;
-            }
-
-            return 0;
         }
 
         protected override string GetInfoHash(XElement item)

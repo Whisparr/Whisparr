@@ -37,7 +37,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
         public Tuple<Series, List<Episode>> GetSeriesInfo(int tvdbSeriesId)
         {
             var httpRequest = _requestBuilder.Create()
-                                             .SetSegment("route", "scene")
+                                             .SetSegment("route", "release")
                                              .Resource(tvdbSeriesId.ToString())
                                              .Build();
 
@@ -259,16 +259,6 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
 
         private static SeriesStatusType MapSeriesStatus(string status)
         {
-            if (status.Equals("ended", StringComparison.InvariantCultureIgnoreCase))
-            {
-                return SeriesStatusType.Ended;
-            }
-
-            if (status.Equals("upcoming", StringComparison.InvariantCultureIgnoreCase))
-            {
-                return SeriesStatusType.Upcoming;
-            }
-
             return SeriesStatusType.Continuing;
         }
 

@@ -24,22 +24,6 @@ namespace NzbDrone.Core.Organizer
             return ruleBuilder.SetValidator(new ValidStandardEpisodeFormatValidator());
         }
 
-        public static IRuleBuilderOptions<T, string> ValidDailyEpisodeFormat<T>(this IRuleBuilder<T, string> ruleBuilder)
-        {
-            ruleBuilder.SetValidator(new NotEmptyValidator(null));
-            ruleBuilder.SetValidator(new IllegalCharactersValidator());
-
-            return ruleBuilder.SetValidator(new ValidDailyEpisodeFormatValidator());
-        }
-
-        public static IRuleBuilderOptions<T, string> ValidAnimeEpisodeFormat<T>(this IRuleBuilder<T, string> ruleBuilder)
-        {
-            ruleBuilder.SetValidator(new NotEmptyValidator(null));
-            ruleBuilder.SetValidator(new IllegalCharactersValidator());
-
-            return ruleBuilder.SetValidator(new ValidAnimeEpisodeFormatValidator());
-        }
-
         public static IRuleBuilderOptions<T, string> ValidSeriesFolderFormat<T>(this IRuleBuilder<T, string> ruleBuilder)
         {
             ruleBuilder.SetValidator(new NotEmptyValidator(null));
@@ -76,50 +60,6 @@ namespace NzbDrone.Core.Organizer
             var value = context.PropertyValue as string;
 
             if (!FileNameBuilder.SeasonEpisodePatternRegex.IsMatch(value) &&
-                !FileNameValidation.OriginalTokenRegex.IsMatch(value))
-            {
-                return false;
-            }
-
-            return true;
-        }
-    }
-
-    public class ValidDailyEpisodeFormatValidator : PropertyValidator
-    {
-        public ValidDailyEpisodeFormatValidator()
-            : base("Must contain Air Date OR Season and Episode OR Original Title")
-        {
-        }
-
-        protected override bool IsValid(PropertyValidatorContext context)
-        {
-            var value = context.PropertyValue as string;
-
-            if (!FileNameBuilder.SeasonEpisodePatternRegex.IsMatch(value) &&
-                !FileNameBuilder.AirDateRegex.IsMatch(value) &&
-                !FileNameValidation.OriginalTokenRegex.IsMatch(value))
-            {
-                return false;
-            }
-
-            return true;
-        }
-    }
-
-    public class ValidAnimeEpisodeFormatValidator : PropertyValidator
-    {
-        public ValidAnimeEpisodeFormatValidator()
-            : base("Must contain Absolute Episode number OR Season and Episode OR Original Title")
-        {
-        }
-
-        protected override bool IsValid(PropertyValidatorContext context)
-        {
-            var value = context.PropertyValue as string;
-
-            if (!FileNameBuilder.SeasonEpisodePatternRegex.IsMatch(value) &&
-                !FileNameBuilder.AbsoluteEpisodePatternRegex.IsMatch(value) &&
                 !FileNameValidation.OriginalTokenRegex.IsMatch(value))
             {
                 return false;

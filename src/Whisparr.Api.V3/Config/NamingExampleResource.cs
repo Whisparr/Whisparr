@@ -26,8 +26,6 @@ namespace Whisparr.Api.V3.Config
                 ReplaceIllegalCharacters = model.ReplaceIllegalCharacters,
                 MultiEpisodeStyle = model.MultiEpisodeStyle,
                 StandardEpisodeFormat = model.StandardEpisodeFormat,
-                DailyEpisodeFormat = model.DailyEpisodeFormat,
-                AnimeEpisodeFormat = model.AnimeEpisodeFormat,
                 SeriesFolderFormat = model.SeriesFolderFormat,
                 SeasonFolderFormat = model.SeasonFolderFormat,
                 SpecialsFolderFormat = model.SpecialsFolderFormat
@@ -61,8 +59,6 @@ namespace Whisparr.Api.V3.Config
                 ReplaceIllegalCharacters = resource.ReplaceIllegalCharacters,
                 MultiEpisodeStyle = resource.MultiEpisodeStyle,
                 StandardEpisodeFormat = resource.StandardEpisodeFormat,
-                DailyEpisodeFormat = resource.DailyEpisodeFormat,
-                AnimeEpisodeFormat = resource.AnimeEpisodeFormat,
                 SeriesFolderFormat = resource.SeriesFolderFormat,
                 SeasonFolderFormat = resource.SeasonFolderFormat,
                 SpecialsFolderFormat = resource.SpecialsFolderFormat

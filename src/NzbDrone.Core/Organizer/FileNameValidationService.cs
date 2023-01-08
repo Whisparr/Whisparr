@@ -9,8 +9,6 @@ namespace NzbDrone.Core.Organizer
     public interface IFilenameValidationService
     {
         ValidationFailure ValidateStandardFilename(SampleResult sampleResult);
-        ValidationFailure ValidateDailyFilename(SampleResult sampleResult);
-        ValidationFailure ValidateAnimeFilename(SampleResult sampleResult);
     }
 
     public class FileNameValidationService : IFilenameValidationService
@@ -48,34 +46,6 @@ namespace NzbDrone.Core.Organizer
             if (parsedEpisodeInfo.IsDaily)
             {
                 if (!parsedEpisodeInfo.AirDate.Equals(sampleResult.Episodes.Single().AirDate))
-                {
-                    return validationFailure;
-                }
-
-                return null;
-            }
-
-            if (!ValidateSeasonAndEpisodeNumbers(sampleResult.Episodes, parsedEpisodeInfo))
-            {
-                return validationFailure;
-            }
-
-            return null;
-        }
-
-        public ValidationFailure ValidateAnimeFilename(SampleResult sampleResult)
-        {
-            var validationFailure = new ValidationFailure("AnimeEpisodeFormat", ERROR_MESSAGE);
-            var parsedEpisodeInfo = Parser.Parser.ParseTitle(sampleResult.FileName);
-
-            if (parsedEpisodeInfo == null)
-            {
-                return validationFailure;
-            }
-
-            if (parsedEpisodeInfo.AbsoluteEpisodeNumbers.Any())
-            {
-                if (!parsedEpisodeInfo.AbsoluteEpisodeNumbers.First().Equals(sampleResult.Episodes.First().AbsoluteEpisodeNumber))
                 {
                     return validationFailure;
                 }

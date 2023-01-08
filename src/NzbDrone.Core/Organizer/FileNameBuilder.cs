@@ -27,7 +27,6 @@ namespace NzbDrone.Core.Organizer
         string GetSeriesFolder(Series series, NamingConfig namingConfig = null);
         string GetSeasonFolder(Series series, int seasonNumber, NamingConfig namingConfig = null);
         bool RequiresEpisodeTitle(Series series, List<Episode> episodes);
-        bool RequiresAbsoluteEpisodeNumber();
     }
 
     public class FileNameBuilder : IBuildFileNames
@@ -42,7 +41,6 @@ namespace NzbDrone.Core.Organizer
         private readonly ICached<EpisodeFormat[]> _episodeFormatCache;
         private readonly ICached<AbsoluteEpisodeFormat[]> _absoluteEpisodeFormatCache;
         private readonly ICached<bool> _requiresEpisodeTitleCache;
-        private readonly ICached<bool> _requiresAbsoluteEpisodeNumberCache;
         private readonly ICached<bool> _patternHasEpisodeIdentifierCache;
         private readonly Logger _logger;
 
@@ -125,7 +123,6 @@ namespace NzbDrone.Core.Organizer
             _episodeFormatCache = cacheManager.GetCache<EpisodeFormat[]>(GetType(), "episodeFormat");
             _absoluteEpisodeFormatCache = cacheManager.GetCache<AbsoluteEpisodeFormat[]>(GetType(), "absoluteEpisodeFormat");
             _requiresEpisodeTitleCache = cacheManager.GetCache<bool>(GetType(), "requiresEpisodeTitle");
-            _requiresAbsoluteEpisodeNumberCache = cacheManager.GetCache<bool>(GetType(), "requiresAbsoluteEpisodeNumber");
             _patternHasEpisodeIdentifierCache = cacheManager.GetCache<bool>(GetType(), "patternHasEpisodeIdentifier");
             _logger = logger;
         }
@@ -400,19 +397,6 @@ namespace NzbDrone.Core.Organizer
                 }
 
                 return false;
-            });
-        }
-
-        public bool RequiresAbsoluteEpisodeNumber()
-        {
-            var namingConfig = _namingConfigService.GetConfig();
-            var pattern = namingConfig.AnimeEpisodeFormat;
-
-            return _requiresAbsoluteEpisodeNumberCache.Get(pattern, () =>
-            {
-                var matches = AbsoluteEpisodeRegex.Matches(pattern);
-
-                return matches.Count > 0;
             });
         }
 

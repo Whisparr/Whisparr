@@ -30,7 +30,7 @@ namespace Whisparr.Http.Middleware
 
                 context.Response.StatusCode = 503;
                 context.Response.ContentType = isJson ? "application/json" : "text/plain";
-                await context.Response.Body.WriteAsync(bytes, 0, bytes.Length);
+                await context.Response.Body.WriteAsync(bytes);
 
                 return;
             }

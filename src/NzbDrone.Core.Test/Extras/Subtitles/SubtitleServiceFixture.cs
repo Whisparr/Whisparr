@@ -73,7 +73,7 @@ namespace NzbDrone.Core.Test.Extras.Subtitles
 
             var results = Subject.ImportFiles(_localEpisode, _episodeFile, files, true).ToList();
 
-            results.Count().Should().Be(0);
+            results.Count.Should().Be(0);
         }
 
         [Test]
@@ -92,7 +92,7 @@ namespace NzbDrone.Core.Test.Extras.Subtitles
 
             var results = Subject.ImportFiles(_localEpisode, _episodeFile, files, true).ToList();
 
-            results.Count().Should().Be(1);
+            results.Count.Should().Be(1);
 
             results[0].RelativePath.AsOsAgnostic().PathEquals(Path.Combine("Season 1", expectedOutputPath).AsOsAgnostic()).Should().Be(true);
         }
@@ -119,7 +119,7 @@ namespace NzbDrone.Core.Test.Extras.Subtitles
 
             var results = Subject.ImportFiles(_localEpisode, _episodeFile, files, true).ToList();
 
-            results.Count().Should().Be(expectedOutputs.Length);
+            results.Count.Should().Be(expectedOutputs.Length);
 
             for (int i = 0; i < expectedOutputs.Length; i++)
             {
@@ -148,7 +148,7 @@ namespace NzbDrone.Core.Test.Extras.Subtitles
 
             var results = Subject.ImportFiles(_localEpisode, _episodeFile, files, true).ToList();
 
-            results.Count().Should().Be(expectedOutputs.Length);
+            results.Count.Should().Be(expectedOutputs.Length);
 
             for (int i = 0; i < expectedOutputs.Length; i++)
             {
@@ -179,7 +179,7 @@ namespace NzbDrone.Core.Test.Extras.Subtitles
 
             var results = Subject.ImportFiles(_localEpisode, _episodeFile, new List<string> { subtitleFile }, true).ToList();
 
-            results.Count().Should().Be(1);
+            results.Count.Should().Be(1);
 
             results[0].RelativePath.AsOsAgnostic().PathEquals(Path.Combine("Season 1", expectedOutputPath).AsOsAgnostic()).Should().Be(true);
 
@@ -204,7 +204,7 @@ namespace NzbDrone.Core.Test.Extras.Subtitles
 
             var results = Subject.ImportFiles(_localEpisode, _episodeFile, new List<string> { subtitleFile }, true).ToList();
 
-            results.Count().Should().Be(0);
+            results.Count.Should().Be(0);
         }
     }
 }

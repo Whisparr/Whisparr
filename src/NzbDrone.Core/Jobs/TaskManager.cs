@@ -129,7 +129,7 @@ namespace NzbDrone.Core.Jobs
 
             var currentTasks = _scheduledTaskRepository.All().ToList();
 
-            _logger.Trace("Initializing jobs. Available: {0} Existing: {1}", defaultTasks.Count(), currentTasks.Count());
+            _logger.Trace("Initializing jobs. Available: {0} Existing: {1}", defaultTasks.Count, currentTasks.Count);
 
             foreach (var job in currentTasks)
             {

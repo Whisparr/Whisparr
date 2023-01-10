@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using FluentValidation;
 using NzbDrone.Core.Annotations;
 using NzbDrone.Core.Validation;
@@ -23,6 +24,20 @@ namespace NzbDrone.Core.Indexers.Rarbg
             BaseUrl = "https://torrentapi.org";
             RankedOnly = false;
             MinimumSeeders = IndexerDefaults.MINIMUM_SEEDERS;
+            Categories = new int[]
+            {
+                (int)RarbgCategories.Movie_Xvid,
+                (int)RarbgCategories.Movie_Xvid_720p,
+                (int)RarbgCategories.Movie_x264,
+                (int)RarbgCategories.Movie_x264_720p,
+                (int)RarbgCategories.Movie_x264_1080p,
+                (int)RarbgCategories.Movie_x264_4K,
+                (int)RarbgCategories.Movie_x265_1080p,
+                (int)RarbgCategories.Movie_x265_4K,
+                (int)RarbgCategories.Movie_x265_4K_HDR,
+                (int)RarbgCategories.Movie_BD_Remux,
+                (int)RarbgCategories.XXX
+            };
         }
 
         [FieldDefinition(0, Label = "API URL", HelpText = "URL to Rarbg api, not the website.")]
@@ -40,9 +55,42 @@ namespace NzbDrone.Core.Indexers.Rarbg
         [FieldDefinition(4)]
         public SeedCriteriaSettings SeedCriteria { get; set; } = new SeedCriteriaSettings();
 
+        [FieldDefinition(5, Type = FieldType.Select, Label = "Categories", SelectOptions = typeof(RarbgCategories), HelpText = "Categories for use in search and feeds. If unspecified, all options are used.")]
+        public IEnumerable<int> Categories { get; set; }
+
         public NzbDroneValidationResult Validate()
         {
             return new NzbDroneValidationResult(Validator.Validate(this));
         }
+    }
+
+    public enum RarbgCategories
+    {
+        [FieldOption]
+        Movie_Xvid = 14,
+        [FieldOption]
+        Movie_Xvid_720p = 48,
+        [FieldOption]
+        Movie_x264 = 17,
+        [FieldOption]
+        Movie_x264_720p = 45,
+        [FieldOption]
+        Movie_x264_1080p = 44,
+        [FieldOption]
+        Movie_x264_4K = 50,
+        [FieldOption]
+        Movie_x264_3D = 47,
+        [FieldOption]
+        Movie_x265_1080p = 54,
+        [FieldOption]
+        Movie_x265_4K = 51,
+        [FieldOption]
+        Movie_x265_4K_HDR = 52,
+        [FieldOption]
+        Movie_BD_Remux = 46,
+        [FieldOption]
+        Movie_Full_BD = 42,
+        [FieldOption]
+        XXX = 4,
     }
 }

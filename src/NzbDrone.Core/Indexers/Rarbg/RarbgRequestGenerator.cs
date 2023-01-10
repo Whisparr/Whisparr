@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using NzbDrone.Common.EnvironmentInfo;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;

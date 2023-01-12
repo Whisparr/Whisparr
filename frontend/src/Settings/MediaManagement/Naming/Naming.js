@@ -40,32 +40,6 @@ class Naming extends Component {
     });
   };
 
-  onDailyNamingModalOpenClick = () => {
-    this.setState({
-      isNamingModalOpen: true,
-      namingModalOptions: {
-        name: 'dailyEpisodeFormat',
-        season: true,
-        episode: true,
-        daily: true,
-        additional: true
-      }
-    });
-  };
-
-  onAnimeNamingModalOpenClick = () => {
-    this.setState({
-      isNamingModalOpen: true,
-      namingModalOptions: {
-        name: 'animeEpisodeFormat',
-        season: true,
-        episode: true,
-        anime: true,
-        additional: true
-      }
-    });
-  };
-
   onSeriesFolderNamingModalOpenClick = () => {
     this.setState({
       isNamingModalOpen: true,
@@ -132,10 +106,6 @@ class Naming extends Component {
 
     const standardEpisodeFormatHelpTexts = [];
     const standardEpisodeFormatErrors = [];
-    const dailyEpisodeFormatHelpTexts = [];
-    const dailyEpisodeFormatErrors = [];
-    const animeEpisodeFormatHelpTexts = [];
-    const animeEpisodeFormatErrors = [];
     const seriesFolderFormatHelpTexts = [];
     const seriesFolderFormatErrors = [];
     const seasonFolderFormatHelpTexts = [];
@@ -154,24 +124,6 @@ class Naming extends Component {
         standardEpisodeFormatHelpTexts.push(`Multi Episode: ${examples.multiEpisodeExample}`);
       } else {
         standardEpisodeFormatErrors.push({ message: 'Multi Episode: Invalid Format' });
-      }
-
-      if (examples.dailyEpisodeExample) {
-        dailyEpisodeFormatHelpTexts.push(`Example: ${examples.dailyEpisodeExample}`);
-      } else {
-        dailyEpisodeFormatErrors.push({ message: 'Invalid Format' });
-      }
-
-      if (examples.animeEpisodeExample) {
-        animeEpisodeFormatHelpTexts.push(`Single Episode: ${examples.animeEpisodeExample}`);
-      } else {
-        animeEpisodeFormatErrors.push({ message: 'Single Episode: Invalid Format' });
-      }
-
-      if (examples.animeMultiEpisodeExample) {
-        animeEpisodeFormatHelpTexts.push(`Multi Episode: ${examples.animeMultiEpisodeExample}`);
-      } else {
-        animeEpisodeFormatErrors.push({ message: 'Multi Episode: Invalid Format' });
       }
 
       if (examples.seriesFolderExample) {
@@ -247,36 +199,6 @@ class Naming extends Component {
                         {...settings.standardEpisodeFormat}
                         helpTexts={standardEpisodeFormatHelpTexts}
                         errors={[...standardEpisodeFormatErrors, ...settings.standardEpisodeFormat.errors]}
-                      />
-                    </FormGroup>
-
-                    <FormGroup size={sizes.LARGE}>
-                      <FormLabel>Daily Episode Format</FormLabel>
-
-                      <FormInputGroup
-                        inputClassName={styles.namingInput}
-                        type={inputTypes.TEXT}
-                        name="dailyEpisodeFormat"
-                        buttons={<FormInputButton onPress={this.onDailyNamingModalOpenClick}>?</FormInputButton>}
-                        onChange={onInputChange}
-                        {...settings.dailyEpisodeFormat}
-                        helpTexts={dailyEpisodeFormatHelpTexts}
-                        errors={[...dailyEpisodeFormatErrors, ...settings.dailyEpisodeFormat.errors]}
-                      />
-                    </FormGroup>
-
-                    <FormGroup size={sizes.LARGE}>
-                      <FormLabel>Anime Episode Format</FormLabel>
-
-                      <FormInputGroup
-                        inputClassName={styles.namingInput}
-                        type={inputTypes.TEXT}
-                        name="animeEpisodeFormat"
-                        buttons={<FormInputButton onPress={this.onAnimeNamingModalOpenClick}>?</FormInputButton>}
-                        onChange={onInputChange}
-                        {...settings.animeEpisodeFormat}
-                        helpTexts={animeEpisodeFormatHelpTexts}
-                        errors={[...animeEpisodeFormatErrors, ...settings.animeEpisodeFormat.errors]}
                       />
                     </FormGroup>
                   </div>

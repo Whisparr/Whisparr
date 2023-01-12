@@ -120,6 +120,17 @@ function Settings() {
         </Link>
 
         <div className={styles.summary}>
+          Information on where Sonarr gets Site and Release information
+        </div>
+
+        <Link
+          className={styles.link}
+          to="/settings/metadatasource"
+        >
+          Metadata Source
+        </Link>
+
+        <div className={styles.summary}>
           Information on where Whisparr gets Series and Episode information
         </div>
 

@@ -284,6 +284,8 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
         {
             switch (coverType.ToLower())
             {
+                case "logo":
+                    return MediaCoverTypes.Logo;
                 case "poster":
                     return MediaCoverTypes.Poster;
                 case "banner":

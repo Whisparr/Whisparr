@@ -111,7 +111,10 @@ class SeriesIndexPoster extends Component {
 
     const elementStyle = {
       width: `${posterWidth}px`,
-      height: `${posterHeight}px`
+      height: `${posterHeight}px`,
+      objectFit: 'contain',
+      'padding-right': '15px',
+      'padding-left': '5px'
     };
 
     return (

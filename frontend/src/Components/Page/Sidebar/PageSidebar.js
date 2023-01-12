@@ -20,7 +20,7 @@ const SIDEBAR_WIDTH = parseInt(dimensions.sidebarWidth);
 const links = [
   {
     iconName: icons.SERIES_CONTINUING,
-    title: 'Series',
+    title: 'Sites',
     to: '/',
     alias: '/series',
     children: [

@@ -232,6 +232,12 @@ class SeriesDetails extends Component {
     const statusDetails = getSeriesStatusDetails(status);
     const runningYears = statusDetails.title === 'Ended' ? `${year}-${getDateYear(previousAiring)}` : `${year}-`;
 
+    const elementStyle = {
+      width: '100%',
+      height: 'auto',
+      objectFit: 'contain'
+    };
+
     let episodeFilesCountMessage = 'No episode files';
 
     if (episodeFileCount === 1) {
@@ -337,6 +343,7 @@ class SeriesDetails extends Component {
             <div className={styles.headerContent}>
               <SeriesPoster
                 className={styles.poster}
+                style={elementStyle}
                 images={images}
                 size={500}
                 lazy={false}

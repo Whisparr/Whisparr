@@ -31,7 +31,8 @@
 .poster {
   flex: 0 0 170px;
   margin-right: 20px;
-  height: 250px;
+  max-width: 500px;
+  max-height: 250px;
 }
 
 .content {

@@ -1,4 +1,4 @@
-const whisparrBlue = '#ff69b4';
+const whisparrPink = '#ff69b4';
 const darkGray = '#888';
 const mediumGray = '#999';
 const gray = '#adadad';
@@ -23,10 +23,10 @@ module.exports = {
   successColor: '#27c24c',
   dangerColor: '#f05050',
   warningColor: '#ffa500',
-  infoColor: whisparrBlue,
+  infoColor: whisparrPink,
   purple,
   pink,
-  whisparrBlue,
+  whisparrPink,
   helpTextColor: '#909293',
   darkGray,
   gray,
@@ -35,8 +35,8 @@ module.exports = {
 
   // Theme Colors
 
-  themeBlue: whisparrBlue,
-  themeAlternateBlue: whisparrBlue,
+  themePink: whisparrPink,
+  themeAlternatePink: whisparrPink,
   themeRed: '#c4273c',
   themeDarkColor: '#3a3f51',
   themeLightColor: '#4f566f',
@@ -58,7 +58,7 @@ module.exports = {
   linkHoverColor: '#1b72e2',
 
   // Header
-  pageHeaderBackgroundColor: whisparrBlue,
+  pageHeaderBackgroundColor: whisparrPink,
 
   // Sidebar
 

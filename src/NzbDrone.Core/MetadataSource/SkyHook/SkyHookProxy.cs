@@ -37,7 +37,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
         public Tuple<Series, List<Episode>> GetSeriesInfo(int tvdbSeriesId)
         {
             var httpRequest = _requestBuilder.Create()
-                                             .SetSegment("route", "release")
+                                             .SetSegment("route", "site")
                                              .Resource(tvdbSeriesId.ToString())
                                              .Build();
 

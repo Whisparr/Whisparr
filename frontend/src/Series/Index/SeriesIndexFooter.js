@@ -60,7 +60,7 @@ class SeriesIndexFooter extends PureComponent {
                       enableColorImpairedMode && 'colorImpaired'
                     )}
                   />
-                  <div>Continuing (All episodes downloaded)</div>
+                  <div>Continuing (All scenes downloaded)</div>
                 </div>
 
                 <div className={styles.legendItem}>
@@ -70,7 +70,7 @@ class SeriesIndexFooter extends PureComponent {
                       enableColorImpairedMode && 'colorImpaired'
                     )}
                   />
-                  <div>Ended (All episodes downloaded)</div>
+                  <div>Ended (All scenes downloaded)</div>
                 </div>
 
                 <div className={styles.legendItem}>
@@ -80,7 +80,7 @@ class SeriesIndexFooter extends PureComponent {
                       enableColorImpairedMode && 'colorImpaired'
                     )}
                   />
-                  <div>Missing Episodes (Series monitored)</div>
+                  <div>Missing Scenes (Series monitored)</div>
                 </div>
 
                 <div className={styles.legendItem}>
@@ -90,25 +90,15 @@ class SeriesIndexFooter extends PureComponent {
                       enableColorImpairedMode && 'colorImpaired'
                     )}
                   />
-                  <div>Missing Episodes (Series not monitored)</div>
+                  <div>Missing Scenes (Series not monitored)</div>
                 </div>
               </div>
 
               <div className={styles.statistics}>
                 <DescriptionList>
                   <DescriptionListItem
-                    title="Series"
+                    title="Sites"
                     data={count}
-                  />
-
-                  <DescriptionListItem
-                    title="Ended"
-                    data={ended}
-                  />
-
-                  <DescriptionListItem
-                    title="Continuing"
-                    data={continuing}
                   />
                 </DescriptionList>
 
@@ -126,7 +116,7 @@ class SeriesIndexFooter extends PureComponent {
 
                 <DescriptionList>
                   <DescriptionListItem
-                    title="Episodes"
+                    title="Scenes"
                     data={episodes}
                   />
 

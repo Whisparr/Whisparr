@@ -107,10 +107,6 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
                 .Callback<SeasonSearchCriteria>(s => result.Add(s))
                 .Returns(new List<Parser.Model.ReleaseInfo>());
 
-            _mockIndexer.Setup(v => v.Fetch(It.IsAny<SpecialEpisodeSearchCriteria>()))
-                .Callback<SpecialEpisodeSearchCriteria>(s => result.Add(s))
-                .Returns(new List<Parser.Model.ReleaseInfo>());
-
             return result;
         }
 
@@ -235,8 +231,6 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
             var criteria = allCriteria.OfType<SingleEpisodeSearchCriteria>().ToList();
 
             criteria.Count.Should().Be(1);
-            criteria[0].SeasonNumber.Should().Be(2);
-            criteria[0].EpisodeNumber.Should().Be(3);
         }
 
         [Test]
@@ -286,8 +280,6 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
             criteria1[0].SeasonNumber.Should().Be(5);
 
             criteria2.Count.Should().Be(1);
-            criteria2[0].SeasonNumber.Should().Be(6);
-            criteria2[0].EpisodeNumber.Should().Be(11);
         }
 
         [Test]

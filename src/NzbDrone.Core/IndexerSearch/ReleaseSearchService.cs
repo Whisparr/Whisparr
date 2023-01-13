@@ -57,7 +57,7 @@ namespace NzbDrone.Core.IndexerSearch
         {
             var series = _seriesService.GetSeries(episode.SeriesId);
 
-            return SearchSpecial(series, new List<Episode> { episode }, false, userInvokedSearch, interactiveSearch);
+            return SearchSingle(series, episode, false, userInvokedSearch, interactiveSearch);
         }
 
         public List<DownloadDecision> SeasonSearch(int seriesId, int seasonNumber, bool missingOnly, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
@@ -78,23 +78,20 @@ namespace NzbDrone.Core.IndexerSearch
 
             var downloadDecisions = new List<DownloadDecision>();
 
-            downloadDecisions.AddRange(SearchSpecial(series, episodes, monitoredOnly, userInvokedSearch, interactiveSearch));
-
             return DeDupeDecisions(downloadDecisions);
         }
 
-        private List<DownloadDecision> SearchSpecial(Series series, List<Episode> episodes, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
+        private List<DownloadDecision> SearchSingle(Series series, Episode episode, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
         {
             var downloadDecisions = new List<DownloadDecision>();
 
-            var searchSpec = Get<SpecialEpisodeSearchCriteria>(series, episodes, monitoredOnly, userInvokedSearch, interactiveSearch);
+            var searchSpec = Get<SingleEpisodeSearchCriteria>(series, new List<Episode> { episode }, monitoredOnly, userInvokedSearch, interactiveSearch);
+            searchSpec.ReleaseDate = episode.AirDateUtc;
+            searchSpec.Performer = episode.Actors.Select(p => p.Name).FirstOrDefault();
+            searchSpec.EpisodeTitle = episode.Title;
 
-            // build list of queries for each episode in the form: "<series> <episode-title>"
-            searchSpec.EpisodeQueryTitles = episodes.Where(e => !string.IsNullOrWhiteSpace(e.Title))
-                                                    .SelectMany(e => searchSpec.CleanSceneTitles.Select(title => title + " " + SearchCriteriaBase.GetCleanSceneTitle(e.Title)))
-                                                    .ToArray();
-
-            downloadDecisions.AddRange(Dispatch(indexer => indexer.Fetch(searchSpec), searchSpec));
+            var decisions = Dispatch(indexer => indexer.Fetch(searchSpec), searchSpec);
+            downloadDecisions.AddRange(decisions);
 
             return DeDupeDecisions(downloadDecisions);
         }

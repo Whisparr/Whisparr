@@ -35,11 +35,11 @@ namespace NzbDrone.Core.DecisionEngine.Specifications.Search
 
         private Decision IsSatisfiedBy(RemoteEpisode remoteEpisode, SingleEpisodeSearchCriteria singleEpisodeSpec)
         {
-            if (singleEpisodeSpec.SeasonNumber != remoteEpisode.ParsedEpisodeInfo.SeasonNumber)
-            {
-                _logger.Debug("Season number does not match searched season number, skipping.");
-                return Decision.Reject("Wrong season");
-            }
+            // if (singleEpisodeSpec.SeasonNumber != remoteEpisode.ParsedEpisodeInfo.SeasonNumber)
+            // {
+            //     _logger.Debug("Season number does not match searched season number, skipping.");
+            //     return Decision.Reject("Wrong season");
+            // }
 
             if (!remoteEpisode.ParsedEpisodeInfo.EpisodeNumbers.Any())
             {
@@ -47,11 +47,11 @@ namespace NzbDrone.Core.DecisionEngine.Specifications.Search
                 return Decision.Reject("Full season pack");
             }
 
-            if (!remoteEpisode.ParsedEpisodeInfo.EpisodeNumbers.Contains(singleEpisodeSpec.EpisodeNumber))
-            {
-                _logger.Debug("Episode number does not match searched episode number, skipping.");
-                return Decision.Reject("Wrong episode");
-            }
+            // if (!remoteEpisode.ParsedEpisodeInfo.EpisodeNumbers.Contains(singleEpisodeSpec.EpisodeNumber))
+            // {
+            //     _logger.Debug("Episode number does not match searched episode number, skipping.");
+            //     return Decision.Reject("Wrong episode");
+            // }
 
             return Decision.Accept();
         }

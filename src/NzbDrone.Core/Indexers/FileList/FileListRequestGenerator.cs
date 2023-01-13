@@ -24,7 +24,7 @@ namespace NzbDrone.Core.Indexers.FileList
         {
             var pageableRequests = new IndexerPageableRequestChain();
 
-            AddNameRequests(pageableRequests, searchCriteria, "search-torrents", Settings.Categories, $"&season={searchCriteria.SeasonNumber}&episode={searchCriteria.EpisodeNumber}");
+            AddNameRequests(pageableRequests, searchCriteria, "search-torrents", Settings.Categories, string.Empty);
 
             return pageableRequests;
         }
@@ -36,11 +36,6 @@ namespace NzbDrone.Core.Indexers.FileList
             AddNameRequests(pageableRequests, searchCriteria, "search-torrents", Settings.Categories, $"&season={searchCriteria.SeasonNumber}");
 
             return pageableRequests;
-        }
-
-        public IndexerPageableRequestChain GetSearchRequests(SpecialEpisodeSearchCriteria searchCriteria)
-        {
-            return new IndexerPageableRequestChain();
         }
 
         private void AddImdbRequests(IndexerPageableRequestChain chain, SearchCriteriaBase searchCriteria, string searchType, IEnumerable<int> categories, string parameters)

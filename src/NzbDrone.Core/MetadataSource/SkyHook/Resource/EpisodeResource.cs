@@ -13,7 +13,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook.Resource
         public int? AiredBeforeSeasonNumber { get; set; }
         public int? AiredBeforeEpisodeNumber { get; set; }
         public string Title { get; set; }
-        public DateTime? ReleaseDate { get; set; }
+        public string ReleaseDate { get; set; }
         public string Overview { get; set; }
         public string Image { get; set; }
         public List<ActorResource> Credits { get; set; }

@@ -205,7 +205,8 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             var newActor = new Actor
             {
                 Name = arg.Name,
-                Character = arg.Character
+                Character = arg.Character,
+                TpdbId = arg.ForeignId
             };
 
             newActor.Images = arg.Images.Select(MapImage).ToList();
@@ -226,8 +227,8 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             episode.AiredBeforeSeasonNumber = oracleEpisode.AiredBeforeSeasonNumber;
             episode.AiredBeforeEpisodeNumber = oracleEpisode.AiredBeforeEpisodeNumber;
 
-            episode.AirDate = oracleEpisode.ReleaseDate.ToString();
-            episode.AirDateUtc = oracleEpisode.ReleaseDate;
+            episode.AirDate = oracleEpisode.ReleaseDate;
+            episode.AirDateUtc = DateTime.Parse(episode.AirDate, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.AssumeUniversal);
             episode.Actors = oracleEpisode.Credits.Select(MapActors).ToList();
 
             episode.Ratings = new Ratings();

@@ -34,7 +34,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook.Resource
         public RatingResource Rating { get; set; }
 
         public List<ImageResource> Images { get; set; }
-        public List<SeasonResource> Seasons { get; set; }
+        public List<int> Years { get; set; }
         public List<EpisodeResource> Episodes { get; set; }
     }
 }

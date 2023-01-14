@@ -193,9 +193,9 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 series.Certification = show.ContentRating.ToUpper();
             }
 
-            var seasons = show.Seasons.OrderBy(x => x.SeasonNumber);
+            var seasons = show.Years.OrderBy(x => x);
 
-            series.Year = seasons.Select(s => s.SeasonNumber).FirstOrDefault();
+            series.Year = show.Years.FirstOrDefault();
             series.Seasons = seasons.Select(MapSeason).ToList();
             series.Images = show.Images.Select(MapImage).ToList();
             series.Monitored = true;
@@ -222,7 +222,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             var episode = new Episode();
             episode.TvdbId = oracleEpisode.ForeignId;
             episode.Overview = oracleEpisode.Overview;
-            episode.SeasonNumber = oracleEpisode.SeasonNumber;
+            episode.SeasonNumber = oracleEpisode.Year;
             episode.EpisodeNumber = oracleEpisode.EpisodeNumber;
             episode.AbsoluteEpisodeNumber = oracleEpisode.AbsoluteEpisodeNumber;
             episode.Title = oracleEpisode.Title;
@@ -245,13 +245,13 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             return episode;
         }
 
-        private static Season MapSeason(SeasonResource seasonResource)
+        private static Season MapSeason(int seasonResource)
         {
             return new Season
             {
-                SeasonNumber = seasonResource.SeasonNumber,
-                Images = seasonResource.Images.Select(MapImage).ToList(),
-                Monitored = seasonResource.SeasonNumber > 0
+                SeasonNumber = seasonResource,
+                Images = new List<MediaCover.MediaCover>(),
+                Monitored = true
             };
         }
 

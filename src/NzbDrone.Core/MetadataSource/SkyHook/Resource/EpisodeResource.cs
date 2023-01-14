@@ -6,7 +6,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook.Resource
     public class EpisodeResource
     {
         public int ForeignId { get; set; }
-        public int SeasonNumber { get; set; }
+        public int Year { get; set; }
         public int EpisodeNumber { get; set; }
         public int? AbsoluteEpisodeNumber { get; set; }
         public int? AiredAfterSeasonNumber { get; set; }

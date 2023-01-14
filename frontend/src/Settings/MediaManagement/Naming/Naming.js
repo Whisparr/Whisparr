@@ -137,12 +137,6 @@ class Naming extends Component {
       } else {
         seasonFolderFormatErrors.push({ message: 'Invalid Format' });
       }
-
-      if (examples.specialsFolderExample) {
-        specialsFolderFormatHelpTexts.push(`Example: ${examples.specialsFolderExample}`);
-      } else {
-        specialsFolderFormatErrors.push({ message: 'Invalid Format' });
-      }
     }
 
     return (
@@ -234,24 +228,6 @@ class Naming extends Component {
                   {...settings.seasonFolderFormat}
                   helpTexts={seasonFolderFormatHelpTexts}
                   errors={[...seasonFolderFormatErrors, ...settings.seasonFolderFormat.errors]}
-                />
-              </FormGroup>
-
-              <FormGroup
-                advancedSettings={advancedSettings}
-                isAdvanced={true}
-              >
-                <FormLabel>Specials Folder Format</FormLabel>
-
-                <FormInputGroup
-                  inputClassName={styles.namingInput}
-                  type={inputTypes.TEXT}
-                  name="specialsFolderFormat"
-                  buttons={<FormInputButton onPress={this.onSpecialsFolderNamingModalOpenClick}>?</FormInputButton>}
-                  onChange={onInputChange}
-                  {...settings.specialsFolderFormat}
-                  helpTexts={specialsFolderFormatHelpTexts}
-                  errors={[...specialsFolderFormatErrors, ...settings.specialsFolderFormat.errors]}
                 />
               </FormGroup>
 

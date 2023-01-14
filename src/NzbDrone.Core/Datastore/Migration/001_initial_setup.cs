@@ -218,8 +218,7 @@ namespace NzbDrone.Core.Datastore.Migration
                   .WithColumn("StandardEpisodeFormat").AsString().Nullable()
                   .WithColumn("SeasonFolderFormat").AsString().Nullable()
                   .WithColumn("SeriesFolderFormat").AsString().Nullable()
-                  .WithColumn("ReplaceIllegalCharacters").AsBoolean().WithDefaultValue(true)
-                  .WithColumn("SpecialsFolderFormat").AsString().Nullable();
+                  .WithColumn("ReplaceIllegalCharacters").AsBoolean().WithDefaultValue(true);
 
             Create.TableForModel("Metadata")
                   .WithColumn("Enable").AsBoolean().NotNullable()

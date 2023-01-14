@@ -305,7 +305,7 @@ namespace NzbDrone.Core.Organizer
             AddIdTokens(tokenHandlers, series);
             AddSeasonTokens(tokenHandlers, seasonNumber);
 
-            var format = seasonNumber == 0 ? namingConfig.SpecialsFolderFormat : namingConfig.SeasonFolderFormat;
+            var format = namingConfig.SeasonFolderFormat;
             var folderName = ReplaceTokens(format, tokenHandlers, namingConfig);
 
             folderName = CleanFolderName(folderName);

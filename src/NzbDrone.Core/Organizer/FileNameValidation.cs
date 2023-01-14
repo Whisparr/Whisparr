@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -38,13 +38,6 @@ namespace NzbDrone.Core.Organizer
             ruleBuilder.SetValidator(new IllegalCharactersValidator());
 
             return ruleBuilder.SetValidator(new RegularExpressionValidator(SeasonFolderRegex)).WithMessage("Must contain season number");
-        }
-
-        public static IRuleBuilderOptions<T, string> ValidSpecialsFolderFormat<T>(this IRuleBuilder<T, string> ruleBuilder)
-        {
-            ruleBuilder.SetValidator(new NotEmptyValidator(null));
-
-            return ruleBuilder.SetValidator(new IllegalCharactersValidator());
         }
     }
 

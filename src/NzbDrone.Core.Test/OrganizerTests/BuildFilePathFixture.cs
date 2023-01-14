@@ -50,7 +50,6 @@ namespace NzbDrone.Core.Test.OrganizerTests
                 .Build();
 
             _namingConfig.SeasonFolderFormat = seasonFolderFormat;
-            _namingConfig.SpecialsFolderFormat = "MySpecials";
 
             Subject.BuildFilePath(fakeEpisodes, fakeSeries, fakeEpisodeFile, ".mkv").Should().Be(expectedPath.AsOsAgnostic());
         }

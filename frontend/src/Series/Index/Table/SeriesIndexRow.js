@@ -2,7 +2,6 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import CheckInput from 'Components/Form/CheckInput';
-import HeartRating from 'Components/HeartRating';
 import IconButton from 'Components/Link/IconButton';
 import Link from 'Components/Link/Link';
 import SpinnerIconButton from 'Components/Link/SpinnerIconButton';
@@ -373,19 +372,6 @@ class SeriesIndexRow extends Component {
                   <span title={joinedGenres}>
                     {joinedGenres}
                   </span>
-                </VirtualTableRowCell>
-              );
-            }
-
-            if (name === 'ratings') {
-              return (
-                <VirtualTableRowCell
-                  key={name}
-                  className={styles[name]}
-                >
-                  <HeartRating
-                    rating={ratings.value}
-                  />
                 </VirtualTableRowCell>
               );
             }

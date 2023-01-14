@@ -7,9 +7,7 @@ import styles from './SeriesDetailsLinks.css';
 
 function SeriesDetailsLinks(props) {
   const {
-    tvdbId,
-    tvMazeId,
-    imdbId
+    tvdbId
   } = props;
 
   return (
@@ -39,46 +37,12 @@ function SeriesDetailsLinks(props) {
           Trakt
         </Label>
       </Link>
-
-      {
-        !!tvMazeId &&
-          <Link
-            className={styles.link}
-            to={`http://www.tvmaze.com/shows/${tvMazeId}/_`}
-          >
-            <Label
-              className={styles.linkLabel}
-              kind={kinds.INFO}
-              size={sizes.LARGE}
-            >
-              TV Maze
-            </Label>
-          </Link>
-      }
-
-      {
-        !!imdbId &&
-          <Link
-            className={styles.link}
-            to={`http://imdb.com/title/${imdbId}/`}
-          >
-            <Label
-              className={styles.linkLabel}
-              kind={kinds.INFO}
-              size={sizes.LARGE}
-            >
-              IMDB
-            </Label>
-          </Link>
-      }
     </div>
   );
 }
 
 SeriesDetailsLinks.propTypes = {
-  tvdbId: PropTypes.number.isRequired,
-  tvMazeId: PropTypes.number,
-  imdbId: PropTypes.string
+  tvdbId: PropTypes.number.isRequired
 };
 
 export default SeriesDetailsLinks;

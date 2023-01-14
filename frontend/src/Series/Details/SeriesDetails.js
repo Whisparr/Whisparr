@@ -3,7 +3,6 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import TextTruncate from 'react-text-truncate';
-import HeartRating from 'Components/HeartRating';
 import Icon from 'Components/Icon';
 import Label from 'Components/Label';
 import IconButton from 'Components/Link/IconButton';
@@ -175,8 +174,6 @@ class SeriesDetails extends Component {
     const {
       id,
       tvdbId,
-      tvMazeId,
-      imdbId,
       title,
       runtime,
       ratings,
@@ -412,11 +409,6 @@ class SeriesDetails extends Component {
                         </span>
                     }
 
-                    <HeartRating
-                      rating={ratings.value}
-                      iconSize={20}
-                    />
-
                     <SeriesGenres genres={genres} />
 
                     <span>
@@ -552,8 +544,6 @@ class SeriesDetails extends Component {
                     tooltip={
                       <SeriesDetailsLinks
                         tvdbId={tvdbId}
-                        tvMazeId={tvMazeId}
-                        imdbId={imdbId}
                       />
                     }
                     kind={kinds.INVERSE}
@@ -699,8 +689,6 @@ class SeriesDetails extends Component {
 SeriesDetails.propTypes = {
   id: PropTypes.number.isRequired,
   tvdbId: PropTypes.number.isRequired,
-  tvMazeId: PropTypes.number,
-  imdbId: PropTypes.string,
   title: PropTypes.string.isRequired,
   runtime: PropTypes.number.isRequired,
   ratings: PropTypes.object.isRequired,

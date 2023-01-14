@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import HeartRating from 'Components/HeartRating';
 import Icon from 'Components/Icon';
 import Label from 'Components/Label';
 import Link from 'Components/Link/Link';
@@ -139,12 +138,6 @@ class AddNewSeriesSearchResult extends Component {
             </div>
 
             <div>
-              <Label size={sizes.LARGE}>
-                <HeartRating
-                  rating={ratings.value}
-                  iconSize={13}
-                />
-              </Label>
 
               {
                 network ?

@@ -62,7 +62,7 @@ namespace NzbDrone.Core.Organizer
         public static readonly Regex AbsoluteEpisodePatternRegex = new Regex(@"(?<separator>(?<=})[- ._]+?)?(?<absolute>{absolute(?:\:0+)?})(?<separator>[- ._]+?(?={))?",
                                                                     RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-        public static readonly Regex AirDateRegex = new Regex(@"\{Air(\s|\W|_)Date\}", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        public static readonly Regex AirDateRegex = new Regex(@"\{Release(\s|\W|_)Date\}", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         public static readonly Regex SeriesTitleRegex = new Regex(@"(?<token>\{(?:Site)(?<separator>[- ._])(Clean)?Title(The)?(Year)?\})",
                                                                             RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -497,11 +497,11 @@ namespace NzbDrone.Core.Organizer
         {
             if (!episodes.First().AirDate.IsNullOrWhiteSpace())
             {
-                tokenHandlers["{Air Date}"] = m => episodes.First().AirDate.Replace('-', ' ');
+                tokenHandlers["{Release Date}"] = m => episodes.First().AirDate.Replace('-', ' ');
             }
             else
             {
-                tokenHandlers["{Air Date}"] = m => "Unknown";
+                tokenHandlers["{Release Date}"] = m => "Unknown";
             }
         }
 

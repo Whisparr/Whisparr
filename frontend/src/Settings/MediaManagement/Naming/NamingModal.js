@@ -68,8 +68,8 @@ const episodeTokens = [
 ];
 
 const airDateTokens = [
-  { token: '{Air-Date}', example: '2016-03-20' },
-  { token: '{Air Date}', example: '2016 03 20' }
+  { token: '{Release-Date}', example: '2016-03-20' },
+  { token: '{Release Date}', example: '2016 03 20' }
 ];
 
 const absoluteTokens = [

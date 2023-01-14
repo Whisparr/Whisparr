@@ -44,7 +44,7 @@ namespace NzbDrone.Core.Organizer
     public class ValidStandardEpisodeFormatValidator : PropertyValidator
     {
         public ValidStandardEpisodeFormatValidator()
-            : base("Must contain season and episode numbers OR Original Title")
+            : base("Must contain release date OR Original Title")
         {
         }
 
@@ -52,7 +52,7 @@ namespace NzbDrone.Core.Organizer
         {
             var value = context.PropertyValue as string;
 
-            if (!FileNameBuilder.SeasonEpisodePatternRegex.IsMatch(value) &&
+            if (!FileNameBuilder.AirDateRegex.IsMatch(value) &&
                 !FileNameValidation.OriginalTokenRegex.IsMatch(value))
             {
                 return false;

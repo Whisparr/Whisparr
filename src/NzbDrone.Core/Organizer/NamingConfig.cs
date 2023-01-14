@@ -9,7 +9,7 @@ namespace NzbDrone.Core.Organizer
             RenameEpisodes = false,
             ReplaceIllegalCharacters = true,
             MultiEpisodeStyle = 0,
-            StandardEpisodeFormat = "{Site Title} - S{season:00}E{episode:00} - {Episode Title} {Quality Full}",
+            StandardEpisodeFormat = "{Site Title} - {Release-Date} - {Episode Title} {Quality Full}",
             SeriesFolderFormat = "{Site Title}",
             SeasonFolderFormat = "Season {season}"
         };

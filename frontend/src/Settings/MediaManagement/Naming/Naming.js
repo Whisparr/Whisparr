@@ -59,16 +59,6 @@ class Naming extends Component {
     });
   };
 
-  onSpecialsFolderNamingModalOpenClick = () => {
-    this.setState({
-      isNamingModalOpen: true,
-      namingModalOptions: {
-        name: 'specialsFolderFormat',
-        season: true
-      }
-    });
-  };
-
   onNamingModalClose = () => {
     this.setState({ isNamingModalOpen: false });
   };
@@ -110,8 +100,6 @@ class Naming extends Component {
     const seriesFolderFormatErrors = [];
     const seasonFolderFormatHelpTexts = [];
     const seasonFolderFormatErrors = [];
-    const specialsFolderFormatHelpTexts = [];
-    const specialsFolderFormatErrors = [];
 
     if (examplesPopulated) {
       if (examples.singleEpisodeExample) {

@@ -39,7 +39,6 @@ namespace NzbDrone.Core.Organizer
         private readonly IUpdateMediaInfo _mediaInfoUpdater;
         private readonly ICustomFormatCalculationService _formatCalculator;
         private readonly ICached<EpisodeFormat[]> _episodeFormatCache;
-        private readonly ICached<AbsoluteEpisodeFormat[]> _absoluteEpisodeFormatCache;
         private readonly ICached<bool> _requiresEpisodeTitleCache;
         private readonly ICached<bool> _patternHasEpisodeIdentifierCache;
         private readonly Logger _logger;
@@ -53,14 +52,8 @@ namespace NzbDrone.Core.Organizer
         private static readonly Regex SeasonRegex = new Regex(@"(?<season>\{season(?:\:0+)?})",
                                                               RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-        private static readonly Regex AbsoluteEpisodeRegex = new Regex(@"(?<absolute>\{absolute(?:\:0+)?})",
-                                                               RegexOptions.Compiled | RegexOptions.IgnoreCase);
-
         public static readonly Regex SeasonEpisodePatternRegex = new Regex(@"(?<separator>(?<=})[- ._]+?)?(?<seasonEpisode>s?{season(?:\:0+)?}(?<episodeSeparator>[- ._]?[ex])(?<episode>{episode(?:\:0+)?}))(?<separator>[- ._]+?(?={))?",
                                                                             RegexOptions.Compiled | RegexOptions.IgnoreCase);
-
-        public static readonly Regex AbsoluteEpisodePatternRegex = new Regex(@"(?<separator>(?<=})[- ._]+?)?(?<absolute>{absolute(?:\:0+)?})(?<separator>[- ._]+?(?={))?",
-                                                                    RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         public static readonly Regex AirDateRegex = new Regex(@"\{Release(\s|\W|_)Date\}", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
@@ -121,7 +114,6 @@ namespace NzbDrone.Core.Organizer
             _mediaInfoUpdater = mediaInfoUpdater;
             _formatCalculator = formatCalculator;
             _episodeFormatCache = cacheManager.GetCache<EpisodeFormat[]>(GetType(), "episodeFormat");
-            _absoluteEpisodeFormatCache = cacheManager.GetCache<AbsoluteEpisodeFormat[]>(GetType(), "absoluteEpisodeFormat");
             _requiresEpisodeTitleCache = cacheManager.GetCache<bool>(GetType(), "requiresEpisodeTitle");
             _patternHasEpisodeIdentifierCache = cacheManager.GetCache<bool>(GetType(), "patternHasEpisodeIdentifier");
             _logger = logger;
@@ -158,7 +150,6 @@ namespace NzbDrone.Core.Organizer
                 var patternHasEpisodeIdentifier = GetPatternHasEpisodeIdentifier(splitPattern);
 
                 splitPattern = AddSeasonEpisodeNumberingTokens(splitPattern, tokenHandlers, episodes, namingConfig);
-                splitPattern = AddAbsoluteNumberingTokens(splitPattern, tokenHandlers, series, episodes, namingConfig);
 
                 UpdateMediaInfoIfNeeded(splitPattern, episodeFile, series);
 
@@ -475,19 +466,6 @@ namespace NzbDrone.Core.Organizer
             return pattern;
         }
 
-        private string AddAbsoluteNumberingTokens(string pattern, Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Series series, List<Episode> episodes, NamingConfig namingConfig)
-        {
-            var absoluteEpisodeFormats = GetAbsoluteFormat(pattern).DistinctBy(v => v.AbsoluteEpisodePattern).ToList();
-
-            foreach (var absoluteEpisodeFormat in absoluteEpisodeFormats)
-            {
-                pattern = pattern.Replace(absoluteEpisodeFormat.AbsoluteEpisodePattern, "");
-                continue;
-            }
-
-            return pattern;
-        }
-
         private void AddSeasonTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, int seasonNumber)
         {
             tokenHandlers["{Season}"] = m => seasonNumber.ToString(m.CustomFormat);
@@ -601,7 +579,6 @@ namespace NzbDrone.Core.Organizer
 
         private void AddIdTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Series series)
         {
-            tokenHandlers["{ImdbId}"] = m => series.ImdbId ?? string.Empty;
             tokenHandlers["{TvdbId}"] = m => series.TvdbId.ToString();
         }
 
@@ -827,26 +804,11 @@ namespace NzbDrone.Core.Organizer
                 }).ToArray());
         }
 
-        private AbsoluteEpisodeFormat[] GetAbsoluteFormat(string pattern)
-        {
-            return _absoluteEpisodeFormatCache.Get(pattern, () => AbsoluteEpisodePatternRegex.Matches(pattern).OfType<Match>()
-                .Select(match => new AbsoluteEpisodeFormat
-                {
-                    Separator = match.Groups["separator"].Value.IsNotNullOrWhiteSpace() ? match.Groups["separator"].Value : "-",
-                    AbsoluteEpisodePattern = match.Groups["absolute"].Value
-                }).ToArray());
-        }
-
         private bool GetPatternHasEpisodeIdentifier(string pattern)
         {
             return _patternHasEpisodeIdentifierCache.Get(pattern, () =>
             {
                 if (SeasonEpisodePatternRegex.IsMatch(pattern))
-                {
-                    return true;
-                }
-
-                if (AbsoluteEpisodePatternRegex.IsMatch(pattern))
                 {
                     return true;
                 }

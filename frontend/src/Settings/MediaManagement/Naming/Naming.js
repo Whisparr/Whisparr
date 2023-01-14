@@ -120,12 +120,6 @@ class Naming extends Component {
         standardEpisodeFormatErrors.push({ message: 'Single Episode: Invalid Format' });
       }
 
-      if (examples.multiEpisodeExample) {
-        standardEpisodeFormatHelpTexts.push(`Multi Episode: ${examples.multiEpisodeExample}`);
-      } else {
-        standardEpisodeFormatErrors.push({ message: 'Multi Episode: Invalid Format' });
-      }
-
       if (examples.seriesFolderExample) {
         seriesFolderFormatHelpTexts.push(`Example: ${examples.seriesFolderExample}`);
       } else {

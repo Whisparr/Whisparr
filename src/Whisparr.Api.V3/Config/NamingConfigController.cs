@@ -78,15 +78,10 @@ namespace Whisparr.Api.V3.Config
             var sampleResource = new NamingExampleResource();
 
             var singleEpisodeSampleResult = _filenameSampleService.GetStandardSample(nameSpec);
-            var multiEpisodeSampleResult = _filenameSampleService.GetMultiEpisodeSample(nameSpec);
 
             sampleResource.SingleEpisodeExample = _filenameValidationService.ValidateStandardFilename(singleEpisodeSampleResult) != null
                     ? null
                     : singleEpisodeSampleResult.FileName;
-
-            sampleResource.MultiEpisodeExample = _filenameValidationService.ValidateStandardFilename(multiEpisodeSampleResult) != null
-                    ? null
-                    : multiEpisodeSampleResult.FileName;
 
             sampleResource.SeriesFolderExample = nameSpec.SeriesFolderFormat.IsNullOrWhiteSpace()
                 ? null
@@ -102,15 +97,12 @@ namespace Whisparr.Api.V3.Config
         private void ValidateFormatResult(NamingConfig nameSpec)
         {
             var singleEpisodeSampleResult = _filenameSampleService.GetStandardSample(nameSpec);
-            var multiEpisodeSampleResult = _filenameSampleService.GetMultiEpisodeSample(nameSpec);
 
             var singleEpisodeValidationResult = _filenameValidationService.ValidateStandardFilename(singleEpisodeSampleResult);
-            var multiEpisodeValidationResult = _filenameValidationService.ValidateStandardFilename(multiEpisodeSampleResult);
 
             var validationFailures = new List<ValidationFailure>();
 
             validationFailures.AddIfNotNull(singleEpisodeValidationResult);
-            validationFailures.AddIfNotNull(multiEpisodeValidationResult);
 
             if (validationFailures.Any())
             {

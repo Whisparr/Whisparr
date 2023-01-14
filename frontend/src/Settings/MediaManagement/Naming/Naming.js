@@ -208,7 +208,7 @@ class Naming extends Component {
                 advancedSettings={advancedSettings}
                 isAdvanced={true}
               >
-                <FormLabel>Series Folder Format</FormLabel>
+                <FormLabel>Site Folder Format</FormLabel>
 
                 <FormInputGroup
                   inputClassName={styles.namingInput}
@@ -217,7 +217,7 @@ class Naming extends Component {
                   buttons={<FormInputButton onPress={this.onSeriesFolderNamingModalOpenClick}>?</FormInputButton>}
                   onChange={onInputChange}
                   {...settings.seriesFolderFormat}
-                  helpTexts={['Used when adding a new series or moving series via the series editor', ...seriesFolderFormatHelpTexts]}
+                  helpTexts={['Used when adding a new site or moving sites via the site editor', ...seriesFolderFormatHelpTexts]}
                   errors={[...seriesFolderFormatErrors, ...settings.seriesFolderFormat.errors]}
                 />
               </FormGroup>

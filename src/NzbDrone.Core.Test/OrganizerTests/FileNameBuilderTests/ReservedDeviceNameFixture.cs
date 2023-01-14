@@ -64,7 +64,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         public void should_replace_reserved_device_name_in_series_folder(string title, string expected)
         {
             _series.Title = title;
-            _namingConfig.SeriesFolderFormat = "{Series.Title}";
+            _namingConfig.SeriesFolderFormat = "{Site.Title}";
 
             Subject.GetSeriesFolder(_series).Should().Be($"{expected}");
         }
@@ -74,7 +74,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         public void should_replace_reserved_device_name_in_season_folder(string title, string expected)
         {
             _series.Title = title;
-            _namingConfig.SeasonFolderFormat = "{Series.Title} - Season {Season:00}";
+            _namingConfig.SeasonFolderFormat = "{Site.Title} - Season {Season:00}";
 
             Subject.GetSeasonFolder(_series, 1).Should().Be($"{expected} - Season 01");
         }
@@ -84,7 +84,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         public void should_replace_reserved_device_name_in_file_name(string title, string expected)
         {
             _series.Title = title;
-            _namingConfig.StandardEpisodeFormat = "{Series.Title} - S{Season:00}E{Episode:00}";
+            _namingConfig.StandardEpisodeFormat = "{Site.Title} - S{Season:00}E{Episode:00}";
 
             Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile).Should().Be($"{expected} - S15E06");
         }

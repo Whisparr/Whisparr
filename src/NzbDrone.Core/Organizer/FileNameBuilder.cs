@@ -64,7 +64,7 @@ namespace NzbDrone.Core.Organizer
 
         public static readonly Regex AirDateRegex = new Regex(@"\{Air(\s|\W|_)Date\}", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-        public static readonly Regex SeriesTitleRegex = new Regex(@"(?<token>\{(?:Series)(?<separator>[- ._])(Clean)?Title(The)?(Year)?\})",
+        public static readonly Regex SeriesTitleRegex = new Regex(@"(?<token>\{(?:Site)(?<separator>[- ._])(Clean)?Title(The)?(Year)?\})",
                                                                             RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         private static readonly Regex FileNameCleanupRegex = new Regex(@"([- ._])(\1)+", RegexOptions.Compiled);
@@ -402,14 +402,14 @@ namespace NzbDrone.Core.Organizer
 
         private void AddSeriesTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Series series)
         {
-            tokenHandlers["{Series Title}"] = m => series.Title;
-            tokenHandlers["{Series CleanTitle}"] = m => CleanTitle(series.Title);
-            tokenHandlers["{Series CleanTitleYear}"] = m => CleanTitle(TitleYear(series.Title, series.Year));
-            tokenHandlers["{Series TitleThe}"] = m => TitleThe(series.Title);
-            tokenHandlers["{Series TitleYear}"] = m => TitleYear(series.Title, series.Year);
-            tokenHandlers["{Series TitleTheYear}"] = m => TitleYear(TitleThe(series.Title), series.Year);
-            tokenHandlers["{Series TitleFirstCharacter}"] = m => TitleThe(series.Title).Substring(0, 1).FirstCharToUpper();
-            tokenHandlers["{Series Year}"] = m => series.Year.ToString();
+            tokenHandlers["{Site Title}"] = m => series.Title;
+            tokenHandlers["{Site CleanTitle}"] = m => CleanTitle(series.Title);
+            tokenHandlers["{Site CleanTitleYear}"] = m => CleanTitle(TitleYear(series.Title, series.Year));
+            tokenHandlers["{Site TitleThe}"] = m => TitleThe(series.Title);
+            tokenHandlers["{Site TitleYear}"] = m => TitleYear(series.Title, series.Year);
+            tokenHandlers["{Site TitleTheYear}"] = m => TitleYear(TitleThe(series.Title), series.Year);
+            tokenHandlers["{Site TitleFirstCharacter}"] = m => TitleThe(series.Title).Substring(0, 1).FirstCharToUpper();
+            tokenHandlers["{Site Year}"] = m => series.Year.ToString();
         }
 
         private string AddSeasonEpisodeNumberingTokens(string pattern, Dictionary<string, Func<TokenMatch, string>> tokenHandlers, List<Episode> episodes, NamingConfig namingConfig)

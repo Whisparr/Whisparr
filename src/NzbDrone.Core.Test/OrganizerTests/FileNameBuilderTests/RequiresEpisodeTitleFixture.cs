@@ -40,7 +40,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_return_false_when_episode_title_is_not_part_of_the_pattern()
         {
-            _namingConfig.StandardEpisodeFormat = "{Series Title} S{season:00}E{episode:00}";
+            _namingConfig.StandardEpisodeFormat = "{Site Title} S{season:00}E{episode:00}";
             Subject.RequiresEpisodeTitle(_series, new List<Episode> { _episode }).Should().BeFalse();
         }
 

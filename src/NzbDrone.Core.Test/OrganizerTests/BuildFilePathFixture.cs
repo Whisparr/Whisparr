@@ -77,7 +77,7 @@ namespace NzbDrone.Core.Test.OrganizerTests
                 .With(s => s.SceneName = filename)
                 .Build();
 
-            _namingConfig.SeasonFolderFormat = "{Series Title} Season {season:0}";
+            _namingConfig.SeasonFolderFormat = "{Site Title} Season {season:0}";
 
             Subject.BuildFilePath(fakeEpisodes, fakeSeries, fakeEpisodeFile, ".mkv").Should().Be(expectedPath.AsOsAgnostic());
         }

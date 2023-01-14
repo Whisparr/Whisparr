@@ -72,7 +72,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_replace_Series_space_Title()
         {
-            _namingConfig.StandardEpisodeFormat = "{Series Title}";
+            _namingConfig.StandardEpisodeFormat = "{Site Title}";
 
             Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
                    .Should().Be("South Park");
@@ -81,7 +81,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_replace_Series_underscore_Title()
         {
-            _namingConfig.StandardEpisodeFormat = "{Series_Title}";
+            _namingConfig.StandardEpisodeFormat = "{Site_Title}";
 
             Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
                    .Should().Be("South_Park");
@@ -90,7 +90,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_replace_Series_dot_Title()
         {
-            _namingConfig.StandardEpisodeFormat = "{Series.Title}";
+            _namingConfig.StandardEpisodeFormat = "{Site.Title}";
 
             Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
                    .Should().Be("South.Park");
@@ -108,7 +108,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_replace_SERIES_TITLE_with_all_caps()
         {
-            _namingConfig.StandardEpisodeFormat = "{SERIES TITLE}";
+            _namingConfig.StandardEpisodeFormat = "{SITETITLE}";
 
             Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
                    .Should().Be("SOUTH PARK");
@@ -126,7 +126,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_replace_series_title_with_all_lower_case()
         {
-            _namingConfig.StandardEpisodeFormat = "{series title}";
+            _namingConfig.StandardEpisodeFormat = "{site title}";
 
             Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
                    .Should().Be("south park");
@@ -135,7 +135,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_cleanup_Series_Title()
         {
-            _namingConfig.StandardEpisodeFormat = "{Series.CleanTitle}";
+            _namingConfig.StandardEpisodeFormat = "{Site.CleanTitle}";
             _series.Title = "South Park (1997)";
 
             Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
@@ -232,7 +232,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_replace_all_contents_in_pattern()
         {
-            _namingConfig.StandardEpisodeFormat = "{Series Title} - S{season:00}E{episode:00} - {Episode Title} [{Quality Title}]";
+            _namingConfig.StandardEpisodeFormat = "{Site Title} - S{season:00}E{episode:00} - {Episode Title} [{Quality Title}]";
 
             Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
                    .Should().Be("South Park - S15E06 - City Sushi [HDTV-720p]");
@@ -240,8 +240,8 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
         [TestCase("Some Escaped {{ String", "Some Escaped { String")]
         [TestCase("Some Escaped }} String", "Some Escaped } String")]
-        [TestCase("Some Escaped {{Series Title}} String", "Some Escaped {Series Title} String")]
-        [TestCase("Some Escaped {{{Series Title}}} String", "Some Escaped {South Park} String")]
+        [TestCase("Some Escaped {{Site Title}} String", "Some Escaped {Site Title} String")]
+        [TestCase("Some Escaped {{{Site Title}}} String", "Some Escaped {South Park} String")]
         public void should_escape_token_in_format(string format, string expected)
         {
             _namingConfig.StandardEpisodeFormat = format;
@@ -253,7 +253,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_escape_token_in_title()
         {
-            _namingConfig.StandardEpisodeFormat = "Some Unescaped {Series Title} String";
+            _namingConfig.StandardEpisodeFormat = "Some Unescaped {Site Title} String";
             _series.Title = "My {Quality Full} Title";
 
             Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
@@ -317,7 +317,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         public void should_be_able_to_use_original_title()
         {
             _series.Title = "30 Rock";
-            _namingConfig.StandardEpisodeFormat = "{Series Title} - {Original Title}";
+            _namingConfig.StandardEpisodeFormat = "{Site Title} - {Original Title}";
 
             _episodeFile.SceneName = "30.Rock.S01E01.xvid-LOL";
             _episodeFile.RelativePath = "30 Rock - S01E01 - Test";
@@ -329,7 +329,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_trim_periods_from_end_of_episode_title()
         {
-            _namingConfig.StandardEpisodeFormat = "{Series Title} - S{season:00}E{episode:00} - {Episode Title}";
+            _namingConfig.StandardEpisodeFormat = "{Site Title} - S{season:00}E{episode:00} - {Episode Title}";
             _namingConfig.MultiEpisodeStyle = 3;
 
             var episode = Builder<Episode>.CreateNew()
@@ -345,7 +345,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_trim_question_marks_from_end_of_episode_title()
         {
-            _namingConfig.StandardEpisodeFormat = "{Series Title} - S{season:00}E{episode:00} - {Episode Title}";
+            _namingConfig.StandardEpisodeFormat = "{Site Title} - S{season:00}E{episode:00} - {Episode Title}";
             _namingConfig.MultiEpisodeStyle = 3;
 
             var episode = Builder<Episode>.CreateNew()
@@ -361,7 +361,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_replace_double_period_with_single_period()
         {
-            _namingConfig.StandardEpisodeFormat = "{Series.Title}.S{season:00}E{episode:00}.{Episode.Title}";
+            _namingConfig.StandardEpisodeFormat = "{Site.Title}.S{season:00}E{episode:00}.{Episode.Title}";
 
             var episode = Builder<Episode>.CreateNew()
                             .With(e => e.Title = "Part 1")
@@ -376,7 +376,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_replace_triple_period_with_single_period()
         {
-            _namingConfig.StandardEpisodeFormat = "{Series.Title}.S{season:00}E{episode:00}.{Episode.Title}";
+            _namingConfig.StandardEpisodeFormat = "{Site.Title}.S{season:00}E{episode:00}.{Episode.Title}";
 
             var episode = Builder<Episode>.CreateNew()
                             .With(e => e.Title = "Part 1")
@@ -391,7 +391,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_not_replace_absolute_numbering_when_series_is_not_anime()
         {
-            _namingConfig.StandardEpisodeFormat = "{Series.Title}.S{season:00}E{episode:00}.{absolute:00}.{Episode.Title}";
+            _namingConfig.StandardEpisodeFormat = "{Site.Title}.S{season:00}E{episode:00}.{absolute:00}.{Episode.Title}";
 
             Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
                    .Should().Be("South.Park.S15E06.City.Sushi");
@@ -400,7 +400,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_include_affixes_if_value_not_empty()
         {
-            _namingConfig.StandardEpisodeFormat = "{Series.Title}.S{season:00}E{episode:00}{_Episode.Title_}{Quality.Title}";
+            _namingConfig.StandardEpisodeFormat = "{Site.Title}.S{season:00}E{episode:00}{_Episode.Title_}{Quality.Title}";
 
             Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
                    .Should().Be("South.Park.S15E06_City.Sushi_HDTV-720p");
@@ -409,7 +409,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_not_include_affixes_if_value_empty()
         {
-            _namingConfig.StandardEpisodeFormat = "{Series.Title}.S{season:00}E{episode:00}{_Episode.Title_}";
+            _namingConfig.StandardEpisodeFormat = "{Site.Title}.S{season:00}E{episode:00}{_Episode.Title_}";
 
             _episode1.Title = "";
 
@@ -420,7 +420,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_format_mediainfo_properly()
         {
-            _namingConfig.StandardEpisodeFormat = "{Series.Title}.S{season:00}E{episode:00}.{Episode.Title}.{MEDIAINFO.FULL}";
+            _namingConfig.StandardEpisodeFormat = "{Site.Title}.S{season:00}E{episode:00}.{Episode.Title}.{MEDIAINFO.FULL}";
 
             _episodeFile.MediaInfo = new Core.MediaFiles.MediaInfo.MediaInfoModel()
             {
@@ -448,7 +448,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [TestCase("nor", "NO")]
         public void should_format_languagecodes_properly(string language, string code)
         {
-            _namingConfig.StandardEpisodeFormat = "{Series.Title}.S{season:00}E{episode:00}.{Episode.Title}.{MEDIAINFO.FULL}";
+            _namingConfig.StandardEpisodeFormat = "{Site.Title}.S{season:00}E{episode:00}.{Episode.Title}.{MEDIAINFO.FULL}";
 
             _episodeFile.MediaInfo = new Core.MediaFiles.MediaInfo.MediaInfoModel()
             {
@@ -467,7 +467,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_exclude_english_in_mediainfo_audio_language()
         {
-            _namingConfig.StandardEpisodeFormat = "{Series.Title}.S{season:00}E{episode:00}.{Episode.Title}.{MEDIAINFO.FULL}";
+            _namingConfig.StandardEpisodeFormat = "{Site.Title}.S{season:00}E{episode:00}.{Episode.Title}.{MEDIAINFO.FULL}";
 
             _episodeFile.MediaInfo = new Core.MediaFiles.MediaInfo.MediaInfoModel()
             {
@@ -486,7 +486,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         public void should_remove_duplicate_non_word_characters()
         {
             _series.Title = "Venture Bros.";
-            _namingConfig.StandardEpisodeFormat = "{Series.Title}.{season}x{episode:00}";
+            _namingConfig.StandardEpisodeFormat = "{Site.Title}.{season}x{episode:00}";
 
             Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
                    .Should().Be("Venture.Bros.15x06");
@@ -521,7 +521,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_allow_period_between_season_and_episode()
         {
-            _namingConfig.StandardEpisodeFormat = "{Series.Title}.S{season:00}.E{episode:00}.{Episode.Title}";
+            _namingConfig.StandardEpisodeFormat = "{Site.Title}.S{season:00}.E{episode:00}.{Episode.Title}";
 
             Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
                    .Should().Be("South.Park.S15.E06.City.Sushi");
@@ -530,7 +530,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_allow_space_between_season_and_episode()
         {
-            _namingConfig.StandardEpisodeFormat = "{Series Title} - S{season:00} E{episode:00} - {Episode Title}";
+            _namingConfig.StandardEpisodeFormat = "{Site Title} - S{season:00} E{episode:00} - {Episode Title}";
 
             Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
                    .Should().Be("South Park - S15 E06 - City Sushi");
@@ -548,7 +548,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_wrap_proper_in_square_brackets()
         {
-            _namingConfig.StandardEpisodeFormat = "{Series Title} - S{season:00}E{episode:00} [{Quality Title}] {[Quality Proper]}";
+            _namingConfig.StandardEpisodeFormat = "{Site Title} - S{season:00}E{episode:00} [{Quality Title}] {[Quality Proper]}";
 
             GivenProper();
 
@@ -559,7 +559,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_not_wrap_proper_in_square_brackets_when_not_a_proper()
         {
-            _namingConfig.StandardEpisodeFormat = "{Series Title} - S{season:00}E{episode:00} [{Quality Title}] {[Quality Proper]}";
+            _namingConfig.StandardEpisodeFormat = "{Site Title} - S{season:00}E{episode:00} [{Quality Title}] {[Quality Proper]}";
 
             Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
                    .Should().Be("South Park - S15E06 [HDTV-720p]");
@@ -568,7 +568,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_replace_quality_full_with_quality_title_only_when_not_a_proper()
         {
-            _namingConfig.StandardEpisodeFormat = "{Series Title} - S{season:00}E{episode:00} [{Quality Full}]";
+            _namingConfig.StandardEpisodeFormat = "{Site Title} - S{season:00}E{episode:00} [{Quality Full}]";
 
             Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
                    .Should().Be("South Park - S15E06 [HDTV-720p]");
@@ -577,7 +577,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_replace_quality_full_with_quality_title_and_proper_only_when_a_proper()
         {
-            _namingConfig.StandardEpisodeFormat = "{Series Title} - S{season:00}E{episode:00} [{Quality Full}]";
+            _namingConfig.StandardEpisodeFormat = "{Site Title} - S{season:00}E{episode:00} [{Quality Full}]";
 
             GivenProper();
 
@@ -588,7 +588,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_replace_quality_full_with_quality_title_and_real_when_a_real()
         {
-            _namingConfig.StandardEpisodeFormat = "{Series Title} - S{season:00}E{episode:00} [{Quality Full}]";
+            _namingConfig.StandardEpisodeFormat = "{Site Title} - S{season:00}E{episode:00} [{Quality Full}]";
             GivenReal();
 
             Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
@@ -747,7 +747,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         public void should_include_hdr_for_mediainfo_videodynamicrange_with_valid_properties(HdrFormat hdrFormat, string expectedName)
         {
             _namingConfig.StandardEpisodeFormat =
-                "{Series.Title}.S{season:00}E{episode:00}.{Episode.Title}.{MediaInfo VideoDynamicRange}";
+                "{Site.Title}.S{season:00}E{episode:00}.{Episode.Title}.{MediaInfo VideoDynamicRange}";
 
             GivenMediaInfoModel(hdrFormat: hdrFormat);
 
@@ -759,7 +759,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         public void should_update_media_info_if_token_configured_and_revision_is_old()
         {
             _namingConfig.StandardEpisodeFormat =
-                "{Series.Title}.S{season:00}E{episode:00}.{Episode.Title}.{MediaInfo VideoDynamicRange}";
+                "{Site.Title}.S{season:00}E{episode:00}.{Episode.Title}.{MediaInfo VideoDynamicRange}";
 
             GivenMediaInfoModel(schemaRevision: 3);
 
@@ -772,7 +772,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         public void should_not_update_media_info_if_no_series_path_available()
         {
             _namingConfig.StandardEpisodeFormat =
-                "{Series.Title}.S{season:00}E{episode:00}.{Episode.Title}.{MediaInfo VideoDynamicRange}";
+                "{Site.Title}.S{season:00}E{episode:00}.{Episode.Title}.{MediaInfo VideoDynamicRange}";
 
             GivenMediaInfoModel(schemaRevision: 3);
             _series.Path = null;
@@ -786,7 +786,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         public void should_not_update_media_info_if_token_not_configured_and_revision_is_old()
         {
             _namingConfig.StandardEpisodeFormat =
-                "{Series.Title}.S{season:00}E{episode:00}.{Episode.Title}";
+                "{Site.Title}.S{season:00}E{episode:00}.{Episode.Title}";
 
             GivenMediaInfoModel(schemaRevision: 3);
 
@@ -799,7 +799,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         public void should_not_update_media_info_if_token_configured_and_revision_is_current()
         {
             _namingConfig.StandardEpisodeFormat =
-                "{Series.Title}.S{season:00}E{episode:00}.{Episode.Title}.{MediaInfo VideoDynamicRange}";
+                "{Site.Title}.S{season:00}E{episode:00}.{Episode.Title}.{MediaInfo VideoDynamicRange}";
 
             GivenMediaInfoModel(schemaRevision: 5);
 
@@ -812,7 +812,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         public void should_not_update_media_info_if_token_configured_and_revision_is_newer()
         {
             _namingConfig.StandardEpisodeFormat =
-                "{Series.Title}.S{season:00}E{episode:00}.{Episode.Title}.{MediaInfo VideoDynamicRange}";
+                "{Site.Title}.S{season:00}E{episode:00}.{Episode.Title}.{MediaInfo VideoDynamicRange}";
 
             GivenMediaInfoModel(schemaRevision: 8);
 
@@ -821,8 +821,8 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
             Mocker.GetMock<IUpdateMediaInfo>().Verify(v => v.Update(_episodeFile, _series), Times.Never());
         }
 
-        [TestCase("{Series.Title}.S{season:00}E{episode:00}.{Episode.Title}.{MediaInfo VideoDynamicRange}")]
-        [TestCase("{Series.Title}.S{season:00}E{episode:00}.{Episode.Title}.{MediaInfo.VideoDynamicRange}")]
+        [TestCase("{Site.Title}.S{season:00}E{episode:00}.{Episode.Title}.{MediaInfo VideoDynamicRange}")]
+        [TestCase("{Site.Title}.S{season:00}E{episode:00}.{Episode.Title}.{MediaInfo.VideoDynamicRange}")]
         public void should_use_updated_media_info_if_token_configured_and_revision_is_old(string standardEpisodeFormat)
         {
             _namingConfig.StandardEpisodeFormat = standardEpisodeFormat;

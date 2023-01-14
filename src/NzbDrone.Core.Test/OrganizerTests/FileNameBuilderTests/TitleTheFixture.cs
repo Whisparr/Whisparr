@@ -64,7 +64,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         public void should_get_expected_title_back(string title, string expected)
         {
             _series.Title = title;
-            _namingConfig.StandardEpisodeFormat = "{Series TitleThe}";
+            _namingConfig.StandardEpisodeFormat = "{Site TitleThe}";
 
             Subject.BuildFileName(new List<Episode> { _episode }, _series, _episodeFile)
                    .Should().Be(expected);
@@ -77,7 +77,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         public void should_not_change_title(string title)
         {
             _series.Title = title;
-            _namingConfig.StandardEpisodeFormat = "{Series TitleThe}";
+            _namingConfig.StandardEpisodeFormat = "{Site TitleThe}";
 
             Subject.BuildFileName(new List<Episode> { _episode }, _series, _episodeFile)
                    .Should().Be(title);

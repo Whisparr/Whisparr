@@ -39,7 +39,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         public void should_get_expected_folder_name_back(string title, string expected)
         {
             _series.Title = title;
-            _namingConfig.SeriesFolderFormat = "{Series TitleFirstCharacter}\\{Series Title}";
+            _namingConfig.SeriesFolderFormat = "{Site TitleFirstCharacter}\\{Site Title}";
 
             Subject.GetSeriesFolder(_series).Should().Be(expected);
         }
@@ -48,7 +48,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         public void should_be_able_to_use_lower_case_first_character()
         {
             _series.Title = "Westworld";
-            _namingConfig.SeriesFolderFormat = "{series titlefirstcharacter}\\{series title}";
+            _namingConfig.SeriesFolderFormat = "{series titlefirstcharacter}\\{site title}";
 
             Subject.GetSeriesFolder(_series).Should().Be("w\\westworld");
         }

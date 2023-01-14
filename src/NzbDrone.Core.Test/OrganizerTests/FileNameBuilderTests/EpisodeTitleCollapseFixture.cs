@@ -90,7 +90,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_not_collapse_episode_titles_when_episode_titles_are_not_the_same()
         {
-            _namingConfig.StandardEpisodeFormat = "{Series Title} - S{season:00}E{episode:00} - {Episode Title}";
+            _namingConfig.StandardEpisodeFormat = "{Site Title} - S{season:00}E{episode:00} - {Episode Title}";
             _namingConfig.MultiEpisodeStyle = 3;
 
             _episode1.Title = "Hello";

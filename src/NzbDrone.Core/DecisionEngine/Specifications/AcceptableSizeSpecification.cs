@@ -48,28 +48,7 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
 
             if (runtime == 0)
             {
-                var firstSeasonNumber = subject.Series.Seasons.Where(s => s.SeasonNumber > 0).Min(s => s.SeasonNumber);
-                var pilotEpisode = _episodeService.GetEpisodesBySeason(subject.Series.Id, firstSeasonNumber).First();
-
-                if (subject.Episodes.First().SeasonNumber == pilotEpisode.SeasonNumber)
-                {
-                    // If the first episode has an air date use it, otherwise use the release's publish date because like runtime it may not have updated yet.
-                    var gracePeriodEnd = (pilotEpisode.AirDateUtc ?? subject.Release.PublishDate).AddHours(24);
-
-                    // If episodes don't have an air date that is okay, otherwise make sure it's within 24 hours of the first episode airing.
-                    if (subject.Episodes.All(e => !e.AirDateUtc.HasValue || e.AirDateUtc.Value.Before(gracePeriodEnd)))
-                    {
-                        _logger.Debug("Series runtime is 0, but all episodes in release aired within 24 hours of first episode in season, defaulting runtime to 45 minutes");
-                        runtime = 45;
-                    }
-                }
-
-                // Reject if the run time is still 0
-                if (runtime == 0)
-                {
-                    _logger.Debug("Series runtime is 0, unable to validate size until it is available, rejecting");
-                    return Decision.Reject("Series runtime is 0, unable to validate size until it is available");
-                }
+                runtime = 30; // TODO: Assume 30 for now, may just rip out quality definitions
             }
 
             var qualityDefinition = _qualityDefinitionService.Get(quality);

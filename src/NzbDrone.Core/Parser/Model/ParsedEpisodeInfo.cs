@@ -10,14 +10,16 @@ namespace NzbDrone.Core.Parser.Model
     public class ParsedEpisodeInfo
     {
         public string ReleaseTitle { get; set; }
-        public string SeriesTitle { get; set; }
+        public string SeriesTitle { get; set; } // Site Title
         public SeriesTitleInfo SeriesTitleInfo { get; set; }
         public QualityModel Quality { get; set; }
         public int SeasonNumber { get; set; }
         public int[] EpisodeNumbers { get; set; }
         public int[] AbsoluteEpisodeNumbers { get; set; }
         public decimal[] SpecialAbsoluteEpisodeNumbers { get; set; }
-        public string AirDate { get; set; }
+        public string AirDate { get; set; } // Release Date
+        public string Performer { get; set; }
+        public string SceneTitle { get; set; }
         public List<Language> Languages { get; set; }
         public bool FullSeason { get; set; }
         public bool IsPartialSeason { get; set; }

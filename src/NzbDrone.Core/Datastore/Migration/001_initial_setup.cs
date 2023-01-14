@@ -285,7 +285,9 @@ namespace NzbDrone.Core.Datastore.Migration
                   .WithColumn("TorrentDelay").AsInt32().NotNullable()
                   .WithColumn("Order").AsInt32().NotNullable()
                   .WithColumn("Tags").AsString().NotNullable()
-                  .WithColumn("BypassIfHighestQuality").AsBoolean().WithDefaultValue(false);
+                  .WithColumn("BypassIfHighestQuality").AsBoolean().WithDefaultValue(false)
+                  .WithColumn("BypassIfAboveCustomFormatScore").AsBoolean().WithDefaultValue(false)
+                  .WithColumn("MinimumCustomFormatScore").AsInt32().Nullable();
 
             Create.TableForModel("Users")
                   .WithColumn("Identifier").AsString().NotNullable().Unique()

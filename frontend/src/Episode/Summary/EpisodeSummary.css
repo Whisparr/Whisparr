@@ -8,6 +8,12 @@
   margin-top: 20px;
 }
 
+.actors {
+  display: inline-block;
+  width: 100px;
+  font-weight: bold;
+}
+
 .files {
   overflow-x: auto;
   margin-top: 20px;

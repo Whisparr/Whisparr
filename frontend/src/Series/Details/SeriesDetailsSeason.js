@@ -239,7 +239,7 @@ class SeriesDetailsSeason extends Component {
       isInteractiveSearchModalOpen
     } = this.state;
 
-    const title = seasonNumber === 0 ? 'Specials' : `Season ${seasonNumber}`;
+    const title = seasonNumber === 0 ? 'Specials' : `${seasonNumber}`;
 
     return (
       <div

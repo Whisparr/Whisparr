@@ -193,7 +193,10 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 series.Certification = show.ContentRating.ToUpper();
             }
 
-            series.Seasons = show.Seasons.Select(MapSeason).ToList();
+            var seasons = show.Seasons.OrderBy(x => x.SeasonNumber);
+
+            series.Year = seasons.Select(s => s.SeasonNumber).FirstOrDefault();
+            series.Seasons = seasons.Select(MapSeason).ToList();
             series.Images = show.Images.Select(MapImage).ToList();
             series.Monitored = true;
 

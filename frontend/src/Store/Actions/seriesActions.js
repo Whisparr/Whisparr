@@ -125,12 +125,6 @@ export const filterPredicates = {
     return dateFilterPredicate(item.added, filterValue, type);
   },
 
-  ratings: function(item, filterValue, type) {
-    const predicate = filterTypePredicates[type];
-
-    return predicate(item.ratings.value * 10, filterValue);
-  },
-
   originalLanguage: function(item, filterValue, type) {
     const predicate = filterTypePredicates[type];
     const { originalLanguage } = item;
@@ -315,11 +309,6 @@ export const filterBuilderProps = [
     name: 'releaseGroups',
     label: 'Release Groups',
     type: filterBuilderTypes.ARRAY
-  },
-  {
-    name: 'ratings',
-    label: 'Rating',
-    type: filterBuilderTypes.NUMBER
   },
   {
     name: 'certification',

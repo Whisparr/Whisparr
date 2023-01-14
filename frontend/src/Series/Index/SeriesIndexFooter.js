@@ -17,8 +17,6 @@ class SeriesIndexFooter extends PureComponent {
     const count = series.length;
     let episodes = 0;
     let episodeFiles = 0;
-    let ended = 0;
-    let continuing = 0;
     let monitored = 0;
     let totalFileSize = 0;
 
@@ -33,12 +31,6 @@ class SeriesIndexFooter extends PureComponent {
 
       episodes += episodeCount;
       episodeFiles += episodeFileCount;
-
-      if (s.status === 'ended') {
-        ended++;
-      } else {
-        continuing++;
-      }
 
       if (s.monitored) {
         monitored++;

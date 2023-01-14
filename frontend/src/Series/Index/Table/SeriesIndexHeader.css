@@ -79,12 +79,6 @@
   flex: 0 0 120px;
 }
 
-.ratings {
-  composes: headerCell from '~Components/Table/VirtualTableHeaderCell.css';
-
-  flex: 0 0 80px;
-}
-
 .tags {
   composes: headerCell from '~Components/Table/VirtualTableHeaderCell.css';
 

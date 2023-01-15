@@ -54,9 +54,6 @@ class EpisodeDetailsModalContent extends Component {
       seriesTitle,
       titleSlug,
       seriesMonitored,
-      seasonNumber,
-      episodeNumber,
-      absoluteEpisodeNumber,
       episodeTitle,
       airDate,
       monitored,
@@ -91,10 +88,7 @@ class EpisodeDetailsModalContent extends Component {
           <span className={styles.separator}>-</span>
 
           <SeasonEpisodeNumber
-            seasonNumber={seasonNumber}
-            episodeNumber={episodeNumber}
-            absoluteEpisodeNumber={absoluteEpisodeNumber}
-            airDate={airDate}
+            episodeNumber={airDate}
           />
 
           <span className={styles.separator}>-</span>
@@ -194,9 +188,6 @@ EpisodeDetailsModalContent.propTypes = {
   seriesTitle: PropTypes.string.isRequired,
   titleSlug: PropTypes.string.isRequired,
   seriesMonitored: PropTypes.bool.isRequired,
-  seasonNumber: PropTypes.number.isRequired,
-  episodeNumber: PropTypes.number.isRequired,
-  absoluteEpisodeNumber: PropTypes.number,
   airDate: PropTypes.string.isRequired,
   episodeTitle: PropTypes.string.isRequired,
   monitored: PropTypes.bool.isRequired,

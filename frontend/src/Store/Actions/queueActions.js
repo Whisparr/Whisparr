@@ -64,27 +64,21 @@ export const defaultState = {
       },
       {
         name: 'series.sortTitle',
-        label: 'Series',
+        label: 'Site',
         isSortable: true,
         isVisible: true
       },
       {
         name: 'episode',
-        label: 'Episode',
+        label: 'Release Date',
         isSortable: true,
         isVisible: true
       },
       {
         name: 'episodes.title',
-        label: 'Episode Title',
+        label: 'Scene Title',
         isSortable: true,
         isVisible: true
-      },
-      {
-        name: 'episodes.airDateUtc',
-        label: 'Episode Air Date',
-        isSortable: true,
-        isVisible: false
       },
       {
         name: 'languages',

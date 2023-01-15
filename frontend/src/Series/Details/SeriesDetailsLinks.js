@@ -14,7 +14,7 @@ function SeriesDetailsLinks(props) {
     <div className={styles.links}>
       <Link
         className={styles.link}
-        to={`http://www.thetvdb.com/?tab=series&id=${tvdbId}`}
+        to={`https://metadataapi.net/sites/${tvdbId}`}
       >
         <Label
           className={styles.linkLabel}
@@ -22,19 +22,6 @@ function SeriesDetailsLinks(props) {
           size={sizes.LARGE}
         >
           The TVDB
-        </Label>
-      </Link>
-
-      <Link
-        className={styles.link}
-        to={`http://trakt.tv/search/tvdb/${tvdbId}?id_type=show`}
-      >
-        <Label
-          className={styles.linkLabel}
-          kind={kinds.INFO}
-          size={sizes.LARGE}
-        >
-          Trakt
         </Label>
       </Link>
     </div>

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Languages;
 using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.Tv;
@@ -91,7 +92,7 @@ namespace Whisparr.Api.V3.Series
                        // NextAiring
                        // PreviousAiring
                        Network = model.Network,
-                       Images = model.Images,
+                       Images = model.Images.JsonClone(),
 
                        Seasons = model.Seasons.ToResource(includeSeasonImages),
                        Year = model.Year,

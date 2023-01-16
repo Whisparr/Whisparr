@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using FizzWare.NBuilder;
 using FluentAssertions;
@@ -15,12 +16,20 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeServiceTests
         private const int SERIES_ID = 1;
         private const string AIR_DATE = "2014-04-02";
 
-        private Episode CreateEpisode(int seasonNumber, int episodeNumber)
+        private Episode CreateEpisode(int seasonNumber, int episodeNumber, string performer = null, string title = null)
         {
             var episode = Builder<Episode>.CreateNew()
                                           .With(e => e.SeriesId = 1)
                                           .With(e => e.SeasonNumber = seasonNumber)
                                           .With(e => e.EpisodeNumber = episodeNumber)
+                                          .With(e => e.Title = title)
+                                          .With(e => e.Actors = new List<Actor>
+                                          {
+                                              new Actor
+                                              {
+                                                  Name = performer
+                                              }
+                                          })
                                           .With(e => e.AirDate = AIR_DATE)
                                           .BuildNew();
 
@@ -59,14 +68,6 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeServiceTests
         }
 
         [Test]
-        public void should_get_episode_when_regular_episode_and_special_share_the_same_air_date()
-        {
-            GivenEpisodes(CreateEpisode(1, 1), CreateEpisode(0, 1));
-
-            Subject.FindEpisode(SERIES_ID, AIR_DATE, null).Should().NotBeNull();
-        }
-
-        [Test]
         public void should_get_special_when_its_the_only_episode_for_the_date_provided()
         {
             GivenEpisodes(CreateEpisode(0, 1));
@@ -75,15 +76,39 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeServiceTests
         }
 
         [Test]
-        public void should_get_episode_when_two_regular_episodes_share_the_same_air_date_and_part_is_provided()
+        public void should_get_episode_when_two_regular_episodes_share_the_same_air_date_and_performer_part_is_provided()
         {
-            var episode1 = CreateEpisode(1, 1);
-            var episode2 = CreateEpisode(1, 2);
+            var episode1 = CreateEpisode(2023, 1, "Jenna Jay");
+            var episode2 = CreateEpisode(2023, 2, "Jackie Bush");
 
             GivenEpisodes(episode1, episode2);
 
-            Subject.FindEpisode(SERIES_ID, AIR_DATE, 1).Should().Be(episode1);
-            Subject.FindEpisode(SERIES_ID, AIR_DATE, 2).Should().Be(episode2);
+            Subject.FindEpisode(SERIES_ID, AIR_DATE, "Jenna Jay").Should().Be(episode1);
+            Subject.FindEpisode(SERIES_ID, AIR_DATE, "Jackie Bush").Should().Be(episode2);
+        }
+
+        [Test]
+        public void should_get_episode_when_two_regular_episodes_share_the_same_air_date_and_performer_and_part_is_provided()
+        {
+            var episode1 = CreateEpisode(2023, 1, "Jenna Jay", "Get Some");
+            var episode2 = CreateEpisode(2023, 2, "Jenna Jay", "Good Times");
+
+            GivenEpisodes(episode1, episode2);
+
+            Subject.FindEpisode(SERIES_ID, AIR_DATE, "Jenna Jay Get Some").Should().Be(episode1);
+            Subject.FindEpisode(SERIES_ID, AIR_DATE, "Jenna Jay Good Times").Should().Be(episode2);
+        }
+
+        [Test]
+        public void should_get_episode_when_two_regular_episodes_share_the_same_air_date_and_title_part_is_provided()
+        {
+            var episode1 = CreateEpisode(2023, 1, "Jenna Jay", "Get Some");
+            var episode2 = CreateEpisode(2023, 2, "Jackie Bush", "Good Times");
+
+            GivenEpisodes(episode1, episode2);
+
+            Subject.FindEpisode(SERIES_ID, AIR_DATE, "Get Some").Should().Be(episode1);
+            Subject.FindEpisode(SERIES_ID, AIR_DATE, "Good Times").Should().Be(episode2);
         }
     }
 }

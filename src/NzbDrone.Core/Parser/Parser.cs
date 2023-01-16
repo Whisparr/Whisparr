@@ -41,7 +41,7 @@ namespace NzbDrone.Core.Parser
         private static readonly Regex[] ReportTitleRegex = new[]
             {
                 // Episodes with airdate (18.04.28)
-                new Regex(@"^(?<title>.+?)?\W*(?<airyear>\d{2}|\d{4})[-_. ]+(?<airmonth>[0-1][0-9])[-_. ]+(?<airday>[0-3][0-9])(?![-_. ]+[0-3][0-9])",
+                new Regex(@"^(?<title>.+?)?\W*(?<airyear>\d{2}|\d{4})[-_. ]+(?<airmonth>[0-1][0-9])[-_. ]+(?<airday>[0-3][0-9])(?![-_. ]+[0-3][0-9])\W*(?<episodeString>.+?)\W*(XXX)",
                     RegexOptions.IgnoreCase | RegexOptions.Compiled)
             };
 
@@ -539,6 +539,9 @@ namespace NzbDrone.Core.Parser
             var seriesName = matchCollection[0].Groups["title"].Value.Replace('.', ' ').Replace('_', ' ');
             seriesName = RequestInfoRegex.Replace(seriesName, "").Trim(' ');
 
+            var episodeString = matchCollection[0].Groups["episodeString"].Value.Replace('.', ' ').Replace('_', ' ');
+            episodeString = RequestInfoRegex.Replace(episodeString, "").Trim(' ');
+
             int airYear;
             int.TryParse(matchCollection[0].Groups["airyear"].Value, out airYear);
 
@@ -713,6 +716,7 @@ namespace NzbDrone.Core.Parser
                 lastSeasonEpisodeStringIndex = Math.Max(lastSeasonEpisodeStringIndex, matchCollection[0].Groups["airyear"].EndIndex());
                 lastSeasonEpisodeStringIndex = Math.Max(lastSeasonEpisodeStringIndex, matchCollection[0].Groups["airmonth"].EndIndex());
                 lastSeasonEpisodeStringIndex = Math.Max(lastSeasonEpisodeStringIndex, matchCollection[0].Groups["airday"].EndIndex());
+                lastSeasonEpisodeStringIndex = Math.Max(lastSeasonEpisodeStringIndex, matchCollection[0].Groups["episodeString"].EndIndex());
 
                 result = new ParsedEpisodeInfo
                 {
@@ -739,6 +743,7 @@ namespace NzbDrone.Core.Parser
 
             result.SeriesTitle = seriesName;
             result.SeriesTitleInfo = GetSeriesTitleInfo(result.SeriesTitle);
+            result.SceneTitle = episodeString;
 
             Logger.Debug("Episode Parsed. {0}", result);
 

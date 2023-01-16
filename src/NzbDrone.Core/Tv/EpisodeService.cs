@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NLog;
+using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Datastore;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.MediaFiles.Events;
 using NzbDrone.Core.Messaging.Events;
+using NzbDrone.Core.Parser;
 using NzbDrone.Core.Tv.Events;
 
 namespace NzbDrone.Core.Tv
@@ -20,7 +22,7 @@ namespace NzbDrone.Core.Tv
         Episode FindEpisodeByTitle(int seriesId, int seasonNumber, string releaseTitle);
         List<Episode> FindEpisodesBySceneNumbering(int seriesId, int seasonNumber, int episodeNumber);
         List<Episode> FindEpisodesBySceneNumbering(int seriesId, int sceneAbsoluteEpisodeNumber);
-        Episode FindEpisode(int seriesId, string date, int? part);
+        Episode FindEpisode(int seriesId, string date, string part);
         List<Episode> GetEpisodeBySeries(int seriesId);
         List<Episode> GetEpisodesBySeason(int seriesId, int seasonNumber);
         List<Episode> GetEpisodesBySceneSeason(int seriesId, int sceneSeasonNumber);
@@ -85,7 +87,7 @@ namespace NzbDrone.Core.Tv
             return _episodeRepository.FindEpisodesBySceneNumbering(seriesId, sceneAbsoluteEpisodeNumber);
         }
 
-        public Episode FindEpisode(int seriesId, string date, int? part)
+        public Episode FindEpisode(int seriesId, string date, string part)
         {
             return FindOneByAirDate(seriesId, date, part);
         }
@@ -243,7 +245,7 @@ namespace NzbDrone.Core.Tv
             }
         }
 
-        private Episode FindOneByAirDate(int seriesId, string date, int? part)
+        private Episode FindOneByAirDate(int seriesId, string date, string part)
         {
             var episodes = _episodeRepository.Find(seriesId, date);
 
@@ -257,22 +259,51 @@ namespace NzbDrone.Core.Tv
                 return episodes.First();
             }
 
-            _logger.Debug("Multiple episodes with the same air date were found, will exclude specials");
-
-            var regularEpisodes = episodes.Where(e => e.SeasonNumber > 0).ToList();
-
-            if (regularEpisodes.Count == 1 && !part.HasValue)
+            if (part.IsNotNullOrWhiteSpace())
             {
-                _logger.Debug("Left with one episode after excluding specials");
-                return regularEpisodes.First();
-            }
-            else if (part.HasValue && part.Value <= regularEpisodes.Count)
-            {
-                var sortedEpisodes = regularEpisodes.OrderBy(e => e.SeasonNumber)
-                                                               .ThenBy(e => e.EpisodeNumber)
-                                                                .ToList();
+                var cleanPart = part.CleanSeriesTitle();
+                var matches = new List<Episode>();
 
-                return sortedEpisodes[part.Value - 1];
+                foreach (var episode in episodes)
+                {
+                    var cleanTitle = episode.Title?.CleanSeriesTitle() ?? string.Empty;
+
+                    // If Part matches title, consider a match
+                    if (cleanTitle.IsNotNullOrWhiteSpace() && cleanTitle.Equals(cleanPart))
+                    {
+                        matches.Add(episode);
+                        continue;
+                    }
+
+                    var cleanPerformers = episode.Actors.Where(a => a.Name.IsNotNullOrWhiteSpace())
+                                    .Select(a => a.Name.CleanSeriesTitle());
+
+                    if (cleanPerformers.Empty())
+                    {
+                        continue;
+                    }
+
+                    // If Part matches performer, consider a match
+                    if (cleanPerformers.Any(p => p.IsNotNullOrWhiteSpace() && p.Equals(cleanPart)))
+                    {
+                        matches.Add(episode);
+                        continue;
+                    }
+
+                    var episodeMatchString = $"{cleanPerformers.First()}{cleanTitle}";
+
+                    // If Performer + Title starts with part, consider a match
+                    if (episodeMatchString.StartsWith(cleanPart))
+                    {
+                        matches.Add(episode);
+                        continue;
+                    }
+                }
+
+                if (matches.Count == 1)
+                {
+                    return matches.First();
+                }
             }
 
             throw new InvalidOperationException($"Multiple episodes with the same air date found. Date: {date}");

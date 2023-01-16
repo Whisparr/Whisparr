@@ -18,7 +18,6 @@ namespace NzbDrone.Core.Parser.Model
         public int[] AbsoluteEpisodeNumbers { get; set; }
         public decimal[] SpecialAbsoluteEpisodeNumbers { get; set; }
         public string AirDate { get; set; } // Release Date
-        public string Performer { get; set; }
         public string SceneTitle { get; set; }
         public List<Language> Languages { get; set; }
         public bool FullSeason { get; set; }

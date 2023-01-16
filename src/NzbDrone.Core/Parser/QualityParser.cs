@@ -457,7 +457,7 @@ namespace NzbDrone.Core.Parser
                     result.ResolutionDetectionSource = QualityDetectionSource.Name;
 
                     result.Quality = source == QualitySource.Unknown
-                        ? Quality.HDTV2160p
+                        ? Quality.WEBDL2160p
                         : QualityFinder.FindBySourceAndResolution(source, 2160);
 
                     return result;
@@ -468,7 +468,7 @@ namespace NzbDrone.Core.Parser
                     result.ResolutionDetectionSource = QualityDetectionSource.Name;
 
                     result.Quality = source == QualitySource.Unknown
-                        ? Quality.HDTV1080p
+                        ? Quality.WEBDL1080p
                         : QualityFinder.FindBySourceAndResolution(source, 1080);
 
                     return result;
@@ -479,7 +479,7 @@ namespace NzbDrone.Core.Parser
                     result.ResolutionDetectionSource = QualityDetectionSource.Name;
 
                     result.Quality = source == QualitySource.Unknown
-                        ? Quality.HDTV720p
+                        ? Quality.WEBDL720p
                         : QualityFinder.FindBySourceAndResolution(source, 720);
 
                     return result;
@@ -491,7 +491,7 @@ namespace NzbDrone.Core.Parser
                     result.ResolutionDetectionSource = QualityDetectionSource.Name;
 
                     result.Quality = source == QualitySource.Unknown
-                        ? Quality.SDTV
+                        ? Quality.WEBDL480p
                         : QualityFinder.FindBySourceAndResolution(source, 480);
 
                     return result;

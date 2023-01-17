@@ -304,9 +304,12 @@ namespace NzbDrone.Core.Tv
                 {
                     return matches.First();
                 }
+
+                episodes = matches;
             }
 
-            throw new InvalidOperationException($"Multiple episodes with the same air date found. Date: {date}");
+            _logger.Debug("Multiple episodes with the same air date found. Date: {0}", date);
+            return null;
         }
     }
 }

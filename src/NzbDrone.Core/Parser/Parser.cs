@@ -40,8 +40,12 @@ namespace NzbDrone.Core.Parser
 
         private static readonly Regex[] ReportTitleRegex = new[]
             {
-                // Episodes with airdate (18.04.28)
+                // Episodes with airdate (18.04.28) and performer/title followed by XXX
                 new Regex(@"^(?<title>.+?)?\W*(?<airyear>\d{2}|\d{4})[-_. ]+(?<airmonth>[0-1][0-9])[-_. ]+(?<airday>[0-3][0-9])(?![-_. ]+[0-3][0-9])\W*(?<episodeString>.+?)\W*(XXX)",
+                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
+                // Episodes with airdate (18.04.28)
+                new Regex(@"^(?<title>.+?)?\W*(?<airyear>\d{2}|\d{4})[-_. ]+(?<airmonth>[0-1][0-9])[-_. ]+(?<airday>[0-3][0-9])(?![-_. ]+[0-3][0-9])",
                     RegexOptions.IgnoreCase | RegexOptions.Compiled)
             };
 

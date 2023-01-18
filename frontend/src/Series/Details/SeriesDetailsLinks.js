@@ -21,7 +21,7 @@ function SeriesDetailsLinks(props) {
           kind={kinds.INFO}
           size={sizes.LARGE}
         >
-          The TVDB
+          TPDB
         </Label>
       </Link>
     </div>

@@ -86,10 +86,11 @@ class EpisodeSummary extends Component {
       qualityProfileId,
       network,
       overview,
-      airDateUtc,
+      airDate,
       mediaInfo,
       path,
       size,
+      actors,
       languages,
       quality,
       customFormats,
@@ -98,14 +99,15 @@ class EpisodeSummary extends Component {
     } = this.props;
 
     const hasOverview = !!overview;
+    const joinedPerformers = actors.map((a) => a.character).join(', ');
 
     return (
       <div>
         <div>
-          <span className={styles.infoTitle}>Airs</span>
+          <span className={styles.infoTitle}>Released</span>
 
           <EpisodeAiringConnector
-            airDateUtc={airDateUtc}
+            airDateUtc={airDate}
             network={network}
           />
         </div>
@@ -121,6 +123,13 @@ class EpisodeSummary extends Component {
               qualityProfileId={qualityProfileId}
             />
           </Label>
+        </div>
+
+        <div>
+          <span className={styles.actors}>Performers</span>
+          {
+            joinedPerformers
+          }
         </div>
 
         <div className={styles.overview}>
@@ -170,15 +179,21 @@ EpisodeSummary.propTypes = {
   qualityProfileId: PropTypes.number.isRequired,
   network: PropTypes.string.isRequired,
   overview: PropTypes.string,
-  airDateUtc: PropTypes.string.isRequired,
+  airDate: PropTypes.string.isRequired,
   mediaInfo: PropTypes.object,
   path: PropTypes.string,
   size: PropTypes.number,
+  actors: PropTypes.arrayOf(PropTypes.object),
+  joinedPerformers: PropTypes.string,
   languages: PropTypes.arrayOf(PropTypes.object),
   quality: PropTypes.object,
   qualityCutoffNotMet: PropTypes.bool,
   customFormats: PropTypes.arrayOf(PropTypes.object),
   onDeleteEpisodeFile: PropTypes.func.isRequired
+};
+
+EpisodeSummary.defaultProps = {
+  actors: []
 };
 
 export default EpisodeSummary;

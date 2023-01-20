@@ -37,7 +37,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_add_imdb_id()
         {
-            _namingConfig.SeriesFolderFormat = "{Series Title} ({ImdbId})";
+            _namingConfig.SeriesFolderFormat = "{Site Title} ({ImdbId})";
 
             Subject.GetSeriesFolder(_series)
                    .Should().Be($"Series Title ({_series.ImdbId})");
@@ -46,7 +46,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_add_tvdb_id()
         {
-            _namingConfig.SeriesFolderFormat = "{Series Title} ({TvdbId})";
+            _namingConfig.SeriesFolderFormat = "{Site Title} ({TvdbId})";
 
             Subject.GetSeriesFolder(_series)
                    .Should().Be($"Series Title ({_series.TvdbId})");

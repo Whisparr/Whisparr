@@ -48,8 +48,6 @@ namespace NzbDrone.Core.Test.ParserTests.ParsingServiceTests
             _singleEpisodeSearchCriteria = new SingleEpisodeSearchCriteria
             {
                 Series = _series,
-                EpisodeNumber = _episodes.First().EpisodeNumber,
-                SeasonNumber = _episodes.First().SeasonNumber,
                 Episodes = _episodes
             };
 

@@ -20,11 +20,6 @@ namespace NzbDrone.Core.Indexers.HDBits
             return pageableRequests;
         }
 
-        public virtual IndexerPageableRequestChain GetSearchRequests(SpecialEpisodeSearchCriteria searchCriteria)
-        {
-            return new IndexerPageableRequestChain();
-        }
-
         public virtual IndexerPageableRequestChain GetSearchRequests(SeasonSearchCriteria searchCriteria)
         {
             var pageableRequests = new IndexerPageableRequestChain();

@@ -25,7 +25,7 @@ namespace NzbDrone.Integration.Test.ApiTests
         {
             var config = NamingConfig.GetSingle();
             config.RenameEpisodes = false;
-            config.StandardEpisodeFormat = "{Series Title} - {season}x{episode:00} - {Episode Title}";
+            config.StandardEpisodeFormat = "{Site Title} - {season}x{episode:00} - {Episode Title}";
 
             var result = NamingConfig.Put(config);
             result.RenameEpisodes.Should().BeFalse();
@@ -59,7 +59,7 @@ namespace NzbDrone.Integration.Test.ApiTests
         {
             var config = NamingConfig.GetSingle();
             config.RenameEpisodes = true;
-            config.StandardEpisodeFormat = "{Series Title} - {season}x{episode:00} - {Episode Title}";
+            config.StandardEpisodeFormat = "{Site Title} - {season}x{episode:00} - {Episode Title}";
 
             var errors = NamingConfig.InvalidPut(config);
             errors.Should().NotBeNull();
@@ -70,7 +70,7 @@ namespace NzbDrone.Integration.Test.ApiTests
         {
             var config = NamingConfig.GetSingle();
             config.RenameEpisodes = false;
-            config.StandardEpisodeFormat = "{Series Title} - {season}x{episode:00} - {Episode Title}";
+            config.StandardEpisodeFormat = "{Site Title} - {season}x{episode:00} - {Episode Title}";
 
             var errors = NamingConfig.InvalidPut(config);
             errors.Should().NotBeNull();

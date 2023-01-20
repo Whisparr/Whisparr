@@ -40,7 +40,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         {
             _series.Title = title;
             _series.Year = year;
-            _namingConfig.SeriesFolderFormat = "{Series Year}\\{Series Title}";
+            _namingConfig.SeriesFolderFormat = "{Site Year}\\{Site Title}";
 
             Subject.GetSeriesFolder(_series).Should().Be(expected);
         }

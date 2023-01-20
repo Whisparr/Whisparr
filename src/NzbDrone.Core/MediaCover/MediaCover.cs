@@ -5,11 +5,12 @@ namespace NzbDrone.Core.MediaCover
     public enum MediaCoverTypes
     {
         Unknown = 0,
-        Poster = 1,
-        Banner = 2,
-        Fanart = 3,
-        Screenshot = 4,
-        Headshot = 5
+        Logo = 1,
+        Poster = 2,
+        Banner = 3,
+        Fanart = 4,
+        Screenshot = 5,
+        Headshot = 6
     }
 
     public class MediaCover : IEmbeddedDocument

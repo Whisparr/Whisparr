@@ -1,4 +1,4 @@
-﻿using Whisparr.Http.REST;
+using Whisparr.Http.REST;
 
 namespace Whisparr.Api.V3.Config
 {
@@ -10,7 +10,6 @@ namespace Whisparr.Api.V3.Config
         public string StandardEpisodeFormat { get; set; }
         public string SeriesFolderFormat { get; set; }
         public string SeasonFolderFormat { get; set; }
-        public string SpecialsFolderFormat { get; set; }
         public bool IncludeSeriesTitle { get; set; }
         public bool IncludeEpisodeTitle { get; set; }
         public bool IncludeQuality { get; set; }

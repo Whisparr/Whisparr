@@ -21,7 +21,8 @@ function createMapStateToProps() {
 
       const {
         airDateUtc,
-        overview
+        overview,
+        actors
       } = episode;
 
       const {
@@ -39,6 +40,7 @@ function createMapStateToProps() {
         qualityProfileId,
         airDateUtc,
         overview,
+        actors,
         mediaInfo,
         path,
         size,

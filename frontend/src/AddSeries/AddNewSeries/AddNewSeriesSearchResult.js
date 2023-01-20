@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import HeartRating from 'Components/HeartRating';
 import Icon from 'Components/Icon';
 import Label from 'Components/Label';
 import Link from 'Components/Link/Link';
@@ -40,7 +39,7 @@ class AddNewSeriesSearchResult extends Component {
     this.setState({ isNewAddSeriesModalOpen: false });
   };
 
-  onTPDBLinkPress = (event) => {
+  onTVDBLinkPress = (event) => {
     event.stopPropagation();
   };
 
@@ -49,7 +48,7 @@ class AddNewSeriesSearchResult extends Component {
 
   render() {
     const {
-      tpdbId,
+      tvdbId,
       title,
       titleSlug,
       year,
@@ -57,7 +56,6 @@ class AddNewSeriesSearchResult extends Component {
       status,
       overview,
       statistics,
-      ratings,
       folder,
       images,
       isExistingSeries,
@@ -125,12 +123,12 @@ class AddNewSeriesSearchResult extends Component {
                 }
 
                 <Link
-                  className={styles.tpdbLink}
-                  to={`http://www.thetpdb.com/?tab=series&id=${tpdbId}`}
-                  onPress={this.onTPDBLinkPress}
+                  className={styles.tvdbLink}
+                  to={`https://metadataapi.net/sites/${tvdbId}`}
+                  onPress={this.onTVDBLinkPress}
                 >
                   <Icon
-                    className={styles.tpdbLinkIcon}
+                    className={styles.tvdbLinkIcon}
                     name={icons.EXTERNAL_LINK}
                     size={28}
                   />
@@ -139,12 +137,6 @@ class AddNewSeriesSearchResult extends Component {
             </div>
 
             <div>
-              <Label size={sizes.LARGE}>
-                <HeartRating
-                  rating={ratings.value}
-                  iconSize={13}
-                />
-              </Label>
 
               {
                 network ?
@@ -195,7 +187,7 @@ class AddNewSeriesSearchResult extends Component {
 
         <AddNewSeriesModal
           isOpen={isNewAddSeriesModalOpen && !isExistingSeries}
-          tpdbId={tpdbId}
+          tvdbId={tvdbId}
           title={title}
           year={year}
           overview={overview}
@@ -209,7 +201,7 @@ class AddNewSeriesSearchResult extends Component {
 }
 
 AddNewSeriesSearchResult.propTypes = {
-  tpdbId: PropTypes.number.isRequired,
+  tvdbId: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   titleSlug: PropTypes.string.isRequired,
   year: PropTypes.number.isRequired,
@@ -217,7 +209,6 @@ AddNewSeriesSearchResult.propTypes = {
   status: PropTypes.string.isRequired,
   overview: PropTypes.string,
   statistics: PropTypes.object.isRequired,
-  ratings: PropTypes.object.isRequired,
   folder: PropTypes.string.isRequired,
   images: PropTypes.arrayOf(PropTypes.object).isRequired,
   isExistingSeries: PropTypes.bool.isRequired,

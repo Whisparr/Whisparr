@@ -59,16 +59,6 @@ class Naming extends Component {
     });
   };
 
-  onSpecialsFolderNamingModalOpenClick = () => {
-    this.setState({
-      isNamingModalOpen: true,
-      namingModalOptions: {
-        name: 'specialsFolderFormat',
-        season: true
-      }
-    });
-  };
-
   onNamingModalClose = () => {
     this.setState({ isNamingModalOpen: false });
   };
@@ -110,20 +100,12 @@ class Naming extends Component {
     const seriesFolderFormatErrors = [];
     const seasonFolderFormatHelpTexts = [];
     const seasonFolderFormatErrors = [];
-    const specialsFolderFormatHelpTexts = [];
-    const specialsFolderFormatErrors = [];
 
     if (examplesPopulated) {
       if (examples.singleEpisodeExample) {
         standardEpisodeFormatHelpTexts.push(`Single Episode: ${examples.singleEpisodeExample}`);
       } else {
         standardEpisodeFormatErrors.push({ message: 'Single Episode: Invalid Format' });
-      }
-
-      if (examples.multiEpisodeExample) {
-        standardEpisodeFormatHelpTexts.push(`Multi Episode: ${examples.multiEpisodeExample}`);
-      } else {
-        standardEpisodeFormatErrors.push({ message: 'Multi Episode: Invalid Format' });
       }
 
       if (examples.seriesFolderExample) {
@@ -136,12 +118,6 @@ class Naming extends Component {
         seasonFolderFormatHelpTexts.push(`Example: ${examples.seasonFolderExample}`);
       } else {
         seasonFolderFormatErrors.push({ message: 'Invalid Format' });
-      }
-
-      if (examples.specialsFolderExample) {
-        specialsFolderFormatHelpTexts.push(`Example: ${examples.specialsFolderExample}`);
-      } else {
-        specialsFolderFormatErrors.push({ message: 'Invalid Format' });
       }
     }
 
@@ -208,7 +184,7 @@ class Naming extends Component {
                 advancedSettings={advancedSettings}
                 isAdvanced={true}
               >
-                <FormLabel>Series Folder Format</FormLabel>
+                <FormLabel>Site Folder Format</FormLabel>
 
                 <FormInputGroup
                   inputClassName={styles.namingInput}
@@ -217,7 +193,7 @@ class Naming extends Component {
                   buttons={<FormInputButton onPress={this.onSeriesFolderNamingModalOpenClick}>?</FormInputButton>}
                   onChange={onInputChange}
                   {...settings.seriesFolderFormat}
-                  helpTexts={['Used when adding a new series or moving series via the series editor', ...seriesFolderFormatHelpTexts]}
+                  helpTexts={['Used when adding a new site or moving sites via the site editor', ...seriesFolderFormatHelpTexts]}
                   errors={[...seriesFolderFormatErrors, ...settings.seriesFolderFormat.errors]}
                 />
               </FormGroup>
@@ -234,24 +210,6 @@ class Naming extends Component {
                   {...settings.seasonFolderFormat}
                   helpTexts={seasonFolderFormatHelpTexts}
                   errors={[...seasonFolderFormatErrors, ...settings.seasonFolderFormat.errors]}
-                />
-              </FormGroup>
-
-              <FormGroup
-                advancedSettings={advancedSettings}
-                isAdvanced={true}
-              >
-                <FormLabel>Specials Folder Format</FormLabel>
-
-                <FormInputGroup
-                  inputClassName={styles.namingInput}
-                  type={inputTypes.TEXT}
-                  name="specialsFolderFormat"
-                  buttons={<FormInputButton onPress={this.onSpecialsFolderNamingModalOpenClick}>?</FormInputButton>}
-                  onChange={onInputChange}
-                  {...settings.specialsFolderFormat}
-                  helpTexts={specialsFolderFormatHelpTexts}
-                  errors={[...specialsFolderFormatErrors, ...settings.specialsFolderFormat.errors]}
                 />
               </FormGroup>
 

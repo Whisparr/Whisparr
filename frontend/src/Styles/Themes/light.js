@@ -217,7 +217,7 @@ module.exports = {
   //
   // Table
 
-  tableRowHoverBackgroundColor: '#fafbfc',
+  tableRowHoverBackgroundColor: '#c5c5c5',
 
   //
   // Series

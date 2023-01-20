@@ -40,341 +40,12 @@ namespace NzbDrone.Core.Parser
 
         private static readonly Regex[] ReportTitleRegex = new[]
             {
-                // Anime - Absolute Episode Number + Title + Season+Episode
-                // Todo: This currently breaks series that start with numbers
-//                new Regex(@"^(?:(?<absoluteepisode>\d{2,3})(?:_|-|\s|\.)+)+(?<title>.+?)(?:\W|_)+(?:S?(?<season>(?<!\d+)\d{1,2}(?!\d+))(?:(?:\-|[ex]|\W[ex]){1,2}(?<episode>\d{2}(?!\d+)))+)",
-//                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Daily episode with year in series title and air time after date (Plex DVR format)
-                new Regex(@"^^(?<title>.+?\((?<titleyear>\d{4})\))[-_. ]+(?<airyear>19[4-9]\d|20\d\d)(?<sep>[-_]?)(?<airmonth>0\d|1[0-2])\k<sep>(?<airday>[0-2]\d|3[01])[-_. ]\d{2}[-_. ]\d{2}[-_. ]\d{2}",
-                RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Daily episodes without title (2018-10-12, 20181012) (Strict pattern to avoid false matches)
-                new Regex(@"^(?<airyear>19[6-9]\d|20\d\d)(?<sep>[-_]?)(?<airmonth>0\d|1[0-2])\k<sep>(?<airday>[0-2]\d|3[01])(?!\d)",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Multi-Part episodes without a title (S01E05.S01E06)
-                new Regex(@"^(?:\W*S(?<season>(?<!\d+)(?:\d{1,2}|\d{4})(?!\d+))(?:e{1,2}(?<episode>\d{1,3}(?!\d+)))+){2,}",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Multi-Part episodes without a title (1x05.1x06)
-                new Regex(@"^(?:\W*(?<season>(?<!\d+)(?:\d{1,2}|\d{4})(?!\d+))(?:x{1,2}(?<episode>\d{1,3}(?!\d+)))+){2,}",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Episodes without a title, Multi (S01E04E05, 1x04x05, etc)
-                new Regex(@"^(?:S?(?<season>(?<!\d+)(?:\d{1,2}|\d{4})(?!\d+))(?:(?:[-_]|[ex]){1,2}(?<episode>\d{2,3}(?!\d+))){2,})",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Episodes without a title, Single (S01E05, 1x05)
-                new Regex(@"^(?:S?(?<season>(?<!\d+)(?:\d{1,2}|\d{4})(?!\d+))(?:(?:[-_ ]?[ex])(?<episode>\d{2,3}(?!\d+))))",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Anime - [SubGroup] Title Season+Episode
-                new Regex(@"^(?:\[(?<subgroup>.+?)\](?:_|-|\s|\.)?)(?<title>.+?)(?:[-_\W](?<![()\[!]))+(?:S?(?<season>(?<!\d+)\d{1,2}(?!\d+))(?:(?:[ex]|\W[ex]){1,2}(?<episode>\d{2}(?!\d+)))+)(?:[_. ](?!\d+)).*?(?<hash>\[\w{8}\])?(?:$|\.)",
+                // Episodes with airdate (18.04.28) and performer/title followed by XXX
+                new Regex(@"^(?<title>.+?)?\W*(?<airyear>\d{2}|\d{4})[-_. ]+(?<airmonth>[0-1][0-9])[-_. ]+(?<airday>[0-3][0-9])(?![-_. ]+[0-3][0-9])\W*(?<episodeString>.+?)\W*(XXX)",
                     RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
-                // Anime - [SubGroup] Title Episode Absolute Episode Number ([SubGroup] Series Title Episode 01)
-                new Regex(@"^(?:\[(?<subgroup>.+?)\][-_. ]?)(?<title>.+?)[-_. ](?:Episode)(?:[-_. ]+(?<absoluteepisode>(?<!\d+)\d{2,3}(\.\d{1,2})?(?!\d+)))+(?:_|-|\s|\.)*?(?<hash>\[.{8}\])?(?:$|\.)?",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Anime - [SubGroup] Title Absolute Episode Number + Season+Episode
-                new Regex(@"^(?:\[(?<subgroup>.+?)\](?:_|-|\s|\.)?)(?<title>.+?)(?:(?:[-_\W](?<![()\[!]))+(?<absoluteepisode>\d{2,3}(\.\d{1,2})?))+(?:_|-|\s|\.)+(?:S?(?<season>(?<!\d+)\d{1,2}(?!\d+))(?:(?:\-|[ex]|\W[ex]){1,2}(?<episode>\d{2}(?!\d+)))+).*?(?<hash>[(\[]\w{8}[)\]])?(?:$|\.)",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Anime - [SubGroup] Title Season+Episode + Absolute Episode Number
-                new Regex(@"^(?:\[(?<subgroup>.+?)\](?:_|-|\s|\.)?)(?<title>.+?)(?:[-_\W](?<![()\[!]))+(?:S?(?<season>(?<!\d+)\d{1,2}(?!\d+))(?:(?:\-|[ex]|\W[ex]){1,2}(?<episode>\d{2}(?!\d+)))+)(?:(?:_|-|\s|\.)+(?<absoluteepisode>(?<!\d+)\d{2,3}(\.\d{1,2})?(?!\d+|\-[a-z])))+.*?(?<hash>\[\w{8}\])?(?:$|\.)",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Anime - [SubGroup] Title with trailing number Absolute Episode Number - Batch separated with tilde
-                new Regex(@"^\[(?<subgroup>.+?)\][-_. ]?(?<title>.+?[^-]+?)(?:(?<![-_. ]|\b[0]\d+) - )[-_. ]?(?<absoluteepisode>\d{2,3}(\.\d{1,2})?(?!\d+))\s?~\s?(?<absoluteepisode>\d{2,3}(\.\d{1,2})?(?!\d+))(?:[-_. ]+(?<special>special|ova|ovd))?.*?(?<hash>\[\w{8}\])?(?:$|\.mkv)",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Anime - [SubGroup] Title with season number in brackets Absolute Episode Number
-                new Regex(@"^\[(?<subgroup>.+?)\][-_. ]?(?<title>[^-]+?)[_. ]+?\(Season[_. ](?<season>\d+)\)[-_. ]+?(?:[-_. ]?(?<absoluteepisode>\d{2,3}(\.\d{1,2})?(?!\d+)))+(?:[-_. ]+(?<special>special|ova|ovd))?.*?(?<hash>\[\w{8}\])?(?:$|\.mkv)",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Anime - [SubGroup] Title with trailing number Absolute Episode Number
-                new Regex(@"^\[(?<subgroup>.+?)\][-_. ]?(?<title>[^-]+?)(?:(?<![-_. ]|\b[0]\d+) - )(?:[-_. ]?(?<absoluteepisode>\d{2,3}(\.\d{1,2})?(?!\d+)))+(?:[-_. ]+(?<special>special|ova|ovd))?.*?(?<hash>\[\w{8}\])?(?:$|\.mkv)",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Anime - [SubGroup] Title with trailing number Absolute Episode Number
-                new Regex(@"^\[(?<subgroup>.+?)\][-_. ]?(?<title>[^-]+?)(?:(?<![-_. ]|\b[0]\d+)[_ ]+)(?:[-_. ]?(?<absoluteepisode>\d{3}(\.\d{1,2})?(?!\d+|-[a-z]+)))+(?:[-_. ]+(?<special>special|ova|ovd))?.*?(?<hash>\[\w{8}\])?(?:$|\.mkv)",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Anime - [SubGroup] Title - Absolute Episode Number
-                new Regex(@"^\[(?<subgroup>.+?)\][-_. ]?(?<title>.+?)(?:(?<!\b[0]\d+))(?:[. ]-[. ](?<absoluteepisode>\d{2,3}(\.\d{1,2})?(?!\d+|[-])))+(?:[-_. ]+(?<special>special|ova|ovd))?.*?(?<hash>\[\w{8}\])?(?:$|\.mkv)",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Anime - [SubGroup] Title Absolute Episode Number - Absolute Episode Number (batches without full separator between title and absolute episode numbers)
-                new Regex(@"^\[(?<subgroup>.+?)\][-_. ]?(?<title>.+?)(?:(?<!\b[0]\d+))(?<absoluteepisode>\d{2,3}(\.\d{1,2})?(?!\d+|[-]))[. ]-[. ](?<absoluteepisode>\d{2,3}(\.\d{1,2})?(?!\d+|[-]))(?:[-_. ]+(?<special>special|ova|ovd))?.*?(?<hash>\[\w{8}\])?(?:$|\.mkv)",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Anime - [SubGroup] Title Absolute Episode Number
-                new Regex(@"^\[(?<subgroup>.+?)\][-_. ]?(?<title>.+?)[-_. ]+\(?(?:[-_. ]?#?(?<absoluteepisode>\d{2,3}(\.\d{1,2})?(?!\d+|-[a-z]+)))+\)?(?:[-_. ]+(?<special>special|ova|ovd))?.*?(?<hash>\[\w{8}\])?(?:$|\.mkv)",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Multi-episode Repeated (S01E05 - S01E06)
-                new Regex(@"^(?<title>.+?)(?:(?:[-_\W](?<![()\[!]))+S(?<season>(?<!\d+)(?:\d{1,2}|\d{4})(?!\d+))(?:(?:e|[-_. ]e){1,2}(?<episode>\d{1,3}(?!\d+)))+){2,}",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Multi-episode Repeated (1x05 - 1x06)
-                new Regex(@"^(?<title>.+?)(?:(?:[-_\W](?<![()\[!]))+(?<season>(?<!\d+)(?:\d{1,2}|\d{4})(?!\d+))(?:x{1,2}(?<episode>\d{1,3}(?!\d+)))+){2,}",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Single episodes with a title (S01E05, 1x05, etc) and trailing info in slashes
-                new Regex(@"^(?<title>.+?)(?:(?:[-_\W](?<![()\[!]))+S?(?<season>(?<!\d+)(?:\d{1,2})(?!\d+))(?:[ex]|\W[ex]|_){1,2}(?<episode>\d{2,3}(?!\d+|(?:[ex]|\W[ex]|_|-){1,2}\d+))).+?(?:\[.+?\])(?!\\)",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Anime - Title Season EpisodeNumber + Absolute Episode Number [SubGroup]
-                new Regex(@"^(?<title>.+?)(?:[-_\W](?<![()\[!]))+(?:S?(?<season>(?<!\d+)\d{1,2}(?!\d+))(?:(?:[ex]|\W[ex]|-){1,2}(?<episode>(?<!\d+)\d{2}(?!\d+)))+)[-_. (]+?(?:[-_. ]?(?<absoluteepisode>(?<!\d+)\d{3}(\.\d{1,2})?(?!\d+|[pi])))+.+?\[(?<subgroup>.+?)\](?:$|\.mkv)",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Multi-Episode with a title (S01E05E06, S01E05-06, S01E05 E06, etc) and trailing info in slashes
-                new Regex(@"^(?<title>.+?)(?:(?:[-_\W](?<![()\[!]))+S?(?<season>(?<!\d+)(?:\d{1,2})(?!\d+))(?:[ex]|\W[ex]|_){1,2}(?<episode>\d{2,3}(?!\d+))(?:(?:\-|[ex]|\W[ex]|_){1,2}(?<episode>\d{2,3}(?!\d+)))+).+?(?:\[.+?\])(?!\\)",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Anime - Title Absolute Episode Number [SubGroup] [Hash]? (Series Title Episode 99-100 [RlsGroup] [ABCD1234])
-                new Regex(@"^(?<title>.+?)[-_. ]Episode(?:[-_. ]+(?<absoluteepisode>\d{2,3}(\.\d{1,2})?(?!\d+)))+(?:.+?)\[(?<subgroup>.+?)\].*?(?<hash>\[\w{8}\])?(?:$|\.)",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Anime - Title Absolute Episode Number [SubGroup] [Hash]
-                new Regex(@"^(?<title>.+?)(?:(?:_|-|\s|\.)+(?<absoluteepisode>\d{3}(\.\d{1,2})(?!\d+)))+(?:.+?)\[(?<subgroup>.+?)\].*?(?<hash>\[\w{8}\])?(?:$|\.)",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Anime - Title Absolute Episode Number (Year) [SubGroup]
-                new Regex(@"^(?<title>.+?)[-_. ]+(?<absoluteepisode>(?<!\d+)\d{2}(?!\d+))[-_. ](\(\d{4}\))[-_. ]\[(?<subgroup>.+?)\]",
-                            RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Anime - Title with trailing number, Absolute Episode Number and hash
-                new Regex(@"^(?<title>[^-]+?)(?:(?<![-_. ]|\b[0]\d+) - )(?:[-_. ]?(?<absoluteepisode>\d{2,3}(\.\d{1,2})?(?!\d+)))+(?:[-_. ]+(?<special>special|ova|ovd))?.*?(?<hash>\[\w{8}\])(?:$|\.mkv)",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Anime - Title Absolute Episode Number [Hash]
-                new Regex(@"^(?<title>.+?)(?:(?:_|-|\s|\.)+(?<absoluteepisode>\d{2,3}(\.\d{1,2})?(?!\d+)))+(?:[-_. ]+(?<special>special|ova|ovd))?[-_. ]+.*?(?<hash>\[\w{8}\])(?:$|\.)",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Episodes with airdate AND season/episode number, capture season/episode only
-                new Regex(@"^(?<title>.+?)?\W*(?<airdate>\d{4}\W+[0-1][0-9]\W+[0-3][0-9])(?!\W+[0-3][0-9])[-_. ](?:s?(?<season>(?<!\d+)(?:\d{1,2})(?!\d+)))(?:[ex](?<episode>(?<!\d+)(?:\d{1,3})(?!\d+)))",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Episodes with airdate AND season/episode number
-                new Regex(@"^(?<title>.+?)?\W*(?<airyear>\d{4})\W+(?<airmonth>[0-1][0-9])\W+(?<airday>[0-3][0-9])(?!\W+[0-3][0-9]).+?(?:s?(?<season>(?<!\d+)(?:\d{1,2})(?!\d+)))(?:[ex](?<episode>(?<!\d+)(?:\d{1,3})(?!\d+)))",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Multi-episode with title (S01E05-06, S01E05-6)
-                new Regex(@"^(?<title>.+?)(?:[-_\W](?<![()\[!]))+S(?<season>(?<!\d+)(?:\d{1,2})(?!\d+))E(?<episode>\d{1,2}(?!\d+))(?:-(?<episode>\d{1,2}(?!\d+)))+(?:[-_. ]|$)",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Episodes with a title, Single episodes (S01E05, 1x05, etc) & Multi-episode (S01E05E06, S01E05-06, S01E05 E06, etc)
-                new Regex(@"^(?<title>.+?)(?:(?:[-_\W](?<![()\[!]))+S?(?<season>(?<!\d+)(?:\d{1,2})(?!\d+))(?:[ex]|\W[ex]){1,2}(?<episode>\d{2,3}(?!\d+))(?:(?:\-|[ex]|\W[ex]|_){1,2}(?<episode>\d{2,3}(?!\d+)))*)\W?(?!\\)",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Episodes with a title, 4 digit season number, Single episodes (S2016E05, etc) & Multi-episode (S2016E05E06, S2016E05-06, S2016E05 E06, etc)
-                new Regex(@"^(?<title>.+?)(?:(?:[-_\W](?<![()\[!]))+S(?<season>(?<!\d+)(?:\d{4})(?!\d+))(?:e|\We|_){1,2}(?<episode>\d{2,4}(?!\d+))(?:(?:\-|e|\We|_){1,2}(?<episode>\d{2,3}(?!\d+)))*)\W?(?!\\)",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Episodes with a title, 4 digit season number, Single episodes (2016x05, etc) & Multi-episode (2016x05x06, 2016x05-06, 2016x05 x06, etc)
-                new Regex(@"^(?<title>.+?)(?:(?:[-_\W](?<![()\[!]))+(?<season>(?<!\d+)(?:\d{4})(?!\d+))(?:x|\Wx){1,2}(?<episode>\d{2,4}(?!\d+))(?:(?:\-|x|\Wx|_){1,2}(?<episode>\d{2,3}(?!\d+)))*)\W?(?!\\)",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Multi-season pack
-                new Regex(@"^(?<title>.+?)[-_. ]+(?:S|(?:Season|Saison|Series|Stagione)[_. ])(?<season>(?<!\d+)(?:\d{1,2})(?!\d+))(?:-|[-_. ]{3})(?:S|(?:Season|Saison|Series|Stagione)[_. ])?(?<season>(?<!\d+)(?:\d{1,2})(?!\d+))",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Partial season pack
-                new Regex(@"^(?<title>.+?)(?:\W+S(?<season>(?<!\d+)(?:\d{1,2})(?!\d+))\W+(?:(?:Part\W?|(?<!\d+\W+)e)(?<seasonpart>\d{1,2}(?!\d+)))+)",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                                // Anime - 4 digit absolute episode number
-                new Regex(@"^(?:\[(?<subgroup>.+?)\][-_. ]?)(?<title>.+?)[-_. ]+?(?<absoluteepisode>\d{4}(\.\d{1,2})?(?!\d+))",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Anime - Title 4-digit Absolute Episode Number [SubGroup]
-                new Regex(@"^(?<title>.+?)[-_. ]+(?<absoluteepisode>(?<!\d+)\d{4}(?!\d+))[-_. ]\[(?<subgroup>.+?)\]",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Mini-Series with year in title, treated as season 1, episodes are labelled as Part01, Part 01, Part.1
-                new Regex(@"^(?<title>.+?\d{4})(?:\W+(?:(?:Part\W?|e)(?<episode>\d{1,2}(?!\d+)))+)",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Mini-Series, treated as season 1, multi episodes are labelled as E1-E2
-                new Regex(@"^(?<title>.+?)(?:[-._ ][e])(?<episode>\d{2,3}(?!\d+))(?:(?:\-?[e])(?<episode>\d{2,3}(?!\d+)))+",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Episodes with airdate and part (2018.04.28.Part.2)
-                new Regex(@"^(?<title>.+?)?\W*(?<airyear>\d{4})[-_. ]+(?<airmonth>[0-1][0-9])[-_. ]+(?<airday>[0-3][0-9])(?![-_. ]+[0-3][0-9])[-_. ]+Part[-_. ]?(?<part>[1-9])",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Mini-Series, treated as season 1, episodes are labelled as Part01, Part 01, Part.1
-                new Regex(@"^(?<title>.+?)(?:\W+(?:(?:(?<!\()Part\W?|(?<!\d+\W+)e)(?<episode>\d{1,2}(?!\d+|\))))+)",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Mini-Series, treated as season 1, episodes are labelled as Part One/Two/Three/...Nine, Part.One, Part_One
-                new Regex(@"^(?<title>.+?)(?:\W+(?:Part[-._ ](?<episode>One|Two|Three|Four|Five|Six|Seven|Eight|Nine)(?>[-._ ])))",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Mini-Series, treated as season 1, episodes are labelled as XofY
-                new Regex(@"^(?<title>.+?)(?:\W+(?:(?<episode>(?<!\d+)\d{1,2}(?!\d+))of\d+)+)",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Supports Season 01 Episode 03
-                new Regex(@"(?:.*(?:\""|^))(?<title>.*?)(?:[-_\W](?<![()\[]))+(?:\W?Season\W?)(?<season>(?<!\d+)\d{1,2}(?!\d+))(?:\W|_)+(?:Episode\W)(?:[-_. ]?(?<episode>(?<!\d+)\d{1,2}(?!\d+)))+",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Multi-episode with episodes in square brackets (Series Title [S01E11E12] or Series Title [S01E11-12])
-                new Regex(@"(?:.*(?:^))(?<title>.*?)[-._ ]+\[S(?<season>(?<!\d+)\d{2}(?!\d+))(?:[E-]{1,2}(?<episode>(?<!\d+)\d{2}(?!\d+)))+\]",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Multi-episode release with no space between series title and season (S01E11E12)
-                new Regex(@"(?:.*(?:^))(?<title>.*?)S(?<season>(?<!\d+)\d{2}(?!\d+))(?:E(?<episode>(?<!\d+)\d{2}(?!\d+)))+",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Multi-episode with single episode numbers (S6.E1-E2, S6.E1E2, S6E1E2, etc)
-                new Regex(@"^(?<title>.+?)[-_. ]S(?<season>(?<!\d+)(?:\d{1,2}|\d{4})(?!\d+))(?:[-_. ]?[ex]?(?<episode>(?<!\d+)\d{1,2}(?!\d+)))+",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Single episode season or episode S1E1 or S1-E1 or S1.Ep1 or S01.Ep.01
-                new Regex(@"(?:.*(?:\""|^))(?<title>.*?)(?:\W?|_)S(?<season>(?<!\d+)\d{1,2}(?!\d+))(?:\W|_)?Ep?[ ._]?(?<episode>(?<!\d+)\d{1,2}(?!\d+))",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // 3 digit season S010E05
-                new Regex(@"(?:.*(?:\""|^))(?<title>.*?)(?:\W?|_)S(?<season>(?<!\d+)\d{3}(?!\d+))(?:\W|_)?E(?<episode>(?<!\d+)\d{1,2}(?!\d+))",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // 5 digit episode number with a title
-                new Regex(@"^(?:(?<title>.+?)(?:_|-|\s|\.)+)(?:S?(?<season>(?<!\d+)\d{1,2}(?!\d+)))(?:(?:\-|[ex]|\W[ex]|_){1,2}(?<episode>(?<!\d+)\d{5}(?!\d+)))",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // 5 digit multi-episode with a title
-                new Regex(@"^(?:(?<title>.+?)(?:_|-|\s|\.)+)(?:S?(?<season>(?<!\d+)\d{1,2}(?!\d+)))(?:(?:[-_. ]{1,3}ep){1,2}(?<episode>(?<!\d+)\d{5}(?!\d+)))+",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Separated season and episode numbers S01 - E01
-                new Regex(@"^(?<title>.+?)(?:_|-|\s|\.)+S(?<season>\d{2}(?!\d+))(\W-\W)E(?<episode>(?<!\d+)\d{2}(?!\d+))(?!\\)",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Season and episode numbers in square brackets (single and mult-episode)
-                // Series Title - [02x01] - Episode 1
-                // Series Title - [02x01x02] - Episode 1
-                new Regex(@"^(?<title>.+?)?(?:[-_\W](?<![()\[!]))+\[(?<season>(?<!\d+)\d{1,2})(?:(?:-|x){1,2}(?<episode>\d{2}))+\].+?(?:\.|$)",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Anime - Title with season number - Absolute Episode Number (Title S01 - EP14)
-                new Regex(@"^(?<title>.+?S\d{1,2})[-_. ]{3,}(?:EP)?(?<absoluteepisode>\d{2,3}(\.\d{1,2})?(?!\d+|[-]))",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Anime - French titles with single episode numbers, with or without leading sub group ([RlsGroup] Title - Episode 1)
-                new Regex(@"^(?:\[(?<subgroup>.+?)\][-_. ]?)?(?<title>.+?)[-_. ]+?(?:Episode[-_. ]+?)(?<absoluteepisode>\d{1}(\.\d{1,2})?(?!\d+))",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Anime - Absolute episode number in square brackets
-                new Regex(@"^(?:\[(?<subgroup>.+?)\][-_. ]?)(?<title>.+?)[-_. ]+?\[(?<absoluteepisode>\d{2,3}(\.\d{1,2})?(?!\d+))\]",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Japanese variety shows with leading date
-                new Regex(@"^(?<airyear>\d{2})(?<airmonth>[0-1][0-9])(?<airday>[0-3][0-9])(?![-_. ]+[0-3][0-9])[-_. ](?<title>.+?)[-_. ](?:Season[-_. ]?(?<season>\d{1,2})[-_. ])?(?:ep|#)(?<episode>\d{2,3})",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Season only releases
-                new Regex(@"^(?<title>.+?)[-_. ]+?(?:S|Season|Saison|Series|Stagione)[-_. ]?(?<season>\d{1,2}(?![-_. ]?\d+))(?:[-_. ]|$)+(?<extras>EXTRAS|SUBPACK)?(?!\\)",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // 4 digit season only releases
-                new Regex(@"^(?<title>.+?)[-_. ]+?(?:S|Season|Saison|Series|Stagione)[-_. ]?(?<season>\d{4}(?![-_. ]?\d+))(\W+|_|$)(?<extras>EXTRAS|SUBPACK)?(?!\\)",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Episodes with a title and season/episode in square brackets
-                new Regex(@"^(?<title>.+?)(?:(?:[-_\W](?<![()\[!]))+\[S?(?<season>(?<!\d+)\d{1,2}(?!\d+))(?:(?:\-|[ex]|\W[ex]|_){1,2}(?<episode>(?<!\d+)\d{2}(?!\d+|i|p)))+\])\W?(?!\\)",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Supports 103/113 naming
-                new Regex(@"^(?<title>.+?)?(?:(?:[_.-](?<![()\[!]))+(?<season>(?<!\d+)[1-9])(?<episode>[1-9][0-9]|[0][1-9])(?![a-z]|\d+))+(?:[_.]|$)",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // 4 digit episode number
-                // Episodes without a title, Single (S01E05, 1x05) AND Multi (S01E04E05, 1x04x05, etc)
-                new Regex(@"^(?:S?(?<season>(?<!\d+)\d{1,2}(?!\d+))(?:(?:\-|[ex]|\W[ex]|_){1,2}(?<episode>\d{4}(?!\d+|i|p)))+)(\W+|_|$)(?!\\)",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // 4 digit episode number
-                // Episodes with a title, Single episodes (S01E05, 1x05, etc) & Multi-episode (S01E05E06, S01E05-06, S01E05 E06, etc)
-                new Regex(@"^(?<title>.+?)(?:(?:[-_\W](?<![()\[!]))+S?(?<season>(?<!\d+)\d{1,2}(?!\d+))(?:(?:\-|[ex]|\W[ex]|_){1,2}(?<episode>\d{4}(?!\d+|i|p)))+)\W?(?!\\)",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Episodes with airdate (2018.04.28)
-                new Regex(@"^(?<title>.+?)?\W*(?<airyear>\d{4})[-_. ]+(?<airmonth>[0-1][0-9])[-_. ]+(?<airday>[0-3][0-9])(?![-_. ]+[0-3][0-9])",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Episodes with airdate (04.28.2018)
-                new Regex(@"^(?<title>.+?)?\W*(?<airmonth>[0-1][0-9])[-_. ]+(?<airday>[0-3][0-9])[-_. ]+(?<airyear>\d{4})(?!\d+)",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Episodes with airdate (20180428)
-                new Regex(@"^(?<title>.+?)?\W*(?<!\d+)(?<airyear>\d{4})(?<airmonth>[0-1][0-9])(?<airday>[0-3][0-9])(?!\d+)",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Anime - Title Absolute Episode Number (E195 or E1206)
-                new Regex(@"^(?:\[(?<subgroup>.+?)\][-_. ]?)?(?<title>.+?)(?:(?:_|-|\s|\.)+(?:e|ep)(?<absoluteepisode>(\d{3}|\d{4})(\.\d{1,2})?))+[-_. ].*?(?<hash>\[\w{8}\])?(?:$|\.)",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Supports 1103/1113 naming
-                new Regex(@"^(?<title>.+?)?(?:(?:[-_. ](?<![()\[!]))*(?<season>(?<!\d+|\(|\[|e|x)\d{2})(?<episode>(?<!e|x)(?:[1-9][0-9]|[0][1-9])(?!p|i|\d+|\)|\]|\W\d+|\W(?:e|ep|x)\d+)))+([-_. ]+|$)(?!\\)",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Dutch/Flemish release titles
-                new Regex(@"^(?<title>.+?)[-_. ](?:Se\.(?<season>(?<!\d+)(?:\d{1,2}|\d{4})(?!\d+))(?:(?:[-_ ]?afl\.)(?<episode>\d{1,3}(?!\d+))(?:(?:[-]|[-_ ]en[-_ ])(?<episode>\d{1,3}(?!\d+)))*))",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Episodes with single digit episode number (S01E1, S01E5E6, etc)
-                new Regex(@"^(?<title>.*?)(?:(?:[-_\W](?<![()\[!]))+S?(?<season>(?<!\d+)\d{1,2}(?!\d+))(?:(?:\-|[ex]){1,2}(?<episode>\d{1}))+)+(\W+|_|$)(?!\\)",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // iTunes Season 1\05 Title (Quality).ext
-                new Regex(@"^(?:Season(?:_|-|\s|\.)(?<season>(?<!\d+)\d{1,2}(?!\d+)))(?:_|-|\s|\.)(?<episode>(?<!\d+)\d{1,2}(?!\d+))",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // iTunes 1-05 Title (Quality).ext
-                new Regex(@"^(?:(?<season>(?<!\d+)(?:\d{1,2})(?!\d+))(?:-(?<episode>\d{2,3}(?!\d+))))",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Spanish tracker releases
-                new Regex(@"^(?<title>.+?)(?:[-_. ]+?Temporada.+?\[Cap[-_.])(?<season>(?<!\d+)\d{1,2})(?<episode>(?<!e|x)(?:[1-9][0-9]|[0][1-9]))(?:\])",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Anime Range - Title Absolute Episode Number (ep01-12)
-                new Regex(@"^(?:\[(?<subgroup>.+?)\][-_. ]?)?(?<title>.+?)(?:_|\s|\.)+(?:e|ep)(?<absoluteepisode>\d{2,3}(\.\d{1,2})?)-(?<absoluteepisode>(?<!\d+)\d{1,2}(\.\d{1,2})?(?!\d+|-)).*?(?<hash>\[\w{8}\])?(?:$|\.)",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Anime - Title Absolute Episode Number (e66)
-                new Regex(@"^(?:\[(?<subgroup>.+?)\][-_. ]?)?(?<title>.+?)(?:(?:_|-|\s|\.)+(?:e|ep)(?<absoluteepisode>\d{2,4}(\.\d{1,2})?))+[-_. ].*?(?<hash>\[\w{8}\])?(?:$|\.)",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Anime - Title Episode Absolute Episode Number (Series Title Episode 01)
-                new Regex(@"^(?<title>.+?)[-_. ](?:Episode)(?:[-_. ]+(?<absoluteepisode>(?<!\d+)\d{2,3}(\.\d{1,2})?(?!\d+)))+(?:_|-|\s|\.)*?(?<hash>\[.{8}\])?(?:$|\.)?",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Anime Range - Title Absolute Episode Number (1 or 2 digit absolute episode numbers in a range, 1-10)
-                new Regex(@"^(?:\[(?<subgroup>.+?)\][-_. ]?)?(?<title>.+?)[_. ]+(?<absoluteepisode>(?<!\d+)\d{1,2}(\.\d{1,2})?(?!\d+))-(?<absoluteepisode>(?<!\d+)\d{1,2}(\.\d{1,2})?(?!\d+|-))(?:_|\s|\.)*?(?<hash>\[.{8}\])?(?:$|\.)?",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Anime - Title Absolute Episode Number
-                new Regex(@"^(?:\[(?<subgroup>.+?)\][-_. ]?)?(?<title>.+?)(?:[-_. ]+(?<absoluteepisode>(?<!\d+)\d{2,4}(\.\d{1,2})?(?!\d+|[ip])))+(?:_|-|\s|\.)*?(?<hash>\[.{8}\])?(?:$|\.)?",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Anime - Title {Absolute Episode Number}
-                new Regex(@"^(?:\[(?<subgroup>.+?)\][-_. ]?)?(?<title>.+?)(?:(?:[-_\W](?<![()\[!]))+(?<absoluteepisode>(?<!\d+)\d{2,3}(\.\d{1,2})?(?!\d+|[ip])))+(?:_|-|\s|\.)*?(?<hash>\[.{8}\])?(?:$|\.)?",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Extant, terrible multi-episode naming (extant.10708.hdtv-lol.mp4)
-                new Regex(@"^(?<title>.+?)[-_. ](?<season>[0]?\d?)(?:(?<episode>\d{2}){2}(?!\d+))[-_. ]",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Season only releases for poorly named anime
-                new Regex(@"^(?:\[(?<subgroup>.+?)\][-_. ])?(?<title>.+?)[-_. ]+?[\[(](?:S|Season|Saison|Series|Stagione)[-_. ]?(?<season>\d{1,2}(?![-_. ]?\d+))(?:[-_. )\]]|$)+(?<extras>EXTRAS|SUBPACK)?(?!\\)",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Episodes without a title, Single episode numbers (S1E1, 1x1)
-                new Regex(@"^(?:S?(?<season>(?<!\d+)(?:\d{1,2}|\d{4})(?!\d+))(?:(?:[-_ ]?[ex])(?<episode>\d{1}(?!\d+))))",
+                // Episodes with airdate (18.04.28)
+                new Regex(@"^(?<title>.+?)?\W*(?<airyear>\d{2}|\d{4})[-_. ]+(?<airmonth>[0-1][0-9])[-_. ]+(?<airday>[0-3][0-9])(?![-_. ]+[0-3][0-9])",
                     RegexOptions.IgnoreCase | RegexOptions.Compiled)
             };
 
@@ -872,6 +543,9 @@ namespace NzbDrone.Core.Parser
             var seriesName = matchCollection[0].Groups["title"].Value.Replace('.', ' ').Replace('_', ' ');
             seriesName = RequestInfoRegex.Replace(seriesName, "").Trim(' ');
 
+            var episodeString = matchCollection[0].Groups["episodeString"].Value.Replace('.', ' ').Replace('_', ' ');
+            episodeString = RequestInfoRegex.Replace(episodeString, "").Trim(' ');
+
             int airYear;
             int.TryParse(matchCollection[0].Groups["airyear"].Value, out airYear);
 
@@ -879,7 +553,7 @@ namespace NzbDrone.Core.Parser
 
             ParsedEpisodeInfo result;
 
-            if (airYear < 1900)
+            if (!matchCollection[0].Groups["airyear"].Success)
             {
                 result = new ParsedEpisodeInfo
                 {
@@ -1003,6 +677,11 @@ namespace NzbDrone.Core.Parser
             }
             else
             {
+                if (airYear <= 99)
+                {
+                    airYear = CultureInfo.CurrentCulture.Calendar.ToFourDigitYear(airYear);
+                }
+
                 // Try to Parse as a daily show
                 var airmonth = Convert.ToInt32(matchCollection[0].Groups["airmonth"].Value);
                 var airday = Convert.ToInt32(matchCollection[0].Groups["airday"].Value);
@@ -1041,6 +720,7 @@ namespace NzbDrone.Core.Parser
                 lastSeasonEpisodeStringIndex = Math.Max(lastSeasonEpisodeStringIndex, matchCollection[0].Groups["airyear"].EndIndex());
                 lastSeasonEpisodeStringIndex = Math.Max(lastSeasonEpisodeStringIndex, matchCollection[0].Groups["airmonth"].EndIndex());
                 lastSeasonEpisodeStringIndex = Math.Max(lastSeasonEpisodeStringIndex, matchCollection[0].Groups["airday"].EndIndex());
+                lastSeasonEpisodeStringIndex = Math.Max(lastSeasonEpisodeStringIndex, matchCollection[0].Groups["episodeString"].EndIndex());
 
                 result = new ParsedEpisodeInfo
                 {
@@ -1067,6 +747,7 @@ namespace NzbDrone.Core.Parser
 
             result.SeriesTitle = seriesName;
             result.SeriesTitleInfo = GetSeriesTitleInfo(result.SeriesTitle);
+            result.SceneTitle = episodeString;
 
             Logger.Debug("Episode Parsed. {0}", result);
 

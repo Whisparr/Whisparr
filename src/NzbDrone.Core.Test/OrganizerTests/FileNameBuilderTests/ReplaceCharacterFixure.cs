@@ -69,7 +69,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         public void should_replace_illegal_characters(string title, string expected)
         {
             _series.Title = title;
-            _namingConfig.StandardEpisodeFormat = "{Series Title}";
+            _namingConfig.StandardEpisodeFormat = "{Site Title}";
 
             Subject.BuildFileName(new List<Episode> { _episode }, _series, _episodeFile)
                    .Should().Be(expected);

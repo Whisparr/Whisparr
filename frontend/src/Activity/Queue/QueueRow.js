@@ -4,7 +4,6 @@ import ProtocolLabel from 'Activity/Queue/ProtocolLabel';
 import IconButton from 'Components/Link/IconButton';
 import SpinnerIconButton from 'Components/Link/SpinnerIconButton';
 import ProgressBar from 'Components/ProgressBar';
-import RelativeDateCellConnector from 'Components/Table/Cells/RelativeDateCellConnector';
 import TableRowCell from 'Components/Table/Cells/TableRowCell';
 import TableSelectCell from 'Components/Table/Cells/TableSelectCell';
 import TableRow from 'Components/Table/TableRow';
@@ -174,14 +173,7 @@ class QueueRow extends Component {
                   {
                     episode ?
                       <SeasonEpisodeNumber
-                        seasonNumber={episode.seasonNumber}
-                        episodeNumber={episode.episodeNumber}
-                        absoluteEpisodeNumber={episode.absoluteEpisodeNumber}
-                        alternateTitles={series.alternateTitles}
-                        sceneSeasonNumber={episode.sceneSeasonNumber}
-                        sceneEpisodeNumber={episode.sceneEpisodeNumber}
-                        sceneAbsoluteEpisodeNumber={episode.sceneAbsoluteEpisodeNumber}
-                        unverifiedSceneNumbering={episode.unverifiedSceneNumbering}
+                        episodeNumber={episode.airDate}
                       /> :
                       '-'
                   }
@@ -203,23 +195,6 @@ class QueueRow extends Component {
                       /> :
                       '-'
                   }
-                </TableRowCell>
-              );
-            }
-
-            if (name === 'episodes.airDateUtc') {
-              if (episode) {
-                return (
-                  <RelativeDateCellConnector
-                    key={name}
-                    date={episode.airDateUtc}
-                  />
-                );
-              }
-
-              return (
-                <TableRowCell key={name}>
-                  -
                 </TableRowCell>
               );
             }

@@ -7,14 +7,14 @@ import styles from './SeriesDetailsLinks.css';
 
 function SeriesDetailsLinks(props) {
   const {
-    tpdbId
+    tvdbId
   } = props;
 
   return (
     <div className={styles.links}>
       <Link
         className={styles.link}
-        to={`http://www.thetpdb.com/?tab=series&id=${tpdbId}`}
+        to={`https://metadataapi.net/sites/${tvdbId}`}
       >
         <Label
           className={styles.linkLabel}
@@ -29,7 +29,7 @@ function SeriesDetailsLinks(props) {
 }
 
 SeriesDetailsLinks.propTypes = {
-  tpdbId: PropTypes.number.isRequired,
+  tvdbId: PropTypes.number.isRequired
 };
 
 export default SeriesDetailsLinks;

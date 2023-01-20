@@ -20,9 +20,9 @@ namespace NzbDrone.Core.Test.OrganizerTests
                   .Setup(c => c.GetConfig()).Returns(_namingConfig);
         }
 
-        [TestCase("Venture Bros.", 1, "{Series.Title}.{season:00}", "Venture.Bros.01")]
-        [TestCase("Venture Bros.", 1, "{Series Title} Season {season:00}", "Venture Bros. Season 01")]
-        [TestCase("Series Title?", 1, "{Series Title} Season {season:00}", "Series Title! Season 01")]
+        [TestCase("Venture Bros.", 1, "{Site.Title}.{season:00}", "Venture.Bros.01")]
+        [TestCase("Venture Bros.", 1, "{Site Title} Season {season:00}", "Venture Bros. Season 01")]
+        [TestCase("Series Title?", 1, "{Site Title} Season {season:00}", "Series Title! Season 01")]
         public void should_use_seriesFolderFormat_to_build_folder_name(string seriesTitle, int seasonNumber, string format, string expected)
         {
             _namingConfig.SeasonFolderFormat = format;

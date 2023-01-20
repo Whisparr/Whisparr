@@ -53,11 +53,11 @@ class EpisodeRow extends Component {
       episodeFileId,
       monitored,
       seasonNumber,
-      episodeNumber,
-      absoluteEpisodeNumber,
       sceneSeasonNumber,
       sceneEpisodeNumber,
       sceneAbsoluteEpisodeNumber,
+      actors,
+      airDate,
       airDateUtc,
       title,
       useSceneNumbering,
@@ -110,8 +110,7 @@ class EpisodeRow extends Component {
                 >
                   <EpisodeNumber
                     seasonNumber={seasonNumber}
-                    episodeNumber={episodeNumber}
-                    absoluteEpisodeNumber={absoluteEpisodeNumber}
+                    episodeNumber={airDate}
                     useSceneNumbering={useSceneNumbering}
                     unverifiedSceneNumbering={unverifiedSceneNumbering}
                     sceneSeasonNumber={sceneSeasonNumber}
@@ -135,6 +134,21 @@ class EpisodeRow extends Component {
                     episodeTitle={title}
                     showOpenSeriesButton={false}
                   />
+                </TableRowCell>
+              );
+            }
+
+            if (name === 'actors') {
+              const joinedPerformers = actors.map((a) => a.character).slice(0, 4).join(', ');
+
+              return (
+                <TableRowCell
+                  key={name}
+                  className={styles.actors}
+                >
+                  <span title={joinedPerformers}>
+                    {joinedPerformers}
+                  </span>
                 </TableRowCell>
               );
             }
@@ -322,11 +336,12 @@ EpisodeRow.propTypes = {
   episodeFileId: PropTypes.number,
   monitored: PropTypes.bool.isRequired,
   seasonNumber: PropTypes.number.isRequired,
-  episodeNumber: PropTypes.number.isRequired,
-  absoluteEpisodeNumber: PropTypes.number,
   sceneSeasonNumber: PropTypes.number,
   sceneEpisodeNumber: PropTypes.number,
   sceneAbsoluteEpisodeNumber: PropTypes.number,
+  actors: PropTypes.arrayOf(PropTypes.object),
+  joinedPerformers: PropTypes.string,
+  airDate: PropTypes.string,
   airDateUtc: PropTypes.string,
   title: PropTypes.string.isRequired,
   isSaving: PropTypes.bool,
@@ -346,7 +361,8 @@ EpisodeRow.propTypes = {
 
 EpisodeRow.defaultProps = {
   alternateTitles: [],
-  customFormats: []
+  customFormats: [],
+  actors: []
 };
 
 export default EpisodeRow;

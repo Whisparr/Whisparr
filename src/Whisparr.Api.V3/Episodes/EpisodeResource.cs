@@ -34,6 +34,7 @@ namespace Whisparr.Api.V3.Episodes
         public DateTime? GrabDate { get; set; }
         public string SeriesTitle { get; set; }
         public SeriesResource Series { get; set; }
+        public List<Actor> Actors { get; set; }
 
         public List<MediaCover> Images { get; set; }
 
@@ -64,6 +65,7 @@ namespace Whisparr.Api.V3.Episodes
                 AirDate = model.AirDate,
                 AirDateUtc = model.AirDateUtc,
                 Overview = model.Overview,
+                Actors = model.Actors,
 
                 // EpisodeFile
 

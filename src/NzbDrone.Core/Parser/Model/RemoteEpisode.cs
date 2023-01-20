@@ -13,7 +13,6 @@ namespace NzbDrone.Core.Parser.Model
         public ReleaseInfo Release { get; set; }
         public ParsedEpisodeInfo ParsedEpisodeInfo { get; set; }
         public int MappedSeasonNumber { get; set; }
-
         public Series Series { get; set; }
         public List<Episode> Episodes { get; set; }
         public bool EpisodeRequested { get; set; }
@@ -23,6 +22,7 @@ namespace NzbDrone.Core.Parser.Model
         public int CustomFormatScore { get; set; }
         public SeriesMatchType SeriesMatchType { get; set; }
         public List<Language> Languages { get; set; }
+        public ReleaseSourceType ReleaseSource { get; set; }
 
         public RemoteEpisode()
         {
@@ -40,5 +40,15 @@ namespace NzbDrone.Core.Parser.Model
         {
             return Release.Title;
         }
+    }
+
+    public enum ReleaseSourceType
+    {
+        Unknown = 0,
+        Rss = 1,
+        Search = 2,
+        UserInvokedSearch = 3,
+        InteractiveSearch = 4,
+        ReleasePush = 5
     }
 }

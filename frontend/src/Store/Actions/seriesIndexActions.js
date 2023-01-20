@@ -150,12 +150,6 @@ export const defaultState = {
       isVisible: false
     },
     {
-      name: 'ratings',
-      label: 'Rating',
-      isSortable: true,
-      isVisible: false
-    },
-    {
       name: 'certification',
       label: 'Certification',
       isSortable: false,
@@ -253,12 +247,6 @@ export const defaultState = {
       const { originalLanguage = {} } = item;
 
       return originalLanguage.name;
-    },
-
-    ratings: function(item) {
-      const { ratings = {} } = item;
-
-      return ratings.value;
     }
   },
 

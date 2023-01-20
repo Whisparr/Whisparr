@@ -16,7 +16,7 @@ class MoreInfo extends Component {
         <DescriptionList>
           <DescriptionListItemTitle>Home page</DescriptionListItemTitle>
           <DescriptionListItemDescription>
-            <Link to="https://whisparr.tv/">whisparr.tv</Link>
+            <Link to="https://whisparr.com/">whisparr.com</Link>
           </DescriptionListItemDescription>
 
           <DescriptionListItemTitle>Wiki</DescriptionListItemTitle>
@@ -24,32 +24,14 @@ class MoreInfo extends Component {
             <Link to="https://wiki.servarr.com/whisparr">wiki.servarr.com/whisparr</Link>
           </DescriptionListItemDescription>
 
-          <DescriptionListItemTitle>Forums</DescriptionListItemTitle>
-          <DescriptionListItemDescription>
-            <Link to="https://forums.whisparr.tv/">forums.whisparr.tv</Link>
-          </DescriptionListItemDescription>
-
-          <DescriptionListItemTitle>Twitter</DescriptionListItemTitle>
-          <DescriptionListItemDescription>
-            <Link to="https://twitter.com/whisparrtv">@whisparrtv</Link>
-          </DescriptionListItemDescription>
-
           <DescriptionListItemTitle>Discord</DescriptionListItemTitle>
           <DescriptionListItemDescription>
-            <Link to="https://discord.gg/73QUuf3bgA">discord.gg/73QUuf3bgA</Link>
-          </DescriptionListItemDescription>
-
-          <DescriptionListItemTitle>IRC</DescriptionListItemTitle>
-          <DescriptionListItemDescription>
-            <Link to="irc://irc.libera.chat/#whisparr">#whisparr on Libera</Link>
-          </DescriptionListItemDescription>
-          <DescriptionListItemDescription>
-            <Link to="https://web.libera.chat/?channels=#whisparr">Libera webchat</Link>
+            <Link to="https://whisparr.com/discord">https://whisparr.com/discord</Link>
           </DescriptionListItemDescription>
 
           <DescriptionListItemTitle>Donations</DescriptionListItemTitle>
           <DescriptionListItemDescription>
-            <Link to="https://whisparr.tv/donate">whisparr.tv/donate</Link>
+            <Link to="https://whisparr.com/donate">whisparr.com/donate</Link>
           </DescriptionListItemDescription>
 
           <DescriptionListItemTitle>Source</DescriptionListItemTitle>
@@ -58,9 +40,6 @@ class MoreInfo extends Component {
           </DescriptionListItemDescription>
 
           <DescriptionListItemTitle>Feature Requests</DescriptionListItemTitle>
-          <DescriptionListItemDescription>
-            <Link to="https://forums.whisparr.tv/">forums.whisparr.tv</Link>
-          </DescriptionListItemDescription>
           <DescriptionListItemDescription>
             <Link to="https://github.com/Whisparr/Whisparr/issues">github.com/Whisparr/Whisparr/issues</Link>
           </DescriptionListItemDescription>

@@ -36,12 +36,17 @@ export const defaultState = {
     },
     {
       name: 'episodeNumber',
-      label: '#',
+      label: 'Date',
       isVisible: true
     },
     {
       name: 'title',
       label: 'Title',
+      isVisible: true
+    },
+    {
+      name: 'actors',
+      label: 'Performers',
       isVisible: true
     },
     {
@@ -57,7 +62,7 @@ export const defaultState = {
     {
       name: 'airDateUtc',
       label: 'Air Date',
-      isVisible: true
+      isVisible: false
     },
     {
       name: 'languages',

@@ -14,6 +14,5 @@ namespace NzbDrone.Core.Indexers
         IList<ReleaseInfo> FetchRecent();
         IList<ReleaseInfo> Fetch(SeasonSearchCriteria searchCriteria);
         IList<ReleaseInfo> Fetch(SingleEpisodeSearchCriteria searchCriteria);
-        IList<ReleaseInfo> Fetch(SpecialEpisodeSearchCriteria searchCriteria);
     }
 }

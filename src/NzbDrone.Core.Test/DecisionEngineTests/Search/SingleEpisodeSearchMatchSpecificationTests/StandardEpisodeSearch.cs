@@ -22,9 +22,6 @@ namespace NzbDrone.Core.Test.DecisionEngineTests.Search.SingleEpisodeSearchMatch
             _remoteEpisode.ParsedEpisodeInfo.SeasonNumber = 5;
             _remoteEpisode.ParsedEpisodeInfo.EpisodeNumbers = new[] { 1 };
             _remoteEpisode.MappedSeasonNumber = 5;
-
-            _searchCriteria.SeasonNumber = 5;
-            _searchCriteria.EpisodeNumber = 1;
         }
 
         [Test]
@@ -41,7 +38,6 @@ namespace NzbDrone.Core.Test.DecisionEngineTests.Search.SingleEpisodeSearchMatch
         {
             _remoteEpisode.ParsedEpisodeInfo.SeasonNumber = 10;
             _remoteEpisode.MappedSeasonNumber = 5; // 10 -> 5 mapping
-            _searchCriteria.SeasonNumber = 10; // searching by tvdb 5 = 10 scene
 
             Subject.IsSatisfiedBy(_remoteEpisode, _searchCriteria).Accepted.Should().BeTrue();
         }
@@ -51,7 +47,6 @@ namespace NzbDrone.Core.Test.DecisionEngineTests.Search.SingleEpisodeSearchMatch
         {
             _remoteEpisode.ParsedEpisodeInfo.SeasonNumber = 10;
             _remoteEpisode.MappedSeasonNumber = 6; // 9 -> 5 mapping
-            _searchCriteria.SeasonNumber = 9; // searching by tvdb 5 = 9 scene
 
             Subject.IsSatisfiedBy(_remoteEpisode, _searchCriteria).Accepted.Should().BeFalse();
         }

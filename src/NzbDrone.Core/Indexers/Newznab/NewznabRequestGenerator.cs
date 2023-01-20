@@ -76,10 +76,19 @@ namespace NzbDrone.Core.Indexers.Newznab
         {
             var pageableRequests = new IndexerPageableRequestChain();
 
-            AddTitlePageableRequests(pageableRequests,
-                    Settings.Categories,
-                    searchCriteria,
-                    "");
+            var releaseDate = searchCriteria.ReleaseDate?.ToString("yy.MM.dd") ?? string.Empty;
+
+            if (SupportsSearch)
+            {
+                var queryTitles = TextSearchEngine == "raw" ? searchCriteria.SceneTitles : searchCriteria.CleanSceneTitles;
+                foreach (var queryTitle in queryTitles)
+                {
+                    pageableRequests.Add(GetPagedRequests(MaxPages,
+                        Settings.Categories,
+                        "search",
+                        $"&q={NewsnabifyTitle(queryTitle)}+{releaseDate}"));
+                }
+            }
 
             return pageableRequests;
         }
@@ -92,27 +101,6 @@ namespace NzbDrone.Core.Indexers.Newznab
                     Settings.Categories,
                     searchCriteria,
                     "");
-
-            return pageableRequests;
-        }
-
-        public virtual IndexerPageableRequestChain GetSearchRequests(SpecialEpisodeSearchCriteria searchCriteria)
-        {
-            var pageableRequests = new IndexerPageableRequestChain();
-
-            if (SupportsSearch)
-            {
-                foreach (var queryTitle in searchCriteria.EpisodeQueryTitles)
-                {
-                    var query = queryTitle.Replace('+', ' ');
-                    query = System.Web.HttpUtility.UrlEncode(query);
-
-                    pageableRequests.Add(GetPagedRequests(MaxPages,
-                        Settings.Categories,
-                        "search",
-                        $"&q={query}"));
-                }
-            }
 
             return pageableRequests;
         }

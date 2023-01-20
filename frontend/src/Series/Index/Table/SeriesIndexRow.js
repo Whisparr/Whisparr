@@ -2,7 +2,6 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import CheckInput from 'Components/Form/CheckInput';
-import HeartRating from 'Components/HeartRating';
 import IconButton from 'Components/Link/IconButton';
 import Link from 'Components/Link/Link';
 import SpinnerIconButton from 'Components/Link/SpinnerIconButton';
@@ -93,7 +92,6 @@ class SeriesIndexRow extends Component {
       year,
       path,
       genres,
-      ratings,
       certification,
       tags,
       images,
@@ -377,19 +375,6 @@ class SeriesIndexRow extends Component {
               );
             }
 
-            if (name === 'ratings') {
-              return (
-                <VirtualTableRowCell
-                  key={name}
-                  className={styles[name]}
-                >
-                  <HeartRating
-                    rating={ratings.value}
-                  />
-                </VirtualTableRowCell>
-              );
-            }
-
             if (name === 'certification') {
               return (
                 <VirtualTableRowCell
@@ -520,7 +505,6 @@ SeriesIndexRow.propTypes = {
   year: PropTypes.number,
   path: PropTypes.string.isRequired,
   genres: PropTypes.arrayOf(PropTypes.string).isRequired,
-  ratings: PropTypes.object.isRequired,
   certification: PropTypes.string,
   tags: PropTypes.arrayOf(PropTypes.number).isRequired,
   images: PropTypes.arrayOf(PropTypes.object).isRequired,

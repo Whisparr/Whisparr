@@ -24,9 +24,7 @@ namespace NzbDrone.Core.Test.IndexerTests.IntegrationTests
 
             _singleSearchCriteria = new SingleEpisodeSearchCriteria()
                 {
-                    SceneTitles = new List<string> { "Person of Interest" },
-                    SeasonNumber = 1,
-                    EpisodeNumber = 1
+                    SceneTitles = new List<string> { "Person of Interest" }
                 };
         }
 

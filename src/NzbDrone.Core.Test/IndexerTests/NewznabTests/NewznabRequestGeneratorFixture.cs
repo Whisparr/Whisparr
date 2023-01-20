@@ -28,8 +28,6 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
             {
                 Series = new Tv.Series { TvdbId = 20, ImdbId = "t40" },
                 SceneTitles = new List<string> { "Monkey Island" },
-                SeasonNumber = 1,
-                EpisodeNumber = 2
             };
 
             _capabilities = new NewznabCapabilities();

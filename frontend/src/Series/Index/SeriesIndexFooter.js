@@ -17,8 +17,6 @@ class SeriesIndexFooter extends PureComponent {
     const count = series.length;
     let episodes = 0;
     let episodeFiles = 0;
-    let ended = 0;
-    let continuing = 0;
     let monitored = 0;
     let totalFileSize = 0;
 
@@ -33,12 +31,6 @@ class SeriesIndexFooter extends PureComponent {
 
       episodes += episodeCount;
       episodeFiles += episodeFileCount;
-
-      if (s.status === 'ended') {
-        ended++;
-      } else {
-        continuing++;
-      }
 
       if (s.monitored) {
         monitored++;
@@ -60,7 +52,7 @@ class SeriesIndexFooter extends PureComponent {
                       enableColorImpairedMode && 'colorImpaired'
                     )}
                   />
-                  <div>Continuing (All episodes downloaded)</div>
+                  <div>Continuing (All scenes downloaded)</div>
                 </div>
 
                 <div className={styles.legendItem}>
@@ -70,7 +62,7 @@ class SeriesIndexFooter extends PureComponent {
                       enableColorImpairedMode && 'colorImpaired'
                     )}
                   />
-                  <div>Ended (All episodes downloaded)</div>
+                  <div>Ended (All scenes downloaded)</div>
                 </div>
 
                 <div className={styles.legendItem}>
@@ -80,7 +72,7 @@ class SeriesIndexFooter extends PureComponent {
                       enableColorImpairedMode && 'colorImpaired'
                     )}
                   />
-                  <div>Missing Episodes (Series monitored)</div>
+                  <div>Missing Scenes (Series monitored)</div>
                 </div>
 
                 <div className={styles.legendItem}>
@@ -90,25 +82,15 @@ class SeriesIndexFooter extends PureComponent {
                       enableColorImpairedMode && 'colorImpaired'
                     )}
                   />
-                  <div>Missing Episodes (Series not monitored)</div>
+                  <div>Missing Scenes (Series not monitored)</div>
                 </div>
               </div>
 
               <div className={styles.statistics}>
                 <DescriptionList>
                   <DescriptionListItem
-                    title="Series"
+                    title="Sites"
                     data={count}
-                  />
-
-                  <DescriptionListItem
-                    title="Ended"
-                    data={ended}
-                  />
-
-                  <DescriptionListItem
-                    title="Continuing"
-                    data={continuing}
                   />
                 </DescriptionList>
 
@@ -126,7 +108,7 @@ class SeriesIndexFooter extends PureComponent {
 
                 <DescriptionList>
                   <DescriptionListItem
-                    title="Episodes"
+                    title="Scenes"
                     data={episodes}
                   />
 

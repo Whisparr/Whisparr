@@ -31,7 +31,7 @@ namespace NzbDrone.Core.Indexers.Rarbg
         {
             var pageableRequests = new IndexerPageableRequestChain();
 
-            pageableRequests.Add(GetPagedRequests("search", searchCriteria.Series.TvdbId, "S{0:00}E{1:00}", searchCriteria.SeasonNumber, searchCriteria.EpisodeNumber));
+            pageableRequests.Add(GetPagedRequests("search", "{0} {1}", searchCriteria.Series.Title, searchCriteria.ReleaseDate.Value.ToString("yy.MM.dd")));
 
             return pageableRequests;
         }
@@ -40,27 +40,12 @@ namespace NzbDrone.Core.Indexers.Rarbg
         {
             var pageableRequests = new IndexerPageableRequestChain();
 
-            pageableRequests.Add(GetPagedRequests("search", searchCriteria.Series.TvdbId, "S{0:00}", searchCriteria.SeasonNumber));
+            pageableRequests.Add(GetPagedRequests("search", "S{0:00}", searchCriteria.SeasonNumber));
 
             return pageableRequests;
         }
 
-        public virtual IndexerPageableRequestChain GetSearchRequests(SpecialEpisodeSearchCriteria searchCriteria)
-        {
-            var pageableRequests = new IndexerPageableRequestChain();
-
-            foreach (var queryTitle in searchCriteria.EpisodeQueryTitles)
-            {
-                var query = queryTitle.Replace('+', ' ');
-                query = System.Web.HttpUtility.UrlEncode(query);
-
-                pageableRequests.Add(GetPagedRequests("search", searchCriteria.Series.TvdbId, query));
-            }
-
-            return pageableRequests;
-        }
-
-        private IEnumerable<IndexerRequest> GetPagedRequests(string mode, int? tvdbId, string query, params object[] args)
+        private IEnumerable<IndexerRequest> GetPagedRequests(string mode, string query, params object[] args)
         {
             var requestBuilder = new HttpRequestBuilder(Settings.BaseUrl)
                 .Resource("/pubapi_v2.php")
@@ -73,11 +58,6 @@ namespace NzbDrone.Core.Indexers.Rarbg
             }
 
             requestBuilder.AddQueryParam("mode", mode);
-
-            if (tvdbId.HasValue)
-            {
-                requestBuilder.AddQueryParam("search_tvdb", tvdbId.Value);
-            }
 
             if (query.IsNotNullOrWhiteSpace())
             {

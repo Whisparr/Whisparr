@@ -199,7 +199,7 @@ namespace NzbDrone.Core.Parser
 
             if (parsedEpisodeInfo.IsDaily)
             {
-                var episodeInfo = GetDailyEpisode(series, parsedEpisodeInfo.AirDate, parsedEpisodeInfo.DailyPart, searchCriteria);
+                var episodeInfo = GetDailyEpisode(series, parsedEpisodeInfo.AirDate, parsedEpisodeInfo.SceneTitle, searchCriteria);
 
                 if (episodeInfo != null)
                 {
@@ -370,7 +370,7 @@ namespace NzbDrone.Core.Parser
             return new FindSeriesResult(series, matchType);
         }
 
-        private Episode GetDailyEpisode(Series series, string airDate, int? part, SearchCriteriaBase searchCriteria)
+        private Episode GetDailyEpisode(Series series, string airDate, string part, SearchCriteriaBase searchCriteria)
         {
             Episode episodeInfo = null;
 

@@ -77,7 +77,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_replace_Series_space_Title()
         {
-            _namingConfig.StandardEpisodeFormat = "{Series Title}";
+            _namingConfig.StandardEpisodeFormat = "{Site Title}";
 
             Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
                    .Should().Be("South Park");
@@ -86,7 +86,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_format_extend_multi_episode_properly()
         {
-            _namingConfig.StandardEpisodeFormat = "{Series Title} - S{season:00}E{episode:00} - {Episode Title}";
+            _namingConfig.StandardEpisodeFormat = "{Site Title} - S{season:00}E{episode:00} - {Episode Title}";
             _namingConfig.MultiEpisodeStyle = 0;
 
             Subject.BuildFileName(new List<Episode> { _episode1, _episode2 }, _series, _episodeFile)
@@ -96,7 +96,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_format_duplicate_multi_episode_properly()
         {
-            _namingConfig.StandardEpisodeFormat = "{Series Title} - S{season:00}E{episode:00} - {Episode Title}";
+            _namingConfig.StandardEpisodeFormat = "{Site Title} - S{season:00}E{episode:00} - {Episode Title}";
             _namingConfig.MultiEpisodeStyle = 1;
 
             Subject.BuildFileName(new List<Episode> { _episode1, _episode2 }, _series, _episodeFile)
@@ -106,7 +106,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_format_repeat_multi_episode_properly()
         {
-            _namingConfig.StandardEpisodeFormat = "{Series Title} - S{season:00}E{episode:00} - {Episode Title}";
+            _namingConfig.StandardEpisodeFormat = "{Site Title} - S{season:00}E{episode:00} - {Episode Title}";
             _namingConfig.MultiEpisodeStyle = 2;
 
             Subject.BuildFileName(new List<Episode> { _episode1, _episode2 }, _series, _episodeFile)
@@ -116,7 +116,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_format_scene_multi_episode_properly()
         {
-            _namingConfig.StandardEpisodeFormat = "{Series Title} - S{season:00}E{episode:00} - {Episode Title}";
+            _namingConfig.StandardEpisodeFormat = "{Site Title} - S{season:00}E{episode:00} - {Episode Title}";
             _namingConfig.MultiEpisodeStyle = 3;
 
             Subject.BuildFileName(new List<Episode> { _episode1, _episode2 }, _series, _episodeFile)
@@ -127,7 +127,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         public void should_get_proper_filename_when_multi_episode_is_duplicated_and_bracket_follows_pattern()
         {
             _namingConfig.StandardEpisodeFormat =
-                "{Series Title} - S{season:00}E{episode:00} - ({Quality Title}, {MediaInfo Full}, {Release Group}) - {Episode Title}";
+                "{Site Title} - S{season:00}E{episode:00} - ({Quality Title}, {MediaInfo Full}, {Release Group}) - {Episode Title}";
             _namingConfig.MultiEpisodeStyle = (int)MultiEpisodeStyle.Duplicate;
 
             Subject.BuildFileName(new List<Episode> { _episode1, _episode2 }, _series, _episodeFile)
@@ -137,7 +137,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_format_range_multi_episode_properly()
         {
-            _namingConfig.StandardEpisodeFormat = "{Series Title} - S{season:00}E{episode:00} - {Episode Title}";
+            _namingConfig.StandardEpisodeFormat = "{Site Title} - S{season:00}E{episode:00} - {Episode Title}";
             _namingConfig.MultiEpisodeStyle = 4;
 
             Subject.BuildFileName(new List<Episode> { _episode1, _episode2, _episode3 }, _series, _episodeFile)
@@ -147,7 +147,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_format_single_episode_with_range_multi_episode_properly()
         {
-            _namingConfig.StandardEpisodeFormat = "{Series Title} - S{season:00}E{episode:00} - {Episode Title}";
+            _namingConfig.StandardEpisodeFormat = "{Site Title} - S{season:00}E{episode:00} - {Episode Title}";
             _namingConfig.MultiEpisodeStyle = 4;
 
             Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
@@ -157,7 +157,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_format_prefixed_range_multi_episode_properly()
         {
-            _namingConfig.StandardEpisodeFormat = "{Series Title} - S{season:00}E{episode:00} - {Episode Title}";
+            _namingConfig.StandardEpisodeFormat = "{Site Title} - S{season:00}E{episode:00} - {Episode Title}";
             _namingConfig.MultiEpisodeStyle = 5;
 
             Subject.BuildFileName(new List<Episode> { _episode1, _episode2, _episode3 }, _series, _episodeFile)
@@ -167,7 +167,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_format_single_episode_with_prefixed_range_multi_episode_properly()
         {
-            _namingConfig.StandardEpisodeFormat = "{Series Title} - S{season:00}E{episode:00} - {Episode Title}";
+            _namingConfig.StandardEpisodeFormat = "{Site Title} - S{season:00}E{episode:00} - {Episode Title}";
             _namingConfig.MultiEpisodeStyle = 5;
 
             Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
@@ -177,7 +177,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_format_prefixed_range_multi_episode_using_episode_separator()
         {
-            _namingConfig.StandardEpisodeFormat = "{Series Title} - {season:0}x{episode:00} - {Episode Title}";
+            _namingConfig.StandardEpisodeFormat = "{Site Title} - {season:0}x{episode:00} - {Episode Title}";
             _namingConfig.MultiEpisodeStyle = 5;
 
             Subject.BuildFileName(new List<Episode> { _episode1, _episode2, _episode3 }, _series, _episodeFile)

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -29,7 +29,7 @@ namespace NzbDrone.Core.Organizer
             ruleBuilder.SetValidator(new NotEmptyValidator(null));
             ruleBuilder.SetValidator(new IllegalCharactersValidator());
 
-            return ruleBuilder.SetValidator(new RegularExpressionValidator(FileNameBuilder.SeriesTitleRegex)).WithMessage("Must contain series title");
+            return ruleBuilder.SetValidator(new RegularExpressionValidator(FileNameBuilder.SeriesTitleRegex)).WithMessage("Must contain site title");
         }
 
         public static IRuleBuilderOptions<T, string> ValidSeasonFolderFormat<T>(this IRuleBuilder<T, string> ruleBuilder)
@@ -39,19 +39,12 @@ namespace NzbDrone.Core.Organizer
 
             return ruleBuilder.SetValidator(new RegularExpressionValidator(SeasonFolderRegex)).WithMessage("Must contain season number");
         }
-
-        public static IRuleBuilderOptions<T, string> ValidSpecialsFolderFormat<T>(this IRuleBuilder<T, string> ruleBuilder)
-        {
-            ruleBuilder.SetValidator(new NotEmptyValidator(null));
-
-            return ruleBuilder.SetValidator(new IllegalCharactersValidator());
-        }
     }
 
     public class ValidStandardEpisodeFormatValidator : PropertyValidator
     {
         public ValidStandardEpisodeFormatValidator()
-            : base("Must contain season and episode numbers OR Original Title")
+            : base("Must contain release date OR Original Title")
         {
         }
 
@@ -59,7 +52,7 @@ namespace NzbDrone.Core.Organizer
         {
             var value = context.PropertyValue as string;
 
-            if (!FileNameBuilder.SeasonEpisodePatternRegex.IsMatch(value) &&
+            if (!FileNameBuilder.AirDateRegex.IsMatch(value) &&
                 !FileNameValidation.OriginalTokenRegex.IsMatch(value))
             {
                 return false;

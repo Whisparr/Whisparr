@@ -9,10 +9,9 @@ namespace NzbDrone.Core.Organizer
             RenameEpisodes = false,
             ReplaceIllegalCharacters = true,
             MultiEpisodeStyle = 0,
-            StandardEpisodeFormat = "{Series Title} - S{season:00}E{episode:00} - {Episode Title} {Quality Full}",
-            SeriesFolderFormat = "{Series Title}",
-            SeasonFolderFormat = "Season {season}",
-            SpecialsFolderFormat = "Specials"
+            StandardEpisodeFormat = "{Site Title} - {Release-Date} - {Episode Title} {Quality Full}",
+            SeriesFolderFormat = "{Site Title}",
+            SeasonFolderFormat = "Season {season}"
         };
 
         public bool RenameEpisodes { get; set; }
@@ -21,6 +20,5 @@ namespace NzbDrone.Core.Organizer
         public string StandardEpisodeFormat { get; set; }
         public string SeriesFolderFormat { get; set; }
         public string SeasonFolderFormat { get; set; }
-        public string SpecialsFolderFormat { get; set; }
     }
 }

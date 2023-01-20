@@ -37,7 +37,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
         public Tuple<Series, List<Episode>> GetSeriesInfo(int tvdbSeriesId)
         {
             var httpRequest = _requestBuilder.Create()
-                                             .SetSegment("route", "release")
+                                             .SetSegment("route", "site")
                                              .Resource(tvdbSeriesId.ToString())
                                              .Build();
 
@@ -193,7 +193,10 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 series.Certification = show.ContentRating.ToUpper();
             }
 
-            series.Seasons = show.Seasons.Select(MapSeason).ToList();
+            var seasons = show.Years.OrderBy(x => x);
+
+            series.Year = show.Years.FirstOrDefault();
+            series.Seasons = seasons.Select(MapSeason).ToList();
             series.Images = show.Images.Select(MapImage).ToList();
             series.Monitored = true;
 
@@ -205,7 +208,8 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             var newActor = new Actor
             {
                 Name = arg.Name,
-                Character = arg.Character
+                Character = arg.Character,
+                TpdbId = arg.ForeignId
             };
 
             newActor.Images = arg.Images.Select(MapImage).ToList();
@@ -218,7 +222,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             var episode = new Episode();
             episode.TvdbId = oracleEpisode.ForeignId;
             episode.Overview = oracleEpisode.Overview;
-            episode.SeasonNumber = oracleEpisode.SeasonNumber;
+            episode.SeasonNumber = oracleEpisode.Year;
             episode.EpisodeNumber = oracleEpisode.EpisodeNumber;
             episode.AbsoluteEpisodeNumber = oracleEpisode.AbsoluteEpisodeNumber;
             episode.Title = oracleEpisode.Title;
@@ -226,8 +230,8 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             episode.AiredBeforeSeasonNumber = oracleEpisode.AiredBeforeSeasonNumber;
             episode.AiredBeforeEpisodeNumber = oracleEpisode.AiredBeforeEpisodeNumber;
 
-            episode.AirDate = oracleEpisode.ReleaseDate.ToString();
-            episode.AirDateUtc = oracleEpisode.ReleaseDate;
+            episode.AirDate = oracleEpisode.ReleaseDate;
+            episode.AirDateUtc = DateTime.Parse(episode.AirDate, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.AssumeUniversal);
             episode.Actors = oracleEpisode.Credits.Select(MapActors).ToList();
 
             episode.Ratings = new Ratings();
@@ -241,13 +245,13 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             return episode;
         }
 
-        private static Season MapSeason(SeasonResource seasonResource)
+        private static Season MapSeason(int seasonResource)
         {
             return new Season
             {
-                SeasonNumber = seasonResource.SeasonNumber,
-                Images = seasonResource.Images.Select(MapImage).ToList(),
-                Monitored = seasonResource.SeasonNumber > 0
+                SeasonNumber = seasonResource,
+                Images = new List<MediaCover.MediaCover>(),
+                Monitored = true
             };
         }
 
@@ -283,6 +287,8 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
         {
             switch (coverType.ToLower())
             {
+                case "logo":
+                    return MediaCoverTypes.Logo;
                 case "poster":
                     return MediaCoverTypes.Poster;
                 case "banner":

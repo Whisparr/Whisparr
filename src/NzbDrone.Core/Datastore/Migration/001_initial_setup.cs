@@ -218,8 +218,7 @@ namespace NzbDrone.Core.Datastore.Migration
                   .WithColumn("StandardEpisodeFormat").AsString().Nullable()
                   .WithColumn("SeasonFolderFormat").AsString().Nullable()
                   .WithColumn("SeriesFolderFormat").AsString().Nullable()
-                  .WithColumn("ReplaceIllegalCharacters").AsBoolean().WithDefaultValue(true)
-                  .WithColumn("SpecialsFolderFormat").AsString().Nullable();
+                  .WithColumn("ReplaceIllegalCharacters").AsBoolean().WithDefaultValue(true);
 
             Create.TableForModel("Metadata")
                   .WithColumn("Enable").AsBoolean().NotNullable()
@@ -285,7 +284,9 @@ namespace NzbDrone.Core.Datastore.Migration
                   .WithColumn("TorrentDelay").AsInt32().NotNullable()
                   .WithColumn("Order").AsInt32().NotNullable()
                   .WithColumn("Tags").AsString().NotNullable()
-                  .WithColumn("BypassIfHighestQuality").AsBoolean().WithDefaultValue(false);
+                  .WithColumn("BypassIfHighestQuality").AsBoolean().WithDefaultValue(false)
+                  .WithColumn("BypassIfAboveCustomFormatScore").AsBoolean().WithDefaultValue(false)
+                  .WithColumn("MinimumCustomFormatScore").AsInt32().Nullable();
 
             Create.TableForModel("Users")
                   .WithColumn("Identifier").AsString().NotNullable().Unique()

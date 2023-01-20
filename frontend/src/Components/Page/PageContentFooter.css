@@ -2,7 +2,7 @@
   display: flex;
   flex: 0 0 auto;
   padding: 20px;
-  background-color: var(--pageFooterBackground);
+  background-color: var(--pageHeaderBackgroundColor);
 }
 
 @media only screen and (max-width: $breakpointSmall) {

@@ -5,8 +5,9 @@
 }
 
 .poster {
-  width: 35px;
-  height: 50px;
+  width: 80px;
+  height: 35px;
+  object-fit: contain;
 }
 
 .titles {
@@ -14,8 +15,11 @@
 }
 
 .title {
+  position: relative;
+  top: 50%;
   flex: 1 1 1px;
   margin-left: 5px;
+  transform: translateY(-50%);
 }
 
 .alternateTitle {

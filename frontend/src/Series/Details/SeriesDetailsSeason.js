@@ -221,6 +221,10 @@ class SeriesDetailsSeason extends Component {
     } = this.props;
 
     const {
+      sizeOnDisk = 0
+    } = statistics;
+
+    const {
       episodeCount,
       episodeFileCount,
       totalEpisodeCount,
@@ -235,7 +239,7 @@ class SeriesDetailsSeason extends Component {
       isInteractiveSearchModalOpen
     } = this.state;
 
-    const title = seasonNumber === 0 ? 'Specials' : `Season ${seasonNumber}`;
+    const title = seasonNumber === 0 ? 'Specials' : `${seasonNumber}`;
 
     return (
       <div
@@ -273,7 +277,7 @@ class SeriesDetailsSeason extends Component {
                     totalEpisodeCount={totalEpisodeCount}
                     monitoredEpisodeCount={monitoredEpisodeCount}
                     episodeFileCount={episodeFileCount}
-                    sizeOnDisk={statistics.sizeOnDisk}
+                    sizeOnDisk={sizeOnDisk}
                   />
                 </div>
               }
@@ -281,9 +285,9 @@ class SeriesDetailsSeason extends Component {
             />
 
             {
-              statistics.sizeOnDisk ?
+              sizeOnDisk ?
                 <div className={styles.sizeOnDisk}>
-                  {formatBytes(statistics.sizeOnDisk)}
+                  {formatBytes(sizeOnDisk)}
                 </div> :
                 null
             }

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NzbDrone.Common.Extensions;
+using NzbDrone.Core.CustomFormats;
 using NzbDrone.Core.Languages;
 using NzbDrone.Core.MediaFiles.MediaInfo;
 using NzbDrone.Core.Qualities;
@@ -14,6 +15,7 @@ namespace NzbDrone.Core.Parser.Model
         {
             Episodes = new List<Episode>();
             Languages = new List<Language>();
+            CustomFormats = new List<CustomFormat>();
         }
 
         public string Path { get; set; }
@@ -31,6 +33,8 @@ namespace NzbDrone.Core.Parser.Model
         public string ReleaseGroup { get; set; }
         public string SceneName { get; set; }
         public bool OtherVideoFiles { get; set; }
+        public List<CustomFormat> CustomFormats { get; set; }
+        public int CustomFormatScore { get; set; }
 
         public int SeasonNumber
         {

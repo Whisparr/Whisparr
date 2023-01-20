@@ -1,17 +1,12 @@
-﻿using NzbDrone.Core.Organizer;
+using NzbDrone.Core.Organizer;
 
 namespace Whisparr.Api.V3.Config
 {
     public class NamingExampleResource
     {
         public string SingleEpisodeExample { get; set; }
-        public string MultiEpisodeExample { get; set; }
-        public string DailyEpisodeExample { get; set; }
-        public string AnimeEpisodeExample { get; set; }
-        public string AnimeMultiEpisodeExample { get; set; }
         public string SeriesFolderExample { get; set; }
         public string SeasonFolderExample { get; set; }
-        public string SpecialsFolderExample { get; set; }
     }
 
     public static class NamingConfigResourceMapper
@@ -27,8 +22,7 @@ namespace Whisparr.Api.V3.Config
                 MultiEpisodeStyle = model.MultiEpisodeStyle,
                 StandardEpisodeFormat = model.StandardEpisodeFormat,
                 SeriesFolderFormat = model.SeriesFolderFormat,
-                SeasonFolderFormat = model.SeasonFolderFormat,
-                SpecialsFolderFormat = model.SpecialsFolderFormat
+                SeasonFolderFormat = model.SeasonFolderFormat
 
                 // IncludeSeriesTitle
                 // IncludeEpisodeTitle
@@ -60,8 +54,7 @@ namespace Whisparr.Api.V3.Config
                 MultiEpisodeStyle = resource.MultiEpisodeStyle,
                 StandardEpisodeFormat = resource.StandardEpisodeFormat,
                 SeriesFolderFormat = resource.SeriesFolderFormat,
-                SeasonFolderFormat = resource.SeasonFolderFormat,
-                SpecialsFolderFormat = resource.SpecialsFolderFormat
+                SeasonFolderFormat = resource.SeasonFolderFormat
             };
         }
     }

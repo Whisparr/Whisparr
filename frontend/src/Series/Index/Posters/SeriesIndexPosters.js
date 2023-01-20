@@ -16,9 +16,9 @@ const progressBarHeight = parseInt(dimensions.progressBarSmallHeight);
 const detailedProgressBarHeight = parseInt(dimensions.progressBarMediumHeight);
 
 const additionalColumnCount = {
-  small: 3,
-  medium: 2,
-  large: 1
+  small: 2,
+  medium: 1,
+  large: 0
 };
 
 function calculateColumnWidth(width, posterSize, isSmallScreen) {
@@ -84,7 +84,7 @@ function calculateRowHeight(posterHeight, sortKey, isSmallScreen, posterOptions)
 }
 
 function calculatePosterHeight(posterWidth) {
-  return Math.ceil((250 / 170) * posterWidth);
+  return Math.ceil((100 / 170) * posterWidth);
 }
 
 class SeriesIndexPosters extends Component {

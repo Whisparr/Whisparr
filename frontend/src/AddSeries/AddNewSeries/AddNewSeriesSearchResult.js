@@ -99,14 +99,6 @@ class AddNewSeriesSearchResult extends Component {
               <div className={styles.titleContainer}>
                 <div className={styles.title}>
                   {title}
-
-                  {
-                    !title.contains(year) && year ?
-                      <span className={styles.year}>
-                        ({year})
-                      </span> :
-                      null
-                  }
                 </div>
               </div>
 
@@ -142,14 +134,6 @@ class AddNewSeriesSearchResult extends Component {
                 network ?
                   <Label size={sizes.LARGE}>
                     {network}
-                  </Label> :
-                  null
-              }
-
-              {
-                seasonCount ?
-                  <Label size={sizes.LARGE}>
-                    {seasons}
                   </Label> :
                   null
               }

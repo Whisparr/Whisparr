@@ -46,9 +46,12 @@ const seriesTokens = [
   { token: '{Site Title}', example: 'Site Title\'s' },
   { token: '{Site CleanTitle}', example: 'Site Titles' },
   { token: '{Site CleanTitleYear}', example: 'Site Titles! 2010' },
+  { token: '{Site CleanTitleWithoutYear}', example: 'Site Titles!' },
   { token: '{Site TitleThe}', example: 'Site Title\'s, The' },
   { token: '{Site TitleTheYear}', example: 'Site Title\'s, The (2010)' },
+  { token: '{Site TitleTheWithoutYear}', example: 'Site Title\'s, The' },
   { token: '{Site TitleYear}', example: 'Site Title\'s (2010)' },
+  { token: '{Site TitleWithoutYear}', example: 'Site Title\'s' },
   { token: '{Site TitleFirstCharacter}', example: 'S' },
   { token: '{Site Year}', example: '2010' }
 ];

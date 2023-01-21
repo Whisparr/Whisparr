@@ -92,7 +92,7 @@ function AppRoutes(props) {
       />
 
       <Route
-        path="/series/:titleSlug"
+        path="/site/:titleSlug"
         component={SeriesDetailsPageConnector}
       />
 

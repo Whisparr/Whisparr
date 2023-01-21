@@ -68,7 +68,7 @@ class AddNewSeriesSearchResult extends Component {
       isNewAddSeriesModalOpen
     } = this.state;
 
-    const linkProps = isExistingSeries ? { to: `/series/${titleSlug}` } : { onPress: this.onPress };
+    const linkProps = isExistingSeries ? { to: `/site/${titleSlug}` } : { onPress: this.onPress };
     let seasons = '1 Season';
 
     if (seasonCount > 1) {

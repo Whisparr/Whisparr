@@ -159,7 +159,7 @@ class SeriesIndexRow extends Component {
                     showBanners ?
                       <Link
                         className={styles.link}
-                        to={`/series/${titleSlug}`}
+                        to={`/site/${titleSlug}`}
                       >
                         <SeriesBanner
                           className={styles.bannerImage}

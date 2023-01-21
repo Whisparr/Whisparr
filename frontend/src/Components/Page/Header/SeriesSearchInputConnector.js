@@ -57,7 +57,7 @@ function createMapStateToProps() {
 function createMapDispatchToProps(dispatch, props) {
   return {
     onGoToSeries(titleSlug) {
-      dispatch(push(`${window.Whisparr.urlBase}/series/${titleSlug}`));
+      dispatch(push(`${window.Whisparr.urlBase}/site/${titleSlug}`));
     },
 
     onGoToAddNewSeries(query) {

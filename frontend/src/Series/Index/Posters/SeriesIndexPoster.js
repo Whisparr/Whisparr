@@ -107,7 +107,7 @@ class SeriesIndexPoster extends Component {
       isDeleteSeriesModalOpen
     } = this.state;
 
-    const link = `/series/${titleSlug}`;
+    const link = `/site/${titleSlug}`;
 
     const elementStyle = {
       width: `${posterWidth}px`,

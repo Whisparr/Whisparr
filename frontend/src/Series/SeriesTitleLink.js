@@ -3,7 +3,7 @@ import React from 'react';
 import Link from 'Components/Link/Link';
 
 function SeriesTitleLink({ titleSlug, title }) {
-  const link = `/series/${titleSlug}`;
+  const link = `/site/${titleSlug}`;
 
   return (
     <Link to={link}>

@@ -64,7 +64,7 @@ class EpisodeDetailsModalContent extends Component {
       onModalClose
     } = this.props;
 
-    const seriesLink = `/series/${titleSlug}`;
+    const seriesLink = `/site/${titleSlug}`;
 
     return (
       <ModalContent

@@ -386,7 +386,7 @@ class SeriesDetails extends Component {
                       name={icons.ARROW_LEFT}
                       size={30}
                       title={`Go to ${previousSeries.title}`}
-                      to={`/series/${previousSeries.titleSlug}`}
+                      to={`/site/${previousSeries.titleSlug}`}
                     />
 
                     <IconButton
@@ -394,7 +394,7 @@ class SeriesDetails extends Component {
                       name={icons.ARROW_RIGHT}
                       size={30}
                       title={`Go to ${nextSeries.title}`}
-                      to={`/series/${nextSeries.titleSlug}`}
+                      to={`/site/${nextSeries.titleSlug}`}
                     />
                   </div>
                 </div>

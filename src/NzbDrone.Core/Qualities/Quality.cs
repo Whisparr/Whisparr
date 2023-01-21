@@ -118,6 +118,8 @@ namespace NzbDrone.Core.Qualities
         public static Quality Bluray1080pRemux => new Quality(20,  "Bluray-1080p Remux", QualitySource.BlurayRaw, 1080);
         public static Quality Bluray2160pRemux => new Quality(21, "Bluray-2160p Remux", QualitySource.BlurayRaw, 2160);
 
+        public static Quality VR => new Quality(22, "VR", QualitySource.VR, 1080);
+
         static Quality()
         {
             All = new List<Quality>
@@ -141,6 +143,7 @@ namespace NzbDrone.Core.Qualities
                 WEBRip2160p,
                 WEBDL2160p,
                 Bluray2160p,
+                VR,
                 Bluray1080pRemux,
                 Bluray2160pRemux
             };
@@ -169,7 +172,8 @@ namespace NzbDrone.Core.Qualities
                 new QualityDefinition(Quality.WEBRip2160p) { Weight = 15, MinSize = 35, MaxSize = null, PreferredSize = 95, GroupName = "WEB 2160p" },
                 new QualityDefinition(Quality.WEBDL2160p)  { Weight = 15, MinSize = 35, MaxSize = null, PreferredSize = 95, GroupName = "WEB 2160p" },
                 new QualityDefinition(Quality.Bluray2160p) { Weight = 16, MinSize = 35, MaxSize = null, PreferredSize = 95 },
-                new QualityDefinition(Quality.Bluray2160pRemux) { Weight = 17, MinSize = 35, MaxSize = null, PreferredSize = 95 }
+                new QualityDefinition(Quality.Bluray2160pRemux) { Weight = 17, MinSize = 35, MaxSize = null, PreferredSize = 95 },
+                new QualityDefinition(Quality.VR) { Weight = 18, MinSize = 4, MaxSize = null, PreferredSize = 95 },
             };
         }
 

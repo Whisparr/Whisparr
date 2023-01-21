@@ -145,6 +145,10 @@ namespace NzbDrone.Core.Profiles.Qualities
                 Quality.WEBDL1080p,
                 Quality.Bluray720p,
                 Quality.Bluray1080p);
+
+            AddDefaultProfile("VR",
+                Quality.VR,
+                Quality.VR);
         }
 
         public void Handle(CustomFormatAddedEvent message)

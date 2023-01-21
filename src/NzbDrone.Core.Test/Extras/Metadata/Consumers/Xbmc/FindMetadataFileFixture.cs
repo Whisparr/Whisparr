@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using Moq;
@@ -35,7 +35,7 @@ namespace NzbDrone.Core.Test.Extras.Metadata.Consumers.Xbmc
         [Test]
         public void should_return_metadata_for_xbmc_nfo()
         {
-            var path = Path.Combine(_series.Path, "the.series.s01e01.episode.nfo");
+            var path = Path.Combine(_series.Path, "the.series.22.12.24.episode.nfo");
 
             Mocker.GetMock<IDetectXbmcNfo>()
                   .Setup(v => v.IsXbmcNfoFile(path))
@@ -50,7 +50,7 @@ namespace NzbDrone.Core.Test.Extras.Metadata.Consumers.Xbmc
         [Test]
         public void should_return_null_for_scene_nfo()
         {
-            var path = Path.Combine(_series.Path, "the.series.s01e01.episode.nfo");
+            var path = Path.Combine(_series.Path, "the.series.22.12.24.episode.nfo");
 
             Mocker.GetMock<IDetectXbmcNfo>()
                   .Setup(v => v.IsXbmcNfoFile(path))

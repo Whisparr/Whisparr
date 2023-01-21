@@ -55,25 +55,17 @@ class AddNewSeriesSearchResult extends Component {
       network,
       status,
       overview,
-      statistics,
       folder,
       images,
       isExistingSeries,
       isSmallScreen
     } = this.props;
 
-    const seasonCount = statistics.seasonCount;
-
     const {
       isNewAddSeriesModalOpen
     } = this.state;
 
     const linkProps = isExistingSeries ? { to: `/site/${titleSlug}` } : { onPress: this.onPress };
-    let seasons = '1 Season';
-
-    if (seasonCount > 1) {
-      seasons = `${seasonCount} Seasons`;
-    }
 
     return (
       <div className={styles.searchResult}>
@@ -192,7 +184,6 @@ AddNewSeriesSearchResult.propTypes = {
   network: PropTypes.string,
   status: PropTypes.string.isRequired,
   overview: PropTypes.string,
-  statistics: PropTypes.object.isRequired,
   folder: PropTypes.string.isRequired,
   images: PropTypes.arrayOf(PropTypes.object).isRequired,
   isExistingSeries: PropTypes.bool.isRequired,

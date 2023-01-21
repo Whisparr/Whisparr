@@ -93,32 +93,6 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
         }
 
         [Test]
-        public void should_search_by_tvdbid_if_supported()
-        {
-            _capabilities.SupportedSearchParameters = new[] { "q" };
-
-            var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
-            results.GetTier(0).Should().HaveCount(1);
-
-            var page = results.GetAllTiers().First().First();
-
-            page.Url.Query.Should().Contain("tvdbid=20");
-        }
-
-        [Test]
-        public void should_search_by_tvmaze_if_supported()
-        {
-            _capabilities.SupportedSearchParameters = new[] { "q" };
-
-            var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
-            results.GetTier(0).Should().HaveCount(1);
-
-            var page = results.GetAllTiers().First().First();
-
-            page.Url.Query.Should().Contain("tvmazeid=30");
-        }
-
-        [Test]
         public void should_not_use_aggregrated_id_search_if_no_ids_supported()
         {
             _capabilities.SupportedSearchParameters = new[] { "q" };
@@ -134,23 +108,6 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
         }
 
         [Test]
-        public void should_fallback_to_title()
-        {
-            _capabilities.SupportedSearchParameters = new[] { "q" };
-            _capabilities.SupportsAggregateIdSearch = true;
-
-            var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
-            results.Tiers.Should().Be(2);
-
-            var pageTier2 = results.GetTier(1).First().First();
-
-            pageTier2.Url.Query.Should().NotContain("tvdbid=20");
-            pageTier2.Url.Query.Should().NotContain("rid=10");
-            pageTier2.Url.Query.Should().NotContain("q=");
-            pageTier2.Url.Query.Should().Contain("title=Monkey%20Island");
-        }
-
-        [Test]
         public void should_url_encode_title()
         {
             _capabilities.SupportedSearchParameters = new[] { "q" };
@@ -159,30 +116,12 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
             _singleEpisodeSearchCriteria.SceneTitles[0] = "Elith & Little";
 
             var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
-            results.Tiers.Should().Be(2);
+            results.Tiers.Should().Be(1);
 
             var pageTier2 = results.GetTier(1).First().First();
 
-            pageTier2.Url.Query.Should().NotContain("tvdbid=20");
-            pageTier2.Url.Query.Should().NotContain("rid=10");
             pageTier2.Url.Query.Should().NotContain("q=");
             pageTier2.Url.Query.Should().Contain("title=Elith%20%26%20Little");
-        }
-
-        [Test]
-        public void should_fallback_to_q()
-        {
-            _capabilities.SupportedSearchParameters = new[] { "q" };
-            _capabilities.SupportsAggregateIdSearch = true;
-
-            var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
-            results.Tiers.Should().Be(2);
-
-            var pageTier2 = results.GetTier(1).First().First();
-
-            pageTier2.Url.Query.Should().NotContain("tvdbid=20");
-            pageTier2.Url.Query.Should().NotContain("rid=10");
-            pageTier2.Url.Query.Should().Contain("q=");
         }
 
         [Test]

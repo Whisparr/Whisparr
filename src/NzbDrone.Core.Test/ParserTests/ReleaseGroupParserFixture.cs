@@ -77,7 +77,7 @@ namespace NzbDrone.Core.Test.ParserTests
         [Test]
         public void should_not_include_extension_in_release_group()
         {
-            const string path = @"C:\Test\Doctor.Series.2005.s01e01.internal.bdrip.x264-archivist.mkv";
+            const string path = @"C:\Test\Doctor.Series.2005.22.12.24.internal.bdrip.x264-archivist.mkv";
 
             Parser.Parser.ParsePath(path).ReleaseGroup.Should().Be("archivist");
         }

@@ -24,7 +24,7 @@ namespace NzbDrone.Core.Test.ParserTests.ParsingServiceTests
         [Test]
         public void should_use_parsed_series_title()
         {
-            const string title = "30.Stone.S01E01.720p.hdtv";
+            const string title = "30.Stone.22.12.24.720p.hdtv";
 
             Subject.GetSeries(title);
 
@@ -35,7 +35,7 @@ namespace NzbDrone.Core.Test.ParserTests.ParsingServiceTests
         [Test]
         public void should_fallback_to_title_without_year_and_year_when_title_lookup_fails()
         {
-            const string title = "Show.2004.S01E01.720p.hdtv";
+            const string title = "Show.2004.22.12.24.720p.hdtv";
             var parsedEpisodeInfo = Parser.Parser.ParseTitle(title);
 
             Subject.GetSeries(title);
@@ -51,7 +51,7 @@ namespace NzbDrone.Core.Test.ParserTests.ParsingServiceTests
             var series = new Series { TvdbId = 100 };
             Mocker.GetMock<ISeriesService>().Setup(v => v.FindByTitle("Welcome")).Returns(series);
 
-            var result = Subject.GetSeries("Welcome (Mairimashita).S01E01.720p.WEB-DL-Viva");
+            var result = Subject.GetSeries("Welcome (Mairimashita).22.12.24.720p.WEB-DL-Viva");
 
             result.Should().NotBeNull();
             result.TvdbId.Should().Be(100);

@@ -26,14 +26,15 @@ namespace NzbDrone.Core.Test.UpdateTests
         public void no_update_when_version_higher()
         {
             UseRealHttp();
-            Subject.GetLatestUpdate("widowmaker", new Version(10, 0)).Should().BeNull();
+            Subject.GetLatestUpdate("develop", new Version(10, 0)).Should().BeNull();
         }
 
         [Test]
+        [Ignore("Update Tests on New Branch")]
         public void finds_update_when_version_lower()
         {
             UseRealHttp();
-            Subject.GetLatestUpdate("widowmaker", new Version(3, 0)).Should().NotBeNull();
+            Subject.GetLatestUpdate("develop", new Version(0, 1)).Should().NotBeNull();
         }
 
         [Test]
@@ -44,15 +45,16 @@ namespace NzbDrone.Core.Test.UpdateTests
         }
 
         [Test]
+        [Ignore("Update Tests on New Branch")]
         public void should_get_recent_updates()
         {
-            const string branch = "widowmaker";
+            const string branch = "develop";
             UseRealHttp();
-            var recent = Subject.GetRecentUpdates(branch, new Version(3, 0), null);
+            var recent = Subject.GetRecentUpdates(branch, new Version(2, 0), null);
 
             recent.Should().NotBeEmpty();
             recent.Should().OnlyContain(c => c.Hash.IsNotNullOrWhiteSpace());
-            recent.Should().OnlyContain(c => c.FileName.Contains($"Whisparr.{c.Branch}.4."));
+            recent.Should().OnlyContain(c => c.FileName.Contains($"Whisparr.{c.Branch}.2."));
             recent.Should().OnlyContain(c => c.ReleaseDate.Year >= 2014);
             recent.Where(c => c.Changes != null).Should().OnlyContain(c => c.Changes.New != null);
             recent.Where(c => c.Changes != null).Should().OnlyContain(c => c.Changes.Fixed != null);

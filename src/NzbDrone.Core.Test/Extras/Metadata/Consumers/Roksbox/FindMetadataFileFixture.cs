@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using NUnit.Framework;
@@ -45,7 +45,7 @@ namespace NzbDrone.Core.Test.Extras.Metadata.Consumers.Roksbox
         [TestCase(".jpg", MetadataType.EpisodeImage)]
         public void should_return_metadata_for_episode_if_valid_file_for_episode(string extension, MetadataType type)
         {
-            var path = Path.Combine(_series.Path, "the.series.s01e01.episode" + extension);
+            var path = Path.Combine(_series.Path, "the.series.22.12.24.episode" + extension);
 
             Subject.FindMetadataFile(_series, path).Type.Should().Be(type);
         }

@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+using FluentAssertions;
 using NUnit.Framework;
 using NzbDrone.Core.Test.Framework;
 
@@ -10,7 +10,7 @@ namespace NzbDrone.Core.Test.ParserTests
         [Test]
         public void should_have_year_zero_when_title_doesnt_have_a_year()
         {
-            const string title = "Series.Title.S01E01.pilot.720p.hdtv";
+            const string title = "Series.Title.22.12.24.pilot.720p.hdtv";
 
             var result = Parser.Parser.ParseTitle(title).SeriesTitleInfo;
 
@@ -20,7 +20,7 @@ namespace NzbDrone.Core.Test.ParserTests
         [Test]
         public void should_have_same_title_for_title_and_title_without_year_when_title_doesnt_have_a_year()
         {
-            const string title = "Series.Title.S01E01.pilot.720p.hdtv";
+            const string title = "Series.Title.22.12.24.pilot.720p.hdtv";
 
             var result = Parser.Parser.ParseTitle(title).SeriesTitleInfo;
 
@@ -30,7 +30,7 @@ namespace NzbDrone.Core.Test.ParserTests
         [Test]
         public void should_have_year_when_title_has_a_year()
         {
-            const string title = "Series.Title.2004.S01E01.pilot.720p.hdtv";
+            const string title = "Series.Title.2004.22.12.24.pilot.720p.hdtv";
 
             var result = Parser.Parser.ParseTitle(title).SeriesTitleInfo;
 
@@ -40,7 +40,7 @@ namespace NzbDrone.Core.Test.ParserTests
         [Test]
         public void should_have_year_in_title_when_title_has_a_year()
         {
-            const string title = "Series.Title.2004.S01E01.pilot.720p.hdtv";
+            const string title = "Series.Title.2004.22.12.24.pilot.720p.hdtv";
 
             var result = Parser.Parser.ParseTitle(title).SeriesTitleInfo;
 
@@ -50,7 +50,7 @@ namespace NzbDrone.Core.Test.ParserTests
         [Test]
         public void should_title_without_year_should_not_contain_year()
         {
-            const string title = "Series.Title.2004.S01E01.pilot.720p.hdtv";
+            const string title = "Series.Title.2004.22.12.24.pilot.720p.hdtv";
 
             var result = Parser.Parser.ParseTitle(title).SeriesTitleInfo;
 

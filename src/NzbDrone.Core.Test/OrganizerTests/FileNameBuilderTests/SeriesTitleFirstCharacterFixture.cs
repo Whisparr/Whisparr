@@ -48,7 +48,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         public void should_be_able_to_use_lower_case_first_character()
         {
             _series.Title = "Westworld";
-            _namingConfig.SeriesFolderFormat = "{series titlefirstcharacter}\\{site title}";
+            _namingConfig.SeriesFolderFormat = "{site titlefirstcharacter}\\{site title}";
 
             Subject.GetSeriesFolder(_series).Should().Be("w\\westworld");
         }

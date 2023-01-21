@@ -5,7 +5,6 @@ import RelativeDateCellConnector from 'Components/Table/Cells/RelativeDateCellCo
 import TableRowCell from 'Components/Table/Cells/TableRowCell';
 import TableRow from 'Components/Table/TableRow';
 import EpisodeFormats from 'Episode/EpisodeFormats';
-import EpisodeNumber from 'Episode/EpisodeNumber';
 import EpisodeSearchCellConnector from 'Episode/EpisodeSearchCellConnector';
 import EpisodeStatusConnector from 'Episode/EpisodeStatusConnector';
 import EpisodeTitleLink from 'Episode/EpisodeTitleLink';
@@ -52,16 +51,9 @@ class EpisodeRow extends Component {
       seriesId,
       episodeFileId,
       monitored,
-      seasonNumber,
-      sceneSeasonNumber,
-      sceneEpisodeNumber,
-      sceneAbsoluteEpisodeNumber,
       actors,
-      airDate,
       airDateUtc,
       title,
-      useSceneNumbering,
-      unverifiedSceneNumbering,
       isSaving,
       seriesMonitored,
       episodeFilePath,
@@ -69,7 +61,6 @@ class EpisodeRow extends Component {
       episodeFileSize,
       releaseGroup,
       customFormats,
-      alternateTitles,
       columns
     } = this.props;
 
@@ -102,23 +93,12 @@ class EpisodeRow extends Component {
               );
             }
 
-            if (name === 'episodeNumber') {
+            if (name === 'airDateUtc') {
               return (
-                <TableRowCell
+                <RelativeDateCellConnector
                   key={name}
-                  className={styles.episodeNumber}
-                >
-                  <EpisodeNumber
-                    seasonNumber={seasonNumber}
-                    episodeNumber={airDate}
-                    useSceneNumbering={useSceneNumbering}
-                    unverifiedSceneNumbering={unverifiedSceneNumbering}
-                    sceneSeasonNumber={sceneSeasonNumber}
-                    sceneEpisodeNumber={sceneEpisodeNumber}
-                    sceneAbsoluteEpisodeNumber={sceneAbsoluteEpisodeNumber}
-                    alternateTitles={alternateTitles}
-                  />
-                </TableRowCell>
+                  date={airDateUtc}
+                />
               );
             }
 
@@ -170,15 +150,6 @@ class EpisodeRow extends Component {
                     episodeFileRelativePath
                   }
                 </TableRowCell>
-              );
-            }
-
-            if (name === 'airDateUtc') {
-              return (
-                <RelativeDateCellConnector
-                  key={name}
-                  date={airDateUtc}
-                />
               );
             }
 

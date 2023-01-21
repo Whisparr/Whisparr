@@ -10,18 +10,6 @@
   width: 42px;
 }
 
-.episodeNumber {
-  composes: cell from '~Components/Table/Cells/TableRowCell.css';
-
-  width: 95px;
-}
-
-.episodeNumberAnime {
-  composes: episodeNumber;
-
-  width: 95px;
-}
-
 .actors {
   composes: cell from '~Components/Table/Cells/TableRowCell.css';
 

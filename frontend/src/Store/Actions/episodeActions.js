@@ -35,11 +35,6 @@ export const defaultState = {
       isModifiable: false
     },
     {
-      name: 'episodeNumber',
-      label: 'Date',
-      isVisible: true
-    },
-    {
       name: 'title',
       label: 'Title',
       isVisible: true
@@ -61,8 +56,8 @@ export const defaultState = {
     },
     {
       name: 'airDateUtc',
-      label: 'Air Date',
-      isVisible: false
+      label: 'Release Date',
+      isVisible: true
     },
     {
       name: 'languages',

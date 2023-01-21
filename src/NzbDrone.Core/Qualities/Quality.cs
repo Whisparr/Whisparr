@@ -113,6 +113,8 @@ namespace NzbDrone.Core.Qualities
         public static Quality WEBRip1080p => new Quality(15, "WEBRip-1080p", QualitySource.WebRip, 1080);
         public static Quality WEBRip2160p => new Quality(17, "WEBRip-2160p", QualitySource.WebRip, 2160);
 
+        public static Quality VR => new Quality(22, "VR", QualitySource.VR, 1080);
+
         static Quality()
         {
             All = new List<Quality>
@@ -140,7 +142,8 @@ namespace NzbDrone.Core.Qualities
                 Remux1080p,
                 Remux2160p,
                 BRDISK,
-                RAWHD
+                RAWHD,
+                VR
             };
 
             AllLookup = new Quality[All.Select(v => v.Id).Max() + 1];
@@ -179,7 +182,8 @@ namespace NzbDrone.Core.Qualities
                 new QualityDefinition(Quality.Remux2160p)  { Weight = 24, MinSize = 0, MaxSize = null, PreferredSize = null },
 
                 new QualityDefinition(Quality.BRDISK)      { Weight = 25, MinSize = 0, MaxSize = null, PreferredSize = null },
-                new QualityDefinition(Quality.RAWHD)       { Weight = 26, MinSize = 0, MaxSize = null, PreferredSize = null }
+                new QualityDefinition(Quality.RAWHD)       { Weight = 26, MinSize = 0, MaxSize = null, PreferredSize = null },
+                new QualityDefinition(Quality.VR)          { Weight = 27, MinSize = 4, MaxSize = null, PreferredSize = null },
             };
         }
 

@@ -16,6 +16,7 @@ namespace NzbDrone.Core.Parser
 
         private static readonly Regex SourceRegex = new (@"\b(?:
                                                             (?<bluray>M?Blu[-_. ]?Ray|HD[-_. ]?DVD|BD(?!$)|UHD2?BD|BDISO|BDMux|BD25|BD50|BR[-_. ]?DISK)|
+                                                            (?<vr>VR180)|
                                                             (?<webdl>WEB[-_. ]?DL(?:mux)?|AmazonHD|AmazonSD|iTunesHD|MaxdomeHD|NetflixU?HD|WebHD|HBOMaxHD|DisneyHD|[. ]WEB[. ](?:[xh][ .]?26[45]|DDP?5[. ]1)|[. ](?-i:WEB)$|(?:\d{3,4}0p)[-. ]WEB[-. ]|[-. ]WEB[-. ]\d{3,4}0p|\b\s\/\sWEB\s\/\s\b|(?:AMZN|NF|DP)[. -]WEB[. -](?!Rip))|
                                                             (?<webrip>WebRip|Web-Rip|WEBMux)|
                                                             (?<hdtv>HDTV)|
@@ -138,6 +139,12 @@ namespace NzbDrone.Core.Parser
             if (sourceMatch != null && sourceMatch.Success)
             {
                 result.SourceDetectionSource = QualityDetectionSource.Name;
+
+                if (sourceMatch.Groups["vr"].Success)
+                {
+                    result.Quality = Quality.VR;
+                    return result;
+                }
 
                 if (sourceMatch.Groups["bluray"].Success)
                 {

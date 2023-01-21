@@ -200,6 +200,10 @@ namespace NzbDrone.Core.Profiles.Qualities
                 Quality.Bluray720p,
                 Quality.Bluray1080p,
                 Quality.Remux1080p);
+
+            AddDefaultProfile("VR",
+                Quality.VR,
+                Quality.VR);
         }
 
         public QualityProfile GetDefaultProfile(string name, Quality cutoff = null, params Quality[] allowed)

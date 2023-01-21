@@ -23,7 +23,7 @@ namespace NzbDrone.Core.Test.IndexerTests.FanzubTests
             _seasonSearchCriteria = new SeasonSearchCriteria()
             {
                 SceneTitles = new List<string>() { "Naruto Shippuuden" },
-                SeasonNumber = 1,
+                Year = 1,
             };
         }
 

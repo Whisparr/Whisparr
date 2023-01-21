@@ -37,7 +37,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
 
             _multiSearch = new SeasonSearchCriteria();
             _multiSearch.Episodes = _episodes.ToList();
-            _multiSearch.SeasonNumber = 1;
+            _multiSearch.Year = 1;
 
             _parseResultMulti = new RemoteEpisode
             {

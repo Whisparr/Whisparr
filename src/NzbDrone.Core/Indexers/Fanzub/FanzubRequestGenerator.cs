@@ -38,9 +38,9 @@ namespace NzbDrone.Core.Indexers.Fanzub
         {
             var pageableRequests = new IndexerPageableRequestChain();
 
-            if (Settings.AnimeStandardFormatSearch && searchCriteria.SeasonNumber > 0)
+            if (Settings.AnimeStandardFormatSearch && searchCriteria.Year > 0)
             {
-                var searchTitles = searchCriteria.CleanSceneTitles.SelectMany(v => GetSeasonSearchStrings(v, searchCriteria.SeasonNumber)).ToList();
+                var searchTitles = searchCriteria.CleanSceneTitles.SelectMany(v => GetSeasonSearchStrings(v, searchCriteria.Year)).ToList();
                 pageableRequests.Add(GetPagedRequests(string.Join("|", searchTitles)));
             }
 

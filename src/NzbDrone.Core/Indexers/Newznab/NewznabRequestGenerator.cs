@@ -97,27 +97,26 @@ namespace NzbDrone.Core.Indexers.Newznab
         {
             var pageableRequests = new IndexerPageableRequestChain();
 
-            AddTitlePageableRequests(pageableRequests,
-                    Settings.Categories,
-                    searchCriteria,
-                    "");
+            var twoDigitYear = new DateTime(searchCriteria.Year, 1, 31).ToString("yy");
 
-            return pageableRequests;
-        }
-
-        private void AddTitlePageableRequests(IndexerPageableRequestChain chain, IEnumerable<int> categories, SearchCriteriaBase searchCriteria, string parameters)
-        {
             if (SupportsSearch)
             {
                 var queryTitles = TextSearchEngine == "raw" ? searchCriteria.SceneTitles : searchCriteria.CleanSceneTitles;
                 foreach (var queryTitle in queryTitles)
                 {
-                    chain.Add(GetPagedRequests(MaxPages,
+                    pageableRequests.Add(GetPagedRequests(MaxPages,
                         Settings.Categories,
                         "search",
-                        $"&q={NewsnabifyTitle(queryTitle)}{parameters}"));
+                        $"&q={NewsnabifyTitle(queryTitle)}+{twoDigitYear}"));
+
+                    pageableRequests.Add(GetPagedRequests(MaxPages,
+                        Settings.Categories,
+                        "search",
+                        $"&q={NewsnabifyTitle(queryTitle)}+{searchCriteria.Year}"));
                 }
             }
+
+            return pageableRequests;
         }
 
         private IEnumerable<IndexerRequest> GetPagedRequests(int maxPages, IEnumerable<int> categories, string searchType, string parameters)

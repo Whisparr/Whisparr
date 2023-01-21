@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
 using NzbDrone.Common.Serializer;
 using NzbDrone.Core.IndexerSearch.Definitions;
@@ -31,7 +32,7 @@ namespace NzbDrone.Core.Indexers.HDBits
                 {
                     var query = queryBase.Clone();
 
-                    query.TvdbInfo.Season = seasonNumber;
+                    query.Search = $"{query.Search} {seasonNumber}";
 
                     pageableRequests.Add(GetRequest(query));
                 }
@@ -44,6 +45,8 @@ namespace NzbDrone.Core.Indexers.HDBits
         {
             var pageableRequests = new IndexerPageableRequestChain();
 
+            var releaseDate = searchCriteria.ReleaseDate?.ToString("yy.MM.dd") ?? string.Empty;
+
             var queryBase = new TorrentQuery();
             if (TryAddSearchParameters(queryBase, searchCriteria))
             {
@@ -51,8 +54,7 @@ namespace NzbDrone.Core.Indexers.HDBits
                 {
                     var query = queryBase.Clone();
 
-                    query.TvdbInfo.Season = episode.SeasonNumber;
-                    query.TvdbInfo.Episode = episode.EpisodeNumber;
+                    query.Search = $"{query.Search} {releaseDate}";
 
                     pageableRequests.Add(GetRequest(query));
                 }
@@ -63,10 +65,9 @@ namespace NzbDrone.Core.Indexers.HDBits
 
         private bool TryAddSearchParameters(TorrentQuery query, SearchCriteriaBase searchCriteria)
         {
-            if (searchCriteria.Series.TvdbId != 0)
+            if (searchCriteria.Series.Title.IsNotNullOrWhiteSpace())
             {
-                query.TvdbInfo = query.TvdbInfo ?? new TvdbInfo();
-                query.TvdbInfo.Id = searchCriteria.Series.TvdbId;
+                query.Search = searchCriteria.Series.Title;
                 return true;
             }
 

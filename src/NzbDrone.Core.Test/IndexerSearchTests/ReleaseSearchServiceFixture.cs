@@ -245,7 +245,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
             var criteria = allCriteria.OfType<SeasonSearchCriteria>().ToList();
 
             criteria.Count.Should().Be(1);
-            criteria[0].SeasonNumber.Should().Be(2);
+            criteria[0].Year.Should().Be(2);
         }
 
         [Test]
@@ -260,8 +260,8 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
             var criteria = allCriteria.OfType<SeasonSearchCriteria>().ToList();
 
             criteria.Count.Should().Be(2);
-            criteria[0].SeasonNumber.Should().Be(3);
-            criteria[1].SeasonNumber.Should().Be(4);
+            criteria[0].Year.Should().Be(3);
+            criteria[1].Year.Should().Be(4);
         }
 
         [Test]
@@ -277,7 +277,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
             var criteria2 = allCriteria.OfType<SingleEpisodeSearchCriteria>().ToList();
 
             criteria1.Count.Should().Be(1);
-            criteria1[0].SeasonNumber.Should().Be(5);
+            criteria1[0].Year.Should().Be(5);
 
             criteria2.Count.Should().Be(1);
         }
@@ -294,7 +294,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
             var criteria = allCriteria.OfType<SeasonSearchCriteria>().ToList();
 
             criteria.Count.Should().Be(1);
-            criteria[0].SeasonNumber.Should().Be(7);
+            criteria[0].Year.Should().Be(7);
         }
     }
 }

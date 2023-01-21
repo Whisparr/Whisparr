@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
 using NzbDrone.Core.IndexerSearch.Definitions;
 
@@ -24,7 +23,12 @@ namespace NzbDrone.Core.Indexers.FileList
         {
             var pageableRequests = new IndexerPageableRequestChain();
 
-            AddNameRequests(pageableRequests, searchCriteria, "search-torrents", Settings.Categories, string.Empty);
+            var releaseDate = searchCriteria.ReleaseDate?.ToString("yy.MM.dd") ?? string.Empty;
+
+            foreach (var sceneTitle in searchCriteria.SceneTitles)
+            {
+                pageableRequests.Add(GetRequest("search-torrents", Settings.Categories, string.Format("&type=name&query={0}{1}", Uri.EscapeDataString($"{sceneTitle.Trim()} {releaseDate}"))));
+            }
 
             return pageableRequests;
         }
@@ -33,25 +37,12 @@ namespace NzbDrone.Core.Indexers.FileList
         {
             var pageableRequests = new IndexerPageableRequestChain();
 
-            AddNameRequests(pageableRequests, searchCriteria, "search-torrents", Settings.Categories, $"&season={searchCriteria.SeasonNumber}");
-
-            return pageableRequests;
-        }
-
-        private void AddImdbRequests(IndexerPageableRequestChain chain, SearchCriteriaBase searchCriteria, string searchType, IEnumerable<int> categories, string parameters)
-        {
-            if (searchCriteria.Series.ImdbId.IsNotNullOrWhiteSpace())
-            {
-                chain.Add(GetRequest(searchType, categories, string.Format("&type=imdb&query={0}{1}", searchCriteria.Series.ImdbId, parameters)));
-            }
-        }
-
-        private void AddNameRequests(IndexerPageableRequestChain chain, SearchCriteriaBase searchCriteria, string searchType, IEnumerable<int> categories, string parameters)
-        {
             foreach (var sceneTitle in searchCriteria.SceneTitles)
             {
-                chain.Add(GetRequest(searchType, categories, string.Format("&type=name&query={0}{1}", Uri.EscapeDataString(sceneTitle.Trim()), parameters)));
+                pageableRequests.Add(GetRequest("search-torrents", Settings.Categories, string.Format("&type=name&query={0}{1}", Uri.EscapeDataString($"{sceneTitle.Trim()} {searchCriteria.Year}"))));
             }
+
+            return pageableRequests;
         }
 
         private IEnumerable<IndexerRequest> GetRequest(string searchType, IEnumerable<int> categories, string parameters)

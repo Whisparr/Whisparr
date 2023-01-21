@@ -40,7 +40,7 @@ namespace NzbDrone.Core.Indexers.Rarbg
         {
             var pageableRequests = new IndexerPageableRequestChain();
 
-            pageableRequests.Add(GetPagedRequests("search", "S{0:00}", searchCriteria.SeasonNumber));
+            pageableRequests.Add(GetPagedRequests("search", "{0} {1}", searchCriteria.Series.Title, searchCriteria.Year));
 
             return pageableRequests;
         }

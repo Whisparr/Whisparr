@@ -253,7 +253,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
                 .With(v => v.SceneSeasonNumber, 2)
                 .BuildList();
 
-            var criteria = new SeasonSearchCriteria { Episodes = episodes.Take(1).ToList(), SeasonNumber = 1 };
+            var criteria = new SeasonSearchCriteria { Episodes = episodes.Take(1).ToList(), Year = 1 };
 
             var reports = episodes.Select(v =>
                 new ReleaseInfo()

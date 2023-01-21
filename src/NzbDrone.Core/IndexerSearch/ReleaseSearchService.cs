@@ -78,6 +78,22 @@ namespace NzbDrone.Core.IndexerSearch
 
             var downloadDecisions = new List<DownloadDecision>();
 
+            if (episodes.Count == 1)
+            {
+                var searchSpec = Get<SingleEpisodeSearchCriteria>(series, episodes, monitoredOnly, userInvokedSearch, interactiveSearch);
+
+                var decisions = Dispatch(indexer => indexer.Fetch(searchSpec), searchSpec);
+                downloadDecisions.AddRange(decisions);
+            }
+            else
+            {
+                var searchSpec = Get<SeasonSearchCriteria>(series, episodes, monitoredOnly, userInvokedSearch, interactiveSearch);
+                searchSpec.Year = seasonNumber;
+
+                var decisions = Dispatch(indexer => indexer.Fetch(searchSpec), searchSpec);
+                downloadDecisions.AddRange(decisions);
+            }
+
             return DeDupeDecisions(downloadDecisions);
         }
 

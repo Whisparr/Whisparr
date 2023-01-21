@@ -29,10 +29,10 @@ namespace NzbDrone.Core.DecisionEngine.Specifications.Search
                 return Decision.Accept();
             }
 
-            if (singleEpisodeSpec.SeasonNumber != remoteEpisode.ParsedEpisodeInfo.SeasonNumber)
+            if (singleEpisodeSpec.Year != remoteEpisode.ParsedEpisodeInfo.SeasonNumber)
             {
-                _logger.Debug("Season number does not match searched season number, skipping.");
-                return Decision.Reject("Wrong season");
+                _logger.Debug("Year does not match searched year, skipping.");
+                return Decision.Reject("Wrong year");
             }
 
             return Decision.Accept();

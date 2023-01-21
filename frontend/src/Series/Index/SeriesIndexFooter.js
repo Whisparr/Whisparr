@@ -52,7 +52,7 @@ class SeriesIndexFooter extends PureComponent {
                       enableColorImpairedMode && 'colorImpaired'
                     )}
                   />
-                  <div>Continuing (All scenes downloaded)</div>
+                  <div>Site Active (All scenes downloaded)</div>
                 </div>
 
                 <div className={styles.legendItem}>
@@ -62,7 +62,7 @@ class SeriesIndexFooter extends PureComponent {
                       enableColorImpairedMode && 'colorImpaired'
                     )}
                   />
-                  <div>Ended (All scenes downloaded)</div>
+                  <div>Site Inactive (All scenes downloaded)</div>
                 </div>
 
                 <div className={styles.legendItem}>
@@ -72,7 +72,7 @@ class SeriesIndexFooter extends PureComponent {
                       enableColorImpairedMode && 'colorImpaired'
                     )}
                   />
-                  <div>Missing Scenes (Series monitored)</div>
+                  <div>Missing Scenes (Site monitored)</div>
                 </div>
 
                 <div className={styles.legendItem}>
@@ -82,7 +82,7 @@ class SeriesIndexFooter extends PureComponent {
                       enableColorImpairedMode && 'colorImpaired'
                     )}
                   />
-                  <div>Missing Scenes (Series not monitored)</div>
+                  <div>Missing Scenes (Site not monitored)</div>
                 </div>
               </div>
 

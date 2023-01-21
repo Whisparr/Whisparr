@@ -252,6 +252,11 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
 
         private static SeriesStatusType MapSeriesStatus(string status)
         {
+            if (status.Equals("ended", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return SeriesStatusType.Ended;
+            }
+
             return SeriesStatusType.Continuing;
         }
 

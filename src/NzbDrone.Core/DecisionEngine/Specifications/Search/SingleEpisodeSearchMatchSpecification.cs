@@ -37,6 +37,12 @@ namespace NzbDrone.Core.DecisionEngine.Specifications.Search
 
         private Decision IsSatisfiedBy(RemoteEpisode remoteEpisode, SingleEpisodeSearchCriteria singleEpisodeSpec)
         {
+            if (!singleEpisodeSpec.ReleaseDate.HasValue)
+            {
+                _logger.Debug("Searched episode has no release date, skipping.");
+                return Decision.Reject("No Episode Release Date");
+            }
+
             // TODO match by performer or release date
             var releaseDate = singleEpisodeSpec.ReleaseDate.Value.ToString(Episode.AIR_DATE_FORMAT);
 

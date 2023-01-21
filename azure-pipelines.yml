@@ -27,6 +27,7 @@ trigger:
     include:
     - develop
     - master
+    - v*
 
 pr:
   branches:

@@ -60,10 +60,6 @@ $fullColorGradient: rgba(244, 245, 246, 0.2);
   pointer-events: all;
 }
 
-.airTime {
-  color: var(--calendarTextDim);
-}
-
 /*
  * Status
  */

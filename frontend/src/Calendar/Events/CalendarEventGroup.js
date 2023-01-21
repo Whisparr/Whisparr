@@ -7,7 +7,6 @@ import getStatusStyle from 'Calendar/getStatusStyle';
 import Icon from 'Components/Icon';
 import Link from 'Components/Link/Link';
 import { icons, kinds } from 'Helpers/Props';
-import formatTime from 'Utilities/Date/formatTime';
 import padNumber from 'Utilities/Number/padNumber';
 import styles from './CalendarEventGroup.css';
 
@@ -73,7 +72,6 @@ class CalendarEventGroup extends Component {
       isDownloading,
       showEpisodeInformation,
       showFinaleIcon,
-      timeFormat,
       fullColorEvents,
       colorImpairedMode,
       onEventModalOpenToggle
@@ -176,10 +174,6 @@ class CalendarEventGroup extends Component {
         </div>
 
         <div className={styles.airingInfo}>
-          <div className={styles.airTime}>
-            {formatTime(airDateUtc, timeFormat)} - {formatTime(endTime.toISOString(), timeFormat, { includeMinuteZero: true })}
-          </div>
-
           {
             showEpisodeInformation ?
               <div className={styles.episodeInfo}>

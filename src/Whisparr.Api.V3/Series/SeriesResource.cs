@@ -28,7 +28,6 @@ namespace Whisparr.Api.V3.Series
         public DateTime? NextAiring { get; set; }
         public DateTime? PreviousAiring { get; set; }
         public string Network { get; set; }
-        public string AirTime { get; set; }
         public List<MediaCover> Images { get; set; }
         public Language OriginalLanguage { get; set; }
         public string RemotePoster { get; set; }
@@ -92,7 +91,6 @@ namespace Whisparr.Api.V3.Series
                        // NextAiring
                        // PreviousAiring
                        Network = model.Network,
-                       AirTime = model.AirTime,
                        Images = model.Images,
 
                        Seasons = model.Seasons.ToResource(includeSeasonImages),
@@ -151,7 +149,6 @@ namespace Whisparr.Api.V3.Series
                        // NextAiring
                        // PreviousAiring
                        Network = resource.Network,
-                       AirTime = resource.AirTime,
                        Images = resource.Images,
 
                        Seasons = resource.Seasons?.ToModel() ?? new List<Season>(),

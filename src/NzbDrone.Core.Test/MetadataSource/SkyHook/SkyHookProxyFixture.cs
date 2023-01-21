@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
@@ -56,7 +56,6 @@ namespace NzbDrone.Core.Test.MetadataSource.SkyHook
             series.CleanTitle.Should().Be(Parser.Parser.CleanSeriesTitle(series.Title));
             series.SortTitle.Should().Be(SeriesTitleNormalizer.Normalize(series.Title, series.TvdbId));
             series.Overview.Should().NotBeNullOrWhiteSpace();
-            series.AirTime.Should().NotBeNullOrWhiteSpace();
             series.FirstAired.Should().HaveValue();
             series.FirstAired.Value.Kind.Should().Be(DateTimeKind.Utc);
             series.Images.Should().NotBeEmpty();

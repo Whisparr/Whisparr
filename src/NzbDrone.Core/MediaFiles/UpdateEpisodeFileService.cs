@@ -53,14 +53,13 @@ namespace NzbDrone.Core.MediaFiles
                 case FileDateType.LocalAirDate:
                     {
                         var airDate = episodes.First().AirDate;
-                        var airTime = series.AirTime;
 
-                        if (airDate.IsNullOrWhiteSpace() || airTime.IsNullOrWhiteSpace())
+                        if (airDate.IsNullOrWhiteSpace())
                         {
                             return false;
                         }
 
-                        return ChangeFileDateToLocalAirDate(episodeFilePath, airDate, airTime);
+                        return ChangeFileDateToLocalAirDate(episodeFilePath, airDate);
                     }
 
                 case FileDateType.UtcAirDate:
@@ -79,11 +78,11 @@ namespace NzbDrone.Core.MediaFiles
             return false;
         }
 
-        private bool ChangeFileDateToLocalAirDate(string filePath, string fileDate, string fileTime)
+        private bool ChangeFileDateToLocalAirDate(string filePath, string fileDate)
         {
             DateTime airDate;
 
-            if (DateTime.TryParse(fileDate + ' ' + fileTime, out airDate))
+            if (DateTime.TryParse(fileDate + " 12:00", out airDate))
             {
                 // avoiding false +ve checks and set date skewing by not using UTC (Windows)
                 DateTime oldDateTime = _diskProvider.FileGetLastWrite(filePath);

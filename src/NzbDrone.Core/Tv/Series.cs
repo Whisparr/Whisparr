@@ -25,7 +25,6 @@ namespace NzbDrone.Core.Tv
         public string SortTitle { get; set; }
         public SeriesStatusType Status { get; set; }
         public string Overview { get; set; }
-        public string AirTime { get; set; }
         public bool Monitored { get; set; }
         public int QualityProfileId { get; set; }
         public bool SeasonFolder { get; set; }

@@ -20,11 +20,6 @@
   font-size: $defaultFontSize;
 }
 
-.airTime {
-  flex: 1 0 1px;
-  color: var(--calendarTextDim);
-}
-
 .episodeInfo {
   margin-left: 10px;
   color: var(--calendarTextDim);

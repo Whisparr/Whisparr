@@ -8,7 +8,6 @@ import Link from 'Components/Link/Link';
 import EpisodeDetailsModal from 'Episode/EpisodeDetailsModal';
 import episodeEntities from 'Episode/episodeEntities';
 import { icons, kinds } from 'Helpers/Props';
-import formatTime from 'Utilities/Date/formatTime';
 import padNumber from 'Utilities/Number/padNumber';
 import CalendarEventQueueDetails from './CalendarEventQueueDetails';
 import styles from './CalendarEvent.css';
@@ -63,7 +62,6 @@ class CalendarEvent extends Component {
       showSpecialIcon,
       showCutoffUnmetIcon,
       fullColorEvents,
-      timeFormat,
       colorImpairedMode
     } = this.props;
 
@@ -197,10 +195,6 @@ class CalendarEvent extends Component {
               </div> :
               null
           }
-
-          <div className={styles.airTime}>
-            {formatTime(airDateUtc, timeFormat)} - {formatTime(endTime.toISOString(), timeFormat, { includeMinuteZero: true })}
-          </div>
         </div>
 
         <EpisodeDetailsModal

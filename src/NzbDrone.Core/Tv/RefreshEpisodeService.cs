@@ -62,6 +62,7 @@ namespace NzbDrone.Core.Tv
                     episodeToUpdate.TvdbId = episode.TvdbId;
                     episodeToUpdate.EpisodeNumber = episode.EpisodeNumber;
                     episodeToUpdate.SeasonNumber = episode.SeasonNumber;
+                    episodeToUpdate.Runtime = episode.Runtime;
                     episodeToUpdate.AbsoluteEpisodeNumber = episode.AbsoluteEpisodeNumber;
                     episodeToUpdate.AiredAfterSeasonNumber = episode.AiredAfterSeasonNumber;
                     episodeToUpdate.AiredBeforeSeasonNumber = episode.AiredBeforeSeasonNumber;

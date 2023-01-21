@@ -221,6 +221,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             episode.EpisodeNumber = oracleEpisode.EpisodeNumber;
             episode.AbsoluteEpisodeNumber = oracleEpisode.AbsoluteEpisodeNumber;
             episode.Title = oracleEpisode.Title;
+            episode.Runtime = oracleEpisode.Duration.GetValueOrDefault();
             episode.AiredAfterSeasonNumber = oracleEpisode.AiredAfterSeasonNumber;
             episode.AiredBeforeSeasonNumber = oracleEpisode.AiredBeforeSeasonNumber;
             episode.AiredBeforeEpisodeNumber = oracleEpisode.AiredBeforeEpisodeNumber;
@@ -252,7 +253,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
 
         private static SeriesStatusType MapSeriesStatus(string status)
         {
-            if (status.Equals("ended", StringComparison.InvariantCultureIgnoreCase))
+            if (status.IsNotNullOrWhiteSpace() && status.Equals("ended", StringComparison.InvariantCultureIgnoreCase))
             {
                 return SeriesStatusType.Ended;
             }

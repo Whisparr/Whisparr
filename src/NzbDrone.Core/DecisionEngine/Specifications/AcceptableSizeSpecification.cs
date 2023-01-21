@@ -44,11 +44,17 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
                 return Decision.Accept();
             }
 
-            var runtime = subject.Series.Runtime;
+            // Try to use runtime from episode/episodes first and fallback to series
+            var runtime = (int)subject.Episodes.Where(x => x.Runtime == 0).Average(x => x.Runtime);
 
             if (runtime == 0)
             {
-                runtime = 30; // TODO: Assume 30 for now, may just rip out quality definitions
+                runtime = subject.Series.Runtime;
+            }
+
+            if (runtime == 0)
+            {
+                runtime = 30;
             }
 
             var qualityDefinition = _qualityDefinitionService.Get(quality);

@@ -37,7 +37,7 @@ export const defaultState = {
     },
     {
       name: 'series.sortTitle',
-      label: 'Series',
+      label: 'Site',
       isSortable: true,
       isVisible: true
     },
@@ -48,7 +48,7 @@ export const defaultState = {
     },
     {
       name: 'episodes.title',
-      label: 'Episode Title',
+      label: 'Scene Title',
       isVisible: true
     },
     {

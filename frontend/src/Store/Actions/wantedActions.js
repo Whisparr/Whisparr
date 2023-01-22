@@ -29,13 +29,8 @@ export const defaultState = {
     columns: [
       {
         name: 'series.sortTitle',
-        label: 'Series Title',
+        label: 'Site Title',
         isSortable: true,
-        isVisible: true
-      },
-      {
-        name: 'episode',
-        label: 'Episode',
         isVisible: true
       },
       {
@@ -45,7 +40,7 @@ export const defaultState = {
       },
       {
         name: 'episodes.airDateUtc',
-        label: 'Air Date',
+        label: 'Release Date',
         isSortable: true,
         isVisible: true
       },
@@ -101,13 +96,8 @@ export const defaultState = {
     columns: [
       {
         name: 'series.sortTitle',
-        label: 'Series Title',
+        label: 'Site Title',
         isSortable: true,
-        isVisible: true
-      },
-      {
-        name: 'episode',
-        label: 'Episode',
         isVisible: true
       },
       {
@@ -117,7 +107,7 @@ export const defaultState = {
       },
       {
         name: 'episodes.airDateUtc',
-        label: 'Air Date',
+        label: 'Release Date',
         isSortable: true,
         isVisible: true
       },

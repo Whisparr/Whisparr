@@ -25,7 +25,7 @@ class SelectSeasonRow extends Component {
         onPress={this.onPress}
       >
         {
-          seasonNumber === 0 ? 'Specials' : `Season ${seasonNumber}`
+          seasonNumber === 0 ? 'Specials' : `${seasonNumber}`
         }
       </Link>
     );

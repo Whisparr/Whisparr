@@ -198,17 +198,17 @@ class InteractiveImportModalContentConnector extends Component {
         } = item;
 
         if (!series) {
-          this.setState({ interactiveImportErrorMessage: 'Series must be chosen for each selected file' });
+          this.setState({ interactiveImportErrorMessage: 'Site must be chosen for each selected file' });
           return;
         }
 
         if (isNaN(seasonNumber)) {
-          this.setState({ interactiveImportErrorMessage: 'Season must be chosen for each selected file' });
+          this.setState({ interactiveImportErrorMessage: 'Year must be chosen for each selected file' });
           return;
         }
 
         if (!episodes || !episodes.length) {
-          this.setState({ interactiveImportErrorMessage: 'One or more episodes must be chosen for each selected file' });
+          this.setState({ interactiveImportErrorMessage: 'One or more release must be chosen for each selected file' });
           return;
         }
 

@@ -23,7 +23,7 @@ class SelectSeasonModalContent extends Component {
     return (
       <ModalContent onModalClose={onModalClose}>
         <ModalHeader>
-          {modalTitle} - Select Season
+          {modalTitle} - Select Year
         </ModalHeader>
 
         <ModalBody>

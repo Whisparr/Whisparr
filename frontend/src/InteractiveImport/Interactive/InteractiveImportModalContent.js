@@ -40,18 +40,18 @@ const columns = [
   },
   {
     name: 'series',
-    label: 'Series',
+    label: 'Site',
     isSortable: true,
     isVisible: true
   },
   {
     name: 'season',
-    label: 'Season',
+    label: 'Year',
     isVisible: true
   },
   {
     name: 'episodes',
-    label: 'Episode(s)',
+    label: 'Release(s)',
     isVisible: true
   },
   {
@@ -293,8 +293,8 @@ class InteractiveImportModalContent extends Component {
 
     const bulkSelectOptions = [
       { key: SELECT, value: 'Select...', disabled: true },
-      { key: SEASON, value: 'Select Season' },
-      { key: EPISODE, value: 'Select Episode(s)' },
+      { key: SEASON, value: 'Select Year' },
+      { key: EPISODE, value: 'Select Release(s)' },
       { key: QUALITY, value: 'Select Quality' },
       { key: RELEASE_GROUP, value: 'Select Release Group' },
       { key: LANGUAGE, value: 'Select Language' }
@@ -303,7 +303,7 @@ class InteractiveImportModalContent extends Component {
     if (allowSeriesChange) {
       bulkSelectOptions.splice(1, 0, {
         key: SERIES,
-        value: 'Select Series'
+        value: 'Select Site'
       });
     }
 

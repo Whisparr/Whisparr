@@ -48,7 +48,7 @@ class SelectSeriesModalContent extends Component {
     return (
       <ModalContent onModalClose={onModalClose}>
         <ModalHeader>
-          {modalTitle} - Select Series
+          {modalTitle} - Select Site
         </ModalHeader>
 
         <ModalBody

@@ -268,7 +268,7 @@ class InteractiveImportRow extends Component {
           this.state.isSeriesColumnVisible ?
             <TableRowCellButton
               isDisabled={!allowSeriesChange}
-              title={allowSeriesChange ? 'Click to change series' : undefined}
+              title={allowSeriesChange ? 'Click to change site' : undefined}
               onPress={this.onSelectSeriesPress}
             >
               {
@@ -280,7 +280,7 @@ class InteractiveImportRow extends Component {
 
         <TableRowCellButton
           isDisabled={!series}
-          title={series ? 'Click to change season' : undefined}
+          title={series ? 'Click to change site' : undefined}
           onPress={this.onSelectSeasonPress}
         >
           {
@@ -298,7 +298,7 @@ class InteractiveImportRow extends Component {
 
         <TableRowCellButton
           isDisabled={!series || isNaN(seasonNumber)}
-          title={series && !isNaN(seasonNumber) ? 'Click to change episode' : undefined}
+          title={series && !isNaN(seasonNumber) ? 'Click to change release' : undefined}
           onPress={this.onSelectEpisodePress}
         >
           {

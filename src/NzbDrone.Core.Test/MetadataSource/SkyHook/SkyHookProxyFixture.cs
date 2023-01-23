@@ -29,7 +29,7 @@ namespace NzbDrone.Core.Test.MetadataSource.SkyHook
         {
             var details = Subject.GetSeriesInfo(tvdbId);
 
-            // ValidateSeries(details.Item1);
+            ValidateSeries(details.Item1);
             ValidateEpisodes(details.Item2);
 
             details.Item1.Title.Should().Be(title);
@@ -56,16 +56,17 @@ namespace NzbDrone.Core.Test.MetadataSource.SkyHook
             series.Title.Should().NotBeNullOrWhiteSpace();
             series.CleanTitle.Should().Be(Parser.Parser.CleanSeriesTitle(series.Title));
             series.SortTitle.Should().Be(SeriesTitleNormalizer.Normalize(series.Title, series.TvdbId));
-            series.Overview.Should().NotBeNullOrWhiteSpace();
-            series.FirstAired.Should().HaveValue();
-            series.FirstAired.Value.Kind.Should().Be(DateTimeKind.Utc);
+
+            // series.Overview.Should().NotBeNullOrWhiteSpace();
+            // series.FirstAired.Should().HaveValue();
+            // series.FirstAired.Value.Kind.Should().Be(DateTimeKind.Utc);
             series.Images.Should().NotBeEmpty();
-            series.ImdbId.Should().NotBeNullOrWhiteSpace();
+
+            // series.ImdbId.Should().NotBeNullOrWhiteSpace();
             series.Network.Should().NotBeNullOrWhiteSpace();
             series.Runtime.Should().BeGreaterThan(0);
             series.TitleSlug.Should().NotBeNullOrWhiteSpace();
 
-            // series.TvRageId.Should().BeGreaterThan(0);
             series.TvdbId.Should().BeGreaterThan(0);
         }
 

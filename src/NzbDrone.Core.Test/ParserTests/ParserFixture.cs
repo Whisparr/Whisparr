@@ -22,35 +22,35 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Series Title 0", "seriestitle0")]
         [TestCase("Series of the Day", "seriesday")]
         [TestCase("Series of the Day 2", "seriesday2")]
-        [TestCase("[ www.Torrenting.com ] - Series.S03E14.720p.HDTV.X264-DIMENSION", "series")]
-        [TestCase("www.Torrenting.com - Series.S03E14.720p.HDTV.X264-DIMENSION", "series")]
+        [TestCase("[ www.Torrenting.com ] - Series.23.01.23.720p.HDTV.X264-DIMENSION", "series")]
+        [TestCase("www.Torrenting.com - Series.23.01.23.720p.HDTV.X264-DIMENSION", "series")]
         [TestCase("Series S02E09 HDTV x264-2HD [eztv]-[rarbg.com]", "series")]
         [TestCase("Series.911.S01.DVDRip.DD2.0.x264-DEEP", "series 911")]
-        [TestCase("www.Torrenting.org - Series.S03E14.720p.HDTV.X264-DIMENSION", "series")]
+        [TestCase("www.Torrenting.org - Series.23.01.23.720p.HDTV.X264-DIMENSION", "series")]
         public void should_parse_series_name(string postTitle, string title)
         {
             var result = Parser.Parser.ParseSeriesName(postTitle).CleanSeriesTitle();
             result.Should().Be(title.CleanSeriesTitle());
         }
 
-        [TestCase("Series S03E14 720p HDTV X264-DIMENSION", "Series")]
-        [TestCase("Series.S03E14.720p.HDTV.X264-DIMENSION", "Series")]
-        [TestCase("Series-S03E14-720p-HDTV-X264-DIMENSION", "Series")]
-        [TestCase("Series_S03E14_720p_HDTV_X264-DIMENSION", "Series")]
-        [TestCase("Series 2022 S03E14 720p HDTV X264-DIMENSION", "Series", 2022)]
-        [TestCase("Series (2022) S03E14 720p HDTV X264-DIMENSION", "Series", 2022)]
-        [TestCase("Series.2022.S03E14.720p.HDTV.X264-DIMENSION", "Series", 2022)]
-        [TestCase("Series-2022-S03E14-720p-HDTV-X264-DIMENSION", "Series", 2022)]
-        [TestCase("Series_2022_S03E14_720p_HDTV_X264-DIMENSION", "Series", 2022)]
-        [TestCase("1234 S03E14 720p HDTV X264-DIMENSION", "1234")]
-        [TestCase("1234.S03E14.720p.HDTV.X264-DIMENSION", "1234")]
-        [TestCase("1234-S03E14-720p-HDTV-X264-DIMENSION", "1234")]
-        [TestCase("1234_S03E14_720p_HDTV_X264-DIMENSION", "1234")]
-        [TestCase("1234 2022 S03E14 720p HDTV X264-DIMENSION", "1234", 2022)]
-        [TestCase("1234 (2022) S03E14 720p HDTV X264-DIMENSION", "1234", 2022)]
-        [TestCase("1234.2022.S03E14.720p.HDTV.X264-DIMENSION", "1234", 2022)]
-        [TestCase("1234-2022-S03E14-720p-HDTV-X264-DIMENSION", "1234", 2022)]
-        [TestCase("1234_2022_S03E14_720p_HDTV_X264-DIMENSION", "1234", 2022)]
+        [TestCase("Series 23 01 23 720p HDTV X264-DIMENSION", "Series")]
+        [TestCase("Series.23.01.23.720p.HDTV.X264-DIMENSION", "Series")]
+        [TestCase("Series-23-01-23-720p-HDTV-X264-DIMENSION", "Series")]
+        [TestCase("Series_23.01.23_720p_HDTV_X264-DIMENSION", "Series")]
+        [TestCase("Series 2022 23 01 23 720p HDTV X264-DIMENSION", "Series", 2022)]
+        [TestCase("Series (2022) 23 01 23 720p HDTV X264-DIMENSION", "Series", 2022)]
+        [TestCase("Series.2022.23.01.23.720p.HDTV.X264-DIMENSION", "Series", 2022)]
+        [TestCase("Series-2022-23-01-23-720p-HDTV-X264-DIMENSION", "Series", 2022)]
+        [TestCase("Series_2022_23_01_23_720p_HDTV_X264-DIMENSION", "Series", 2022)]
+        [TestCase("1234 23 01 23 720p HDTV X264-DIMENSION", "1234")]
+        [TestCase("1234.23.01.23.720p.HDTV.X264-DIMENSION", "1234")]
+        [TestCase("1234-23-01-23-720p-HDTV-X264-DIMENSION", "1234")]
+        [TestCase("1234_23_01_23_720p_HDTV_X264-DIMENSION", "1234")]
+        [TestCase("1234 2022 23 01 23 720p HDTV X264-DIMENSION", "1234", 2022)]
+        [TestCase("1234 (2022) 23 01 23 720p HDTV X264-DIMENSION", "1234", 2022)]
+        [TestCase("1234.2022.23.01.23.720p.HDTV.X264-DIMENSION", "1234", 2022)]
+        [TestCase("1234-2022-23-01-23-720p-HDTV-X264-DIMENSION", "1234", 2022)]
+        [TestCase("1234_2022_23_01_23_720p_HDTV_X264-DIMENSION", "1234", 2022)]
         public void should_parse_series_title_info(string postTitle, string titleWithoutYear, int year = 0)
         {
             var seriesTitleInfo = Parser.Parser.ParseTitle(postTitle).SeriesTitleInfo;
@@ -72,14 +72,14 @@ namespace NzbDrone.Core.Test.ParserTests
             Parser.Parser.ParseTitle(postTitle);
         }
 
-        [TestCase("[scnzbefnet][509103] 2.Developers.Series.S03E18.720p.HDTV.X264-DIMENSION", "2 Developers Series")]
+        [TestCase("[scnzbefnet][509103] 2.Developers.Series.23-01-22.720p.HDTV.X264-DIMENSION", "2 Developers Series")]
         public void should_remove_request_info_from_title(string postTitle, string title)
         {
             Parser.Parser.ParseTitle(postTitle).SeriesTitle.Should().Be(title);
         }
 
-        [TestCase("Series.S01E02.Chained.Title.mkv")]
-        [TestCase("Show - S01E01 - Title.avi")]
+        [TestCase("Series.23.01.23.Chained.Title.mkv")]
+        [TestCase("Show - 23.01.23 - Title.avi")]
         public void should_parse_quality_from_extension(string title)
         {
             Parser.Parser.ParseTitle(title).Quality.Quality.Should().NotBe(Quality.Unknown);
@@ -87,7 +87,7 @@ namespace NzbDrone.Core.Test.ParserTests
             Parser.Parser.ParseTitle(title).Quality.ResolutionDetectionSource.Should().Be(QualityDetectionSource.Extension);
         }
 
-        [TestCase("Series.S01E02.Chained.Title.mkv", "Series.S01E02.Chained.Title")]
+        [TestCase("Series.23.01.23.Chained.Title.mkv", "Series.23.01.23.Chained.Title")]
         public void should_parse_releasetitle(string path, string releaseTitle)
         {
             var result = Parser.Parser.ParseTitle(path);

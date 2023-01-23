@@ -18,7 +18,6 @@ using NzbDrone.Test.Common;
 
 namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 {
-    [Platform(Exclude = "Win")]
     [TestFixture]
     public class FileNameBuilderFixture : CoreTest<FileNameBuilder>
     {
@@ -99,7 +98,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_replace_Series_dash_Title()
         {
-            _namingConfig.StandardEpisodeFormat = "{Series-Title}";
+            _namingConfig.StandardEpisodeFormat = "{Site-Title}";
 
             Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
                    .Should().Be("South-Park");
@@ -117,7 +116,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_replace_SERIES_TITLE_with_random_casing_should_keep_original_casing()
         {
-            _namingConfig.StandardEpisodeFormat = "{sErIES-tItLE}";
+            _namingConfig.StandardEpisodeFormat = "{sItE-tItLE}";
 
             Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
                    .Should().Be(_series.Title.Replace(' ', '-'));

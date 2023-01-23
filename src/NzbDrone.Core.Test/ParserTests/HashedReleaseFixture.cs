@@ -13,14 +13,14 @@ namespace NzbDrone.Core.Test.ParserTests
         {
             new object[]
             {
-                @"C:\Test\Some.Hashed.Release.S01E01.720p.WEB-DL.AAC2.0.H.264-Mercury\0e895c37245186812cb08aab1529cf8ee389dd05.mkv".AsOsAgnostic(),
+                @"C:\Test\Some.Hashed.Release.23.01.12.720p.WEB-DL.AAC2.0.H.264-Mercury\0e895c37245186812cb08aab1529cf8ee389dd05.mkv".AsOsAgnostic(),
                 "Some Hashed Release",
                 Quality.WEBDL720p,
                 "Mercury"
             },
             new object[]
             {
-                @"C:\Test\0e895c37245186812cb08aab1529cf8ee389dd05\Some.Hashed.Release.S01E01.720p.WEB-DL.AAC2.0.H.264-Mercury.mkv".AsOsAgnostic(),
+                @"C:\Test\0e895c37245186812cb08aab1529cf8ee389dd05\Some.Hashed.Release.23.01.12.720p.WEB-DL.AAC2.0.H.264-Mercury.mkv".AsOsAgnostic(),
                 "Some Hashed Release",
                 Quality.WEBDL720p,
                 "Mercury"
@@ -41,49 +41,49 @@ namespace NzbDrone.Core.Test.ParserTests
             },
             new object[]
             {
-                @"C:\Test\Title.S01E10.DVDRip.XviD-WHISPARR\AHFMZXGHEWD660.mkv".AsOsAgnostic(),
+                @"C:\Test\Title.23.01.12.DVDRip.XviD-WHISPARR\AHFMZXGHEWD660.mkv".AsOsAgnostic(),
                 "Title",
                 Quality.DVD,
                 "WHISPARR"
             },
             new object[]
             {
-                @"C:\Test\Show Title.S02E12.1080p.BluRay.x264-WHISPARR\Backup_72023S02-12.mkv".AsOsAgnostic(),
+                @"C:\Test\Show Title.23.01.12.1080p.BluRay.x264-WHISPARR\Backup_72023S02-12.mkv".AsOsAgnostic(),
                 "Show Title",
                 Quality.Bluray1080p,
                 "WHISPARR"
             },
             new object[]
             {
-                @"C:\Test\Title S04E08 Chupacabra 720p WEB-DL DD5 1 H 264-ECI\123.mkv".AsOsAgnostic(),
+                @"C:\Test\Title 23.01.12 Chupacabra 720p WEB-DL DD5 1 H 264-ECI\123.mkv".AsOsAgnostic(),
                 "Title",
                 Quality.WEBDL720p,
                 "ECI"
             },
             new object[]
             {
-                @"C:\Test\Title S04E08 Chupacabra 720p WEB-DL DD5 1 H 264-ECI\abc.mkv".AsOsAgnostic(),
+                @"C:\Test\Title 23.01.12 Chupacabra 720p WEB-DL DD5 1 H 264-ECI\abc.mkv".AsOsAgnostic(),
                 "Title",
                 Quality.WEBDL720p,
                 "ECI"
             },
             new object[]
             {
-                @"C:\Test\Title S04E08 Chupacabra 720p WEB-DL DD5 1 H 264-ECI\b00bs.mkv".AsOsAgnostic(),
+                @"C:\Test\Title 23.01.12 Chupacabra 720p WEB-DL DD5 1 H 264-ECI\b00bs.mkv".AsOsAgnostic(),
                 "Title",
                 Quality.WEBDL720p,
                 "ECI"
             },
             new object[]
             {
-                @"C:\Test\The.Show.Title.S02E23.720p.HDTV.x264-NZBgeek/cgajsofuejsa501.mkv".AsOsAgnostic(),
+                @"C:\Test\The.Show.Title.23.01.12.720p.HDTV.x264-NZBgeek/cgajsofuejsa501.mkv".AsOsAgnostic(),
                 "The Show Title",
                 Quality.HDTV720p,
                 "NZBgeek"
             },
             new object[]
             {
-                @"C:\Test\Show.Title.S03E04.1080p.WEB-DL.DD5.1.H264-RARBG\170424_26.mkv".AsOsAgnostic(),
+                @"C:\Test\Show.Title.23.01.12.1080p.WEB-DL.DD5.1.H264-RARBG\170424_26.mkv".AsOsAgnostic(),
                 "Show Title",
                 Quality.WEBDL1080p,
                 "RARBG"
@@ -111,35 +111,35 @@ namespace NzbDrone.Core.Test.ParserTests
             },
             new object[]
             {
-                @"C:\Test\Series.Title.S02E24.720p.HDTV.H.264\abc.xyz.af6021c37f7852.mkv".AsOsAgnostic(),
+                @"C:\Test\Series.Title.23.01.12.720p.HDTV.H.264\abc.xyz.af6021c37f7852.mkv".AsOsAgnostic(),
                 "Series Title",
                 Quality.HDTV720p,
                 null
             },
             new object[]
             {
-                @"C:\Test\tv\Series.Title.S04E03.Episode.Name.1080p.AMZN.WEB-DL.DDP5.1.H.264-NTb\cwnOJYks5E2WP7zGuzPkdkRK3JkWw0.mkv".AsOsAgnostic(),
+                @"C:\Test\tv\Series.Title.23.01.12.Episode.Name.1080p.AMZN.WEB-DL.DDP5.1.H.264-NTb\cwnOJYks5E2WP7zGuzPkdkRK3JkWw0.mkv".AsOsAgnostic(),
                 "Series Title",
                 Quality.WEBDL1080p,
                 "NTb"
             },
             new object[]
             {
-                @"C:\Test\tv\Series.Title.2017.S04E07.Episode.Name.1080p.AMZN.WEB-DL.DDP5.1.H.264-NTb/s2e2fYzx5xJhuBjHn5ZXE07Ebi.mkv".AsOsAgnostic(),
+                @"C:\Test\tv\Series.Title.2017.23.01.12.Episode.Name.1080p.AMZN.WEB-DL.DDP5.1.H.264-NTb/s2e2fYzx5xJhuBjHn5ZXE07Ebi.mkv".AsOsAgnostic(),
                 "Series Title 2017",
                 Quality.WEBDL1080p,
                 "NTb"
             },
             new object[]
             {
-                @"C:\Test\tv\Series.Title.S04E03.Episode.Name.1080p.AMZN.WEB-DL.DDP5.1.H.264-NTb\zM0vnVU1SoV4uwTihfzTHkYmJPBemgN3MqXG1fY.mkv".AsOsAgnostic(),
+                @"C:\Test\tv\Series.Title.23.01.12.Episode.Name.1080p.AMZN.WEB-DL.DDP5.1.H.264-NTb\zM0vnVU1SoV4uwTihfzTHkYmJPBemgN3MqXG1fY.mkv".AsOsAgnostic(),
                 "Series Title",
                 Quality.WEBDL1080p,
                 "NTb"
             },
             new object[]
             {
-                @"C:\Test\tv\Series.Title.2019.S02E02.The.Episode.of.Names.1080p.AMZN.WEB-DL.DDP5.1.H.264-NTb/46XuzmawYQeUBwNdH2Hw2996.mkv".AsOsAgnostic(),
+                @"C:\Test\tv\Series.Title.2019.23.01.12.The.Episode.of.Names.1080p.AMZN.WEB-DL.DDP5.1.H.264-NTb/46XuzmawYQeUBwNdH2Hw2996.mkv".AsOsAgnostic(),
                 "Series Title 2019",
                 Quality.WEBDL1080p,
                 "NTb"

@@ -297,13 +297,13 @@ namespace NzbDrone.Integration.Test
             }
         }
 
-        public EpisodeFileResource EnsureEpisodeFile(SeriesResource series, int season, int episode, Quality quality)
+        public EpisodeFileResource EnsureEpisodeFile(SeriesResource series, string airdate, Quality quality)
         {
-            var result = Episodes.GetEpisodesInSeries(series.Id).Single(v => v.SeasonNumber == season && v.EpisodeNumber == episode);
+            var result = Episodes.GetEpisodesInSeries(series.Id).Single(v => v.AirDate == airdate);
 
             if (result.EpisodeFile == null)
             {
-                var path = Path.Combine(SeriesRootFolder, series.Title, string.Format("Series.S{0}E{1}.{2}.mkv", season, episode, quality.Name));
+                var path = Path.Combine(SeriesRootFolder, series.Title, string.Format("Series.{0}.{1}.mkv", airdate, quality.Name));
 
                 Directory.CreateDirectory(Path.GetDirectoryName(path));
                 File.WriteAllText(path, "Fake Episode");
@@ -312,7 +312,7 @@ namespace NzbDrone.Integration.Test
 
                 Commands.WaitAll();
 
-                result = Episodes.GetEpisodesInSeries(series.Id).Single(v => v.SeasonNumber == season && v.EpisodeNumber == episode);
+                result = Episodes.GetEpisodesInSeries(series.Id).Single(v => v.AirDate == airdate);
 
                 result.EpisodeFileId.Should().NotBe(0);
             }

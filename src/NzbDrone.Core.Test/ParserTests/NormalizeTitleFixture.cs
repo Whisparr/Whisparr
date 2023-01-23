@@ -22,7 +22,7 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("peri.od", "period")]
         [TestCase("this.^&%^**$%@#$!That", "thisthat")]
         [TestCase("test/test", "testtest")]
-        [TestCase("90210", "90210")]
+        [TestCase("126", "126")]
         [TestCase("24", "24")]
         public void should_remove_special_characters_and_casing(string dirty, string clean)
         {

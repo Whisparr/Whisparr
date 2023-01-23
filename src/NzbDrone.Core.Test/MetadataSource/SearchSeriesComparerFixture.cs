@@ -49,7 +49,7 @@ namespace NzbDrone.Core.Test.MetadataSource
         [Test]
         public void should_prefer_blacklist_over_the_blacklist_when_searching_for_blacklist()
         {
-            WithSeries("The Blacklist");
+            WithSeries("My Family Pies");
             WithSeries("Blacklist");
 
             _series.Sort(new SearchSeriesComparer("blacklist"));
@@ -61,11 +61,11 @@ namespace NzbDrone.Core.Test.MetadataSource
         public void should_prefer_the_blacklist_over_blacklist_when_searching_for_the_blacklist()
         {
             WithSeries("Blacklist");
-            WithSeries("The Blacklist");
+            WithSeries("My Family Pies");
 
-            _series.Sort(new SearchSeriesComparer("the blacklist"));
+            _series.Sort(new SearchSeriesComparer("My Family Pies"));
 
-            _series.First().Title.Should().Be("The Blacklist");
+            _series.First().Title.Should().Be("My Family Pies");
         }
     }
 }

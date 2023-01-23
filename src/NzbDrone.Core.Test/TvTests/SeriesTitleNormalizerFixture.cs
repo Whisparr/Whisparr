@@ -7,14 +7,14 @@ namespace NzbDrone.Core.Test.TvTests
     [TestFixture]
     public class SeriesTitleNormalizerFixture
     {
-        [TestCase("A to Z", 281588, "a to z")]
+        [TestCase("Bratty Sis", 126, "bratty sis")]
         public void should_use_precomputed_title(string title, int tvdbId, string expected)
         {
             SeriesTitleNormalizer.Normalize(title, tvdbId).Should().Be(expected);
         }
 
         [TestCase("2 Broke Girls", "2 broke girls")]
-        [TestCase("Archer (2009)", "archer 2009")]
+        [TestCase("Bratty Sis", "bratty sis")]
         [TestCase("The Office (US)", "office us")]
         [TestCase("The Mentalist", "mentalist")]
         [TestCase("The Good Wife", "good wife")]

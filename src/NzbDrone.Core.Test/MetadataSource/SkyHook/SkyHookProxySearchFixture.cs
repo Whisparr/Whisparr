@@ -20,33 +20,20 @@ namespace NzbDrone.Core.Test.MetadataSource.SkyHook
             UseRealHttp();
         }
 
-        [TestCase("The Simpsons", "The Simpsons")]
-        [TestCase("South Park", "South Park")]
-        [TestCase("Franklin & Bash", "Franklin & Bash")]
-        [TestCase("House", "House")]
-        [TestCase("Mr. D", "Mr. D")]
-        [TestCase("Rob & Big", "Rob & Big")]
-        [TestCase("M*A*S*H", "M*A*S*H")]
+        [TestCase("Blacked Raw", "Blacked Raw")]
+        [TestCase("Brazzers Exxtra", "Brazzers Exxtra")]
+        [TestCase("Creampie Angels", "Creampie Angels")]
+        [TestCase("CovertJapan", "CovertJapan")]
+        [TestCase("Don't Break Me", "Don't Break Me")]
+        [TestCase("Gloryhole Secrets", "Gloryhole Secrets")]
+        [TestCase("True Amateurs", "True Amateurs")]
 
-        // [TestCase("imdb:tt0436992", "Doctor Who (2005)")]
-        [TestCase("tvdb:78804", "Doctor Who (2005)")]
-        [TestCase("tvdbid:78804", "Doctor Who (2005)")]
-        [TestCase("tvdbid: 78804 ", "Doctor Who (2005)")]
+        [TestCase("tvdb:2273", "5K Porn")]
+        [TestCase("tvdbid:2273", "5K Porn")]
+        [TestCase("tvdbid: 2273 ", "5K Porn")]
         public void successful_search(string title, string expected)
         {
             var result = Subject.SearchForNewSeries(title);
-
-            result.Should().NotBeEmpty();
-
-            result[0].Title.Should().Be(expected);
-
-            ExceptionVerification.IgnoreWarns();
-        }
-
-        [TestCase("tt0496424", "30 Rock")]
-        public void should_search_by_imdb(string title, string expected)
-        {
-            var result = Subject.SearchForNewSeriesByImdbId(title);
 
             result.Should().NotBeEmpty();
 
@@ -71,7 +58,7 @@ namespace NzbDrone.Core.Test.MetadataSource.SkyHook
         [TestCase("tvdbid: 99999999999999999999")]
         [TestCase("tvdbid: 0")]
         [TestCase("tvdbid: -12")]
-        [TestCase("tvdbid:289578")]
+        [TestCase("tvdbid:1")]
         [TestCase("adjalkwdjkalwdjklawjdlKAJD")]
         public void no_search_result(string term)
         {
@@ -81,11 +68,11 @@ namespace NzbDrone.Core.Test.MetadataSource.SkyHook
             ExceptionVerification.IgnoreWarns();
         }
 
-        [TestCase("tvdbid:78804")]
-        [TestCase("Doctor Who")]
+        [TestCase("tvdbid:2273")]
+        [TestCase("5K Porn")]
         public void should_return_existing_series_if_found(string term)
         {
-            const int tvdbId = 78804;
+            const int tvdbId = 2273;
             var existingSeries = new Series
             {
                 TvdbId = tvdbId

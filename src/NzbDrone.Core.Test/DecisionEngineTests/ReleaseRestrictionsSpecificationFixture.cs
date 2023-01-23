@@ -27,7 +27,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
                                         },
                                Release = new ReleaseInfo
                                          {
-                                             Title = "Dexter.S08E01.EDITED.WEBRip.x264-KYR"
+                                             Title = "Bratty Sis.S08E01.EDITED.WEBRip.x264-KYR"
                                          }
                            };
 

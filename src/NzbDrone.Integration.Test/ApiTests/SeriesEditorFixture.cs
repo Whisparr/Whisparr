@@ -13,7 +13,7 @@ namespace NzbDrone.Integration.Test.ApiTests
         {
             WaitForCompletion(() => Profiles.All().Count > 0);
 
-            foreach (var title in new[] { "90210", "Dexter" })
+            foreach (var title in new[] { "5K Porn", "Bratty Sis" })
             {
                 var newSeries = Series.Lookup(title).First();
 

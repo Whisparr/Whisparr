@@ -20,10 +20,10 @@ namespace NzbDrone.Integration.Test.ApiTests
 
         private SeriesResource GivenSeriesWithEpisodes()
         {
-            var newSeries = Series.Lookup("archer").Single(c => c.TvdbId == 110381);
+            var newSeries = Series.Lookup("My Family Pies").Single(c => c.TvdbId == 77);
 
             newSeries.QualityProfileId = 1;
-            newSeries.Path = @"C:\Test\Archer".AsOsAgnostic();
+            newSeries.Path = @"C:\Test\BrattySis".AsOsAgnostic();
 
             newSeries = Series.Post(newSeries);
 

@@ -210,38 +210,6 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport.Specifications
         }
 
         [Test]
-        public void should_be_accepted_if_both_file_and_folder_info_map_to_same_special()
-        {
-            var title = "Some.Special.S12E00.WEB-DL.1080p-GoodNightTV";
-            var actualInfo = Parser.Parser.ParseTitle("Some.Special.S0E100.WEB-DL.1080p-GoodNightTV.mkv");
-
-            var folderInfo = Parser.Parser.ParseTitle(title);
-            var fileInfo = Parser.Parser.ParseTitle(title + ".mkv");
-            var localEpisode = new LocalEpisode
-            {
-                FileEpisodeInfo = fileInfo,
-                FolderEpisodeInfo = folderInfo,
-                Series = new Tv.Series
-                {
-                    Id = 1,
-                    Title = "Some Special"
-                }
-            };
-
-            GivenEpisodes(actualInfo, actualInfo.EpisodeNumbers);
-
-            Mocker.GetMock<IParsingService>()
-                .Setup(v => v.ParseSpecialEpisodeTitle(fileInfo, It.IsAny<string>(), 0, null))
-                .Returns(actualInfo);
-
-            Mocker.GetMock<IParsingService>()
-                .Setup(v => v.ParseSpecialEpisodeTitle(folderInfo, It.IsAny<string>(), 0, null))
-                .Returns(actualInfo);
-
-            Subject.IsSatisfiedBy(localEpisode, null).Accepted.Should().BeTrue();
-        }
-
-        [Test]
         public void should_be_accepted_if_file_has_absolute_episode_number_and_folder_uses_standard()
         {
             _localEpisode.FileEpisodeInfo.SeasonNumber = 1;

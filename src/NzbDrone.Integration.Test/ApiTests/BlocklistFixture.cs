@@ -14,7 +14,7 @@ namespace NzbDrone.Integration.Test.ApiTests
         [Ignore("Adding to blocklist not supported")]
         public void should_be_able_to_add_to_blocklist()
         {
-            _series = EnsureSeries(266189, "The Blacklist");
+            _series = EnsureSeries(77, "My Family Pies");
 
             Blocklist.Post(new BlocklistResource
             {

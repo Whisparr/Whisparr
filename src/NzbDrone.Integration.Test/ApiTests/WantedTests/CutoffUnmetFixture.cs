@@ -13,8 +13,8 @@ namespace NzbDrone.Integration.Test.ApiTests.WantedTests
         public void cutoff_should_have_monitored_items()
         {
             EnsureProfileCutoff(1, Quality.HDTV720p, true);
-            var series = EnsureSeries(266189, "The Blacklist", true);
-            EnsureEpisodeFile(series, 1, 1, Quality.SDTV);
+            var series = EnsureSeries(77, "My Family Pies", true);
+            EnsureEpisodeFile(series, "2018-12-30", Quality.SDTV);
 
             var result = WantedCutoffUnmet.GetPaged(0, 15, "airDateUtc", "desc");
 
@@ -26,8 +26,8 @@ namespace NzbDrone.Integration.Test.ApiTests.WantedTests
         public void cutoff_should_not_have_unmonitored_items()
         {
             EnsureProfileCutoff(1, Quality.HDTV720p, true);
-            var series = EnsureSeries(266189, "The Blacklist", false);
-            EnsureEpisodeFile(series, 1, 1, Quality.SDTV);
+            var series = EnsureSeries(77, "My Family Pies", false);
+            EnsureEpisodeFile(series, "2018-12-30", Quality.SDTV);
 
             var result = WantedCutoffUnmet.GetPaged(0, 15, "airDateUtc", "desc");
 
@@ -39,13 +39,13 @@ namespace NzbDrone.Integration.Test.ApiTests.WantedTests
         public void cutoff_should_have_series()
         {
             EnsureProfileCutoff(1, Quality.HDTV720p, true);
-            var series = EnsureSeries(266189, "The Blacklist", true);
-            EnsureEpisodeFile(series, 1, 1, Quality.SDTV);
+            var series = EnsureSeries(77, "My Family Pies", true);
+            EnsureEpisodeFile(series, "2018-12-30", Quality.SDTV);
 
             var result = WantedCutoffUnmet.GetPaged(0, 15, "airDateUtc", "desc");
 
             result.Records.First().Series.Should().NotBeNull();
-            result.Records.First().Series.Title.Should().Be("The Blacklist");
+            result.Records.First().Series.Title.Should().Be("My Family Pies");
         }
 
         [Test]
@@ -53,8 +53,8 @@ namespace NzbDrone.Integration.Test.ApiTests.WantedTests
         public void cutoff_should_have_unmonitored_items()
         {
             EnsureProfileCutoff(1, Quality.HDTV720p, true);
-            var series = EnsureSeries(266189, "The Blacklist", false);
-            EnsureEpisodeFile(series, 1, 1, Quality.SDTV);
+            var series = EnsureSeries(77, "My Family Pies", false);
+            EnsureEpisodeFile(series, "2018-12-30", Quality.SDTV);
 
             var result = WantedCutoffUnmet.GetPaged(0, 15, "airDateUtc", "desc", "monitored", "false");
 

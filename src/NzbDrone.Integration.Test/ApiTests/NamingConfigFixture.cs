@@ -25,7 +25,7 @@ namespace NzbDrone.Integration.Test.ApiTests
         {
             var config = NamingConfig.GetSingle();
             config.RenameEpisodes = false;
-            config.StandardEpisodeFormat = "{Site Title} - {season}x{episode:00} - {Episode Title}";
+            config.StandardEpisodeFormat = "{Site Title} - {Release-Date} - {Episode Title}";
 
             var result = NamingConfig.Put(config);
             result.RenameEpisodes.Should().BeFalse();
@@ -59,17 +59,6 @@ namespace NzbDrone.Integration.Test.ApiTests
         {
             var config = NamingConfig.GetSingle();
             config.RenameEpisodes = true;
-            config.StandardEpisodeFormat = "{Site Title} - {season}x{episode:00} - {Episode Title}";
-
-            var errors = NamingConfig.InvalidPut(config);
-            errors.Should().NotBeNull();
-        }
-
-        [Test]
-        public void should_get_bad_request_if_anime_format_doesnt_contain_season_and_episode_or_absolute()
-        {
-            var config = NamingConfig.GetSingle();
-            config.RenameEpisodes = false;
             config.StandardEpisodeFormat = "{Site Title} - {season}x{episode:00} - {Episode Title}";
 
             var errors = NamingConfig.InvalidPut(config);

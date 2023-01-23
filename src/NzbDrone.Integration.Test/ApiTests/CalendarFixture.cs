@@ -23,27 +23,27 @@ namespace NzbDrone.Integration.Test.ApiTests
         [Test]
         public void should_be_able_to_get_episodes()
         {
-            var series = EnsureSeries(266189, "The Blacklist", true);
+            var series = EnsureSeries(77, "My Family Pies", true);
 
             var request = Calendar.BuildRequest();
-            request.AddParameter("start", new DateTime(2015, 10, 1).ToString("s") + "Z");
-            request.AddParameter("end", new DateTime(2015, 10, 3).ToString("s") + "Z");
+            request.AddParameter("start", new DateTime(2018, 12, 29).ToString("s") + "Z");
+            request.AddParameter("end", new DateTime(2018, 12, 31).ToString("s") + "Z");
             var items = Calendar.Get<List<EpisodeResource>>(request);
 
             items = items.Where(v => v.SeriesId == series.Id).ToList();
 
             items.Should().HaveCount(1);
-            items.First().Title.Should().Be("The Troll Farmer");
+            items.First().Title.Should().Be("Home From College - S6:E1");
         }
 
         [Test]
         public void should_not_be_able_to_get_unmonitored_episodes()
         {
-            var series = EnsureSeries(266189, "The Blacklist", false);
+            var series = EnsureSeries(77, "My Family Pies", false);
 
             var request = Calendar.BuildRequest();
-            request.AddParameter("start", new DateTime(2015, 10, 1).ToString("s") + "Z");
-            request.AddParameter("end", new DateTime(2015, 10, 3).ToString("s") + "Z");
+            request.AddParameter("start", new DateTime(2018, 12, 29).ToString("s") + "Z");
+            request.AddParameter("end", new DateTime(2018, 12, 31).ToString("s") + "Z");
             request.AddParameter("unmonitored", "false");
             var items = Calendar.Get<List<EpisodeResource>>(request);
 
@@ -55,18 +55,18 @@ namespace NzbDrone.Integration.Test.ApiTests
         [Test]
         public void should_be_able_to_get_unmonitored_episodes()
         {
-            var series = EnsureSeries(266189, "The Blacklist", false);
+            var series = EnsureSeries(77, "My Family Pies", false);
 
             var request = Calendar.BuildRequest();
-            request.AddParameter("start", new DateTime(2015, 10, 1).ToString("s") + "Z");
-            request.AddParameter("end", new DateTime(2015, 10, 3).ToString("s") + "Z");
+            request.AddParameter("start", new DateTime(2018, 12, 29).ToString("s") + "Z");
+            request.AddParameter("end", new DateTime(2018, 12, 31).ToString("s") + "Z");
             request.AddParameter("unmonitored", "true");
             var items = Calendar.Get<List<EpisodeResource>>(request);
 
             items = items.Where(v => v.SeriesId == series.Id).ToList();
 
             items.Should().HaveCount(1);
-            items.First().Title.Should().Be("The Troll Farmer");
+            items.First().Title.Should().Be("Home From College - S6:E1");
         }
     }
 }

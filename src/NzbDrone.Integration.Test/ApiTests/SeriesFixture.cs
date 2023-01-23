@@ -13,10 +13,10 @@ namespace NzbDrone.Integration.Test.ApiTests
         [Order(0)]
         public void add_series_with_tags_should_store_them()
         {
-            EnsureNoSeries(266189, "The Blacklist");
+            EnsureNoSeries(77, "My Family Pies");
             var tag = EnsureTag("abc");
 
-            var series = Series.Lookup("tvdb:266189").Single();
+            var series = Series.Lookup("tvdb:77").Single();
 
             series.QualityProfileId = 1;
             series.Path = Path.Combine(SeriesRootFolder, series.Title);
@@ -33,9 +33,9 @@ namespace NzbDrone.Integration.Test.ApiTests
         [Order(0)]
         public void add_series_without_profileid_should_return_badrequest()
         {
-            EnsureNoSeries(266189, "The Blacklist");
+            EnsureNoSeries(77, "My Family Pies");
 
-            var series = Series.Lookup("tvdb:266189").Single();
+            var series = Series.Lookup("tvdb:77").Single();
 
             series.Path = Path.Combine(SeriesRootFolder, series.Title);
 
@@ -46,9 +46,9 @@ namespace NzbDrone.Integration.Test.ApiTests
         [Order(0)]
         public void add_series_without_path_should_return_badrequest()
         {
-            EnsureNoSeries(266189, "The Blacklist");
+            EnsureNoSeries(77, "My Family Pies");
 
-            var series = Series.Lookup("tvdb:266189").Single();
+            var series = Series.Lookup("tvdb:77").Single();
 
             series.QualityProfileId = 1;
 
@@ -59,9 +59,9 @@ namespace NzbDrone.Integration.Test.ApiTests
         [Order(1)]
         public void add_series()
         {
-            EnsureNoSeries(266189, "The Blacklist");
+            EnsureNoSeries(77, "My Family Pies");
 
-            var series = Series.Lookup("tvdb:266189").Single();
+            var series = Series.Lookup("tvdb:77").Single();
 
             series.QualityProfileId = 1;
             series.Path = Path.Combine(SeriesRootFolder, series.Title);
@@ -78,23 +78,23 @@ namespace NzbDrone.Integration.Test.ApiTests
         [Order(2)]
         public void get_all_series()
         {
-            EnsureSeries(266189, "The Blacklist");
-            EnsureSeries(73065, "Archer");
+            EnsureSeries(77, "My Family Pies");
+            EnsureSeries(126, "BrattySis");
 
             Series.All().Should().NotBeNullOrEmpty();
-            Series.All().Should().Contain(v => v.TvdbId == 73065);
-            Series.All().Should().Contain(v => v.TvdbId == 266189);
+            Series.All().Should().Contain(v => v.TvdbId == 126);
+            Series.All().Should().Contain(v => v.TvdbId == 77);
         }
 
         [Test]
         [Order(2)]
         public void get_series_by_id()
         {
-            var series = EnsureSeries(266189, "The Blacklist");
+            var series = EnsureSeries(77, "My Family Pies");
 
             var result = Series.Get(series.Id);
 
-            result.TvdbId.Should().Be(266189);
+            result.TvdbId.Should().Be(77);
         }
 
         [Test]
@@ -107,7 +107,7 @@ namespace NzbDrone.Integration.Test.ApiTests
         [Order(2)]
         public void update_series_profile_id()
         {
-            var series = EnsureSeries(266189, "The Blacklist");
+            var series = EnsureSeries(77, "My Family Pies");
 
             var profileId = 1;
             if (series.QualityProfileId == profileId)
@@ -126,7 +126,7 @@ namespace NzbDrone.Integration.Test.ApiTests
         [Order(3)]
         public void update_series_monitored()
         {
-            var series = EnsureSeries(266189, "The Blacklist", false);
+            var series = EnsureSeries(77, "My Family Pies", false);
 
             series.Monitored.Should().BeFalse();
             series.Seasons.First().Monitored.Should().BeFalse();
@@ -147,7 +147,7 @@ namespace NzbDrone.Integration.Test.ApiTests
         [Order(3)]
         public void update_series_tags()
         {
-            var series = EnsureSeries(266189, "The Blacklist");
+            var series = EnsureSeries(77, "My Family Pies");
             var tag = EnsureTag("abc");
 
             if (series.Tags.Contains(tag.Id))
@@ -170,13 +170,13 @@ namespace NzbDrone.Integration.Test.ApiTests
         [Order(4)]
         public void delete_series()
         {
-            var series = EnsureSeries(266189, "The Blacklist");
+            var series = EnsureSeries(77, "My Family Pies");
 
             Series.Get(series.Id).Should().NotBeNull();
 
             Series.Delete(series.Id);
 
-            Series.All().Should().NotContain(v => v.TvdbId == 266189);
+            Series.All().Should().NotContain(v => v.TvdbId == 77);
         }
     }
 }

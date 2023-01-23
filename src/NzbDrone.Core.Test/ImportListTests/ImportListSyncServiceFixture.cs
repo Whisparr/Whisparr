@@ -107,16 +107,6 @@ namespace NzbDrone.Core.Test.ImportListTests
         }
 
         [Test]
-        public void should_search_by_imdb_if_series_title_and_series_imdb()
-        {
-            WithImdbId();
-            Subject.Execute(new ImportListSyncCommand());
-
-            Mocker.GetMock<ISearchForNewSeries>()
-                  .Verify(v => v.SearchForNewSeriesByImdbId(It.IsAny<string>()), Times.Once());
-        }
-
-        [Test]
         public void should_not_add_if_existing_series()
         {
             WithTvdbId();

@@ -11,7 +11,7 @@ namespace NzbDrone.Integration.Test.ApiTests.WantedTests
         [Order(0)]
         public void missing_should_be_empty()
         {
-            EnsureNoSeries(266189, "The Blacklist");
+            EnsureNoSeries(77, "My Family Pies");
 
             var result = WantedMissing.GetPaged(0, 15, "airDateUtc", "desc");
 
@@ -22,7 +22,7 @@ namespace NzbDrone.Integration.Test.ApiTests.WantedTests
         [Order(1)]
         public void missing_should_have_monitored_items()
         {
-            EnsureSeries(266189, "The Blacklist", true);
+            EnsureSeries(77, "My Family Pies", true);
 
             var result = WantedMissing.GetPaged(0, 15, "airDateUtc", "desc");
 
@@ -33,19 +33,19 @@ namespace NzbDrone.Integration.Test.ApiTests.WantedTests
         [Order(1)]
         public void missing_should_have_series()
         {
-            EnsureSeries(266189, "The Blacklist", true);
+            EnsureSeries(77, "My Family Pies", true);
 
             var result = WantedMissing.GetPaged(0, 15, "airDateUtc", "desc");
 
             result.Records.First().Series.Should().NotBeNull();
-            result.Records.First().Series.Title.Should().Be("The Blacklist");
+            result.Records.First().Series.Title.Should().Be("My Family Pies");
         }
 
         [Test]
         [Order(1)]
         public void missing_should_not_have_unmonitored_items()
         {
-            EnsureSeries(266189, "The Blacklist", false);
+            EnsureSeries(77, "My Family Pies", false);
 
             var result = WantedMissing.GetPaged(0, 15, "airDateUtc", "desc");
 
@@ -56,7 +56,7 @@ namespace NzbDrone.Integration.Test.ApiTests.WantedTests
         [Order(2)]
         public void missing_should_have_unmonitored_items()
         {
-            EnsureSeries(266189, "The Blacklist", false);
+            EnsureSeries(77, "My Family Pies", false);
 
             var result = WantedMissing.GetPaged(0, 15, "airDateUtc", "desc", "monitored", "false");
 

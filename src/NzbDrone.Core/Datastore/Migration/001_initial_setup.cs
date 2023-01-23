@@ -18,7 +18,6 @@ namespace NzbDrone.Core.Datastore.Migration
 
             Create.TableForModel("Series")
                   .WithColumn("TvdbId").AsInt32().Unique()
-                  .WithColumn("ImdbId").AsString().Nullable()
                   .WithColumn("Title").AsString()
                   .WithColumn("TitleSlug").AsString().Nullable()
                   .WithColumn("CleanTitle").AsString().Indexed()

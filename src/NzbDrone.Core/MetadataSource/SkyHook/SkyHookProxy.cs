@@ -154,7 +154,6 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             var series = new Series();
             series.TvdbId = show.ForeignId;
 
-            series.ImdbId = show.ImdbId;
             series.Title = show.Title;
             series.CleanTitle = Parser.Parser.CleanSeriesTitle(show.Title);
             series.SortTitle = SeriesTitleNormalizer.Normalize(show.Title, show.ForeignId);

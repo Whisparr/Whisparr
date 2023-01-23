@@ -33,7 +33,6 @@ namespace NzbDrone.Core.Organizer
             {
                 Title = "The Site Title!",
                 Year = 2010,
-                ImdbId = "tt12345",
                 TvdbId = 12345,
             };
 

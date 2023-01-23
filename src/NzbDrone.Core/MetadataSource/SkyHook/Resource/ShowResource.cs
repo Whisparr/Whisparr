@@ -25,7 +25,6 @@ namespace NzbDrone.Core.MetadataSource.SkyHook.Resource
         public TimeOfDayResource TimeOfDay { get; set; }
 
         public string Network { get; set; }
-        public string ImdbId { get; set; }
         public string OriginalLanguage { get; set; }
         public List<string> Genres { get; set; }
 

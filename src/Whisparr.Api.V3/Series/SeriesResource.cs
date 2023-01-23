@@ -48,7 +48,6 @@ namespace Whisparr.Api.V3.Series
         public int TvdbId { get; set; }
         public DateTime? FirstAired { get; set; }
         public string CleanTitle { get; set; }
-        public string ImdbId { get; set; }
         public string TitleSlug { get; set; }
         public string RootFolderPath { get; set; }
         public string Folder { get; set; }
@@ -109,7 +108,6 @@ namespace Whisparr.Api.V3.Series
                        TvdbId = model.TvdbId,
                        FirstAired = model.FirstAired,
                        CleanTitle = model.CleanTitle,
-                       ImdbId = model.ImdbId,
                        TitleSlug = model.TitleSlug,
 
                        // Root folder path needs to be calculated from the series path
@@ -167,7 +165,6 @@ namespace Whisparr.Api.V3.Series
                        TvdbId = resource.TvdbId,
                        FirstAired = resource.FirstAired,
                        CleanTitle = resource.CleanTitle,
-                       ImdbId = resource.ImdbId,
                        TitleSlug = resource.TitleSlug,
                        RootFolderPath = resource.RootFolderPath,
                        Certification = resource.Certification,

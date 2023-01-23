@@ -401,11 +401,6 @@ namespace NzbDrone.Core.Notifications.Discord
             links.Add($"[The TVDB](https://thetvdb.com/?tab=series&id={series.TvdbId})");
             links.Add($"[Trakt](https://trakt.tv/search/tvdb/{series.TvdbId}?id_type=show)");
 
-            if (series.ImdbId.IsNotNullOrWhiteSpace())
-            {
-                links.Add($"[IMDB](https://imdb.com/title/{series.ImdbId}/)");
-            }
-
             return string.Join(" / ", links);
         }
 

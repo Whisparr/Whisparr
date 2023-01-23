@@ -35,7 +35,6 @@ namespace NzbDrone.Core.Notifications.Notifiarr
             variables.Add("Whisparr_Series_Id", series.Id.ToString());
             variables.Add("Whisparr_Series_Title", series.Title);
             variables.Add("Whisparr_Series_TvdbId", series.TvdbId.ToString());
-            variables.Add("Whisparr_Series_ImdbId", series.ImdbId ?? string.Empty);
             variables.Add("Whisparr_Release_EpisodeCount", remoteEpisode.Episodes.Count.ToString());
             variables.Add("Whisparr_Release_SeasonNumber", remoteEpisode.Episodes.First().SeasonNumber.ToString());
             variables.Add("Whisparr_Release_EpisodeNumbers", string.Join(",", remoteEpisode.Episodes.Select(e => e.EpisodeNumber)));
@@ -71,7 +70,6 @@ namespace NzbDrone.Core.Notifications.Notifiarr
             variables.Add("Whisparr_Series_Title", series.Title);
             variables.Add("Whisparr_Series_Path", series.Path);
             variables.Add("Whisparr_Series_TvdbId", series.TvdbId.ToString());
-            variables.Add("Whisparr_Series_ImdbId", series.ImdbId ?? string.Empty);
             variables.Add("Whisparr_EpisodeFile_Id", episodeFile.Id.ToString());
             variables.Add("Whisparr_EpisodeFile_EpisodeCount", episodeFile.Episodes.Value.Count.ToString());
             variables.Add("Whisparr_EpisodeFile_RelativePath", episodeFile.RelativePath);
@@ -122,7 +120,6 @@ namespace NzbDrone.Core.Notifications.Notifiarr
             variables.Add("Whisparr_Series_Title", series.Title);
             variables.Add("Whisparr_Series_Path", series.Path);
             variables.Add("Whisparr_Series_TvdbId", series.TvdbId.ToString());
-            variables.Add("Whisparr_Series_ImdbId", series.ImdbId ?? string.Empty);
             variables.Add("Whisparr_EpisodeFile_Ids", string.Join(",", renamedFiles.Select(e => e.EpisodeFile.Id)));
             variables.Add("Whisparr_EpisodeFile_RelativePaths", string.Join("|", renamedFiles.Select(e => e.EpisodeFile.RelativePath)));
             variables.Add("Whisparr_EpisodeFile_Paths", string.Join("|", renamedFiles.Select(e => e.EpisodeFile.Path)));
@@ -145,7 +142,6 @@ namespace NzbDrone.Core.Notifications.Notifiarr
             variables.Add("Whisparr_Series_Title", series.Title);
             variables.Add("Whisparr_Series_Path", series.Path);
             variables.Add("Whisparr_Series_TvdbId", series.TvdbId.ToString());
-            variables.Add("Whisparr_Series_ImdbId", series.ImdbId ?? string.Empty);
             variables.Add("Whisparr_EpisodeFile_Id", episodeFile.Id.ToString());
             variables.Add("Whisparr_EpisodeFile_EpisodeCount", episodeFile.Episodes.Value.Count.ToString());
             variables.Add("Whisparr_EpisodeFile_RelativePath", episodeFile.RelativePath);
@@ -174,7 +170,6 @@ namespace NzbDrone.Core.Notifications.Notifiarr
             variables.Add("Whisparr_Series_Title", series.Title);
             variables.Add("Whisparr_Series_Path", series.Path);
             variables.Add("Whisparr_Series_TvdbId", series.TvdbId.ToString());
-            variables.Add("Whisparr_Series_ImdbId", series.ImdbId ?? string.Empty);
             variables.Add("Whisparr_Series_DeletedFiles", deleteMessage.DeletedFiles.ToString());
 
             _proxy.SendNotification(variables, Settings);

@@ -19,7 +19,6 @@ namespace NzbDrone.Core.Tv
         }
 
         public int TvdbId { get; set; }
-        public string ImdbId { get; set; }
         public string Title { get; set; }
         public string CleanTitle { get; set; }
         public string SortTitle { get; set; }

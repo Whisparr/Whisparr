@@ -1,12 +1,8 @@
-using System.Collections.Generic;
-using System.Linq;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
-using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.Organizer;
-using NzbDrone.Core.Qualities;
 using NzbDrone.Core.Test.Framework;
 using NzbDrone.Core.Tv;
 
@@ -24,7 +20,6 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
             _series = Builder<Series>
                       .CreateNew()
                       .With(s => s.Title = "Series Title")
-                      .With(s => s.ImdbId = "tt12345")
                       .With(s => s.TvdbId = 12345)
                       .Build();
 

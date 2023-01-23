@@ -186,8 +186,7 @@ namespace NzbDrone.Core.Notifications.Trakt
                 Year = series.Year,
                 Ids = new TraktShowIdsResource
                 {
-                    Tvdb = series.TvdbId,
-                    Imdb = series.ImdbId ?? "",
+                    Tvdb = series.TvdbId
                 },
                 Seasons = payloadSeasons,
             });
@@ -225,8 +224,7 @@ namespace NzbDrone.Core.Notifications.Trakt
                 Year = series.Year,
                 Ids = new TraktShowIdsResource
                 {
-                    Tvdb = series.TvdbId,
-                    Imdb = series.ImdbId ?? "",
+                    Tvdb = series.TvdbId
                 },
                 Seasons = payloadSeasons,
             });
@@ -247,8 +245,7 @@ namespace NzbDrone.Core.Notifications.Trakt
                 Year = series.Year,
                 Ids = new TraktShowIdsResource
                 {
-                    Tvdb = series.TvdbId,
-                    Imdb = series.ImdbId ?? "",
+                    Tvdb = series.TvdbId
                 },
             });
 

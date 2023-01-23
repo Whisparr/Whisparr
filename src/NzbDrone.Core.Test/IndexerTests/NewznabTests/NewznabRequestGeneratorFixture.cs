@@ -26,7 +26,7 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
 
             _singleEpisodeSearchCriteria = new SingleEpisodeSearchCriteria
             {
-                Series = new Tv.Series { TvdbId = 20, ImdbId = "t40" },
+                Series = new Tv.Series { TvdbId = 20 },
                 SceneTitles = new List<string> { "Monkey Island" },
             };
 

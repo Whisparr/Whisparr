@@ -167,13 +167,6 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
                     uniqueId.SetAttributeValue("default", true);
                     tvShow.Add(uniqueId);
 
-                    if (series.ImdbId.IsNotNullOrWhiteSpace())
-                    {
-                        var imdbId = new XElement("uniqueid", series.ImdbId);
-                        imdbId.SetAttributeValue("type", "imdb");
-                        tvShow.Add(imdbId);
-                    }
-
                     foreach (var genre in series.Genres)
                     {
                         tvShow.Add(new XElement("genre", genre));

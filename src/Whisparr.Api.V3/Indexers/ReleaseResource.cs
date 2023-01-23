@@ -28,23 +28,15 @@ namespace Whisparr.Api.V3.Indexers
         public string SubGroup { get; set; }
         public string ReleaseHash { get; set; }
         public string Title { get; set; }
-        public bool FullSeason { get; set; }
         public bool SceneSource { get; set; }
-        public int SeasonNumber { get; set; }
         public List<Language> Languages { get; set; }
         public int LanguageWeight { get; set; }
         public string AirDate { get; set; }
         public string SeriesTitle { get; set; }
-        public int[] EpisodeNumbers { get; set; }
-        public int[] AbsoluteEpisodeNumbers { get; set; }
-        public int? MappedSeasonNumber { get; set; }
-        public int[] MappedEpisodeNumbers { get; set; }
-        public int[] MappedAbsoluteEpisodeNumbers { get; set; }
         public bool Approved { get; set; }
         public bool TemporarilyRejected { get; set; }
         public bool Rejected { get; set; }
         public int TvdbId { get; set; }
-        public int TvRageId { get; set; }
         public IEnumerable<string> Rejections { get; set; }
         public DateTime PublishDate { get; set; }
         public string CommentUrl { get; set; }
@@ -63,9 +55,6 @@ namespace Whisparr.Api.V3.Indexers
         public DownloadProtocol Protocol { get; set; }
 
         public bool IsDaily { get; set; }
-        public bool IsAbsoluteNumbering { get; set; }
-        public bool IsPossibleSpecialEpisode { get; set; }
-        public bool Special { get; set; }
 
         // Sent when queuing an unknown release
 
@@ -101,16 +90,9 @@ namespace Whisparr.Api.V3.Indexers
                 ReleaseGroup = parsedEpisodeInfo.ReleaseGroup,
                 ReleaseHash = parsedEpisodeInfo.ReleaseHash,
                 Title = releaseInfo.Title,
-                FullSeason = parsedEpisodeInfo.FullSeason,
-                SeasonNumber = parsedEpisodeInfo.SeasonNumber,
                 Languages = remoteEpisode.Languages,
                 AirDate = parsedEpisodeInfo.AirDate,
                 SeriesTitle = parsedEpisodeInfo.SeriesTitle,
-                EpisodeNumbers = parsedEpisodeInfo.EpisodeNumbers,
-                AbsoluteEpisodeNumbers = parsedEpisodeInfo.AbsoluteEpisodeNumbers,
-                MappedSeasonNumber = remoteEpisode.Episodes.FirstOrDefault()?.SeasonNumber,
-                MappedEpisodeNumbers = remoteEpisode.Episodes.Select(v => v.EpisodeNumber).ToArray(),
-                MappedAbsoluteEpisodeNumbers = remoteEpisode.Episodes.Where(v => v.AbsoluteEpisodeNumber.HasValue).Select(v => v.AbsoluteEpisodeNumber.Value).ToArray(),
                 Approved = model.Approved,
                 TemporarilyRejected = model.TemporarilyRejected,
                 Rejected = model.Rejected,
@@ -133,10 +115,7 @@ namespace Whisparr.Api.V3.Indexers
                 Leechers = (torrentInfo.Peers.HasValue && torrentInfo.Seeders.HasValue) ? (torrentInfo.Peers.Value - torrentInfo.Seeders.Value) : (int?)null,
                 Protocol = releaseInfo.DownloadProtocol,
 
-                IsDaily = parsedEpisodeInfo.IsDaily,
-                IsAbsoluteNumbering = parsedEpisodeInfo.IsAbsoluteNumbering,
-                IsPossibleSpecialEpisode = parsedEpisodeInfo.IsPossibleSpecialEpisode,
-                Special = parsedEpisodeInfo.Special,
+                IsDaily = parsedEpisodeInfo.IsDaily
             };
         }
 

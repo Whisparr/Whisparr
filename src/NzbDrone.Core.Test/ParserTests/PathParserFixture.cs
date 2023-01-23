@@ -17,7 +17,6 @@ namespace NzbDrone.Core.Test.ParserTests
             var result = Parser.Parser.ParsePath(path.AsOsAgnostic());
 
             result.AirDate.Should().Be(airDate);
-            result.FullSeason.Should().BeFalse();
 
             ExceptionVerification.IgnoreWarns();
         }

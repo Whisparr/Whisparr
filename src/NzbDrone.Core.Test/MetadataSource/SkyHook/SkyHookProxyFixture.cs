@@ -22,7 +22,6 @@ namespace NzbDrone.Core.Test.MetadataSource.SkyHook
             UseRealHttp();
         }
 
-        [TestCase(2273, "5K Porn")]
         [TestCase(200, "Blacked")]
         [TestCase(77, "My Family Pies")]
         public void should_be_able_to_get_series_detail(int tvdbId, string title)

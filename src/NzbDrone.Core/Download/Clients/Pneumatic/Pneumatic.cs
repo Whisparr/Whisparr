@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using FluentValidation.Results;
@@ -36,11 +36,6 @@ namespace NzbDrone.Core.Download.Clients.Pneumatic
         {
             var url = remoteEpisode.Release.DownloadUrl;
             var title = remoteEpisode.Release.Title;
-
-            if (remoteEpisode.ParsedEpisodeInfo.FullSeason)
-            {
-                throw new NotSupportedException("Full season releases are not supported with Pneumatic.");
-            }
 
             title = FileNameBuilder.CleanFileName(title);
 

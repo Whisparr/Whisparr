@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Net;
 using FizzWare.NBuilder;
@@ -38,7 +38,6 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests
             _remoteEpisode.Release.DownloadUrl = _nzbUrl;
 
             _remoteEpisode.ParsedEpisodeInfo = new ParsedEpisodeInfo();
-            _remoteEpisode.ParsedEpisodeInfo.FullSeason = false;
 
             _downloadClientItem = Builder<DownloadClientItem>
                                   .CreateNew().With(d => d.DownloadId = "_Droned.S01E01.Pilot.1080p.WEB-DL-DRONE_0")
@@ -71,15 +70,6 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests
             WithFailedDownload();
 
             Assert.Throws<WebException>(() => Subject.Download(_remoteEpisode));
-        }
-
-        [Test]
-        public void should_throw_if_full_season_download()
-        {
-            _remoteEpisode.Release.Title = "30 Rock - Season 1";
-            _remoteEpisode.ParsedEpisodeInfo.FullSeason = true;
-
-            Assert.Throws<NotSupportedException>(() => Subject.Download(_remoteEpisode));
         }
 
         [Test]

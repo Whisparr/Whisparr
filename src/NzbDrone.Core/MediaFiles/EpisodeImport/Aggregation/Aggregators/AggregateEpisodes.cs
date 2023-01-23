@@ -33,13 +33,11 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Aggregation.Aggregators
             if (!localEpisode.OtherVideoFiles && !SceneChecker.IsSceneTitle(Path.GetFileNameWithoutExtension(localEpisode.Path)))
             {
                 if (downloadClientEpisodeInfo != null &&
-                    !downloadClientEpisodeInfo.FullSeason &&
                     PreferOtherEpisodeInfo(parsedEpisodeInfo, downloadClientEpisodeInfo))
                 {
                     parsedEpisodeInfo = localEpisode.DownloadClientEpisodeInfo;
                 }
                 else if (folderEpisodeInfo != null &&
-                         !folderEpisodeInfo.FullSeason &&
                          PreferOtherEpisodeInfo(parsedEpisodeInfo, folderEpisodeInfo))
                 {
                     parsedEpisodeInfo = localEpisode.FolderEpisodeInfo;
@@ -74,16 +72,6 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Aggregation.Aggregators
 
             var episodes = _parsingService.GetEpisodes(bestEpisodeInfoForEpisodes, localEpisode.Series, localEpisode.SceneSource);
 
-            if (episodes.Empty() && bestEpisodeInfoForEpisodes.IsPossibleSpecialEpisode)
-            {
-                var parsedSpecialEpisodeInfo = GetSpecialEpisodeInfo(localEpisode, bestEpisodeInfoForEpisodes);
-
-                if (parsedSpecialEpisodeInfo != null)
-                {
-                    episodes = _parsingService.GetEpisodes(parsedSpecialEpisodeInfo, localEpisode.Series, localEpisode.SceneSource);
-                }
-            }
-
             return episodes;
         }
 
@@ -92,12 +80,6 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Aggregation.Aggregators
             if (fileEpisodeInfo == null)
             {
                 return true;
-            }
-
-            // When the files episode info is not absolute prefer it over a parsed episode info that is absolute
-            if (!fileEpisodeInfo.IsAbsoluteNumbering && otherEpisodeInfo.IsAbsoluteNumbering)
-            {
-                return false;
             }
 
             return true;

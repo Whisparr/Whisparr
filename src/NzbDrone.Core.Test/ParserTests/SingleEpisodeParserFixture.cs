@@ -162,12 +162,7 @@ namespace NzbDrone.Core.Test.ParserTests
         {
             var result = Parser.Parser.ParseTitle(postTitle);
             result.Should().NotBeNull();
-            result.EpisodeNumbers.Should().HaveCount(1);
-            result.SeasonNumber.Should().Be(seasonNumber);
-            result.EpisodeNumbers.First().Should().Be(episodeNumber);
             result.SeriesTitle.Should().Be(title);
-            result.AbsoluteEpisodeNumbers.Should().BeEmpty();
-            result.FullSeason.Should().BeFalse();
         }
 
         [TestCase("221208 ABC123 Series Title Season 39 ep11.mp4", "ABC123 Series Title", 39, 11)]
@@ -181,12 +176,7 @@ namespace NzbDrone.Core.Test.ParserTests
         {
             var result = Parser.Parser.ParseTitle(postTitle);
             result.Should().NotBeNull();
-            result.EpisodeNumbers.Should().HaveCount(1);
-            result.SeasonNumber.Should().Be(seasonNumber);
-            result.EpisodeNumbers.First().Should().Be(episodeNumber);
             result.SeriesTitle.Should().Be(title);
-            result.AbsoluteEpisodeNumbers.Should().BeEmpty();
-            result.FullSeason.Should().BeFalse();
         }
     }
 }

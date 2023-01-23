@@ -53,7 +53,7 @@ namespace NzbDrone.Core.Download
                 return null;
             }
 
-            var seedConfig = _indexerSeedConfigProvider.GetSeedConfiguration(cachedConfig.IndexerId, cachedConfig.FullSeason);
+            var seedConfig = _indexerSeedConfigProvider.GetSeedConfiguration(cachedConfig.IndexerId);
 
             return seedConfig;
         }
@@ -82,8 +82,7 @@ namespace NzbDrone.Core.Download
 
             return new CachedSeedConfiguration
             {
-                IndexerId = historyItem.IndexerId,
-                FullSeason = parsedEpisodeInfo.FullSeason
+                IndexerId = historyItem.IndexerId
             };
         }
     }

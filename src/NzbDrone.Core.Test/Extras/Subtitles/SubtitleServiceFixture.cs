@@ -39,7 +39,7 @@ namespace NzbDrone.Core.Test.Extras.Subtitles
 
             var episodes = Builder<Episode>.CreateListOfSize(1)
                                            .All()
-                                           .With(e => e.SeasonNumber = 1)
+                                           .With(e => e.AirDate = "2023-01-18")
                                            .Build()
                                            .ToList();
 
@@ -54,15 +54,14 @@ namespace NzbDrone.Core.Test.Extras.Subtitles
                                                  .With(l => l.Path = Path.Combine(_episodeFolder, "Series.Title.S01E01.mkv").AsOsAgnostic())
                                                  .With(l => l.FileEpisodeInfo = new ParsedEpisodeInfo
                                                  {
-                                                     SeasonNumber = 1,
-                                                     EpisodeNumbers = new[] { 1 }
+                                                     AirDate = "2023-01-18"
                                                  })
                                                  .Build();
 
             Mocker.GetMock<IDiskProvider>().Setup(s => s.GetParentFolder(It.IsAny<string>()))
                   .Returns((string path) => Directory.GetParent(path).FullName);
 
-            Mocker.GetMock<IDetectSample>().Setup(s => s.IsSample(It.IsAny<Series>(), It.IsAny<string>(), It.IsAny<bool>()))
+            Mocker.GetMock<IDetectSample>().Setup(s => s.IsSample(It.IsAny<Series>(), It.IsAny<string>()))
                   .Returns(DetectSampleResult.NotSample);
         }
 
@@ -173,7 +172,7 @@ namespace NzbDrone.Core.Test.Extras.Subtitles
             Mocker.GetMock<IDiskProvider>().Setup(s => s.GetFiles(It.IsAny<string>(), SearchOption.AllDirectories))
                   .Returns(videoFiles);
 
-            Mocker.GetMock<IDetectSample>().Setup(s => s.IsSample(It.IsAny<Series>(), sampleFile, It.IsAny<bool>()))
+            Mocker.GetMock<IDetectSample>().Setup(s => s.IsSample(It.IsAny<Series>(), sampleFile))
                   .Returns(DetectSampleResult.Sample);
 
             var results = Subject.ImportFiles(_localEpisode, _episodeFile, new List<string> { subtitleFile }, true).ToList();

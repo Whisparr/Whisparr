@@ -191,14 +191,6 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         }
 
         [Test]
-        public void should_return_true_for_special()
-        {
-            _parseResultSingle.ParsedEpisodeInfo.Special = true;
-
-            Subject.IsSatisfiedBy(_parseResultSingle, null).Accepted.Should().BeTrue();
-        }
-
-        [Test]
         public void should_return_false_if_series_runtime_is_zero_and_single_episode_is_not_from_first_season()
         {
             _series.Runtime = 0;

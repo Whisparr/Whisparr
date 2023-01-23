@@ -99,8 +99,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Roksbox
 
             var parseResult = Parser.Parser.ParseTitle(filename);
 
-            if (parseResult != null &&
-                !parseResult.FullSeason)
+            if (parseResult != null)
             {
                 var extension = Path.GetExtension(filename).ToLowerInvariant();
 

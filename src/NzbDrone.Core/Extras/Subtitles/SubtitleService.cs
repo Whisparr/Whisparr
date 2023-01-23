@@ -125,13 +125,12 @@ namespace NzbDrone.Core.Extras.Subtitles
                     // Season and episode match
                     var fileEpisodeInfo = Parser.Parser.ParsePath(file) ?? new ParsedEpisodeInfo();
 
-                    if (fileEpisodeInfo.EpisodeNumbers.Length == 0)
+                    if (fileEpisodeInfo.AirDate.IsNullOrWhiteSpace())
                     {
                         continue;
                     }
 
-                    if (fileEpisodeInfo.SeasonNumber == localEpisode.FileEpisodeInfo.SeasonNumber &&
-                        fileEpisodeInfo.EpisodeNumbers.SequenceEqual(localEpisode.FileEpisodeInfo.EpisodeNumbers))
+                    if (fileEpisodeInfo.AirDate == localEpisode.FileEpisodeInfo.AirDate)
                     {
                         matchingFiles.Add(file);
                     }
@@ -157,7 +156,7 @@ namespace NzbDrone.Core.Extras.Subtitles
                 // Filter out samples
                 videoFiles = videoFiles.Where(file =>
                 {
-                    var sample = _detectSample.IsSample(localEpisode.Series, file, false);
+                    var sample = _detectSample.IsSample(localEpisode.Series, file);
 
                     if (sample == DetectSampleResult.Sample)
                     {

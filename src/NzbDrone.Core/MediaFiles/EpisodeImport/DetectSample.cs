@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using NLog;
 using NzbDrone.Core.MediaFiles.MediaInfo;
@@ -8,7 +8,7 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport
 {
     public interface IDetectSample
     {
-        DetectSampleResult IsSample(Series series, string path, bool isSpecial);
+        DetectSampleResult IsSample(Series series, string path);
     }
 
     public class DetectSample : IDetectSample
@@ -22,14 +22,8 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport
             _logger = logger;
         }
 
-        public DetectSampleResult IsSample(Series series, string path, bool isSpecial)
+        public DetectSampleResult IsSample(Series series, string path)
         {
-            if (isSpecial)
-            {
-                _logger.Debug("Special, skipping sample check");
-                return DetectSampleResult.NotSample;
-            }
-
             var extension = Path.GetExtension(path);
 
             if (extension != null && extension.Equals(".flv", StringComparison.InvariantCultureIgnoreCase))

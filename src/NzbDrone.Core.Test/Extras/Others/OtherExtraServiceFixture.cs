@@ -36,7 +36,7 @@ namespace NzbDrone.Core.Test.Extras.Others
 
             var episodes = Builder<Episode>.CreateListOfSize(1)
                                            .All()
-                                           .With(e => e.SeasonNumber = 1)
+                                           .With(e => e.AirDate = "2023-01-01")
                                            .Build()
                                            .ToList();
 
@@ -51,8 +51,7 @@ namespace NzbDrone.Core.Test.Extras.Others
                                                  .With(l => l.Path = Path.Combine(_episodeFolder, "Series.Title.S01E01.mkv").AsOsAgnostic())
                                                  .With(l => l.FileEpisodeInfo = new ParsedEpisodeInfo
                                                  {
-                                                     SeasonNumber = 1,
-                                                     EpisodeNumbers = new[] { 1 }
+                                                     AirDate = "2023-01-01"
                                                  })
                                                  .Build();
         }

@@ -305,12 +305,6 @@ namespace NzbDrone.Core.Parser
 
                             if (result != null)
                             {
-                                if (result.FullSeason && result.ReleaseTokens.ContainsIgnoreCase("Special"))
-                                {
-                                    result.FullSeason = false;
-                                    result.Special = true;
-                                }
-
                                 result.Languages = LanguageParser.ParseLanguages(releaseTitle);
                                 Logger.Debug("Languages parsed: {0}", string.Join(", ", result.Languages));
 
@@ -557,15 +551,12 @@ namespace NzbDrone.Core.Parser
             {
                 result = new ParsedEpisodeInfo
                 {
-                    ReleaseTitle = releaseTitle,
-                    EpisodeNumbers = new int[0],
-                    AbsoluteEpisodeNumbers = new int[0]
+                    ReleaseTitle = releaseTitle
                 };
 
                 foreach (Match matchGroup in matchCollection)
                 {
                     var episodeCaptures = matchGroup.Groups["episode"].Captures.Cast<Capture>().ToList();
-                    var absoluteEpisodeCaptures = matchGroup.Groups["absoluteepisode"].Captures.Cast<Capture>().ToList();
 
                     // Allows use to return a list of 0 episodes (We can handle that as a full season release)
                     if (episodeCaptures.Any())
@@ -579,69 +570,8 @@ namespace NzbDrone.Core.Parser
                         }
 
                         var count = last - first + 1;
-                        result.EpisodeNumbers = Enumerable.Range(first, count).ToArray();
 
                         lastSeasonEpisodeStringIndex = Math.Max(lastSeasonEpisodeStringIndex, episodeCaptures.Last().EndIndex());
-                    }
-
-                    if (absoluteEpisodeCaptures.Any())
-                    {
-                        var first = ParseDecimal(absoluteEpisodeCaptures.First().Value);
-                        var last = ParseDecimal(absoluteEpisodeCaptures.Last().Value);
-
-                        if (first > last)
-                        {
-                            return null;
-                        }
-
-                        if ((first % 1) != 0 || (last % 1) != 0)
-                        {
-                            if (absoluteEpisodeCaptures.Count != 1)
-                            {
-                                return null; // Multiple matches not allowed for specials
-                            }
-
-                            result.SpecialAbsoluteEpisodeNumbers = new decimal[] { first };
-                            result.Special = true;
-
-                            lastSeasonEpisodeStringIndex = Math.Max(lastSeasonEpisodeStringIndex, absoluteEpisodeCaptures.First().EndIndex());
-                        }
-                        else
-                        {
-                            var count = last - first + 1;
-                            result.AbsoluteEpisodeNumbers = Enumerable.Range((int)first, (int)count).ToArray();
-
-                            if (matchGroup.Groups["special"].Success)
-                            {
-                                result.Special = true;
-                            }
-
-                            lastSeasonEpisodeStringIndex = Math.Max(lastSeasonEpisodeStringIndex, absoluteEpisodeCaptures.Last().EndIndex());
-                        }
-                    }
-
-                    if (!episodeCaptures.Any() && !absoluteEpisodeCaptures.Any())
-                    {
-                        // Check to see if this is an "Extras" or "SUBPACK" release, if it is, set
-                        // IsSeasonExtra so they can be filtered out
-                        if (!matchCollection[0].Groups["extras"].Value.IsNullOrWhiteSpace())
-                        {
-                            result.IsSeasonExtra = true;
-                        }
-
-                        // Partial season packs will have a seasonpart group so they can be differentiated
-                        // from a full season/single episode release
-                        var seasonPart = matchCollection[0].Groups["seasonpart"].Value;
-
-                        if (seasonPart.IsNotNullOrWhiteSpace())
-                        {
-                            result.SeasonPart = Convert.ToInt32(seasonPart);
-                            result.IsPartialSeason = true;
-                        }
-                        else
-                        {
-                            result.FullSeason = true;
-                        }
                     }
                 }
 
@@ -656,23 +586,6 @@ namespace NzbDrone.Core.Parser
 
                         lastSeasonEpisodeStringIndex = Math.Max(lastSeasonEpisodeStringIndex, seasonCapture.EndIndex());
                     }
-                }
-
-                // If more than 1 season was parsed set IsMultiSeason to true so it can be rejected later
-                if (seasons.Distinct().Count() > 1)
-                {
-                    result.IsMultiSeason = true;
-                }
-
-                if (seasons.Any())
-                {
-                    // If at least one season was parsed use the first season as the season
-                    result.SeasonNumber = seasons.First();
-                }
-                else if (!result.AbsoluteEpisodeNumbers.Any() && result.EpisodeNumbers.Any())
-                {
-                    // If no season was found and it's not an absolute only release it should be treated as a mini series and season 1
-                    result.SeasonNumber = 1;
                 }
             }
             else
@@ -727,13 +640,6 @@ namespace NzbDrone.Core.Parser
                     ReleaseTitle = releaseTitle,
                     AirDate = airDate.ToString(Episode.AIR_DATE_FORMAT),
                 };
-
-                var partMatch = matchCollection[0].Groups["part"];
-
-                if (partMatch.Success)
-                {
-                    result.DailyPart = Convert.ToInt32(partMatch.Value);
-                }
             }
 
             if (lastSeasonEpisodeStringIndex != releaseTitle.Length)

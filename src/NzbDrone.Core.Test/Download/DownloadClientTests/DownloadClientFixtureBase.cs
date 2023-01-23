@@ -51,7 +51,6 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests
             remoteEpisode.Release.DownloadProtocol = Subject.Protocol;
 
             remoteEpisode.ParsedEpisodeInfo = new ParsedEpisodeInfo();
-            remoteEpisode.ParsedEpisodeInfo.FullSeason = false;
 
             remoteEpisode.Episodes = new List<Episode>();
 

@@ -231,8 +231,7 @@ namespace NzbDrone.Core.Download.Pending
             var seriesReleases = _repository.AllBySeriesId(targetItem.SeriesId);
 
             var releasesToRemove = seriesReleases.Where(
-                c => c.ParsedEpisodeInfo.SeasonNumber == targetItem.ParsedEpisodeInfo.SeasonNumber &&
-                     c.ParsedEpisodeInfo.EpisodeNumbers.SequenceEqual(targetItem.ParsedEpisodeInfo.EpisodeNumbers));
+                c => c.ParsedEpisodeInfo.AirDate == targetItem.ParsedEpisodeInfo.AirDate);
 
             _repository.DeleteMany(releasesToRemove.Select(c => c.Id));
         }
@@ -320,14 +319,12 @@ namespace NzbDrone.Core.Download.Pending
 
                 if (knownRemoteEpisodes != null && knownRemoteEpisodes.TryGetValue(release.Release.Title, out var knownRemoteEpisode))
                 {
-                    release.RemoteEpisode.MappedSeasonNumber = knownRemoteEpisode.MappedSeasonNumber;
                     release.RemoteEpisode.Episodes = knownRemoteEpisode.Episodes;
                 }
                 else
                 {
                     var remoteEpisode = _parsingService.Map(release.ParsedEpisodeInfo, series);
 
-                    release.RemoteEpisode.MappedSeasonNumber = remoteEpisode.MappedSeasonNumber;
                     release.RemoteEpisode.Episodes = remoteEpisode.Episodes;
                 }
 

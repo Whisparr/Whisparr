@@ -38,9 +38,6 @@ namespace NzbDrone.Core.Test.ParserTests
             result.Should().NotBeNull();
             result.SeriesTitle.Should().Be(title);
             result.AirDate.Should().Be(airDate.ToString(Episode.AIR_DATE_FORMAT));
-            result.EpisodeNumbers.Should().BeEmpty();
-            result.AbsoluteEpisodeNumbers.Should().BeEmpty();
-            result.FullSeason.Should().BeFalse();
         }
 
         [TestCase("A Late Talk Show {year} {month} {day} Emma Roberts HDTV XviD BFF")]

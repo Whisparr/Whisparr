@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Parser;
 using NzbDrone.Core.Parser.Model;
@@ -12,7 +12,7 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport
             var otherVideoFiles = localEpisode.OtherVideoFiles;
             var downloadClientInfo = localEpisode.DownloadClientEpisodeInfo;
 
-            if (!otherVideoFiles && downloadClientInfo != null && !downloadClientInfo.FullSeason)
+            if (!otherVideoFiles && downloadClientInfo != null)
             {
                 return Parser.Parser.RemoveFileExtension(downloadClientInfo.ReleaseTitle);
             }
@@ -27,7 +27,6 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport
             var folderTitle = localEpisode.FolderEpisodeInfo?.ReleaseTitle;
 
             if (!otherVideoFiles &&
-                localEpisode.FolderEpisodeInfo?.FullSeason == false &&
                 folderTitle.IsNotNullOrWhiteSpace() &&
                 SceneChecker.IsSceneTitle(folderTitle))
             {

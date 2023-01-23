@@ -100,15 +100,6 @@ namespace NzbDrone.Core.DecisionEngine
 
         private int CompareEpisodeCount(DownloadDecision x, DownloadDecision y)
         {
-            var seasonPackCompare = CompareBy(x.RemoteEpisode,
-                y.RemoteEpisode,
-                remoteEpisode => remoteEpisode.ParsedEpisodeInfo.FullSeason);
-
-            if (seasonPackCompare != 0)
-            {
-                return seasonPackCompare;
-            }
-
             return CompareByReverse(x.RemoteEpisode, y.RemoteEpisode, remoteEpisode => remoteEpisode.Episodes.Count);
         }
 

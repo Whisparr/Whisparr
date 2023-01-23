@@ -56,8 +56,6 @@ namespace NzbDrone.Core.Parser.Model
             }
         }
 
-        public bool IsSpecial => SeasonNumber == 0;
-
         public override string ToString()
         {
             return Path;

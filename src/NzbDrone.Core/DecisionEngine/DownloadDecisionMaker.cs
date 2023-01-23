@@ -74,16 +74,6 @@ namespace NzbDrone.Core.DecisionEngine
                 {
                     var parsedEpisodeInfo = Parser.Parser.ParseTitle(report.Title);
 
-                    if (parsedEpisodeInfo == null || parsedEpisodeInfo.IsPossibleSpecialEpisode)
-                    {
-                        var specialEpisodeInfo = _parsingService.ParseSpecialEpisodeTitle(parsedEpisodeInfo, report.Title, report.TvdbId, searchCriteria);
-
-                        if (specialEpisodeInfo != null)
-                        {
-                            parsedEpisodeInfo = specialEpisodeInfo;
-                        }
-                    }
-
                     if (parsedEpisodeInfo != null && !parsedEpisodeInfo.SeriesTitle.IsNullOrWhiteSpace())
                     {
                         var remoteEpisode = _parsingService.Map(parsedEpisodeInfo, report.TvdbId, searchCriteria);

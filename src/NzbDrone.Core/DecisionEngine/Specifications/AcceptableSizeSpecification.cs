@@ -32,12 +32,6 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
 
             var quality = subject.ParsedEpisodeInfo.Quality.Quality;
 
-            if (subject.ParsedEpisodeInfo.Special)
-            {
-                _logger.Debug("Special release found, skipping size check.");
-                return Decision.Accept();
-            }
-
             if (subject.Release.Size == 0)
             {
                 _logger.Debug("Release has unknown size, skipping size check");

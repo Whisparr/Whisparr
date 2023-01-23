@@ -47,13 +47,12 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
                 ParsedEpisodeInfo = new ParsedEpisodeInfo()
                 {
                     SeriesTitle = "TV Series",
-                    SeasonNumber = 1
-                },
-                MappedSeasonNumber = 1
+                    AirDate = "2023-02-01"
+                }
             };
 
             Mocker.GetMock<IParsingService>()
-                  .Setup(s => s.Map(It.Is<ParsedEpisodeInfo>(i => i.SeasonNumber == 1 && i.SeriesTitle == "TV Series"), It.IsAny<int>(), It.IsAny<IEnumerable<int>>()))
+                  .Setup(s => s.Map(It.Is<ParsedEpisodeInfo>(i => i.SeriesTitle == "TV Series"), It.IsAny<int>(), It.IsAny<IEnumerable<int>>()))
                   .Returns(remoteEpisode);
 
             var client = new DownloadClientDefinition()
@@ -81,8 +80,6 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
             trackedDownload.RemoteEpisode.Series.Should().NotBeNull();
             trackedDownload.RemoteEpisode.Series.Id.Should().Be(5);
             trackedDownload.RemoteEpisode.Episodes.First().Id.Should().Be(4);
-            trackedDownload.RemoteEpisode.ParsedEpisodeInfo.SeasonNumber.Should().Be(1);
-            trackedDownload.RemoteEpisode.MappedSeasonNumber.Should().Be(1);
         }
 
         [Test]
@@ -94,11 +91,8 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
                 Episodes = new List<Episode> { new Episode { Id = 4 } },
                 ParsedEpisodeInfo = new ParsedEpisodeInfo()
                 {
-                    SeriesTitle = "TV Series",
-                    SeasonNumber = 0,
-                    EpisodeNumbers = new[] { 1 }
-                },
-                MappedSeasonNumber = 0
+                    SeriesTitle = "TV Series"
+                }
             };
 
             Mocker.GetMock<IHistoryService>()
@@ -115,7 +109,7 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
                 });
 
             Mocker.GetMock<IParsingService>()
-                  .Setup(s => s.Map(It.Is<ParsedEpisodeInfo>(i => i.SeasonNumber == 0 && i.SeriesTitle == "TV Series"), It.IsAny<int>(), It.IsAny<IEnumerable<int>>()))
+                  .Setup(s => s.Map(It.Is<ParsedEpisodeInfo>(i => i.SeriesTitle == "TV Series"), It.IsAny<int>(), It.IsAny<IEnumerable<int>>()))
                   .Returns(remoteEpisode);
 
             Mocker.GetMock<IParsingService>()
@@ -147,8 +141,6 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
             trackedDownload.RemoteEpisode.Series.Should().NotBeNull();
             trackedDownload.RemoteEpisode.Series.Id.Should().Be(5);
             trackedDownload.RemoteEpisode.Episodes.First().Id.Should().Be(4);
-            trackedDownload.RemoteEpisode.ParsedEpisodeInfo.SeasonNumber.Should().Be(0);
-            trackedDownload.RemoteEpisode.MappedSeasonNumber.Should().Be(0);
         }
 
         [Test]
@@ -162,11 +154,8 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
                                     Episodes = new List<Episode> { new Episode { Id = 4 } },
                                     ParsedEpisodeInfo = new ParsedEpisodeInfo()
                                                         {
-                                                            SeriesTitle = "TV Series",
-                                                            SeasonNumber = 1,
-                                                            EpisodeNumbers = new[] { 1 }
-                                                        },
-                                    MappedSeasonNumber = 0
+                                                            SeriesTitle = "TV Series"
+                                                        }
                                 };
 
             Mocker.GetMock<IParsingService>()
@@ -221,11 +210,8 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
                 Episodes = new List<Episode> { new Episode { Id = 4 } },
                 ParsedEpisodeInfo = new ParsedEpisodeInfo()
                 {
-                    SeriesTitle = "TV Series",
-                    SeasonNumber = 1,
-                    EpisodeNumbers = new[] { 1 }
-                },
-                MappedSeasonNumber = 0
+                    SeriesTitle = "TV Series"
+                }
             };
 
             Mocker.GetMock<IParsingService>()
@@ -280,11 +266,8 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
                 Episodes = new List<Episode> { new Episode { Id = 4 } },
                 ParsedEpisodeInfo = new ParsedEpisodeInfo()
                 {
-                    SeriesTitle = "TV Series",
-                    SeasonNumber = 1,
-                    EpisodeNumbers = new[] { 1 }
-                },
-                MappedSeasonNumber = 0
+                    SeriesTitle = "TV Series"
+                }
             };
 
             Mocker.GetMock<IParsingService>()

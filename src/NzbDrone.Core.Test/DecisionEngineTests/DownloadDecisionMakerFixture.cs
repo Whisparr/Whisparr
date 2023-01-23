@@ -269,7 +269,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
                         DownloadAllowed = true,
                         ParsedEpisodeInfo = p,
                         Series = series,
-                        Episodes = episodes.Where(v => v.SceneEpisodeNumber == p.EpisodeNumbers.First()).ToList()
+                        Episodes = episodes.Where(v => v.SceneEpisodeNumber == 1).ToList()
                     });
 
             Mocker.SetConstant<IEnumerable<IDecisionEngineSpecification>>(new List<IDecisionEngineSpecification>

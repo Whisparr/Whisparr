@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using NzbDrone.Common.Cache;
 using NzbDrone.Common.Extensions;
@@ -13,7 +13,7 @@ namespace NzbDrone.Core.Indexers
     public interface ISeedConfigProvider
     {
         TorrentSeedConfiguration GetSeedConfiguration(RemoteEpisode release);
-        TorrentSeedConfiguration GetSeedConfiguration(int indexerId, bool fullSeason);
+        TorrentSeedConfiguration GetSeedConfiguration(int indexerId);
     }
 
     public class SeedConfigProvider : ISeedConfigProvider, IHandle<ProviderUpdatedEvent<IIndexer>>
@@ -39,10 +39,10 @@ namespace NzbDrone.Core.Indexers
                 return null;
             }
 
-            return GetSeedConfiguration(remoteEpisode.Release.IndexerId, remoteEpisode.ParsedEpisodeInfo.FullSeason);
+            return GetSeedConfiguration(remoteEpisode.Release.IndexerId);
         }
 
-        public TorrentSeedConfiguration GetSeedConfiguration(int indexerId, bool fullSeason)
+        public TorrentSeedConfiguration GetSeedConfiguration(int indexerId)
         {
             if (indexerId == 0)
             {
@@ -61,7 +61,7 @@ namespace NzbDrone.Core.Indexers
                 Ratio = seedCriteria.SeedRatio
             };
 
-            var seedTime = fullSeason ? seedCriteria.SeasonPackSeedTime : seedCriteria.SeedTime;
+            var seedTime = seedCriteria.SeedTime;
             if (seedTime.HasValue)
             {
                 seedConfig.SeedTime = TimeSpan.FromMinutes(seedTime.Value);

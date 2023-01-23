@@ -38,7 +38,7 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Aggregation.Aggregators
 
         private string GetReleaseGroup(ParsedEpisodeInfo episodeInfo, bool skipFullSeason)
         {
-            if (episodeInfo == null || (episodeInfo.FullSeason && skipFullSeason))
+            if (episodeInfo == null)
             {
                 return null;
             }

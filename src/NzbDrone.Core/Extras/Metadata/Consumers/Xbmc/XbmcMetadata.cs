@@ -125,7 +125,6 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
             var parseResult = Parser.Parser.ParseTitle(filename);
 
             if (parseResult != null &&
-                !parseResult.FullSeason &&
                 Path.GetExtension(filename).Equals(".nfo", StringComparison.OrdinalIgnoreCase) &&
                 _detectNfo.IsXbmcNfoFile(path))
             {

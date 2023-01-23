@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
@@ -30,36 +30,6 @@ namespace NzbDrone.Core.Test.IndexerTests
             });
 
             result.Should().BeNull();
-        }
-
-        [Test]
-        public void should_return_season_time_for_season_packs()
-        {
-            var settings = new TorznabSettings();
-            settings.SeedCriteria.SeasonPackSeedTime = 10;
-
-            Mocker.GetMock<IIndexerFactory>()
-                     .Setup(v => v.Get(It.IsAny<int>()))
-                     .Returns(new IndexerDefinition
-                     {
-                         Settings = settings
-                     });
-
-            var result = Subject.GetSeedConfiguration(new RemoteEpisode
-            {
-                Release = new ReleaseInfo()
-                {
-                    DownloadProtocol = DownloadProtocol.Torrent,
-                    IndexerId = 1
-                },
-                ParsedEpisodeInfo = new ParsedEpisodeInfo
-                {
-                    FullSeason = true
-                }
-            });
-
-            result.Should().NotBeNull();
-            result.SeedTime.Should().Be(TimeSpan.FromMinutes(10));
         }
     }
 }

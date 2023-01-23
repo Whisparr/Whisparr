@@ -96,8 +96,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Wdtv
 
             var parseResult = Parser.Parser.ParseTitle(filename);
 
-            if (parseResult != null &&
-                !parseResult.FullSeason)
+            if (parseResult != null)
             {
                 switch (Path.GetExtension(filename).ToLowerInvariant())
                 {

@@ -40,8 +40,6 @@ namespace NzbDrone.Core.Test.ParserTests.ParsingServiceTests
             {
                 SeriesTitle = _series.Title,
                 SeriesTitleInfo = new SeriesTitleInfo(),
-                SeasonNumber = 1,
-                EpisodeNumbers = new[] { 1 },
                 Languages = new List<Language> { Language.English }
             };
 

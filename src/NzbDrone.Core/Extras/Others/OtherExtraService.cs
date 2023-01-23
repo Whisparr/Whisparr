@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -116,13 +116,12 @@ namespace NzbDrone.Core.Extras.Others
                     // Season and episode match
                     var fileEpisodeInfo = Parser.Parser.ParsePath(file) ?? new ParsedEpisodeInfo();
 
-                    if (fileEpisodeInfo.EpisodeNumbers.Length == 0)
+                    if (fileEpisodeInfo.AirDate.IsNullOrWhiteSpace())
                     {
                         continue;
                     }
 
-                    if (fileEpisodeInfo.SeasonNumber == localEpisode.FileEpisodeInfo.SeasonNumber &&
-                        fileEpisodeInfo.EpisodeNumbers.SequenceEqual(localEpisode.FileEpisodeInfo.EpisodeNumbers))
+                    if (fileEpisodeInfo.AirDate == localEpisode.FileEpisodeInfo.AirDate)
                     {
                         matchingFiles.Add(file);
                     }

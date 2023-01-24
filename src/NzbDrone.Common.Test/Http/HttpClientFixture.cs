@@ -314,7 +314,7 @@ namespace NzbDrone.Common.Test.Http
         public void should_follow_redirects_to_https()
         {
             var request = new HttpRequestBuilder($"https://{_httpBinHost}/redirect-to")
-                .AddQueryParam("url", $"https://whisparr.tv/")
+                .AddQueryParam("url", $"https://whisparr.com/")
                 .Build();
             request.AllowAutoRedirect = true;
 
@@ -367,7 +367,7 @@ namespace NzbDrone.Common.Test.Http
         {
             var file = GetTempFilePath();
 
-            var url = "https://whisparr.tv/img/slider/seriesdetails.png";
+            var url = "https://whisparr.com/logo/256.png";
 
             Subject.DownloadFile(url, file);
 
@@ -376,7 +376,7 @@ namespace NzbDrone.Common.Test.Http
 
             var fileInfo = new FileInfo(file);
 
-            fileInfo.Length.Should().Be(114770);
+            fileInfo.Length.Should().Be(14164);
         }
 
         [Test]
@@ -385,7 +385,7 @@ namespace NzbDrone.Common.Test.Http
             var file = GetTempFilePath();
 
             var request = new HttpRequestBuilder($"https://{_httpBinHost}/redirect-to")
-                .AddQueryParam("url", $"https://whisparr.tv/img/slider/seriesdetails.png")
+                .AddQueryParam("url", $"https://whisparr.com/logo/256.png")
                 .Build();
 
             Subject.DownloadFile(request.Url.FullUri, file);
@@ -394,7 +394,7 @@ namespace NzbDrone.Common.Test.Http
 
             var fileInfo = new FileInfo(file);
             fileInfo.Exists.Should().BeTrue();
-            fileInfo.Length.Should().Be(114770);
+            fileInfo.Length.Should().Be(14164);
         }
 
         [Test]
@@ -402,7 +402,7 @@ namespace NzbDrone.Common.Test.Http
         {
             var file = GetTempFilePath();
 
-            Assert.Throws<HttpException>(() => Subject.DownloadFile("https://download.whisparr.tv/wrongpath", file));
+            Assert.Throws<HttpException>(() => Subject.DownloadFile("https://download.sonarr.tv/wrongpath", file));
 
             File.Exists(file).Should().BeFalse();
             File.Exists(file + ".part").Should().BeFalse();

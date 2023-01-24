@@ -19,27 +19,27 @@ namespace NzbDrone.Core.Test.TvTests
         private List<Episode> _insertedEpisodes;
         private List<Episode> _updatedEpisodes;
         private List<Episode> _deletedEpisodes;
-        private Tuple<Series, List<Episode>> _gameOfThrones;
+        private Tuple<Series, List<Episode>> _myFamilyPies;
 
         [OneTimeSetUp]
         public void TestFixture()
         {
             UseRealHttp();
 
-            _gameOfThrones = Mocker.Resolve<SkyHookProxy>().GetSeriesInfo(77); // My Family Pies
+            _myFamilyPies = Mocker.Resolve<SkyHookProxy>().GetSeriesInfo(77); // My Family Pies
 
             // Remove specials.
-            _gameOfThrones.Item2.RemoveAll(v => v.SeasonNumber == 0);
+            _myFamilyPies.Item2.RemoveAll(v => v.SeasonNumber == 0);
         }
 
         private List<Episode> GetEpisodes()
         {
-            return _gameOfThrones.Item2.JsonClone();
+            return _myFamilyPies.Item2.JsonClone();
         }
 
         private Series GetSeries()
         {
-            var series = _gameOfThrones.Item1.JsonClone();
+            var series = _myFamilyPies.Item1.JsonClone();
             series.Seasons = new List<Season>();
 
             return series;

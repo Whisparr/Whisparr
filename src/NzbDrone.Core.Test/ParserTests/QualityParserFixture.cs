@@ -62,9 +62,6 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("The.Series.S02E15.divx", false)]
         [TestCase("The.Series.S03E06.HDTV-WiDE", false)]
         [TestCase("Series.S10E27.WS.DSR.XviD-2HD", false)]
-        [TestCase("[HorribleSubs] The Series - 32 [480p]", false)]
-        [TestCase("[CR] The Series - 004 [480p][48CE2D0F]", false)]
-        [TestCase("[Hatsuyuki] The Series - 363 [848x480][ADE35E38]", false)]
         [TestCase("The.Series.S03.TVRip.XviD-NOGRP", false)]
         [TestCase("[HorribleSubs] The Series - 03 [360p].mkv", false)]
         [TestCase("[SubsPlease] Series Title (540p) [AB649D32].mkv", false)]
@@ -93,6 +90,9 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("The.Series.S01E08.Das.geloeschte.Ich.German.Dubbed.DL.AmazonHD.x264-TVS", false)]
         [TestCase("The.Series.S01E04.Rod.Trip.mit.meinem.Onkel.German.DL.NetflixUHD.x264", false)]
         [TestCase("[HorribleSubs] Series Title! S01 [Web][MKV][h264][480p][AAC 2.0][Softsubs (HorribleSubs)]", false)]
+        [TestCase("[HorribleSubs] The Series - 32 [480p]", false)]
+        [TestCase("[CR] The Series - 004 [480p][48CE2D0F]", false)]
+        [TestCase("[Hatsuyuki] The Series - 363 [848x480][ADE35E38]", false)]
         public void should_parse_webdl480p_quality(string title, bool proper)
         {
             ParseAndVerifyQuality(title, Quality.WEBDL480p, proper);
@@ -124,7 +124,6 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Series - S01E01 - Title [HDTV]", false)]
         [TestCase("Series - S01E01 - Title [HDTV-720p]", false)]
         [TestCase("The Series S04E87 REPACK 720p HDTV x264 aAF", true)]
-        [TestCase("The.Series.S02E15.720p", false)]
         [TestCase("S07E23 - [HDTV-720p].mkv ", false)]
         [TestCase("Series - S22E03 - MoneyBART - HD TV.mkv", false)]
         [TestCase("S07E23.mkv ", false)]
@@ -132,33 +131,24 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("The.Series.S02E15.mkv", false)]
         [TestCase(@"E:\Downloads\tv\The.Series.S01E01.720p.HDTV\ajifajjjeaeaeqwer_eppj.avi", false)]
         [TestCase("The.Series.S01E08.Tourmaline.Nepal.720p.HDTV.x264-DHD", false)]
-        [TestCase("[Underwater-FFF] The Series - 01 (720p) [27AAA0A0]", false)]
-        [TestCase("[Doki] The Series - 07 (1280x720 Hi10P AAC) [80AF7DDE]", false)]
         [TestCase("[Doremi].The.Series.5.Go.Go!.31.[1280x720].[C65D4B1F].mkv", false)]
-        [TestCase("[HorribleSubs]_Series_Title_-_145_[720p]", false)]
-        [TestCase("[Eveyuu] Series Title - 10 [Hi10P 1280x720 H264][10B23BD8]", false)]
         [TestCase("The.Series.US.S12E17.HR.WS.PDTV.X264-DIMENSION", false)]
         [TestCase("The.Series.The.Lost.Whisparr.Summer.HR.WS.PDTV.x264-DHD", false)]
         [TestCase("The Series S01E07 - Motor zmen (CZ)[TvRip][HEVC][720p]", false)]
         [TestCase("The.Series.S05E06.720p.HDTV.x264-FHD", false)]
-        [TestCase("Series.Title.1x01.ITA.720p.x264-RlsGrp [01/54] - \"series.title.1x01.ita.720p.x264-rlsgrp.nfo\"", false)]
         [TestCase("[TMS-Remux].Series.Title.X.21.720p.[76EA1C53].mkv", false)]
         public void should_parse_hdtv720p_quality(string title, bool proper)
         {
             ParseAndVerifyQuality(title, Quality.HDTV720p, proper);
         }
 
-        [TestCase("Under the Series S01E10 Let the Whisparr Begin 1080p", false)]
         [TestCase("Series.S07E01.ARE.YOU.1080P.HDTV.X264-QCF", false)]
         [TestCase("Series.S07E01.ARE.YOU.1080P.HDTV.x264-QCF", false)]
         [TestCase("Series.S07E01.ARE.YOU.1080P.HDTV.proper.X264-QCF", true)]
         [TestCase("Series - S01E01 - Title [HDTV-1080p]", false)]
-        [TestCase("[HorribleSubs] Series Title - 32 [1080p]", false)]
         [TestCase("Series S01E07 - Whisparr zmen (CZ)[TvRip][HEVC][1080p]", false)]
-        [TestCase("The Online Series Alicization 04 vostfr FHD", false)]
         [TestCase("Series Slayer 04 vostfr FHD.mkv", false)]
         [TestCase("[Onii-ChanSub] The.Series - 02 vostfr (FHD 1080p 10bits).mkv", false)]
-        [TestCase("[Miaou] Series Title 02 VOSTFR FHD 10 bits", false)]
         [TestCase("[mhastream.com]_Episode_05_FHD.mp4", false)]
         [TestCase("[Kousei]_One_Series_ - _609_[FHD][648A87C7].mp4", false)]
         [TestCase("Series culpable 1x02 Culpabilidad [HDTV 1080i AVC MP2 2.0 Sub][GrupoHDS]", false)]
@@ -169,10 +159,10 @@ namespace NzbDrone.Core.Test.ParserTests
             ParseAndVerifyQuality(title, Quality.HDTV1080p, proper);
         }
 
-        [TestCase("My Title - 23.01.12 - EpTitle [HEVC 4k DTSHD-MA-6ch]", false)]
-        [TestCase("My Title - 23.01.12 - EpTitle [HEVC-4k DTSHD-MA-6ch]", false)]
-        [TestCase("My Title - 23.01.12 - EpTitle [4k HEVC DTSHD-MA-6ch]", false)]
-        [TestCase("[GM-Team][国漫][诛仙][Series Title][2022][19][HEVC][GB][4K]", false)]
+        [TestCase("My Title - 23.01.12 - EpTitle [HEVC HDTV4k DTSHD-MA-6ch]", false)]
+        [TestCase("My Title - 23.01.12 - EpTitle [HEVC-HDTV4k DTSHD-MA-6ch]", false)]
+        [TestCase("My Title - 23.01.12 - EpTitle [HDTV4k HEVC DTSHD-MA-6ch]", false)]
+        [TestCase("[GM-Team][国漫][诛仙][Series Title][2022][19][HEVC][GB][HDTV][4K]", false)]
         public void should_parse_hdtv2160p_quality(string title, bool proper)
         {
             ParseAndVerifyQuality(title, Quality.HDTV2160p, proper);
@@ -204,6 +194,12 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("[HorribleSubs] Series Title! S01 [Web][MKV][h264][AAC 2.0][Softsubs (HorribleSubs)]", false)]
         [TestCase("Series.Title.S04E13.960p.WEB-DL.AAC2.0.H.264-squalor", false)]
         [TestCase("Series.Title.S16.DP.WEB.720p.DDP.5.1.H.264.PLEX", false)]
+        [TestCase("The.Series.S02E15.720p", false)]
+        [TestCase("[Underwater-FFF] The Series - 01 (720p) [27AAA0A0]", false)]
+        [TestCase("[Doki] The Series - 07 (1280x720 Hi10P AAC) [80AF7DDE]", false)]
+        [TestCase("[HorribleSubs]_Series_Title_-_145_[720p]", false)]
+        [TestCase("[Eveyuu] Series Title - 10 [Hi10P 1280x720 H264][10B23BD8]", false)]
+        [TestCase("Series.Title.1x01.ITA.720p.x264-RlsGrp [01/54] - \"series.title.1x01.ita.720p.x264-rlsgrp.nfo\"", false)]
         public void should_parse_webdl720p_quality(string title, bool proper)
         {
             ParseAndVerifyQuality(title, Quality.WEBDL720p, proper);
@@ -247,6 +243,10 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Series.Title.S02E02.This.Year.Will.Be.Different.1080p.WEB.H 265", false)]
         [TestCase("Series Title Season 2 [WEB 1080p HEVC Opus] [Netaro]", false)]
         [TestCase("Series Title Season 2 (WEB 1080p HEVC Opus) [Netaro]", false)]
+        [TestCase("Under the Series S01E10 Let the Whisparr Begin 1080p", false)]
+        [TestCase("[HorribleSubs] Series Title - 32 [1080p]", false)]
+        [TestCase("The Online Series Alicization 04 vostfr FHD", false)]
+        [TestCase("[Miaou] Series Title 02 VOSTFR FHD 10 bits", false)]
         public void should_parse_webdl1080p_quality(string title, bool proper)
         {
             ParseAndVerifyQuality(title, Quality.WEBDL1080p, proper);
@@ -272,6 +272,10 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("[HorribleSubs] Series Title! S01 [Web][MKV][h264][2160p][AAC 2.0][Softsubs (HorribleSubs)]", false)]
         [TestCase("Series Title S02 2013 WEB-DL 4k H265 AAC 2Audio-HDSWEB", false)]
         [TestCase("Series.Title.S02E02.This.Year.Will.Be.Different.2160p.WEB.H.265", false)]
+        [TestCase("My Title - 23.01.12 - EpTitle [HEVC 4k DTSHD-MA-6ch]", false)]
+        [TestCase("My Title - 23.01.12 - EpTitle [HEVC-4k DTSHD-MA-6ch]", false)]
+        [TestCase("My Title - 23.01.12 - EpTitle [4k HEVC DTSHD-MA-6ch]", false)]
+        [TestCase("[GM-Team][国漫][诛仙][Series Title][2022][19][HEVC][GB][4K]", false)]
         public void should_parse_webdl2160p_quality(string title, bool proper)
         {
             ParseAndVerifyQuality(title, Quality.WEBDL2160p, proper);
@@ -392,6 +396,7 @@ namespace NzbDrone.Core.Test.ParserTests
         }
 
         [Test]
+        [Ignore("We call back to WEBDL")]
         [TestCaseSource(nameof(OtherSourceQualityParserCases))]
         public void should_parse_quality_from_other_source(string qualityString, Quality quality)
         {

@@ -57,13 +57,13 @@ namespace NzbDrone.Core.Test.Extras.Others
         }
 
         [Test]
-        [TestCase("Series Title - S01E01.nfo", "Series Title - S01E01.nfo")]
-        [TestCase("Series.Title.S01E01.nfo", "Series Title - S01E01.nfo")]
-        [TestCase("Series-Title-S01E01.nfo", "Series Title - S01E01.nfo")]
-        [TestCase("Series Title S01E01.nfo", "Series Title - S01E01.nfo")]
-        [TestCase("Series_Title_S01E01.nfo", "Series Title - S01E01.nfo")]
-        [TestCase("S01E01.thumb.jpg", "Series Title - S01E01.jpg")]
-        [TestCase(@"Series.Title.S01E01\thumb.jpg", "Series Title - S01E01.jpg")]
+        [TestCase("Series Title - 23-01-15.nfo", "Series Title - 23-01-15.nfo")]
+        [TestCase("Series.Title.23.01.15.nfo", "Series Title - 23.01.15.nfo")]
+        [TestCase("Series-Title-23-01-15.nfo", "Series Title - 23-01-15.nfo")]
+        [TestCase("Series Title 23.01.15.nfo", "Series Title - 23.01.15.nfo")]
+        [TestCase("Series_Title_23.01.15.nfo", "Series Title - 23.01.15.nfo")]
+        [TestCase("230115.thumb.jpg", "Series Title - 230115.jpg")]
+        [TestCase(@"Series.Title.23.01.15\thumb.jpg", "Series Title - 23.01.15.jpg")]
         public void should_import_matching_file(string filePath, string expectedOutputPath)
         {
             var files = new List<string> { Path.Combine(_episodeFolder, filePath).AsOsAgnostic() };

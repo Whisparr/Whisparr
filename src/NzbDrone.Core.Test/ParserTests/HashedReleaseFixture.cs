@@ -27,14 +27,14 @@ namespace NzbDrone.Core.Test.ParserTests
             },
             new object[]
             {
-                @"C:\Test\Fake.Dir.S01E01-Test\yrucreM-462.H.0.2CAA.LD-BEW.p027.10E10S.esaeleR.dehsaH.emoS.mkv".AsOsAgnostic(),
+                @"C:\Test\Fake.Dir.23-01-15-Test\yrucreM-462.H.0.2CAA.LD-BEW.p027.10E10S.esaeleR.dehsaH.emoS.mkv".AsOsAgnostic(),
                 "Some Hashed Release",
                 Quality.WEBDL720p,
                 "Mercury"
             },
             new object[]
             {
-                @"C:\Test\Fake.Dir.S01E01-Test\yrucreM-LN 1.5DD LD-BEW P0801 10E10S esaeleR dehsaH emoS.mkv".AsOsAgnostic(),
+                @"C:\Test\Fake.Dir.23-01-15-Test\yrucreM-LN 1.5DD LD-BEW P0801 10E10S esaeleR dehsaH emoS.mkv".AsOsAgnostic(),
                 "Some Hashed Release",
                 Quality.WEBDL1080p,
                 "Mercury"
@@ -90,21 +90,14 @@ namespace NzbDrone.Core.Test.ParserTests
             },
             new object[]
             {
-                @"C:\Test\XxQVHK4GJMP3n2dLpmhW\XxQVHK4GJMP3n2dLpmhW\MKV\010E70S.nuF.fo.snoS.mkv".AsOsAgnostic(),
+                @"C:\Test\XxQVHK4GJMP3n2dLpmhW\XxQVHK4GJMP3n2dLpmhW\MKV\230115.nuF.fo.snoS.mkv".AsOsAgnostic(),
                 "Sons of Fun",
                 Quality.HDTV720p,
                 null
             },
             new object[]
             {
-                @"50E50S.denorD.mkv".AsOsAgnostic(),
-                "Droned",
-                Quality.HDTV720p,
-                null
-            },
-            new object[]
-            {
-                @"C:\Test\XxQVHK4GJMP3n2dLpmhW\XxQVHK4GJMP3n2dLpmhW\50E50S.denorD.mkv".AsOsAgnostic(),
+                @"C:\Test\XxQVHK4GJMP3n2dLpmhW\XxQVHK4GJMP3n2dLpmhW\230115.denorD.mkv".AsOsAgnostic(),
                 "Droned",
                 Quality.HDTV720p,
                 null

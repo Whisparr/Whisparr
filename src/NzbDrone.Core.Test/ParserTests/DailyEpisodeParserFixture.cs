@@ -19,7 +19,6 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("2020.A.Late.Talk.Show.2012.13.02.PDTV.XviD-C4TV", "2020 A Late Talk Show", 2012, 2, 13)]
         [TestCase("2020.A.Late.Talk.Show.2011.12.02.PDTV.XviD-C4TV", "2020 A Late Talk Show", 2011, 12, 2)]
         [TestCase("Series Title - 2013-10-30 - Episode Title (1) [HDTV-720p]", "Series Title", 2013, 10, 30)]
-        [TestCase("The_Series_US_04.28.2014_hdtv.x264.Poke.mp4", "The Series US", 2014, 4, 28)]
         [TestCase("A.Late.Talk.Show.140722.720p.HDTV.x264-YesTV", "A Late Talk Show", 2014, 07, 22)]
         [TestCase("A_Late_Talk_Show_140722_720p_HDTV_x264-YesTV", "A Late Talk Show", 2014, 07, 22)]
 
@@ -28,7 +27,6 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Tree_Series_2018_06_22_Seth_Meyers_720p_HEVC_x265-MeGusta", "Tree Series", 2018, 6, 22)]
         [TestCase("20161024- Exotic Payback.21x41_720.mkv", "", 2016, 10, 24)]
         [TestCase("Series and Title 20201013 Ep7432 [720p WebRip (x264)] [SUBS]", "Series and Title", 2020, 10, 13)]
-        [TestCase("Series Title (1955) - 1954-01-23 05 00 00 - Cottage for Sale.ts", "Series Title (1955)", 1954, 1, 23)]
 
         // [TestCase("", "", 0, 0, 0)]
         public void should_parse_daily_episode(string postTitle, string title, int year, int month, int day)

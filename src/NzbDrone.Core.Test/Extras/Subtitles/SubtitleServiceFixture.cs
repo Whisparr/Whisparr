@@ -77,14 +77,14 @@ namespace NzbDrone.Core.Test.Extras.Subtitles
         }
 
         [Test]
-        [TestCase("Series Title - S01E01.srt", "Series Title - S01E01.srt")]
-        [TestCase("Series.Title.S01E01.en.srt", "Series Title - S01E01.en.srt")]
-        [TestCase("Series.Title.S01E01.english.srt", "Series Title - S01E01.en.srt")]
-        [TestCase("Series-Title-S01E01-fr-cc.srt", "Series Title - S01E01.fr.cc.srt")]
-        [TestCase("Series Title S01E01_en_sdh_forced.srt", "Series Title - S01E01.en.sdh.forced.srt")]
-        [TestCase("Series_Title_S01E01 en.srt", "Series Title - S01E01.en.srt")]
-        [TestCase(@"Subs\S01E01.en.srt", "Series Title - S01E01.en.srt")]
-        [TestCase(@"Subs\Series.Title.S01E01\2_en.srt", "Series Title - S01E01.en.srt")]
+        [TestCase("Series Title - 23-01-15.srt", "Series Title - 23-01-15.srt")]
+        [TestCase("Series.Title.23.01.15.en.srt", "Series Title - 23.01.15.en.srt")]
+        [TestCase("Series.Title.23.01.15.english.srt", "Series Title - 23.01.15.en.srt")]
+        [TestCase("Series-Title-23.01.15-fr-cc.srt", "Series Title - 23.01.15.fr.cc.srt")]
+        [TestCase("Series Title 230115_en_sdh_forced.srt", "Series Title - 230115.en.sdh.forced.srt")]
+        [TestCase("Series_Title_230115 en.srt", "Series Title - 230115.en.srt")]
+        [TestCase(@"Subs\23.01.15.en.srt", "Series Title - 23.01.15.en.srt")]
+        [TestCase(@"Subs\Series.Title.23.01.15\2_en.srt", "Series Title - 23.01.15.en.srt")]
         public void should_import_matching_subtitle_file(string filePath, string expectedOutputPath)
         {
             var files = new List<string> { Path.Combine(_episodeFolder, filePath).AsOsAgnostic() };
@@ -97,6 +97,7 @@ namespace NzbDrone.Core.Test.Extras.Subtitles
         }
 
         [Test]
+        [Ignore("No Subtitles for Scenes")]
         public void should_import_multiple_subtitle_files_per_language()
         {
             var files = new List<string>

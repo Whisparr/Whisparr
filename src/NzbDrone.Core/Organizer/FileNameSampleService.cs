@@ -41,7 +41,7 @@ namespace NzbDrone.Core.Organizer
                 SeasonNumber = 1,
                 EpisodeNumber = 1,
                 Title = "Episode Title (1)",
-                AirDate = "2013-10-30",
+                AirDate = "2022-05-01",
                 AbsoluteEpisodeNumber = 1,
             };
 

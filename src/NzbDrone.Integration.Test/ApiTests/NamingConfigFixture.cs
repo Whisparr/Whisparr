@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+using FluentAssertions;
 using NUnit.Framework;
 
 namespace NzbDrone.Integration.Test.ApiTests

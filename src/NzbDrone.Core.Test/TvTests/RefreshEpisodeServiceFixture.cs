@@ -175,7 +175,7 @@ namespace NzbDrone.Core.Test.TvTests
             var series = GetSeries();
             series.Seasons = new List<Season>();
 
-            var episodes = GetEpisodes().OrderBy(v => v.SeasonNumber).ThenBy(v => v.EpisodeNumber).Take(4).ToList();
+            var episodes = GetEpisodes().OrderBy(v => v.AirDate).Take(4).ToList();
 
             episodes[1].AirDateUtc = DateTime.UtcNow.AddDays(-15);
             episodes[2].AirDateUtc = DateTime.UtcNow.AddDays(-10);
@@ -186,7 +186,7 @@ namespace NzbDrone.Core.Test.TvTests
 
             Subject.RefreshEpisodeInfo(series, episodes);
 
-            _insertedEpisodes = _insertedEpisodes.OrderBy(v => v.EpisodeNumber).ToList();
+            _insertedEpisodes = _insertedEpisodes.OrderBy(v => v.AirDate).ToList();
 
             _insertedEpisodes.Should().HaveSameCount(episodes);
             _insertedEpisodes[0].Monitored.Should().Be(false);
@@ -218,6 +218,7 @@ namespace NzbDrone.Core.Test.TvTests
         }
 
         [Test]
+        [Ignore("tpdb will always have an air date, if no air date then date of import is used as an air date, blame Gykes if not the case")]
         public void should_override_empty_airdate_for_direct_to_dvd()
         {
             var series = GetSeries();

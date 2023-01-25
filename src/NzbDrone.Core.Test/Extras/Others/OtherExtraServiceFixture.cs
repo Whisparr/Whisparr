@@ -28,7 +28,7 @@ namespace NzbDrone.Core.Test.Extras.Others
         public void Setup()
         {
             _seriesFolder = @"C:\Test\TV\Series Title".AsOsAgnostic();
-            _episodeFolder = @"C:\Test\Unsorted TV\Series.Title.S01".AsOsAgnostic();
+            _episodeFolder = @"C:\Test\Unsorted TV\Series.Title.23.01.15".AsOsAgnostic();
 
             _series = Builder<Series>.CreateNew()
                                      .With(s => s.Path = _seriesFolder)
@@ -62,7 +62,7 @@ namespace NzbDrone.Core.Test.Extras.Others
         [TestCase("Series-Title-23-01-15.nfo", "Series Title - 23-01-15.nfo")]
         [TestCase("Series Title 23.01.15.nfo", "Series Title - 23.01.15.nfo")]
         [TestCase("Series_Title_23.01.15.nfo", "Series Title - 23.01.15.nfo")]
-        [TestCase("230115.thumb.jpg", "Series Title - 230115.jpg")]
+        [TestCase("20230115.thumb.jpg", "Series Title - 20230115.jpg")]
         [TestCase(@"Series.Title.23.01.15\thumb.jpg", "Series Title - 23.01.15.jpg")]
         public void should_import_matching_file(string filePath, string expectedOutputPath)
         {

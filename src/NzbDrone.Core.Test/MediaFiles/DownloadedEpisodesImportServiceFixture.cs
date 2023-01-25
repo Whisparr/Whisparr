@@ -24,7 +24,7 @@ namespace NzbDrone.Core.Test.MediaFiles
     {
         private string _droneFactory = "c:\\drop\\".AsOsAgnostic();
         private string[] _subFolders = new[] { "c:\\root\\foldername".AsOsAgnostic() };
-        private string[] _videoFiles = new[] { "c:\\root\\foldername\\30.rock.s01e01.ext".AsOsAgnostic() };
+        private string[] _videoFiles = new[] { "c:\\root\\foldername\\30.rock.23.01.15.ext".AsOsAgnostic() };
 
         private TrackedDownload _trackedDownload;
 

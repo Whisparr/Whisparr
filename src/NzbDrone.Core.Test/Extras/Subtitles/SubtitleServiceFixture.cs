@@ -77,6 +77,7 @@ namespace NzbDrone.Core.Test.Extras.Subtitles
         }
 
         [Test]
+        [Ignore("No Subtitles for Scenes")]
         [TestCase("Series Title - 23-01-15.srt", "Series Title - 23-01-15.srt")]
         [TestCase("Series.Title.23.01.15.en.srt", "Series Title - 23.01.15.en.srt")]
         [TestCase("Series.Title.23.01.15.english.srt", "Series Title - 23.01.15.en.srt")]

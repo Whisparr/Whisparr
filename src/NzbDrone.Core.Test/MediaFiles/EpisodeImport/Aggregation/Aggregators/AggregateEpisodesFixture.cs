@@ -39,13 +39,13 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport.Aggregation.Aggregators
         [Test]
         public void should_not_use_folder_for_full_season()
         {
-            var fileEpisodeInfo = Parser.Parser.ParseTitle("Series.Title.S01E01");
-            var folderEpisodeInfo = Parser.Parser.ParseTitle("Series.Title.S01");
+            var fileEpisodeInfo = Parser.Parser.ParseTitle("Series.Title.23.01.15");
+            var folderEpisodeInfo = Parser.Parser.ParseTitle("Series.Title.2023");
             var localEpisode = new LocalEpisode
                                {
                                    FileEpisodeInfo = fileEpisodeInfo,
                                    FolderEpisodeInfo = folderEpisodeInfo,
-                                   Path = @"C:\Test\Unsorted TV\Series.Title.S01\Series.Title.S01E01.mkv".AsOsAgnostic(),
+                                   Path = @"C:\Test\Unsorted TV\Series.Title.2023\Series.Title.23.01.15.mkv".AsOsAgnostic(),
                                    Series = _series
                                };
 
@@ -58,13 +58,13 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport.Aggregation.Aggregators
         [Test]
         public void should_not_use_folder_when_it_contains_more_than_one_valid_video_file()
         {
-            var fileEpisodeInfo = Parser.Parser.ParseTitle("Series.Title.S01E01");
-            var folderEpisodeInfo = Parser.Parser.ParseTitle("Series.Title.S01");
+            var fileEpisodeInfo = Parser.Parser.ParseTitle("Series.Title.23.01.15");
+            var folderEpisodeInfo = Parser.Parser.ParseTitle("Series.Title.2023");
             var localEpisode = new LocalEpisode
             {
                 FileEpisodeInfo = fileEpisodeInfo,
                 FolderEpisodeInfo = folderEpisodeInfo,
-                Path = @"C:\Test\Unsorted TV\Series.Title.S01\Series.Title.S01E01.mkv".AsOsAgnostic(),
+                Path = @"C:\Test\Unsorted TV\Series.Title.2023\Series.Title.23.01.15.mkv".AsOsAgnostic(),
                 Series = _series,
                 OtherVideoFiles = true
             };
@@ -78,13 +78,13 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport.Aggregation.Aggregators
         [Test]
         public void should_not_use_folder_name_if_file_name_is_scene_name()
         {
-            var fileEpisodeInfo = Parser.Parser.ParseTitle("Series.Title.S01E01");
-            var folderEpisodeInfo = Parser.Parser.ParseTitle("Series.Title.S01E01");
+            var fileEpisodeInfo = Parser.Parser.ParseTitle("Series.Title.23.01.15");
+            var folderEpisodeInfo = Parser.Parser.ParseTitle("Series.Title.23.01.15");
             var localEpisode = new LocalEpisode
             {
                 FileEpisodeInfo = fileEpisodeInfo,
                 FolderEpisodeInfo = folderEpisodeInfo,
-                Path = @"C:\Test\Unsorted TV\Series.Title.S01E01\Series.Title.S01E01.720p.HDTV-Whisparr.mkv".AsOsAgnostic(),
+                Path = @"C:\Test\Unsorted TV\Series.Title.23.01.15\Series.Title.23.01.15.720p.HDTV-Whisparr.mkv".AsOsAgnostic(),
                 Series = _series
             };
 
@@ -97,13 +97,13 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport.Aggregation.Aggregators
         [Test]
         public void should_use_folder_when_only_one_video_file()
         {
-            var fileEpisodeInfo = Parser.Parser.ParseTitle("Series.Title.S01E01");
-            var folderEpisodeInfo = Parser.Parser.ParseTitle("Series.Title.S01E01");
+            var fileEpisodeInfo = Parser.Parser.ParseTitle("Series.Title.23.01.15");
+            var folderEpisodeInfo = Parser.Parser.ParseTitle("Series.Title.23.01.15");
             var localEpisode = new LocalEpisode
             {
                 FileEpisodeInfo = fileEpisodeInfo,
                 FolderEpisodeInfo = folderEpisodeInfo,
-                Path = @"C:\Test\Unsorted TV\Series.Title.S01E01\Series.Title.S01E01.mkv".AsOsAgnostic(),
+                Path = @"C:\Test\Unsorted TV\Series.Title.23.01.15\Series.Title.23.01.15.mkv".AsOsAgnostic(),
                 Series = _series
             };
 
@@ -116,13 +116,13 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport.Aggregation.Aggregators
         [Test]
         public void should_use_file_when_folder_is_absolute_and_file_is_not()
         {
-            var fileEpisodeInfo = Parser.Parser.ParseTitle("Series.Title.S01E01");
+            var fileEpisodeInfo = Parser.Parser.ParseTitle("Series.Title.23.01.15");
             var folderEpisodeInfo = Parser.Parser.ParseTitle("Series.Title.01");
             var localEpisode = new LocalEpisode
                                {
                                    FileEpisodeInfo = fileEpisodeInfo,
                                    FolderEpisodeInfo = folderEpisodeInfo,
-                                   Path = @"C:\Test\Unsorted TV\Series.Title.101\Series.Title.S01E01.mkv".AsOsAgnostic(),
+                                   Path = @"C:\Test\Unsorted TV\Series.Title.101\Series.Title.23.01.15.mkv".AsOsAgnostic(),
                                    Series = _series
                                };
 
@@ -133,6 +133,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport.Aggregation.Aggregators
         }
 
         [Test]
+        [Ignore("No specials in scene releases")]
         public void should_use_special_info_when_not_null()
         {
             var fileEpisodeInfo = Parser.Parser.ParseTitle("S00E01");

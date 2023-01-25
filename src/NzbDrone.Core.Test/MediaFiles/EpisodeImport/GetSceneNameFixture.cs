@@ -20,8 +20,8 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
     public class GetSceneNameFixture : CoreTest
     {
         private LocalEpisode _localEpisode;
-        private string _seasonName = "series.title.s02.dvdrip.x264-ingot";
-        private string _episodeName = "series.title.s02e23.dvdrip.x264-ingot";
+        private string _seasonName = "series.title.2023.dvdrip.x264-ingot";
+        private string _episodeName = "series.title.23-01-15.dvdrip.x264-ingot";
 
         [SetUp]
         public void Setup()

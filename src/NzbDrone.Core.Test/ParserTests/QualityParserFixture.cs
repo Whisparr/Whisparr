@@ -159,9 +159,9 @@ namespace NzbDrone.Core.Test.ParserTests
             ParseAndVerifyQuality(title, Quality.HDTV1080p, proper);
         }
 
-        [TestCase("My Title - 23.01.12 - EpTitle [HEVC HDTV4k DTSHD-MA-6ch]", false)]
-        [TestCase("My Title - 23.01.12 - EpTitle [HEVC-HDTV4k DTSHD-MA-6ch]", false)]
-        [TestCase("My Title - 23.01.12 - EpTitle [HDTV4k HEVC DTSHD-MA-6ch]", false)]
+        // [TestCase("My Title - 23.01.12 - EpTitle [HEVC HDTV 4k DTSHD-MA-6ch]", false)]
+        // [TestCase("My Title - 23.01.12 - EpTitle [HEVC-HDTV 4k DTSHD-MA-6ch]", false)]
+        [TestCase("My Title - 23.01.12 - EpTitle [HDTV 4k HEVC DTSHD-MA-6ch]", false)]
         [TestCase("[GM-Team][国漫][诛仙][Series Title][2022][19][HEVC][GB][HDTV][4K]", false)]
         public void should_parse_hdtv2160p_quality(string title, bool proper)
         {

@@ -55,7 +55,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             _failDelayed1.Setup(c => c.IsSatisfiedBy(It.IsAny<RemoteEpisode>(), null)).Returns(Decision.Reject("failDelayed1"));
             _failDelayed1.SetupGet(c => c.Priority).Returns(SpecificationPriority.Disk);
 
-            _reports = new List<ReleaseInfo> { new ReleaseInfo { Title = "The.Office.S03E115.DVDRip.XviD-OSiTV" } };
+            _reports = new List<ReleaseInfo> { new ReleaseInfo { Title = "The.Office.23.01.15.DVDRip.XviD-OSiTV" } };
             _remoteEpisode = new RemoteEpisode
             {
                 Series = new Series(),
@@ -216,9 +216,9 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
 
             _reports = new List<ReleaseInfo>
                 {
-                    new ReleaseInfo { Title = "The.Office.S03E115.DVDRip.XviD-OSiTV" },
-                    new ReleaseInfo { Title = "The.Office.S03E115.DVDRip.XviD-OSiTV" },
-                    new ReleaseInfo { Title = "The.Office.S03E115.DVDRip.XviD-OSiTV" }
+                    new ReleaseInfo { Title = "The.Office.23.01.15.DVDRip.XviD-OSiTV" },
+                    new ReleaseInfo { Title = "The.Office.23.01.15.DVDRip.XviD-OSiTV" },
+                    new ReleaseInfo { Title = "The.Office.23.01.15.DVDRip.XviD-OSiTV" }
                 };
 
             Subject.GetRssDecision(_reports);
@@ -258,7 +258,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             var reports = episodes.Select(v =>
                 new ReleaseInfo()
                 {
-                    Title = string.Format("{0}.S{1:00}E{2:00}.720p.WEB-DL-DRONE", series.Title, v.SceneSeasonNumber, v.SceneEpisodeNumber)
+                    Title = string.Format("{0}.{S{1:00}E{2:00}}.720p.WEB-DL-DRONE", series.Title, v.SceneSeasonNumber, v.SceneEpisodeNumber)
                 }).ToList();
 
             Mocker.GetMock<IParsingService>()
@@ -322,7 +322,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
 
             _reports = new List<ReleaseInfo>
                 {
-                    new ReleaseInfo { Title = "The.Office.S03E115.DVDRip.XviD-OSiTV" },
+                    new ReleaseInfo { Title = "The.Office.23.01.15.DVDRip.XviD-OSiTV" },
                 };
 
             Subject.GetRssDecision(_reports).Should().HaveCount(1);

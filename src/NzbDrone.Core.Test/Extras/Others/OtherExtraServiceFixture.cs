@@ -36,22 +36,22 @@ namespace NzbDrone.Core.Test.Extras.Others
 
             var episodes = Builder<Episode>.CreateListOfSize(1)
                                            .All()
-                                           .With(e => e.AirDate = "2023-01-01")
+                                           .With(e => e.AirDate = "2023-01-15")
                                            .Build()
                                            .ToList();
 
             _episodeFile = Builder<EpisodeFile>.CreateNew()
-                                               .With(f => f.Path = Path.Combine(_series.Path, "Season 1", "Series Title - S01E01.mkv").AsOsAgnostic())
-                                               .With(f => f.RelativePath = @"Season 1\Series Title - S01E01.mkv")
+                                               .With(f => f.Path = Path.Combine(_series.Path, "Season 1", "Series Title - 23.01.15.mkv").AsOsAgnostic())
+                                               .With(f => f.RelativePath = @"Season 1\Series Title - 23.01.15.mkv")
                                                .Build();
 
             _localEpisode = Builder<LocalEpisode>.CreateNew()
                                                  .With(l => l.Series = _series)
                                                  .With(l => l.Episodes = episodes)
-                                                 .With(l => l.Path = Path.Combine(_episodeFolder, "Series.Title.S01E01.mkv").AsOsAgnostic())
+                                                 .With(l => l.Path = Path.Combine(_episodeFolder, "Series.Title.2023.01.15.mkv").AsOsAgnostic())
                                                  .With(l => l.FileEpisodeInfo = new ParsedEpisodeInfo
                                                  {
-                                                     AirDate = "2023-01-01"
+                                                     AirDate = "2023-01-15"
                                                  })
                                                  .Build();
         }

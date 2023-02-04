@@ -246,11 +246,13 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             var series = Builder<Series>.CreateNew().Build();
 
             var episodes = Builder<Episode>.CreateListOfSize(2)
+                .TheFirst(1)
+                .With(v => v.AirDate, "2023-01-15")
+                .TheNext(1)
+                .With(v => v.AirDate, "2023-01-20")
                 .All()
                 .With(v => v.SeriesId, series.Id)
                 .With(v => v.Series, series)
-                .With(v => v.SeasonNumber, 1)
-                .With(v => v.SceneSeasonNumber, 2)
                 .BuildList();
 
             var criteria = new SeasonSearchCriteria { Episodes = episodes.Take(1).ToList(), Year = 1 };
@@ -258,18 +260,18 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             var reports = episodes.Select(v =>
                 new ReleaseInfo()
                 {
-                    Title = string.Format("{0}.{S{1:00}E{2:00}}.720p.WEB-DL-DRONE", series.Title, v.SceneSeasonNumber, v.SceneEpisodeNumber)
+                    Title = string.Format("{0}.{1}.720p.WEB-DL-DRONE", series.Title, v.AirDate)
                 }).ToList();
 
             Mocker.GetMock<IParsingService>()
                 .Setup(v => v.Map(It.IsAny<ParsedEpisodeInfo>(), It.IsAny<int>(), It.IsAny<SearchCriteriaBase>()))
-                .Returns<ParsedEpisodeInfo, int, int, SearchCriteriaBase>((p, tvdbid, tvrageid, c) =>
+                .Returns<ParsedEpisodeInfo, int, SearchCriteriaBase>((p, tvdbid, c) =>
                     new RemoteEpisode
                     {
                         DownloadAllowed = true,
                         ParsedEpisodeInfo = p,
                         Series = series,
-                        Episodes = episodes.Where(v => v.SceneEpisodeNumber == 1).ToList()
+                        Episodes = episodes.Where(v => v.AirDate == p.AirDate).ToList()
                     });
 
             Mocker.SetConstant<IEnumerable<IDecisionEngineSpecification>>(new List<IDecisionEngineSpecification>

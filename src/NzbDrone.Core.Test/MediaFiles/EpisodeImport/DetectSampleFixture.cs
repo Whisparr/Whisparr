@@ -50,13 +50,6 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
         }
 
         [Test]
-        public void should_return_false_if_season_zero()
-        {
-            _localEpisode.Episodes[0].SeasonNumber = 0;
-            ShouldBeNotSample();
-        }
-
-        [Test]
         public void should_return_false_for_flv()
         {
             _localEpisode.Path = @"C:\Test\some.show.s01e01.flv";

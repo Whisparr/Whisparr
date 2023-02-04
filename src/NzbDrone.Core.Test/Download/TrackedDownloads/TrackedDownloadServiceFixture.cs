@@ -28,7 +28,7 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
                  new EpisodeHistory()
                 {
                      DownloadId = "35238",
-                     SourceTitle = "TV Series S01",
+                     SourceTitle = "TV Series 23.02.01",
                      SeriesId = 5,
                      EpisodeId = 4
                 }

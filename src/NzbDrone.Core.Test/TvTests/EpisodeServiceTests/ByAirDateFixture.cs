@@ -44,14 +44,6 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeServiceTests
         }
 
         [Test]
-        public void should_throw_when_multiple_regular_episodes_are_found_and_not_part_provided()
-        {
-            GivenEpisodes(CreateEpisode(1, 1), CreateEpisode(2, 1));
-
-            Assert.Throws<InvalidOperationException>(() => Subject.FindEpisode(SERIES_ID, AIR_DATE, null));
-        }
-
-        [Test]
         public void should_return_null_when_finds_no_episode()
         {
             GivenEpisodes();

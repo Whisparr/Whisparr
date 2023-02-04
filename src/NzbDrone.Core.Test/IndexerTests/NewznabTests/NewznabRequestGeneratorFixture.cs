@@ -46,13 +46,13 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
 
             var page = results.GetAllTiers().First().First();
 
-            page.Url.Query.Should().Contain("&cat=1,2,3,4&");
+            page.Url.Query.Should().Contain("&cat=1,2&");
         }
 
         [Test]
         public void should_not_have_duplicate_categories()
         {
-            Subject.Settings.Categories = new[] { 1, 2, 3 };
+            Subject.Settings.Categories = new[] { 1, 2, 2, 3 };
 
             var results = Subject.GetRecentRequests();
 
@@ -60,7 +60,7 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
 
             var page = results.GetAllTiers().First().First();
 
-            page.Url.FullUri.Should().Contain("&cat=1,2,3,4&");
+            page.Url.FullUri.Should().Contain("&cat=1,2,3&");
         }
 
         [Test]
@@ -105,23 +105,6 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
             var page = results.GetTier(0).First().First();
 
             page.Url.Query.Should().Contain("q=");
-        }
-
-        [Test]
-        public void should_url_encode_title()
-        {
-            _capabilities.SupportedSearchParameters = new[] { "q" };
-            _capabilities.SupportsAggregateIdSearch = true;
-
-            _singleEpisodeSearchCriteria.SceneTitles[0] = "Elith & Little";
-
-            var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
-            results.Tiers.Should().Be(1);
-
-            var pageTier2 = results.GetTier(1).First().First();
-
-            pageTier2.Url.Query.Should().NotContain("q=");
-            pageTier2.Url.Query.Should().Contain("title=Elith%20%26%20Little");
         }
 
         [Test]

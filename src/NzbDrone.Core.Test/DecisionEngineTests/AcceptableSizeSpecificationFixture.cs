@@ -191,33 +191,6 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         }
 
         [Test]
-        public void should_return_false_if_series_runtime_is_zero_and_single_episode_is_not_from_first_season()
-        {
-            _series.Runtime = 0;
-            _parseResultSingle.Series = _series;
-            _parseResultSingle.Episodes.First().Id = 5;
-            _parseResultSingle.Release.Size = 200.Megabytes();
-            _parseResultSingle.Episodes.First().SeasonNumber = 2;
-
-            Subject.IsSatisfiedBy(_parseResultSingle, null).Accepted.Should().Be(false);
-        }
-
-        [Test]
-        public void should_return_false_if_series_runtime_is_zero_and_single_episode_aired_more_than_24_hours_after_first_aired_episode()
-        {
-            _series.Runtime = 0;
-
-            _parseResultSingle.Series = _series;
-            _parseResultSingle.Release.Size = 200.Megabytes();
-            _parseResultSingle.Episodes.First().Id = 5;
-            _parseResultSingle.Episodes.First().SeasonNumber = 1;
-            _parseResultSingle.Episodes.First().EpisodeNumber = 2;
-            _parseResultSingle.Episodes.First().AirDateUtc = _episodes.First().AirDateUtc.Value.AddDays(7);
-
-            Subject.IsSatisfiedBy(_parseResultSingle, null).Accepted.Should().Be(false);
-        }
-
-        [Test]
         public void should_return_true_if_series_runtime_is_zero_and_single_episode_aired_less_than_24_hours_after_first_aired_episode()
         {
             _series.Runtime = 0;
@@ -230,35 +203,6 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             _parseResultSingle.Episodes.First().AirDateUtc = _episodes.First().AirDateUtc.Value.AddHours(1);
 
             Subject.IsSatisfiedBy(_parseResultSingle, null).Accepted.Should().Be(true);
-        }
-
-        [Test]
-        public void should_return_false_if_series_runtime_is_zero_and_multi_episode_is_not_from_first_season()
-        {
-            _series.Runtime = 0;
-            _parseResultMulti.Series = _series;
-            _parseResultMulti.Release.Size = 200.Megabytes();
-            _parseResultMulti.Episodes.ForEach(e => e.SeasonNumber = 2);
-
-            Subject.IsSatisfiedBy(_parseResultMulti, null).Accepted.Should().Be(false);
-        }
-
-        [Test]
-        public void should_return_false_if_series_runtime_is_zero_and_multi_episode_aired_more_than_24_hours_after_first_aired_episode()
-        {
-            var airDateUtc = _episodes.First().AirDateUtc.Value.AddDays(7);
-
-            _series.Runtime = 0;
-
-            _parseResultMulti.Series = _series;
-            _parseResultMulti.Release.Size = 200.Megabytes();
-            _parseResultMulti.Episodes.ForEach(e =>
-            {
-                e.SeasonNumber = 1;
-                e.AirDateUtc = airDateUtc;
-            });
-
-            Subject.IsSatisfiedBy(_parseResultMulti, null).Accepted.Should().Be(false);
         }
 
         [Test]

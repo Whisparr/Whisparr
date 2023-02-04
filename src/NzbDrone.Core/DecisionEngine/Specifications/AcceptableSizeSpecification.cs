@@ -39,7 +39,7 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
             }
 
             // Try to use runtime from episode/episodes first and fallback to series
-            var runtime = (int)subject.Episodes.Where(x => x.Runtime == 0).Average(x => x.Runtime);
+            var runtime = ((int?)subject.Episodes.Where(x => x.Runtime == 0).Average(x => (int?)x.Runtime)) ?? 0;
 
             if (runtime == 0)
             {

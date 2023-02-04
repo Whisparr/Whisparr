@@ -10,6 +10,7 @@ import styles from './ImportMovieRow.css';
 function ImportMovieRow(props) {
   const {
     id,
+    relativePath,
     monitor,
     qualityProfileId,
     selectedMovie,
@@ -30,7 +31,7 @@ function ImportMovieRow(props) {
       />
 
       <VirtualTableRowCell className={styles.folder}>
-        {id}
+        {relativePath}
       </VirtualTableRowCell>
 
       <VirtualTableRowCell className={styles.movie}>
@@ -63,6 +64,7 @@ function ImportMovieRow(props) {
 
 ImportMovieRow.propTypes = {
   id: PropTypes.string.isRequired,
+  relativePath: PropTypes.string.isRequired,
   monitor: PropTypes.string.isRequired,
   qualityProfileId: PropTypes.number.isRequired,
   selectedMovie: PropTypes.object,

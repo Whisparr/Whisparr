@@ -86,7 +86,7 @@ namespace NzbDrone.Core.Backup
             _logger.ProgressDebug("Creating backup zip");
 
             // Delete journal file created during database backup
-            _diskProvider.DeleteFile(Path.Combine(_backupTempFolder, "whisparr.db-journal"));
+            _diskProvider.DeleteFile(Path.Combine(_backupTempFolder, "whisparr2.db-journal"));
 
             _archiveService.CreateZip(backupPath, _diskProvider.GetFiles(_backupTempFolder, SearchOption.TopDirectoryOnly));
 
@@ -141,7 +141,7 @@ namespace NzbDrone.Core.Backup
                         restoredFile = true;
                     }
 
-                    if (fileName.Equals("whisparr.db", StringComparison.InvariantCultureIgnoreCase))
+                    if (fileName.Equals("whisparr2.db", StringComparison.InvariantCultureIgnoreCase))
                     {
                         _diskProvider.MoveFile(file, _appFolderInfo.GetDatabaseRestore(), true);
                         restoredFile = true;

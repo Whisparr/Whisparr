@@ -354,6 +354,8 @@ namespace NzbDrone.Core.Datastore.Migration
                   .WithColumn("RemoveTagsAutomatically").AsBoolean().WithDefaultValue(false)
                   .WithColumn("Tags").AsString().WithDefaultValue("[]");
 
+            Alter.Table("VersionInfo").AlterColumn("AppliedOn").AsDateTimeOffset().Nullable();
+
             Insert.IntoTable("DelayProfiles").Row(new
             {
                 EnableUsenet = true,

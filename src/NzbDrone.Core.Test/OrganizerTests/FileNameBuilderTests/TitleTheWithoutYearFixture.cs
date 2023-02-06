@@ -59,7 +59,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         {
             _series.Title = title;
             _series.Year = year;
-            _namingConfig.StandardEpisodeFormat = "{Series TitleTheWithoutYear}";
+            _namingConfig.StandardEpisodeFormat = "{Site TitleTheWithoutYear}";
 
             Subject.BuildFileName(new List<Episode> { _episode }, _series, _episodeFile)
                    .Should().Be(expected);
@@ -70,7 +70,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         {
             _series.Title = "The Alienist";
             _series.Year = 0;
-            _namingConfig.StandardEpisodeFormat = "{Series TitleTheWithoutYear}";
+            _namingConfig.StandardEpisodeFormat = "{Site TitleTheWithoutYear}";
 
             Subject.BuildFileName(new List<Episode> { _episode }, _series, _episodeFile)
                    .Should().Be("Alienist, The");

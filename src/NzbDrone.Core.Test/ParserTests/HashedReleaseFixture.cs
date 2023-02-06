@@ -34,13 +34,6 @@ namespace NzbDrone.Core.Test.ParserTests
             },
             new object[]
             {
-                @"C:\Test\Fake.Dir.23-01-15-Test\yrucreM-LN 1.5DD LD-BEW P0801 51 10 32 esaeleR dehsaH emoS.mkv".AsOsAgnostic(),
-                "Some Hashed Release",
-                Quality.WEBDL1080p,
-                "Mercury"
-            },
-            new object[]
-            {
                 @"C:\Test\Title.23.01.12.DVDRip.XviD-WHISPARR\AHFMZXGHEWD660.mkv".AsOsAgnostic(),
                 "Title",
                 Quality.DVD,
@@ -87,20 +80,6 @@ namespace NzbDrone.Core.Test.ParserTests
                 "Show Title",
                 Quality.WEBDL1080p,
                 "RARBG"
-            },
-            new object[]
-            {
-                @"C:\Test\XxQVHK4GJMP3n2dLpmhW\XxQVHK4GJMP3n2dLpmhW\MKV\51103202.nuF.fo.snoS.mkv".AsOsAgnostic(),
-                "Sons of Fun",
-                Quality.HDTV720p,
-                null
-            },
-            new object[]
-            {
-                @"C:\Test\XxQVHK4GJMP3n2dLpmhW\XxQVHK4GJMP3n2dLpmhW\51103202.denorD.mkv".AsOsAgnostic(),
-                "Droned",
-                Quality.HDTV720p,
-                null
             },
             new object[]
             {

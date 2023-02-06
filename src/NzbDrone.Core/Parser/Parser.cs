@@ -41,11 +41,11 @@ namespace NzbDrone.Core.Parser
         private static readonly Regex[] ReportTitleRegex = new[]
             {
                 // Episodes with airdate (18.04.28) and performer/title followed by XXX
-                new Regex(@"^(?<title>.+?)?\W*(?<airyear>\d{2}|\d{4})[-_. ]+(?<airmonth>[0-1][0-9])[-_. ]+(?<airday>[0-3][0-9])(?![-_. ]+[0-3][0-9])\W*(?<episodeString>.+?)\W*(XXX)",
+                new Regex(@"^(?<title>.+?)?[-_. ]+(?<airyear>\d{2}|\d{4})[-_. ]+(?<airmonth>[0-1][0-9])[-_. ]+(?<airday>[0-3][0-9])(?![-_. ]+[0-3][0-9])\W*(?<episodeString>.+?)\W*(XXX)",
                     RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
                 // Episodes with airdate (18.04.28)
-                new Regex(@"^(?<title>.+?)?\W*(?<airyear>\d{2}|\d{4})[-_. ]+(?<airmonth>[0-1][0-9])[-_. ]+(?<airday>[0-3][0-9])(?![-_. ]+[0-3][0-9])",
+                new Regex(@"^(?<title>.+?)?[-_. ]+(?<airyear>\d{2}|\d{4})[-_. ]+(?<airmonth>[0-1][0-9])[-_. ]+(?<airday>[0-3][0-9])(?![-_. ]+[0-3][0-9])",
                     RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
                 // Episodes with airdate before title (2018-10-12, 20181012) (Strict pattern to avoid false matches)
@@ -53,7 +53,7 @@ namespace NzbDrone.Core.Parser
                     RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
                 // Episodes with airdate after title (2018-10-12, 20181012) (Strict pattern to avoid false matches)
-                new Regex(@"^(?<title>.+?)?\W*(?<airyear>19[6-9]\d|20\d\d)(?<sep>[-_]?)(?<airmonth>[0-1][0-9])\k<sep>(?<airday>[0-3][0-9])",
+                new Regex(@"^(?<title>.+?)?[-_. ]+(?<airyear>19[6-9]\d|20\d\d)(?<sep>[-_]?)(?<airmonth>[0-1][0-9])\k<sep>(?<airday>[0-3][0-9])",
                     RegexOptions.IgnoreCase | RegexOptions.Compiled)
             };
 

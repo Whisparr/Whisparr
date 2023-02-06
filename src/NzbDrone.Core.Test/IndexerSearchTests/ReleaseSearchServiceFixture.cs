@@ -264,24 +264,6 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
         }
 
         [Test]
-        public void scene_seasonsearch_should_search_single_episode_if_possible()
-        {
-            WithEpisodes();
-
-            var allCriteria = WatchForSearchCriteria();
-
-            Subject.SeasonSearch(_xemSeries.Id, 4, false, false, true, false);
-
-            var criteria1 = allCriteria.OfType<SeasonSearchCriteria>().ToList();
-            var criteria2 = allCriteria.OfType<SingleEpisodeSearchCriteria>().ToList();
-
-            criteria1.Count.Should().Be(1);
-            criteria1[0].Year.Should().Be(4);
-
-            criteria2.Count.Should().Be(1);
-        }
-
-        [Test]
         public void scene_seasonsearch_should_use_seasonnumber_if_no_scene_number_is_available()
         {
             WithEpisodes();

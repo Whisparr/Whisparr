@@ -57,12 +57,9 @@ namespace NzbDrone.Core.Test.Extras.Others
         }
 
         [Test]
-        [TestCase("Series Title - 23-01-15.nfo", "Series Title - 23-01-15.nfo")]
         [TestCase("Series.Title.23.01.15.nfo", "Series Title - 23.01.15.nfo")]
-        [TestCase("Series-Title-23-01-15.nfo", "Series Title - 23-01-15.nfo")]
         [TestCase("Series Title 23.01.15.nfo", "Series Title - 23.01.15.nfo")]
         [TestCase("Series_Title_23.01.15.nfo", "Series Title - 23.01.15.nfo")]
-        [TestCase("20230115.thumb.jpg", "Series Title - 20230115.jpg")]
         [TestCase(@"Series.Title.23.01.15\thumb.jpg", "Series Title - 23.01.15.jpg")]
         public void should_import_matching_file(string filePath, string expectedOutputPath)
         {

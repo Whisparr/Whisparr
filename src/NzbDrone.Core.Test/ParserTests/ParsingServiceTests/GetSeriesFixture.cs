@@ -50,6 +50,7 @@ namespace NzbDrone.Core.Test.ParserTests.ParsingServiceTests
         {
             var series = new Series { TvdbId = 100 };
             Mocker.GetMock<ISeriesService>().Setup(v => v.FindByTitle("Welcome")).Returns(series);
+            Mocker.GetMock<ISeriesService>().Setup(v => v.FindByTitle("Mairimashita")).Returns(series);
 
             var result = Subject.GetSeries("Welcome (Mairimashita).22.12.24.720p.WEB-DL-Viva");
 

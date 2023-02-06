@@ -143,6 +143,7 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeRepositoryTests
         }
 
         [Test]
+        [Ignore("Nothing is on air given we don't have times")]
         public void should_not_return_episodes_on_air()
         {
             var onAirEpisode = Builder<Episode>.CreateNew()

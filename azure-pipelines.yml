@@ -1068,4 +1068,5 @@ stages:
             SYSTEM_ACCESSTOKEN: $(System.AccessToken)
             DISCORDCHANNELID: $(discordChannelId)
             DISCORDWEBHOOKKEY: $(discordWebhookKey)
+            DISCORDTHREADID: 1062939940880650291
 

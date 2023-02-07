@@ -28,9 +28,9 @@ namespace NzbDrone.Core.Test.MetadataSource.SkyHook
         [TestCase("Gloryhole Secrets", "Gloryhole Secrets")]
         [TestCase("True Amateurs", "True Amateurs")]
 
-        [TestCase("tvdb:2273", "5K Porn")]
-        [TestCase("tvdbid:2273", "5K Porn")]
-        [TestCase("tvdbid: 2273 ", "5K Porn")]
+        [TestCase("tpdb:2273", "5K Porn")]
+        [TestCase("tpdbid:2273", "5K Porn")]
+        [TestCase("tpdbid: 2273 ", "5K Porn")]
         public void successful_search(string title, string expected)
         {
             var result = Subject.SearchForNewSeries(title);
@@ -54,11 +54,11 @@ namespace NzbDrone.Core.Test.MetadataSource.SkyHook
             ExceptionVerification.IgnoreWarns();
         }
 
-        [TestCase("tvdbid:")]
-        [TestCase("tvdbid: 99999999999999999999")]
-        [TestCase("tvdbid: 0")]
-        [TestCase("tvdbid: -12")]
-        [TestCase("tvdbid:1")]
+        [TestCase("tpdbid:")]
+        [TestCase("tpdbid: 99999999999999999999")]
+        [TestCase("tpdbid: 0")]
+        [TestCase("tpdbid: -12")]
+        [TestCase("tpdbid:1")]
         [TestCase("adjalkwdjkalwdjklawjdlKAJD")]
         public void no_search_result(string term)
         {
@@ -68,7 +68,7 @@ namespace NzbDrone.Core.Test.MetadataSource.SkyHook
             ExceptionVerification.IgnoreWarns();
         }
 
-        [TestCase("tvdbid:2273")]
+        [TestCase("tpdbid:2273")]
         [TestCase("5K Porn")]
         public void should_return_existing_series_if_found(string term)
         {
@@ -80,7 +80,7 @@ namespace NzbDrone.Core.Test.MetadataSource.SkyHook
 
             Mocker.GetMock<ISeriesService>().Setup(c => c.FindByTvdbId(tvdbId)).Returns(existingSeries);
 
-            var result = Subject.SearchForNewSeries("tvdbid: " + tvdbId);
+            var result = Subject.SearchForNewSeries("tpdbid: " + tvdbId);
 
             result.Should().Contain(existingSeries);
             result.Should().ContainSingle(c => c.TvdbId == tvdbId);

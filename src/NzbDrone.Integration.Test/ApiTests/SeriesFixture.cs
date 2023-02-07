@@ -16,7 +16,7 @@ namespace NzbDrone.Integration.Test.ApiTests
             EnsureNoSeries(77, "My Family Pies");
             var tag = EnsureTag("abc");
 
-            var series = Series.Lookup("tvdb:77").Single();
+            var series = Series.Lookup("tpdb:77").Single();
 
             series.QualityProfileId = 1;
             series.Path = Path.Combine(SeriesRootFolder, series.Title);
@@ -35,7 +35,7 @@ namespace NzbDrone.Integration.Test.ApiTests
         {
             EnsureNoSeries(77, "My Family Pies");
 
-            var series = Series.Lookup("tvdb:77").Single();
+            var series = Series.Lookup("tpdb:77").Single();
 
             series.Path = Path.Combine(SeriesRootFolder, series.Title);
 
@@ -48,7 +48,7 @@ namespace NzbDrone.Integration.Test.ApiTests
         {
             EnsureNoSeries(77, "My Family Pies");
 
-            var series = Series.Lookup("tvdb:77").Single();
+            var series = Series.Lookup("tpdb:77").Single();
 
             series.QualityProfileId = 1;
 
@@ -61,7 +61,7 @@ namespace NzbDrone.Integration.Test.ApiTests
         {
             EnsureNoSeries(77, "My Family Pies");
 
-            var series = Series.Lookup("tvdb:77").Single();
+            var series = Series.Lookup("tpdb:77").Single();
 
             series.QualityProfileId = 1;
             series.Path = Path.Combine(SeriesRootFolder, series.Title);

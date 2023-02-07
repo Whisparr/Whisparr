@@ -75,17 +75,17 @@ class ImportSeriesSelectFolder extends Component {
             !error && isPopulated &&
               <div>
                 <div className={styles.header}>
-                  Import series you already have
+                  Import sites you already have
                 </div>
 
                 <div className={styles.tips}>
                   Some tips to ensure the import goes smoothly:
                   <ul>
                     <li className={styles.tip}>
-                      Make sure that your files include the quality in their filenames. eg. <span className={styles.code}>episode.s02e15.bluray.mkv</span>
+                      Make sure that your files include the quality in their filenames. eg. <span className={styles.code}>site.23.01.15.episode.1080p.mkv</span>
                     </li>
                     <li className={styles.tip}>
-                      Point Whisparr to the folder containing all of your tv shows, not a specific one. eg. <span className={styles.code}>"{isWindows ? 'C:\\tv shows' : '/tv shows'}"</span> and not <span className={styles.code}>"{isWindows ? 'C:\\tv shows\\the simpsons' : '/tv shows/the simpsons'}"</span> Additionally, each series must be in its own folder within the root/library folder.
+                      Point Whisparr to the folder containing all of your sites, not a specific one. eg. <span className={styles.code}>"{isWindows ? 'C:\\sites' : '/sites'}"</span> and not <span className={styles.code}>"{isWindows ? 'C:\\sites\\brazzers' : '/sites/brazzers'}"</span> Additionally, each site must be in its own folder within the root/library folder.
                     </li>
                     <li className={styles.tip}>
                       Do not use for importing downloads from your download client, this is only for existing organized libraries, not unsorted files.

@@ -165,7 +165,7 @@ class ImportSeriesFooter extends Component {
               isDisabled={!selectedCount || isLookingUpSeries}
               onPress={onImportPress}
             >
-              Import {selectedCount} Series
+              Import {selectedCount} Sites
             </SpinnerButton>
 
             {

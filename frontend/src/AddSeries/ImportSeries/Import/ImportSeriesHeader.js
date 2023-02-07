@@ -68,7 +68,7 @@ function ImportSeriesHeader(props) {
         className={styles.series}
         name="series"
       >
-        Series
+        Sites
       </VirtualTableHeaderCell>
     </VirtualTableHeader>
   );

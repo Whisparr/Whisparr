@@ -101,7 +101,7 @@ class AddNewSeries extends Component {
               className={styles.searchInput}
               name="seriesLookup"
               value={term}
-              placeholder="eg. Breaking Bad, tvdb:####"
+              placeholder="eg. Brazzers, tpdb:####"
               autoFocus={true}
               onChange={this.onSearchInputChange}
             />
@@ -152,7 +152,7 @@ class AddNewSeries extends Component {
             !isFetching && !error && !items.length && !!term &&
               <div className={styles.message}>
                 <div className={styles.noResults}>Couldn't find any results for '{term}'</div>
-                <div>You can also search using TVDB ID of a show. eg. tvdb:71663</div>
+                <div>You can also search using TPDB ID of a show. eg. tpdb:92</div>
                 <div>
                   <Link to="https://wiki.servarr.com/whisparr/faq#why-cant-i-add-a-new-series-when-i-know-the-tvdb-id">
                     Why can't I find my show?
@@ -166,9 +166,9 @@ class AddNewSeries extends Component {
               null :
               <div className={styles.message}>
                 <div className={styles.helpText}>
-                  It's easy to add a new series, just start typing the name the series you want to add.
+                  It's easy to add a new site, just start typing the name the site you want to add.
                 </div>
-                <div>You can also search using TVDB ID of a show. eg. tvdb:71663</div>
+                <div>You can also search using TPDB ID of a show. eg. tpdb:92</div>
               </div>
           }
 
@@ -176,14 +176,14 @@ class AddNewSeries extends Component {
             !term && !hasExistingSeries ?
               <div className={styles.message}>
                 <div className={styles.noSeriesText}>
-                  You haven't added any series yet, do you want to import some or all of your series first?
+                  You haven't added any sites yet, do you want to import some or all of your sites first?
                 </div>
                 <div>
                   <Button
                     to="/add/import"
                     kind={kinds.PRIMARY}
                   >
-                    Import Existing Series
+                    Import Existing Sites
                   </Button>
                 </div>
               </div> :

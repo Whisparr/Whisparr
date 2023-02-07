@@ -116,7 +116,7 @@ class ImportSeries extends Component {
             rootFoldersPopulated &&
             !unmappedFolders.length ?
               <div>
-                All series in {path} have been imported
+                All sites in {path} have been imported
               </div> :
               null
           }

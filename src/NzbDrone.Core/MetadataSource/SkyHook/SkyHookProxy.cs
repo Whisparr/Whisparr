@@ -84,7 +84,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             {
                 var lowerTitle = title.ToLowerInvariant();
 
-                if (lowerTitle.StartsWith("tvdb:") || lowerTitle.StartsWith("tvdbid:"))
+                if (lowerTitle.StartsWith("tpdb:") || lowerTitle.StartsWith("tpdbid:"))
                 {
                     var slug = lowerTitle.Split(':')[1].Trim();
 

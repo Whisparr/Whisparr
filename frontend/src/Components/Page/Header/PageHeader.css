@@ -5,6 +5,7 @@
   flex: 0 0 auto;
   height: $headerHeight;
   background-color: var(--pageHeaderBackgroundColor);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   color: var(--white);
 }
 

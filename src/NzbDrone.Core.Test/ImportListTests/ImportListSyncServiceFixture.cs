@@ -33,10 +33,6 @@ namespace NzbDrone.Core.Test.ImportListTests
                   .Setup(v => v.SearchForNewSeries(It.IsAny<string>()))
                   .Returns(new List<Series>());
 
-            Mocker.GetMock<ISearchForNewSeries>()
-                  .Setup(v => v.SearchForNewSeriesByImdbId(It.IsAny<string>()))
-                  .Returns(new List<Series>());
-
             Mocker.GetMock<IImportListFactory>()
                   .Setup(v => v.All())
                   .Returns(new List<ImportListDefinition> { new ImportListDefinition { ShouldMonitor = MonitorTypes.All } });

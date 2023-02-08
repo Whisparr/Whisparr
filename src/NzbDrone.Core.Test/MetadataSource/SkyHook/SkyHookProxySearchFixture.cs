@@ -42,18 +42,6 @@ namespace NzbDrone.Core.Test.MetadataSource.SkyHook
             ExceptionVerification.IgnoreWarns();
         }
 
-        [TestCase("4565se")]
-        public void should_not_search_by_imdb_if_invalid(string title)
-        {
-            var result = Subject.SearchForNewSeriesByImdbId(title);
-            result.Should().BeEmpty();
-
-            Mocker.GetMock<ISearchForNewSeries>()
-                  .Verify(v => v.SearchForNewSeries(It.IsAny<string>()), Times.Never());
-
-            ExceptionVerification.IgnoreWarns();
-        }
-
         [TestCase("tpdbid:")]
         [TestCase("tpdbid: 99999999999999999999")]
         [TestCase("tpdbid: 0")]

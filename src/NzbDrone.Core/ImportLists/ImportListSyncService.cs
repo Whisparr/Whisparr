@@ -80,19 +80,6 @@ namespace NzbDrone.Core.ImportLists
 
                 var importList = importLists.Single(x => x.Id == report.ImportListId);
 
-                // Map by IMDbId if we have it
-                if (report.TvdbId <= 0 && report.ImdbId.IsNotNullOrWhiteSpace())
-                {
-                    var mappedSeries = _seriesSearchService.SearchForNewSeriesByImdbId(report.ImdbId)
-                        .FirstOrDefault();
-
-                    if (mappedSeries != null)
-                    {
-                        report.TvdbId = mappedSeries.TvdbId;
-                        report.Title = mappedSeries?.Title;
-                    }
-                }
-
                 // Map TVDb if we only have a series name
                 if (report.TvdbId <= 0 && report.Title.IsNotNullOrWhiteSpace())
                 {

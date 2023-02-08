@@ -25,7 +25,6 @@ class SeriesEditorFooter extends Component {
     this.state = {
       monitored: NO_CHANGE,
       qualityProfileId: NO_CHANGE,
-      seasonFolder: NO_CHANGE,
       rootFolderPath: NO_CHANGE,
       savingTags: false,
       isDeleteSeriesModalOpen: false,
@@ -45,7 +44,6 @@ class SeriesEditorFooter extends Component {
       this.setState({
         monitored: NO_CHANGE,
         qualityProfileId: NO_CHANGE,
-        seasonFolder: NO_CHANGE,
         rootFolderPath: NO_CHANGE,
         savingTags: false
       });
@@ -71,9 +69,6 @@ class SeriesEditorFooter extends Component {
         break;
       case 'monitored':
         this.props.onSaveSelected({ [name]: value === 'monitored' });
-        break;
-      case 'seasonFolder':
-        this.props.onSaveSelected({ [name]: value === 'yes' });
         break;
       default:
         this.props.onSaveSelected({ [name]: value });
@@ -146,7 +141,6 @@ class SeriesEditorFooter extends Component {
     const {
       monitored,
       qualityProfileId,
-      seasonFolder,
       rootFolderPath,
       savingTags,
       isTagsModalOpen,
@@ -159,12 +153,6 @@ class SeriesEditorFooter extends Component {
       { key: NO_CHANGE, value: 'No Change', disabled: true },
       { key: 'monitored', value: 'Monitored' },
       { key: 'unmonitored', value: 'Unmonitored' }
-    ];
-
-    const seasonFolderOptions = [
-      { key: NO_CHANGE, value: 'No Change', disabled: true },
-      { key: 'yes', value: 'Yes' },
-      { key: 'no', value: 'No' }
     ];
 
     return (
@@ -210,28 +198,6 @@ class SeriesEditorFooter extends Component {
                     name="qualityProfileId"
                     value={qualityProfileId}
                     includeNoChange={true}
-                    isDisabled={!selectedCount}
-                    onChange={this.onInputChange}
-                  />
-                </div>
-              );
-            }
-
-            if (name === 'seasonFolder') {
-              return (
-                <div
-                  key={name}
-                  className={styles.inputContainer}
-                >
-                  <SeriesEditorFooterLabel
-                    label="Season Folder"
-                    isSaving={isSaving && seasonFolder !== NO_CHANGE}
-                  />
-
-                  <SelectInput
-                    name="seasonFolder"
-                    value={seasonFolder}
-                    values={seasonFolderOptions}
                     isDisabled={!selectedCount}
                     onChange={this.onInputChange}
                   />

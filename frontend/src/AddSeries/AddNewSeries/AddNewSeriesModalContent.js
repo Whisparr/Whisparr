@@ -43,7 +43,6 @@ class AddNewSeriesModalContent extends Component {
       rootFolderPath,
       monitor,
       qualityProfileId,
-      seasonFolder,
       searchForMissingEpisodes,
       searchForCutoffUnmetEpisodes,
       folder,
@@ -147,17 +146,6 @@ class AddNewSeriesModalContent extends Component {
                 </FormGroup>
 
                 <FormGroup>
-                  <FormLabel>Season Folder</FormLabel>
-
-                  <FormInputGroup
-                    type={inputTypes.CHECK}
-                    name="seasonFolder"
-                    onChange={onInputChange}
-                    {...seasonFolder}
-                  />
-                </FormGroup>
-
-                <FormGroup>
                   <FormLabel>Tags</FormLabel>
 
                   <FormInputGroup
@@ -227,7 +215,6 @@ AddNewSeriesModalContent.propTypes = {
   rootFolderPath: PropTypes.object,
   monitor: PropTypes.object.isRequired,
   qualityProfileId: PropTypes.object,
-  seasonFolder: PropTypes.object.isRequired,
   searchForMissingEpisodes: PropTypes.object.isRequired,
   searchForCutoffUnmetEpisodes: PropTypes.object.isRequired,
   folder: PropTypes.string.isRequired,

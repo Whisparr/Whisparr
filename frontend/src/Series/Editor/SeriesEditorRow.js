@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import CheckInput from 'Components/Form/CheckInput';
 import TableRowCell from 'Components/Table/Cells/TableRowCell';
 import TableSelectCell from 'Components/Table/Cells/TableSelectCell';
 import TableRow from 'Components/Table/TableRow';
@@ -8,17 +7,8 @@ import TagListConnector from 'Components/TagListConnector';
 import SeriesStatusCell from 'Series/Index/Table/SeriesStatusCell';
 import SeriesTitleLink from 'Series/SeriesTitleLink';
 import formatBytes from 'Utilities/Number/formatBytes';
-import styles from './SeriesEditorRow.css';
 
 class SeriesEditorRow extends Component {
-
-  //
-  // Listeners
-
-  onSeasonFolderChange = () => {
-    // Mock handler to satisfy `onChange` being required for `CheckInput`.
-    //
-  };
 
   //
   // Render
@@ -33,7 +23,6 @@ class SeriesEditorRow extends Component {
       qualityProfile,
       path,
       tags,
-      seasonFolder,
       statistics = {},
       columns,
       isSelected,
@@ -73,7 +62,6 @@ class SeriesEditorRow extends Component {
               return (
                 <TableRowCell
                   key={name}
-                  className={styles.title}
                 >
                   <SeriesTitleLink
 
@@ -88,22 +76,6 @@ class SeriesEditorRow extends Component {
               return (
                 <TableRowCell key={name}>
                   {qualityProfile.name}
-                </TableRowCell>
-              );
-            }
-
-            if (name === 'seasonFolder') {
-              return (
-                <TableRowCell
-                  key={name}
-                  className={styles.seasonFolder}
-                >
-                  <CheckInput
-                    name="seasonFolder"
-                    value={seasonFolder}
-                    isDisabled={true}
-                    onChange={this.onSeasonFolderChange}
-                  />
                 </TableRowCell>
               );
             }
@@ -149,7 +121,6 @@ SeriesEditorRow.propTypes = {
   title: PropTypes.string.isRequired,
   monitored: PropTypes.bool.isRequired,
   qualityProfile: PropTypes.object.isRequired,
-  seasonFolder: PropTypes.bool.isRequired,
   path: PropTypes.string.isRequired,
   statistics: PropTypes.object.isRequired,
   tags: PropTypes.arrayOf(PropTypes.number).isRequired,

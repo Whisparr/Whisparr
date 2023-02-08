@@ -6,7 +6,6 @@ namespace Whisparr.Api.V3.Config
     {
         public string SingleEpisodeExample { get; set; }
         public string SeriesFolderExample { get; set; }
-        public string SeasonFolderExample { get; set; }
     }
 
     public static class NamingConfigResourceMapper
@@ -22,7 +21,6 @@ namespace Whisparr.Api.V3.Config
                 MultiEpisodeStyle = model.MultiEpisodeStyle,
                 StandardEpisodeFormat = model.StandardEpisodeFormat,
                 SeriesFolderFormat = model.SeriesFolderFormat,
-                SeasonFolderFormat = model.SeasonFolderFormat
 
                 // IncludeSeriesTitle
                 // IncludeEpisodeTitle
@@ -53,8 +51,7 @@ namespace Whisparr.Api.V3.Config
                 ReplaceIllegalCharacters = resource.ReplaceIllegalCharacters,
                 MultiEpisodeStyle = resource.MultiEpisodeStyle,
                 StandardEpisodeFormat = resource.StandardEpisodeFormat,
-                SeriesFolderFormat = resource.SeriesFolderFormat,
-                SeasonFolderFormat = resource.SeasonFolderFormat
+                SeriesFolderFormat = resource.SeriesFolderFormat
             };
         }
     }

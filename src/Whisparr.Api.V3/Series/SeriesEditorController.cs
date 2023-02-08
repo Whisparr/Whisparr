@@ -39,11 +39,6 @@ namespace Whisparr.Api.V3.Series
                     series.QualityProfileId = resource.QualityProfileId.Value;
                 }
 
-                if (resource.SeasonFolder.HasValue)
-                {
-                    series.SeasonFolder = resource.SeasonFolder.Value;
-                }
-
                 if (resource.RootFolderPath.IsNotNullOrWhiteSpace())
                 {
                     series.RootFolderPath = resource.RootFolderPath;

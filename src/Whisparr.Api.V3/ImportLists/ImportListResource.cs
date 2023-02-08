@@ -10,7 +10,6 @@ namespace Whisparr.Api.V3.ImportLists
         public MonitorTypes ShouldMonitor { get; set; }
         public string RootFolderPath { get; set; }
         public int QualityProfileId { get; set; }
-        public bool SeasonFolder { get; set; }
         public ImportListType ListType { get; set; }
         public int ListOrder { get; set; }
         public TimeSpan MinRefreshInterval { get; set; }
@@ -31,7 +30,6 @@ namespace Whisparr.Api.V3.ImportLists
             resource.ShouldMonitor = definition.ShouldMonitor;
             resource.RootFolderPath = definition.RootFolderPath;
             resource.QualityProfileId = definition.QualityProfileId;
-            resource.SeasonFolder = definition.SeasonFolder;
             resource.ListType = definition.ListType;
             resource.ListOrder = (int)definition.ListType;
             resource.MinRefreshInterval = definition.MinRefreshInterval;
@@ -52,7 +50,6 @@ namespace Whisparr.Api.V3.ImportLists
             definition.ShouldMonitor = resource.ShouldMonitor;
             definition.RootFolderPath = resource.RootFolderPath;
             definition.QualityProfileId = resource.QualityProfileId;
-            definition.SeasonFolder = resource.SeasonFolder;
             definition.ListType = resource.ListType;
             definition.MinRefreshInterval = resource.MinRefreshInterval;
 

@@ -49,16 +49,6 @@ class Naming extends Component {
     });
   };
 
-  onSeasonFolderNamingModalOpenClick = () => {
-    this.setState({
-      isNamingModalOpen: true,
-      namingModalOptions: {
-        name: 'seasonFolderFormat',
-        season: true
-      }
-    });
-  };
-
   onNamingModalClose = () => {
     this.setState({ isNamingModalOpen: false });
   };
@@ -98,8 +88,6 @@ class Naming extends Component {
     const standardEpisodeFormatErrors = [];
     const seriesFolderFormatHelpTexts = [];
     const seriesFolderFormatErrors = [];
-    const seasonFolderFormatHelpTexts = [];
-    const seasonFolderFormatErrors = [];
 
     if (examplesPopulated) {
       if (examples.singleEpisodeExample) {
@@ -112,12 +100,6 @@ class Naming extends Component {
         seriesFolderFormatHelpTexts.push(`Example: ${examples.seriesFolderExample}`);
       } else {
         seriesFolderFormatErrors.push({ message: 'Invalid Format' });
-      }
-
-      if (examples.seasonFolderExample) {
-        seasonFolderFormatHelpTexts.push(`Example: ${examples.seasonFolderExample}`);
-      } else {
-        seasonFolderFormatErrors.push({ message: 'Invalid Format' });
       }
     }
 
@@ -195,21 +177,6 @@ class Naming extends Component {
                   {...settings.seriesFolderFormat}
                   helpTexts={['Used when adding a new site or moving sites via the site editor', ...seriesFolderFormatHelpTexts]}
                   errors={[...seriesFolderFormatErrors, ...settings.seriesFolderFormat.errors]}
-                />
-              </FormGroup>
-
-              <FormGroup>
-                <FormLabel>Season Folder Format</FormLabel>
-
-                <FormInputGroup
-                  inputClassName={styles.namingInput}
-                  type={inputTypes.TEXT}
-                  name="seasonFolderFormat"
-                  buttons={<FormInputButton onPress={this.onSeasonFolderNamingModalOpenClick}>?</FormInputButton>}
-                  onChange={onInputChange}
-                  {...settings.seasonFolderFormat}
-                  helpTexts={seasonFolderFormatHelpTexts}
-                  errors={[...seasonFolderFormatErrors, ...settings.seasonFolderFormat.errors]}
                 />
               </FormGroup>
 

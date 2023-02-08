@@ -13,7 +13,6 @@ function ImportSeriesRow(props) {
     relativePath,
     monitor,
     qualityProfileId,
-    seasonFolder,
     selectedSeries,
     isExistingSeries,
     isSelected,
@@ -53,15 +52,6 @@ function ImportSeriesRow(props) {
         />
       </VirtualTableRowCell>
 
-      <VirtualTableRowCell className={styles.seasonFolder}>
-        <FormInputGroup
-          type={inputTypes.CHECK}
-          name="seasonFolder"
-          value={seasonFolder}
-          onChange={onInputChange}
-        />
-      </VirtualTableRowCell>
-
       <VirtualTableRowCell className={styles.series}>
         <ImportSeriesSelectSeriesConnector
           id={id}
@@ -78,7 +68,6 @@ ImportSeriesRow.propTypes = {
   relativePath: PropTypes.string.isRequired,
   monitor: PropTypes.string.isRequired,
   qualityProfileId: PropTypes.number.isRequired,
-  seasonFolder: PropTypes.bool.isRequired,
   selectedSeries: PropTypes.object,
   isExistingSeries: PropTypes.bool.isRequired,
   items: PropTypes.arrayOf(PropTypes.object).isRequired,

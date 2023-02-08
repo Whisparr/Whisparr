@@ -54,12 +54,6 @@ export const defaultState = {
       isVisible: true
     },
     {
-      name: 'seasonFolder',
-      label: 'Season Folder',
-      isSortable: true,
-      isVisible: true
-    },
-    {
       name: 'path',
       label: 'Path',
       isSortable: true,

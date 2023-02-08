@@ -71,16 +71,6 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
         [TestCase("Con Game", "Con_Game")]
         [TestCase("Com1 Sat", "Com1_Sat")]
-        public void should_replace_reserved_device_name_in_season_folder(string title, string expected)
-        {
-            _series.Title = title;
-            _namingConfig.SeasonFolderFormat = "{Site.Title} - Season {Season:00}";
-
-            Subject.GetSeasonFolder(_series, 1).Should().Be($"{expected} - Season 01");
-        }
-
-        [TestCase("Con Game", "Con_Game")]
-        [TestCase("Com1 Sat", "Com1_Sat")]
         public void should_replace_reserved_device_name_in_file_name(string title, string expected)
         {
             _series.Title = title;

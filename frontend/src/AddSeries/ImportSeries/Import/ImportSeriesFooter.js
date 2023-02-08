@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import CheckInput from 'Components/Form/CheckInput';
 import FormInputGroup from 'Components/Form/FormInputGroup';
 import Icon from 'Components/Icon';
 import Button from 'Components/Link/Button';
@@ -24,14 +23,12 @@ class ImportSeriesFooter extends Component {
 
     const {
       defaultMonitor,
-      defaultQualityProfileId,
-      defaultSeasonFolder
+      defaultQualityProfileId
     } = props;
 
     this.state = {
       monitor: defaultMonitor,
-      qualityProfileId: defaultQualityProfileId,
-      seasonFolder: defaultSeasonFolder
+      qualityProfileId: defaultQualityProfileId
     };
   }
 
@@ -39,16 +36,13 @@ class ImportSeriesFooter extends Component {
     const {
       defaultMonitor,
       defaultQualityProfileId,
-      defaultSeasonFolder,
       isMonitorMixed,
-      isQualityProfileIdMixed,
-      isSeasonFolderMixed
+      isQualityProfileIdMixed
     } = this.props;
 
     const {
       monitor,
-      qualityProfileId,
-      seasonFolder
+      qualityProfileId
     } = this.state;
 
     const newState = {};
@@ -63,12 +57,6 @@ class ImportSeriesFooter extends Component {
       newState.qualityProfileId = MIXED;
     } else if (!isQualityProfileIdMixed && qualityProfileId !== defaultQualityProfileId) {
       newState.qualityProfileId = defaultQualityProfileId;
-    }
-
-    if (isSeasonFolderMixed && seasonFolder != null) {
-      newState.seasonFolder = null;
-    } else if (!isSeasonFolderMixed && seasonFolder !== defaultSeasonFolder) {
-      newState.seasonFolder = defaultSeasonFolder;
     }
 
     if (!_.isEmpty(newState)) {
@@ -103,8 +91,7 @@ class ImportSeriesFooter extends Component {
 
     const {
       monitor,
-      qualityProfileId,
-      seasonFolder
+      qualityProfileId
     } = this.state;
 
     return (
@@ -135,19 +122,6 @@ class ImportSeriesFooter extends Component {
             value={qualityProfileId}
             isDisabled={!selectedCount}
             includeMixed={isQualityProfileIdMixed}
-            onChange={this.onInputChange}
-          />
-        </div>
-
-        <div className={styles.inputContainer}>
-          <div className={styles.label}>
-            Season Folder
-          </div>
-
-          <CheckInput
-            name="seasonFolder"
-            value={seasonFolder}
-            isDisabled={!selectedCount}
             onChange={this.onInputChange}
           />
         </div>
@@ -254,10 +228,8 @@ ImportSeriesFooter.propTypes = {
   isLookingUpSeries: PropTypes.bool.isRequired,
   defaultMonitor: PropTypes.string.isRequired,
   defaultQualityProfileId: PropTypes.number,
-  defaultSeasonFolder: PropTypes.bool.isRequired,
   isMonitorMixed: PropTypes.bool.isRequired,
   isQualityProfileIdMixed: PropTypes.bool.isRequired,
-  isSeasonFolderMixed: PropTypes.bool.isRequired,
   hasUnsearchedItems: PropTypes.bool.isRequired,
   importError: PropTypes.object,
   onInputChange: PropTypes.func.isRequired,

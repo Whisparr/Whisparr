@@ -16,15 +16,13 @@ class ImportSeriesTable extends Component {
       unmappedFolders,
       defaultMonitor,
       defaultQualityProfileId,
-      defaultSeasonFolder,
       onSeriesLookup,
       onSetImportSeriesValue
     } = this.props;
 
     const values = {
       monitor: defaultMonitor,
-      qualityProfileId: defaultQualityProfileId,
-      seasonFolder: defaultSeasonFolder
+      qualityProfileId: defaultQualityProfileId
     };
 
     unmappedFolders.forEach((unmappedFolder) => {
@@ -168,7 +166,6 @@ ImportSeriesTable.propTypes = {
   unmappedFolders: PropTypes.arrayOf(PropTypes.object),
   defaultMonitor: PropTypes.string.isRequired,
   defaultQualityProfileId: PropTypes.number,
-  defaultSeasonFolder: PropTypes.bool.isRequired,
   allSelected: PropTypes.bool.isRequired,
   allUnselected: PropTypes.bool.isRequired,
   selectedState: PropTypes.object.isRequired,

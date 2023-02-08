@@ -58,13 +58,6 @@ function ImportSeriesHeader(props) {
       </VirtualTableHeaderCell>
 
       <VirtualTableHeaderCell
-        className={styles.seasonFolder}
-        name="seasonFolder"
-      >
-        Season Folder
-      </VirtualTableHeaderCell>
-
-      <VirtualTableHeaderCell
         className={styles.series}
         name="series"
       >

@@ -26,7 +26,6 @@ namespace NzbDrone.Core.Tv
         public string Overview { get; set; }
         public bool Monitored { get; set; }
         public int QualityProfileId { get; set; }
-        public bool SeasonFolder { get; set; }
         public DateTime? LastInfoSync { get; set; }
         public int Runtime { get; set; }
         public List<MediaCover.MediaCover> Images { get; set; }
@@ -61,7 +60,6 @@ namespace NzbDrone.Core.Tv
             Path = otherSeries.Path;
             QualityProfileId = otherSeries.QualityProfileId;
 
-            SeasonFolder = otherSeries.SeasonFolder;
             Monitored = otherSeries.Monitored;
 
             RootFolderPath = otherSeries.RootFolderPath;

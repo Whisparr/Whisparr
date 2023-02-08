@@ -11,7 +11,6 @@ namespace NzbDrone.Core.Organizer
     {
         SampleResult GetStandardSample(NamingConfig nameSpec);
         string GetSeriesFolderSample(NamingConfig nameSpec);
-        string GetSeasonFolderSample(NamingConfig nameSpec);
     }
 
     public class FileNameSampleService : IFilenameSampleService
@@ -129,11 +128,6 @@ namespace NzbDrone.Core.Organizer
         public string GetSeriesFolderSample(NamingConfig nameSpec)
         {
             return _buildFileNames.GetSeriesFolder(_standardSeries, nameSpec);
-        }
-
-        public string GetSeasonFolderSample(NamingConfig nameSpec)
-        {
-            return _buildFileNames.GetSeasonFolder(_standardSeries, _episode1.SeasonNumber, nameSpec);
         }
 
         private string BuildSample(List<Episode> episodes, Series series, EpisodeFile episodeFile, NamingConfig nameSpec, List<CustomFormat> customFormats)

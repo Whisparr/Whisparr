@@ -32,7 +32,6 @@ namespace Whisparr.Api.V3.Config
             SharedValidator.RuleFor(c => c.MultiEpisodeStyle).InclusiveBetween(0, 5);
             SharedValidator.RuleFor(c => c.StandardEpisodeFormat).ValidEpisodeFormat();
             SharedValidator.RuleFor(c => c.SeriesFolderFormat).ValidSeriesFolderFormat();
-            SharedValidator.RuleFor(c => c.SeasonFolderFormat).ValidSeasonFolderFormat();
         }
 
         protected override NamingConfigResource GetResourceById(int id)
@@ -86,10 +85,6 @@ namespace Whisparr.Api.V3.Config
             sampleResource.SeriesFolderExample = nameSpec.SeriesFolderFormat.IsNullOrWhiteSpace()
                 ? null
                 : _filenameSampleService.GetSeriesFolderSample(nameSpec);
-
-            sampleResource.SeasonFolderExample = nameSpec.SeasonFolderFormat.IsNullOrWhiteSpace()
-                ? null
-                : _filenameSampleService.GetSeasonFolderSample(nameSpec);
 
             return sampleResource;
         }

@@ -18,8 +18,7 @@ function createMapStateToProps() {
     (addSeries, importSeries, selectedIds) => {
       const {
         monitor: defaultMonitor,
-        qualityProfileId: defaultQualityProfileId,
-        seasonFolder: defaultSeasonFolder
+        qualityProfileId: defaultQualityProfileId
       } = addSeries.defaults;
 
       const {
@@ -31,7 +30,6 @@ function createMapStateToProps() {
 
       const isMonitorMixed = isMixed(items, selectedIds, defaultMonitor, 'monitor');
       const isQualityProfileIdMixed = isMixed(items, selectedIds, defaultQualityProfileId, 'qualityProfileId');
-      const isSeasonFolderMixed = isMixed(items, selectedIds, defaultSeasonFolder, 'seasonFolder');
       const hasUnsearchedItems = !isLookingUpSeries && items.some((item) => !item.isPopulated);
 
       return {
@@ -40,10 +38,8 @@ function createMapStateToProps() {
         isImporting,
         defaultMonitor,
         defaultQualityProfileId,
-        defaultSeasonFolder,
         isMonitorMixed,
         isQualityProfileIdMixed,
-        isSeasonFolderMixed,
         importError,
         hasUnsearchedItems
       };

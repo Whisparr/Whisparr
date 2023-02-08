@@ -108,7 +108,6 @@ export default {
       return selectProviderSchema(state, section, payload, (selectedSchema) => {
         selectedSchema.enableAutomaticAdd = true;
         selectedSchema.shouldMonitor = 'all';
-        selectedSchema.seasonFolder = true;
 
         return selectedSchema;
       });

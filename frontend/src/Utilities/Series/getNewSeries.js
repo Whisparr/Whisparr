@@ -4,7 +4,6 @@ function getNewSeries(series, payload) {
     rootFolderPath,
     monitor,
     qualityProfileId,
-    seasonFolder,
     tags,
     searchForMissingEpisodes = false,
     searchForCutoffUnmetEpisodes = false
@@ -20,7 +19,6 @@ function getNewSeries(series, payload) {
   series.monitored = true;
   series.qualityProfileId = qualityProfileId;
   series.rootFolderPath = rootFolderPath;
-  series.seasonFolder = seasonFolder;
   series.tags = tags;
 
   return series;

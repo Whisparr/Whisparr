@@ -47,7 +47,6 @@ function EditImportListModalContent(props) {
     shouldMonitor,
     rootFolderPath,
     qualityProfileId,
-    seasonFolder,
     tags,
     fields
   } = item;
@@ -152,17 +151,6 @@ function EditImportListModalContent(props) {
                   helpText={'Quality Profile list items will be added with'}
                   {...qualityProfileId}
                   onChange={onInputChange}
-                />
-              </FormGroup>
-
-              <FormGroup>
-                <FormLabel>Season Folder</FormLabel>
-
-                <FormInputGroup
-                  type={inputTypes.CHECK}
-                  name="seasonFolder"
-                  onChange={onInputChange}
-                  {...seasonFolder}
                 />
               </FormGroup>
 

@@ -122,13 +122,6 @@ namespace NzbDrone.Core.MediaFiles
             try
             {
                 _mediaFileAttributeService.SetFolderLastWriteTime(series.Path, episodeFile.DateAdded);
-
-                if (series.SeasonFolder)
-                {
-                    var seasonFolder = Path.GetDirectoryName(destinationFilePath);
-
-                    _mediaFileAttributeService.SetFolderLastWriteTime(seasonFolder, episodeFile.DateAdded);
-                }
             }
             catch (Exception ex)
             {
@@ -148,7 +141,6 @@ namespace NzbDrone.Core.MediaFiles
         private void EnsureEpisodeFolder(EpisodeFile episodeFile, Series series, int seasonNumber, string filePath)
         {
             var episodeFolder = Path.GetDirectoryName(filePath);
-            var seasonFolder = _buildFileNames.BuildSeasonPath(series, seasonNumber);
             var seriesFolder = series.Path;
             var rootFolder = new OsPath(seriesFolder).Directory.FullPath;
 
@@ -167,14 +159,7 @@ namespace NzbDrone.Core.MediaFiles
                 changed = true;
             }
 
-            if (seriesFolder != seasonFolder && !_diskProvider.FolderExists(seasonFolder))
-            {
-                CreateFolder(seasonFolder);
-                newEvent.SeasonFolder = seasonFolder;
-                changed = true;
-            }
-
-            if (seasonFolder != episodeFolder && !_diskProvider.FolderExists(episodeFolder))
+            if (seriesFolder != episodeFolder && !_diskProvider.FolderExists(episodeFolder))
             {
                 CreateFolder(episodeFolder);
                 newEvent.EpisodeFolder = episodeFolder;

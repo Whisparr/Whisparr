@@ -9,7 +9,6 @@ namespace NzbDrone.Core.ImportLists
         public bool EnableAutomaticAdd { get; set; }
         public MonitorTypes ShouldMonitor { get; set; }
         public int QualityProfileId { get; set; }
-        public bool SeasonFolder { get; set; }
         public string RootFolderPath { get; set; }
 
         public override bool Enable => EnableAutomaticAdd;

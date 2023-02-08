@@ -25,7 +25,6 @@ namespace NzbDrone.Core.Test.TvTests.SeriesServiceTests
                 .All()
                 .With(s => s.QualityProfileId = 1)
                 .With(s => s.Monitored)
-                .With(s => s.SeasonFolder)
                 .With(s => s.Path = @"C:\Test\name".AsOsAgnostic())
                 .With(s => s.RootFolderPath = "")
                 .Build().ToList();

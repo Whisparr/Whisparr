@@ -40,7 +40,6 @@ namespace Whisparr.Api.V3.Series
         public int QualityProfileId { get; set; }
 
         // Editing Only
-        public bool SeasonFolder { get; set; }
         public bool Monitored { get; set; }
 
         public bool UseSceneNumbering { get; set; }
@@ -100,7 +99,6 @@ namespace Whisparr.Api.V3.Series
                        Path = model.Path,
                        QualityProfileId = model.QualityProfileId,
 
-                       SeasonFolder = model.SeasonFolder,
                        Monitored = model.Monitored,
 
                        UseSceneNumbering = model.UseSceneNumbering,
@@ -157,7 +155,6 @@ namespace Whisparr.Api.V3.Series
                        Path = resource.Path,
                        QualityProfileId = resource.QualityProfileId,
 
-                       SeasonFolder = resource.SeasonFolder,
                        Monitored = resource.Monitored,
 
                        UseSceneNumbering = resource.UseSceneNumbering,

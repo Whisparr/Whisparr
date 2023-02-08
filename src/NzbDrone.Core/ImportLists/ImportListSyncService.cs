@@ -122,7 +122,6 @@ namespace NzbDrone.Core.ImportLists
                         Monitored = monitored,
                         RootFolderPath = importList.RootFolderPath,
                         QualityProfileId = importList.QualityProfileId,
-                        SeasonFolder = importList.SeasonFolder,
                         Tags = importList.Tags,
                         AddOptions = new AddSeriesOptions
                                      {

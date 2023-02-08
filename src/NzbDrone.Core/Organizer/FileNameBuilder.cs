@@ -22,10 +22,8 @@ namespace NzbDrone.Core.Organizer
     {
         string BuildFileName(List<Episode> episodes, Series series, EpisodeFile episodeFile, string extension = "", NamingConfig namingConfig = null, List<CustomFormat> customFormats = null);
         string BuildFilePath(List<Episode> episodes, Series series, EpisodeFile episodeFile, string extension, NamingConfig namingConfig = null, List<CustomFormat> customFormats = null);
-        string BuildSeasonPath(Series series, int seasonNumber);
         BasicNamingConfig GetBasicNamingConfig(NamingConfig nameSpec);
         string GetSeriesFolder(Series series, NamingConfig namingConfig = null);
-        string GetSeasonFolder(Series series, int seasonNumber, NamingConfig namingConfig = null);
         bool RequiresEpisodeTitle(Series series, List<Episode> episodes);
     }
 
@@ -194,27 +192,11 @@ namespace NzbDrone.Core.Organizer
         {
             Ensure.That(extension, () => extension).IsNotNullOrWhiteSpace();
 
-            var seasonPath = BuildSeasonPath(series, episodes.First().SeasonNumber);
+            var seasonPath = series.Path;
             var remainingPathLength = LongPathSupport.MaxFilePathLength - seasonPath.GetByteCount() - 1;
             var fileName = BuildFileName(episodes, series, episodeFile, extension, remainingPathLength, namingConfig, customFormats);
 
             return Path.Combine(seasonPath, fileName);
-        }
-
-        public string BuildSeasonPath(Series series, int seasonNumber)
-        {
-            var path = series.Path;
-
-            if (series.SeasonFolder)
-            {
-                var seasonFolder = GetSeasonFolder(series, seasonNumber);
-
-                seasonFolder = CleanFileName(seasonFolder);
-
-                path = Path.Combine(path, seasonFolder);
-            }
-
-            return path;
         }
 
         public BasicNamingConfig GetBasicNamingConfig(NamingConfig nameSpec)
@@ -276,28 +258,6 @@ namespace NzbDrone.Core.Organizer
             AddIdTokens(tokenHandlers, series);
 
             var folderName = ReplaceTokens(namingConfig.SeriesFolderFormat, tokenHandlers, namingConfig);
-
-            folderName = CleanFolderName(folderName);
-            folderName = ReplaceReservedDeviceNames(folderName);
-
-            return folderName;
-        }
-
-        public string GetSeasonFolder(Series series, int seasonNumber, NamingConfig namingConfig = null)
-        {
-            if (namingConfig == null)
-            {
-                namingConfig = _namingConfigService.GetConfig();
-            }
-
-            var tokenHandlers = new Dictionary<string, Func<TokenMatch, string>>(FileNameBuilderTokenEqualityComparer.Instance);
-
-            AddSeriesTokens(tokenHandlers, series);
-            AddIdTokens(tokenHandlers, series);
-            AddSeasonTokens(tokenHandlers, seasonNumber);
-
-            var format = namingConfig.SeasonFolderFormat;
-            var folderName = ReplaceTokens(format, tokenHandlers, namingConfig);
 
             folderName = CleanFolderName(folderName);
             folderName = ReplaceReservedDeviceNames(folderName);

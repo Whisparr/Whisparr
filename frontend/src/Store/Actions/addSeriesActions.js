@@ -33,7 +33,6 @@ export const defaultState = {
     rootFolderPath: '',
     monitor: monitorOptions[0].key,
     qualityProfileId: 0,
-    seasonFolder: true,
     searchForMissingEpisodes: false,
     searchForCutoffUnmetEpisodes: false,
     tags: []

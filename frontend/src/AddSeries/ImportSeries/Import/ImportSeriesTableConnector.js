@@ -14,7 +14,6 @@ function createMapStateToProps() {
       return {
         defaultMonitor: addSeries.defaults.monitor,
         defaultQualityProfileId: addSeries.defaults.qualityProfileId,
-        defaultSeasonFolder: addSeries.defaults.seasonFolder,
         items: importSeries.items,
         isSmallScreen: dimensions.isSmallScreen,
         allSeries

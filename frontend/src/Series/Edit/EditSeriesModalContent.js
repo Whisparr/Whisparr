@@ -68,7 +68,6 @@ class EditSeriesModalContent extends Component {
 
     const {
       monitored,
-      seasonFolder,
       qualityProfileId,
       path,
       tags
@@ -90,18 +89,6 @@ class EditSeriesModalContent extends Component {
                 name="monitored"
                 helpText="Download monitored episodes in this series"
                 {...monitored}
-                onChange={onInputChange}
-              />
-            </FormGroup>
-
-            <FormGroup>
-              <FormLabel>Use Season Folder</FormLabel>
-
-              <FormInputGroup
-                type={inputTypes.CHECK}
-                name="seasonFolder"
-                helpText="Sort episodes into season folders"
-                {...seasonFolder}
                 onChange={onInputChange}
               />
             </FormGroup>

@@ -16,7 +16,6 @@ function createImportSeriesItemSelector() {
       return {
         defaultMonitor: addSeries.defaults.monitor,
         defaultQualityProfileId: addSeries.defaults.qualityProfileId,
-        defaultSeasonFolder: addSeries.defaults.seasonFolder,
         ...item,
         isExistingSeries
       };

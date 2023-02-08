@@ -57,11 +57,10 @@ class ImportSeriesRowConnector extends Component {
 
     const {
       items,
-      monitor,
-      seasonFolder
+      monitor
     } = this.props;
 
-    if (!items || !monitor || !seasonFolder == null) {
+    if (!items || !monitor) {
       return null;
     }
 
@@ -79,7 +78,6 @@ ImportSeriesRowConnector.propTypes = {
   rootFolderId: PropTypes.number.isRequired,
   id: PropTypes.string.isRequired,
   monitor: PropTypes.string,
-  seasonFolder: PropTypes.bool,
   items: PropTypes.arrayOf(PropTypes.object),
   setImportSeriesValue: PropTypes.func.isRequired
 };

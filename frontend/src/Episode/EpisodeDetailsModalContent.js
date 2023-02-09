@@ -55,6 +55,7 @@ class EpisodeDetailsModalContent extends Component {
       titleSlug,
       seriesMonitored,
       episodeTitle,
+      actors,
       airDate,
       monitored,
       isSaving,
@@ -65,6 +66,7 @@ class EpisodeDetailsModalContent extends Component {
     } = this.props;
 
     const seriesLink = `/site/${titleSlug}`;
+    const joinedPerformers = actors.map((a) => a.character).slice(0, 4).join(', ');
 
     return (
       <ModalContent
@@ -94,6 +96,11 @@ class EpisodeDetailsModalContent extends Component {
           <span className={styles.separator}>-</span>
 
           {episodeTitle}
+
+          <span className={styles.separator}>-</span>
+
+          {joinedPerformers}
+
         </ModalHeader>
 
         <ModalBody>
@@ -188,6 +195,8 @@ EpisodeDetailsModalContent.propTypes = {
   seriesTitle: PropTypes.string.isRequired,
   titleSlug: PropTypes.string.isRequired,
   seriesMonitored: PropTypes.bool.isRequired,
+  actors: PropTypes.arrayOf(PropTypes.object),
+  joinedPerformers: PropTypes.string,
   airDate: PropTypes.string.isRequired,
   episodeTitle: PropTypes.string.isRequired,
   monitored: PropTypes.bool.isRequired,
@@ -203,7 +212,8 @@ EpisodeDetailsModalContent.propTypes = {
 EpisodeDetailsModalContent.defaultProps = {
   selectedTab: 'details',
   episodeEntity: episodeEntities.EPISODES,
-  startInteractiveSearch: false
+  startInteractiveSearch: false,
+  actors: []
 };
 
 export default EpisodeDetailsModalContent;

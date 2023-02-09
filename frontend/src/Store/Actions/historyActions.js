@@ -43,12 +43,17 @@ export const defaultState = {
     },
     {
       name: 'episode',
-      label: 'Episode',
+      label: 'Release Date',
       isVisible: true
     },
     {
       name: 'episodes.title',
       label: 'Scene Title',
+      isVisible: true
+    },
+    {
+      name: 'actors',
+      label: 'Performers',
       isVisible: true
     },
     {

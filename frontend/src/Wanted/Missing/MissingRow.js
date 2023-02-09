@@ -24,6 +24,7 @@ function MissingRow(props) {
     sceneEpisodeNumber,
     sceneAbsoluteEpisodeNumber,
     unverifiedSceneNumbering,
+    actors,
     airDateUtc,
     title,
     isSelected,
@@ -99,6 +100,21 @@ function MissingRow(props) {
             );
           }
 
+          if (name === 'actors') {
+            const joinedPerformers = actors.map((a) => a.character).slice(0, 4).join(', ');
+
+            return (
+              <TableRowCell
+                key={name}
+                className={styles.actors}
+              >
+                <span title={joinedPerformers}>
+                  {joinedPerformers}
+                </span>
+              </TableRowCell>
+            );
+          }
+
           if (name === 'episodes.airDateUtc') {
             return (
               <RelativeDateCellConnector
@@ -153,12 +169,18 @@ MissingRow.propTypes = {
   sceneSeasonNumber: PropTypes.number,
   sceneEpisodeNumber: PropTypes.number,
   sceneAbsoluteEpisodeNumber: PropTypes.number,
+  actors: PropTypes.arrayOf(PropTypes.object),
+  joinedPerformers: PropTypes.string,
   unverifiedSceneNumbering: PropTypes.bool.isRequired,
   airDateUtc: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   isSelected: PropTypes.bool,
   columns: PropTypes.arrayOf(PropTypes.object).isRequired,
   onSelectedChange: PropTypes.func.isRequired
+};
+
+MissingRow.defaultProps = {
+  actors: []
 };
 
 export default MissingRow;

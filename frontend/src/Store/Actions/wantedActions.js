@@ -39,6 +39,11 @@ export const defaultState = {
         isVisible: true
       },
       {
+        name: 'actors',
+        label: 'Performers',
+        isVisible: true
+      },
+      {
         name: 'episodes.airDateUtc',
         label: 'Release Date',
         isSortable: true,
@@ -103,6 +108,11 @@ export const defaultState = {
       {
         name: 'episodes.title',
         label: 'Episode Title',
+        isVisible: true
+      },
+      {
+        name: 'actors',
+        label: 'Performers',
         isVisible: true
       },
       {

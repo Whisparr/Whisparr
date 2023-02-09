@@ -27,3 +27,9 @@
 
   width: 30px;
 }
+
+.actors {
+  composes: cell from '~Components/Table/Cells/TableRowCell.css';
+
+  width: 400px;
+}

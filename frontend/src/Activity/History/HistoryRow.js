@@ -117,13 +117,7 @@ class HistoryRow extends Component {
               return (
                 <TableRowCell key={name}>
                   <SeasonEpisodeNumber
-                    seasonNumber={episode.seasonNumber}
-                    episodeNumber={episode.episodeNumber}
-                    absoluteEpisodeNumber={episode.absoluteEpisodeNumber}
-                    alternateTitles={series.alternateTitles}
-                    sceneSeasonNumber={episode.sceneSeasonNumber}
-                    sceneEpisodeNumber={episode.sceneEpisodeNumber}
-                    sceneAbsoluteEpisodeNumber={episode.sceneAbsoluteEpisodeNumber}
+                    episodeNumber={episode.airDate}
                   />
                 </TableRowCell>
               );
@@ -139,6 +133,21 @@ class HistoryRow extends Component {
                     episodeTitle={episode.title}
                     showOpenSeriesButton={true}
                   />
+                </TableRowCell>
+              );
+            }
+
+            if (name === 'actors') {
+              const joinedPerformers = episode.actors.map((a) => a.character).slice(0, 4).join(', ');
+
+              return (
+                <TableRowCell
+                  key={name}
+                  className={styles.actors}
+                >
+                  <span title={joinedPerformers}>
+                    {joinedPerformers}
+                  </span>
                 </TableRowCell>
               );
             }
@@ -281,6 +290,7 @@ HistoryRow.propTypes = {
   qualityCutoffNotMet: PropTypes.bool.isRequired,
   eventType: PropTypes.string.isRequired,
   sourceTitle: PropTypes.string.isRequired,
+  joinedPerformers: PropTypes.string,
   date: PropTypes.string.isRequired,
   data: PropTypes.object.isRequired,
   isMarkingAsFailed: PropTypes.bool,

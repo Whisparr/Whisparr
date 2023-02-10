@@ -180,7 +180,6 @@ CutoffUnmetRow.propTypes = {
   sceneEpisodeNumber: PropTypes.number,
   sceneAbsoluteEpisodeNumber: PropTypes.number,
   actors: PropTypes.arrayOf(PropTypes.object),
-  joinedPerformers: PropTypes.string,
   unverifiedSceneNumbering: PropTypes.bool.isRequired,
   airDateUtc: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,

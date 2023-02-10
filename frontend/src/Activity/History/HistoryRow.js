@@ -290,7 +290,6 @@ HistoryRow.propTypes = {
   qualityCutoffNotMet: PropTypes.bool.isRequired,
   eventType: PropTypes.string.isRequired,
   sourceTitle: PropTypes.string.isRequired,
-  joinedPerformers: PropTypes.string,
   date: PropTypes.string.isRequired,
   data: PropTypes.object.isRequired,
   isMarkingAsFailed: PropTypes.bool,

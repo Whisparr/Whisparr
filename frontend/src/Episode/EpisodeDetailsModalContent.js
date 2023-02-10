@@ -196,7 +196,6 @@ EpisodeDetailsModalContent.propTypes = {
   titleSlug: PropTypes.string.isRequired,
   seriesMonitored: PropTypes.bool.isRequired,
   actors: PropTypes.arrayOf(PropTypes.object),
-  joinedPerformers: PropTypes.string,
   airDate: PropTypes.string.isRequired,
   episodeTitle: PropTypes.string.isRequired,
   monitored: PropTypes.bool.isRequired,

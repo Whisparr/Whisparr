@@ -40,10 +40,6 @@ namespace NzbDrone.Core.Parser
 
         private static readonly Regex[] ReportTitleRegex = new[]
             {
-                // Episodes with airdate (18.04.28) and performer/title followed by XXX
-                new Regex(@"^(?<title>.+?)?[-_. ]+(?<airyear>\d{2}|\d{4})[-_. ]+(?<airmonth>[0-1][0-9])[-_. ]+(?<airday>[0-3][0-9])(?![-_. ]+[0-3][0-9])\W*(?<episodeString>.+?)\W*(XXX)",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
                 // Episodes with airdate (18.04.28)
                 new Regex(@"^(?<title>.+?)?[-_. ]+(?<airyear>\d{2}|\d{4})[-_. ]+(?<airmonth>[0-1][0-9])[-_. ]+(?<airday>[0-3][0-9])(?![-_. ]+[0-3][0-9])",
                     RegexOptions.IgnoreCase | RegexOptions.Compiled),
@@ -59,10 +55,7 @@ namespace NzbDrone.Core.Parser
 
         private static readonly Regex[] SpecialEpisodeTitleRegex = new Regex[]
             {
-                new Regex(@"\.S\d+E00\.(?<episodetitle>.+?)(?:\.(?:720p|1080p|2160p|HDTV|WEB|WEBRip|WEB-DL)\.|$)",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                new Regex(@"\.S\d+\.Special\.(?<episodetitle>.+?)(?:\.(?:720p|1080p|2160p|HDTV|WEB|WEBRip|WEB-DL)\.|$)",
+                new Regex(@"(?<episodetitle>.+?)(?:\[.*(?:720p|1080p|2160p|HDTV|WEB|WEBRip|WEB-?DL).*\]|XXX|$)",
                           RegexOptions.IgnoreCase | RegexOptions.Compiled)
             };
 
@@ -545,9 +538,6 @@ namespace NzbDrone.Core.Parser
             var seriesName = matchCollection[0].Groups["title"].Value.Replace('.', ' ').Replace('_', ' ');
             seriesName = RequestInfoRegex.Replace(seriesName, "").Trim(' ');
 
-            var episodeString = matchCollection[0].Groups["episodeString"].Value.Replace('.', ' ').Replace('_', ' ');
-            episodeString = RequestInfoRegex.Replace(episodeString, "").Trim(' ');
-
             int airYear;
             int.TryParse(matchCollection[0].Groups["airyear"].Value, out airYear);
 
@@ -641,7 +631,6 @@ namespace NzbDrone.Core.Parser
                 lastSeasonEpisodeStringIndex = Math.Max(lastSeasonEpisodeStringIndex, matchCollection[0].Groups["airyear"].EndIndex());
                 lastSeasonEpisodeStringIndex = Math.Max(lastSeasonEpisodeStringIndex, matchCollection[0].Groups["airmonth"].EndIndex());
                 lastSeasonEpisodeStringIndex = Math.Max(lastSeasonEpisodeStringIndex, matchCollection[0].Groups["airday"].EndIndex());
-                lastSeasonEpisodeStringIndex = Math.Max(lastSeasonEpisodeStringIndex, matchCollection[0].Groups["episodeString"].EndIndex());
 
                 result = new ParsedEpisodeInfo
                 {
@@ -661,7 +650,6 @@ namespace NzbDrone.Core.Parser
 
             result.SeriesTitle = seriesName;
             result.SeriesTitleInfo = GetSeriesTitleInfo(result.SeriesTitle);
-            result.SceneTitle = episodeString;
 
             Logger.Debug("Episode Parsed. {0}", result);
 

@@ -1,4 +1,3 @@
-using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 using NzbDrone.Core.Parser;
@@ -59,6 +58,14 @@ namespace NzbDrone.Core.Test.ParserTests
             var seriesTitleInfo = Parser.Parser.ParseTitle(postTitle).SeriesTitleInfo;
             seriesTitleInfo.TitleWithoutYear.Should().Be(titleWithoutYear);
             seriesTitleInfo.Year.Should().Be(year);
+        }
+
+        [TestCase("Digital Playground - 2014-12-20 - Dirty Santa - Episode 4 - Candy Cane Lane - [WEBDL-1080p].mp4", " - Dirty Santa - Episode 4 - Candy Cane Lane - [WEBDL-1080p]")]
+        public void should_parse_episode_string(string title, string expected)
+        {
+            var seriesTitleInfo = Parser.Parser.ParseTitle(title);
+            seriesTitleInfo.AirDate.Should().Be("2014-12-20");
+            seriesTitleInfo.ReleaseTokens.Should().Be(expected);
         }
 
         [Test]

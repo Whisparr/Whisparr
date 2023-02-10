@@ -75,8 +75,8 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeServiceTests
 
             GivenEpisodes(episode1, episode2);
 
-            Subject.FindEpisode(SERIES_ID, AIR_DATE, "Jenna Jay").Should().Be(episode1);
-            Subject.FindEpisode(SERIES_ID, AIR_DATE, "Jackie Bush").Should().Be(episode2);
+            Subject.FindEpisode(SERIES_ID, AIR_DATE, " - Jenna Jay - [WEBDL-1080p]").Should().Be(episode1);
+            Subject.FindEpisode(SERIES_ID, AIR_DATE, " - Jackie Bush - [WEBDL-1080p]").Should().Be(episode2);
         }
 
         [Test]
@@ -87,8 +87,8 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeServiceTests
 
             GivenEpisodes(episode1, episode2);
 
-            Subject.FindEpisode(SERIES_ID, AIR_DATE, "Jenna Jay Get Some").Should().Be(episode1);
-            Subject.FindEpisode(SERIES_ID, AIR_DATE, "Jenna Jay Good Times").Should().Be(episode2);
+            Subject.FindEpisode(SERIES_ID, AIR_DATE, " - Jenna Jay - Get Some - [WEBDL-1080p]").Should().Be(episode1);
+            Subject.FindEpisode(SERIES_ID, AIR_DATE, " - Jenna Jay - Good Times - [WEBDL-1080p]").Should().Be(episode2);
         }
 
         [Test]
@@ -99,8 +99,20 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeServiceTests
 
             GivenEpisodes(episode1, episode2);
 
-            Subject.FindEpisode(SERIES_ID, AIR_DATE, "Get Some").Should().Be(episode1);
-            Subject.FindEpisode(SERIES_ID, AIR_DATE, "Good Times").Should().Be(episode2);
+            Subject.FindEpisode(SERIES_ID, AIR_DATE, " - Get Some - [WEBDL-1080p]").Should().Be(episode1);
+            Subject.FindEpisode(SERIES_ID, AIR_DATE, " - Good Times - [WEBDL-1080p]").Should().Be(episode2);
+        }
+
+        [Test]
+        public void should_normalize_episode_titles_for_compare()
+        {
+            var episode1 = CreateEpisode(2023, 1, "Jenna Jay", "Get Some");
+            var episode2 = CreateEpisode(2023, 2, "Jackie Bush", "Good Times");
+
+            GivenEpisodes(episode1, episode2);
+
+            Subject.FindEpisode(SERIES_ID, AIR_DATE, ".Jenna.Jay.Get.Some.XXX.720p.MP4-SEXALiTY").Should().Be(episode1);
+            Subject.FindEpisode(SERIES_ID, AIR_DATE, ".Jackie.Bush.Good.Times.XXX.720p.MP4-SEXALiTY").Should().Be(episode2);
         }
     }
 }

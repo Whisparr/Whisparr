@@ -27,11 +27,15 @@ namespace NzbDrone.Core.Notifications.Stash
             {
                 Query = $@"mutation {{
                             metadataScan(
-                            input: {{useFileMetadata: false, stripFileExtension: true, scanGeneratePhashes: true, paths: [{cleanPath}]}}
-                            )
-                            metadataGenerate(
-                            input: {{sprites: true, previews: {generatePreviews}, imagePreviews: false, markers: false, transcodes: false}}
-                            )
+                            input: {{
+                                useFileMetadata: false,
+                                stripFileExtension: true,
+                                scanGeneratePreviews: {(settings.GeneratePreviews ? "true" : "false")},
+                                scanGenerateImagePreviews: {(settings.GenerateImagePreviews ? "true" : "false")},
+                                scanGenerateSprites: {(settings.GenerateSprites ? "true" : "false")},
+                                scanGeneratePhashes: {(settings.GeneratePhashes ? "true" : "false")},
+                                paths: [{cleanPath}]
+                            }})
                         }}"
             }.ToJson());
 

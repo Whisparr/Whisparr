@@ -16,6 +16,10 @@ namespace NzbDrone.Core.Notifications.Stash
             RuleFor(c => c.Port).ValidPort();
             RuleFor(c => c.MapFrom).NotEmpty().Unless(c => c.MapTo.IsNullOrWhiteSpace());
             RuleFor(c => c.MapTo).NotEmpty().Unless(c => c.MapFrom.IsNullOrWhiteSpace());
+            RuleFor(c => c.GenerateImagePreviews)
+                .Equal(false)
+                .Unless(c => c.GeneratePreviews)
+                .WithMessage("Generate Previews must also be enabled");
         }
     }
 
@@ -40,7 +44,7 @@ namespace NzbDrone.Core.Notifications.Stash
         [FieldDefinition(3, Label = "API Key", Privacy = PrivacyLevel.ApiKey)]
         public string ApiKey { get; set; }
 
-        [FieldDefinition(4, Label = "Generate Previews", HelpText = "Generate video previews for new media", Type = FieldType.Checkbox)]
+        [FieldDefinition(4, Label = "Generate Previews", HelpText = "Generate previews for new media", Type = FieldType.Checkbox)]
         public bool GeneratePreviews { get; set; }
 
         [FieldDefinition(5, Label = "Generate Image Previews", HelpText = "Generate image previews for new media", Type = FieldType.Checkbox)]

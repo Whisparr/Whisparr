@@ -15,7 +15,7 @@ namespace NzbDrone.Common.Cloud
             Services = new HttpRequestBuilder("https://whisparr.servarr.com/v1/")
                 .CreateFactory();
 
-            WhisparrMetadata = new HttpRequestBuilder("https://whisparr.zdn.zone/{route}")
+            WhisparrMetadata = new HttpRequestBuilder("https://api.whisparr.com/v2/{route}")
                 .CreateFactory();
         }
 

@@ -70,7 +70,7 @@
   height: 55px;
 }
 
-.tvdbLink {
+.tpdbLink {
   composes: link from '~Components/Link/Link.css';
 
   margin-top: -4px;
@@ -78,7 +78,7 @@
   color: var(--textColor);
 }
 
-.tvdbLinkIcon {
+.tpdbLinkIcon {
   margin-left: 10px;
 }
 

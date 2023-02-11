@@ -107,12 +107,12 @@ class AddNewSeriesSearchResult extends Component {
                 }
 
                 <Link
-                  className={styles.tvdbLink}
+                  className={styles.tpdbLink}
                   to={`https://metadataapi.net/sites/${tvdbId}`}
                   onPress={this.onTVDBLinkPress}
                 >
                   <Icon
-                    className={styles.tvdbLinkIcon}
+                    className={styles.tpdbLinkIcon}
                     name={icons.EXTERNAL_LINK}
                     size={28}
                   />

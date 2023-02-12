@@ -259,9 +259,9 @@ namespace NzbDrone.Core.Tv
                 return episodes.First();
             }
 
-            var episodeTitle = Parser.Parser.NormalizeEpisodeTitle(releaseTokens);
+            var parsedEpisodeTitle = Parser.Parser.NormalizeEpisodeTitle(releaseTokens);
 
-            if (episodeTitle.IsNotNullOrWhiteSpace())
+            if (parsedEpisodeTitle.IsNotNullOrWhiteSpace())
             {
                 var matches = new List<Episode>();
 
@@ -269,32 +269,35 @@ namespace NzbDrone.Core.Tv
                 {
                     var cleanTitle = episode.Title.IsNotNullOrWhiteSpace() ? Parser.Parser.NormalizeEpisodeTitle(episode.Title) : string.Empty;
 
-                    // If Part matches title, consider a match
-                    if (cleanTitle.IsNotNullOrWhiteSpace() && episodeTitle.Equals(cleanTitle))
+                    // If parsed title matches title, consider a match
+                    if (cleanTitle.IsNotNullOrWhiteSpace() && parsedEpisodeTitle.Equals(cleanTitle))
                     {
                         matches.Add(episode);
                         continue;
                     }
 
-                    var cleanPerformers = episode.Actors.Where(a => a.Name.IsNotNullOrWhiteSpace())
-                                    .Select(a => Parser.Parser.NormalizeEpisodeTitle(a.Name));
+                    var cleanPerformers = episode.Actors.Select(a => Parser.Parser.NormalizeEpisodeTitle(a.Name))
+                                                        .Where(x => x.IsNotNullOrWhiteSpace());
 
                     if (cleanPerformers.Empty())
                     {
                         continue;
                     }
 
-                    // If Part matches performer, consider a match
-                    if (cleanPerformers.Any(p => p.IsNotNullOrWhiteSpace() && episodeTitle.Equals(p)))
+                    // If parsed title matches performer, consider a match
+                    if (cleanPerformers.Any(p => p.IsNotNullOrWhiteSpace() && parsedEpisodeTitle.Equals(p)))
                     {
                         matches.Add(episode);
                         continue;
                     }
 
-                    var episodeMatchString = $"{cleanPerformers.First()} {cleanTitle}";
+                    if (cleanTitle.IsNullOrWhiteSpace())
+                    {
+                        continue;
+                    }
 
-                    // If Performer + Title starts with part, consider a match
-                    if (episodeMatchString.StartsWith(episodeTitle))
+                    // If parsed title contains a performer and the title then consider a match
+                    if (cleanPerformers.Any(x => parsedEpisodeTitle.Contains(x)) && parsedEpisodeTitle.Contains(cleanTitle))
                     {
                         matches.Add(episode);
                         continue;

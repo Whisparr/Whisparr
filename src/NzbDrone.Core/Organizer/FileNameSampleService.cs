@@ -37,7 +37,7 @@ namespace NzbDrone.Core.Organizer
 
             _episode1 = new Episode
             {
-                SeasonNumber = 1,
+                SeasonNumber = 2022,
                 EpisodeNumber = 1,
                 Title = "Episode Title (1)",
                 AirDate = "2022-05-01",
@@ -46,7 +46,7 @@ namespace NzbDrone.Core.Organizer
 
             _episode2 = new Episode
             {
-                SeasonNumber = 1,
+                SeasonNumber = 2022,
                 EpisodeNumber = 2,
                 Title = "Episode Title (2)",
                 AbsoluteEpisodeNumber = 2
@@ -54,7 +54,7 @@ namespace NzbDrone.Core.Organizer
 
             _episode3 = new Episode
             {
-                SeasonNumber = 1,
+                SeasonNumber = 2022,
                 EpisodeNumber = 3,
                 Title = "Episode Title (3)",
                 AbsoluteEpisodeNumber = 3

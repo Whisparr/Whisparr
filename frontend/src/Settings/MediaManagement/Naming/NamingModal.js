@@ -57,17 +57,13 @@ const seriesTokens = [
 ];
 
 const seriesIdTokens = [
-  { token: '{tvdbId}', example: '12345' }
-];
-
-const seasonTokens = [
-  { token: '{season:0}', example: '1' },
-  { token: '{season:00}', example: '01' }
+  { token: '{tpdbId}', example: '12345' }
 ];
 
 const airDateTokens = [
   { token: '{Release-Date}', example: '2016-03-20' },
-  { token: '{Release Date}', example: '2016 03 20' }
+  { token: '{Release Date}', example: '2016 03 20' },
+  { token: '{Episode Year}', example: '2016' }
 ];
 
 const episodeTitleTokens = [
@@ -175,7 +171,6 @@ class NamingModal extends Component {
       value,
       isOpen,
       advancedSettings,
-      season,
       episode,
       additional,
       onInputChange,
@@ -288,34 +283,9 @@ class NamingModal extends Component {
             </FieldSet>
 
             {
-              season &&
-                <FieldSet legend="Season">
-                  <div className={styles.groups}>
-                    {
-                      seasonTokens.map(({ token, example }) => {
-                        return (
-                          <NamingOption
-                            key={token}
-                            name={name}
-                            value={value}
-                            token={token}
-                            example={example}
-                            tokenSeparator={tokenSeparator}
-                            tokenCase={tokenCase}
-                            onPress={this.onOptionPress}
-                          />
-                        );
-                      }
-                      )
-                    }
-                  </div>
-                </FieldSet>
-            }
-
-            {
               episode &&
                 <div>
-                  <FieldSet legend="Air-Date">
+                  <FieldSet legend="Release Date">
                     <div className={styles.groups}>
                       {
                         airDateTokens.map(({ token, example }) => {

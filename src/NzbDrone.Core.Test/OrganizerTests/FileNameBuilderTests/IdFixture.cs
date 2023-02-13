@@ -32,7 +32,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_add_tvdb_id()
         {
-            _namingConfig.SeriesFolderFormat = "{Site Title} ({TvdbId})";
+            _namingConfig.SeriesFolderFormat = "{Site Title} ({TpdbId})";
 
             Subject.GetSeriesFolder(_series)
                    .Should().Be($"Series Title ({_series.TvdbId})");

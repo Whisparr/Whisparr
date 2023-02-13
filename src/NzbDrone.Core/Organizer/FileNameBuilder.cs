@@ -226,7 +226,7 @@ namespace NzbDrone.Core.Organizer
                     basicNamingConfig.ReplaceSpaces = true;
                 }
 
-                if (token.StartsWith("{Series", StringComparison.InvariantCultureIgnoreCase))
+                if (token.StartsWith("{Site", StringComparison.InvariantCultureIgnoreCase))
                 {
                     basicNamingConfig.IncludeSeriesTitle = true;
                 }
@@ -438,7 +438,7 @@ namespace NzbDrone.Core.Organizer
 
         private void AddSeasonTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, int seasonNumber)
         {
-            tokenHandlers["{Season}"] = m => seasonNumber.ToString(m.CustomFormat);
+            tokenHandlers["{Episode Year}"] = m => seasonNumber.ToString(m.CustomFormat);
         }
 
         private void AddEpisodeTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, List<Episode> episodes)
@@ -549,7 +549,7 @@ namespace NzbDrone.Core.Organizer
 
         private void AddIdTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Series series)
         {
-            tokenHandlers["{TvdbId}"] = m => series.TvdbId.ToString();
+            tokenHandlers["{TpdbId}"] = m => series.TvdbId.ToString();
         }
 
         private string GetLanguagesToken(List<string> mediaInfoLanguages, string filter, bool skipEnglishOnly, bool quoted)

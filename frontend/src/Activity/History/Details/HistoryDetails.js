@@ -77,7 +77,7 @@ function HistoryDetails(props) {
           seriesMatchType ?
             <DescriptionListItem
               descriptionClassName={styles.description}
-              title="Series Match Type"
+              title="Site Match Type"
               data={seriesMatchType}
             /> :
             null

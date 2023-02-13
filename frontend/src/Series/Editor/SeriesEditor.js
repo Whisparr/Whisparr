@@ -127,7 +127,7 @@ class SeriesEditor extends Component {
     const selectedSeriesIds = this.getSelectedIds();
 
     return (
-      <PageContent title="Series Editor">
+      <PageContent title="Site Editor">
         <PageToolbar>
           <PageToolbarSection />
           <PageToolbarSection alignContent={align.RIGHT}>

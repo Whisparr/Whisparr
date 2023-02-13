@@ -268,7 +268,7 @@ class SeriesDetails extends Component {
               iconName={icons.SEARCH}
               isDisabled={!monitored || !hasMonitoredEpisodes || !hasEpisodes}
               isSpinning={isSearching}
-              title={hasMonitoredEpisodes ? undefined : 'No monitored episodes in this series'}
+              title={hasMonitoredEpisodes ? undefined : 'No monitored episodes in this site'}
               onPress={onSearchPress}
             />
 
@@ -297,7 +297,7 @@ class SeriesDetails extends Component {
             <PageToolbarSeparator />
 
             <PageToolbarButton
-              label="Series Monitoring"
+              label="Site Monitoring"
               iconName={icons.MONITORED}
               onPress={this.onMonitorOptionsPress}
             />

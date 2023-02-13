@@ -11,7 +11,7 @@ function NoSeries(props) {
     return (
       <div>
         <div className={styles.message}>
-          All series are hidden due to the applied filter.
+          All sites are hidden due to the applied filter.
         </div>
       </div>
     );
@@ -20,7 +20,7 @@ function NoSeries(props) {
   return (
     <div>
       <div className={styles.message}>
-        No series found, to get started you'll want to import your existing series or add a new series.
+        No site found, to get started you'll want to import your existing media or add a new site.
       </div>
 
       <div className={styles.buttonContainer}>
@@ -28,7 +28,7 @@ function NoSeries(props) {
           to="/add/import"
           kind={kinds.PRIMARY}
         >
-          Import Existing Series
+          Import Existing Sites
         </Button>
       </div>
 
@@ -37,7 +37,7 @@ function NoSeries(props) {
           to="/add/new"
           kind={kinds.PRIMARY}
         >
-          Add New Series
+          Add New Site
         </Button>
       </div>
     </div>

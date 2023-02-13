@@ -53,7 +53,7 @@ class QualityDefinitions extends Component {
 
           <div className={styles.sizeLimitHelpTextContainer}>
             <div className={styles.sizeLimitHelpText}>
-              Limits are automatically adjusted for the series runtime and number of episodes in the file.
+              Limits are automatically adjusted for the episode and sites runtime and number of episodes in the file.
             </div>
           </div>
         </PageSectionContent>

@@ -20,7 +20,7 @@ import styles from './EpisodeHistoryRow.css';
 function getTitle(eventType) {
   switch (eventType) {
     case 'grabbed': return 'Grabbed';
-    case 'seriesFolderImported': return 'Series Folder Imported';
+    case 'seriesFolderImported': return 'Site Folder Imported';
     case 'downloadFolderImported': return 'Download Folder Imported';
     case 'downloadFailed': return 'Download Failed';
     case 'episodeFileDeleted': return 'Episode File Deleted';

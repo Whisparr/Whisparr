@@ -95,12 +95,12 @@ class MediaManagement extends Component {
                         isAdvanced={true}
                         size={sizes.MEDIUM}
                       >
-                        <FormLabel>Create empty series folders</FormLabel>
+                        <FormLabel>Create empty site folders</FormLabel>
 
                         <FormInputGroup
                           type={inputTypes.CHECK}
                           name="createEmptySeriesFolders"
-                          helpText="Create missing series folders during disk scan"
+                          helpText="Create missing site folders during disk scan"
                           onChange={onInputChange}
                           {...settings.createEmptySeriesFolders}
                         />
@@ -116,7 +116,7 @@ class MediaManagement extends Component {
                         <FormInputGroup
                           type={inputTypes.CHECK}
                           name="deleteEmptyFolders"
-                          helpText="Delete empty series and season folders during disk scan and when episode files are deleted"
+                          helpText="Delete empty site folders during disk scan and when episode files are deleted"
                           onChange={onInputChange}
                           {...settings.deleteEmptyFolders}
                         />
@@ -159,7 +159,7 @@ class MediaManagement extends Component {
                             <FormInputGroup
                               type={inputTypes.CHECK}
                               name="skipFreeSpaceCheckWhenImporting"
-                              helpText="Use when Whisparr is unable to detect free space from your series root folder"
+                              helpText="Use when Whisparr is unable to detect free space from your site root folder"
                               onChange={onInputChange}
                               {...settings.skipFreeSpaceCheckWhenImporting}
                             />
@@ -295,12 +295,12 @@ class MediaManagement extends Component {
                     advancedSettings={advancedSettings}
                     isAdvanced={true}
                   >
-                    <FormLabel>Rescan Series Folder after Refresh</FormLabel>
+                    <FormLabel>Rescan Site Folder after Refresh</FormLabel>
 
                     <FormInputGroup
                       type={inputTypes.SELECT}
                       name="rescanAfterRefresh"
-                      helpText="Rescan the series folder after refreshing the series"
+                      helpText="Rescan the site folder after refreshing the site"
                       helpTextWarning="Whisparr will not automatically detect changes to files when not set to 'Always'"
                       values={rescanAfterRefreshOptions}
                       onChange={onInputChange}

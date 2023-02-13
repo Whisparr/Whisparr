@@ -249,7 +249,7 @@ class InteractiveSearchRow extends Component {
           isOpen={this.state.isConfirmGrabModalOpen}
           kind={kinds.WARNING}
           title="Grab Release"
-          message={`Whisparr was unable to determine which series and episode this release was for. Whisparr may be unable to automatically import this release. Do you want to grab '${title}'?`}
+          message={`Whisparr was unable to determine which site and episode this release was for. Whisparr may be unable to automatically import this release. Do you want to grab '${title}'?`}
           confirmLabel="Grab"
           onConfirm={this.onGrabConfirm}
           onCancel={this.onGrabCancel}

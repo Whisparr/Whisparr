@@ -60,7 +60,7 @@ class QueueOptions extends Component {
             type={inputTypes.CHECK}
             name="includeUnknownSeriesItems"
             value={includeUnknownSeriesItems}
-            helpText="Show items without a series in the queue, this could include removed series, movies or anything else in Whisparr's category"
+            helpText="Show items without a site in the queue, this could include removed sites, movies or anything else in Whisparr's category"
             onChange={this.onOptionChange}
           />
         </FormGroup>

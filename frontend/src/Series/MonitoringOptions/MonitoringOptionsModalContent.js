@@ -78,7 +78,7 @@ class MonitoringOptionsModalContent extends Component {
     return (
       <ModalContent onModalClose={onModalClose}>
         <ModalHeader>
-          Monitor Series
+          Monitor Site
         </ModalHeader>
 
         <ModalBody>

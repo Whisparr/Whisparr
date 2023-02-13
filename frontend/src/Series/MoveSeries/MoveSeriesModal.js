@@ -46,8 +46,8 @@ function MoveSeriesModal(props) {
         <ModalBody>
           {
             destinationRootFolder ?
-              `Would you like to move the series folders to '${destinationRootFolder}'?` :
-              `Would you like to move the series files from '${originalPath}' to '${destinationPath}'?`
+              `Would you like to move the sites folders to '${destinationRootFolder}'?` :
+              `Would you like to move the sites files from '${originalPath}' to '${destinationPath}'?`
           }
         </ModalBody>
 

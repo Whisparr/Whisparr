@@ -172,7 +172,7 @@ class EpisodeDetailsModalContent extends Component {
                 to={seriesLink}
                 onPress={onModalClose}
               >
-                Open Series
+                Open Site
               </Button>
           }
 

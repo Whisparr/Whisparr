@@ -98,7 +98,7 @@ function EditNotificationModalContent(props) {
                 <FormInputGroup
                   type={inputTypes.TAG}
                   name="tags"
-                  helpText="Only send notifications for series with at least one matching tag"
+                  helpText="Only send notifications for sites with at least one matching tag"
                   {...tags}
                   onChange={onInputChange}
                 />

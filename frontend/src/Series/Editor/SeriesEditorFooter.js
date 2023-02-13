@@ -159,7 +159,7 @@ class SeriesEditorFooter extends Component {
       <PageContentFooter>
         <div className={styles.inputContainer}>
           <SeriesEditorFooterLabel
-            label="Monitor Series"
+            label="Monitor Site"
             isSaving={isSaving && monitored !== NO_CHANGE}
           />
 
@@ -235,7 +235,7 @@ class SeriesEditorFooter extends Component {
         <div className={styles.buttonContainer}>
           <div className={styles.buttonContainerContent}>
             <SeriesEditorFooterLabel
-              label={`${selectedCount} Series Selected`}
+              label={`${selectedCount} Sites Selected`}
               isSaving={false}
             />
 

@@ -52,7 +52,7 @@ class AddImportListModalContent extends Component {
               <div>
 
                 <Alert kind={kinds.INFO}>
-                  <div>Whisparr supports multiple lists for importing Series into the database.</div>
+                  <div>Whisparr supports multiple lists for importing Sites into the database.</div>
                   <div>For more information on the individual lists, click on the info buttons.</div>
                 </Alert>
                 {

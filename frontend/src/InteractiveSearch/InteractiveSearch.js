@@ -138,7 +138,7 @@ function InteractiveSearch(props) {
               errorMessage ?
                 <Fragment>
                   Search failed because its {errorMessage.charAt(0).toLowerCase() + errorMessage.slice(1)}.
-                  Try refreshing the series info and verify the necessary information is present before searching again
+                  Try refreshing the site info and verify the necessary information is present before searching again
                 </Fragment> :
                 'Unable to load results for this episode search. Try again later'
             }

@@ -89,7 +89,7 @@ class SeasonPassFooter extends Component {
       <PageContentFooter>
         <div className={styles.inputContainer}>
           <div className={styles.label}>
-            Monitor Series
+            Monitor Site
           </div>
 
           <SelectInput
@@ -117,7 +117,7 @@ class SeasonPassFooter extends Component {
 
         <div>
           <div className={styles.label}>
-            {selectedCount} Series Selected
+            {selectedCount} Sites Selected
           </div>
 
           <SpinnerButton

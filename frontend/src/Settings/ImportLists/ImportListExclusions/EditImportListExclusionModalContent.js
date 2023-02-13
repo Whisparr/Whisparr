@@ -63,7 +63,7 @@ function EditImportListExclusionModalContent(props) {
                 <FormInputGroup
                   type={inputTypes.TEXT}
                   name="title"
-                  helpText="The name of the series to exclude"
+                  helpText="The name of the site to exclude"
                   {...title}
                   onChange={onInputChange}
                 />
@@ -75,7 +75,7 @@ function EditImportListExclusionModalContent(props) {
                 <FormInputGroup
                   type={inputTypes.TEXT}
                   name="tvdbId"
-                  helpText="The TVDB ID of the series to exclude"
+                  helpText="The TPDB ID of the site to exclude"
                   {...tvdbId}
                   onChange={onInputChange}
                 />

@@ -98,7 +98,7 @@ function EditImportListModalContent(props) {
                 <FormInputGroup
                   type={inputTypes.CHECK}
                   name="enableAutomaticAdd"
-                  helpText={'Add series to Whisparr when syncs are performed via the UI or by Whisparr'}
+                  helpText={'Add site to Whisparr when syncs are performed via the UI or by Whisparr'}
                   {...enableAutomaticAdd}
                   onChange={onInputChange}
                 />

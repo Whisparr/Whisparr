@@ -95,7 +95,7 @@ class ImportSeries extends Component {
     } = this.state;
 
     return (
-      <PageContent title="Import Series">
+      <PageContent title="Import Site">
         <PageContentBody
           registerScroller={this.setScrollerRef}
           onScroll={this.onScroll}

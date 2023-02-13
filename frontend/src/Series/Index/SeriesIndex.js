@@ -294,7 +294,7 @@ class SeriesIndex extends Component {
 
             {
               !isFetching && !!error &&
-                <div>Unable to load series</div>
+                <div>Unable to load sites</div>
             }
 
             {

@@ -271,14 +271,14 @@ class SeriesSearchInput extends Component {
 
     if (suggestions.length || loading) {
       suggestionGroups.push({
-        title: 'Existing Series',
+        title: 'Existing Site',
         loading,
         suggestions
       });
     }
 
     suggestionGroups.push({
-      title: 'Add New Series',
+      title: 'Add New Site',
       suggestions: [
         {
           type: ADD_NEW_TYPE,

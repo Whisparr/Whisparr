@@ -95,7 +95,7 @@ function NotificationEventItems(props) {
             <FormInputGroup
               type={inputTypes.CHECK}
               name="onSeriesDelete"
-              helpText="On Series Delete"
+              helpText="On Site Delete"
               isDisabled={!supportsOnSeriesDelete.value}
               {...onSeriesDelete}
               onChange={onInputChange}

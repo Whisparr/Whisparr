@@ -123,7 +123,7 @@ function EditReleaseProfileModalContent(props) {
             <FormInputGroup
               type={inputTypes.TAG}
               name="tags"
-              helpText="Release profiles will apply to series with at least one matching tag. Leave blank to apply to all series"
+              helpText="Release profiles will apply to sites with at least one matching tag. Leave blank to apply to all sites"
               {...tags}
               onChange={onInputChange}
             />

@@ -41,7 +41,7 @@ function getInternalLink(source) {
       return (
         <IconButton
           name={icons.SERIES_CONTINUING}
-          title="Series Editor"
+          title="Site Editor"
           to="/serieseditor"
         />
       );

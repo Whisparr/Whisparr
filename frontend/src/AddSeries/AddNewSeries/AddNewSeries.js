@@ -87,7 +87,7 @@ class AddNewSeries extends Component {
     const isFetching = this.state.isFetching;
 
     return (
-      <PageContent title="Add New Series">
+      <PageContent title="Add New Site">
         <PageContentBody>
           <div className={styles.searchContainer}>
             <div className={styles.searchIconContainer}>

@@ -57,7 +57,7 @@ class DeleteSeriesModalContent extends Component {
     return (
       <ModalContent onModalClose={onModalClose}>
         <ModalHeader>
-          Delete Selected Series
+          Delete Selected Sites
         </ModalHeader>
 
         <ModalBody>
@@ -69,19 +69,19 @@ class DeleteSeriesModalContent extends Component {
                 type={inputTypes.CHECK}
                 name="addImportListExclusion"
                 value={deleteOptions.addImportListExclusion}
-                helpText="Prevent series from being added to Whisparr by lists"
+                helpText="Prevent sites from being added to Whisparr by lists"
                 onChange={setDeleteOption}
               />
             </FormGroup>
 
             <FormGroup>
-              <FormLabel>{`Delete Series Folder${series.length > 1 ? 's' : ''}`}</FormLabel>
+              <FormLabel>{`Delete Site Folder${series.length > 1 ? 's' : ''}`}</FormLabel>
 
               <FormInputGroup
                 type={inputTypes.CHECK}
                 name="deleteFiles"
                 value={deleteFiles}
-                helpText={`Delete Series Folder${series.length > 1 ? 's' : ''} and all contents`}
+                helpText={`Delete Site Folder${series.length > 1 ? 's' : ''} and all contents`}
                 kind={kinds.DANGER}
                 onChange={this.onDeleteFilesChange}
               />

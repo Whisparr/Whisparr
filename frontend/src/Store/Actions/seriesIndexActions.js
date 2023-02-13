@@ -60,7 +60,7 @@ export const defaultState = {
     },
     {
       name: 'sortTitle',
-      label: 'Series Title',
+      label: 'Site Title',
       isSortable: true,
       isVisible: true,
       isModifiable: false

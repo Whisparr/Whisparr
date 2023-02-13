@@ -109,7 +109,7 @@ function Settings() {
         </Link>
 
         <div className={styles.summary}>
-          Create metadata files when episodes are imported or series are refreshed
+          Create metadata files when episodes are imported or sites are refreshed
         </div>
 
         <Link
@@ -131,7 +131,7 @@ function Settings() {
         </Link>
 
         <div className={styles.summary}>
-          Information on where Whisparr gets Series and Episode information
+          Information on where Whisparr gets Site and Episode information
         </div>
 
         <Link

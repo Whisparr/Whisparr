@@ -442,7 +442,7 @@ class SeriesIndexRow extends Component {
                 >
                   <SpinnerIconButton
                     name={icons.REFRESH}
-                    title="Refresh series"
+                    title="Refresh site"
                     isSpinning={isRefreshingSeries}
                     onPress={onRefreshSeriesPress}
                   />
@@ -460,7 +460,7 @@ class SeriesIndexRow extends Component {
 
                   <IconButton
                     name={icons.EDIT}
-                    title="Edit Series"
+                    title="Edit Site"
                     onPress={this.onEditSeriesPress}
                   />
                 </VirtualTableRowCell>

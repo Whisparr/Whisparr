@@ -195,7 +195,7 @@ function EditIndexerModalContent(props) {
                 <FormInputGroup
                   type={inputTypes.TAG}
                   name="tags"
-                  helpText="Only use this indexer for series with at least one matching tag. Leave blank to use with all series."
+                  helpText="Only use this indexer for sites with at least one matching tag. Leave blank to use with all sites."
                   {...tags}
                   onChange={onInputChange}
                 />

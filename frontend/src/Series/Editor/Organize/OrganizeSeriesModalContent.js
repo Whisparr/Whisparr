@@ -20,12 +20,12 @@ function OrganizeSeriesModalContent(props) {
   return (
     <ModalContent onModalClose={onModalClose}>
       <ModalHeader>
-        Organize Selected Series
+        Organize Selected Sites
       </ModalHeader>
 
       <ModalBody>
         <Alert>
-          Tip: To preview a rename, select "Cancel", then select any series title and use the
+          Tip: To preview a rename, select "Cancel", then select any site title and use the
           <Icon
             className={styles.renameIcon}
             name={icons.ORGANIZE}
@@ -33,7 +33,7 @@ function OrganizeSeriesModalContent(props) {
         </Alert>
 
         <div className={styles.message}>
-          Are you sure you want to organize all files in the {seriesTitles.length} selected series?
+          Are you sure you want to organize all files in the {seriesTitles.length} selected site?
         </div>
 
         <ul>

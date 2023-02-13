@@ -87,7 +87,7 @@ class EditSeriesModalContent extends Component {
               <FormInputGroup
                 type={inputTypes.CHECK}
                 name="monitored"
-                helpText="Download monitored episodes in this series"
+                helpText="Download monitored episodes in this site"
                 {...monitored}
                 onChange={onInputChange}
               />

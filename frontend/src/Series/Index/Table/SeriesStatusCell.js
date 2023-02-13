@@ -25,7 +25,7 @@ function SeriesStatusCell(props) {
       <Icon
         className={styles.statusIcon}
         name={monitored ? icons.MONITORED : icons.UNMONITORED}
-        title={monitored ? 'Series is monitored' : 'Series is unmonitored'}
+        title={monitored ? 'Site is monitored' : 'Site is unmonitored'}
       />
 
       <Icon

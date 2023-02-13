@@ -135,7 +135,7 @@ class Notification extends Component {
         {
           supportsOnSeriesDelete && onSeriesDelete ?
             <Label kind={kinds.SUCCESS}>
-              On Series Delete
+              On Site Delete
             </Label> :
             null
         }

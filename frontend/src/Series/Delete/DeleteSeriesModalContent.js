@@ -62,11 +62,11 @@ class DeleteSeriesModalContent extends Component {
     const deleteFiles = this.state.deleteFiles;
     const addImportListExclusion = deleteOptions.addImportListExclusion;
     let deleteFilesLabel = `Delete ${episodeFileCount} Episode Files`;
-    let deleteFilesHelpText = 'Delete the episode files and series folder';
+    let deleteFilesHelpText = 'Delete the episode files and site folder';
 
     if (episodeFileCount === 0) {
-      deleteFilesLabel = 'Delete Series Folder';
-      deleteFilesHelpText = 'Delete the series folder and its contents';
+      deleteFilesLabel = 'Delete Site Folder';
+      deleteFilesHelpText = 'Delete the site folder and its contents';
     }
 
     return (
@@ -94,7 +94,7 @@ class DeleteSeriesModalContent extends Component {
               type={inputTypes.CHECK}
               name="addImportListExclusion"
               value={addImportListExclusion}
-              helpText="Prevent series from being added to Whisparr by lists"
+              helpText="Prevent site from being added to Whisparr by lists"
               onChange={onDeleteOptionChange}
             />
           </FormGroup>
@@ -115,7 +115,7 @@ class DeleteSeriesModalContent extends Component {
           {
             deleteFiles &&
               <div className={styles.deleteFilesMessage}>
-                <div>The series folder <strong>{path}</strong> and all of its content will be deleted.</div>
+                <div>The site folder <strong>{path}</strong> and all of its content will be deleted.</div>
 
                 {
                   !!episodeFileCount &&

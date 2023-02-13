@@ -20,7 +20,7 @@ function ErrorPage(props) {
   if (!isLocalStorageSupported) {
     errorMessage = 'Local Storage is not supported or disabled. A plugin or private browsing may have disabled it.';
   } else if (seriesError) {
-    errorMessage = getErrorMessage(seriesError, 'Failed to load series from API');
+    errorMessage = getErrorMessage(seriesError, 'Failed to load sites from API');
   } else if (customFiltersError) {
     errorMessage = getErrorMessage(customFiltersError, 'Failed to load custom filters from API');
   } else if (tagsError) {

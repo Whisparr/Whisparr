@@ -57,7 +57,7 @@ class ImportSeriesSelectFolder extends Component {
     const hasRootFolders = items.length > 0;
 
     return (
-      <PageContent title="Import Series">
+      <PageContent title="Import Site">
         <PageContentBody>
           {
             isFetching && !isPopulated ?

@@ -143,7 +143,7 @@ class SeriesIndexPoster extends Component {
             <IconButton
               className={styles.action}
               name={icons.EDIT}
-              title="Edit Series"
+              title="Edit Site"
               onPress={this.onEditSeriesPress}
             />
           </Label>

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -14,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Hosting.WindowsServices;
 using NLog;
+using Npgsql;
 using NzbDrone.Common.Composition.Extensions;
 using NzbDrone.Common.EnvironmentInfo;
 using NzbDrone.Common.Exceptions;
@@ -110,6 +112,12 @@ namespace NzbDrone.Host
                 Logger.Info(e.Message);
                 LogManager.Configuration = null;
             }
+
+            // Make sure there are no lingering database connections
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            SQLiteConnection.ClearAllPools();
+            NpgsqlConnection.ClearAllPools();
         }
 
         public static IHostBuilder CreateConsoleHostBuilder(string[] args, StartupContext context)
@@ -118,7 +126,7 @@ namespace NzbDrone.Host
 
             var bindAddress = config.GetValue(nameof(ConfigFileProvider.BindAddress), "*");
             var port = config.GetValue(nameof(ConfigFileProvider.Port), 6969);
-            var sslPort = config.GetValue(nameof(ConfigFileProvider.SslPort), 8787);
+            var sslPort = config.GetValue(nameof(ConfigFileProvider.SslPort), 8008);
             var enableSsl = config.GetValue(nameof(ConfigFileProvider.EnableSsl), false);
             var sslCertPath = config.GetValue<string>(nameof(ConfigFileProvider.SslCertPath));
             var sslCertPassword = config.GetValue<string>(nameof(ConfigFileProvider.SslCertPassword));
@@ -211,11 +219,20 @@ namespace NzbDrone.Host
         private static IConfiguration GetConfiguration(StartupContext context)
         {
             var appFolder = new AppFolderInfo(context);
-            return new ConfigurationBuilder()
-                .AddXmlFile(appFolder.GetConfigPath(), optional: true, reloadOnChange: false)
-                .AddInMemoryCollection(new List<KeyValuePair<string, string>> { new ("dataProtectionFolder", appFolder.GetDataProtectionPath()) })
-                .AddEnvironmentVariables()
-                .Build();
+            var configPath = appFolder.GetConfigPath();
+
+            try
+            {
+                return new ConfigurationBuilder()
+                    .AddXmlFile(configPath, optional: true, reloadOnChange: false)
+                    .AddInMemoryCollection(new List<KeyValuePair<string, string>> { new ("dataProtectionFolder", appFolder.GetDataProtectionPath()) })
+                    .AddEnvironmentVariables()
+                    .Build();
+            }
+            catch (InvalidDataException ex)
+            {
+                throw new InvalidConfigFileException($"{configPath} is corrupt or invalid. Please delete the config file and Whisparr will recreate it.", ex);
+            }
         }
 
         private static string BuildUrl(string scheme, string bindAddress, int port)

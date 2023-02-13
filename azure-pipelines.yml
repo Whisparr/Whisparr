@@ -15,7 +15,7 @@ variables:
   buildName: '$(Build.SourceBranchName).$(whisparrVersion)'
   sentryOrg: 'servarr'
   sentryUrl: 'https://sentry.servarr.com'
-  dotnetVersion: '6.0.404'
+  dotnetVersion: '6.0.405'
   nodeVersion: '16.X'
   innoVersion: '6.2.0'
   windowsImage: 'windows-2022'

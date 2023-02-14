@@ -46,7 +46,6 @@ namespace NzbDrone.Core.Test.ParserTests
             new object[] { "2160p Remux", Quality.Bluray2160pRemux },
         };
 
-        [TestCase("S07E23 .avi ", false)]
         [TestCase("The.Series.S01E13.x264-CtrlSD", false)]
         [TestCase("The Series S02E01 HDTV XviD 2HD", false)]
         [TestCase("The Series S05E11 PROPER HDTV XviD 2HD", true)]
@@ -57,15 +56,9 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("The Series S01E04 Series Death Train DSR x264 MiNDTHEGAP", false)]
         [TestCase("The Series S11E03 has no periods or extension HDTV", false)]
         [TestCase("The.Series.S04E05.HDTV.XviD-LOL", false)]
-        [TestCase("The.Series.S02E15.avi", false)]
-        [TestCase("The.Series.S02E15.xvid", false)]
-        [TestCase("The.Series.S02E15.divx", false)]
         [TestCase("The.Series.S03E06.HDTV-WiDE", false)]
         [TestCase("Series.S10E27.WS.DSR.XviD-2HD", false)]
         [TestCase("The.Series.S03.TVRip.XviD-NOGRP", false)]
-        [TestCase("[HorribleSubs] The Series - 03 [360p].mkv", false)]
-        [TestCase("[SubsPlease] Series Title (540p) [AB649D32].mkv", false)]
-        [TestCase("[Erai-raws] Series Title [540p][Multiple Subtitle].mkv", false)]
         public void should_parse_sdtv_quality(string title, bool proper)
         {
             ParseAndVerifyQuality(title, Quality.SDTV, proper);
@@ -93,6 +86,13 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("[HorribleSubs] The Series - 32 [480p]", false)]
         [TestCase("[CR] The Series - 004 [480p][48CE2D0F]", false)]
         [TestCase("[Hatsuyuki] The Series - 363 [848x480][ADE35E38]", false)]
+        [TestCase("[HorribleSubs] The Series - 03 [360p].mkv", false)]
+        [TestCase("[SubsPlease] Series Title (540p) [AB649D32].mkv", false)]
+        [TestCase("[Erai-raws] Series Title [540p][Multiple Subtitle].mkv", false)]
+        [TestCase("S07E23 .avi ", false)]
+        [TestCase("The.Series.S02E15.avi", false)]
+        [TestCase("The.Series.S02E15.xvid", false)]
+        [TestCase("The.Series.S02E15.divx", false)]
         public void should_parse_webdl480p_quality(string title, bool proper)
         {
             ParseAndVerifyQuality(title, Quality.WEBDL480p, proper);
@@ -126,17 +126,12 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("The Series S04E87 REPACK 720p HDTV x264 aAF", true)]
         [TestCase("S07E23 - [HDTV-720p].mkv ", false)]
         [TestCase("Series - S22E03 - MoneyBART - HD TV.mkv", false)]
-        [TestCase("S07E23.mkv ", false)]
         [TestCase("The.Series.S08E05.720p.HDTV.X264-DIMENSION", false)]
-        [TestCase("The.Series.S02E15.mkv", false)]
         [TestCase(@"E:\Downloads\tv\The.Series.S01E01.720p.HDTV\ajifajjjeaeaeqwer_eppj.avi", false)]
         [TestCase("The.Series.S01E08.Tourmaline.Nepal.720p.HDTV.x264-DHD", false)]
-        [TestCase("[Doremi].The.Series.5.Go.Go!.31.[1280x720].[C65D4B1F].mkv", false)]
-        [TestCase("The.Series.US.S12E17.HR.WS.PDTV.X264-DIMENSION", false)]
         [TestCase("The.Series.The.Lost.Whisparr.Summer.HR.WS.PDTV.x264-DHD", false)]
         [TestCase("The Series S01E07 - Motor zmen (CZ)[TvRip][HEVC][720p]", false)]
         [TestCase("The.Series.S05E06.720p.HDTV.x264-FHD", false)]
-        [TestCase("[TMS-Remux].Series.Title.X.21.720p.[76EA1C53].mkv", false)]
         public void should_parse_hdtv720p_quality(string title, bool proper)
         {
             ParseAndVerifyQuality(title, Quality.HDTV720p, proper);
@@ -147,10 +142,6 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Series.S07E01.ARE.YOU.1080P.HDTV.proper.X264-QCF", true)]
         [TestCase("Series - S01E01 - Title [HDTV-1080p]", false)]
         [TestCase("Series S01E07 - Whisparr zmen (CZ)[TvRip][HEVC][1080p]", false)]
-        [TestCase("Series Slayer 04 vostfr FHD.mkv", false)]
-        [TestCase("[Onii-ChanSub] The.Series - 02 vostfr (FHD 1080p 10bits).mkv", false)]
-        [TestCase("[mhastream.com]_Episode_05_FHD.mp4", false)]
-        [TestCase("[Kousei]_One_Series_ - _609_[FHD][648A87C7].mp4", false)]
         [TestCase("Series culpable 1x02 Culpabilidad [HDTV 1080i AVC MP2 2.0 Sub][GrupoHDS]", false)]
         [TestCase("Series cómo pasó - 19x15 [344] Cuarenta años de baile [HDTV 1080i AVC MP2 2.0 Sub][GrupoHDS]", false)]
         [TestCase("Super.Seires.Go.S01E02.Depths.of.Whisparr.1080i.HDTV.DD5.1.H.264-NOGRP", false)]
@@ -200,6 +191,10 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("[HorribleSubs]_Series_Title_-_145_[720p]", false)]
         [TestCase("[Eveyuu] Series Title - 10 [Hi10P 1280x720 H264][10B23BD8]", false)]
         [TestCase("Series.Title.1x01.ITA.720p.x264-RlsGrp [01/54] - \"series.title.1x01.ita.720p.x264-rlsgrp.nfo\"", false)]
+        [TestCase("[TMS-Remux].Series.Title.X.21.720p.[76EA1C53].mkv", false)]
+        [TestCase("The.Series.S02E15.mkv", false)]
+        [TestCase("[Doremi].The.Series.5.Go.Go!.31.[1280x720].[C65D4B1F].mkv", false)]
+        [TestCase("S07E23.mkv ", false)]
         public void should_parse_webdl720p_quality(string title, bool proper)
         {
             ParseAndVerifyQuality(title, Quality.WEBDL720p, proper);
@@ -247,6 +242,10 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("[HorribleSubs] Series Title - 32 [1080p]", false)]
         [TestCase("The Online Series Alicization 04 vostfr FHD", false)]
         [TestCase("[Miaou] Series Title 02 VOSTFR FHD 10 bits", false)]
+        [TestCase("Series Slayer 04 vostfr FHD.mkv", false)]
+        [TestCase("[mhastream.com]_Episode_05_FHD.mp4", false)]
+        [TestCase("[Kousei]_One_Series_ - _609_[FHD][648A87C7].mp4", false)]
+        [TestCase("[Onii-ChanSub] The.Series - 02 vostfr (FHD 1080p 10bits).mkv", false)]
         public void should_parse_webdl1080p_quality(string title, bool proper)
         {
             ParseAndVerifyQuality(title, Quality.WEBDL1080p, proper);

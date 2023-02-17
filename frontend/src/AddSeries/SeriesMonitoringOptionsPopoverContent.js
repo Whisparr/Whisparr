@@ -6,38 +6,38 @@ function SeriesMonitoringOptionsPopoverContent() {
   return (
     <DescriptionList>
       <DescriptionListItem
-        title="All Episodes"
-        data="Monitor all episodes except specials"
+        title="All Scenes"
+        data="Monitor all scenes except specials"
       />
 
       <DescriptionListItem
-        title="Future Episodes"
-        data="Monitor episodes that have not aired yet"
+        title="Future Scenes"
+        data="Monitor scenes that have not aired yet"
       />
 
       <DescriptionListItem
-        title="Missing Episodes"
-        data="Monitor episodes that do not have files or have not aired yet"
+        title="Missing Scenes"
+        data="Monitor scenes that do not have files or have not aired yet"
       />
 
       <DescriptionListItem
-        title="Existing Episodes"
-        data="Monitor episodes that have files or have not aired yet"
+        title="Existing Scenes"
+        data="Monitor scenes that have files or have not aired yet"
       />
 
       <DescriptionListItem
-        title="First Season"
-        data="Monitor all episodes of the first season. All other seasons will be ignored"
+        title="First Year"
+        data="Monitor all scenes of the first year. All other seasons will be ignored"
       />
 
       <DescriptionListItem
-        title="Latest Season"
-        data="Monitor all episodes of the latest season and future seasons"
+        title="Latest Year"
+        data="Monitor all scenes of the latest year and future seasons"
       />
 
       <DescriptionListItem
         title="None"
-        data="No episodes will be monitored"
+        data="No scenes will be monitored"
       />
     </DescriptionList>
   );

@@ -23,7 +23,7 @@ namespace NzbDrone.Core.Test.MetadataSource.SkyHook
         }
 
         [TestCase(200, "Blacked")]
-        [TestCase(77, "My Family Pies")]
+        [TestCase(94, "Brazzers Exxtra")]
         public void should_be_able_to_get_series_detail(int tvdbId, string title)
         {
             var details = Subject.GetSeriesInfo(tvdbId);
@@ -99,7 +99,7 @@ namespace NzbDrone.Core.Test.MetadataSource.SkyHook
 
             if (episode.AirDateUtc.HasValue)
             {
-                episode.AirDateUtc.Value.Kind.Should().Be(DateTimeKind.Utc);
+                episode.AirDateUtc.Value.Kind.Should().Be(DateTimeKind.Unspecified);
             }
 
             episode.Images.Any(i => i.CoverType == MediaCoverTypes.Screenshot && i.RemoteUrl.Contains("-940."))

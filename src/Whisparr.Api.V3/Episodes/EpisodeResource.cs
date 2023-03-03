@@ -20,9 +20,9 @@ namespace Whisparr.Api.V3.Episodes
         public string Title { get; set; }
         public string AirDate { get; set; }
         public DateTime? AirDateUtc { get; set; }
+        public int Runtime { get; set; }
         public string Overview { get; set; }
         public EpisodeFileResource EpisodeFile { get; set; }
-
         public bool HasFile { get; set; }
         public bool Monitored { get; set; }
         public int? AbsoluteEpisodeNumber { get; set; }
@@ -64,6 +64,7 @@ namespace Whisparr.Api.V3.Episodes
                 Title = model.Title,
                 AirDate = model.AirDate,
                 AirDateUtc = model.AirDateUtc,
+                Runtime = model.Runtime,
                 Overview = model.Overview,
                 Actors = model.Actors,
 

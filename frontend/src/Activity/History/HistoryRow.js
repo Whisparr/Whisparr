@@ -250,10 +250,12 @@ class HistoryRow extends Component {
                   key={name}
                   className={styles.details}
                 >
-                  <IconButton
-                    name={icons.INFO}
-                    onPress={this.onDetailsPress}
-                  />
+                  <div className={styles.actionContents}>
+                    <IconButton
+                      name={icons.INFO}
+                      onPress={this.onDetailsPress}
+                    />
+                  </div>
                 </TableRowCell>
               );
             }

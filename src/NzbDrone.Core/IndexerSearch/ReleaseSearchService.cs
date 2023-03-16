@@ -116,7 +116,7 @@ namespace NzbDrone.Core.IndexerSearch
             where TSpec : SearchCriteriaBase, new()
         {
             var spec = new TSpec();
-            spec.SceneTitles = new List<string> { series.Title };
+            spec.SceneTitles = new List<string> { series.Title, series.TitleSlug };
 
             spec.Series = series;
             spec.Episodes = episodes;

@@ -134,6 +134,10 @@ function EditSeriesModalContent(props: EditSeriesModalContentProps) {
     }
   }, [rootFolderPath, save]);
 
+  const onCancelPress = useCallback(() => {
+    setIsConfirmMoveModalOpen(false);
+  }, [setIsConfirmMoveModalOpen]);
+
   const onDoNotMoveSeriesPress = useCallback(() => {
     setIsConfirmMoveModalOpen(false);
     save(false);
@@ -223,6 +227,7 @@ function EditSeriesModalContent(props: EditSeriesModalContentProps) {
       <MoveSeriesModal
         isOpen={isConfirmMoveModalOpen}
         destinationRootFolder={rootFolderPath}
+        onModalClose={onCancelPress}
         onSavePress={onDoNotMoveSeriesPress}
         onMoveSeriesPress={onMoveSeriesPress}
       />

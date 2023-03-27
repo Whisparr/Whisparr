@@ -117,7 +117,7 @@ function SeriesIndexPoster(props: SeriesIndexPosterProps) {
   const elementStyle = {
     width: `${posterWidth}px`,
     height: `${posterHeight}px`,
-    objectFit: 'contain',
+    objectFit: 'contain' as const,
     'padding-right': '15px',
     'padding-left': '5px',
   };

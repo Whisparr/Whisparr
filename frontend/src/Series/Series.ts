@@ -1,5 +1,7 @@
 import ModelBase from 'App/ModelBase';
 
+export type SeriesType = 'anime' | 'daily' | 'standard';
+
 export interface Image {
   coverType: string;
   url: string;
@@ -59,7 +61,6 @@ interface Series extends ModelBase {
   runtime: number;
   seasonFolder: boolean;
   seasons: Season[];
-  seriesType: string;
   sortTitle: string;
   statistics: Statistics;
   status: string;

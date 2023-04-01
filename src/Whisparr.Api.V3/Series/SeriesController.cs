@@ -69,8 +69,8 @@ namespace Whisparr.Api.V3.Series
             Http.Validation.RuleBuilderExtensions.ValidId(SharedValidator.RuleFor(s => s.QualityProfileId));
 
             SharedValidator.RuleFor(s => s.Path)
-                           .Cascade(CascadeMode.StopOnFirstFailure)
-                           .IsValidPath()
+                .Cascade(CascadeMode.Stop)
+                .IsValidPath()
                            .SetValidator(rootFolderValidator)
                            .SetValidator(mappedNetworkDriveValidator)
                            .SetValidator(seriesPathValidator)

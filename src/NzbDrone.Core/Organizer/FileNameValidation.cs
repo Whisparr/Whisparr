@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -43,10 +42,7 @@ namespace NzbDrone.Core.Organizer
 
     public class ValidStandardEpisodeFormatValidator : PropertyValidator
     {
-        public ValidStandardEpisodeFormatValidator()
-            : base("Must contain release date OR Original Title")
-        {
-        }
+        protected override string GetDefaultMessageTemplate() => "Must contain release date OR Original Title";
 
         protected override bool IsValid(PropertyValidatorContext context)
         {
@@ -58,37 +54,26 @@ namespace NzbDrone.Core.Organizer
                 return false;
             }
 
-            return true;
+            return FileNameBuilder.SeasonEpisodePatternRegex.IsMatch(value) ||
+                   FileNameValidation.OriginalTokenRegex.IsMatch(value);
         }
     }
 
     public class IllegalCharactersValidator : PropertyValidator
     {
-        private readonly char[] _invalidPathChars = Path.GetInvalidPathChars();
+        private static readonly char[] InvalidPathChars = Path.GetInvalidPathChars();
 
-        public IllegalCharactersValidator()
-            : base("Contains illegal characters: {InvalidCharacters}")
-        {
-        }
+        protected override string GetDefaultMessageTemplate() => "Contains illegal characters: {InvalidCharacters}";
 
         protected override bool IsValid(PropertyValidatorContext context)
         {
             var value = context.PropertyValue as string;
-            var invalidCharacters = new List<char>();
-
             if (value.IsNullOrWhiteSpace())
             {
                 return true;
             }
 
-            foreach (var i in _invalidPathChars)
-            {
-                if (value.IndexOf(i) >= 0)
-                {
-                    invalidCharacters.Add(i);
-                }
-            }
-
+            var invalidCharacters = InvalidPathChars.Where(i => value!.IndexOf(i) >= 0).ToList();
             if (invalidCharacters.Any())
             {
                 context.MessageFormatter.AppendArgument("InvalidCharacters", string.Join("", invalidCharacters));

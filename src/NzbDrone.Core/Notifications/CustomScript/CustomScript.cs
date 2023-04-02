@@ -130,6 +130,9 @@ namespace NzbDrone.Core.Notifications.CustomScript
             environmentVariables.Add("Whisparr_EpisodeFile_MediaInfo_VideoDynamicRangeType", MediaInfoFormatter.FormatVideoDynamicRangeType(episodeFile.MediaInfo));
             environmentVariables.Add("Whisparr_EpisodeFile_CustomFormat", string.Join("|", message.EpisodeInfo.CustomFormats));
             environmentVariables.Add("Whisparr_EpisodeFile_CustomFormatScore", message.EpisodeInfo.CustomFormatScore.ToString());
+            environmentVariables.Add("Whisparr_Release_Indexer", message.Release?.Indexer);
+            environmentVariables.Add("Whisparr_Release_Size", message.Release?.Size.ToString());
+            environmentVariables.Add("Whisparr_Release_Title", message.Release?.Title);
 
             if (message.OldFiles.Any())
             {

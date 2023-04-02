@@ -44,22 +44,25 @@ namespace NzbDrone.Core.Notifications.Stash
         [FieldDefinition(3, Label = "API Key", Privacy = PrivacyLevel.ApiKey)]
         public string ApiKey { get; set; }
 
-        [FieldDefinition(4, Label = "Generate Previews", HelpText = "Generate previews for new media", Type = FieldType.Checkbox)]
+        [FieldDefinition(4, Label = "Generate Covers", HelpText = "Generate covers for new media", Type = FieldType.Checkbox)]
+        public bool GenerateCovers { get; set; }
+
+        [FieldDefinition(5, Label = "Generate Previews", HelpText = "Generate previews for new media", Type = FieldType.Checkbox)]
         public bool GeneratePreviews { get; set; }
 
-        [FieldDefinition(5, Label = "Generate Image Previews", HelpText = "Generate image previews for new media", Type = FieldType.Checkbox)]
+        [FieldDefinition(6, Label = "Generate Image Previews", HelpText = "Generate image previews for new media", Type = FieldType.Checkbox)]
         public bool GenerateImagePreviews { get; set; }
 
-        [FieldDefinition(6, Label = "Generate Sprites", HelpText = "Generate sprites for new media", Type = FieldType.Checkbox)]
+        [FieldDefinition(7, Label = "Generate Sprites", HelpText = "Generate sprites for new media", Type = FieldType.Checkbox)]
         public bool GenerateSprites { get; set; }
 
-        [FieldDefinition(7, Label = "Generate Phashes", HelpText = "Generate phash for new media", Type = FieldType.Checkbox)]
+        [FieldDefinition(8, Label = "Generate Phashes", HelpText = "Generate phash for new media", Type = FieldType.Checkbox)]
         public bool GeneratePhashes { get; set; }
 
-        [FieldDefinition(8, Label = "Map Paths From", Type = FieldType.Textbox, Advanced = true, HelpText = "Whisparr Path, Used to modify site paths when Stash sees library path location differently from Whisparr")]
+        [FieldDefinition(9, Label = "Map Paths From", Type = FieldType.Textbox, Advanced = true, HelpText = "Whisparr Path, Used to modify site paths when Stash sees library path location differently from Whisparr")]
         public string MapFrom { get; set; }
 
-        [FieldDefinition(9, Label = "Map Paths To", Type = FieldType.Textbox, Advanced = true, HelpText = "Stash Path, Used to modify site paths when Stash sees library path location differently from Whisparr")]
+        [FieldDefinition(10, Label = "Map Paths To", Type = FieldType.Textbox, Advanced = true, HelpText = "Stash Path, Used to modify site paths when Stash sees library path location differently from Whisparr")]
         public string MapTo { get; set; }
 
         [JsonIgnore]

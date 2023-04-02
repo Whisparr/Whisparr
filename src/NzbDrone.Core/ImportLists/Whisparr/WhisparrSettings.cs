@@ -22,9 +22,9 @@ namespace NzbDrone.Core.ImportLists.Whisparr
         {
             BaseUrl = "";
             ApiKey = "";
-            ProfileIds = new int[] { };
-            LanguageProfileIds = new int[] { };
-            TagIds = new int[] { };
+            ProfileIds = System.Array.Empty<int>();
+            LanguageProfileIds = System.Array.Empty<int>();
+            TagIds = System.Array.Empty<int>();
         }
 
         [FieldDefinition(0, Label = "Full URL", HelpText = "URL, including port, of the Whisparr V3 instance to import from")]

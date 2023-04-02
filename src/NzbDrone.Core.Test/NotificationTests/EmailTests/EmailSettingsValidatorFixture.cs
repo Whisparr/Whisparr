@@ -104,9 +104,9 @@ namespace NzbDrone.Core.Test.NotificationTests.EmailTests
         [Test]
         public void should_not_be_valid_if_to_bcc_cc_are_all_empty()
         {
-            _emailSettings.To = new string[] { };
-            _emailSettings.Cc = new string[] { };
-            _emailSettings.Bcc = new string[] { };
+            _emailSettings.To = System.Array.Empty<string>();
+            _emailSettings.Cc = System.Array.Empty<string>();
+            _emailSettings.Bcc = System.Array.Empty<string>();
 
             _validator.Validate(_emailSettings).IsValid.Should().BeFalse();
         }

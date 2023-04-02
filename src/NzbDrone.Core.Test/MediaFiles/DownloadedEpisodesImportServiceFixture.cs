@@ -91,7 +91,7 @@ namespace NzbDrone.Core.Test.MediaFiles
         private void WasImportedResponse()
         {
             Mocker.GetMock<IDiskScanService>().Setup(c => c.GetVideoFiles(It.IsAny<string>(), It.IsAny<bool>()))
-                  .Returns(new string[0]);
+                  .Returns(System.Array.Empty<string>());
         }
 
         [Test]
@@ -140,7 +140,7 @@ namespace NzbDrone.Core.Test.MediaFiles
 
             Mocker.GetMock<IDiskScanService>()
                   .Setup(c => c.GetVideoFiles(It.IsAny<string>(), It.IsAny<bool>()))
-                  .Returns(new string[0]);
+                  .Returns(System.Array.Empty<string>());
 
             Subject.ProcessRootFolder(new DirectoryInfo(_droneFactory));
 

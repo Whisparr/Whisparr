@@ -10,7 +10,6 @@ interface SelectEpisodeModalProps {
   seriesId: number;
   seasonNumber: number;
   selectedDetails?: string;
-  isAnime: boolean;
   modalTitle: string;
   onEpisodesSelect(selectedEpisodes: SelectedEpisode[]): void;
   onModalClose(): void;
@@ -23,7 +22,6 @@ function SelectEpisodeModal(props: SelectEpisodeModalProps) {
     seriesId,
     seasonNumber,
     selectedDetails,
-    isAnime,
     modalTitle,
     onEpisodesSelect,
     onModalClose,
@@ -36,7 +34,6 @@ function SelectEpisodeModal(props: SelectEpisodeModalProps) {
         seriesId={seriesId}
         seasonNumber={seasonNumber}
         selectedDetails={selectedDetails}
-        isAnime={isAnime}
         modalTitle={modalTitle}
         onEpisodesSelect={onEpisodesSelect}
         onModalClose={onModalClose}

@@ -1,7 +1,5 @@
 import ModelBase from 'App/ModelBase';
 
-export type SeriesType = 'anime' | 'daily' | 'standard';
-
 export interface Image {
   coverType: string;
   url: string;

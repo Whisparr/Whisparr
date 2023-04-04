@@ -63,7 +63,6 @@ interface SelectEpisodeModalContentProps {
   seriesId: number;
   seasonNumber: number;
   selectedDetails?: string;
-  isAnime: boolean;
   sortKey?: string;
   sortDirection?: string;
   modalTitle?: string;
@@ -80,7 +79,6 @@ function SelectEpisodeModalContent(props: SelectEpisodeModalContentProps) {
     seriesId,
     seasonNumber,
     selectedDetails,
-    isAnime,
     sortKey,
     sortDirection,
     modalTitle,
@@ -237,10 +235,8 @@ function SelectEpisodeModalContent(props: SelectEpisodeModalContentProps) {
                       key={item.id}
                       id={item.id}
                       episodeNumber={item.episodeNumber}
-                      absoluteEpisodeNumber={item.absoluteEpisodeNumber}
                       title={item.title}
                       airDate={item.airDate}
-                      isAnime={isAnime}
                       isSelected={selectedState[item.id]}
                       onSelectedChange={onSelectedChange}
                     />

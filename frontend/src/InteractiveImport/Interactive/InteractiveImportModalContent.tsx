@@ -825,7 +825,6 @@ function InteractiveImportModalContent(
         selectedIds={orderedSelectedIds}
         seriesId={selectedItem?.series?.id}
         seasonNumber={selectedItem?.seasonNumber}
-        isAnime={selectedItem?.series.type === 'anime'}
         modalTitle={modalTitle}
         onEpisodesSelect={onEpisodesSelect}
         onModalClose={onSelectModalClose}

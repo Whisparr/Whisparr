@@ -296,16 +296,11 @@ function InteractiveImportRow(props: InteractiveImportRowProps) {
   );
 
   const seriesTitle = series ? series.title : '';
-  const isAnime = series?.seriesType === 'anime';
 
   const episodeInfo = episodes.map((episode) => {
     return (
       <div key={episode.id}>
         {episode.episodeNumber}
-
-        {isAnime && episode.absoluteEpisodeNumber != null
-          ? ` (${episode.absoluteEpisodeNumber})`
-          : ''}
 
         {` - ${episode.title}`}
       </div>
@@ -466,7 +461,6 @@ function InteractiveImportRow(props: InteractiveImportRowProps) {
         isOpen={selectModalOpen === 'episode'}
         selectedIds={[id]}
         seriesId={series && series.id}
-        isAnime={isAnime}
         seasonNumber={seasonNumber}
         selectedDetails={relativePath}
         modalTitle={modalTitle}

@@ -346,7 +346,6 @@ function OverrideMatchModalContent(props: OverrideMatchModalContentProps) {
         isOpen={selectModalOpen === 'episode'}
         selectedIds={[guid]}
         seriesId={seriesId}
-        isAnime={false}
         seasonNumber={seasonNumber}
         selectedDetails={title}
         modalTitle={modalTitle}

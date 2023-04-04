@@ -25,10 +25,8 @@ class SelectEpisodeRow extends Component {
     const {
       id,
       episodeNumber,
-      absoluteEpisodeNumber,
       title,
       airDate,
-      isAnime,
       isSelected,
       onSelectedChange
     } = this.props;
@@ -43,7 +41,6 @@ class SelectEpisodeRow extends Component {
 
         <TableRowCell>
           {episodeNumber}
-          {isAnime ? ` (${absoluteEpisodeNumber})` : ''}
         </TableRowCell>
 
         <TableRowCell>
@@ -64,7 +61,6 @@ SelectEpisodeRow.propTypes = {
   absoluteEpisodeNumber: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   airDate: PropTypes.string.isRequired,
-  isAnime: PropTypes.bool.isRequired,
   isSelected: PropTypes.bool,
   onSelectedChange: PropTypes.func.isRequired
 };

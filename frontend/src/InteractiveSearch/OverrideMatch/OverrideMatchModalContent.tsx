@@ -23,7 +23,7 @@ import Series from 'Series/Series';
 import { grabRelease } from 'Store/Actions/releaseActions';
 import { fetchDownloadClients } from 'Store/Actions/settingsActions';
 import createEnabledDownloadClientsSelector from 'Store/Selectors/createEnabledDownloadClientsSelector';
-import createSeriesSelector from 'Store/Selectors/createSeriesSelector';
+import { createSeriesSelectorForHook } from 'Store/Selectors/createSeriesSelector';
 import translate from 'Utilities/String/translate';
 import SelectDownloadClientModal from './DownloadClient/SelectDownloadClientModal';
 import OverrideMatchData from './OverrideMatchData';
@@ -77,7 +77,9 @@ function OverrideMatchModalContent(props: OverrideMatchModalContentProps) {
   );
 
   const dispatch = useDispatch();
-  const series: Series = useSelector(createSeriesSelector(seriesId));
+  const series: Series | undefined = useSelector(
+    createSeriesSelectorForHook(seriesId)
+  );
   const { items: downloadClients } = useSelector(
     createEnabledDownloadClientsSelector(protocol)
   );

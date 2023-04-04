@@ -27,6 +27,7 @@ import {
   reprocessInteractiveImportItems,
   updateInteractiveImportItem,
 } from 'Store/Actions/interactiveImportActions';
+import { SelectStateInputProps } from 'typings/props';
 import Rejection from 'typings/Rejection';
 import formatBytes from 'Utilities/Number/formatBytes';
 import InteractiveImportRowCellPlaceholder from './InteractiveImportRowCellPlaceholder';
@@ -39,6 +40,10 @@ type SelectType =
   | 'releaseGroup'
   | 'quality'
   | 'language';
+
+type SelectedChangeProps = SelectStateInputProps & {
+  hasEpisodeFileId: boolean;
+};
 
 interface InteractiveImportRowProps {
   id: number;
@@ -58,7 +63,7 @@ interface InteractiveImportRowProps {
   isReprocessing?: boolean;
   isSelected?: boolean;
   modalTitle: string;
-  onSelectedChange(...args: unknown[]): void;
+  onSelectedChange(result: SelectedChangeProps): void;
   onValidRowChange(id: number, isValid: boolean): void;
 }
 
@@ -88,7 +93,7 @@ function InteractiveImportRow(props: InteractiveImportRowProps) {
   const dispatch = useDispatch();
 
   const isSeriesColumnVisible = useMemo(
-    () => columns.find((c) => c.name === 'series').isVisible,
+    () => columns.find((c) => c.name === 'series')?.isVisible ?? false,
     [columns]
   );
 
@@ -110,6 +115,7 @@ function InteractiveImportRow(props: InteractiveImportRowProps) {
           id,
           hasEpisodeFileId: !!episodeFileId,
           value: true,
+          shiftKey: false,
         });
       }
     },
@@ -143,7 +149,7 @@ function InteractiveImportRow(props: InteractiveImportRowProps) {
   ]);
 
   const onSelectedChangeWrapper = useCallback(
-    (result) => {
+    (result: SelectedChangeProps) => {
       onSelectedChange({
         ...result,
         hasEpisodeFileId: !!episodeFileId,
@@ -158,6 +164,7 @@ function InteractiveImportRow(props: InteractiveImportRowProps) {
         id,
         hasEpisodeFileId: !!episodeFileId,
         value: true,
+        shiftKey: false,
       });
     }
   }, [id, episodeFileId, isSelected, onSelectedChange]);
@@ -307,9 +314,10 @@ function InteractiveImportRow(props: InteractiveImportRowProps) {
     );
   });
 
+  const requiresSeasonNumber = isNaN(Number(seasonNumber));
   const showSeriesPlaceholder = isSelected && !series;
   const showSeasonNumberPlaceholder =
-    isSelected && !!series && isNaN(seasonNumber) && !isReprocessing;
+    isSelected && !!series && requiresSeasonNumber && !isReprocessing;
   const showEpisodeNumbersPlaceholder =
     isSelected && Number.isInteger(seasonNumber) && !episodes.length;
   const showReleaseGroupPlaceholder = isSelected && !releaseGroup;
@@ -359,9 +367,11 @@ function InteractiveImportRow(props: InteractiveImportRowProps) {
       </TableRowCellButton>
 
       <TableRowCellButton
-        isDisabled={!series || isNaN(seasonNumber)}
+        isDisabled={!series || requiresSeasonNumber}
         title={
-          series && !isNaN(seasonNumber) ? 'Click to change release' : undefined
+          series && !requiresSeasonNumber
+            ? 'Click to change episode'
+            : undefined
         }
         onPress={onSelectEpisodePress}
       >
@@ -451,7 +461,7 @@ function InteractiveImportRow(props: InteractiveImportRowProps) {
 
       <SelectSeasonModal
         isOpen={selectModalOpen === 'season'}
-        seriesId={series && series.id}
+        seriesId={series?.id}
         modalTitle={modalTitle}
         onSeasonSelect={onSeasonSelect}
         onModalClose={onSelectModalClose}
@@ -460,7 +470,7 @@ function InteractiveImportRow(props: InteractiveImportRowProps) {
       <SelectEpisodeModal
         isOpen={selectModalOpen === 'episode'}
         selectedIds={[id]}
-        seriesId={series && series.id}
+        seriesId={series?.id}
         seasonNumber={seasonNumber}
         selectedDetails={relativePath}
         modalTitle={modalTitle}

@@ -29,7 +29,7 @@ function ChangeMonitoringModalContent(
   const [monitor, setMonitor] = useState(NO_CHANGE);
 
   const onInputChange = useCallback(
-    ({ value }) => {
+    ({ value }: { value: string }) => {
       setMonitor(value);
     },
     [setMonitor]

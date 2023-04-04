@@ -12,6 +12,7 @@ export interface Language {
 }
 
 export interface Statistics {
+  seasonCount: number;
   episodeCount: number;
   episodeFileCount: number;
   percentOfEpisodes: number;
@@ -39,11 +40,12 @@ export interface AlternateTitle {
 }
 
 interface Series extends ModelBase {
-  added: Date;
+  added: string;
   alternateTitles: AlternateTitle[];
+  certification: string;
   cleanTitle: string;
   ended: boolean;
-  firstAired: Date;
+  firstAired: string;
   genres: string[];
   images: Image[];
   imdbId: string;
@@ -52,7 +54,8 @@ interface Series extends ModelBase {
   originalLanguage: Language;
   overview: string;
   path: string;
-  previousAiring: Date;
+  previousAiring?: string;
+  nextAiring?: string;
   qualityProfileId: number;
   ratings: Ratings;
   rootFolderPath: string;
@@ -70,6 +73,7 @@ interface Series extends ModelBase {
   tvRageId: number;
   useSceneNumbering: boolean;
   year: number;
+  isSaving?: boolean;
 }
 
 export default Series;

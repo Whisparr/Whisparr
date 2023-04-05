@@ -25,10 +25,31 @@ namespace Whisparr.Api.V3.MediaCovers
             _mimeTypeProvider = new FileExtensionContentTypeProvider();
         }
 
-        [HttpGet(@"{seriesId:int}/{filename:regex((.+)\.(jpg|png|gif))}")]
-        public IActionResult GetMediaCover(int seriesId, string filename)
+        [HttpGet(@"sites/{seriesId:int}/{filename:regex((.+)\.(jpg|png|gif))}")]
+        public IActionResult GetSiteMediaCover(int seriesId, string filename)
         {
-            var filePath = Path.Combine(_appFolderInfo.GetAppDataPath(), "MediaCover", seriesId.ToString(), filename);
+            var filePath = Path.Combine(_appFolderInfo.GetAppDataPath(), "MediaCover", "Sites", seriesId.ToString(), filename);
+
+            if (!_diskProvider.FileExists(filePath) || _diskProvider.GetFileSize(filePath) == 0)
+            {
+                // Return the full sized image if someone requests a non-existing resized one.
+                // TODO: This code can be removed later once everyone had the update for a while.
+                var basefilePath = RegexResizedImage.Replace(filePath, ".jpg");
+                if (basefilePath == filePath || !_diskProvider.FileExists(basefilePath))
+                {
+                    return NotFound();
+                }
+
+                filePath = basefilePath;
+            }
+
+            return PhysicalFile(filePath, GetContentType(filePath));
+        }
+
+        [HttpGet(@"movies/{movieId:int}/{filename:regex((.+)\.(jpg|png|gif))}")]
+        public IActionResult GetMovieMediaCover(int movieId, string filename)
+        {
+            var filePath = Path.Combine(_appFolderInfo.GetAppDataPath(), "MediaCover", "Movies", movieId.ToString(), filename);
 
             if (!_diskProvider.FileExists(filePath) || _diskProvider.GetFileSize(filePath) == 0)
             {

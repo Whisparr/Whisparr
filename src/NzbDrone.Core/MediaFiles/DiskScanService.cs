@@ -15,6 +15,7 @@ using NzbDrone.Core.MediaFiles.Events;
 using NzbDrone.Core.MediaFiles.MediaInfo;
 using NzbDrone.Core.Messaging.Commands;
 using NzbDrone.Core.Messaging.Events;
+using NzbDrone.Core.Movies;
 using NzbDrone.Core.RootFolders;
 using NzbDrone.Core.Tv;
 
@@ -23,6 +24,7 @@ namespace NzbDrone.Core.MediaFiles
     public interface IDiskScanService
     {
         void Scan(Series series);
+        void Scan(Movie movie);
         string[] GetVideoFiles(string path, bool allDirectories = true);
         string[] GetNonVideoFiles(string path, bool allDirectories = true);
         List<string> FilterPaths(string basePath, IEnumerable<string> files, bool filterExtras = true);
@@ -85,14 +87,14 @@ namespace NzbDrone.Core.MediaFiles
                 if (!_diskProvider.FolderExists(rootFolder))
                 {
                     _logger.Warn("Series' root folder ({0}) doesn't exist.", rootFolder);
-                    _eventAggregator.PublishEvent(new SeriesScanSkippedEvent(series, SeriesScanSkippedReason.RootFolderDoesNotExist));
+                    _eventAggregator.PublishEvent(new SeriesScanSkippedEvent(series, EntityScanSkippedReason.RootFolderDoesNotExist));
                     return;
                 }
 
                 if (_diskProvider.FolderEmpty(rootFolder))
                 {
                     _logger.Warn("Series' root folder ({0}) is empty.", rootFolder);
-                    _eventAggregator.PublishEvent(new SeriesScanSkippedEvent(series, SeriesScanSkippedReason.RootFolderIsEmpty));
+                    _eventAggregator.PublishEvent(new SeriesScanSkippedEvent(series, EntityScanSkippedReason.RootFolderIsEmpty));
                     return;
                 }
             }
@@ -176,6 +178,34 @@ namespace NzbDrone.Core.MediaFiles
 
             RemoveEmptySeriesFolder(series.Path);
             CompletedScanning(series);
+        }
+
+        public void Scan(Movie movie)
+        {
+            var rootFolder = _rootFolderService.GetBestRootFolderPath(movie.Path);
+
+            var seriesFolderExists = _diskProvider.FolderExists(movie.Path);
+
+            if (!seriesFolderExists)
+            {
+                if (!_diskProvider.FolderExists(rootFolder))
+                {
+                    _logger.Warn("Series' root folder ({0}) doesn't exist.", rootFolder);
+                    _eventAggregator.PublishEvent(new MovieScanSkippedEvent(movie, EntityScanSkippedReason.RootFolderDoesNotExist));
+                    return;
+                }
+
+                if (_diskProvider.FolderEmpty(rootFolder))
+                {
+                    _logger.Warn("Series' root folder ({0}) is empty.", rootFolder);
+                    _eventAggregator.PublishEvent(new MovieScanSkippedEvent(movie, EntityScanSkippedReason.RootFolderIsEmpty));
+                    return;
+                }
+            }
+
+            _logger.ProgressInfo("Scanning {0}", movie.Title);
+
+            // TODO: Actually do a scan
         }
 
         private void CleanMediaFiles(Series series, List<string> mediaFileList)

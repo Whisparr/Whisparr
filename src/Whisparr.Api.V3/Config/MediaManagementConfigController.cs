@@ -14,7 +14,7 @@ namespace Whisparr.Api.V3.Config
                                            PathExistsValidator pathExistsValidator,
                                            FolderChmodValidator folderChmodValidator,
                                            FolderWritableValidator folderWritableValidator,
-                                           SeriesPathValidator seriesPathValidator,
+                                           MediaPathValidator seriesPathValidator,
                                            StartupFolderValidator startupFolderValidator,
                                            SystemFolderValidator systemFolderValidator,
                                            RootFolderAncestorValidator rootFolderAncestorValidator,

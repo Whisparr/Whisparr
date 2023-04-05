@@ -375,7 +375,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
         {
             foreach (var image in series.Images)
             {
-                var source = _mediaCoverService.GetCoverPath(series.Id, image.CoverType);
+                var source = _mediaCoverService.GetCoverPath(series.Id, MediaCoverEntity.Series, image.CoverType);
                 var destination = image.CoverType.ToString().ToLowerInvariant() + Path.GetExtension(source);
 
                 yield return new ImageFileResult(destination, source);

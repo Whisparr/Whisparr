@@ -32,6 +32,8 @@ namespace Whisparr.Api.V3.Config
             SharedValidator.RuleFor(c => c.MultiEpisodeStyle).InclusiveBetween(0, 5);
             SharedValidator.RuleFor(c => c.StandardEpisodeFormat).ValidEpisodeFormat();
             SharedValidator.RuleFor(c => c.SeriesFolderFormat).ValidSeriesFolderFormat();
+            SharedValidator.RuleFor(c => c.StandardMovieFormat).ValidMovieFormat();
+            SharedValidator.RuleFor(c => c.MovieFolderFormat).ValidMovieFolderFormat();
         }
 
         protected override NamingConfigResource GetResourceById(int id)

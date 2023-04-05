@@ -22,6 +22,8 @@ namespace Whisparr.Api.V3.Config
                 MultiEpisodeStyle = (int)model.MultiEpisodeStyle,
                 StandardEpisodeFormat = model.StandardEpisodeFormat,
                 SeriesFolderFormat = model.SeriesFolderFormat,
+                StandardMovieFormat = model.StandardMovieFormat,
+                MovieFolderFormat = model.MovieFolderFormat,
 
                 // IncludeSeriesTitle
                 // IncludeEpisodeTitle
@@ -53,7 +55,9 @@ namespace Whisparr.Api.V3.Config
                 MultiEpisodeStyle = (MultiEpisodeStyle)resource.MultiEpisodeStyle,
                 ColonReplacementFormat = (ColonReplacementFormat)resource.ColonReplacementFormat,
                 StandardEpisodeFormat = resource.StandardEpisodeFormat,
-                SeriesFolderFormat = resource.SeriesFolderFormat
+                SeriesFolderFormat = resource.SeriesFolderFormat,
+                StandardMovieFormat = resource.StandardMovieFormat,
+                MovieFolderFormat = resource.MovieFolderFormat
             };
         }
     }

@@ -47,7 +47,7 @@ namespace NzbDrone.Automation.Test.PageModel
             });
         }
 
-        public IWebElement SeriesNavIcon => Find(By.LinkText("Sites"));
+        public IWebElement SeriesNavIcon => Find(By.LinkText("Scenes"));
 
         public IWebElement CalendarNavIcon => Find(By.LinkText("Calendar"));
 

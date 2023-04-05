@@ -166,14 +166,14 @@ namespace NzbDrone.Core.Tv
             else if (rescanAfterRefresh == RescanAfterRefreshType.Never)
             {
                 _logger.Trace("Skipping rescan of {0}. Reason: never rescan after refresh", series);
-                _eventAggregator.PublishEvent(new SeriesScanSkippedEvent(series, SeriesScanSkippedReason.NeverRescanAfterRefresh));
+                _eventAggregator.PublishEvent(new SeriesScanSkippedEvent(series, EntityScanSkippedReason.NeverRescanAfterRefresh));
 
                 return;
             }
             else if (rescanAfterRefresh == RescanAfterRefreshType.AfterManual && trigger != CommandTrigger.Manual)
             {
                 _logger.Trace("Skipping rescan of {0}. Reason: not after automatic scans", series);
-                _eventAggregator.PublishEvent(new SeriesScanSkippedEvent(series, SeriesScanSkippedReason.RescanAfterManualRefreshOnly));
+                _eventAggregator.PublishEvent(new SeriesScanSkippedEvent(series, EntityScanSkippedReason.RescanAfterManualRefreshOnly));
 
                 return;
             }

@@ -4,11 +4,14 @@ import { Redirect, Route } from 'react-router-dom';
 import BlocklistConnector from 'Activity/Blocklist/BlocklistConnector';
 import HistoryConnector from 'Activity/History/HistoryConnector';
 import QueueConnector from 'Activity/Queue/QueueConnector';
+import AddNewMovieConnector from 'AddMovie/AddNewMovie/AddNewMovieConnector';
+import ImportMovie from 'AddMovie/ImportMovie/Import/ImportMovie';
 import AddNewSeriesConnector from 'AddSeries/AddNewSeries/AddNewSeriesConnector';
 import ImportSeries from 'AddSeries/ImportSeries/ImportSeries';
 import CalendarPageConnector from 'Calendar/CalendarPageConnector';
 import NotFound from 'Components/NotFound';
 import Switch from 'Components/Router/Switch';
+import MovieIndex from 'Movie/Index/MovieIndex';
 import SeriesDetailsPageConnector from 'Series/Details/SeriesDetailsPageConnector';
 import SeriesIndex from 'Series/Index/SeriesIndex';
 import CustomFormatSettingsConnector from 'Settings/CustomFormats/CustomFormatSettingsConnector';
@@ -75,8 +78,23 @@ function AppRoutes(props) {
       />
 
       <Route
+        path="/movies/add/new"
+        component={AddNewMovieConnector}
+      />
+
+      <Route
         path="/add/import"
         component={ImportSeries}
+      />
+
+      <Route
+        path="/movies/add/import"
+        component={ImportMovie}
+      />
+
+      <Route
+        path="/movies"
+        component={MovieIndex}
       />
 
       <Route

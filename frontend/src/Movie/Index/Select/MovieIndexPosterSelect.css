@@ -1,0 +1,38 @@
+.checkButton {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  width: 36px;
+  height: 36px;
+}
+
+.checkContainer {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: var(--defaultColor);
+}
+
+.selected {
+  color: var(--primaryColor);
+}
+
+.unselected {
+  color: var(--white);
+}
+
+.checkButton {
+  &:hover {
+    .selected {
+      color: var(--white);
+    }
+
+    .unselected {
+      color: var(--primaryColor);
+    }
+  }
+}

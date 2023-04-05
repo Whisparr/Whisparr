@@ -49,9 +49,9 @@ namespace Whisparr.Api.V3.Series
                             IRootFolderService rootFolderService,
                             RootFolderValidator rootFolderValidator,
                             MappedNetworkDriveValidator mappedNetworkDriveValidator,
-                            SeriesPathValidator seriesPathValidator,
+                            MediaPathValidator seriesPathValidator,
                             SeriesExistsValidator seriesExistsValidator,
-                            SeriesAncestorValidator seriesAncestorValidator,
+                            MediaAncestorValidator seriesAncestorValidator,
                             SystemFolderValidator systemFolderValidator,
                             ProfileExistsValidator profileExistsValidator,
                             SeriesFolderAsRootFolderValidator seriesFolderAsRootFolderValidator)
@@ -184,7 +184,7 @@ namespace Whisparr.Api.V3.Series
         {
             foreach (var seriesResource in series)
             {
-                _coverMapper.ConvertToLocalUrls(seriesResource.Id, seriesResource.Images);
+                _coverMapper.ConvertToLocalUrls(seriesResource.Id, MediaCoverEntity.Series, seriesResource.Images);
             }
         }
 
@@ -276,7 +276,7 @@ namespace Whisparr.Api.V3.Series
         [NonAction]
         public void Handle(MediaCoversUpdatedEvent message)
         {
-            if (message.Updated)
+            if (message.Updated && message.Series != null)
             {
                 BroadcastResourceChange(ModelAction.Updated, message.Series.Id);
             }

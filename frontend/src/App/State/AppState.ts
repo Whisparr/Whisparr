@@ -2,6 +2,7 @@ import InteractiveImportAppState from 'App/State/InteractiveImportAppState';
 import CalendarAppState from './CalendarAppState';
 import EpisodeFilesAppState from './EpisodeFilesAppState';
 import EpisodesAppState from './EpisodesAppState';
+import MoviesAppState, { MovieIndexAppState } from './MoviesAppState';
 import QueueAppState from './QueueAppState';
 import SeriesAppState, { SeriesIndexAppState } from './SeriesAppState';
 import SettingsAppState from './SettingsAppState';
@@ -45,8 +46,10 @@ interface AppState {
   episodeFiles: EpisodeFilesAppState;
   interactiveImport: InteractiveImportAppState;
   seriesIndex: SeriesIndexAppState;
+  movieIndex: MovieIndexAppState;
   settings: SettingsAppState;
   series: SeriesAppState;
+  movies: MoviesAppState;
   tags: TagsAppState;
   queue: QueueAppState;
 }

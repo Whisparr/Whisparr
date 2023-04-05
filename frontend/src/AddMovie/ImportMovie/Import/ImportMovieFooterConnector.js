@@ -1,0 +1,55 @@
+import _ from 'lodash';
+import { connect } from 'react-redux';
+import { createSelector } from 'reselect';
+import { cancelLookupMovie, lookupUnsearchedMovie } from 'Store/Actions/importMovieActions';
+import ImportMovieFooter from './ImportMovieFooter';
+
+function isMixed(items, selectedIds, defaultValue, key) {
+  return _.some(items, (movie) => {
+    return selectedIds.indexOf(movie.id) > -1 && movie[key] !== defaultValue;
+  });
+}
+
+function createMapStateToProps() {
+  return createSelector(
+    (state) => state.addMovie,
+    (state) => state.importMovie,
+    (state, { selectedIds }) => selectedIds,
+    (addMovie, importMovie, selectedIds) => {
+      const {
+        monitor: defaultMonitor,
+        qualityProfileId: defaultQualityProfileId
+      } = addMovie.defaults;
+
+      const {
+        isLookingUpMovie,
+        isImporting,
+        items,
+        importError
+      } = importMovie;
+
+      const isMonitorMixed = isMixed(items, selectedIds, defaultMonitor, 'monitor');
+      const isQualityProfileIdMixed = isMixed(items, selectedIds, defaultQualityProfileId, 'qualityProfileId');
+      const hasUnsearchedItems = !isLookingUpMovie && items.some((item) => !item.isPopulated);
+
+      return {
+        selectedCount: selectedIds.length,
+        isLookingUpMovie,
+        isImporting,
+        defaultMonitor,
+        defaultQualityProfileId,
+        isMonitorMixed,
+        isQualityProfileIdMixed,
+        importError,
+        hasUnsearchedItems
+      };
+    }
+  );
+}
+
+const mapDispatchToProps = {
+  onLookupPress: lookupUnsearchedMovie,
+  onCancelLookupPress: cancelLookupMovie
+};
+
+export default connect(createMapStateToProps, mapDispatchToProps)(ImportMovieFooter);

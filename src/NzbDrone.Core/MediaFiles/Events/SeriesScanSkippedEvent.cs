@@ -6,16 +6,16 @@ namespace NzbDrone.Core.MediaFiles.Events
     public class SeriesScanSkippedEvent : IEvent
     {
         public Series Series { get; private set; }
-        public SeriesScanSkippedReason Reason { get; set; }
+        public EntityScanSkippedReason Reason { get; set; }
 
-        public SeriesScanSkippedEvent(Series series, SeriesScanSkippedReason reason)
+        public SeriesScanSkippedEvent(Series series, EntityScanSkippedReason reason)
         {
             Series = series;
             Reason = reason;
         }
     }
 
-    public enum SeriesScanSkippedReason
+    public enum EntityScanSkippedReason
     {
         RootFolderDoesNotExist,
         RootFolderIsEmpty,

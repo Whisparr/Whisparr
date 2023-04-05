@@ -14,6 +14,12 @@ namespace NzbDrone.Core.MediaCover
         Clearlogo = 7
     }
 
+    public enum MediaCoverEntity
+    {
+        Series = 0,
+        Movie = 1
+    }
+
     public class MediaCover : IEmbeddedDocument
     {
         public MediaCoverTypes CoverType { get; set; }

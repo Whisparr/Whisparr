@@ -182,7 +182,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Wdtv
                 return new List<ImageFileResult>();
             }
 
-            var source = _mediaCoverService.GetCoverPath(series.Id, image.CoverType);
+            var source = _mediaCoverService.GetCoverPath(series.Id, MediaCoverEntity.Series, image.CoverType);
             var destination = "folder" + Path.GetExtension(source);
 
             return new List<ImageFileResult>

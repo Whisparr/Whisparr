@@ -11,27 +11,31 @@ using NzbDrone.Core.Exceptions;
 using NzbDrone.Core.Languages;
 using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.MetadataSource.SkyHook.Resource;
+using NzbDrone.Core.Movies;
 using NzbDrone.Core.Parser;
 using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.MetadataSource.SkyHook
 {
-    public class SkyHookProxy : IProvideSeriesInfo, ISearchForNewSeries
+    public class SkyHookProxy : IProvideSeriesInfo, IProvideMovieInfo, ISearchForNewSeries, ISearchForNewMovies
     {
         private readonly IHttpClient _httpClient;
         private readonly Logger _logger;
         private readonly ISeriesService _seriesService;
+        private readonly IMovieService _movieService;
         private readonly IHttpRequestBuilderFactory _requestBuilder;
 
         public SkyHookProxy(IHttpClient httpClient,
                             IWhisparrCloudRequestBuilder requestBuilder,
                             ISeriesService seriesService,
+                            IMovieService movieService,
                             Logger logger)
         {
             _httpClient = httpClient;
             _requestBuilder = requestBuilder.WhisparrMetadata;
             _logger = logger;
             _seriesService = seriesService;
+            _movieService = movieService;
         }
 
         public Tuple<Series, List<Episode>> GetSeriesInfo(int tvdbSeriesId)
@@ -62,6 +66,35 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             var series = MapSeries(httpResponse.Resource);
 
             return new Tuple<Series, List<Episode>>(series, episodes.ToList());
+        }
+
+        public Movie GetMovieInfo(int tmdbMovieId)
+        {
+            var httpRequest = _requestBuilder.Create()
+                                             .SetSegment("route", "movie")
+                                             .Resource(tmdbMovieId.ToString())
+                                             .Build();
+
+            httpRequest.AllowAutoRedirect = true;
+            httpRequest.SuppressHttpError = true;
+
+            var httpResponse = _httpClient.Get<MovieResource>(httpRequest);
+
+            if (httpResponse.HasHttpError)
+            {
+                if (httpResponse.StatusCode == HttpStatusCode.NotFound)
+                {
+                    throw new SeriesNotFoundException(tmdbMovieId);
+                }
+                else
+                {
+                    throw new HttpException(httpRequest, httpResponse);
+                }
+            }
+
+            var movie = MapMovie(httpResponse.Resource);
+
+            return movie;
         }
 
         public List<Series> SearchForNewSeries(string title)
@@ -122,6 +155,64 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             }
         }
 
+        public List<Movie> SearchForNewMovies(string title)
+        {
+            try
+            {
+                var lowerTitle = title.ToLowerInvariant();
+
+                if (lowerTitle.StartsWith("tmdb:") || lowerTitle.StartsWith("tmdbid:"))
+                {
+                    var slug = lowerTitle.Split(':')[1].Trim();
+
+                    if (slug.IsNullOrWhiteSpace() || slug.Any(char.IsWhiteSpace) || !int.TryParse(slug, out var tmdbId) || tmdbId <= 0)
+                    {
+                        return new List<Movie>();
+                    }
+
+                    try
+                    {
+                        var existingMovie = _movieService.FindByTmdbId(tmdbId);
+                        if (existingMovie != null)
+                        {
+                            return new List<Movie> { existingMovie };
+                        }
+
+                        return new List<Movie> { GetMovieInfo(tmdbId) };
+                    }
+                    catch (SeriesNotFoundException)
+                    {
+                        return new List<Movie>();
+                    }
+                }
+
+                var httpRequest = _requestBuilder.Create()
+                                                 .SetSegment("route", "movie")
+                                                 .Resource("search")
+                                                 .AddQueryParam("q", title.ToLower().Trim())
+                                                 .Build();
+
+                var httpResponse = _httpClient.Get<List<MovieResource>>(httpRequest);
+
+                return httpResponse.Resource.SelectList(MapSearchResult);
+            }
+            catch (HttpException ex)
+            {
+                _logger.Warn(ex);
+                throw new SkyHookException("Search for '{0}' failed. Unable to communicate with SkyHook.", ex, title);
+            }
+            catch (WebException ex)
+            {
+                _logger.Warn(ex);
+                throw new SkyHookException("Search for '{0}' failed. Unable to communicate with SkyHook.", ex, title, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.Warn(ex);
+                throw new SkyHookException("Search for '{0}' failed. Invalid response received from SkyHook.", ex, title);
+            }
+        }
+
         private Series MapSearchResult(ShowResource show)
         {
             var series = _seriesService.FindByTvdbId(show.ForeignId);
@@ -132,6 +223,18 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             }
 
             return series;
+        }
+
+        private Movie MapSearchResult(MovieResource movieResource)
+        {
+            var movie = _movieService.FindByTmdbId(movieResource.ForeignId);
+
+            if (movie == null)
+            {
+                movie = MapMovie(movieResource);
+            }
+
+            return movie;
         }
 
         private Series MapSeries(ShowResource show)
@@ -180,6 +283,30 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             series.Monitored = true;
 
             return series;
+        }
+
+        private Movie MapMovie(MovieResource movieResource)
+        {
+            var movie = new Movie();
+
+            movie.TmdbId = movieResource.ForeignId;
+            movie.Title = movieResource.Title;
+            movie.CleanTitle = Parser.Parser.CleanSeriesTitle(movieResource.Title);
+            movie.SortTitle = SeriesTitleNormalizer.Normalize(movieResource.Title, movieResource.ForeignId);
+
+            movie.Overview = movieResource.Overview;
+            movie.Studio = movieResource.Studio;
+
+            if (movieResource.Duration != null)
+            {
+                movie.Runtime = movieResource.Duration.Value;
+            }
+
+            movie.TitleSlug = movieResource.Slug;
+            movie.Images = movieResource.Images.Select(MapImage).ToList();
+            movie.Monitored = true;
+
+            return movie;
         }
 
         private static Actor MapActors(ActorResource arg)

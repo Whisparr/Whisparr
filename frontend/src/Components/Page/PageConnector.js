@@ -5,6 +5,7 @@ import { withRouter } from 'react-router-dom';
 import { createSelector } from 'reselect';
 import { saveDimensions, setIsSidebarVisible } from 'Store/Actions/appActions';
 import { fetchCustomFilters } from 'Store/Actions/customFilterActions';
+import { fetchMovies } from 'Store/Actions/movieActions';
 import { fetchSeries } from 'Store/Actions/seriesActions';
 import { fetchImportLists, fetchLanguages, fetchQualityProfiles, fetchUISettings } from 'Store/Actions/settingsActions';
 import { fetchStatus } from 'Store/Actions/systemActions';
@@ -46,6 +47,7 @@ const selectAppProps = createSelector(
 const selectIsPopulated = createSelector(
   (state) => state.series.isPopulated,
   (state) => state.customFilters.isPopulated,
+  (state) => state.movies.isPopulated,
   (state) => state.tags.isPopulated,
   (state) => state.settings.ui.isPopulated,
   (state) => state.settings.qualityProfiles.isPopulated,
@@ -55,6 +57,7 @@ const selectIsPopulated = createSelector(
   (
     seriesIsPopulated,
     customFiltersIsPopulated,
+    moviesIsPopulated,
     tagsIsPopulated,
     uiSettingsIsPopulated,
     qualityProfilesIsPopulated,
@@ -65,6 +68,7 @@ const selectIsPopulated = createSelector(
     return (
       seriesIsPopulated &&
       customFiltersIsPopulated &&
+      moviesIsPopulated &&
       tagsIsPopulated &&
       uiSettingsIsPopulated &&
       qualityProfilesIsPopulated &&
@@ -78,6 +82,7 @@ const selectIsPopulated = createSelector(
 const selectErrors = createSelector(
   (state) => state.series.error,
   (state) => state.customFilters.error,
+  (state) => state.movies.error,
   (state) => state.tags.error,
   (state) => state.settings.ui.error,
   (state) => state.settings.qualityProfiles.error,
@@ -87,6 +92,7 @@ const selectErrors = createSelector(
   (
     seriesError,
     customFiltersError,
+    moviesError,
     tagsError,
     uiSettingsError,
     qualityProfilesError,
@@ -97,6 +103,7 @@ const selectErrors = createSelector(
     const hasError = !!(
       seriesError ||
       customFiltersError ||
+      moviesError ||
       tagsError ||
       uiSettingsError ||
       qualityProfilesError ||
@@ -109,6 +116,7 @@ const selectErrors = createSelector(
       hasError,
       seriesError,
       customFiltersError,
+      moviesError,
       tagsError,
       uiSettingsError,
       qualityProfilesError,
@@ -151,6 +159,9 @@ function createMapDispatchToProps(dispatch, props) {
   return {
     dispatchFetchSeries() {
       dispatch(fetchSeries());
+    },
+    dispatchFetchMovies() {
+      dispatch(fetchMovies());
     },
     dispatchFetchCustomFilters() {
       dispatch(fetchCustomFilters());
@@ -198,6 +209,7 @@ class PageConnector extends Component {
   componentDidMount() {
     if (!this.props.isPopulated) {
       this.props.dispatchFetchSeries();
+      this.props.dispatchFetchMovies();
       this.props.dispatchFetchCustomFilters();
       this.props.dispatchFetchTags();
       this.props.dispatchFetchQualityProfiles();
@@ -223,6 +235,7 @@ class PageConnector extends Component {
       isPopulated,
       hasError,
       dispatchFetchSeries,
+      dispatchFetchMovies,
       dispatchFetchTags,
       dispatchFetchQualityProfiles,
       dispatchFetchLanguages,
@@ -261,6 +274,7 @@ PageConnector.propTypes = {
   hasError: PropTypes.bool.isRequired,
   isSidebarVisible: PropTypes.bool.isRequired,
   dispatchFetchSeries: PropTypes.func.isRequired,
+  dispatchFetchMovies: PropTypes.func.isRequired,
   dispatchFetchCustomFilters: PropTypes.func.isRequired,
   dispatchFetchTags: PropTypes.func.isRequired,
   dispatchFetchQualityProfiles: PropTypes.func.isRequired,

@@ -10,19 +10,20 @@ using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Messaging.Events;
-using NzbDrone.Core.Tv;
+using NzbDrone.Core.Movies.Events;
 using NzbDrone.Core.Tv.Events;
 
 namespace NzbDrone.Core.MediaCover
 {
     public interface IMapCoversToLocal
     {
-        void ConvertToLocalUrls(int seriesId, IEnumerable<MediaCover> covers);
-        string GetCoverPath(int seriesId, MediaCoverTypes coverType, int? height = null);
+        void ConvertToLocalUrls(int entityId, MediaCoverEntity coverEntity, IEnumerable<MediaCover> covers);
+        string GetCoverPath(int entityId, MediaCoverEntity coverEntity, MediaCoverTypes coverType, int? height = null);
     }
 
     public class MediaCoverService :
         IHandleAsync<SeriesUpdatedEvent>,
+        IHandleAsync<MovieUpdatedEvent>,
         IHandleAsync<SeriesDeletedEvent>,
         IMapCoversToLocal
     {
@@ -63,16 +64,21 @@ namespace NzbDrone.Core.MediaCover
             _coverRootFolder = appFolderInfo.GetMediaCoverPath();
         }
 
-        public string GetCoverPath(int seriesId, MediaCoverTypes coverType, int? height = null)
+        public string GetCoverPath(int entityId, MediaCoverEntity coverEntity, MediaCoverTypes coverType, int? height = null)
         {
             var heightSuffix = height.HasValue ? "-" + height.ToString() : "";
 
-            return Path.Combine(GetSeriesCoverPath(seriesId), coverType.ToString().ToLower() + heightSuffix + GetExtension(coverType));
+            if (coverEntity == MediaCoverEntity.Movie)
+            {
+                return Path.Combine(GetMovieCoverPath(entityId), coverType.ToString().ToLower() + heightSuffix + GetExtension(coverType));
+            }
+
+            return Path.Combine(GetSeriesCoverPath(entityId), coverType.ToString().ToLower() + heightSuffix + GetExtension(coverType));
         }
 
-        public void ConvertToLocalUrls(int seriesId, IEnumerable<MediaCover> covers)
+        public void ConvertToLocalUrls(int entityId, MediaCoverEntity coverEntity, IEnumerable<MediaCover> covers)
         {
-            if (seriesId == 0)
+            if (entityId == 0)
             {
                 // Series isn't in Whisparr yet, map via a proxy to circument referrer issues
                 foreach (var mediaCover in covers)
@@ -89,9 +95,16 @@ namespace NzbDrone.Core.MediaCover
                         continue;
                     }
 
-                    var filePath = GetCoverPath(seriesId, mediaCover.CoverType);
+                    var filePath = GetCoverPath(entityId, coverEntity, mediaCover.CoverType);
 
-                    mediaCover.Url = _configFileProvider.UrlBase + @"/MediaCover/" + seriesId + "/" + mediaCover.CoverType.ToString().ToLower() + GetExtension(mediaCover.CoverType);
+                    if (coverEntity == MediaCoverEntity.Movie)
+                    {
+                        mediaCover.Url = _configFileProvider.UrlBase + @"/MediaCover/Movies/" + entityId + "/" + mediaCover.CoverType.ToString().ToLower() + GetExtension(mediaCover.CoverType);
+                    }
+                    else
+                    {
+                        mediaCover.Url = _configFileProvider.UrlBase + @"/MediaCover/Sites/" + entityId + "/" + mediaCover.CoverType.ToString().ToLower() + GetExtension(mediaCover.CoverType);
+                    }
 
                     if (_diskProvider.FileExists(filePath))
                     {
@@ -104,22 +117,27 @@ namespace NzbDrone.Core.MediaCover
 
         private string GetSeriesCoverPath(int seriesId)
         {
-            return Path.Combine(_coverRootFolder, seriesId.ToString());
+            return Path.Combine(_coverRootFolder, "Sites", seriesId.ToString());
         }
 
-        private bool EnsureCovers(Series series)
+        private string GetMovieCoverPath(int movieId)
+        {
+            return Path.Combine(_coverRootFolder, "Movies", movieId.ToString());
+        }
+
+        private bool EnsureCovers(int entityId, string entityName, List<MediaCover> images, MediaCoverEntity coverEntity)
         {
             var updated = false;
             var toResize = new List<Tuple<MediaCover, bool>>();
 
-            foreach (var cover in series.Images)
+            foreach (var cover in images)
             {
                 if (cover.CoverType == MediaCoverTypes.Unknown)
                 {
                     continue;
                 }
 
-                var fileName = GetCoverPath(series.Id, cover.CoverType);
+                var fileName = GetCoverPath(entityId, coverEntity, cover.CoverType);
                 var alreadyExists = false;
 
                 try
@@ -128,21 +146,21 @@ namespace NzbDrone.Core.MediaCover
 
                     if (!alreadyExists)
                     {
-                        DownloadCover(series, cover);
+                        DownloadCover(entityId, entityName, coverEntity, cover);
                         updated = true;
                     }
                 }
                 catch (HttpException e)
                 {
-                    _logger.Warn("Couldn't download media cover for {0}. {1}", series, e.Message);
+                    _logger.Warn("Couldn't download media cover for {0}. {1}", entityName, e.Message);
                 }
                 catch (WebException e)
                 {
-                    _logger.Warn("Couldn't download media cover for {0}. {1}", series, e.Message);
+                    _logger.Warn("Couldn't download media cover for {0}. {1}", entityName, e.Message);
                 }
                 catch (Exception e)
                 {
-                    _logger.Error(e, "Couldn't download media cover for {0}", series);
+                    _logger.Error(e, "Couldn't download media cover for {0}", entityName);
                 }
 
                 toResize.Add(Tuple.Create(cover, alreadyExists));
@@ -154,7 +172,7 @@ namespace NzbDrone.Core.MediaCover
 
                 foreach (var tuple in toResize)
                 {
-                    EnsureResizedCovers(series, tuple.Item1, !tuple.Item2);
+                    EnsureResizedCovers(entityId, entityName, coverEntity, tuple.Item1, !tuple.Item2);
                 }
             }
             finally
@@ -165,15 +183,15 @@ namespace NzbDrone.Core.MediaCover
             return updated;
         }
 
-        private void DownloadCover(Series series, MediaCover cover)
+        private void DownloadCover(int entityId, string entityName, MediaCoverEntity coverEntity, MediaCover cover)
         {
-            var fileName = GetCoverPath(series.Id, cover.CoverType);
+            var fileName = GetCoverPath(entityId, coverEntity, cover.CoverType);
 
-            _logger.Info("Downloading {0} for {1} {2}", cover.CoverType, series, cover.RemoteUrl);
+            _logger.Info("Downloading {0} for {1} {2}", cover.CoverType, entityName, cover.RemoteUrl);
             _httpClient.DownloadFile(cover.RemoteUrl, fileName);
         }
 
-        private void EnsureResizedCovers(Series series, MediaCover cover, bool forceResize)
+        private void EnsureResizedCovers(int entityId, string entityName, MediaCoverEntity coverEntity, MediaCover cover, bool forceResize)
         {
             int[] heights;
 
@@ -199,12 +217,12 @@ namespace NzbDrone.Core.MediaCover
 
             foreach (var height in heights)
             {
-                var mainFileName = GetCoverPath(series.Id, cover.CoverType);
-                var resizeFileName = GetCoverPath(series.Id, cover.CoverType, height);
+                var mainFileName = GetCoverPath(entityId, coverEntity, cover.CoverType);
+                var resizeFileName = GetCoverPath(entityId, coverEntity, cover.CoverType, height);
 
                 if (forceResize || !_diskProvider.FileExists(resizeFileName) || _diskProvider.GetFileSize(resizeFileName) == 0)
                 {
-                    _logger.Debug("Resizing {0}-{1} for {2}", cover.CoverType, height, series);
+                    _logger.Debug("Resizing {0}-{1} for {2}", cover.CoverType, height, entityName);
 
                     try
                     {
@@ -212,7 +230,7 @@ namespace NzbDrone.Core.MediaCover
                     }
                     catch
                     {
-                        _logger.Debug("Couldn't resize media cover {0}-{1} for {2}, using full size image instead.", cover.CoverType, height, series);
+                        _logger.Debug("Couldn't resize media cover {0}-{1} for {2}, using full size image instead.", cover.CoverType, height, entityName);
                     }
                 }
             }
@@ -232,9 +250,18 @@ namespace NzbDrone.Core.MediaCover
 
         public void HandleAsync(SeriesUpdatedEvent message)
         {
-            var updated = EnsureCovers(message.Series);
+            var series = message.Series;
+            var updated = EnsureCovers(series.Id, series.ToString(), series.Images, MediaCoverEntity.Series);
 
             _eventAggregator.PublishEvent(new MediaCoversUpdatedEvent(message.Series, updated));
+        }
+
+        public void HandleAsync(MovieUpdatedEvent message)
+        {
+            var movie = message.Movie;
+            var updated = EnsureCovers(movie.Id, movie.ToString(), movie.Images, MediaCoverEntity.Movie);
+
+            _eventAggregator.PublishEvent(new MediaCoversUpdatedEvent(message.Movie, updated));
         }
 
         public void HandleAsync(SeriesDeletedEvent message)

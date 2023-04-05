@@ -13,6 +13,7 @@ import FormInputHelpText from './FormInputHelpText';
 import IndexerSelectInputConnector from './IndexerSelectInputConnector';
 import KeyValueListInput from './KeyValueListInput';
 import MonitorEpisodesSelectInput from './MonitorEpisodesSelectInput';
+import MonitorMovieSelectInput from './MonitorMovieSelectInput';
 import NumberInput from './NumberInput';
 import OAuthInputConnector from './OAuthInputConnector';
 import PasswordInput from './PasswordInput';
@@ -46,6 +47,9 @@ function getComponent(type) {
 
     case inputTypes.MONITOR_EPISODES_SELECT:
       return MonitorEpisodesSelectInput;
+
+    case inputTypes.MONITOR_MOVIE_SELECT:
+      return MonitorMovieSelectInput;
 
     case inputTypes.NUMBER:
       return NumberInput;

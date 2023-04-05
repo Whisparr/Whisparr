@@ -1,0 +1,98 @@
+.status {
+  composes: headerCell from '~Components/Table/VirtualTableHeaderCell.css';
+
+  flex: 0 0 60px;
+}
+
+.collection,
+.originalTitle,
+.sortTitle {
+  composes: headerCell from '~Components/Table/VirtualTableHeaderCell.css';
+
+  flex: 4 0 110px;
+}
+
+.minimumAvailability {
+  composes: headerCell  from '~Components/Table/VirtualTableHeaderCell.css';
+
+  flex: 0 0 140px;
+}
+
+.studio {
+  composes: headerCell from '~Components/Table/VirtualTableHeaderCell.css';
+
+  flex: 2 0 90px;
+}
+
+.originalLanguage,
+.qualityProfileId {
+  composes: headerCell from '~Components/Table/VirtualTableHeaderCell.css';
+
+  flex: 1 0 125px;
+}
+
+.inCinemas,
+.physicalRelease,
+.digitalRelease,
+.genres {
+  composes: headerCell from '~Components/Table/VirtualTableHeaderCell.css';
+
+  flex: 0 0 180px;
+}
+
+.added,
+.runtime {
+  composes: headerCell from '~Components/Table/VirtualTableHeaderCell.css';
+
+  flex: 0 0 100px;
+}
+
+.movieStatus {
+  composes: headerCell from '~Components/Table/VirtualTableHeaderCell.css';
+
+  flex: 0 0 150px;
+}
+
+.certification {
+  composes: headerCell from '~Components/Table/VirtualTableHeaderCell.css';
+
+  flex: 0 0 90px;
+}
+
+.year {
+  composes: headerCell from '~Components/Table/VirtualTableHeaderCell.css';
+
+  flex: 0 0 80px;
+}
+
+.path {
+  composes: headerCell from '~Components/Table/VirtualTableHeaderCell.css';
+
+  flex: 1 0 150px;
+}
+
+.sizeOnDisk {
+  composes: headerCell from '~Components/Table/VirtualTableHeaderCell.css';
+
+  flex: 0 0 120px;
+}
+
+.imdbRating,
+.tmdbRating,
+.rottenTomatoesRating {
+  composes: headerCell from '~Components/Table/VirtualTableHeaderCell.css';
+
+  flex: 0 0 80px;
+}
+
+.tags {
+  composes: headerCell from '~Components/Table/VirtualTableHeaderCell.css';
+
+  flex: 1 0 60px;
+}
+
+.actions {
+  composes: headerCell from '~Components/Table/VirtualTableHeaderCell.css';
+
+  flex: 0 1 90px;
+}

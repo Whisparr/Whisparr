@@ -26,6 +26,7 @@ using NzbDrone.Core.Jobs;
 using NzbDrone.Core.Languages;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.Messaging.Commands;
+using NzbDrone.Core.Movies;
 using NzbDrone.Core.Notifications;
 using NzbDrone.Core.Organizer;
 using NzbDrone.Core.Parser.Model;
@@ -107,6 +108,10 @@ namespace NzbDrone.Core.Datastore
             Mapper.Entity<EpisodeHistory>("History").RegisterModel();
 
             Mapper.Entity<Series>("Series").RegisterModel()
+                  .Ignore(s => s.RootFolderPath)
+                  .HasOne(s => s.QualityProfile, s => s.QualityProfileId);
+
+            Mapper.Entity<Movie>("Movies").RegisterModel()
                   .Ignore(s => s.RootFolderPath)
                   .HasOne(s => s.QualityProfile, s => s.QualityProfileId);
 

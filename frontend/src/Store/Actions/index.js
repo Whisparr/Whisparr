@@ -1,3 +1,4 @@
+import * as addMovie from './addMovieActions';
 import * as addSeries from './addSeriesActions';
 import * as app from './appActions';
 import * as blocklist from './blocklistActions';
@@ -12,6 +13,8 @@ import * as episodeSelection from './episodeSelectionActions';
 import * as history from './historyActions';
 import * as importSeries from './importSeriesActions';
 import * as interactiveImportActions from './interactiveImportActions';
+import * as movies from './movieActions';
+import * as movieIndex from './movieIndexActions';
 import * as oAuth from './oAuthActions';
 import * as organizePreview from './organizePreviewActions';
 import * as paths from './pathActions';
@@ -28,6 +31,7 @@ import * as tags from './tagActions';
 import * as wanted from './wantedActions';
 
 export default [
+  addMovie,
   addSeries,
   app,
   blocklist,
@@ -42,6 +46,8 @@ export default [
   history,
   importSeries,
   interactiveImportActions,
+  movies,
+  movieIndex,
   oAuth,
   organizePreview,
   paths,

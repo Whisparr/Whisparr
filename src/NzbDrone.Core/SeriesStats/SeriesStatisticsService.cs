@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace NzbDrone.Core.SeriesStats
@@ -6,7 +6,9 @@ namespace NzbDrone.Core.SeriesStats
     public interface ISeriesStatisticsService
     {
         List<SeriesStatistics> SeriesStatistics();
+        List<MovieStatistics> MovieStatistics();
         SeriesStatistics SeriesStatistics(int seriesId);
+        MovieStatistics MovieStatistics(int movieId);
     }
 
     public class SeriesStatisticsService : ISeriesStatisticsService
@@ -25,6 +27,12 @@ namespace NzbDrone.Core.SeriesStats
             return seasonStatistics.GroupBy(s => s.SeriesId).Select(s => MapSeriesStatistics(s.ToList())).ToList();
         }
 
+        List<MovieStatistics> ISeriesStatisticsService.MovieStatistics()
+        {
+            // TODO: Hook up
+            return new List<MovieStatistics>();
+        }
+
         public SeriesStatistics SeriesStatistics(int seriesId)
         {
             var stats = _seriesStatisticsRepository.SeriesStatistics(seriesId);
@@ -35,6 +43,12 @@ namespace NzbDrone.Core.SeriesStats
             }
 
             return MapSeriesStatistics(stats);
+        }
+
+        MovieStatistics ISeriesStatisticsService.MovieStatistics(int movieId)
+        {
+            // TODO: Hook up
+            return new MovieStatistics();
         }
 
         private SeriesStatistics MapSeriesStatistics(List<SeasonStatistics> seasonStatistics)

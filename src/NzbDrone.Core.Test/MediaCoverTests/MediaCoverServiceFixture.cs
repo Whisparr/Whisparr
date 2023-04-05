@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using FizzWare.NBuilder;
@@ -44,9 +44,9 @@ namespace NzbDrone.Core.Test.MediaCoverTests
             Mocker.GetMock<IDiskProvider>().Setup(c => c.FileExists(It.IsAny<string>()))
                   .Returns(true);
 
-            Subject.ConvertToLocalUrls(12, covers);
+            Subject.ConvertToLocalUrls(12, MediaCoverEntity.Series, covers);
 
-            covers.Single().Url.Should().Be("/MediaCover/12/banner.jpg?lastWrite=1234");
+            covers.Single().Url.Should().Be("/MediaCover/Sites/12/banner.jpg?lastWrite=1234");
         }
 
         [Test]
@@ -57,9 +57,9 @@ namespace NzbDrone.Core.Test.MediaCoverTests
                     new MediaCover.MediaCover { CoverType = MediaCoverTypes.Banner }
                 };
 
-            Subject.ConvertToLocalUrls(12, covers);
+            Subject.ConvertToLocalUrls(12, MediaCoverEntity.Series, covers);
 
-            covers.Single().Url.Should().Be("/MediaCover/12/banner.jpg");
+            covers.Single().Url.Should().Be("/MediaCover/Sites/12/banner.jpg");
         }
 
         [Test]

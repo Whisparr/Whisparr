@@ -58,6 +58,7 @@ import {
   faFastForward as fasFastForward,
   faFileExport as fasFileExport,
   faFileInvoice as farFileInvoice,
+  faFilm as fasFilm,
   faFilter as fasFilter,
   faFolderOpen as fasFolderOpen,
   faForward as fasForward,
@@ -166,6 +167,7 @@ export const MANAGE = fasListCheck;
 export const MEDIA_INFO = farFileInvoice;
 export const MISSING = fasExclamationTriangle;
 export const MONITORED = fasBookmark;
+export const MOVIE = fasFilm;
 export const NETWORK = fasBroadcastTower;
 export const NAVBAR_COLLAPSE = fasBars;
 export const NOT_AIRED = farClock;

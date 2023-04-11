@@ -58,7 +58,7 @@ function episodesSelector() {
 }
 
 export interface SelectedEpisode {
-  fileId: number;
+  id: number;
   episodes: Episode[];
 }
 
@@ -161,7 +161,7 @@ function SelectEpisodeModalContent(props: SelectEpisodeModalContentProps) {
       return a.seasonNumber - b.seasonNumber;
     });
 
-    const mappedEpisodes = selectedIds.map((fileId, index): SelectedEpisode => {
+    const mappedEpisodes = selectedIds.map((id, index): SelectedEpisode => {
       const startingIndex = index * episodesPerFile;
       const episodes = sortedEpisodes.slice(
         startingIndex,
@@ -169,7 +169,7 @@ function SelectEpisodeModalContent(props: SelectEpisodeModalContentProps) {
       );
 
       return {
-        fileId: fileId as number,
+        id: id as number,
         episodes,
       };
     });

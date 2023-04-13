@@ -69,12 +69,14 @@ namespace NzbDrone.Core.SeriesStats
             var parameters = new DynamicParameters();
             parameters.Add("currentDate", currentDate, null);
 
+            var trueIndicator = _database.DatabaseType == DatabaseType.PostgreSQL ? "true" : "1";
+
             return new SqlBuilder(_database.DatabaseType)
-            .Select(@"""Episodes"".""SeriesId"" AS SeriesId,
+            .Select($@"""Episodes"".""SeriesId"" AS SeriesId,
                              ""Episodes"".""SeasonNumber"",
                              COUNT(*) AS TotalEpisodeCount,
                              SUM(CASE WHEN ""AirDateUtc"" <= @currentDate OR ""EpisodeFileId"" > 0 THEN 1 ELSE 0 END) AS AvailableEpisodeCount,
-                             SUM(CASE WHEN (""Monitored"" = true AND ""AirDateUtc"" <= @currentDate) OR ""EpisodeFileId"" > 0 THEN 1 ELSE 0 END) AS EpisodeCount,
+                             SUM(CASE WHEN (""Monitored"" = {trueIndicator} AND ""AirDateUtc"" <= @currentDate) OR ""EpisodeFileId"" > 0 THEN 1 ELSE 0 END) AS EpisodeCount,
                              SUM(CASE WHEN ""EpisodeFileId"" > 0 THEN 1 ELSE 0 END) AS EpisodeFileCount,
                              MIN(CASE WHEN ""AirDateUtc"" < @currentDate OR ""EpisodeFileId"" > 0 OR ""Monitored"" = false THEN NULL ELSE ""AirDateUtc"" END) AS NextAiringString,
                              MAX(CASE WHEN ""AirDateUtc"" >= @currentDate OR ""EpisodeFileId"" = 0 AND ""Monitored"" = false THEN NULL ELSE ""AirDateUtc"" END) AS PreviousAiringString", parameters)

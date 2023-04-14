@@ -200,6 +200,24 @@ namespace NzbDrone.Core.Notifications.CustomScript
             ExecuteScript(environmentVariables);
         }
 
+        public override void OnSeriesAdd(SeriesAddMessage message)
+        {
+            var series = message.Series;
+            var environmentVariables = new StringDictionary();
+
+            environmentVariables.Add("Whisparr_EventType", "SeriesAdd");
+            environmentVariables.Add("Whisparr_InstanceName", _configFileProvider.InstanceName);
+            environmentVariables.Add("Whisparr_ApplicationUrl", _configService.ApplicationUrl);
+            environmentVariables.Add("Whisparr_Series_Id", series.Id.ToString());
+            environmentVariables.Add("Whisparr_Series_Title", series.Title);
+            environmentVariables.Add("Whisparr_Series_TitleSlug", series.TitleSlug);
+            environmentVariables.Add("Whisparr_Series_Path", series.Path);
+            environmentVariables.Add("Whisparr_Series_TvdbId", series.TvdbId.ToString());
+            environmentVariables.Add("Whisparr_Series_Year", series.Year.ToString());
+
+            ExecuteScript(environmentVariables);
+        }
+
         public override void OnSeriesDelete(SeriesDeleteMessage deleteMessage)
         {
             var series = deleteMessage.Series;

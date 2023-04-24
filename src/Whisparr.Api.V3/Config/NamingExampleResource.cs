@@ -18,7 +18,7 @@ namespace Whisparr.Api.V3.Config
 
                 RenameEpisodes = model.RenameEpisodes,
                 ReplaceIllegalCharacters = model.ReplaceIllegalCharacters,
-                MultiEpisodeStyle = model.MultiEpisodeStyle,
+                MultiEpisodeStyle = (int)model.MultiEpisodeStyle,
                 StandardEpisodeFormat = model.StandardEpisodeFormat,
                 SeriesFolderFormat = model.SeriesFolderFormat,
 
@@ -49,7 +49,7 @@ namespace Whisparr.Api.V3.Config
 
                 RenameEpisodes = resource.RenameEpisodes,
                 ReplaceIllegalCharacters = resource.ReplaceIllegalCharacters,
-                MultiEpisodeStyle = resource.MultiEpisodeStyle,
+                MultiEpisodeStyle = (MultiEpisodeStyle)resource.MultiEpisodeStyle,
                 StandardEpisodeFormat = resource.StandardEpisodeFormat,
                 SeriesFolderFormat = resource.SeriesFolderFormat
             };

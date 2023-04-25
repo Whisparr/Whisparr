@@ -13,7 +13,7 @@ namespace NzbDrone.Core.ImportLists.Whisparr
     {
         List<WhisparrSeries> GetSeries(WhisparrSettings settings);
         List<WhisparrProfile> GetQualityProfiles(WhisparrSettings settings);
-        List<WhisparrProfile> GetLanguageProfiles(WhisparrSettings settings);
+        List<WhisparrRootFolder> GetRootFolders(WhisparrSettings settings);
         List<WhisparrTag> GetTags(WhisparrSettings settings);
         ValidationFailure Test(WhisparrSettings settings);
     }
@@ -39,9 +39,9 @@ namespace NzbDrone.Core.ImportLists.Whisparr
             return Execute<WhisparrProfile>("/api/v3/qualityprofile", settings);
         }
 
-        public List<WhisparrProfile> GetLanguageProfiles(WhisparrSettings settings)
+        public List<WhisparrRootFolder> GetRootFolders(WhisparrSettings settings)
         {
-            return Execute<WhisparrProfile>("/api/v3/languageprofile", settings);
+            return Execute<WhisparrRootFolder>("api/v3/rootfolder", settings);
         }
 
         public List<WhisparrTag> GetTags(WhisparrSettings settings)

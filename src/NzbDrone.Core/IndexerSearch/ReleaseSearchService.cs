@@ -102,7 +102,7 @@ namespace NzbDrone.Core.IndexerSearch
             var downloadDecisions = new List<DownloadDecision>();
 
             var searchSpec = Get<SingleEpisodeSearchCriteria>(series, new List<Episode> { episode }, monitoredOnly, userInvokedSearch, interactiveSearch);
-            searchSpec.ReleaseDate = episode.AirDateUtc;
+            searchSpec.ReleaseDate = DateOnly.Parse(episode.AirDate);
             searchSpec.Performer = episode.Actors.Select(p => p.Name).FirstOrDefault();
             searchSpec.EpisodeTitle = episode.Title;
 

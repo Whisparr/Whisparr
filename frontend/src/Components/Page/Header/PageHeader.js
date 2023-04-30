@@ -58,6 +58,7 @@ class PageHeader extends Component {
             <img
               className={styles.logo}
               src={`${window.Whisparr.urlBase}/Content/Images/logo.svg`}
+              alt="Whisparr Logo"
             />
           </Link>
         </div>
@@ -76,7 +77,8 @@ class PageHeader extends Component {
           <IconButton
             className={styles.donate}
             name={icons.HEART}
-            to="https://whisparr.tv/donate.html"
+            aria-label="Donate"
+            to="https://whisparr.com/donate.html"
             size={14}
           />
           <PageHeaderActionsMenuConnector

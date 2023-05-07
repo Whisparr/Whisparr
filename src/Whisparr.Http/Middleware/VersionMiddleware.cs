@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using NzbDrone.Common.EnvironmentInfo;
+using Whisparr.Http.Extensions;
 
 namespace Whisparr.Http.Middleware
 {
@@ -19,7 +20,7 @@ namespace Whisparr.Http.Middleware
 
         public async Task InvokeAsync(HttpContext context)
         {
-            if (!context.Response.Headers.ContainsKey(VERSIONHEADER))
+            if (context.Request.IsApiRequest() && !context.Response.Headers.ContainsKey(VERSIONHEADER))
             {
                 context.Response.Headers.Add(VERSIONHEADER, _version);
             }

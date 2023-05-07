@@ -231,6 +231,8 @@ namespace NzbDrone.Host
             }
             catch (InvalidDataException ex)
             {
+                Logger.Error(ex, ex.Message);
+
                 throw new InvalidConfigFileException($"{configPath} is corrupt or invalid. Please delete the config file and Whisparr will recreate it.", ex);
             }
         }

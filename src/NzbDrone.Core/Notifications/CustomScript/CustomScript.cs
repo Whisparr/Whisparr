@@ -251,6 +251,21 @@ namespace NzbDrone.Core.Notifications.CustomScript
             ExecuteScript(environmentVariables);
         }
 
+        public override void OnHealthRestored(HealthCheck.HealthCheck previousCheck)
+        {
+            var environmentVariables = new StringDictionary();
+
+            environmentVariables.Add("Whisparr_EventType", "HealthRestored");
+            environmentVariables.Add("Whisparr_InstanceName", _configFileProvider.InstanceName);
+            environmentVariables.Add("Whisparr_ApplicationUrl", _configService.ApplicationUrl);
+            environmentVariables.Add("Whisparr_Health_Restored_Level", Enum.GetName(typeof(HealthCheckResult), previousCheck.Type));
+            environmentVariables.Add("Whisparr_Health_Restored_Message", previousCheck.Message);
+            environmentVariables.Add("Whisparr_Health_Restored_Type", previousCheck.Source.Name);
+            environmentVariables.Add("Whisparr_Health_Restored_Wiki", previousCheck.WikiUrl.ToString() ?? string.Empty);
+
+            ExecuteScript(environmentVariables);
+        }
+
         public override void OnApplicationUpdate(ApplicationUpdateMessage updateMessage)
         {
             var environmentVariables = new StringDictionary();

@@ -6,7 +6,6 @@ using NzbDrone.Core.DecisionEngine.Specifications;
 using NzbDrone.Core.Tv;
 using NzbDrone.SignalR;
 using Whisparr.Http;
-using Whisparr.Http.Extensions;
 using Whisparr.Http.REST;
 using Whisparr.Http.REST.Attributes;
 
@@ -62,10 +61,8 @@ namespace Whisparr.Api.V3.Episodes
 
         [HttpPut("monitor")]
         [Consumes("application/json")]
-        public IActionResult SetEpisodesMonitored([FromBody] EpisodesMonitoredResource resource)
+        public IActionResult SetEpisodesMonitored([FromBody] EpisodesMonitoredResource resource, [FromQuery] bool includeImages = false)
         {
-            var includeImages = Request.GetBooleanQueryParameter("includeImages", false);
-
             if (resource.EpisodeIds.Count == 1)
             {
                 _episodeService.SetEpisodeMonitored(resource.EpisodeIds.First(), resource.Monitored);

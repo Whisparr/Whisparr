@@ -18,7 +18,6 @@ using NzbDrone.Core.Validation;
 using NzbDrone.Core.Validation.Paths;
 using NzbDrone.SignalR;
 using Whisparr.Http;
-using Whisparr.Http.Extensions;
 using Whisparr.Http.REST;
 using Whisparr.Http.REST.Attributes;
 
@@ -133,9 +132,8 @@ namespace Whisparr.Api.V3.Series
 
         [RestPutById]
         [Consumes("application/json")]
-        public ActionResult<SeriesResource> UpdateSeries(SeriesResource seriesResource)
+        public ActionResult<SeriesResource> UpdateSeries(SeriesResource seriesResource, bool moveFiles = false)
         {
-            var moveFiles = Request.GetBooleanQueryParameter("moveFiles");
             var series = _seriesService.GetSeries(seriesResource.Id);
 
             if (moveFiles)
@@ -162,11 +160,8 @@ namespace Whisparr.Api.V3.Series
         }
 
         [RestDeleteById]
-        public void DeleteSeries(int id)
+        public void DeleteSeries(int id, bool deleteFiles = false, bool addImportListExclusion = false)
         {
-            var deleteFiles = Request.GetBooleanQueryParameter("deleteFiles");
-            var addImportListExclusion = Request.GetBooleanQueryParameter("addImportListExclusion");
-
             _seriesService.DeleteSeries(new List<int> { id }, deleteFiles, addImportListExclusion);
         }
 

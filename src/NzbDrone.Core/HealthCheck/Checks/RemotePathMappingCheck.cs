@@ -89,7 +89,7 @@ namespace NzbDrone.Core.HealthCheck.Checks
                             }
                             else
                             {
-                                return new HealthCheck(GetType(), HealthCheckResult.Error, string.Format("Download client {0} places downloads in {1} but Sonarr cannot see this directory. You may need to adjust the folder's permissions.", client.Definition.Name, folder.FullPath), "#permissions-error");
+                                return new HealthCheck(GetType(), HealthCheckResult.Error, string.Format("Download client {0} places downloads in {1} but Whisparr cannot see this directory. You may need to adjust the folder's permissions.", client.Definition.Name, folder.FullPath), "#permissions-error");
                             }
                         }
                     }
@@ -130,7 +130,7 @@ namespace NzbDrone.Core.HealthCheck.Checks
 
                     if (_diskProvider.FileExists(episodePath))
                     {
-                        return new HealthCheck(GetType(), HealthCheckResult.Error, string.Format("Sonarr can see but not access downloaded episode {0}. Likely permissions error.", episodePath), "#permissions-error");
+                        return new HealthCheck(GetType(), HealthCheckResult.Error, string.Format("Whisparr can see but not access downloaded episode {0}. Likely permissions error.", episodePath), "#permissions-error");
                     }
                     else
                     {
@@ -159,7 +159,7 @@ namespace NzbDrone.Core.HealthCheck.Checks
                     // that the user realises something is wrong.
                     if (dlpath.IsNullOrWhiteSpace())
                     {
-                        return new HealthCheck(GetType(), HealthCheckResult.Error, "Sonarr failed to import (an) episode(s). Check your logs for details.", "#remote-path-import-failed");
+                        return new HealthCheck(GetType(), HealthCheckResult.Error, "Whisparr failed to import (an) episode(s). Check your logs for details.", "#remote-path-import-failed");
                     }
 
                     if (!dlpath.IsPathValid(PathValidationType.CurrentOs))
@@ -180,13 +180,13 @@ namespace NzbDrone.Core.HealthCheck.Checks
 
                     if (_diskProvider.FolderExists(dlpath))
                     {
-                        return new HealthCheck(GetType(), HealthCheckResult.Error, string.Format("Sonarr can see but not access download directory {0}. Likely permissions error.", dlpath), "#permissions-error");
+                        return new HealthCheck(GetType(), HealthCheckResult.Error, string.Format("Whisparr can see but not access download directory {0}. Likely permissions error.", dlpath), "#permissions-error");
                     }
 
                     // if it's a remote client/docker, likely missing path mappings
                     if (_osInfo.IsDocker)
                     {
-                        return new HealthCheck(GetType(), HealthCheckResult.Error, string.Format("Sonarr can see but not access download directory {0}. Likely permissions error.", client.Definition.Name, dlpath), "#docker-bad-remote-path-mapping");
+                        return new HealthCheck(GetType(), HealthCheckResult.Error, string.Format("Whisparr can see but not access download directory {0}. Likely permissions error.", client.Definition.Name, dlpath), "#docker-bad-remote-path-mapping");
                     }
                     else if (!status.IsLocalhost)
                     {
@@ -195,7 +195,7 @@ namespace NzbDrone.Core.HealthCheck.Checks
                     else
                     {
                         // path mappings shouldn't be needed locally so probably a permissions issue
-                        return new HealthCheck(GetType(), HealthCheckResult.Error, string.Format("Download client {0} reported files in {1} but Sonarr cannot see this directory. You may need to adjust the folder's permissions.", client.Definition.Name, dlpath), "#permissions-error");
+                        return new HealthCheck(GetType(), HealthCheckResult.Error, string.Format("Download client {0} reported files in {1} but Whisparr cannot see this directory. You may need to adjust the folder's permissions.", client.Definition.Name, dlpath), "#permissions-error");
                     }
                 }
                 catch (DownloadClientException ex)

@@ -68,6 +68,8 @@ namespace NzbDrone.Core.MediaFiles
                 _mediaFileService.Delete(file, DeleteMediaFileReason.Upgrade);
             }
 
+            localEpisode.OldFiles = moveFileResult.OldFiles;
+
             if (copyOnly)
             {
                 moveFileResult.EpisodeFile = _episodeFileMover.CopyEpisodeFile(episodeFile, localEpisode);

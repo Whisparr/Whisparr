@@ -121,7 +121,7 @@ namespace NzbDrone.Core.Test.Extras.Subtitles
 
             results.Count.Should().Be(expectedOutputs.Length);
 
-            for (int i = 0; i < expectedOutputs.Length; i++)
+            for (var i = 0; i < expectedOutputs.Length; i++)
             {
                 results[i].RelativePath.AsOsAgnostic().PathEquals(Path.Combine("Season 1", expectedOutputs[i]).AsOsAgnostic()).Should().Be(true);
             }
@@ -150,7 +150,7 @@ namespace NzbDrone.Core.Test.Extras.Subtitles
 
             results.Count.Should().Be(expectedOutputs.Length);
 
-            for (int i = 0; i < expectedOutputs.Length; i++)
+            for (var i = 0; i < expectedOutputs.Length; i++)
             {
                 results[i].RelativePath.AsOsAgnostic().PathEquals(Path.Combine("Season 1", expectedOutputs[i]).AsOsAgnostic()).Should().Be(true);
             }

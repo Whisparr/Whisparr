@@ -37,7 +37,7 @@ namespace NzbDrone.Automation.Test.PageModel
             {
                 try
                 {
-                    IWebElement element = d.FindElement(By.Id("followingBalls"));
+                    var element = d.FindElement(By.Id("followingBalls"));
                     return !element.Displayed;
                 }
                 catch (NoSuchElementException)

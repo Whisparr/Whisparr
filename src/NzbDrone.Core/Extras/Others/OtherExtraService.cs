@@ -132,7 +132,7 @@ namespace NzbDrone.Core.Extras.Others
                 }
             }
 
-            foreach (string file in matchingFiles)
+            foreach (var file in matchingFiles)
             {
                 try
                 {

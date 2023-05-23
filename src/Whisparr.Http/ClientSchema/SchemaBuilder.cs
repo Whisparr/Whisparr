@@ -81,8 +81,7 @@ namespace Whisparr.Http.ClientSchema
         {
             lock (_mappings)
             {
-                FieldMapping[] result;
-                if (!_mappings.TryGetValue(type, out result))
+                if (!_mappings.TryGetValue(type, out var result))
                 {
                     result = GetFieldMapping(type, "", v => v);
 

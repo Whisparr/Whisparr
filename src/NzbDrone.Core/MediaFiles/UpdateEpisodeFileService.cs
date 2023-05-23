@@ -80,9 +80,7 @@ namespace NzbDrone.Core.MediaFiles
 
         private bool ChangeFileDateToLocalAirDate(string filePath, string fileDate)
         {
-            DateTime airDate;
-
-            if (DateTime.TryParse(fileDate + " 12:00", out airDate))
+            if (DateTime.TryParse(fileDate + " 12:00", out var airDate))
             {
                 // avoiding false +ve checks and set date skewing by not using UTC (Windows)
                 DateTime oldDateTime = _diskProvider.FileGetLastWrite(filePath);

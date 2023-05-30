@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Core.DecisionEngine;
 using NzbDrone.Core.Profiles.Qualities;
 using Whisparr.Http.REST;
@@ -13,6 +14,12 @@ namespace Whisparr.Api.V3.Indexers
         public ReleaseControllerBase(IQualityProfileService qualityProfileService)
         {
             _qualityProfile = qualityProfileService.GetDefaultProfile(string.Empty);
+        }
+
+        [NonAction]
+        public override ActionResult<ReleaseResource> GetResourceByIdWithErrorHandler(int id)
+        {
+            return base.GetResourceByIdWithErrorHandler(id);
         }
 
         protected override ReleaseResource GetResourceById(int id)

@@ -26,6 +26,12 @@ namespace Whisparr.Api.V3.Queue
             _pendingReleaseService = pendingReleaseService;
         }
 
+        [NonAction]
+        public override ActionResult<QueueResource> GetResourceByIdWithErrorHandler(int id)
+        {
+            return base.GetResourceByIdWithErrorHandler(id);
+        }
+
         protected override QueueResource GetResourceById(int id)
         {
             throw new NotImplementedException();

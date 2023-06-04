@@ -82,20 +82,20 @@ namespace NzbDrone.Core.ImportLists.Whisparr
                 };
             }
 
+            Settings.Validate().Filter("ApiKey").ThrowOnError();
+
             if (action == "getProfiles")
             {
-                Settings.Validate().Filter("ApiKey").ThrowOnError();
-
                 var profiles = _whisparrV3Proxy.GetQualityProfiles(Settings);
 
                 return new
                 {
                     options = profiles.OrderBy(d => d.Name, StringComparer.InvariantCultureIgnoreCase)
-                                      .Select(d => new
-                                      {
-                                          value = d.Id,
-                                          name = d.Name
-                                      })
+                        .Select(d => new
+                        {
+                            value = d.Id,
+                            name = d.Name
+                        })
                 };
             }
 
@@ -116,18 +116,16 @@ namespace NzbDrone.Core.ImportLists.Whisparr
 
             if (action == "getRootFolders")
             {
-                Settings.Validate().Filter("ApiKey").ThrowOnError();
-
-                var remoteRootfolders = _whisparrV3Proxy.GetRootFolders(Settings);
+                var remoteRootFolders = _whisparrV3Proxy.GetRootFolders(Settings);
 
                 return new
                 {
-                    options = remoteRootfolders.OrderBy(d => d.Path, StringComparer.InvariantCultureIgnoreCase)
-                                               .Select(d => new
-                                               {
-                                                   value = d.Path,
-                                                   name = d.Path
-                                               })
+                    options = remoteRootFolders.OrderBy(d => d.Path, StringComparer.InvariantCultureIgnoreCase)
+                        .Select(d => new
+                        {
+                            value = d.Path,
+                            name = d.Path
+                        })
                 };
             }
 

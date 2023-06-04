@@ -1,9 +1,6 @@
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using FluentValidation;
 using NzbDrone.Core.Annotations;
-using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.Validation;
 
 namespace NzbDrone.Core.Indexers.FileList

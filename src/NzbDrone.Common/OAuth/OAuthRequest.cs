@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -29,7 +29,7 @@ namespace NzbDrone.Common.OAuth
         public virtual string Version { get; set; }
         public virtual string SessionHandle { get; set; }
 
-        /// <seealso cref="http://oauth.net/core/1.0#request_urls"/>
+        // <seealso cref="http://oauth.net/core/1.0#request_urls"/>
         public virtual string RequestUrl { get; set; }
 
 #if !WINRT

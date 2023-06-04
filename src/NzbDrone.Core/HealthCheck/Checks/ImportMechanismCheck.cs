@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using NzbDrone.Core.Configuration;
+﻿using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Configuration.Events;
 using NzbDrone.Core.Download;
-using NzbDrone.Core.Download.Clients.Nzbget;
-using NzbDrone.Core.Download.Clients.Sabnzbd;
 using NzbDrone.Core.ThingiProvider.Events;
 
 namespace NzbDrone.Core.HealthCheck.Checks

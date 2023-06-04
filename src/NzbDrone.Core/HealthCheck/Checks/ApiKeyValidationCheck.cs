@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using NLog;
+﻿using NLog;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Configuration.Events;
 using NzbDrone.Core.Lifecycle;

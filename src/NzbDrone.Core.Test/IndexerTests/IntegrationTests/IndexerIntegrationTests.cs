@@ -7,7 +7,6 @@ using NzbDrone.Core.Indexers;
 using NzbDrone.Core.IndexerSearch.Definitions;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.Test.Framework;
-using NzbDrone.Core.ThingiProvider;
 using NzbDrone.Test.Common.Categories;
 
 namespace NzbDrone.Core.Test.IndexerTests.IntegrationTests

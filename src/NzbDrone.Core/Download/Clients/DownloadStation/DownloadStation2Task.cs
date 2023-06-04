@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using Newtonsoft.Json;
-using NzbDrone.Common.Serializer;
-
-namespace NzbDrone.Core.Download.Clients.DownloadStation
+﻿namespace NzbDrone.Core.Download.Clients.DownloadStation
 {
     public class DownloadStation2Task
     {

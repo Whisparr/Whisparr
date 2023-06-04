@@ -1,6 +1,5 @@
 using System.Threading;
 using NLog;
-using Npgsql;
 using NUnit.Framework;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Datastore;
@@ -8,7 +7,6 @@ using NzbDrone.Core.Datastore.Migration.Framework;
 using NzbDrone.Core.Indexers.Newznab;
 using NzbDrone.Test.Common;
 using NzbDrone.Test.Common.Datastore;
-using Whisparr.Api.V3.Indexers;
 using Whisparr.Http.ClientSchema;
 
 namespace NzbDrone.Integration.Test

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Security.Cryptography;

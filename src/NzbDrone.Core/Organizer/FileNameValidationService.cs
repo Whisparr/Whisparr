@@ -1,8 +1,5 @@
-using System.Collections.Generic;
 using System.Linq;
 using FluentValidation.Results;
-using NzbDrone.Core.Parser.Model;
-using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Organizer
 {

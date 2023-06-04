@@ -2,7 +2,6 @@
 using System.Linq;
 using FizzWare.NBuilder;
 using FluentAssertions;
-using FluentValidation.Validators;
 using NUnit.Framework;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Test.Framework;

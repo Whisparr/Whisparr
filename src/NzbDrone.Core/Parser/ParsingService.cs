@@ -5,8 +5,6 @@ using NLog.Fluent;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Instrumentation.Extensions;
 using NzbDrone.Core.IndexerSearch.Definitions;
-using NzbDrone.Core.Languages;
-using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.Tv;
 

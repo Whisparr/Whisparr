@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.IO;
-using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Download;
 using NzbDrone.Core.Parser;
 using NzbDrone.Core.Parser.Model;

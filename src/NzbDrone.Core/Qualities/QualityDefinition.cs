@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using NzbDrone.Core.Datastore;
+﻿using NzbDrone.Core.Datastore;
 
 namespace NzbDrone.Core.Qualities
 {

@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using NLog;
@@ -31,11 +30,6 @@ namespace NzbDrone.Core.Indexers.TorrentRss
             _logger = logger;
         }
 
-        /// <summary>
-        /// Detect settings for Parser, based on URL
-        /// </summary>
-        /// <param name="settings">Indexer Settings to use for Parser</param>
-        /// <returns>Parsed Settings or <c>null</c></returns>
         public TorrentRssIndexerParserSettings Detect(TorrentRssIndexerSettings indexerSettings)
         {
             _logger.Debug("Evaluating TorrentRss feed '{0}'", indexerSettings.BaseUrl);

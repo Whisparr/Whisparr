@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace NzbDrone.Core.Notifications.Webhook
+﻿namespace NzbDrone.Core.Notifications.Webhook
 {
     public class WebhookSeriesDeletePayload : WebhookPayload
     {

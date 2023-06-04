@@ -12,7 +12,6 @@ using NzbDrone.Core.MetadataSource;
 using NzbDrone.Core.Organizer;
 using NzbDrone.Core.Test.Framework;
 using NzbDrone.Core.Tv;
-using NzbDrone.Core.Tv.Events;
 using NzbDrone.Test.Common;
 
 namespace NzbDrone.Core.Test.TvTests

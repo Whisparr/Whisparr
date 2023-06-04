@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Core.ImportLists.Exclusions;
-using NzbDrone.Core.Validation;
 using Whisparr.Http;
 using Whisparr.Http.REST;
 using Whisparr.Http.REST.Attributes;

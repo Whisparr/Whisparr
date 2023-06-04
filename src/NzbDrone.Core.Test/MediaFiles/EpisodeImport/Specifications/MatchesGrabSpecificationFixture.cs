@@ -1,8 +1,6 @@
 using System.Collections.Generic;
-using System.Linq;
 using FizzWare.NBuilder;
 using FluentAssertions;
-using Moq;
 using NUnit.Framework;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Download;

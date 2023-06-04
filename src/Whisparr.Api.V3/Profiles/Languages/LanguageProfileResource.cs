@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Whisparr.Http.REST;
 
 namespace Whisparr.Api.V3.Profiles.Languages

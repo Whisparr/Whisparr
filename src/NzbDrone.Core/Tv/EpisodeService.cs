@@ -8,7 +8,6 @@ using NzbDrone.Core.Datastore;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.MediaFiles.Events;
 using NzbDrone.Core.Messaging.Events;
-using NzbDrone.Core.Parser;
 using NzbDrone.Core.Tv.Events;
 
 namespace NzbDrone.Core.Tv

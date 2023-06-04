@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using NzbDrone.Core.Tv;
 
 namespace Whisparr.Api.V3.Series
 {

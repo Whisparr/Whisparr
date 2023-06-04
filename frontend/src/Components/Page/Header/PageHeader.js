@@ -6,6 +6,7 @@ import Link from 'Components/Link/Link';
 import { icons } from 'Helpers/Props';
 import KeyboardShortcutsModal from './KeyboardShortcutsModal';
 import PageHeaderActionsMenuConnector from './PageHeaderActionsMenuConnector';
+import SafeForWorkButtonConnector from './SafeForWorkButtonConnector';
 import SeriesSearchInputConnector from './SeriesSearchInputConnector';
 import styles from './PageHeader.css';
 
@@ -74,6 +75,8 @@ class PageHeader extends Component {
         <SeriesSearchInputConnector />
 
         <div className={styles.right}>
+
+          <SafeForWorkButtonConnector />
           <IconButton
             className={styles.donate}
             name={icons.HEART}

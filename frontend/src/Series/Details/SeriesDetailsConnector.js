@@ -67,7 +67,8 @@ function createMapStateToProps() {
     selectEpisodeFiles,
     createAllSeriesSelector(),
     createCommandsSelector(),
-    (titleSlug, episodes, episodeFiles, allSeries, commands) => {
+    (state) => state.settings.safeForWorkMode,
+    (titleSlug, episodes, episodeFiles, allSeries, commands, safeForWorkMode) => {
       const sortedSeries = _.orderBy(allSeries, 'sortTitle');
       const seriesIndex = _.findIndex(sortedSeries, { titleSlug });
       const series = sortedSeries[seriesIndex];
@@ -129,7 +130,8 @@ function createMapStateToProps() {
         hasMonitoredEpisodes,
         hasEpisodeFiles,
         previousSeries,
-        nextSeries
+        nextSeries,
+        safeForWorkMode
       };
     }
   );

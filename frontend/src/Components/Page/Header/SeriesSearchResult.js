@@ -11,7 +11,8 @@ function SeriesSearchResult(props) {
     title,
     images,
     alternateTitles,
-    tags
+    tags,
+    safeForWorkMode
   } = props;
 
   let alternateTitle = null;
@@ -28,6 +29,7 @@ function SeriesSearchResult(props) {
       <SeriesPoster
         className={styles.poster}
         images={images}
+        blur={safeForWorkMode}
         size={250}
         lazy={false}
         overflow={true}
@@ -68,7 +70,8 @@ SeriesSearchResult.propTypes = {
   images: PropTypes.arrayOf(PropTypes.object).isRequired,
   alternateTitles: PropTypes.arrayOf(PropTypes.object).isRequired,
   tags: PropTypes.arrayOf(PropTypes.object).isRequired,
-  match: PropTypes.object.isRequired
+  match: PropTypes.object.isRequired,
+  safeForWorkMode: PropTypes.bool
 };
 
 export default SeriesSearchResult;

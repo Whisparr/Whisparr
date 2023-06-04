@@ -1,6 +1,8 @@
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import LazyLoad from 'react-lazyload';
+import styles from './SeriesImage.css';
 
 function findImage(images, coverType) {
   return images.find((image) => image.coverType === coverType);
@@ -120,6 +122,7 @@ class SeriesImage extends Component {
       style,
       placeholder,
       size,
+      blur,
       lazy,
       overflow
     } = this.props;
@@ -155,7 +158,10 @@ class SeriesImage extends Component {
           }
         >
           <img
-            className={className}
+            className={classNames(
+              className,
+              blur && styles.blur
+            )}
             style={style}
             src={url}
             onError={this.onError}
@@ -168,7 +174,10 @@ class SeriesImage extends Component {
 
     return (
       <img
-        className={className}
+        className={classNames(
+          className,
+          blur && styles.blur
+        )}
         style={style}
         src={isLoaded ? url : placeholder}
         onError={this.onError}
@@ -186,6 +195,7 @@ SeriesImage.propTypes = {
   placeholder: PropTypes.string.isRequired,
   size: PropTypes.number.isRequired,
   lazy: PropTypes.bool.isRequired,
+  blur: PropTypes.bool,
   overflow: PropTypes.bool.isRequired,
   onError: PropTypes.func,
   onLoad: PropTypes.func
@@ -194,6 +204,7 @@ SeriesImage.propTypes = {
 SeriesImage.defaultProps = {
   size: 250,
   lazy: true,
+  blur: false,
   overflow: false
 };
 

@@ -58,7 +58,8 @@ class AddNewSeriesSearchResult extends Component {
       folder,
       images,
       isExistingSeries,
-      isSmallScreen
+      isSmallScreen,
+      safeForWorkMode
     } = this.props;
 
     const {
@@ -81,6 +82,7 @@ class AddNewSeriesSearchResult extends Component {
               <SeriesPoster
                 className={styles.poster}
                 images={images}
+                blur={safeForWorkMode}
                 size={250}
                 overflow={true}
                 lazy={false}
@@ -188,7 +190,8 @@ AddNewSeriesSearchResult.propTypes = {
   folder: PropTypes.string.isRequired,
   images: PropTypes.arrayOf(PropTypes.object).isRequired,
   isExistingSeries: PropTypes.bool.isRequired,
-  isSmallScreen: PropTypes.bool.isRequired
+  isSmallScreen: PropTypes.bool.isRequired,
+  safeForWorkMode: PropTypes.bool
 };
 
 export default AddNewSeriesSearchResult;

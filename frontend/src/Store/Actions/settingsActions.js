@@ -61,6 +61,7 @@ export const defaultState = {
   advancedSettings: false,
   autoTaggingSpecifications: autoTaggingSpecifications.defaultState,
   autoTaggings: autoTaggings.defaultState,
+  safeForWorkMode: false,
   customFormatSpecifications: customFormatSpecifications.defaultState,
   customFormats: customFormats.defaultState,
   delayProfiles: delayProfiles.defaultState,
@@ -85,18 +86,21 @@ export const defaultState = {
 };
 
 export const persistState = [
-  'settings.advancedSettings'
+  'settings.advancedSettings',
+  'settings.safeForWorkMode'
 ];
 
 //
 // Actions Types
 
 export const TOGGLE_ADVANCED_SETTINGS = 'settings/toggleAdvancedSettings';
+export const TOGGLE_SFW_MODE = 'settings/toggleSafeForWorkMode';
 
 //
 // Action Creators
 
 export const toggleAdvancedSettings = createAction(TOGGLE_ADVANCED_SETTINGS);
+export const toggleSafeForWorkMode = createAction(TOGGLE_SFW_MODE);
 
 //
 // Action Handlers
@@ -134,6 +138,10 @@ export const reducers = createHandleActions({
 
   [TOGGLE_ADVANCED_SETTINGS]: (state, { payload }) => {
     return Object.assign({}, state, { advancedSettings: !state.advancedSettings });
+  },
+
+  [TOGGLE_SFW_MODE]: (state, { payload }) => {
+    return Object.assign({}, state, { safeForWorkMode: !state.safeForWorkMode });
   },
 
   ...autoTaggingSpecifications.reducers,

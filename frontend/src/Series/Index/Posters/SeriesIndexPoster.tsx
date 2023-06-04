@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import AppState from 'App/State/AppState';
 import { REFRESH_SERIES, SERIES_SEARCH } from 'Commands/commandNames';
 import Label from 'Components/Label';
 import IconButton from 'Components/Link/IconButton';
@@ -33,6 +34,10 @@ function SeriesIndexPoster(props: SeriesIndexPosterProps) {
 
   const { series, qualityProfile, isRefreshingSeries, isSearchingSeries } =
     useSelector(createSeriesIndexItemSelector(props.seriesId));
+
+  const safeForWorkMode = useSelector(
+    (state: AppState) => state.settings.safeForWorkMode
+  );
 
   const {
     detailedProgressBar,
@@ -119,8 +124,8 @@ function SeriesIndexPoster(props: SeriesIndexPosterProps) {
     width: `${posterWidth}px`,
     height: `${posterHeight}px`,
     objectFit: 'contain' as const,
-    'padding-right': '15px',
-    'padding-left': '5px',
+    paddingRight: '15px',
+    paddingLeft: '5px',
   };
 
   return (
@@ -161,6 +166,7 @@ function SeriesIndexPoster(props: SeriesIndexPosterProps) {
 
         <Link className={styles.link} style={elementStyle} to={link}>
           <SeriesPoster
+            blur={safeForWorkMode}
             style={elementStyle}
             images={images}
             size={250}

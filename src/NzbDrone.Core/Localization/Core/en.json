@@ -2,5 +2,7 @@
   "Language": "Language",
   "UI Language": "UI Language",
   "Language that Whisparr will use for UI": "Language that Whisparr will use for UI",
-  "Browser Reload Required": "Browser Reload Required"
+  "Browser Reload Required": "Browser Reload Required",
+  "HiddenClickToShow": "Hidden, Click To Show",
+  "ShownClickToHide": "Shown, Click To Hide"
 }

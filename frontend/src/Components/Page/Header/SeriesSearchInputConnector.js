@@ -10,7 +10,8 @@ function createCleanSeriesSelector() {
   return createSelector(
     createAllSeriesSelector(),
     createTagsSelector(),
-    (allSeries, allTags) => {
+    (state) => state.settings.safeForWorkMode,
+    (allSeries, allTags, safeForWorkMode) => {
       return allSeries.map((series) => {
         const {
           title,
@@ -27,6 +28,7 @@ function createCleanSeriesSelector() {
           sortTitle,
           images,
           alternateTitles,
+          safeForWorkMode,
           firstCharacter: title.charAt(0).toLowerCase(),
           tags: tags.reduce((acc, id) => {
             const matchingTag = allTags.find((tag) => tag.id === id);

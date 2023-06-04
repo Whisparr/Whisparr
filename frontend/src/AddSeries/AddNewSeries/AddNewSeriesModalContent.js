@@ -51,6 +51,7 @@ class AddNewSeriesModalContent extends Component {
       isWindows,
       onModalClose,
       onInputChange,
+      safeForWorkMode,
       ...otherProps
     } = this.props;
 
@@ -73,6 +74,7 @@ class AddNewSeriesModalContent extends Component {
                 <div className={styles.poster}>
                   <SeriesPoster
                     className={styles.poster}
+                    blur={safeForWorkMode}
                     images={images}
                     size={250}
                   />
@@ -223,7 +225,8 @@ AddNewSeriesModalContent.propTypes = {
   isWindows: PropTypes.bool.isRequired,
   onModalClose: PropTypes.func.isRequired,
   onInputChange: PropTypes.func.isRequired,
-  onAddSeriesPress: PropTypes.func.isRequired
+  onAddSeriesPress: PropTypes.func.isRequired,
+  safeForWorkMode: PropTypes.bool
 };
 
 export default AddNewSeriesModalContent;

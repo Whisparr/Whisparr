@@ -8,10 +8,12 @@ function createMapStateToProps() {
   return createSelector(
     createExistingSeriesSelector(),
     createDimensionsSelector(),
-    (isExistingSeries, dimensions) => {
+    (state) => state.settings.safeForWorkMode,
+    (isExistingSeries, dimensions, safeForWorkMode) => {
       return {
         isExistingSeries,
-        isSmallScreen: dimensions.isSmallScreen
+        isSmallScreen: dimensions.isSmallScreen,
+        safeForWorkMode
       };
     }
   );

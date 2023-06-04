@@ -204,7 +204,8 @@ class SeriesDetails extends Component {
       nextSeries,
       onMonitorTogglePress,
       onRefreshPress,
-      onSearchPress
+      onSearchPress,
+      safeForWorkMode
     } = this.props;
 
     const {
@@ -341,6 +342,7 @@ class SeriesDetails extends Component {
                 className={styles.poster}
                 style={elementStyle}
                 images={images}
+                blur={safeForWorkMode}
                 size={500}
                 lazy={false}
               />
@@ -719,7 +721,8 @@ SeriesDetails.propTypes = {
   nextSeries: PropTypes.object.isRequired,
   onMonitorTogglePress: PropTypes.func.isRequired,
   onRefreshPress: PropTypes.func.isRequired,
-  onSearchPress: PropTypes.func.isRequired
+  onSearchPress: PropTypes.func.isRequired,
+  safeForWorkMode: PropTypes.bool
 };
 
 SeriesDetails.defaultProps = {

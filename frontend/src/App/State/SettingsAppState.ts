@@ -23,6 +23,7 @@ interface SettingsAppState {
   language: LanguageSettingsAppState;
   uiSettings: UiSettingsAppState;
   qualityProfiles: QualityProfilesAppState;
+  safeForWorkMode: boolean;
 }
 
 export default SettingsAppState;

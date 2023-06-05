@@ -46,15 +46,12 @@ namespace NzbDrone.Core.Organizer
 
         protected override bool IsValid(PropertyValidatorContext context)
         {
-            var value = context.PropertyValue as string;
-
-            if (!FileNameBuilder.AirDateRegex.IsMatch(value) &&
-                !FileNameValidation.OriginalTokenRegex.IsMatch(value))
+            if (context.PropertyValue is not string value)
             {
                 return false;
             }
 
-            return FileNameBuilder.SeasonEpisodePatternRegex.IsMatch(value) ||
+            return FileNameBuilder.AirDateRegex.IsMatch(value) ||
                    FileNameValidation.OriginalTokenRegex.IsMatch(value);
         }
     }

@@ -326,7 +326,7 @@ namespace NzbDrone.Core.Notifications.Discord
                                       Author = new DiscordAuthor
                                       {
                                           Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
-                                          IconUrl = "https://raw.githubusercontent.com/Sonarr/Sonarr/develop/Logo/256.png"
+                                          IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
                                       },
                                       Title = "Health Issue Resolved: " + previousCheck.Source.Name,
                                       Description = $"The following issue is now resolved: {previousCheck.Message}",
@@ -385,7 +385,7 @@ namespace NzbDrone.Core.Notifications.Discord
                 Author = new DiscordAuthor
                 {
                     Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
-                    IconUrl = "https://raw.githubusercontent.com/Sonarr/Sonarr/develop/Logo/256.png"
+                    IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
                 },
                 Url = $"http://thetvdb.com/?tab=series&id={series.TvdbId}",
                 Description = "Manual interaction needed",

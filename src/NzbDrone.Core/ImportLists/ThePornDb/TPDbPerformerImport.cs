@@ -7,22 +7,22 @@ using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Parser;
 using NzbDrone.Core.Parser.Model;
 
-namespace NzbDrone.Core.ImportLists.Custom
+namespace NzbDrone.Core.ImportLists.TPDb
 {
-    public class CustomImport : ImportListBase<CustomSettings>
+    public class TPDbPerformer : ImportListBase<TPDbPerformerSettings>
     {
-        private readonly ICustomImportProxy _customProxy;
-        public override string Name => "Custom List";
+        private readonly ITPDbImportProxy _customProxy;
+        public override string Name => "TPDb Performer";
 
         public override TimeSpan MinRefreshInterval => TimeSpan.FromHours(6);
 
         public override ImportListType ListType => ImportListType.Advanced;
 
-        public CustomImport(ICustomImportProxy customProxy,
-                            IImportListStatusService importListStatusService,
-                            IConfigService configService,
-                            IParsingService parsingService,
-                            Logger logger)
+        public TPDbPerformer(ITPDbImportProxy customProxy,
+                             IImportListStatusService importListStatusService,
+                             IConfigService configService,
+                             IParsingService parsingService,
+                             Logger logger)
             : base(importListStatusService, configService, parsingService, logger)
         {
             _customProxy = customProxy;
@@ -34,13 +34,14 @@ namespace NzbDrone.Core.ImportLists.Custom
 
             try
             {
-                var remoteSeries = _customProxy.GetSeries(Settings);
+                var remoteSeries = _customProxy.GetPerformer(Settings);
 
                 foreach (var item in remoteSeries)
                 {
                     series.Add(new ImportListItemInfo
                     {
-                        TpdbSiteId = item.TvdbId
+                        TpdbSiteId = item.SiteId,
+                        TpdbEpisodeId = item.EpisodeId
                     });
                 }
 

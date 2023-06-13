@@ -7,7 +7,8 @@ namespace Whisparr.Api.V3.ImportLists
     public class ImportListResource : ProviderResource<ImportListResource>
     {
         public bool EnableAutomaticAdd { get; set; }
-        public MonitorTypes ShouldMonitor { get; set; }
+        public ImportListMonitorTypes ShouldMonitor { get; set; }
+        public MonitorTypes SiteMonitorType { get; set; }
         public string RootFolderPath { get; set; }
         public int QualityProfileId { get; set; }
         public ImportListType ListType { get; set; }
@@ -28,6 +29,7 @@ namespace Whisparr.Api.V3.ImportLists
 
             resource.EnableAutomaticAdd = definition.EnableAutomaticAdd;
             resource.ShouldMonitor = definition.ShouldMonitor;
+            resource.SiteMonitorType = definition.SiteMonitorType;
             resource.RootFolderPath = definition.RootFolderPath;
             resource.QualityProfileId = definition.QualityProfileId;
             resource.ListType = definition.ListType;
@@ -48,6 +50,7 @@ namespace Whisparr.Api.V3.ImportLists
 
             definition.EnableAutomaticAdd = resource.EnableAutomaticAdd;
             definition.ShouldMonitor = resource.ShouldMonitor;
+            definition.SiteMonitorType = resource.SiteMonitorType;
             definition.RootFolderPath = resource.RootFolderPath;
             definition.QualityProfileId = resource.QualityProfileId;
             definition.ListType = resource.ListType;

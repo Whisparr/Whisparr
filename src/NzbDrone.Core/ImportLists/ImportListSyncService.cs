@@ -18,6 +18,7 @@ namespace NzbDrone.Core.ImportLists
         private readonly IFetchAndParseImportList _listFetcherAndParser;
         private readonly ISearchForNewSeries _seriesSearchService;
         private readonly ISeriesService _seriesService;
+        private readonly IEpisodeService _episodeService;
         private readonly IAddSeriesService _addSeriesService;
         private readonly Logger _logger;
 
@@ -26,6 +27,7 @@ namespace NzbDrone.Core.ImportLists
                               IFetchAndParseImportList listFetcherAndParser,
                               ISearchForNewSeries seriesSearchService,
                               ISeriesService seriesService,
+                              IEpisodeService episodeService,
                               IAddSeriesService addSeriesService,
                               Logger logger)
         {
@@ -34,6 +36,7 @@ namespace NzbDrone.Core.ImportLists
             _listFetcherAndParser = listFetcherAndParser;
             _seriesSearchService = seriesSearchService;
             _seriesService = seriesService;
+            _episodeService = episodeService;
             _addSeriesService = addSeriesService;
             _logger = logger;
         }
@@ -81,42 +84,61 @@ namespace NzbDrone.Core.ImportLists
                 var importList = importLists.Single(x => x.Id == report.ImportListId);
 
                 // Map TVDb if we only have a series name
-                if (report.TvdbId <= 0 && report.Title.IsNotNullOrWhiteSpace())
+                if (report.TpdbSiteId <= 0 && report.Title.IsNotNullOrWhiteSpace())
                 {
                     var mappedSeries = _seriesSearchService.SearchForNewSeries(report.Title)
                         .FirstOrDefault();
 
                     if (mappedSeries != null)
                     {
-                        report.TvdbId = mappedSeries.TvdbId;
+                        report.TpdbSiteId = mappedSeries.TvdbId;
                         report.Title = mappedSeries?.Title;
                     }
                 }
 
                 // Check to see if series excluded
-                var excludedSeries = listExclusions.Where(s => s.TvdbId == report.TvdbId).SingleOrDefault();
+                var excludedSeries = listExclusions.Where(s => s.TvdbId == report.TpdbSiteId).SingleOrDefault();
 
                 if (excludedSeries != null)
                 {
-                    _logger.Debug("{0} [{1}] Rejected due to list exclusion", report.TvdbId, report.Title);
+                    _logger.Debug("{0} [{1}] Rejected due to list exclusion", report.TpdbSiteId, report.Title);
                     continue;
                 }
 
                 // Break if Series Exists in DB
-                if (existingTvdbIds.Any(x => x == report.TvdbId))
+                if (existingTvdbIds.Any(x => x == report.TpdbSiteId))
                 {
-                    _logger.Debug("{0} [{1}] Rejected, Series Exists in DB", report.TvdbId, report.Title);
+                    _logger.Debug("{0} [{1}] Rejected, Series Exists in DB", report.TpdbSiteId, report.Title);
+
+                    // Set montiored if episode item
+                    if (importList.ShouldMonitor == ImportListMonitorTypes.SpecificEpisode && report.TpdbEpisodeId > 0)
+                    {
+                        var series = _seriesService.FindByTvdbId(report.TpdbSiteId);
+
+                        if (series != null)
+                        {
+                            var seriesEpisodes = _episodeService.GetEpisodeBySeries(series.Id);
+
+                            var episode = seriesEpisodes.FirstOrDefault(x => x.TvdbId == report.TpdbEpisodeId);
+
+                            if (episode != null && !episode.Monitored)
+                            {
+                                _episodeService.SetEpisodeMonitored(episode.Id, true);
+                            }
+                        }
+                    }
+
                     continue;
                 }
 
                 // Append Series if not already in DB or already on add list
-                if (seriesToAdd.All(s => s.TvdbId != report.TvdbId))
+                if (seriesToAdd.All(s => s.TvdbId != report.TpdbSiteId))
                 {
-                    var monitored = importList.ShouldMonitor != MonitorTypes.None;
+                    var monitored = importList.ShouldMonitor != ImportListMonitorTypes.None;
 
-                    seriesToAdd.Add(new Series
+                    var toAdd = new Series
                     {
-                        TvdbId = report.TvdbId,
+                        TvdbId = report.TpdbSiteId,
                         Title = report.Title,
                         Year = report.Year,
                         Monitored = monitored,
@@ -126,9 +148,21 @@ namespace NzbDrone.Core.ImportLists
                         AddOptions = new AddSeriesOptions
                                      {
                                          SearchForMissingEpisodes = monitored,
-                                         Monitor = importList.ShouldMonitor
+                                         Monitor = importList.ShouldMonitor == ImportListMonitorTypes.EntireSite ? importList.SiteMonitorType : MonitorTypes.Existing
                                      }
-                    });
+                    };
+
+                    seriesToAdd.Add(toAdd);
+                }
+
+                if (importList.ShouldMonitor == ImportListMonitorTypes.SpecificEpisode && report.TpdbEpisodeId > 0)
+                {
+                    var index = seriesToAdd.FindIndex(c => c.TvdbId == report.TpdbSiteId);
+
+                    if (index >= 0 && seriesToAdd[index].AddOptions != null)
+                    {
+                        seriesToAdd[index].AddOptions.EpisodesToMonitor.Add(report.TpdbEpisodeId);
+                    }
                 }
             }
 

@@ -7,7 +7,8 @@ namespace NzbDrone.Core.ImportLists
     public class ImportListDefinition : ProviderDefinition
     {
         public bool EnableAutomaticAdd { get; set; }
-        public MonitorTypes ShouldMonitor { get; set; }
+        public ImportListMonitorTypes ShouldMonitor { get; set; }
+        public MonitorTypes SiteMonitorType { get; set; }
         public int QualityProfileId { get; set; }
         public string RootFolderPath { get; set; }
 
@@ -16,5 +17,12 @@ namespace NzbDrone.Core.ImportLists
         public ImportListStatus Status { get; set; }
         public ImportListType ListType { get; set; }
         public TimeSpan MinRefreshInterval { get; set; }
+    }
+
+    public enum ImportListMonitorTypes
+    {
+        None,
+        SpecificEpisode,
+        EntireSite
     }
 }

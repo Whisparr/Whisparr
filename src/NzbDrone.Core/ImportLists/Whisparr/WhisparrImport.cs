@@ -41,7 +41,11 @@ namespace NzbDrone.Core.ImportLists.Whisparr
                 {
                     if (Settings.ProfileIds.Any() && !Settings.ProfileIds.Contains(item.QualityProfileId))
                     {
-                        continue;
+                        series.Add(new ImportListItemInfo
+                        {
+                            TpdbSiteId = item.TvdbId,
+                            Title = item.Title
+                        });
                     }
 
                     if (Settings.TagIds.Any() && !Settings.TagIds.Any(tagId => item.Tags.Any(itemTagId => itemTagId == tagId)))
@@ -56,7 +60,7 @@ namespace NzbDrone.Core.ImportLists.Whisparr
 
                     series.Add(new ImportListItemInfo
                     {
-                        TvdbId = item.TvdbId,
+                        TpdbSiteId = item.TvdbId,
                         Title = item.Title
                     });
                 }

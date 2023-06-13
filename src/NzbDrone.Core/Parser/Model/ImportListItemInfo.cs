@@ -8,9 +8,8 @@ namespace NzbDrone.Core.Parser.Model
         public string ImportList { get; set; }
         public string Title { get; set; }
         public int Year { get; set; }
-        public int TvdbId { get; set; }
-        public int TmdbId { get; set; }
-        public string ImdbId { get; set; }
+        public int TpdbSiteId { get; set; }
+        public int TpdbEpisodeId { get; set; }
         public DateTime ReleaseDate { get; set; }
 
         public override string ToString()

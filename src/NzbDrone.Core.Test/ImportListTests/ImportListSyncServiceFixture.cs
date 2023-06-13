@@ -35,7 +35,7 @@ namespace NzbDrone.Core.Test.ImportListTests
 
             Mocker.GetMock<IImportListFactory>()
                   .Setup(v => v.All())
-                  .Returns(new List<ImportListDefinition> { new ImportListDefinition { ShouldMonitor = MonitorTypes.All } });
+                  .Returns(new List<ImportListDefinition> { new ImportListDefinition { ShouldMonitor = ImportListMonitorTypes.EntireSite } });
 
             Mocker.GetMock<IFetchAndParseImportList>()
                   .Setup(v => v.Fetch())
@@ -48,19 +48,14 @@ namespace NzbDrone.Core.Test.ImportListTests
 
         private void WithTvdbId()
         {
-            _importListReports.First().TvdbId = 81189;
-        }
-
-        private void WithImdbId()
-        {
-            _importListReports.First().ImdbId = "tt0496424";
+            _importListReports.First().TpdbSiteId = 81189;
         }
 
         private void WithExistingSeries()
         {
             Mocker.GetMock<ISeriesService>()
                   .Setup(v => v.AllSeriesTvdbIds())
-                  .Returns(new List<int> { _importListReports.First().TvdbId });
+                  .Returns(new List<int> { _importListReports.First().TpdbSiteId });
         }
 
         private void WithExcludedSeries()
@@ -76,7 +71,7 @@ namespace NzbDrone.Core.Test.ImportListTests
                     });
         }
 
-        private void WithMonitorType(MonitorTypes monitor)
+        private void WithMonitorType(ImportListMonitorTypes monitor)
         {
             Mocker.GetMock<IImportListFactory>()
                   .Setup(v => v.All())
@@ -114,9 +109,9 @@ namespace NzbDrone.Core.Test.ImportListTests
                   .Verify(v => v.AddSeries(It.Is<List<Series>>(t => t.Count == 0), It.IsAny<bool>()));
         }
 
-        [TestCase(MonitorTypes.None, false)]
-        [TestCase(MonitorTypes.All, true)]
-        public void should_add_if_not_existing_series(MonitorTypes monitor, bool expectedSeriesMonitored)
+        [TestCase(ImportListMonitorTypes.None, false)]
+        [TestCase(ImportListMonitorTypes.EntireSite, true)]
+        public void should_add_if_not_existing_series(ImportListMonitorTypes monitor, bool expectedSeriesMonitored)
         {
             WithTvdbId();
             WithMonitorType(monitor);

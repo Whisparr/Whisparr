@@ -31,10 +31,10 @@ namespace NzbDrone.Core.ImportLists.Rss.Plex
 
             if (int.TryParse(guid.Replace("tvdb://", ""), out var tvdbId))
             {
-                info.TvdbId = tvdbId;
+                info.TpdbSiteId = tvdbId;
             }
 
-            if (info.TvdbId == 0)
+            if (info.TpdbSiteId == 0)
             {
                 throw new UnsupportedFeedException("Each item in the RSS feed must have a guid element with a TVDB ID");
             }

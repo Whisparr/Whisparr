@@ -121,7 +121,7 @@ class Naming extends Component {
 
         {
           !isFetching && error &&
-            <div>Unable to load Naming settings</div>
+            <Alert kind={kinds.DANGER}>Unable to load Naming settings</Alert>
         }
 
         {

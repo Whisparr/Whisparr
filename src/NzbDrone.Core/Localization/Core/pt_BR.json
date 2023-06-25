@@ -2,5 +2,9 @@
     "Language that Whisparr will use for UI": "Idioma que Whisparr usará para interface do usuário",
     "Browser Reload Required": "Necessário recarregar o navegador",
     "Language": "Idioma",
-    "UI Language": "Idioma da IU"
+    "UI Language": "Idioma da IU",
+    "HiddenClickToShow": "Oculto, clique para mostrar",
+    "ShownClickToHide": "Mostrado, clique para ocultar",
+    "ShowAdvanced": "Mostrar Avançado",
+    "HideAdvanced": "Ocultar Avançado"
 }

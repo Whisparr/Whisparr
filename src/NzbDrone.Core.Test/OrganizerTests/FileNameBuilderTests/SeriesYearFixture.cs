@@ -1,3 +1,4 @@
+using System.IO;
 using System.Linq;
 using FizzWare.NBuilder;
 using FluentAssertions;
@@ -33,16 +34,16 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
                 .Returns<Quality>(v => Quality.DefaultQualityDefinitions.First(c => c.Quality == v));
         }
 
-        [TestCase("The Mist", 2017, "2017\\The Mist")]
-        [TestCase("A", 2021, "2021\\A")]
-        [TestCase("30 Rock", 2006, "2006\\30 Rock")]
-        public void should_get_expected_folder_name_back(string title, int year, string expected)
+        [TestCase("The Mist", 2017, "2017", "The Mist")]
+        [TestCase("A", 2021, "2021", "A")]
+        [TestCase("30 Rock", 2006, "2006", "30 Rock")]
+        public void should_get_expected_folder_name_back(string title, int year, string parent, string child)
         {
             _series.Title = title;
             _series.Year = year;
             _namingConfig.SeriesFolderFormat = "{Site Year}\\{Site Title}";
 
-            Subject.GetSeriesFolder(_series).Should().Be(expected);
+            Subject.GetSeriesFolder(_series).Should().Be(Path.Combine(parent, child));
         }
     }
 }

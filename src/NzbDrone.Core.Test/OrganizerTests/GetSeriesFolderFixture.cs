@@ -1,3 +1,4 @@
+using System.IO;
 using FluentAssertions;
 using NUnit.Framework;
 using NzbDrone.Core.Organizer;
@@ -34,6 +35,17 @@ namespace NzbDrone.Core.Test.OrganizerTests
             var series = new Series { Title = seriesTitle };
 
             Subject.GetSeriesFolder(series).Should().Be(expected);
+        }
+
+        [TestCase("HBO", "30 Rock", "HBO", "30 Rock")]
+        [TestCase("", "Venture Bros", "Venture Bros")]
+        public void should_use_site_network_in_seriesFolderFormat_to_build_folder_name(string seriesNetwork, string seriesTitle, params string[] expected)
+        {
+            _namingConfig.SeriesFolderFormat = "{Site Network}\\{Site Title}";
+
+            var series = new Series { Network = seriesNetwork, Title = seriesTitle };
+
+            Subject.GetSeriesFolder(series).Should().Be(Path.Combine(expected));
         }
     }
 }

@@ -24,7 +24,8 @@ namespace NzbDrone.Core.Notifications.Stash
             var cleanPath = path.ToJson();
 
             var metadataIdentifyQuery = "";
-            if (settings.MetadataIdentify) {
+            if (settings.MetadataIdentify) 
+            {
                 metadataIdentifyQuery = $@"metadataIdentify(
                                             input: {{
                                             sources: [

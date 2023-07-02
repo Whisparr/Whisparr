@@ -25,7 +25,7 @@ namespace NzbDrone.Core.Notifications.Stash
 
             var metadataIdentifyQuery = "";
             if (settings.MetadataIdentify) {
-                metadataIdentifyQuery =  $@"metadataIdentify(
+                metadataIdentifyQuery = $@"metadataIdentify(
                                             input: {{
                                             sources: [
                                                 {{source: {{stash_box_index: 0}}, options: {{setOrganized: false}} }}, 

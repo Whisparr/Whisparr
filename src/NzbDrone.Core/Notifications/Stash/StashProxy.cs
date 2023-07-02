@@ -24,7 +24,7 @@ namespace NzbDrone.Core.Notifications.Stash
             var cleanPath = path.ToJson();
 
             var metadataIdentifyQuery = "";
-            if (settings.MetadataIdentify) 
+            if (settings.MetadataIdentify)
             {
                 metadataIdentifyQuery = $@"metadataIdentify(
                                             input: {{
@@ -41,7 +41,7 @@ namespace NzbDrone.Core.Notifications.Stash
             {
                 Query = $@"mutation {{
                             metadataScan(
-                            input: {{
+                                input: {{
                                 useFileMetadata: false,
                                 stripFileExtension: true,
                                 scanGenerateCovers: {(settings.GenerateCovers ? "true" : "false")},

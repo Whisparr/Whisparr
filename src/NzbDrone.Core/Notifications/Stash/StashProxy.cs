@@ -23,10 +23,9 @@ namespace NzbDrone.Core.Notifications.Stash
             var generatePreviews = settings.GeneratePreviews ? "true" : "false";
             var cleanPath = path.ToJson();
 
-
-            var MetadataIdentifyQuery = "";
+            var metadataIdentifyQuery = "";
             if (settings.MetadataIdentify) {
-                MetadataIdentifyQuery =  $@"metadataIdentify(
+                metadataIdentifyQuery =  $@"metadataIdentify(
                                             input: {{
                                             sources: [
                                                 {{source: {{stash_box_index: 0}}, options: {{setOrganized: false}} }}, 
@@ -38,7 +37,7 @@ namespace NzbDrone.Core.Notifications.Stash
             }
 
             request.SetContent(new
-            {           
+            {
                 Query = $@"mutation {{
                             metadataScan(
                             input: {{
@@ -51,7 +50,7 @@ namespace NzbDrone.Core.Notifications.Stash
                                 scanGeneratePhashes: {(settings.GeneratePhashes ? "true" : "false")},
                                 paths: [{cleanPath}]
                             }})
-                            {(settings.MetadataIdentify ? MetadataIdentifyQuery : "" )}
+                            {metadataIdentifyQuery}
                         }}"
             }.ToJson());
 

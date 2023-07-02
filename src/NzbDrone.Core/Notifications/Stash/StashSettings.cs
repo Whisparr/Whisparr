@@ -65,8 +65,8 @@ namespace NzbDrone.Core.Notifications.Stash
         [FieldDefinition(10, Label = "Map Paths To", Type = FieldType.Textbox, Advanced = true, HelpText = "Stash Path, Used to modify site paths when Stash sees library path location differently from Whisparr")]
         public string MapTo { get; set; }
 
-        [FieldDefinition(11, Label = "Run Identify Task", Type = FieldType.Textbox, Advanced = true, HelpText = "Run metadataIdentify task with StashDB/Autotag on new files")]
-        public string MetadataIdentify { get; set; }
+        [FieldDefinition(11, Label = "Run Identify Task", Type = FieldType.Checkbox, Advanced = true, HelpText = "Run metadataIdentify task with StashDB/Autotag on new files")]
+        public bool MetadataIdentify { get; set; }
 
         [JsonIgnore]
         public string Address => $"{Host.ToUrlHost()}:{Port}";

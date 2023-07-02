@@ -24,7 +24,7 @@ namespace NzbDrone.Core.Notifications.Stash
             var cleanPath = path.ToJson();
 
 
-            var MetadataIdentifyQuery = ""
+            var MetadataIdentifyQuery = "";
             if (settings.MetadataIdentify) {
                 MetadataIdentifyQuery =  $@"metadataIdentify(
                                             input: {{
@@ -34,7 +34,7 @@ namespace NzbDrone.Core.Notifications.Stash
                                             ],
                                             options: {{includeMalePerformers: false, setCoverImage: true, setOrganized: false}}, 
                                             paths: [{cleanPath}]
-                                       }})"
+                                       }})";
             }
 
             request.SetContent(new

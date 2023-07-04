@@ -364,15 +364,9 @@ stages:
       - bash: |
           echo "Uploading source maps to sentry"
           curl -sL https://sentry.io/get-cli/ | bash
-<<<<<<< HEAD
-          RELEASENAME="${WHISPARRVERSION}-${BUILD_SOURCEBRANCHNAME}"
+          RELEASENAME="Whisparr@${WHISPARRVERSION}-${BUILD_SOURCEBRANCHNAME}"
           sentry-cli releases new --finalize -p whisparr -p whisparr-ui -p whisparr-update "${RELEASENAME}"
           sentry-cli releases -p whisparr-ui files "${RELEASENAME}" upload-sourcemaps _output/UI/ --rewrite
-=======
-          RELEASENAME="Radarr@${RADARRVERSION}-${BUILD_SOURCEBRANCHNAME}"
-          sentry-cli releases new --finalize -p radarr -p radarr-ui -p radarr-update "${RELEASENAME}"
-          sentry-cli releases -p radarr-ui files "${RELEASENAME}" upload-sourcemaps _output/UI/ --rewrite
->>>>>>> e606ff05a (Add package to Sentry release to ensure apps don't mix)
           sentry-cli releases set-commits --auto "${RELEASENAME}"
           if [[ ${BUILD_SOURCEBRANCH} == "refs/heads/develop" ]]; then
           sentry-cli releases deploys "${RELEASENAME}" new -e nightly

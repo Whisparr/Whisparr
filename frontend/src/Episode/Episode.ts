@@ -6,9 +6,7 @@ interface Episode extends ModelBase {
   tvdbId: number;
   episodeFileId: number;
   seasonNumber: number;
-  episodeNumber: number;
-  airDate: string;
-  airDateUtc?: string;
+  releaseDate?: string;
   runtime: number;
   absoluteEpisodeNumber?: number;
   sceneSeasonNumber?: number;

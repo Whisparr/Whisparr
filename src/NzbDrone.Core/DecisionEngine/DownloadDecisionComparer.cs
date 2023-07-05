@@ -33,7 +33,6 @@ namespace NzbDrone.Core.DecisionEngine
                 CompareCustomFormatScore,
                 CompareProtocol,
                 CompareEpisodeCount,
-                CompareEpisodeNumber,
                 CompareIndexerPriority,
                 ComparePeersIfTorrent,
                 CompareAgeIfUsenet,
@@ -100,11 +99,6 @@ namespace NzbDrone.Core.DecisionEngine
         private int CompareEpisodeCount(DownloadDecision x, DownloadDecision y)
         {
             return CompareByReverse(x.RemoteEpisode, y.RemoteEpisode, remoteEpisode => remoteEpisode.Episodes.Count);
-        }
-
-        private int CompareEpisodeNumber(DownloadDecision x, DownloadDecision y)
-        {
-            return CompareByReverse(x.RemoteEpisode, y.RemoteEpisode, remoteEpisode => remoteEpisode.Episodes.Select(e => e.EpisodeNumber).MinOrDefault());
         }
 
         private int ComparePeersIfTorrent(DownloadDecision x, DownloadDecision y)

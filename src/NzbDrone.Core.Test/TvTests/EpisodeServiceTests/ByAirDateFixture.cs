@@ -20,7 +20,6 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeServiceTests
             var episode = Builder<Episode>.CreateNew()
                                           .With(e => e.SeriesId = 1)
                                           .With(e => e.SeasonNumber = seasonNumber)
-                                          .With(e => e.EpisodeNumber = episodeNumber)
                                           .With(e => e.Title = title)
                                           .With(e => e.Actors = new List<Actor>
                                           {

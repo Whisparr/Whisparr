@@ -167,12 +167,12 @@ class QueueRow extends Component {
               );
             }
 
-            if (name === 'episodes.airDateUtc') {
+            if (name === 'episodes.releaseDate') {
               if (episode) {
                 return (
                   <RelativeDateCellConnector
                     key={name}
-                    date={episode.airDateUtc}
+                    date={episode.releaseDate}
                   />
                 );
               }

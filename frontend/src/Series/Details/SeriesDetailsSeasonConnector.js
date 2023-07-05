@@ -27,7 +27,7 @@ function createMapStateToProps() {
       }));
 
       const episodesInSeason = episodes.items.filter((episode) => episode.seasonNumber === seasonNumber);
-      const sortedEpisodes = episodesInSeason.sort((a, b) => b.episodeNumber - a.episodeNumber);
+      const sortedEpisodes = episodesInSeason.sort((a, b) => b.releaseDate - a.releaseDate);
 
       return {
         items: sortedEpisodes,

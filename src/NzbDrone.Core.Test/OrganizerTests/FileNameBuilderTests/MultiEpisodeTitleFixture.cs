@@ -39,14 +39,12 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
             _episode1 = Builder<Episode>.CreateNew()
                             .With(e => e.Title = "Episode Title")
                             .With(e => e.SeasonNumber = 15)
-                            .With(e => e.EpisodeNumber = 6)
                             .With(e => e.AbsoluteEpisodeNumber = 100)
                             .Build();
 
             _episode2 = Builder<Episode>.CreateNew()
                             .With(e => e.Title = "Episode Title")
                             .With(e => e.SeasonNumber = 15)
-                            .With(e => e.EpisodeNumber = 7)
                             .With(e => e.AbsoluteEpisodeNumber = 101)
                             .Build();
 

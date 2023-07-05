@@ -10,7 +10,7 @@ import styles from './EpisodeStatus.css';
 
 function EpisodeStatus(props) {
   const {
-    airDateUtc,
+    releaseDate,
     monitored,
     grabbed,
     queueItem,
@@ -19,7 +19,7 @@ function EpisodeStatus(props) {
 
   const hasEpisodeFile = !!episodeFile;
   const isQueued = !!queueItem;
-  const hasAired = isBefore(airDateUtc);
+  const hasAired = isBefore(releaseDate);
 
   if (isQueued) {
     const {
@@ -72,7 +72,7 @@ function EpisodeStatus(props) {
     );
   }
 
-  if (!airDateUtc) {
+  if (!releaseDate) {
     return (
       <div className={styles.center}>
         <Icon
@@ -117,7 +117,7 @@ function EpisodeStatus(props) {
 }
 
 EpisodeStatus.propTypes = {
-  airDateUtc: PropTypes.string,
+  releaseDate: PropTypes.string,
   monitored: PropTypes.bool.isRequired,
   grabbed: PropTypes.bool,
   queueItem: PropTypes.object,

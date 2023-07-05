@@ -61,10 +61,8 @@ namespace NzbDrone.Core.Notifications.CustomScript
             environmentVariables.Add("Whisparr_Series_TvdbId", series.TvdbId.ToString());
             environmentVariables.Add("Whisparr_Release_EpisodeCount", remoteEpisode.Episodes.Count.ToString());
             environmentVariables.Add("Whisparr_Release_SeasonNumber", remoteEpisode.Episodes.First().SeasonNumber.ToString());
-            environmentVariables.Add("Whisparr_Release_EpisodeNumbers", string.Join(",", remoteEpisode.Episodes.Select(e => e.EpisodeNumber)));
             environmentVariables.Add("Whisparr_Release_AbsoluteEpisodeNumbers", string.Join(",", remoteEpisode.Episodes.Select(e => e.AbsoluteEpisodeNumber)));
             environmentVariables.Add("Whisparr_Release_EpisodeAirDates", string.Join(",", remoteEpisode.Episodes.Select(e => e.AirDate)));
-            environmentVariables.Add("Whisparr_Release_EpisodeAirDatesUtc", string.Join(",", remoteEpisode.Episodes.Select(e => e.AirDateUtc)));
             environmentVariables.Add("Whisparr_Release_EpisodeTitles", string.Join("|", remoteEpisode.Episodes.Select(e => e.Title)));
             environmentVariables.Add("Whisparr_Release_EpisodeOverviews", string.Join("|", remoteEpisode.Episodes.Select(e => e.Overview)));
             environmentVariables.Add("Whisparr_Release_Title", remoteEpisode.Release.Title);
@@ -104,9 +102,7 @@ namespace NzbDrone.Core.Notifications.CustomScript
             environmentVariables.Add("Whisparr_EpisodeFile_Path", Path.Combine(series.Path, episodeFile.RelativePath));
             environmentVariables.Add("Whisparr_EpisodeFile_EpisodeIds", string.Join(",", episodeFile.Episodes.Value.Select(e => e.Id)));
             environmentVariables.Add("Whisparr_EpisodeFile_SeasonNumber", episodeFile.SeasonNumber.ToString());
-            environmentVariables.Add("Whisparr_EpisodeFile_EpisodeNumbers", string.Join(",", episodeFile.Episodes.Value.Select(e => e.EpisodeNumber)));
             environmentVariables.Add("Whisparr_EpisodeFile_EpisodeAirDates", string.Join(",", episodeFile.Episodes.Value.Select(e => e.AirDate)));
-            environmentVariables.Add("Whisparr_EpisodeFile_EpisodeAirDatesUtc", string.Join(",", episodeFile.Episodes.Value.Select(e => e.AirDateUtc)));
             environmentVariables.Add("Whisparr_EpisodeFile_EpisodeTitles", string.Join("|", episodeFile.Episodes.Value.Select(e => e.Title)));
             environmentVariables.Add("Whisparr_EpisodeFile_EpisodeOverviews", string.Join("|", episodeFile.Episodes.Value.Select(e => e.Overview)));
             environmentVariables.Add("Whisparr_EpisodeFile_Quality", episodeFile.Quality.Quality.Name);
@@ -186,9 +182,7 @@ namespace NzbDrone.Core.Notifications.CustomScript
             environmentVariables.Add("Whisparr_EpisodeFile_Path", Path.Combine(series.Path, episodeFile.RelativePath));
             environmentVariables.Add("Whisparr_EpisodeFile_EpisodeIds", string.Join(",", episodeFile.Episodes.Value.Select(e => e.Id)));
             environmentVariables.Add("Whisparr_EpisodeFile_SeasonNumber", episodeFile.SeasonNumber.ToString());
-            environmentVariables.Add("Whisparr_EpisodeFile_EpisodeNumbers", string.Join(",", episodeFile.Episodes.Value.Select(e => e.EpisodeNumber)));
             environmentVariables.Add("Whisparr_EpisodeFile_EpisodeAirDates", string.Join(",", episodeFile.Episodes.Value.Select(e => e.AirDate)));
-            environmentVariables.Add("Whisparr_EpisodeFile_EpisodeAirDatesUtc", string.Join(",", episodeFile.Episodes.Value.Select(e => e.AirDateUtc)));
             environmentVariables.Add("Whisparr_EpisodeFile_EpisodeTitles", string.Join("|", episodeFile.Episodes.Value.Select(e => e.Title)));
             environmentVariables.Add("Whisparr_EpisodeFile_EpisodeOverviews", string.Join("|", episodeFile.Episodes.Value.Select(e => e.Overview)));
             environmentVariables.Add("Whisparr_EpisodeFile_Quality", episodeFile.Quality.Quality.Name);

@@ -39,21 +39,18 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
             _episode1 = Builder<Episode>.CreateNew()
                             .With(e => e.Title = "City Sushi")
                             .With(e => e.SeasonNumber = 15)
-                            .With(e => e.EpisodeNumber = 6)
                             .With(e => e.AbsoluteEpisodeNumber = 100)
                             .Build();
 
             _episode2 = Builder<Episode>.CreateNew()
                             .With(e => e.Title = "City Sushi")
                             .With(e => e.SeasonNumber = 15)
-                            .With(e => e.EpisodeNumber = 7)
                             .With(e => e.AbsoluteEpisodeNumber = 101)
                             .Build();
 
             _episode3 = Builder<Episode>.CreateNew()
                             .With(e => e.Title = "City Sushi")
                             .With(e => e.SeasonNumber = 15)
-                            .With(e => e.EpisodeNumber = 8)
                             .With(e => e.AbsoluteEpisodeNumber = 102)
                             .Build();
 
@@ -85,19 +82,6 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
             Subject.BuildFileName(new List<Episode> { _episode1, _episode2 }, _series, _episodeFile)
                    .Should().Be(expected);
-        }
-
-        [Test]
-        public void should_not_collapse_episode_titles_when_episode_titles_are_not_the_same()
-        {
-            _namingConfig.StandardEpisodeFormat = "{Site Title} - S{season:00}E{episode:00} - {Episode Title}";
-            _namingConfig.MultiEpisodeStyle = MultiEpisodeStyle.Scene;
-
-            _episode1.Title = "Hello";
-            _episode2.Title = "World";
-
-            Subject.BuildFileName(new List<Episode> { _episode1, _episode2 }, _series, _episodeFile)
-                   .Should().Be("South Park - S15E06-E07 - Hello + World");
         }
 
         [Test]

@@ -151,7 +151,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Roksbox
                     var doc = new XDocument();
 
                     var details = new XElement("video");
-                    details.Add(new XElement("title", string.Format("{0} - {1}x{2} - {3}", series.Title, episode.SeasonNumber, episode.EpisodeNumber, episode.Title)));
+                    details.Add(new XElement("title", string.Format("{0} - {1}x{2} - {3}", series.Title, episode.SeasonNumber, episode.AirDate, episode.Title)));
                     details.Add(new XElement("year", episode.AirDate));
                     details.Add(new XElement("genre", string.Join(" / ", series.Genres)));
                     var actors = string.Join(" , ", episode.Actors.ConvertAll(c => c.Name + " - " + c.Character).GetRange(0, Math.Min(3, episode.Actors.Count)));

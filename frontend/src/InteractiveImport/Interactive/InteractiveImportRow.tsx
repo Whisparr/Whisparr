@@ -307,7 +307,7 @@ function InteractiveImportRow(props: InteractiveImportRowProps) {
   const episodeInfo = episodes.map((episode) => {
     return (
       <div key={episode.id}>
-        {episode.episodeNumber}
+        {episode.releaseDate}
 
         {` - ${episode.title}`}
       </div>

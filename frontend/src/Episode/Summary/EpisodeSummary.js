@@ -86,7 +86,7 @@ class EpisodeSummary extends Component {
       qualityProfileId,
       network,
       overview,
-      airDate,
+      releaseDate,
       mediaInfo,
       path,
       size,
@@ -107,7 +107,7 @@ class EpisodeSummary extends Component {
           <span className={styles.infoTitle}>Released</span>
 
           <EpisodeAiringConnector
-            airDateUtc={airDate}
+            releaseDate={releaseDate}
             network={network}
           />
         </div>
@@ -179,7 +179,7 @@ EpisodeSummary.propTypes = {
   qualityProfileId: PropTypes.number.isRequired,
   network: PropTypes.string.isRequired,
   overview: PropTypes.string,
-  airDate: PropTypes.string.isRequired,
+  releaseDate: PropTypes.string.isRequired,
   mediaInfo: PropTypes.object,
   path: PropTypes.string,
   size: PropTypes.number,

@@ -43,10 +43,10 @@ namespace Whisparr.Api.V3.Calendar
             var allSeries = _seriesService.GetAllSeries();
             var calendar = new Ical.Net.Calendar
             {
-                ProductId = "-//whisparr.tv//Whisparr//EN"
+                ProductId = "-//whisparr.com//Whisparr//EN"
             };
 
-            var calendarName = "Whisparr TV Schedule";
+            var calendarName = "Whisparr Schedule";
             calendar.AddProperty(new CalendarProperty("NAME", calendarName));
             calendar.AddProperty(new CalendarProperty("X-WR-CALNAME", calendarName));
 
@@ -54,7 +54,7 @@ namespace Whisparr.Api.V3.Calendar
             {
                 var series = allSeries.SingleOrDefault(s => s.Id == episode.SeriesId);
 
-                if (premieresOnly && (episode.SeasonNumber == 0 || episode.EpisodeNumber != 1))
+                if (premieresOnly && (episode.SeasonNumber == 0))
                 {
                     continue;
                 }
@@ -80,7 +80,7 @@ namespace Whisparr.Api.V3.Calendar
                     occurrence.End = new CalDateTime(episode.AirDateUtc.Value.AddMinutes(series.Runtime)) { HasTime = true };
                 }
 
-                occurrence.Summary = $"{series.Title} - {episode.SeasonNumber}x{episode.EpisodeNumber:00} - {episode.Title}";
+                occurrence.Summary = $"{series.Title} - {episode.AirDate} - {episode.Title}";
             }
 
             var serializer = (IStringSerializer)new SerializerFactory().Build(calendar.GetType(), new SerializationContext());

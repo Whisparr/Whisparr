@@ -6,8 +6,7 @@ import CalendarEventConnector from 'Calendar/Events/CalendarEventConnector';
 import getStatusStyle from 'Calendar/getStatusStyle';
 import Icon from 'Components/Icon';
 import Link from 'Components/Link/Link';
-import { icons, kinds } from 'Helpers/Props';
-import padNumber from 'Utilities/Number/padNumber';
+import { icons } from 'Helpers/Props';
 import styles from './CalendarEventGroup.css';
 
 function getEventsInfo(series, events) {
@@ -71,7 +70,6 @@ class CalendarEventGroup extends Component {
       events,
       isDownloading,
       showEpisodeInformation,
-      showFinaleIcon,
       fullColorEvents,
       colorImpairedMode,
       onEventModalOpenToggle
@@ -86,9 +84,9 @@ class CalendarEventGroup extends Component {
     const anyDownloading = isDownloading || anyQueued;
     const firstEpisode = events[0];
     const lastEpisode = events[events.length -1];
-    const airDateUtc = firstEpisode.airDateUtc;
-    const startTime = moment(airDateUtc);
-    const endTime = moment(lastEpisode.airDateUtc).add(series.runtime, 'minutes');
+    const releaseDate = firstEpisode.releaseDate;
+    const startTime = moment(releaseDate);
+    const endTime = moment(lastEpisode.releaseDate).add(series.runtime, 'minutes');
     const seasonNumber = firstEpisode.seasonNumber;
     const statusStyle = getStatusStyle(allDownloaded, anyDownloading, startTime, endTime, anyMonitored);
 
@@ -147,37 +145,13 @@ class CalendarEventGroup extends Component {
                 title="An episode is downloading"
               />
           }
-
-          {
-            firstEpisode.episodeNumber === 1 && seasonNumber > 0 &&
-              <Icon
-                containerClassName={styles.statusIcon}
-                name={icons.INFO}
-                kind={kinds.INFO}
-                darken={fullColorEvents}
-                title={seasonNumber === 1 ? 'Series Premiere' : 'Season Premiere'}
-              />
-          }
-
-          {
-            showFinaleIcon &&
-            lastEpisode.episodeNumber !== 1 &&
-            seasonNumber > 0 &&
-            lastEpisode.episodeNumber === series.seasons.find((season) => season.seasonNumber === seasonNumber).statistics.totalEpisodeCount &&
-              <Icon
-                containerClassName={styles.statusIcon}
-                name={icons.INFO}
-                kind={fullColorEvents ? kinds.DEFAULT : kinds.WARNING}
-                title={series.status === 'ended' ? 'Series finale' : 'Season finale'}
-              />
-          }
         </div>
 
         <div className={styles.airingInfo}>
           {
             showEpisodeInformation ?
               <div className={styles.episodeInfo}>
-                {seasonNumber}x{padNumber(firstEpisode.episodeNumber, 2)}-{padNumber(lastEpisode.episodeNumber, 2)}
+                {seasonNumber}
               </div> :
               <Link
                 className={styles.expandContainerInline}

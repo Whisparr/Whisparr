@@ -67,7 +67,6 @@ namespace NzbDrone.Core.MediaFiles
             environmentVariables.Add("Whisparr_EpisodeFile_EpisodeCount", localEpisode.Episodes.Count.ToString());
             environmentVariables.Add("Whisparr_EpisodeFile_EpisodeIds", string.Join(",", localEpisode.Episodes.Select(e => e.Id)));
             environmentVariables.Add("Whisparr_EpisodeFile_SeasonNumber", localEpisode.SeasonNumber.ToString());
-            environmentVariables.Add("Whisparr_EpisodeFile_EpisodeNumbers", string.Join(",", localEpisode.Episodes.Select(e => e.EpisodeNumber)));
             environmentVariables.Add("Whisparr_EpisodeFile_EpisodeAirDates", string.Join(",", localEpisode.Episodes.Select(e => e.AirDate)));
             environmentVariables.Add("Whisparr_EpisodeFile_EpisodeAirDatesUtc", string.Join(",", localEpisode.Episodes.Select(e => e.AirDateUtc)));
             environmentVariables.Add("Whisparr_EpisodeFile_EpisodeTitles", string.Join("|", localEpisode.Episodes.Select(e => e.Title)));

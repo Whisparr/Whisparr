@@ -136,7 +136,7 @@ namespace NzbDrone.Core.Organizer
 
             var pattern = namingConfig.StandardEpisodeFormat;
 
-            episodes = episodes.OrderBy(e => e.SeasonNumber).ThenBy(e => e.EpisodeNumber).ToList();
+            episodes = episodes.OrderBy(e => e.SeasonNumber).ThenBy(e => e.AirDate).ToList();
 
             var splitPatterns = pattern.Split(new char[] { '\\', '/' }, StringSplitOptions.RemoveEmptyEntries);
             var components = new List<string>();
@@ -395,41 +395,6 @@ namespace NzbDrone.Core.Organizer
             foreach (var episodeFormat in episodeFormats)
             {
                 var seasonEpisodePattern = episodeFormat.SeasonEpisodePattern;
-                string formatPattern;
-
-                switch ((MultiEpisodeStyle)namingConfig.MultiEpisodeStyle)
-                {
-                    case MultiEpisodeStyle.Duplicate:
-                        formatPattern = episodeFormat.Separator + episodeFormat.SeasonEpisodePattern;
-                        seasonEpisodePattern = FormatNumberTokens(seasonEpisodePattern, formatPattern, episodes);
-                        break;
-
-                    case MultiEpisodeStyle.Repeat:
-                        formatPattern = episodeFormat.EpisodeSeparator + episodeFormat.EpisodePattern;
-                        seasonEpisodePattern = FormatNumberTokens(seasonEpisodePattern, formatPattern, episodes);
-                        break;
-
-                    case MultiEpisodeStyle.Scene:
-                        formatPattern = "-" + episodeFormat.EpisodeSeparator + episodeFormat.EpisodePattern;
-                        seasonEpisodePattern = FormatNumberTokens(seasonEpisodePattern, formatPattern, episodes);
-                        break;
-
-                    case MultiEpisodeStyle.Range:
-                        formatPattern = "-" + episodeFormat.EpisodePattern;
-                        seasonEpisodePattern = FormatRangeNumberTokens(seasonEpisodePattern, formatPattern, episodes);
-                        break;
-
-                    case MultiEpisodeStyle.PrefixedRange:
-                        formatPattern = "-" + episodeFormat.EpisodeSeparator + episodeFormat.EpisodePattern;
-                        seasonEpisodePattern = FormatRangeNumberTokens(seasonEpisodePattern, formatPattern, episodes);
-                        break;
-
-                    // MultiEpisodeStyle.Extend
-                    default:
-                        formatPattern = "-" + episodeFormat.EpisodePattern;
-                        seasonEpisodePattern = FormatNumberTokens(seasonEpisodePattern, formatPattern, episodes);
-                        break;
-                }
 
                 var token = string.Format("{{Season Episode{0}}}", index++);
                 pattern = pattern.Replace(episodeFormat.SeasonEpisodePattern, token);
@@ -437,15 +402,6 @@ namespace NzbDrone.Core.Organizer
             }
 
             AddSeasonTokens(tokenHandlers, episodes.First().SeasonNumber);
-
-            if (episodes.Count > 1)
-            {
-                tokenHandlers["{Episode}"] = m => episodes.First().EpisodeNumber.ToString(m.CustomFormat) + "-" + episodes.Last().EpisodeNumber.ToString(m.CustomFormat);
-            }
-            else
-            {
-                tokenHandlers["{Episode}"] = m => episodes.First().EpisodeNumber.ToString(m.CustomFormat);
-            }
 
             return pattern;
         }
@@ -732,48 +688,6 @@ namespace NzbDrone.Core.Organizer
             }
 
             return replacementText;
-        }
-
-        private string FormatNumberTokens(string basePattern, string formatPattern, List<Episode> episodes)
-        {
-            var pattern = string.Empty;
-
-            for (var i = 0; i < episodes.Count; i++)
-            {
-                var patternToReplace = i == 0 ? basePattern : formatPattern;
-
-                pattern += EpisodeRegex.Replace(patternToReplace, match => ReplaceNumberToken(match.Groups["episode"].Value, episodes[i].EpisodeNumber));
-            }
-
-            return ReplaceSeasonTokens(pattern, episodes.First().SeasonNumber);
-        }
-
-        private string FormatRangeNumberTokens(string seasonEpisodePattern, string formatPattern, List<Episode> episodes)
-        {
-            var eps = new List<Episode> { episodes.First() };
-
-            if (episodes.Count > 1)
-            {
-                eps.Add(episodes.Last());
-            }
-
-            return FormatNumberTokens(seasonEpisodePattern, formatPattern, eps);
-        }
-
-        private string ReplaceSeasonTokens(string pattern, int seasonNumber)
-        {
-            return SeasonRegex.Replace(pattern, match => ReplaceNumberToken(match.Groups["season"].Value, seasonNumber));
-        }
-
-        private string ReplaceNumberToken(string token, int value)
-        {
-            var split = token.Trim('{', '}').Split(':');
-            if (split.Length == 1)
-            {
-                return value.ToString("0");
-            }
-
-            return value.ToString(split[1]);
         }
 
         private EpisodeFormat[] GetEpisodeFormat(string pattern)

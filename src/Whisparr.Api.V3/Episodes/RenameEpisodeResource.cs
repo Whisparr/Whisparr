@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Whisparr.Http.REST;
 
@@ -8,7 +8,7 @@ namespace Whisparr.Api.V3.Episodes
     {
         public int SeriesId { get; set; }
         public int SeasonNumber { get; set; }
-        public List<int> EpisodeNumbers { get; set; }
+        public List<string> ReleaseDates { get; set; }
         public int EpisodeFileId { get; set; }
         public string ExistingPath { get; set; }
         public string NewPath { get; set; }
@@ -27,7 +27,7 @@ namespace Whisparr.Api.V3.Episodes
             {
                 SeriesId = model.SeriesId,
                 SeasonNumber = model.SeasonNumber,
-                EpisodeNumbers = model.EpisodeNumbers.ToList(),
+                ReleaseDates = model.ReleaseDates.ToList(),
                 EpisodeFileId = model.EpisodeFileId,
                 ExistingPath = model.ExistingPath,
                 NewPath = model.NewPath

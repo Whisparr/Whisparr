@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -61,7 +61,7 @@ namespace NzbDrone.Core.MediaFiles
 
             return GetPreviews(series, episodes, files)
                 .OrderByDescending(e => e.SeasonNumber)
-                .ThenByDescending(e => e.EpisodeNumbers.First())
+                .ThenByDescending(e => e.ReleaseDates.First())
                 .ToList();
         }
 
@@ -72,7 +72,7 @@ namespace NzbDrone.Core.MediaFiles
             var files = _mediaFileService.GetFilesBySeason(seriesId, seasonNumber);
 
             return GetPreviews(series, episodes, files)
-                .OrderByDescending(e => e.EpisodeNumbers.First()).ToList();
+                .OrderByDescending(e => e.ReleaseDates.First()).ToList();
         }
 
         private IEnumerable<RenameEpisodeFilePreview> GetPreviews(Series series, List<Episode> episodes, List<EpisodeFile> files)
@@ -98,7 +98,7 @@ namespace NzbDrone.Core.MediaFiles
                     {
                         SeriesId = series.Id,
                         SeasonNumber = seasonNumber,
-                        EpisodeNumbers = episodesInFile.Select(e => e.EpisodeNumber).ToList(),
+                        ReleaseDates = episodesInFile.Select(e => e.AirDate).ToList(),
                         EpisodeFileId = file.Id,
                         ExistingPath = file.RelativePath,
                         NewPath = series.Path.GetRelativePath(newPath)

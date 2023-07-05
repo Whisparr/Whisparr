@@ -61,7 +61,6 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
                                             .With(e => e.SeriesId = _otherSeries.Id)
                                             .With(e => e.Id = 2)
                                             .With(e => e.SeasonNumber = 2)
-                                            .With(e => e.EpisodeNumber = 2)
                                             .Build();
 
             _releaseInfo = Builder<ReleaseInfo>.CreateNew()

@@ -51,7 +51,7 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Specifications
 
         private string FormatEpisode(List<Episode> episodes)
         {
-            return string.Join(", ", episodes.Select(e => $"{e.SeasonNumber}x{e.EpisodeNumber:00}"));
+            return string.Join(", ", episodes.Select(e => $"{e.AirDate}"));
         }
     }
 }

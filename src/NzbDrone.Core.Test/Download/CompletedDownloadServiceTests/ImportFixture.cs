@@ -30,9 +30,9 @@ namespace NzbDrone.Core.Test.Download.CompletedDownloadServiceTests
         [SetUp]
         public void Setup()
         {
-            _episode1 = new Episode { Id = 1, SeasonNumber = 1, EpisodeNumber = 1 };
-            _episode2 = new Episode { Id = 2, SeasonNumber = 1, EpisodeNumber = 2 };
-            _episode3 = new Episode { Id = 2, SeasonNumber = 1, EpisodeNumber = 3 };
+            _episode1 = new Episode { Id = 1, SeasonNumber = 1 };
+            _episode2 = new Episode { Id = 2, SeasonNumber = 1 };
+            _episode3 = new Episode { Id = 2, SeasonNumber = 1 };
 
             var completed = Builder<DownloadClientItem>.CreateNew()
                                                     .With(h => h.Status = DownloadItemStatus.Completed)

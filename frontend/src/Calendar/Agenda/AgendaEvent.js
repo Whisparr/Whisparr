@@ -10,7 +10,6 @@ import EpisodeDetailsModal from 'Episode/EpisodeDetailsModal';
 import episodeEntities from 'Episode/episodeEntities';
 import { icons, kinds } from 'Helpers/Props';
 import formatTime from 'Utilities/Date/formatTime';
-import padNumber from 'Utilities/Number/padNumber';
 import styles from './AgendaEvent.css';
 
 class AgendaEvent extends Component {
@@ -46,9 +45,8 @@ class AgendaEvent extends Component {
       episodeFile,
       title,
       seasonNumber,
-      episodeNumber,
       absoluteEpisodeNumber,
-      airDateUtc,
+      releaseDate,
       monitored,
       unverifiedSceneNumbering,
       hasFile,
@@ -56,21 +54,17 @@ class AgendaEvent extends Component {
       queueItem,
       showDate,
       showEpisodeInformation,
-      showFinaleIcon,
-      showSpecialIcon,
       showCutoffUnmetIcon,
       timeFormat,
       longDateFormat,
       colorImpairedMode
     } = this.props;
 
-    const startTime = moment(airDateUtc);
-    const endTime = moment(airDateUtc).add(series.runtime, 'minutes');
+    const startTime = moment(releaseDate);
+    const endTime = moment(releaseDate).add(series.runtime, 'minutes');
     const downloading = !!(queueItem || grabbed);
     const isMonitored = series.monitored && monitored;
     const statusStyle = getStatusStyle(hasFile, downloading, startTime, endTime, isMonitored);
-    const season = series.seasons.find((s) => s.seasonNumber === seasonNumber);
-    const seasonStatistics = season?.statistics || {};
 
     return (
       <div className={styles.event}>
@@ -95,7 +89,7 @@ class AgendaEvent extends Component {
             )}
           >
             <div className={styles.time}>
-              {formatTime(airDateUtc, timeFormat)} - {formatTime(endTime.toISOString(), timeFormat, { includeMinuteZero: true })}
+              {formatTime(releaseDate, timeFormat)} - {formatTime(endTime.toISOString(), timeFormat, { includeMinuteZero: true })}
             </div>
 
             <div className={styles.seriesTitle}>
@@ -105,7 +99,7 @@ class AgendaEvent extends Component {
             {
               showEpisodeInformation &&
                 <div className={styles.seasonEpisodeNumber}>
-                  {seasonNumber}x{padNumber(episodeNumber, 2)}
+                  {seasonNumber}x{releaseDate}
 
                   <div className={styles.episodeSeparator}> - </div>
                 </div>
@@ -159,40 +153,6 @@ class AgendaEvent extends Component {
                   title="Quality cutoff has not been met"
                 />
             }
-
-            {
-              episodeNumber === 1 && seasonNumber > 0 &&
-                <Icon
-                  className={styles.statusIcon}
-                  name={icons.INFO}
-                  kind={kinds.INFO}
-                  title={seasonNumber === 1 ? 'Series Premiere' : 'Season Premiere'}
-                />
-            }
-
-            {
-              showFinaleIcon &&
-              episodeNumber !== 1 &&
-              seasonNumber > 0 &&
-              episodeNumber === seasonStatistics.totalEpisodeCount &&
-                <Icon
-                  className={styles.statusIcon}
-                  name={icons.INFO}
-                  kind={kinds.WARNING}
-                  title={series.status === 'ended' ? 'Series finale' : 'Season finale'}
-                />
-            }
-
-            {
-              showSpecialIcon &&
-              (episodeNumber === 0 || seasonNumber === 0) &&
-                <Icon
-                  className={styles.statusIcon}
-                  name={icons.INFO}
-                  kind={kinds.PINK}
-                  title="Special"
-                />
-            }
           </div>
         </div>
 
@@ -216,9 +176,8 @@ AgendaEvent.propTypes = {
   episodeFile: PropTypes.object,
   title: PropTypes.string.isRequired,
   seasonNumber: PropTypes.number.isRequired,
-  episodeNumber: PropTypes.number.isRequired,
   absoluteEpisodeNumber: PropTypes.number,
-  airDateUtc: PropTypes.string.isRequired,
+  releaseDate: PropTypes.string.isRequired,
   monitored: PropTypes.bool.isRequired,
   unverifiedSceneNumbering: PropTypes.bool,
   hasFile: PropTypes.bool.isRequired,

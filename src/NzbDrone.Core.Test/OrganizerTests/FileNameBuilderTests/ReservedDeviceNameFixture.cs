@@ -38,7 +38,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
             _episode1 = Builder<Episode>.CreateNew()
                             .With(e => e.Title = "City Sushi")
                             .With(e => e.SeasonNumber = 15)
-                            .With(e => e.EpisodeNumber = 6)
+                            .With(e => e.AirDate = "2019-05-19")
                             .With(e => e.AbsoluteEpisodeNumber = 100)
                             .Build();
 
@@ -68,9 +68,9 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         public void should_replace_reserved_device_name_in_file_name(string title, string expected)
         {
             _series.Title = title;
-            _namingConfig.StandardEpisodeFormat = "{Site.Title} - S{Season:00}E{Episode:00}";
+            _namingConfig.StandardEpisodeFormat = "{Site.Title} - {Release Date}";
 
-            Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile).Should().Be($"{expected} - S15E06");
+            Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile).Should().Be($"{expected} - 2019 05 19");
         }
     }
 }

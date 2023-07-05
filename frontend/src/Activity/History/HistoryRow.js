@@ -7,9 +7,9 @@ import TableRow from 'Components/Table/TableRow';
 import episodeEntities from 'Episode/episodeEntities';
 import EpisodeFormats from 'Episode/EpisodeFormats';
 import EpisodeLanguages from 'Episode/EpisodeLanguages';
+import EpisodeNumber from 'Episode/EpisodeNumber';
 import EpisodeQuality from 'Episode/EpisodeQuality';
 import EpisodeTitleLink from 'Episode/EpisodeTitleLink';
-import SeasonEpisodeNumber from 'Episode/SeasonEpisodeNumber';
 import { icons } from 'Helpers/Props';
 import SeriesTitleLink from 'Series/SeriesTitleLink';
 import formatPreferredWordScore from 'Utilities/Number/formatPreferredWordScore';
@@ -116,8 +116,8 @@ class HistoryRow extends Component {
             if (name === 'episode') {
               return (
                 <TableRowCell key={name}>
-                  <SeasonEpisodeNumber
-                    episodeNumber={episode.airDate}
+                  <EpisodeNumber
+                    releaseDate={episode.releaseDate}
                   />
                 </TableRowCell>
               );

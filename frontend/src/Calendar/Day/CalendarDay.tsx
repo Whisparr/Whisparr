@@ -67,7 +67,7 @@ function CalendarDay(props: CalendarDayProps) {
               {...event}
               episodeId={event.id}
               series={event.series as Series}
-              airDateUtc={event.airDateUtc as string}
+              releaseDate={event.releaseDate as string}
               onEventModalOpenToggle={onEventModalOpenToggle}
             />
           );

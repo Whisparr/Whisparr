@@ -5,10 +5,10 @@ import TableRowCell from 'Components/Table/Cells/TableRowCell';
 import TableSelectCell from 'Components/Table/Cells/TableSelectCell';
 import TableRow from 'Components/Table/TableRow';
 import episodeEntities from 'Episode/episodeEntities';
+import EpisodeNumber from 'Episode/EpisodeNumber';
 import EpisodeSearchCellConnector from 'Episode/EpisodeSearchCellConnector';
 import EpisodeStatusConnector from 'Episode/EpisodeStatusConnector';
 import EpisodeTitleLink from 'Episode/EpisodeTitleLink';
-import SeasonEpisodeNumber from 'Episode/SeasonEpisodeNumber';
 import EpisodeFileLanguageConnector from 'EpisodeFile/EpisodeFileLanguageConnector';
 import SeriesTitleLink from 'Series/SeriesTitleLink';
 import styles from './CutoffUnmetRow.css';
@@ -19,14 +19,10 @@ function CutoffUnmetRow(props) {
     episodeFileId,
     series,
     seasonNumber,
-    episodeNumber,
     absoluteEpisodeNumber,
-    sceneSeasonNumber,
-    sceneEpisodeNumber,
-    sceneAbsoluteEpisodeNumber,
     unverifiedSceneNumbering,
     actors,
-    airDateUtc,
+    releaseDate,
     title,
     isSelected,
     columns,
@@ -69,14 +65,10 @@ function CutoffUnmetRow(props) {
                 key={name}
                 className={styles.episode}
               >
-                <SeasonEpisodeNumber
+                <EpisodeNumber
                   seasonNumber={seasonNumber}
-                  episodeNumber={episodeNumber}
                   absoluteEpisodeNumber={absoluteEpisodeNumber}
                   alternateTitles={series.alternateTitles}
-                  sceneSeasonNumber={sceneSeasonNumber}
-                  sceneEpisodeNumber={sceneEpisodeNumber}
-                  sceneAbsoluteEpisodeNumber={sceneAbsoluteEpisodeNumber}
                   unverifiedSceneNumbering={unverifiedSceneNumbering}
                 />
               </TableRowCell>
@@ -112,11 +104,11 @@ function CutoffUnmetRow(props) {
             );
           }
 
-          if (name === 'episodes.airDateUtc') {
+          if (name === 'episodes.releaseDate') {
             return (
               <RelativeDateCellConnector
                 key={name}
-                date={airDateUtc}
+                date={releaseDate}
               />
             );
           }
@@ -174,14 +166,13 @@ CutoffUnmetRow.propTypes = {
   episodeFileId: PropTypes.number,
   series: PropTypes.object.isRequired,
   seasonNumber: PropTypes.number.isRequired,
-  episodeNumber: PropTypes.number.isRequired,
   absoluteEpisodeNumber: PropTypes.number,
   sceneSeasonNumber: PropTypes.number,
   sceneEpisodeNumber: PropTypes.number,
   sceneAbsoluteEpisodeNumber: PropTypes.number,
   actors: PropTypes.arrayOf(PropTypes.object),
   unverifiedSceneNumbering: PropTypes.bool.isRequired,
-  airDateUtc: PropTypes.string.isRequired,
+  releaseDate: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   isSelected: PropTypes.bool,
   columns: PropTypes.arrayOf(PropTypes.object).isRequired,

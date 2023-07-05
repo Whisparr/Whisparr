@@ -37,7 +37,7 @@ function getSeasonStatistics(episodes) {
   const sizeOnDisk = 0;
 
   episodes.forEach((episode) => {
-    if (episode.episodeFileId || (episode.monitored && isBefore(episode.airDateUtc))) {
+    if (episode.episodeFileId || (episode.monitored && isBefore(episode.releaseDate))) {
       episodeCount++;
     }
 
@@ -129,8 +129,8 @@ class SeriesDetailsSeason extends Component {
     } = this.props;
 
     const expand = _.some(items, (item) => {
-      return isAfter(item.airDateUtc) ||
-             isAfter(item.airDateUtc, { days: -30 });
+      return isAfter(item.releaseDate) ||
+             isAfter(item.releaseDate, { days: -30 });
     });
 
     onExpandPress(seasonNumber, expand && seasonNumber > 0);

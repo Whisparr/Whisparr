@@ -43,7 +43,6 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         {
             return Builder<Episode>.CreateNew()
                             .With(e => e.Id = id)
-                            .With(e => e.EpisodeNumber = id)
                             .Build();
         }
 
@@ -124,34 +123,6 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
 
             var qualifiedReports = Subject.PrioritizeDecisions(decisions);
             qualifiedReports.First().RemoteEpisode.ParsedEpisodeInfo.Quality.Quality.Should().Be(Quality.HDTV720p);
-        }
-
-        [Test]
-        public void should_order_by_lowest_number_of_episodes()
-        {
-            var remoteEpisode1 = GivenRemoteEpisode(new List<Episode> { GivenEpisode(2) }, new QualityModel(Quality.HDTV720p), Language.English);
-            var remoteEpisode2 = GivenRemoteEpisode(new List<Episode> { GivenEpisode(1) }, new QualityModel(Quality.HDTV720p), Language.English);
-
-            var decisions = new List<DownloadDecision>();
-            decisions.Add(new DownloadDecision(remoteEpisode1));
-            decisions.Add(new DownloadDecision(remoteEpisode2));
-
-            var qualifiedReports = Subject.PrioritizeDecisions(decisions);
-            qualifiedReports.First().RemoteEpisode.Episodes.First().EpisodeNumber.Should().Be(1);
-        }
-
-        [Test]
-        public void should_order_by_lowest_number_of_episodes_with_multiple_episodes()
-        {
-            var remoteEpisode1 = GivenRemoteEpisode(new List<Episode> { GivenEpisode(2), GivenEpisode(3) }, new QualityModel(Quality.HDTV720p), Language.English);
-            var remoteEpisode2 = GivenRemoteEpisode(new List<Episode> { GivenEpisode(1), GivenEpisode(2) }, new QualityModel(Quality.HDTV720p), Language.English);
-
-            var decisions = new List<DownloadDecision>();
-            decisions.Add(new DownloadDecision(remoteEpisode1));
-            decisions.Add(new DownloadDecision(remoteEpisode2));
-
-            var qualifiedReports = Subject.PrioritizeDecisions(decisions);
-            qualifiedReports.First().RemoteEpisode.Episodes.First().EpisodeNumber.Should().Be(1);
         }
 
         [Test]

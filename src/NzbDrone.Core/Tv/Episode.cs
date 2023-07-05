@@ -20,7 +20,6 @@ namespace NzbDrone.Core.Tv
         public int TvdbId { get; set; }
         public int EpisodeFileId { get; set; }
         public int SeasonNumber { get; set; }
-        public int EpisodeNumber { get; set; }
         public string Title { get; set; }
         public string AirDate { get; set; }
         public DateTime? AirDateUtc { get; set; }
@@ -28,13 +27,6 @@ namespace NzbDrone.Core.Tv
         public int Runtime { get; set; }
         public bool Monitored { get; set; }
         public int? AbsoluteEpisodeNumber { get; set; }
-        public int? SceneAbsoluteEpisodeNumber { get; set; }
-        public int? SceneSeasonNumber { get; set; }
-        public int? SceneEpisodeNumber { get; set; }
-        public int? AiredAfterSeasonNumber { get; set; }
-        public int? AiredBeforeSeasonNumber { get; set; }
-        public int? AiredBeforeEpisodeNumber { get; set; }
-        public bool UnverifiedSceneNumbering { get; set; }
         public Ratings Ratings { get; set; }
         public List<MediaCover.MediaCover> Images { get; set; }
         public List<Actor> Actors { get; set; }
@@ -50,7 +42,7 @@ namespace NzbDrone.Core.Tv
 
         public override string ToString()
         {
-            return string.Format("[{0}]{1}", Id, Title.NullSafe());
+            return string.Format("[{0}]{1} {2}", Id, AirDate, Title.NullSafe());
         }
 
         public int CompareTo(object obj)
@@ -63,16 +55,6 @@ namespace NzbDrone.Core.Tv
             }
 
             if (SeasonNumber < other.SeasonNumber)
-            {
-                return -1;
-            }
-
-            if (EpisodeNumber > other.EpisodeNumber)
-            {
-                return 1;
-            }
-
-            if (EpisodeNumber < other.EpisodeNumber)
             {
                 return -1;
             }

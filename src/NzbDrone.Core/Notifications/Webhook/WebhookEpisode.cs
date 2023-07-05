@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Notifications.Webhook
@@ -13,7 +13,6 @@ namespace NzbDrone.Core.Notifications.Webhook
         {
             Id = episode.Id;
             SeasonNumber = episode.SeasonNumber;
-            EpisodeNumber = episode.EpisodeNumber;
             Title = episode.Title;
             Overview = episode.Overview;
             AirDate = episode.AirDate;
@@ -22,7 +21,6 @@ namespace NzbDrone.Core.Notifications.Webhook
         }
 
         public int Id { get; set; }
-        public int EpisodeNumber { get; set; }
         public int SeasonNumber { get; set; }
         public string Title { get; set; }
         public string Overview { get; set; }

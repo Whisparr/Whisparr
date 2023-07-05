@@ -23,7 +23,7 @@ export const defaultState = {
   isFetching: false,
   isPopulated: false,
   error: null,
-  sortKey: 'episodeNumber',
+  sortKey: 'releaseDate',
   sortDirection: sortDirections.DESCENDING,
   items: [],
 
@@ -55,7 +55,7 @@ export const defaultState = {
       isVisible: false
     },
     {
-      name: 'airDateUtc',
+      name: 'releaseDate',
       label: 'Release Date',
       isVisible: true
     },

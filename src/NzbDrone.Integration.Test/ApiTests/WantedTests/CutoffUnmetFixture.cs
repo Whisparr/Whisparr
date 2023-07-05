@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
@@ -14,7 +15,7 @@ namespace NzbDrone.Integration.Test.ApiTests.WantedTests
         {
             EnsureProfileCutoff(1, Quality.HDTV720p, true);
             var series = EnsureSeries(77, "My Family Pies", true);
-            EnsureEpisodeFile(series, "2018-12-30", Quality.SDTV);
+            EnsureEpisodeFile(series, DateOnly.Parse("2018-12-30"), Quality.SDTV);
 
             var result = WantedCutoffUnmet.GetPaged(0, 15, "airDateUtc", "desc");
 
@@ -27,7 +28,7 @@ namespace NzbDrone.Integration.Test.ApiTests.WantedTests
         {
             EnsureProfileCutoff(1, Quality.HDTV720p, true);
             var series = EnsureSeries(77, "My Family Pies", false);
-            EnsureEpisodeFile(series, "2018-12-30", Quality.SDTV);
+            EnsureEpisodeFile(series, DateOnly.Parse("2018-12-30"), Quality.SDTV);
 
             var result = WantedCutoffUnmet.GetPaged(0, 15, "airDateUtc", "desc");
 
@@ -40,7 +41,7 @@ namespace NzbDrone.Integration.Test.ApiTests.WantedTests
         {
             EnsureProfileCutoff(1, Quality.HDTV720p, true);
             var series = EnsureSeries(77, "My Family Pies", true);
-            EnsureEpisodeFile(series, "2018-12-30", Quality.SDTV);
+            EnsureEpisodeFile(series, DateOnly.Parse("2018-12-30"), Quality.SDTV);
 
             var result = WantedCutoffUnmet.GetPaged(0, 15, "airDateUtc", "desc");
 
@@ -54,7 +55,7 @@ namespace NzbDrone.Integration.Test.ApiTests.WantedTests
         {
             EnsureProfileCutoff(1, Quality.HDTV720p, true);
             var series = EnsureSeries(77, "My Family Pies", false);
-            EnsureEpisodeFile(series, "2018-12-30", Quality.SDTV);
+            EnsureEpisodeFile(series, DateOnly.Parse("2018-12-30"), Quality.SDTV);
 
             var result = WantedCutoffUnmet.GetPaged(0, 15, "airDateUtc", "desc", "monitored", "false");
 

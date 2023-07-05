@@ -16,15 +16,11 @@ namespace NzbDrone.Core.Tv
     {
         Episode GetEpisode(int id);
         List<Episode> GetEpisodes(IEnumerable<int> ids);
-        Episode FindEpisode(int seriesId, int seasonNumber, int episodeNumber);
         Episode FindEpisode(int seriesId, int absoluteEpisodeNumber);
         Episode FindEpisodeByTitle(int seriesId, int seasonNumber, string releaseTitle);
-        List<Episode> FindEpisodesBySceneNumbering(int seriesId, int seasonNumber, int episodeNumber);
-        List<Episode> FindEpisodesBySceneNumbering(int seriesId, int sceneAbsoluteEpisodeNumber);
         Episode FindEpisode(int seriesId, string date, string part);
         List<Episode> GetEpisodeBySeries(int seriesId);
         List<Episode> GetEpisodesBySeason(int seriesId, int seasonNumber);
-        List<Episode> GetEpisodesBySceneSeason(int seriesId, int sceneSeasonNumber);
         List<Episode> EpisodesWithFiles(int seriesId);
         PagingSpec<Episode> EpisodesWithoutFiles(PagingSpec<Episode> pagingSpec);
         List<Episode> GetEpisodesByFileId(int episodeFileId);
@@ -66,24 +62,9 @@ namespace NzbDrone.Core.Tv
             return _episodeRepository.Get(ids).ToList();
         }
 
-        public Episode FindEpisode(int seriesId, int seasonNumber, int episodeNumber)
-        {
-            return _episodeRepository.Find(seriesId, seasonNumber, episodeNumber);
-        }
-
         public Episode FindEpisode(int seriesId, int absoluteEpisodeNumber)
         {
             return _episodeRepository.Find(seriesId, absoluteEpisodeNumber);
-        }
-
-        public List<Episode> FindEpisodesBySceneNumbering(int seriesId, int seasonNumber, int episodeNumber)
-        {
-            return _episodeRepository.FindEpisodesBySceneNumbering(seriesId, seasonNumber, episodeNumber);
-        }
-
-        public List<Episode> FindEpisodesBySceneNumbering(int seriesId, int sceneAbsoluteEpisodeNumber)
-        {
-            return _episodeRepository.FindEpisodesBySceneNumbering(seriesId, sceneAbsoluteEpisodeNumber);
         }
 
         public Episode FindEpisode(int seriesId, string date, string part)
@@ -99,11 +80,6 @@ namespace NzbDrone.Core.Tv
         public List<Episode> GetEpisodesBySeason(int seriesId, int seasonNumber)
         {
             return _episodeRepository.GetEpisodes(seriesId, seasonNumber);
-        }
-
-        public List<Episode> GetEpisodesBySceneSeason(int seriesId, int sceneSeasonNumber)
-        {
-            return _episodeRepository.GetEpisodesBySceneSeason(seriesId, sceneSeasonNumber);
         }
 
         public Episode FindEpisodeByTitle(int seriesId, int seasonNumber, string releaseTitle)

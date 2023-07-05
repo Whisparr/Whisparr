@@ -53,7 +53,7 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Specifications
 
             var episodes = localEpisode.Episodes;
             var firstEpisode = episodes.First();
-            var episodesInSeason = _episodeService.GetEpisodesBySeason(firstEpisode.SeriesId, firstEpisode.EpisodeNumber);
+            var episodesInSeason = _episodeService.GetEpisodesBySeason(firstEpisode.SeriesId, firstEpisode.SeasonNumber);
             var allEpisodesOnTheSameDay = firstEpisode.AirDateUtc.HasValue && episodes.All(e =>
                                               !e.AirDateUtc.HasValue ||
                                               e.AirDateUtc.Value == firstEpisode.AirDateUtc.Value);

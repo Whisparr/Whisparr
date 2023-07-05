@@ -13,19 +13,15 @@ namespace NzbDrone.Core.Tv
 {
     public interface IEpisodeRepository : IBasicRepository<Episode>
     {
-        Episode Find(int seriesId, int season, int episodeNumber);
         Episode Find(int seriesId, int absoluteEpisodeNumber);
         List<Episode> Find(int seriesId, string date);
         List<Episode> GetEpisodes(int seriesId);
         List<Episode> GetEpisodes(int seriesId, int seasonNumber);
         List<Episode> GetEpisodesBySeriesIds(List<int> seriesIds);
-        List<Episode> GetEpisodesBySceneSeason(int seriesId, int sceneSeasonNumber);
         List<Episode> GetEpisodeByFileId(int fileId);
         List<Episode> EpisodesWithFiles(int seriesId);
         PagingSpec<Episode> EpisodesWithoutFiles(PagingSpec<Episode> pagingSpec, bool includeSpecials);
         PagingSpec<Episode> EpisodesWhereCutoffUnmet(PagingSpec<Episode> pagingSpec, List<QualitiesBelowCutoff> qualitiesBelowCutoff, List<LanguagesBelowCutoff> languagesBelowCutoff, bool includeSpecials);
-        List<Episode> FindEpisodesBySceneNumbering(int seriesId, int seasonNumber, int episodeNumber);
-        List<Episode> FindEpisodesBySceneNumbering(int seriesId, int sceneAbsoluteEpisodeNumber);
         List<Episode> EpisodesBetweenDates(DateTime startDate, DateTime endDate, bool includeUnmonitored);
         void SetMonitoredFlat(Episode episode, bool monitored);
         void SetMonitoredBySeason(int seriesId, int seasonNumber, bool monitored);
@@ -51,12 +47,6 @@ namespace NzbDrone.Core.Tv
                 return episode;
             });
 
-        public Episode Find(int seriesId, int season, int episodeNumber)
-        {
-            return Query(s => s.SeriesId == seriesId && s.SeasonNumber == season && s.EpisodeNumber == episodeNumber)
-                               .SingleOrDefault();
-        }
-
         public Episode Find(int seriesId, int absoluteEpisodeNumber)
         {
             return Query(s => s.SeriesId == seriesId && s.AbsoluteEpisodeNumber == absoluteEpisodeNumber)
@@ -81,11 +71,6 @@ namespace NzbDrone.Core.Tv
         public List<Episode> GetEpisodesBySeriesIds(List<int> seriesIds)
         {
             return Query(s => seriesIds.Contains(s.SeriesId)).ToList();
-        }
-
-        public List<Episode> GetEpisodesBySceneSeason(int seriesId, int seasonNumber)
-        {
-            return Query(s => s.SeriesId == seriesId && s.SceneSeasonNumber == seasonNumber).ToList();
         }
 
         public List<Episode> GetEpisodeByFileId(int fileId)
@@ -139,16 +124,6 @@ namespace NzbDrone.Core.Tv
             pagingSpec.TotalRecords = GetPagedRecordCount(EpisodesWhereCutoffUnmetBuilder(qualitiesBelowCutoff, languagesBelowCutoff, startingSeasonNumber).Select(typeof(Episode)), pagingSpec, countTemplate);
 
             return pagingSpec;
-        }
-
-        public List<Episode> FindEpisodesBySceneNumbering(int seriesId, int seasonNumber, int episodeNumber)
-        {
-            return Query(s => s.SeriesId == seriesId && s.SceneSeasonNumber == seasonNumber && s.SceneEpisodeNumber == episodeNumber).ToList();
-        }
-
-        public List<Episode> FindEpisodesBySceneNumbering(int seriesId, int sceneAbsoluteEpisodeNumber)
-        {
-            return Query(s => s.SeriesId == seriesId && s.SceneAbsoluteEpisodeNumber == sceneAbsoluteEpisodeNumber).ToList();
         }
 
         public List<Episode> EpisodesBetweenDates(DateTime startDate, DateTime endDate, bool includeUnmonitored)

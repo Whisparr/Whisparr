@@ -31,19 +31,13 @@ import styles from './SelectEpisodeModalContent.css';
 
 const columns = [
   {
-    name: 'episodeNumber',
-    label: '#',
-    isSortable: true,
-    isVisible: true,
-  },
-  {
     name: 'title',
     label: 'Title',
     isVisible: true,
   },
   {
-    name: 'airDate',
-    label: 'Air Date',
+    name: 'releaseDate',
+    label: 'Release Date',
     isVisible: true,
   },
 ];
@@ -99,7 +93,6 @@ function SelectEpisodeModalContent(props: SelectEpisodeModalContentProps) {
   );
   const dispatch = useDispatch();
 
-  const filterEpisodeNumber = parseInt(filter);
   const errorMessage = getErrorMessage(error, 'Unable to load episodes');
   const selectedCount = selectedIds.length;
   const selectedEpisodesCount = getSelectedIds(selectedState).length;
@@ -233,18 +226,16 @@ function SelectEpisodeModalContent(props: SelectEpisodeModalContentProps) {
             >
               <TableBody>
                 {items.map((item) => {
-                  return item.title.toLowerCase().includes(filter) ||
-                    item.episodeNumber === filterEpisodeNumber ? (
+                  return (
                     <SelectEpisodeRow
                       key={item.id}
                       id={item.id}
-                      episodeNumber={item.episodeNumber}
                       title={item.title}
-                      airDate={item.airDate}
+                      releaseDate={item.releaseDate}
                       isSelected={selectedState[item.id]}
                       onSelectedChange={onSelectedChange}
                     />
-                  ) : null;
+                  );
                 })}
               </TableBody>
             </Table>

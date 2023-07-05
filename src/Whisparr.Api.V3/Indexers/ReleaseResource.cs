@@ -184,7 +184,6 @@ namespace Whisparr.Api.V3.Indexers
         {
             Id = episode.Id;
             SeasonNumber = episode.SeasonNumber;
-            EpisodeNumber = episode.EpisodeNumber;
             AbsoluteEpisodeNumber = episode.AbsoluteEpisodeNumber;
             Title = episode.Title;
         }

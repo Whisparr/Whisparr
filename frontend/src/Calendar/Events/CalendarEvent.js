@@ -8,7 +8,6 @@ import Link from 'Components/Link/Link';
 import EpisodeDetailsModal from 'Episode/EpisodeDetailsModal';
 import episodeEntities from 'Episode/episodeEntities';
 import { icons, kinds } from 'Helpers/Props';
-import padNumber from 'Utilities/Number/padNumber';
 import CalendarEventQueueDetails from './CalendarEventQueueDetails';
 import styles from './CalendarEvent.css';
 
@@ -49,17 +48,13 @@ class CalendarEvent extends Component {
       series,
       episodeFile,
       title,
-      seasonNumber,
-      episodeNumber,
-      airDateUtc,
+      releaseDate,
       monitored,
       unverifiedSceneNumbering,
       hasFile,
       grabbed,
       queueItem,
       showEpisodeInformation,
-      showFinaleIcon,
-      showSpecialIcon,
       showCutoffUnmetIcon,
       fullColorEvents,
       colorImpairedMode
@@ -69,13 +64,11 @@ class CalendarEvent extends Component {
       return null;
     }
 
-    const startTime = moment(airDateUtc);
-    const endTime = moment(airDateUtc).add(series.runtime, 'minutes');
+    const startTime = moment(releaseDate);
+    const endTime = moment(releaseDate).add(series.runtime, 'minutes');
     const isDownloading = !!(queueItem || grabbed);
     const isMonitored = series.monitored && monitored;
     const statusStyle = getStatusStyle(hasFile, isDownloading, startTime, endTime, isMonitored);
-    const season = series.seasons.find((s) => s.seasonNumber === seasonNumber);
-    const seasonStatistics = season?.statistics || {};
 
     return (
       <div
@@ -140,45 +133,6 @@ class CalendarEvent extends Component {
                   /> :
                   null
               }
-
-              {
-                episodeNumber === 1 && seasonNumber > 0 ?
-                  <Icon
-                    className={styles.statusIcon}
-                    name={icons.INFO}
-                    kind={kinds.INFO}
-                    darken={fullColorEvents}
-                    title={seasonNumber === 1 ? 'Series premiere' : 'Season premiere'}
-                  /> :
-                  null
-              }
-
-              {
-                showFinaleIcon &&
-                episodeNumber !== 1 &&
-                seasonNumber > 0 &&
-                episodeNumber === seasonStatistics.totalEpisodeCount ?
-                  <Icon
-                    className={styles.statusIcon}
-                    name={icons.INFO}
-                    kind={fullColorEvents ? kinds.DEFAULT : kinds.WARNING}
-                    title={series.status === 'ended' ? 'Series finale' : 'Season finale'}
-                  /> :
-                  null
-              }
-
-              {
-                showSpecialIcon &&
-                (episodeNumber === 0 || seasonNumber === 0) ?
-                  <Icon
-                    className={styles.statusIcon}
-                    name={icons.INFO}
-                    kind={kinds.PINK}
-                    darken={fullColorEvents}
-                    title="Special"
-                  /> :
-                  null
-              }
             </div>
           </div>
 
@@ -190,7 +144,7 @@ class CalendarEvent extends Component {
                 </div>
 
                 <div>
-                  {seasonNumber}x{padNumber(episodeNumber, 2)}
+                  {releaseDate}
                 </div>
               </div> :
               null
@@ -217,10 +171,8 @@ CalendarEvent.propTypes = {
   series: PropTypes.object.isRequired,
   episodeFile: PropTypes.object,
   title: PropTypes.string.isRequired,
-  seasonNumber: PropTypes.number.isRequired,
-  episodeNumber: PropTypes.number.isRequired,
   absoluteEpisodeNumber: PropTypes.number,
-  airDateUtc: PropTypes.string.isRequired,
+  releaseDate: PropTypes.string.isRequired,
   monitored: PropTypes.bool.isRequired,
   unverifiedSceneNumbering: PropTypes.bool,
   hasFile: PropTypes.bool.isRequired,

@@ -192,7 +192,6 @@ namespace NzbDrone.Core.Test.SeriesStatsTests
             var episode2 = _episode.JsonClone();
 
             episode2.Id = 0;
-            episode2.EpisodeNumber += 1;
 
             Db.Insert(episode2);
 

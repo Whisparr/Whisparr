@@ -2,7 +2,7 @@ interface ReleaseEpisode {
   id: number;
   episodeFileId: number;
   seasonNumber: number;
-  episodeNumber: number;
+  releaseDate?: string;
   absoluteEpisodeNumber?: number;
   title: string;
 }

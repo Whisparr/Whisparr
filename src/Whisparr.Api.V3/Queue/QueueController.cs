@@ -224,6 +224,7 @@ namespace Whisparr.Api.V3.Queue
                     return q => q.Episode;
                 case "episode.airDateUtc":
                 case "episodes.airDateUtc":
+                case "episodes.releaseDate":
                     return q => q.Episode?.AirDateUtc ?? DateTime.MinValue;
                 case "episode.title":
                 case "episodes.title":

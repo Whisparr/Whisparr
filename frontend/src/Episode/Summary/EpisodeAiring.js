@@ -3,18 +3,16 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Label from 'Components/Label';
 import { kinds, sizes } from 'Helpers/Props';
-import formatTime from 'Utilities/Date/formatTime';
 import isInNextWeek from 'Utilities/Date/isInNextWeek';
 import isToday from 'Utilities/Date/isToday';
 import isTomorrow from 'Utilities/Date/isTomorrow';
 
 function EpisodeAiring(props) {
   const {
-    airDateUtc,
+    releaseDate,
     network,
     shortDateFormat,
-    showRelativeDates,
-    timeFormat
+    showRelativeDates
   } = props;
 
   const networkLabel = (
@@ -26,7 +24,7 @@ function EpisodeAiring(props) {
     </Label>
   );
 
-  if (!airDateUtc) {
+  if (!releaseDate) {
     return (
       <span>
         TBA on {networkLabel}
@@ -34,53 +32,50 @@ function EpisodeAiring(props) {
     );
   }
 
-  const time = formatTime(airDateUtc, timeFormat);
-
   if (!showRelativeDates) {
     return (
       <span>
-        {moment(airDateUtc).format(shortDateFormat)} at {time} on {networkLabel}
+        {moment(releaseDate).format(shortDateFormat)} on {networkLabel}
       </span>
     );
   }
 
-  if (isToday(airDateUtc)) {
+  if (isToday(releaseDate)) {
     return (
       <span>
-        {time} on {networkLabel}
+        Today on {networkLabel}
       </span>
     );
   }
 
-  if (isTomorrow(airDateUtc)) {
+  if (isTomorrow(releaseDate)) {
     return (
       <span>
-        Tomorrow at {time} on {networkLabel}
+        Tomorrow on {networkLabel}
       </span>
     );
   }
 
-  if (isInNextWeek(airDateUtc)) {
+  if (isInNextWeek(releaseDate)) {
     return (
       <span>
-        {moment(airDateUtc).format('dddd')} at {time} on {networkLabel}
+        {moment(releaseDate).format('dddd')} on {networkLabel}
       </span>
     );
   }
 
   return (
     <span>
-      {moment(airDateUtc).format(shortDateFormat)} at {time} on {networkLabel}
+      {moment(releaseDate).format(shortDateFormat)} on {networkLabel}
     </span>
   );
 }
 
 EpisodeAiring.propTypes = {
-  airDateUtc: PropTypes.string.isRequired,
+  releaseDate: PropTypes.string.isRequired,
   network: PropTypes.string.isRequired,
   shortDateFormat: PropTypes.string.isRequired,
-  showRelativeDates: PropTypes.bool.isRequired,
-  timeFormat: PropTypes.string.isRequired
+  showRelativeDates: PropTypes.bool.isRequired
 };
 
 export default EpisodeAiring;

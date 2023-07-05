@@ -8,9 +8,9 @@ import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import MonitorToggleButton from 'Components/MonitorToggleButton';
 import episodeEntities from 'Episode/episodeEntities';
+import EpisodeNumber from './EpisodeNumber';
 import EpisodeHistoryConnector from './History/EpisodeHistoryConnector';
 import EpisodeSearchConnector from './Search/EpisodeSearchConnector';
-import SeasonEpisodeNumber from './SeasonEpisodeNumber';
 import EpisodeSummaryConnector from './Summary/EpisodeSummaryConnector';
 import styles from './EpisodeDetailsModalContent.css';
 
@@ -56,7 +56,7 @@ class EpisodeDetailsModalContent extends Component {
       seriesMonitored,
       episodeTitle,
       actors,
-      airDate,
+      releaseDate,
       monitored,
       isSaving,
       showOpenSeriesButton,
@@ -89,8 +89,8 @@ class EpisodeDetailsModalContent extends Component {
 
           <span className={styles.separator}>-</span>
 
-          <SeasonEpisodeNumber
-            episodeNumber={airDate}
+          <EpisodeNumber
+            releaseDate={releaseDate}
           />
 
           <span className={styles.separator}>-</span>
@@ -196,7 +196,7 @@ EpisodeDetailsModalContent.propTypes = {
   titleSlug: PropTypes.string.isRequired,
   seriesMonitored: PropTypes.bool.isRequired,
   actors: PropTypes.arrayOf(PropTypes.object),
-  airDate: PropTypes.string.isRequired,
+  releaseDate: PropTypes.string.isRequired,
   episodeTitle: PropTypes.string.isRequired,
   monitored: PropTypes.bool.isRequired,
   isSaving: PropTypes.bool,

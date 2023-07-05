@@ -145,7 +145,7 @@ namespace NzbDrone.Core.Test.TvTests
             series.Seasons = new List<Season>();
             series.Seasons.Add(new Season { SeasonNumber = 1, Monitored = true });
 
-            var episodes = GetEpisodes().OrderBy(v => v.SeasonNumber).ThenBy(v => v.EpisodeNumber).Take(5).ToList();
+            var episodes = GetEpisodes().OrderBy(v => v.SeasonNumber).ThenBy(v => v.AirDateUtc).Take(5).ToList();
 
             episodes[1].AirDateUtc = DateTime.UtcNow.AddDays(-15);
             episodes[2].AirDateUtc = DateTime.UtcNow.AddDays(-10);
@@ -158,7 +158,7 @@ namespace NzbDrone.Core.Test.TvTests
 
             Subject.RefreshEpisodeInfo(series, episodes);
 
-            _insertedEpisodes = _insertedEpisodes.OrderBy(v => v.EpisodeNumber).ToList();
+            _insertedEpisodes = _insertedEpisodes.OrderBy(v => v.AirDateUtc).ToList();
 
             _insertedEpisodes.Should().HaveCount(4);
             _insertedEpisodes[0].Monitored.Should().Be(true);
@@ -175,7 +175,7 @@ namespace NzbDrone.Core.Test.TvTests
             var series = GetSeries();
             series.Seasons = new List<Season>();
 
-            var episodes = GetEpisodes().OrderBy(v => v.AirDate).Take(4).ToList();
+            var episodes = GetEpisodes().OrderBy(v => v.AirDateUtc).Take(4).ToList();
 
             episodes[1].AirDateUtc = DateTime.UtcNow.AddDays(-15);
             episodes[2].AirDateUtc = DateTime.UtcNow.AddDays(-10);
@@ -186,7 +186,7 @@ namespace NzbDrone.Core.Test.TvTests
 
             Subject.RefreshEpisodeInfo(series, episodes);
 
-            _insertedEpisodes = _insertedEpisodes.OrderBy(v => v.AirDate).ToList();
+            _insertedEpisodes = _insertedEpisodes.OrderBy(v => v.AirDateUtc).ToList();
 
             _insertedEpisodes.Should().HaveSameCount(episodes);
             _insertedEpisodes[0].Monitored.Should().Be(false);
@@ -206,7 +206,8 @@ namespace NzbDrone.Core.Test.TvTests
             var episodes = Builder<Episode>.CreateListOfSize(5)
                                            .TheFirst(2)
                                            .With(e => e.SeasonNumber = 1)
-                                           .With(e => e.EpisodeNumber = 1)
+                                           .With(e => e.AirDate = "2016-01-02")
+                                           .With(e => e.Title = "Some Title")
                                            .Build()
                                            .ToList();
 
@@ -258,29 +259,6 @@ namespace NzbDrone.Core.Test.TvTests
             Subject.RefreshEpisodeInfo(GetSeries(), episodes);
 
             _insertedEpisodes.First().Title.Should().Be("TBA");
-        }
-
-        [Test]
-        public void should_update_air_date_when_multiple_episodes_air_on_the_same_day()
-        {
-            Mocker.GetMock<IEpisodeService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
-                .Returns(new List<Episode>());
-
-            var now = DateTime.UtcNow;
-            var series = GetSeries();
-
-            var episodes = Builder<Episode>.CreateListOfSize(2)
-                                           .All()
-                                           .With(e => e.SeasonNumber = 1)
-                                           .With(e => e.AirDate = now.ToShortDateString())
-                                           .With(e => e.AirDateUtc = now)
-                                           .Build()
-                                           .ToList();
-
-            Subject.RefreshEpisodeInfo(series, episodes);
-
-            _insertedEpisodes.First().AirDateUtc.Value.ToString("s").Should().Be(episodes.First().AirDateUtc.Value.ToString("s"));
-            _insertedEpisodes.Last().AirDateUtc.Value.ToString("s").Should().Be(episodes.First().AirDateUtc.Value.AddMinutes(series.Runtime).ToString("s"));
         }
 
         [Test]

@@ -69,7 +69,7 @@ export const defaultState = {
         isVisible: true
       },
       {
-        name: 'episodes.airDateUtc',
+        name: 'episodes.releaseDate',
         label: 'Release Date',
         isSortable: true,
         isVisible: true

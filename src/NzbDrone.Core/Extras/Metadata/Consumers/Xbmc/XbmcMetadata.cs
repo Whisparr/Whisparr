@@ -235,19 +235,8 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
                     var details = new XElement("episodedetails");
                     details.Add(new XElement("title", episode.Title));
                     details.Add(new XElement("season", episode.SeasonNumber));
-                    details.Add(new XElement("episode", episode.EpisodeNumber));
                     details.Add(new XElement("aired", episode.AirDate));
                     details.Add(new XElement("plot", episode.Overview));
-
-                    if (episode.SeasonNumber == 0 && episode.AiredAfterSeasonNumber.HasValue)
-                    {
-                        details.Add(new XElement("displayafterseason", episode.AiredAfterSeasonNumber));
-                    }
-                    else if (episode.SeasonNumber == 0 && episode.AiredBeforeSeasonNumber.HasValue)
-                    {
-                        details.Add(new XElement("displayseason", episode.AiredBeforeSeasonNumber));
-                        details.Add(new XElement("displayepisode", episode.AiredBeforeEpisodeNumber ?? -1));
-                    }
 
                     var tvdbId = new XElement("uniqueid", episode.TvdbId);
                     tvdbId.SetAttributeValue("type", "tvdb");

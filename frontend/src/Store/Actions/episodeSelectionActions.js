@@ -19,7 +19,7 @@ export const defaultState = {
   isReprocessing: false,
   isPopulated: false,
   error: null,
-  sortKey: 'episodeNumber',
+  sortKey: 'releaseDate',
   sortDirection: sortDirections.ASCENDING,
   items: []
 };

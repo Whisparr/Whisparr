@@ -9,10 +9,10 @@ import CalendarDay from './CalendarDay';
 function sort(items) {
   return _.sortBy(items, (item) => {
     if (item.isGroup) {
-      return moment(item.events[0].airDateUtc).unix();
+      return moment(item.events[0].releaseDate).unix();
     }
 
-    return moment(item.airDateUtc).unix();
+    return moment(item.releaseDate).unix();
   });
 }
 
@@ -23,7 +23,7 @@ function createCalendarEventsConnector() {
     (state) => state.calendar.options.collapseMultipleEpisodes,
     (date, items, collapseMultipleEpisodes) => {
       const filtered = _.filter(items, (item) => {
-        return moment(date).isSame(moment(item.airDateUtc), 'day');
+        return moment(date).isSame(moment(item.releaseDate), 'day');
       });
 
       if (!collapseMultipleEpisodes) {
@@ -44,7 +44,7 @@ function createCalendarEventsConnector() {
             seriesId: events[0].seriesId,
             seasonNumber: events[0].seasonNumber,
             episodeIds: events.map((event) => event.id),
-            events: _.sortBy(events, (item) => moment(item.airDateUtc).unix())
+            events: _.sortBy(events, (item) => moment(item.releaseDate).unix())
           });
         }
       });

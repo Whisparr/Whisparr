@@ -56,25 +56,5 @@ namespace NzbDrone.Core.Test.ParserTests.ParsingServiceTests
         {
             _series.UseSceneNumbering = true;
         }
-
-        [Test]
-        public void should_match_search_criteria_by_scene_numbering()
-        {
-            GivenSceneNumberingSeries();
-
-            Subject.Map(_parsedEpisodeInfo, _series.TvdbId, _singleEpisodeSearchCriteria);
-
-            Mocker.GetMock<IEpisodeService>()
-                .Verify(v => v.FindEpisodesBySceneNumbering(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()), Times.Never());
-        }
-
-        [Test]
-        public void should_match_episode_with_search_criteria()
-        {
-            Subject.Map(_parsedEpisodeInfo, _series.TvdbId, _singleEpisodeSearchCriteria);
-
-            Mocker.GetMock<IEpisodeService>()
-                .Verify(v => v.FindEpisode(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()), Times.Never());
-        }
     }
 }

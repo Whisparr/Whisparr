@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using NLog;
 using NzbDrone.Common.Extensions;
@@ -36,11 +36,11 @@ namespace NzbDrone.Core.Download.TrackedDownloads
 
                 if (lastHistoryItem == null)
                 {
-                    _logger.Trace("No history for episode: S{0:00}E{1:00} [{2}]", e.SeasonNumber, e.EpisodeNumber, e.Id);
+                    _logger.Trace("No history for episode: {0}]", e.ToString());
                     return false;
                 }
 
-                _logger.Trace("Last event for episode: S{0:00}E{1:00} [{2}] is: {3}", e.SeasonNumber, e.EpisodeNumber, e.Id, lastHistoryItem.EventType);
+                _logger.Trace("Last event for episode: {0} is: {1}", e.ToString(), lastHistoryItem.EventType);
 
                 return lastHistoryItem.EventType == EpisodeHistoryEventType.DownloadFolderImported;
             });

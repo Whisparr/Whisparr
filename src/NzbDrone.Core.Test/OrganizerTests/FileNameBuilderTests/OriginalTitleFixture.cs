@@ -31,7 +31,6 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
             _episode = Builder<Episode>.CreateNew()
                             .With(e => e.Title = "City Sushi")
                             .With(e => e.SeasonNumber = 15)
-                            .With(e => e.EpisodeNumber = 6)
                             .With(e => e.AbsoluteEpisodeNumber = 100)
                             .Build();
 
@@ -57,10 +56,10 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         {
             _episodeFile.SceneName = "my.series.s15e06";
             _episodeFile.RelativePath = "My Series - S15E06 - City Sushi";
-            _namingConfig.StandardEpisodeFormat = "{Site Title} - S{season:00}E{episode:00} - {Episode Title} {[Original Title]}";
+            _namingConfig.StandardEpisodeFormat = "{Site Title} - {Episode Title} {[Original Title]}";
 
             Subject.BuildFileName(new List<Episode> { _episode }, _series, _episodeFile)
-                   .Should().Be("My Series - S15E06 - City Sushi [my.series.s15e06]");
+                   .Should().Be("My Series - City Sushi [my.series.s15e06]");
         }
 
         [Test]
@@ -84,24 +83,14 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         }
 
         [Test]
-        public void should_not_include_current_filename_if_including_season_and_episode_tokens_for_standard_series()
-        {
-            _episodeFile.RelativePath = "My Series - S15E06 - City Sushi";
-            _namingConfig.StandardEpisodeFormat = "{Site Title} - S{season:00}E{episode:00} {[Original Title]}";
-
-            Subject.BuildFileName(new List<Episode> { _episode }, _series, _episodeFile)
-                   .Should().Be("My Series - S15E06");
-        }
-
-        [Test]
         public void should_include_current_filename_for_new_file_if_including_season_and_episode_tokens_for_standard_series()
         {
             _episodeFile.Id = 0;
-            _episodeFile.RelativePath = "My Series - S15E06 - City Sushi";
-            _namingConfig.StandardEpisodeFormat = "{Site Title} - S{season:00}E{episode:00} {[Original Title]}";
+            _episodeFile.RelativePath = "My Series - City Sushi";
+            _namingConfig.StandardEpisodeFormat = "{Site Title} - {[Original Title]}";
 
             Subject.BuildFileName(new List<Episode> { _episode }, _series, _episodeFile)
-                   .Should().Be("My Series - S15E06 [My Series - S15E06 - City Sushi]");
+                   .Should().Be("My Series - [My Series - City Sushi]");
         }
     }
 }

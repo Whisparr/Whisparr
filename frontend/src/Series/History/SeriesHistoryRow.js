@@ -14,7 +14,6 @@ import EpisodeFormats from 'Episode/EpisodeFormats';
 import EpisodeLanguages from 'Episode/EpisodeLanguages';
 import EpisodeNumber from 'Episode/EpisodeNumber';
 import EpisodeQuality from 'Episode/EpisodeQuality';
-import SeasonEpisodeNumber from 'Episode/SeasonEpisodeNumber';
 import { icons, kinds, tooltipPositions } from 'Helpers/Props';
 import formatPreferredWordScore from 'Utilities/Number/formatPreferredWordScore';
 import styles from './SeriesHistoryRow.css';
@@ -73,7 +72,6 @@ class SeriesHistoryRow extends Component {
       customFormats,
       date,
       data,
-      fullSeries,
       series,
       episode,
       customFormatScore
@@ -83,7 +81,7 @@ class SeriesHistoryRow extends Component {
       isMarkAsFailedModalOpen
     } = this.state;
 
-    const EpisodeComponent = fullSeries ? SeasonEpisodeNumber : EpisodeNumber;
+    const EpisodeComponent = EpisodeNumber;
 
     return (
       <TableRow>
@@ -95,12 +93,9 @@ class SeriesHistoryRow extends Component {
         <TableRowCell key={name}>
           <EpisodeComponent
             seasonNumber={episode.seasonNumber}
-            episodeNumber={episode.episodeNumber}
+            releaseDate={episode.releaseDate}
             absoluteEpisodeNumber={episode.absoluteEpisodeNumber}
             alternateTitles={series.alternateTitles}
-            sceneSeasonNumber={episode.sceneSeasonNumber}
-            sceneEpisodeNumber={episode.sceneEpisodeNumber}
-            sceneAbsoluteEpisodeNumber={episode.sceneAbsoluteEpisodeNumber}
           />
         </TableRowCell>
 
@@ -187,7 +182,6 @@ SeriesHistoryRow.propTypes = {
   customFormats: PropTypes.arrayOf(PropTypes.object),
   date: PropTypes.string.isRequired,
   data: PropTypes.object.isRequired,
-  fullSeries: PropTypes.bool.isRequired,
   series: PropTypes.object.isRequired,
   episode: PropTypes.object.isRequired,
   customFormatScore: PropTypes.number.isRequired,

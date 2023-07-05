@@ -69,7 +69,6 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
                                         {
                                             Builder<Episode>.CreateNew()
                                                 .With(s => s.SeasonNumber = 1)
-                                                .With(s => s.EpisodeNumber = 1)
                                                 .With(s => s.Runtime = 30)
                                                 .Build()
                                         }

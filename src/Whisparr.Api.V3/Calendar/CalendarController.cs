@@ -64,7 +64,7 @@ namespace Whisparr.Api.V3.Calendar
 
             var resources = MapToResource(result, includeSeries, includeEpisodeFile, includeEpisodeImages);
 
-            return resources.OrderBy(e => e.AirDateUtc).ToList();
+            return resources.OrderBy(e => e.ReleaseDate).ToList();
         }
     }
 }

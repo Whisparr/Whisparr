@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using NLog;
 using NzbDrone.Core.IndexerSearch.Definitions;
 using NzbDrone.Core.Parser.Model;
@@ -33,15 +33,15 @@ namespace NzbDrone.Core.DecisionEngine.Specifications.Search
 
                 if (remoteEpisodes.Any())
                 {
-                    var episodes = remoteEpisode.Episodes.OrderBy(v => v.SeasonNumber).ThenBy(v => v.EpisodeNumber).ToList();
+                    var episodes = remoteEpisode.Episodes.OrderBy(v => v.SeasonNumber).ThenBy(v => v.AirDate).ToList();
 
                     if (episodes.Count > 1)
                     {
-                        return Decision.Reject($"Episode wasn't requested: {episodes.First().SeasonNumber}x{episodes.First().EpisodeNumber}-{episodes.Last().EpisodeNumber}");
+                        return Decision.Reject($"Episode wasn't requested: {episodes.First().SeasonNumber}x{episodes.First().AirDate}-{episodes.Last().AirDate}");
                     }
                     else
                     {
-                        return Decision.Reject($"Episode wasn't requested: {episodes.First().SeasonNumber}x{episodes.First().EpisodeNumber}");
+                        return Decision.Reject($"Episode wasn't requested: {episodes.First().SeasonNumber}x{episodes.First().AirDate}");
                     }
                 }
                 else

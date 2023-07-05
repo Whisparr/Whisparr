@@ -24,9 +24,8 @@ class SelectEpisodeRow extends Component {
   render() {
     const {
       id,
-      episodeNumber,
       title,
-      airDate,
+      releaseDate,
       isSelected,
       onSelectedChange
     } = this.props;
@@ -40,15 +39,11 @@ class SelectEpisodeRow extends Component {
         />
 
         <TableRowCell>
-          {episodeNumber}
-        </TableRowCell>
-
-        <TableRowCell>
           {title}
         </TableRowCell>
 
         <TableRowCell>
-          {airDate}
+          {releaseDate}
         </TableRowCell>
       </TableRowButton>
     );
@@ -57,10 +52,9 @@ class SelectEpisodeRow extends Component {
 
 SelectEpisodeRow.propTypes = {
   id: PropTypes.number.isRequired,
-  episodeNumber: PropTypes.number.isRequired,
   absoluteEpisodeNumber: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
-  airDate: PropTypes.string.isRequired,
+  releaseDate: PropTypes.string.isRequired,
   isSelected: PropTypes.bool,
   onSelectedChange: PropTypes.func.isRequired
 };

@@ -70,13 +70,6 @@ namespace NzbDrone.Core.Tv
 
                     break;
 
-                case MonitorTypes.Pilot:
-                    _logger.Debug("[{0}] Monitoring first episode episodes", series.Title);
-                    ToggleEpisodesMonitoredState(episodes,
-                        e => e.SeasonNumber > 0 && e.SeasonNumber == firstSeason && e.EpisodeNumber == 1);
-
-                    break;
-
                 case MonitorTypes.FirstSeason:
                     _logger.Debug("[{0}] Monitoring first season episodes", series.Title);
                     ToggleEpisodesMonitoredState(episodes, e => e.SeasonNumber > 0 && e.SeasonNumber == firstSeason);
@@ -123,15 +116,9 @@ namespace NzbDrone.Core.Tv
                 if (seasonNumber > 0 &&
                     seasonNumber == lastSeason &&
                     monitoringOptions.Monitor != MonitorTypes.FirstSeason &&
-                    monitoringOptions.Monitor != MonitorTypes.Pilot &&
                     monitoringOptions.Monitor != MonitorTypes.None)
                 {
                     season.Monitored = true;
-                }
-                else if (seasonNumber == firstSeason && monitoringOptions.Monitor == MonitorTypes.Pilot)
-                {
-                    // Don't monitor season 1 if only the pilot episode is monitored
-                    season.Monitored = false;
                 }
                 else if (monitoredSeasons.Contains(seasonNumber))
                 {

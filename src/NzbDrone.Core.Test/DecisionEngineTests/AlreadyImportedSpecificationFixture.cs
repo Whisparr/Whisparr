@@ -37,7 +37,6 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
                                         {
                                             Id = FIRST_EPISODE_ID,
                                             SeasonNumber = 12,
-                                            EpisodeNumber = 3,
                                             EpisodeFileId = 1
                                         }
                                     };

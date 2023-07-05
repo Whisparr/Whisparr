@@ -53,7 +53,7 @@ class EpisodeRow extends Component {
       episodeFileId,
       monitored,
       actors,
-      airDateUtc,
+      releaseDate,
       runtime,
       title,
       isSaving,
@@ -95,11 +95,11 @@ class EpisodeRow extends Component {
               );
             }
 
-            if (name === 'airDateUtc') {
+            if (name === 'releaseDate') {
               return (
                 <RelativeDateCellConnector
                   key={name}
-                  date={airDateUtc}
+                  date={releaseDate}
                 />
               );
             }
@@ -325,8 +325,7 @@ EpisodeRow.propTypes = {
   sceneAbsoluteEpisodeNumber: PropTypes.number,
   actors: PropTypes.arrayOf(PropTypes.object),
   joinedPerformers: PropTypes.string,
-  airDate: PropTypes.string,
-  airDateUtc: PropTypes.string,
+  releaseDate: PropTypes.string,
   runtime: PropTypes.number,
   title: PropTypes.string.isRequired,
   isSaving: PropTypes.bool,

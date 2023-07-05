@@ -198,7 +198,6 @@ namespace NzbDrone.Core.Notifications.Webhook
                     new WebhookEpisode()
                     {
                         Id = 123,
-                        EpisodeNumber = 1,
                         SeasonNumber = 1,
                         Title = "Test title"
                     }

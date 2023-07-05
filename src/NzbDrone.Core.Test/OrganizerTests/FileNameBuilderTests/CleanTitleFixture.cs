@@ -31,7 +31,6 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
             _episode = Builder<Episode>.CreateNew()
                             .With(e => e.Title = "City Sushi")
                             .With(e => e.SeasonNumber = 15)
-                            .With(e => e.EpisodeNumber = 6)
                             .With(e => e.AbsoluteEpisodeNumber = 100)
                             .Build();
 

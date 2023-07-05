@@ -15,7 +15,7 @@ function createMapStateToProps() {
     createEpisodeFileSelector(),
     (episode, queueItem, episodeFile) => {
       const result = _.pick(episode, [
-        'airDateUtc',
+        'releaseDate',
         'monitored',
         'grabbed'
       ]);

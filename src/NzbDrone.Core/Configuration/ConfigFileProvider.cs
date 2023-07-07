@@ -119,8 +119,7 @@ namespace NzbDrone.Core.Configuration
                     continue;
                 }
 
-                object currentValue;
-                allWithDefaults.TryGetValue(configValue.Key, out currentValue);
+                allWithDefaults.TryGetValue(configValue.Key, out var currentValue);
                 if (currentValue == null)
                 {
                     continue;
@@ -143,7 +142,7 @@ namespace NzbDrone.Core.Configuration
             {
                 const string defaultValue = "*";
 
-                string bindAddress = GetValue("BindAddress", defaultValue);
+                var bindAddress = GetValue("BindAddress", defaultValue);
                 if (string.IsNullOrWhiteSpace(bindAddress))
                 {
                     return defaultValue;

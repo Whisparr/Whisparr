@@ -33,6 +33,7 @@ namespace NzbDrone.Core.Organizer
                 Title = "The Site Title!",
                 Year = 2010,
                 TvdbId = 12345,
+                Network = "NetworkXXX"
             };
 
             _episode1 = new Episode

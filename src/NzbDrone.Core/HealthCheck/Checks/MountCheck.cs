@@ -1,5 +1,6 @@
 using System.Linq;
 using NzbDrone.Common.Disk;
+using NzbDrone.Core.Localization;
 using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.HealthCheck.Checks
@@ -9,7 +10,8 @@ namespace NzbDrone.Core.HealthCheck.Checks
         private readonly IDiskProvider _diskProvider;
         private readonly ISeriesService _seriesService;
 
-        public MountCheck(IDiskProvider diskProvider, ISeriesService seriesService)
+        public MountCheck(IDiskProvider diskProvider, ISeriesService seriesService, ILocalizationService localizationService)
+            : base(localizationService)
         {
             _diskProvider = diskProvider;
             _seriesService = seriesService;
@@ -19,14 +21,17 @@ namespace NzbDrone.Core.HealthCheck.Checks
         {
             // Not best for optimization but due to possible symlinks and junctions, we get mounts based on series path so internals can handle mount resolution.
             var mounts = _seriesService.GetAllSeriesPaths()
-                                       .Select(s => _diskProvider.GetMount(s.Value))
-                                       .Where(m => m != null && m.MountOptions != null && m.MountOptions.IsReadOnly)
-                                       .DistinctBy(m => m.RootDirectory)
-                                       .ToList();
+                .Select(s => _diskProvider.GetMount(s.Value))
+                .Where(m => m is { MountOptions.IsReadOnly: true })
+                .DistinctBy(m => m.RootDirectory)
+                .ToList();
 
             if (mounts.Any())
             {
-                return new HealthCheck(GetType(), HealthCheckResult.Error, "Mount containing a series path is mounted read-only: " + string.Join(",", mounts.Select(m => m.Name)), "#series-mount-ro");
+                return new HealthCheck(GetType(),
+                    HealthCheckResult.Error,
+                    $"{_localizationService.GetLocalizedString("MountHealthCheckMessage")}{string.Join(", ", mounts.Select(m => m.Name))}",
+                    "#series-mount-ro");
             }
 
             return new HealthCheck(GetType());

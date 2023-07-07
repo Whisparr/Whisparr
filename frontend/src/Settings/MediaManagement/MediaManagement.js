@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import Alert from 'Components/Alert';
 import FieldSet from 'Components/FieldSet';
 import Form from 'Components/Form/Form';
 import FormGroup from 'Components/Form/FormGroup';
@@ -8,7 +9,7 @@ import FormLabel from 'Components/Form/FormLabel';
 import LoadingIndicator from 'Components/Loading/LoadingIndicator';
 import PageContent from 'Components/Page/PageContent';
 import PageContentBody from 'Components/Page/PageContentBody';
-import { inputTypes, sizes } from 'Helpers/Props';
+import { inputTypes, kinds, sizes } from 'Helpers/Props';
 import RootFoldersConnector from 'RootFolder/RootFoldersConnector';
 import SettingsToolbarConnector from 'Settings/SettingsToolbarConnector';
 import NamingConnector from './Naming/NamingConnector';
@@ -68,27 +69,27 @@ class MediaManagement extends Component {
           <NamingConnector />
 
           {
-            isFetching &&
+            isFetching ?
               <FieldSet legend="Naming Settings">
                 <LoadingIndicator />
-              </FieldSet>
+              </FieldSet> : null
           }
 
           {
-            !isFetching && error &&
+            !isFetching && error ?
               <FieldSet legend="Naming Settings">
-                <div>Unable to load Media Management settings</div>
-              </FieldSet>
+                <Alert kind={kinds.DANGER}>Unable to load Media Management settings</Alert>
+              </FieldSet> : null
           }
 
           {
-            hasSettings && !isFetching && !error &&
+            hasSettings && !isFetching && !error ?
               <Form
                 id="mediaManagementSettings"
                 {...otherProps}
               >
                 {
-                  advancedSettings &&
+                  advancedSettings ?
                     <FieldSet legend="Folders">
                       <FormGroup
                         advancedSettings={advancedSettings}
@@ -121,11 +122,11 @@ class MediaManagement extends Component {
                           {...settings.deleteEmptyFolders}
                         />
                       </FormGroup>
-                    </FieldSet>
+                    </FieldSet> : null
                 }
 
                 {
-                  advancedSettings &&
+                  advancedSettings ?
                     <FieldSet
                       legend="Importing"
                     >
@@ -200,6 +201,41 @@ class MediaManagement extends Component {
                         />
                       </FormGroup>
 
+                      <FormGroup
+                        advancedSettings={advancedSettings}
+                        isAdvanced={true}
+                        size={sizes.MEDIUM}
+                      >
+                        <FormLabel>Import Using Script</FormLabel>
+
+                        <FormInputGroup
+                          type={inputTypes.CHECK}
+                          name="useScriptImport"
+                          helpText="Copy files for importing using a script (ex. for transcoding)"
+                          onChange={onInputChange}
+                          {...settings.useScriptImport}
+                        />
+                      </FormGroup>
+
+                      {
+                        settings.useScriptImport.value ?
+                          <FormGroup
+                            advancedSettings={advancedSettings}
+                            isAdvanced={true}
+                          >
+                            <FormLabel>Import Script Path</FormLabel>
+
+                            <FormInputGroup
+                              type={inputTypes.PATH}
+                              includeFiles={true}
+                              name="scriptImportPath"
+                              helpText="The path to the script to use for importing"
+                              onChange={onInputChange}
+                              {...settings.scriptImportPath}
+                            />
+                          </FormGroup> : null
+                      }
+
                       <FormGroup size={sizes.MEDIUM}>
                         <FormLabel>Import Extra Files</FormLabel>
 
@@ -213,7 +249,7 @@ class MediaManagement extends Component {
                       </FormGroup>
 
                       {
-                        settings.importExtraFiles.value &&
+                        settings.importExtraFiles.value ?
                           <FormGroup
                             advancedSettings={advancedSettings}
                             isAdvanced={true}
@@ -230,9 +266,9 @@ class MediaManagement extends Component {
                               onChange={onInputChange}
                               {...settings.extraFileExtensions}
                             />
-                          </FormGroup>
+                          </FormGroup> : null
                       }
-                    </FieldSet>
+                    </FieldSet> : null
                 }
 
                 <FieldSet
@@ -358,7 +394,7 @@ class MediaManagement extends Component {
                 </FieldSet>
 
                 {
-                  advancedSettings && !isWindows &&
+                  advancedSettings && !isWindows ?
                     <FieldSet
                       legend="Permissions"
                     >
@@ -411,9 +447,9 @@ class MediaManagement extends Component {
                           {...settings.chownGroup}
                         />
                       </FormGroup>
-                    </FieldSet>
+                    </FieldSet> : null
                 }
-              </Form>
+              </Form> : null
           }
 
           <FieldSet legend="Root Folders">

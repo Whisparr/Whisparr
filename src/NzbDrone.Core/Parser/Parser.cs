@@ -124,11 +124,13 @@ namespace NzbDrone.Core.Parser
                                                                 string.Empty,
                                                                 RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        private static readonly RegexReplace WebsitePrefixRegex = new RegexReplace(@"^\[\s*[-a-z]+(\.[a-z]+)+\s*\][- ]*|^www\.[a-z]+\.(?:com|net|org)[ -]*",
+        // Valid TLDs http://data.iana.org/TLD/tlds-alpha-by-domain.txt
+
+        private static readonly RegexReplace WebsitePrefixRegex = new RegexReplace(@"^(?:\[\s*)?(?:www\.)?[-a-z0-9-]{1,256}\.(?:[a-z]{2,6}\.[a-z]{2,6}|xn--[a-z0-9-]{4,}|[a-z]{2,})\b(?:\s*\]|[ -]{2,})[ -]*",
                                                                 string.Empty,
                                                                 RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        private static readonly RegexReplace WebsitePostfixRegex = new RegexReplace(@"\[\s*[-a-z]+(\.[a-z0-9]+)+\s*\]$",
+        private static readonly RegexReplace WebsitePostfixRegex = new RegexReplace(@"(?:\[\s*)?(?:www\.)?[-a-z0-9-]{1,256}\.(?:xn--[a-z0-9-]{4,}|[a-z]{2,6})\b(?:\s*\])$",
                                                                 string.Empty,
                                                                 RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
@@ -159,7 +161,7 @@ namespace NzbDrone.Core.Parser
         private static readonly Regex ExceptionReleaseGroupRegexExact = new Regex(@"(?<releasegroup>(?:D\-Z0N3|Fight-BB|VARYG)\b)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         // groups whose releases end with RlsGroup) or RlsGroup]
-        private static readonly Regex ExceptionReleaseGroupRegex = new Regex(@"(?<releasegroup>(Silence|afm72|Panda|Ghost|MONOLITH|Tigole|Joy|ImE|UTR|t3nzin|Anime Time|Project Angel|Hakata Ramen|HONE)(?=\]|\)))", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex ExceptionReleaseGroupRegex = new Regex(@"(?<releasegroup>(Silence|afm72|Panda|Ghost|MONOLITH|Tigole|Joy|ImE|UTR|t3nzin|Anime Time|Project Angel|Hakata Ramen|HONE|Vyndros)(?=\]|\)))", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex YearInTitleRegex = new Regex(@"^(?<title>.+?)[-_. ]+?[\(\[]?(?<year>\d{4})[\]\)]?",
                                                                 RegexOptions.IgnoreCase | RegexOptions.Compiled);
@@ -367,10 +369,8 @@ namespace NzbDrone.Core.Parser
 
         public static string CleanSeriesTitle(this string title)
         {
-            long number = 0;
-
             // If Title only contains numbers return it as is.
-            if (long.TryParse(title, out number))
+            if (long.TryParse(title, out _))
             {
                 return title;
             }
@@ -472,9 +472,8 @@ namespace NzbDrone.Core.Parser
             if (matches.Count != 0)
             {
                 var group = matches.OfType<Match>().Last().Groups["releasegroup"].Value;
-                int groupIsNumeric;
 
-                if (int.TryParse(group, out groupIsNumeric))
+                if (int.TryParse(group, out _))
                 {
                     return null;
                 }
@@ -538,10 +537,9 @@ namespace NzbDrone.Core.Parser
             var seriesName = matchCollection[0].Groups["title"].Value.Replace('.', ' ').Replace('_', ' ');
             seriesName = RequestInfoRegex.Replace(seriesName, "").Trim(' ');
 
-            int airYear;
-            int.TryParse(matchCollection[0].Groups["airyear"].Value, out airYear);
+            int.TryParse(matchCollection[0].Groups["airyear"].Value, out var airYear);
 
-            int lastSeasonEpisodeStringIndex = matchCollection[0].Groups["title"].EndIndex();
+            var lastSeasonEpisodeStringIndex = matchCollection[0].Groups["title"].EndIndex();
 
             ParsedEpisodeInfo result;
 
@@ -577,8 +575,7 @@ namespace NzbDrone.Core.Parser
 
                 foreach (Capture seasonCapture in matchCollection[0].Groups["season"].Captures)
                 {
-                    int parsedSeason;
-                    if (int.TryParse(seasonCapture.Value, out parsedSeason))
+                    if (int.TryParse(seasonCapture.Value, out var parsedSeason))
                     {
                         seasons.Add(parsedSeason);
 
@@ -719,11 +716,9 @@ namespace NzbDrone.Core.Parser
 
         private static int ParseNumber(string value)
         {
-            int number;
-
             var normalized = value.Normalize(NormalizationForm.FormKC);
 
-            if (int.TryParse(normalized, out number))
+            if (int.TryParse(normalized, out var number))
             {
                 return number;
             }
@@ -740,11 +735,9 @@ namespace NzbDrone.Core.Parser
 
         private static decimal ParseDecimal(string value)
         {
-            decimal number;
-
             var normalized = value.Normalize(NormalizationForm.FormKC);
 
-            if (decimal.TryParse(normalized, NumberStyles.Float, CultureInfo.InvariantCulture, out number))
+            if (decimal.TryParse(normalized, NumberStyles.Float, CultureInfo.InvariantCulture, out var number))
             {
                 return number;
             }

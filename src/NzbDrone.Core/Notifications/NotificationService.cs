@@ -265,7 +265,7 @@ namespace NzbDrone.Core.Notifications
                 }
                 catch (Exception ex)
                 {
-                    _logger.Warn(ex, "Unable to send OnDelete notification to: " + notification.Definition.Name);
+                    _logger.Warn(ex, "Unable to send OnEpisodeFileDelete notification to: " + notification.Definition.Name);
                 }
             }
         }
@@ -290,7 +290,7 @@ namespace NzbDrone.Core.Notifications
                 }
                 catch (Exception ex)
                 {
-                    _logger.Warn(ex, "Unable to send OnDelete notification to: " + notification.Definition.Name);
+                    _logger.Warn(ex, "Unable to send OnSeriesAdd notification to: " + notification.Definition.Name);
                 }
             }
         }
@@ -312,7 +312,7 @@ namespace NzbDrone.Core.Notifications
                     }
                     catch (Exception ex)
                     {
-                        _logger.Warn(ex, "Unable to send OnDelete notification to: " + notification.Definition.Name);
+                        _logger.Warn(ex, "Unable to send OnSeriesDelete notification to: " + notification.Definition.Name);
                     }
                 }
             }

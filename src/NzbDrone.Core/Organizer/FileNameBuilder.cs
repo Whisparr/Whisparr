@@ -55,7 +55,7 @@ namespace NzbDrone.Core.Organizer
 
         public static readonly Regex AirDateRegex = new Regex(@"\{Release(\s|\W|_)Date\}", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-        public static readonly Regex SeriesTitleRegex = new Regex(@"(?<token>\{(?:Site)(?<separator>[- ._])(Clean)?Title(The)?(Without)?(Year)?\})",
+        public static readonly Regex SeriesTitleRegex = new Regex(@"(?<token>\{(?:Site)(?<separator>[- ._])(Clean)?Title(The)?(Without)?(Year)?(Slug)?\})",
                                                                             RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         private static readonly Regex FileNameCleanupRegex = new Regex(@"([- ._])(\1)+", RegexOptions.Compiled);
@@ -177,7 +177,10 @@ namespace NzbDrone.Core.Organizer
                 component = component.Replace("{ellipsis}", "...");
                 component = ReplaceReservedDeviceNames(component);
 
-                components.Add(component);
+                if (component.IsNotNullOrWhiteSpace())
+                {
+                    components.Add(component);
+                }
             }
 
             return string.Join(Path.DirectorySeparatorChar.ToString(), components) + extension;
@@ -252,17 +255,39 @@ namespace NzbDrone.Core.Organizer
                 namingConfig = _namingConfigService.GetConfig();
             }
 
+            var pattern = namingConfig.SeriesFolderFormat;
             var tokenHandlers = new Dictionary<string, Func<TokenMatch, string>>(FileNameBuilderTokenEqualityComparer.Instance);
 
             AddSeriesTokens(tokenHandlers, series);
             AddIdTokens(tokenHandlers, series);
 
-            var folderName = ReplaceTokens(namingConfig.SeriesFolderFormat, tokenHandlers, namingConfig);
+            var splitPatterns = pattern.Split(new char[] { '\\', '/' }, StringSplitOptions.RemoveEmptyEntries);
+            var components = new List<string>();
 
-            folderName = CleanFolderName(folderName);
-            folderName = ReplaceReservedDeviceNames(folderName);
+            foreach (var s in splitPatterns)
+            {
+                var splitPattern = s;
 
-            return folderName;
+                var component = ReplaceTokens(splitPattern, tokenHandlers, namingConfig);
+                component = CleanFolderName(component);
+                component = ReplaceReservedDeviceNames(component);
+
+                if (component.IsNotNullOrWhiteSpace())
+                {
+                    components.Add(component);
+                }
+            }
+
+            return Path.Combine(components.ToArray());
+        }
+
+        public static string SlugTitle(string title)
+        {
+            title = title.Replace(" ", "");
+            title = ScenifyReplaceChars.Replace(title, " ");
+            title = ScenifyRemoveChars.Replace(title, string.Empty);
+
+            return title;
         }
 
         public static string CleanTitle(string title)
@@ -347,6 +372,7 @@ namespace NzbDrone.Core.Organizer
         private void AddSeriesTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Series series)
         {
             tokenHandlers["{Site Title}"] = m => series.Title;
+            tokenHandlers["{Site TitleSlug}"] = m => SlugTitle(series.Title);
             tokenHandlers["{Site CleanTitle}"] = m => CleanTitle(series.Title);
             tokenHandlers["{Site CleanTitleYear}"] = m => CleanTitle(TitleYear(series.Title, series.Year));
             tokenHandlers["{Site CleanTitleWithoutYear}"] = m => CleanTitle(TitleWithoutYear(series.Title));
@@ -357,13 +383,15 @@ namespace NzbDrone.Core.Organizer
             tokenHandlers["{Site TitleTheWithoutYear}"] = m => TitleWithoutYear(TitleThe(series.Title));
             tokenHandlers["{Site TitleFirstCharacter}"] = m => TitleThe(series.Title).Substring(0, 1).FirstCharToUpper();
             tokenHandlers["{Site Year}"] = m => series.Year.ToString();
+
+            tokenHandlers["{Site Network}"] = m => series.Network ?? string.Empty;
         }
 
         private string AddSeasonEpisodeNumberingTokens(string pattern, Dictionary<string, Func<TokenMatch, string>> tokenHandlers, List<Episode> episodes, NamingConfig namingConfig)
         {
             var episodeFormats = GetEpisodeFormat(pattern).DistinctBy(v => v.SeasonEpisodePattern).ToList();
 
-            int index = 1;
+            var index = 1;
             foreach (var episodeFormat in episodeFormats)
             {
                 var seasonEpisodePattern = episodeFormat.SeasonEpisodePattern;
@@ -549,7 +577,7 @@ namespace NzbDrone.Core.Organizer
                 }
             }
 
-            for (int i = 0; i < tokens.Count; i++)
+            for (var i = 0; i < tokens.Count; i++)
             {
                 try
                 {
@@ -710,7 +738,7 @@ namespace NzbDrone.Core.Organizer
         {
             var pattern = string.Empty;
 
-            for (int i = 0; i < episodes.Count; i++)
+            for (var i = 0; i < episodes.Count; i++)
             {
                 var patternToReplace = i == 0 ? basePattern : formatPattern;
 

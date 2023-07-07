@@ -19,7 +19,7 @@ namespace NzbDrone.Core.Download.Clients.Sabnzbd
         SabnzbdConfig GetConfig(SabnzbdSettings settings);
         SabnzbdFullStatus GetFullStatus(SabnzbdSettings settings);
         SabnzbdQueue GetQueue(int start, int limit, SabnzbdSettings settings);
-        SabnzbdHistory GetHistory(int start, int limit, string category, SabnzbdSettings settings);
+        SabnzbdHistory GetHistory(int start, int limit, SabnzbdSettings settings);
         string RetryDownload(string id, SabnzbdSettings settings);
     }
 
@@ -46,14 +46,12 @@ namespace NzbDrone.Core.Download.Clients.Sabnzbd
         {
             var request = BuildRequest("addfile", settings).Post();
 
-            request.AddQueryParam("cat", category);
+            request.AddQueryParam("cat", settings.TvCategory);
             request.AddQueryParam("priority", priority);
 
             request.AddFormUpload("name", filename, nzbData, "application/x-nzb");
 
-            SabnzbdAddResponse response;
-
-            if (!Json.TryDeserialize<SabnzbdAddResponse>(ProcessRequest(request, settings), out response))
+            if (!Json.TryDeserialize<SabnzbdAddResponse>(ProcessRequest(request, settings), out var response))
             {
                 response = new SabnzbdAddResponse();
                 response.Status = true;
@@ -76,9 +74,7 @@ namespace NzbDrone.Core.Download.Clients.Sabnzbd
         {
             var request = BuildRequest("version", settings);
 
-            SabnzbdVersionResponse response;
-
-            if (!Json.TryDeserialize<SabnzbdVersionResponse>(ProcessRequest(request, settings), out response))
+            if (!Json.TryDeserialize<SabnzbdVersionResponse>(ProcessRequest(request, settings), out var response))
             {
                 response = new SabnzbdVersionResponse();
             }
@@ -111,20 +107,25 @@ namespace NzbDrone.Core.Download.Clients.Sabnzbd
             request.AddQueryParam("start", start);
             request.AddQueryParam("limit", limit);
 
+            if (settings.TvCategory.IsNotNullOrWhiteSpace())
+            {
+                request.AddQueryParam("category", settings.TvCategory);
+            }
+
             var response = ProcessRequest(request, settings);
 
             return Json.Deserialize<SabnzbdQueue>(JObject.Parse(response).SelectToken("queue").ToString());
         }
 
-        public SabnzbdHistory GetHistory(int start, int limit, string category, SabnzbdSettings settings)
+        public SabnzbdHistory GetHistory(int start, int limit, SabnzbdSettings settings)
         {
             var request = BuildRequest("history", settings);
             request.AddQueryParam("start", start);
             request.AddQueryParam("limit", limit);
 
-            if (category.IsNotNullOrWhiteSpace())
+            if (settings.TvCategory.IsNotNullOrWhiteSpace())
             {
-                request.AddQueryParam("category", category);
+                request.AddQueryParam("category", settings.TvCategory);
             }
 
             var response = ProcessRequest(request, settings);
@@ -137,9 +138,7 @@ namespace NzbDrone.Core.Download.Clients.Sabnzbd
             var request = BuildRequest("retry", settings);
             request.AddQueryParam("value", id);
 
-            SabnzbdRetryResponse response;
-
-            if (!Json.TryDeserialize<SabnzbdRetryResponse>(ProcessRequest(request, settings), out response))
+            if (!Json.TryDeserialize<SabnzbdRetryResponse>(ProcessRequest(request, settings), out var response))
             {
                 response = new SabnzbdRetryResponse();
                 response.Status = true;
@@ -210,9 +209,7 @@ namespace NzbDrone.Core.Download.Clients.Sabnzbd
 
         private void CheckForError(HttpResponse response)
         {
-            SabnzbdJsonError result;
-
-            if (!Json.TryDeserialize<SabnzbdJsonError>(response.Content, out result))
+            if (!Json.TryDeserialize<SabnzbdJsonError>(response.Content, out var result))
             {
                 // Handle plain text responses from SAB
                 result = new SabnzbdJsonError();

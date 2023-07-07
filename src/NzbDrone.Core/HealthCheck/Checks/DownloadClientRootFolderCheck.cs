@@ -6,6 +6,7 @@ using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Datastore.Events;
 using NzbDrone.Core.Download;
 using NzbDrone.Core.Download.Clients;
+using NzbDrone.Core.Localization;
 using NzbDrone.Core.RemotePathMappings;
 using NzbDrone.Core.RootFolders;
 using NzbDrone.Core.ThingiProvider.Events;
@@ -24,8 +25,10 @@ namespace NzbDrone.Core.HealthCheck.Checks
         private readonly Logger _logger;
 
         public DownloadClientRootFolderCheck(IProvideDownloadClient downloadClientProvider,
-                                      IRootFolderService rootFolderService,
-                                      Logger logger)
+                                             IRootFolderService rootFolderService,
+                                             Logger logger,
+                                             ILocalizationService localizationService)
+            : base(localizationService)
         {
             _downloadClientProvider = downloadClientProvider;
             _rootFolderService = rootFolderService;
@@ -44,13 +47,14 @@ namespace NzbDrone.Core.HealthCheck.Checks
                 try
                 {
                     var status = client.GetStatus();
-                    var folders = status.OutputRootFolders;
+                    var folders = status.OutputRootFolders.Where(folder => rootFolders.Any(r => r.Path.PathEquals(folder.FullPath)));
+
                     foreach (var folder in folders)
                     {
-                        if (rootFolders.Any(r => r.Path.PathEquals(folder.FullPath)))
-                        {
-                            return new HealthCheck(GetType(), HealthCheckResult.Warning, string.Format("Download client {0} places downloads in the root folder {1}. You should not download to a root folder.", client.Definition.Name, folder.FullPath), "#downloads-in-root-folder");
-                        }
+                        return new HealthCheck(GetType(),
+                            HealthCheckResult.Warning,
+                            string.Format(_localizationService.GetLocalizedString("DownloadClientRootFolderHealthCheckMessage"), client.Definition.Name, folder.FullPath),
+                            "#downloads-in-root-folder");
                     }
                 }
                 catch (DownloadClientException ex)

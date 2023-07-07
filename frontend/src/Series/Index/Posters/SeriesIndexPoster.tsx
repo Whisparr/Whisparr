@@ -15,7 +15,9 @@ import { Statistics } from 'Series/Series';
 import SeriesPoster from 'Series/SeriesPoster';
 import { executeCommand } from 'Store/Actions/commandActions';
 import createUISettingsSelector from 'Store/Selectors/createUISettingsSelector';
+import formatDateTime from 'Utilities/Date/formatDateTime';
 import getRelativeDate from 'Utilities/Date/getRelativeDate';
+import translate from 'Utilities/String/translate';
 import createSeriesIndexItemSelector from '../createSeriesIndexItemSelector';
 import selectPosterOptions from './selectPosterOptions';
 import SeriesIndexPosterInfo from './SeriesIndexPosterInfo';
@@ -47,9 +49,8 @@ function SeriesIndexPoster(props: SeriesIndexPosterProps) {
     showSearchAction,
   } = useSelector(selectPosterOptions);
 
-  const { showRelativeDates, shortDateFormat, timeFormat } = useSelector(
-    createUISettingsSelector()
-  );
+  const { showRelativeDates, shortDateFormat, longDateFormat, timeFormat } =
+    useSelector(createUISettingsSelector());
 
   const {
     title,
@@ -57,7 +58,11 @@ function SeriesIndexPoster(props: SeriesIndexPosterProps) {
     status,
     path,
     titleSlug,
+    originalLanguage,
+    network,
     nextAiring,
+    previousAiring,
+    added,
     statistics = {} as Statistics,
     images,
   } = series;
@@ -130,14 +135,14 @@ function SeriesIndexPoster(props: SeriesIndexPosterProps) {
 
   return (
     <div className={styles.content}>
-      <div className={styles.posterContainer}>
+      <div className={styles.posterContainer} title={title}>
         {isSelectMode ? <SeriesIndexPosterSelect seriesId={seriesId} /> : null}
 
         <Label className={styles.controls}>
           <SpinnerIconButton
             className={styles.action}
             name={icons.REFRESH}
-            title="Refresh site"
+            title={translate('RefreshSite')}
             isSpinning={isRefreshingSeries}
             onPress={onRefreshPress}
           />
@@ -146,7 +151,7 @@ function SeriesIndexPoster(props: SeriesIndexPosterProps) {
             <SpinnerIconButton
               className={styles.action}
               name={icons.SEARCH}
-              title="Search for monitored episodes"
+              title={translate('SearchForMonitoredEpisodes')}
               isSpinning={isSearchingSeries}
               onPress={onSearchPress}
             />
@@ -155,13 +160,13 @@ function SeriesIndexPoster(props: SeriesIndexPosterProps) {
           <IconButton
             className={styles.action}
             name={icons.EDIT}
-            title="Edit Site"
+            title={translate('EditSite')}
             onPress={onEditSeriesPress}
           />
         </Label>
 
         {status === 'ended' ? (
-          <div className={styles.ended} title="Ended" />
+          <div className={styles.ended} title={translate('Ended')} />
         ) : null}
 
         <Link className={styles.link} style={elementStyle} to={link}>
@@ -194,20 +199,33 @@ function SeriesIndexPoster(props: SeriesIndexPosterProps) {
         isStandalone={false}
       />
 
-      {showTitle ? <div className={styles.title}>{title}</div> : null}
+      {showTitle ? (
+        <div className={styles.title} title={title}>
+          {title}
+        </div>
+      ) : null}
 
       {showMonitored ? (
         <div className={styles.title}>
-          {monitored ? 'Monitored' : 'Unmonitored'}
+          {monitored ? translate('Monitored') : translate('Unmonitored')}
         </div>
       ) : null}
 
       {showQualityProfile ? (
-        <div className={styles.title}>{qualityProfile.name}</div>
+        <div className={styles.title} title={translate('QualityProfile')}>
+          {qualityProfile.name}
+        </div>
       ) : null}
 
       {nextAiring ? (
-        <div className={styles.nextAiring}>
+        <div
+          className={styles.nextAiring}
+          title={`${translate('NextAiring')}: ${formatDateTime(
+            nextAiring,
+            longDateFormat,
+            timeFormat
+          )}`}
+        >
           {getRelativeDate(nextAiring, shortDateFormat, showRelativeDates, {
             timeFormat,
             timeForToday: true,
@@ -216,6 +234,10 @@ function SeriesIndexPoster(props: SeriesIndexPosterProps) {
       ) : null}
 
       <SeriesIndexPosterInfo
+        originalLanguage={originalLanguage}
+        network={network}
+        previousAiring={previousAiring}
+        added={added}
         seasonCount={seasonCount}
         sizeOnDisk={sizeOnDisk}
         path={path}
@@ -224,6 +246,7 @@ function SeriesIndexPoster(props: SeriesIndexPosterProps) {
         showRelativeDates={showRelativeDates}
         sortKey={sortKey}
         shortDateFormat={shortDateFormat}
+        longDateFormat={longDateFormat}
         timeFormat={timeFormat}
       />
 

@@ -113,6 +113,173 @@
         }
       }
     },
+    "/api/v3/autotagging": {
+      "post": {
+        "tags": [
+          "AutoTagging"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AutoTaggingResource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AutoTaggingResource"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AutoTaggingResource"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AutoTaggingResource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "AutoTagging"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AutoTaggingResource"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/autotagging/{id}": {
+      "put": {
+        "tags": [
+          "AutoTagging"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AutoTaggingResource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AutoTaggingResource"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AutoTaggingResource"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AutoTaggingResource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AutoTagging"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "AutoTagging"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AutoTaggingResource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/autotagging/schema": {
+      "get": {
+        "tags": [
+          "AutoTagging"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/api/v3/system/backup": {
       "get": {
         "tags": [
@@ -335,6 +502,14 @@
               "type": "boolean",
               "default": false
             }
+          },
+          {
+            "name": "tags",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
           }
         ],
         "responses": {
@@ -409,7 +584,7 @@
             }
           },
           {
-            "name": "tagList",
+            "name": "tags",
             "in": "query",
             "schema": {
               "type": "string",
@@ -1203,6 +1378,16 @@
         "tags": [
           "DownloadClient"
         ],
+        "parameters": [
+          {
+            "name": "forceSave",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1242,6 +1427,14 @@
           "DownloadClient"
         ],
         "parameters": [
+          {
+            "name": "forceSave",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
           {
             "name": "id",
             "in": "path",
@@ -1329,6 +1522,63 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/v3/downloadclient/bulk": {
+      "put": {
+        "tags": [
+          "DownloadClient"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DownloadClientBulkResource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DownloadClientResource"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DownloadClientResource"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DownloadClientResource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "DownloadClient"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DownloadClientBulkResource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
           }
         }
       }
@@ -1662,6 +1912,16 @@
       "put": {
         "tags": [
           "Episode"
+        ],
+        "parameters": [
+          {
+            "name": "includeImages",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
         ],
         "requestBody": {
           "content": {
@@ -2330,6 +2590,16 @@
         "tags": [
           "ImportList"
         ],
+        "parameters": [
+          {
+            "name": "forceSave",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -2369,6 +2639,14 @@
           "ImportList"
         ],
         "parameters": [
+          {
+            "name": "forceSave",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
           {
             "name": "id",
             "in": "path",
@@ -2456,6 +2734,63 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/v3/importlist/bulk": {
+      "put": {
+        "tags": [
+          "ImportList"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportListBulkResource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportListResource"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportListResource"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportListResource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "ImportList"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportListBulkResource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
           }
         }
       }
@@ -2726,6 +3061,16 @@
         "tags": [
           "Indexer"
         ],
+        "parameters": [
+          {
+            "name": "forceSave",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -2765,6 +3110,14 @@
           "Indexer"
         ],
         "parameters": [
+          {
+            "name": "forceSave",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
           {
             "name": "id",
             "in": "path",
@@ -2852,6 +3205,63 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/v3/indexer/bulk": {
+      "put": {
+        "tags": [
+          "Indexer"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IndexerBulkResource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/IndexerResource"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IndexerResource"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IndexerResource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Indexer"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IndexerBulkResource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
           }
         }
       }
@@ -3325,6 +3735,25 @@
         }
       }
     },
+    "/api/v3/localization/language": {
+      "get": {
+        "tags": [
+          "Localization"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocalizationLanguageResource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v3/localization/{id}": {
       "get": {
         "tags": [
@@ -3655,6 +4084,16 @@
         "tags": [
           "Metadata"
         ],
+        "parameters": [
+          {
+            "name": "forceSave",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -3694,6 +4133,14 @@
           "Metadata"
         ],
         "parameters": [
+          {
+            "name": "forceSave",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
           {
             "name": "id",
             "in": "path",
@@ -3781,6 +4228,63 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/v3/metadata/bulk": {
+      "put": {
+        "tags": [
+          "Metadata"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MetadataBulkResource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetadataResource"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetadataResource"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetadataResource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Metadata"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MetadataBulkResource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
           }
         }
       }
@@ -4074,6 +4578,14 @@
             }
           },
           {
+            "name": "ColonReplacementFormat",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
             "name": "MultiEpisodeStyle",
             "in": "query",
             "schema": {
@@ -4089,35 +4601,7 @@
             }
           },
           {
-            "name": "DailyEpisodeFormat",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "AnimeEpisodeFormat",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "SeriesFolderFormat",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "SeasonFolderFormat",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "SpecialsFolderFormat",
             "in": "query",
             "schema": {
               "type": "string"
@@ -4213,6 +4697,16 @@
         "tags": [
           "Notification"
         ],
+        "parameters": [
+          {
+            "name": "forceSave",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -4252,6 +4746,14 @@
           "Notification"
         ],
         "parameters": [
+          {
+            "name": "forceSave",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
           {
             "name": "id",
             "in": "path",
@@ -4339,6 +4841,63 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/v3/notification/bulk": {
+      "put": {
+        "tags": [
+          "Notification"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificationBulkResource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationResource"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationResource"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationResource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Notification"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificationBulkResource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
           }
         }
       }
@@ -5957,6 +6516,14 @@
         ],
         "parameters": [
           {
+            "name": "moveFiles",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
             "name": "id",
             "in": "path",
             "required": true,
@@ -6009,6 +6576,22 @@
             "schema": {
               "type": "integer",
               "format": "int32"
+            }
+          },
+          {
+            "name": "deleteFiles",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "addImportListExclusion",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
             }
           }
         ],
@@ -6743,6 +7326,31 @@
   },
   "components": {
     "schemas": {
+      "Actor": {
+        "type": "object",
+        "properties": {
+          "tpdbId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "character": {
+            "type": "string",
+            "nullable": true
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MediaCover"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "AddSeriesOptions": {
         "type": "object",
         "properties": {
@@ -6760,34 +7368,6 @@
           },
           "searchForCutoffUnmetEpisodes": {
             "type": "boolean"
-          }
-        },
-        "additionalProperties": false
-      },
-      "AlternateTitleResource": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "seasonNumber": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "sceneSeasonNumber": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "sceneOrigin": {
-            "type": "string",
-            "nullable": true
-          },
-          "comment": {
-            "type": "string",
-            "nullable": true
           }
         },
         "additionalProperties": false
@@ -6815,6 +7395,74 @@
           "external"
         ],
         "type": "string"
+      },
+      "AutoTaggingResource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "removeTagsAutomatically": {
+            "type": "boolean"
+          },
+          "tags": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "specifications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AutoTaggingSpecificationSchema"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AutoTaggingSpecificationSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "implementation": {
+            "type": "string",
+            "nullable": true
+          },
+          "implementationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "negate": {
+            "type": "boolean"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Field"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "BackupResource": {
         "type": "object",
@@ -7012,6 +7660,11 @@
             "format": "date-time",
             "nullable": true
           },
+          "lastStartTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
           "trigger": {
             "$ref": "#/components/schemas/CommandTrigger"
           },
@@ -7061,6 +7714,9 @@
           "status": {
             "$ref": "#/components/schemas/CommandStatus"
           },
+          "result": {
+            "$ref": "#/components/schemas/CommandResult"
+          },
           "queued": {
             "type": "string",
             "format": "date-time"
@@ -7107,6 +7763,14 @@
           }
         },
         "additionalProperties": false
+      },
+      "CommandResult": {
+        "enum": [
+          "unknown",
+          "successful",
+          "unsuccessful"
+        ],
+        "type": "string"
       },
       "CommandStatus": {
         "enum": [
@@ -7166,7 +7830,8 @@
             "nullable": true
           },
           "includeCustomFormatWhenRenaming": {
-            "type": "boolean"
+            "type": "boolean",
+            "nullable": true
           },
           "specifications": {
             "type": "array",
@@ -7224,6 +7889,13 @@
         },
         "additionalProperties": false
       },
+      "DatabaseType": {
+        "enum": [
+          "sqLite",
+          "postgreSQL"
+        ],
+        "type": "string"
+      },
       "DelayProfileResource": {
         "type": "object",
         "properties": {
@@ -7250,6 +7922,13 @@
           },
           "bypassIfHighestQuality": {
             "type": "boolean"
+          },
+          "bypassIfAboveCustomFormatScore": {
+            "type": "boolean"
+          },
+          "minimumCustomFormatScore": {
+            "type": "integer",
+            "format": "int32"
           },
           "order": {
             "type": "integer",
@@ -7289,6 +7968,48 @@
           "totalSpace": {
             "type": "integer",
             "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DownloadClientBulkResource": {
+        "type": "object",
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "applyTags": {
+            "$ref": "#/components/schemas/ApplyTags"
+          },
+          "enable": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "priority": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "removeCompletedDownloads": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "removeFailedDownloads": {
+            "type": "boolean",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -7543,6 +8264,10 @@
             "format": "date-time",
             "nullable": true
           },
+          "runtime": {
+            "type": "integer",
+            "format": "int32"
+          },
           "overview": {
             "type": "string",
             "nullable": true
@@ -7595,6 +8320,13 @@
           },
           "series": {
             "$ref": "#/components/schemas/SeriesResource"
+          },
+          "actors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Actor"
+            },
+            "nullable": true
           },
           "images": {
             "type": "array",
@@ -7696,6 +8428,10 @@
             "type": "string",
             "nullable": true
           },
+          "helpTextWarning": {
+            "type": "string",
+            "nullable": true
+          },
           "helpLink": {
             "type": "string",
             "nullable": true
@@ -7731,6 +8467,10 @@
           },
           "privacy": {
             "$ref": "#/components/schemas/PrivacyLevel"
+          },
+          "placeholder": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -7811,6 +8551,10 @@
               "$ref": "#/components/schemas/CustomFormatResource"
             },
             "nullable": true
+          },
+          "customFormatScore": {
+            "type": "integer",
+            "format": "int32"
           },
           "qualityCutoffNotMet": {
             "type": "boolean"
@@ -8059,6 +8803,44 @@
         },
         "additionalProperties": false
       },
+      "ImportListBulkResource": {
+        "type": "object",
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "applyTags": {
+            "$ref": "#/components/schemas/ApplyTags"
+          },
+          "enableAutomaticAdd": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "rootFolderPath": {
+            "type": "string",
+            "nullable": true
+          },
+          "qualityProfileId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ImportListExclusionResource": {
         "type": "object",
         "properties": {
@@ -8144,18 +8926,15 @@
             "type": "integer",
             "format": "int32"
           },
-          "seriesType": {
-            "$ref": "#/components/schemas/SeriesTypes"
-          },
-          "seasonFolder": {
-            "type": "boolean"
-          },
           "listType": {
             "$ref": "#/components/schemas/ImportListType"
           },
           "listOrder": {
             "type": "integer",
             "format": "int32"
+          },
+          "minRefreshInterval": {
+            "$ref": "#/components/schemas/TimeSpan"
           }
         },
         "additionalProperties": false
@@ -8165,10 +8944,53 @@
           "program",
           "plex",
           "trakt",
+          "simkl",
           "other",
           "advanced"
         ],
         "type": "string"
+      },
+      "IndexerBulkResource": {
+        "type": "object",
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "applyTags": {
+            "$ref": "#/components/schemas/ApplyTags"
+          },
+          "enableRss": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "enableAutomaticSearch": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "enableInteractiveSearch": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "priority": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "IndexerConfigResource": {
         "type": "object",
@@ -8354,6 +9176,16 @@
             "type": "string",
             "nullable": true,
             "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LocalizationLanguageResource": {
+        "type": "object",
+        "properties": {
+          "identifier": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -8611,6 +9443,13 @@
             "type": "string",
             "nullable": true
           },
+          "customFormats": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CustomFormatResource"
+            },
+            "nullable": true
+          },
           "rejections": {
             "type": "array",
             "items": {
@@ -8641,11 +9480,13 @@
       "MediaCoverTypes": {
         "enum": [
           "unknown",
+          "logo",
           "poster",
           "banner",
           "fanart",
           "screenshot",
-          "headshot"
+          "headshot",
+          "clearlogo"
         ],
         "type": "string"
       },
@@ -8776,6 +9617,13 @@
           "copyUsingHardlinks": {
             "type": "boolean"
           },
+          "useScriptImport": {
+            "type": "boolean"
+          },
+          "scriptImportPath": {
+            "type": "string",
+            "nullable": true
+          },
           "importExtraFiles": {
             "type": "boolean"
           },
@@ -8785,6 +9633,31 @@
           },
           "enableMediaInfo": {
             "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetadataBulkResource": {
+        "type": "object",
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "applyTags": {
+            "$ref": "#/components/schemas/ApplyTags"
           }
         },
         "additionalProperties": false
@@ -8890,6 +9763,10 @@
           "replaceIllegalCharacters": {
             "type": "boolean"
           },
+          "colonReplacementFormat": {
+            "type": "integer",
+            "format": "int32"
+          },
           "multiEpisodeStyle": {
             "type": "integer",
             "format": "int32"
@@ -8898,23 +9775,7 @@
             "type": "string",
             "nullable": true
           },
-          "dailyEpisodeFormat": {
-            "type": "string",
-            "nullable": true
-          },
-          "animeEpisodeFormat": {
-            "type": "string",
-            "nullable": true
-          },
           "seriesFolderFormat": {
-            "type": "string",
-            "nullable": true
-          },
-          "seasonFolderFormat": {
-            "type": "string",
-            "nullable": true
-          },
-          "specialsFolderFormat": {
             "type": "string",
             "nullable": true
           },
@@ -8937,6 +9798,31 @@
           "numberStyle": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NotificationBulkResource": {
+        "type": "object",
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "applyTags": {
+            "$ref": "#/components/schemas/ApplyTags"
           }
         },
         "additionalProperties": false
@@ -9010,6 +9896,9 @@
           "onRename": {
             "type": "boolean"
           },
+          "onSeriesAdd": {
+            "type": "boolean"
+          },
           "onSeriesDelete": {
             "type": "boolean"
           },
@@ -9022,7 +9911,13 @@
           "onHealthIssue": {
             "type": "boolean"
           },
+          "onHealthRestored": {
+            "type": "boolean"
+          },
           "onApplicationUpdate": {
+            "type": "boolean"
+          },
+          "onManualInteractionRequired": {
             "type": "boolean"
           },
           "supportsOnGrab": {
@@ -9037,6 +9932,9 @@
           "supportsOnRename": {
             "type": "boolean"
           },
+          "supportsOnSeriesAdd": {
+            "type": "boolean"
+          },
           "supportsOnSeriesDelete": {
             "type": "boolean"
           },
@@ -9049,7 +9947,13 @@
           "supportsOnHealthIssue": {
             "type": "boolean"
           },
+          "supportsOnHealthRestored": {
+            "type": "boolean"
+          },
           "supportsOnApplicationUpdate": {
+            "type": "boolean"
+          },
+          "supportsOnManualInteractionRequired": {
             "type": "boolean"
           },
           "includeHealthWarnings": {
@@ -9120,34 +10024,6 @@
           "quality": {
             "$ref": "#/components/schemas/QualityModel"
           },
-          "seasonNumber": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "episodeNumbers": {
-            "type": "array",
-            "items": {
-              "type": "integer",
-              "format": "int32"
-            },
-            "nullable": true
-          },
-          "absoluteEpisodeNumbers": {
-            "type": "array",
-            "items": {
-              "type": "integer",
-              "format": "int32"
-            },
-            "nullable": true
-          },
-          "specialAbsoluteEpisodeNumbers": {
-            "type": "array",
-            "items": {
-              "type": "number",
-              "format": "double"
-            },
-            "nullable": true
-          },
           "airDate": {
             "type": "string",
             "nullable": true
@@ -9158,21 +10034,6 @@
               "$ref": "#/components/schemas/Language"
             },
             "nullable": true
-          },
-          "fullSeason": {
-            "type": "boolean"
-          },
-          "isPartialSeason": {
-            "type": "boolean"
-          },
-          "isMultiSeason": {
-            "type": "boolean"
-          },
-          "isSeasonExtra": {
-            "type": "boolean"
-          },
-          "special": {
-            "type": "boolean"
           },
           "releaseGroup": {
             "type": "string",
@@ -9190,24 +10051,7 @@
             "type": "string",
             "nullable": true
           },
-          "dailyPart": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
           "isDaily": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "isAbsoluteNumbering": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "isPossibleSpecialEpisode": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "isPossibleSceneSeasonSpecial": {
             "type": "boolean",
             "readOnly": true
           }
@@ -9340,6 +10184,11 @@
             "type": "number",
             "format": "double",
             "nullable": true
+          },
+          "preferredSize": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -9435,6 +10284,7 @@
           "webRip",
           "dvd",
           "bluray",
+          "vr",
           "blurayRaw"
         ],
         "type": "string"
@@ -9466,6 +10316,11 @@
             "nullable": true
           },
           "episodeId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "seasonNumber": {
             "type": "integer",
             "format": "int32",
             "nullable": true
@@ -9552,6 +10407,9 @@
           "outputPath": {
             "type": "string",
             "nullable": true
+          },
+          "episodeHasFile": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -9663,6 +10521,33 @@
         ],
         "type": "string"
       },
+      "ReleaseEpisodeResource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "seasonNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "episodeNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "absoluteEpisodeNumber": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ReleaseProfileResource": {
         "type": "object",
         "properties": {
@@ -9757,15 +10642,8 @@
             "type": "string",
             "nullable": true
           },
-          "fullSeason": {
-            "type": "boolean"
-          },
           "sceneSource": {
             "type": "boolean"
-          },
-          "seasonNumber": {
-            "type": "integer",
-            "format": "int32"
           },
           "languages": {
             "type": "array",
@@ -9786,40 +10664,15 @@
             "type": "string",
             "nullable": true
           },
-          "episodeNumbers": {
-            "type": "array",
-            "items": {
-              "type": "integer",
-              "format": "int32"
-            },
-            "nullable": true
-          },
-          "absoluteEpisodeNumbers": {
-            "type": "array",
-            "items": {
-              "type": "integer",
-              "format": "int32"
-            },
-            "nullable": true
-          },
-          "mappedSeasonNumber": {
+          "mappedSeriesId": {
             "type": "integer",
             "format": "int32",
             "nullable": true
           },
-          "mappedEpisodeNumbers": {
+          "mappedEpisodeInfo": {
             "type": "array",
             "items": {
-              "type": "integer",
-              "format": "int32"
-            },
-            "nullable": true
-          },
-          "mappedAbsoluteEpisodeNumbers": {
-            "type": "array",
-            "items": {
-              "type": "integer",
-              "format": "int32"
+              "$ref": "#/components/schemas/ReleaseEpisodeResource"
             },
             "nullable": true
           },
@@ -9833,10 +10686,6 @@
             "type": "boolean"
           },
           "tvdbId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "tvRageId": {
             "type": "integer",
             "format": "int32"
           },
@@ -9884,9 +10733,6 @@
             "type": "integer",
             "format": "int32"
           },
-          "sceneMapping": {
-            "$ref": "#/components/schemas/AlternateTitleResource"
-          },
           "magnetUrl": {
             "type": "string",
             "nullable": true
@@ -9911,15 +10757,6 @@
           "isDaily": {
             "type": "boolean"
           },
-          "isAbsoluteNumbering": {
-            "type": "boolean"
-          },
-          "isPossibleSpecialEpisode": {
-            "type": "boolean"
-          },
-          "special": {
-            "type": "boolean"
-          },
           "seriesId": {
             "type": "integer",
             "format": "int32",
@@ -9928,6 +10765,23 @@
           "episodeId": {
             "type": "integer",
             "format": "int32",
+            "nullable": true
+          },
+          "episodeIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "downloadClientId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "shouldOverride": {
+            "type": "boolean",
             "nullable": true
           }
         },
@@ -10201,13 +11055,6 @@
             "format": "int32",
             "nullable": true
           },
-          "seriesType": {
-            "$ref": "#/components/schemas/SeriesTypes"
-          },
-          "seasonFolder": {
-            "type": "boolean",
-            "nullable": true
-          },
           "rootFolderPath": {
             "type": "string",
             "nullable": true
@@ -10246,13 +11093,6 @@
             "type": "string",
             "nullable": true
           },
-          "alternateTitles": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AlternateTitleResource"
-            },
-            "nullable": true
-          },
           "sortTitle": {
             "type": "string",
             "nullable": true
@@ -10283,10 +11123,6 @@
             "nullable": true
           },
           "network": {
-            "type": "string",
-            "nullable": true
-          },
-          "airTime": {
             "type": "string",
             "nullable": true
           },
@@ -10323,9 +11159,6 @@
             "type": "integer",
             "format": "int32"
           },
-          "seasonFolder": {
-            "type": "boolean"
-          },
           "monitored": {
             "type": "boolean"
           },
@@ -10340,27 +11173,12 @@
             "type": "integer",
             "format": "int32"
           },
-          "tvRageId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "tvMazeId": {
-            "type": "integer",
-            "format": "int32"
-          },
           "firstAired": {
             "type": "string",
             "format": "date-time",
             "nullable": true
           },
-          "seriesType": {
-            "$ref": "#/components/schemas/SeriesTypes"
-          },
           "cleanTitle": {
-            "type": "string",
-            "nullable": true
-          },
-          "imdbId": {
             "type": "string",
             "nullable": true
           },
@@ -10412,12 +11230,6 @@
           "episodesChanged": {
             "type": "boolean",
             "nullable": true
-          },
-          "languageProfileId": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true,
-            "deprecated": true
           }
         },
         "additionalProperties": false
@@ -10493,14 +11305,6 @@
           }
         },
         "additionalProperties": false
-      },
-      "SeriesTypes": {
-        "enum": [
-          "standard",
-          "daily",
-          "anime"
-        ],
-        "type": "string"
       },
       "SortDirection": {
         "enum": [
@@ -10618,6 +11422,12 @@
           "packageUpdateMechanismMessage": {
             "type": "string",
             "nullable": true
+          },
+          "databaseVersion": {
+            "$ref": "#/components/schemas/Version"
+          },
+          "databaseType": {
+            "$ref": "#/components/schemas/DatabaseType"
           }
         },
         "additionalProperties": false
@@ -10673,6 +11483,14 @@
             },
             "nullable": true
           },
+          "autoTagIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
           "seriesIds": {
             "type": "array",
             "items": {
@@ -10721,9 +11539,16 @@
             "type": "string",
             "format": "date-time"
           },
+          "lastStartTime": {
+            "type": "string",
+            "format": "date-time"
+          },
           "nextExecution": {
             "type": "string",
             "format": "date-time"
+          },
+          "lastDuration": {
+            "$ref": "#/components/schemas/TimeSpan"
           }
         },
         "additionalProperties": false
@@ -10877,6 +11702,10 @@
             "nullable": true
           },
           "path": {
+            "type": "string",
+            "nullable": true
+          },
+          "relativePath": {
             "type": "string",
             "nullable": true
           }

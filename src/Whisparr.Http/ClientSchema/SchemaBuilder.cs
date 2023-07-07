@@ -81,13 +81,12 @@ namespace Whisparr.Http.ClientSchema
         {
             lock (_mappings)
             {
-                FieldMapping[] result;
-                if (!_mappings.TryGetValue(type, out result))
+                if (!_mappings.TryGetValue(type, out var result))
                 {
                     result = GetFieldMapping(type, "", v => v);
 
                     // Renumber al the field Orders since nested settings will have dupe Orders.
-                    for (int i = 0; i < result.Length; i++)
+                    for (var i = 0; i < result.Length; i++)
                     {
                         result[i].Field.Order = i;
                     }
@@ -114,6 +113,7 @@ namespace Whisparr.Http.ClientSchema
                         Label = fieldAttribute.Label,
                         Unit = fieldAttribute.Unit,
                         HelpText = fieldAttribute.HelpText,
+                        HelpTextWarning = fieldAttribute.HelpTextWarning,
                         HelpLink = fieldAttribute.HelpLink,
                         Order = fieldAttribute.Order,
                         Advanced = fieldAttribute.Advanced,

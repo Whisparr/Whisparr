@@ -188,12 +188,33 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             {
                 Name = arg.Name,
                 Character = arg.Character,
+                Gender = MapGender(arg.Gender),
                 TpdbId = arg.ForeignId
             };
 
             newActor.Images = arg.Images.Select(MapImage).ToList();
 
             return newActor;
+        }
+
+        private static Gender MapGender(string gender)
+        {
+            if (gender == null)
+            {
+                return Gender.Other;
+            }
+
+            var lowerGender = gender.ToLowerInvariant();
+
+            switch (lowerGender)
+            {
+                case "female":
+                    return Gender.Female;
+                case "male":
+                    return Gender.Male;
+                default:
+                    return Gender.Other;
+            }
         }
 
         private static Episode MapEpisode(EpisodeResource oracleEpisode)

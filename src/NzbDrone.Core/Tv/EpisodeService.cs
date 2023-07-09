@@ -266,6 +266,17 @@ namespace NzbDrone.Core.Tv
                         continue;
                     }
 
+                    var cleanFemalePerformers = episode.Actors.Where(a => a.Gender == Gender.Female)
+                                                              .Select(a => Parser.Parser.NormalizeEpisodeTitle(a.Name))
+                                                              .Where(x => x.IsNotNullOrWhiteSpace()).ToList();
+
+                    // If all female performers are in title, consider a match
+                    if (cleanFemalePerformers.Any() && cleanFemalePerformers.All(x => parsedEpisodeTitle.Contains(x)))
+                    {
+                        matches.Add(episode);
+                        continue;
+                    }
+
                     if (cleanTitle.IsNullOrWhiteSpace())
                     {
                         continue;

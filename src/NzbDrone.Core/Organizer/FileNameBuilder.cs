@@ -421,6 +421,10 @@ namespace NzbDrone.Core.Organizer
             {
                 tokenHandlers["{Release Date}"] = m => "Unknown";
             }
+
+            tokenHandlers["{Episode Performers}"] = m => episodes.SelectMany(e => e.Actors.Select(a => a.Name)).Join(" ");
+            tokenHandlers["{Episode PerformersFemale}"] = m => episodes.SelectMany(e => e.Actors.Where(a => a.Gender == Gender.Female).Select(a => a.Name)).Join(" ");
+            tokenHandlers["{Episode PerformersMale}"] = m => episodes.SelectMany(e => e.Actors.Where(a => a.Gender == Gender.Male).Select(a => a.Name)).Join(" ");
         }
 
         private void AddEpisodeTitlePlaceholderTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers)

@@ -42,6 +42,19 @@ namespace NzbDrone.Core.Organizer
                 Title = "Episode Title (1)",
                 AirDate = "2022-05-01",
                 AbsoluteEpisodeNumber = 1,
+                Actors = new List<Actor>
+                {
+                    new Actor
+                    {
+                        Name = "Lola Love",
+                        Gender = Gender.Female
+                    },
+                    new Actor
+                    {
+                        Name = "Brad Harden",
+                        Gender = Gender.Male
+                    }
+                }
             };
 
             _episode2 = new Episode

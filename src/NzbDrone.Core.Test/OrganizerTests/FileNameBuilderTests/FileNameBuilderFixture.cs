@@ -43,6 +43,20 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
                             .With(e => e.Title = "City Sushi")
                             .With(e => e.SeasonNumber = 15)
                             .With(e => e.AbsoluteEpisodeNumber = 100)
+                            .With(e => e.AirDate = "2006-05-19")
+                            .With(e => e.Actors = new List<Actor>
+                            {
+                                new Actor
+                                {
+                                    Name = "Some Female",
+                                    Gender = Gender.Female
+                                },
+                                new Actor
+                                {
+                                    Name = "Some Male",
+                                    Gender = Gender.Male
+                                }
+                            })
                             .Build();
 
             _episodeFile = new EpisodeFile { Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "WhisparrTest" };
@@ -155,6 +169,58 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
             Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
                    .Should().Be("City-Sushi");
+        }
+
+        [Test]
+        public void should_replace_episode_performers()
+        {
+            _namingConfig.StandardEpisodeFormat = "{Episode Performers}";
+
+            Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
+                   .Should().Be("Some Female Some Male");
+        }
+
+        [Test]
+        public void should_replace_episode_performers_female()
+        {
+            _namingConfig.StandardEpisodeFormat = "{Episode PerformersFemale}";
+
+            Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
+                   .Should().Be("Some Female");
+        }
+
+        [Test]
+        public void should_replace_episode_performers_male()
+        {
+            _namingConfig.StandardEpisodeFormat = "{Episode PerformersMale}";
+
+            Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
+                   .Should().Be("Some Male");
+        }
+
+        [Test]
+        public void should_replace_episode_performers_female_with_multiple()
+        {
+            _namingConfig.StandardEpisodeFormat = "{Episode PerformersFemale}";
+
+            _episode1.Actors.Add(new Actor
+            {
+                Name = "Other Female",
+                Gender = Gender.Female
+            });
+
+            Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
+                   .Should().Be("Some Female Other Female");
+        }
+
+        [Test]
+        public void should_skip_no_performers()
+        {
+            _namingConfig.StandardEpisodeFormat = "{Episode Title} {Episode Performers} {Release Date}";
+            _episode1.Actors = new List<Actor>();
+
+            Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
+                   .Should().Be("City Sushi 2006 05 19");
         }
 
         [Test]

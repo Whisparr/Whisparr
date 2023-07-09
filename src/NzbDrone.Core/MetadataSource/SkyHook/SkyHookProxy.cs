@@ -174,7 +174,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
 
             var seasons = show.Episodes.Select(e => e.Year).Distinct().OrderBy(x => x);
 
-            series.Year = show.Years.FirstOrDefault();
+            series.Year = seasons.FirstOrDefault();
             series.Seasons = seasons.Select(MapSeason).ToList();
             series.Images = show.Images.Select(MapImage).ToList();
             series.Monitored = true;

@@ -107,7 +107,7 @@ function MissingRow(props) {
             );
           }
 
-          if (name === 'episodes.releaseDate') {
+          if (name === 'episodes.airDateUtc') {
             return (
               <RelativeDateCellConnector
                 key={name}

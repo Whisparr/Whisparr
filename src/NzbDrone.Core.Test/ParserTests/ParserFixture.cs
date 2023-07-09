@@ -90,6 +90,7 @@ namespace NzbDrone.Core.Test.ParserTests
 
         [TestCase("Series.23.01.23.Chained.Title.mkv")]
         [TestCase("Show - 23.01.23 - Title.avi")]
+        [TestCase("Show - 23.01.23 - Title.f4v")]
         public void should_parse_quality_from_extension(string title)
         {
             Parser.Parser.ParseTitle(title).Quality.Quality.Should().NotBe(Quality.Unknown);

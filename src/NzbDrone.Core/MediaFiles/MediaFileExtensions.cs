@@ -54,6 +54,7 @@ namespace NzbDrone.Core.MediaFiles
                 { ".fli", Quality.WEBDL480p },
                 { ".flv", Quality.WEBDL480p },
                 { ".wpl", Quality.WEBDL480p },
+                { ".f4v", Quality.WEBDL480p },
 
                 // DVD
                 { ".img", Quality.DVD },

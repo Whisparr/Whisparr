@@ -25,7 +25,8 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeServiceTests
                                           {
                                               new Actor
                                               {
-                                                  Name = performer
+                                                  Name = performer,
+                                                  Gender = Gender.Other
                                               }
                                           })
                                           .With(e => e.AirDate = AIR_DATE)

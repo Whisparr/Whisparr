@@ -15,7 +15,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests.Search
         private Series _series1;
         private Series _series2;
         private RemoteEpisode _remoteEpisode = new RemoteEpisode();
-        private SearchCriteriaBase _searchCriteria = new SingleEpisodeSearchCriteria();
+        private SceneSearchCriteriaBase _searchCriteria = new SingleEpisodeSearchCriteria();
 
         [SetUp]
         public void Setup()

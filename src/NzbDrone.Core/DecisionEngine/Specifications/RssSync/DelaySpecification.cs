@@ -26,7 +26,7 @@ namespace NzbDrone.Core.DecisionEngine.Specifications.RssSync
         public SpecificationPriority Priority => SpecificationPriority.Database;
         public RejectionType Type => RejectionType.Temporary;
 
-        public virtual Decision IsSatisfiedBy(RemoteEpisode subject, SearchCriteriaBase searchCriteria)
+        public virtual Decision IsSatisfiedBy(RemoteEpisode subject, SceneSearchCriteriaBase searchCriteria)
         {
             if (searchCriteria != null && searchCriteria.UserInvokedSearch)
             {

@@ -17,7 +17,7 @@ namespace NzbDrone.Core.DecisionEngine
     public interface IMakeDownloadDecision
     {
         List<DownloadDecision> GetRssDecision(List<ReleaseInfo> reports, bool pushedRelease = false);
-        List<DownloadDecision> GetSearchDecision(List<ReleaseInfo> reports, SearchCriteriaBase searchCriteriaBase);
+        List<DownloadDecision> GetSearchDecision(List<ReleaseInfo> reports, SceneSearchCriteriaBase searchCriteriaBase);
     }
 
     public class DownloadDecisionMaker : IMakeDownloadDecision
@@ -46,12 +46,12 @@ namespace NzbDrone.Core.DecisionEngine
             return GetDecisions(reports, pushedRelease).ToList();
         }
 
-        public List<DownloadDecision> GetSearchDecision(List<ReleaseInfo> reports, SearchCriteriaBase searchCriteriaBase)
+        public List<DownloadDecision> GetSearchDecision(List<ReleaseInfo> reports, SceneSearchCriteriaBase searchCriteriaBase)
         {
             return GetDecisions(reports, false, searchCriteriaBase).ToList();
         }
 
-        private IEnumerable<DownloadDecision> GetDecisions(List<ReleaseInfo> reports, bool pushedRelease, SearchCriteriaBase searchCriteria = null)
+        private IEnumerable<DownloadDecision> GetDecisions(List<ReleaseInfo> reports, bool pushedRelease, SceneSearchCriteriaBase searchCriteria = null)
         {
             if (reports.Any())
             {
@@ -171,7 +171,7 @@ namespace NzbDrone.Core.DecisionEngine
             }
         }
 
-        private DownloadDecision GetDecisionForReport(RemoteEpisode remoteEpisode, SearchCriteriaBase searchCriteria = null)
+        private DownloadDecision GetDecisionForReport(RemoteEpisode remoteEpisode, SceneSearchCriteriaBase searchCriteria = null)
         {
             var reasons = Array.Empty<Rejection>();
 
@@ -190,7 +190,7 @@ namespace NzbDrone.Core.DecisionEngine
             return new DownloadDecision(remoteEpisode, reasons.ToArray());
         }
 
-        private Rejection EvaluateSpec(IDecisionEngineSpecification spec, RemoteEpisode remoteEpisode, SearchCriteriaBase searchCriteriaBase = null)
+        private Rejection EvaluateSpec(IDecisionEngineSpecification spec, RemoteEpisode remoteEpisode, SceneSearchCriteriaBase searchCriteriaBase = null)
         {
             try
             {

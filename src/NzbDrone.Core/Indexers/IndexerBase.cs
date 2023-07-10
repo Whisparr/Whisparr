@@ -70,6 +70,7 @@ namespace NzbDrone.Core.Indexers
         public abstract IList<ReleaseInfo> FetchRecent();
         public abstract IList<ReleaseInfo> Fetch(SeasonSearchCriteria searchCriteria);
         public abstract IList<ReleaseInfo> Fetch(SingleEpisodeSearchCriteria searchCriteria);
+        public abstract IList<ReleaseInfo> Fetch(MovieSearchCriteria searchCriteria);
         public abstract HttpRequest GetDownloadRequest(string link);
 
         protected virtual IList<ReleaseInfo> CleanupReleases(IEnumerable<ReleaseInfo> releases)

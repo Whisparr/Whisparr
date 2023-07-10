@@ -33,7 +33,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
                   .Returns(new List<IIndexer> { _mockIndexer.Object });
 
             Mocker.GetMock<IMakeDownloadDecision>()
-                .Setup(s => s.GetSearchDecision(It.IsAny<List<Parser.Model.ReleaseInfo>>(), It.IsAny<SearchCriteriaBase>()))
+                .Setup(s => s.GetSearchDecision(It.IsAny<List<Parser.Model.ReleaseInfo>>(), It.IsAny<SceneSearchCriteriaBase>()))
                 .Returns(new List<DownloadDecision>());
 
             _xemSeries = Builder<Series>.CreateNew()
@@ -92,9 +92,9 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
             WithEpisode(7, 2, null, null);
         }
 
-        private List<SearchCriteriaBase> WatchForSearchCriteria()
+        private List<SceneSearchCriteriaBase> WatchForSearchCriteria()
         {
-            var result = new List<SearchCriteriaBase>();
+            var result = new List<SceneSearchCriteriaBase>();
 
             _mockIndexer.Setup(v => v.Fetch(It.IsAny<SingleEpisodeSearchCriteria>()))
                 .Callback<SingleEpisodeSearchCriteria>(s => result.Add(s))

@@ -9,6 +9,7 @@ using NzbDrone.Common.TPL;
 using NzbDrone.Core.DecisionEngine;
 using NzbDrone.Core.Indexers;
 using NzbDrone.Core.IndexerSearch.Definitions;
+using NzbDrone.Core.Movies;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.Tv;
 
@@ -20,24 +21,29 @@ namespace NzbDrone.Core.IndexerSearch
         List<DownloadDecision> EpisodeSearch(Episode episode, bool userInvokedSearch, bool interactiveSearch);
         List<DownloadDecision> SeasonSearch(int seriesId, int seasonNumber, bool missingOnly, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch);
         List<DownloadDecision> SeasonSearch(int seriesId, int seasonNumber, List<Episode> episodes, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch);
+        List<DownloadDecision> MovieSearch(int movieId, bool userInvokedSearch, bool interactiveSearch);
+        List<DownloadDecision> MovieSearch(Movie movie,  bool userInvokedSearch, bool interactiveSearch);
     }
 
     public class ReleaseSearchService : ISearchForReleases
     {
         private readonly IIndexerFactory _indexerFactory;
         private readonly ISeriesService _seriesService;
+        private readonly IMovieService _movieService;
         private readonly IEpisodeService _episodeService;
         private readonly IMakeDownloadDecision _makeDownloadDecision;
         private readonly Logger _logger;
 
         public ReleaseSearchService(IIndexerFactory indexerFactory,
                                 ISeriesService seriesService,
+                                IMovieService movieService,
                                 IEpisodeService episodeService,
                                 IMakeDownloadDecision makeDownloadDecision,
                                 Logger logger)
         {
             _indexerFactory = indexerFactory;
             _seriesService = seriesService;
+            _movieService = movieService;
             _episodeService = episodeService;
             _makeDownloadDecision = makeDownloadDecision;
             _logger = logger;
@@ -94,6 +100,27 @@ namespace NzbDrone.Core.IndexerSearch
             return DeDupeDecisions(downloadDecisions);
         }
 
+        public List<DownloadDecision> MovieSearch(int movieId, bool userInvokedSearch, bool interactiveSearch)
+        {
+            var movie = _movieService.GetMovie(movieId);
+
+            return MovieSearch(movie, userInvokedSearch, interactiveSearch);
+        }
+
+        public List<DownloadDecision> MovieSearch(Movie movie, bool userInvokedSearch, bool interactiveSearch)
+        {
+            var downloadDecisions = new List<DownloadDecision>();
+
+            var searchSpec = Get<MovieSearchCriteria>(movie, userInvokedSearch, interactiveSearch);
+
+            searchSpec.Movie = movie;
+
+            var decisions = Dispatch(indexer => indexer.Fetch(searchSpec), searchSpec);
+            downloadDecisions.AddRange(decisions);
+
+            return DeDupeDecisions(downloadDecisions);
+        }
+
         private List<DownloadDecision> SearchSingle(Series series, Episode episode, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
         {
             var downloadDecisions = new List<DownloadDecision>();
@@ -110,7 +137,7 @@ namespace NzbDrone.Core.IndexerSearch
         }
 
         private TSpec Get<TSpec>(Series series, List<Episode> episodes, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
-            where TSpec : SearchCriteriaBase, new()
+            where TSpec : SceneSearchCriteriaBase, new()
         {
             var spec = new TSpec();
             spec.SceneTitles = new List<string> { series.Title, series.TitleSlug };
@@ -129,7 +156,24 @@ namespace NzbDrone.Core.IndexerSearch
             return spec;
         }
 
-        private List<DownloadDecision> Dispatch(Func<IIndexer, IEnumerable<ReleaseInfo>> searchAction, SearchCriteriaBase criteriaBase)
+        private TSpec Get<TSpec>(Movie movie, bool userInvokedSearch, bool interactiveSearch)
+            where TSpec : SearchCriteriaBase, new()
+        {
+            var spec = new TSpec();
+            spec.SceneTitles = new List<string> { movie.Title };
+
+            spec.UserInvokedSearch = userInvokedSearch;
+            spec.InteractiveSearch = interactiveSearch;
+
+            if (!spec.SceneTitles.Contains(movie.Title))
+            {
+                spec.SceneTitles.Add(movie.Title);
+            }
+
+            return spec;
+        }
+
+        private List<DownloadDecision> Dispatch(Func<IIndexer, IEnumerable<ReleaseInfo>> searchAction, SceneSearchCriteriaBase criteriaBase)
         {
             var indexers = criteriaBase.InteractiveSearch ?
                 _indexerFactory.InteractiveSearchEnabled() :

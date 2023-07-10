@@ -20,7 +20,7 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
         public SpecificationPriority Priority => SpecificationPriority.Default;
         public RejectionType Type => RejectionType.Permanent;
 
-        public Decision IsSatisfiedBy(RemoteEpisode remoteEpisode, SearchCriteriaBase searchCriteria)
+        public Decision IsSatisfiedBy(RemoteEpisode remoteEpisode, SceneSearchCriteriaBase searchCriteria)
         {
             var torrentInfo = remoteEpisode.Release as TorrentInfo;
 

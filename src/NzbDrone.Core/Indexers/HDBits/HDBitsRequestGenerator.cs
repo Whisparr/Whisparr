@@ -64,7 +64,7 @@ namespace NzbDrone.Core.Indexers.HDBits
             return pageableRequests;
         }
 
-        private bool TryAddSearchParameters(TorrentQuery query, SearchCriteriaBase searchCriteria)
+        private bool TryAddSearchParameters(TorrentQuery query, SceneSearchCriteriaBase searchCriteria)
         {
             if (searchCriteria.Series.Title.IsNotNullOrWhiteSpace())
             {

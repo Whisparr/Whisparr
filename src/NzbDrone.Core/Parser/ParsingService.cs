@@ -13,11 +13,11 @@ namespace NzbDrone.Core.Parser
     public interface IParsingService
     {
         Series GetSeries(string title);
-        RemoteEpisode Map(ParsedEpisodeInfo parsedEpisodeInfo, int tvdbId, SearchCriteriaBase searchCriteria = null);
+        RemoteEpisode Map(ParsedEpisodeInfo parsedEpisodeInfo, int tvdbId, SceneSearchCriteriaBase searchCriteria = null);
         RemoteEpisode Map(ParsedEpisodeInfo parsedEpisodeInfo, Series series);
         RemoteEpisode Map(ParsedEpisodeInfo parsedEpisodeInfo, int seriesId, IEnumerable<int> episodeIds);
-        List<Episode> GetEpisodes(ParsedEpisodeInfo parsedEpisodeInfo, Series series, bool sceneSource, SearchCriteriaBase searchCriteria = null);
-        ParsedEpisodeInfo ParseSpecialEpisodeTitle(ParsedEpisodeInfo parsedEpisodeInfo, string releaseTitle, int tvdbId, SearchCriteriaBase searchCriteria = null);
+        List<Episode> GetEpisodes(ParsedEpisodeInfo parsedEpisodeInfo, Series series, bool sceneSource, SceneSearchCriteriaBase searchCriteria = null);
+        ParsedEpisodeInfo ParseSpecialEpisodeTitle(ParsedEpisodeInfo parsedEpisodeInfo, string releaseTitle, int tvdbId, SceneSearchCriteriaBase searchCriteria = null);
         ParsedEpisodeInfo ParseSpecialEpisodeTitle(ParsedEpisodeInfo parsedEpisodeInfo, string releaseTitle, Series series);
     }
 
@@ -100,7 +100,7 @@ namespace NzbDrone.Core.Parser
             return foundSeries;
         }
 
-        public RemoteEpisode Map(ParsedEpisodeInfo parsedEpisodeInfo, int tvdbId, SearchCriteriaBase searchCriteria = null)
+        public RemoteEpisode Map(ParsedEpisodeInfo parsedEpisodeInfo, int tvdbId, SceneSearchCriteriaBase searchCriteria = null)
         {
             return Map(parsedEpisodeInfo, tvdbId, null, searchCriteria);
         }
@@ -120,7 +120,7 @@ namespace NzbDrone.Core.Parser
                    };
         }
 
-        private RemoteEpisode Map(ParsedEpisodeInfo parsedEpisodeInfo, int tvdbId, Series series, SearchCriteriaBase searchCriteria)
+        private RemoteEpisode Map(ParsedEpisodeInfo parsedEpisodeInfo, int tvdbId, Series series, SceneSearchCriteriaBase searchCriteria)
         {
             var remoteEpisode = new RemoteEpisode
             {
@@ -161,7 +161,7 @@ namespace NzbDrone.Core.Parser
             return remoteEpisode;
         }
 
-        public List<Episode> GetEpisodes(ParsedEpisodeInfo parsedEpisodeInfo, Series series, bool sceneSource, SearchCriteriaBase searchCriteria = null)
+        public List<Episode> GetEpisodes(ParsedEpisodeInfo parsedEpisodeInfo, Series series, bool sceneSource, SceneSearchCriteriaBase searchCriteria = null)
         {
             if (sceneSource)
             {
@@ -173,7 +173,7 @@ namespace NzbDrone.Core.Parser
             return GetEpisodes(parsedEpisodeInfo, series, searchCriteria);
         }
 
-        private List<Episode> GetEpisodes(ParsedEpisodeInfo parsedEpisodeInfo, Series series, SearchCriteriaBase searchCriteria)
+        private List<Episode> GetEpisodes(ParsedEpisodeInfo parsedEpisodeInfo, Series series, SceneSearchCriteriaBase searchCriteria)
         {
             var episodeInfo = GetDailyEpisode(series, parsedEpisodeInfo.AirDate, parsedEpisodeInfo.ReleaseTokens, searchCriteria);
 
@@ -185,7 +185,7 @@ namespace NzbDrone.Core.Parser
             return new List<Episode>();
         }
 
-        public ParsedEpisodeInfo ParseSpecialEpisodeTitle(ParsedEpisodeInfo parsedEpisodeInfo, string releaseTitle, int tvdbId, SearchCriteriaBase searchCriteria = null)
+        public ParsedEpisodeInfo ParseSpecialEpisodeTitle(ParsedEpisodeInfo parsedEpisodeInfo, string releaseTitle, int tvdbId, SceneSearchCriteriaBase searchCriteria = null)
         {
             if (searchCriteria != null)
             {
@@ -244,7 +244,7 @@ namespace NzbDrone.Core.Parser
             return null;
         }
 
-        private FindSeriesResult FindSeries(ParsedEpisodeInfo parsedEpisodeInfo, int tvdbId, SearchCriteriaBase searchCriteria)
+        private FindSeriesResult FindSeries(ParsedEpisodeInfo parsedEpisodeInfo, int tvdbId, SceneSearchCriteriaBase searchCriteria)
         {
             Series series = null;
 
@@ -314,7 +314,7 @@ namespace NzbDrone.Core.Parser
             return new FindSeriesResult(series, matchType);
         }
 
-        private Episode GetDailyEpisode(Series series, string airDate, string part, SearchCriteriaBase searchCriteria)
+        private Episode GetDailyEpisode(Series series, string airDate, string part, SceneSearchCriteriaBase searchCriteria)
         {
             Episode episodeInfo = null;
 

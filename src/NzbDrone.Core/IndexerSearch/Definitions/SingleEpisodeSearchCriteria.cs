@@ -3,7 +3,7 @@ using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.IndexerSearch.Definitions
 {
-    public class SingleEpisodeSearchCriteria : SearchCriteriaBase
+    public class SingleEpisodeSearchCriteria : SceneSearchCriteriaBase
     {
         public string EpisodeTitle { get; set; }
         public DateOnly? ReleaseDate { get; set; }

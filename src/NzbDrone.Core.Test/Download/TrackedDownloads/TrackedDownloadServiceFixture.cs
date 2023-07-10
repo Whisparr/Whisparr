@@ -159,7 +159,7 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
                                 };
 
             Mocker.GetMock<IParsingService>()
-                  .Setup(s => s.Map(It.IsAny<ParsedEpisodeInfo>(), It.IsAny<int>(), (SearchCriteriaBase)null))
+                  .Setup(s => s.Map(It.IsAny<ParsedEpisodeInfo>(), It.IsAny<int>(), (SceneSearchCriteriaBase)null))
                   .Returns(remoteEpisode);
 
             Mocker.GetMock<IHistoryService>()
@@ -189,7 +189,7 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
             Subject.GetTrackedDownloads().Should().HaveCount(1);
 
             Mocker.GetMock<IParsingService>()
-                  .Setup(s => s.Map(It.IsAny<ParsedEpisodeInfo>(), It.IsAny<int>(), (SearchCriteriaBase)null))
+                  .Setup(s => s.Map(It.IsAny<ParsedEpisodeInfo>(), It.IsAny<int>(), (SceneSearchCriteriaBase)null))
                   .Returns(default(RemoteEpisode));
 
             Subject.Handle(new EpisodeInfoRefreshedEvent(remoteEpisode.Series, new List<Episode>(), new List<Episode>(), remoteEpisode.Episodes));
@@ -215,7 +215,7 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
             };
 
             Mocker.GetMock<IParsingService>()
-                  .Setup(s => s.Map(It.IsAny<ParsedEpisodeInfo>(), It.IsAny<int>(), (SearchCriteriaBase)null))
+                  .Setup(s => s.Map(It.IsAny<ParsedEpisodeInfo>(), It.IsAny<int>(), (SceneSearchCriteriaBase)null))
                   .Returns(default(RemoteEpisode));
 
             Mocker.GetMock<IHistoryService>()
@@ -245,7 +245,7 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
             Subject.GetTrackedDownloads().Should().HaveCount(1);
 
             Mocker.GetMock<IParsingService>()
-                  .Setup(s => s.Map(It.IsAny<ParsedEpisodeInfo>(), It.IsAny<int>(), (SearchCriteriaBase)null))
+                  .Setup(s => s.Map(It.IsAny<ParsedEpisodeInfo>(), It.IsAny<int>(), (SceneSearchCriteriaBase)null))
                   .Returns(default(RemoteEpisode));
 
             Subject.Handle(new EpisodeInfoRefreshedEvent(remoteEpisode.Series, new List<Episode>(), new List<Episode>(), remoteEpisode.Episodes));
@@ -271,7 +271,7 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
             };
 
             Mocker.GetMock<IParsingService>()
-                  .Setup(s => s.Map(It.IsAny<ParsedEpisodeInfo>(), It.IsAny<int>(), (SearchCriteriaBase)null))
+                  .Setup(s => s.Map(It.IsAny<ParsedEpisodeInfo>(), It.IsAny<int>(), (SceneSearchCriteriaBase)null))
                   .Returns(default(RemoteEpisode));
 
             Mocker.GetMock<IHistoryService>()
@@ -301,7 +301,7 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
             Subject.GetTrackedDownloads().Should().HaveCount(1);
 
             Mocker.GetMock<IParsingService>()
-                  .Setup(s => s.Map(It.IsAny<ParsedEpisodeInfo>(), It.IsAny<int>(), (SearchCriteriaBase)null))
+                  .Setup(s => s.Map(It.IsAny<ParsedEpisodeInfo>(), It.IsAny<int>(), (SceneSearchCriteriaBase)null))
                   .Returns(default(RemoteEpisode));
 
             Subject.Handle(new SeriesDeletedEvent(new List<Series> { remoteEpisode.Series }, true, true));

@@ -29,6 +29,8 @@ namespace NzbDrone.Core.Test.ParserTests
 
         // [TestCase("1234-2022-23-01-23-720p-HDTV-X264-DIMENSION", "1234 2022", "2023-01-23")]
         [TestCase("1234_2022_23_01_23_720p_HDTV_X264-DIMENSION", "1234 2022", "2023-01-23")]
+
+        [TestCase("Series Title - 2013-05-15 - 36 Ciara [WEBDL-1080p]", "Series Title", "2013-05-15")]
         public void should_parse_single_episode(string postTitle, string title, string airDate)
         {
             var result = Parser.Parser.ParseTitle(postTitle);

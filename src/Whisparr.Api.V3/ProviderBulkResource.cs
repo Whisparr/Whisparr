@@ -9,6 +9,11 @@ namespace Whisparr.Api.V3
         public List<int> Ids { get; set; }
         public List<int> Tags { get; set; }
         public ApplyTags ApplyTags { get; set; }
+
+        public ProviderBulkResource()
+        {
+            Ids = new List<int>();
+        }
     }
 
     public class ProviderBulkResourceMapper<TProviderBulkResource, TProviderDefinition>

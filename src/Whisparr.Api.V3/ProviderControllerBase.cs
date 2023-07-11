@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Common.Serializer;
 using NzbDrone.Core.ThingiProvider;
 using NzbDrone.Core.Validation;
-using Whisparr.Api.V3.Series;
 using Whisparr.Http.REST;
 using Whisparr.Http.REST.Attributes;
 

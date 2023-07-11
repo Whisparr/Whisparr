@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using NzbDrone.Core.ThingiProvider;
-using Whisparr.Api.V3.Series;
 
 namespace Whisparr.Api.V3
 {

@@ -52,7 +52,6 @@ class SelectEpisodeRow extends Component {
 
 SelectEpisodeRow.propTypes = {
   id: PropTypes.number.isRequired,
-  absoluteEpisodeNumber: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   releaseDate: PropTypes.string.isRequired,
   isSelected: PropTypes.bool,

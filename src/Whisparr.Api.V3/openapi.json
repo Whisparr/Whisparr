@@ -6983,6 +6983,9 @@
             "type": "string",
             "nullable": true
           },
+          "gender": {
+            "$ref": "#/components/schemas/Gender"
+          },
           "images": {
             "type": "array",
             "items": {
@@ -7001,6 +7004,14 @@
           },
           "ignoreEpisodesWithoutFiles": {
             "type": "boolean"
+          },
+          "episodesToMonitor": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
           },
           "monitor": {
             "$ref": "#/components/schemas/MonitorTypes"
@@ -7538,6 +7549,49 @@
         ],
         "type": "string"
       },
+      "DateOnly": {
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "month": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "day": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "dayOfWeek": {
+            "$ref": "#/components/schemas/DayOfWeek"
+          },
+          "dayOfYear": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "dayNumber": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DayOfWeek": {
+        "enum": [
+          "sunday",
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday",
+          "saturday"
+        ],
+        "type": "string"
+      },
       "DelayProfileResource": {
         "type": "object",
         "properties": {
@@ -7889,22 +7943,12 @@
             "type": "integer",
             "format": "int32"
           },
-          "episodeNumber": {
-            "type": "integer",
-            "format": "int32"
-          },
           "title": {
             "type": "string",
             "nullable": true
           },
-          "airDate": {
-            "type": "string",
-            "nullable": true
-          },
-          "airDateUtc": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
+          "releaseDate": {
+            "$ref": "#/components/schemas/DateOnly"
           },
           "runtime": {
             "type": "integer",
@@ -7927,24 +7971,6 @@
             "type": "integer",
             "format": "int32",
             "nullable": true
-          },
-          "sceneAbsoluteEpisodeNumber": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "sceneEpisodeNumber": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "sceneSeasonNumber": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "unverifiedSceneNumbering": {
-            "type": "boolean"
           },
           "endTime": {
             "type": "string",
@@ -8122,6 +8148,14 @@
           "none",
           "localAirDate",
           "utcAirDate"
+        ],
+        "type": "string"
+      },
+      "Gender": {
+        "enum": [
+          "female",
+          "male",
+          "other"
         ],
         "type": "string"
       },
@@ -8501,6 +8535,14 @@
         },
         "additionalProperties": false
       },
+      "ImportListMonitorTypes": {
+        "enum": [
+          "none",
+          "specificEpisode",
+          "entireSite"
+        ],
+        "type": "string"
+      },
       "ImportListResource": {
         "type": "object",
         "properties": {
@@ -8558,6 +8600,9 @@
             "type": "boolean"
           },
           "shouldMonitor": {
+            "$ref": "#/components/schemas/ImportListMonitorTypes"
+          },
+          "siteMonitorType": {
             "$ref": "#/components/schemas/MonitorTypes"
           },
           "rootFolderPath": {
@@ -9372,7 +9417,6 @@
           "existing",
           "firstSeason",
           "latestSeason",
-          "pilot",
           "none"
         ],
         "type": "string"
@@ -9385,6 +9429,14 @@
           },
           "ignoreEpisodesWithoutFiles": {
             "type": "boolean"
+          },
+          "episodesToMonitor": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
           },
           "monitor": {
             "$ref": "#/components/schemas/MonitorTypes"
@@ -10466,11 +10518,10 @@
             "type": "integer",
             "format": "int32"
           },
-          "episodeNumbers": {
+          "releaseDates": {
             "type": "array",
             "items": {
-              "type": "integer",
-              "format": "int32"
+              "type": "string"
             },
             "nullable": true
           },

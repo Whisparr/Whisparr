@@ -226,7 +226,7 @@ function SelectEpisodeModalContent(props: SelectEpisodeModalContentProps) {
             >
               <TableBody>
                 {items.map((item) => {
-                  return (
+                  return item.title.toLowerCase().includes(filter) ? (
                     <SelectEpisodeRow
                       key={item.id}
                       id={item.id}
@@ -235,7 +235,7 @@ function SelectEpisodeModalContent(props: SelectEpisodeModalContentProps) {
                       isSelected={selectedState[item.id]}
                       onSelectedChange={onSelectedChange}
                     />
-                  );
+                  ) : null;
                 })}
               </TableBody>
             </Table>

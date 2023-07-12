@@ -47,7 +47,7 @@ function EpisodeNumber(props) {
 }
 
 EpisodeNumber.propTypes = {
-  releaseDate: PropTypes.number.isRequired,
+  releaseDate: PropTypes.string.isRequired,
   absoluteEpisodeNumber: PropTypes.number,
   useSceneNumbering: PropTypes.bool.isRequired,
   unverifiedSceneNumbering: PropTypes.bool.isRequired,

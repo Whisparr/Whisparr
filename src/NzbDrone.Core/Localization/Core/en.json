@@ -269,6 +269,8 @@
   "ShownClickToHide": "Shown, click to hide",
   "Size": "Size",
   "SizeOnDisk": "Size on disk",
+  "SkipRedownloadHelpText": "Prevents Whisparr from trying to download an alternative release for this item",
+  "SkipRedownload": "Skip Redownload",
   "Source": "Source",
   "Special": "Special",
   "Started": "Started",

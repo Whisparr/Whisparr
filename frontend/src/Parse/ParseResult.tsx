@@ -5,6 +5,7 @@ import EpisodeFormats from 'Episode/EpisodeFormats';
 import SeriesTitleLink from 'Series/SeriesTitleLink';
 import translate from 'Utilities/String/translate';
 import ParseResultItem from './ParseResultItem';
+import styles from './ParseResult.css';
 
 interface ParseResultProps {
   item: ParseModel;
@@ -38,11 +39,11 @@ function ParseResult(props: ParseResultProps) {
     <div>
       <FieldSet legend={translate('Release')}>
         <ParseResultItem
-          title={translate('Release Title')}
+          title={translate('ReleaseTitle')}
           data={releaseTitle}
         />
 
-        <ParseResultItem title={translate('Series Title')} data={seriesTitle} />
+        <ParseResultItem title={translate('SeriesTitle')} data={seriesTitle} />
 
         <ParseResultItem
           title={translate('Year')}
@@ -50,7 +51,7 @@ function ParseResult(props: ParseResultProps) {
         />
 
         <ParseResultItem
-          title={translate('All Titles')}
+          title={translate('AllTitles')}
           data={
             seriesTitleInfo.allTitles?.length > 0
               ? seriesTitleInfo.allTitles.join(', ')
@@ -59,62 +60,70 @@ function ParseResult(props: ParseResultProps) {
         />
 
         <ParseResultItem
-          title={translate('Release Group')}
+          title={translate('ReleaseGroup')}
           data={releaseGroup ?? '-'}
         />
 
         <ParseResultItem
-          title={translate('Release Hash')}
+          title={translate('ReleaseHash')}
           data={releaseHash ? releaseHash : '-'}
         />
       </FieldSet>
 
-      {/* 
-      
-      Year
-      Secondary titles
-      special episode
-      
-      */}
+      <FieldSet legend={translate('EpisodeInfo')}>
+        <div className={styles.container}>
+          <div className={styles.column}>
+            <ParseResultItem
+              title={translate('AirDate')}
+              data={airDate ?? '-'}
+            />
+          </div>
 
-      <FieldSet legend={translate('Episode Info')}>
-        <ParseResultItem
-          title={translate('Special')}
-          data={special ? 'True' : 'False'}
-        />
-
-        <ParseResultItem title={translate('Air Date')} data={airDate ?? '-'} />
+          <div className={styles.column}>
+            <ParseResultItem
+              title={translate('Special')}
+              data={special ? 'True' : 'False'}
+            />
+          </div>
+        </div>
       </FieldSet>
 
       <FieldSet legend={translate('Quality')}>
-        <ParseResultItem
-          title={translate('Quality')}
-          data={quality.quality.name}
-        />
+        <div className={styles.container}>
+          <div className={styles.column}>
+            <ParseResultItem
+              title={translate('Quality')}
+              data={quality.quality.name}
+            />
+            <ParseResultItem
+              title={translate('Proper')}
+              data={
+                quality.revision.version > 1 && !quality.revision.isRepack
+                  ? 'True'
+                  : '-'
+              }
+            />
 
-        <ParseResultItem
-          title={translate('Version')}
-          data={quality.revision.version > 1 ? quality.revision.version : '-'}
-        />
+            <ParseResultItem
+              title={translate('Repack')}
+              data={quality.revision.isRepack ? 'True' : '-'}
+            />
+          </div>
 
-        <ParseResultItem
-          title={translate('Real')}
-          data={quality.revision.real ? 'True' : '-'}
-        />
+          <div className={styles.column}>
+            <ParseResultItem
+              title={translate('Version')}
+              data={
+                quality.revision.version > 1 ? quality.revision.version : '-'
+              }
+            />
 
-        <ParseResultItem
-          title={translate('Proper')}
-          data={
-            quality.revision.version > 1 && !quality.revision.isRepack
-              ? 'True'
-              : '-'
-          }
-        />
-
-        <ParseResultItem
-          title={translate('Repack')}
-          data={quality.revision.isRepack ? 'True' : '-'}
-        />
+            <ParseResultItem
+              title={translate('Real')}
+              data={quality.revision.real ? 'True' : '-'}
+            />
+          </div>
+        </div>
       </FieldSet>
 
       <FieldSet legend={translate('Languages')}>
@@ -126,7 +135,7 @@ function ParseResult(props: ParseResultProps) {
 
       <FieldSet legend={translate('Details')}>
         <ParseResultItem
-          title={translate('Matched to Site')}
+          title={translate('MatchedToSite')}
           data={
             series ? (
               <SeriesTitleLink
@@ -140,7 +149,7 @@ function ParseResult(props: ParseResultProps) {
         />
 
         <ParseResultItem
-          title={translate('Matched to Episodes')}
+          title={translate('MatchedToEpisodes')}
           data={
             episodes.length ? (
               <div>
@@ -160,12 +169,12 @@ function ParseResult(props: ParseResultProps) {
         />
 
         <ParseResultItem
-          title={translate('Custom Formats')}
+          title={translate('CustomFormats')}
           data={<EpisodeFormats formats={customFormats} />}
         />
 
         <ParseResultItem
-          title={translate('Custom Format Score')}
+          title={translate('CustomFormatScore')}
           data={customFormatScore}
         />
       </FieldSet>

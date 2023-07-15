@@ -4,6 +4,7 @@ interface CssExports {
   'actors': string;
   'audio': string;
   'audioLanguages': string;
+  'customFormatScore': string;
   'languages': string;
   'monitored': string;
   'releaseGroup': string;

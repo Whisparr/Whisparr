@@ -41,7 +41,6 @@ namespace NzbDrone.Core.Extras.Metadata
         public abstract MetadataFileResult SeriesMetadata(Series series);
         public abstract MetadataFileResult EpisodeMetadata(Series series, EpisodeFile episodeFile);
         public abstract List<ImageFileResult> SeriesImages(Series series);
-        public abstract List<ImageFileResult> SeasonImages(Series series, Season season);
         public abstract List<ImageFileResult> EpisodeImages(Series series, EpisodeFile episodeFile);
 
         public virtual object RequestAction(string action, IDictionary<string, string> query)

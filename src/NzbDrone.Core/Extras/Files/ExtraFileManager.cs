@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -77,7 +77,6 @@ namespace NzbDrone.Core.Extras.Files
             return new TExtraFile
             {
                 SeriesId = series.Id,
-                SeasonNumber = episodeFile.SeasonNumber,
                 EpisodeFileId = episodeFile.Id,
                 RelativePath = series.Path.GetRelativePath(newFileName),
                 Extension = extension

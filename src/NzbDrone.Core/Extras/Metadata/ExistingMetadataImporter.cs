@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NLog;
@@ -90,7 +90,6 @@ namespace NzbDrone.Core.Extras.Metadata
                             continue;
                         }
 
-                        metadata.SeasonNumber = localEpisode.SeasonNumber;
                         metadata.EpisodeFileId = localEpisode.Episodes.First().EpisodeFileId;
                     }
 

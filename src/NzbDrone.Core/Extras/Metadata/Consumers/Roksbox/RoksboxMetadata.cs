@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using NLog;
@@ -31,7 +30,6 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Roksbox
             _logger = logger;
         }
 
-        private static readonly Regex SeasonImagesRegex = new Regex(@"^(season (?<season>\d+))|(?<specials>specials)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         private static List<string> ValidCertification = new List<string> { "G", "NC-17", "PG", "PG-13", "R", "UR", "UNRATED", "NR", "TV-Y", "TV-Y7", "TV-Y7-FV", "TV-G", "TV-PG", "TV-14", "TV-MA" };
 
         public override string Name => "Roksbox";
@@ -75,24 +73,6 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Roksbox
             // Series and season images are both named folder.jpg, only season ones sit in season folders
             if (Path.GetFileNameWithoutExtension(filename).Equals(parentdir.Name, StringComparison.InvariantCultureIgnoreCase))
             {
-                var seasonMatch = SeasonImagesRegex.Match(parentdir.Name);
-
-                if (seasonMatch.Success)
-                {
-                    metadata.Type = MetadataType.SeasonImage;
-
-                    if (seasonMatch.Groups["specials"].Success)
-                    {
-                        metadata.SeasonNumber = 0;
-                    }
-                    else
-                    {
-                        metadata.SeasonNumber = Convert.ToInt32(seasonMatch.Groups["season"].Value);
-                    }
-
-                    return metadata;
-                }
-
                 metadata.Type = MetadataType.SeriesImage;
                 return metadata;
             }
@@ -200,35 +180,6 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Roksbox
             return new List<ImageFileResult> { new ImageFileResult(destination, source) };
         }
 
-        public override List<ImageFileResult> SeasonImages(Series series, Season season)
-        {
-            if (!Settings.SeasonImages)
-            {
-                return new List<ImageFileResult>();
-            }
-
-            var seasonFolders = GetSeasonFolders(series);
-
-            if (!seasonFolders.TryGetValue(season.SeasonNumber, out var seasonFolder))
-            {
-                _logger.Trace("Failed to find season folder for series {0}, season {1}.", series.Title, season.SeasonNumber);
-                return new List<ImageFileResult>();
-            }
-
-            // Roksbox only supports one season image, so first of all try for poster otherwise just use whatever is first in the collection
-            var image = season.Images.SingleOrDefault(c => c.CoverType == MediaCoverTypes.Poster) ?? season.Images.FirstOrDefault();
-            if (image == null)
-            {
-                _logger.Trace("Failed to find suitable season image for series {0}, season {1}.", series.Title, season.SeasonNumber);
-                return new List<ImageFileResult>();
-            }
-
-            var filename = Path.GetFileName(seasonFolder) + ".jpg";
-            var path = series.Path.GetRelativePath(Path.Combine(series.Path, seasonFolder, filename));
-
-            return new List<ImageFileResult> { new ImageFileResult(path, image.RemoteUrl) };
-        }
-
         public override List<ImageFileResult> EpisodeImages(Series series, EpisodeFile episodeFile)
         {
             if (!Settings.EpisodeImages)
@@ -255,44 +206,6 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Roksbox
         private string GetEpisodeImageFilename(string episodeFilePath)
         {
             return Path.ChangeExtension(episodeFilePath, "jpg");
-        }
-
-        private Dictionary<int, string> GetSeasonFolders(Series series)
-        {
-            var seasonFolderMap = new Dictionary<int, string>();
-
-            foreach (var folder in _diskProvider.GetDirectories(series.Path))
-            {
-                var directoryinfo = new DirectoryInfo(folder);
-                var seasonMatch = SeasonImagesRegex.Match(directoryinfo.Name);
-
-                if (seasonMatch.Success)
-                {
-                    var seasonNumber = seasonMatch.Groups["season"].Value;
-
-                    if (seasonNumber.Contains("specials"))
-                    {
-                        seasonFolderMap[0] = folder;
-                    }
-                    else
-                    {
-                        if (int.TryParse(seasonNumber, out var matchedSeason))
-                        {
-                            seasonFolderMap[matchedSeason] = folder;
-                        }
-                        else
-                        {
-                            _logger.Debug("Failed to parse season number from {0} for series {1}.", folder, series.Title);
-                        }
-                    }
-                }
-                else
-                {
-                    _logger.Debug("Rejecting folder {0} for series {1}.", Path.GetDirectoryName(folder), series.Title);
-                }
-            }
-
-            return seasonFolderMap;
         }
     }
 }

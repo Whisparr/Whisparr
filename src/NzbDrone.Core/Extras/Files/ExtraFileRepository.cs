@@ -9,10 +9,8 @@ namespace NzbDrone.Core.Extras.Files
         where TExtraFile : ExtraFile, new()
     {
         void DeleteForSeriesIds(List<int> seriesIds);
-        void DeleteForSeason(int seriesId, int seasonNumber);
         void DeleteForEpisodeFile(int episodeFileId);
         List<TExtraFile> GetFilesBySeries(int seriesId);
-        List<TExtraFile> GetFilesBySeason(int seriesId, int seasonNumber);
         List<TExtraFile> GetFilesByEpisodeFile(int episodeFileId);
         TExtraFile FindByPath(int seriesId, string path);
     }
@@ -30,11 +28,6 @@ namespace NzbDrone.Core.Extras.Files
             Delete(c => seriesIds.Contains(c.SeriesId));
         }
 
-        public void DeleteForSeason(int seriesId, int seasonNumber)
-        {
-            Delete(c => c.SeriesId == seriesId && c.SeasonNumber == seasonNumber);
-        }
-
         public void DeleteForEpisodeFile(int episodeFileId)
         {
             Delete(c => c.EpisodeFileId == episodeFileId);
@@ -43,11 +36,6 @@ namespace NzbDrone.Core.Extras.Files
         public List<TExtraFile> GetFilesBySeries(int seriesId)
         {
             return Query(c => c.SeriesId == seriesId);
-        }
-
-        public List<TExtraFile> GetFilesBySeason(int seriesId, int seasonNumber)
-        {
-            return Query(c => c.SeriesId == seriesId && c.SeasonNumber == seasonNumber);
         }
 
         public List<TExtraFile> GetFilesByEpisodeFile(int episodeFileId)

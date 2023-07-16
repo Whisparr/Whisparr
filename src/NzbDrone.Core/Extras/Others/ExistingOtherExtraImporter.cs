@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NLog;
@@ -77,7 +77,6 @@ namespace NzbDrone.Core.Extras.Others
                 var extraFile = new OtherExtraFile
                 {
                     SeriesId = series.Id,
-                    SeasonNumber = localEpisode.SeasonNumber,
                     EpisodeFileId = localEpisode.Episodes.First().EpisodeFileId,
                     RelativePath = series.Path.GetRelativePath(possibleExtraFile),
                     Extension = extension

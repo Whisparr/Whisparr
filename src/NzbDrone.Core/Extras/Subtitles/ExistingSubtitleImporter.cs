@@ -74,7 +74,6 @@ namespace NzbDrone.Core.Extras.Subtitles
                     var subtitleFile = new SubtitleFile
                                        {
                                            SeriesId = series.Id,
-                                           SeasonNumber = localEpisode.SeasonNumber,
                                            EpisodeFileId = localEpisode.Episodes.First().EpisodeFileId,
                                            RelativePath = series.Path.GetRelativePath(possibleSubtitleFile),
                                            Language = LanguageParser.ParseSubtitleLanguage(possibleSubtitleFile),

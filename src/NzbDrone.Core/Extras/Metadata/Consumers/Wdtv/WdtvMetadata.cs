@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using NLog;
-using NzbDrone.Common.Disk;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Extras.Metadata.Files;
 using NzbDrone.Core.MediaCover;
@@ -19,19 +17,14 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Wdtv
     public class WdtvMetadata : MetadataBase<WdtvMetadataSettings>
     {
         private readonly IMapCoversToLocal _mediaCoverService;
-        private readonly IDiskProvider _diskProvider;
         private readonly Logger _logger;
 
         public WdtvMetadata(IMapCoversToLocal mediaCoverService,
-                            IDiskProvider diskProvider,
                             Logger logger)
         {
             _mediaCoverService = mediaCoverService;
-            _diskProvider = diskProvider;
             _logger = logger;
         }
-
-        private static readonly Regex SeasonImagesRegex = new Regex(@"^(season (?<season>\d+))|(?<specials>specials)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         public override string Name => "WDTV";
 
@@ -72,24 +65,6 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Wdtv
             // Series and season images are both named folder.jpg, only season ones sit in season folders
             if (Path.GetFileName(filename).Equals("folder.jpg", StringComparison.InvariantCultureIgnoreCase))
             {
-                var parentdir = Directory.GetParent(path);
-                var seasonMatch = SeasonImagesRegex.Match(parentdir.Name);
-                if (seasonMatch.Success)
-                {
-                    metadata.Type = MetadataType.SeasonImage;
-
-                    if (seasonMatch.Groups["specials"].Success)
-                    {
-                        metadata.SeasonNumber = 0;
-                    }
-                    else
-                    {
-                        metadata.SeasonNumber = Convert.ToInt32(seasonMatch.Groups["season"].Value);
-                    }
-
-                    return metadata;
-                }
-
                 metadata.Type = MetadataType.SeriesImage;
                 return metadata;
             }
@@ -191,35 +166,6 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Wdtv
                    };
         }
 
-        public override List<ImageFileResult> SeasonImages(Series series, Season season)
-        {
-            if (!Settings.SeasonImages)
-            {
-                return new List<ImageFileResult>();
-            }
-
-            var seasonFolders = GetSeasonFolders(series);
-
-            // Work out the path to this season - if we don't have a matching path then skip this season.
-            if (!seasonFolders.TryGetValue(season.SeasonNumber, out var seasonFolder))
-            {
-                _logger.Trace("Failed to find season folder for series {0}, season {1}.", series.Title, season.SeasonNumber);
-                return new List<ImageFileResult>();
-            }
-
-            // WDTV only supports one season image, so first of all try for poster otherwise just use whatever is first in the collection
-            var image = season.Images.SingleOrDefault(c => c.CoverType == MediaCoverTypes.Poster) ?? season.Images.FirstOrDefault();
-            if (image == null)
-            {
-                _logger.Trace("Failed to find suitable season image for series {0}, season {1}.", series.Title, season.SeasonNumber);
-                return new List<ImageFileResult>();
-            }
-
-            var path = Path.Combine(seasonFolder, "folder.jpg");
-
-            return new List<ImageFileResult> { new ImageFileResult(path, image.RemoteUrl) };
-        }
-
         public override List<ImageFileResult> EpisodeImages(Series series, EpisodeFile episodeFile)
         {
             if (!Settings.EpisodeImages)
@@ -246,44 +192,6 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Wdtv
         private string GetEpisodeImageFilename(string episodeFilePath)
         {
             return Path.ChangeExtension(episodeFilePath, "metathumb");
-        }
-
-        private Dictionary<int, string> GetSeasonFolders(Series series)
-        {
-            var seasonFolderMap = new Dictionary<int, string>();
-
-            foreach (var folder in _diskProvider.GetDirectories(series.Path))
-            {
-                var directoryinfo = new DirectoryInfo(folder);
-                var seasonMatch = SeasonImagesRegex.Match(directoryinfo.Name);
-
-                if (seasonMatch.Success)
-                {
-                    var seasonNumber = seasonMatch.Groups["season"].Value;
-
-                    if (seasonNumber.Contains("specials"))
-                    {
-                        seasonFolderMap[0] = folder;
-                    }
-                    else
-                    {
-                        if (int.TryParse(seasonNumber, out var matchedSeason))
-                        {
-                            seasonFolderMap[matchedSeason] = folder;
-                        }
-                        else
-                        {
-                            _logger.Debug("Failed to parse season number from {0} for series {1}.", folder, series.Title);
-                        }
-                    }
-                }
-                else
-                {
-                    _logger.Debug("Rejecting folder {0} for series {1}.", Path.GetDirectoryName(folder), series.Title);
-                }
-            }
-
-            return seasonFolderMap;
         }
     }
 }

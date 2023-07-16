@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -101,7 +101,6 @@ namespace NzbDrone.Core.Extras.Metadata
 
                 files.AddIfNotNull(ProcessSeriesMetadata(consumer, series, consumerFiles));
                 files.AddRange(ProcessSeriesImages(consumer, series, consumerFiles));
-                files.AddRange(ProcessSeasonImages(consumer, series, consumerFiles));
 
                 foreach (var episodeFile in episodeFiles)
                 {
@@ -149,11 +148,6 @@ namespace NzbDrone.Core.Extras.Metadata
                 {
                     files.AddIfNotNull(ProcessSeriesMetadata(consumer, series, consumerFiles));
                     files.AddRange(ProcessSeriesImages(consumer, series, consumerFiles));
-                }
-
-                if (seasonFolder.IsNotNullOrWhiteSpace())
-                {
-                    files.AddRange(ProcessSeasonImages(consumer, series, consumerFiles));
                 }
             }
 
@@ -293,7 +287,6 @@ namespace NzbDrone.Core.Extras.Metadata
                            new MetadataFile
                            {
                                SeriesId = series.Id,
-                               SeasonNumber = episodeFile.SeasonNumber,
                                EpisodeFileId = episodeFile.Id,
                                Consumer = consumer.GetType().Name,
                                Type = MetadataType.EpisodeMetadata,
@@ -349,46 +342,6 @@ namespace NzbDrone.Core.Extras.Metadata
             return result;
         }
 
-        private List<MetadataFile> ProcessSeasonImages(IMetadata consumer, Series series, List<MetadataFile> existingMetadataFiles)
-        {
-            var result = new List<MetadataFile>();
-
-            foreach (var season in series.Seasons)
-            {
-                foreach (var image in consumer.SeasonImages(series, season))
-                {
-                    var fullPath = Path.Combine(series.Path, image.RelativePath);
-
-                    if (_diskProvider.FileExists(fullPath))
-                    {
-                        _logger.Debug("Season image already exists: {0}", fullPath);
-                        continue;
-                    }
-
-                    _otherExtraFileRenamer.RenameOtherExtraFile(series, fullPath);
-
-                    var metadata = GetMetadataFile(series, existingMetadataFiles, c => c.Type == MetadataType.SeasonImage &&
-                                                                                  c.SeasonNumber == season.SeasonNumber &&
-                                                                                  c.RelativePath == image.RelativePath) ??
-                                new MetadataFile
-                                {
-                                    SeriesId = series.Id,
-                                    SeasonNumber = season.SeasonNumber,
-                                    Consumer = consumer.GetType().Name,
-                                    Type = MetadataType.SeasonImage,
-                                    RelativePath = image.RelativePath,
-                                    Extension = Path.GetExtension(fullPath)
-                                };
-
-                    DownloadImage(series, image);
-
-                    result.Add(metadata);
-                }
-            }
-
-            return result;
-        }
-
         private List<MetadataFile> ProcessEpisodeImages(IMetadata consumer, Series series, EpisodeFile episodeFile, List<MetadataFile> existingMetadataFiles)
         {
             var result = new List<MetadataFile>();
@@ -424,7 +377,6 @@ namespace NzbDrone.Core.Extras.Metadata
                                new MetadataFile
                                {
                                    SeriesId = series.Id,
-                                   SeasonNumber = episodeFile.SeasonNumber,
                                    EpisodeFileId = episodeFile.Id,
                                    Consumer = consumer.GetType().Name,
                                    Type = MetadataType.EpisodeImage,

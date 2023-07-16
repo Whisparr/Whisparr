@@ -19,7 +19,6 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
             SeriesMetadataUrl = false;
             EpisodeMetadata = true;
             SeriesImages = true;
-            SeasonImages = true;
             EpisodeImages = true;
         }
 
@@ -34,9 +33,6 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
 
         [FieldDefinition(3, Label = "Series Images", Type = FieldType.Checkbox, Section = MetadataSectionType.Image, HelpText = "fanart.jpg, poster.jpg, banner.jpg")]
         public bool SeriesImages { get; set; }
-
-        [FieldDefinition(4, Label = "Season Images", Type = FieldType.Checkbox, Section = MetadataSectionType.Image, HelpText = "season##-poster.jpg, season##-banner.jpg, season-specials-poster.jpg, season-specials-banner.jpg")]
-        public bool SeasonImages { get; set; }
 
         [FieldDefinition(5, Label = "Episode Images", Type = FieldType.Checkbox, Section = MetadataSectionType.Image, HelpText = "<filename>-thumb.jpg")]
         public bool EpisodeImages { get; set; }

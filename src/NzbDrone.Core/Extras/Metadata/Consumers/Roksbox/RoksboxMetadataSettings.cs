@@ -17,7 +17,6 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Roksbox
         {
             EpisodeMetadata = true;
             SeriesImages = true;
-            SeasonImages = true;
             EpisodeImages = true;
         }
 
@@ -26,9 +25,6 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Roksbox
 
         [FieldDefinition(1, Label = "Series Images", Type = FieldType.Checkbox, Section = MetadataSectionType.Image, HelpText = "Series Title.jpg")]
         public bool SeriesImages { get; set; }
-
-        [FieldDefinition(2, Label = "Season Images", Type = FieldType.Checkbox, Section = MetadataSectionType.Image, HelpText = "Season ##.jpg")]
-        public bool SeasonImages { get; set; }
 
         [FieldDefinition(3, Label = "Episode Images", Type = FieldType.Checkbox, Section = MetadataSectionType.Image, HelpText = "Season##\\filename.jpg")]
         public bool EpisodeImages { get; set; }

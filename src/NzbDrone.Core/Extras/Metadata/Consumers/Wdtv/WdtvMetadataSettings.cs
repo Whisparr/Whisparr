@@ -17,7 +17,6 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Wdtv
         {
             EpisodeMetadata = true;
             SeriesImages = true;
-            SeasonImages = true;
             EpisodeImages = true;
         }
 
@@ -26,9 +25,6 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Wdtv
 
         [FieldDefinition(1, Label = "Series Images", Type = FieldType.Checkbox, Section = MetadataSectionType.Image, HelpText = "folder.jpg")]
         public bool SeriesImages { get; set; }
-
-        [FieldDefinition(2, Label = "Season Images", Type = FieldType.Checkbox, Section = MetadataSectionType.Image, HelpText = "Season##\\folder.jpg")]
-        public bool SeasonImages { get; set; }
 
         [FieldDefinition(3, Label = "Episode Images", Type = FieldType.Checkbox, Section = MetadataSectionType.Image, HelpText = "Season##\\filename.metathumb")]
         public bool EpisodeImages { get; set; }

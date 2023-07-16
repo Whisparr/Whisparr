@@ -40,7 +40,6 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
         }
 
         private static readonly Regex SeriesImagesRegex = new Regex(@"^(?<type>poster|banner|fanart)\.(?:png|jpg)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-        private static readonly Regex SeasonImagesRegex = new Regex(@"^season(?<season>\d{2,}|-all|-specials)-(?<type>poster|banner|fanart)\.(?:png|jpg)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         private static readonly Regex EpisodeImageRegex = new Regex(@"-thumb\.(?:png|jpg)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         public override string Name => "Kodi (XBMC) / Emby";
@@ -82,30 +81,6 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
             if (SeriesImagesRegex.IsMatch(filename))
             {
                 metadata.Type = MetadataType.SeriesImage;
-                return metadata;
-            }
-
-            var seasonMatch = SeasonImagesRegex.Match(filename);
-
-            if (seasonMatch.Success)
-            {
-                metadata.Type = MetadataType.SeasonImage;
-
-                var seasonNumberMatch = seasonMatch.Groups["season"].Value;
-
-                if (seasonNumberMatch.Contains("specials"))
-                {
-                    metadata.SeasonNumber = 0;
-                }
-                else if (int.TryParse(seasonNumberMatch, out var seasonNumber))
-                {
-                    metadata.SeasonNumber = seasonNumber;
-                }
-                else
-                {
-                    return null;
-                }
-
                 return metadata;
             }
 
@@ -331,16 +306,6 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
             return ProcessSeriesImages(series).ToList();
         }
 
-        public override List<ImageFileResult> SeasonImages(Series series, Season season)
-        {
-            if (!Settings.SeasonImages)
-            {
-                return new List<ImageFileResult>();
-            }
-
-            return ProcessSeasonImages(series, season).ToList();
-        }
-
         public override List<ImageFileResult> EpisodeImages(Series series, EpisodeFile episodeFile)
         {
             if (!Settings.EpisodeImages)
@@ -379,21 +344,6 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
                 var destination = image.CoverType.ToString().ToLowerInvariant() + Path.GetExtension(source);
 
                 yield return new ImageFileResult(destination, source);
-            }
-        }
-
-        private IEnumerable<ImageFileResult> ProcessSeasonImages(Series series, Season season)
-        {
-            foreach (var image in season.Images)
-            {
-                var filename = string.Format("season{0:00}-{1}.jpg", season.SeasonNumber, image.CoverType.ToString().ToLower());
-
-                if (season.SeasonNumber == 0)
-                {
-                    filename = string.Format("season-specials-{0}.jpg", image.CoverType.ToString().ToLower());
-                }
-
-                yield return new ImageFileResult(filename, image.RemoteUrl);
             }
         }
 

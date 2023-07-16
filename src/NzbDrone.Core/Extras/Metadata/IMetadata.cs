@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using NzbDrone.Core.Extras.Metadata.Files;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.ThingiProvider;
@@ -13,7 +13,6 @@ namespace NzbDrone.Core.Extras.Metadata
         MetadataFileResult SeriesMetadata(Series series);
         MetadataFileResult EpisodeMetadata(Series series, EpisodeFile episodeFile);
         List<ImageFileResult> SeriesImages(Series series);
-        List<ImageFileResult> SeasonImages(Series series, Season season);
         List<ImageFileResult> EpisodeImages(Series series, EpisodeFile episodeFile);
     }
 }

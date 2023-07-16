@@ -55,6 +55,10 @@ namespace NzbDrone.Core.Datastore.Migration
             Alter.Table("NamingConfig")
                  .AddColumn("MovieFolderFormat").AsString().Nullable();
 
+            Delete.Column("SeasonNumber").FromTable("ExtraFiles");
+            Delete.Column("SeasonNumber").FromTable("MetadataFiles");
+            Delete.Column("SeasonNumber").FromTable("SubtitleFiles");
+
             // Set defaults for existing configs
             Update.Table("NamingConfig").Set(new
             {

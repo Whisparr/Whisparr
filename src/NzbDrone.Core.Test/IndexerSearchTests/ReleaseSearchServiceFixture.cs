@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using Moq;
@@ -98,17 +99,17 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
 
             _mockIndexer.Setup(v => v.Fetch(It.IsAny<SingleEpisodeSearchCriteria>()))
                 .Callback<SingleEpisodeSearchCriteria>(s => result.Add(s))
-                .Returns(new List<Parser.Model.ReleaseInfo>());
+                .Returns(Task.FromResult<IList<Parser.Model.ReleaseInfo>>(new List<Parser.Model.ReleaseInfo>()));
 
             _mockIndexer.Setup(v => v.Fetch(It.IsAny<SeasonSearchCriteria>()))
                 .Callback<SeasonSearchCriteria>(s => result.Add(s))
-                .Returns(new List<Parser.Model.ReleaseInfo>());
+                .Returns(Task.FromResult<IList<Parser.Model.ReleaseInfo>>(new List<Parser.Model.ReleaseInfo>()));
 
             return result;
         }
 
         [Test]
-        public void Tags_IndexerTags_SeriesNoTags_IndexerNotIncluded()
+        public async Task Tags_IndexerTags_SeriesNoTags_IndexerNotIncluded()
         {
             _mockIndexer.SetupGet(s => s.Definition).Returns(new IndexerDefinition
             {
@@ -120,7 +121,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
 
             var allCriteria = WatchForSearchCriteria();
 
-            Subject.EpisodeSearch(_xemEpisodes.First(), true, false);
+            await Subject.EpisodeSearch(_xemEpisodes.First(), true, false);
 
             var criteria = allCriteria.OfType<SingleEpisodeSearchCriteria>().ToList();
 
@@ -128,7 +129,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
         }
 
         [Test]
-        public void Tags_IndexerNoTags_SeriesTags_IndexerIncluded()
+        public async Task Tags_IndexerNoTags_SeriesTags_IndexerIncluded()
         {
             _mockIndexer.SetupGet(s => s.Definition).Returns(new IndexerDefinition
             {
@@ -149,7 +150,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
 
             var allCriteria = WatchForSearchCriteria();
 
-            Subject.EpisodeSearch(_xemEpisodes.First(), true, false);
+            await Subject.EpisodeSearch(_xemEpisodes.First(), true, false);
 
             var criteria = allCriteria.OfType<SingleEpisodeSearchCriteria>().ToList();
 
@@ -157,7 +158,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
         }
 
         [Test]
-        public void Tags_IndexerAndSeriesTagsMatch_IndexerIncluded()
+        public async Task Tags_IndexerAndSeriesTagsMatch_IndexerIncluded()
         {
             _mockIndexer.SetupGet(s => s.Definition).Returns(new IndexerDefinition
             {
@@ -179,7 +180,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
 
             var allCriteria = WatchForSearchCriteria();
 
-            Subject.EpisodeSearch(_xemEpisodes.First(), true, false);
+            await Subject.EpisodeSearch(_xemEpisodes.First(), true, false);
 
             var criteria = allCriteria.OfType<SingleEpisodeSearchCriteria>().ToList();
 
@@ -187,7 +188,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
         }
 
         [Test]
-        public void Tags_IndexerAndSeriesTagsMismatch_IndexerNotIncluded()
+        public async Task Tags_IndexerAndSeriesTagsMismatch_IndexerNotIncluded()
         {
             _mockIndexer.SetupGet(s => s.Definition).Returns(new IndexerDefinition
             {
@@ -209,7 +210,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
 
             var allCriteria = WatchForSearchCriteria();
 
-            Subject.EpisodeSearch(_xemEpisodes.First(), true, false);
+            await Subject.EpisodeSearch(_xemEpisodes.First(), true, false);
 
             var criteria = allCriteria.OfType<SingleEpisodeSearchCriteria>().ToList();
 
@@ -217,13 +218,13 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
         }
 
         [Test]
-        public void scene_episodesearch()
+        public async Task scene_episodesearch()
         {
             WithEpisodes();
 
             var allCriteria = WatchForSearchCriteria();
 
-            Subject.EpisodeSearch(_xemEpisodes.First(), true, false);
+            await Subject.EpisodeSearch(_xemEpisodes.First(), true, false);
 
             var criteria = allCriteria.OfType<SingleEpisodeSearchCriteria>().ToList();
 
@@ -231,13 +232,13 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
         }
 
         [Test]
-        public void scene_seasonsearch()
+        public async Task scene_seasonsearch()
         {
             WithEpisodes();
 
             var allCriteria = WatchForSearchCriteria();
 
-            Subject.SeasonSearch(_xemSeries.Id, 1, false, false, true, false);
+            await Subject.SeasonSearch(_xemSeries.Id, 1, false, false, true, false);
 
             var criteria = allCriteria.OfType<SeasonSearchCriteria>().ToList();
 
@@ -246,13 +247,13 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
         }
 
         [Test]
-        public void scene_seasonsearch_should_search_multiple_seasons()
+        public async Task scene_seasonsearch_should_search_multiple_seasons()
         {
             WithEpisodes();
 
             var allCriteria = WatchForSearchCriteria();
 
-            Subject.SeasonSearch(_xemSeries.Id, 2, false, false, true, false);
+            await Subject.SeasonSearch(_xemSeries.Id, 2, false, false, true, false);
 
             var criteria = allCriteria.OfType<SeasonSearchCriteria>().ToList();
 
@@ -261,13 +262,13 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
         }
 
         [Test]
-        public void scene_seasonsearch_should_use_seasonnumber_if_no_scene_number_is_available()
+        public async Task scene_seasonsearch_should_use_seasonnumber_if_no_scene_number_is_available()
         {
             WithEpisodes();
 
             var allCriteria = WatchForSearchCriteria();
 
-            Subject.SeasonSearch(_xemSeries.Id, 7, false, false, true, false);
+            await Subject.SeasonSearch(_xemSeries.Id, 7, false, false, true, false);
 
             var criteria = allCriteria.OfType<SeasonSearchCriteria>().ToList();
 

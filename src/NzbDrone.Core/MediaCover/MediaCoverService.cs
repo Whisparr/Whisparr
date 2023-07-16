@@ -253,7 +253,7 @@ namespace NzbDrone.Core.MediaCover
             var series = message.Series;
             var updated = EnsureCovers(series.Id, series.ToString(), series.Images, MediaCoverEntity.Series);
 
-            _eventAggregator.PublishEvent(new MediaCoversUpdatedEvent(message.Series, updated));
+            _eventAggregator.PublishEvent(new SeriesMediaCoversUpdatedEvent(message.Series, updated));
         }
 
         public void HandleAsync(MovieUpdatedEvent message)
@@ -261,7 +261,7 @@ namespace NzbDrone.Core.MediaCover
             var movie = message.Movie;
             var updated = EnsureCovers(movie.Id, movie.ToString(), movie.Images, MediaCoverEntity.Movie);
 
-            _eventAggregator.PublishEvent(new MediaCoversUpdatedEvent(message.Movie, updated));
+            _eventAggregator.PublishEvent(new MovieMediaCoversUpdatedEvent(message.Movie, updated));
         }
 
         public void HandleAsync(SeriesDeletedEvent message)

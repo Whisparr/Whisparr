@@ -34,6 +34,7 @@ namespace NzbDrone.Core.Movies
         public string TitleSlug { get; set; }
         public string Path { get; set; }
         public int Year { get; set; }
+        public int MovieFileId { get; set; }
         public Ratings Ratings { get; set; }
         public List<string> Genres { get; set; }
         public string Studio { get; set; }

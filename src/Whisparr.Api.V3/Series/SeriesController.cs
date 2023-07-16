@@ -31,7 +31,7 @@ namespace Whisparr.Api.V3.Series
                                 IHandle<SeriesEditedEvent>,
                                 IHandle<SeriesDeletedEvent>,
                                 IHandle<SeriesRenamedEvent>,
-                                IHandle<MediaCoversUpdatedEvent>
+                                IHandle<SeriesMediaCoversUpdatedEvent>
     {
         private readonly ISeriesService _seriesService;
         private readonly IAddSeriesService _addSeriesService;
@@ -274,7 +274,7 @@ namespace Whisparr.Api.V3.Series
         }
 
         [NonAction]
-        public void Handle(MediaCoversUpdatedEvent message)
+        public void Handle(SeriesMediaCoversUpdatedEvent message)
         {
             if (message.Updated && message.Series != null)
             {

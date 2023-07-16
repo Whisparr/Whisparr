@@ -119,6 +119,11 @@ namespace NzbDrone.Core.Indexers.Newznab
             return pageableRequests;
         }
 
+        public virtual IndexerPageableRequestChain GetSearchRequests(MovieSearchCriteria searchCriteria)
+        {
+            return new IndexerPageableRequestChain();
+        }
+
         private IEnumerable<IndexerRequest> GetPagedRequests(int maxPages, IEnumerable<int> categories, string searchType, string parameters)
         {
             if (categories.Empty())

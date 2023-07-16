@@ -22,7 +22,8 @@ namespace NzbDrone.Core.Extras
     }
 
     public class ExtraService : IExtraService,
-                                IHandle<MediaCoversUpdatedEvent>,
+                                IHandle<SeriesMediaCoversUpdatedEvent>,
+                                IHandle<MovieMediaCoversUpdatedEvent>,
                                 IHandle<EpisodeFolderCreatedEvent>,
                                 IHandle<SeriesScannedEvent>,
                                 IHandle<SeriesRenamedEvent>
@@ -108,7 +109,7 @@ namespace NzbDrone.Core.Extras
             }
         }
 
-        public void Handle(MediaCoversUpdatedEvent message)
+        public void Handle(SeriesMediaCoversUpdatedEvent message)
         {
             if (message.Updated)
             {
@@ -119,6 +120,11 @@ namespace NzbDrone.Core.Extras
                     extraFileManager.CreateAfterMediaCoverUpdate(series);
                 }
             }
+        }
+
+        public void Handle(MovieMediaCoversUpdatedEvent message)
+        {
+            // TODO Generate some Movie Metadata
         }
 
         public void Handle(SeriesScannedEvent message)

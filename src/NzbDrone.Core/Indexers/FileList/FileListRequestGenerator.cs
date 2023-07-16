@@ -45,6 +45,11 @@ namespace NzbDrone.Core.Indexers.FileList
             return pageableRequests;
         }
 
+        public virtual IndexerPageableRequestChain GetSearchRequests(MovieSearchCriteria searchCriteria)
+        {
+            return new IndexerPageableRequestChain();
+        }
+
         private IEnumerable<IndexerRequest> GetRequest(string searchType, IEnumerable<int> categories, string parameters)
         {
             var categoriesQuery = string.Join(",", categories.Distinct());

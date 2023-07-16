@@ -8,7 +8,7 @@ namespace NzbDrone.Core.DecisionEngine
 {
     public interface IPrioritizeDownloadDecision
     {
-        List<DownloadDecision> PrioritizeDecisions(List<DownloadDecision> decisions);
+        List<SceneDownloadDecision> PrioritizeDecisions(List<SceneDownloadDecision> decisions);
     }
 
     public class DownloadDecisionPriorizationService : IPrioritizeDownloadDecision
@@ -24,7 +24,7 @@ namespace NzbDrone.Core.DecisionEngine
             _qualityDefinitionService = qualityDefinitionService;
         }
 
-        public List<DownloadDecision> PrioritizeDecisions(List<DownloadDecision> decisions)
+        public List<SceneDownloadDecision> PrioritizeDecisions(List<SceneDownloadDecision> decisions)
         {
             return decisions.Where(c => c.RemoteEpisode.Series != null)
                             .GroupBy(c => c.RemoteEpisode.Series.Id, (seriesId, downloadDecisions) =>

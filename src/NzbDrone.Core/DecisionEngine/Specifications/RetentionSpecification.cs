@@ -1,4 +1,4 @@
-﻿using NLog;
+using NLog;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.IndexerSearch.Definitions;
 using NzbDrone.Core.Parser.Model;
@@ -37,6 +37,11 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
                 return Decision.Reject("Older than configured retention");
             }
 
+            return Decision.Accept();
+        }
+
+        public Decision IsSatisfiedBy(RemoteMovie subject, MovieSearchCriteria searchCriteria)
+        {
             return Decision.Accept();
         }
     }

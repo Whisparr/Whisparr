@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using NLog;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.IndexerSearch.Definitions;
@@ -48,6 +48,11 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
 
             _logger.Debug("Release is {0} minutes old, greater than minimum age of {1} minutes", ageRounded, minimumAge);
 
+            return Decision.Accept();
+        }
+
+        public Decision IsSatisfiedBy(RemoteMovie subject, MovieSearchCriteria searchCriteria)
+        {
             return Decision.Accept();
         }
     }

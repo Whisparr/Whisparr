@@ -27,7 +27,7 @@ namespace Whisparr.Api.V3.Indexers
             throw new NotImplementedException();
         }
 
-        protected virtual List<ReleaseResource> MapDecisions(IEnumerable<DownloadDecision> decisions)
+        protected virtual List<ReleaseResource> MapDecisions(IEnumerable<SceneDownloadDecision> decisions)
         {
             var result = new List<ReleaseResource>();
 
@@ -41,7 +41,7 @@ namespace Whisparr.Api.V3.Indexers
             return result;
         }
 
-        protected virtual ReleaseResource MapDecision(DownloadDecision decision, int initialWeight)
+        protected virtual ReleaseResource MapDecision(SceneDownloadDecision decision, int initialWeight)
         {
             var release = decision.ToResource();
 

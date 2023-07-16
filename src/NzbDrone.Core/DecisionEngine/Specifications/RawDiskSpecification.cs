@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Text.RegularExpressions;
 using NLog;
 using NzbDrone.Common.Extensions;
@@ -61,6 +61,11 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
                 return Decision.Reject("Raw Bluray release");
             }
 
+            return Decision.Accept();
+        }
+
+        public Decision IsSatisfiedBy(RemoteMovie subject, MovieSearchCriteria searchCriteria)
+        {
             return Decision.Accept();
         }
     }

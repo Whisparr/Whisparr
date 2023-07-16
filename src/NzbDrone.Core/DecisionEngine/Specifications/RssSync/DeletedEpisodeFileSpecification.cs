@@ -60,6 +60,11 @@ namespace NzbDrone.Core.DecisionEngine.Specifications.RssSync
             return Decision.Accept();
         }
 
+        public Decision IsSatisfiedBy(RemoteMovie subject, MovieSearchCriteria searchCriteria)
+        {
+            return Decision.Accept();
+        }
+
         private bool IsEpisodeFileMissing(Series series, EpisodeFile episodeFile)
         {
             var fullPath = Path.Combine(series.Path, episodeFile.RelativePath);

@@ -34,7 +34,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
 
             Mocker.GetMock<IMakeDownloadDecision>()
                 .Setup(s => s.GetSearchDecision(It.IsAny<List<Parser.Model.ReleaseInfo>>(), It.IsAny<SceneSearchCriteriaBase>()))
-                .Returns(new List<DownloadDecision>());
+                .Returns(new List<SceneDownloadDecision>());
 
             _xemSeries = Builder<Series>.CreateNew()
                 .With(v => v.UseSceneNumbering = true)

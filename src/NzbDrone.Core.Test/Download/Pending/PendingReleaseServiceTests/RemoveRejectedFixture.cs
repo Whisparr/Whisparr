@@ -21,7 +21,7 @@ namespace NzbDrone.Core.Test.Download.Pending.PendingReleaseServiceTests
     [TestFixture]
     public class RemoveRejectedFixture : CoreTest<PendingReleaseService>
     {
-        private DownloadDecision _temporarilyRejected;
+        private SceneDownloadDecision _temporarilyRejected;
         private Series _series;
         private Episode _episode;
         private QualityProfile _profile;
@@ -63,7 +63,7 @@ namespace NzbDrone.Core.Test.Download.Pending.PendingReleaseServiceTests
             _remoteEpisode.ParsedEpisodeInfo = _parsedEpisodeInfo;
             _remoteEpisode.Release = _release;
 
-            _temporarilyRejected = new DownloadDecision(_remoteEpisode, new Rejection("Temp Rejected", RejectionType.Temporary));
+            _temporarilyRejected = new SceneDownloadDecision(_remoteEpisode, new Rejection("Temp Rejected", RejectionType.Temporary));
 
             Mocker.GetMock<IPendingReleaseRepository>()
                   .Setup(s => s.All())
@@ -86,8 +86,8 @@ namespace NzbDrone.Core.Test.Download.Pending.PendingReleaseServiceTests
                   .Returns(new List<Episode> { _episode });
 
             Mocker.GetMock<IPrioritizeDownloadDecision>()
-                  .Setup(s => s.PrioritizeDecisions(It.IsAny<List<DownloadDecision>>()))
-                  .Returns((List<DownloadDecision> d) => d);
+                  .Setup(s => s.PrioritizeDecisions(It.IsAny<List<SceneDownloadDecision>>()))
+                  .Returns((List<SceneDownloadDecision> d) => d);
         }
 
         private void GivenHeldRelease(string title, string indexer, DateTime publishDate)
@@ -114,9 +114,9 @@ namespace NzbDrone.Core.Test.Download.Pending.PendingReleaseServiceTests
         {
             GivenHeldRelease(_release.Title, _release.Indexer, _release.PublishDate);
 
-            Subject.Handle(new RssSyncCompleteEvent(new ProcessedDecisions(new List<DownloadDecision>(),
-                                                                           new List<DownloadDecision>(),
-                                                                           new List<DownloadDecision> { _temporarilyRejected })));
+            Subject.Handle(new RssSyncCompleteEvent(new ProcessedDecisions(new List<SceneDownloadDecision>(),
+                                                                           new List<SceneDownloadDecision>(),
+                                                                           new List<SceneDownloadDecision> { _temporarilyRejected })));
 
             VerifyDelete();
         }
@@ -126,9 +126,9 @@ namespace NzbDrone.Core.Test.Download.Pending.PendingReleaseServiceTests
         {
             GivenHeldRelease(_release.Title + "-RP", _release.Indexer, _release.PublishDate);
 
-            Subject.Handle(new RssSyncCompleteEvent(new ProcessedDecisions(new List<DownloadDecision>(),
-                                                                           new List<DownloadDecision>(),
-                                                                           new List<DownloadDecision> { _temporarilyRejected })));
+            Subject.Handle(new RssSyncCompleteEvent(new ProcessedDecisions(new List<SceneDownloadDecision>(),
+                                                                           new List<SceneDownloadDecision>(),
+                                                                           new List<SceneDownloadDecision> { _temporarilyRejected })));
 
             VerifyNoDelete();
         }
@@ -138,9 +138,9 @@ namespace NzbDrone.Core.Test.Download.Pending.PendingReleaseServiceTests
         {
             GivenHeldRelease(_release.Title, "AnotherIndexer", _release.PublishDate);
 
-            Subject.Handle(new RssSyncCompleteEvent(new ProcessedDecisions(new List<DownloadDecision>(),
-                                                                           new List<DownloadDecision>(),
-                                                                           new List<DownloadDecision> { _temporarilyRejected })));
+            Subject.Handle(new RssSyncCompleteEvent(new ProcessedDecisions(new List<SceneDownloadDecision>(),
+                                                                           new List<SceneDownloadDecision>(),
+                                                                           new List<SceneDownloadDecision> { _temporarilyRejected })));
 
             VerifyNoDelete();
         }
@@ -150,9 +150,9 @@ namespace NzbDrone.Core.Test.Download.Pending.PendingReleaseServiceTests
         {
             GivenHeldRelease(_release.Title, _release.Indexer, _release.PublishDate.AddHours(1));
 
-            Subject.Handle(new RssSyncCompleteEvent(new ProcessedDecisions(new List<DownloadDecision>(),
-                                                                           new List<DownloadDecision>(),
-                                                                           new List<DownloadDecision> { _temporarilyRejected })));
+            Subject.Handle(new RssSyncCompleteEvent(new ProcessedDecisions(new List<SceneDownloadDecision>(),
+                                                                           new List<SceneDownloadDecision>(),
+                                                                           new List<SceneDownloadDecision> { _temporarilyRejected })));
 
             VerifyNoDelete();
         }

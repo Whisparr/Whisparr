@@ -57,7 +57,7 @@ namespace Whisparr.Api.V3.Indexers
 
             ResolveIndexer(info);
 
-            List<DownloadDecision> decisions;
+            List<SceneDownloadDecision> decisions;
 
             lock (PushLock)
             {

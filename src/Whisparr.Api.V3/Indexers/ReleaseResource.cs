@@ -79,7 +79,7 @@ namespace Whisparr.Api.V3.Indexers
 
     public static class ReleaseResourceMapper
     {
-        public static ReleaseResource ToResource(this DownloadDecision model)
+        public static ReleaseResource ToResource(this SceneDownloadDecision model)
         {
             var releaseInfo = model.RemoteEpisode.Release;
             var parsedEpisodeInfo = model.RemoteEpisode.ParsedEpisodeInfo;

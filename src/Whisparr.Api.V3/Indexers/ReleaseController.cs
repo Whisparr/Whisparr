@@ -231,7 +231,7 @@ namespace Whisparr.Api.V3.Indexers
             return MapDecisions(prioritizedDecisions);
         }
 
-        protected override ReleaseResource MapDecision(DownloadDecision decision, int initialWeight)
+        protected override ReleaseResource MapDecision(SceneDownloadDecision decision, int initialWeight)
         {
             var resource = base.MapDecision(decision, initialWeight);
             _remoteEpisodeCache.Set(GetCacheKey(resource), decision.RemoteEpisode, TimeSpan.FromMinutes(30));

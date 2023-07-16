@@ -9,14 +9,14 @@ using NzbDrone.Core.Qualities;
 
 namespace NzbDrone.Core.DecisionEngine
 {
-    public class DownloadDecisionComparer : IComparer<DownloadDecision>
+    public class DownloadDecisionComparer : IComparer<SceneDownloadDecision>
     {
         private readonly IConfigService _configService;
         private readonly IDelayProfileService _delayProfileService;
         private readonly IQualityDefinitionService _qualityDefinitionService;
 
-        public delegate int CompareDelegate(DownloadDecision x, DownloadDecision y);
-        public delegate int CompareDelegate<TSubject, TValue>(DownloadDecision x, DownloadDecision y);
+        public delegate int CompareDelegate(SceneDownloadDecision x, SceneDownloadDecision y);
+        public delegate int CompareDelegate<TSubject, TValue>(SceneDownloadDecision x, SceneDownloadDecision y);
 
         public DownloadDecisionComparer(IConfigService configService, IDelayProfileService delayProfileService, IQualityDefinitionService qualityDefinitionService)
         {
@@ -25,7 +25,7 @@ namespace NzbDrone.Core.DecisionEngine
             _qualityDefinitionService = qualityDefinitionService;
         }
 
-        public int Compare(DownloadDecision x, DownloadDecision y)
+        public int Compare(SceneDownloadDecision x, SceneDownloadDecision y)
         {
             var comparers = new List<CompareDelegate>
             {
@@ -62,12 +62,12 @@ namespace NzbDrone.Core.DecisionEngine
             return comparers.Select(comparer => comparer).FirstOrDefault(result => result != 0);
         }
 
-        private int CompareIndexerPriority(DownloadDecision x, DownloadDecision y)
+        private int CompareIndexerPriority(SceneDownloadDecision x, SceneDownloadDecision y)
         {
             return CompareByReverse(x.RemoteEpisode.Release, y.RemoteEpisode.Release, release => release.IndexerPriority);
         }
 
-        private int CompareQuality(DownloadDecision x, DownloadDecision y)
+        private int CompareQuality(SceneDownloadDecision x, SceneDownloadDecision y)
         {
             if (_configService.DownloadPropersAndRepacks == ProperDownloadTypes.DoNotPrefer)
             {
@@ -79,12 +79,12 @@ namespace NzbDrone.Core.DecisionEngine
                 CompareBy(x.RemoteEpisode, y.RemoteEpisode, remoteEpisode => remoteEpisode.ParsedEpisodeInfo.Quality.Revision));
         }
 
-        private int CompareCustomFormatScore(DownloadDecision x, DownloadDecision y)
+        private int CompareCustomFormatScore(SceneDownloadDecision x, SceneDownloadDecision y)
         {
             return CompareBy(x.RemoteEpisode, y.RemoteEpisode, remoteMovie => remoteMovie.CustomFormatScore);
         }
 
-        private int CompareProtocol(DownloadDecision x, DownloadDecision y)
+        private int CompareProtocol(SceneDownloadDecision x, SceneDownloadDecision y)
         {
             var result = CompareBy(x.RemoteEpisode, y.RemoteEpisode, remoteEpisode =>
             {
@@ -96,12 +96,12 @@ namespace NzbDrone.Core.DecisionEngine
             return result;
         }
 
-        private int CompareEpisodeCount(DownloadDecision x, DownloadDecision y)
+        private int CompareEpisodeCount(SceneDownloadDecision x, SceneDownloadDecision y)
         {
             return CompareByReverse(x.RemoteEpisode, y.RemoteEpisode, remoteEpisode => remoteEpisode.Episodes.Count);
         }
 
-        private int ComparePeersIfTorrent(DownloadDecision x, DownloadDecision y)
+        private int ComparePeersIfTorrent(SceneDownloadDecision x, SceneDownloadDecision y)
         {
             // Different protocols should get caught when checking the preferred protocol,
             // since we're dealing with the same series in our comparisons
@@ -126,7 +126,7 @@ namespace NzbDrone.Core.DecisionEngine
                 }));
         }
 
-        private int CompareAgeIfUsenet(DownloadDecision x, DownloadDecision y)
+        private int CompareAgeIfUsenet(SceneDownloadDecision x, SceneDownloadDecision y)
         {
             if (x.RemoteEpisode.Release.DownloadProtocol != DownloadProtocol.Usenet ||
                 y.RemoteEpisode.Release.DownloadProtocol != DownloadProtocol.Usenet)
@@ -158,7 +158,7 @@ namespace NzbDrone.Core.DecisionEngine
             });
         }
 
-        private int CompareSize(DownloadDecision x, DownloadDecision y)
+        private int CompareSize(SceneDownloadDecision x, SceneDownloadDecision y)
         {
             var sizeCompare =  CompareBy(x.RemoteEpisode, y.RemoteEpisode, remoteEpisode =>
             {

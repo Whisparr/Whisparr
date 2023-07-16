@@ -60,7 +60,7 @@ namespace NzbDrone.Core.IndexerSearch
 
             foreach (var group in groups.OrderBy(g => g.Episodes.Min(e => e.LastSearchTime ?? DateTime.MinValue)))
             {
-                List<DownloadDecision> decisions;
+                List<SceneDownloadDecision> decisions;
 
                 var seriesId = group.SeriesId;
                 var seasonNumber = group.SeasonNumber;

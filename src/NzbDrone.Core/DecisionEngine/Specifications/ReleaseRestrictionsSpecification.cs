@@ -64,6 +64,11 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
             return Decision.Accept();
         }
 
+        public Decision IsSatisfiedBy(RemoteMovie subject, MovieSearchCriteria searchCriteria)
+        {
+            return Decision.Accept();
+        }
+
         private List<string> ContainsAny(List<string> terms, string title)
         {
             return terms.Where(t => _termMatcherService.IsMatch(t, title)).ToList();

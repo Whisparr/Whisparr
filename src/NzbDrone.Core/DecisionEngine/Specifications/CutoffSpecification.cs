@@ -54,5 +54,10 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
 
             return Decision.Accept();
         }
+
+        public Decision IsSatisfiedBy(RemoteMovie subject, MovieSearchCriteria searchCriteria)
+        {
+            return Decision.Accept();
+        }
     }
 }

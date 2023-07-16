@@ -1,4 +1,4 @@
-﻿using NLog;
+using NLog;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.IndexerSearch.Definitions;
@@ -47,6 +47,11 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
                 return Decision.Reject(message);
             }
 
+            return Decision.Accept();
+        }
+
+        public Decision IsSatisfiedBy(RemoteMovie subject, MovieSearchCriteria searchCriteria)
+        {
             return Decision.Accept();
         }
     }

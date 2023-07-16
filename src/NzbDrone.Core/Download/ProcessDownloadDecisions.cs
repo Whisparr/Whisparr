@@ -12,7 +12,7 @@ namespace NzbDrone.Core.Download
 {
     public interface IProcessDownloadDecisions
     {
-        ProcessedDecisions ProcessDecisions(List<DownloadDecision> decisions);
+        ProcessedDecisions ProcessDecisions(List<SceneDownloadDecision> decisions);
     }
 
     public class ProcessDownloadDecisions : IProcessDownloadDecisions
@@ -33,15 +33,15 @@ namespace NzbDrone.Core.Download
             _logger = logger;
         }
 
-        public ProcessedDecisions ProcessDecisions(List<DownloadDecision> decisions)
+        public ProcessedDecisions ProcessDecisions(List<SceneDownloadDecision> decisions)
         {
             var qualifiedReports = GetQualifiedReports(decisions);
             var prioritizedDecisions = _prioritizeDownloadDecision.PrioritizeDecisions(qualifiedReports);
-            var grabbed = new List<DownloadDecision>();
-            var pending = new List<DownloadDecision>();
+            var grabbed = new List<SceneDownloadDecision>();
+            var pending = new List<SceneDownloadDecision>();
             var rejected = decisions.Where(d => d.Rejected).ToList();
 
-            var pendingAddQueue = new List<Tuple<DownloadDecision, PendingReleaseReason>>();
+            var pendingAddQueue = new List<Tuple<SceneDownloadDecision, PendingReleaseReason>>();
 
             var usenetFailed = false;
             var torrentFailed = false;
@@ -112,13 +112,13 @@ namespace NzbDrone.Core.Download
             return new ProcessedDecisions(grabbed, pending, rejected);
         }
 
-        internal List<DownloadDecision> GetQualifiedReports(IEnumerable<DownloadDecision> decisions)
+        internal List<SceneDownloadDecision> GetQualifiedReports(IEnumerable<SceneDownloadDecision> decisions)
         {
             // Process both approved and temporarily rejected
             return decisions.Where(c => (c.Approved || c.TemporarilyRejected) && c.RemoteEpisode.Episodes.Any()).ToList();
         }
 
-        private bool IsEpisodeProcessed(List<DownloadDecision> decisions, DownloadDecision report)
+        private bool IsEpisodeProcessed(List<SceneDownloadDecision> decisions, SceneDownloadDecision report)
         {
             var episodeIds = report.RemoteEpisode.Episodes.Select(e => e.Id).ToList();
 
@@ -129,7 +129,7 @@ namespace NzbDrone.Core.Download
                             .Any();
         }
 
-        private void PreparePending(List<Tuple<DownloadDecision, PendingReleaseReason>> queue, List<DownloadDecision> grabbed, List<DownloadDecision> pending, DownloadDecision report, PendingReleaseReason reason)
+        private void PreparePending(List<Tuple<SceneDownloadDecision, PendingReleaseReason>> queue, List<SceneDownloadDecision> grabbed, List<SceneDownloadDecision> pending, SceneDownloadDecision report, PendingReleaseReason reason)
         {
             // If a release was already grabbed with matching episodes we should store it as a fallback
             // and filter it out the next time it is processed.

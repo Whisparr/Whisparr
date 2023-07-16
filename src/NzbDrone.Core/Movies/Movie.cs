@@ -29,6 +29,7 @@ namespace NzbDrone.Core.Movies
         public int Runtime { get; set; }
         public List<MediaCover.MediaCover> Images { get; set; }
         public int TmdbId { get; set; }
+        public DateTime? ReleaseDate { get; set; }
         public string RootFolderPath { get; set; }
         public LazyLoaded<QualityProfile> QualityProfile { get; set; }
         public string TitleSlug { get; set; }

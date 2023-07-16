@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NLog;
@@ -35,6 +35,11 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
                 return Decision.Reject($"Indexer {subject.Release.Indexer} is blocked till {status.DisabledTill} due to failures, cannot grab release.");
             }
 
+            return Decision.Accept();
+        }
+
+        public Decision IsSatisfiedBy(RemoteMovie subject, MovieSearchCriteria searchCriteria)
+        {
             return Decision.Accept();
         }
 

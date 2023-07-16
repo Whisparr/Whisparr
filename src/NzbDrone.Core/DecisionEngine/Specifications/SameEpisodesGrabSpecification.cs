@@ -28,5 +28,10 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
             _logger.Debug("Episode file on disk contains more episodes than this release contains");
             return Decision.Reject("Episode file on disk contains more episodes than this release contains");
         }
+
+        public Decision IsSatisfiedBy(RemoteMovie subject, MovieSearchCriteria searchCriteria)
+        {
+            return Decision.Accept();
+        }
     }
 }

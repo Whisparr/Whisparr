@@ -5,11 +5,11 @@ namespace NzbDrone.Core.Download
 {
     public class ProcessedDecisions
     {
-        public List<DownloadDecision> Grabbed { get; set; }
-        public List<DownloadDecision> Pending { get; set; }
-        public List<DownloadDecision> Rejected { get; set; }
+        public List<SceneDownloadDecision> Grabbed { get; set; }
+        public List<SceneDownloadDecision> Pending { get; set; }
+        public List<SceneDownloadDecision> Rejected { get; set; }
 
-        public ProcessedDecisions(List<DownloadDecision> grabbed, List<DownloadDecision> pending, List<DownloadDecision> rejected)
+        public ProcessedDecisions(List<SceneDownloadDecision> grabbed, List<SceneDownloadDecision> pending, List<SceneDownloadDecision> rejected)
         {
             Grabbed = grabbed;
             Pending = pending;

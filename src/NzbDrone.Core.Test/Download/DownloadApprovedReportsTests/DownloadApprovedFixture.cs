@@ -26,8 +26,8 @@ namespace NzbDrone.Core.Test.Download.DownloadApprovedReportsTests
         public void SetUp()
         {
             Mocker.GetMock<IPrioritizeDownloadDecision>()
-                .Setup(v => v.PrioritizeDecisions(It.IsAny<List<DownloadDecision>>()))
-                .Returns<List<DownloadDecision>>(v => v);
+                .Setup(v => v.PrioritizeDecisions(It.IsAny<List<SceneDownloadDecision>>()))
+                .Returns<List<SceneDownloadDecision>>(v => v);
         }
 
         private Episode GetEpisode(int id)
@@ -63,8 +63,8 @@ namespace NzbDrone.Core.Test.Download.DownloadApprovedReportsTests
             var episodes = new List<Episode> { GetEpisode(1) };
             var remoteEpisode = GetRemoteEpisode(episodes, new QualityModel(Quality.HDTV720p));
 
-            var decisions = new List<DownloadDecision>();
-            decisions.Add(new DownloadDecision(remoteEpisode));
+            var decisions = new List<SceneDownloadDecision>();
+            decisions.Add(new SceneDownloadDecision(remoteEpisode));
 
             Subject.ProcessDecisions(decisions);
             Mocker.GetMock<IDownloadService>().Verify(v => v.DownloadReport(It.IsAny<RemoteEpisode>(), null), Times.Once());
@@ -76,9 +76,9 @@ namespace NzbDrone.Core.Test.Download.DownloadApprovedReportsTests
             var episodes = new List<Episode> { GetEpisode(1) };
             var remoteEpisode = GetRemoteEpisode(episodes, new QualityModel(Quality.HDTV720p));
 
-            var decisions = new List<DownloadDecision>();
-            decisions.Add(new DownloadDecision(remoteEpisode));
-            decisions.Add(new DownloadDecision(remoteEpisode));
+            var decisions = new List<SceneDownloadDecision>();
+            decisions.Add(new SceneDownloadDecision(remoteEpisode));
+            decisions.Add(new SceneDownloadDecision(remoteEpisode));
 
             Subject.ProcessDecisions(decisions);
             Mocker.GetMock<IDownloadService>().Verify(v => v.DownloadReport(It.IsAny<RemoteEpisode>(), null), Times.Once());
@@ -95,9 +95,9 @@ namespace NzbDrone.Core.Test.Download.DownloadApprovedReportsTests
                                                     new List<Episode> { GetEpisode(1), GetEpisode(2) },
                                                     new QualityModel(Quality.HDTV720p));
 
-            var decisions = new List<DownloadDecision>();
-            decisions.Add(new DownloadDecision(remoteEpisode1));
-            decisions.Add(new DownloadDecision(remoteEpisode2));
+            var decisions = new List<SceneDownloadDecision>();
+            decisions.Add(new SceneDownloadDecision(remoteEpisode1));
+            decisions.Add(new SceneDownloadDecision(remoteEpisode2));
 
             Subject.ProcessDecisions(decisions);
             Mocker.GetMock<IDownloadService>().Verify(v => v.DownloadReport(It.IsAny<RemoteEpisode>(), null), Times.Once());
@@ -109,8 +109,8 @@ namespace NzbDrone.Core.Test.Download.DownloadApprovedReportsTests
             var episodes = new List<Episode> { GetEpisode(1) };
             var remoteEpisode = GetRemoteEpisode(episodes, new QualityModel(Quality.HDTV720p));
 
-            var decisions = new List<DownloadDecision>();
-            decisions.Add(new DownloadDecision(remoteEpisode));
+            var decisions = new List<SceneDownloadDecision>();
+            decisions.Add(new SceneDownloadDecision(remoteEpisode));
 
             Subject.ProcessDecisions(decisions).Grabbed.Should().HaveCount(1);
         }
@@ -126,9 +126,9 @@ namespace NzbDrone.Core.Test.Download.DownloadApprovedReportsTests
                                                     new List<Episode> { GetEpisode(2) },
                                                     new QualityModel(Quality.HDTV720p));
 
-            var decisions = new List<DownloadDecision>();
-            decisions.Add(new DownloadDecision(remoteEpisode1));
-            decisions.Add(new DownloadDecision(remoteEpisode2));
+            var decisions = new List<SceneDownloadDecision>();
+            decisions.Add(new SceneDownloadDecision(remoteEpisode1));
+            decisions.Add(new SceneDownloadDecision(remoteEpisode2));
 
             Subject.ProcessDecisions(decisions).Grabbed.Should().HaveCount(2);
         }
@@ -148,10 +148,10 @@ namespace NzbDrone.Core.Test.Download.DownloadApprovedReportsTests
                                                     new List<Episode> { GetEpisode(2) },
                                                     new QualityModel(Quality.HDTV720p));
 
-            var decisions = new List<DownloadDecision>();
-            decisions.Add(new DownloadDecision(remoteEpisode1));
-            decisions.Add(new DownloadDecision(remoteEpisode2));
-            decisions.Add(new DownloadDecision(remoteEpisode3));
+            var decisions = new List<SceneDownloadDecision>();
+            decisions.Add(new SceneDownloadDecision(remoteEpisode1));
+            decisions.Add(new SceneDownloadDecision(remoteEpisode2));
+            decisions.Add(new SceneDownloadDecision(remoteEpisode3));
 
             Subject.ProcessDecisions(decisions).Grabbed.Should().HaveCount(2);
         }
@@ -162,8 +162,8 @@ namespace NzbDrone.Core.Test.Download.DownloadApprovedReportsTests
             var episodes = new List<Episode> { GetEpisode(1) };
             var remoteEpisode = GetRemoteEpisode(episodes, new QualityModel(Quality.HDTV720p));
 
-            var decisions = new List<DownloadDecision>();
-            decisions.Add(new DownloadDecision(remoteEpisode));
+            var decisions = new List<SceneDownloadDecision>();
+            decisions.Add(new SceneDownloadDecision(remoteEpisode));
 
             Mocker.GetMock<IDownloadService>().Setup(s => s.DownloadReport(It.IsAny<RemoteEpisode>(), null)).Throws(new Exception());
             Subject.ProcessDecisions(decisions).Grabbed.Should().BeEmpty();
@@ -173,9 +173,9 @@ namespace NzbDrone.Core.Test.Download.DownloadApprovedReportsTests
         [Test]
         public void should_return_an_empty_list_when_none_are_approved()
         {
-            var decisions = new List<DownloadDecision>();
-            decisions.Add(new DownloadDecision(null, new Rejection("Failure!")));
-            decisions.Add(new DownloadDecision(null, new Rejection("Failure!")));
+            var decisions = new List<SceneDownloadDecision>();
+            decisions.Add(new SceneDownloadDecision(null, new Rejection("Failure!")));
+            decisions.Add(new SceneDownloadDecision(null, new Rejection("Failure!")));
 
             Subject.GetQualifiedReports(decisions).Should().BeEmpty();
         }
@@ -186,8 +186,8 @@ namespace NzbDrone.Core.Test.Download.DownloadApprovedReportsTests
             var episodes = new List<Episode> { GetEpisode(1) };
             var remoteEpisode = GetRemoteEpisode(episodes, new QualityModel(Quality.HDTV720p));
 
-            var decisions = new List<DownloadDecision>();
-            decisions.Add(new DownloadDecision(remoteEpisode, new Rejection("Failure!", RejectionType.Temporary)));
+            var decisions = new List<SceneDownloadDecision>();
+            decisions.Add(new SceneDownloadDecision(remoteEpisode, new Rejection("Failure!", RejectionType.Temporary)));
 
             Subject.ProcessDecisions(decisions);
             Mocker.GetMock<IDownloadService>().Verify(v => v.DownloadReport(It.IsAny<RemoteEpisode>(), null), Times.Never());
@@ -199,12 +199,12 @@ namespace NzbDrone.Core.Test.Download.DownloadApprovedReportsTests
             var episodes = new List<Episode> { GetEpisode(1) };
             var remoteEpisode = GetRemoteEpisode(episodes, new QualityModel(Quality.HDTV720p));
 
-            var decisions = new List<DownloadDecision>();
-            decisions.Add(new DownloadDecision(remoteEpisode));
-            decisions.Add(new DownloadDecision(remoteEpisode, new Rejection("Failure!", RejectionType.Temporary)));
+            var decisions = new List<SceneDownloadDecision>();
+            decisions.Add(new SceneDownloadDecision(remoteEpisode));
+            decisions.Add(new SceneDownloadDecision(remoteEpisode, new Rejection("Failure!", RejectionType.Temporary)));
 
             Subject.ProcessDecisions(decisions);
-            Mocker.GetMock<IPendingReleaseService>().Verify(v => v.AddMany(It.IsAny<List<Tuple<DownloadDecision, PendingReleaseReason>>>()), Times.Never());
+            Mocker.GetMock<IPendingReleaseService>().Verify(v => v.AddMany(It.IsAny<List<Tuple<SceneDownloadDecision, PendingReleaseReason>>>()), Times.Never());
         }
 
         [Test]
@@ -213,12 +213,12 @@ namespace NzbDrone.Core.Test.Download.DownloadApprovedReportsTests
             var episodes = new List<Episode> { GetEpisode(1) };
             var remoteEpisode = GetRemoteEpisode(episodes, new QualityModel(Quality.HDTV720p));
 
-            var decisions = new List<DownloadDecision>();
-            decisions.Add(new DownloadDecision(remoteEpisode, new Rejection("Failure!", RejectionType.Temporary)));
-            decisions.Add(new DownloadDecision(remoteEpisode, new Rejection("Failure!", RejectionType.Temporary)));
+            var decisions = new List<SceneDownloadDecision>();
+            decisions.Add(new SceneDownloadDecision(remoteEpisode, new Rejection("Failure!", RejectionType.Temporary)));
+            decisions.Add(new SceneDownloadDecision(remoteEpisode, new Rejection("Failure!", RejectionType.Temporary)));
 
             Subject.ProcessDecisions(decisions);
-            Mocker.GetMock<IPendingReleaseService>().Verify(v => v.AddMany(It.IsAny<List<Tuple<DownloadDecision, PendingReleaseReason>>>()), Times.Once());
+            Mocker.GetMock<IPendingReleaseService>().Verify(v => v.AddMany(It.IsAny<List<Tuple<SceneDownloadDecision, PendingReleaseReason>>>()), Times.Once());
         }
 
         [Test]
@@ -227,9 +227,9 @@ namespace NzbDrone.Core.Test.Download.DownloadApprovedReportsTests
             var episodes = new List<Episode> { GetEpisode(1) };
             var remoteEpisode = GetRemoteEpisode(episodes, new QualityModel(Quality.HDTV720p));
 
-            var decisions = new List<DownloadDecision>();
-            decisions.Add(new DownloadDecision(remoteEpisode));
-            decisions.Add(new DownloadDecision(remoteEpisode));
+            var decisions = new List<SceneDownloadDecision>();
+            decisions.Add(new SceneDownloadDecision(remoteEpisode));
+            decisions.Add(new SceneDownloadDecision(remoteEpisode));
 
             Mocker.GetMock<IDownloadService>().Setup(s => s.DownloadReport(It.IsAny<RemoteEpisode>(), null))
                   .Throws(new DownloadClientUnavailableException("Download client failed"));
@@ -245,9 +245,9 @@ namespace NzbDrone.Core.Test.Download.DownloadApprovedReportsTests
             var remoteEpisode = GetRemoteEpisode(episodes, new QualityModel(Quality.HDTV720p), DownloadProtocol.Usenet);
             var remoteEpisode2 = GetRemoteEpisode(episodes, new QualityModel(Quality.HDTV720p), DownloadProtocol.Torrent);
 
-            var decisions = new List<DownloadDecision>();
-            decisions.Add(new DownloadDecision(remoteEpisode));
-            decisions.Add(new DownloadDecision(remoteEpisode2));
+            var decisions = new List<SceneDownloadDecision>();
+            decisions.Add(new SceneDownloadDecision(remoteEpisode));
+            decisions.Add(new SceneDownloadDecision(remoteEpisode2));
 
             Mocker.GetMock<IDownloadService>().Setup(s => s.DownloadReport(It.Is<RemoteEpisode>(r => r.Release.DownloadProtocol == DownloadProtocol.Usenet), null))
                   .Throws(new DownloadClientUnavailableException("Download client failed"));
@@ -263,8 +263,8 @@ namespace NzbDrone.Core.Test.Download.DownloadApprovedReportsTests
             var episodes = new List<Episode> { GetEpisode(1) };
             var remoteEpisode = GetRemoteEpisode(episodes, new QualityModel(Quality.HDTV720p));
 
-            var decisions = new List<DownloadDecision>();
-            decisions.Add(new DownloadDecision(remoteEpisode));
+            var decisions = new List<SceneDownloadDecision>();
+            decisions.Add(new SceneDownloadDecision(remoteEpisode));
 
             Mocker.GetMock<IDownloadService>()
                   .Setup(s => s.DownloadReport(It.IsAny<RemoteEpisode>(), null))

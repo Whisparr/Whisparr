@@ -22,8 +22,8 @@ namespace NzbDrone.Core.Download.Pending
 {
     public interface IPendingReleaseService
     {
-        void Add(DownloadDecision decision, PendingReleaseReason reason);
-        void AddMany(List<Tuple<DownloadDecision, PendingReleaseReason>> decisions);
+        void Add(SceneDownloadDecision decision, PendingReleaseReason reason);
+        void AddMany(List<Tuple<SceneDownloadDecision, PendingReleaseReason>> decisions);
         List<ReleaseInfo> GetPending();
         List<RemoteEpisode> GetPendingRemoteEpisodes(int seriesId);
         List<Queue.Queue> GetPendingQueue();
@@ -74,12 +74,12 @@ namespace NzbDrone.Core.Download.Pending
             _logger = logger;
         }
 
-        public void Add(DownloadDecision decision, PendingReleaseReason reason)
+        public void Add(SceneDownloadDecision decision, PendingReleaseReason reason)
         {
-            AddMany(new List<Tuple<DownloadDecision, PendingReleaseReason>> { Tuple.Create(decision, reason) });
+            AddMany(new List<Tuple<SceneDownloadDecision, PendingReleaseReason>> { Tuple.Create(decision, reason) });
         }
 
-        public void AddMany(List<Tuple<DownloadDecision, PendingReleaseReason>> decisions)
+        public void AddMany(List<Tuple<SceneDownloadDecision, PendingReleaseReason>> decisions)
         {
             foreach (var seriesDecisions in decisions.GroupBy(v => v.Item1.RemoteEpisode.Series.Id))
             {
@@ -358,7 +358,7 @@ namespace NzbDrone.Core.Download.Pending
             return queue;
         }
 
-        private void Insert(DownloadDecision decision, PendingReleaseReason reason)
+        private void Insert(SceneDownloadDecision decision, PendingReleaseReason reason)
         {
             _repository.Insert(new PendingRelease
             {
@@ -424,7 +424,7 @@ namespace NzbDrone.Core.Download.Pending
             }
         }
 
-        private void RemoveRejected(List<DownloadDecision> rejected)
+        private void RemoveRejected(List<SceneDownloadDecision> rejected)
         {
             _logger.Debug("Removing failed releases from pending");
             var pending = GetPendingReleases();

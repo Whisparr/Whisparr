@@ -17,12 +17,12 @@ namespace NzbDrone.Core.IndexerSearch
 {
     public interface ISearchForReleases
     {
-        List<DownloadDecision> EpisodeSearch(int episodeId, bool userInvokedSearch, bool interactiveSearch);
-        List<DownloadDecision> EpisodeSearch(Episode episode, bool userInvokedSearch, bool interactiveSearch);
-        List<DownloadDecision> SeasonSearch(int seriesId, int seasonNumber, bool missingOnly, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch);
-        List<DownloadDecision> SeasonSearch(int seriesId, int seasonNumber, List<Episode> episodes, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch);
-        List<DownloadDecision> MovieSearch(int movieId, bool userInvokedSearch, bool interactiveSearch);
-        List<DownloadDecision> MovieSearch(Movie movie,  bool userInvokedSearch, bool interactiveSearch);
+        List<SceneDownloadDecision> EpisodeSearch(int episodeId, bool userInvokedSearch, bool interactiveSearch);
+        List<SceneDownloadDecision> EpisodeSearch(Episode episode, bool userInvokedSearch, bool interactiveSearch);
+        List<SceneDownloadDecision> SeasonSearch(int seriesId, int seasonNumber, bool missingOnly, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch);
+        List<SceneDownloadDecision> SeasonSearch(int seriesId, int seasonNumber, List<Episode> episodes, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch);
+        List<SceneDownloadDecision> MovieSearch(int movieId, bool userInvokedSearch, bool interactiveSearch);
+        List<SceneDownloadDecision> MovieSearch(Movie movie,  bool userInvokedSearch, bool interactiveSearch);
     }
 
     public class ReleaseSearchService : ISearchForReleases
@@ -49,21 +49,21 @@ namespace NzbDrone.Core.IndexerSearch
             _logger = logger;
         }
 
-        public List<DownloadDecision> EpisodeSearch(int episodeId, bool userInvokedSearch, bool interactiveSearch)
+        public List<SceneDownloadDecision> EpisodeSearch(int episodeId, bool userInvokedSearch, bool interactiveSearch)
         {
             var episode = _episodeService.GetEpisode(episodeId);
 
             return EpisodeSearch(episode, userInvokedSearch, interactiveSearch);
         }
 
-        public List<DownloadDecision> EpisodeSearch(Episode episode, bool userInvokedSearch, bool interactiveSearch)
+        public List<SceneDownloadDecision> EpisodeSearch(Episode episode, bool userInvokedSearch, bool interactiveSearch)
         {
             var series = _seriesService.GetSeries(episode.SeriesId);
 
             return SearchSingle(series, episode, false, userInvokedSearch, interactiveSearch);
         }
 
-        public List<DownloadDecision> SeasonSearch(int seriesId, int seasonNumber, bool missingOnly, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
+        public List<SceneDownloadDecision> SeasonSearch(int seriesId, int seasonNumber, bool missingOnly, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
         {
             var episodes = _episodeService.GetEpisodesBySeason(seriesId, seasonNumber);
 
@@ -75,11 +75,11 @@ namespace NzbDrone.Core.IndexerSearch
             return SeasonSearch(seriesId, seasonNumber, episodes, monitoredOnly, userInvokedSearch, interactiveSearch);
         }
 
-        public List<DownloadDecision> SeasonSearch(int seriesId, int seasonNumber, List<Episode> episodes, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
+        public List<SceneDownloadDecision> SeasonSearch(int seriesId, int seasonNumber, List<Episode> episodes, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
         {
             var series = _seriesService.GetSeries(seriesId);
 
-            var downloadDecisions = new List<DownloadDecision>();
+            var downloadDecisions = new List<SceneDownloadDecision>();
 
             if (episodes.Count == 1)
             {
@@ -100,16 +100,16 @@ namespace NzbDrone.Core.IndexerSearch
             return DeDupeDecisions(downloadDecisions);
         }
 
-        public List<DownloadDecision> MovieSearch(int movieId, bool userInvokedSearch, bool interactiveSearch)
+        public List<SceneDownloadDecision> MovieSearch(int movieId, bool userInvokedSearch, bool interactiveSearch)
         {
             var movie = _movieService.GetMovie(movieId);
 
             return MovieSearch(movie, userInvokedSearch, interactiveSearch);
         }
 
-        public List<DownloadDecision> MovieSearch(Movie movie, bool userInvokedSearch, bool interactiveSearch)
+        public List<SceneDownloadDecision> MovieSearch(Movie movie, bool userInvokedSearch, bool interactiveSearch)
         {
-            var downloadDecisions = new List<DownloadDecision>();
+            var downloadDecisions = new List<SceneDownloadDecision>();
 
             var searchSpec = Get<MovieSearchCriteria>(movie, userInvokedSearch, interactiveSearch);
 
@@ -121,9 +121,9 @@ namespace NzbDrone.Core.IndexerSearch
             return DeDupeDecisions(downloadDecisions);
         }
 
-        private List<DownloadDecision> SearchSingle(Series series, Episode episode, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
+        private List<SceneDownloadDecision> SearchSingle(Series series, Episode episode, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
         {
-            var downloadDecisions = new List<DownloadDecision>();
+            var downloadDecisions = new List<SceneDownloadDecision>();
 
             var searchSpec = Get<SingleEpisodeSearchCriteria>(series, new List<Episode> { episode }, monitoredOnly, userInvokedSearch, interactiveSearch);
             searchSpec.ReleaseDate = DateOnly.Parse(episode.AirDate);
@@ -173,7 +173,7 @@ namespace NzbDrone.Core.IndexerSearch
             return spec;
         }
 
-        private List<DownloadDecision> Dispatch(Func<IIndexer, IEnumerable<ReleaseInfo>> searchAction, SceneSearchCriteriaBase criteriaBase)
+        private List<SceneDownloadDecision> Dispatch(Func<IIndexer, IEnumerable<ReleaseInfo>> searchAction, SceneSearchCriteriaBase criteriaBase)
         {
             var indexers = criteriaBase.InteractiveSearch ?
                 _indexerFactory.InteractiveSearchEnabled() :
@@ -228,7 +228,62 @@ namespace NzbDrone.Core.IndexerSearch
             return _makeDownloadDecision.GetSearchDecision(reports, criteriaBase).ToList();
         }
 
-        private List<DownloadDecision> DeDupeDecisions(List<DownloadDecision> decisions)
+        private List<SceneDownloadDecision> Dispatch(Func<IIndexer, IEnumerable<ReleaseInfo>> searchAction, MovieSearchCriteria criteriaBase)
+        {
+            var indexers = criteriaBase.InteractiveSearch ?
+                _indexerFactory.InteractiveSearchEnabled() :
+                _indexerFactory.AutomaticSearchEnabled();
+
+            // Filter indexers to untagged indexers and indexers with intersecting tags
+            indexers = indexers.Where(i => i.Definition.Tags.Empty() || i.Definition.Tags.Intersect(criteriaBase.Movie.Tags).Any()).ToList();
+
+            var reports = new List<ReleaseInfo>();
+
+            _logger.ProgressInfo("Searching indexers for {0}. {1} active indexers", criteriaBase, indexers.Count);
+
+            var taskList = new List<Task>();
+            var taskFactory = new TaskFactory(TaskCreationOptions.LongRunning, TaskContinuationOptions.None);
+
+            foreach (var indexer in indexers)
+            {
+                var indexerLocal = indexer;
+
+                taskList.Add(taskFactory.StartNew(() =>
+                {
+                    try
+                    {
+                        var indexerReports = searchAction(indexerLocal);
+
+                        lock (reports)
+                        {
+                            reports.AddRange(indexerReports);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.Error(e, "Error while searching for {0}", criteriaBase);
+                    }
+                }).LogExceptions());
+            }
+
+            Task.WaitAll(taskList.ToArray());
+
+            _logger.Debug("Total of {0} reports were found for {1} from {2} indexers", reports.Count, criteriaBase, indexers.Count);
+
+            // TODO Do we need to set LastSearchTime for Movies?
+            // Update the last search time for all episodes if at least 1 indexer was searched.
+            // if (indexers.Any())
+            // {
+            //    var lastSearchTime = DateTime.UtcNow;
+            //    _logger.Debug("Setting last search time to: {0}", lastSearchTime);
+            //    criteriaBase.Episodes.ForEach(e => e.LastSearchTime = lastSearchTime);
+            //    _episodeService.UpdateLastSearchTime(criteriaBase.Episodes);
+            // }
+
+            return _makeDownloadDecision.GetSearchDecision(reports, criteriaBase).ToList();
+        }
+
+        private List<SceneDownloadDecision> DeDupeDecisions(List<SceneDownloadDecision> decisions)
         {
             // De-dupe reports by guid so duplicate results aren't returned. Pick the one with the least rejections.
 

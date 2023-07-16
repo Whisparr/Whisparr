@@ -57,5 +57,10 @@ namespace NzbDrone.Core.DecisionEngine.Specifications.RssSync
 
             return Decision.Reject("One or more episodes is not monitored");
         }
+
+        public Decision IsSatisfiedBy(RemoteMovie subject, MovieSearchCriteria searchCriteria)
+        {
+            return Decision.Accept();
+        }
     }
 }

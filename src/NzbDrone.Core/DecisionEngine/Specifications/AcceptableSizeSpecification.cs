@@ -95,5 +95,10 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
             _logger.Debug("Item: {0}, meets size constraints", subject);
             return Decision.Accept();
         }
+
+        public Decision IsSatisfiedBy(RemoteMovie subject, MovieSearchCriteria searchCriteria)
+        {
+            return Decision.Accept();
+        }
     }
 }

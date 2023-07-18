@@ -10,6 +10,7 @@ namespace Whisparr.Http.Frontend
 {
     [Authorize(Policy = "UI")]
     [ApiController]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class InitializeJsonController : Controller
     {
         private readonly IConfigFileProvider _configFileProvider;

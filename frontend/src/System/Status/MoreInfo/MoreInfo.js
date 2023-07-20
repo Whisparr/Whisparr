@@ -4,6 +4,7 @@ import DescriptionListItemDescription from 'Components/DescriptionList/Descripti
 import DescriptionListItemTitle from 'Components/DescriptionList/DescriptionListItemTitle';
 import FieldSet from 'Components/FieldSet';
 import Link from 'Components/Link/Link';
+import translate from 'Utilities/String/translate';
 
 class MoreInfo extends Component {
 
@@ -12,34 +13,46 @@ class MoreInfo extends Component {
 
   render() {
     return (
-      <FieldSet legend="More Info">
+      <FieldSet legend={translate('MoreInfo')}>
         <DescriptionList>
-          <DescriptionListItemTitle>Home page</DescriptionListItemTitle>
+          <DescriptionListItemTitle>
+            {translate('HomePage')}
+          </DescriptionListItemTitle>
           <DescriptionListItemDescription>
             <Link to="https://whisparr.com/">whisparr.com</Link>
           </DescriptionListItemDescription>
 
-          <DescriptionListItemTitle>Wiki</DescriptionListItemTitle>
+          <DescriptionListItemTitle>
+            {translate('Wiki')}
+          </DescriptionListItemTitle>
           <DescriptionListItemDescription>
             <Link to="https://wiki.servarr.com/whisparr">wiki.servarr.com/whisparr</Link>
           </DescriptionListItemDescription>
 
-          <DescriptionListItemTitle>Discord</DescriptionListItemTitle>
+          <DescriptionListItemTitle>
+            {translate('Discord')}
+          </DescriptionListItemTitle>
           <DescriptionListItemDescription>
             <Link to="https://whisparr.com/discord">https://whisparr.com/discord</Link>
           </DescriptionListItemDescription>
 
-          <DescriptionListItemTitle>Donations</DescriptionListItemTitle>
+          <DescriptionListItemTitle>
+            {translate('Donations')}
+          </DescriptionListItemTitle>
           <DescriptionListItemDescription>
             <Link to="https://whisparr.com/donate">whisparr.com/donate</Link>
           </DescriptionListItemDescription>
 
-          <DescriptionListItemTitle>Source</DescriptionListItemTitle>
+          <DescriptionListItemTitle>
+            {translate('Source')}
+          </DescriptionListItemTitle>
           <DescriptionListItemDescription>
             <Link to="https://github.com/Whisparr/Whisparr/">github.com/Whisparr/Whisparr</Link>
           </DescriptionListItemDescription>
 
-          <DescriptionListItemTitle>Feature Requests</DescriptionListItemTitle>
+          <DescriptionListItemTitle>
+            {translate('FeatureRequests')}
+          </DescriptionListItemTitle>
           <DescriptionListItemDescription>
             <Link to="https://github.com/Whisparr/Whisparr/issues">github.com/Whisparr/Whisparr/issues</Link>
           </DescriptionListItemDescription>

@@ -22,6 +22,7 @@ const requiresRestartKeys = [
   'bindAddress',
   'port',
   'urlBase',
+  'instanceName',
   'enableSsl',
   'sslPort',
   'sslCertPath',
@@ -125,7 +126,7 @@ class GeneralSettings extends Component {
           {
             !isFetching && error &&
               <Alert kind={kinds.DANGER}>
-                {translate('UnableToLoadGeneralSettings')}
+                {translate('GeneralSettingsLoadError')}
               </Alert>
           }
 
@@ -186,10 +187,8 @@ class GeneralSettings extends Component {
           isOpen={this.state.isRestartRequiredModalOpen}
           kind={kinds.DANGER}
           title={translate('RestartWhisparr')}
-          message={
-            `Whisparr requires a restart to apply changes, do you want to restart now? ${isWindowsService ? 'Depending which user is running the Whisparr service you may need to restart Whisparr as admin once before the service will start automatically.' : ''}`
-          }
-          cancelLabel={translate('IllRestartLater')}
+          message={`${translate('RestartRequiredToApplyChanges')} ${isWindowsService ? translate('RestartRequiredWindowsService') : ''}`}
+          cancelLabel={translate('RestartLater')}
           confirmLabel={translate('RestartNow')}
           onConfirm={this.onConfirmRestart}
           onCancel={this.onCloseRestartRequiredModalOpen}

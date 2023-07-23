@@ -18,13 +18,14 @@ import ModalHeader from 'Components/Modal/ModalHeader';
 import Popover from 'Components/Tooltip/Popover';
 import { icons, inputTypes, kinds, tooltipPositions } from 'Helpers/Props';
 import formatShortTimeSpan from 'Utilities/Date/formatShortTimeSpan';
+import ImportListMonitoringOptionsPopoverContent from './ImportListMonitoringOptionsPopoverContent';
 import styles from './EditImportListModalContent.css';
 
 function EditImportListModalContent(props) {
 
   const monitorOptions = [
     { key: 'none', value: 'None' },
-    { key: 'specificEpisode', value: 'Specific Episode' },
+    { key: 'specificEpisode', value: 'Specific Episode(s)' },
     { key: 'entireSite', value: 'All Site Episodes' }
   ];
 
@@ -114,6 +115,18 @@ function EditImportListModalContent(props) {
               <FormGroup>
                 <FormLabel>
                   Monitor
+
+                  <Popover
+                    anchor={
+                      <Icon
+                        className={styles.labelIcon}
+                        name={icons.INFO}
+                      />
+                    }
+                    title="List Monitoring Options"
+                    body={<ImportListMonitoringOptionsPopoverContent />}
+                    position={tooltipPositions.RIGHT}
+                  />
                 </FormLabel>
 
                 <FormInputGroup

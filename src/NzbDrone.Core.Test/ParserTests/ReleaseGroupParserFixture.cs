@@ -40,9 +40,6 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("SomeShow.S20E13.1080p.Blu-Ray.DTS-ES.5.1.x264-ROUGH [PublicHD]", "ROUGH")]
         [TestCase("SomeShow S01E168 1080p WEB-DL AAC 2.0 x264-Erai-raws", "Erai-raws")]
         [TestCase("The.Good.Series.S05E03.Series.of.Intelligence.1080p.10bit.AMZN.WEB-DL.DDP5.1.HEVC-Vyndros", "Vyndros")]
-        [TestCase("[Tenrai-Sensei] Series [BD][1080p][HEVC 10bit x265][Dual Audio]", "Tenrai-Sensei")]
-        [TestCase("[Erai-raws] Series - 0955 ~ 1005 [1080p]", "Erai-raws")]
-        [TestCase("[Exiled-Destiny] Series Title", "Exiled-Destiny")]
         [TestCase("Series.Title.S01E09.1080p.DSNP.WEB-DL.DDP2.0.H.264-VARYG", "VARYG")]
 
         // [TestCase("", "")]
@@ -120,19 +117,6 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Series.S01E01.Rites.of.Passage.1080p.BluRay.x264-DON-AlteZachen", "DON")]
         [TestCase("Series.Title.S04E06.Episode.Name.720p.WEB-DL.DD5.1.H.264-HarrHD-RePACKPOST", "HarrHD")]
         public void should_not_include_repost_in_release_group(string title, string expected)
-        {
-            Parser.Parser.ParseReleaseGroup(title).Should().Be(expected);
-        }
-
-        [TestCase("[FFF] Series Title!! - S01E11 - Someday, With Whisparr", "FFF")]
-        [TestCase("[HorribleSubs] Series Title!! - S01E12 - Whisparr Going Well!!", "HorribleSubs")]
-        [TestCase("[Anime-Koi] Series Title - S01E06 - Guys From Whisparr", "Anime-Koi")]
-        [TestCase("[Anime-Koi] Series Title - S01E07 - A High-Grade Whisparr", "Anime-Koi")]
-        [TestCase("[Anime-Koi] Series Title 2 - 01 [h264-720p][28D54E2C]", "Anime-Koi")]
-
-        // [TestCase("Tokyo.Ghoul.02x01.013.HDTV-720p-Anime-Koi", "Anime-Koi")]
-        // [TestCase("", "")]
-        public void should_parse_anime_release_groups(string title, string expected)
         {
             Parser.Parser.ParseReleaseGroup(title).Should().Be(expected);
         }

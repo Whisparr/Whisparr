@@ -27,6 +27,7 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Tree_Series_2018_06_22_Seth_Meyers_720p_HEVC_x265-MeGusta", "Tree Series", 2018, 6, 22)]
         [TestCase("20161024- Exotic Payback.21x41_720.mkv", "", 2016, 10, 24)]
         [TestCase("Series and Title 20201013 Ep7432 [720p WebRip (x264)] [SUBS]", "Series and Title", 2020, 10, 13)]
+        [TestCase("[Site] 19-07-2023 - Loli - Beautiful 2160p {RlsGroup}", "Site", 2023, 07, 19)]
 
         // [TestCase("", "", 0, 0, 0)]
         public void should_parse_daily_episode(string postTitle, string title, int year, int month, int day)

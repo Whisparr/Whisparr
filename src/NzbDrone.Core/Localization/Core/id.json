@@ -1,1 +1,21 @@
-{}
+{
+    "QualityProfile": "Profil Kualitas",
+    "Language": "Bahasa",
+    "Close": "Tutup",
+    "Delete": "Hapus",
+    "EnableAutomaticSearch": "Aktifkan Penelusuran Otomatis",
+    "EnableInteractiveSearch": "Aktifkan Penelusuran Interaktif",
+    "Enabled": "Aktif",
+    "Ended": "Berakhir",
+    "Monitored": "Dimonitor",
+    "Network": "Jaringan",
+    "NextAiring": "Tayang Selanjutnya",
+    "NoSeasons": "Tidak ada musim",
+    "OneSeason": "1 musim",
+    "OriginalLanguage": "Bahasa Asli",
+    "Path": "Path",
+    "PreviousAiring": "Sebelumnya Tayang",
+    "Priority": "Prioritas",
+    "ProxyFailedToTestHealthCheckMessage": "Gagal menguji proxy: {0}",
+    "ProxyBadRequestHealthCheckMessage": "Gagal menguji proxy. Kode Status: {0}"
+}

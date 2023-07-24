@@ -20,7 +20,7 @@ function createMapStateToProps() {
       props.isPopulated = organizePreview.isPopulated && naming.isPopulated;
       props.error = organizePreview.error || naming.error;
       props.renameEpisodes = naming.item.renameEpisodes;
-      props.episodeFormat = naming.item.StandardEpisodeFormat;
+      props.episodeFormat = naming.item.standardEpisodeFormat;
       props.path = series.path;
 
       return props;

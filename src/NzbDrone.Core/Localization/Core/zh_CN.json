@@ -1,1 +1,14 @@
-{}
+{
+    "Language": "语言",
+    "Language that Whisparr will use for UI": "Whisparr 将用于 UI 的语言",
+    "UI Language": "用户界面语言",
+    "Browser Reload Required": "需要重新加载浏览器",
+    "HiddenClickToShow": "隐藏，点击显示",
+    "ShownClickToHide": "显示，点击隐藏",
+    "HideAdvanced": "隐藏高级",
+    "ShowAdvanced": "显示高级",
+    "ApplyTagsHelpTextRemove": "移除: 移除已输入的标签",
+    "ApplyTagsHelpTextReplace": "替换: 用输入的标签替换当前标签 (不输入将会清除所有标签)",
+    "ApplyTagsHelpTextAdd": "添加: 添加标签至已有的标签列表中",
+    "AppDataLocationHealthCheckMessage": "正在更新期间的 AppData 不会被更新删除"
+}

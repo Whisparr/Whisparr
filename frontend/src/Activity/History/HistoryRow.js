@@ -13,7 +13,7 @@ import EpisodeQuality from 'Episode/EpisodeQuality';
 import EpisodeTitleLink from 'Episode/EpisodeTitleLink';
 import { icons, tooltipPositions } from 'Helpers/Props';
 import SeriesTitleLink from 'Series/SeriesTitleLink';
-import formatPreferredWordScore from 'Utilities/Number/formatPreferredWordScore';
+import formatCustomFormatScore from 'Utilities/Number/formatCustomFormatScore';
 import HistoryDetailsModal from './Details/HistoryDetailsModal';
 import HistoryEventTypeCell from './HistoryEventTypeCell';
 import styles from './HistoryRow.css';
@@ -220,7 +220,7 @@ class HistoryRow extends Component {
                   className={styles.customFormatScore}
                 >
                   <Tooltip
-                    anchor={formatPreferredWordScore(
+                    anchor={formatCustomFormatScore(
                       customFormatScore,
                       customFormats.length
                     )}

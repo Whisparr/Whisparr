@@ -42,7 +42,7 @@ namespace NzbDrone.Core.Parser
             {
                 // Site title in brackets with full year in date then episode info
                 // [Site] 19-07-2023 - Loli - Beautiful 2160p {RlsGroup}
-                new Regex("^\\[(?<title>.+?)\\]?[-_. ]+(?<airday>[0-3][0-9])(?![-_. ]+[0-3][0-9])?[-_. ]+(?<airmonth>[0-1][0-9])?[-_. ]+(?<airyear>(19|20)\\d{2})",
+                new Regex("^\\[(?<title>.+?)\\][-_. ]+(?<airday>[0-3][0-9])(?![-_. ]+[0-3][0-9])?[-_. ]+(?<airmonth>[0-1][0-9])[-_. ]+(?<airyear>(19|20)\\d{2})",
                     RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
                 // Episodes with non-separated airdate after title (20180428)

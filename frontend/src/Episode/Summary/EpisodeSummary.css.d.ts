@@ -2,6 +2,8 @@
 // Please do not change this file!
 interface CssExports {
   'actions': string;
+  'actor': string;
+  'actorContainer': string;
   'actors': string;
   'fileRow': string;
   'files': string;

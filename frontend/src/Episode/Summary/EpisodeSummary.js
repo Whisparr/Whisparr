@@ -5,6 +5,7 @@ import ConfirmModal from 'Components/Modal/ConfirmModal';
 import Table from 'Components/Table/Table';
 import TableBody from 'Components/Table/TableBody';
 import { kinds, sizes } from 'Helpers/Props';
+import SeriesPerformerConnector from 'Series/SeriesPerformerConnector';
 import QualityProfileNameConnector from 'Settings/Profiles/Quality/QualityProfileNameConnector';
 import EpisodeAiringConnector from './EpisodeAiringConnector';
 import EpisodeFileRow from './EpisodeFileRow';
@@ -83,6 +84,7 @@ class EpisodeSummary extends Component {
 
   render() {
     const {
+      seriesId,
       qualityProfileId,
       network,
       overview,
@@ -99,7 +101,6 @@ class EpisodeSummary extends Component {
     } = this.props;
 
     const hasOverview = !!overview;
-    const joinedPerformers = actors.map((a) => a.character).join(', ');
 
     return (
       <div>
@@ -127,9 +128,28 @@ class EpisodeSummary extends Component {
 
         <div>
           <span className={styles.actors}>Performers</span>
-          {
-            joinedPerformers
-          }
+
+          <div className={styles.actorContainer}>
+            {
+              actors.map((a) => {
+                const {
+                  tpdbId,
+                  name: actorName
+                } = a;
+
+                return (
+                  <div className={styles.actor} key={a.tpdbId}>
+                    <SeriesPerformerConnector
+                      tpdbId={tpdbId}
+                      seriesId={seriesId}
+                      name={actorName}
+                      key={a.id}
+                    />
+                  </div>
+                );
+              })
+            }
+          </div>
         </div>
 
         <div className={styles.overview}>
@@ -175,6 +195,7 @@ class EpisodeSummary extends Component {
 }
 
 EpisodeSummary.propTypes = {
+  seriesId: PropTypes.number.isRequired,
   episodeFileId: PropTypes.number.isRequired,
   qualityProfileId: PropTypes.number.isRequired,
   network: PropTypes.string.isRequired,

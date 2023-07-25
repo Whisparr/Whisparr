@@ -3,6 +3,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import { deleteEpisodeFile, fetchEpisodeFile } from 'Store/Actions/episodeFileActions';
+import { fetchRootFolders } from 'Store/Actions/rootFolderActions';
+import { fetchImportListSchema } from 'Store/Actions/settingsActions';
 import createEpisodeFileSelector from 'Store/Selectors/createEpisodeFileSelector';
 import createEpisodeSelector from 'Store/Selectors/createEpisodeSelector';
 import createSeriesSelector from 'Store/Selectors/createSeriesSelector';
@@ -15,6 +17,7 @@ function createMapStateToProps() {
     createEpisodeFileSelector(),
     (series, episode, episodeFile = {}) => {
       const {
+        id: seriesId,
         qualityProfileId,
         network
       } = series;
@@ -36,6 +39,7 @@ function createMapStateToProps() {
       } = episodeFile;
 
       return {
+        seriesId,
         network,
         qualityProfileId,
         releaseDate,
@@ -66,6 +70,14 @@ function createMapDispatchToProps(dispatch, props) {
       dispatch(fetchEpisodeFile({
         id: props.episodeFileId
       }));
+    },
+
+    dispatchFetchImportListSchema() {
+      dispatch(fetchImportListSchema());
+    },
+
+    dispatchFetchRootFolders() {
+      dispatch(fetchRootFolders());
     }
   };
 }
@@ -79,12 +91,17 @@ class EpisodeSummaryConnector extends Component {
     const {
       episodeFileId,
       path,
-      dispatchFetchEpisodeFile
+      dispatchFetchEpisodeFile,
+      dispatchFetchImportListSchema,
+      dispatchFetchRootFolders
     } = this.props;
 
     if (episodeFileId && !path) {
       dispatchFetchEpisodeFile({ id: episodeFileId });
     }
+
+    dispatchFetchImportListSchema();
+    dispatchFetchRootFolders();
   }
 
   //
@@ -93,6 +110,8 @@ class EpisodeSummaryConnector extends Component {
   render() {
     const {
       dispatchFetchEpisodeFile,
+      dispatchFetchImportListSchema,
+      dispatchFetchRootFolders,
       ...otherProps
     } = this.props;
 
@@ -103,7 +122,9 @@ class EpisodeSummaryConnector extends Component {
 EpisodeSummaryConnector.propTypes = {
   episodeFileId: PropTypes.number,
   path: PropTypes.string,
-  dispatchFetchEpisodeFile: PropTypes.func.isRequired
+  dispatchFetchEpisodeFile: PropTypes.func.isRequired,
+  dispatchFetchImportListSchema: PropTypes.func.isRequired,
+  dispatchFetchRootFolders: PropTypes.func.isRequired
 };
 
 export default connect(createMapStateToProps, createMapDispatchToProps)(EpisodeSummaryConnector);

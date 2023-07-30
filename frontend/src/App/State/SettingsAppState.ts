@@ -1,5 +1,6 @@
 import AppSectionState, {
   AppSectionDeleteState,
+  AppSectionItemState,
   AppSectionSaveState,
   AppSectionSchemaState,
 } from 'App/State/AppSectionState';
@@ -35,17 +36,17 @@ export interface QualityProfilesAppState
     AppSectionSchemaState<QualityProfile> {}
 
 export type LanguageSettingsAppState = AppSectionState<Language>;
-export type UiSettingsAppState = AppSectionState<UiSettings>;
+export type UiSettingsAppState = AppSectionItemState<UiSettings>;
 
 interface SettingsAppState {
   downloadClients: DownloadClientAppState;
   importLists: ImportListAppState;
   indexers: IndexerAppState;
+  languages: LanguageSettingsAppState;
   notifications: NotificationAppState;
-  language: LanguageSettingsAppState;
-  uiSettings: UiSettingsAppState;
   qualityProfiles: QualityProfilesAppState;
   safeForWorkMode: boolean;
+  ui: UiSettingsAppState;
 }
 
 export default SettingsAppState;

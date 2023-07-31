@@ -17,6 +17,7 @@ namespace Whisparr.Http.Extensions
             "episode.title", // Deprecated
             "episode.airDateUtc", // Deprecated
             "episode.language", // Deprecated
+            "episodes.releaseDate",
             "timeleft",
             "estimatedCompletionTime",
             "protocol",

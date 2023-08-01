@@ -7,6 +7,7 @@ import TableBody from 'Components/Table/TableBody';
 import { kinds, sizes } from 'Helpers/Props';
 import SeriesPerformerConnector from 'Series/SeriesPerformerConnector';
 import QualityProfileNameConnector from 'Settings/Profiles/Quality/QualityProfileNameConnector';
+import translate from 'Utilities/String/translate';
 import EpisodeAiringConnector from './EpisodeAiringConnector';
 import EpisodeFileRow from './EpisodeFileRow';
 import styles from './EpisodeSummary.css';
@@ -14,31 +15,31 @@ import styles from './EpisodeSummary.css';
 const columns = [
   {
     name: 'path',
-    label: 'Path',
+    label: () => translate('Path'),
     isSortable: false,
     isVisible: true
   },
   {
     name: 'size',
-    label: 'Size',
+    label: () => translate('Size'),
     isSortable: false,
     isVisible: true
   },
   {
     name: 'languages',
-    label: 'Languages',
+    label: () => translate('Languages'),
     isSortable: false,
     isVisible: true
   },
   {
     name: 'quality',
-    label: 'Quality',
+    label: () => translate('Quality'),
     isSortable: false,
     isVisible: true
   },
   {
     name: 'customFormats',
-    label: 'Formats',
+    label: () => translate('Formats'),
     isSortable: false,
     isVisible: true
   },

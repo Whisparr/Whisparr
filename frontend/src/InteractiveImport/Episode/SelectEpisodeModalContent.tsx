@@ -25,6 +25,7 @@ import createClientSideCollectionSelector from 'Store/Selectors/createClientSide
 import { CheckInputChanged } from 'typings/inputs';
 import { SelectStateInputProps } from 'typings/props';
 import getErrorMessage from 'Utilities/Object/getErrorMessage';
+import translate from 'Utilities/String/translate';
 import getSelectedIds from 'Utilities/Table/getSelectedIds';
 import SelectEpisodeRow from './SelectEpisodeRow';
 import styles from './SelectEpisodeModalContent.css';
@@ -32,12 +33,12 @@ import styles from './SelectEpisodeModalContent.css';
 const columns = [
   {
     name: 'title',
-    label: 'Title',
+    label: () => translate('Title'),
     isVisible: true,
   },
   {
     name: 'releaseDate',
-    label: 'Release Date',
+    label: () => translate('ReleaseDate'),
     isVisible: true,
   },
 ];

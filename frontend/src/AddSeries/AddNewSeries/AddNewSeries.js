@@ -9,6 +9,7 @@ import PageContent from 'Components/Page/PageContent';
 import PageContentBody from 'Components/Page/PageContentBody';
 import { icons, kinds } from 'Helpers/Props';
 import getErrorMessage from 'Utilities/Object/getErrorMessage';
+import translate from 'Utilities/String/translate';
 import AddNewSeriesSearchResultConnector from './AddNewSeriesSearchResultConnector';
 import styles from './AddNewSeries.css';
 
@@ -87,7 +88,7 @@ class AddNewSeries extends Component {
     const isFetching = this.state.isFetching;
 
     return (
-      <PageContent title="Add New Site">
+      <PageContent title={translate('AddNewSite')}>
         <PageContentBody>
           <div className={styles.searchContainer}>
             <div className={styles.searchIconContainer}>
@@ -126,7 +127,7 @@ class AddNewSeries extends Component {
             !isFetching && !!error ?
               <div className={styles.message}>
                 <div className={styles.helpText}>
-                  Failed to load search results, please try again.
+                  {translate('AddNewSeriesError')}
                 </div>
                 <div>{getErrorMessage(error)}</div>
               </div> : null
@@ -151,11 +152,11 @@ class AddNewSeries extends Component {
           {
             !isFetching && !error && !items.length && !!term &&
               <div className={styles.message}>
-                <div className={styles.noResults}>Couldn't find any results for '{term}'</div>
-                <div>You can also search using TPDB ID of a show. eg. tpdb:92</div>
+                <div className={styles.noResults}>{translate('CouldNotFindResults', { term })}</div>
+                <div>{translate('SearchByTpdbId')}</div>
                 <div>
-                  <Link to="https://wiki.servarr.com/whisparr/faq#why-cant-i-add-a-new-series-when-i-know-the-tvdb-id">
-                    Why can't I find my show?
+                  <Link to="https://wiki.servarr.com/whisparr/faq#why-cant-i-add-a-new-site-when-i-know-the-tpdb-id">
+                    {translate('WhyCantIFindMySite')}
                   </Link>
                 </div>
               </div>
@@ -166,9 +167,9 @@ class AddNewSeries extends Component {
               null :
               <div className={styles.message}>
                 <div className={styles.helpText}>
-                  It's easy to add a new site, just start typing the name the site you want to add.
+                  {translate('AddNewSeriesHelpText')}
                 </div>
-                <div>You can also search using TPDB ID of a show. eg. tpdb:92</div>
+                <div>{translate('SearchByTpdbId')}</div>
               </div>
           }
 
@@ -176,14 +177,14 @@ class AddNewSeries extends Component {
             !term && !hasExistingSeries ?
               <div className={styles.message}>
                 <div className={styles.noSeriesText}>
-                  You haven't added any sites yet, do you want to import some or all of your sites first?
+                  {translate('NoSitesHaveBeenAdded')}
                 </div>
                 <div>
                   <Button
                     to="/add/import"
                     kind={kinds.PRIMARY}
                   >
-                    Import Existing Sites
+                    {translate('ImportExistingSites')}
                   </Button>
                 </div>
               </div> :

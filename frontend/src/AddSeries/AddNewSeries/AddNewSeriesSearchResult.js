@@ -6,6 +6,7 @@ import Link from 'Components/Link/Link';
 import MetadataAttribution from 'Components/MetadataAttribution';
 import { icons, kinds, sizes } from 'Helpers/Props';
 import SeriesPoster from 'Series/SeriesPoster';
+import translate from 'Utilities/String/translate';
 import AddNewSeriesModal from './AddNewSeriesModal';
 import styles from './AddNewSeriesSearchResult.css';
 
@@ -104,7 +105,7 @@ class AddNewSeriesSearchResult extends Component {
                       className={styles.alreadyExistsIcon}
                       name={icons.CHECK_CIRCLE}
                       size={36}
-                      title="Already in your library"
+                      title={translate('AlreadyInYourLibrary')}
                     /> :
                     null
                 }
@@ -139,7 +140,7 @@ class AddNewSeriesSearchResult extends Component {
                     kind={kinds.DANGER}
                     size={sizes.LARGE}
                   >
-                    Ended
+                    {translate('Ended')}
                   </Label> :
                   null
               }
@@ -150,7 +151,7 @@ class AddNewSeriesSearchResult extends Component {
                     kind={kinds.INFO}
                     size={sizes.LARGE}
                   >
-                    Upcoming
+                    {translate('Upcoming')}
                   </Label> :
                   null
               }

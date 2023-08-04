@@ -3,7 +3,6 @@ import translate from 'Utilities/String/translate';
 import InlineMarkdown from '../../Components/Markdown/InlineMarkdown';
 import styles from './Tpdb.css';
 
-
 function Tpdb(props) {
   return (
     <div className={styles.container}>

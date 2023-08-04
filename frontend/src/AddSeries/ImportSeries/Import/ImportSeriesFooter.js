@@ -9,6 +9,7 @@ import LoadingIndicator from 'Components/Loading/LoadingIndicator';
 import PageContentFooter from 'Components/Page/PageContentFooter';
 import Popover from 'Components/Tooltip/Popover';
 import { icons, inputTypes, kinds, tooltipPositions } from 'Helpers/Props';
+import translate from 'Utilities/String/translate';
 import styles from './ImportSeriesFooter.css';
 
 const MIXED = 'mixed';
@@ -98,7 +99,7 @@ class ImportSeriesFooter extends Component {
       <PageContentFooter>
         <div className={styles.inputContainer}>
           <div className={styles.label}>
-            Monitor
+            {translate('Monitor')}
           </div>
 
           <FormInputGroup
@@ -113,7 +114,7 @@ class ImportSeriesFooter extends Component {
 
         <div className={styles.inputContainer}>
           <div className={styles.label}>
-            Quality Profile
+            {translate('QualityProfile')}
           </div>
 
           <FormInputGroup
@@ -139,7 +140,7 @@ class ImportSeriesFooter extends Component {
               isDisabled={!selectedCount || isLookingUpSeries}
               onPress={onImportPress}
             >
-              Import {selectedCount} Sites
+              {translate('ImportCountSites', { selectedCount })}
             </SpinnerButton>
 
             {
@@ -149,7 +150,7 @@ class ImportSeriesFooter extends Component {
                   kind={kinds.WARNING}
                   onPress={onCancelLookupPress}
                 >
-                  Cancel Processing
+                  {translate('CancelProcessing')}
                 </Button> :
                 null
             }
@@ -161,7 +162,7 @@ class ImportSeriesFooter extends Component {
                   kind={kinds.SUCCESS}
                   onPress={onLookupPress}
                 >
-                  Start Processing
+                  {translate('StartProcessing')}
                 </Button> :
                 null
             }
@@ -177,7 +178,7 @@ class ImportSeriesFooter extends Component {
 
             {
               isLookingUpSeries ?
-                'Processing Folders' :
+                translate('ProcessingFolders') :
                 null
             }
 
@@ -191,7 +192,7 @@ class ImportSeriesFooter extends Component {
                       kind={kinds.WARNING}
                     />
                   }
-                  title="Import Errors"
+                  title={translate('ImportErrors')}
                   body={
                     <ul>
                       {

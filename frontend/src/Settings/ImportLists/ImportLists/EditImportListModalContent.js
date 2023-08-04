@@ -18,8 +18,8 @@ import ModalHeader from 'Components/Modal/ModalHeader';
 import Popover from 'Components/Tooltip/Popover';
 import { icons, inputTypes, kinds, tooltipPositions } from 'Helpers/Props';
 import formatShortTimeSpan from 'Utilities/Date/formatShortTimeSpan';
-import ImportListMonitoringOptionsPopoverContent from './ImportListMonitoringOptionsPopoverContent';
 import translate from 'Utilities/String/translate';
+import ImportListMonitoringOptionsPopoverContent from './ImportListMonitoringOptionsPopoverContent';
 import styles from './EditImportListModalContent.css';
 
 function EditImportListModalContent(props) {

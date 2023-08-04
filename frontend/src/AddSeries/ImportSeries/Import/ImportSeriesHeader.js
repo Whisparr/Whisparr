@@ -7,6 +7,7 @@ import VirtualTableHeaderCell from 'Components/Table/VirtualTableHeaderCell';
 import VirtualTableSelectAllHeaderCell from 'Components/Table/VirtualTableSelectAllHeaderCell';
 import Popover from 'Components/Tooltip/Popover';
 import { icons, tooltipPositions } from 'Helpers/Props';
+import translate from 'Utilities/String/translate';
 import styles from './ImportSeriesHeader.css';
 
 function ImportSeriesHeader(props) {
@@ -28,14 +29,14 @@ function ImportSeriesHeader(props) {
         className={styles.folder}
         name="folder"
       >
-        Folder
+        {translate('Folder')}
       </VirtualTableHeaderCell>
 
       <VirtualTableHeaderCell
         className={styles.monitor}
         name="monitor"
       >
-        Monitor
+        {translate('Monitor')}
 
         <Popover
           anchor={
@@ -44,7 +45,7 @@ function ImportSeriesHeader(props) {
               name={icons.INFO}
             />
           }
-          title="Monitoring Options"
+          title={translate('MonitoringOptions')}
           body={<SeriesMonitoringOptionsPopoverContent />}
           position={tooltipPositions.RIGHT}
         />
@@ -54,14 +55,14 @@ function ImportSeriesHeader(props) {
         className={styles.qualityProfile}
         name="qualityProfileId"
       >
-        Quality Profile
+        {translate('QualityProfile')}
       </VirtualTableHeaderCell>
 
       <VirtualTableHeaderCell
         className={styles.series}
         name="series"
       >
-        Sites
+        {translate('Sites')}
       </VirtualTableHeaderCell>
     </VirtualTableHeader>
   );

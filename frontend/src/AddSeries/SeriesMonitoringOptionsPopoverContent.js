@@ -1,43 +1,44 @@
 import React from 'react';
 import DescriptionList from 'Components/DescriptionList/DescriptionList';
 import DescriptionListItem from 'Components/DescriptionList/DescriptionListItem';
+import translate from 'Utilities/String/translate';
 
 function SeriesMonitoringOptionsPopoverContent() {
   return (
     <DescriptionList>
       <DescriptionListItem
-        title="All Scenes"
-        data="Monitor all scenes except specials"
+        title={translate('MonitorAllScenes')}
+        data={translate('MonitorAllScenesDescription')}
       />
 
       <DescriptionListItem
-        title="Future Scenes"
-        data="Monitor scenes that have not aired yet"
+        title={translate('MonitorFutureScenes')}
+        data={translate('MonitorFutureScenesDescription')}
       />
 
       <DescriptionListItem
-        title="Missing Scenes"
-        data="Monitor scenes that do not have files or have not aired yet"
+        title={translate('MonitorMissingScenes')}
+        data={translate('MonitorMissingScenesDescription')}
       />
 
       <DescriptionListItem
-        title="Existing Scenes"
-        data="Monitor scenes that have files or have not aired yet"
+        title={translate('MonitorExistingScenes')}
+        data={translate('MonitorExistingScenesDescription')}
       />
 
       <DescriptionListItem
-        title="First Year"
-        data="Monitor all scenes of the first year. All other seasons will be ignored"
+        title={translate('MonitorFirstYear')}
+        data={translate('MonitorFirstYearDescription')}
       />
 
       <DescriptionListItem
-        title="Latest Year"
-        data="Monitor all scenes of the latest year and future seasons"
+        title={translate('MonitorLatestYear')}
+        data={translate('MonitorLatestYearDescription')}
       />
 
       <DescriptionListItem
-        title="None"
-        data="No scenes will be monitored"
+        title={translate('MonitorNone')}
+        data={translate('MonitorNoneDescription')}
       />
     </DescriptionList>
   );

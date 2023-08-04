@@ -99,7 +99,7 @@ namespace NzbDrone.Host
                 {
                     Version = "3.0.0",
                     Title = "Whisparr",
-                    Description = "Whisparr API docs",
+                    Description = "Whisparr API docs - The v3 API docs apply to both v2 versions of Whisparr. Some functionality may only be available in v2 of the Whisparr application.",
                     License = new OpenApiLicense
                     {
                         Name = "GPL-3.0",

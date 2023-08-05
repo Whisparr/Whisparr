@@ -1,1 +1,8 @@
-{}
+{
+    "ApplyTagsHelpTextAdd": "Aggiungi: Aggiunge le etichette alla lista esistente di etichette",
+    "ApplyTagsHelpTextRemove": "Rimuovi: Rimuove le etichette inserite",
+    "ApplyTagsHelpTextReplace": "Sostituire: Sostituisce le etichette con quelle inserite (non inserire nessuna etichette per eliminarle tutte)",
+    "DeleteConditionMessageText": "Sei sicuro di voler eliminare la condizione '{0}'?",
+    "DeleteCustomFormatMessageText": "Sei sicuro di voler eliminare il formato personalizzato '{0}'?",
+    "DeleteSelectedDownloadClients": "Cancella i Client di Download"
+}

@@ -1,1 +1,22 @@
-{}
+{
+    "Activity": "Activiteit",
+    "Add": "Toevoegen",
+    "AddNew": "Nieuwe toevoegen",
+    "AddingTag": "Tag wordt toegevoegd",
+    "Apply": "Toepassen",
+    "ApplyTags": "Pas Tags Toe",
+    "ApplyTagsHelpTextHowToApply": "Hoe tags toepassen op de geselecteerde indexeerders",
+    "ApplyTagsHelpTextAdd": "Toevoegen: Voeg de tags toe aan de bestaande tag lijst",
+    "ApplyTagsHelpTextRemove": "Verwijderen: Verwijder de ingevoerde tags",
+    "ApplyTagsHelpTextReplace": "Vervangen: Vervang de tags met de ingevoerde tags (vul geen tags in om alle tags te wissen)",
+    "AutoAdd": "Automatisch Toevoegen",
+    "Calendar": "Kalender",
+    "Cancel": "Annuleer",
+    "CountDownloadClientsSelected": "{count} download client(s) geselecteerd",
+    "Delete": "Verwijder",
+    "Added": "Toegevoegd",
+    "AutomaticAdd": "Automatisch Toevoegen",
+    "CloneCondition": "Kloon Conditie",
+    "Close": "Sluit",
+    "ApplyChanges": "Pas Wijzigingen Toe"
+}

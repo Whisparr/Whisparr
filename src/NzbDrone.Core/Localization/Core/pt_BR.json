@@ -68,5 +68,6 @@
     "Blocklist": "Lista de Bloqueio",
     "Calendar": "Calendário",
     "Cancel": "Cancelar",
-    "Connect": "Conectar"
+    "Connect": "Conectar",
+    "RemotePathMappingBadDockerPathHealthCheckMessage": "Você está usando o docker; cliente de download {0} coloca downloads em {1}, mas este não é um caminho {2} válido. Revise seus mapeamentos de caminho remoto e baixe as configurações do cliente."
 }

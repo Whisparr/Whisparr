@@ -75,8 +75,7 @@ namespace NzbDrone.Core.Datastore.Migration
 
                 var updatedActors = actors.GroupBy(x => x.TpdbId).Select(x => x.First()).ToList();
 
-                // Currently not working - to investigate.
-                var updateSql = "UPDATE \"Performers\" SET \"TpdbId\" = @TpdbId, \"Name\" = @Name, \"Character\" = @Character, \"Gender\" = @Gender, \"Images\" = @Images";
+                var updateSql = "INSERT INTO \"Performers\" (\"TpdbId\",\"Name\",\"Character\", \"Gender\", \"Images\") VALUES (@TpdbId, @Name, @Character, @Gender, @Images)";
                 conn.Execute(updateSql, updatedActors, transaction: tran);
             }
         }

@@ -41,24 +41,34 @@ namespace NzbDrone.Core.Datastore.Migration
 
             Execute.WithConnection(UniqueActors);
 
-            // TODO: Add back in once run through Performers with ActorID
-            // Delete.Column("Actors").FromTable("Episodes");
-            // Rename.Column("Performers").OnTable("Episodes").To("Actors");
+            Delete.Column("Actors").FromTable("Episodes");
+            Rename.Column("Performers").OnTable("Episodes").To("Actors");
         }
 
         private void UniqueActors(IDbConnection conn, IDbTransaction tran)
         {
             var actors = new List<Actor11Serialized>();
+            var episodes = new List<EpisodePerformerPre>();
+            var performers = new List<Performers>();
             using (var actorsCmd = conn.CreateCommand())
             {
                 actorsCmd.Transaction = tran;
-                actorsCmd.CommandText = "SELECT \"Actors\" FROM \"Episodes\"";
+                actorsCmd.CommandText = "SELECT \"Id\", \"Actors\" FROM \"Episodes\"";
 
                 using (var reader = actorsCmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        var data = STJson.Deserialize<List<Actor11>>(reader.GetString(0));
+                        var episodeId = reader.GetInt32(0);
+                        var data = STJson.Deserialize<List<Actor11>>(reader.GetString(1));
+                        var actorIds = data.Select(x => x.TpdbId).ToList();
+
+                        episodes.Add(new EpisodePerformerPre
+                        {
+                            EpisodeId = episodeId,
+                            TpdbIds = actorIds
+                        });
+
                         foreach (var actor in data)
                         {
                             actors.Add(new Actor11Serialized
@@ -75,9 +85,47 @@ namespace NzbDrone.Core.Datastore.Migration
 
                 var updatedActors = actors.GroupBy(x => x.TpdbId).Select(x => x.First()).ToList();
 
-                var updateSql = "INSERT INTO \"Performers\" (\"TpdbId\",\"Name\",\"Character\", \"Gender\", \"Images\") VALUES (@TpdbId, @Name, @Character, @Gender, @Images)";
-                conn.Execute(updateSql, updatedActors, transaction: tran);
+                var insertPerfomersSql = "INSERT INTO \"Performers\" (\"TpdbId\",\"Name\",\"Character\", \"Gender\", \"Images\") VALUES (@TpdbId, @Name, @Character, @Gender, @Images)";
+                conn.Execute(insertPerfomersSql, updatedActors, transaction: tran);
             }
+
+            using (var performersCmd = conn.CreateCommand())
+            {
+                performersCmd.Transaction = tran;
+                performersCmd.CommandText = "SELECT \"Id\", \"TpdbId\" FROM \"Performers\"";
+
+                using (var reader = performersCmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        performers.Add(new Performers
+                        {
+                            Id = reader.GetInt32(0),
+                            TpdbId = reader.GetInt32(1)
+                        });
+                    }
+                }
+            }
+
+            var episodePerformerMap = new List<EpisodePerformerMap>();
+
+            foreach (var episode in episodes)
+            {
+                var performerIds = new List<int>();
+                foreach (var performer in episode.TpdbIds)
+                {
+                    performerIds.Add(performers.Where(x => x.TpdbId.Equals(performer)).Select(x => x.Id).First());
+                }
+
+                episodePerformerMap.Add(new EpisodePerformerMap
+                {
+                    EpisodeId = episode.EpisodeId,
+                    PerfomerIds = JsonSerializer.Serialize(performerIds, _serializerSettings)
+                });
+            }
+
+            var updateEpisodesSql = "UPDATE \"Episodes\" SET \"Performers\" = @PerfomerIds WHERE \"Id\" = @EpisodeId";
+            conn.Execute(updateEpisodesSql, episodePerformerMap, transaction: tran);
         }
 
         private class Actor11
@@ -96,6 +144,24 @@ namespace NzbDrone.Core.Datastore.Migration
             public string Character { get; set; }
             public string Gender { get; set; }
             public string Images { get; set; }
+        }
+
+        private class EpisodePerformerPre
+        {
+            public int EpisodeId { get; set; }
+            public List<int> TpdbIds { get; set; }
+        }
+
+        private class EpisodePerformerMap
+        {
+            public int EpisodeId { get; set; }
+            public string PerfomerIds { get; set; }
+        }
+
+        private class Performers
+        {
+            public int Id { get; set; }
+            public int TpdbId { get; set; }
         }
 
         private class MediaCover11

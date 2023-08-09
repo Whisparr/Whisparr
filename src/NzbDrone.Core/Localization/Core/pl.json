@@ -1,3 +1,9 @@
 {
-    "Language": "Język"
+    "Language": "Język",
+    "Apply": "Zastosuj",
+    "ApplyTagsHelpTextRemove": "Usuń: usuń wprowadzone tagi",
+    "BlocklistRelease": "Dodaj wersję do czarnej listy",
+    "BlocklistReleases": "Dodaj wersje do czarnej listy",
+    "ApplyChanges": "Zastosuj zmiany",
+    "ApiKeyValidationHealthCheckMessage": "Zaktualizuj swój klucz API aby był długi na co najmniej {0} znaków. Możesz to zrobić poprzez ustawienia lub plik konfiguracyjny"
 }

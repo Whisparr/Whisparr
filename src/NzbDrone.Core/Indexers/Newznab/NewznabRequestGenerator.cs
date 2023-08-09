@@ -6,6 +6,7 @@ using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
 using NzbDrone.Common.Instrumentation;
 using NzbDrone.Core.IndexerSearch.Definitions;
+using NzbDrone.Core.ThingiProvider;
 
 namespace NzbDrone.Core.Indexers.Newznab
 {
@@ -14,6 +15,7 @@ namespace NzbDrone.Core.Indexers.Newznab
         private readonly Logger _logger;
         private readonly INewznabCapabilitiesProvider _capabilitiesProvider;
 
+        public ProviderDefinition Definition { get; set; }
         public int MaxPages { get; set; }
         public int PageSize { get; set; }
         public NewznabSettings Settings { get; set; }

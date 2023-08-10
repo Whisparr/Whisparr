@@ -7,6 +7,7 @@ import getStatusStyle from 'Calendar/getStatusStyle';
 import Icon from 'Components/Icon';
 import Link from 'Components/Link/Link';
 import { icons } from 'Helpers/Props';
+import translate from '../../Utilities/String/translate';
 import styles from './CalendarEventGroup.css';
 
 function getEventsInfo(series, events) {
@@ -142,7 +143,7 @@ class CalendarEventGroup extends Component {
               <Icon
                 containerClassName={styles.statusIcon}
                 name={icons.DOWNLOADING}
-                title="An episode is downloading"
+                title={translate('AnEpisodeIsDownloading')}
               />
           }
         </div>

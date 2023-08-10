@@ -10,6 +10,7 @@ import EpisodeDetailsModal from 'Episode/EpisodeDetailsModal';
 import episodeEntities from 'Episode/episodeEntities';
 import { icons, kinds } from 'Helpers/Props';
 import formatTime from 'Utilities/Date/formatTime';
+import translate from 'Utilities/String/translate';
 import styles from './AgendaEvent.css';
 
 class AgendaEvent extends Component {
@@ -117,7 +118,7 @@ class AgendaEvent extends Component {
                 <Icon
                   className={styles.statusIcon}
                   name={icons.WARNING}
-                  title="Scene number hasn't been verified yet"
+                  title={translate('SceneNumberNotVerified')}
                 /> :
                 null
             }
@@ -138,7 +139,7 @@ class AgendaEvent extends Component {
                 <Icon
                   className={styles.statusIcon}
                   name={icons.DOWNLOADING}
-                  title="Episode is downloading"
+                  title={translate('EpisodeIsDownloading')}
                 />
             }
 
@@ -150,7 +151,7 @@ class AgendaEvent extends Component {
                   className={styles.statusIcon}
                   name={icons.EPISODE_FILE}
                   kind={kinds.WARNING}
-                  title="Quality cutoff has not been met"
+                  title={translate('QualityCutoffNotMet')}
                 />
             }
           </div>

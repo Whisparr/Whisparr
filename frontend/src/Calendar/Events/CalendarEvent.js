@@ -8,6 +8,7 @@ import Link from 'Components/Link/Link';
 import EpisodeDetailsModal from 'Episode/EpisodeDetailsModal';
 import episodeEntities from 'Episode/episodeEntities';
 import { icons, kinds } from 'Helpers/Props';
+import translate from 'Utilities/String/translate';
 import CalendarEventQueueDetails from './CalendarEventQueueDetails';
 import styles from './CalendarEvent.css';
 
@@ -96,7 +97,7 @@ class CalendarEvent extends Component {
                   <Icon
                     className={styles.statusIcon}
                     name={icons.WARNING}
-                    title="Scene number hasn't been verified yet"
+                    title={translate('SceneNumberNotVerified')}
                   /> :
                   null
               }
@@ -116,7 +117,7 @@ class CalendarEvent extends Component {
                   <Icon
                     className={styles.statusIcon}
                     name={icons.DOWNLOADING}
-                    title="Episode is downloading"
+                    title={translate('EpisodeIsDownloading')}
                   /> :
                   null
               }
@@ -129,7 +130,7 @@ class CalendarEvent extends Component {
                     className={styles.statusIcon}
                     name={icons.EPISODE_FILE}
                     kind={fullColorEvents ? kinds.DEFAULT : kinds.WARNING}
-                    title="Quality cutoff has not been met"
+                    title={translate('QualityCutoffNotMet')}
                   /> :
                   null
               }
@@ -178,7 +179,7 @@ CalendarEvent.propTypes = {
   hasFile: PropTypes.bool.isRequired,
   grabbed: PropTypes.bool,
   queueItem: PropTypes.object,
-  // These props come from the connector, not marked as required to apease TS for now.
+  // These props come from the connector, not marked as required to appease TS for now.
   showEpisodeInformation: PropTypes.bool,
   showFinaleIcon: PropTypes.bool,
   showSpecialIcon: PropTypes.bool,

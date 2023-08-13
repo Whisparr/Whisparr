@@ -4,6 +4,7 @@ import keyboardShortcuts, { shortcuts } from 'Components/keyboardShortcuts';
 import IconButton from 'Components/Link/IconButton';
 import Link from 'Components/Link/Link';
 import { icons } from 'Helpers/Props';
+import translate from 'Utilities/String/translate';
 import KeyboardShortcutsModal from './KeyboardShortcutsModal';
 import PageHeaderActionsMenuConnector from './PageHeaderActionsMenuConnector';
 import SafeForWorkButtonConnector from './SafeForWorkButtonConnector';
@@ -80,7 +81,7 @@ class PageHeader extends Component {
           <IconButton
             className={styles.donate}
             name={icons.HEART}
-            aria-label="Donate"
+            aria-label={translate('Donate')}
             to="https://whisparr.com/donate.html"
             size={14}
           />

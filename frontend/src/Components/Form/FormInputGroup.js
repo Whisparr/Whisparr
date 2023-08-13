@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Link from 'Components/Link/Link';
 import { inputTypes, kinds } from 'Helpers/Props';
+import translate from 'Utilities/String/translate';
 import AutoCompleteInput from './AutoCompleteInput';
 import CaptchaInputConnector from './CaptchaInputConnector';
 import CheckInput from './CheckInput';
@@ -211,7 +212,7 @@ function FormInputGroup(props) {
           <Link
             to={helpLink}
           >
-            More Info
+            {translate('MoreInfo')}
           </Link>
       }
 

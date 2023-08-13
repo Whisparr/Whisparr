@@ -6,6 +6,7 @@ import { kinds, sizes } from 'Helpers/Props';
 import isInNextWeek from 'Utilities/Date/isInNextWeek';
 import isToday from 'Utilities/Date/isToday';
 import isTomorrow from 'Utilities/Date/isTomorrow';
+import translate from '../../Utilities/String/translate';
 
 function EpisodeAiring(props) {
   const {
@@ -27,7 +28,7 @@ function EpisodeAiring(props) {
   if (!releaseDate) {
     return (
       <span>
-        TBA on {networkLabel}
+        {translate('AirsTbaOn', { networkLabel: '' })}networkLabel
       </span>
     );
   }
@@ -35,7 +36,7 @@ function EpisodeAiring(props) {
   if (!showRelativeDates) {
     return (
       <span>
-        {moment(releaseDate).format(shortDateFormat)} on {networkLabel}
+        {translate('AirsDateAtTimeOn', { date: moment(releaseDate).format(shortDateFormat), networkLabel: '' })}{networkLabel}
       </span>
     );
   }
@@ -43,7 +44,7 @@ function EpisodeAiring(props) {
   if (isToday(releaseDate)) {
     return (
       <span>
-        Today on {networkLabel}
+        {translate('AirsTimeOn', { networkLabel: '' })}{networkLabel}
       </span>
     );
   }
@@ -51,7 +52,7 @@ function EpisodeAiring(props) {
   if (isTomorrow(releaseDate)) {
     return (
       <span>
-        Tomorrow on {networkLabel}
+        {translate('AirsTomorrowOn', { networkLabel: '' })}{networkLabel}
       </span>
     );
   }
@@ -59,14 +60,14 @@ function EpisodeAiring(props) {
   if (isInNextWeek(releaseDate)) {
     return (
       <span>
-        {moment(releaseDate).format('dddd')} on {networkLabel}
+        {translate('AirsDateAtTimeOn', { date: moment(releaseDate).format('dddd'), networkLabel: '' })}{networkLabel}
       </span>
     );
   }
 
   return (
     <span>
-      {moment(releaseDate).format(shortDateFormat)} on {networkLabel}
+      {translate('AirsDateAtTimeOn', { date: moment(releaseDate).format(shortDateFormat), networkLabel: '' })}{networkLabel}
     </span>
   );
 }

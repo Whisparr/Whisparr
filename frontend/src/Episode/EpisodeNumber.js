@@ -2,13 +2,14 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Icon from 'Components/Icon';
 import { icons, kinds } from 'Helpers/Props';
+import translate from 'Utilities/String/translate';
 import styles from './EpisodeNumber.css';
 
 function getWarningMessage(unverifiedSceneNumbering, absoluteEpisodeNumber) {
   const messages = [];
 
   if (unverifiedSceneNumbering) {
-    messages.push('Scene number hasn\'t been verified yet');
+    messages.push(translate('SceneNumberNotVerified'));
   }
 
   return messages.join('\n');

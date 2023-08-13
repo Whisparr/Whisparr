@@ -195,7 +195,9 @@ function SelectMovieModalContent(props: SelectMovieModalContentProps) {
 
   return (
     <ModalContent onModalClose={onModalClose}>
-      <ModalHeader>{modalTitle} - Select Movie</ModalHeader>
+      <ModalHeader>
+        {translate('SelectMovieModalTitle', { modalTitle })}
+      </ModalHeader>
 
       <ModalBody
         className={styles.modalBody}
@@ -203,7 +205,7 @@ function SelectMovieModalContent(props: SelectMovieModalContentProps) {
       >
         <TextInput
           className={styles.filterInput}
-          placeholder="Filter movies"
+          placeholder={translate('FilterMoviePlaceholder')}
           name="filter"
           value={filter}
           autoFocus={true}
@@ -232,7 +234,7 @@ function SelectMovieModalContent(props: SelectMovieModalContentProps) {
 
       <ModalFooter className={styles.footer}>
         <div className={styles.path}>{relativePath}</div>
-        <Button onPress={onModalClose}>Cancel</Button>
+        <Button onPress={onModalClose}>{translate('Cancel')}</Button>
       </ModalFooter>
     </ModalContent>
   );

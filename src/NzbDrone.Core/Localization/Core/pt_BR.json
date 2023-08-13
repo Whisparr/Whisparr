@@ -69,5 +69,15 @@
     "Calendar": "Calendário",
     "Cancel": "Cancelar",
     "Connect": "Conectar",
-    "RemotePathMappingBadDockerPathHealthCheckMessage": "Você está usando o docker; cliente de download {0} coloca downloads em {1}, mas este não é um caminho {2} válido. Revise seus mapeamentos de caminho remoto e baixe as configurações do cliente."
+    "RemotePathMappingBadDockerPathHealthCheckMessage": "Você está usando o docker; cliente de download {0} coloca downloads em {1}, mas este não é um caminho {2} válido. Revise seus mapeamentos de caminho remoto e baixe as configurações do cliente.",
+    "Events": "Eventos",
+    "LastDuration": "Última Duração",
+    "NextExecution": "Próxima Execução",
+    "TotalSpace": "Espaço Total",
+    "Backup": "Backup",
+    "FreeSpace": "Espaço Livre",
+    "LastExecution": "Última Execução",
+    "LastWriteTime": "Hora da Última Gravação",
+    "Location": "Localização",
+    "System": "Sistema"
 }

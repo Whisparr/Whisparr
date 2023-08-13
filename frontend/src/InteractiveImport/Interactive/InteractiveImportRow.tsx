@@ -343,7 +343,7 @@ function InteractiveImportRow(props: InteractiveImportRowProps) {
       {isSeriesColumnVisible ? (
         <TableRowCellButton
           isDisabled={!allowSeriesChange}
-          title={allowSeriesChange ? 'Click to change site' : undefined}
+          title={allowSeriesChange ? translate('ClickToChangeSite') : undefined}
           onPress={onSelectSeriesPress}
         >
           {showSeriesPlaceholder ? (
@@ -356,7 +356,7 @@ function InteractiveImportRow(props: InteractiveImportRowProps) {
 
       <TableRowCellButton
         isDisabled={!series}
-        title={series ? 'Click to change year' : undefined}
+        title={series ? translate('ClickToChangeYear') : undefined}
         onPress={onSelectSeasonPress}
       >
         {showSeasonNumberPlaceholder ? (
@@ -374,7 +374,7 @@ function InteractiveImportRow(props: InteractiveImportRowProps) {
         isDisabled={!series || requiresSeasonNumber}
         title={
           series && !requiresSeasonNumber
-            ? 'Click to change episode'
+            ? translate('ClickToChangeEpisode')
             : undefined
         }
         onPress={onSelectEpisodePress}
@@ -387,7 +387,7 @@ function InteractiveImportRow(props: InteractiveImportRowProps) {
       </TableRowCellButton>
 
       <TableRowCellButton
-        title="Click to change release group"
+        title={translate('ClickToChangeReleaseGroup')}
         onPress={onSelectReleaseGroupPress}
       >
         {showReleaseGroupPlaceholder ? (
@@ -399,7 +399,7 @@ function InteractiveImportRow(props: InteractiveImportRowProps) {
 
       <TableRowCellButton
         className={styles.quality}
-        title="Click to change quality"
+        title={translate('ClickToChangeQuality')}
         onPress={onSelectQualityPress}
       >
         {showQualityPlaceholder && <InteractiveImportRowCellPlaceholder />}
@@ -411,7 +411,7 @@ function InteractiveImportRow(props: InteractiveImportRowProps) {
 
       <TableRowCellButton
         className={styles.languages}
-        title="Click to change language"
+        title={translate('ClickToChangeLanguage')}
         onPress={onSelectLanguagePress}
       >
         {showLanguagePlaceholder && <InteractiveImportRowCellPlaceholder />}
@@ -445,7 +445,7 @@ function InteractiveImportRow(props: InteractiveImportRowProps) {
         {rejections.length ? (
           <Popover
             anchor={<Icon name={icons.DANGER} kind={kinds.DANGER} />}
-            title="Release Rejected"
+            title={translate('ReleaseRejected')}
             body={
               <ul>
                 {rejections.map((rejection, index) => {

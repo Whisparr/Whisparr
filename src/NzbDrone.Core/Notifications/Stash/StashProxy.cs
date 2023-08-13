@@ -20,8 +20,28 @@ namespace NzbDrone.Core.Notifications.Stash
             var request = BuildRequest(settings);
             request.Headers.ContentType = "application/json";
 
-            var generatePreviews = settings.GeneratePreviews ? "true" : "false";
             var cleanPath = path.ToJson();
+
+            var metadataIdentifyQuery =
+                settings.MetadataIdentify ?
+                $@"metadataIdentify(
+                    input: {{
+                        sources: [
+                            {{source: {{stash_box_endpoint:""https://metadataapi.net/graphql""}} }}, 
+                            {{source: {{scraper_id: ""builtin_autotag""}}, options: {{setOrganized: false}} }}
+                        ],
+                        options: {{
+                            includeMalePerformers: {(settings.IncludeMalePerformers ? "true" : "false")},
+                            setCoverImage: true,
+                            setOrganized: {(settings.SetOrganized ? "true" : "false")},
+                            fieldOptions: [
+                                {{ field: ""studio"", strategy: ""MERGE"", createMissing: true }},
+                                {{ field: ""performers"", strategy: ""MERGE"", createMissing: true }},
+                                {{ field: ""tags"", strategy: ""MERGE"", createMissing: true }}
+                            ]
+                        }}, 
+                        paths: [{cleanPath}]
+                    }})" : "";
 
             request.SetContent(new
             {
@@ -37,6 +57,7 @@ namespace NzbDrone.Core.Notifications.Stash
                                 scanGeneratePhashes: {(settings.GeneratePhashes ? "true" : "false")},
                                 paths: [{cleanPath}]
                             }})
+                            {metadataIdentifyQuery}
                         }}"
             }.ToJson());
 

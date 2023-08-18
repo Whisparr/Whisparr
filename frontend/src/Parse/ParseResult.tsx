@@ -82,7 +82,7 @@ function ParseResult(props: ParseResultProps) {
           <div className={styles.column}>
             <ParseResultItem
               title={translate('Special')}
-              data={special ? 'True' : 'False'}
+              data={special ? translate('True') : translate('False')}
             />
           </div>
         </div>
@@ -99,14 +99,14 @@ function ParseResult(props: ParseResultProps) {
               title={translate('Proper')}
               data={
                 quality.revision.version > 1 && !quality.revision.isRepack
-                  ? 'True'
+                  ? translate('True')
                   : '-'
               }
             />
 
             <ParseResultItem
               title={translate('Repack')}
-              data={quality.revision.isRepack ? 'True' : '-'}
+              data={quality.revision.isRepack ? translate('True') : '-'}
             />
           </div>
 
@@ -120,7 +120,7 @@ function ParseResult(props: ParseResultProps) {
 
             <ParseResultItem
               title={translate('Real')}
-              data={quality.revision.real ? 'True' : '-'}
+              data={quality.revision.real ? translate('True') : '-'}
             />
           </div>
         </div>
@@ -170,7 +170,13 @@ function ParseResult(props: ParseResultProps) {
 
         <ParseResultItem
           title={translate('CustomFormats')}
-          data={<EpisodeFormats formats={customFormats} />}
+          data={
+            customFormats && customFormats.length > 0 ? (
+              <EpisodeFormats formats={customFormats} />
+            ) : (
+              '-'
+            )
+          }
         />
 
         <ParseResultItem

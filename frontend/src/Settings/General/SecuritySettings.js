@@ -139,8 +139,8 @@ class SecuritySettings extends Component {
             type={inputTypes.SELECT}
             name="authenticationMethod"
             values={authenticationMethodOptions}
-            helpText={translate('AuthenticationMethodHelpText')}
-            helpTextWarning={translate('AuthenticationRequiredWarning')}
+            helpText={translate('AuthenticationMethodHelpText', { appName: 'Whisparr' })}
+            helpTextWarning={translate('AuthenticationRequiredWarning', { appName: 'Whisparr' })}
             onChange={onInputChange}
             {...authenticationMethod}
           />

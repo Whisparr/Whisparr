@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import Link from 'Components/Link/Link';
+import Label from 'Components/Label';
+import VirtualTableRowCell from 'Components/Table/Cells/VirtualTableRowCell';
 import styles from './SelectSeriesRow.css';
 
 class SelectSeriesRow extends Component {
@@ -17,13 +18,19 @@ class SelectSeriesRow extends Component {
 
   render() {
     return (
-      <Link
-        className={styles.series}
-        component="div"
-        onPress={this.onPress}
-      >
-        {this.props.title}
-      </Link>
+      <>
+        <VirtualTableRowCell className={styles.title}>
+          {this.props.title}
+        </VirtualTableRowCell>
+
+        <VirtualTableRowCell className={styles.year}>
+          {this.props.year}
+        </VirtualTableRowCell>
+
+        <VirtualTableRowCell className={styles.tvdbId}>
+          <Label>{this.props.tvdbId}</Label>
+        </VirtualTableRowCell>
+      </>
     );
   }
 }
@@ -31,6 +38,8 @@ class SelectSeriesRow extends Component {
 SelectSeriesRow.propTypes = {
   id: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
+  tvdbId: PropTypes.number.isRequired,
+  year: PropTypes.number.isRequired,
   onSeriesSelect: PropTypes.func.isRequired
 };
 

@@ -244,12 +244,27 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
 
                     details.Add(new XElement("country"));
 
-                    var tags = _tagRepository.Get(movie.Tags);
-
-                    foreach (var tag in tags)
+                    if (Settings.AddCollectionName && movie.MovieMetadata.Value.CollectionTitle != null)
                     {
-                        details.Add(new XElement("tag", tag.Label));
+                        var setElement = new XElement("set");
+
+                        setElement.Add(new XElement("name", movie.MovieMetadata.Value.CollectionTitle));
+                        setElement.Add(new XElement("overview"));
+
+                        details.Add(setElement);
                     }
+
+                    if (movie.Tags.Any())
+                    {
+                        var tags = _tagRepository.Get(movie.Tags);
+
+                        foreach (var tag in tags)
+                        {
+                            details.Add(new XElement("tag", tag.Label));
+                        }
+                    }
+
+                    details.Add(new XElement("status", movie.MovieMetadata.Value.Status));
 
                     foreach (var credit in movie.MovieMetadata.Value.Credits)
                     {

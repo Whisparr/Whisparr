@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Button from 'Components/Link/Button';
 import { kinds } from 'Helpers/Props';
+import translate from 'Utilities/String/translate';
 import styles from './NoSeries.css';
 
 function NoSeries(props) {
@@ -11,7 +12,7 @@ function NoSeries(props) {
     return (
       <div>
         <div className={styles.message}>
-          All sites are hidden due to the applied filter.
+          {translate('AllSitesAreHiddenByTheAppliedFilter')}
         </div>
       </div>
     );
@@ -20,7 +21,7 @@ function NoSeries(props) {
   return (
     <div>
       <div className={styles.message}>
-        No site found, to get started you'll want to import your existing media or add a new site.
+        {translate('NoSitesFoundImportOrAdd')}
       </div>
 
       <div className={styles.buttonContainer}>
@@ -28,7 +29,7 @@ function NoSeries(props) {
           to="/add/import"
           kind={kinds.PRIMARY}
         >
-          Import Existing Sites
+          {translate('ImportExistingSites')}
         </Button>
       </div>
 
@@ -37,7 +38,7 @@ function NoSeries(props) {
           to="/add/new"
           kind={kinds.PRIMARY}
         >
-          Add New Site
+          {translate('AddNewSite')}
         </Button>
       </div>
     </div>

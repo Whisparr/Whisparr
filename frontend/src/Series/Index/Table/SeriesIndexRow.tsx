@@ -22,6 +22,7 @@ import SeriesTitleLink from 'Series/SeriesTitleLink';
 import { executeCommand } from 'Store/Actions/commandActions';
 import { SelectStateInputProps } from 'typings/props';
 import formatBytes from 'Utilities/Number/formatBytes';
+import translate from 'Utilities/String/translate';
 import SeriesIndexProgressBar from '../ProgressBar/SeriesIndexProgressBar';
 import hasGrowableColumns from './hasGrowableColumns';
 import SeasonsCell from './SeasonsCell';
@@ -434,7 +435,7 @@ function SeriesIndexRow(props: SeriesIndexRowProps) {
             <VirtualTableRowCell key={name} className={styles[name]}>
               <SpinnerIconButton
                 name={icons.REFRESH}
-                title="Refresh site"
+                title={translate('RefreshSite')}
                 isSpinning={isRefreshingSeries}
                 onPress={onRefreshPress}
               />
@@ -442,7 +443,7 @@ function SeriesIndexRow(props: SeriesIndexRowProps) {
               {showSearchAction ? (
                 <SpinnerIconButton
                   name={icons.SEARCH}
-                  title="Search for monitored scenes"
+                  title={translate('SearchForMonitoredEpisodes')}
                   isSpinning={isSearchingSeries}
                   onPress={onSearchPress}
                 />
@@ -450,7 +451,7 @@ function SeriesIndexRow(props: SeriesIndexRowProps) {
 
               <IconButton
                 name={icons.EDIT}
-                title="Edit Site"
+                title={translate('EditSite')}
                 onPress={onEditSeriesPress}
               />
             </VirtualTableRowCell>

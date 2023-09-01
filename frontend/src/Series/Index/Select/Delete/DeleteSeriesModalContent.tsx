@@ -16,6 +16,7 @@ import Series from 'Series/Series';
 import { bulkDeleteSeries, setDeleteOption } from 'Store/Actions/seriesActions';
 import createAllSeriesSelector from 'Store/Selectors/createAllSeriesSelector';
 import { CheckInputChanged } from 'typings/inputs';
+import translate from 'Utilities/String/translate';
 import styles from './DeleteSeriesModalContent.css';
 
 interface DeleteSeriesModalContentProps {
@@ -86,34 +87,38 @@ function DeleteSeriesModalContent(props: DeleteSeriesModalContentProps) {
 
   return (
     <ModalContent onModalClose={onModalClose}>
-      <ModalHeader>Delete Selected Sites</ModalHeader>
+      <ModalHeader>{translate('DeleteSelectedSites')}</ModalHeader>
 
       <ModalBody>
         <div>
           <FormGroup>
-            <FormLabel>Add List Exclusion</FormLabel>
+            <FormLabel>{translate('AddListExclusion')}</FormLabel>
 
             <FormInputGroup
               type={inputTypes.CHECK}
               name="addImportListExclusion"
               value={addImportListExclusion}
-              helpText="Prevent site from being added to Whisparr by lists"
+              helpText={translate('AddListExclusionHelpText')}
               onChange={onDeleteOptionChange}
             />
           </FormGroup>
 
           <FormGroup>
-            <FormLabel>{`Delete Site Folder${
-              series.length > 1 ? 's' : ''
-            }`}</FormLabel>
+            <FormLabel>
+              {series.length > 1
+                ? translate('DeleteSiteFolders')
+                : translate('DeleteSiteFolder')}
+            </FormLabel>
 
             <FormInputGroup
               type={inputTypes.CHECK}
               name="deleteFiles"
               value={deleteFiles}
-              helpText={`Delete Site Folder${
-                series.length > 1 ? 's' : ''
-              } and all contents`}
+              helpText={
+                series.length > 1
+                  ? translate('DeleteSiteFoldersHelpText')
+                  : translate('DeleteSiteFolderHelpText')
+              }
               kind={kinds.DANGER}
               onChange={onDeleteFilesChange}
             />
@@ -121,9 +126,13 @@ function DeleteSeriesModalContent(props: DeleteSeriesModalContentProps) {
         </div>
 
         <div className={styles.message}>
-          {`Are you sure you want to delete ${series.length} selected sites${
-            deleteFiles ? ' and all contents' : ''
-          }?`}
+          {deleteFiles
+            ? translate('DeleteSiteFolderCountWithFilesConfirmation', {
+                count: series.length,
+              })
+            : translate('DeleteSiteFolderCountConfirmation', {
+                count: series.length,
+              })}
         </div>
 
         <ul>
@@ -144,10 +153,10 @@ function DeleteSeriesModalContent(props: DeleteSeriesModalContentProps) {
       </ModalBody>
 
       <ModalFooter>
-        <Button onPress={onModalClose}>Cancel</Button>
+        <Button onPress={onModalClose}>{translate('Cancel')}</Button>
 
         <Button kind={kinds.DANGER} onPress={onDeleteSeriesConfirmed}>
-          Delete
+          {translate('Delete')}
         </Button>
       </ModalFooter>
     </ModalContent>

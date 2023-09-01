@@ -197,7 +197,7 @@ function SeriesIndexSelectFooter() {
             isDisabled={!anySelected || isOrganizingSeries}
             onPress={onOrganizePress}
           >
-            {translate('Rename Files')}
+            {translate('RenameFiles')}
           </SpinnerButton>
 
           <SpinnerButton
@@ -205,7 +205,7 @@ function SeriesIndexSelectFooter() {
             isDisabled={!anySelected || isOrganizingSeries}
             onPress={onTagsPress}
           >
-            {translate('Set Tags')}
+            {translate('SetTags')}
           </SpinnerButton>
 
           <SpinnerButton
@@ -213,7 +213,7 @@ function SeriesIndexSelectFooter() {
             isDisabled={!anySelected || isOrganizingSeries}
             onPress={onMonitoringPress}
           >
-            {translate('Update Monitoring')}
+            {translate('UpdateMonitoring')}
           </SpinnerButton>
         </div>
 
@@ -230,7 +230,7 @@ function SeriesIndexSelectFooter() {
       </div>
 
       <div className={styles.selected}>
-        {translate('{count} series selected', { count: selectedCount })}
+        {translate('CountSitesSelected', { count: selectedCount })}
       </div>
 
       <EditSeriesModal

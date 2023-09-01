@@ -9,6 +9,7 @@ import DescriptionListItem from 'Components/DescriptionList/DescriptionListItem'
 import createClientSideCollectionSelector from 'Store/Selectors/createClientSideCollectionSelector';
 import createDeepEqualSelector from 'Store/Selectors/createDeepEqualSelector';
 import formatBytes from 'Utilities/Number/formatBytes';
+import translate from 'Utilities/String/translate';
 import styles from './SeriesIndexFooter.css';
 
 function createUnoptimizedSelector() {
@@ -85,7 +86,7 @@ export default function SeriesIndexFooter() {
                     enableColorImpairedMode && 'colorImpaired'
                   )}
                 />
-                <div>Site Active (All scenes downloaded)</div>
+                <div>{translate('SiteIndexFooterContinuing')}</div>
               </div>
 
               <div className={styles.legendItem}>
@@ -95,7 +96,7 @@ export default function SeriesIndexFooter() {
                     enableColorImpairedMode && 'colorImpaired'
                   )}
                 />
-                <div>Site Inactive (All scenes downloaded)</div>
+                <div>{translate('SiteIndexFooterEnded')}</div>
               </div>
 
               <div className={styles.legendItem}>
@@ -105,7 +106,7 @@ export default function SeriesIndexFooter() {
                     enableColorImpairedMode && 'colorImpaired'
                   )}
                 />
-                <div>Missing Scenes (Site monitored)</div>
+                <div>{translate('SiteIndexFooterMissingMonitored')}</div>
               </div>
 
               <div className={styles.legendItem}>
@@ -115,7 +116,7 @@ export default function SeriesIndexFooter() {
                     enableColorImpairedMode && 'colorImpaired'
                   )}
                 />
-                <div>Missing Scenes (Site not monitored)</div>
+                <div>{translate('SiteIndexFooterMissingUnmonitored')}</div>
               </div>
 
               <div className={styles.legendItem}>
@@ -125,37 +126,49 @@ export default function SeriesIndexFooter() {
                     enableColorImpairedMode && 'colorImpaired'
                   )}
                 />
-                <div>Downloading (One or more episodes)</div>
+                <div>{translate('SiteIndexFooterDownloading')}</div>
               </div>
             </div>
 
             <div className={styles.statistics}>
               <DescriptionList>
-                <DescriptionListItem title="Sites" data={count} />
+                <DescriptionListItem title={translate('Sites')} data={count} />
 
-                <DescriptionListItem title="Ended" data={ended} />
+                <DescriptionListItem title={translate('Ended')} data={ended} />
 
-                <DescriptionListItem title="Continuing" data={continuing} />
+                <DescriptionListItem
+                  title={translate('Continuing')}
+                  data={continuing}
+                />
               </DescriptionList>
 
               <DescriptionList>
-                <DescriptionListItem title="Monitored" data={monitored} />
+                <DescriptionListItem
+                  title={translate('Monitored')}
+                  data={monitored}
+                />
 
                 <DescriptionListItem
-                  title="Unmonitored"
+                  title={translate('Unmonitored')}
                   data={count - monitored}
                 />
               </DescriptionList>
 
               <DescriptionList>
-                <DescriptionListItem title="Scenes" data={episodes} />
+                <DescriptionListItem
+                  title={translate('Episodes')}
+                  data={episodes}
+                />
 
-                <DescriptionListItem title="Files" data={episodeFiles} />
+                <DescriptionListItem
+                  title={translate('Files')}
+                  data={episodeFiles}
+                />
               </DescriptionList>
 
               <DescriptionList>
                 <DescriptionListItem
-                  title="Total File Size"
+                  title={translate('TotalFileSize')}
                   data={formatBytes(totalFileSize)}
                 />
               </DescriptionList>

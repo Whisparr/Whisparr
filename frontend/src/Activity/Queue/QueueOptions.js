@@ -55,7 +55,7 @@ class QueueOptions extends Component {
     return (
       <Fragment>
         <FormGroup>
-          <FormLabel>{translate('ShowUnknownSeriesItems')}</FormLabel>
+          <FormLabel>{translate('ShowUnknownSiteItems')}</FormLabel>
 
           <FormInputGroup
             type={inputTypes.CHECK}

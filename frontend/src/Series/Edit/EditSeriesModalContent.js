@@ -12,6 +12,7 @@ import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { inputTypes, kinds } from 'Helpers/Props';
 import MoveSeriesModal from 'Series/MoveSeries/MoveSeriesModal';
+import translate from 'Utilities/String/translate';
 import styles from './EditSeriesModalContent.css';
 
 class EditSeriesModalContent extends Component {
@@ -80,18 +81,18 @@ class EditSeriesModalContent extends Component {
     return (
       <ModalContent onModalClose={onModalClose}>
         <ModalHeader>
-          Edit - {title}
+          {translate('EditSiteModalHeader', { title })}
         </ModalHeader>
 
         <ModalBody>
           <Form {...otherProps}>
             <FormGroup>
-              <FormLabel>Monitored</FormLabel>
+              <FormLabel>{translate('Monitored')}</FormLabel>
 
               <FormInputGroup
                 type={inputTypes.CHECK}
                 name="monitored"
-                helpText="Download monitored episodes in this site"
+                helpText={translate('MonitoredHelpText')}
                 {...monitored}
                 onChange={onInputChange}
               />
@@ -120,7 +121,7 @@ class EditSeriesModalContent extends Component {
             </FormGroup>
 
             <FormGroup>
-              <FormLabel>Tags</FormLabel>
+              <FormLabel>{translate('Tags')}</FormLabel>
 
               <FormInputGroup
                 type={inputTypes.TAG}
@@ -138,20 +139,20 @@ class EditSeriesModalContent extends Component {
             kind={kinds.DANGER}
             onPress={onDeleteSeriesPress}
           >
-            Delete
+            {translate('Delete')}
           </Button>
 
           <Button
             onPress={onModalClose}
           >
-            Cancel
+            {translate('Cancel')}
           </Button>
 
           <SpinnerButton
             isSpinning={isSaving}
             onPress={this.onSavePress}
           >
-            Save
+            {translate('Save')}
           </SpinnerButton>
         </ModalFooter>
 

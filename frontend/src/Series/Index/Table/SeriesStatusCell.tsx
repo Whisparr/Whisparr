@@ -6,6 +6,7 @@ import VirtualTableRowCell from 'Components/Table/Cells/TableRowCell';
 import { icons } from 'Helpers/Props';
 import { getSeriesStatusDetails } from 'Series/SeriesStatus';
 import { toggleSeriesMonitored } from 'Store/Actions/seriesActions';
+import translate from 'Utilities/String/translate';
 import styles from './SeriesStatusCell.css';
 
 interface SeriesStatusCellProps {
@@ -50,7 +51,11 @@ function SeriesStatusCell(props: SeriesStatusCellProps) {
         <Icon
           className={styles.statusIcon}
           name={monitored ? icons.MONITORED : icons.UNMONITORED}
-          title={monitored ? 'Site is monitored' : 'Site is unmonitored'}
+          title={
+            monitored
+              ? translate('SiteIsMonitored')
+              : translate('SiteIsUnmonitored')
+          }
         />
       )}
 

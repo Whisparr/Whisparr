@@ -1,31 +1,32 @@
 
 import { icons } from 'Helpers/Props';
+import translate from 'Utilities/String/translate';
 
 export function getSeriesStatusDetails(status) {
 
   let statusDetails = {
     icon: icons.SERIES_CONTINUING,
-    title: 'Continuing',
-    message: 'More episodes are expected'
+    title: translate('Continuing'),
+    message: translate('ContinuingSiteDescription')
   };
 
   if (status === 'deleted') {
     statusDetails = {
       icon: icons.SERIES_DELETED,
-      title: 'Deleted',
-      message: 'Site was deleted from TheTPDB'
+      title: translate('Deleted'),
+      message: translate('DeletedSiteDescription')
     };
   } else if (status === 'ended') {
     statusDetails = {
       icon: icons.SERIES_ENDED,
-      title: 'Ended',
-      message: 'No additional episodes are expected'
+      title: translate('Ended'),
+      message: translate('EndedSiteDescription')
     };
   } else if (status === 'upcoming') {
     statusDetails = {
       icon: icons.SERIES_CONTINUING,
-      title: 'Upcoming',
-      message: 'Site has been announced but no exact air date yet'
+      title: translate('Upcoming'),
+      message: translate('UpcomingSiteDescription')
     };
   }
 

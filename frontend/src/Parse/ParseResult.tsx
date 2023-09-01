@@ -43,7 +43,7 @@ function ParseResult(props: ParseResultProps) {
           data={releaseTitle}
         />
 
-        <ParseResultItem title={translate('SeriesTitle')} data={seriesTitle} />
+        <ParseResultItem title={translate('SiteTitle')} data={seriesTitle} />
 
         <ParseResultItem
           title={translate('Year')}

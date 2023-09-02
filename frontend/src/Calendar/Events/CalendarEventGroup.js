@@ -7,7 +7,7 @@ import getStatusStyle from 'Calendar/getStatusStyle';
 import Icon from 'Components/Icon';
 import Link from 'Components/Link/Link';
 import { icons } from 'Helpers/Props';
-import translate from '../../Utilities/String/translate';
+import translate from 'Utilities/String/translate';
 import styles from './CalendarEventGroup.css';
 
 function getEventsInfo(series, events) {

@@ -6,7 +6,7 @@ import { kinds, sizes } from 'Helpers/Props';
 import isInNextWeek from 'Utilities/Date/isInNextWeek';
 import isToday from 'Utilities/Date/isToday';
 import isTomorrow from 'Utilities/Date/isTomorrow';
-import translate from '../../Utilities/String/translate';
+import translate from 'Utilities/String/translate';
 
 function EpisodeAiring(props) {
   const {

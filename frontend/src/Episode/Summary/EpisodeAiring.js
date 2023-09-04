@@ -28,7 +28,7 @@ function EpisodeAiring(props) {
   if (!releaseDate) {
     return (
       <span>
-        {translate('AirsTbaOn', { networkLabel: '' })}networkLabel
+        {translate('AirsTbaOn', { networkLabel: '' })}{networkLabel}
       </span>
     );
   }

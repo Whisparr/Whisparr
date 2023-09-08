@@ -57,5 +57,17 @@
     "Wiki": "Wiki",
     "Yes": "Sí",
     "YesCancel": "Sí, Cancelar",
-    "Unmonitored": "Sin monitorizar"
+    "Unmonitored": "Sin monitorizar",
+    "DeleteSelectedImportLists": "Eliminar Lista(s) de Importación",
+    "EditSelectedDownloadClients": "Editar Clientes de Descarga Seleccionados",
+    "EditSelectedImportLists": "Editar Listas de Importación Seleccionadas",
+    "ManageClients": "Gestionar Clientes",
+    "ManageIndexers": "Gestionar Indexadores",
+    "CloneCondition": "Clonar Condición",
+    "DeleteCondition": "Eliminar Condición",
+    "EditSelectedIndexers": "Editar Indexadores Seleccionados",
+    "Implementation": "Implementación",
+    "ManageDownloadClients": "Gestionar Clientes de Descarga",
+    "ManageImportLists": "Gestionar Listas de Importación",
+    "ManageLists": "Gestionar Listas"
 }

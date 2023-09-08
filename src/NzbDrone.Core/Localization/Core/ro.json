@@ -48,5 +48,8 @@
     "ExportCustomFormat": "Exportați formatul personalizat",
     "General": "General",
     "History": "Istoric",
-    "Added": "Adăugat"
+    "Added": "Adăugat",
+    "DeleteSelectedIndexersMessageText": "Sigur doriți să ștergeți {count} indexatori selectați?",
+    "DeleteSelectedDownloadClients": "Ștergere clienți de descărcare",
+    "DeleteSelectedDownloadClientsMessageText": "Sigur doriți să ștergeți {count} clienți de descărcare selectați?"
 }

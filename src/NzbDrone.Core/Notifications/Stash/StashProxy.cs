@@ -35,9 +35,9 @@ namespace NzbDrone.Core.Notifications.Stash
                             setCoverImage: true,
                             setOrganized: {(settings.SetOrganized ? "true" : "false")},
                             fieldOptions: [
-                                {{ field: ""studio"", strategy: ""MERGE"", createMissing: true }},
-                                {{ field: ""performers"", strategy: ""MERGE"", createMissing: true }},
-                                {{ field: ""tags"", strategy: ""MERGE"", createMissing: true }}
+                                {{ field: ""studio"", strategy: MERGE, createMissing: true }},
+                                {{ field: ""performers"", strategy: MERGE, createMissing: true }},
+                                {{ field: ""tags"", strategy: MERGE, createMissing: true }}
                             ]
                         }}, 
                         paths: [{cleanPath}]

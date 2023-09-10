@@ -1,4 +1,5 @@
 using NLog;
+using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
 using NzbDrone.Common.Serializer;
 
@@ -79,7 +80,10 @@ namespace NzbDrone.Core.Notifications.Stash
 
         private string ProcessRequest(HttpRequest request, StashSettings settings)
         {
-            request.Headers.Add("ApiKey", settings.ApiKey);
+            if (settings.ApiKey.IsNotNullOrWhiteSpace())
+            {
+                request.Headers.Add("ApiKey", settings.ApiKey);
+            }
 
             var response = _httpClient.Post(request);
             _logger.Trace("Response: {0}", response.Content);

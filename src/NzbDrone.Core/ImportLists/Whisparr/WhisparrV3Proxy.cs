@@ -65,8 +65,8 @@ namespace NzbDrone.Core.ImportLists.Whisparr
 
                 if (ex.Response.HasHttpRedirect)
                 {
-                    _logger.Error(ex, "Sonarr returned redirect and is invalid");
-                    return new ValidationFailure("BaseUrl", "Sonarr URL is invalid, are you missing a URL base?");
+                    _logger.Error(ex, "Whisparr returned redirect and is invalid");
+                    return new ValidationFailure("BaseUrl", "Whisparr URL is invalid, are you missing a URL base?");
                 }
 
                 _logger.Error(ex, "Unable to connect to import list.");

@@ -34,5 +34,11 @@ namespace NzbDrone.Core.Test.Qualities
         {
             QualityFinder.FindBySourceAndResolution(source, resolution).Should().Be(Quality.Bluray720p);
         }
+
+        [TestCase(QualitySource.VR, 2160)]
+        public void should_return_Vr(QualitySource source, int resolution)
+        {
+            QualityFinder.FindBySourceAndResolution(source, resolution).Should().Be(Quality.VR);
+        }
     }
 }

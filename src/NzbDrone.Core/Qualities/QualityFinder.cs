@@ -17,6 +17,12 @@ namespace NzbDrone.Core.Qualities
                 return matchingQuality;
             }
 
+            // Workaround until we add VR2160 or similar
+            if (source == QualitySource.VR && resolution >= Quality.VR.Resolution)
+            {
+                return Quality.VR;
+            }
+
             var matchingResolution = Quality.All.Where(q => q.Resolution == resolution)
                                             .OrderBy(q => q.Source)
                                             .ToList();

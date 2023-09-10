@@ -12,7 +12,6 @@ namespace NzbDrone.Core.Notifications.Stash
         public StashSettingsValidator()
         {
             RuleFor(c => c.Host).ValidHost();
-            RuleFor(c => c.ApiKey).NotEmpty();
             RuleFor(c => c.Port).ValidPort();
             RuleFor(c => c.MapFrom).NotEmpty().Unless(c => c.MapTo.IsNullOrWhiteSpace());
             RuleFor(c => c.MapTo).NotEmpty().Unless(c => c.MapFrom.IsNullOrWhiteSpace());

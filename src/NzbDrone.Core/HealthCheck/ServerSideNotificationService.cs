@@ -9,15 +9,11 @@ using NzbDrone.Common.EnvironmentInfo;
 using NzbDrone.Common.Http;
 using NzbDrone.Common.Serializer;
 using NzbDrone.Core.Configuration;
+using NzbDrone.Core.Localization;
 
 namespace NzbDrone.Core.HealthCheck
 {
-    public interface IServerSideNotificationService
-    {
-        public HealthCheck GetServerChecks();
-    }
-
-    public class ServerSideNotificationService : IServerSideNotificationService
+    public class ServerSideNotificationService : HealthCheckBase
     {
         private readonly IHttpClient _client;
         private readonly IWhisparrCloudRequestBuilder _cloudRequestBuilder;
@@ -29,8 +25,10 @@ namespace NzbDrone.Core.HealthCheck
         public ServerSideNotificationService(IHttpClient client,
                                              IWhisparrCloudRequestBuilder cloudRequestBuilder,
                                              IConfigFileProvider configFileProvider,
+                                             ILocalizationService localizationService,
                                              ICacheManager cacheManager,
                                              Logger logger)
+            : base(localizationService)
         {
             _client = client;
             _cloudRequestBuilder = cloudRequestBuilder;
@@ -40,7 +38,7 @@ namespace NzbDrone.Core.HealthCheck
             _cache = cacheManager.GetCache<HealthCheck>(GetType());
         }
 
-        public HealthCheck GetServerChecks()
+        public override HealthCheck Check()
         {
             return _cache.Get("ServerChecks", RetrieveServerChecks, TimeSpan.FromHours(2));
         }

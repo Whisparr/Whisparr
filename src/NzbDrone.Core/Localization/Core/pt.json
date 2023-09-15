@@ -1,6 +1,3 @@
 {
-    "Language": "Idioma",
-    "UI Language": "Idioma da interface",
-    "Language that Whisparr will use for UI": "Idioma que o Whisparr usa na interface",
-    "Browser Reload Required": "Necessário reiniciar o browser"
+    "Language": "Idioma"
 }

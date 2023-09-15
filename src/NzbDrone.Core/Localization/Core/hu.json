@@ -1,8 +1,5 @@
 {
     "Language": "Nyelv",
-    "UI Language": "Felhasználói felület nyelv",
-    "Language that Whisparr will use for UI": "Whisparr felhasználói felület nyelve",
-    "Browser Reload Required": "A böngésző újratöltése szükséges",
     "HiddenClickToShow": "Rejtett, kattints a felfedéshez",
     "ShownClickToHide": "Kattints, hogy elrejtsd",
     "ShowAdvanced": "Haladó nézet",

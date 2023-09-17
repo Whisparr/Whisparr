@@ -37,6 +37,11 @@ const columns = [
     isVisible: true,
   },
   {
+    name: 'actors',
+    label: () => translate('Performers'),
+    isVisible: true,
+  },
+  {
     name: 'releaseDate',
     label: () => translate('ReleaseDate'),
     isVisible: true,
@@ -232,6 +237,7 @@ function SelectEpisodeModalContent(props: SelectEpisodeModalContentProps) {
                       key={item.id}
                       id={item.id}
                       title={item.title}
+                      actors={item.actors}
                       releaseDate={item.releaseDate}
                       isSelected={selectedState[item.id]}
                       onSelectedChange={onSelectedChange}

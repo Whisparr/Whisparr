@@ -1,12 +1,20 @@
 import ModelBase from 'App/ModelBase';
 import Series from 'Series/Series';
 
+export interface Actor {
+  tpdbId: number;
+  name: string;
+  character: string;
+  gender: string;
+}
+
 interface Episode extends ModelBase {
   seriesId: number;
   tvdbId: number;
   episodeFileId: number;
   seasonNumber: number;
   releaseDate?: string;
+  actors: Actor[];
   runtime: number;
   absoluteEpisodeNumber?: number;
   sceneSeasonNumber?: number;

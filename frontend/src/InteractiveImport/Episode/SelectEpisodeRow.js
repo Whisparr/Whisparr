@@ -26,9 +26,12 @@ class SelectEpisodeRow extends Component {
       id,
       title,
       releaseDate,
+      actors,
       isSelected,
       onSelectedChange
     } = this.props;
+
+    const joinedPerformers = actors.map((a) => a.character).slice(0, 4).join(', ');
 
     return (
       <TableRowButton onPress={this.onPress}>
@@ -43,6 +46,12 @@ class SelectEpisodeRow extends Component {
         </TableRowCell>
 
         <TableRowCell>
+          <span title={joinedPerformers}>
+            {joinedPerformers}
+          </span>
+        </TableRowCell>
+
+        <TableRowCell>
           {releaseDate}
         </TableRowCell>
       </TableRowButton>
@@ -53,6 +62,7 @@ class SelectEpisodeRow extends Component {
 SelectEpisodeRow.propTypes = {
   id: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
+  actors: PropTypes.arrayOf(PropTypes.object).isRequired,
   releaseDate: PropTypes.string.isRequired,
   isSelected: PropTypes.bool,
   onSelectedChange: PropTypes.func.isRequired

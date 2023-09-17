@@ -35,7 +35,7 @@ namespace NzbDrone.Core.Tv
         {
             cleanTitle = cleanTitle.ToLowerInvariant();
 
-            var series = Query(s => s.CleanTitle == cleanTitle)
+            var series = Query(s => s.CleanTitle == cleanTitle || s.TitleSlug == cleanTitle)
                                         .ToList();
 
             return ReturnSingleSeriesOrThrow(series);

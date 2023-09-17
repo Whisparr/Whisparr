@@ -41,8 +41,18 @@ namespace NzbDrone.Core.Parser
         private static readonly Regex[] ReportTitleRegex = new[]
             {
                 // Site title in brackets with full year in date then episode info
-                // [Site] 19-07-2023 - Loli - Beautiful 2160p {RlsGroup}
+                // [Site] 19-07-2023 - Loli - Beautiful Episode 2160p {RlsGroup}
                 new Regex("^\\[(?<title>.+?)\\][-_. ]+(?<airday>[0-3][0-9])(?![-_. ]+[0-3][0-9])?[-_. ]+(?<airmonth>[0-1][0-9])[-_. ]+(?<airyear>(19|20)\\d{2})",
+                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
+                // Site title in brackets, date after title and performer
+                // [Site] Beautiful Episode - Loli - 2023-07-22 - 1080p
+                new Regex("^\\[(?<title>.+?)\\]\\W+(?<episodetitle>.+?) - (?<performer>.+?) - (?<airyear>(19|20)\\d{2})[-_.](?<airmonth>[0-1][0-9])[-_.](?<airday>[0-3][0-9])",
+                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
+                // Site title in brackets, date after title and performer, title in parentheses
+                // [Site] Loli (Beautiful Episode) 2023.07.21 [1080p]
+                new Regex("^\\[(?<title>.+?)\\]\\W+(?<performer>.+?)\\W+\\((?<episodetitle>.+?)\\)\\W+(?<airyear>(19|20)\\d{2})[.](?<airmonth>[0-1][0-9])[.](?<airday>[0-3][0-9])",
                     RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
                 // Episodes with non-separated airdate after title (20180428)
@@ -634,13 +644,26 @@ namespace NzbDrone.Core.Parser
                 };
             }
 
-            if (lastSeasonEpisodeStringIndex != releaseTitle.Length)
+            if (matchCollection[0].Groups["episodetitle"].Success)
             {
-                result.ReleaseTokens = releaseTitle.Substring(lastSeasonEpisodeStringIndex);
+                result.ReleaseTokens = matchCollection[0].Groups["episodetitle"].Value;
             }
-            else
+
+            if (matchCollection[0].Groups["performer"].Success)
             {
-                result.ReleaseTokens = releaseTitle;
+                result.ReleaseTokens += " - " + matchCollection[0].Groups["performer"].Value;
+            }
+
+            if (result.ReleaseTokens.IsNullOrWhiteSpace())
+            {
+                if (lastSeasonEpisodeStringIndex != releaseTitle.Length)
+                {
+                    result.ReleaseTokens = releaseTitle.Substring(lastSeasonEpisodeStringIndex);
+                }
+                else
+                {
+                    result.ReleaseTokens = releaseTitle;
+                }
             }
 
             result.SeriesTitle = seriesName;

@@ -47,12 +47,7 @@ namespace NzbDrone.Core.Parser
 
                 // Site title in brackets, date after title and performer
                 // [Site] Beautiful Episode - Loli - 2023-07-22 - 1080p
-                new Regex("^\\[(?<title>.+?)\\]\\W+(?<episodetitle>.+?) - (?<performer>.+?) - (?<airyear>(19|20)\\d{2})[-_.](?<airmonth>[0-1][0-9])[-_.](?<airday>[0-3][0-9])",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-                // Site title in brackets, date after title and performer, title in parentheses
-                // [Site] Loli (Beautiful Episode) 2023.07.21 [1080p]
-                new Regex("^\\[(?<title>.+?)\\]\\W+(?<performer>.+?)\\W+\\((?<episodetitle>.+?)\\)\\W+(?<airyear>(19|20)\\d{2})[.](?<airmonth>[0-1][0-9])[.](?<airday>[0-3][0-9])",
+                new Regex("^\\[(?<title>.+?)\\](?<releasetoken>.+?)(?:( - |\\s)(\\[|\\()?(?<airyear>(19|20)\\d{2})[-_.](?<airmonth>[0-1][0-9])[-_.](?<airday>[0-3][0-9])(\\]|\\))?)",
                     RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
                 // Episodes with non-separated airdate after title (20180428)
@@ -644,14 +639,9 @@ namespace NzbDrone.Core.Parser
                 };
             }
 
-            if (matchCollection[0].Groups["episodetitle"].Success)
+            if (matchCollection[0].Groups["releasetoken"].Success)
             {
-                result.ReleaseTokens = matchCollection[0].Groups["episodetitle"].Value;
-            }
-
-            if (matchCollection[0].Groups["performer"].Success)
-            {
-                result.ReleaseTokens += " - " + matchCollection[0].Groups["performer"].Value;
+                result.ReleaseTokens = matchCollection[0].Groups["releasetoken"].Value;
             }
 
             if (result.ReleaseTokens.IsNullOrWhiteSpace())

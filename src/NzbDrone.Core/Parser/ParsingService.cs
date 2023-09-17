@@ -288,6 +288,12 @@ namespace NzbDrone.Core.Parser
                 matchType = SeriesMatchType.Title;
             }
 
+            if (series == null)
+            {
+                series = _seriesService.FindByTitleSlug(parsedEpisodeInfo.SeriesTitle);
+                matchType = SeriesMatchType.Title;
+            }
+
             if (series == null && tvdbId > 0)
             {
                 series = _seriesService.FindByTvdbId(tvdbId);

@@ -17,6 +17,7 @@ namespace NzbDrone.Core.Tv
         Series FindByTvdbId(int tvdbId);
         Series FindByTitle(string title);
         Series FindByTitle(string title, int year);
+        Series FindByTitleSlug(string slug);
         Series FindByTitleInexact(string title);
         Series FindByPath(string path);
         void DeleteSeries(List<int> seriesIds, bool deleteFiles, bool addImportListExclusion);
@@ -86,6 +87,11 @@ namespace NzbDrone.Core.Tv
         public Series FindByTitle(string title)
         {
             return _seriesRepository.FindByTitle(title.CleanSeriesTitle());
+        }
+
+        public Series FindByTitleSlug(string slug)
+        {
+            return _seriesRepository.FindByTitleSlug(slug);
         }
 
         public Series FindByTitleInexact(string title)

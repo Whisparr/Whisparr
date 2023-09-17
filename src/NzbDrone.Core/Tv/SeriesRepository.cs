@@ -11,6 +11,7 @@ namespace NzbDrone.Core.Tv
         bool SeriesPathExists(string path);
         Series FindByTitle(string cleanTitle);
         Series FindByTitle(string cleanTitle, int year);
+        Series FindByTitleSlug(string titleSlug);
         List<Series> FindByTitleInexact(string cleanTitle);
         Series FindByTvdbId(int tvdbId);
         Series FindByPath(string path);
@@ -35,7 +36,7 @@ namespace NzbDrone.Core.Tv
         {
             cleanTitle = cleanTitle.ToLowerInvariant();
 
-            var series = Query(s => s.CleanTitle == cleanTitle || s.TitleSlug == cleanTitle)
+            var series = Query(s => s.CleanTitle == cleanTitle)
                                         .ToList();
 
             return ReturnSingleSeriesOrThrow(series);
@@ -46,6 +47,16 @@ namespace NzbDrone.Core.Tv
             cleanTitle = cleanTitle.ToLowerInvariant();
 
             var series = Query(s => s.CleanTitle == cleanTitle && s.Year == year).ToList();
+
+            return ReturnSingleSeriesOrThrow(series);
+        }
+
+        public Series FindByTitleSlug(string titleSlug)
+        {
+            titleSlug = titleSlug.ToLowerInvariant();
+
+            var series = Query(s => s.TitleSlug == titleSlug)
+                                        .ToList();
 
             return ReturnSingleSeriesOrThrow(series);
         }

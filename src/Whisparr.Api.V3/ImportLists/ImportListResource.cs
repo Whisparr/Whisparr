@@ -7,6 +7,7 @@ namespace Whisparr.Api.V3.ImportLists
     public class ImportListResource : ProviderResource<ImportListResource>
     {
         public bool EnableAutomaticAdd { get; set; }
+        public bool SearchForMissingEpisodes { get; set; }
         public ImportListMonitorTypes ShouldMonitor { get; set; }
         public MonitorTypes SiteMonitorType { get; set; }
         public string RootFolderPath { get; set; }
@@ -28,6 +29,7 @@ namespace Whisparr.Api.V3.ImportLists
             var resource = base.ToResource(definition);
 
             resource.EnableAutomaticAdd = definition.EnableAutomaticAdd;
+            resource.SearchForMissingEpisodes = definition.SearchForMissingEpisodes;
             resource.ShouldMonitor = definition.ShouldMonitor;
             resource.SiteMonitorType = definition.SiteMonitorType;
             resource.RootFolderPath = definition.RootFolderPath;
@@ -49,6 +51,7 @@ namespace Whisparr.Api.V3.ImportLists
             var definition = base.ToModel(resource, existingDefinition);
 
             definition.EnableAutomaticAdd = resource.EnableAutomaticAdd;
+            definition.SearchForMissingEpisodes = resource.SearchForMissingEpisodes;
             definition.ShouldMonitor = resource.ShouldMonitor;
             definition.SiteMonitorType = resource.SiteMonitorType;
             definition.RootFolderPath = resource.RootFolderPath;

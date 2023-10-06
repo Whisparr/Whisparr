@@ -67,8 +67,6 @@ interface SelectEpisodeModalContentProps {
   seriesId?: number;
   seasonNumber?: number;
   selectedDetails?: string;
-  sortKey?: string;
-  sortDirection?: string;
   modalTitle: string;
   onEpisodesSelect(selectedEpisodes: SelectedEpisode[]): unknown;
   onModalClose(): unknown;
@@ -83,8 +81,6 @@ function SelectEpisodeModalContent(props: SelectEpisodeModalContentProps) {
     seriesId,
     seasonNumber,
     selectedDetails,
-    sortKey,
-    sortDirection,
     modalTitle,
     onEpisodesSelect,
     onModalClose,
@@ -94,9 +90,8 @@ function SelectEpisodeModalContent(props: SelectEpisodeModalContentProps) {
   const [selectState, setSelectState] = useSelectState();
 
   const { allSelected, allUnselected, selectedState } = selectState;
-  const { isFetching, isPopulated, items, error } = useSelector(
-    episodesSelector()
-  );
+  const { isFetching, isPopulated, items, error, sortKey, sortDirection } =
+    useSelector(episodesSelector());
   const dispatch = useDispatch();
 
   const errorMessage = getErrorMessage(error, translate('EpisodesLoadError'));

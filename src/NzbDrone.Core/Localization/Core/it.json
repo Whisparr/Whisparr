@@ -25,5 +25,6 @@
     "Apply": "Applica",
     "AptUpdater": "Usa apt per installare l'aggiornamento",
     "BackupNow": "Esegui backup ora",
-    "Backups": "Backups"
+    "Backups": "Backups",
+    "AddImportList": "Aggiungi lista da importare"
 }

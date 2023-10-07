@@ -17,5 +17,19 @@
     "AutomaticAdd": "Automatisch Toevoegen",
     "CloneCondition": "Kloon Conditie",
     "Close": "Sluit",
-    "ApplyChanges": "Pas Wijzigingen Toe"
+    "ApplyChanges": "Pas Wijzigingen Toe",
+    "AddAutoTagError": "Niet in staat een nieuw automatisch label toe te voegen, probeer het opnieuw.",
+    "AddConditionError": "Niet in staat een nieuwe voorwaarde toe te voegen, probeer het opnieuw.",
+    "AddConnection": "Voeg connectie toe",
+    "CalendarOptions": "Kalender Opties",
+    "AddDownloadClientError": "Kan geen nieuwe downloadclient toevoegen. Probeer het opnieuw.",
+    "AddCustomFormat": "Voeg aangepast formaat toe",
+    "AddDelayProfile": "Voeg vertragingsprofiel toe",
+    "AddDownloadClient": "Download Client Toevoegen",
+    "AddCustomFormatError": "Kan geen nieuw aangepast formaat toevoegen. Probeer het opnieuw.",
+    "AddIndexer": "Voeg Indexeerder Toe",
+    "AddIndexerError": "Kon geen nieuwe indexeerder toevoegen, Probeer het opnieuw.",
+    "AddList": "Lijst Toevoegen",
+    "AddListError": "Kon geen nieuwe lijst toevoegen, probeer het opnieuw.",
+    "AddNewRestriction": "Voeg nieuwe restrictie toe"
 }

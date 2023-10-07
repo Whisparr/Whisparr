@@ -215,5 +215,19 @@
     "UrlBase": "URL Base",
     "Usenet": "Usenet",
     "Username": "Brukernavn",
-    "WhyCantIFindMySite": "Hvorfor finner jeg ikke filmen min?"
+    "WhyCantIFindMySite": "Hvorfor finner jeg ikke filmen min?",
+    "ImportLists": "importeringsliste",
+    "DeleteNotificationMessageText": "Er du sikker på at du vil slette formattaggen {0}?",
+    "EditCondition": "Legg til kobling",
+    "RemoveQueueItemConfirmation": "Er du sikker på at du vil fjerne {0} elementet {1} fra køen?",
+    "CalendarOptions": "Kalenderalternativer",
+    "CheckDownloadClientForDetails": "sjekk nedlastningsklienten for mer informasjon",
+    "ConnectionLost": "Tilkobling mistet",
+    "ConnectionLostReconnect": "Radarr vil forsøke å koble til automatisk, eller du kan klikke oppdater nedenfor.",
+    "ConnectionLostToBackend": "Radarr har mistet tilkoblingen til baksystemet og må lastes inn på nytt for å gjenopprette funksjonalitet.",
+    "ICalFeed": "iCal Feed",
+    "ICalLink": "iCal Link",
+    "ICalShowAsAllDayEventsHelpText": "Hendelser vil vises som heldagshendelser i kalenderen din",
+    "AgeWhenGrabbed": "Alder (når den tas)",
+    "Agenda": "Agenda"
 }

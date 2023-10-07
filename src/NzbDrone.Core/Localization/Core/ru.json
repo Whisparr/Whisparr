@@ -42,5 +42,17 @@
     "TestParsing": "Тест сбора данных",
     "ResetQualityDefinitionsMessageText": "Вы уверены, что хотите сбросить определения качества?",
     "AllTitles": "Все заголовки",
-    "ApplyTagsHelpTextHowToApplyDownloadClients": "Как применить теги к выбранным клиентам загрузки"
+    "ApplyTagsHelpTextHowToApplyDownloadClients": "Как применить теги к выбранным клиентам загрузки",
+    "Add": "Добавить",
+    "Activity": "Активность",
+    "AddCondition": "Добавить условие",
+    "Actions": "Действия",
+    "About": "Об",
+    "AddConditionError": "Невозможно добавить новое условие, попробуйте еще раз.",
+    "AddDownloadClientError": "Не удалось добавить новый клиент загрузки, попробуйте еще раз.",
+    "AddConnection": "Добавить подключение",
+    "AddCustomFormat": "Добавить свой формат",
+    "AddCustomFormatError": "Невозможно добавить новый пользовательский формат, попробуйте ещё раз.",
+    "AddDelayProfile": "Добавить профиль задержки",
+    "AddDownloadClient": "Добавить программу для скачивания"
 }

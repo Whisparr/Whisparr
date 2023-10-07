@@ -4,5 +4,6 @@
     "EditSelectedDownloadClients": "Ausgewählte Download Clienten bearbeiten",
     "EditSelectedImportLists": "Ausgewählte Einspiel-Liste bearbeten",
     "EditSelectedIndexers": "Ausgewähle Indexer bearbeiten",
-    "ApplyChanges": "Änderungen anwenden"
+    "ApplyChanges": "Änderungen anwenden",
+    "SkipFreeSpaceCheck": "Prüfung des freien Speichers überspringen"
 }

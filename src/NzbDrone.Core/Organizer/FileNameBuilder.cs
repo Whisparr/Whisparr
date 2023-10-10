@@ -304,6 +304,17 @@ namespace NzbDrone.Core.Organizer
             return TitlePrefixRegex.Replace(title, "$2, $1$3");
         }
 
+        public static string CleanTitleThe(string title)
+        {
+            if (TitlePrefixRegex.IsMatch(title))
+            {
+                var splitResult = TitlePrefixRegex.Split(title);
+                return $"{CleanTitle(splitResult[2]).Trim()}, {splitResult[1]}{CleanTitle(splitResult[3])}";
+            }
+
+            return CleanTitle(title);
+        }
+
         public static string TitleYear(string title, int year)
         {
             // Don't use 0 for the year.
@@ -319,6 +330,25 @@ namespace NzbDrone.Core.Organizer
             }
 
             return $"{title} ({year})";
+        }
+
+        public static string CleanTitleTheYear(string title, int year)
+        {
+            // Don't use 0 for the year.
+            if (year == 0)
+            {
+                return CleanTitleThe(title);
+            }
+
+            // Regex match incase the year in the title doesn't match the year, for whatever reason.
+            if (YearRegex.IsMatch(title))
+            {
+                var splitReturn = YearRegex.Split(title);
+                var yearMatch = YearRegex.Match(title);
+                return $"{CleanTitleThe(splitReturn[0].Trim())} {yearMatch.Value[1..5]}";
+            }
+
+            return $"{CleanTitleThe(title)} {year}";
         }
 
         public static string TitleWithoutYear(string title)
@@ -389,15 +419,18 @@ namespace NzbDrone.Core.Organizer
         private void AddSeriesTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Series series)
         {
             tokenHandlers["{Site Title}"] = m => series.Title;
-            tokenHandlers["{Site TitleSlug}"] = m => SlugTitle(series.Title);
             tokenHandlers["{Site CleanTitle}"] = m => CleanTitle(series.Title);
+            tokenHandlers["{Site TitleYear}"] = m => TitleYear(series.Title, series.Year);
             tokenHandlers["{Site CleanTitleYear}"] = m => CleanTitle(TitleYear(series.Title, series.Year));
+            tokenHandlers["{Site TitleWithoutYear}"] = m => TitleWithoutYear(series.Title);
             tokenHandlers["{Site CleanTitleWithoutYear}"] = m => CleanTitle(TitleWithoutYear(series.Title));
             tokenHandlers["{Site TitleThe}"] = m => TitleThe(series.Title);
-            tokenHandlers["{Site TitleYear}"] = m => TitleYear(series.Title, series.Year);
-            tokenHandlers["{Site TitleWithoutYear}"] = m => TitleWithoutYear(series.Title);
+            tokenHandlers["{Site CleanTitleThe}"] = m => CleanTitleThe(series.Title);
             tokenHandlers["{Site TitleTheYear}"] = m => TitleYear(TitleThe(series.Title), series.Year);
+            tokenHandlers["{Site CleanTitleTheYear}"] = m => CleanTitleTheYear(series.Title, series.Year);
             tokenHandlers["{Site TitleTheWithoutYear}"] = m => TitleWithoutYear(TitleThe(series.Title));
+            tokenHandlers["{Site CleanTitleTheWithoutYear}"] = m => CleanTitleThe(TitleWithoutYear(series.Title));
+            tokenHandlers["{Site TitleSlug}"] = m => SlugTitle(series.Title);
             tokenHandlers["{Site TitleFirstCharacter}"] = m => TitleFirstCharacter(TitleThe(series.Title));
             tokenHandlers["{Site Year}"] = m => series.Year.ToString();
 

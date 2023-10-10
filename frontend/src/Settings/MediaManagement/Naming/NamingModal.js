@@ -81,15 +81,18 @@ const fileNameTokens = [
 
 const seriesTokens = [
   { token: '{Site Title}', example: 'Site Title\'s' },
-  { token: '{Site TitleSlug}', example: 'SiteTitle\'s' },
   { token: '{Site CleanTitle}', example: 'Site Titles' },
+  { token: '{Site TitleYear}', example: 'Site Title\'s (2010)' },
   { token: '{Site CleanTitleYear}', example: 'Site Titles! 2010' },
+  { token: '{Site TitleWithoutYear}', example: 'Site Title\'s' },
   { token: '{Site CleanTitleWithoutYear}', example: 'Site Titles!' },
   { token: '{Site TitleThe}', example: 'Site Title\'s, The' },
+  { token: '{Site CleanTitleThe}', example: 'Site Title\'s!, The' },
   { token: '{Site TitleTheYear}', example: 'Site Title\'s, The (2010)' },
+  { token: '{Site CleanTitleTheYear}', example: 'Site Title\'s!, The 2010' },
   { token: '{Site TitleTheWithoutYear}', example: 'Site Title\'s, The' },
-  { token: '{Site TitleYear}', example: 'Site Title\'s (2010)' },
-  { token: '{Site TitleWithoutYear}', example: 'Site Title\'s' },
+  { token: '{Site CleanTitleTheWithoutYear}', example: 'Site Title\'s!, The' },
+  { token: '{Site TitleSlug}', example: 'SiteTitle\'s' },
   { token: '{Site TitleFirstCharacter}', example: 'S' },
   { token: '{Site Year}', example: '2010' },
   { token: '{Site Network}', example: 'Site Network' }

@@ -84,6 +84,7 @@ class PageHeader extends Component {
             aria-label={translate('Donate')}
             to="https://whisparr.com/donate.html"
             size={14}
+            title={translate('Donate')}
           />
           <PageHeaderActionsMenuConnector
             onKeyboardShortcutsPress={this.onOpenKeyboardShortcutsModal}

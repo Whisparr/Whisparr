@@ -58,7 +58,7 @@ namespace NzbDrone.Integration.Test.ApiTests.WantedTests
         {
             EnsureSeries(77, "My Family Pies", false);
 
-            var result = WantedMissing.GetPaged(0, 15, "airDateUtc", "desc", "monitored", "false");
+            var result = WantedMissing.GetPaged(0, 15, "airDateUtc", "desc", "monitored", false);
 
             result.Records.Should().NotBeEmpty();
         }

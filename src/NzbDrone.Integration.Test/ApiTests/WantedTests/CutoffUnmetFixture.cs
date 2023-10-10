@@ -57,7 +57,7 @@ namespace NzbDrone.Integration.Test.ApiTests.WantedTests
             var series = EnsureSeries(77, "My Family Pies", false);
             EnsureEpisodeFile(series, DateOnly.Parse("2018-12-30"), Quality.SDTV);
 
-            var result = WantedCutoffUnmet.GetPaged(0, 15, "airDateUtc", "desc", "monitored", "false");
+            var result = WantedCutoffUnmet.GetPaged(0, 15, "airDateUtc", "desc", "monitored", false);
 
             result.Records.Should().NotBeEmpty();
         }

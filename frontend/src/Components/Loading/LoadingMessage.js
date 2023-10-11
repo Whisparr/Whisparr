@@ -27,7 +27,7 @@ const messages = [
   'I once stole a pornographic book that was printed in Braille; I used to rub the dirty parts.',
   'I reckon porn gives kids an unrealistic idea of what it\'s like to be a plumber.',
   'The couple next door have just made a sex tape… obviously, they don\'t know that yet.',
-  'There\.s nothing but porn on TV these days. I tell you, it makes me so angry, I sit on the end of my bed and shake my fist at it.',
+  'There\'s nothing but porn on TV these days. I tell you, it makes me so angry, I sit on the end of my bed and shake my fist at it.',
   'Hi, I\'ve come to clean your pool',
   'Why do you think the net was born? Porn! Porn! Porn!',
   'All these guys unzip their flies for... Porn! Porn! Porn!',

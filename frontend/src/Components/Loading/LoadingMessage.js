@@ -55,7 +55,7 @@ const messages = [
   'Any violation of a woman\'s body can become sex for men; this is the essential truth of pornography.',
   'Legend has it that every new technology is first used for something related to sex or pornography. That seems to be the way of humankind.',
   'Unzipping...',
-  'Uncensoring...',
+  'Uncensoring...'
 ];
 
 let message = null;

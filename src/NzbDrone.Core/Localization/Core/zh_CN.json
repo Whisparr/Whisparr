@@ -1028,7 +1028,7 @@
     "ConnectionLost": "连接丢失",
     "ConnectionLostReconnect": "{appName} 将会尝试自动连接，您也可以点击下方的重新加载。",
     "ConnectionLostToBackend": "{appName} 与后端的链接已断开，需要重新加载恢复功能。",
-    "DelayingDownloadUntil": "将下载延迟到 {date} 的 {time}",
+    "DelayingDownloadUntil": "将下载推迟到 {date} 的 {time}",
     "DeletedReasonManual": "文件已通过 UI 删除",
     "DeletedReasonMissingFromDisk": "Sonarr 在磁盘上找不到该文件，因此已取消数据库中和该文件的集关联",
     "DeletedReasonUpgrade": "升级时删除原文件",

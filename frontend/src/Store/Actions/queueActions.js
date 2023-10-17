@@ -179,25 +179,25 @@ export const defaultState = {
     filterBuilderProps: [
       {
         name: 'seriesIds',
-        label: 'Sites',
+        label: () => translate('Sites'),
         type: filterBuilderTypes.EQUAL,
         valueType: filterBuilderValueTypes.SERIES
       },
       {
         name: 'quality',
-        label: 'Quality',
+        label: () => translate('Quality'),
         type: filterBuilderTypes.EQUAL,
         valueType: filterBuilderValueTypes.QUALITY
       },
       {
         name: 'languages',
-        label: 'Languages',
+        label: () => translate('Languages'),
         type: filterBuilderTypes.CONTAINS,
         valueType: filterBuilderValueTypes.LANGUAGE
       },
       {
         name: 'protocol',
-        label: 'Protocol',
+        label: () => translate('Protocol'),
         type: filterBuilderTypes.EQUAL,
         valueType: filterBuilderValueTypes.PROTOCOL
       }

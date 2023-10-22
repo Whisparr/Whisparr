@@ -779,6 +779,8 @@
   "MonitorLatestYearDescription": "Monitor all episodes of the latest year that released within the last 90 days and all future years",
   "MonitorMissingScenes": "Missing Scene",
   "MonitorMissingScenesDescription": "Monitor scenes that do not have files or have not aired yet",
+  "MonitorNewItems": "Monitor New Items",
+  "MonitorNewItemsHelpText": "Which new scenes should be monitored",
   "MonitorNone": "None",
   "MonitorNoneDescription": "No episodes will be monitored",
   "MonitorSite": "Monitor Site",

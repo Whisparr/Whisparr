@@ -27,4 +27,10 @@ namespace NzbDrone.Core.Tv
         LatestSeason,
         None
     }
+
+    public enum NewItemMonitorTypes
+    {
+        All,
+        None
+    }
 }

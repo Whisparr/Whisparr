@@ -8,6 +8,7 @@ namespace NzbDrone.Core.ImportLists
     {
         public bool EnableAutomaticAdd { get; set; }
         public ImportListMonitorTypes ShouldMonitor { get; set; }
+        public NewItemMonitorTypes MonitorNewItems { get; set; }
         public MonitorTypes SiteMonitorType { get; set; }
         public int QualityProfileId { get; set; }
         public string RootFolderPath { get; set; }

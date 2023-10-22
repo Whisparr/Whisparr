@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using NzbDrone.Core.Tv;
 
 namespace Whisparr.Api.V3.Series
 {
@@ -6,6 +7,7 @@ namespace Whisparr.Api.V3.Series
     {
         public List<int> SeriesIds { get; set; }
         public bool? Monitored { get; set; }
+        public NewItemMonitorTypes? MonitorNewItems { get; set; }
         public int? QualityProfileId { get; set; }
         public string RootFolderPath { get; set; }
         public List<int> Tags { get; set; }

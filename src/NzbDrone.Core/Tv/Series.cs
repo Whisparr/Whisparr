@@ -25,6 +25,7 @@ namespace NzbDrone.Core.Tv
         public SeriesStatusType Status { get; set; }
         public string Overview { get; set; }
         public bool Monitored { get; set; }
+        public NewItemMonitorTypes MonitorNewItems { get; set; }
         public int QualityProfileId { get; set; }
         public DateTime? LastInfoSync { get; set; }
         public int Runtime { get; set; }
@@ -61,6 +62,7 @@ namespace NzbDrone.Core.Tv
             QualityProfileId = otherSeries.QualityProfileId;
 
             Monitored = otherSeries.Monitored;
+            MonitorNewItems = otherSeries.MonitorNewItems;
 
             RootFolderPath = otherSeries.RootFolderPath;
             Tags = otherSeries.Tags;

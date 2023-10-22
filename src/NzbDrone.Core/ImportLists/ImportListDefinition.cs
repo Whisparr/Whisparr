@@ -10,6 +10,7 @@ namespace NzbDrone.Core.ImportLists
         public bool SearchForMissingEpisodes { get; set; }
         public ImportListMonitorTypes ShouldMonitor { get; set; }
         public MonitorTypes SiteMonitorType { get; set; }
+        public NewItemMonitorTypes MonitorNewItems { get; set; }
         public int QualityProfileId { get; set; }
         public string RootFolderPath { get; set; }
 

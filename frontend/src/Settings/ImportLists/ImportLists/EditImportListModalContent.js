@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import SeriesMonitoringOptionsPopoverContent from 'AddSeries/SeriesMonitoringOptionsPopoverContent';
+import SeriesMonitorNewItemsOptionsPopoverContent from 'AddSeries/SeriesMonitorNewItemsOptionsPopoverContent';
 import Alert from 'Components/Alert';
 import Form from 'Components/Form/Form';
 import FormGroup from 'Components/Form/FormGroup';
@@ -57,6 +58,7 @@ function EditImportListModalContent(props) {
     shouldMonitor,
     siteMonitorType,
     rootFolderPath,
+    monitorNewItems,
     qualityProfileId,
     tags,
     fields
@@ -185,6 +187,31 @@ function EditImportListModalContent(props) {
                   </FormGroup> :
                   null
               }
+
+              <FormGroup>
+                <FormLabel>
+                  {translate('MonitorNewSeasons')}
+                  <Popover
+                    anchor={
+                      <Icon
+                        className={styles.labelIcon}
+                        name={icons.INFO}
+                      />
+                    }
+                    title={translate('MonitorNewSeasons')}
+                    body={<SeriesMonitorNewItemsOptionsPopoverContent />}
+                    position={tooltipPositions.RIGHT}
+                  />
+                </FormLabel>
+
+                <FormInputGroup
+                  type={inputTypes.MONITOR_NEW_ITEMS_SELECT}
+                  name="monitorNewItems"
+                  helpText={translate('MonitorNewSeasonsHelpText')}
+                  {...monitorNewItems}
+                  onChange={onInputChange}
+                />
+              </FormGroup>
 
               <FormGroup>
                 <FormLabel>{translate('RootFolder')}</FormLabel>

@@ -10,6 +10,7 @@ namespace Whisparr.Api.V3.ImportLists
         public bool SearchForMissingEpisodes { get; set; }
         public ImportListMonitorTypes ShouldMonitor { get; set; }
         public MonitorTypes SiteMonitorType { get; set; }
+        public NewItemMonitorTypes MonitorNewItems { get; set; }
         public string RootFolderPath { get; set; }
         public int QualityProfileId { get; set; }
         public ImportListType ListType { get; set; }
@@ -32,6 +33,7 @@ namespace Whisparr.Api.V3.ImportLists
             resource.SearchForMissingEpisodes = definition.SearchForMissingEpisodes;
             resource.ShouldMonitor = definition.ShouldMonitor;
             resource.SiteMonitorType = definition.SiteMonitorType;
+            resource.MonitorNewItems = definition.MonitorNewItems;
             resource.RootFolderPath = definition.RootFolderPath;
             resource.QualityProfileId = definition.QualityProfileId;
             resource.ListType = definition.ListType;
@@ -54,6 +56,7 @@ namespace Whisparr.Api.V3.ImportLists
             definition.SearchForMissingEpisodes = resource.SearchForMissingEpisodes;
             definition.ShouldMonitor = resource.ShouldMonitor;
             definition.SiteMonitorType = resource.SiteMonitorType;
+            definition.MonitorNewItems = resource.MonitorNewItems;
             definition.RootFolderPath = resource.RootFolderPath;
             definition.QualityProfileId = resource.QualityProfileId;
             definition.ListType = resource.ListType;

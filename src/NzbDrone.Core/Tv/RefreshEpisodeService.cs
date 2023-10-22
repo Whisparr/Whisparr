@@ -54,7 +54,7 @@ namespace NzbDrone.Core.Tv
                     else
                     {
                         episodeToUpdate = new Episode();
-                        episodeToUpdate.Monitored = GetMonitoredStatus(episode, seasons);
+                        episodeToUpdate.Monitored = GetMonitoredStatus(episode, seasons, series);
                         newList.Add(episodeToUpdate);
                     }
 
@@ -105,8 +105,13 @@ namespace NzbDrone.Core.Tv
             }
         }
 
-        private bool GetMonitoredStatus(Episode episode, IEnumerable<Season> seasons)
+        private bool GetMonitoredStatus(Episode episode, IEnumerable<Season> seasons, Series series)
         {
+            if (series.MonitorNewItems == NewItemMonitorTypes.None)
+            {
+                return false;
+            }
+
             var season = seasons.SingleOrDefault(c => c.SeasonNumber == episode.SeasonNumber);
             return season == null || season.Monitored;
         }

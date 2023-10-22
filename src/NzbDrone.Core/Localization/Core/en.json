@@ -1174,6 +1174,7 @@
   "SeasonFolderFormat": "Season Folder Format",
   "SeasonInformation": "Season Information",
   "SeasonNumber": "Season Number",
+  "SeasonNumberToken": "{seasonNumber}",
   "SeasonPack": "Season Pack",
   "SeasonPassEpisodesDownloaded": "{episodeFileCount}/{totalEpisodeCount} episodes downloaded",
   "SeasonPassTruncated": "Only latest 25 seasons are shown, go to details to see all seasons",

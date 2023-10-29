@@ -503,6 +503,25 @@ namespace NzbDrone.Core.Download.Clients.Sabnzbd
                 };
             }
 
+            // New in SABnzbd 4.1, but on older versions this will be empty and not apply
+            if (config.Sorters.Any(s => s.is_active && ContainsCategory(s.sort_cats, Settings.MovieCategory)))
+            {
+                return new NzbDroneValidationFailure("MovieCategory", "Disable TV Sorting")
+                {
+                    InfoLink = _proxy.GetBaseUrl(Settings, "config/sorting/"),
+                    DetailedDescription = "You must disable sorting for the category Radarr uses to prevent import issues. Go to Sabnzbd to fix it."
+                };
+            }
+
+            if (config.Misc.enable_tv_sorting && ContainsCategory(config.Misc.tv_categories, Settings.MovieCategory))
+            {
+                return new NzbDroneValidationFailure("MovieCategory", _localizationService.GetLocalizedString("DownloadClientSabnzbdValidationEnableDisableTvSorting"))
+                {
+                    InfoLink = _proxy.GetBaseUrl(Settings, "config/sorting/"),
+                    DetailedDescription = _localizationService.GetLocalizedString("DownloadClientSabnzbdValidationEnableDisableTvSortingDetail")
+                };
+            }
+
             if (config.Misc.enable_tv_sorting && ContainsCategory(config.Misc.tv_categories, Settings.MovieCategory))
             {
                 return new NzbDroneValidationFailure("MovieCategory", _localizationService.GetLocalizedString("DownloadClientSabnzbdValidationEnableDisableTvSorting"))

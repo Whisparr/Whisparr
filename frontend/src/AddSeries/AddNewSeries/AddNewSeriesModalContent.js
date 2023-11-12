@@ -106,7 +106,7 @@ class AddNewSeriesModalContent extends Component {
                       seriesFolder: folder,
                       isWindows
                     }}
-                    helpText={translate('AddNewSeriesRootFolderHelpText', { folder })}
+                    helpText={translate('AddNewSiteRootFolderHelpText', { folder })}
                     onChange={onInputChange}
                     {...rootFolderPath}
                   />
@@ -167,7 +167,7 @@ class AddNewSeriesModalContent extends Component {
           <div>
             <label className={styles.searchLabelContainer}>
               <span className={styles.searchLabel}>
-                {translate('AddNewSeriesSearchForMissingEpisodes')}
+                {translate('AddNewSiteSearchForMissingEpisodes')}
               </span>
 
               <CheckInput
@@ -181,7 +181,7 @@ class AddNewSeriesModalContent extends Component {
 
             <label className={styles.searchLabelContainer}>
               <span className={styles.searchLabel}>
-                {translate('AddNewSeriesSearchForCutoffUnmetEpisodes')}
+                {translate('AddNewSiteSearchForCutoffUnmetEpisodes')}
               </span>
 
               <CheckInput
@@ -200,7 +200,7 @@ class AddNewSeriesModalContent extends Component {
             isSpinning={isAdding}
             onPress={this.onAddSeriesPress}
           >
-            {translate('AddSeriesWithTitle', { title })}
+            {translate('AddSiteWithTitle', { title })}
           </SpinnerButton>
         </ModalFooter>
       </ModalContent>

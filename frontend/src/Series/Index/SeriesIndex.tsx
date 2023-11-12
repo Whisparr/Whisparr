@@ -239,7 +239,7 @@ const SeriesIndex = withScrollPosition((props: SeriesIndexProps) => {
               label={
                 isSelectMode
                   ? translate('StopSelecting')
-                  : translate('SelectSeries')
+                  : translate('SelectSites')
               }
               iconName={isSelectMode ? icons.SERIES_ENDED : icons.CHECK}
               isSelectMode={isSelectMode}

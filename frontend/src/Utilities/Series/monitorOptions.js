@@ -4,37 +4,37 @@ const monitorOptions = [
   {
     key: 'all',
     get value() {
-      return translate('MonitorAllEpisodes');
+      return translate('MonitorAllScenes');
     }
   },
   {
     key: 'future',
     get value() {
-      return translate('MonitorFutureEpisodes');
+      return translate('MonitorFutureScenes');
     }
   },
   {
     key: 'missing',
     get value() {
-      return translate('MonitorMissingEpisodes');
+      return translate('MonitorMissingScenes');
     }
   },
   {
     key: 'existing',
     get value() {
-      return translate('MonitorExistingEpisodes');
+      return translate('MonitorExistingScenes');
     }
   },
   {
     key: 'firstSeason',
     get value() {
-      return translate('MonitorFirstSeason');
+      return translate('MonitorFirstYear');
     }
   },
   {
     key: 'latestSeason',
     get value() {
-      return translate('MonitorLatestSeason');
+      return translate('MonitorLatestYear');
     }
   },
   {

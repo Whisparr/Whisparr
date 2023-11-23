@@ -1098,6 +1098,7 @@
   "SearchOnAddPerformerHelpText": "Search for movies/scenes on this performer when added to library",
   "SearchPerformer": "Search Performer",
   "SearchSelected": "Search Selected",
+  "SearchMoviesConfirmationMessageText": "Are you sure you want to run a search for {count} movie(s)?",
   "Seconds": "Seconds",
   "Security": "Security",
   "Seeders": "Seeders",

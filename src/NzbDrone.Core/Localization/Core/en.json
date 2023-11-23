@@ -1548,6 +1548,7 @@
   "SearchOnAddStudioHelpText": "Search for movies/scenes on this studio when added to library",
   "SearchPerformer": "Search Performer",
   "SearchSelected": "Search Selected",
+  "SearchMoviesConfirmationMessageText": "Are you sure you want to run a search for {count} movie(s)?",
   "SearchTitle": "Search Title",
   "SearchTitleDate": "Search Title Date",
   "SearchTitleDateHelpText": "Search with a Title and Date combination",

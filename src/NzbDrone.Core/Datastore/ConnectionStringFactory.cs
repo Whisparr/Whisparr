@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data.SQLite;
 using Npgsql;
 using NzbDrone.Common.EnvironmentInfo;
@@ -9,8 +9,8 @@ namespace NzbDrone.Core.Datastore
 {
     public interface IConnectionStringFactory
     {
-        string MainDbConnectionString { get; }
-        string LogDbConnectionString { get; }
+        DatabaseConnectionInfo MainDbConnection { get; }
+        DatabaseConnectionInfo LogDbConnection { get; }
         string GetDatabasePath(string connectionString);
     }
 
@@ -22,15 +22,15 @@ namespace NzbDrone.Core.Datastore
         {
             _configFileProvider = configFileProvider;
 
-            MainDbConnectionString = _configFileProvider.PostgresHost.IsNotNullOrWhiteSpace() ? GetPostgresConnectionString(_configFileProvider.PostgresMainDb) :
+            MainDbConnection = _configFileProvider.PostgresHost.IsNotNullOrWhiteSpace() ? GetPostgresConnectionString(_configFileProvider.PostgresMainDb) :
                 GetConnectionString(appFolderInfo.GetDatabase());
 
-            LogDbConnectionString = _configFileProvider.PostgresHost.IsNotNullOrWhiteSpace() ? GetPostgresConnectionString(_configFileProvider.PostgresLogDb) :
+            LogDbConnection = _configFileProvider.PostgresHost.IsNotNullOrWhiteSpace() ? GetPostgresConnectionString(_configFileProvider.PostgresLogDb) :
                 GetConnectionString(appFolderInfo.GetLogDatabase());
         }
 
-        public string MainDbConnectionString { get; private set; }
-        public string LogDbConnectionString { get; private set; }
+        public DatabaseConnectionInfo MainDbConnection { get; private set; }
+        public DatabaseConnectionInfo LogDbConnection { get; private set; }
 
         public string GetDatabasePath(string connectionString)
         {
@@ -39,7 +39,7 @@ namespace NzbDrone.Core.Datastore
             return connectionBuilder.DataSource;
         }
 
-        private static string GetConnectionString(string dbPath)
+        private static DatabaseConnectionInfo GetConnectionString(string dbPath)
         {
             var connectionBuilder = new SQLiteConnectionStringBuilder
             {
@@ -57,10 +57,10 @@ namespace NzbDrone.Core.Datastore
                 connectionBuilder.Add("Full FSync", true);
             }
 
-            return connectionBuilder.ConnectionString;
+            return new DatabaseConnectionInfo(DatabaseType.SQLite, connectionBuilder.ConnectionString);
         }
 
-        private string GetPostgresConnectionString(string dbName)
+        private DatabaseConnectionInfo GetPostgresConnectionString(string dbName)
         {
             var connectionBuilder = new NpgsqlConnectionStringBuilder();
 
@@ -71,7 +71,7 @@ namespace NzbDrone.Core.Datastore
             connectionBuilder.Port = _configFileProvider.PostgresPort;
             connectionBuilder.Enlist = false;
 
-            return connectionBuilder.ConnectionString;
+            return new DatabaseConnectionInfo(DatabaseType.PostgreSQL, connectionBuilder.ConnectionString);
         }
     }
 }

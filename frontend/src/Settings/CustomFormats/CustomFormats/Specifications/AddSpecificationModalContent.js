@@ -53,11 +53,11 @@ class AddSpecificationModalContent extends Component {
 
                 <Alert kind={kinds.INFO}>
                   <div>
-                    {translate('RadarrSupportsCustomConditionsAgainstTheReleasePropertiesBelow')}
+                    {translate('WhisparrSupportsCustomConditionsAgainstTheReleasePropertiesBelow')}
                   </div>
                   <div>
                     {translate('VisitGithubCustomFormatsAphrodite')}
-                    <Link to="https://wiki.servarr.com/radarr/settings#custom-formats-2">{translate('Wiki')}</Link>
+                    <Link to="https://wiki.servarr.com/whisparr/settings#custom-formats-2">{translate('Wiki')}</Link>
                   </div>
                 </Alert>
 

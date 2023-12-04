@@ -78,7 +78,7 @@ namespace NzbDrone.Core.Test.MediaFiles.MovieImport.Aggregation.Aggregators.Augm
             var mediaInfo = Builder<MediaInfoModel>.CreateNew()
                 .With(m => m.Width = 1920)
                 .With(m => m.Height = 1080)
-                .With(m => m.Title = "Movie.Title.2008.WEB.x264-Radarr")
+                .With(m => m.Title = "Movie.Title.2008.WEB.x264-Whisparr")
                 .Build();
 
             var localMovie = Builder<LocalMovie>.CreateNew()
@@ -98,7 +98,7 @@ namespace NzbDrone.Core.Test.MediaFiles.MovieImport.Aggregation.Aggregators.Augm
             var mediaInfo = Builder<MediaInfoModel>.CreateNew()
                 .With(m => m.Width = 1920)
                 .With(m => m.Height = 1080)
-                .With(m => m.Title = "Movie.Title.2008.x264-Radarr")
+                .With(m => m.Title = "Movie.Title.2008.x264-Whisparr")
                 .Build();
 
             var localMovie = Builder<LocalMovie>.CreateNew()

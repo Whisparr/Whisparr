@@ -1,0 +1,10 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFrameworks>net6.0</TargetFrameworks>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NzbDrone.Core\Whisparr.Core.csproj" />
+    <ProjectReference Include="..\NzbDrone.Common\Whisparr.Common.csproj" />
+  </ItemGroup>
+</Project>

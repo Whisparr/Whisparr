@@ -77,7 +77,7 @@ namespace NzbDrone.Core.Notifications.Pushsafer
             try
             {
                 const string title = "Test Notification";
-                const string body = "This is a test message from Radarr";
+                const string body = "This is a test message from Whisparr";
 
                 SendNotification(title, body, settings);
             }

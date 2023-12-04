@@ -51,7 +51,13 @@ TmdbRating.propTypes = {
 };
 
 TmdbRating.defaultProps = {
-  iconSize: 14
+  iconSize: 14,
+  ratings: {
+    tmdb: {
+      value: 0,
+      votes: 0
+    }
+  }
 };
 
 export default TmdbRating;

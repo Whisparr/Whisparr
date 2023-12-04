@@ -22,7 +22,7 @@ namespace NzbDrone.Update.UpdateEngine
         {
             try
             {
-                var targetExecutable = Path.Combine(targetFolder, "Radarr.dll");
+                var targetExecutable = Path.Combine(targetFolder, "Whisparr.dll");
 
                 if (File.Exists(targetExecutable))
                 {

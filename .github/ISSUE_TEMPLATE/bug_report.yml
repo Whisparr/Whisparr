@@ -38,14 +38,14 @@ body:
     description: |
       examples:
         - **OS**: Ubuntu 20.04
-        - **Radarr**: Radarr 3.0.1.4259
+        - **Whisparr**: Whisparr 3.0.1.4259
         - **Docker Install**: Yes
         - **Using Reverse Proxy**: No
         - **Browser**: Firefox 90 (If UI related)
         - **Database**: Sqlite 3.36.0
     value: |
         - OS: 
-        - Radarr: 
+        - Whisparr: 
         - Docker Install: 
         - Using Reverse Proxy: 
         - Browser: 
@@ -67,7 +67,7 @@ body:
   attributes:
     label: Trace Logs? **Not Optional**
     description: |
-      Trace Logs (https://wiki.servarr.com/radarr/troubleshooting#logging-and-log-files) 
+      Trace Logs (https://wiki.servarr.com/whisparr/troubleshooting#logging-and-log-files) 
       ***Generally speaking, all bug reports MUST have trace logs provided.***
       Tip: You can attach images or log files by clicking this area to highlight it and then dragging files in.
       Additionally, any additional info? Screenshots? References? Anything that will give us more context about the issue you are encountering!

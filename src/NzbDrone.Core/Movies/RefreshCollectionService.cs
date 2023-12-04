@@ -133,7 +133,6 @@ namespace NzbDrone.Core.Movies
                         Title = m.Title,
                         QualityProfileId = collection.QualityProfileId,
                         RootFolderPath = collection.RootFolderPath,
-                        MinimumAvailability = collection.MinimumAvailability,
                         AddOptions = new AddMovieOptions
                         {
                             SearchForMovie = collection.SearchOnAdd,

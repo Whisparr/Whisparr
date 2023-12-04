@@ -1,6 +1,8 @@
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import LazyLoad from 'react-lazyload';
+import styles from './MovieImage.css';
 
 function findImage(images, coverType) {
   return images.find((image) => image.coverType === coverType);
@@ -118,6 +120,7 @@ class MovieImage extends Component {
       style,
       placeholder,
       size,
+      blur,
       lazy,
       overflow
     } = this.props;
@@ -153,7 +156,10 @@ class MovieImage extends Component {
           }
         >
           <img
-            className={className}
+            className={classNames(
+              className,
+              blur && styles.blur
+            )}
             style={style}
             src={url}
             onError={this.onError}
@@ -166,7 +172,10 @@ class MovieImage extends Component {
 
     return (
       <img
-        className={className}
+        className={classNames(
+          className,
+          blur && styles.blur
+        )}
         style={style}
         src={isLoaded ? url : placeholder}
         onError={this.onError}
@@ -184,6 +193,7 @@ MovieImage.propTypes = {
   placeholder: PropTypes.string.isRequired,
   size: PropTypes.number.isRequired,
   lazy: PropTypes.bool.isRequired,
+  blur: PropTypes.bool,
   overflow: PropTypes.bool.isRequired,
   onError: PropTypes.func,
   onLoad: PropTypes.func
@@ -192,6 +202,7 @@ MovieImage.propTypes = {
 MovieImage.defaultProps = {
   size: 250,
   lazy: true,
+  blur: false,
   overflow: false
 };
 

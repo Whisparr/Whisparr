@@ -52,10 +52,6 @@ namespace NzbDrone.Update.UpdateEngine
                 {
                     _diskTransferService.TransferFile(_appFolderInfo.GetDatabase(), _appFolderInfo.GetUpdateBackupDatabase(), TransferMode.Copy);
                 }
-                else
-                {
-                    _diskTransferService.TransferFile(_appFolderInfo.GetV0Database(), _appFolderInfo.GetV0UpdateBackupDatabase(), TransferMode.Copy);
-                }
             }
             catch (Exception e)
             {

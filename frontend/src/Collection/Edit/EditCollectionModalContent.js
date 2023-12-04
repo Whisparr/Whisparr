@@ -41,13 +41,13 @@ class EditCollectionModalContent extends Component {
       onInputChange,
       onModalClose,
       isSmallScreen,
+      safeForWorkMode,
       ...otherProps
     } = this.props;
 
     const {
       monitored,
       qualityProfileId,
-      minimumAvailability,
       // Id,
       rootFolderPath,
       tags,
@@ -66,6 +66,7 @@ class EditCollectionModalContent extends Component {
               !isSmallScreen &&
                 <div className={styles.poster}>
                   <MoviePoster
+                    blur={safeForWorkMode}
                     className={styles.poster}
                     images={images}
                     size={250}
@@ -89,17 +90,6 @@ class EditCollectionModalContent extends Component {
                     name="monitored"
                     helpText={translate('MonitoredCollectionHelpText')}
                     {...monitored}
-                    onChange={onInputChange}
-                  />
-                </FormGroup>
-
-                <FormGroup>
-                  <FormLabel>{translate('MinimumAvailability')}</FormLabel>
-
-                  <FormInputGroup
-                    type={inputTypes.AVAILABILITY_SELECT}
-                    name="minimumAvailability"
-                    {...minimumAvailability}
                     onChange={onInputChange}
                   />
                 </FormGroup>
@@ -184,7 +174,8 @@ EditCollectionModalContent.propTypes = {
   isSmallScreen: PropTypes.bool.isRequired,
   onInputChange: PropTypes.func.isRequired,
   onSavePress: PropTypes.func.isRequired,
-  onModalClose: PropTypes.func.isRequired
+  onModalClose: PropTypes.func.isRequired,
+  safeForWorkMode: PropTypes.bool
 };
 
 export default EditCollectionModalContent;

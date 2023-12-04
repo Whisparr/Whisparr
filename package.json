@@ -1,7 +1,7 @@
 {
-  "name": "radarr",
+  "name": "whisparr",
   "version": "1.0.0",
-  "description": "Radarr is a PVR for Usenet and BitTorrent users",
+  "description": "Whisparr is a PVR for Usenet and BitTorrent users",
   "scripts": {
     "build": "webpack --config ./frontend/build/webpack.config.js",
     "prebuild": "yarn clean",
@@ -13,8 +13,8 @@
     "stylelint-linux": "stylelint $(find frontend -name '*.css') --config frontend/.stylelintrc",
     "stylelint-windows": "stylelint frontend/**/*.css --config frontend/.stylelintrc"
   },
-  "repository": "https://github.com/Radarr/Radarr",
-  "author": "Team Radarr",
+  "repository": "https://github.com/Whisparr/Whisparr",
+  "author": "Team Whisparr",
   "license": "GPL-3.0",
   "readmeFilename": "readme.md",
   "main": "index.ts",

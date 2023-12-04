@@ -12,13 +12,15 @@ function createMapStateToProps() {
     createDimensionsSelector(),
     (state, { internalId }) => internalId,
     (state) => state.settings.ui.item.movieRuntimeFormat,
-    (isExistingMovie, isExclusionMovie, dimensions, internalId, movieRuntimeFormat) => {
+    (state) => state.settings.safeForWorkMode,
+    (isExistingMovie, isExclusionMovie, dimensions, internalId, movieRuntimeFormat, safeForWorkMode) => {
       return {
         existingMovieId: internalId,
         isExistingMovie,
         isExclusionMovie,
         isSmallScreen: dimensions.isSmallScreen,
-        movieRuntimeFormat
+        movieRuntimeFormat,
+        safeForWorkMode
       };
     }
   );

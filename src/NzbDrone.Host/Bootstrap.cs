@@ -33,18 +33,18 @@ namespace NzbDrone.Host
 
         public static readonly List<string> ASSEMBLIES = new List<string>
         {
-            "Radarr.Host",
-            "Radarr.Core",
-            "Radarr.SignalR",
-            "Radarr.Api.V3",
-            "Radarr.Http"
+            "Whisparr.Host",
+            "Whisparr.Core",
+            "Whisparr.SignalR",
+            "Whisparr.Api.V3",
+            "Whisparr.Http"
         };
 
         public static void Start(string[] args, Action<IHostBuilder> trayCallback = null)
         {
             try
             {
-                Logger.Info("Starting Radarr - {0} - Version {1}",
+                Logger.Info("Starting Whisparr - {0} - Version {1}",
                             Environment.ProcessPath,
                             Assembly.GetExecutingAssembly().GetName().Version);
 
@@ -95,7 +95,7 @@ namespace NzbDrone.Host
                             })
                             .ConfigureServices(services =>
                             {
-                                services.Configure<PostgresOptions>(config.GetSection("Radarr:Postgres"));
+                                services.Configure<PostgresOptions>(config.GetSection("Whisparr:Postgres"));
                             }).Build();
 
                         break;
@@ -104,7 +104,7 @@ namespace NzbDrone.Host
             }
             catch (InvalidConfigFileException ex)
             {
-                throw new RadarrStartupException(ex);
+                throw new WhisparrStartupException(ex);
             }
             catch (TerminateApplicationException e)
             {
@@ -124,8 +124,8 @@ namespace NzbDrone.Host
             var config = GetConfiguration(context);
 
             var bindAddress = config.GetValue(nameof(ConfigFileProvider.BindAddress), "*");
-            var port = config.GetValue(nameof(ConfigFileProvider.Port), 7878);
-            var sslPort = config.GetValue(nameof(ConfigFileProvider.SslPort), 8787);
+            var port = config.GetValue(nameof(ConfigFileProvider.Port), 6969);
+            var sslPort = config.GetValue(nameof(ConfigFileProvider.SslPort), 9898);
             var enableSsl = config.GetValue(nameof(ConfigFileProvider.EnableSsl), false);
             var sslCertPath = config.GetValue<string>(nameof(ConfigFileProvider.SslCertPath));
             var sslCertPassword = config.GetValue<string>(nameof(ConfigFileProvider.SslCertPassword));
@@ -149,7 +149,7 @@ namespace NzbDrone.Host
                 })
                 .ConfigureServices(services =>
                 {
-                    services.Configure<PostgresOptions>(config.GetSection("Radarr:Postgres"));
+                    services.Configure<PostgresOptions>(config.GetSection("Whisparr:Postgres"));
                 })
                 .ConfigureWebHost(builder =>
                 {
@@ -232,7 +232,7 @@ namespace NzbDrone.Host
             {
                 Logger.Error(ex, ex.Message);
 
-                throw new InvalidConfigFileException($"{configPath} is corrupt or invalid. Please delete the config file and Radarr will recreate it.", ex);
+                throw new InvalidConfigFileException($"{configPath} is corrupt or invalid. Please delete the config file and Whisparr will recreate it.", ex);
             }
         }
 
@@ -253,11 +253,11 @@ namespace NzbDrone.Host
             {
                 if (ex.HResult == 0x2 || ex.HResult == 0x2006D080)
                 {
-                    throw new RadarrStartupException(ex,
+                    throw new WhisparrStartupException(ex,
                         $"The SSL certificate file {cert} does not exist");
                 }
 
-                throw new RadarrStartupException(ex);
+                throw new WhisparrStartupException(ex);
             }
 
             return certificate;

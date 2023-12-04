@@ -100,7 +100,7 @@ const config = {
   slicer,
   serialize,
   merge,
-  key: 'radarr'
+  key: 'whisparr'
 };
 
 export default function createPersistState() {

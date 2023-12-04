@@ -123,11 +123,6 @@ namespace NzbDrone.Core.Parser
         {
             FindMovieResult result = null;
 
-            if (!string.IsNullOrWhiteSpace(imdbId) && imdbId != "0")
-            {
-                result = TryGetMovieByImDbId(parsedMovieInfo, imdbId);
-            }
-
             if (result == null && tmdbId > 0)
             {
                 result = TryGetMovieByTmdbId(parsedMovieInfo, tmdbId);
@@ -153,25 +148,12 @@ namespace NzbDrone.Core.Parser
             return result;
         }
 
-        private FindMovieResult TryGetMovieByImDbId(ParsedMovieInfo parsedMovieInfo, string imdbId)
-        {
-            var movie = _movieService.FindByImdbId(imdbId);
-
-            // Should fix practically all problems, where indexer is shite at adding correct imdbids to movies.
-            if (movie != null && (parsedMovieInfo.Year < 1800 || movie.MovieMetadata.Value.Year == parsedMovieInfo.Year || movie.MovieMetadata.Value.SecondaryYear == parsedMovieInfo.Year))
-            {
-                return new FindMovieResult(movie, MovieMatchType.Id);
-            }
-
-            return null;
-        }
-
         private FindMovieResult TryGetMovieByTmdbId(ParsedMovieInfo parsedMovieInfo, int tmdbId)
         {
             var movie = _movieService.FindByTmdbId(tmdbId);
 
             // Should fix practically all problems, where indexer is shite at adding correct imdbids to movies.
-            if (movie != null && (parsedMovieInfo.Year < 1800 || movie.MovieMetadata.Value.Year == parsedMovieInfo.Year || movie.MovieMetadata.Value.SecondaryYear == parsedMovieInfo.Year))
+            if (movie != null && (parsedMovieInfo.Year < 1800 || movie.MovieMetadata.Value.Year == parsedMovieInfo.Year))
             {
                 return new FindMovieResult(movie, MovieMatchType.Id);
             }
@@ -212,9 +194,6 @@ namespace NzbDrone.Core.Parser
             {
                 searchCriteria.Movie.MovieMetadata.Value.CleanTitle
             };
-            possibleTitles.AddIfNotNull(searchCriteria.Movie.MovieMetadata.Value.CleanOriginalTitle);
-            possibleTitles.AddRange(searchCriteria.Movie.MovieMetadata.Value.AlternativeTitles.Select(t => t.CleanTitle));
-            possibleTitles.AddRange(searchCriteria.Movie.MovieMetadata.Value.Translations.Select(t => t.CleanTitle));
 
             var cleanTitles = parsedMovieInfo.MovieTitles.Select(t => t.CleanMovieTitle()).ToArray();
 
@@ -229,7 +208,7 @@ namespace NzbDrone.Core.Parser
 
             if (possibleMovie != null)
             {
-                if (parsedMovieInfo.Year < 1800 || possibleMovie.MovieMetadata.Value.Year == parsedMovieInfo.Year || possibleMovie.MovieMetadata.Value.SecondaryYear == parsedMovieInfo.Year)
+                if (parsedMovieInfo.Year < 1800 || possibleMovie.MovieMetadata.Value.Year == parsedMovieInfo.Year)
                 {
                     return new FindMovieResult(possibleMovie, MovieMatchType.Title);
                 }

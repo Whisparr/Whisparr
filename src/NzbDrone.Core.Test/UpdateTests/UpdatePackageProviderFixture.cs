@@ -25,6 +25,7 @@ namespace NzbDrone.Core.Test.UpdateTests
         }
 
         [Test]
+        [Ignore("TODO: Update API")]
         public void finds_update_when_version_lower()
         {
             UseRealHttp();
@@ -49,7 +50,7 @@ namespace NzbDrone.Core.Test.UpdateTests
 
             recent.Should().NotBeEmpty();
             recent.Should().OnlyContain(c => c.Hash.IsNotNullOrWhiteSpace());
-            recent.Should().OnlyContain(c => c.FileName.Contains("Radarr"));
+            recent.Should().OnlyContain(c => c.FileName.Contains("Whisparr"));
             recent.Should().OnlyContain(c => c.ReleaseDate.Year >= 2014);
 
             if (recentWithChanges.Any())

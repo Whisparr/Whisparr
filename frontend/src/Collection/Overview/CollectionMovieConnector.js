@@ -11,10 +11,12 @@ function createMapStateToProps() {
   return createSelector(
     createDimensionsSelector(),
     createCollectionExistingMovieSelector(),
-    (dimensions, existingMovie) => {
+    (state) => state.settings.safeForWorkMode,
+    (dimensions, existingMovie, safeForWorkMode) => {
       return {
         isSmallScreen: dimensions.isSmallScreen,
         isExistingMovie: !!existingMovie,
+        safeForWorkMode,
         ...existingMovie
       };
     }

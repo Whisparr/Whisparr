@@ -66,12 +66,6 @@ const fileDateOptions = [
     }
   },
   {
-    key: 'cinemas',
-    get value() {
-      return translate('InCinemasDate');
-    }
-  },
-  {
     key: 'release',
     get value() {
       return translate('PhysicalReleaseDate');

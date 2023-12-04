@@ -39,7 +39,7 @@ namespace NzbDrone.Core.HealthCheck
 
         private static HttpUri MakeWikiUrl(string fragment)
         {
-            return new HttpUri("https://wiki.servarr.com/radarr/system#") + new HttpUri(fragment);
+            return new HttpUri("https://wiki.servarr.com/whisparr/system#") + new HttpUri(fragment);
         }
     }
 

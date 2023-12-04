@@ -32,7 +32,6 @@ export const defaultState = {
     rootFolderPath: '',
     monitor: 'movieOnly',
     qualityProfileId: 0,
-    minimumAvailability: 'announced',
     searchForMovie: true,
     tags: []
   }

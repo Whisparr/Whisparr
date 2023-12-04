@@ -31,13 +31,13 @@ namespace NzbDrone.Host.AccessControl
             {
                 if (!IsNzbDronePortOpen(_configFileProvider.Port))
                 {
-                    _logger.Debug("Opening Port for Radarr: {0}", _configFileProvider.Port);
+                    _logger.Debug("Opening Port for Whisparr: {0}", _configFileProvider.Port);
                     OpenFirewallPort(_configFileProvider.Port);
                 }
 
                 if (_configFileProvider.EnableSsl && !IsNzbDronePortOpen(_configFileProvider.SslPort))
                 {
-                    _logger.Debug("Opening SSL Port for Radarr: {0}", _configFileProvider.SslPort);
+                    _logger.Debug("Opening SSL Port for Whisparr: {0}", _configFileProvider.SslPort);
                     OpenFirewallPort(_configFileProvider.SslPort);
                 }
             }
@@ -82,7 +82,7 @@ namespace NzbDrone.Host.AccessControl
             }
             catch (Exception ex)
             {
-                _logger.Warn(ex, "Failed to open port in firewall for Radarr " + portNumber);
+                _logger.Warn(ex, "Failed to open port in firewall for Whisparr " + portNumber);
             }
         }
 

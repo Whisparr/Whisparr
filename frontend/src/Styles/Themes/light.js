@@ -1,5 +1,4 @@
-const radarrYellow = '#ffc230';
-const radarrAlternateYellow = '#2193b5';
+const whisparrPink = '#ff69b4';
 const darkGray = '#888';
 const mediumGray = '#999';
 const gray = '#adadad';
@@ -28,7 +27,7 @@ module.exports = {
   queueColor: '#7a43b6',
   purple,
   pink,
-  radarrYellow,
+  whisparrPink,
   helpTextColor: '#909293',
   darkGray,
   gray,
@@ -37,8 +36,8 @@ module.exports = {
 
   // Theme Colors
 
-  themeBlue: radarrYellow,
-  themeAlternateYellow: radarrAlternateYellow,
+  themePink: whisparrPink,
+  themeAlternatePink: whisparrPink,
   themeRed: '#c4273c',
   themeDarkColor: '#595959',
   themeLightColor: '#707070',
@@ -60,7 +59,7 @@ module.exports = {
   linkHoverColor: '#1b72e2',
 
   // Header
-  pageHeaderBackgroundColor: '#464b51',
+  pageHeaderBackgroundColor: whisparrPink,
 
   // Sidebar
 
@@ -141,8 +140,8 @@ module.exports = {
   //
   // Toolbar
 
-  toobarButtonHoverColor: '#ffc230',
-  toobarButtonSelectedColor: '#ffc230',
+  toobarButtonHoverColor: whisparrPink,
+  toobarButtonSelectedColor: whisparrPink,
 
   //
   // Scroller

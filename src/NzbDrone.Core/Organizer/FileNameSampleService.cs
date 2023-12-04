@@ -53,10 +53,8 @@ namespace NzbDrone.Core.Organizer
             _movieMetadata = new MovieMetadata
             {
                 Title = "The Movie: Title",
-                OriginalTitle = "The Original Movie Title",
                 CollectionTitle = "The Movie Collection",
                 CollectionTmdbId = 123654,
-                Certification = "R",
                 Year = 2010,
                 ImdbId = "tt0066921",
                 TmdbId = 345691

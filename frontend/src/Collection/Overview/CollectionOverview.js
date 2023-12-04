@@ -326,7 +326,6 @@ CollectionOverview.propTypes = {
   id: PropTypes.number.isRequired,
   monitored: PropTypes.bool.isRequired,
   qualityProfileId: PropTypes.number.isRequired,
-  minimumAvailability: PropTypes.string.isRequired,
   searchOnAdd: PropTypes.bool.isRequired,
   rootFolderPath: PropTypes.string.isRequired,
   tmdbId: PropTypes.number.isRequired,

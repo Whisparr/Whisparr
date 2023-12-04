@@ -41,7 +41,6 @@ namespace NzbDrone.Core.Movies
         Dictionary<int, List<int>> AllMovieTags();
         Movie UpdateMovie(Movie movie);
         List<Movie> UpdateMovie(List<Movie> movie, bool useExistingRelativeFolder);
-        List<int> GetRecommendedTmdbIds();
         bool MoviePathExists(string folder);
         void RemoveAddOptions(Movie movie);
         bool ExistsByMetadataId(int metadataId);
@@ -121,7 +120,7 @@ namespace NzbDrone.Core.Movies
         {
             var cleanTitles = titles.Select(t => t.CleanMovieTitle().ToLowerInvariant());
 
-            var result = candidates.Where(x => cleanTitles.Contains(x.MovieMetadata.Value.CleanTitle) || cleanTitles.Contains(x.MovieMetadata.Value.CleanOriginalTitle))
+            var result = candidates.Where(x => cleanTitles.Contains(x.MovieMetadata.Value.CleanTitle))
                 .AllWithYear(year)
                 .ToList();
 
@@ -129,22 +128,6 @@ namespace NzbDrone.Core.Movies
             {
                 result =
                     candidates.Where(movie => otherTitles.Contains(movie.MovieMetadata.Value.CleanTitle)).AllWithYear(year).ToList();
-            }
-
-            if (result == null || result.Count == 0)
-            {
-                result = candidates
-                    .Where(m => m.MovieMetadata.Value.AlternativeTitles.Any(t => cleanTitles.Contains(t.CleanTitle) ||
-                                                        otherTitles.Contains(t.CleanTitle)))
-                    .AllWithYear(year).ToList();
-            }
-
-            if (result == null || result.Count == 0)
-            {
-                result = candidates
-                    .Where(m => m.MovieMetadata.Value.Translations.Any(t => cleanTitles.Contains(t.CleanTitle) ||
-                                                        otherTitles.Contains(t.CleanTitle)))
-                    .AllWithYear(year).ToList();
             }
 
             return ReturnSingleMovieOrThrow(result.ToList());
@@ -349,11 +332,6 @@ namespace NzbDrone.Core.Movies
             }
 
             return false;
-        }
-
-        public List<int> GetRecommendedTmdbIds()
-        {
-            return _movieRepository.GetRecommendations();
         }
 
         public bool ExistsByMetadataId(int metadataId)

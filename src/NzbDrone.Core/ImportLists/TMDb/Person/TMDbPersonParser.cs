@@ -38,7 +38,7 @@ namespace NzbDrone.Core.ImportLists.TMDb.Person
                 foreach (var movie in jsonResponse.Cast)
                 {
                     // Movies with no Year Fix
-                    if (string.IsNullOrWhiteSpace(movie.ReleaseDate))
+                    if (string.IsNullOrWhiteSpace(movie.ReleaseDate) || !movie.Adult)
                     {
                         continue;
                     }
@@ -52,7 +52,7 @@ namespace NzbDrone.Core.ImportLists.TMDb.Person
                 foreach (var movie in jsonResponse.Crew)
                 {
                     // Movies with no Year Fix
-                    if (string.IsNullOrWhiteSpace(movie.ReleaseDate))
+                    if (string.IsNullOrWhiteSpace(movie.ReleaseDate) || !movie.Adult)
                     {
                         continue;
                     }

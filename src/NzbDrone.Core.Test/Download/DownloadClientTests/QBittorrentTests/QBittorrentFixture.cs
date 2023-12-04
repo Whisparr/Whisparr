@@ -30,7 +30,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.QBittorrentTests
                 Port = 2222,
                 Username = "admin",
                 Password = "pass",
-                MovieCategory = "movies-radarr"
+                MovieCategory = "movies-whisparr"
             };
 
             Mocker.GetMock<ITorrentFileInfoReader>()
@@ -768,7 +768,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.QBittorrentTests
         [Test]
         public void should_get_category_from_the_category_if_set()
         {
-            const string category = "movies-radarr";
+            const string category = "movies-whisparr";
             GivenGlobalSeedLimits(1.0f);
 
             var torrent = new QBittorrentTorrent
@@ -793,7 +793,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.QBittorrentTests
         [Test]
         public void should_get_category_from_the_label_if_the_category_is_not_available()
         {
-            const string category = "movies-radarr";
+            const string category = "movies-whisparr";
             GivenGlobalSeedLimits(1.0f);
 
             var torrent = new QBittorrentTorrent

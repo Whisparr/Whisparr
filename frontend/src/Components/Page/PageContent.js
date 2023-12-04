@@ -14,7 +14,7 @@ function PageContent(props) {
 
   return (
     <ErrorBoundary errorComponent={PageContentError}>
-      <DocumentTitle title={title ? `${title} - ${window.Radarr.instanceName}` : window.Radarr.instanceName}>
+      <DocumentTitle title={title ? `${title} - ${window.Whisparr.instanceName}` : window.Whisparr.instanceName}>
         <div className={className}>
           {children}
         </div>

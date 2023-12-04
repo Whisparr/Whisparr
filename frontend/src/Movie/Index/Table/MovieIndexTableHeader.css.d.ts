@@ -3,20 +3,13 @@
 interface CssExports {
   'actions': string;
   'added': string;
-  'certification': string;
   'collection': string;
-  'digitalRelease': string;
   'genres': string;
-  'imdbRating': string;
-  'inCinemas': string;
-  'minimumAvailability': string;
   'movieStatus': string;
   'originalLanguage': string;
-  'originalTitle': string;
   'path': string;
-  'physicalRelease': string;
-  'popularity': string;
   'qualityProfileId': string;
+  'releaseDate': string;
   'rottenTomatoesRating': string;
   'runtime': string;
   'sizeOnDisk': string;

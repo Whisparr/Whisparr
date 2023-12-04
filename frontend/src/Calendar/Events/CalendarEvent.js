@@ -19,9 +19,7 @@ class CalendarEvent extends Component {
     const {
       movieFile,
       isAvailable,
-      inCinemas,
-      physicalRelease,
-      digitalRelease,
+      releaseDate,
       title,
       titleSlug,
       genres,
@@ -44,15 +42,7 @@ class CalendarEvent extends Component {
     const link = `/movie/${titleSlug}`;
     const eventType = [];
 
-    if (inCinemas && moment(date).isSame(moment(inCinemas), 'day')) {
-      eventType.push('Cinemas');
-    }
-
-    if (physicalRelease && moment(date).isSame(moment(physicalRelease), 'day')) {
-      eventType.push('Physical');
-    }
-
-    if (digitalRelease && moment(date).isSame(moment(digitalRelease), 'day')) {
+    if (releaseDate && moment(date).isSame(moment(releaseDate), 'day')) {
       eventType.push('Digital');
     }
 
@@ -145,9 +135,7 @@ CalendarEvent.propTypes = {
   title: PropTypes.string.isRequired,
   titleSlug: PropTypes.string.isRequired,
   isAvailable: PropTypes.bool.isRequired,
-  inCinemas: PropTypes.string,
-  physicalRelease: PropTypes.string,
-  digitalRelease: PropTypes.string,
+  releaseDate: PropTypes.string,
   date: PropTypes.string.isRequired,
   monitored: PropTypes.bool.isRequired,
   certification: PropTypes.string,

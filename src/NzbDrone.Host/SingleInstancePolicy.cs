@@ -32,7 +32,7 @@ namespace NzbDrone.Host
         {
             if (IsAlreadyRunning())
             {
-                _logger.Warn("Another instance of Radarr is already running.");
+                _logger.Warn("Another instance of Whisparr is already running.");
                 _browserService.LaunchWebUI();
                 throw new TerminateApplicationException("Another instance is already running");
             }
@@ -50,7 +50,7 @@ namespace NzbDrone.Host
         {
             if (IsAlreadyRunning())
             {
-                _logger.Debug("Another instance of Radarr is already running.");
+                _logger.Debug("Another instance of Whisparr is already running.");
             }
         }
 
@@ -65,22 +65,22 @@ namespace NzbDrone.Host
             {
                 var currentId = _processProvider.GetCurrentProcess().Id;
 
-                var otherProcesses = _processProvider.FindProcessByName(ProcessProvider.RADARR_CONSOLE_PROCESS_NAME)
-                                                     .Union(_processProvider.FindProcessByName(ProcessProvider.RADARR_PROCESS_NAME))
+                var otherProcesses = _processProvider.FindProcessByName(ProcessProvider.WHISPARR_CONSOLE_PROCESS_NAME)
+                                                     .Union(_processProvider.FindProcessByName(ProcessProvider.WHISPARR_PROCESS_NAME))
                                                      .Select(c => c.Id)
                                                      .Except(new[] { currentId })
                                                      .ToList();
 
                 if (otherProcesses.Any())
                 {
-                    _logger.Info("{0} instance(s) of Radarr are running", otherProcesses.Count);
+                    _logger.Info("{0} instance(s) of Whisparr are running", otherProcesses.Count);
                 }
 
                 return otherProcesses;
             }
             catch (Exception ex)
             {
-                _logger.Warn(ex, "Failed to check for multiple instances of Radarr.");
+                _logger.Warn(ex, "Failed to check for multiple instances of Whisparr.");
                 return new List<int>();
             }
         }

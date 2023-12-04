@@ -50,7 +50,6 @@ export const defaultState = {
     rootFolderPath: '',
     monitor: 'movieOnly',
     qualityProfileId: 0,
-    minimumAvailability: 'announced',
     searchForMovie: true,
     tags: []
   },
@@ -347,8 +346,7 @@ export const actionHandlers = handleThunks({
       monitored,
       monitor,
       qualityProfileId,
-      rootFolderPath,
-      minimumAvailability
+      rootFolderPath
     } = payload;
 
     const response = {};
@@ -363,10 +361,6 @@ export const actionHandlers = handleThunks({
 
     if (payload.hasOwnProperty('qualityProfileId')) {
       response.qualityProfileId = qualityProfileId;
-    }
-
-    if (payload.hasOwnProperty('minimumAvailability')) {
-      response.minimumAvailability = minimumAvailability;
     }
 
     response.rootFolderPath = rootFolderPath;

@@ -79,7 +79,7 @@ function AuthenticationRequiredModalContent(props) {
                   values={authenticationMethodOptions}
                   helpText={translate('AuthenticationMethodHelpText')}
                   helpTextWarning={authenticationMethod.value === 'none' ? translate('AuthenticationMethodHelpTextWarning') : undefined}
-                  helpLink="https://wiki.servarr.com/radarr/faq#forced-authentication"
+                  helpLink="https://wiki.servarr.com/whisparr/faq#forced-authentication"
                   onChange={onInputChange}
                   {...authenticationMethod}
                 />

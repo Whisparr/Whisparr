@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net6.0</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="9.5.4" />
+    <PackageReference Include="Ical.Net" Version="4.2.0" />
+    <PackageReference Include="NLog" Version="5.2.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NzbDrone.Core\Whisparr.Core.csproj" />
+    <ProjectReference Include="..\Whisparr.Http\Whisparr.Http.csproj" />
+  </ItemGroup>
+</Project>

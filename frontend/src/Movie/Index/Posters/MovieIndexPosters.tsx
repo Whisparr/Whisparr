@@ -143,10 +143,8 @@ export default function MovieIndexPosters(props: MovieIndexPostersProps) {
       showTitle,
       showMonitored,
       showQualityProfile,
-      showCinemaRelease,
       showReleaseDate,
       showTmdbRating,
-      showImdbRating,
       showRottenTomatoesRating,
     } = posterOptions;
 
@@ -171,19 +169,11 @@ export default function MovieIndexPosters(props: MovieIndexPostersProps) {
       heights.push(19);
     }
 
-    if (showCinemaRelease) {
-      heights.push(19);
-    }
-
     if (showReleaseDate) {
       heights.push(19);
     }
 
     if (showTmdbRating) {
-      heights.push(19);
-    }
-
-    if (showImdbRating) {
       heights.push(19);
     }
 
@@ -197,7 +187,6 @@ export default function MovieIndexPosters(props: MovieIndexPostersProps) {
       case 'year':
       case 'path':
       case 'sizeOnDisk':
-      case 'originalTitle':
       case 'originalLanguage':
         heights.push(19);
         break;
@@ -206,19 +195,8 @@ export default function MovieIndexPosters(props: MovieIndexPostersProps) {
           heights.push(19);
         }
         break;
-      case 'inCinemas':
-        if (!showCinemaRelease) {
-          heights.push(19);
-        }
-        break;
-      case 'digitalRelease':
-      case 'physicalRelease':
+      case 'releaseDate':
         if (!showReleaseDate) {
-          heights.push(19);
-        }
-        break;
-      case 'imdbRating':
-        if (!showImdbRating) {
           heights.push(19);
         }
         break;

@@ -76,7 +76,8 @@ class CollectionMovie extends Component {
       posterHeight,
       detailedProgressBar,
       onMonitorTogglePress,
-      collectionId
+      collectionId,
+      safeForWorkMode
     } = this.props;
 
     const {
@@ -113,6 +114,7 @@ class CollectionMovie extends Component {
             {...linkProps}
           >
             <MoviePoster
+              blur={safeForWorkMode}
               className={styles.poster}
               style={elementStyle}
               images={images}
@@ -192,7 +194,8 @@ CollectionMovie.propTypes = {
   tmdbId: PropTypes.number.isRequired,
   imdbId: PropTypes.string,
   youTubeTrailerId: PropTypes.string,
-  onMonitorTogglePress: PropTypes.func.isRequired
+  onMonitorTogglePress: PropTypes.func.isRequired,
+  safeForWorkMode: PropTypes.bool
 };
 
 export default CollectionMovie;

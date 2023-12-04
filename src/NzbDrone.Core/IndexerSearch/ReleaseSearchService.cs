@@ -9,7 +9,6 @@ using NzbDrone.Core.DecisionEngine;
 using NzbDrone.Core.Indexers;
 using NzbDrone.Core.IndexerSearch.Definitions;
 using NzbDrone.Core.Movies;
-using NzbDrone.Core.Movies.Translations;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.Profiles.Qualities;
 
@@ -26,21 +25,18 @@ namespace NzbDrone.Core.IndexerSearch
         private readonly IIndexerFactory _indexerFactory;
         private readonly IMakeDownloadDecision _makeDownloadDecision;
         private readonly IMovieService _movieService;
-        private readonly IMovieTranslationService _movieTranslationService;
         private readonly IQualityProfileService _qualityProfileService;
         private readonly Logger _logger;
 
         public ReleaseSearchService(IIndexerFactory indexerFactory,
                                 IMakeDownloadDecision makeDownloadDecision,
                                 IMovieService movieService,
-                                IMovieTranslationService movieTranslationService,
                                 IQualityProfileService qualityProfileService,
                                 Logger logger)
         {
             _indexerFactory = indexerFactory;
             _makeDownloadDecision = makeDownloadDecision;
             _movieService = movieService;
-            _movieTranslationService = movieTranslationService;
             _qualityProfileService = qualityProfileService;
             _logger = logger;
         }
@@ -48,7 +44,6 @@ namespace NzbDrone.Core.IndexerSearch
         public async Task<List<DownloadDecision>> MovieSearch(int movieId, bool userInvokedSearch, bool interactiveSearch)
         {
             var movie = _movieService.GetMovie(movieId);
-            movie.MovieMetadata.Value.Translations = _movieTranslationService.GetAllTranslationsForMovieMetadata(movie.MovieMetadataId);
 
             return await MovieSearch(movie, userInvokedSearch, interactiveSearch);
         }
@@ -76,19 +71,11 @@ namespace NzbDrone.Core.IndexerSearch
             };
 
             var wantedLanguages = _qualityProfileService.GetAcceptableLanguages(movie.QualityProfileId);
-            var translations = _movieTranslationService.GetAllTranslationsForMovieMetadata(movie.MovieMetadataId);
 
             var queryTranslations = new List<string>
             {
-                movie.MovieMetadata.Value.Title,
-                movie.MovieMetadata.Value.OriginalTitle
+                movie.MovieMetadata.Value.Title
             };
-
-            // Add Translation of wanted languages to search query
-            foreach (var translation in translations.Where(a => wantedLanguages.Contains(a.Language)))
-            {
-                queryTranslations.Add(translation.Title);
-            }
 
             spec.SceneTitles = queryTranslations.Distinct().Where(t => t.IsNotNullOrWhiteSpace()).ToList();
 

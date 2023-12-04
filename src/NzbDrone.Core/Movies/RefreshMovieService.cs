@@ -16,7 +16,6 @@ using NzbDrone.Core.Movies.Collections;
 using NzbDrone.Core.Movies.Commands;
 using NzbDrone.Core.Movies.Credits;
 using NzbDrone.Core.Movies.Events;
-using NzbDrone.Core.Movies.Translations;
 using NzbDrone.Core.RootFolders;
 
 namespace NzbDrone.Core.Movies
@@ -28,7 +27,6 @@ namespace NzbDrone.Core.Movies
         private readonly IAddMovieCollectionService _movieCollectionService;
         private readonly IMovieMetadataService _movieMetadataService;
         private readonly IRootFolderService _folderService;
-        private readonly IMovieTranslationService _movieTranslationService;
         private readonly IAlternativeTitleService _titleService;
         private readonly ICreditService _creditService;
         private readonly IEventAggregator _eventAggregator;
@@ -43,7 +41,6 @@ namespace NzbDrone.Core.Movies
                                     IAddMovieCollectionService movieCollectionService,
                                     IMovieMetadataService movieMetadataService,
                                     IRootFolderService folderService,
-                                    IMovieTranslationService movieTranslationService,
                                     IAlternativeTitleService titleService,
                                     ICreditService creditService,
                                     IEventAggregator eventAggregator,
@@ -58,7 +55,6 @@ namespace NzbDrone.Core.Movies
             _movieCollectionService = movieCollectionService;
             _movieMetadataService = movieMetadataService;
             _folderService = folderService;
-            _movieTranslationService = movieTranslationService;
             _titleService = titleService;
             _creditService = creditService;
             _eventAggregator = eventAggregator;
@@ -118,21 +114,12 @@ namespace NzbDrone.Core.Movies
             movieMetadata.Ratings = movieInfo.Ratings;
 
             // movie.Genres = movieInfo.Genres;
-            movieMetadata.Certification = movieInfo.Certification;
-            movieMetadata.InCinemas = movieInfo.InCinemas;
             movieMetadata.Website = movieInfo.Website;
 
             movieMetadata.Year = movieInfo.Year;
-            movieMetadata.SecondaryYear = movieInfo.SecondaryYear;
-            movieMetadata.PhysicalRelease = movieInfo.PhysicalRelease;
-            movieMetadata.DigitalRelease = movieInfo.DigitalRelease;
-            movieMetadata.YouTubeTrailerId = movieInfo.YouTubeTrailerId;
+            movieMetadata.ReleaseDate = movieInfo.ReleaseDate;
             movieMetadata.Studio = movieInfo.Studio;
-            movieMetadata.OriginalTitle = movieInfo.OriginalTitle;
-            movieMetadata.CleanOriginalTitle = movieInfo.CleanOriginalTitle;
             movieMetadata.OriginalLanguage = movieInfo.OriginalLanguage;
-            movieMetadata.Recommendations = movieInfo.Recommendations;
-            movieMetadata.Popularity = movieInfo.Popularity;
 
             // add collection
             if (movieInfo.CollectionTmdbId > 0)
@@ -144,7 +131,6 @@ namespace NzbDrone.Core.Movies
                     Monitored = movie.AddOptions?.Monitor == MonitorTypes.MovieAndCollection,
                     SearchOnAdd = movie.AddOptions?.SearchForMovie ?? false,
                     QualityProfileId = movie.QualityProfileId,
-                    MinimumAvailability = movie.MinimumAvailability,
                     RootFolderPath = _folderService.GetBestRootFolderPath(movie.Path).TrimEnd('/', '\\', ' '),
                     Tags = movie.Tags
                 });
@@ -160,9 +146,6 @@ namespace NzbDrone.Core.Movies
                 movieMetadata.CollectionTmdbId = 0;
                 movieMetadata.CollectionTitle = null;
             }
-
-            movieMetadata.AlternativeTitles = _titleService.UpdateTitles(movieInfo.AlternativeTitles, movieMetadata);
-            _movieTranslationService.UpdateTranslations(movieInfo.Translations, movieMetadata);
 
             _movieMetadataService.Upsert(movieMetadata);
             _creditService.UpdateCredits(credits, movieMetadata);

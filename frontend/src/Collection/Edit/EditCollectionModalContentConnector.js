@@ -30,7 +30,8 @@ function createMapStateToProps() {
     createCollectionSelector(),
     createIsPathChangingSelector(),
     createDimensionsSelector(),
-    (moviesState, collection, isPathChanging, dimensions) => {
+    (state) => state.settings.safeForWorkMode,
+    (moviesState, collection, isPathChanging, dimensions, safeForWorkMode) => {
       const {
         isSaving,
         saveError,
@@ -40,7 +41,6 @@ function createMapStateToProps() {
       const movieSettings = {
         monitored: collection.monitored,
         qualityProfileId: collection.qualityProfileId,
-        minimumAvailability: collection.minimumAvailability,
         rootFolderPath: collection.rootFolderPath,
         tags: collection.tags,
         searchOnAdd: collection.searchOnAdd
@@ -58,6 +58,7 @@ function createMapStateToProps() {
         originalPath: collection.path,
         item: settings.settings,
         isSmallScreen: dimensions.isSmallScreen,
+        safeForWorkMode,
         ...settings
       };
     }

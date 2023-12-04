@@ -17,7 +17,7 @@ import LoadingPage from './LoadingPage';
 import Page from './Page';
 
 function testLocalStorage() {
-  const key = 'radarrTest';
+  const key = 'whisparrTest';
 
   try {
     localStorage.setItem(key, key);

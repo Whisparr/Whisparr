@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import TextTruncate from 'react-text-truncate';
+import AppState from 'App/State/AppState';
 import { MOVIE_SEARCH, REFRESH_MOVIE } from 'Commands/commandNames';
 import Icon from 'Components/Icon';
 import IconButton from 'Components/Link/IconButton';
@@ -57,6 +58,10 @@ function MovieIndexOverview(props: MovieIndexOverviewProps) {
 
   const { movie, qualityProfile, isRefreshingMovie, isSearchingMovie } =
     useSelector(createMovieIndexItemSelector(props.movieId));
+
+  const safeForWorkMode = useSelector(
+    (state: AppState) => state.settings.safeForWorkMode
+  );
 
   const overviewOptions = useSelector(selectOverviewOptions);
 
@@ -139,6 +144,7 @@ function MovieIndexOverview(props: MovieIndexOverviewProps) {
             {isSelectMode ? <MovieIndexPosterSelect movieId={movieId} /> : null}
             <Link className={styles.link} style={elementStyle} to={link}>
               <MoviePoster
+                blur={safeForWorkMode}
                 className={styles.poster}
                 style={elementStyle}
                 images={images}

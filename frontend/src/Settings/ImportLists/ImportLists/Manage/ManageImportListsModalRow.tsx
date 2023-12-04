@@ -7,7 +7,6 @@ import TableRow from 'Components/Table/TableRow';
 import TagListConnector from 'Components/TagListConnector';
 import { createQualityProfileSelectorForHook } from 'Store/Selectors/createQualityProfileSelector';
 import { SelectStateInputProps } from 'typings/props';
-import firstCharToUpper from 'Utilities/String/firstCharToUpper';
 import translate from 'Utilities/String/translate';
 import styles from './ManageImportListsModalRow.css';
 
@@ -16,7 +15,6 @@ interface ManageImportListsModalRowProps {
   name: string;
   rootFolderPath: string;
   qualityProfileId: number;
-  minimumAvailability: string;
   implementation: string;
   tags: number[];
   enabled: boolean;
@@ -32,7 +30,6 @@ function ManageImportListsModalRow(props: ManageImportListsModalRowProps) {
     isSelected,
     name,
     rootFolderPath,
-    minimumAvailability,
     qualityProfileId,
     implementation,
     enabled,
@@ -70,10 +67,6 @@ function ManageImportListsModalRow(props: ManageImportListsModalRowProps) {
 
       <TableRowCell className={styles.qualityProfileId}>
         {qualityProfile?.name ?? translate('None')}
-      </TableRowCell>
-
-      <TableRowCell className={styles.minimumAvailability}>
-        {translate(firstCharToUpper(minimumAvailability))}
       </TableRowCell>
 
       <TableRowCell className={styles.rootFolderPath}>

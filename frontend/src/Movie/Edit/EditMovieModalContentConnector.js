@@ -38,7 +38,6 @@ function createMapStateToProps() {
       const movieSettings = {
         monitored: movie.monitored,
         qualityProfileId: movie.qualityProfileId,
-        minimumAvailability: movie.minimumAvailability,
         path: movie.path,
         tags: movie.tags
       };

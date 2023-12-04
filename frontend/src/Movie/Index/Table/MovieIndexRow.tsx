@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useSelect } from 'App/SelectContext';
 import { MOVIE_SEARCH, REFRESH_MOVIE } from 'Commands/commandNames';
 import Icon from 'Components/Icon';
-import ImdbRating from 'Components/ImdbRating';
 import IconButton from 'Components/Link/IconButton';
 import SpinnerIconButton from 'Components/Link/SpinnerIconButton';
 import RottenTomatoRating from 'Components/RottenTomatoRating';
@@ -19,14 +18,12 @@ import DeleteMovieModal from 'Movie/Delete/DeleteMovieModal';
 import MovieDetailsLinks from 'Movie/Details/MovieDetailsLinks';
 import EditMovieModalConnector from 'Movie/Edit/EditMovieModalConnector';
 import createMovieIndexItemSelector from 'Movie/Index/createMovieIndexItemSelector';
-import MoviePopularityIndex from 'Movie/MoviePopularityIndex';
 import MovieTitleLink from 'Movie/MovieTitleLink';
 import { executeCommand } from 'Store/Actions/commandActions';
 import createUISettingsSelector from 'Store/Selectors/createUISettingsSelector';
 import { SelectStateInputProps } from 'typings/props';
 import formatRuntime from 'Utilities/Date/formatRuntime';
 import formatBytes from 'Utilities/Number/formatBytes';
-import firstCharToUpper from 'Utilities/String/firstCharToUpper';
 import translate from 'Utilities/String/translate';
 import MovieIndexProgressBar from '../ProgressBar/MovieIndexProgressBar';
 import MovieStatusCell from './MovieStatusCell';
@@ -58,20 +55,14 @@ function MovieIndexRow(props: MovieIndexRowProps) {
     studio,
     status,
     originalLanguage,
-    originalTitle,
     added,
     year,
-    inCinemas,
-    digitalRelease,
-    physicalRelease,
+    releaseDate,
     runtime,
-    minimumAvailability,
     path,
     sizeOnDisk,
     genres = [],
     ratings,
-    popularity,
-    certification,
     tags = [],
     tmdbId,
     imdbId,
@@ -199,14 +190,6 @@ function MovieIndexRow(props: MovieIndexRowProps) {
           );
         }
 
-        if (name === 'originalTitle') {
-          return (
-            <VirtualTableRowCell key={name} className={styles[name]}>
-              {originalTitle}
-            </VirtualTableRowCell>
-          );
-        }
-
         if (name === 'qualityProfileId') {
           return (
             <VirtualTableRowCell key={name} className={styles[name]}>
@@ -236,40 +219,14 @@ function MovieIndexRow(props: MovieIndexRowProps) {
           );
         }
 
-        if (name === 'inCinemas') {
+        if (name === 'releaseDate') {
           return (
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore ts(2739)
             <RelativeDateCellConnector
               key={name}
               className={styles[name]}
-              date={inCinemas}
-              component={VirtualTableRowCell}
-            />
-          );
-        }
-
-        if (name === 'digitalRelease') {
-          return (
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore ts(2739)
-            <RelativeDateCellConnector
-              key={name}
-              className={styles[name]}
-              date={digitalRelease}
-              component={VirtualTableRowCell}
-            />
-          );
-        }
-
-        if (name === 'physicalRelease') {
-          return (
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore ts(2739)
-            <RelativeDateCellConnector
-              key={name}
-              className={styles[name]}
-              date={physicalRelease}
+              date={releaseDate}
               component={VirtualTableRowCell}
             />
           );
@@ -279,14 +236,6 @@ function MovieIndexRow(props: MovieIndexRowProps) {
           return (
             <VirtualTableRowCell key={name} className={styles[name]}>
               {formatRuntime(runtime, movieRuntimeFormat)}
-            </VirtualTableRowCell>
-          );
-        }
-
-        if (name === 'minimumAvailability') {
-          return (
-            <VirtualTableRowCell key={name} className={styles[name]}>
-              {translate(firstCharToUpper(minimumAvailability))}
             </VirtualTableRowCell>
           );
         }
@@ -352,30 +301,6 @@ function MovieIndexRow(props: MovieIndexRowProps) {
           return (
             <VirtualTableRowCell key={name} className={styles[name]}>
               <RottenTomatoRating ratings={ratings} />
-            </VirtualTableRowCell>
-          );
-        }
-
-        if (name === 'imdbRating') {
-          return (
-            <VirtualTableRowCell key={name} className={styles[name]}>
-              <ImdbRating ratings={ratings} />
-            </VirtualTableRowCell>
-          );
-        }
-
-        if (name === 'popularity') {
-          return (
-            <VirtualTableRowCell key={name} className={styles[name]}>
-              <MoviePopularityIndex popularity={popularity} />
-            </VirtualTableRowCell>
-          );
-        }
-
-        if (name === 'certification') {
-          return (
-            <VirtualTableRowCell key={name} className={styles[name]}>
-              {certification}
             </VirtualTableRowCell>
           );
         }

@@ -25,8 +25,8 @@ namespace NzbDrone.Core.Test.NotificationTests.EmailTests
             _emailSettings = Builder<EmailSettings>.CreateNew()
                                         .With(s => s.Server = "someserver")
                                         .With(s => s.Port = 567)
-                                        .With(s => s.From = "radarr@radarr.video")
-                                        .With(s => s.To = new string[] { "radarr@radarr.video" })
+                                        .With(s => s.From = "whisparr@whisparr.com")
+                                        .With(s => s.To = new string[] { "whisparr@whisparr.com" })
                                         .Build();
         }
 
@@ -60,8 +60,8 @@ namespace NzbDrone.Core.Test.NotificationTests.EmailTests
             _validator.Validate(_emailSettings).IsValid.Should().BeFalse();
         }
 
-        [TestCase("radarr")]
-        [TestCase("radarr.video")]
+        [TestCase("whisparr")]
+        [TestCase("whisparr.com")]
         public void should_not_be_valid_if_to_is_invalid(string email)
         {
             _emailSettings.To = new string[] { email };
@@ -69,8 +69,8 @@ namespace NzbDrone.Core.Test.NotificationTests.EmailTests
             _validator.Validate(_emailSettings).IsValid.Should().BeFalse();
         }
 
-        [TestCase("radarr")]
-        [TestCase("radarr.video")]
+        [TestCase("whisparr")]
+        [TestCase("whisparr.com")]
         public void should_not_be_valid_if_cc_is_invalid(string email)
         {
             _emailSettings.Cc = new string[] { email };
@@ -78,8 +78,8 @@ namespace NzbDrone.Core.Test.NotificationTests.EmailTests
             _validator.Validate(_emailSettings).IsValid.Should().BeFalse();
         }
 
-        [TestCase("radarr")]
-        [TestCase("radarr.video")]
+        [TestCase("whisparr")]
+        [TestCase("whisparr.com")]
         public void should_not_be_valid_if_bcc_is_invalid(string email)
         {
             _emailSettings.Bcc = new string[] { email };

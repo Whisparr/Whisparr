@@ -6,12 +6,12 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
 
-    <!-- Chrome, Safari, Opera, and Firefox OS -->
-    <meta name="theme-color" content="#595959" />
+    <!-- Chrome, Opera, and Firefox OS -->
+    <meta name="theme-color" content="#3a3f51" />
     <!-- Windows Phone -->
     <meta name="msapplication-navbutton-color" content="#3a3f51" />
 
-    <meta name="description" content="Radarr" />
+    <meta name="description" content="Whisparr" />
 
     <link
       rel="apple-touch-icon"
@@ -50,7 +50,7 @@
     <link rel="stylesheet" type="text/css" href="/Content/Fonts/fonts.css">
 
     <script>
-      window.Radarr = {
+      window.Whisparr = {
         urlBase: '__URL_BASE__'
       };
     </script>
@@ -58,7 +58,7 @@
     <% for (key in htmlWebpackPlugin.files.js) { %><script type="text/javascript" src="<%= htmlWebpackPlugin.files.js[key] %>" data-no-hash></script><% } %>
     <% for (key in htmlWebpackPlugin.files.css) { %><link href="<%= htmlWebpackPlugin.files.css[key] %>" rel="stylesheet"></link><% } %>
 
-    <title>Radarr</title>
+    <title>Whisparr</title>
 
     <!--
       The super basic styling for .root  will live here,

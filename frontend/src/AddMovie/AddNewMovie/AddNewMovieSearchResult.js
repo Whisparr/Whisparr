@@ -78,7 +78,8 @@ class AddNewMovieSearchResult extends Component {
       movieFile,
       runtime,
       movieRuntimeFormat,
-      certification
+      certification,
+      safeForWorkMode
     } = this.props;
 
     const {
@@ -108,6 +109,7 @@ class AddNewMovieSearchResult extends Component {
               <div>
                 <div className={styles.posterContainer}>
                   <MoviePoster
+                    blur={safeForWorkMode}
                     className={styles.poster}
                     style={elementStyle}
                     images={images}
@@ -291,7 +293,8 @@ AddNewMovieSearchResult.propTypes = {
   colorImpairedMode: PropTypes.bool,
   runtime: PropTypes.number.isRequired,
   movieRuntimeFormat: PropTypes.string.isRequired,
-  certification: PropTypes.string
+  certification: PropTypes.string,
+  safeForWorkMode: PropTypes.bool
 };
 
 export default AddNewMovieSearchResult;

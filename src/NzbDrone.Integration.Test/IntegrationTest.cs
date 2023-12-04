@@ -7,14 +7,14 @@ using NzbDrone.Core.Datastore.Migration.Framework;
 using NzbDrone.Core.Indexers.Newznab;
 using NzbDrone.Test.Common;
 using NzbDrone.Test.Common.Datastore;
-using Radarr.Http.ClientSchema;
+using Whisparr.Http.ClientSchema;
 
 namespace NzbDrone.Integration.Test
 {
     [Parallelizable(ParallelScope.Fixtures)]
     public abstract class IntegrationTest : IntegrationTestBase
     {
-        protected static int StaticPort = 7878;
+        protected static int StaticPort = 6969;
 
         protected NzbDroneRunner _runner;
 
@@ -50,7 +50,7 @@ namespace NzbDrone.Integration.Test
             // Make sure tasks have been initialized so the config put below doesn't cause errors
             WaitForCompletion(() => Tasks.All().SelectList(x => x.TaskName).Contains("RssSync"), 20000);
 
-            Indexers.Post(new Radarr.Api.V3.Indexers.IndexerResource
+            Indexers.Post(new Whisparr.Api.V3.Indexers.IndexerResource
             {
                 EnableRss = false,
                 EnableInteractiveSearch = false,

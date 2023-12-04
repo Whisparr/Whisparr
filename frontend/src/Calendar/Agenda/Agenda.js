@@ -15,25 +15,15 @@ function Agenda(props) {
   const endDateParsed = Date.parse(end);
 
   items.forEach((item) => {
-    const cinemaDateParsed = Date.parse(item.inCinemas);
-    const digitalDateParsed = Date.parse(item.digitalRelease);
-    const physicalDateParsed = Date.parse(item.physicalRelease);
+    const releaseDateParsed = Date.parse(item.releaseDate);
     const dates = [];
 
-    if (cinemaDateParsed > 0 && cinemaDateParsed >= startDateParsed && cinemaDateParsed <= endDateParsed) {
-      dates.push(cinemaDateParsed);
-    }
-    if (digitalDateParsed > 0 && digitalDateParsed >= startDateParsed && digitalDateParsed <= endDateParsed) {
-      dates.push(digitalDateParsed);
-    }
-    if (physicalDateParsed > 0 && physicalDateParsed >= startDateParsed && physicalDateParsed <= endDateParsed) {
-      dates.push(physicalDateParsed);
+    if (releaseDateParsed > 0 && releaseDateParsed >= startDateParsed && releaseDateParsed <= endDateParsed) {
+      dates.push(releaseDateParsed);
     }
 
     item.sortDate = Math.min(...dates);
-    item.cinemaDateParsed = cinemaDateParsed;
-    item.digitalDateParsed = digitalDateParsed;
-    item.physicalDateParsed = physicalDateParsed;
+    item.releaseDateParsed = releaseDateParsed;
   });
 
   items.sort((a, b) => ((a.sortDate > b.sortDate) ? 1 : -1));

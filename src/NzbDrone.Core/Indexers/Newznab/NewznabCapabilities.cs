@@ -18,7 +18,7 @@ namespace NzbDrone.Core.Indexers.Newznab
             DefaultPageSize = 100;
             MaxPageSize = 100;
             SupportedSearchParameters = new[] { "q" };
-            SupportedMovieSearchParameters = new[] { "q", "imdbid", "imdbtitle", "imdbyear" };
+            SupportedMovieSearchParameters = new[] { "q" };
             SupportsAggregateIdSearch = false;
             TextSearchEngine = "sphinx"; // This should remain 'sphinx' for older newznab installs
             MovieTextSearchEngine = "sphinx"; // This should remain 'sphinx' for older newznab installs

@@ -10,7 +10,6 @@ import CalendarPageConnector from 'Calendar/CalendarPageConnector';
 import CollectionConnector from 'Collection/CollectionConnector';
 import NotFound from 'Components/NotFound';
 import Switch from 'Components/Router/Switch';
-import DiscoverMovieConnector from 'DiscoverMovie/DiscoverMovieConnector';
 import MovieDetailsPageConnector from 'Movie/Details/MovieDetailsPageConnector';
 import MovieIndex from 'Movie/Index/MovieIndex';
 import CustomFormatSettingsPage from 'Settings/CustomFormats/CustomFormatSettingsPage';
@@ -52,7 +51,7 @@ function AppRoutes(props) {
       />
 
       {
-        window.Radarr.urlBase &&
+        window.Whisparr.urlBase &&
           <Route
             exact={true}
             path="/"
@@ -81,11 +80,6 @@ function AppRoutes(props) {
       <Route
         path="/add/import"
         component={ImportMovies}
-      />
-
-      <Route
-        path="/add/discover"
-        component={DiscoverMovieConnector}
       />
 
       <Route

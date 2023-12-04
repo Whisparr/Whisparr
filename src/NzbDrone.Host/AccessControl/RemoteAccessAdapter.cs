@@ -29,7 +29,7 @@ namespace NzbDrone.Host.AccessControl
                 }
                 else if (!passive)
                 {
-                    throw new RemoteAccessException("Failed to register URLs for Radarr. Radarr will not be accessible remotely");
+                    throw new RemoteAccessException("Failed to register URLs for Whisparr. Whisparr will not be accessible remotely");
                 }
             }
         }

@@ -3,7 +3,6 @@
 interface CssExports {
   'detailsIcon': string;
   'folder': string;
-  'minimumAvailability': string;
   'monitor': string;
   'movie': string;
   'qualityProfile': string;

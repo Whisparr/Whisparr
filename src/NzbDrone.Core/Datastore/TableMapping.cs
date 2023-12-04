@@ -31,7 +31,6 @@ using NzbDrone.Core.Movies;
 using NzbDrone.Core.Movies.AlternativeTitles;
 using NzbDrone.Core.Movies.Collections;
 using NzbDrone.Core.Movies.Credits;
-using NzbDrone.Core.Movies.Translations;
 using NzbDrone.Core.Notifications;
 using NzbDrone.Core.Organizer;
 using NzbDrone.Core.Parser.Model;
@@ -130,8 +129,6 @@ namespace NzbDrone.Core.Datastore
 
             Mapper.Entity<AlternativeTitle>("AlternativeTitles").RegisterModel();
 
-            Mapper.Entity<MovieTranslation>("MovieTranslations").RegisterModel();
-
             Mapper.Entity<Credit>("Credits").RegisterModel();
 
             Mapper.Entity<ImportExclusion>("ImportExclusions").RegisterModel();
@@ -173,8 +170,7 @@ namespace NzbDrone.Core.Datastore
 
             Mapper.Entity<UpdateHistory>("UpdateHistory").RegisterModel();
 
-            Mapper.Entity<MovieMetadata>("MovieMetadata").RegisterModel()
-                .Ignore(s => s.Translations);
+            Mapper.Entity<MovieMetadata>("MovieMetadata").RegisterModel();
 
             Mapper.Entity<MovieCollection>("Collections").RegisterModel();
 
@@ -207,7 +203,6 @@ namespace NzbDrone.Core.Datastore
             SqlMapper.AddTypeHandler(new EmbeddedDocumentConverter<ReleaseInfo>());
             SqlMapper.AddTypeHandler(new EmbeddedDocumentConverter<PendingReleaseAdditionalInfo>());
             SqlMapper.AddTypeHandler(new EmbeddedDocumentConverter<Ratings>());
-            SqlMapper.AddTypeHandler(new EmbeddedDocumentConverter<List<MovieTranslation>>());
             SqlMapper.AddTypeHandler(new EmbeddedDocumentConverter<HashSet<int>>());
             SqlMapper.AddTypeHandler(new OsPathConverter());
             SqlMapper.RemoveTypeMap(typeof(Guid));

@@ -8,13 +8,11 @@ import translate from 'Utilities/String/translate';
 import styles from './MovieReleaseDates.css';
 
 interface MovieReleaseDatesProps {
-  inCinemas: string;
-  physicalRelease: string;
-  digitalRelease: string;
+  releaseDate: string;
 }
 
 function MovieReleaseDates(props: MovieReleaseDatesProps) {
-  const { inCinemas, physicalRelease, digitalRelease } = props;
+  const { releaseDate } = props;
 
   const { showRelativeDates, shortDateFormat, timeFormat } = useSelector(
     createUISettingsSelector()
@@ -22,39 +20,15 @@ function MovieReleaseDates(props: MovieReleaseDatesProps) {
 
   return (
     <div>
-      {inCinemas ? (
-        <div title={translate('InCinemas')}>
-          <div className={styles.dateIcon}>
-            <Icon name={icons.IN_CINEMAS} />
-          </div>
-          {getRelativeDate(inCinemas, shortDateFormat, showRelativeDates, {
-            timeFormat,
-            timeForToday: false,
-          })}
-        </div>
-      ) : null}
-      {digitalRelease ? (
+      {releaseDate ? (
         <div title={translate('DigitalRelease')}>
-          <div className={styles.dateIcon}>
-            <Icon name={icons.MOVIE_FILE} />
-          </div>
-          {getRelativeDate(digitalRelease, shortDateFormat, showRelativeDates, {
-            timeFormat,
-            timeForToday: false,
-          })}
-        </div>
-      ) : null}
-      {physicalRelease ? (
-        <div title={translate('PhysicalRelease')}>
           <div className={styles.dateIcon}>
             <Icon name={icons.DISC} />
           </div>
-          {getRelativeDate(
-            physicalRelease,
-            shortDateFormat,
-            showRelativeDates,
-            { timeFormat, timeForToday: false }
-          )}
+          {getRelativeDate(releaseDate, shortDateFormat, showRelativeDates, {
+            timeFormat,
+            timeForToday: false,
+          })}
         </div>
       ) : null}
     </div>

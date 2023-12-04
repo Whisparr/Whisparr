@@ -16,7 +16,6 @@ using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.MediaFiles.MediaInfo;
 using NzbDrone.Core.Movies;
 using NzbDrone.Core.Movies.Credits;
-using NzbDrone.Core.Movies.Translations;
 using NzbDrone.Core.Tags;
 
 namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
@@ -29,14 +28,12 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
         private readonly IDiskProvider _diskProvider;
         private readonly ICreditService _creditService;
         private readonly ITagRepository _tagRepository;
-        private readonly IMovieTranslationService _movieTranslationsService;
 
         public XbmcMetadata(IDetectXbmcNfo detectNfo,
                             IDiskProvider diskProvider,
                             IMapCoversToLocal mediaCoverService,
                             ICreditService creditService,
                             ITagRepository tagRepository,
-                            IMovieTranslationService movieTranslationsService,
                             Logger logger)
         {
             _logger = logger;
@@ -45,7 +42,6 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
             _detectNfo = detectNfo;
             _creditService = creditService;
             _tagRepository = tagRepository;
-            _movieTranslationsService = movieTranslationsService;
         }
 
         private static readonly Regex MovieImagesRegex = new Regex(@"^(?<type>poster|banner|fanart|clearart|discart|keyart|landscape|logo|backdrop|clearlogo)\.(?:png|jpe?g)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -126,9 +122,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
                     (int)movie.MovieMetadata.Value.OriginalLanguage :
                     Settings.MovieMetadataLanguage;
 
-                var movieTranslations = _movieTranslationsService.GetAllTranslationsForMovieMetadata(movie.MovieMetadataId);
                 var selectedSettingsLanguage = Language.FindById(movieMetadataLanguage);
-                var movieTranslation = movieTranslations.FirstOrDefault(mt => mt.Language == selectedSettingsLanguage);
 
                 var credits = _creditService.GetAllCreditsForMovieMetadata(movie.MovieMetadataId);
 
@@ -148,11 +142,9 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
 
                     var details = new XElement("movie");
 
-                    var metadataTitle = movieTranslation?.Title ?? movie.Title;
+                    var metadataTitle = movie.Title;
 
                     details.Add(new XElement("title", metadataTitle));
-
-                    details.Add(new XElement("originaltitle", movie.MovieMetadata.Value.OriginalTitle));
 
                     details.Add(new XElement("sorttitle", Parser.Parser.NormalizeTitle(metadataTitle)));
 
@@ -200,7 +192,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
 
                     details.Add(new XElement("outline"));
 
-                    details.Add(new XElement("plot", movieTranslation?.Overview ?? movie.MovieMetadata.Value.Overview));
+                    details.Add(new XElement("plot", movie.MovieMetadata.Value.Overview));
 
                     details.Add(new XElement("tagline"));
 
@@ -231,11 +223,6 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
                         }
 
                         details.Add(fanartElement);
-                    }
-
-                    if (movie.MovieMetadata.Value.Certification.IsNotNullOrWhiteSpace())
-                    {
-                        details.Add(new XElement("mpaa", movie.MovieMetadata.Value.Certification));
                     }
 
                     details.Add(new XElement("playcount"));
@@ -296,16 +283,14 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
                         }
                     }
 
-                    if (movie.MovieMetadata.Value.InCinemas.HasValue)
+                    if (movie.MovieMetadata.Value.ReleaseDate.HasValue)
                     {
-                        details.Add(new XElement("premiered", movie.MovieMetadata.Value.InCinemas.Value.ToString("yyyy-MM-dd")));
+                        details.Add(new XElement("premiered", movie.MovieMetadata.Value.ReleaseDate.Value.ToString("yyyy-MM-dd")));
                     }
 
                     details.Add(new XElement("year", movie.Year));
 
                     details.Add(new XElement("studio", movie.MovieMetadata.Value.Studio));
-
-                    details.Add(new XElement("trailer", "plugin://plugin.video.youtube/play/?video_id=" + movie.MovieMetadata.Value.YouTubeTrailerId));
 
                     details.Add(new XElement("watched", watched));
 

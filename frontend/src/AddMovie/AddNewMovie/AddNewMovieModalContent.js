@@ -41,11 +41,11 @@ class AddNewMovieModalContent extends Component {
       rootFolderPath,
       monitor,
       qualityProfileId,
-      minimumAvailability,
       searchForMovie,
       folder,
       tags,
       isSmallScreen,
+      safeForWorkMode,
       isWindows,
       onModalClose,
       onInputChange
@@ -68,6 +68,7 @@ class AddNewMovieModalContent extends Component {
               !isSmallScreen &&
                 <div className={styles.poster}>
                   <MoviePoster
+                    blur={safeForWorkMode}
                     className={styles.poster}
                     images={images}
                     size={250}
@@ -111,17 +112,6 @@ class AddNewMovieModalContent extends Component {
                     name="monitor"
                     onChange={onInputChange}
                     {...monitor}
-                  />
-                </FormGroup>
-
-                <FormGroup>
-                  <FormLabel>{translate('MinimumAvailability')}</FormLabel>
-
-                  <FormInputGroup
-                    type={inputTypes.AVAILABILITY_SELECT}
-                    name="minimumAvailability"
-                    onChange={onInputChange}
-                    {...minimumAvailability}
                   />
                 </FormGroup>
 
@@ -190,7 +180,6 @@ AddNewMovieModalContent.propTypes = {
   rootFolderPath: PropTypes.object,
   monitor: PropTypes.object.isRequired,
   qualityProfileId: PropTypes.object,
-  minimumAvailability: PropTypes.object.isRequired,
   searchForMovie: PropTypes.object.isRequired,
   folder: PropTypes.string.isRequired,
   tags: PropTypes.object.isRequired,
@@ -198,7 +187,8 @@ AddNewMovieModalContent.propTypes = {
   isWindows: PropTypes.bool.isRequired,
   onModalClose: PropTypes.func.isRequired,
   onInputChange: PropTypes.func.isRequired,
-  onAddMoviePress: PropTypes.func.isRequired
+  onAddMoviePress: PropTypes.func.isRequired,
+  safeForWorkMode: PropTypes.bool
 };
 
 export default AddNewMovieModalContent;

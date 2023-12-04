@@ -11,12 +11,6 @@ const protocols = [
     }
   },
   {
-    id: 'inCinemas',
-    get name() {
-      return translate('InCinemas');
-    }
-  },
-  {
     id: 'released',
     get name() {
       return translate('Released');

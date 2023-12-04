@@ -5,39 +5,23 @@ namespace NzbDrone.Core.MetadataSource.SkyHook.Resource
 {
     public class MovieResource
     {
-        public int TmdbId { get; set; }
-        public string ImdbId { get; set; }
+        public ExternalIdResource ForeignIds { get; set; }
         public string Overview { get; set; }
         public string Title { get; set; }
-        public string OriginalTitle { get; set; }
-        public string TitleSlug { get; set; }
+        public string Slug { get; set; }
 
         // Depricated but left in place until cache fills new object (MovieRatings)
-        public List<RatingItem> Ratings { get; set; }
-        public RatingResource MovieRatings { get; set; }
-        public int? Runtime { get; set; }
+        public RatingResource Ratings { get; set; }
+        public int? Duration { get; set; }
         public List<ImageResource> Images { get; set; }
         public List<string> Genres { get; set; }
 
         public int Year { get; set; }
-        public DateTime? Premier { get; set; }
-        public DateTime? InCinema { get; set; }
-        public DateTime? PhysicalRelease { get; set; }
-        public DateTime? DigitalRelease { get; set; }
+        public DateTime? ReleaseDateUtc { get; set; }
 
-        public List<AlternativeTitleResource> AlternativeTitles { get; set; }
-        public List<TranslationResource> Translations { get; set; }
+        public List<CastResource> Credits { get; set; }
+        public StudioResource Studio { get; set; }
 
-        public Credits Credits { get; set; }
-        public string Studio { get; set; }
-        public string YoutubeTrailerId { get; set; }
-
-        public List<CertificationResource> Certifications { get; set; }
-        public string Status { get; set; }
-        public CollectionResource Collection { get; set; }
-        public string OriginalLanguage { get; set; }
         public string Homepage { get; set; }
-        public List<RecommendationResource> Recommendations { get; set; }
-        public float? Popularity { get; set; }
     }
 }

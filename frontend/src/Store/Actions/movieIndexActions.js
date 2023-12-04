@@ -33,10 +33,8 @@ export const defaultState = {
     showTitle: false,
     showMonitored: true,
     showQualityProfile: true,
-    showCinemaRelease: false,
     showReleaseDate: false,
     showTmdbRating: false,
-    showImdbRating: false,
     showRottenTomatoesRating: false,
     showSearchAction: false
   },
@@ -79,12 +77,6 @@ export const defaultState = {
       isSortable: true,
       isVisible: true,
       isModifiable: false
-    },
-    {
-      name: 'originalTitle',
-      label: () => translate('OriginalTitle'),
-      isSortable: true,
-      isVisible: false
     },
     {
       name: 'collection',
@@ -147,12 +139,6 @@ export const defaultState = {
       isVisible: false
     },
     {
-      name: 'minimumAvailability',
-      label: () => translate('MinAvailability'),
-      isSortable: true,
-      isVisible: false
-    },
-    {
       name: 'path',
       label: () => translate('Path'),
       isSortable: true,
@@ -185,24 +171,6 @@ export const defaultState = {
     {
       name: 'rottenTomatoesRating',
       label: () => translate('RottenTomatoesRating'),
-      isSortable: true,
-      isVisible: false
-    },
-    {
-      name: 'imdbRating',
-      label: () => translate('ImdbRating'),
-      isSortable: true,
-      isVisible: false
-    },
-    {
-      name: 'popularity',
-      label: () => translate('Popularity'),
-      isSortable: true,
-      isVisible: false
-    },
-    {
-      name: 'certification',
-      label: () => translate('Certification'),
       isSortable: true,
       isVisible: false
     },
@@ -241,12 +209,6 @@ export const defaultState = {
       return originalLanguage.name;
     },
 
-    imdbRating: function(item) {
-      const { ratings = {} } = item;
-
-      return ratings.imdb ? ratings.imdb.value : 0;
-    },
-
     tmdbRating: function(item) {
       const { ratings = {} } = item;
 
@@ -279,19 +241,8 @@ export const defaultState = {
       valueType: filterBuilderValueTypes.BOOL
     },
     {
-      name: 'minimumAvailability',
-      label: () => translate('MinimumAvailability'),
-      type: filterBuilderTypes.EXACT,
-      valueType: filterBuilderValueTypes.MINIMUM_AVAILABILITY
-    },
-    {
       name: 'title',
       label: () => translate('Title'),
-      type: filterBuilderTypes.STRING
-    },
-    {
-      name: 'originalTitle',
-      label: () => translate('OriginalTitle'),
       type: filterBuilderTypes.STRING
     },
     {
@@ -438,43 +389,9 @@ export const defaultState = {
       type: filterBuilderTypes.NUMBER
     },
     {
-      name: 'imdbRating',
-      label: () => translate('ImdbRating'),
-      type: filterBuilderTypes.NUMBER
-    },
-    {
       name: 'rottenTomatoesRating',
       label: () => translate('RottenTomatoesRating'),
       type: filterBuilderTypes.NUMBER
-    },
-    {
-      name: 'imdbVotes',
-      label: () => translate('ImdbVotes'),
-      type: filterBuilderTypes.NUMBER
-    },
-    {
-      name: 'popularity',
-      label: () => translate('Popularity'),
-      type: filterBuilderTypes.NUMBER
-    },
-    {
-      name: 'certification',
-      label: () => translate('Certification'),
-      type: filterBuilderTypes.EXACT,
-      optionsSelector: function(items) {
-        const certificationList = items.reduce((acc, movie) => {
-          if (movie.certification) {
-            acc.push({
-              id: movie.certification,
-              name: movie.certification
-            });
-          }
-
-          return acc;
-        }, []);
-
-        return certificationList.sort(sortByName);
-      }
     },
     {
       name: 'tags',

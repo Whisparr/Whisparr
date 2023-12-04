@@ -23,7 +23,7 @@ namespace NzbDrone.Core.Update
         private readonly IAnalyticsService _analyticsService;
         private readonly IMainDatabase _mainDatabase;
 
-        public UpdatePackageProvider(IHttpClient httpClient, IRadarrCloudRequestBuilder requestBuilder, IAnalyticsService analyticsService, IPlatformInfo platformInfo, IMainDatabase mainDatabase)
+        public UpdatePackageProvider(IHttpClient httpClient, IWhisparrCloudRequestBuilder requestBuilder, IAnalyticsService analyticsService, IPlatformInfo platformInfo, IMainDatabase mainDatabase)
         {
             _platformInfo = platformInfo;
             _analyticsService = analyticsService;

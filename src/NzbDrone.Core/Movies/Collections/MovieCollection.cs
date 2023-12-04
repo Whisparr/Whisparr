@@ -21,7 +21,6 @@ namespace NzbDrone.Core.Movies.Collections
         public int QualityProfileId { get; set; }
         public string RootFolderPath { get; set; }
         public bool SearchOnAdd { get; set; }
-        public MovieStatusType MinimumAvailability { get; set; }
         public DateTime? LastInfoSync { get; set; }
         public List<MediaCover.MediaCover> Images { get; set; }
         public DateTime Added { get; set; }
@@ -35,7 +34,6 @@ namespace NzbDrone.Core.Movies.Collections
             Monitored = otherCollection.Monitored;
             SearchOnAdd = otherCollection.SearchOnAdd;
             QualityProfileId = otherCollection.QualityProfileId;
-            MinimumAvailability = otherCollection.MinimumAvailability;
             RootFolderPath = otherCollection.RootFolderPath;
             Tags = otherCollection.Tags;
         }

@@ -43,9 +43,7 @@ class AgendaEvent extends Component {
       titleSlug,
       genres,
       isAvailable,
-      inCinemas,
-      digitalRelease,
-      physicalRelease,
+      releaseDate,
       monitored,
       hasFile,
       grabbed,
@@ -55,28 +53,16 @@ class AgendaEvent extends Component {
       showCutoffUnmetIcon,
       longDateFormat,
       colorImpairedMode,
-      cinemaDateParsed,
-      digitalDateParsed,
-      physicalDateParsed,
+      releaseDateParsed,
       sortDate
     } = this.props;
 
     let startTime = null;
     let releaseIcon = null;
 
-    if (physicalDateParsed === sortDate) {
-      startTime = physicalRelease;
+    if (releaseDateParsed === sortDate) {
+      startTime = releaseDate;
       releaseIcon = icons.DISC;
-    }
-
-    if (digitalDateParsed === sortDate) {
-      startTime = digitalRelease;
-      releaseIcon = icons.MOVIE_FILE;
-    }
-
-    if (cinemaDateParsed === sortDate) {
-      startTime = inCinemas;
-      releaseIcon = icons.IN_CINEMAS;
     }
 
     startTime = moment(startTime);
@@ -164,9 +150,7 @@ AgendaEvent.propTypes = {
   titleSlug: PropTypes.string.isRequired,
   genres: PropTypes.arrayOf(PropTypes.string).isRequired,
   isAvailable: PropTypes.bool.isRequired,
-  inCinemas: PropTypes.string,
-  digitalRelease: PropTypes.string,
-  physicalRelease: PropTypes.string,
+  releaseDate: PropTypes.string,
   monitored: PropTypes.bool.isRequired,
   hasFile: PropTypes.bool.isRequired,
   grabbed: PropTypes.bool,
@@ -177,9 +161,7 @@ AgendaEvent.propTypes = {
   timeFormat: PropTypes.string.isRequired,
   longDateFormat: PropTypes.string.isRequired,
   colorImpairedMode: PropTypes.bool.isRequired,
-  cinemaDateParsed: PropTypes.number,
-  digitalDateParsed: PropTypes.number,
-  physicalDateParsed: PropTypes.number,
+  releaseDateParsed: PropTypes.number,
   sortDate: PropTypes.number
 };
 

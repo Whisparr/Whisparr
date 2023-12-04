@@ -17,7 +17,7 @@ namespace NzbDrone.Core.ImportLists.TMDb
         public readonly ISearchForNewMovie _skyhookProxy;
         public readonly IHttpRequestBuilderFactory _requestBuilder;
 
-        protected TMDbImportListBase(IRadarrCloudRequestBuilder requestBuilder,
+        protected TMDbImportListBase(IWhisparrCloudRequestBuilder requestBuilder,
                                     IHttpClient httpClient,
                                     IImportListStatusService importListStatusService,
                                     IConfigService configService,

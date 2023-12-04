@@ -13,7 +13,8 @@ function createMapStateToProps() {
     (state) => state.addMovie,
     createDimensionsSelector(),
     createSystemStatusSelector(),
-    (addMovieState, dimensions, systemStatus) => {
+    (state) => state.settings.safeForWorkMode,
+    (addMovieState, dimensions, systemStatus, safeForWorkMode) => {
       const {
         isAdding,
         addError,
@@ -33,6 +34,7 @@ function createMapStateToProps() {
         validationErrors,
         validationWarnings,
         isWindows: systemStatus.isWindows,
+        safeForWorkMode,
         ...settings
       };
     }
@@ -59,7 +61,6 @@ class AddNewMovieModalContentConnector extends Component {
       rootFolderPath,
       monitor,
       qualityProfileId,
-      minimumAvailability,
       searchForMovie,
       tags
     } = this.props;
@@ -69,7 +70,6 @@ class AddNewMovieModalContentConnector extends Component {
       rootFolderPath: rootFolderPath.value,
       monitor: monitor.value,
       qualityProfileId: qualityProfileId.value,
-      minimumAvailability: minimumAvailability.value,
       searchForMovie: searchForMovie.value,
       tags: tags.value
     });
@@ -94,7 +94,6 @@ AddNewMovieModalContentConnector.propTypes = {
   rootFolderPath: PropTypes.object,
   monitor: PropTypes.object.isRequired,
   qualityProfileId: PropTypes.object,
-  minimumAvailability: PropTypes.object.isRequired,
   searchForMovie: PropTypes.object.isRequired,
   tags: PropTypes.object.isRequired,
   onModalClose: PropTypes.func.isRequired,

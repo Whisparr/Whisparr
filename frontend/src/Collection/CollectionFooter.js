@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import AvailabilitySelectInput from 'Components/Form/AvailabilitySelectInput';
 import QualityProfileSelectInputConnector from 'Components/Form/QualityProfileSelectInputConnector';
 import RootFolderSelectInputConnector from 'Components/Form/RootFolderSelectInputConnector';
 import SelectInput from 'Components/Form/SelectInput';
@@ -26,7 +25,6 @@ class CollectionFooter extends Component {
       monitor: NO_CHANGE,
       monitored: NO_CHANGE,
       qualityProfileId: NO_CHANGE,
-      minimumAvailability: NO_CHANGE,
       rootFolderPath: NO_CHANGE,
       destinationRootFolder: null
     };
@@ -44,8 +42,7 @@ class CollectionFooter extends Component {
         monitored: NO_CHANGE,
         monitor: NO_CHANGE,
         qualityProfileId: NO_CHANGE,
-        rootFolderPath: NO_CHANGE,
-        minimumAvailability: NO_CHANGE
+        rootFolderPath: NO_CHANGE
       });
     }
 
@@ -66,7 +63,6 @@ class CollectionFooter extends Component {
       monitor,
       monitored,
       qualityProfileId,
-      minimumAvailability,
       rootFolderPath
     } = this.state;
 
@@ -82,10 +78,6 @@ class CollectionFooter extends Component {
 
     if (qualityProfileId !== NO_CHANGE) {
       changes.qualityProfileId = qualityProfileId;
-    }
-
-    if (minimumAvailability !== NO_CHANGE) {
-      changes.minimumAvailability = minimumAvailability;
     }
 
     if (rootFolderPath !== NO_CHANGE) {
@@ -108,7 +100,6 @@ class CollectionFooter extends Component {
       monitored,
       monitor,
       qualityProfileId,
-      minimumAvailability,
       rootFolderPath
     } = this.state;
 
@@ -161,21 +152,6 @@ class CollectionFooter extends Component {
           <QualityProfileSelectInputConnector
             name="qualityProfileId"
             value={qualityProfileId}
-            includeNoChange={true}
-            isDisabled={!selectedCount}
-            onChange={this.onInputChange}
-          />
-        </div>
-
-        <div className={styles.inputContainer}>
-          <CollectionFooterLabel
-            label={translate('MinimumAvailability')}
-            isSaving={isSaving && minimumAvailability !== NO_CHANGE}
-          />
-
-          <AvailabilitySelectInput
-            name="minimumAvailability"
-            value={minimumAvailability}
             includeNoChange={true}
             isDisabled={!selectedCount}
             onChange={this.onInputChange}

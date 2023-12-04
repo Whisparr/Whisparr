@@ -10,7 +10,8 @@ function createCleanMovieSelector() {
   return createSelector(
     createAllMoviesSelector(),
     createTagsSelector(),
-    (allMovies, allTags) => {
+    (state) => state.settings.safeForWorkMode,
+    (allMovies, allTags, safeForWorkMode) => {
       return allMovies.map((movie) => {
         const {
           title,
@@ -33,6 +34,7 @@ function createCleanMovieSelector() {
           alternateTitles,
           tmdbId,
           imdbId,
+          safeForWorkMode,
           firstCharacter: title.charAt(0).toLowerCase(),
           tags: tags.reduce((acc, id) => {
             const matchingTag = allTags.find((tag) => tag.id === id);
@@ -63,11 +65,11 @@ function createMapStateToProps() {
 function createMapDispatchToProps(dispatch, props) {
   return {
     onGoToMovie(titleSlug) {
-      dispatch(push(`${window.Radarr.urlBase}/movie/${titleSlug}`));
+      dispatch(push(`${window.Whisparr.urlBase}/movie/${titleSlug}`));
     },
 
     onGoToAddNewMovie(query) {
-      dispatch(push(`${window.Radarr.urlBase}/add/new?term=${encodeURIComponent(query)}`));
+      dispatch(push(`${window.Whisparr.urlBase}/add/new?term=${encodeURIComponent(query)}`));
     }
   };
 }

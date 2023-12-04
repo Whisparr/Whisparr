@@ -1,5 +1,5 @@
 {
-    "name": "Radarr",
+    "name": "Whisparr",
     "icons": [
         {
             "src": "android-chrome-192x192.png",
@@ -13,7 +13,7 @@
         }
     ],
     "start_url": "../../../../",
-    "theme_color": "#3a3f51",
-    "background_color": "#3a3f51",
+    "theme_color": "#ff69b4",
+    "background_color": "#ff69b4",
     "display": "standalone"
 }

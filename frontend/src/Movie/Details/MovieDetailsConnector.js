@@ -91,7 +91,8 @@ function createMapStateToProps() {
     (state) => state.queue.details.items,
     (state) => state.app.isSidebarVisible,
     (state) => state.settings.ui.item.movieRuntimeFormat,
-    (titleSlug, movieFiles, movieCredits, extraFiles, allMovies, commands, dimensions, queueItems, isSidebarVisible, movieRuntimeFormat) => {
+    (state) => state.settings.safeForWorkMode,
+    (titleSlug, movieFiles, movieCredits, extraFiles, allMovies, commands, dimensions, queueItems, isSidebarVisible, movieRuntimeFormat, safeForWorkMode) => {
       const sortedMovies = _.orderBy(allMovies, 'sortTitle');
       const movieIndex = _.findIndex(sortedMovies, { titleSlug });
       const movie = sortedMovies[movieIndex];
@@ -167,7 +168,8 @@ function createMapStateToProps() {
         isSmallScreen: dimensions.isSmallScreen,
         isSidebarVisible,
         queueItem,
-        movieRuntimeFormat
+        movieRuntimeFormat,
+        safeForWorkMode
       };
     }
   );
@@ -215,7 +217,7 @@ function createMapDispatchToProps(dispatch, props) {
       dispatch(executeCommand(payload));
     },
     onGoToMovie(titleSlug) {
-      dispatch(push(`${window.Radarr.urlBase}/movie/${titleSlug}`));
+      dispatch(push(`${window.Whisparr.urlBase}/movie/${titleSlug}`));
     },
     dispatchFetchMovieBlocklist({ movieId }) {
       dispatch(fetchMovieBlocklist({ movieId }));

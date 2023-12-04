@@ -43,7 +43,7 @@ namespace NzbDrone.Core.Datastore.Converters
                 reader.Read(); // Move to start of object (stored in this property)
                 ValidateToken(reader, JsonTokenType.StartObject); // Start of specification
 
-                var type = Type.GetType($"NzbDrone.Core.AutoTagging.Specifications.{typename}, Radarr.Core", true);
+                var type = Type.GetType($"NzbDrone.Core.AutoTagging.Specifications.{typename}, Whisparr.Core", true);
                 var item = (IAutoTaggingSpecification)JsonSerializer.Deserialize(ref reader, type, options);
                 results.Add(item);
 

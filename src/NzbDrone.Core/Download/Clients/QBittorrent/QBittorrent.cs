@@ -437,7 +437,7 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
                     return new NzbDroneValidationFailure("MovieCategory", "Category is recommended")
                     {
                         IsWarning = true,
-                        DetailedDescription = "Radarr will not attempt to import completed downloads without a category."
+                        DetailedDescription = "Whisparr will not attempt to import completed downloads without a category."
                     };
                 }
 
@@ -447,7 +447,7 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
                 {
                     return new NzbDroneValidationFailure(string.Empty, "qBittorrent is configured to remove torrents when they reach their Share Ratio Limit")
                     {
-                        DetailedDescription = "Radarr will be unable to perform Completed Download Handling as configured. You can fix this in qBittorrent ('Tools -> Options...' in the menu) by changing 'Options -> BitTorrent -> Share Ratio Limiting' from 'Remove them' to 'Pause them'."
+                        DetailedDescription = "Whisparr will be unable to perform Completed Download Handling as configured. You can fix this in qBittorrent ('Tools -> Options...' in the menu) by changing 'Options -> BitTorrent -> Share Ratio Limiting' from 'Remove them' to 'Pause them'."
                     };
                 }
             }
@@ -510,7 +510,7 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
                 {
                     return new NzbDroneValidationFailure("MovieCategory", "Configuration of label failed")
                     {
-                        DetailedDescription = "Radarr was unable to add the label to qBittorrent."
+                        DetailedDescription = "Whisparr was unable to add the label to qBittorrent."
                     };
                 }
             }
@@ -524,7 +524,7 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
                 {
                     return new NzbDroneValidationFailure("MovieImportedCategory", "Configuration of label failed")
                     {
-                        DetailedDescription = "Radarr was unable to add the label to qBittorrent."
+                        DetailedDescription = "Whisparr was unable to add the label to qBittorrent."
                     };
                 }
             }

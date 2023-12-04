@@ -52,15 +52,10 @@ const fileNameTokens = [
 
 const movieTokens = [
   { token: '{Movie Title}', example: 'Movie\'s Title' },
-  { token: '{Movie Title:DE}', example: 'Titel des Films' },
   { token: '{Movie CleanTitle}', example: 'Movies Title' },
   { token: '{Movie TitleThe}', example: 'Movie\'s Title, The' },
-  { token: '{Movie OriginalTitle}', example: 'Τίτλος ταινίας' },
-  { token: '{Movie CleanOriginalTitle}', example: 'Τίτλος ταινίας' },
   { token: '{Movie TitleFirstCharacter}', example: 'M' },
-  { token: '{Movie TitleFirstCharacter:DE}', example: 'T' },
   { token: '{Movie Collection}', example: 'The Movie Collection' },
-  { token: '{Movie Certification}', example: 'R' },
   { token: '{Release Year}', example: '2009' }
 ];
 

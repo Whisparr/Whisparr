@@ -14,7 +14,9 @@ namespace NzbDrone.Core.Notifications.Webhook
         public string FolderPath { get; set; }
         public int TmdbId { get; set; }
         public string ImdbId { get; set; }
+        public string StashId { get; set; }
         public string Overview { get; set; }
+        public string ItemType { get; set; }
 
         public WebhookMovie()
         {
@@ -25,11 +27,13 @@ namespace NzbDrone.Core.Notifications.Webhook
             Id = movie.Id;
             Title = movie.Title;
             Year = movie.Year;
-            ReleaseDate = movie.MovieMetadata.Value.PhysicalReleaseDate().ToString("yyyy-MM-dd");
+            ReleaseDate = movie.MovieMetadata.Value.ReleaseDateUtc.Value.ToString("yyyy-MM-dd");
             FolderPath = movie.Path;
             TmdbId = movie.TmdbId;
             ImdbId = movie.ImdbId;
+            StashId = movie.MovieMetadata.Value.StashId;
             Overview = movie.MovieMetadata.Value.Overview;
+            ItemType = movie.MovieMetadata.Value.ItemType.ToString();
         }
 
         public WebhookMovie(Movie movie, MovieFile movieFile)

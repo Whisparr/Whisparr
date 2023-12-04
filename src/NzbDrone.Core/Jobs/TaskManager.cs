@@ -92,6 +92,18 @@ namespace NzbDrone.Core.Jobs
                     new ScheduledTask
                     {
                         Interval = 24 * 60,
+                        TypeName = typeof(SyncPerformerItemsCommand).FullName
+                    },
+
+                    new ScheduledTask
+                    {
+                        Interval = 24 * 60,
+                        TypeName = typeof(SyncStudioItemsCommand).FullName
+                    },
+
+                    new ScheduledTask
+                    {
+                        Interval = 24 * 60,
                         TypeName = typeof(HousekeepingCommand).FullName
                     },
 
@@ -99,12 +111,6 @@ namespace NzbDrone.Core.Jobs
                     {
                         Interval = 24 * 60,
                         TypeName = typeof(CleanUpRecycleBinCommand).FullName
-                    },
-
-                    new ScheduledTask
-                    {
-                        Interval = 24 * 60,
-                        TypeName = typeof(RefreshCollectionsCommand).FullName
                     },
 
                     new ScheduledTask

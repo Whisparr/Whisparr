@@ -52,21 +52,35 @@ const fileNameTokens = [
 
 const movieTokens = [
   { token: '{Movie Title}', example: 'Movie\'s Title' },
-  { token: '{Movie Title:DE}', example: 'Titel des Films' },
   { token: '{Movie CleanTitle}', example: 'Movies Title' },
   { token: '{Movie TitleThe}', example: 'Movie\'s Title, The' },
-  { token: '{Movie OriginalTitle}', example: 'Τίτλος ταινίας' },
-  { token: '{Movie CleanOriginalTitle}', example: 'Τίτλος ταινίας' },
   { token: '{Movie TitleFirstCharacter}', example: 'M' },
-  { token: '{Movie TitleFirstCharacter:DE}', example: 'T' },
   { token: '{Movie Collection}', example: 'The Movie Collection' },
-  { token: '{Movie Certification}', example: 'R' },
   { token: '{Release Year}', example: '2009' }
+];
+
+const sceneTokens = [
+  { token: '{Scene Title}', example: 'Scene\'s Title' },
+  { token: '{Scene CleanTitle}', example: 'Scenes Title' },
+  { token: '{Scene TitleThe}', example: 'Scene\'s Title, The' },
+  { token: '{Scene TitleFirstCharacter}', example: 'S' },
+  { token: '{Release Date}', example: '2009-02-04' }
+];
+
+const studioTokens = [
+  { token: '{Studio Title}', example: 'Studio\'s Title' },
+  { token: '{Studio CleanTitle}', example: 'Studios Title' },
+  { token: '{Studio TitleThe}', example: 'Studio\'s Title, The' },
+  { token: '{Studio TitleFirstCharacter}', example: 'S' }
 ];
 
 const movieIdTokens = [
   { token: '{ImdbId}', example: 'tt12345' },
   { token: '{TmdbId}', example: '123456' }
+];
+
+const sceneIdTokens = [
+  { token: '{StashId}', example: '155f2559-d1f1-42b1-8cbe-9008542df5ce' }
 ];
 
 const qualityTokens = [
@@ -178,6 +192,7 @@ class NamingModal extends Component {
       isOpen,
       advancedSettings,
       additional,
+      isScene,
       onInputChange,
       onModalClose
     } = this.props;
@@ -243,32 +258,108 @@ class NamingModal extends Component {
                 </FieldSet>
             }
 
-            <FieldSet legend={translate('Movie')}>
-              <div className={styles.groups}>
-                {
-                  movieTokens.map(({ token, example }) => {
-                    return (
-                      <NamingOption
-                        key={token}
-                        name={name}
-                        value={value}
-                        token={token}
-                        example={example}
-                        tokenSeparator={tokenSeparator}
-                        tokenCase={tokenCase}
-                        onPress={this.onOptionPress}
-                      />
-                    );
-                  }
-                  )
-                }
-              </div>
-            </FieldSet>
+            {
+              !isScene &&
+                <div>
+                  <FieldSet legend={translate('Movie')}>
+                    <div className={styles.groups}>
+                      {
+                        movieTokens.map(({ token, example }) => {
+                          return (
+                            <NamingOption
+                              key={token}
+                              name={name}
+                              value={value}
+                              token={token}
+                              example={example}
+                              tokenSeparator={tokenSeparator}
+                              tokenCase={tokenCase}
+                              onPress={this.onOptionPress}
+                            />
+                          );
+                        }
+                        )
+                      }
+                    </div>
+                  </FieldSet>
 
-            <FieldSet legend={translate('MovieID')}>
+                  <FieldSet legend={translate('MovieID')}>
+                    <div className={styles.groups}>
+                      {
+                        movieIdTokens.map(({ token, example }) => {
+                          return (
+                            <NamingOption
+                              key={token}
+                              name={name}
+                              value={value}
+                              token={token}
+                              example={example}
+                              tokenSeparator={tokenSeparator}
+                              tokenCase={tokenCase}
+                              onPress={this.onOptionPress}
+                            />
+                          );
+                        }
+                        )
+                      }
+                    </div>
+                  </FieldSet>
+                </div>
+            }
+
+            {
+              isScene &&
+                <div>
+                  <FieldSet legend={translate('Scene')}>
+                    <div className={styles.groups}>
+                      {
+                        sceneTokens.map(({ token, example }) => {
+                          return (
+                            <NamingOption
+                              key={token}
+                              name={name}
+                              value={value}
+                              token={token}
+                              example={example}
+                              tokenSeparator={tokenSeparator}
+                              tokenCase={tokenCase}
+                              onPress={this.onOptionPress}
+                            />
+                          );
+                        }
+                        )
+                      }
+                    </div>
+                  </FieldSet>
+
+                  <FieldSet legend={translate('SceneId')}>
+                    <div className={styles.groups}>
+                      {
+                        sceneIdTokens.map(({ token, example }) => {
+                          return (
+                            <NamingOption
+                              key={token}
+                              name={name}
+                              value={value}
+                              token={token}
+                              example={example}
+                              tokenSeparator={tokenSeparator}
+                              tokenCase={tokenCase}
+                              onPress={this.onOptionPress}
+                            />
+                          );
+                        }
+                        )
+                      }
+                    </div>
+                  </FieldSet>
+                </div>
+            }
+
+            <FieldSet legend={translate('Studio')}>
               <div className={styles.groups}>
                 {
-                  movieIdTokens.map(({ token, example }) => {
+                  studioTokens.map(({ token, example }) => {
                     return (
                       <NamingOption
                         key={token}
@@ -458,12 +549,14 @@ NamingModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   advancedSettings: PropTypes.bool.isRequired,
   additional: PropTypes.bool.isRequired,
+  isScene: PropTypes.bool.isRequired,
   onInputChange: PropTypes.func.isRequired,
   onModalClose: PropTypes.func.isRequired
 };
 
 NamingModal.defaultProps = {
-  additional: false
+  additional: false,
+  isScene: false
 };
 
 export default NamingModal;

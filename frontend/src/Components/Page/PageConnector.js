@@ -6,8 +6,9 @@ import { createSelector } from 'reselect';
 import { fetchTranslations, saveDimensions, setIsSidebarVisible } from 'Store/Actions/appActions';
 import { fetchCustomFilters } from 'Store/Actions/customFilterActions';
 import { fetchMovies } from 'Store/Actions/movieActions';
-import { fetchMovieCollections } from 'Store/Actions/movieCollectionActions';
+import { fetchPerformers } from 'Store/Actions/performerActions';
 import { fetchImportLists, fetchIndexerFlags, fetchLanguages, fetchQualityProfiles, fetchUISettings } from 'Store/Actions/settingsActions';
+import { fetchStudios } from 'Store/Actions/studioActions';
 import { fetchStatus } from 'Store/Actions/systemActions';
 import { fetchTags } from 'Store/Actions/tagActions';
 import createDimensionsSelector from 'Store/Selectors/createDimensionsSelector';
@@ -17,7 +18,7 @@ import LoadingPage from './LoadingPage';
 import Page from './Page';
 
 function testLocalStorage() {
-  const key = 'radarrTest';
+  const key = 'whisparrTest';
 
   try {
     localStorage.setItem(key, key);
@@ -53,7 +54,6 @@ const selectIsPopulated = createSelector(
   (state) => state.settings.indexerFlags.isPopulated,
   (state) => state.settings.importLists.isPopulated,
   (state) => state.system.status.isPopulated,
-  (state) => state.movieCollections.isPopulated,
   (state) => state.app.translations.isPopulated,
   (
     customFiltersIsPopulated,
@@ -64,7 +64,6 @@ const selectIsPopulated = createSelector(
     indexerFlagsIsPopulated,
     importListsIsPopulated,
     systemStatusIsPopulated,
-    movieCollectionsIsPopulated,
     translationsIsPopulated
   ) => {
     return (
@@ -76,7 +75,6 @@ const selectIsPopulated = createSelector(
       indexerFlagsIsPopulated &&
       importListsIsPopulated &&
       systemStatusIsPopulated &&
-      movieCollectionsIsPopulated &&
       translationsIsPopulated
     );
   }
@@ -91,7 +89,6 @@ const selectErrors = createSelector(
   (state) => state.settings.indexerFlags.error,
   (state) => state.settings.importLists.error,
   (state) => state.system.status.error,
-  (state) => state.movieCollections.error,
   (state) => state.app.translations.error,
   (
     customFiltersError,
@@ -102,7 +99,6 @@ const selectErrors = createSelector(
     indexerFlagsError,
     importListsError,
     systemStatusError,
-    movieCollectionsError,
     translationsError
   ) => {
     const hasError = !!(
@@ -114,7 +110,6 @@ const selectErrors = createSelector(
       indexerFlagsError ||
       importListsError ||
       systemStatusError ||
-      movieCollectionsError ||
       translationsError
     );
 
@@ -128,7 +123,6 @@ const selectErrors = createSelector(
       indexerFlagsError,
       importListsError,
       systemStatusError,
-      movieCollectionsError,
       translationsError
     };
   }
@@ -167,8 +161,11 @@ function createMapDispatchToProps(dispatch, props) {
     dispatchFetchMovies() {
       dispatch(fetchMovies());
     },
-    dispatchFetchMovieCollections() {
-      dispatch(fetchMovieCollections());
+    dispatchFetchPerformers() {
+      dispatch(fetchPerformers());
+    },
+    dispatchFetchStudios() {
+      dispatch(fetchStudios());
     },
     dispatchFetchCustomFilters() {
       dispatch(fetchCustomFilters());
@@ -222,7 +219,8 @@ class PageConnector extends Component {
   componentDidMount() {
     if (!this.props.isPopulated) {
       this.props.dispatchFetchMovies();
-      this.props.dispatchFetchMovieCollections();
+      this.props.dispatchFetchPerformers();
+      this.props.dispatchFetchStudios();
       this.props.dispatchFetchCustomFilters();
       this.props.dispatchFetchTags();
       this.props.dispatchFetchQualityProfiles();
@@ -250,7 +248,8 @@ class PageConnector extends Component {
       isPopulated,
       hasError,
       dispatchFetchMovies,
-      dispatchFetchMovieCollections,
+      dispatchFetchPerformers,
+      dispatchFetchStudios,
       dispatchFetchTags,
       dispatchFetchQualityProfiles,
       dispatchFetchLanguages,
@@ -291,7 +290,8 @@ PageConnector.propTypes = {
   hasError: PropTypes.bool.isRequired,
   isSidebarVisible: PropTypes.bool.isRequired,
   dispatchFetchMovies: PropTypes.func.isRequired,
-  dispatchFetchMovieCollections: PropTypes.func.isRequired,
+  dispatchFetchPerformers: PropTypes.func.isRequired,
+  dispatchFetchStudios: PropTypes.func.isRequired,
   dispatchFetchCustomFilters: PropTypes.func.isRequired,
   dispatchFetchTags: PropTypes.func.isRequired,
   dispatchFetchQualityProfiles: PropTypes.func.isRequired,

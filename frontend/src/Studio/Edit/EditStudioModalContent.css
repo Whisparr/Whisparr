@@ -1,0 +1,19 @@
+.container {
+  display: flex;
+}
+
+.poster {
+  flex: 0 0 170px;
+  margin-right: 20px;
+  width: 200px;
+  height: 250px;
+  object-fit: contain;
+}
+
+.info {
+  flex-grow: 1;
+}
+
+.overview {
+  margin-bottom: 30px;
+}

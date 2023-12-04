@@ -30,7 +30,8 @@ namespace NzbDrone.Core.ImportLists.TMDb.Company
                                                .SetSegment("api", "3")
                                                .SetSegment("route", "discover")
                                                .SetSegment("id", $"movie")
-                                               .SetSegment("secondaryRoute", "");
+                                               .SetSegment("secondaryRoute", "")
+                                               .AddQueryParam("include_adult", true);
 
             requestBuilder.AddQueryParam("with_companies", Settings.CompanyId);
 

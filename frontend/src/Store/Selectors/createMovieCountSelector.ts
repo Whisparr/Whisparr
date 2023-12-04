@@ -1,10 +1,10 @@
 import { createSelector } from 'reselect';
 import AppState from 'App/State/AppState';
-import createAllMoviesSelector from './createAllMoviesSelector';
+import createAllItemsSelector from './createAllItemsSelector';
 
 function createMovieCountSelector() {
   return createSelector(
-    createAllMoviesSelector(),
+    createAllItemsSelector(),
     (state: AppState) => state.movies.error,
     (state: AppState) => state.movies.isFetching,
     (state: AppState) => state.movies.isPopulated,

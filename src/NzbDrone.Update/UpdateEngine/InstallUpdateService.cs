@@ -86,11 +86,11 @@ namespace NzbDrone.Update.UpdateEngine
         public void Start(string installationFolder, int processId)
         {
             _logger.Info("Installation Folder: {0}", installationFolder);
-            _logger.Info("Updating Radarr from version {0} to version {1}", _detectExistingVersion.GetExistingVersion(installationFolder), BuildInfo.Version);
+            _logger.Info("Updating Whisparr from version {0} to version {1}", _detectExistingVersion.GetExistingVersion(installationFolder), BuildInfo.Version);
 
             Verify(installationFolder, processId);
 
-            if (installationFolder.EndsWith(@"\bin\Radarr") || installationFolder.EndsWith(@"/bin/Radarr"))
+            if (installationFolder.EndsWith(@"\bin\Whisparr") || installationFolder.EndsWith(@"/bin/Whisparr"))
             {
                 installationFolder = installationFolder.GetParentPath();
                 _logger.Info("Fixed Installation Folder: {0}", installationFolder);
@@ -98,8 +98,8 @@ namespace NzbDrone.Update.UpdateEngine
 
             var appType = _detectApplicationType.GetAppType();
 
-            _processProvider.FindProcessByName(ProcessProvider.RADARR_CONSOLE_PROCESS_NAME);
-            _processProvider.FindProcessByName(ProcessProvider.RADARR_PROCESS_NAME);
+            _processProvider.FindProcessByName(ProcessProvider.WHISPARR_CONSOLE_PROCESS_NAME);
+            _processProvider.FindProcessByName(ProcessProvider.WHISPARR_PROCESS_NAME);
 
             if (OsInfo.IsWindows)
             {
@@ -113,9 +113,9 @@ namespace NzbDrone.Update.UpdateEngine
 
                 if (OsInfo.IsWindows)
                 {
-                    if (_processProvider.Exists(ProcessProvider.RADARR_CONSOLE_PROCESS_NAME) || _processProvider.Exists(ProcessProvider.RADARR_PROCESS_NAME))
+                    if (_processProvider.Exists(ProcessProvider.WHISPARR_CONSOLE_PROCESS_NAME) || _processProvider.Exists(ProcessProvider.WHISPARR_PROCESS_NAME))
                     {
-                        _logger.Error("Radarr was restarted prematurely by external process.");
+                        _logger.Error("Whisparr was restarted prematurely by external process.");
                         return;
                     }
                 }
@@ -131,7 +131,7 @@ namespace NzbDrone.Update.UpdateEngine
                     // Set executable flag on app and ffprobe
                     if (OsInfo.IsOsx || OsInfo.IsLinux)
                     {
-                        _diskProvider.SetFilePermissions(Path.Combine(installationFolder, "Radarr"), "755", null);
+                        _diskProvider.SetFilePermissions(Path.Combine(installationFolder, "Whisparr"), "755", null);
                         _diskProvider.SetFilePermissions(Path.Combine(installationFolder, "ffprobe"), "755", null);
                     }
                 }
@@ -157,14 +157,14 @@ namespace NzbDrone.Update.UpdateEngine
                     {
                         System.Threading.Thread.Sleep(1000);
 
-                        if (_processProvider.Exists(ProcessProvider.RADARR_PROCESS_NAME))
+                        if (_processProvider.Exists(ProcessProvider.WHISPARR_PROCESS_NAME))
                         {
-                            _logger.Info("Radarr was restarted by external process.");
+                            _logger.Info("Whisparr was restarted by external process.");
                             break;
                         }
                     }
 
-                    if (!_processProvider.Exists(ProcessProvider.RADARR_PROCESS_NAME))
+                    if (!_processProvider.Exists(ProcessProvider.WHISPARR_PROCESS_NAME))
                     {
                         _startNzbDrone.Start(appType, installationFolder);
                     }

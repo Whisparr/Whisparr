@@ -20,6 +20,12 @@ namespace NzbDrone.Core.ImportLists.ImportListMovies
             set { MovieMetadata.Value.Title = value; }
         }
 
+        public string ForeignId
+        {
+            get { return MovieMetadata.Value.ForeignId; }
+            set { MovieMetadata.Value.ForeignId = value; }
+        }
+
         public int TmdbId
         {
             get { return MovieMetadata.Value.TmdbId; }
@@ -30,6 +36,12 @@ namespace NzbDrone.Core.ImportLists.ImportListMovies
         {
             get { return MovieMetadata.Value.ImdbId; }
             set { MovieMetadata.Value.ImdbId = value; }
+        }
+
+        public string StashId
+        {
+            get { return MovieMetadata.Value.StashId; }
+            set { MovieMetadata.Value.StashId = value; }
         }
 
         public int Year

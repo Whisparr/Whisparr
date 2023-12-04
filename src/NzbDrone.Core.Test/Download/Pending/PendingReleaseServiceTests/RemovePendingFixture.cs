@@ -52,7 +52,7 @@ namespace NzbDrone.Core.Test.Download.Pending.PendingReleaseServiceTests
             _pending.Add(new PendingRelease
             {
                 Id = id,
-                Title = "Movie.Title.2020.720p-Radarr",
+                Title = "Movie.Title.2020.720p-Whisparr",
                 ParsedMovieInfo = new ParsedMovieInfo { MovieTitles = new List<string> { title }, Year = year },
                 Release = Builder<ReleaseInfo>.CreateNew().Build(),
                 MovieId = _movie.Id

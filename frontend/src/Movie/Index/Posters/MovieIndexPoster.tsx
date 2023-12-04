@@ -1,8 +1,8 @@
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import AppState from 'App/State/AppState';
 import { MOVIE_SEARCH, REFRESH_MOVIE } from 'Commands/commandNames';
 import Icon from 'Components/Icon';
-import ImdbRating from 'Components/ImdbRating';
 import Label from 'Components/Label';
 import IconButton from 'Components/Link/IconButton';
 import Link from 'Components/Link/Link';
@@ -40,15 +40,17 @@ function MovieIndexPoster(props: MovieIndexPosterProps) {
   const { movie, qualityProfile, isRefreshingMovie, isSearchingMovie } =
     useSelector(createMovieIndexItemSelector(props.movieId));
 
+  const safeForWorkMode = useSelector(
+    (state: AppState) => state.settings.safeForWorkMode
+  );
+
   const {
     detailedProgressBar,
     showTitle,
     showMonitored,
     showQualityProfile,
-    showCinemaRelease,
     showReleaseDate,
     showTmdbRating,
-    showImdbRating,
     showRottenTomatoesRating,
     showSearchAction,
   } = useSelector(selectPosterOptions);
@@ -61,23 +63,19 @@ function MovieIndexPoster(props: MovieIndexPosterProps) {
     monitored,
     status,
     images,
+    foreignId,
     tmdbId,
     imdbId,
-    youTubeTrailerId,
     hasFile,
     isAvailable,
-    studio,
+    studioTitle,
     added,
     year,
-    inCinemas,
-    physicalRelease,
-    digitalRelease,
+    releaseDate,
     path,
     movieFile,
     ratings,
     sizeOnDisk,
-    certification,
-    originalTitle,
     originalLanguage,
   } = movie;
 
@@ -129,26 +127,12 @@ function MovieIndexPoster(props: MovieIndexPosterProps) {
     setIsDeleteMovieModalOpen(false);
   }, [setIsDeleteMovieModalOpen]);
 
-  const link = `/movie/${tmdbId}`;
+  const link = `/movie/${foreignId}`;
 
   const elementStyle = {
     width: `${posterWidth}px`,
     height: `${posterHeight}px`,
   };
-
-  let releaseDate = '';
-  let releaseDateType = '';
-  if (physicalRelease && digitalRelease) {
-    releaseDate =
-      physicalRelease < digitalRelease ? physicalRelease : digitalRelease;
-    releaseDateType = physicalRelease < digitalRelease ? 'Released' : 'Digital';
-  } else if (physicalRelease && !digitalRelease) {
-    releaseDate = physicalRelease;
-    releaseDateType = 'Released';
-  } else if (digitalRelease && !physicalRelease) {
-    releaseDate = digitalRelease;
-    releaseDateType = 'Digital';
-  }
 
   return (
     <div className={styles.content}>
@@ -183,19 +167,14 @@ function MovieIndexPoster(props: MovieIndexPosterProps) {
             <Popover
               anchor={<Icon name={icons.EXTERNAL_LINK} size={12} />}
               title={translate('Links')}
-              body={
-                <MovieDetailsLinks
-                  tmdbId={tmdbId}
-                  imdbId={imdbId}
-                  youTubeTrailerId={youTubeTrailerId}
-                />
-              }
+              body={<MovieDetailsLinks tmdbId={tmdbId} imdbId={imdbId} />}
             />
           </span>
         </Label>
 
         <Link className={styles.link} style={elementStyle} to={link}>
           <MoviePoster
+            blur={safeForWorkMode}
             style={elementStyle}
             images={images}
             size={250}
@@ -241,21 +220,9 @@ function MovieIndexPoster(props: MovieIndexPosterProps) {
         </div>
       ) : null}
 
-      {showCinemaRelease && inCinemas ? (
-        <div className={styles.title} title={translate('InCinemas')}>
-          <Icon name={icons.IN_CINEMAS} />{' '}
-          {getRelativeDate(inCinemas, shortDateFormat, showRelativeDates, {
-            timeFormat,
-            timeForToday: false,
-          })}
-        </div>
-      ) : null}
-
       {showReleaseDate && releaseDate ? (
         <div className={styles.title}>
-          <Icon
-            name={releaseDateType === 'Digital' ? icons.MOVIE_FILE : icons.DISC}
-          />{' '}
+          <Icon name={icons.DISC} />{' '}
           {getRelativeDate(releaseDate, shortDateFormat, showRelativeDates, {
             timeFormat,
             timeForToday: false,
@@ -269,12 +236,6 @@ function MovieIndexPoster(props: MovieIndexPosterProps) {
         </div>
       ) : null}
 
-      {showImdbRating && !!ratings.imdb ? (
-        <div className={styles.title}>
-          <ImdbRating ratings={ratings} iconSize={12} />
-        </div>
-      ) : null}
-
       {showRottenTomatoesRating && !!ratings.rottenTomatoes ? (
         <div className={styles.title}>
           <RottenTomatoRating ratings={ratings} iconSize={12} />
@@ -282,29 +243,23 @@ function MovieIndexPoster(props: MovieIndexPosterProps) {
       ) : null}
 
       <MovieIndexPosterInfo
-        studio={studio}
+        studio={studioTitle}
         qualityProfile={qualityProfile}
         added={added}
         year={year}
         showQualityProfile={showQualityProfile}
-        showCinemaRelease={showCinemaRelease}
         showReleaseDate={showReleaseDate}
         showRelativeDates={showRelativeDates}
         shortDateFormat={shortDateFormat}
         longDateFormat={longDateFormat}
         timeFormat={timeFormat}
-        inCinemas={inCinemas}
-        physicalRelease={physicalRelease}
-        digitalRelease={digitalRelease}
+        releaseDate={releaseDate}
         ratings={ratings}
         sizeOnDisk={sizeOnDisk}
         sortKey={sortKey}
         path={path}
-        certification={certification}
-        originalTitle={originalTitle}
         originalLanguage={originalLanguage}
         showTmdbRating={showTmdbRating}
-        showImdbRating={showImdbRating}
         showRottenTomatoesRating={showRottenTomatoesRating}
       />
 

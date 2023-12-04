@@ -29,9 +29,8 @@ using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.Messaging.Commands;
 using NzbDrone.Core.Movies;
 using NzbDrone.Core.Movies.AlternativeTitles;
-using NzbDrone.Core.Movies.Collections;
-using NzbDrone.Core.Movies.Credits;
-using NzbDrone.Core.Movies.Translations;
+using NzbDrone.Core.Movies.Performers;
+using NzbDrone.Core.Movies.Studios;
 using NzbDrone.Core.Notifications;
 using NzbDrone.Core.Organizer;
 using NzbDrone.Core.Parser.Model;
@@ -117,6 +116,7 @@ namespace NzbDrone.Core.Datastore
                   .Ignore(s => s.RootFolderPath)
                   .Ignore(s => s.Title)
                   .Ignore(s => s.Year)
+                  .Ignore(s => s.ForeignId)
                   .Ignore(s => s.TmdbId)
                   .Ignore(s => s.ImdbId)
                   .HasOne(a => a.MovieMetadata, a => a.MovieMetadataId);
@@ -124,15 +124,13 @@ namespace NzbDrone.Core.Datastore
             Mapper.Entity<ImportListMovie>("ImportListMovies").RegisterModel()
                   .Ignore(s => s.Title)
                   .Ignore(s => s.Year)
+                  .Ignore(s => s.ForeignId)
                   .Ignore(s => s.TmdbId)
                   .Ignore(s => s.ImdbId)
+                  .Ignore(s => s.StashId)
                   .HasOne(a => a.MovieMetadata, a => a.MovieMetadataId);
 
             Mapper.Entity<AlternativeTitle>("AlternativeTitles").RegisterModel();
-
-            Mapper.Entity<MovieTranslation>("MovieTranslations").RegisterModel();
-
-            Mapper.Entity<Credit>("Credits").RegisterModel();
 
             Mapper.Entity<ImportExclusion>("ImportExclusions").RegisterModel();
 
@@ -173,10 +171,10 @@ namespace NzbDrone.Core.Datastore
 
             Mapper.Entity<UpdateHistory>("UpdateHistory").RegisterModel();
 
-            Mapper.Entity<MovieMetadata>("MovieMetadata").RegisterModel()
-                .Ignore(s => s.Translations);
+            Mapper.Entity<MovieMetadata>("MovieMetadata").RegisterModel();
 
-            Mapper.Entity<MovieCollection>("Collections").RegisterModel();
+            Mapper.Entity<Performer>("Performers").RegisterModel();
+            Mapper.Entity<Studio>("Studios").RegisterModel();
 
             Mapper.Entity<AutoTagging.AutoTag>("AutoTagging").RegisterModel();
         }
@@ -207,7 +205,7 @@ namespace NzbDrone.Core.Datastore
             SqlMapper.AddTypeHandler(new EmbeddedDocumentConverter<ReleaseInfo>());
             SqlMapper.AddTypeHandler(new EmbeddedDocumentConverter<PendingReleaseAdditionalInfo>());
             SqlMapper.AddTypeHandler(new EmbeddedDocumentConverter<Ratings>());
-            SqlMapper.AddTypeHandler(new EmbeddedDocumentConverter<List<MovieTranslation>>());
+            SqlMapper.AddTypeHandler(new EmbeddedDocumentConverter<List<Credit>>());
             SqlMapper.AddTypeHandler(new EmbeddedDocumentConverter<HashSet<int>>());
             SqlMapper.AddTypeHandler(new OsPathConverter());
             SqlMapper.RemoveTypeMap(typeof(Guid));

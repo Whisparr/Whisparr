@@ -49,7 +49,7 @@ namespace NzbDrone.Common.Instrumentation
             new (@"(?<=\?|&)(X-Plex-Client-Identifier|X-Plex-Token)=(?<secret>[^&=]+?)(?= |&|$)", RegexOptions.Compiled | RegexOptions.IgnoreCase),
 
             // Notifiarr
-            new (@"api/v[0-9]/notification/radarr/(?<secret>[\w-]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase),
+            new (@"api/v[0-9]/notification/whisparr/(?<secret>[\w-]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase),
 
             // Discord
             new (@"discord.com/api/webhooks/((?<secret>[\w-]+)/)?(?<secret>[\w-]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase)

@@ -11,7 +11,8 @@ import PageContentBody from 'Components/Page/PageContentBody';
 import { icons, kinds } from 'Helpers/Props';
 import getErrorMessage from 'Utilities/Object/getErrorMessage';
 import translate from 'Utilities/String/translate';
-import AddNewMovieSearchResultConnector from './AddNewMovieSearchResultConnector';
+import AddNewMovieSearchResultConnector from './AddNewMovie/AddNewMovieSearchResultConnector';
+import AddNewPerformerSearchResultConnector from './AddNewPerformer/AddNewPerformerSearchResultConnector';
 import styles from './AddNewMovie.css';
 
 class AddNewMovie extends Component {
@@ -133,7 +134,7 @@ class AddNewMovie extends Component {
                 </div>
                 <Alert kind={kinds.WARNING}>{getErrorMessage(error)}</Alert>
                 <div>
-                  <Link to="https://wiki.servarr.com/radarr/troubleshooting#invalid-response-received-from-tmdb">
+                  <Link to="https://wiki.servarr.com/whisparr/troubleshooting#invalid-response-received-from-tmdb">
                     {translate('WhySearchesCouldBeFailing')}
                   </Link>
                 </div>
@@ -145,13 +146,24 @@ class AddNewMovie extends Component {
               <div className={styles.searchResults}>
                 {
                   items.map((item) => {
-                    return (
-                      <AddNewMovieSearchResultConnector
-                        key={item.tmdbId}
-                        colorImpairedMode={colorImpairedMode}
-                        {...item}
-                      />
-                    );
+                    if (item.movie) {
+                      return (
+                        <AddNewMovieSearchResultConnector
+                          key={item.foreignId}
+                          colorImpairedMode={colorImpairedMode}
+                          {...item.movie}
+                        />
+                      );
+                    } else if (item.performer) {
+                      return (
+                        <AddNewPerformerSearchResultConnector
+                          key={item.foreignId}
+                          colorImpairedMode={colorImpairedMode}
+                          {...item.performer}
+                        />
+                      );
+                    }
+                    return null;
                   })
                 }
               </div>
@@ -167,7 +179,7 @@ class AddNewMovie extends Component {
                   {translate('YouCanAlsoSearch')}
                 </div>
                 <div>
-                  <Link to="https://wiki.servarr.com/radarr/faq#why-can-i-not-add-a-new-movie-to-radarr">
+                  <Link to="https://wiki.servarr.com/whisparr/faq#why-can-i-not-add-a-new-movie-to-whisparr">
                     {translate('CantFindMovie')}
                   </Link>
                 </div>

@@ -24,6 +24,11 @@ namespace NzbDrone.Core.Indexers.TorrentRss
             return new IndexerPageableRequestChain();
         }
 
+        public IndexerPageableRequestChain GetSearchRequests(SceneSearchCriteria searchCriteria)
+        {
+            return new IndexerPageableRequestChain();
+        }
+
         private IEnumerable<IndexerRequest> GetRssRequests(string searchParameters)
         {
             var request = new IndexerRequest(Settings.BaseUrl.Trim().TrimEnd('/'), HttpAccept.Rss);

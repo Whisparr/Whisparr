@@ -8,7 +8,8 @@ using NzbDrone.Core.Languages;
 using NzbDrone.Core.Lifecycle;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.Movies;
-using NzbDrone.Core.Movies.Collections;
+using NzbDrone.Core.Movies.Performers;
+using NzbDrone.Core.Movies.Studios;
 using NzbDrone.Core.Qualities;
 
 namespace NzbDrone.Core.Profiles.Qualities
@@ -34,21 +35,24 @@ namespace NzbDrone.Core.Profiles.Qualities
         private readonly ICustomFormatService _formatService;
         private readonly IMovieService _movieService;
         private readonly IImportListFactory _importListFactory;
-        private readonly IMovieCollectionService _collectionService;
+        private readonly IPerformerService _performerService;
+        private readonly IStudioService _studioService;
         private readonly Logger _logger;
 
         public QualityProfileService(IQualityProfileRepository profileRepository,
                               ICustomFormatService formatService,
                               IMovieService movieService,
                               IImportListFactory importListFactory,
-                              IMovieCollectionService collectionService,
+                              IPerformerService performerService,
+                              IStudioService studioService,
                               Logger logger)
         {
             _profileRepository = profileRepository;
             _formatService = formatService;
             _movieService = movieService;
             _importListFactory = importListFactory;
-            _collectionService = collectionService;
+            _performerService = performerService;
+            _studioService = studioService;
             _logger = logger;
         }
 
@@ -64,7 +68,8 @@ namespace NzbDrone.Core.Profiles.Qualities
 
         public void Delete(int id)
         {
-            if (_movieService.GetAllMovies().Any(c => c.QualityProfileId == id) || _importListFactory.All().Any(c => c.QualityProfileId == id) || _collectionService.GetAllCollections().Any(c => c.QualityProfileId == id))
+            if (_movieService.GetAllMovies().Any(c => c.QualityProfileId == id) || _importListFactory.All().Any(c => c.QualityProfileId == id) ||
+                _performerService.GetAllPerformers().Any(c => c.QualityProfileId == id) || _studioService.GetAllStudios().Any(c => c.QualityProfileId == id))
             {
                 throw new QualityProfileInUseException(id);
             }
@@ -129,12 +134,6 @@ namespace NzbDrone.Core.Profiles.Qualities
 
             AddDefaultProfile("Any",
                 Quality.Bluray480p,
-                Quality.WORKPRINT,
-                Quality.CAM,
-                Quality.TELESYNC,
-                Quality.TELECINE,
-                Quality.DVDSCR,
-                Quality.REGIONAL,
                 Quality.SDTV,
                 Quality.DVD,
                 Quality.DVDR,
@@ -160,12 +159,6 @@ namespace NzbDrone.Core.Profiles.Qualities
 
             AddDefaultProfile("SD",
                 Quality.Bluray480p,
-                Quality.WORKPRINT,
-                Quality.CAM,
-                Quality.TELESYNC,
-                Quality.TELECINE,
-                Quality.DVDSCR,
-                Quality.REGIONAL,
                 Quality.SDTV,
                 Quality.DVD,
                 Quality.WEBDL480p,

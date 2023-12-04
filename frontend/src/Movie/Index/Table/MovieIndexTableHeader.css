@@ -4,18 +4,10 @@
   flex: 0 0 60px;
 }
 
-.collection,
-.originalTitle,
 .sortTitle {
   composes: headerCell from '~Components/Table/VirtualTableHeaderCell.css';
 
   flex: 4 0 110px;
-}
-
-.minimumAvailability {
-  composes: headerCell  from '~Components/Table/VirtualTableHeaderCell.css';
-
-  flex: 0 0 140px;
 }
 
 .studio {
@@ -31,9 +23,7 @@
   flex: 1 0 125px;
 }
 
-.inCinemas,
-.physicalRelease,
-.digitalRelease,
+.releaseDate,
 .genres {
   composes: headerCell from '~Components/Table/VirtualTableHeaderCell.css';
 
@@ -41,7 +31,6 @@
 }
 
 .added,
-.popularity,
 .runtime {
   composes: headerCell from '~Components/Table/VirtualTableHeaderCell.css';
 
@@ -52,12 +41,6 @@
   composes: headerCell from '~Components/Table/VirtualTableHeaderCell.css';
 
   flex: 0 0 150px;
-}
-
-.certification {
-  composes: headerCell from '~Components/Table/VirtualTableHeaderCell.css';
-
-  flex: 0 0 90px;
 }
 
 .year {
@@ -78,7 +61,6 @@
   flex: 0 0 120px;
 }
 
-.imdbRating,
 .tmdbRating,
 .rottenTomatoesRating {
   composes: headerCell from '~Components/Table/VirtualTableHeaderCell.css';

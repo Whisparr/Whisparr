@@ -21,6 +21,7 @@ export const defaultState = {
   saveError: null,
   isDeleting: false,
   deleteError: null,
+  indexMode: 'movie',
   sortKey: 'sortTitle',
   sortDirection: sortDirections.ASCENDING,
   secondarySortKey: 'sortTitle',
@@ -33,10 +34,8 @@ export const defaultState = {
     showTitle: false,
     showMonitored: true,
     showQualityProfile: true,
-    showCinemaRelease: false,
     showReleaseDate: false,
     showTmdbRating: false,
-    showImdbRating: false,
     showRottenTomatoesRating: false,
     showSearchAction: false
   },
@@ -81,18 +80,6 @@ export const defaultState = {
       isModifiable: false
     },
     {
-      name: 'originalTitle',
-      label: () => translate('OriginalTitle'),
-      isSortable: true,
-      isVisible: false
-    },
-    {
-      name: 'collection',
-      label: () => translate('Collection'),
-      isSortable: true,
-      isVisible: false
-    },
-    {
       name: 'studio',
       label: () => translate('Studio'),
       isSortable: true,
@@ -103,12 +90,6 @@ export const defaultState = {
       label: () => translate('QualityProfile'),
       isSortable: true,
       isVisible: true
-    },
-    {
-      name: 'originalLanguage',
-      label: () => translate('OriginalLanguage'),
-      isSortable: true,
-      isVisible: false
     },
     {
       name: 'added',
@@ -123,32 +104,14 @@ export const defaultState = {
       isVisible: false
     },
     {
-      name: 'inCinemas',
-      label: () => translate('InCinemas'),
-      isSortable: true,
-      isVisible: false
-    },
-    {
-      name: 'digitalRelease',
-      label: () => translate('DigitalRelease'),
-      isSortable: true,
-      isVisible: false
-    },
-    {
-      name: 'physicalRelease',
-      label: () => translate('PhysicalRelease'),
+      name: 'releaseDate',
+      label: () => translate('ReleaseDate'),
       isSortable: true,
       isVisible: false
     },
     {
       name: 'runtime',
       label: () => translate('Runtime'),
-      isSortable: true,
-      isVisible: false
-    },
-    {
-      name: 'minimumAvailability',
-      label: () => translate('MinAvailability'),
       isSortable: true,
       isVisible: false
     },
@@ -179,30 +142,6 @@ export const defaultState = {
     {
       name: 'tmdbRating',
       label: () => translate('TmdbRating'),
-      isSortable: true,
-      isVisible: false
-    },
-    {
-      name: 'rottenTomatoesRating',
-      label: () => translate('RottenTomatoesRating'),
-      isSortable: true,
-      isVisible: false
-    },
-    {
-      name: 'imdbRating',
-      label: () => translate('ImdbRating'),
-      isSortable: true,
-      isVisible: false
-    },
-    {
-      name: 'popularity',
-      label: () => translate('Popularity'),
-      isSortable: true,
-      isVisible: false
-    },
-    {
-      name: 'certification',
-      label: () => translate('Certification'),
       isSortable: true,
       isVisible: false
     },
@@ -241,12 +180,6 @@ export const defaultState = {
       return originalLanguage.name;
     },
 
-    imdbRating: function(item) {
-      const { ratings = {} } = item;
-
-      return ratings.imdb ? ratings.imdb.value : 0;
-    },
-
     tmdbRating: function(item) {
       const { ratings = {} } = item;
 
@@ -279,39 +212,9 @@ export const defaultState = {
       valueType: filterBuilderValueTypes.BOOL
     },
     {
-      name: 'minimumAvailability',
-      label: () => translate('MinimumAvailability'),
-      type: filterBuilderTypes.EXACT,
-      valueType: filterBuilderValueTypes.MINIMUM_AVAILABILITY
-    },
-    {
       name: 'title',
       label: () => translate('Title'),
       type: filterBuilderTypes.STRING
-    },
-    {
-      name: 'originalTitle',
-      label: () => translate('OriginalTitle'),
-      type: filterBuilderTypes.STRING
-    },
-    {
-      name: 'originalLanguage',
-      label: () => translate('OriginalLanguage'),
-      type: filterBuilderTypes.EXACT,
-      optionsSelector: function(items) {
-        const collectionList = items.reduce((acc, movie) => {
-          if (movie.originalLanguage) {
-            acc.push({
-              id: movie.originalLanguage.name,
-              name: movie.originalLanguage.name
-            });
-          }
-
-          return acc;
-        }, []);
-
-        return collectionList.sort(sortByName);
-      }
     },
     {
       name: 'status',
@@ -325,10 +228,10 @@ export const defaultState = {
       type: filterBuilderTypes.EXACT,
       optionsSelector: function(items) {
         const tagList = items.reduce((acc, movie) => {
-          if (movie.studio) {
+          if (movie.studioTitle) {
             acc.push({
-              id: movie.studio,
-              name: movie.studio
+              id: movie.studioTitle,
+              name: movie.studioTitle
             });
           }
 
@@ -336,25 +239,6 @@ export const defaultState = {
         }, []);
 
         return tagList.sort(sortByName);
-      }
-    },
-    {
-      name: 'collection',
-      label: () => translate('Collection'),
-      type: filterBuilderTypes.ARRAY,
-      optionsSelector: function(items) {
-        const collectionList = items.reduce((acc, movie) => {
-          if (movie.collection && movie.collection.title) {
-            acc.push({
-              id: movie.collection.title,
-              name: movie.collection.title
-            });
-          }
-
-          return acc;
-        }, []);
-
-        return collectionList.sort(sortByName);
       }
     },
     {
@@ -375,20 +259,8 @@ export const defaultState = {
       type: filterBuilderTypes.NUMBER
     },
     {
-      name: 'inCinemas',
-      label: () => translate('InCinemas'),
-      type: filterBuilderTypes.DATE,
-      valueType: filterBuilderValueTypes.DATE
-    },
-    {
-      name: 'physicalRelease',
-      label: () => translate('PhysicalRelease'),
-      type: filterBuilderTypes.DATE,
-      valueType: filterBuilderValueTypes.DATE
-    },
-    {
-      name: 'digitalRelease',
-      label: () => translate('DigitalRelease'),
+      name: 'releaseDate',
+      label: () => translate('ReleaseDate'),
       type: filterBuilderTypes.DATE,
       valueType: filterBuilderValueTypes.DATE
     },
@@ -438,45 +310,6 @@ export const defaultState = {
       type: filterBuilderTypes.NUMBER
     },
     {
-      name: 'imdbRating',
-      label: () => translate('ImdbRating'),
-      type: filterBuilderTypes.NUMBER
-    },
-    {
-      name: 'rottenTomatoesRating',
-      label: () => translate('RottenTomatoesRating'),
-      type: filterBuilderTypes.NUMBER
-    },
-    {
-      name: 'imdbVotes',
-      label: () => translate('ImdbVotes'),
-      type: filterBuilderTypes.NUMBER
-    },
-    {
-      name: 'popularity',
-      label: () => translate('Popularity'),
-      type: filterBuilderTypes.NUMBER
-    },
-    {
-      name: 'certification',
-      label: () => translate('Certification'),
-      type: filterBuilderTypes.EXACT,
-      optionsSelector: function(items) {
-        const certificationList = items.reduce((acc, movie) => {
-          if (movie.certification) {
-            acc.push({
-              id: movie.certification,
-              name: movie.certification
-            });
-          }
-
-          return acc;
-        }, []);
-
-        return certificationList.sort(sortByName);
-      }
-    },
-    {
       name: 'tags',
       label: () => translate('Tags'),
       type: filterBuilderTypes.ARRAY,
@@ -506,6 +339,7 @@ export const SET_MOVIE_VIEW = 'movieIndex/setMovieView';
 export const SET_MOVIE_TABLE_OPTION = 'movieIndex/setMovieTableOption';
 export const SET_MOVIE_POSTER_OPTION = 'movieIndex/setMoviePosterOption';
 export const SET_MOVIE_OVERVIEW_OPTION = 'movieIndex/setMovieOverviewOption';
+export const SET_MOVIE_INDEX_MODE = 'movieIndex/setMovieIndexMode';
 
 //
 // Action Creators
@@ -516,6 +350,7 @@ export const setMovieView = createAction(SET_MOVIE_VIEW);
 export const setMovieTableOption = createAction(SET_MOVIE_TABLE_OPTION);
 export const setMoviePosterOption = createAction(SET_MOVIE_POSTER_OPTION);
 export const setMovieOverviewOption = createAction(SET_MOVIE_OVERVIEW_OPTION);
+export const setMovieIndexMode = createAction(SET_MOVIE_INDEX_MODE);
 
 //
 // Reducers
@@ -553,6 +388,10 @@ export const reducers = createHandleActions({
         ...payload
       }
     };
+  },
+
+  [SET_MOVIE_INDEX_MODE]: function(state, { payload }) {
+    return Object.assign({}, state, { indexMode: payload.indexMode });
   }
 
 }, defaultState, section);

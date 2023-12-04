@@ -153,7 +153,7 @@ namespace NzbDrone.Core.ImportLists
 
         protected virtual bool IsValidItem(ImportListMovie listItem)
         {
-            if (listItem.Title.IsNullOrWhiteSpace() && listItem.ImdbId.IsNullOrWhiteSpace() && listItem.TmdbId == 0)
+            if (listItem.Title.IsNullOrWhiteSpace() && listItem.ImdbId.IsNullOrWhiteSpace() && listItem.ForeignId.IsNullOrWhiteSpace() && listItem.TmdbId == 0)
             {
                 return false;
             }

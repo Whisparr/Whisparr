@@ -226,19 +226,6 @@ class UISettings extends Component {
 
                 <FieldSet legend={translate('Language')}>
                   <FormGroup>
-                    <FormLabel>{translate('MovieInfoLanguage')}</FormLabel>
-                    <FormInputGroup
-                      type={inputTypes.LANGUAGE_SELECT}
-                      name="movieInfoLanguage"
-                      values={languages}
-                      helpText={translate('MovieInfoLanguageHelpText')}
-                      helpTextWarning={translate('MovieInfoLanguageHelpTextWarning')}
-                      onChange={onInputChange}
-                      {...settings.movieInfoLanguage}
-                    />
-                  </FormGroup>
-
-                  <FormGroup>
                     <FormLabel>{translate('UILanguage')}</FormLabel>
                     <FormInputGroup
                       type={inputTypes.LANGUAGE_SELECT}

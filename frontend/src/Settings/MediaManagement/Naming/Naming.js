@@ -57,7 +57,7 @@ class Naming extends Component {
   //
   // Listeners
 
-  onStandardNamingModalOpenClick = () => {
+  onMovieNamingModalOpenClick = () => {
     this.setState({
       isNamingModalOpen: true,
       namingModalOptions: {
@@ -67,11 +67,32 @@ class Naming extends Component {
     });
   };
 
+  onSceneNamingModalOpenClick = () => {
+    this.setState({
+      isNamingModalOpen: true,
+      namingModalOptions: {
+        name: 'standardSceneFormat',
+        additional: true,
+        isScene: true
+      }
+    });
+  };
+
   onMovieFolderNamingModalOpenClick = () => {
     this.setState({
       isNamingModalOpen: true,
       namingModalOptions: {
         name: 'movieFolderFormat'
+      }
+    });
+  };
+
+  onSceneFolderNamingModalOpenClick = () => {
+    this.setState({
+      isNamingModalOpen: true,
+      namingModalOptions: {
+        name: 'sceneFolderFormat',
+        isScene: true
       }
     });
   };
@@ -101,12 +122,17 @@ class Naming extends Component {
     } = this.state;
 
     const renameMovies = hasSettings && settings.renameMovies.value;
+    const renameScenes = hasSettings && settings.renameScenes.value;
     const replaceIllegalCharacters = hasSettings && settings.replaceIllegalCharacters.value;
 
     const standardMovieFormatHelpTexts = [];
     const standardMovieFormatErrors = [];
     const movieFolderFormatHelpTexts = [];
     const movieFolderFormatErrors = [];
+    const standardSceneFormatHelpTexts = [];
+    const standardSceneFormatErrors = [];
+    const sceneFolderFormatHelpTexts = [];
+    const sceneFolderFormatErrors = [];
 
     if (examplesPopulated) {
       if (examples.movieExample) {
@@ -121,6 +147,22 @@ class Naming extends Component {
         movieFolderFormatHelpTexts.push(`Example: ${examples.movieFolderExample}`);
       } else {
         movieFolderFormatErrors.push({ get message() {
+          return translate('InvalidFormat');
+        } });
+      }
+
+      if (examples.sceneExample) {
+        standardSceneFormatHelpTexts.push(`Example: ${examples.sceneExample}`);
+      } else {
+        standardSceneFormatErrors.push({ get message() {
+          return translate('InvalidFormat');
+        } });
+      }
+
+      if (examples.sceneFolderExample) {
+        sceneFolderFormatHelpTexts.push(`Example: ${examples.sceneFolderExample}`);
+      } else {
+        sceneFolderFormatErrors.push({ get message() {
           return translate('InvalidFormat');
         } });
       }
@@ -152,6 +194,18 @@ class Naming extends Component {
                   helpText={translate('RenameMoviesHelpText')}
                   onChange={onInputChange}
                   {...settings.renameMovies}
+                />
+              </FormGroup>
+
+              <FormGroup size={sizes.MEDIUM}>
+                <FormLabel>{translate('RenameScenes')}</FormLabel>
+
+                <FormInputGroup
+                  type={inputTypes.CHECK}
+                  name="renameScenes"
+                  helpText={translate('RenameScenesHelpText')}
+                  onChange={onInputChange}
+                  {...settings.renameScenes}
                 />
               </FormGroup>
 
@@ -192,7 +246,7 @@ class Naming extends Component {
                       inputClassName={styles.namingInput}
                       type={inputTypes.TEXT}
                       name="standardMovieFormat"
-                      buttons={<FormInputButton onPress={this.onStandardNamingModalOpenClick}>?</FormInputButton>}
+                      buttons={<FormInputButton onPress={this.onMovieNamingModalOpenClick}>?</FormInputButton>}
                       onChange={onInputChange}
                       {...settings.standardMovieFormat}
                       helpTexts={standardMovieFormatHelpTexts}
@@ -216,6 +270,42 @@ class Naming extends Component {
                   {...settings.movieFolderFormat}
                   helpTexts={['Used when adding a new movie or moving movies via the editor', ...movieFolderFormatHelpTexts]}
                   errors={[...movieFolderFormatErrors, ...settings.movieFolderFormat.errors]}
+                />
+              </FormGroup>
+
+              {
+                renameScenes &&
+                  <FormGroup size={sizes.LARGE}>
+                    <FormLabel>{translate('StandardSceneFormat')}</FormLabel>
+
+                    <FormInputGroup
+                      inputClassName={styles.namingInput}
+                      type={inputTypes.TEXT}
+                      name="standardSceneFormat"
+                      buttons={<FormInputButton onPress={this.onSceneNamingModalOpenClick}>?</FormInputButton>}
+                      onChange={onInputChange}
+                      {...settings.standardSceneFormat}
+                      helpTexts={standardSceneFormatHelpTexts}
+                      errors={[...standardSceneFormatErrors, ...settings.standardSceneFormat.errors]}
+                    />
+                  </FormGroup>
+              }
+
+              <FormGroup
+                advancedSettings={advancedSettings}
+                isAdvanced={true}
+              >
+                <FormLabel>{translate('SceneFolderFormat')}</FormLabel>
+
+                <FormInputGroup
+                  inputClassName={styles.namingInput}
+                  type={inputTypes.TEXT}
+                  name="sceneFolderFormat"
+                  buttons={<FormInputButton onPress={this.onSceneFolderNamingModalOpenClick}>?</FormInputButton>}
+                  onChange={onInputChange}
+                  {...settings.sceneFolderFormat}
+                  helpTexts={['Used when adding a new scene or moving scenes via the editor', ...sceneFolderFormatHelpTexts]}
+                  errors={[...sceneFolderFormatErrors, ...settings.sceneFolderFormat.errors]}
                 />
               </FormGroup>
 

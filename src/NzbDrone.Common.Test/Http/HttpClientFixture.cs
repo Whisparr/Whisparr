@@ -305,14 +305,14 @@ namespace NzbDrone.Common.Test.Http
         public async Task should_follow_redirects_to_https()
         {
             var request = new HttpRequestBuilder($"https://{_httpBinHost}/redirect-to")
-                .AddQueryParam("url", $"https://radarr.video/")
+                .AddQueryParam("url", $"https://whisparr.com/")
                 .Build();
             request.AllowAutoRedirect = true;
 
             var response = await Subject.GetAsync(request);
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            response.Content.Should().Contain("Radarr");
+            response.Content.Should().Contain("Whisparr");
 
             ExceptionVerification.ExpectedErrors(0);
         }
@@ -339,7 +339,7 @@ namespace NzbDrone.Common.Test.Http
 
             var userAgent = response.Resource.Headers["User-Agent"].ToString();
 
-            userAgent.Should().Contain("Radarr");
+            userAgent.Should().Contain("Whisparr");
         }
 
         [TestCase("Accept", "text/xml, text/rss+xml, application/rss+xml")]

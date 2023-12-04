@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net6.0</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.143" />
+    <PackageReference Include="NBuilder" Version="6.1.0" />
+    <PackageReference Include="System.Data.SQLite.Core.Servarr" Version="1.0.115.5-18" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NzbDrone.Test.Common\Whisparr.Test.Common.csproj" />
+    <ProjectReference Include="..\NzbDrone.Core\Whisparr.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Logo\1024.png">
+      <Link>Files\1024.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Files\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Datastore\Migration\" />
+    <Folder Include="IndexerTests\BroadcastheNetTests\" />
+    <Folder Include="IndexerTests\FanzubTests\" />
+    <Folder Include="IndexerTests\TorrentleechTests\" />
+  </ItemGroup>
+</Project>

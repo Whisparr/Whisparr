@@ -6,9 +6,11 @@ import MovieCollectionAppState from './MovieCollectionAppState';
 import MovieFilesAppState from './MovieFilesAppState';
 import MoviesAppState, { MovieIndexAppState } from './MoviesAppState';
 import ParseAppState from './ParseAppState';
+import PerformersAppState from './PerformersAppState';
 import QueueAppState from './QueueAppState';
 import RootFolderAppState from './RootFolderAppState';
 import SettingsAppState from './SettingsAppState';
+import StudiosAppState from './StudiosAppState';
 import SystemAppState from './SystemAppState';
 import TagsAppState from './TagsAppState';
 
@@ -52,6 +54,9 @@ interface AppState {
   movieCollections: MovieCollectionAppState;
   movieFiles: MovieFilesAppState;
   movieIndex: MovieIndexAppState;
+  sceneIndex: MovieIndexAppState;
+  performers: PerformersAppState;
+  studios: StudiosAppState;
   movies: MoviesAppState;
   parse: ParseAppState;
   queue: QueueAppState;

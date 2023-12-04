@@ -9,8 +9,7 @@ import styles from './MovieDetailsLinks.css';
 function MovieDetailsLinks(props) {
   const {
     tmdbId,
-    imdbId,
-    youTubeTrailerId
+    imdbId
   } = props;
 
   return (
@@ -85,30 +84,13 @@ function MovieDetailsLinks(props) {
             </Label>
           </Link>
       }
-
-      {
-        !!youTubeTrailerId &&
-          <Link
-            className={styles.link}
-            to={`https://www.youtube.com/watch?v=${youTubeTrailerId}/`}
-          >
-            <Label
-              className={styles.linkLabel}
-              kind={kinds.DANGER}
-              size={sizes.LARGE}
-            >
-              {translate('Trailer')}
-            </Label>
-          </Link>
-      }
     </div>
   );
 }
 
 MovieDetailsLinks.propTypes = {
   tmdbId: PropTypes.number.isRequired,
-  imdbId: PropTypes.string,
-  youTubeTrailerId: PropTypes.string
+  imdbId: PropTypes.string
 };
 
 export default MovieDetailsLinks;

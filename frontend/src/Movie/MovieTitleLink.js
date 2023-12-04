@@ -25,6 +25,7 @@ class MovieTitleLink extends PureComponent {
 }
 
 MovieTitleLink.propTypes = {
+  foreignId: PropTypes.string.isRequired,
   titleSlug: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   year: PropTypes.number

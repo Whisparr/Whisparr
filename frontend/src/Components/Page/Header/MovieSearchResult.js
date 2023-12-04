@@ -14,7 +14,8 @@ function MovieSearchResult(props) {
     alternateTitles,
     tmdbId,
     imdbId,
-    tags
+    tags,
+    safeForWorkMode
   } = props;
 
   let alternateTitle = null;
@@ -31,6 +32,7 @@ function MovieSearchResult(props) {
       <MoviePoster
         className={styles.poster}
         images={images}
+        blur={safeForWorkMode}
         size={250}
         lazy={false}
         overflow={true}
@@ -90,7 +92,8 @@ MovieSearchResult.propTypes = {
   tmdbId: PropTypes.number,
   imdbId: PropTypes.string,
   tags: PropTypes.arrayOf(PropTypes.object).isRequired,
-  match: PropTypes.object.isRequired
+  match: PropTypes.object.isRequired,
+  safeForWorkMode: PropTypes.bool
 };
 
 export default MovieSearchResult;

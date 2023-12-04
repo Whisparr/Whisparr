@@ -58,7 +58,7 @@ namespace NzbDrone.Core.ImportLists
 
         public List<IImportList> Discoverable()
         {
-            var enabledImportLists = GetAvailableProviders().Where(n => n.GetType() == typeof(RadarrList.RadarrListImport) || n.GetType() == typeof(TMDb.Popular.TMDbPopularImport));
+            var enabledImportLists = GetAvailableProviders().Where(n => n.GetType() == typeof(TMDb.Popular.TMDbPopularImport));
 
             return enabledImportLists.ToList();
         }

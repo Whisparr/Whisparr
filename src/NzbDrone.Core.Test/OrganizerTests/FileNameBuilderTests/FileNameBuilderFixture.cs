@@ -8,11 +8,9 @@ using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using NzbDrone.Core.CustomFormats;
-using NzbDrone.Core.Languages;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.MediaFiles.MediaInfo;
 using NzbDrone.Core.Movies;
-using NzbDrone.Core.Movies.Translations;
 using NzbDrone.Core.Organizer;
 using NzbDrone.Core.Qualities;
 using NzbDrone.Core.Test.Framework;
@@ -24,31 +22,14 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
     {
         private Movie _movie;
         private MovieFile _movieFile;
-        private List<MovieTranslation> _movieTranslations;
         private NamingConfig _namingConfig;
 
         [SetUp]
         public void Setup()
         {
-            _movieTranslations = new List<MovieTranslation>
-            {
-                new MovieTranslation
-                {
-                    Language = Language.German,
-                    Title = "German South Park"
-                },
-
-                new MovieTranslation
-                {
-                    Language = Language.French,
-                    Title = "French South Park"
-                }
-            };
-
             _movie = Builder<Movie>
                     .CreateNew()
                     .With(s => s.Title = "South Park")
-                    .With(s => s.MovieMetadata.Value.OriginalTitle = "South of the Park")
                     .Build();
 
             _namingConfig = NamingConfig.Default;
@@ -57,7 +38,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
             Mocker.GetMock<INamingConfigService>()
                   .Setup(c => c.GetConfig()).Returns(_namingConfig);
 
-            _movieFile = new MovieFile { Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "RadarrTest" };
+            _movieFile = new MovieFile { Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "WhisparrTest" };
 
             Mocker.GetMock<IQualityDefinitionService>()
                 .Setup(v => v.Get(Moq.It.IsAny<Quality>()))
@@ -66,10 +47,6 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
             Mocker.GetMock<ICustomFormatService>()
                 .Setup(v => v.All())
                 .Returns(new List<CustomFormat>());
-
-            Mocker.GetMock<IMovieTranslationService>()
-                .Setup(v => v.GetAllTranslationsForMovieMetadata(It.IsAny<int>()))
-                .Returns(_movieTranslations);
         }
 
         private void GivenProper()
@@ -146,51 +123,6 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         }
 
         [Test]
-        public void should_replace_translated_movie_title()
-        {
-            _namingConfig.StandardMovieFormat = "{Movie Title:FR}";
-
-            Subject.BuildFileName(_movie, _movieFile)
-                   .Should().Be("French South Park");
-        }
-
-        [Test]
-        public void should_replace_translated_movie_title_with_base_title_if_invalid_code()
-        {
-            _namingConfig.StandardMovieFormat = "{Movie Title:JP}";
-
-            Subject.BuildFileName(_movie, _movieFile)
-                   .Should().Be("South Park");
-        }
-
-        [Test]
-        public void should_replace_translated_movie_title_with_base_title_if_no_translation_exists()
-        {
-            _namingConfig.StandardMovieFormat = "{Movie Title:JA}";
-
-            Subject.BuildFileName(_movie, _movieFile)
-                   .Should().Be("South Park");
-        }
-
-        [Test]
-        public void should_replace_translated_movie_title_with_fallback_if_no_translation_exists()
-        {
-            _namingConfig.StandardMovieFormat = "{Movie Title:JP|FR}";
-
-            Subject.BuildFileName(_movie, _movieFile)
-                   .Should().Be("French South Park");
-        }
-
-        [Test]
-        public void should_replace_translated_movie_title_with_original_if_no_translation_or_fallback_exists()
-        {
-            _namingConfig.StandardMovieFormat = "{Movie Title:JP|CN}";
-
-            Subject.BuildFileName(_movie, _movieFile)
-                   .Should().Be("South Park");
-        }
-
-        [Test]
         public void should_cleanup_Movie_Title()
         {
             _namingConfig.StandardMovieFormat = "{Movie.CleanTitle}";
@@ -198,36 +130,6 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
             Subject.BuildFileName(_movie, _movieFile)
                    .Should().Be("South.Park.1997");
-        }
-
-        [Test]
-        public void should_replace_movie_original_title()
-        {
-            _namingConfig.StandardMovieFormat = "{Movie OriginalTitle}";
-            _movie.MovieMetadata.Value.OriginalTitle = "South of the Park";
-
-            Subject.BuildFileName(_movie, _movieFile)
-                   .Should().Be("South of the Park");
-        }
-
-        [Test]
-        public void should_replace_movie_certification()
-        {
-            _namingConfig.StandardMovieFormat = "{Movie Certification}";
-            _movie.MovieMetadata.Value.Certification = "R";
-
-            Subject.BuildFileName(_movie, _movieFile)
-                   .Should().Be("R");
-        }
-
-        [Test]
-        public void should_replace_movie_collection()
-        {
-            _namingConfig.StandardMovieFormat = "{Movie Collection}";
-            _movie.MovieMetadata.Value.CollectionTitle = "South Part Collection";
-
-            Subject.BuildFileName(_movie, _movieFile)
-                   .Should().Be("South Part Collection");
         }
 
         [Test]
@@ -593,19 +495,19 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         }
 
         [Test]
-        public void should_use_Radarr_as_release_group_when_not_available()
+        public void should_use_Whisparr_as_release_group_when_not_available()
         {
             _movieFile.ReleaseGroup = null;
             _namingConfig.StandardMovieFormat = "{Release Group}";
 
             Subject.BuildFileName(_movie, _movieFile)
-                   .Should().Be("Radarr");
+                   .Should().Be("Whisparr");
         }
 
         [TestCase("{Movie Title}{-Release Group}", "South Park")]
         [TestCase("{Movie Title}{ Release Group}", "South Park")]
         [TestCase("{Movie Title}{ [Release Group]}", "South Park")]
-        public void should_not_use_Radarr_as_release_group_if_pattern_has_separator(string pattern, string expectedFileName)
+        public void should_not_use_Whisparr_as_release_group_if_pattern_has_separator(string pattern, string expectedFileName)
         {
             _movieFile.ReleaseGroup = null;
             _namingConfig.StandardMovieFormat = pattern;

@@ -11,19 +11,17 @@ namespace NzbDrone.Core.Qualities
         public string Name { get; set; }
         public QualitySource Source { get; set; }
         public int Resolution { get; set; }
-        public Modifier Modifier { get; set; }
 
         public Quality()
         {
         }
 
-        private Quality(int id, string name, QualitySource source, int resolution, Modifier modifier = Modifier.NONE)
+        private Quality(int id, string name, QualitySource source, int resolution)
         {
             Id = id;
             Name = name;
             Source = source;
             Resolution = resolution;
-            Modifier = modifier;
         }
 
         public override string ToString()
@@ -77,63 +75,49 @@ namespace NzbDrone.Core.Qualities
         }
 
         // Unable to determine
-        public static Quality Unknown => new Quality(0, "Unknown", QualitySource.UNKNOWN, 0);
-
-        // Pre-release
-        public static Quality WORKPRINT => new Quality(24, "WORKPRINT", QualitySource.WORKPRINT, 0); // new
-        public static Quality CAM => new Quality(25, "CAM", QualitySource.CAM, 0); // new
-        public static Quality TELESYNC => new Quality(26, "TELESYNC", QualitySource.TELESYNC, 0); // new
-        public static Quality TELECINE => new Quality(27, "TELECINE", QualitySource.TELECINE, 0); // new
-        public static Quality DVDSCR => new Quality(28, "DVDSCR", QualitySource.DVD, 480, Modifier.SCREENER); // new
-        public static Quality REGIONAL => new Quality(29, "REGIONAL", QualitySource.DVD, 480, Modifier.REGIONAL); // new
+        public static Quality Unknown => new Quality(0, "Unknown", QualitySource.Unknown, 0);
 
         // SD
-        public static Quality SDTV => new Quality(1, "SDTV", QualitySource.TV, 480);
+        public static Quality SDTV => new Quality(1, "SDTV", QualitySource.Television, 480);
         public static Quality DVD => new Quality(2, "DVD", QualitySource.DVD, 0);
-        public static Quality DVDR => new Quality(23, "DVD-R", QualitySource.DVD, 480, Modifier.REMUX); // new
+        public static Quality DVDR => new Quality(23, "DVD-R", QualitySource.DVDRaw, 480); // new
 
         // HDTV
-        public static Quality HDTV720p => new Quality(4, "HDTV-720p", QualitySource.TV, 720);
-        public static Quality HDTV1080p => new Quality(9, "HDTV-1080p", QualitySource.TV, 1080);
-        public static Quality HDTV2160p => new Quality(16, "HDTV-2160p", QualitySource.TV, 2160);
+        public static Quality HDTV720p => new Quality(4, "HDTV-720p", QualitySource.Television, 720);
+        public static Quality HDTV1080p => new Quality(9, "HDTV-1080p", QualitySource.Television, 1080);
+        public static Quality HDTV2160p => new Quality(16, "HDTV-2160p", QualitySource.Television, 2160);
 
         // Web-DL
-        public static Quality WEBDL480p => new Quality(8, "WEBDL-480p", QualitySource.WEBDL, 480);
-        public static Quality WEBDL720p => new Quality(5, "WEBDL-720p", QualitySource.WEBDL, 720);
-        public static Quality WEBDL1080p => new Quality(3, "WEBDL-1080p", QualitySource.WEBDL, 1080);
-        public static Quality WEBDL2160p => new Quality(18, "WEBDL-2160p", QualitySource.WEBDL, 2160);
+        public static Quality WEBDL480p => new Quality(8, "WEBDL-480p", QualitySource.Web, 480);
+        public static Quality WEBDL720p => new Quality(5, "WEBDL-720p", QualitySource.Web, 720);
+        public static Quality WEBDL1080p => new Quality(3, "WEBDL-1080p", QualitySource.Web, 1080);
+        public static Quality WEBDL2160p => new Quality(18, "WEBDL-2160p", QualitySource.Web, 2160);
 
         // Bluray
-        public static Quality Bluray480p => new Quality(20, "Bluray-480p", QualitySource.BLURAY, 480); // new
-        public static Quality Bluray576p => new Quality(21, "Bluray-576p", QualitySource.BLURAY, 576); // new
-        public static Quality Bluray720p => new Quality(6, "Bluray-720p", QualitySource.BLURAY, 720);
-        public static Quality Bluray1080p => new Quality(7, "Bluray-1080p", QualitySource.BLURAY, 1080);
-        public static Quality Bluray2160p => new Quality(19, "Bluray-2160p", QualitySource.BLURAY, 2160);
+        public static Quality Bluray480p => new Quality(20, "Bluray-480p", QualitySource.Bluray, 480); // new
+        public static Quality Bluray576p => new Quality(21, "Bluray-576p", QualitySource.Bluray, 576); // new
+        public static Quality Bluray720p => new Quality(6, "Bluray-720p", QualitySource.Bluray, 720);
+        public static Quality Bluray1080p => new Quality(7, "Bluray-1080p", QualitySource.Bluray, 1080);
+        public static Quality Bluray2160p => new Quality(19, "Bluray-2160p", QualitySource.Bluray, 2160);
 
-        public static Quality Remux1080p => new Quality(30, "Remux-1080p", QualitySource.BLURAY, 1080, Modifier.REMUX);
-        public static Quality Remux2160p => new Quality(31, "Remux-2160p", QualitySource.BLURAY, 2160, Modifier.REMUX);
+        public static Quality Remux1080p => new Quality(30, "Remux-1080p", QualitySource.BlurayRaw, 1080);
+        public static Quality Remux2160p => new Quality(31, "Remux-2160p", QualitySource.BlurayRaw, 2160);
 
-        public static Quality BRDISK => new Quality(22, "BR-DISK", QualitySource.BLURAY, 1080, Modifier.BRDISK); // new
+        public static Quality BRDISK => new Quality(22, "BR-DISK", QualitySource.BlurayDisk, 1080); // new
 
         // Others
-        public static Quality RAWHD => new Quality(10, "Raw-HD", QualitySource.TV, 1080, Modifier.RAWHD);
+        public static Quality RAWHD => new Quality(10, "Raw-HD", QualitySource.TelevisionRaw, 1080);
 
-        public static Quality WEBRip480p => new Quality(12, "WEBRip-480p", QualitySource.WEBRIP, 480);
-        public static Quality WEBRip720p => new Quality(14, "WEBRip-720p", QualitySource.WEBRIP, 720);
-        public static Quality WEBRip1080p => new Quality(15, "WEBRip-1080p", QualitySource.WEBRIP, 1080);
-        public static Quality WEBRip2160p => new Quality(17, "WEBRip-2160p", QualitySource.WEBRIP, 2160);
+        public static Quality WEBRip480p => new Quality(12, "WEBRip-480p", QualitySource.WebRip, 480);
+        public static Quality WEBRip720p => new Quality(14, "WEBRip-720p", QualitySource.WebRip, 720);
+        public static Quality WEBRip1080p => new Quality(15, "WEBRip-1080p", QualitySource.WebRip, 1080);
+        public static Quality WEBRip2160p => new Quality(17, "WEBRip-2160p", QualitySource.WebRip, 2160);
 
         static Quality()
         {
             All = new List<Quality>
             {
                 Unknown,
-                WORKPRINT,
-                CAM,
-                TELESYNC,
-                TELECINE,
-                DVDSCR,
-                REGIONAL,
                 SDTV,
                 DVD,
                 DVDR,
@@ -168,12 +152,6 @@ namespace NzbDrone.Core.Qualities
             DefaultQualityDefinitions = new HashSet<QualityDefinition>
             {
                 new QualityDefinition(Quality.Unknown)     { Weight = 1,  MinSize = 0, MaxSize = 100, PreferredSize = 95 },
-                new QualityDefinition(Quality.WORKPRINT)   { Weight = 2,  MinSize = 0, MaxSize = 100, PreferredSize = 95 },
-                new QualityDefinition(Quality.CAM)         { Weight = 3,  MinSize = 0, MaxSize = 100, PreferredSize = 95 },
-                new QualityDefinition(Quality.TELESYNC)    { Weight = 4,  MinSize = 0, MaxSize = 100, PreferredSize = 95 },
-                new QualityDefinition(Quality.TELECINE)    { Weight = 5,  MinSize = 0, MaxSize = 100, PreferredSize = 95 },
-                new QualityDefinition(Quality.REGIONAL)    { Weight = 6,  MinSize = 0, MaxSize = 100, PreferredSize = 95 },
-                new QualityDefinition(Quality.DVDSCR)      { Weight = 7,  MinSize = 0, MaxSize = 100, PreferredSize = 95 },
                 new QualityDefinition(Quality.SDTV)        { Weight = 8,  MinSize = 0, MaxSize = 100, PreferredSize = 95 },
                 new QualityDefinition(Quality.DVD)         { Weight = 9,  MinSize = 0, MaxSize = 100, PreferredSize = 95 },
                 new QualityDefinition(Quality.DVDR)        { Weight = 10,  MinSize = 0, MaxSize = 100, PreferredSize = 95 },

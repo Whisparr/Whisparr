@@ -123,7 +123,6 @@ export default {
         selectedSchema.name = payload.presetName ?? payload.implementationName;
         selectedSchema.implementationName = payload.implementationName;
         selectedSchema.minRefreshInterval = selectedSchema.minRefreshInterval ?? payload.minRefreshInterval;
-        selectedSchema.minimumAvailability = 'released';
         selectedSchema.rootFolderPath = '';
 
         return selectedSchema;

@@ -78,13 +78,13 @@ namespace NzbDrone.Core.Notifications.Gotify
                 const string title = "Test Notification";
 
                 var sb = new StringBuilder();
-                sb.AppendLine("This is a test message from Radarr");
+                sb.AppendLine("This is a test message from Whisparr");
 
                 if (Settings.IncludeMoviePoster)
                 {
                     isMarkdown = true;
 
-                    sb.AppendLine("\r![](https://raw.githubusercontent.com/Radarr/Radarr/develop/Logo/128.png)");
+                    sb.AppendLine("\r![](https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/128.png)");
                 }
 
                 var payload = new GotifyMessage

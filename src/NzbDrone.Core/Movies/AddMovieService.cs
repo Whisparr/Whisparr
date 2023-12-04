@@ -64,6 +64,7 @@ namespace NzbDrone.Core.Movies
         {
             var added = DateTime.UtcNow;
             var moviesToAdd = new List<Movie>();
+            var existingMovieForeignIds = _movieService.AllMovieForeignIds();
 
             foreach (var m in newMovies)
             {
@@ -76,6 +77,18 @@ namespace NzbDrone.Core.Movies
 
                     movie.Added = added;
 
+                    if (existingMovieForeignIds.Any(f => f == movie.ForeignId))
+                    {
+                        _logger.Debug("Foreign ID {0} was not added due to validation failure: Movie already exists in database", m.ForeignId);
+                        continue;
+                    }
+
+                    if (moviesToAdd.Any(f => f.ForeignId == movie.ForeignId))
+                    {
+                        _logger.Debug("Foreign ID {0} was not added due to validation failure: Movie already exists on list", m.ForeignId);
+                        continue;
+                    }
+
                     moviesToAdd.Add(movie);
                 }
                 catch (ValidationException ex)
@@ -85,7 +98,7 @@ namespace NzbDrone.Core.Movies
                         throw;
                     }
 
-                    _logger.Debug("TmdbId {0} was not added due to validation failures. {1}", m.TmdbId, ex.Message);
+                    _logger.Debug("TmdbId {0} was not added due to validation failures. {1}", m.ForeignId, ex.Message);
                 }
             }
 
@@ -101,15 +114,15 @@ namespace NzbDrone.Core.Movies
 
             try
             {
-                movie.MovieMetadata = _movieInfo.GetMovieInfo(newMovie.TmdbId).Item1;
+                movie.MovieMetadata = int.TryParse(newMovie.ForeignId, out var tmdbId) ? _movieInfo.GetMovieInfo(tmdbId).Item1 : _movieInfo.GetSceneInfo(newMovie.ForeignId).Item1;
             }
             catch (MovieNotFoundException)
             {
-                _logger.Error("TmdbId {0} was not found, it may have been removed from TMDb. Path: {1}", newMovie.TmdbId, newMovie.Path);
+                _logger.Error("TmdbId {0} was not found, it may have been removed from TMDb. Path: {1}", newMovie.ForeignId, newMovie.Path);
 
                 throw new ValidationException(new List<ValidationFailure>
                                               {
-                                                  new ValidationFailure("TmdbId", $"A movie with this ID was not found. Path: {newMovie.Path}", newMovie.TmdbId)
+                                                  new ValidationFailure("TmdbId", $"A movie with this ID was not found. Path: {newMovie.Path}", newMovie.ForeignId)
                                               });
             }
 
@@ -127,7 +140,7 @@ namespace NzbDrone.Core.Movies
             }
 
             newMovie.MovieMetadata.Value.CleanTitle = newMovie.Title.CleanMovieTitle();
-            newMovie.MovieMetadata.Value.SortTitle = MovieTitleNormalizer.Normalize(newMovie.Title, newMovie.TmdbId);
+            newMovie.MovieMetadata.Value.SortTitle = MovieTitleNormalizer.Normalize(newMovie.Title, newMovie.ForeignId);
             newMovie.Added = DateTime.UtcNow;
 
             var validationResult = _addMovieValidator.Validate(newMovie);

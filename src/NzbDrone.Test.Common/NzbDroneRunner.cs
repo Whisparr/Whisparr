@@ -27,7 +27,7 @@ namespace NzbDrone.Test.Common
         public PostgresOptions PostgresOptions { get; private set; }
         public int Port { get; private set; }
 
-        public NzbDroneRunner(Logger logger, PostgresOptions postgresOptions, int port = 7878)
+        public NzbDroneRunner(Logger logger, PostgresOptions postgresOptions, int port = 6969)
         {
             _processProvider = new ProcessProvider(logger);
             _restClient = new RestClient($"http://localhost:{port}/api/v3");
@@ -46,11 +46,11 @@ namespace NzbDrone.Test.Common
             string consoleExe;
             if (OsInfo.IsWindows)
             {
-                consoleExe = "Radarr.Console.exe";
+                consoleExe = "Whisparr.Console.exe";
             }
             else
             {
-                consoleExe = "Radarr";
+                consoleExe = "Whisparr";
             }
 
             if (BuildInfo.IsDebug)
@@ -79,11 +79,11 @@ namespace NzbDrone.Test.Common
 
                 if (statusCall.ResponseStatus == ResponseStatus.Completed)
                 {
-                    TestContext.Progress.WriteLine($"Radarr {Port} is started. Running Tests");
+                    TestContext.Progress.WriteLine($"Whisparr {Port} is started. Running Tests");
                     return;
                 }
 
-                TestContext.Progress.WriteLine("Waiting for Radarr to start. Response Status : {0}  [{1}] {2}", statusCall.ResponseStatus, statusCall.StatusDescription, statusCall.ErrorException.Message);
+                TestContext.Progress.WriteLine("Waiting for Whisparr to start. Response Status : {0}  [{1}] {2}", statusCall.ResponseStatus, statusCall.StatusDescription, statusCall.ErrorException.Message);
 
                 Thread.Sleep(500);
             }
@@ -98,7 +98,7 @@ namespace NzbDrone.Test.Common
                     _nzbDroneProcess.Refresh();
                     if (_nzbDroneProcess.HasExited)
                     {
-                        var log = File.ReadAllLines(Path.Combine(AppData, "logs", "Radarr.trace.txt"));
+                        var log = File.ReadAllLines(Path.Combine(AppData, "logs", "Whisparr.trace.txt"));
                         var output = log.Join(Environment.NewLine);
                         TestContext.Progress.WriteLine("Process has exited prematurely: ExitCode={0} Output:\n{1}", _nzbDroneProcess.ExitCode, output);
                     }
@@ -123,8 +123,8 @@ namespace NzbDrone.Test.Common
                     _processProvider.Kill(_nzbDroneProcess.Id);
                 }
 
-                _processProvider.KillAll(ProcessProvider.RADARR_CONSOLE_PROCESS_NAME);
-                _processProvider.KillAll(ProcessProvider.RADARR_PROCESS_NAME);
+                _processProvider.KillAll(ProcessProvider.WHISPARR_CONSOLE_PROCESS_NAME);
+                _processProvider.KillAll(ProcessProvider.WHISPARR_PROCESS_NAME);
             }
             catch (InvalidOperationException)
             {
@@ -134,25 +134,25 @@ namespace NzbDrone.Test.Common
             TestBase.DeleteTempFolder(AppData);
         }
 
-        private void Start(string outputRadarrConsoleExe)
+        private void Start(string outputWhisparrConsoleExe)
         {
             StringDictionary envVars = new ();
             if (PostgresOptions?.Host != null)
             {
-                envVars.Add("Radarr__Postgres__Host", PostgresOptions.Host);
-                envVars.Add("Radarr__Postgres__Port", PostgresOptions.Port.ToString());
-                envVars.Add("Radarr__Postgres__User", PostgresOptions.User);
-                envVars.Add("Radarr__Postgres__Password", PostgresOptions.Password);
-                envVars.Add("Radarr__Postgres__MainDb", PostgresOptions.MainDb);
-                envVars.Add("Radarr__Postgres__LogDb", PostgresOptions.LogDb);
+                envVars.Add("Whisparr__Postgres__Host", PostgresOptions.Host);
+                envVars.Add("Whisparr__Postgres__Port", PostgresOptions.Port.ToString());
+                envVars.Add("Whisparr__Postgres__User", PostgresOptions.User);
+                envVars.Add("Whisparr__Postgres__Password", PostgresOptions.Password);
+                envVars.Add("Whisparr__Postgres__MainDb", PostgresOptions.MainDb);
+                envVars.Add("Whisparr__Postgres__LogDb", PostgresOptions.LogDb);
 
                 TestContext.Progress.WriteLine("Using env vars:\n{0}", envVars.ToJson());
             }
 
-            TestContext.Progress.WriteLine("Starting instance from {0} on port {1}", outputRadarrConsoleExe, Port);
+            TestContext.Progress.WriteLine("Starting instance from {0} on port {1}", outputWhisparrConsoleExe, Port);
 
             var args = "-nobrowser -nosingleinstancecheck -data=\"" + AppData + "\"";
-            _nzbDroneProcess = _processProvider.Start(outputRadarrConsoleExe, args, envVars, OnOutputDataReceived, OnOutputDataReceived);
+            _nzbDroneProcess = _processProvider.Start(outputWhisparrConsoleExe, args, envVars, OnOutputDataReceived, OnOutputDataReceived);
         }
 
         private void OnOutputDataReceived(string data)

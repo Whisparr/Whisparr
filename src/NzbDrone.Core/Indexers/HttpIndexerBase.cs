@@ -60,6 +60,16 @@ namespace NzbDrone.Core.Indexers
             return FetchReleases(g => g.GetSearchRequests(searchCriteria));
         }
 
+        public override Task<IList<ReleaseInfo>> Fetch(SceneSearchCriteria searchCriteria)
+        {
+            if (!SupportsSearch)
+            {
+                return Task.FromResult<IList<ReleaseInfo>>(Array.Empty<ReleaseInfo>());
+            }
+
+            return FetchReleases(g => g.GetSearchRequests(searchCriteria));
+        }
+
         protected IndexerPageableRequestChain GetRequestChain(SearchCriteriaBase searchCriteria = null)
         {
             var generator = GetRequestGenerator();

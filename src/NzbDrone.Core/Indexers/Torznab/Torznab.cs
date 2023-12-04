@@ -135,7 +135,7 @@ namespace NzbDrone.Core.Indexers.Torznab
                 }
 
                 if (capabilities.SupportedMovieSearchParameters != null &&
-                    new[] { "q", "tmdbid", "imdbid" }.Any(v => capabilities.SupportedMovieSearchParameters.Contains(v)))
+                    new[] { "q", "tmdbid" }.Any(v => capabilities.SupportedMovieSearchParameters.Contains(v)))
                 {
                     return null;
                 }

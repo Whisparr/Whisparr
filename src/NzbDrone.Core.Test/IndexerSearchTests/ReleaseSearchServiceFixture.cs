@@ -10,7 +10,6 @@ using NzbDrone.Core.Indexers;
 using NzbDrone.Core.IndexerSearch;
 using NzbDrone.Core.IndexerSearch.Definitions;
 using NzbDrone.Core.Movies;
-using NzbDrone.Core.Movies.Translations;
 using NzbDrone.Core.Test.Framework;
 
 namespace NzbDrone.Core.Test.IndexerSearchTests
@@ -42,10 +41,6 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
             Mocker.GetMock<IMovieService>()
                 .Setup(v => v.GetMovie(_movie.Id))
                 .Returns(_movie);
-
-            Mocker.GetMock<IMovieTranslationService>()
-                .Setup(s => s.GetAllTranslationsForMovieMetadata(It.IsAny<int>()))
-                .Returns(new List<MovieTranslation>());
         }
 
         private List<SearchCriteriaBase> WatchForSearchCriteria()

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using Newtonsoft.Json;
 using NzbDrone.Common.Extensions;
@@ -28,14 +29,14 @@ namespace NzbDrone.Core.ImportLists.TMDb
                 return movies;
             }
 
-            return jsonResponse.Results.SelectList(MapListMovie);
+            return jsonResponse.Results.Where(x => x.Adult).SelectList(MapListMovie);
         }
 
         protected ImportListMovie MapListMovie(MovieResultResource movieResult)
         {
             var movie =  new ImportListMovie
             {
-                TmdbId = movieResult.Id,
+                ForeignId = movieResult.Id.ToString(),
                 Title = movieResult.Title,
             };
 

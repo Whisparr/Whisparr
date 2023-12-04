@@ -21,15 +21,15 @@ namespace NzbDrone.Core.Notifications
         protected const string APPLICATION_UPDATE_TITLE = "Application Updated";
         protected const string MANUAL_INTERACTION_REQUIRED_TITLE = "Manual Interaction";
 
-        protected const string MOVIE_GRABBED_TITLE_BRANDED = "Radarr - " + MOVIE_GRABBED_TITLE;
-        protected const string MOVIE_ADDED_TITLE_BRANDED = "Radarr - " + MOVIE_ADDED_TITLE;
-        protected const string MOVIE_DOWNLOADED_TITLE_BRANDED = "Radarr - " + MOVIE_DOWNLOADED_TITLE;
-        protected const string MOVIE_DELETED_TITLE_BRANDED = "Radarr - " + MOVIE_DELETED_TITLE;
-        protected const string MOVIE_FILE_DELETED_TITLE_BRANDED = "Radarr - " + MOVIE_FILE_DELETED_TITLE;
-        protected const string HEALTH_ISSUE_TITLE_BRANDED = "Radarr - " + HEALTH_ISSUE_TITLE;
-        protected const string HEALTH_RESTORED_TITLE_BRANDED = "Radarr - " + HEALTH_RESTORED_TITLE;
-        protected const string APPLICATION_UPDATE_TITLE_BRANDED = "Radarr - " + APPLICATION_UPDATE_TITLE;
-        protected const string MANUAL_INTERACTION_REQUIRED_TITLE_BRANDED = "Radarr - " + MANUAL_INTERACTION_REQUIRED_TITLE;
+        protected const string MOVIE_GRABBED_TITLE_BRANDED = "Whisparr - " + MOVIE_GRABBED_TITLE;
+        protected const string MOVIE_ADDED_TITLE_BRANDED = "Whisparr - " + MOVIE_ADDED_TITLE;
+        protected const string MOVIE_DOWNLOADED_TITLE_BRANDED = "Whisparr - " + MOVIE_DOWNLOADED_TITLE;
+        protected const string MOVIE_DELETED_TITLE_BRANDED = "Whisparr - " + MOVIE_DELETED_TITLE;
+        protected const string MOVIE_FILE_DELETED_TITLE_BRANDED = "Whisparr - " + MOVIE_FILE_DELETED_TITLE;
+        protected const string HEALTH_ISSUE_TITLE_BRANDED = "Whisparr - " + HEALTH_ISSUE_TITLE;
+        protected const string HEALTH_RESTORED_TITLE_BRANDED = "Whisparr - " + HEALTH_RESTORED_TITLE;
+        protected const string APPLICATION_UPDATE_TITLE_BRANDED = "Whisparr - " + APPLICATION_UPDATE_TITLE;
+        protected const string MANUAL_INTERACTION_REQUIRED_TITLE_BRANDED = "Whisparr - " + MANUAL_INTERACTION_REQUIRED_TITLE;
 
         public abstract string Name { get; }
 

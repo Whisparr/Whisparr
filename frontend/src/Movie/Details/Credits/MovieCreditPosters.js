@@ -126,17 +126,15 @@ class MovieCreditPosters extends Component {
           }}
         >
           {items.map((credit) => (
-            <SwiperSlide key={credit.id} style={{ width: posterWidth, height: rowHeight }}>
+            <SwiperSlide key={credit.creditForeignId} style={{ width: posterWidth, height: rowHeight }}>
               <MovieCreditPosterConnector
-                key={credit.id}
+                key={credit.creditForeignId}
                 component={itemComponent}
                 posterWidth={posterWidth}
                 posterHeight={posterHeight}
-                tmdbId={credit.personTmdbId}
-                personName={credit.personName}
+                performer={credit.performer}
                 job={credit.job}
                 character={credit.character}
-                images={credit.images}
               />
             </SwiperSlide>
           ))}

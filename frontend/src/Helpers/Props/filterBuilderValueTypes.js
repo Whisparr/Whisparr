@@ -10,6 +10,5 @@ export const QUALITY = 'quality';
 export const QUALITY_PROFILE = 'qualityProfile';
 export const MOVIE = 'movie';
 export const RELEASE_STATUS = 'releaseStatus';
-export const MINIMUM_AVAILABILITY = 'minimumAvailability';
 export const TAG = 'tag';
 export const IMPORTLIST = 'importList';

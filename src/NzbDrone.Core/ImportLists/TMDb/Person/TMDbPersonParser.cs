@@ -38,12 +38,12 @@ namespace NzbDrone.Core.ImportLists.TMDb.Person
                 foreach (var movie in jsonResponse.Cast)
                 {
                     // Movies with no Year Fix
-                    if (string.IsNullOrWhiteSpace(movie.ReleaseDate))
+                    if (string.IsNullOrWhiteSpace(movie.ReleaseDate) || !movie.Adult)
                     {
                         continue;
                     }
 
-                    movies.AddIfNotNull(new ImportListMovie { TmdbId = movie.Id });
+                    movies.AddIfNotNull(new ImportListMovie { ForeignId = movie.Id.ToString(), TmdbId = movie.Id });
                 }
             }
 
@@ -52,14 +52,14 @@ namespace NzbDrone.Core.ImportLists.TMDb.Person
                 foreach (var movie in jsonResponse.Crew)
                 {
                     // Movies with no Year Fix
-                    if (string.IsNullOrWhiteSpace(movie.ReleaseDate))
+                    if (string.IsNullOrWhiteSpace(movie.ReleaseDate) || !movie.Adult)
                     {
                         continue;
                     }
 
                     if (crewTypes.Contains(movie.Department))
                     {
-                        movies.AddIfNotNull(new ImportListMovie { TmdbId = movie.Id });
+                        movies.AddIfNotNull(new ImportListMovie { ForeignId = movie.Id.ToString(), TmdbId = movie.Id });
                     }
                 }
             }

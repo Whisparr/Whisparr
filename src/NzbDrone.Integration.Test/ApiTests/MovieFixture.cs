@@ -13,10 +13,10 @@ namespace NzbDrone.Integration.Test.ApiTests
         [Order(0)]
         public void add_movie_with_tags_should_store_them()
         {
-            EnsureNoMovie(680, "Pulp Fiction");
+            EnsureNoMovie(42019, "Taboo");
             var tag = EnsureTag("abc");
 
-            var movie = Movies.Lookup("imdb:tt0110912").Single();
+            var movie = Movies.Lookup("tmdb:42019").Single();
 
             movie.QualityProfileId = 1;
             movie.Path = Path.Combine(MovieRootFolder, movie.Title);
@@ -33,9 +33,9 @@ namespace NzbDrone.Integration.Test.ApiTests
         [Order(0)]
         public void add_movie_without_profileid_should_return_badrequest()
         {
-            EnsureNoMovie(680, "Pulp Fiction");
+            EnsureNoMovie(680, "Taboo");
 
-            var movie = Movies.Lookup("imdb:tt0110912").Single();
+            var movie = Movies.Lookup("tmdb:42019").Single();
 
             movie.Path = Path.Combine(MovieRootFolder, movie.Title);
 
@@ -46,9 +46,9 @@ namespace NzbDrone.Integration.Test.ApiTests
         [Order(0)]
         public void add_movie_without_path_should_return_badrequest()
         {
-            EnsureNoMovie(680, "Pulp Fiction");
+            EnsureNoMovie(42019, "Taboo");
 
-            var movie = Movies.Lookup("imdb:tt0110912").Single();
+            var movie = Movies.Lookup("tmdb:42019").Single();
 
             movie.QualityProfileId = 1;
 
@@ -59,9 +59,9 @@ namespace NzbDrone.Integration.Test.ApiTests
         [Order(1)]
         public void add_movie()
         {
-            EnsureNoMovie(680, "Pulp Fiction");
+            EnsureNoMovie(42019, "Taboo");
 
-            var movie = Movies.Lookup("imdb:tt0110912").Single();
+            var movie = Movies.Lookup("tmdb:42019").Single();
 
             movie.QualityProfileId = 1;
             movie.Path = Path.Combine(MovieRootFolder, movie.Title);
@@ -78,14 +78,14 @@ namespace NzbDrone.Integration.Test.ApiTests
         [Order(2)]
         public void get_all_movies()
         {
-            EnsureMovie(680, "Pulp Fiction");
-            EnsureMovie(155, "The Dark Knight");
+            EnsureMovie(42019, "Taboo");
+            EnsureMovie(37795, "Taboo II");
 
             var movies = Movies.All();
 
             movies.Should().NotBeNullOrEmpty();
-            movies.Should().Contain(v => v.ImdbId == "tt0110912");
-            movies.Should().Contain(v => v.ImdbId == "tt0468569");
+            movies.Should().Contain(v => v.TmdbId == 42019);
+            movies.Should().Contain(v => v.TmdbId == 37795);
             movies.Should().Contain(v => v.Images.All(i => i.RemoteUrl.Contains("https://image.tmdb.org")));
         }
 
@@ -93,18 +93,18 @@ namespace NzbDrone.Integration.Test.ApiTests
         [Order(2)]
         public void get_movie_by_tmdbid()
         {
-            EnsureMovie(680, "Pulp Fiction");
-            EnsureMovie(155, "The Dark Knight");
+            EnsureMovie(42019, "Taboo");
+            EnsureMovie(37795, "Taboo II");
 
             var queryParams = new Dictionary<string, object>()
             {
-                { "tmdbId", 680 }
+                { "tmdbId", 42019 }
             };
 
             var movies = Movies.All(queryParams);
 
             movies.Should().NotBeNullOrEmpty();
-            movies.Should().Contain(v => v.ImdbId == "tt0110912");
+            movies.Should().Contain(v => v.TmdbId == 42019);
             movies.Should().Contain(v => v.Images.All(i => i.RemoteUrl.Contains("https://image.tmdb.org")));
         }
 
@@ -112,11 +112,11 @@ namespace NzbDrone.Integration.Test.ApiTests
         [Order(2)]
         public void get_movie_by_id()
         {
-            var movie = EnsureMovie(680, "Pulp Fiction");
+            var movie = EnsureMovie(42019, "Taboo");
 
             var result = Movies.Get(movie.Id);
 
-            result.ImdbId.Should().Be("tt0110912");
+            result.TmdbId.Should().Be(42019);
         }
 
         [Test]
@@ -129,7 +129,7 @@ namespace NzbDrone.Integration.Test.ApiTests
         [Order(2)]
         public void update_movie_profile_id()
         {
-            var movie = EnsureMovie(680, "Pulp Fiction");
+            var movie = EnsureMovie(42019, "Taboo");
 
             var profileId = 1;
             if (movie.QualityProfileId == profileId)
@@ -148,7 +148,7 @@ namespace NzbDrone.Integration.Test.ApiTests
         [Order(3)]
         public void update_movie_monitored()
         {
-            var movie = EnsureMovie(680, "Pulp Fiction", false);
+            var movie = EnsureMovie(42019, "Taboo", false);
 
             movie.Monitored.Should().BeFalse();
 
@@ -163,7 +163,7 @@ namespace NzbDrone.Integration.Test.ApiTests
         [Order(3)]
         public void update_movie_tags()
         {
-            var movie = EnsureMovie(680, "Pulp Fiction");
+            var movie = EnsureMovie(42019, "Taboo");
             var tag = EnsureTag("abc");
 
             if (movie.Tags.Contains(tag.Id))
@@ -186,13 +186,13 @@ namespace NzbDrone.Integration.Test.ApiTests
         [Order(4)]
         public void delete_movie()
         {
-            var movie = EnsureMovie(680, "Pulp Fiction");
+            var movie = EnsureMovie(42019, "Pulp Fiction");
 
             Movies.Get(movie.Id).Should().NotBeNull();
 
             Movies.Delete(movie.Id);
 
-            Movies.All().Should().NotContain(v => v.ImdbId == "tt0110912");
+            Movies.All().Should().NotContain(v => v.TmdbId == 42019);
         }
     }
 }

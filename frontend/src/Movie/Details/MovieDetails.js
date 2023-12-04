@@ -5,7 +5,6 @@ import TextTruncate from 'react-text-truncate';
 import Alert from 'Components/Alert';
 import FieldSet from 'Components/FieldSet';
 import Icon from 'Components/Icon';
-import ImdbRating from 'Components/ImdbRating';
 import InfoLabel from 'Components/InfoLabel';
 import IconButton from 'Components/Link/IconButton';
 import Marquee from 'Components/Marquee';
@@ -31,20 +30,18 @@ import MovieInteractiveSearchModalConnector from 'Movie/Search/MovieInteractiveS
 import MovieFileEditorTable from 'MovieFile/Editor/MovieFileEditorTable';
 import ExtraFileTable from 'MovieFile/Extras/ExtraFileTable';
 import OrganizePreviewModalConnector from 'Organize/OrganizePreviewModalConnector';
+import ScenePoster from 'Scene/ScenePoster';
 import QualityProfileNameConnector from 'Settings/Profiles/Quality/QualityProfileNameConnector';
 import fonts from 'Styles/Variables/fonts';
 import * as keyCodes from 'Utilities/Constants/keyCodes';
 import formatRuntime from 'Utilities/Date/formatRuntime';
 import formatBytes from 'Utilities/Number/formatBytes';
 import translate from 'Utilities/String/translate';
-import MovieCollectionLabelConnector from './../MovieCollectionLabelConnector';
 import MovieCastPostersConnector from './Credits/Cast/MovieCastPostersConnector';
-import MovieCrewPostersConnector from './Credits/Crew/MovieCrewPostersConnector';
 import MovieDetailsLinks from './MovieDetailsLinks';
 import MovieReleaseDates from './MovieReleaseDates';
 import MovieStatusLabel from './MovieStatusLabel';
 import MovieTagsConnector from './MovieTagsConnector';
-import MovieTitlesTable from './Titles/MovieTitlesTable';
 import styles from './MovieDetails.css';
 
 const defaultFontSize = parseInt(fonts.defaultFontSize);
@@ -229,11 +226,8 @@ class MovieDetails extends Component {
       tmdbId,
       imdbId,
       title,
-      originalTitle,
       year,
-      inCinemas,
-      physicalRelease,
-      digitalRelease,
+      releaseDate,
       runtime,
       certification,
       ratings,
@@ -243,19 +237,17 @@ class MovieDetails extends Component {
       monitored,
       studio,
       genres,
-      collection,
       overview,
-      youTubeTrailerId,
       isAvailable,
       images,
       tags,
+      itemType,
       isSaving,
       isRefreshing,
       isSearching,
       isFetching,
       isSmallScreen,
       movieFilesError,
-      movieCreditsError,
       extraFilesError,
       hasMovieFiles,
       previousMovie,
@@ -264,7 +256,8 @@ class MovieDetails extends Component {
       onRefreshPress,
       onSearchPress,
       queueItem,
-      movieRuntimeFormat
+      movieRuntimeFormat,
+      safeForWorkMode
     } = this.props;
 
     const {
@@ -280,6 +273,7 @@ class MovieDetails extends Component {
 
     const fanartUrl = getFanartUrl(images);
     const marqueeWidth = isSmallScreen ? titleWidth : (titleWidth - 150);
+    const ImageComponent = itemType === 'movie' ? MoviePoster : ScenePoster;
 
     return (
       <PageContent title={title}>
@@ -348,7 +342,7 @@ class MovieDetails extends Component {
         </PageToolbar>
 
         <PageContentBody innerClassName={styles.innerContentBody}>
-          <div className={styles.header}>
+          <div className={itemType === 'movie' ? styles.header : styles.sceneHeader}>
             <div
               className={styles.backdrop}
               style={
@@ -361,8 +355,9 @@ class MovieDetails extends Component {
             </div>
 
             <div className={styles.headerContent}>
-              <MoviePoster
-                className={styles.poster}
+              <ImageComponent
+                blur={safeForWorkMode}
+                className={itemType === 'movie' ? styles.poster : styles.screenShot}
                 images={images}
                 size={250}
                 lazy={false}
@@ -383,7 +378,7 @@ class MovieDetails extends Component {
                       </div>
 
                       <div className={styles.title} style={{ width: marqueeWidth }}>
-                        <Marquee text={title} title={originalTitle} />
+                        <Marquee text={title} />
                       </div>
                     </div>
 
@@ -426,9 +421,7 @@ class MovieDetails extends Component {
                             title={translate('ReleaseDates')}
                             body={
                               <MovieReleaseDates
-                                inCinemas={inCinemas}
-                                physicalRelease={physicalRelease}
-                                digitalRelease={digitalRelease}
+                                releaseDate={releaseDate}
                               />
                             }
                             position={tooltipPositions.BOTTOM}
@@ -456,7 +449,6 @@ class MovieDetails extends Component {
                             <MovieDetailsLinks
                               tmdbId={tmdbId}
                               imdbId={imdbId}
-                              youTubeTrailerId={youTubeTrailerId}
                             />
                           }
                           position={tooltipPositions.BOTTOM}
@@ -489,15 +481,6 @@ class MovieDetails extends Component {
                     !!ratings.tmdb &&
                       <span className={styles.rating}>
                         <TmdbRating
-                          ratings={ratings}
-                          iconSize={20}
-                        />
-                      </span>
-                  }
-                  {
-                    !!ratings.imdb &&
-                      <span className={styles.rating}>
-                        <ImdbRating
                           ratings={ratings}
                           iconSize={20}
                         />
@@ -568,21 +551,6 @@ class MovieDetails extends Component {
                   </InfoLabel>
 
                   {
-                    !!collection &&
-                      <InfoLabel
-                        className={styles.detailsInfoLabel}
-                        title={translate('Collection')}
-                        size={sizes.LARGE}
-                      >
-                        <div className={styles.collection}>
-                          <MovieCollectionLabelConnector
-                            tmdbId={collection.tmdbId}
-                          />
-                        </div>
-                      </InfoLabel>
-                  }
-
-                  {
                     !!studio && !isSmallScreen &&
                       <InfoLabel
                         className={styles.detailsInfoLabel}
@@ -631,14 +599,6 @@ class MovieDetails extends Component {
             }
 
             {
-              !isFetching && movieCreditsError ?
-                <Alert kind={kinds.DANGER}>
-                  {translate('LoadingMovieCreditsFailed')}
-                </Alert> :
-                null
-            }
-
-            {
               !isFetching && extraFilesError ?
                 <Alert kind={kinds.DANGER}>
                   {translate('LoadingMovieExtraFilesFailed')}
@@ -658,19 +618,8 @@ class MovieDetails extends Component {
 
             <FieldSet legend={translate('Cast')}>
               <MovieCastPostersConnector
-                isSmallScreen={isSmallScreen}
-              />
-            </FieldSet>
-
-            <FieldSet legend={translate('Crew')}>
-              <MovieCrewPostersConnector
-                isSmallScreen={isSmallScreen}
-              />
-            </FieldSet>
-
-            <FieldSet legend={translate('Titles')}>
-              <MovieTitlesTable
                 movieId={id}
+                isSmallScreen={isSmallScreen}
               />
             </FieldSet>
           </div>
@@ -727,7 +676,6 @@ MovieDetails.propTypes = {
   tmdbId: PropTypes.number.isRequired,
   imdbId: PropTypes.string,
   title: PropTypes.string.isRequired,
-  originalTitle: PropTypes.string,
   year: PropTypes.number.isRequired,
   runtime: PropTypes.number.isRequired,
   certification: PropTypes.string,
@@ -740,15 +688,13 @@ MovieDetails.propTypes = {
   studio: PropTypes.string,
   genres: PropTypes.arrayOf(PropTypes.string).isRequired,
   collection: PropTypes.object,
-  youTubeTrailerId: PropTypes.string,
   isAvailable: PropTypes.bool.isRequired,
-  inCinemas: PropTypes.string,
-  physicalRelease: PropTypes.string,
-  digitalRelease: PropTypes.string,
+  releaseDate: PropTypes.string,
   overview: PropTypes.string.isRequired,
   images: PropTypes.arrayOf(PropTypes.object).isRequired,
   alternateTitles: PropTypes.arrayOf(PropTypes.string).isRequired,
   tags: PropTypes.arrayOf(PropTypes.number).isRequired,
+  itemType: PropTypes.string.isRequired,
   isSaving: PropTypes.bool.isRequired,
   isRefreshing: PropTypes.bool.isRequired,
   isSearching: PropTypes.bool.isRequired,
@@ -757,7 +703,6 @@ MovieDetails.propTypes = {
   isSmallScreen: PropTypes.bool.isRequired,
   isSidebarVisible: PropTypes.bool.isRequired,
   movieFilesError: PropTypes.object,
-  movieCreditsError: PropTypes.object,
   extraFilesError: PropTypes.object,
   hasMovieFiles: PropTypes.bool.isRequired,
   previousMovie: PropTypes.object.isRequired,
@@ -767,7 +712,8 @@ MovieDetails.propTypes = {
   onSearchPress: PropTypes.func.isRequired,
   onGoToMovie: PropTypes.func.isRequired,
   queueItem: PropTypes.object,
-  movieRuntimeFormat: PropTypes.string.isRequired
+  movieRuntimeFormat: PropTypes.string.isRequired,
+  safeForWorkMode: PropTypes.bool
 };
 
 MovieDetails.defaultProps = {

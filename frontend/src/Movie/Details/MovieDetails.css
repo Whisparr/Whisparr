@@ -8,6 +8,12 @@
   height: 425px;
 }
 
+.sceneHeader {
+  position: relative;
+  width: 100%;
+  height: 325px;
+}
+
 .errorMessage {
   margin-top: 20px;
   text-align: center;
@@ -44,6 +50,14 @@
   margin-right: 35px;
   width: 250px;
   height: 368px;
+}
+
+.screenShot {
+  z-index: 2;
+  flex-shrink: 0;
+  margin-right: 35px;
+  width: 368px;
+  height: 250px;
 }
 
 .info {

@@ -45,7 +45,6 @@ function EditImportListModalContent(props) {
     enableAuto,
     minRefreshInterval,
     monitor,
-    minimumAvailability,
     qualityProfileId,
     rootFolderPath,
     searchOnAdd,
@@ -155,16 +154,6 @@ function EditImportListModalContent(props) {
               </FormGroup>
 
               <FormGroup>
-                <FormLabel>{translate('MinimumAvailability')}</FormLabel>
-                <FormInputGroup
-                  type={inputTypes.AVAILABILITY_SELECT}
-                  name="minimumAvailability"
-                  {...minimumAvailability}
-                  onChange={onInputChange}
-                />
-              </FormGroup>
-
-              <FormGroup>
                 <FormLabel>{translate('QualityProfile')}</FormLabel>
 
                 <FormInputGroup
@@ -188,7 +177,7 @@ function EditImportListModalContent(props) {
               </FormGroup>
 
               <FormGroup>
-                <FormLabel>{translate('RadarrTags')}</FormLabel>
+                <FormLabel>{translate('WhisparrTags')}</FormLabel>
 
                 <FormInputGroup
                   type={inputTypes.TAG}

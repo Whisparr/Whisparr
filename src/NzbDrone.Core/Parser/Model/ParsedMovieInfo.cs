@@ -16,15 +16,18 @@ namespace NzbDrone.Core.Parser.Model
         public string OriginalTitle { get; set; }
         public string ReleaseTitle { get; set; }
         public string SimpleReleaseTitle { get; set; }
+        public string StudioTitle { get; set; }
         public QualityModel Quality { get; set; }
         public List<Language> Languages { get; set; }
         public string ReleaseGroup { get; set; }
         public string ReleaseHash { get; set; }
+        public string ReleaseDate { get; set; }
         public string Edition { get; set; }
         public int Year { get; set; }
         public string ImdbId { get; set; }
         public int TmdbId { get; set; }
         public string HardcodedSubs { get; set; }
+        public string ReleaseTokens { get; set; }
 
         public string MovieTitle => PrimaryMovieTitle;
 
@@ -38,6 +41,18 @@ namespace NzbDrone.Core.Parser.Model
                 }
 
                 return null;
+            }
+        }
+
+        public bool IsScene
+        {
+            get
+            {
+                return !string.IsNullOrWhiteSpace(ReleaseDate);
+            }
+
+            private set
+            {
             }
         }
 

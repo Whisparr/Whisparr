@@ -9,7 +9,7 @@ namespace NzbDrone.Core.ImportLists.ImportExclusions
     public interface IImportExclusionsService
     {
         List<ImportExclusion> GetAllExclusions();
-        bool IsMovieExcluded(int tmdbId);
+        bool IsMovieExcluded(string foreignId);
         ImportExclusion AddExclusion(ImportExclusion exclusion);
         List<ImportExclusion> AddExclusions(List<ImportExclusion> exclusions);
         void RemoveExclusion(ImportExclusion exclusion);
@@ -31,9 +31,9 @@ namespace NzbDrone.Core.ImportLists.ImportExclusions
 
         public ImportExclusion AddExclusion(ImportExclusion exclusion)
         {
-            if (_exclusionRepository.IsMovieExcluded(exclusion.TmdbId))
+            if (_exclusionRepository.IsMovieExcluded(exclusion.ForeignId))
             {
-                return _exclusionRepository.GetByTmdbid(exclusion.TmdbId);
+                return _exclusionRepository.GetByTmdbid(exclusion.ForeignId);
             }
 
             return _exclusionRepository.Insert(exclusion);
@@ -51,9 +51,9 @@ namespace NzbDrone.Core.ImportLists.ImportExclusions
             return _exclusionRepository.All().ToList();
         }
 
-        public bool IsMovieExcluded(int tmdbId)
+        public bool IsMovieExcluded(string foreignId)
         {
-            return _exclusionRepository.IsMovieExcluded(tmdbId);
+            return _exclusionRepository.IsMovieExcluded(foreignId);
         }
 
         public void RemoveExclusion(ImportExclusion exclusion)
@@ -77,7 +77,7 @@ namespace NzbDrone.Core.ImportLists.ImportExclusions
             {
                 _logger.Debug("Adding {0} Deleted Movies to Import Exclusions", message.Movies.Count);
 
-                var exclusions = message.Movies.Select(m => new ImportExclusion { TmdbId = m.TmdbId, MovieTitle = m.Title, MovieYear = m.Year }).ToList();
+                var exclusions = message.Movies.Select(m => new ImportExclusion { ForeignId = m.ForeignId, MovieTitle = m.Title, MovieYear = m.Year }).ToList();
                 _exclusionRepository.InsertMany(DeDupeExclusions(exclusions));
             }
         }
@@ -87,8 +87,8 @@ namespace NzbDrone.Core.ImportLists.ImportExclusions
             var existingExclusions = _exclusionRepository.AllExcludedTmdbIds();
 
             return exclusions
-                .DistinctBy(x => x.TmdbId)
-                .Where(x => !existingExclusions.Contains(x.TmdbId))
+                .DistinctBy(x => x.ForeignId)
+                .Where(x => !existingExclusions.Contains(x.ForeignId))
                 .ToList();
         }
     }

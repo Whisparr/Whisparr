@@ -10,7 +10,6 @@ import HistoryEventTypeFilterBuilderRowValue from './HistoryEventTypeFilterBuild
 import ImportListFilterBuilderRowValueConnector from './ImportListFilterBuilderRowValueConnector';
 import IndexerFilterBuilderRowValueConnector from './IndexerFilterBuilderRowValueConnector';
 import LanguageFilterBuilderRowValue from './LanguageFilterBuilderRowValue';
-import MinimumAvailabilityFilterBuilderRowValue from './MinimumAvailabilityFilterBuilderRowValue';
 import MovieFilterBuilderRowValue from './MovieFilterBuilderRowValue';
 import ProtocolFilterBuilderRowValue from './ProtocolFilterBuilderRowValue';
 import QualityFilterBuilderRowValueConnector from './QualityFilterBuilderRowValueConnector';
@@ -84,9 +83,6 @@ function getRowValueConnector(selectedFilterBuilderProp) {
 
     case filterBuilderValueTypes.RELEASE_STATUS:
       return ReleaseStatusFilterBuilderRowValue;
-
-    case filterBuilderValueTypes.MINIMUM_AVAILABILITY:
-      return MinimumAvailabilityFilterBuilderRowValue;
 
     case filterBuilderValueTypes.TAG:
       return TagFilterBuilderRowValueConnector;

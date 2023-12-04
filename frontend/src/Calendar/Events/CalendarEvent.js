@@ -1,11 +1,11 @@
 import classNames from 'classnames';
-import moment from 'moment';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import Icon from 'Components/Icon';
 import Link from 'Components/Link/Link';
 import { icons, kinds } from 'Helpers/Props';
 import getStatusStyle from 'Utilities/Movie/getStatusStyle';
+import firstCharToUpper from 'Utilities/String/firstCharToUpper';
 import translate from 'Utilities/String/translate';
 import CalendarEventQueueDetails from './CalendarEventQueueDetails';
 import styles from './CalendarEvent.css';
@@ -19,13 +19,10 @@ class CalendarEvent extends Component {
     const {
       movieFile,
       isAvailable,
-      inCinemas,
-      physicalRelease,
-      digitalRelease,
       title,
       titleSlug,
       genres,
-      date,
+      itemType,
       monitored,
       certification,
       hasFile,
@@ -42,19 +39,6 @@ class CalendarEvent extends Component {
     const statusStyle = getStatusStyle(null, isMonitored, hasFile, isAvailable, 'style', isDownloading);
     const joinedGenres = genres.slice(0, 2).join(', ');
     const link = `/movie/${titleSlug}`;
-    const eventType = [];
-
-    if (inCinemas && moment(date).isSame(moment(inCinemas), 'day')) {
-      eventType.push('Cinemas');
-    }
-
-    if (physicalRelease && moment(date).isSame(moment(physicalRelease), 'day')) {
-      eventType.push('Physical');
-    }
-
-    if (digitalRelease && moment(date).isSame(moment(digitalRelease), 'day')) {
-      eventType.push('Digital');
-    }
 
     return (
       <div
@@ -124,7 +108,7 @@ class CalendarEvent extends Component {
             showMovieInformation ?
               <div className={styles.movieInfo}>
                 <div className={styles.genres}>
-                  {eventType.join(', ')}
+                  {firstCharToUpper(itemType)}
                 </div>
                 <div>
                   {certification}
@@ -145,9 +129,8 @@ CalendarEvent.propTypes = {
   title: PropTypes.string.isRequired,
   titleSlug: PropTypes.string.isRequired,
   isAvailable: PropTypes.bool.isRequired,
-  inCinemas: PropTypes.string,
-  physicalRelease: PropTypes.string,
-  digitalRelease: PropTypes.string,
+  releaseDate: PropTypes.string,
+  itemType: PropTypes.string.isRequired,
   date: PropTypes.string.isRequired,
   monitored: PropTypes.bool.isRequired,
   certification: PropTypes.string,

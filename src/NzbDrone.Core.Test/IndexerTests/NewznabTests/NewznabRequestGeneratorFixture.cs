@@ -26,7 +26,7 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
 
             _movieSearchCriteria = new MovieSearchCriteria
             {
-                Movie = new Movies.Movie { ImdbId = "tt0076759", Title = "Star Wars", Year = 1977, TmdbId = 11 },
+                Movie = new Movies.Movie { ImdbId = "tt0076759", Title = "Star Wars", Year = 1977, ForeignId = "11", TmdbId = 11 },
                 SceneTitles = new List<string> { "Star Wars" }
             };
 
@@ -68,7 +68,7 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
         {
             var results = Subject.GetSearchRequests(_movieSearchCriteria);
 
-            results.GetAllTiers().Should().HaveCount(2);
+            results.GetAllTiers().Should().HaveCount(1);
 
             var pages = results.GetAllTiers().First().Take(3).ToList();
 
@@ -82,39 +82,11 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
         {
             var results = Subject.GetSearchRequests(_movieSearchCriteria);
 
-            results.GetAllTiers().Should().HaveCount(2);
+            results.GetAllTiers().Should().HaveCount(1);
 
             var pages = results.GetAllTiers().First().Take(500).ToList();
 
             pages.Count.Should().BeLessThan(500);
-        }
-
-        [Test]
-        public void should_not_search_by_imdbid_if_not_supported()
-        {
-            _capabilities.SupportedMovieSearchParameters = new[] { "q" };
-
-            var results = Subject.GetSearchRequests(_movieSearchCriteria);
-
-            results.GetAllTiers().Should().HaveCount(1);
-
-            var page = results.GetAllTiers().First().First();
-
-            page.Url.Query.Should().NotContain("imdbid=0076759");
-            page.Url.Query.Should().Contain("q=Star");
-        }
-
-        [Test]
-        public void should_search_by_imdbid_if_supported()
-        {
-            _capabilities.SupportedMovieSearchParameters = new[] { "q", "imdbid" };
-
-            var results = Subject.GetSearchRequests(_movieSearchCriteria);
-            results.GetTier(0).Should().HaveCount(1);
-
-            var page = results.GetAllTiers().First().First();
-
-            page.Url.Query.Should().Contain("imdbid=0076759");
         }
 
         [Test]
@@ -128,35 +100,6 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
             var page = results.GetAllTiers().First().First();
 
             page.Url.Query.Should().Contain("tmdbid=11");
-        }
-
-        [Test]
-        public void should_prefer_search_by_tmdbid_if_rid_supported()
-        {
-            _capabilities.SupportedMovieSearchParameters = new[] { "q", "tmdbid", "imdbid" };
-
-            var results = Subject.GetSearchRequests(_movieSearchCriteria);
-            results.GetTier(0).Should().HaveCount(1);
-
-            var page = results.GetAllTiers().First().First();
-
-            page.Url.Query.Should().Contain("tmdbid=11");
-            page.Url.Query.Should().NotContain("imdbid=0076759");
-        }
-
-        [Test]
-        public void should_use_aggregrated_id_search_if_supported()
-        {
-            _capabilities.SupportedMovieSearchParameters = new[] { "q", "tmdbid", "imdbid" };
-            _capabilities.SupportsAggregateIdSearch = true;
-
-            var results = Subject.GetSearchRequests(_movieSearchCriteria);
-            results.GetTier(0).Should().HaveCount(1);
-
-            var page = results.GetTier(0).First().First();
-
-            page.Url.Query.Should().Contain("tmdbid=11");
-            page.Url.Query.Should().Contain("imdbid=0076759");
         }
 
         [Test]
@@ -213,7 +156,7 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
 
             var movieRawSearchCriteria = new MovieSearchCriteria
             {
-                Movie = new Movies.Movie { Title = "Some Movie & Title: Words", Year = 2021, TmdbId = 123 },
+                Movie = new Movies.Movie { Title = "Some Movie & Title: Words", Year = 2021, ForeignId = "123", TmdbId = 123 },
                 SceneTitles = new List<string> { "Some Movie & Title: Words" }
             };
 
@@ -234,7 +177,7 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
 
             var movieRawSearchCriteria = new MovieSearchCriteria
             {
-                Movie = new Movies.Movie { Title = "Some Movie & Title: Words", Year = 2021, TmdbId = 123 },
+                Movie = new Movies.Movie { Title = "Some Movie & Title: Words", Year = 2021, ForeignId = "123", TmdbId = 123 },
                 SceneTitles = new List<string> { "Some Movie & Title: Words" }
             };
 

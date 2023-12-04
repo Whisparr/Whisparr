@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using FizzWare.NBuilder;
 using Moq;
@@ -8,9 +7,9 @@ using NzbDrone.Core.AutoTagging;
 using NzbDrone.Core.Exceptions;
 using NzbDrone.Core.MetadataSource;
 using NzbDrone.Core.Movies;
-using NzbDrone.Core.Movies.Collections;
 using NzbDrone.Core.Movies.Commands;
-using NzbDrone.Core.Movies.Credits;
+using NzbDrone.Core.Movies.Performers;
+using NzbDrone.Core.Movies.Studios;
 using NzbDrone.Core.RootFolders;
 using NzbDrone.Core.Test.Framework;
 using NzbDrone.Test.Common;
@@ -21,7 +20,6 @@ namespace NzbDrone.Core.Test.MovieTests
     public class RefreshMovieServiceFixture : CoreTest<RefreshMovieService>
     {
         private MovieMetadata _movie;
-        private MovieCollection _movieCollection;
         private Movie _existingMovie;
 
         [SetUp]
@@ -29,9 +27,6 @@ namespace NzbDrone.Core.Test.MovieTests
         {
             _movie = Builder<MovieMetadata>.CreateNew()
                 .With(s => s.Status = MovieStatusType.Released)
-                .Build();
-
-            _movieCollection = Builder<MovieCollection>.CreateNew()
                 .Build();
 
             _existingMovie = Builder<Movie>.CreateNew()
@@ -45,10 +40,6 @@ namespace NzbDrone.Core.Test.MovieTests
             Mocker.GetMock<IMovieMetadataService>()
                   .Setup(s => s.Get(_movie.Id))
                   .Returns(_movie);
-
-            Mocker.GetMock<IAddMovieCollectionService>()
-                  .Setup(v => v.AddMovieCollection(It.IsAny<MovieCollection>()))
-                  .Returns(_movieCollection);
 
             Mocker.GetMock<IProvideMovieInfo>()
                   .Setup(s => s.GetMovieInfo(It.IsAny<int>()))
@@ -67,7 +58,7 @@ namespace NzbDrone.Core.Test.MovieTests
         {
             Mocker.GetMock<IProvideMovieInfo>()
                   .Setup(s => s.GetMovieInfo(_movie.TmdbId))
-                  .Returns(new Tuple<MovieMetadata, List<Credit>>(movie, new List<Credit>()));
+                  .Returns(new System.Tuple<MovieMetadata, Studio, List<Performer>>(movie, new Studio(), new List<Performer>()));
         }
 
         [Test]
@@ -99,14 +90,14 @@ namespace NzbDrone.Core.Test.MovieTests
         public void should_update_if_tmdb_id_changed()
         {
             var newMovieInfo = _movie.JsonClone();
-            newMovieInfo.TmdbId = _movie.TmdbId + 1;
+            newMovieInfo.ForeignId = _movie.ForeignId + 1;
 
             GivenNewMovieInfo(newMovieInfo);
 
             Subject.Execute(new RefreshMovieCommand(new List<int> { _movie.Id }));
 
             Mocker.GetMock<IMovieMetadataService>()
-                .Verify(v => v.Upsert(It.Is<MovieMetadata>(s => s.TmdbId == newMovieInfo.TmdbId)));
+                .Verify(v => v.Upsert(It.Is<MovieMetadata>(s => s.ForeignId == newMovieInfo.ForeignId)));
 
             ExceptionVerification.ExpectedWarns(1);
         }

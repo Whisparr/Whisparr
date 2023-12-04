@@ -27,7 +27,9 @@ function MovieIndexRefreshMovieButton(
     items,
     totalItems,
   }: MoviesAppState & MovieIndexAppState & ClientSideCollectionAppState =
-    useSelector(createMovieClientSideCollectionItemsSelector('movieIndex'));
+    useSelector(
+      createMovieClientSideCollectionItemsSelector('movieIndex', 'movie')
+    );
 
   const dispatch = useDispatch();
   const { isSelectMode, selectedFilterKey } = props;

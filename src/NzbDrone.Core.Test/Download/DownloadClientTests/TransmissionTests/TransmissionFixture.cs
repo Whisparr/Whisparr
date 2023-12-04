@@ -80,7 +80,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.TransmissionTests
             id.Should().NotBeNullOrEmpty();
 
             Mocker.GetMock<ITransmissionProxy>()
-                  .Verify(v => v.AddTorrentFromData(It.IsAny<byte[]>(), @"C:/Downloads/Finished/radarr", It.IsAny<TransmissionSettings>()), Times.Once());
+                  .Verify(v => v.AddTorrentFromData(It.IsAny<byte[]>(), @"C:/Downloads/Finished/whisparr", It.IsAny<TransmissionSettings>()), Times.Once());
         }
 
         [Test]
@@ -96,7 +96,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.TransmissionTests
             id.Should().NotBeNullOrEmpty();
 
             Mocker.GetMock<ITransmissionProxy>()
-                  .Verify(v => v.AddTorrentFromData(It.IsAny<byte[]>(), @"C:/Downloads/Finished/transmission/radarr", It.IsAny<TransmissionSettings>()), Times.Once());
+                  .Verify(v => v.AddTorrentFromData(It.IsAny<byte[]>(), @"C:/Downloads/Finished/transmission/whisparr", It.IsAny<TransmissionSettings>()), Times.Once());
         }
 
         [Test]
@@ -114,7 +114,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.TransmissionTests
             id.Should().NotBeNullOrEmpty();
 
             Mocker.GetMock<ITransmissionProxy>()
-                  .Verify(v => v.AddTorrentFromData(It.IsAny<byte[]>(), @"C:/Downloads/Finished/transmission/radarr", It.IsAny<TransmissionSettings>()), Times.Once());
+                  .Verify(v => v.AddTorrentFromData(It.IsAny<byte[]>(), @"C:/Downloads/Finished/transmission/whisparr", It.IsAny<TransmissionSettings>()), Times.Once());
         }
 
         [Test]
@@ -211,7 +211,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.TransmissionTests
         {
             GivenMovieCategory();
 
-            _downloading.DownloadDir = @"C:/Downloads/Finished/transmission/radarr";
+            _downloading.DownloadDir = @"C:/Downloads/Finished/transmission/whisparr";
 
             GivenTorrents(new List<TransmissionTorrent>
                 {
@@ -230,7 +230,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.TransmissionTests
         {
             GivenMovieDirectory();
 
-            _downloading.DownloadDir = @"C:/Downloads/Finished/radarr/subdir";
+            _downloading.DownloadDir = @"C:/Downloads/Finished/whisparr/subdir";
 
             GivenTorrents(new List<TransmissionTorrent>
                 {

@@ -28,7 +28,7 @@ namespace NzbDrone.Core.Indexers.HDBits
             BaseUrl = "https://hdbits.org";
             MinimumSeeders = IndexerDefaults.MINIMUM_SEEDERS;
 
-            Categories = new[] { (int)HdBitsCategory.Movie };
+            Categories = new[] { (int)HdBitsCategory.Xxx };
             Codecs = Array.Empty<int>();
             Mediums = Array.Empty<int>();
             MultiLanguages = Array.Empty<int>();
@@ -59,7 +59,7 @@ namespace NzbDrone.Core.Indexers.HDBits
         [FieldDefinition(7, Type = FieldType.Number, Label = "Minimum Seeders", HelpText = "Minimum number of seeders required.", Advanced = true)]
         public int MinimumSeeders { get; set; }
 
-        [FieldDefinition(8, Type = FieldType.Select, SelectOptions = typeof(IndexerFlags), Label = "Required Flags", HelpText = "What indexer flags are required?", HelpLink = "https://wiki.servarr.com/radarr/settings#indexer-flags", Advanced = true)]
+        [FieldDefinition(8, Type = FieldType.Select, SelectOptions = typeof(IndexerFlags), Label = "Required Flags", HelpText = "What indexer flags are required?", HelpLink = "https://wiki.servarr.com/whisparr/settings#indexer-flags", Advanced = true)]
         public IEnumerable<int> RequiredFlags { get; set; }
 
         [FieldDefinition(9)]

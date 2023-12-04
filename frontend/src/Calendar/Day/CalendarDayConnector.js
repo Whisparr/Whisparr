@@ -9,10 +9,10 @@ import CalendarDay from './CalendarDay';
 function sort(items) {
   return _.sortBy(items, (item) => {
     if (item.isGroup) {
-      return moment(item.events[0].inCinemas).unix();
+      return moment(item.events[0].releaseDate).unix();
     }
 
-    return moment(item.inCinemas).unix();
+    return moment(item.releaseDate).unix();
   });
 }
 
@@ -22,9 +22,7 @@ function createCalendarEventsConnector() {
     (state) => state.calendar.items,
     (date, items) => {
       const filtered = _.filter(items, (item) => {
-        return (item.inCinemas && moment(date).isSame(moment(item.inCinemas), 'day')) ||
-          (item.physicalRelease && moment(date).isSame(moment(item.physicalRelease), 'day')) ||
-          (item.digitalRelease && moment(date).isSame(moment(item.digitalRelease), 'day'));
+        return (item.releaseDate && moment(date).isSame(moment(item.releaseDate), 'day'));
       });
 
       return sort(filtered);

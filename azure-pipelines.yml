@@ -9,10 +9,10 @@ variables:
   testsFolder: './_tests'
   yarnCacheFolder: $(Pipeline.Workspace)/.yarn
   nugetCacheFolder: $(Pipeline.Workspace)/.nuget/packages
-  majorVersion: '5.2.5'
+  majorVersion: '3.0.0'
   minorVersion: $[counter('minorVersion', 2000)]
-  radarrVersion: '$(majorVersion).$(minorVersion)'
-  buildName: '$(Build.SourceBranchName).$(radarrVersion)'
+  whisparrVersion: '$(majorVersion).$(minorVersion)'
+  buildName: '$(Build.SourceBranchName).$(whisparrVersion)'
   sentryOrg: 'servarr'
   sentryUrl: 'https://sentry.servarr.com'
   dotnetVersion: '6.0.417'
@@ -27,10 +27,11 @@ trigger:
     include:
     - develop
     - master
+    - eros
   paths:
     exclude:
       - .github
-      - src/Radarr.Api.*/openapi.json
+      - src/Whisparr.Api.*/openapi.json
 
 pr:
   branches:
@@ -40,7 +41,7 @@ pr:
     exclude:
     - .github
     - src/NzbDrone.Core/Localization/Core
-    - src/Radarr.Api.*/openapi.json
+    - src/Whisparr.Api.*/openapi.json
 
 stages:
   - stage: Setup
@@ -52,7 +53,7 @@ stages:
         vmImage: ${{ variables.linuxImage }}
       steps:
       # Set the build name properly.  The 'name' property won't recursively expand so hack here:
-      - bash: echo "##vso[build.updatebuildnumber]$RADARRVERSION"
+      - bash: echo "##vso[build.updatebuildnumber]$WHISPARRVERSION"
         displayName: Set Build Name
       - bash: |
           if [[ $BUILD_REASON == "PullRequest" ]]; then
@@ -110,7 +111,7 @@ stages:
           fi
         displayName: Enable Extra Platform Support
       - bash: ./build.sh --backend --enable-extra-platforms
-        displayName: Build Radarr Backend
+        displayName: Build Whisparr Backend
       - bash: |
           find ${OUTPUTFOLDER} -type f ! -path "*/publish/*" -exec rm -rf {} \;
           find ${OUTPUTFOLDER} -depth -empty -type d -exec rm -r "{}" \;
@@ -181,7 +182,7 @@ stages:
           path: $(yarnCacheFolder)
         displayName: Cache Yarn packages
       - bash: ./build.sh --frontend
-        displayName: Build Radarr Frontend
+        displayName: Build Whisparr Frontend
         env:
           FORCE_COLOR: 0
           YARN_CACHE_FOLDER: $(yarnCacheFolder)
@@ -216,8 +217,8 @@ stages:
         displayName: Fetch Frontend
       - bash: |
           ./build.sh --packages --installer
-          cp distribution/windows/setup/output/Radarr.*win-x64.exe ${BUILD_ARTIFACTSTAGINGDIRECTORY}/Radarr.${BUILDNAME}.windows-core-x64-installer.exe
-          cp distribution/windows/setup/output/Radarr.*win-x86.exe ${BUILD_ARTIFACTSTAGINGDIRECTORY}/Radarr.${BUILDNAME}.windows-core-x86-installer.exe
+          cp distribution/windows/setup/output/Whisparr.*win-x64.exe ${BUILD_ARTIFACTSTAGINGDIRECTORY}/Whisparr.${BUILDNAME}.windows-core-x64-installer.exe
+          cp distribution/windows/setup/output/Whisparr.*win-x86.exe ${BUILD_ARTIFACTSTAGINGDIRECTORY}/Whisparr.${BUILDNAME}.windows-core-x86-installer.exe
         displayName: Create Installers
       - publish: $(Build.ArtifactStagingDirectory)
         artifact: 'WindowsInstaller'
@@ -251,34 +252,34 @@ stages:
         displayName: Create Packages
       - bash: |
           find . -name "ffprobe" -exec chmod a+x {} \;
-          find . -name "Radarr" -exec chmod a+x {} \;
-          find . -name "Radarr.Update" -exec chmod a+x {} \;
+          find . -name "Whisparr" -exec chmod a+x {} \;
+          find . -name "Whisparr.Update" -exec chmod a+x {} \;
         displayName: Set executable bits
       - task: ArchiveFiles@2
         displayName: Create win-x64 zip
         inputs:
-          archiveFile: '$(Build.ArtifactStagingDirectory)/Radarr.$(buildName).windows-core-x64.zip'
+          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).windows-core-x64.zip'
           archiveType: 'zip'
           includeRootFolder: false
           rootFolderOrFile: $(artifactsFolder)/win-x64/net6.0
       - task: ArchiveFiles@2
         displayName: Create win-x86 zip
         inputs:
-          archiveFile: '$(Build.ArtifactStagingDirectory)/Radarr.$(buildName).windows-core-x86.zip'
+          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).windows-core-x86.zip'
           archiveType: 'zip'
           includeRootFolder: false
           rootFolderOrFile: $(artifactsFolder)/win-x86/net6.0
       - task: ArchiveFiles@2
         displayName: Create osx-x64 app
         inputs:
-          archiveFile: '$(Build.ArtifactStagingDirectory)/Radarr.$(buildName).osx-app-core-x64.zip'
+          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).osx-app-core-x64.zip'
           archiveType: 'zip'
           includeRootFolder: false
           rootFolderOrFile: $(artifactsFolder)/osx-x64-app/net6.0
       - task: ArchiveFiles@2
         displayName: Create osx-x64 tar
         inputs:
-          archiveFile: '$(Build.ArtifactStagingDirectory)/Radarr.$(buildName).osx-core-x64.tar.gz'
+          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).osx-core-x64.tar.gz'
           archiveType: 'tar'
           tarCompression: 'gz'
           includeRootFolder: false
@@ -286,14 +287,14 @@ stages:
       - task: ArchiveFiles@2
         displayName: Create osx-arm64 app
         inputs:
-          archiveFile: '$(Build.ArtifactStagingDirectory)/Radarr.$(buildName).osx-app-core-arm64.zip'
+          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).osx-app-core-arm64.zip'
           archiveType: 'zip'
           includeRootFolder: false
           rootFolderOrFile: $(artifactsFolder)/osx-arm64-app/net6.0
       - task: ArchiveFiles@2
         displayName: Create osx-arm64 tar
         inputs:
-          archiveFile: '$(Build.ArtifactStagingDirectory)/Radarr.$(buildName).osx-core-arm64.tar.gz'
+          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).osx-core-arm64.tar.gz'
           archiveType: 'tar'
           tarCompression: 'gz'
           includeRootFolder: false
@@ -301,7 +302,7 @@ stages:
       - task: ArchiveFiles@2
         displayName: Create linux-x64 tar
         inputs:
-          archiveFile: '$(Build.ArtifactStagingDirectory)/Radarr.$(buildName).linux-core-x64.tar.gz'
+          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).linux-core-x64.tar.gz'
           archiveType: 'tar'
           tarCompression: 'gz'
           includeRootFolder: false
@@ -309,7 +310,7 @@ stages:
       - task: ArchiveFiles@2
         displayName: Create linux-musl-x64 tar
         inputs:
-          archiveFile: '$(Build.ArtifactStagingDirectory)/Radarr.$(buildName).linux-musl-core-x64.tar.gz'
+          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).linux-musl-core-x64.tar.gz'
           archiveType: 'tar'
           tarCompression: 'gz'
           includeRootFolder: false
@@ -317,7 +318,7 @@ stages:
       - task: ArchiveFiles@2
         displayName: Create linux-x86 tar
         inputs:
-          archiveFile: '$(Build.ArtifactStagingDirectory)/Radarr.$(buildName).linux-core-x86.tar.gz'
+          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).linux-core-x86.tar.gz'
           archiveType: 'tar'
           tarCompression: 'gz'
           includeRootFolder: false
@@ -325,7 +326,7 @@ stages:
       - task: ArchiveFiles@2
         displayName: Create linux-arm tar
         inputs:
-          archiveFile: '$(Build.ArtifactStagingDirectory)/Radarr.$(buildName).linux-core-arm.tar.gz'
+          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).linux-core-arm.tar.gz'
           archiveType: 'tar'
           tarCompression: 'gz'
           includeRootFolder: false
@@ -333,7 +334,7 @@ stages:
       - task: ArchiveFiles@2
         displayName: Create linux-musl-arm tar
         inputs:
-          archiveFile: '$(Build.ArtifactStagingDirectory)/Radarr.$(buildName).linux-musl-core-arm.tar.gz'
+          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).linux-musl-core-arm.tar.gz'
           archiveType: 'tar'
           tarCompression: 'gz'
           includeRootFolder: false
@@ -341,7 +342,7 @@ stages:
       - task: ArchiveFiles@2
         displayName: Create linux-arm64 tar
         inputs:
-          archiveFile: '$(Build.ArtifactStagingDirectory)/Radarr.$(buildName).linux-core-arm64.tar.gz'
+          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).linux-core-arm64.tar.gz'
           archiveType: 'tar'
           tarCompression: 'gz'
           includeRootFolder: false
@@ -349,7 +350,7 @@ stages:
       - task: ArchiveFiles@2
         displayName: Create linux-musl-arm64 tar
         inputs:
-          archiveFile: '$(Build.ArtifactStagingDirectory)/Radarr.$(buildName).linux-musl-core-arm64.tar.gz'
+          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).linux-musl-core-arm64.tar.gz'
           archiveType: 'tar'
           tarCompression: 'gz'
           includeRootFolder: false
@@ -357,7 +358,7 @@ stages:
       - task: ArchiveFiles@2
         displayName: Create freebsd-x64 tar
         inputs:
-          archiveFile: '$(Build.ArtifactStagingDirectory)/Radarr.$(buildName).freebsd-core-x64.tar.gz'
+          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).freebsd-core-x64.tar.gz'
           archiveType: 'tar'
           tarCompression: 'gz'
           includeRootFolder: false
@@ -368,9 +369,9 @@ stages:
       - bash: |
           echo "Uploading source maps to sentry"
           curl -sL https://sentry.io/get-cli/ | bash
-          RELEASENAME="Radarr@${RADARRVERSION}-${BUILD_SOURCEBRANCHNAME}"
-          sentry-cli releases new --finalize -p radarr -p radarr-ui -p radarr-update "${RELEASENAME}"
-          sentry-cli releases -p radarr-ui files "${RELEASENAME}" upload-sourcemaps _output/UI/ --rewrite
+          RELEASENAME="Whisparr@${WHISPARRVERSION}-${BUILD_SOURCEBRANCHNAME}"
+          sentry-cli releases new --finalize -p whisparr -p whisparr-ui -p whisparr-update "${RELEASENAME}"
+          sentry-cli releases -p whisparr-ui files "${RELEASENAME}" upload-sourcemaps _output/UI/ --rewrite
           sentry-cli releases set-commits --auto "${RELEASENAME}"
           if [[ ${BUILD_SOURCEBRANCH} == "refs/heads/develop" ]]; then
           sentry-cli releases deploys "${RELEASENAME}" new -e nightly
@@ -465,7 +466,7 @@ stages:
           chmod a+x _tests/ffprobe
         displayName: Make ffprobe Executable
         condition: and(succeeded(), ne(variables['osName'], 'Windows'))
-      - bash: find ${TESTSFOLDER} -name "Radarr.Test.Dummy" -exec chmod a+x {} \;
+      - bash: find ${TESTSFOLDER} -name "Whisparr.Test.Dummy" -exec chmod a+x {} \;
         displayName: Make Test Dummy Executable
         condition: and(succeeded(), ne(variables['osName'], 'Windows'))
       - bash: |
@@ -525,7 +526,7 @@ stages:
       - bash: |
           chmod a+x _tests/ffprobe
         displayName: Make ffprobe Executable
-      - bash: find ${TESTSFOLDER} -name "Radarr.Test.Dummy" -exec chmod a+x {} \;
+      - bash: find ${TESTSFOLDER} -name "Whisparr.Test.Dummy" -exec chmod a+x {} \;
         displayName: Make Test Dummy Executable
         condition: and(succeeded(), ne(variables['osName'], 'Windows'))
       - bash: |
@@ -546,12 +547,12 @@ stages:
       dependsOn: Prepare
       condition: and(succeeded(), eq(dependencies.Prepare.outputs['setVar.backendNotUpdated'], '0'))
       variables:
-        pattern: 'Radarr.*.linux-core-x64.tar.gz'
+        pattern: 'Whisparr.*.linux-core-x64.tar.gz'
         artifactName: linux-x64-tests
-        Radarr__Postgres__Host: 'localhost'
-        Radarr__Postgres__Port: '5432'
-        Radarr__Postgres__User: 'radarr'
-        Radarr__Postgres__Password: 'radarr'
+        Whisparr__Postgres__Host: 'localhost'
+        Whisparr__Postgres__Port: '5432'
+        Whisparr__Postgres__User: 'whisparr'
+        Whisparr__Postgres__Password: 'whisparr'
 
       pool:
         vmImage: ${{ variables.linuxImage }}
@@ -573,13 +574,13 @@ stages:
       - bash: |
           chmod a+x _tests/ffprobe
         displayName: Make ffprobe Executable
-      - bash: find ${TESTSFOLDER} -name "Radarr.Test.Dummy" -exec chmod a+x {} \;
+      - bash: find ${TESTSFOLDER} -name "Whisparr.Test.Dummy" -exec chmod a+x {} \;
         displayName: Make Test Dummy Executable
         condition: and(succeeded(), ne(variables['osName'], 'Windows'))
       - bash: |
           docker run -d --name=postgres14 \
-          -e POSTGRES_PASSWORD=radarr \
-          -e POSTGRES_USER=radarr \
+          -e POSTGRES_PASSWORD=whisparr \
+          -e POSTGRES_USER=whisparr \
           -p 5432:5432/tcp \
           -v /usr/share/zoneinfo/America/Chicago:/etc/localtime:ro \
           postgres:14
@@ -602,12 +603,12 @@ stages:
       dependsOn: Prepare
       condition: and(succeeded(), eq(dependencies.Prepare.outputs['setVar.backendNotUpdated'], '0'))
       variables:
-        pattern: 'Radarr.*.linux-core-x64.tar.gz'
+        pattern: 'Whisparr.*.linux-core-x64.tar.gz'
         artifactName: linux-x64-tests
-        Radarr__Postgres__Host: 'localhost'
-        Radarr__Postgres__Port: '5432'
-        Radarr__Postgres__User: 'radarr'
-        Radarr__Postgres__Password: 'radarr'
+        Whisparr__Postgres__Host: 'localhost'
+        Whisparr__Postgres__Port: '5432'
+        Whisparr__Postgres__User: 'whisparr'
+        Whisparr__Postgres__Password: 'whisparr'
   
       pool:
         vmImage: ${{ variables.linuxImage }}
@@ -629,13 +630,13 @@ stages:
       - bash: |
           chmod a+x _tests/ffprobe
         displayName: Make ffprobe Executable
-      - bash: find ${TESTSFOLDER} -name "Radarr.Test.Dummy" -exec chmod a+x {} \;
+      - bash: find ${TESTSFOLDER} -name "Whisparr.Test.Dummy" -exec chmod a+x {} \;
         displayName: Make Test Dummy Executable
         condition: and(succeeded(), ne(variables['osName'], 'Windows'))
       - bash: |
           docker run -d --name=postgres15 \
-          -e POSTGRES_PASSWORD=radarr \
-          -e POSTGRES_USER=radarr \
+          -e POSTGRES_PASSWORD=whisparr \
+          -e POSTGRES_USER=whisparr \
           -p 5432:5432/tcp \
           -v /usr/share/zoneinfo/America/Chicago:/etc/localtime:ro \
           postgres:15
@@ -681,17 +682,17 @@ stages:
             osName: 'Mac'
             testName: 'osx-x64'
             imageName: ${{ variables.macImage }}
-            pattern: 'Radarr.*.osx-core-x64.tar.gz'
+            pattern: 'Whisparr.*.osx-core-x64.tar.gz'
           WindowsCore:
             osName: 'Windows'
             testName: 'win-x64'
             imageName: ${{ variables.windowsImage }}
-            pattern: 'Radarr.*.windows-core-x64.zip'
+            pattern: 'Whisparr.*.windows-core-x64.zip'
           LinuxCore:
             osName: 'Linux'
             testName: 'linux-x64'
             imageName: ${{ variables.linuxImage }}
-            pattern: 'Radarr.*.linux-core-x64.tar.gz'
+            pattern: 'Whisparr.*.linux-core-x64.tar.gz'
 
       pool:
         vmImage: $(imageName)
@@ -722,7 +723,7 @@ stages:
         displayName: Extract Package
       - bash: |
           mkdir -p ./bin/
-          cp -r -v ${BUILD_ARTIFACTSTAGINGDIRECTORY}/bin/Radarr/. ./bin/
+          cp -r -v ${BUILD_ARTIFACTSTAGINGDIRECTORY}/bin/Whisparr/. ./bin/
         displayName: Move Package Contents
       - bash: |
           chmod a+x ${TESTSFOLDER}/test.sh
@@ -741,11 +742,11 @@ stages:
       dependsOn: Prepare
       condition: and(succeeded(), eq(dependencies.Prepare.outputs['setVar.backendNotUpdated'], '0'))
       variables:
-        pattern: 'Radarr.*.linux-core-x64.tar.gz'
-        Radarr__Postgres__Host: 'localhost'
-        Radarr__Postgres__Port: '5432'
-        Radarr__Postgres__User: 'radarr'
-        Radarr__Postgres__Password: 'radarr'
+        pattern: 'Whisparr.*.linux-core-x64.tar.gz'
+        Whisparr__Postgres__Host: 'localhost'
+        Whisparr__Postgres__Port: '5432'
+        Whisparr__Postgres__User: 'whisparr'
+        Whisparr__Postgres__Password: 'whisparr'
 
       pool:
         vmImage: ${{ variables.linuxImage }}
@@ -776,12 +777,12 @@ stages:
           displayName: Extract Package
         - bash: |
             mkdir -p ./bin/
-            cp -r -v ${BUILD_ARTIFACTSTAGINGDIRECTORY}/bin/Radarr/. ./bin/
+            cp -r -v ${BUILD_ARTIFACTSTAGINGDIRECTORY}/bin/Whisparr/. ./bin/
           displayName: Move Package Contents
         - bash: |
             docker run -d --name=postgres14 \
-            -e POSTGRES_PASSWORD=radarr \
-            -e POSTGRES_USER=radarr \
+            -e POSTGRES_PASSWORD=whisparr \
+            -e POSTGRES_USER=whisparr \
             -p 5432:5432/tcp \
             -v /usr/share/zoneinfo/America/Chicago:/etc/localtime:ro \
             postgres:14
@@ -804,11 +805,11 @@ stages:
       dependsOn: Prepare
       condition: and(succeeded(), eq(dependencies.Prepare.outputs['setVar.backendNotUpdated'], '0'))
       variables:
-        pattern: 'Radarr.*.linux-core-x64.tar.gz'
-        Radarr__Postgres__Host: 'localhost'
-        Radarr__Postgres__Port: '5432'
-        Radarr__Postgres__User: 'radarr'
-        Radarr__Postgres__Password: 'radarr'
+        pattern: 'Whisparr.*.linux-core-x64.tar.gz'
+        Whisparr__Postgres__Host: 'localhost'
+        Whisparr__Postgres__Port: '5432'
+        Whisparr__Postgres__User: 'whisparr'
+        Whisparr__Postgres__Password: 'whisparr'
 
       pool:
         vmImage: ${{ variables.linuxImage }}
@@ -839,12 +840,12 @@ stages:
           displayName: Extract Package
         - bash: |
             mkdir -p ./bin/
-            cp -r -v ${BUILD_ARTIFACTSTAGINGDIRECTORY}/bin/Radarr/. ./bin/
+            cp -r -v ${BUILD_ARTIFACTSTAGINGDIRECTORY}/bin/Whisparr/. ./bin/
           displayName: Move Package Contents
         - bash: |
             docker run -d --name=postgres15 \
-            -e POSTGRES_PASSWORD=radarr \
-            -e POSTGRES_USER=radarr \
+            -e POSTGRES_PASSWORD=whisparr \
+            -e POSTGRES_USER=whisparr \
             -p 5432:5432/tcp \
             -v /usr/share/zoneinfo/America/Chicago:/etc/localtime:ro \
             postgres:15
@@ -868,7 +869,7 @@ stages:
       workspace:
         clean: all
       variables:
-        pattern: 'Radarr.*.freebsd-core-x64.tar.gz'
+        pattern: 'Whisparr.*.freebsd-core-x64.tar.gz'
       pool:
         name: 'FreeBSD'
 
@@ -893,7 +894,7 @@ stages:
         displayName: Extract Package
       - bash: |
           mkdir -p ./bin/
-          cp -r -v ${BUILD_ARTIFACTSTAGINGDIRECTORY}/bin/Radarr/. ./bin/
+          cp -r -v ${BUILD_ARTIFACTSTAGINGDIRECTORY}/bin/Whisparr/. ./bin/
         displayName: Move Package Contents
       - bash: |
           chmod a+x ${TESTSFOLDER}/test.sh
@@ -917,12 +918,12 @@ stages:
             testName: 'linux-musl-x64'
             artifactName: linux-musl-x64-tests
             containerImage: ghcr.io/servarr/testimages:alpine
-            pattern: 'Radarr.*.linux-musl-core-x64.tar.gz'
+            pattern: 'Whisparr.*.linux-musl-core-x64.tar.gz'
           linux-x86:
             testName: 'linux-x86'
             artifactName: linux-x86-tests
             containerImage: ghcr.io/servarr/testimages:linux-x86
-            pattern: 'Radarr.*.linux-core-x86.tar.gz'
+            pattern: 'Whisparr.*.linux-core-x86.tar.gz'
       pool:
         vmImage: ${{ variables.linuxImage }}
 
@@ -962,7 +963,7 @@ stages:
         displayName: Extract Package
       - bash: |
           mkdir -p ./bin/
-          cp -r -v ${BUILD_ARTIFACTSTAGINGDIRECTORY}/bin/Radarr/. ./bin/
+          cp -r -v ${BUILD_ARTIFACTSTAGINGDIRECTORY}/bin/Whisparr/. ./bin/
         displayName: Move Package Contents
       - bash: |
           chmod a+x ${TESTSFOLDER}/test.sh
@@ -988,19 +989,19 @@ stages:
             osName: 'Linux'
             artifactName: 'linux-x64'
             imageName: ${{ variables.linuxImage }}
-            pattern: 'Radarr.*.linux-core-x64.tar.gz'
+            pattern: 'Whisparr.*.linux-core-x64.tar.gz'
             failBuild: true
           Mac:
             osName: 'Mac'
             artifactName: 'osx-x64'
             imageName: ${{ variables.macImage }}
-            pattern: 'Radarr.*.osx-core-x64.tar.gz'
+            pattern: 'Whisparr.*.osx-core-x64.tar.gz'
             failBuild: true
           Windows:
             osName: 'Windows'
             artifactName: 'win-x64'
             imageName: ${{ variables.windowsImage }}
-            pattern: 'Radarr.*.windows-core-x64.zip'
+            pattern: 'Whisparr.*.windows-core-x64.zip'
             failBuild: true
 
       pool:
@@ -1032,7 +1033,7 @@ stages:
         displayName: Extract Package
       - bash: |
           mkdir -p ./bin/
-          cp -r -v ${BUILD_ARTIFACTSTAGINGDIRECTORY}/bin/Radarr/. ./bin/
+          cp -r -v ${BUILD_ARTIFACTSTAGINGDIRECTORY}/bin/Whisparr/. ./bin/
         displayName: Move Package Contents
       - bash: |
           chmod a+x ${TESTSFOLDER}/test.sh
@@ -1104,31 +1105,10 @@ stages:
           path: $(yarnCacheFolder)
         displayName: Cache Yarn packages
       - bash: ./build.sh --lint
-        displayName: Lint Radarr Frontend
+        displayName: Lint Whisparr Frontend
         env:
           FORCE_COLOR: 0
           YARN_CACHE_FOLDER: $(yarnCacheFolder)
-
-    - job: Analyze_Frontend
-      displayName: Frontend
-      condition: eq(variables['System.PullRequest.IsFork'], 'False')
-      pool:
-        vmImage: ${{ variables.windowsImage }}
-      steps:
-      - checkout: self # Need history for Sonar analysis
-      - task: SonarCloudPrepare@1
-        env:
-          SONAR_SCANNER_OPTS: ''
-        inputs:
-          SonarCloud: 'SonarCloud'
-          organization: 'radarr'
-          scannerMode: 'CLI'
-          configMode: 'manual'
-          cliProjectKey: 'Radarr_Radarr.UI'
-          cliProjectName: 'RadarrUI'
-          cliProjectVersion: '$(radarrVersion)'
-          cliSources: './frontend'
-      - task: SonarCloudAnalyze@1
       
     - job: Api_Docs
       displayName: API Docs
@@ -1164,7 +1144,7 @@ stages:
           then
             git commit -am 'Automated API Docs update'
             git push -f --set-upstream origin api-docs
-            curl -X POST -H "Authorization: token ${GITHUBTOKEN}" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/radarr/radarr/pulls -d '{"head":"api-docs","base":"develop","title":"Update API docs"}'
+            curl -X POST -H "Authorization: token ${GITHUBTOKEN}" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/whisparr/whisparr/pulls -d '{"head":"api-docs","base":"develop","title":"Update API docs"}'
           else
             echo "No changes since last run"
           fi
@@ -1205,27 +1185,10 @@ stages:
         submodules: true
       - powershell: Set-Service SCardSvr -StartupType Manual
         displayName: Enable Windows Test Service
-      - task: SonarCloudPrepare@1
-        condition: eq(variables['System.PullRequest.IsFork'], 'False')
-        inputs:
-          SonarCloud: 'SonarCloud'
-          organization: 'radarr'
-          scannerMode: 'MSBuild'
-          projectKey: 'Radarr_Radarr'
-          projectName: 'Radarr'
-          projectVersion: '$(radarrVersion)'
-          extraProperties: |
-            sonar.exclusions=**/obj/**,**/*.dll,**/NzbDrone.Core.Test/Files/**/*,./frontend/**,**/ExternalModules/**,./src/Libraries/**
-            sonar.coverage.exclusions=**/Radarr.Api.V3/**/*
-            sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/CoverageResults/**/coverage.opencover.xml
-            sonar.cs.nunit.reportsPaths=$(Build.SourcesDirectory)/TestResult.xml
       - bash: |
           ./build.sh --backend -f net6.0 -r win-x64
           TEST_DIR=_tests/net6.0/win-x64/publish/ ./test.sh Windows Unit Coverage
         displayName: Coverage Unit Tests
-      - task: SonarCloudAnalyze@1
-        condition: eq(variables['System.PullRequest.IsFork'], 'False')
-        displayName: Publish SonarCloud Results
       - task: reportgenerator@4
         displayName: Generate Coverage Report
         inputs:
@@ -1267,5 +1230,5 @@ stages:
             SYSTEM_ACCESSTOKEN: $(System.AccessToken)
             DISCORDCHANNELID: $(discordChannelId)
             DISCORDWEBHOOKKEY: $(discordWebhookKey)
-            DISCORDTHREADID: $(discordThreadId)
+            DISCORDTHREADID: 1191571521781649499
 

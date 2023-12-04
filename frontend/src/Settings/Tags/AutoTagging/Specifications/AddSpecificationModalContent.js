@@ -67,7 +67,7 @@ export default function AddSpecificationModalContent(props) {
 
               <Alert kind={kinds.INFO}>
                 <div>
-                  {'Radarr supports the follow properties for auto tagging rules'}
+                  {'Whisparr supports the follow properties for auto tagging rules'}
                 </div>
               </Alert>
 

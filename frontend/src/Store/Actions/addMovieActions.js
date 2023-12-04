@@ -32,7 +32,6 @@ export const defaultState = {
     rootFolderPath: '',
     monitor: 'movieOnly',
     qualityProfileId: 0,
-    minimumAvailability: 'announced',
     searchForMovie: true,
     tags: []
   }
@@ -46,6 +45,7 @@ export const persistState = [
 // Actions Types
 
 export const LOOKUP_MOVIE = 'addMovie/lookupMovie';
+export const LOOKUP_SCENE = 'addMovie/lookupScene';
 export const ADD_MOVIE = 'addMovie/addMovie';
 export const SET_ADD_MOVIE_VALUE = 'addMovie/setAddMovieValue';
 export const CLEAR_ADD_MOVIE = 'addMovie/clearAddMovie';
@@ -55,6 +55,7 @@ export const SET_ADD_MOVIE_DEFAULT = 'addMovie/setAddMovieDefault';
 // Action Creators
 
 export const lookupMovie = createThunk(LOOKUP_MOVIE);
+export const lookupScene = createThunk(LOOKUP_SCENE);
 export const addMovie = createThunk(ADD_MOVIE);
 export const clearAddMovie = createAction(CLEAR_ADD_MOVIE);
 export const setAddMovieDefault = createAction(SET_ADD_MOVIE_DEFAULT);
@@ -79,7 +80,7 @@ export const actionHandlers = handleThunks({
     }
 
     const { request, abortRequest } = createAjaxRequest({
-      url: '/movie/lookup',
+      url: '/lookup/movie',
       data: {
         term: payload.term
       }
@@ -88,7 +89,48 @@ export const actionHandlers = handleThunks({
     abortCurrentRequest = abortRequest;
 
     request.done((data) => {
-      data = data.map((movie) => ({ ...movie, internalId: movie.id, id: movie.tmdbId }));
+      data = data.map((movie) => ({ ...movie, internalId: movie.id, id: movie.foreignId }));
+
+      dispatch(batchActions([
+        update({ section, data }),
+
+        set({
+          section,
+          isFetching: false,
+          isPopulated: true,
+          error: null
+        })
+      ]));
+    });
+
+    request.fail((xhr) => {
+      dispatch(set({
+        section,
+        isFetching: false,
+        isPopulated: false,
+        error: xhr.aborted ? null : xhr
+      }));
+    });
+  },
+
+  [LOOKUP_SCENE]: function(getState, payload, dispatch) {
+    dispatch(set({ section, isFetching: true }));
+
+    if (abortCurrentRequest) {
+      abortCurrentRequest();
+    }
+
+    const { request, abortRequest } = createAjaxRequest({
+      url: '/lookup/scene',
+      data: {
+        term: payload.term
+      }
+    });
+
+    abortCurrentRequest = abortRequest;
+
+    request.done((data) => {
+      data = data.map((movie) => ({ ...movie, internalId: movie.id, id: movie.foreignId }));
 
       dispatch(batchActions([
         update({ section, data }),
@@ -115,9 +157,10 @@ export const actionHandlers = handleThunks({
   [ADD_MOVIE]: function(getState, payload, dispatch) {
     dispatch(set({ section, isAdding: true }));
 
-    const tmdbId = payload.tmdbId;
+    const foreignId = payload.foreignId;
     const items = getState().addMovie.items;
-    const newMovie = getNewMovie(_.cloneDeep(_.find(items, { tmdbId })), payload);
+    const itemToAdd = _.find(items, { foreignId });
+    const newMovie = getNewMovie(_.cloneDeep(itemToAdd.movie), payload);
     newMovie.id = 0;
 
     const promise = createAjaxRequest({
@@ -131,7 +174,7 @@ export const actionHandlers = handleThunks({
     promise.done((data) => {
       const updatedItem = _.cloneDeep(data);
       updatedItem.internalId = updatedItem.id;
-      updatedItem.id = updatedItem.tmdbId;
+      updatedItem.id = updatedItem.foreignId;
       delete updatedItem.images;
 
       const actions = [
@@ -145,18 +188,6 @@ export const actionHandlers = handleThunks({
           addError: null
         })
       ];
-
-      if (!newMovie.collection) {
-        dispatch(batchActions(actions));
-        return;
-      }
-
-      const collectionToUpdate = getState().movieCollections.items.find((collection) => collection.tmdbId === newMovie.collection.tmdbId);
-
-      if (collectionToUpdate) {
-        const collectionData = { ...collectionToUpdate, missingMovies: Math.max(0, collectionToUpdate.missingMovies - 1 ) };
-        actions.push(updateItem({ section: 'movieCollections', ...collectionData }));
-      }
 
       dispatch(batchActions(actions));
     });

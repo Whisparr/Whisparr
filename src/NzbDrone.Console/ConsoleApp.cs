@@ -42,7 +42,7 @@ namespace NzbDrone.Console
 
                 Bootstrap.Start(args);
             }
-            catch (RadarrStartupException ex)
+            catch (WhisparrStartupException ex)
             {
                 System.Console.WriteLine("");
                 System.Console.WriteLine("");
@@ -53,7 +53,7 @@ namespace NzbDrone.Console
             {
                 System.Console.WriteLine("");
                 System.Console.WriteLine("");
-                Logger.Fatal(ex.Message + " This can happen if another instance of Radarr is already running another application is using the same port (default: 7878) or the user has insufficient permissions");
+                Logger.Fatal(ex.Message + " This can happen if another instance of Whisparr is already running another application is using the same port (default: 6969) or the user has insufficient permissions");
                 Exit(ExitCodes.RecoverableFailure, startupArgs);
             }
             catch (IOException ex)
@@ -62,7 +62,7 @@ namespace NzbDrone.Console
                 {
                     System.Console.WriteLine("");
                     System.Console.WriteLine("");
-                    Logger.Fatal(ex.Message + " This can happen if another instance of Radarr is already running another application is using the same port (default: 7878) or the user has insufficient permissions");
+                    Logger.Fatal(ex.Message + " This can happen if another instance of Whisparr is already running another application is using the same port (default: 6969) or the user has insufficient permissions");
                     Exit(ExitCodes.RecoverableFailure, startupArgs);
                 }
                 else

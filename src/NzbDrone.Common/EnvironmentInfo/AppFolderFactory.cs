@@ -43,7 +43,7 @@ namespace NzbDrone.Common.EnvironmentInfo
             }
             catch (UnauthorizedAccessException)
             {
-                throw new RadarrStartupException("Cannot create AppFolder, Access to the path {0} is denied", _appFolderInfo.AppDataFolder);
+                throw new WhisparrStartupException("Cannot create AppFolder, Access to the path {0} is denied", _appFolderInfo.AppDataFolder);
             }
 
             if (OsInfo.IsWindows)
@@ -53,7 +53,7 @@ namespace NzbDrone.Common.EnvironmentInfo
 
             if (!_diskProvider.FolderWritable(_appFolderInfo.AppDataFolder))
             {
-                throw new RadarrStartupException("AppFolder {0} is not writable", _appFolderInfo.AppDataFolder);
+                throw new WhisparrStartupException("AppFolder {0} is not writable", _appFolderInfo.AppDataFolder);
             }
 
             InitializeMonoApplicationData();
@@ -93,7 +93,7 @@ namespace NzbDrone.Common.EnvironmentInfo
                     RemovePidFile();
                 }
 
-                // Exit if a radarr.db already exists
+                // Exit if a whisparr.db already exists
                 if (_diskProvider.FileExists(_appFolderInfo.GetDatabase()))
                 {
                     return;
@@ -111,7 +111,7 @@ namespace NzbDrone.Common.EnvironmentInfo
             catch (Exception ex)
             {
                 _logger.Debug(ex, ex.Message);
-                throw new RadarrStartupException("Unable to migrate DB from nzbdrone.db to {0}. Migrate manually", _appFolderInfo.GetDatabase());
+                throw new WhisparrStartupException("Unable to migrate DB from nzbdrone.db to {0}. Migrate manually", _appFolderInfo.GetDatabase());
             }
         }
 
@@ -190,7 +190,7 @@ namespace NzbDrone.Common.EnvironmentInfo
         {
             if (OsInfo.IsNotWindows)
             {
-                _diskProvider.DeleteFile(Path.Combine(_appFolderInfo.AppDataFolder, "radarr.pid"));
+                _diskProvider.DeleteFile(Path.Combine(_appFolderInfo.AppDataFolder, "whisparr.pid"));
             }
         }
     }

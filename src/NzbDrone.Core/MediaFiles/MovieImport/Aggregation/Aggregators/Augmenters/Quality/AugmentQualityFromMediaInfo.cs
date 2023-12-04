@@ -28,7 +28,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Aggregation.Aggregators.Augmenter
 
             var width = localMovie.MediaInfo.Width;
             var height = localMovie.MediaInfo.Height;
-            var source = QualitySource.UNKNOWN;
+            var source = QualitySource.Unknown;
             var sourceConfidence = Confidence.Default;
             var title = localMovie.MediaInfo.Title;
 
@@ -37,7 +37,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Aggregation.Aggregators.Augmenter
                 var parsedQuality = QualityParser.ParseQualityName(title.Trim());
 
                 // Only use the quality if it's not unknown and the source is from the name (which is MediaInfo's title in this case)
-                if (parsedQuality.Quality.Source != QualitySource.UNKNOWN &&
+                if (parsedQuality.Quality.Source != QualitySource.Unknown &&
                     parsedQuality.SourceDetectionSource == QualityDetectionSource.Name)
                 {
                     source = parsedQuality.Quality.Source;

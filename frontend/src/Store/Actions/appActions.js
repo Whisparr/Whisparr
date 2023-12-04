@@ -36,7 +36,7 @@ export const defaultState = {
   messages: {
     items: []
   },
-  version: window.Radarr.version,
+  version: window.Whisparr.version,
   isUpdated: false,
   isConnected: true,
   isReconnecting: false,

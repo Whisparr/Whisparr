@@ -5,14 +5,15 @@ import BlocklistConnector from 'Activity/Blocklist/BlocklistConnector';
 import HistoryConnector from 'Activity/History/HistoryConnector';
 import QueueConnector from 'Activity/Queue/QueueConnector';
 import AddNewMovieConnector from 'AddMovie/AddNewMovie/AddNewMovieConnector';
+import AddNewSceneConnector from 'AddMovie/AddNewMovie/AddNewSceneConnector';
 import ImportMovies from 'AddMovie/ImportMovie/ImportMovies';
 import CalendarPageConnector from 'Calendar/CalendarPageConnector';
-import CollectionConnector from 'Collection/CollectionConnector';
 import NotFound from 'Components/NotFound';
 import Switch from 'Components/Router/Switch';
-import DiscoverMovieConnector from 'DiscoverMovie/DiscoverMovieConnector';
 import MovieDetailsPageConnector from 'Movie/Details/MovieDetailsPageConnector';
 import MovieIndex from 'Movie/Index/MovieIndex';
+import PerformerIndex from 'Performer/Index/PerformerIndex';
+import SceneIndex from 'Scene/Index/SceneIndex';
 import CustomFormatSettingsPage from 'Settings/CustomFormats/CustomFormatSettingsPage';
 import DownloadClientSettingsConnector from 'Settings/DownloadClients/DownloadClientSettingsConnector';
 import GeneralSettingsConnector from 'Settings/General/GeneralSettingsConnector';
@@ -26,6 +27,7 @@ import QualityConnector from 'Settings/Quality/QualityConnector';
 import Settings from 'Settings/Settings';
 import TagSettings from 'Settings/Tags/TagSettings';
 import UISettingsConnector from 'Settings/UI/UISettingsConnector';
+import StudioIndex from 'Studio/Index/StudioIndex';
 import BackupsConnector from 'System/Backup/BackupsConnector';
 import LogsTableConnector from 'System/Events/LogsTableConnector';
 import Logs from 'System/Logs/Logs';
@@ -52,7 +54,7 @@ function AppRoutes(props) {
       />
 
       {
-        window.Radarr.urlBase &&
+        window.Whisparr.urlBase &&
           <Route
             exact={true}
             path="/"
@@ -69,23 +71,38 @@ function AppRoutes(props) {
       }
 
       <Route
-        path="/add/new"
+        path="/movies"
+        component={MovieIndex}
+      />
+
+      <Route
+        path="/scenes"
+        component={SceneIndex}
+      />
+
+      <Route
+        path="/performers"
+        component={PerformerIndex}
+      />
+
+      <Route
+        path="/studios"
+        component={StudioIndex}
+      />
+
+      <Route
+        path="/add/new/movie"
         component={AddNewMovieConnector}
       />
 
       <Route
-        path="/collections"
-        component={CollectionConnector}
+        path="/add/new/scene"
+        component={AddNewSceneConnector}
       />
 
       <Route
         path="/add/import"
         component={ImportMovies}
-      />
-
-      <Route
-        path="/add/discover"
-        component={DiscoverMovieConnector}
       />
 
       <Route

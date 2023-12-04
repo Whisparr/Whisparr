@@ -24,14 +24,14 @@ namespace NzbDrone.Core.Notifications.Xbmc
 
         public override void OnGrab(GrabMessage grabMessage)
         {
-            const string header = "Radarr - Grabbed";
+            const string header = "Whisparr - Grabbed";
 
             Notify(Settings, header, grabMessage.Message);
         }
 
         public override void OnDownload(DownloadMessage message)
         {
-            const string header = "Radarr - Downloaded";
+            const string header = "Whisparr - Downloaded";
 
             Notify(Settings, header, message.Message);
             UpdateAndCleanMovie(message.Movie, message.OldMovieFiles.Any());
@@ -44,7 +44,7 @@ namespace NzbDrone.Core.Notifications.Xbmc
 
         public override void OnMovieFileDelete(MovieFileDeleteMessage deleteMessage)
         {
-            const string header = "Radarr - Deleted";
+            const string header = "Whisparr - Deleted";
 
             Notify(Settings, header, deleteMessage.Message);
             UpdateAndCleanMovie(deleteMessage.Movie, true);
@@ -54,7 +54,7 @@ namespace NzbDrone.Core.Notifications.Xbmc
         {
             if (deleteMessage.DeletedFiles)
             {
-                const string header = "Radarr - Deleted";
+                const string header = "Whisparr - Deleted";
 
                 Notify(Settings, header, deleteMessage.Message);
                 UpdateAndCleanMovie(deleteMessage.Movie, true);

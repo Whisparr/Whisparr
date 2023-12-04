@@ -51,14 +51,14 @@ namespace NzbDrone.Core.Test.UpdateTests
             }
 
             Mocker.GetMock<IAppFolderInfo>().SetupGet(c => c.TempFolder).Returns(TempFolder);
-            Mocker.GetMock<IAppFolderInfo>().SetupGet(c => c.StartUpFolder).Returns(@"C:\Radarr".AsOsAgnostic);
-            Mocker.GetMock<IAppFolderInfo>().SetupGet(c => c.AppDataFolder).Returns(@"C:\ProgramData\Radarr".AsOsAgnostic);
+            Mocker.GetMock<IAppFolderInfo>().SetupGet(c => c.StartUpFolder).Returns(@"C:\Whisparr".AsOsAgnostic);
+            Mocker.GetMock<IAppFolderInfo>().SetupGet(c => c.AppDataFolder).Returns(@"C:\ProgramData\Whisparr".AsOsAgnostic);
 
             Mocker.GetMock<ICheckUpdateService>().Setup(c => c.AvailableUpdate()).Returns(_updatePackage);
             Mocker.GetMock<IVerifyUpdates>().Setup(c => c.Verify(It.IsAny<UpdatePackage>(), It.IsAny<string>())).Returns(true);
 
             Mocker.GetMock<IProcessProvider>().Setup(c => c.GetCurrentProcess()).Returns(new ProcessInfo { Id = 12 });
-            Mocker.GetMock<IRuntimeInfo>().Setup(c => c.ExecutingApplication).Returns(@"C:\Test\Radarr.exe");
+            Mocker.GetMock<IRuntimeInfo>().Setup(c => c.ExecutingApplication).Returns(@"C:\Test\Whisparr.exe");
 
             Mocker.GetMock<IConfigFileProvider>()
                   .SetupGet(s => s.UpdateAutomatically)
@@ -69,7 +69,7 @@ namespace NzbDrone.Core.Test.UpdateTests
                   .Returns(true);
 
             Mocker.GetMock<IDiskProvider>()
-                  .Setup(v => v.FileExists(It.Is<string>(s => s.EndsWith("Radarr.Update".ProcessNameToExe()))))
+                  .Setup(v => v.FileExists(It.Is<string>(s => s.EndsWith("Whisparr.Update".ProcessNameToExe()))))
                   .Returns(true);
 
             _sandboxFolder = Mocker.GetMock<IAppFolderInfo>().Object.GetUpdateSandboxFolder();
@@ -154,7 +154,7 @@ namespace NzbDrone.Core.Test.UpdateTests
         public void should_return_with_warning_if_updater_doesnt_exists()
         {
             Mocker.GetMock<IDiskProvider>()
-                  .Setup(v => v.FileExists(It.Is<string>(s => s.EndsWith("Radarr.Update".ProcessNameToExe()))))
+                  .Setup(v => v.FileExists(It.Is<string>(s => s.EndsWith("Whisparr.Update".ProcessNameToExe()))))
                   .Returns(false);
 
             Subject.Execute(new ApplicationUpdateCommand());

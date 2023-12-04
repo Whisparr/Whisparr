@@ -128,16 +128,8 @@ export const filterPredicates = {
     return predicate(originalLanguage ? originalLanguage.name : '', filterValue);
   },
 
-  inCinemas: function(item, filterValue, type) {
-    return dateFilterPredicate(item.inCinemas, filterValue, type);
-  },
-
-  physicalRelease: function(item, filterValue, type) {
-    return dateFilterPredicate(item.physicalRelease, filterValue, type);
-  },
-
-  digitalRelease: function(item, filterValue, type) {
-    return dateFilterPredicate(item.digitalRelease, filterValue, type);
+  releaseDate: function(item, filterValue, type) {
+    return dateFilterPredicate(item.releaseDate, filterValue, type);
   },
 
   tmdbRating: function(item, filterValue, type) {
@@ -156,26 +148,10 @@ export const filterPredicates = {
     return predicate(rating, filterValue);
   },
 
-  imdbRating: function(item, filterValue, type) {
-    const predicate = filterTypePredicates[type];
-
-    const rating = item.ratings.imdb ? item.ratings.imdb.value : 0;
-
-    return predicate(rating, filterValue);
-  },
-
   rottenTomatoesRating: function(item, filterValue, type) {
     const predicate = filterTypePredicates[type];
 
     const rating = item.ratings.rottenTomatoes ? item.ratings.rottenTomatoes.value : 0;
-
-    return predicate(rating, filterValue);
-  },
-
-  imdbVotes: function(item, filterValue, type) {
-    const predicate = filterTypePredicates[type];
-
-    const rating = item.ratings.imdb ? item.ratings.imdb.votes : 0;
 
     return predicate(rating, filterValue);
   },
@@ -197,10 +173,6 @@ export const sortPredicates = {
 
     if (item.status === 'announced') {
       result++;
-    }
-
-    if (item.status === 'inCinemas') {
-      result += 2;
     }
 
     if (item.status === 'released') {
@@ -241,48 +213,9 @@ export const sortPredicates = {
     return item.year || undefined;
   },
 
-  inCinemas: function(item, direction) {
-    if (item.inCinemas) {
-      return moment(item.inCinemas).unix();
-    }
-
-    if (direction === sortDirections.DESCENDING) {
-      return -1 * Number.MAX_VALUE;
-    }
-
-    return Number.MAX_VALUE;
-  },
-
-  physicalRelease: function(item, direction) {
-    if (item.physicalRelease) {
-      return moment(item.physicalRelease).unix();
-    }
-
-    if (direction === sortDirections.DESCENDING) {
-      return -1 * Number.MAX_VALUE;
-    }
-
-    return Number.MAX_VALUE;
-  },
-
-  digitalRelease: function(item, direction) {
-    if (item.digitalRelease) {
-      return moment(item.digitalRelease).unix();
-    }
-
-    if (direction === sortDirections.DESCENDING) {
-      return -1 * Number.MAX_VALUE;
-    }
-
-    return Number.MAX_VALUE;
-  },
-
   releaseDate: function(item, direction) {
-    const { inCinemas, digitalRelease, physicalRelease } = item;
-    const releaseDate = digitalRelease || physicalRelease || inCinemas;
-
-    if (releaseDate) {
-      return moment(releaseDate).unix();
+    if (item.releaseDate) {
+      return moment(item.releaseDate).unix();
     }
 
     if (direction === sortDirections.DESCENDING) {

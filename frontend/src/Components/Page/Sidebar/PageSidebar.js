@@ -20,28 +20,48 @@ const SIDEBAR_WIDTH = parseInt(dimensions.sidebarWidth);
 
 const links = [
   {
-    iconName: icons.MOVIE_CONTINUING,
+    iconName: icons.FILM,
     title: () => translate('Movies'),
     to: '/',
     alias: '/movies',
     children: [
       {
-        title: () => translate('AddNew'),
-        to: '/add/new'
-      },
-      {
         title: () => translate('ImportLibrary'),
-        to: '/add/import'
+        to: '/movies/add/import'
       },
       {
-        title: () => translate('Collections'),
-        to: '/collections'
-      },
-      {
-        title: () => translate('Discover'),
-        to: '/add/discover'
+        title: () => translate('AddNew'),
+        to: '/add/new/movie'
       }
     ]
+  },
+
+  {
+    iconName: icons.SCENE,
+    title: () => translate('Scenes'),
+    to: '/scenes',
+    children: [
+      {
+        title: () => translate('ImportLibrary'),
+        to: '/scenes/add/import'
+      },
+      {
+        title: () => translate('AddNew'),
+        to: '/add/new/scene'
+      }
+    ]
+  },
+
+  {
+    iconName: icons.STUDIO,
+    title: () => translate('Studios'),
+    to: '/studios'
+  },
+
+  {
+    iconName: icons.PERFORMER,
+    title: () => translate('Performers'),
+    to: '/performers'
   },
 
   {
@@ -419,7 +439,7 @@ class PageSidebar extends Component {
       transform
     } = this.state;
 
-    const urlBase = window.Radarr.urlBase;
+    const urlBase = window.Whisparr.urlBase;
     const pathname = urlBase ? location.pathname.substr(urlBase.length) || '/' : location.pathname;
     const activeParent = getActiveParent(pathname);
 

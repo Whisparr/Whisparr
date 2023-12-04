@@ -26,7 +26,7 @@ class TmdbRating extends PureComponent {
     }
 
     return (
-      <span title={`${rating.votes} votes`}>
+      <span title={`${rating?.votes ?? 0} votes`}>
         {
           !hideIcon &&
             <img
@@ -51,7 +51,13 @@ TmdbRating.propTypes = {
 };
 
 TmdbRating.defaultProps = {
-  iconSize: 14
+  iconSize: 14,
+  ratings: {
+    tmdb: {
+      value: 0,
+      votes: 0
+    }
+  }
 };
 
 export default TmdbRating;

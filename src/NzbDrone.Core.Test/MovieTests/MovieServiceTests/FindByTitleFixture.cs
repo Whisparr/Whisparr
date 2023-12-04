@@ -4,7 +4,6 @@ using FizzWare.NBuilder;
 using FluentAssertions;
 using NUnit.Framework;
 using NzbDrone.Core.Movies;
-using NzbDrone.Core.Movies.AlternativeTitles;
 using NzbDrone.Core.Test.Framework;
 
 namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
@@ -27,13 +26,6 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
                                         .TheRest()
                                         .With(x => x.MovieMetadata.Value.CleanTitle = "darkknight")
                                         .With(x => x.Year = 2008)
-                                        .With(x => x.MovieMetadata.Value.AlternativeTitles = new List<AlternativeTitle>
-                                        {
-                                            new AlternativeTitle
-                                            {
-                                                CleanTitle = "batman"
-                                            }
-                                        })
                                         .Build()
                                         .ToList();
         }
@@ -45,14 +37,6 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
 
             movie.Should().NotBeNull();
             movie.Year.Should().Be(2000);
-        }
-
-        [Test]
-        public void should_find_candidates_by_alt_titles()
-        {
-            var movie = Subject.FindByTitle(new List<string> { "batman" }, 2008, new List<string>(), _candidates);
-            movie.Should().NotBeNull();
-            movie.Year.Should().Be(2008);
         }
     }
 }

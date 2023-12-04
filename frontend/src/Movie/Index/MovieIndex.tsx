@@ -88,7 +88,9 @@ const MovieIndex = withScrollPosition((props: MovieIndexProps) => {
     sortDirection,
     view,
   }: MoviesAppState & MovieIndexAppState & ClientSideCollectionAppState =
-    useSelector(createMovieClientSideCollectionItemsSelector('movieIndex'));
+    useSelector(
+      createMovieClientSideCollectionItemsSelector('movieIndex', 'movie')
+    );
 
   const isRssSyncExecuting = useSelector(
     createCommandExecutingSelector(RSS_SYNC)

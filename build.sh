@@ -17,11 +17,11 @@ ProgressEnd()
 
 UpdateVersionNumber()
 {
-    if [ "$RADARRVERSION" != "" ]; then
+    if [ "$WHISPARRVERSION" != "" ]; then
         echo "Updating Version Info"
-        sed -i'' -e "s/<AssemblyVersion>[0-9.*]\+<\/AssemblyVersion>/<AssemblyVersion>$RADARRVERSION<\/AssemblyVersion>/g" src/Directory.Build.props
+        sed -i'' -e "s/<AssemblyVersion>[0-9.*]\+<\/AssemblyVersion>/<AssemblyVersion>$WHISPARRVERSION<\/AssemblyVersion>/g" src/Directory.Build.props
         sed -i'' -e "s/<AssemblyConfiguration>[\$()A-Za-z-]\+<\/AssemblyConfiguration>/<AssemblyConfiguration>${BUILD_SOURCEBRANCHNAME}<\/AssemblyConfiguration>/g" src/Directory.Build.props
-        sed -i'' -e "s/<string>10.0.0.0<\/string>/<string>$RADARRVERSION<\/string>/g" distribution/osx/Radarr.app/Contents/Info.plist
+        sed -i'' -e "s/<string>10.0.0.0<\/string>/<string>$WHISPARRVERSION<\/string>/g" distribution/osx/Whisparr.app/Contents/Info.plist
     fi
 }
 
@@ -66,7 +66,7 @@ Build()
     rm -rf $outputFolder
     rm -rf $testPackageFolder
 
-    slnFile=src/Radarr.sln
+    slnFile=src/Whisparr.sln
 
     if [ $os = "windows" ]; then
         platform=Windows
@@ -110,7 +110,7 @@ PackageFiles()
     rm -rf $folder
     mkdir -p $folder
     cp -r $outputFolder/$framework/$runtime/publish/* $folder
-    cp -r $outputFolder/Radarr.Update/$framework/$runtime/publish $folder/Radarr.Update
+    cp -r $outputFolder/Whisparr.Update/$framework/$runtime/publish $folder/Whisparr.Update
     cp -r $outputFolder/UI $folder
 
     echo "Adding LICENSE"
@@ -124,7 +124,7 @@ PackageLinux()
 
     ProgressStart "Creating $runtime Package for $framework"
 
-    local folder=$artifactsFolder/$runtime/$framework/Radarr
+    local folder=$artifactsFolder/$runtime/$framework/Whisparr
 
     PackageFiles "$folder" "$framework" "$runtime"
 
@@ -132,14 +132,14 @@ PackageLinux()
     rm -f $folder/ServiceUninstall.*
     rm -f $folder/ServiceInstall.*
 
-    echo "Removing Radarr.Windows"
-    rm $folder/Radarr.Windows.*
+    echo "Removing Whisparr.Windows"
+    rm $folder/Whisparr.Windows.*
 
-    echo "Adding Radarr.Mono to UpdatePackage"
-    cp $folder/Radarr.Mono.* $folder/Radarr.Update
+    echo "Adding Whisparr.Mono to UpdatePackage"
+    cp $folder/Whisparr.Mono.* $folder/Whisparr.Update
     if [ "$framework" = "net6.0" ]; then
-        cp $folder/Mono.Posix.NETStandard.* $folder/Radarr.Update
-        cp $folder/libMonoPosixHelper.* $folder/Radarr.Update
+        cp $folder/Mono.Posix.NETStandard.* $folder/Whisparr.Update
+        cp $folder/libMonoPosixHelper.* $folder/Whisparr.Update
     fi
 
     ProgressEnd "Creating $runtime Package for $framework"
@@ -152,7 +152,7 @@ PackageMacOS()
     
     ProgressStart "Creating MacOS Package for $framework $runtime"
 
-    local folder=$artifactsFolder/$runtime/$framework/Radarr
+    local folder=$artifactsFolder/$runtime/$framework/Whisparr
 
     PackageFiles "$folder" "$framework" "$runtime"
 
@@ -160,14 +160,14 @@ PackageMacOS()
     rm -f $folder/ServiceUninstall.*
     rm -f $folder/ServiceInstall.*
 
-    echo "Removing Radarr.Windows"
-    rm $folder/Radarr.Windows.*
+    echo "Removing Whisparr.Windows"
+    rm $folder/Whisparr.Windows.*
 
-    echo "Adding Radarr.Mono to UpdatePackage"
-    cp $folder/Radarr.Mono.* $folder/Radarr.Update
+    echo "Adding Whisparr.Mono to UpdatePackage"
+    cp $folder/Whisparr.Mono.* $folder/Whisparr.Update
     if [ "$framework" = "net6.0" ]; then
-        cp $folder/Mono.Posix.NETStandard.* $folder/Radarr.Update
-        cp $folder/libMonoPosixHelper.* $folder/Radarr.Update
+        cp $folder/Mono.Posix.NETStandard.* $folder/Whisparr.Update
+        cp $folder/libMonoPosixHelper.* $folder/Whisparr.Update
     fi
 
     ProgressEnd 'Creating MacOS Package'
@@ -184,14 +184,14 @@ PackageMacOSApp()
 
     rm -rf $folder
     mkdir -p $folder
-    cp -r distribution/osx/Radarr.app $folder
-    mkdir -p $folder/Radarr.app/Contents/MacOS
+    cp -r distribution/osx/Whisparr.app $folder
+    mkdir -p $folder/Whisparr.app/Contents/MacOS
 
     echo "Copying Binaries"
-    cp -r $artifactsFolder/$runtime/$framework/Radarr/* $folder/Radarr.app/Contents/MacOS
+    cp -r $artifactsFolder/$runtime/$framework/Whisparr/* $folder/Whisparr.app/Contents/MacOS
 
     echo "Removing Update Folder"
-    rm -r $folder/Radarr.app/Contents/MacOS/Radarr.Update
+    rm -r $folder/Whisparr.app/Contents/MacOS/Whisparr.Update
 
     ProgressEnd 'Creating macOS App Package'
 }
@@ -203,18 +203,18 @@ PackageWindows()
     
     ProgressStart "Creating Windows Package for $framework"
 
-    local folder=$artifactsFolder/$runtime/$framework/Radarr
+    local folder=$artifactsFolder/$runtime/$framework/Whisparr
     
     PackageFiles "$folder" "$framework" "$runtime"
     cp -r $outputFolder/$framework-windows/$runtime/publish/* $folder
 
-    echo "Removing Radarr.Mono"
-    rm -f $folder/Radarr.Mono.*
+    echo "Removing Whisparr.Mono"
+    rm -f $folder/Whisparr.Mono.*
     rm -f $folder/Mono.Posix.NETStandard.*
     rm -f $folder/libMonoPosixHelper.*
 
-    echo "Adding Radarr.Windows to UpdatePackage"
-    cp $folder/Radarr.Windows.* $folder/Radarr.Update
+    echo "Adding Whisparr.Windows to UpdatePackage"
+    cp $folder/Whisparr.Windows.* $folder/Whisparr.Update
 
     ProgressEnd 'Creating Windows Package'
 }
@@ -246,7 +246,7 @@ BuildInstaller()
     local framework="$1"
     local runtime="$2"
     
-    ./_inno/ISCC.exe distribution/windows/setup/radarr.iss "//DFramework=$framework" "//DRuntime=$runtime"
+    ./_inno/ISCC.exe distribution/windows/setup/whisparr.iss "//DFramework=$framework" "//DRuntime=$runtime"
 }
 
 InstallInno()

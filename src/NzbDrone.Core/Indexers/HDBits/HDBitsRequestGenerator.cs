@@ -34,6 +34,25 @@ namespace NzbDrone.Core.Indexers.HDBits
             return pageableRequests;
         }
 
+        public virtual IndexerPageableRequestChain GetSearchRequests(SceneSearchCriteria searchCriteria)
+        {
+            var pageableRequests = new IndexerPageableRequestChain();
+
+            var releaseDate = searchCriteria.ReleaseDate?.ToString("yy.MM.dd") ?? string.Empty;
+
+            var queryBase = new TorrentQuery();
+            if (TryAddSearchParameters(queryBase, searchCriteria))
+            {
+                var query = queryBase.Clone();
+
+                query.Search = $"{query.Search} {releaseDate}";
+
+                pageableRequests.Add(GetRequest(query));
+            }
+
+            return pageableRequests;
+        }
+
         private bool TryAddSearchParameters(TorrentQuery query, SearchCriteriaBase searchCriteria)
         {
             if (searchCriteria.Movie.MovieMetadata.Value.ImdbId.IsNullOrWhiteSpace())

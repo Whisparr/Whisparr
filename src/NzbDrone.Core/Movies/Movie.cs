@@ -15,10 +15,11 @@ namespace NzbDrone.Core.Movies
             MovieMetadata = new MovieMetadata();
         }
 
+        public const string RELEASE_DATE_FORMAT = "yyyy-MM-dd";
+
         public int MovieMetadataId { get; set; }
 
         public bool Monitored { get; set; }
-        public MovieStatusType MinimumAvailability { get; set; }
         public int QualityProfileId { get; set; }
 
         public string Path { get; set; }
@@ -40,6 +41,12 @@ namespace NzbDrone.Core.Movies
         {
             get { return MovieMetadata.Value.Title; }
             set { MovieMetadata.Value.Title = value; }
+        }
+
+        public string ForeignId
+        {
+            get { return MovieMetadata.Value.ForeignId; }
+            set { MovieMetadata.Value.ForeignId = value; }
         }
 
         public int TmdbId
@@ -75,50 +82,12 @@ namespace NzbDrone.Core.Movies
         public bool IsAvailable(int delay = 0)
         {
             // the below line is what was used before delay was implemented, could still be used for cases when delay==0
-            // return (Status >= MinimumAvailability || (MinimumAvailability == MovieStatusType.PreDB && Status >= MovieStatusType.Released));
-
-            // This more complex sequence handles the delay
-            DateTime minimumAvailabilityDate;
-
-            if ((MinimumAvailability == MovieStatusType.TBA) || (MinimumAvailability == MovieStatusType.Announced))
-            {
-                minimumAvailabilityDate = DateTime.MinValue;
-            }
-            else if (MinimumAvailability == MovieStatusType.InCinemas && MovieMetadata.Value.InCinemas.HasValue)
-            {
-                minimumAvailabilityDate = MovieMetadata.Value.InCinemas.Value;
-            }
-            else
-            {
-                if (MovieMetadata.Value.PhysicalRelease.HasValue && MovieMetadata.Value.DigitalRelease.HasValue)
-                {
-                    minimumAvailabilityDate = new DateTime(Math.Min(MovieMetadata.Value.PhysicalRelease.Value.Ticks, MovieMetadata.Value.DigitalRelease.Value.Ticks));
-                }
-                else if (MovieMetadata.Value.PhysicalRelease.HasValue)
-                {
-                    minimumAvailabilityDate = MovieMetadata.Value.PhysicalRelease.Value;
-                }
-                else if (MovieMetadata.Value.DigitalRelease.HasValue)
-                {
-                    minimumAvailabilityDate = MovieMetadata.Value.DigitalRelease.Value;
-                }
-                else
-                {
-                    minimumAvailabilityDate = MovieMetadata.Value.InCinemas.HasValue ? MovieMetadata.Value.InCinemas.Value.AddDays(90) : DateTime.MaxValue;
-                }
-            }
-
-            if (minimumAvailabilityDate == DateTime.MinValue || minimumAvailabilityDate == DateTime.MaxValue)
-            {
-                return DateTime.Now >= minimumAvailabilityDate;
-            }
-
-            return DateTime.Now >= minimumAvailabilityDate.AddDays((double)delay);
+            return MovieMetadata.Value.Status == MovieStatusType.Released;
         }
 
         public override string ToString()
         {
-            return string.Format("[{1} ({2})][{0}, {3}]", MovieMetadata.Value.ImdbId, MovieMetadata.Value.Title.NullSafe(), MovieMetadata.Value.Year.NullSafe(), MovieMetadata.Value.TmdbId);
+            return string.Format("[{1} ({2})][{0}, {3}]", MovieMetadata.Value.ImdbId, MovieMetadata.Value.Title.NullSafe(), MovieMetadata.Value.Year.NullSafe(), MovieMetadata.Value.ForeignId);
         }
 
         public void ApplyChanges(Movie otherMovie)
@@ -127,7 +96,6 @@ namespace NzbDrone.Core.Movies
             QualityProfileId = otherMovie.QualityProfileId;
 
             Monitored = otherMovie.Monitored;
-            MinimumAvailability = otherMovie.MinimumAvailability;
 
             RootFolderPath = otherMovie.RootFolderPath;
             Tags = otherMovie.Tags;

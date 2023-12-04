@@ -2,7 +2,7 @@ using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 using NzbDrone.Test.Common;
-using Radarr.Api.V3.Movies;
+using Whisparr.Api.V3.Movies;
 
 namespace NzbDrone.Integration.Test.ApiTests
 {
@@ -13,7 +13,7 @@ namespace NzbDrone.Integration.Test.ApiTests
         {
             WaitForCompletion(() => QualityProfiles.All().Count > 0);
 
-            foreach (var title in new[] { "The Dark Knight", "Pulp Fiction" })
+            foreach (var title in new[] { "Taboo", "Pulp Fiction" })
             {
                 var newMovie = Movies.Lookup(title).First();
 

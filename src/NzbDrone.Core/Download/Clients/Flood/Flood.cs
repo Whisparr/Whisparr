@@ -51,9 +51,6 @@ namespace NzbDrone.Core.Download.Clients.Flood
                 {
                     switch (additionalTag)
                     {
-                        case (int)AdditionalTags.Collection:
-                            result.Add(remoteMovie.Movie.MovieMetadata.Value.CollectionTitle);
-                            break;
                         case (int)AdditionalTags.Quality:
                             result.Add(remoteMovie.ParsedMovieInfo.Quality.Quality.ToString());
                             break;
@@ -70,7 +67,7 @@ namespace NzbDrone.Core.Download.Clients.Flood
                             result.Add(remoteMovie.Release.Indexer);
                             break;
                         case (int)AdditionalTags.Studio:
-                            result.Add(remoteMovie.Movie.MovieMetadata.Value.Studio);
+                            result.Add(remoteMovie.Movie.MovieMetadata.Value.StudioTitle);
                             break;
                         default:
                             throw new DownloadClientException("Unexpected additional tag ID");
@@ -82,7 +79,7 @@ namespace NzbDrone.Core.Download.Clients.Flood
         }
 
         public override string Name => "Flood";
-        public override ProviderMessage Message => new ProviderMessage("Radarr will handle automatic removal of torrents based on the current seed criteria in Settings -> Indexers", ProviderMessageType.Info);
+        public override ProviderMessage Message => new ProviderMessage("Whisparr will handle automatic removal of torrents based on the current seed criteria in Settings -> Indexers", ProviderMessageType.Info);
         protected override string AddFromTorrentFile(RemoteMovie remoteMovie, string hash, string filename, byte[] fileContent)
         {
             _proxy.AddTorrentByFile(Convert.ToBase64String(fileContent), HandleTags(remoteMovie, Settings), Settings);

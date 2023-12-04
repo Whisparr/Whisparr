@@ -23,6 +23,7 @@ namespace NzbDrone.Core.Movies
         List<Movie> AddMovies(List<Movie> newMovies);
         Movie FindByImdbId(string imdbid);
         Movie FindByTmdbId(int tmdbid);
+        Movie FindByForeignId(string foreignId);
         Movie FindByTitle(string title);
         Movie FindByTitle(string title, int year);
         Movie FindByTitle(List<string> titles, int? year, List<string> otherTitles, List<Movie> candidates);
@@ -30,9 +31,9 @@ namespace NzbDrone.Core.Movies
         Movie FindByPath(string path);
         Dictionary<int, string> AllMoviePaths();
         List<int> AllMovieTmdbIds();
+        List<string> AllMovieForeignIds();
         bool MovieExists(Movie movie);
         List<Movie> GetMoviesByFileId(int fileId);
-        List<Movie> GetMoviesByCollectionTmdbId(int collectionId);
         List<Movie> GetMoviesBetweenDates(DateTime start, DateTime end, bool includeUnmonitored);
         PagingSpec<Movie> MoviesWithoutFiles(PagingSpec<Movie> pagingSpec);
         void DeleteMovie(int movieId, bool deleteFiles, bool addExclusion = false);
@@ -41,11 +42,9 @@ namespace NzbDrone.Core.Movies
         Dictionary<int, List<int>> AllMovieTags();
         Movie UpdateMovie(Movie movie);
         List<Movie> UpdateMovie(List<Movie> movie, bool useExistingRelativeFolder);
-        List<int> GetRecommendedTmdbIds();
         bool MoviePathExists(string folder);
         void RemoveAddOptions(Movie movie);
         bool ExistsByMetadataId(int metadataId);
-        HashSet<int> AllMovieWithCollectionsTmdbIds();
     }
 
     public class MovieService : IMovieService, IHandle<MovieFileAddedEvent>,
@@ -121,7 +120,7 @@ namespace NzbDrone.Core.Movies
         {
             var cleanTitles = titles.Select(t => t.CleanMovieTitle().ToLowerInvariant());
 
-            var result = candidates.Where(x => cleanTitles.Contains(x.MovieMetadata.Value.CleanTitle) || cleanTitles.Contains(x.MovieMetadata.Value.CleanOriginalTitle))
+            var result = candidates.Where(x => cleanTitles.Contains(x.MovieMetadata.Value.CleanTitle))
                 .AllWithYear(year)
                 .ToList();
 
@@ -129,22 +128,6 @@ namespace NzbDrone.Core.Movies
             {
                 result =
                     candidates.Where(movie => otherTitles.Contains(movie.MovieMetadata.Value.CleanTitle)).AllWithYear(year).ToList();
-            }
-
-            if (result == null || result.Count == 0)
-            {
-                result = candidates
-                    .Where(m => m.MovieMetadata.Value.AlternativeTitles.Any(t => cleanTitles.Contains(t.CleanTitle) ||
-                                                        otherTitles.Contains(t.CleanTitle)))
-                    .AllWithYear(year).ToList();
-            }
-
-            if (result == null || result.Count == 0)
-            {
-                result = candidates
-                    .Where(m => m.MovieMetadata.Value.Translations.Any(t => cleanTitles.Contains(t.CleanTitle) ||
-                                                        otherTitles.Contains(t.CleanTitle)))
-                    .AllWithYear(year).ToList();
             }
 
             return ReturnSingleMovieOrThrow(result.ToList());
@@ -189,6 +172,11 @@ namespace NzbDrone.Core.Movies
             return _movieRepository.FindByTmdbId(tmdbid);
         }
 
+        public Movie FindByForeignId(string foreignId)
+        {
+            return _movieRepository.FindByForeignId(foreignId);
+        }
+
         public Movie FindByPath(string path)
         {
             return _movieRepository.FindByPath(path);
@@ -202,6 +190,11 @@ namespace NzbDrone.Core.Movies
         public List<int> AllMovieTmdbIds()
         {
             return _movieRepository.AllMovieTmdbIds();
+        }
+
+        public List<string> AllMovieForeignIds()
+        {
+            return _movieRepository.AllMovieForeignIds();
         }
 
         public void DeleteMovie(int movieId, bool deleteFiles, bool addExclusion = false)
@@ -287,11 +280,6 @@ namespace NzbDrone.Core.Movies
             return _movieRepository.GetMoviesByFileId(fileId);
         }
 
-        public List<Movie> GetMoviesByCollectionTmdbId(int collectionId)
-        {
-            return _movieRepository.GetMoviesByCollectionTmdbId(collectionId);
-        }
-
         public List<Movie> GetMoviesBetweenDates(DateTime start, DateTime end, bool includeUnmonitored)
         {
             var movies = _movieRepository.MoviesBetweenDates(start.ToUniversalTime(), end.ToUniversalTime(), includeUnmonitored);
@@ -351,19 +339,9 @@ namespace NzbDrone.Core.Movies
             return false;
         }
 
-        public List<int> GetRecommendedTmdbIds()
-        {
-            return _movieRepository.GetRecommendations();
-        }
-
         public bool ExistsByMetadataId(int metadataId)
         {
             return _movieRepository.ExistsByMetadataId(metadataId);
-        }
-
-        public HashSet<int> AllMovieWithCollectionsTmdbIds()
-        {
-            return _movieRepository.AllMovieWithCollectionsTmdbIds();
         }
 
         private Movie ReturnSingleMovieOrThrow(List<Movie> movies)

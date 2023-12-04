@@ -27,6 +27,8 @@ interface CssExports {
   'qualityProfileName': string;
   'rating': string;
   'runtime': string;
+  'sceneHeader': string;
+  'screenShot': string;
   'selectedTab': string;
   'sizeOnDisk': string;
   'statusName': string;

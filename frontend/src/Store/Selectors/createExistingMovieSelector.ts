@@ -1,14 +1,14 @@
 import { some } from 'lodash';
 import { createSelector } from 'reselect';
 import AppState from 'App/State/AppState';
-import createAllMoviesSelector from './createAllMoviesSelector';
+import createAllItemsSelector from './createAllItemsSelector';
 
 function createExistingMovieSelector() {
   return createSelector(
-    (_: AppState, { tmdbId }: { tmdbId: number }) => tmdbId,
-    createAllMoviesSelector(),
-    (tmdbId, movies) => {
-      return some(movies, { tmdbId });
+    (_: AppState, { foreignId }: { foreignId: string }) => foreignId,
+    createAllItemsSelector(),
+    (foreignId, movies) => {
+      return some(movies, { foreignId });
     }
   );
 }

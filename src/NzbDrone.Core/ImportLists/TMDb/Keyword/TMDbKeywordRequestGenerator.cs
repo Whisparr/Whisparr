@@ -30,7 +30,8 @@ namespace NzbDrone.Core.ImportLists.TMDb.Keyword
                                                .SetSegment("api", "3")
                                                .SetSegment("route", "keyword")
                                                .SetSegment("id", $"{Settings.KeywordId}")
-                                               .SetSegment("secondaryRoute", "/movies");
+                                               .SetSegment("secondaryRoute", "/movies")
+                                               .AddQueryParam("include_adult", true);
 
             var jsonResponse = JsonConvert.DeserializeObject<MovieSearchResource>(HttpClient.Execute(requestBuilder.Build()).Content);
 

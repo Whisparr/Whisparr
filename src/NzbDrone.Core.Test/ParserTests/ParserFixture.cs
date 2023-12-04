@@ -62,6 +62,8 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("G.I.Movie.Movie.2013.THEATRiCAL.COMPLETE.BLURAY-GLiMMER", "G.I. Movie Movie")]
         [TestCase("www.Torrenting.org - Movie.2008.720p.X264-DIMENSION", "Movie")]
         [TestCase("The.French.Movie.2013.720p.BluRay.x264 - ROUGH[PublicHD]", "The French Movie")]
+        [TestCase("40.Years.Old.Temptations.Of.A.Married.Women.XXX.2017.DVDRIP.x264-group", "40 Years Old Temptations Of A Married Women")]
+        [TestCase("40.Years.Old.Temptations.Of.A.Married.Women.XXX.DVDRIP.x264-group", "40 Years Old Temptations Of A Married Women")]
         public void should_parse_movie_title(string postTitle, string title)
         {
             Parser.Parser.ParseMovieTitle(postTitle).PrimaryMovieTitle.Should().Be(title);
@@ -156,19 +158,19 @@ namespace NzbDrone.Core.Test.ParserTests
                 "Kjeller chitai",
                 "Basement of Shame"
             })]
-        [TestCase("Radarr.Under.Water.(aka.Beneath.the.Code.Freeze).1997.DVDRip.x264.CG-Grzechsin.mkv",
+        [TestCase("Whisparr.Under.Water.(aka.Beneath.the.Code.Freeze).1997.DVDRip.x264.CG-Grzechsin.mkv",
             new string[]
             {
-                "Radarr Under Water (aka Beneath the Code Freeze)",
-                "Radarr Under Water",
+                "Whisparr Under Water (aka Beneath the Code Freeze)",
+                "Whisparr Under Water",
                 "Beneath the Code Freeze"
             })]
-        [TestCase("Radarr.prodavet. AKA.Radarr.Shift.2005.DVDRip.x264-HANDJOB.mkv",
+        [TestCase("Whisparr.prodavet. AKA.Whisparr.Shift.2005.DVDRip.x264-HANDJOB.mkv",
             new string[]
             {
-                "Radarr prodavet  AKA Radarr Shift",
-                "Radarr prodavet",
-                "Radarr Shift"
+                "Whisparr prodavet  AKA Whisparr Shift",
+                "Whisparr prodavet",
+                "Whisparr Shift"
             })]
         [TestCase("AKA.2002.DVDRip.x264-HANDJOB.mkv",
             new string[]
@@ -261,8 +263,8 @@ namespace NzbDrone.Core.Test.ParserTests
             parsed.Languages.Should().Contain(Language.German);
         }
 
-        [TestCase("Movie.Title.2016.1080p.KORSUB.WEBRip.x264.AAC2.0-RADARR", "KORSUB")]
-        [TestCase("Movie.Title.2016.1080p.KORSUBS.WEBRip.x264.AAC2.0-RADARR", "KORSUBS")]
+        [TestCase("Movie.Title.2016.1080p.KORSUB.WEBRip.x264.AAC2.0-WHISPARR", "KORSUB")]
+        [TestCase("Movie.Title.2016.1080p.KORSUBS.WEBRip.x264.AAC2.0-WHISPARR", "KORSUBS")]
         [TestCase("Movie Title 2017 HC 720p HDRiP DD5 1 x264-LEGi0N", "Generic Hardcoded Subs")]
         [TestCase("Movie.Title.2017.720p.SUBBED.HDRip.V2.XViD-26k.avi", "Generic Hardcoded Subs")]
         [TestCase("Movie.Title.2000.1080p.BlueRay.x264.DTS.RoSubbed-playHD", null)]

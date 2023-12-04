@@ -16,15 +16,13 @@ class ImportMovieTable extends Component {
       unmappedFolders,
       defaultMonitor,
       defaultQualityProfileId,
-      defaultMinimumAvailability,
       onMovieLookup,
       onSetImportMovieValue
     } = this.props;
 
     const values = {
       monitor: defaultMonitor,
-      qualityProfileId: defaultQualityProfileId,
-      minimumAvailability: defaultMinimumAvailability
+      qualityProfileId: defaultQualityProfileId
     };
 
     unmappedFolders.forEach((unmappedFolder) => {
@@ -168,7 +166,6 @@ ImportMovieTable.propTypes = {
   unmappedFolders: PropTypes.arrayOf(PropTypes.object),
   defaultMonitor: PropTypes.string.isRequired,
   defaultQualityProfileId: PropTypes.number,
-  defaultMinimumAvailability: PropTypes.string,
   allSelected: PropTypes.bool.isRequired,
   allUnselected: PropTypes.bool.isRequired,
   selectedState: PropTypes.object.isRequired,

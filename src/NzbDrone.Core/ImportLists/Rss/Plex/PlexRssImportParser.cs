@@ -39,11 +39,11 @@ namespace NzbDrone.Core.ImportLists.Rss.Plex
 
                 if (int.TryParse(guid.Replace("tmdb://", ""), out var tmdbId))
                 {
-                    info.TmdbId = tmdbId;
+                    info.ForeignId = tmdbId.ToString();
                 }
             }
 
-            if (info.ImdbId.IsNullOrWhiteSpace() && info.TmdbId == 0)
+            if (info.ImdbId.IsNullOrWhiteSpace() && info.ForeignId.IsNullOrWhiteSpace())
             {
                 throw new UnsupportedFeedException("Each item in the RSS feed must have a guid element with a IMDB ID or TMDB ID");
             }

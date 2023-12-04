@@ -57,6 +57,7 @@ import {
   faExclamationTriangle as fasExclamationTriangle,
   faExternalLinkAlt as fasExternalLinkAlt,
   faEye as fasEye,
+  faEyeSlash as fasEyeSlash,
   faFastBackward as fasFastBackward,
   faFastForward as fasFastForward,
   faFileExport as fasFileExport,
@@ -111,7 +112,9 @@ import {
   faTrashAlt as fasTrashAlt,
   faUser as fasUser,
   faUserPlus as fasUserPlus,
+  faVenusMars as fasVenusMars,
   faVial as fasVial,
+  faVideo as fasVideo,
   faWrench as fasWrench
 } from '@fortawesome/free-solid-svg-icons';
 
@@ -127,6 +130,7 @@ export const ANNOUNCED = fasBullhorn;
 export const ARROW_LEFT = fasArrowCircleLeft;
 export const ARROW_RIGHT = fasArrowCircleRight;
 export const BACKUP = farFileArchive;
+export const BLOCKLIST = fasBan;
 export const BUG = fasBug;
 export const CALENDAR = fasCalendarAlt;
 export const CALENDAR_O = farCalendar;
@@ -184,6 +188,7 @@ export const MONITORED = fasBookmark;
 export const NETWORK = fasBroadcastTower;
 export const NAVBAR_COLLAPSE = fasBars;
 export const NOT_AIRED = farClock;
+export const NSFW = fasEye;
 export const ORGANIZE = fasSitemap;
 export const OVERFLOW = fasEllipsisH;
 export const OVERVIEW = fasThList;
@@ -195,6 +200,7 @@ export const PARENT = fasLevelUpAlt;
 export const PARSE = fasCalculator;
 export const PAUSED = fasPause;
 export const PENDING = farClock;
+export const PERFORMER = fasVenusMars;
 export const PLAY = fasPlay;
 export const PROFILE = fasUser;
 export const POPULAR = fasFire;
@@ -209,6 +215,7 @@ export const RESTORE = fasHistory;
 export const REORDER = fasBars;
 export const RSS = fasRss;
 export const SAVE = fasSave;
+export const SCENE = fasVideo;
 export const SCHEDULED = farClock;
 export const SCORE = fasUserPlus;
 export const SEARCH = fasSearch;
@@ -216,6 +223,7 @@ export const MOVIE_CONTINUING = fasPlay;
 export const SERIES_ENDED = fasStop;
 export const MOVIE_DELETED = fasExclamationTriangle;
 export const SETTINGS = fasCogs;
+export const SFW = fasEyeSlash;
 export const SHUTDOWN = fasPowerOff;
 export const SORT = fasSort;
 export const SORT_ASCENDING = fasSortUp;
@@ -239,4 +247,3 @@ export const UNSAVED_SETTING = farDotCircle;
 export const VIEW = fasEye;
 export const WARNING = fasExclamationTriangle;
 export const WIKI = fasBookReader;
-export const BLOCKLIST = fasBan;

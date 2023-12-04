@@ -43,7 +43,7 @@ namespace NzbDrone.Core.Movies
                 return true;
             }
 
-            if (movie.Status == MovieStatusType.Released && movie.PhysicalReleaseDate() >= DateTime.UtcNow.AddDays(-30))
+            if (movie.Status == MovieStatusType.Released && movie.ReleaseDateUtc >= DateTime.UtcNow.AddDays(-30))
             {
                 _logger.Trace("Movie {0} is released since less than 30 days, should refresh", movie.Title);
                 return true;

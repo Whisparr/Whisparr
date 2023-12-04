@@ -74,33 +74,6 @@ function MovieIndexSortMenu(props: MovieIndexSortMenuProps) {
         </SortMenuItem>
 
         <SortMenuItem
-          name="inCinemas"
-          sortKey={sortKey}
-          sortDirection={sortDirection}
-          onPress={onSortSelect}
-        >
-          {translate('InCinemas')}
-        </SortMenuItem>
-
-        <SortMenuItem
-          name="physicalRelease"
-          sortKey={sortKey}
-          sortDirection={sortDirection}
-          onPress={onSortSelect}
-        >
-          {translate('PhysicalRelease')}
-        </SortMenuItem>
-
-        <SortMenuItem
-          name="digitalRelease"
-          sortKey={sortKey}
-          sortDirection={sortDirection}
-          onPress={onSortSelect}
-        >
-          {translate('DigitalRelease')}
-        </SortMenuItem>
-
-        <SortMenuItem
           name="releaseDate"
           sortKey={sortKey}
           sortDirection={sortDirection}
@@ -119,30 +92,12 @@ function MovieIndexSortMenu(props: MovieIndexSortMenuProps) {
         </SortMenuItem>
 
         <SortMenuItem
-          name="imdbRating"
-          sortKey={sortKey}
-          sortDirection={sortDirection}
-          onPress={onSortSelect}
-        >
-          {translate('ImdbRating')}
-        </SortMenuItem>
-
-        <SortMenuItem
           name="rottenTomatoesRating"
           sortKey={sortKey}
           sortDirection={sortDirection}
           onPress={onSortSelect}
         >
           {translate('RottenTomatoesRating')}
-        </SortMenuItem>
-
-        <SortMenuItem
-          name="popularity"
-          sortKey={sortKey}
-          sortDirection={sortDirection}
-          onPress={onSortSelect}
-        >
-          {translate('Popularity')}
         </SortMenuItem>
 
         <SortMenuItem
@@ -161,24 +116,6 @@ function MovieIndexSortMenu(props: MovieIndexSortMenuProps) {
           onPress={onSortSelect}
         >
           {translate('SizeOnDisk')}
-        </SortMenuItem>
-
-        <SortMenuItem
-          name="certification"
-          sortKey={sortKey}
-          sortDirection={sortDirection}
-          onPress={onSortSelect}
-        >
-          {translate('Certification')}
-        </SortMenuItem>
-
-        <SortMenuItem
-          name="originalTitle"
-          sortKey={sortKey}
-          sortDirection={sortDirection}
-          onPress={onSortSelect}
-        >
-          {translate('OriginalTitle')}
         </SortMenuItem>
 
         <SortMenuItem

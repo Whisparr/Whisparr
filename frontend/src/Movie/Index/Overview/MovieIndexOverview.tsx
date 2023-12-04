@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import TextTruncate from 'react-text-truncate';
+import AppState from 'App/State/AppState';
 import { MOVIE_SEARCH, REFRESH_MOVIE } from 'Commands/commandNames';
 import Icon from 'Components/Icon';
 import IconButton from 'Components/Link/IconButton';
@@ -58,6 +59,10 @@ function MovieIndexOverview(props: MovieIndexOverviewProps) {
   const { movie, qualityProfile, isRefreshingMovie, isSearchingMovie } =
     useSelector(createMovieIndexItemSelector(props.movieId));
 
+  const safeForWorkMode = useSelector(
+    (state: AppState) => state.settings.safeForWorkMode
+  );
+
   const overviewOptions = useSelector(selectOverviewOptions);
 
   const {
@@ -69,12 +74,12 @@ function MovieIndexOverview(props: MovieIndexOverviewProps) {
     images,
     hasFile,
     isAvailable,
+    foreignId,
     tmdbId,
     imdbId,
-    studio,
+    studioTitle,
     sizeOnDisk,
     added,
-    youTubeTrailerId,
   } = movie;
 
   const dispatch = useDispatch();
@@ -116,7 +121,7 @@ function MovieIndexOverview(props: MovieIndexOverviewProps) {
     setIsDeleteMovieModalOpen(false);
   }, [setIsDeleteMovieModalOpen]);
 
-  const link = `/movie/${tmdbId}`;
+  const link = `/movie/${foreignId}`;
 
   const elementStyle = {
     width: `${posterWidth}px`,
@@ -139,6 +144,7 @@ function MovieIndexOverview(props: MovieIndexOverviewProps) {
             {isSelectMode ? <MovieIndexPosterSelect movieId={movieId} /> : null}
             <Link className={styles.link} style={elementStyle} to={link}>
               <MoviePoster
+                blur={safeForWorkMode}
                 className={styles.poster}
                 style={elementStyle}
                 images={images}
@@ -173,13 +179,7 @@ function MovieIndexOverview(props: MovieIndexOverviewProps) {
                 <Popover
                   anchor={<Icon name={icons.EXTERNAL_LINK} size={12} />}
                   title={translate('Links')}
-                  body={
-                    <MovieDetailsLinks
-                      tmdbId={tmdbId}
-                      imdbId={imdbId}
-                      youTubeTrailerId={youTubeTrailerId}
-                    />
-                  }
+                  body={<MovieDetailsLinks tmdbId={tmdbId} imdbId={imdbId} />}
                 />
               </span>
 
@@ -222,7 +222,7 @@ function MovieIndexOverview(props: MovieIndexOverviewProps) {
               height={overviewHeight}
               monitored={monitored}
               qualityProfile={qualityProfile}
-              studio={studio}
+              studio={studioTitle}
               sizeOnDisk={sizeOnDisk}
               added={added}
               path={path}

@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net6.0</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="NBuilder" Version="6.1.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NzbDrone.Core\Whisparr.Core.csproj" />
+    <ProjectReference Include="..\NzbDrone.Test.Common\Whisparr.Test.Common.csproj" />
+    <ProjectReference Include="..\Whisparr.Http\Whisparr.Http.csproj" />
+  </ItemGroup>
+</Project>

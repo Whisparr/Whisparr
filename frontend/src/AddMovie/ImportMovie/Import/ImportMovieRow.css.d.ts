@@ -2,7 +2,6 @@
 // Please do not change this file!
 interface CssExports {
   'folder': string;
-  'minimumAvailability': string;
   'monitor': string;
   'movie': string;
   'qualityProfile': string;

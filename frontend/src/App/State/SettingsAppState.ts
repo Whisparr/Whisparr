@@ -49,6 +49,7 @@ interface SettingsAppState {
   notifications: NotificationAppState;
   qualityProfiles: QualityProfilesAppState;
   ui: UiSettingsAppState;
+  safeForWorkMode: boolean;
 }
 
 export default SettingsAppState;

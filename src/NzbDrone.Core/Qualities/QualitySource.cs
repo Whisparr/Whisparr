@@ -2,15 +2,15 @@ namespace NzbDrone.Core.Qualities
 {
     public enum QualitySource
     {
-        UNKNOWN = 0,
-        CAM,
-        TELESYNC,
-        TELECINE,
-        WORKPRINT,
+        Unknown,
         DVD,
-        TV,
-        WEBDL,
-        WEBRIP,
-        BLURAY
+        DVDRaw,
+        Television,
+        TelevisionRaw,
+        Web,
+        WebRip,
+        Bluray,
+        BlurayRaw,
+        BlurayDisk
     }
 }

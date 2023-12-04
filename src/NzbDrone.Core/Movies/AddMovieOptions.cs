@@ -10,6 +10,7 @@ namespace NzbDrone.Core.Movies
     {
         Manual,
         List,
-        Collection
+        Performer,
+        Studio
     }
 }

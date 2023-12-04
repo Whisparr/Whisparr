@@ -15,8 +15,6 @@ using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.MediaFiles.MediaInfo;
 using NzbDrone.Core.Movies;
-using NzbDrone.Core.Movies.Credits;
-using NzbDrone.Core.Movies.Translations;
 using NzbDrone.Core.Tags;
 
 namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
@@ -27,25 +25,19 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
         private readonly Logger _logger;
         private readonly IDetectXbmcNfo _detectNfo;
         private readonly IDiskProvider _diskProvider;
-        private readonly ICreditService _creditService;
         private readonly ITagRepository _tagRepository;
-        private readonly IMovieTranslationService _movieTranslationsService;
 
         public XbmcMetadata(IDetectXbmcNfo detectNfo,
                             IDiskProvider diskProvider,
                             IMapCoversToLocal mediaCoverService,
-                            ICreditService creditService,
                             ITagRepository tagRepository,
-                            IMovieTranslationService movieTranslationsService,
                             Logger logger)
         {
             _logger = logger;
             _mediaCoverService = mediaCoverService;
             _diskProvider = diskProvider;
             _detectNfo = detectNfo;
-            _creditService = creditService;
             _tagRepository = tagRepository;
-            _movieTranslationsService = movieTranslationsService;
         }
 
         private static readonly Regex MovieImagesRegex = new Regex(@"^(?<type>poster|banner|fanart|clearart|discart|keyart|landscape|logo|backdrop|clearlogo)\.(?:png|jpe?g)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -126,11 +118,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
                     (int)movie.MovieMetadata.Value.OriginalLanguage :
                     Settings.MovieMetadataLanguage;
 
-                var movieTranslations = _movieTranslationsService.GetAllTranslationsForMovieMetadata(movie.MovieMetadataId);
                 var selectedSettingsLanguage = Language.FindById(movieMetadataLanguage);
-                var movieTranslation = movieTranslations.FirstOrDefault(mt => mt.Language == selectedSettingsLanguage);
-
-                var credits = _creditService.GetAllCreditsForMovieMetadata(movie.MovieMetadataId);
 
                 var watched = GetExistingWatchedStatus(movie, movieFile.RelativePath);
 
@@ -148,11 +136,9 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
 
                     var details = new XElement("movie");
 
-                    var metadataTitle = movieTranslation?.Title ?? movie.Title;
+                    var metadataTitle = movie.Title;
 
                     details.Add(new XElement("title", metadataTitle));
-
-                    details.Add(new XElement("originaltitle", movie.MovieMetadata.Value.OriginalTitle));
 
                     details.Add(new XElement("sorttitle", Parser.Parser.NormalizeTitle(metadataTitle)));
 
@@ -200,7 +186,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
 
                     details.Add(new XElement("outline"));
 
-                    details.Add(new XElement("plot", movieTranslation?.Overview ?? movie.MovieMetadata.Value.Overview));
+                    details.Add(new XElement("plot", movie.MovieMetadata.Value.Overview));
 
                     details.Add(new XElement("tagline"));
 
@@ -233,18 +219,13 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
                         details.Add(fanartElement);
                     }
 
-                    if (movie.MovieMetadata.Value.Certification.IsNotNullOrWhiteSpace())
-                    {
-                        details.Add(new XElement("mpaa", movie.MovieMetadata.Value.Certification));
-                    }
-
                     details.Add(new XElement("playcount"));
 
                     details.Add(new XElement("lastplayed"));
 
-                    details.Add(new XElement("id", movie.TmdbId));
+                    details.Add(new XElement("id", movie.ForeignId));
 
-                    var uniqueId = new XElement("uniqueid", movie.TmdbId);
+                    var uniqueId = new XElement("uniqueid", movie.ForeignId);
                     uniqueId.SetAttributeValue("type", "tmdb");
                     uniqueId.SetAttributeValue("default", true);
                     details.Add(uniqueId);
@@ -263,16 +244,6 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
 
                     details.Add(new XElement("country"));
 
-                    if (Settings.AddCollectionName && movie.MovieMetadata.Value.CollectionTitle != null)
-                    {
-                        var setElement = new XElement("set");
-
-                        setElement.Add(new XElement("name", movie.MovieMetadata.Value.CollectionTitle));
-                        setElement.Add(new XElement("overview"));
-
-                        details.Add(setElement);
-                    }
-
                     var tags = _tagRepository.Get(movie.Tags);
 
                     foreach (var tag in tags)
@@ -280,32 +251,30 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
                         details.Add(new XElement("tag", tag.Label));
                     }
 
-                    foreach (var credit in credits)
+                    foreach (var credit in movie.MovieMetadata.Value.Credits)
                     {
-                        if (credit.Name != null && credit.Job == "Screenplay")
+                        if (credit.Performer.Name != null && credit.Job == "Screenplay")
                         {
-                            details.Add(new XElement("credits", credit.Name));
+                            details.Add(new XElement("credits", credit.Performer.Name));
                         }
                     }
 
-                    foreach (var credit in credits)
+                    foreach (var credit in movie.MovieMetadata.Value.Credits)
                     {
-                        if (credit.Name != null && credit.Job == "Director")
+                        if (credit.Performer.Name != null && credit.Job == "Director")
                         {
-                            details.Add(new XElement("director", credit.Name));
+                            details.Add(new XElement("director", credit.Performer.Name));
                         }
                     }
 
-                    if (movie.MovieMetadata.Value.InCinemas.HasValue)
+                    if (movie.MovieMetadata.Value.ReleaseDateUtc.HasValue)
                     {
-                        details.Add(new XElement("premiered", movie.MovieMetadata.Value.InCinemas.Value.ToString("yyyy-MM-dd")));
+                        details.Add(new XElement("premiered", movie.MovieMetadata.Value.ReleaseDateUtc.Value.ToString("yyyy-MM-dd")));
                     }
 
                     details.Add(new XElement("year", movie.Year));
 
-                    details.Add(new XElement("studio", movie.MovieMetadata.Value.Studio));
-
-                    details.Add(new XElement("trailer", "plugin://plugin.video.youtube/play/?video_id=" + movie.MovieMetadata.Value.YouTubeTrailerId));
+                    details.Add(new XElement("studio", movie.MovieMetadata.Value.StudioTitle));
 
                     details.Add(new XElement("watched", watched));
 
@@ -354,17 +323,17 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
                         fileInfo.Add(streamDetails);
                         details.Add(fileInfo);
 
-                        foreach (var credit in credits)
+                        foreach (var credit in movie.MovieMetadata.Value.Credits)
                         {
-                            if (credit.Name != null && credit.Character != null)
+                            if (credit.Performer.Name != null && credit.Character != null)
                             {
                                 var actorElement = new XElement("actor");
 
-                                actorElement.Add(new XElement("name", credit.Name));
+                                actorElement.Add(new XElement("name", credit.Performer.Name));
                                 actorElement.Add(new XElement("role", credit.Character));
                                 actorElement.Add(new XElement("order", credit.Order));
 
-                                var headshot = credit.Images.FirstOrDefault(m => m.CoverType == MediaCoverTypes.Headshot);
+                                var headshot = credit.Performer.Images.FirstOrDefault(m => m.CoverType == MediaCoverTypes.Headshot);
 
                                 if (headshot != null && headshot.RemoteUrl != null)
                                 {
@@ -386,7 +355,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
 
             if (Settings.MovieMetadataURL)
             {
-                xmlResult += "https://www.themoviedb.org/movie/" + movie.MovieMetadata.Value.TmdbId;
+                xmlResult += "https://www.themoviedb.org/movie/" + movie.MovieMetadata.Value.ForeignId;
                 xmlResult += Environment.NewLine;
 
                 xmlResult += "https://www.imdb.com/title/" + movie.MovieMetadata.Value.ImdbId;

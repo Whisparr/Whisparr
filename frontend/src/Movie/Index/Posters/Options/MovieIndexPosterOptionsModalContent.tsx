@@ -52,10 +52,8 @@ function MovieIndexPosterOptionsModalContent(
     showTitle,
     showMonitored,
     showQualityProfile,
-    showCinemaRelease,
     showReleaseDate,
     showTmdbRating,
-    showImdbRating,
     showRottenTomatoesRating,
     showSearchAction,
   } = posterOptions;
@@ -136,18 +134,6 @@ function MovieIndexPosterOptionsModalContent(
           </FormGroup>
 
           <FormGroup>
-            <FormLabel>{translate('ShowCinemaRelease')}</FormLabel>
-
-            <FormInputGroup
-              type={inputTypes.CHECK}
-              name="showCinemaRelease"
-              value={showCinemaRelease}
-              helpText={translate('ShowCinemaReleaseHelpText')}
-              onChange={onPosterOptionChange}
-            />
-          </FormGroup>
-
-          <FormGroup>
             <FormLabel>{translate('ShowReleaseDate')}</FormLabel>
 
             <FormInputGroup
@@ -167,18 +153,6 @@ function MovieIndexPosterOptionsModalContent(
               name="showTmdbRating"
               value={showTmdbRating}
               helpText={translate('ShowTmdbRatingHelpText')}
-              onChange={onPosterOptionChange}
-            />
-          </FormGroup>
-
-          <FormGroup>
-            <FormLabel>{translate('ShowImdbRating')}</FormLabel>
-
-            <FormInputGroup
-              type={inputTypes.CHECK}
-              name="showImdbRating"
-              value={showImdbRating}
-              helpText={translate('ShowImdbRatingHelpText')}
               onChange={onPosterOptionChange}
             />
           </FormGroup>

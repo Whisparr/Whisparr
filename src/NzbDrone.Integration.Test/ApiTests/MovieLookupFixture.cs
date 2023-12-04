@@ -6,8 +6,7 @@ namespace NzbDrone.Integration.Test.ApiTests
     [TestFixture]
     public class MovieLookupFixture : IntegrationTest
     {
-        [TestCase("psycho", "Psycho")]
-        [TestCase("pulp fiction", "Pulp Fiction")]
+        [TestCase("taboo", "Taboo")]
         public void lookup_new_movie_by_title(string term, string title)
         {
             var movie = Movies.Lookup(term);
@@ -17,12 +16,13 @@ namespace NzbDrone.Integration.Test.ApiTests
         }
 
         [Test]
+        [Ignore("Not Implemented on Meta")]
         public void lookup_new_movie_by_imdbid()
         {
-            var movie = Movies.Lookup("imdb:tt0110912");
+            var movie = Movies.Lookup("imdb:tt0081593");
 
             movie.Should().NotBeEmpty();
-            movie.Should().Contain(c => c.Title == "Pulp Fiction");
+            movie.Should().Contain(c => c.Title == "Taboo");
         }
 
         [Test]

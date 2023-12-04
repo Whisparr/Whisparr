@@ -8,9 +8,9 @@ namespace NzbDrone.Core.ImportLists.ImportExclusions
 {
     public interface IImportExclusionsRepository : IBasicRepository<ImportExclusion>
     {
-        bool IsMovieExcluded(int tmdbid);
-        ImportExclusion GetByTmdbid(int tmdbid);
-        List<int> AllExcludedTmdbIds();
+        bool IsMovieExcluded(string tmdbid);
+        ImportExclusion GetByTmdbid(string tmdbid);
+        List<string> AllExcludedTmdbIds();
     }
 
     public class ImportExclusionsRepository : BasicRepository<ImportExclusion>, IImportExclusionsRepository
@@ -20,21 +20,21 @@ namespace NzbDrone.Core.ImportLists.ImportExclusions
         {
         }
 
-        public bool IsMovieExcluded(int tmdbid)
+        public bool IsMovieExcluded(string tmdbid)
         {
-            return Query(x => x.TmdbId == tmdbid).Any();
+            return Query(x => x.ForeignId == tmdbid).Any();
         }
 
-        public ImportExclusion GetByTmdbid(int tmdbid)
+        public ImportExclusion GetByTmdbid(string tmdbid)
         {
-            return Query(x => x.TmdbId == tmdbid).First();
+            return Query(x => x.ForeignId == tmdbid).First();
         }
 
-        public List<int> AllExcludedTmdbIds()
+        public List<string> AllExcludedTmdbIds()
         {
             using var conn = _database.OpenConnection();
 
-            return conn.Query<int>("SELECT \"TmdbId\" FROM \"ImportExclusions\"").ToList();
+            return conn.Query<string>("SELECT \"ForeignId\" FROM \"ImportExclusions\"").ToList();
         }
     }
 }

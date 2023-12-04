@@ -9,12 +9,11 @@ import { executeCommand } from 'Store/Actions/commandActions';
 import { clearExtraFiles, fetchExtraFiles } from 'Store/Actions/extraFileActions';
 import { toggleMovieMonitored } from 'Store/Actions/movieActions';
 import { clearMovieBlocklist, fetchMovieBlocklist } from 'Store/Actions/movieBlocklistActions';
-import { clearMovieCredits, fetchMovieCredits } from 'Store/Actions/movieCreditsActions';
 import { clearMovieFiles, fetchMovieFiles } from 'Store/Actions/movieFileActions';
 import { clearQueueDetails, fetchQueueDetails } from 'Store/Actions/queueActions';
 import { cancelFetchReleases, clearReleases } from 'Store/Actions/releaseActions';
 import { fetchImportListSchema } from 'Store/Actions/settingsActions';
-import createAllMoviesSelector from 'Store/Selectors/createAllMoviesSelector';
+import createAllItemsSelector from 'Store/Selectors/createAllItemsSelector';
 import createCommandsSelector from 'Store/Selectors/createCommandsSelector';
 import createDimensionsSelector from 'Store/Selectors/createDimensionsSelector';
 import { findCommand, isCommandExecuting } from 'Utilities/Command';
@@ -45,23 +44,6 @@ const selectMovieFiles = createSelector(
   }
 );
 
-const selectMovieCredits = createSelector(
-  (state) => state.movieCredits,
-  (movieCredits) => {
-    const {
-      isFetching,
-      isPopulated,
-      error
-    } = movieCredits;
-
-    return {
-      isMovieCreditsFetching: isFetching,
-      isMovieCreditsPopulated: isPopulated,
-      movieCreditsError: error
-    };
-  }
-);
-
 const selectExtraFiles = createSelector(
   (state) => state.extraFiles,
   (extraFiles) => {
@@ -83,15 +65,15 @@ function createMapStateToProps() {
   return createSelector(
     (state, { titleSlug }) => titleSlug,
     selectMovieFiles,
-    selectMovieCredits,
     selectExtraFiles,
-    createAllMoviesSelector(),
+    createAllItemsSelector(),
     createCommandsSelector(),
     createDimensionsSelector(),
     (state) => state.queue.details.items,
     (state) => state.app.isSidebarVisible,
     (state) => state.settings.ui.item.movieRuntimeFormat,
-    (titleSlug, movieFiles, movieCredits, extraFiles, allMovies, commands, dimensions, queueItems, isSidebarVisible, movieRuntimeFormat) => {
+    (state) => state.settings.safeForWorkMode,
+    (titleSlug, movieFiles, extraFiles, allMovies, commands, dimensions, queueItems, isSidebarVisible, movieRuntimeFormat, safeForWorkMode) => {
       const sortedMovies = _.orderBy(allMovies, 'sortTitle');
       const movieIndex = _.findIndex(sortedMovies, { titleSlug });
       const movie = sortedMovies[movieIndex];
@@ -107,12 +89,6 @@ function createMapStateToProps() {
         hasMovieFiles,
         sizeOnDisk
       } = movieFiles;
-
-      const {
-        isMovieCreditsFetching,
-        isMovieCreditsPopulated,
-        movieCreditsError
-      } = movieCredits;
 
       const {
         isExtraFilesFetching,
@@ -137,8 +113,8 @@ function createMapStateToProps() {
         isRenamingMovieCommand.body.movieIds.indexOf(movie.id) > -1
       );
 
-      const isFetching = isMovieFilesFetching || isMovieCreditsFetching || isExtraFilesFetching;
-      const isPopulated = isMovieFilesPopulated && isMovieCreditsPopulated && isExtraFilesPopulated;
+      const isFetching = isMovieFilesFetching || isExtraFilesFetching;
+      const isPopulated = isMovieFilesPopulated && isExtraFilesPopulated;
       const alternateTitles = _.reduce(movie.alternateTitles, (acc, alternateTitle) => {
         acc.push(alternateTitle.title);
         return acc;
@@ -158,7 +134,6 @@ function createMapStateToProps() {
         isFetching,
         isPopulated,
         movieFilesError,
-        movieCreditsError,
         extraFilesError,
         hasMovieFiles,
         sizeOnDisk,
@@ -167,7 +142,8 @@ function createMapStateToProps() {
         isSmallScreen: dimensions.isSmallScreen,
         isSidebarVisible,
         queueItem,
-        movieRuntimeFormat
+        movieRuntimeFormat,
+        safeForWorkMode
       };
     }
   );
@@ -180,12 +156,6 @@ function createMapDispatchToProps(dispatch, props) {
     },
     dispatchClearMovieFiles() {
       dispatch(clearMovieFiles());
-    },
-    dispatchFetchMovieCredits({ movieId }) {
-      dispatch(fetchMovieCredits({ movieId }));
-    },
-    dispatchClearMovieCredits() {
-      dispatch(clearMovieCredits());
     },
     dispatchFetchExtraFiles({ movieId }) {
       dispatch(fetchExtraFiles({ movieId }));
@@ -215,7 +185,7 @@ function createMapDispatchToProps(dispatch, props) {
       dispatch(executeCommand(payload));
     },
     onGoToMovie(titleSlug) {
-      dispatch(push(`${window.Radarr.urlBase}/movie/${titleSlug}`));
+      dispatch(push(`${window.Whisparr.urlBase}/movie/${titleSlug}`));
     },
     dispatchFetchMovieBlocklist({ movieId }) {
       dispatch(fetchMovieBlocklist({ movieId }));
@@ -277,7 +247,6 @@ class MovieDetailsConnector extends Component {
     this.props.dispatchFetchMovieFiles({ movieId });
     this.props.dispatchFetchMovieBlocklist({ movieId });
     this.props.dispatchFetchExtraFiles({ movieId });
-    this.props.dispatchFetchMovieCredits({ movieId });
     this.props.dispatchFetchQueueDetails({ movieId });
     this.props.dispatchFetchImportListSchema();
   };
@@ -287,7 +256,6 @@ class MovieDetailsConnector extends Component {
     this.props.dispatchClearMovieBlocklist();
     this.props.dispatchClearMovieFiles();
     this.props.dispatchClearExtraFiles();
-    this.props.dispatchClearMovieCredits();
     this.props.dispatchClearQueueDetails();
     this.props.dispatchClearReleases();
   };
@@ -344,8 +312,6 @@ MovieDetailsConnector.propTypes = {
   dispatchClearMovieFiles: PropTypes.func.isRequired,
   dispatchFetchExtraFiles: PropTypes.func.isRequired,
   dispatchClearExtraFiles: PropTypes.func.isRequired,
-  dispatchFetchMovieCredits: PropTypes.func.isRequired,
-  dispatchClearMovieCredits: PropTypes.func.isRequired,
   dispatchClearReleases: PropTypes.func.isRequired,
   dispatchCancelFetchReleases: PropTypes.func.isRequired,
   dispatchToggleMovieMonitored: PropTypes.func.isRequired,

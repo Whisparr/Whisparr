@@ -4,7 +4,6 @@ import PageContentBody from 'Components/Page/PageContentBody';
 import SettingsToolbarConnector from 'Settings/SettingsToolbarConnector';
 import translate from 'Utilities/String/translate';
 import MetadatasConnector from './Metadata/MetadatasConnector';
-import MetadataOptionsConnector from './Options/MetadataOptionsConnector';
 
 class MetadataSettings extends Component {
 
@@ -57,11 +56,6 @@ class MetadataSettings extends Component {
         />
 
         <PageContentBody>
-          <MetadataOptionsConnector
-            onChildMounted={this.onChildMounted}
-            onChildStateChange={this.onChildStateChange}
-          />
-
           <MetadatasConnector />
         </PageContentBody>
       </PageContent>

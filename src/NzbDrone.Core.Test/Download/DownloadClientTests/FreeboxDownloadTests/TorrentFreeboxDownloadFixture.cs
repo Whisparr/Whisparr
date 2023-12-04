@@ -224,7 +224,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.FreeboxDownloadTests
 
             var remoteMovie = CreateRemoteMovie();
 
-            remoteMovie.Movie.MovieMetadata.Value.PhysicalRelease = DateTime.UtcNow.AddDays(-ageDay);
+            remoteMovie.Movie.MovieMetadata.Value.ReleaseDateUtc = DateTime.UtcNow.AddDays(-ageDay);
 
             await Subject.Download(remoteMovie, CreateIndexer());
 

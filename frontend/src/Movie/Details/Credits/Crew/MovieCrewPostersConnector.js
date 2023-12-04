@@ -2,14 +2,15 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
+import createMovieSelector from 'Store/Selectors/createMovieSelector';
 import MovieCreditPosters from '../MovieCreditPosters';
 import MovieCrewPoster from './MovieCrewPoster';
 
 function createMapStateToProps() {
   return createSelector(
-    (state) => state.movieCredits.items,
-    (credits) => {
-      const crew = _.reduce(credits, (acc, credit) => {
+    createMovieSelector(),
+    (movie) => {
+      const crew = _.reduce(movie.credits, (acc, credit) => {
         if (credit.type === 'crew') {
           acc.push(credit);
         }

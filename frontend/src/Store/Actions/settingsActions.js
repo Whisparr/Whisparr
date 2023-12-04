@@ -18,7 +18,6 @@ import indexers from './Settings/indexers';
 import languages from './Settings/languages';
 import mediaManagement from './Settings/mediaManagement';
 import metadata from './Settings/metadata';
-import metadataOptions from './Settings/metadataOptions';
 import naming from './Settings/naming';
 import namingExamples from './Settings/namingExamples';
 import notifications from './Settings/notifications';
@@ -45,7 +44,6 @@ export * from './Settings/importListOptions';
 export * from './Settings/importLists';
 export * from './Settings/mediaManagement';
 export * from './Settings/metadata';
-export * from './Settings/metadataOptions';
 export * from './Settings/naming';
 export * from './Settings/namingExamples';
 export * from './Settings/notifications';
@@ -67,6 +65,7 @@ export const defaultState = {
   advancedSettings: false,
   autoTaggingSpecifications: autoTaggingSpecifications.defaultState,
   autoTaggings: autoTaggings.defaultState,
+  safeForWorkMode: false,
   customFormatSpecifications: customFormatSpecifications.defaultState,
   customFormats: customFormats.defaultState,
   delayProfiles: delayProfiles.defaultState,
@@ -82,7 +81,6 @@ export const defaultState = {
   importLists: importLists.defaultState,
   mediaManagement: mediaManagement.defaultState,
   metadata: metadata.defaultState,
-  metadataOptions: metadataOptions.defaultState,
   naming: naming.defaultState,
   namingExamples: namingExamples.defaultState,
   notifications: notifications.defaultState,
@@ -94,18 +92,21 @@ export const defaultState = {
 };
 
 export const persistState = [
-  'settings.advancedSettings'
+  'settings.advancedSettings',
+  'settings.safeForWorkMode'
 ];
 
 //
 // Actions Types
 
 export const TOGGLE_ADVANCED_SETTINGS = 'settings/toggleAdvancedSettings';
+export const TOGGLE_SFW_MODE = 'settings/toggleSafeForWorkMode';
 
 //
 // Action Creators
 
 export const toggleAdvancedSettings = createAction(TOGGLE_ADVANCED_SETTINGS);
+export const toggleSafeForWorkMode = createAction(TOGGLE_SFW_MODE);
 
 //
 // Action Handlers
@@ -128,7 +129,6 @@ export const actionHandlers = handleThunks({
   ...importLists.actionHandlers,
   ...mediaManagement.actionHandlers,
   ...metadata.actionHandlers,
-  ...metadataOptions.actionHandlers,
   ...naming.actionHandlers,
   ...namingExamples.actionHandlers,
   ...notifications.actionHandlers,
@@ -148,6 +148,10 @@ export const reducers = createHandleActions({
     return Object.assign({}, state, { advancedSettings: !state.advancedSettings });
   },
 
+  [TOGGLE_SFW_MODE]: (state, { payload }) => {
+    return Object.assign({}, state, { safeForWorkMode: !state.safeForWorkMode });
+  },
+
   ...autoTaggingSpecifications.reducers,
   ...autoTaggings.reducers,
   ...customFormatSpecifications.reducers,
@@ -165,7 +169,6 @@ export const reducers = createHandleActions({
   ...importLists.reducers,
   ...mediaManagement.reducers,
   ...metadata.reducers,
-  ...metadataOptions.reducers,
   ...naming.reducers,
   ...namingExamples.reducers,
   ...notifications.reducers,

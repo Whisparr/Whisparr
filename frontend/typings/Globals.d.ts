@@ -1,7 +1,7 @@
 declare module '*.module.css';
 
 interface Window {
-  Radarr: {
+  Whisparr: {
     apiKey: string;
     instanceName: string;
     theme: string;

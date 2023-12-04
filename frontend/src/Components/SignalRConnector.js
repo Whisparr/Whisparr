@@ -61,7 +61,7 @@ function Logger(minimumLogLevel) {
 }
 
 Logger.prototype.cleanse = function(message) {
-  const apikey = new RegExp(`access_token=${encodeURIComponent(window.Radarr.apiKey)}`, 'g');
+  const apikey = new RegExp(`access_token=${encodeURIComponent(window.Whisparr.apiKey)}`, 'g');
   return message.replace(apikey, 'access_token=(removed)');
 };
 
@@ -101,11 +101,11 @@ class SignalRConnector extends Component {
   componentDidMount() {
     console.log('[signalR] starting');
 
-    const url = `${window.Radarr.urlBase}/signalr/messages`;
+    const url = `${window.Whisparr.urlBase}/signalr/messages`;
 
     this.connection = new signalR.HubConnectionBuilder()
       .configureLogging(new Logger(signalR.LogLevel.Information))
-      .withUrl(`${url}?access_token=${encodeURIComponent(window.Radarr.apiKey)}`)
+      .withUrl(`${url}?access_token=${encodeURIComponent(window.Whisparr.apiKey)}`)
       .withAutomaticReconnect({
         nextRetryDelayInMilliseconds: (retryContext) => {
           if (retryContext.elapsedMilliseconds > 180000) {
@@ -205,11 +205,9 @@ class SignalRConnector extends Component {
     }
   };
 
-  handleCollection = (body) => {
+  handlePerformer = (body) => {
     const action = body.action;
-    const section = 'movieCollections';
-
-    console.log(body);
+    const section = 'performers';
 
     if (action === 'updated') {
       this.props.dispatchUpdateItem({ section, ...body.resource });
@@ -234,6 +232,17 @@ class SignalRConnector extends Component {
 
   handleQueueStatus = (body) => {
     this.props.dispatchUpdate({ section: 'queue.status', data: body.resource });
+  };
+
+  handleStudio = (body) => {
+    const action = body.action;
+    const section = 'studios';
+
+    if (action === 'updated') {
+      this.props.dispatchUpdateItem({ section, ...body.resource });
+    } else if (action === 'deleted') {
+      this.props.dispatchRemoveItem({ section, id: body.resource.id });
+    }
   };
 
   handleVersion = (body) => {

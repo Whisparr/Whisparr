@@ -1,15 +1,15 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace NzbDrone.Core.Movies
 {
     public static class MovieTitleNormalizer
     {
-        private static readonly Dictionary<int, string> PreComputedTitles = new Dictionary<int, string>
+        private static readonly Dictionary<string, string> PreComputedTitles = new Dictionary<string, string>
                                                                      {
-                                                                         { 999999999, "a to z" },
+                                                                         { "999999999", "a to z" },
                                                                      };
 
-        public static string Normalize(string title, int tmdbid)
+        public static string Normalize(string title, string tmdbid)
         {
             if (PreComputedTitles.ContainsKey(tmdbid))
             {

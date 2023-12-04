@@ -11,6 +11,8 @@ namespace NzbDrone.Core.Organizer
     {
         SampleResult GetMovieSample(NamingConfig nameSpec);
         string GetMovieFolderSample(NamingConfig nameSpec);
+        SampleResult GetSceneSample(NamingConfig nameSpec);
+        string GetSceneFolderSample(NamingConfig nameSpec);
     }
 
     public class FileNameSampleService : IFilenameSampleService
@@ -19,7 +21,9 @@ namespace NzbDrone.Core.Organizer
 
         private static MovieFile _movieFile;
         private static Movie _movie;
+        private static Movie _scene;
         private static MovieMetadata _movieMetadata;
+        private static MovieMetadata _sceneMetadata;
         private static List<CustomFormat> _customFormats;
 
         public FileNameSampleService(IBuildFileNames buildFileNames)
@@ -53,13 +57,21 @@ namespace NzbDrone.Core.Organizer
             _movieMetadata = new MovieMetadata
             {
                 Title = "The Movie: Title",
-                OriginalTitle = "The Original Movie Title",
-                CollectionTitle = "The Movie Collection",
-                CollectionTmdbId = 123654,
-                Certification = "R",
                 Year = 2010,
                 ImdbId = "tt0066921",
-                TmdbId = 345691
+                TmdbId = 345691,
+                ForeignId = "345691",
+                ItemType = ItemType.Movie
+            };
+
+            _sceneMetadata = new MovieMetadata
+            {
+                Title = "The Scene: Title",
+                Year = 2010,
+                ImdbId = "tt0066921",
+                StashId = "d8f9b8b4-7801-4fa6-bd18-0a4dbd0ce598",
+                ForeignId = "d8f9b8b4-7801-4fa6-bd18-0a4dbd0ce598",
+                ItemType = ItemType.Scene
             };
 
             _movie = new Movie
@@ -67,6 +79,14 @@ namespace NzbDrone.Core.Organizer
                 MovieFile = _movieFile,
                 MovieFileId = 1,
                 MovieMetadata = _movieMetadata,
+                MovieMetadataId = 1
+            };
+
+            _scene = new Movie
+            {
+                MovieFile = _movieFile,
+                MovieFileId = 1,
+                MovieMetadata = _sceneMetadata,
                 MovieMetadataId = 1
             };
 
@@ -96,6 +116,21 @@ namespace NzbDrone.Core.Organizer
         }
 
         public string GetMovieFolderSample(NamingConfig nameSpec)
+        {
+            return _buildFileNames.GetMovieFolder(_movie, nameSpec);
+        }
+
+        public SampleResult GetSceneSample(NamingConfig nameSpec)
+        {
+            var result = new SampleResult
+            {
+                FileName = BuildSample(_movie, _movieFile, nameSpec),
+            };
+
+            return result;
+        }
+
+        public string GetSceneFolderSample(NamingConfig nameSpec)
         {
             return _buildFileNames.GetMovieFolder(_movie, nameSpec);
         }

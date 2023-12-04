@@ -33,17 +33,6 @@ namespace NzbDrone.Core.Indexers.Newznab
             }
         }
 
-        private bool SupportsImdbSearch
-        {
-            get
-            {
-                var capabilities = _capabilitiesProvider.GetCapabilities(Settings);
-
-                return capabilities.SupportedMovieSearchParameters != null &&
-                       capabilities.SupportedMovieSearchParameters.Contains("imdbid");
-            }
-        }
-
         private bool SupportsTmdbSearch
         {
             get
@@ -113,23 +102,38 @@ namespace NzbDrone.Core.Indexers.Newznab
             return pageableRequests;
         }
 
+        public virtual IndexerPageableRequestChain GetSearchRequests(SceneSearchCriteria searchCriteria)
+        {
+            var pageableRequests = new IndexerPageableRequestChain();
+
+            var releaseDate = searchCriteria.ReleaseDate?.ToString("yy.MM.dd") ?? string.Empty;
+
+            if (SupportsSearch)
+            {
+                var queryTitles = TextSearchEngine == "raw" ? searchCriteria.SceneTitles : searchCriteria.CleanSceneTitles;
+                foreach (var queryTitle in queryTitles)
+                {
+                    pageableRequests.Add(GetPagedRequests(MaxPages,
+                        Settings.Categories,
+                        "search",
+                        $"&q={NewsnabifyTitle(queryTitle)}+{releaseDate}"));
+                }
+            }
+
+            return pageableRequests;
+        }
+
         private void AddMovieIdPageableRequests(IndexerPageableRequestChain chain, int maxPages, IEnumerable<int> categories, SearchCriteriaBase searchCriteria)
         {
             var includeTmdbSearch = SupportsTmdbSearch && searchCriteria.Movie.MovieMetadata.Value.TmdbId > 0;
-            var includeImdbSearch = SupportsImdbSearch && searchCriteria.Movie.MovieMetadata.Value.ImdbId.IsNotNullOrWhiteSpace();
 
-            if (SupportsAggregatedIdSearch && (includeTmdbSearch || includeImdbSearch))
+            if (SupportsAggregatedIdSearch && includeTmdbSearch)
             {
                 var ids = "";
 
                 if (includeTmdbSearch)
                 {
-                    ids += $"&tmdbid={searchCriteria.Movie.MovieMetadata.Value.TmdbId}";
-                }
-
-                if (includeImdbSearch)
-                {
-                    ids += $"&imdbid={searchCriteria.Movie.MovieMetadata.Value.ImdbId.Substring(2)}";
+                    ids += $"&tmdbid={searchCriteria.Movie.MovieMetadata.Value.ForeignId}";
                 }
 
                 chain.Add(GetPagedRequests(maxPages, categories, "movie", ids));
@@ -141,14 +145,7 @@ namespace NzbDrone.Core.Indexers.Newznab
                     chain.Add(GetPagedRequests(maxPages,
                         categories,
                         "movie",
-                        $"&tmdbid={searchCriteria.Movie.MovieMetadata.Value.TmdbId}"));
-                }
-                else if (includeImdbSearch)
-                {
-                    chain.Add(GetPagedRequests(maxPages,
-                        categories,
-                        "movie",
-                        $"&imdbid={searchCriteria.Movie.MovieMetadata.Value.ImdbId.Substring(2)}"));
+                        $"&tmdbid={searchCriteria.Movie.MovieMetadata.Value.ForeignId}"));
                 }
             }
 
@@ -160,10 +157,7 @@ namespace NzbDrone.Core.Indexers.Newznab
                 {
                     var searchQuery = queryTitle;
 
-                    if (!Settings.RemoveYear)
-                    {
-                        searchQuery = $"{searchQuery} {searchCriteria.Movie.Year}";
-                    }
+                    searchQuery = $"{searchQuery} {searchCriteria.Movie.Year}";
 
                     chain.Add(GetPagedRequests(MaxPages,
                         Settings.Categories,

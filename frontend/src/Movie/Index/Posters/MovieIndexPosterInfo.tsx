@@ -1,6 +1,5 @@
 import React from 'react';
 import Icon from 'Components/Icon';
-import ImdbRating from 'Components/ImdbRating';
 import RottenTomatoRating from 'Components/RottenTomatoRating';
 import TmdbRating from 'Components/TmdbRating';
 import { icons } from 'Helpers/Props';
@@ -19,24 +18,18 @@ interface MovieIndexPosterInfoProps {
   qualityProfile?: QualityProfile;
   added?: string;
   year: number;
-  inCinemas?: string;
-  digitalRelease?: string;
-  physicalRelease?: string;
+  releaseDate?: string;
   path: string;
   ratings: Ratings;
-  certification: string;
-  originalTitle: string;
   originalLanguage: Language;
   sizeOnDisk?: number;
   sortKey: string;
   showRelativeDates: boolean;
-  showCinemaRelease: boolean;
   showReleaseDate: boolean;
   shortDateFormat: string;
   longDateFormat: string;
   timeFormat: string;
   showTmdbRating: boolean;
-  showImdbRating: boolean;
   showRottenTomatoesRating: boolean;
 }
 
@@ -47,24 +40,18 @@ function MovieIndexPosterInfo(props: MovieIndexPosterInfoProps) {
     qualityProfile,
     added,
     year,
-    inCinemas,
-    digitalRelease,
-    physicalRelease,
+    releaseDate,
     path,
     ratings,
-    certification,
-    originalTitle,
     originalLanguage,
     sizeOnDisk,
     sortKey,
     showRelativeDates,
-    showCinemaRelease,
     showReleaseDate,
     shortDateFormat,
     longDateFormat,
     timeFormat,
     showTmdbRating,
-    showImdbRating,
     showRottenTomatoesRating,
   } = props;
 
@@ -117,27 +104,9 @@ function MovieIndexPosterInfo(props: MovieIndexPosterInfoProps) {
     );
   }
 
-  if (sortKey === 'inCinemas' && inCinemas && !showCinemaRelease) {
-    const inCinemasDate = getRelativeDate(
-      inCinemas,
-      shortDateFormat,
-      showRelativeDates,
-      {
-        timeFormat,
-        timeForToday: false,
-      }
-    );
-
-    return (
-      <div className={styles.info} title={translate('InCinemas')}>
-        <Icon name={icons.IN_CINEMAS} /> {inCinemasDate}
-      </div>
-    );
-  }
-
-  if (sortKey === 'digitalRelease' && digitalRelease && !showReleaseDate) {
+  if (sortKey === 'releaseDate' && releaseDate && !showReleaseDate) {
     const digitalReleaseDate = getRelativeDate(
-      digitalRelease,
+      releaseDate,
       shortDateFormat,
       showRelativeDates,
       {
@@ -148,25 +117,7 @@ function MovieIndexPosterInfo(props: MovieIndexPosterInfoProps) {
 
     return (
       <div className={styles.info}>
-        <Icon name={icons.MOVIE_FILE} /> {digitalReleaseDate}
-      </div>
-    );
-  }
-
-  if (sortKey === 'physicalRelease' && physicalRelease && !showReleaseDate) {
-    const physicalReleaseDate = getRelativeDate(
-      physicalRelease,
-      shortDateFormat,
-      showRelativeDates,
-      {
-        timeFormat,
-        timeForToday: false,
-      }
-    );
-
-    return (
-      <div className={styles.info}>
-        <Icon name={icons.DISC} /> {physicalReleaseDate}
+        <Icon name={icons.DISC} /> {digitalReleaseDate}
       </div>
     );
   }
@@ -175,14 +126,6 @@ function MovieIndexPosterInfo(props: MovieIndexPosterInfoProps) {
     return (
       <div className={styles.info}>
         <TmdbRating ratings={ratings} iconSize={12} />
-      </div>
-    );
-  }
-
-  if (!showImdbRating && sortKey === 'imdbRating' && !!ratings.imdb) {
-    return (
-      <div className={styles.info}>
-        <ImdbRating ratings={ratings} iconSize={12} />
       </div>
     );
   }
@@ -211,18 +154,6 @@ function MovieIndexPosterInfo(props: MovieIndexPosterInfoProps) {
     return (
       <div className={styles.info} title={translate('SizeOnDisk')}>
         {formatBytes(sizeOnDisk)}
-      </div>
-    );
-  }
-
-  if (sortKey === 'certification') {
-    return <div className={styles.info}>{certification}</div>;
-  }
-
-  if (sortKey === 'originalTitle' && originalTitle) {
-    return (
-      <div className={styles.title} title={originalTitle}>
-        {originalTitle}
       </div>
     );
   }

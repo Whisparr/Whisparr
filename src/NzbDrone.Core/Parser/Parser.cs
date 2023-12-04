@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using NLog;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Instrumentation;
+using NzbDrone.Core.Movies;
 using NzbDrone.Core.Parser.Model;
 
 namespace NzbDrone.Core.Parser
@@ -23,8 +25,30 @@ namespace NzbDrone.Core.Parser
 
         private static readonly RegexReplace[] PreSubstitutionRegex = Array.Empty<RegexReplace>();
 
-        private static readonly Regex[] ReportMovieTitleRegex = new[]
+        private static readonly Regex[] ReportTitleRegex = new[]
         {
+            // SCENE - Site title in brackets with full year in date then episode info
+            // [Site] 19-07-2023 - Loli - Beautiful Episode 2160p {RlsGroup}
+            new Regex("^\\[(?<studiotitle>.+?)\\][-_. ]+(?<airday>[0-3][0-9])(?![-_. ]+[0-3][0-9])?[-_. ]+(?<airmonth>[0-1][0-9])[-_. ]+(?<airyear>(19|20)\\d{2})",
+                RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
+            // SCENE - Site title in brackets, date after title and performer
+            // [Site] Beautiful Episode - Loli - 2023-07-22 - 1080p
+            new Regex("^\\[(?<studiotitle>.+?)\\](?<releasetoken>.+?)(?:( - |\\s)(\\[|\\()?(?<airyear>(19|20)\\d{2})[-_.](?<airmonth>[0-1][0-9])[-_.](?<airday>[0-3][0-9])(\\]|\\))?)",
+                RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
+            // SCENE with non-separated airdate after title (20180428)
+            new Regex(@"^(?<studiotitle>.+?)?[-_. ]+(?<airyear>(19|20)\d{2})(?<airmonth>[0-1][0-9])(?<airday>[0-3][0-9])",
+                RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
+            // SCENE with airdate (18.04.28, 2018.04.28, 18-04-28, 18 04 28, 18_04_28)
+            new Regex(@"^(?<studiotitle>.+?)?[-_. ]+(?<airyear>\d{2}|\d{4})[-_. ]+(?<airmonth>[0-1][0-9])[-_. ]+(?<airday>[0-3][0-9])",
+                RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
+            // SCENE with airdate before title (2018-10-12, 20181012) (Strict pattern to avoid false matches)
+            new Regex(@"^(?<airyear>19[6-9]\d|20\d{2})[-_]?(?<airmonth>[0-1][0-9])[-_]?(?<airday>[0-3][0-9])",
+                RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
             // Anime [Subgroup] and Year
             new Regex(@"^(?:\[(?<subgroup>.+?)\][-_. ]?)(?<title>(?![(\[]).+?)?(?:(?:[-_\W](?<![)\[!]))*(?<year>(1(8|9)|20)\d{2}(?!p|i|x|\d+|\]|\W\d+)))+.*?(?<hash>\[\w{8}\])?(?:$|\.)", RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
@@ -58,10 +82,12 @@ namespace NzbDrone.Core.Parser
             new Regex(@"^(?<title>(?![(\[]).+?)?(?:(?:[-_\W](?<![)!]))*(?<year>(1(8|9)|20)\d{2}(?!p|i|\d+|\W\d+)))+(\W+|_|$)(?!\\)", RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
             // As a last resort for movies that have ( or [ in their title.
-            new Regex(@"^(?<title>.+?)?(?:(?:[-_\W](?<![)\[!]))*(?<year>(1(8|9)|20)\d{2}(?!p|i|\d+|\]|\W\d+)))+(\W+|_|$)(?!\\)", RegexOptions.IgnoreCase | RegexOptions.Compiled)
+            new Regex(@"^(?<title>.+?)?(?:(?:[-_\W](?<![)\[!]))*(?<year>(1(8|9)|20)\d{2}(?!p|i|\d+|\]|\W\d+)))+(\W+|_|$)(?!\\)", RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
+            new Regex(@"^(?<title>(?![(\[]).+?)?(XXX)(\W+|_|$)(?!\\)", RegexOptions.IgnoreCase | RegexOptions.Compiled),
         };
 
-        private static readonly Regex[] ReportMovieTitleFolderRegex = new[]
+        private static readonly Regex[] ReportTitleFolderRegex = new[]
         {
             // When year comes first.
             new Regex(@"^(?:(?:[-_\W](?<![)!]))*(?<year>(19|20)\d{2}(?!p|i|\d+|\W\d+)))+(\W+|_|$)(?<title>.+?)?$")
@@ -253,11 +279,11 @@ namespace NzbDrone.Core.Parser
                     return m.Value;
                 });
 
-                var allRegexes = ReportMovieTitleRegex.ToList();
+                var allRegexes = ReportTitleRegex.ToList();
 
                 if (isDir)
                 {
-                    allRegexes.AddRange(ReportMovieTitleFolderRegex);
+                    allRegexes.AddRange(ReportTitleFolderRegex);
                 }
 
                 foreach (var regex in allRegexes)
@@ -269,7 +295,7 @@ namespace NzbDrone.Core.Parser
                         Logger.Trace(regex);
                         try
                         {
-                            var result = ParseMovieMatchCollection(match);
+                            var result = ParseMatchCollection(match, releaseTitle);
 
                             if (result != null)
                             {
@@ -582,93 +608,178 @@ namespace NzbDrone.Core.Parser
             return title;
         }
 
-        private static ParsedMovieInfo ParseMovieMatchCollection(MatchCollection matchCollection)
+        private static ParsedMovieInfo ParseMatchCollection(MatchCollection matchCollection, string releaseTitle)
         {
-            if (!matchCollection[0].Groups["title"].Success || matchCollection[0].Groups["title"].Value == "(")
+            if (!matchCollection[0].Groups["airyear"].Success)
             {
-                return null;
-            }
-
-            var movieName = matchCollection[0].Groups["title"].Value.Replace('_', ' ');
-            movieName = RequestInfoRegex.Replace(movieName, "").Trim(' ');
-
-            var parts = movieName.Split('.');
-            movieName = "";
-            var n = 0;
-            var previousAcronym = false;
-            var nextPart = "";
-            foreach (var part in parts)
-            {
-                if (parts.Length >= n + 2)
+                if (!matchCollection[0].Groups["title"].Success || matchCollection[0].Groups["title"].Value == "(")
                 {
-                    nextPart = parts[n + 1];
-                }
-                else
-                {
-                    nextPart = "";
+                    return null;
                 }
 
-                if (part.Length == 1 && part.ToLower() != "a" && !int.TryParse(part, out _) &&
-                    (previousAcronym || n < parts.Length - 1) &&
-                    (previousAcronym || nextPart.Length != 1 || !int.TryParse(nextPart, out _)))
+                var movieName = matchCollection[0].Groups["title"].Value.Replace('_', ' ');
+                movieName = RequestInfoRegex.Replace(movieName, "").Trim(' ');
+
+                var parts = movieName.Split('.');
+                movieName = "";
+                var n = 0;
+                var previousAcronym = false;
+                var nextPart = "";
+                foreach (var part in parts)
                 {
-                    movieName += part + ".";
-                    previousAcronym = true;
-                }
-                else if (part.ToLower() == "a" && (previousAcronym || nextPart.Length == 1))
-                {
-                    movieName += part + ".";
-                    previousAcronym = true;
-                }
-                else if (part.ToLower() == "dr")
-                {
-                    movieName += part + ".";
-                    previousAcronym = true;
-                }
-                else
-                {
-                    if (previousAcronym)
+                    if (parts.Length >= n + 2)
                     {
-                        movieName += " ";
-                        previousAcronym = false;
+                        nextPart = parts[n + 1];
+                    }
+                    else
+                    {
+                        nextPart = "";
                     }
 
-                    movieName += part + " ";
+                    if (part.Length == 1 && part.ToLower() != "a" && !int.TryParse(part, out _) &&
+                        (previousAcronym || n < parts.Length - 1) &&
+                        (previousAcronym || nextPart.Length != 1 || !int.TryParse(nextPart, out _)))
+                    {
+                        movieName += part + ".";
+                        previousAcronym = true;
+                    }
+                    else if (part.ToLower() == "a" && (previousAcronym || nextPart.Length == 1))
+                    {
+                        movieName += part + ".";
+                        previousAcronym = true;
+                    }
+                    else if (part.ToLower() == "dr")
+                    {
+                        movieName += part + ".";
+                        previousAcronym = true;
+                    }
+                    else
+                    {
+                        if (previousAcronym)
+                        {
+                            movieName += " ";
+                            previousAcronym = false;
+                        }
+
+                        movieName += part + " ";
+                    }
+
+                    n++;
                 }
 
-                n++;
+                movieName = movieName.Trim(' ').TrimEnd("XXX").Trim(' ');
+
+                int.TryParse(matchCollection[0].Groups["year"].Value, out var releaseYear);
+
+                ParsedMovieInfo result;
+
+                result = new ParsedMovieInfo { Year = releaseYear };
+
+                if (matchCollection[0].Groups["edition"].Success)
+                {
+                    result.Edition = matchCollection[0].Groups["edition"].Value.Replace(".", " ");
+                }
+
+                var movieTitles = new List<string>();
+                movieTitles.Add(movieName);
+
+                // Delete parentheses of the form (aka ...).
+                var unbracketedName = BracketedAlternativeTitleRegex.Replace(movieName, "$1 AKA $2");
+
+                // Split by AKA and filter out empty and duplicate names.
+                movieTitles
+                    .AddRange(AlternativeTitleRegex
+                            .Split(unbracketedName)
+                            .Where(alternativeName => alternativeName.IsNotNullOrWhiteSpace() && alternativeName != movieName));
+
+                result.MovieTitles = movieTitles;
+
+                Logger.Debug("Movie Parsed. {0}", result);
+
+                return result;
             }
-
-            movieName = movieName.Trim(' ');
-
-            int.TryParse(matchCollection[0].Groups["year"].Value, out var airYear);
-
-            ParsedMovieInfo result;
-
-            result = new ParsedMovieInfo { Year = airYear };
-
-            if (matchCollection[0].Groups["edition"].Success)
+            else
             {
-                result.Edition = matchCollection[0].Groups["edition"].Value.Replace(".", " ");
+                int.TryParse(matchCollection[0].Groups["airyear"].Value, out var airYear);
+
+                var studioTitle = matchCollection[0].Groups["studiotitle"].Value.Replace('.', ' ').Replace('_', ' ');
+                studioTitle = RequestInfoRegex.Replace(studioTitle, "").Trim(' ');
+
+                var lastSeasonEpisodeStringIndex = matchCollection[0].Groups["studiotitle"].EndIndex();
+
+                if (airYear <= 99)
+                {
+                    airYear = CultureInfo.CurrentCulture.Calendar.ToFourDigitYear(airYear);
+                }
+
+                // Try to Parse as a daily show
+                var airmonth = Convert.ToInt32(matchCollection[0].Groups["airmonth"].Value);
+                var airday = Convert.ToInt32(matchCollection[0].Groups["airday"].Value);
+
+                // Swap day and month if month is bigger than 12 (scene fail)
+                if (airmonth > 12)
+                {
+                    var tempDay = airday;
+                    airday = airmonth;
+                    airmonth = tempDay;
+                }
+
+                DateTime airDate;
+
+                try
+                {
+                    airDate = new DateTime(airYear, airmonth, airday);
+                }
+                catch (Exception)
+                {
+                    throw new InvalidDateException("Invalid date found: {0}-{1}-{2}", airYear, airmonth, airday);
+                }
+
+                // Check if episode is in the future (most likely a parse error)
+                if (airDate > DateTime.Now.AddDays(1).Date)
+                {
+                    throw new InvalidDateException("Invalid date found: {0}", airDate);
+                }
+
+                // If the parsed air date is before 1970 and the title year wasn't matched (not a match for the Plex DVR format) throw an error
+                if (airDate < new DateTime(1970, 1, 1) && matchCollection[0].Groups["titleyear"].Value.IsNullOrWhiteSpace())
+                {
+                    throw new InvalidDateException("Invalid date found: {0}", airDate);
+                }
+
+                lastSeasonEpisodeStringIndex = Math.Max(lastSeasonEpisodeStringIndex, matchCollection[0].Groups["airyear"].EndIndex());
+                lastSeasonEpisodeStringIndex = Math.Max(lastSeasonEpisodeStringIndex, matchCollection[0].Groups["airmonth"].EndIndex());
+                lastSeasonEpisodeStringIndex = Math.Max(lastSeasonEpisodeStringIndex, matchCollection[0].Groups["airday"].EndIndex());
+
+                var result = new ParsedMovieInfo
+                {
+                    ReleaseTitle = releaseTitle,
+                    ReleaseDate = airDate.ToString(Movie.RELEASE_DATE_FORMAT),
+                };
+
+                if (matchCollection[0].Groups["releasetoken"].Success)
+                {
+                    result.ReleaseTokens = matchCollection[0].Groups["releasetoken"].Value;
+                }
+
+                if (result.ReleaseTokens.IsNullOrWhiteSpace())
+                {
+                    if (lastSeasonEpisodeStringIndex != releaseTitle.Length)
+                    {
+                        result.ReleaseTokens = releaseTitle.Substring(lastSeasonEpisodeStringIndex);
+                    }
+                    else
+                    {
+                        result.ReleaseTokens = releaseTitle;
+                    }
+                }
+
+                result.StudioTitle = studioTitle;
+
+                Logger.Debug("Scene Parsed. {0}", result);
+
+                return result;
             }
-
-            var movieTitles = new List<string>();
-            movieTitles.Add(movieName);
-
-            // Delete parentheses of the form (aka ...).
-            var unbracketedName = BracketedAlternativeTitleRegex.Replace(movieName, "$1 AKA $2");
-
-            // Split by AKA and filter out empty and duplicate names.
-            movieTitles
-                .AddRange(AlternativeTitleRegex
-                        .Split(unbracketedName)
-                        .Where(alternativeName => alternativeName.IsNotNullOrWhiteSpace() && alternativeName != movieName));
-
-            result.MovieTitles = movieTitles;
-
-            Logger.Debug("Movie Parsed. {0}", result);
-
-            return result;
         }
 
         private static bool ValidateBeforeParsing(string title)

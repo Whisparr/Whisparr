@@ -17,7 +17,7 @@ namespace NzbDrone.Core.Test.MovieTests
         {
             _movie = Builder<MovieMetadata>.CreateNew()
                                      .With(v => v.Status = MovieStatusType.InCinemas)
-                                     .With(m => m.PhysicalRelease = DateTime.Today.AddDays(-100))
+                                     .With(m => m.ReleaseDateUtc = DateTime.Today.AddDays(-100))
                                      .Build();
         }
 
@@ -53,7 +53,7 @@ namespace NzbDrone.Core.Test.MovieTests
 
         private void GivenRecentlyReleased()
         {
-            _movie.PhysicalRelease = DateTime.Today.AddDays(-7);
+            _movie.ReleaseDateUtc = DateTime.Today.AddDays(-7);
         }
 
         [Test]

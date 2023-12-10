@@ -41,6 +41,30 @@ const links = [
   },
 
   {
+    iconName: icons.MOVIE_CONTINUING,
+    title: () => translate('Scenes'),
+    to: '/scenes',
+    children: [
+      {
+        title: () => translate('Performers'),
+        to: '/scenes/performers'
+      },
+      {
+        title: () => translate('Sites'),
+        to: '/scenes/sites'
+      },
+      {
+        title: () => translate('AddNew'),
+        to: '/scenes/add/new'
+      },
+      {
+        title: () => translate('ImportLibrary'),
+        to: '/scenes/add/import'
+      }
+    ]
+  },
+
+  {
     iconName: icons.CALENDAR,
     title: () => translate('Calendar'),
     to: '/calendar'

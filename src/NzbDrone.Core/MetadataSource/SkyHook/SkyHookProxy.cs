@@ -214,6 +214,8 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             movie.Genres = resource.Genres;
             movie.Images = resource.Images.Select(MapImage).ToList();
 
+            movie.ItemType = resource.ItemType;
+
             var now = DateTime.Now;
 
             movie.Status = MovieStatusType.Announced;
@@ -406,7 +408,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 var firstChar = searchTerm.First();
 
                 var request = _whisparrMetadata.Create()
-                    .SetSegment("route", "movie/search")
+                    .SetSegment("route", "search")
                     .AddQueryParam("q", searchTerm)
                     .AddQueryParam("year", yearTerm)
                     .Build();

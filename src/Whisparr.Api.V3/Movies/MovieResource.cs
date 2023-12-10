@@ -66,6 +66,7 @@ namespace Whisparr.Api.V3.Movies
         public Ratings Ratings { get; set; }
         public MovieFileResource MovieFile { get; set; }
         public MovieCollection Collection { get; set; }
+        public ItemType ItemType { get; set; }
     }
 
     public static class MovieResourceMapper
@@ -123,6 +124,7 @@ namespace Whisparr.Api.V3.Movies
                 MovieFile = movieFile,
                 Studio = model.MovieMetadata.Value.Studio,
                 Collection = collection,
+                ItemType = model.MovieMetadata.Value.ItemType
             };
         }
 

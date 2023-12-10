@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using NzbDrone.Core.Movies;
 
 namespace NzbDrone.Core.MetadataSource.SkyHook.Resource
 {
@@ -23,5 +24,6 @@ namespace NzbDrone.Core.MetadataSource.SkyHook.Resource
         public StudioResource Studio { get; set; }
 
         public string Homepage { get; set; }
+        public ItemType ItemType { get; set; }
     }
 }

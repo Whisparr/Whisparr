@@ -38,6 +38,7 @@ namespace NzbDrone.Core.Movies
         public string Studio { get; set; }
         public Language OriginalLanguage { get; set; }
         public List<int> Recommendations { get; set; }
+        public ItemType ItemType { get; set; }
 
         [MemberwiseEqualityIgnore]
         public bool IsRecentMovie
@@ -52,5 +53,11 @@ namespace NzbDrone.Core.Movies
                 return false;
             }
         }
+    }
+
+    public enum ItemType
+    {
+        Movie,
+        Scene
     }
 }

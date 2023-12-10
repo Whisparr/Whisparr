@@ -68,6 +68,11 @@ function AppRoutes(props) {
       }
 
       <Route
+        path="/movies"
+        component={MovieIndex}
+      />
+
+      <Route
         path="/add/new"
         component={AddNewMovieConnector}
       />

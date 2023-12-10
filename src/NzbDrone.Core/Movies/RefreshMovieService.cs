@@ -112,6 +112,7 @@ namespace NzbDrone.Core.Movies
             movieMetadata.LastInfoSync = DateTime.UtcNow;
             movieMetadata.Runtime = movieInfo.Runtime;
             movieMetadata.Ratings = movieInfo.Ratings;
+            movieMetadata.ItemType = movieInfo.ItemType;
 
             // movie.Genres = movieInfo.Genres;
             movieMetadata.Website = movieInfo.Website;

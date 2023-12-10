@@ -11,6 +11,7 @@ import MovieStatusLabel from 'Movie/Details/MovieStatusLabel';
 import MovieIndexProgressBar from 'Movie/Index/ProgressBar/MovieIndexProgressBar';
 import MoviePoster from 'Movie/MoviePoster';
 import formatRuntime from 'Utilities/Date/formatRuntime';
+import firstCharToUpper from 'Utilities/String/firstCharToUpper';
 import translate from 'Utilities/String/translate';
 import AddNewMovieModal from './AddNewMovieModal';
 import styles from './AddNewMovieSearchResult.css';
@@ -62,6 +63,7 @@ class AddNewMovieSearchResult extends Component {
       year,
       studio,
       status,
+      itemType,
       overview,
       ratings,
       folder,
@@ -192,6 +194,10 @@ class AddNewMovieSearchResult extends Component {
             </div>
 
             <div>
+              <Label size={sizes.LARGE} kind={kinds.PINK}>
+                {firstCharToUpper(itemType)}
+              </Label>
+
               <Label size={sizes.LARGE}>
                 <TmdbRating
                   ratings={ratings}
@@ -276,6 +282,7 @@ AddNewMovieSearchResult.propTypes = {
   year: PropTypes.number.isRequired,
   studio: PropTypes.string,
   status: PropTypes.string.isRequired,
+  itemType: PropTypes.string.isRequired,
   overview: PropTypes.string,
   ratings: PropTypes.object.isRequired,
   folder: PropTypes.string.isRequired,

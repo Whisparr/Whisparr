@@ -26,7 +26,7 @@ class TmdbRating extends PureComponent {
     }
 
     return (
-      <span title={`${rating.votes} votes`}>
+      <span title={`${rating?.votes ?? 0} votes`}>
         {
           !hideIcon &&
             <img

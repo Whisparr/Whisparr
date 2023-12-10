@@ -113,6 +113,7 @@ namespace NzbDrone.Core.IndexerSearch
         {
             var spec = new TSpec();
             spec.SceneTitles = episodes.Select(e => e.Title).ToList();
+            spec.SceneTitles.Add(series.TitleSlug);
 
             spec.Series = series;
             spec.Episodes = episodes;

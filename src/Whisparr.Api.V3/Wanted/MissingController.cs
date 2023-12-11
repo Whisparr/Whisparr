@@ -35,7 +35,7 @@ namespace Whisparr.Api.V3.Wanted
                 SortDirection = pagingResource.SortDirection
             };
 
-            pagingSpec.FilterExpressions.Add(v => v.Monitored == monitored || v.Series.Monitored == monitored);
+            pagingSpec.FilterExpressions.Add(v => v.Monitored == monitored);
 
             var resource = pagingSpec.ApplyToPage(_episodeService.EpisodesWithoutFiles, v => MapToResource(v, includeSeries, false, includeImages));
 

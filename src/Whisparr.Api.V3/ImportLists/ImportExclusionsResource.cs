@@ -7,7 +7,7 @@ namespace Whisparr.Api.V3.ImportLists
     public class ImportExclusionsResource : ProviderResource<ImportExclusionsResource>
     {
         // public int Id { get; set; }
-        public int TmdbId { get; set; }
+        public string ForeignId { get; set; }
         public string MovieTitle { get; set; }
         public int MovieYear { get; set; }
     }
@@ -24,7 +24,7 @@ namespace Whisparr.Api.V3.ImportLists
             return new ImportExclusionsResource
             {
                 Id = model.Id,
-                TmdbId = model.TmdbId,
+                ForeignId = model.ForeignId,
                 MovieTitle = model.MovieTitle,
                 MovieYear = model.MovieYear
             };
@@ -40,7 +40,7 @@ namespace Whisparr.Api.V3.ImportLists
             return new ImportExclusion
             {
                 Id = resource.Id,
-                TmdbId = resource.TmdbId,
+                ForeignId = resource.ForeignId,
                 MovieTitle = resource.MovieTitle,
                 MovieYear = resource.MovieYear
             };

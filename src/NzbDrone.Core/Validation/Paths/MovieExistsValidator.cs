@@ -12,7 +12,7 @@ namespace NzbDrone.Core.Validation.Paths
             _movieService = movieService;
         }
 
-        protected override string GetDefaultMessageTemplate() => "This movie has already been added";
+        protected override string GetDefaultMessageTemplate() => "This item has already been added";
 
         protected override bool IsValid(PropertyValidatorContext context)
         {
@@ -21,9 +21,9 @@ namespace NzbDrone.Core.Validation.Paths
                 return true;
             }
 
-            var tmdbId = (int)context.PropertyValue;
+            var foreignId = (string)context.PropertyValue;
 
-            return _movieService.FindByTmdbId(tmdbId) == null;
+            return _movieService.FindByForeignId(foreignId) == null;
         }
     }
 }

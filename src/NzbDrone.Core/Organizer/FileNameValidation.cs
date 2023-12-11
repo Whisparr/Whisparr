@@ -23,6 +23,22 @@ namespace NzbDrone.Core.Organizer
 
             return ruleBuilder.SetValidator(new RegularExpressionValidator(FileNameBuilder.MovieTitleRegex)).WithMessage("Must contain movie title");
         }
+
+        public static IRuleBuilderOptions<T, string> ValidSceneFolderFormat<T>(this IRuleBuilder<T, string> ruleBuilder)
+        {
+            ruleBuilder.SetValidator(new NotEmptyValidator(null));
+            ruleBuilder.SetValidator(new IllegalCharactersValidator());
+
+            return ruleBuilder.SetValidator(new RegularExpressionValidator(FileNameBuilder.MovieTitleRegex)).WithMessage("Must contain scene title");
+        }
+
+        public static IRuleBuilderOptions<T, string> ValidSceneFormat<T>(this IRuleBuilder<T, string> ruleBuilder)
+        {
+            ruleBuilder.SetValidator(new NotEmptyValidator(null));
+            ruleBuilder.SetValidator(new IllegalCharactersValidator());
+
+            return ruleBuilder.SetValidator(new RegularExpressionValidator(FileNameBuilder.MovieTitleRegex)).WithMessage("Must contain scene title");
+        }
     }
 
     public class IllegalCharactersValidator : PropertyValidator

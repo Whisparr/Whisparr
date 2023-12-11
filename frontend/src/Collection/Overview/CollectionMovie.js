@@ -193,7 +193,6 @@ CollectionMovie.propTypes = {
   isExistingMovie: PropTypes.bool,
   tmdbId: PropTypes.number.isRequired,
   imdbId: PropTypes.string,
-  youTubeTrailerId: PropTypes.string,
   onMonitorTogglePress: PropTypes.func.isRequired,
   safeForWorkMode: PropTypes.bool
 };

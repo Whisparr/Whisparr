@@ -33,7 +33,7 @@ namespace NzbDrone.Core.Notifications.Discord
                     Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
                     IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
                 },
-                Url = $"https://www.themoviedb.org/movie/{message.Movie.MovieMetadata.Value.TmdbId}",
+                Url = $"https://www.themoviedb.org/movie/{message.Movie.MovieMetadata.Value.ForeignId}",
                 Description = "Movie Grabbed",
                 Title = GetTitle(message.Movie),
                 Color = (int)DiscordColors.Standard,
@@ -133,7 +133,7 @@ namespace NzbDrone.Core.Notifications.Discord
                     Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
                     IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
                 },
-                Url = $"https://www.themoviedb.org/movie/{message.Movie.MovieMetadata.Value.TmdbId}",
+                Url = $"https://www.themoviedb.org/movie/{message.Movie.MovieMetadata.Value.ForeignId}",
                 Description = isUpgrade ? "Movie Upgraded" : "Movie Imported",
                 Title = GetTitle(message.Movie),
                 Color = isUpgrade ? (int)DiscordColors.Upgrade : (int)DiscordColors.Success,
@@ -236,7 +236,7 @@ namespace NzbDrone.Core.Notifications.Discord
                     Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
                     IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
                 },
-                Url = $"https://www.themoviedb.org/movie/{movie.MovieMetadata.Value.TmdbId}",
+                Url = $"https://www.themoviedb.org/movie/{movie.MovieMetadata.Value.ForeignId}",
                 Title = movie.Title,
                 Description = "Movie Added",
                 Color = (int)DiscordColors.Success,
@@ -293,7 +293,7 @@ namespace NzbDrone.Core.Notifications.Discord
                     Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
                     IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
                 },
-                Url = $"https://www.themoviedb.org/movie/{movie.MovieMetadata.Value.TmdbId}",
+                Url = $"https://www.themoviedb.org/movie/{movie.MovieMetadata.Value.ForeignId}",
                 Title = movie.Title,
                 Description = deleteMessage.DeletedFilesMessage,
                 Color = (int)DiscordColors.Danger,
@@ -334,7 +334,7 @@ namespace NzbDrone.Core.Notifications.Discord
                     Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
                     IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
                 },
-                Url = $"https://www.themoviedb.org/movie/{movie.MovieMetadata.Value.TmdbId}",
+                Url = $"https://www.themoviedb.org/movie/{movie.MovieMetadata.Value.ForeignId}",
                 Title = GetTitle(movie),
                 Description = "Movie File Deleted",
                 Color = (int)DiscordColors.Danger,
@@ -434,7 +434,7 @@ namespace NzbDrone.Core.Notifications.Discord
                     Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
                     IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
                 },
-                Url = $"https://www.themoviedb.org/movie/{movie.MovieMetadata.Value.TmdbId}",
+                Url = $"https://www.themoviedb.org/movie/{movie.MovieMetadata.Value.ForeignId}",
                 Description = "Manual interaction needed",
                 Title = GetTitle(movie),
                 Color = (int)DiscordColors.Standard,
@@ -578,8 +578,8 @@ namespace NzbDrone.Core.Notifications.Discord
 
         private static string GetLinksString(Movie movie)
         {
-            var links = string.Format("[{0}]({1})", "TMDb", $"https://themoviedb.org/movie/{movie.MovieMetadata.Value.TmdbId}");
-            links += string.Format(" / [{0}]({1})", "Trakt", $"https://trakt.tv/search/tmdb/{movie.MovieMetadata.Value.TmdbId}?id_type=movie");
+            var links = string.Format("[{0}]({1})", "TMDb", $"https://themoviedb.org/movie/{movie.MovieMetadata.Value.ForeignId}");
+            links += string.Format(" / [{0}]({1})", "Trakt", $"https://trakt.tv/search/tmdb/{movie.MovieMetadata.Value.ForeignId}?id_type=movie");
             if (movie.MovieMetadata.Value.ImdbId.IsNotNullOrWhiteSpace())
             {
                 links += string.Format(" / [{0}]({1})", "IMDb", $"https://imdb.com/title/{movie.MovieMetadata.Value.ImdbId}/");

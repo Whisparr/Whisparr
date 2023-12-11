@@ -67,7 +67,7 @@ namespace NzbDrone.Core.Notifications.CustomScript
             environmentVariables.Add("Whisparr_Movie_Genres", string.Join("|", movie.MovieMetadata.Value.Genres));
             environmentVariables.Add("Whisparr_Movie_Tags", string.Join("|", movie.Tags.Select(t => _tagRepository.Get(t).Label)));
             environmentVariables.Add("Whisparr_Movie_ImdbId", movie.MovieMetadata.Value.ImdbId ?? string.Empty);
-            environmentVariables.Add("Whisparr_Movie_TmdbId", movie.MovieMetadata.Value.TmdbId.ToString());
+            environmentVariables.Add("Whisparr_Movie_TmdbId", movie.MovieMetadata.Value.ForeignId.ToString());
             environmentVariables.Add("Whisparr_Movie_Release_Date", movie.MovieMetadata.Value.ReleaseDate.ToString() ?? string.Empty);
             environmentVariables.Add("Whisparr_Movie_Overview", movie.MovieMetadata.Value.Overview);
             environmentVariables.Add("Whisparr_Release_Title", remoteMovie.Release.Title);
@@ -105,7 +105,7 @@ namespace NzbDrone.Core.Notifications.CustomScript
             environmentVariables.Add("Whisparr_Movie_Tags", string.Join("|", movie.Tags.Select(t => _tagRepository.Get(t).Label)));
             environmentVariables.Add("Whisparr_Movie_Path", movie.Path);
             environmentVariables.Add("Whisparr_Movie_ImdbId", movie.MovieMetadata.Value.ImdbId ?? string.Empty);
-            environmentVariables.Add("Whisparr_Movie_TmdbId", movie.MovieMetadata.Value.TmdbId.ToString());
+            environmentVariables.Add("Whisparr_Movie_TmdbId", movie.MovieMetadata.Value.ForeignId.ToString());
             environmentVariables.Add("Whisparr_Movie_Release_Date", movie.MovieMetadata.Value.ReleaseDate.ToString() ?? string.Empty);
             environmentVariables.Add("Whisparr_Movie_Overview", movie.MovieMetadata.Value.Overview);
             environmentVariables.Add("Whisparr_MovieFile_Id", movieFile.Id.ToString());
@@ -160,7 +160,7 @@ namespace NzbDrone.Core.Notifications.CustomScript
             environmentVariables.Add("Whisparr_Movie_Tags", string.Join("|", movie.Tags.Select(t => _tagRepository.Get(t).Label)));
             environmentVariables.Add("Whisparr_Movie_Path", movie.Path);
             environmentVariables.Add("Whisparr_Movie_ImdbId", movie.MovieMetadata.Value.ImdbId ?? string.Empty);
-            environmentVariables.Add("Whisparr_Movie_TmdbId", movie.MovieMetadata.Value.TmdbId.ToString());
+            environmentVariables.Add("Whisparr_Movie_TmdbId", movie.MovieMetadata.Value.ForeignId.ToString());
             environmentVariables.Add("Whisparr_Movie_Release_Date", movie.MovieMetadata.Value.ReleaseDate.ToString() ?? string.Empty);
             environmentVariables.Add("Whisparr_MovieFile_Ids", string.Join(",", renamedFiles.Select(e => e.MovieFile.Id)));
             environmentVariables.Add("Whisparr_MovieFile_RelativePaths", string.Join("|", renamedFiles.Select(e => e.MovieFile.RelativePath)));
@@ -186,7 +186,7 @@ namespace NzbDrone.Core.Notifications.CustomScript
             environmentVariables.Add("Whisparr_Movie_Tags", string.Join("|", movie.Tags.Select(t => _tagRepository.Get(t).Label)));
             environmentVariables.Add("Whisparr_Movie_Path", movie.Path);
             environmentVariables.Add("Whisparr_Movie_ImdbId", movie.MovieMetadata.Value.ImdbId ?? string.Empty);
-            environmentVariables.Add("Whisparr_Movie_TmdbId", movie.MovieMetadata.Value.TmdbId.ToString());
+            environmentVariables.Add("Whisparr_Movie_TmdbId", movie.MovieMetadata.Value.ForeignId.ToString());
             environmentVariables.Add("Whisparr_Movie_AddMethod", movie.AddOptions.AddMethod.ToString());
 
             ExecuteScript(environmentVariables);
@@ -211,7 +211,7 @@ namespace NzbDrone.Core.Notifications.CustomScript
             environmentVariables.Add("Whisparr_Movie_Tags", string.Join("|", movie.Tags.Select(t => _tagRepository.Get(t).Label)));
             environmentVariables.Add("Whisparr_Movie_Path", movie.Path);
             environmentVariables.Add("Whisparr_Movie_ImdbId", movie.MovieMetadata.Value.ImdbId ?? string.Empty);
-            environmentVariables.Add("Whisparr_Movie_TmdbId", movie.MovieMetadata.Value.TmdbId.ToString());
+            environmentVariables.Add("Whisparr_Movie_TmdbId", movie.MovieMetadata.Value.ForeignId.ToString());
             environmentVariables.Add("Whisparr_Movie_Overview", movie.MovieMetadata.Value.Overview);
             environmentVariables.Add("Whisparr_MovieFile_Id", movieFile.Id.ToString());
             environmentVariables.Add("Whisparr_MovieFile_RelativePath", movieFile.RelativePath);
@@ -241,7 +241,7 @@ namespace NzbDrone.Core.Notifications.CustomScript
             environmentVariables.Add("Whisparr_Movie_Tags", string.Join("|", movie.Tags.Select(t => _tagRepository.Get(t).Label)));
             environmentVariables.Add("Whisparr_Movie_Path", movie.Path);
             environmentVariables.Add("Whisparr_Movie_ImdbId", movie.MovieMetadata.Value.ImdbId ?? string.Empty);
-            environmentVariables.Add("Whisparr_Movie_TmdbId", movie.MovieMetadata.Value.TmdbId.ToString());
+            environmentVariables.Add("Whisparr_Movie_TmdbId", movie.MovieMetadata.Value.ForeignId.ToString());
             environmentVariables.Add("Whisparr_Movie_DeletedFiles", deleteMessage.DeletedFiles.ToString());
             environmentVariables.Add("Whisparr_Movie_Overview", movie.MovieMetadata.Value.Overview);
 
@@ -313,7 +313,7 @@ namespace NzbDrone.Core.Notifications.CustomScript
             environmentVariables.Add("Whisparr_Movie_Tags", string.Join("|", movie.Tags.Select(t => _tagRepository.Get(t).Label)));
             environmentVariables.Add("Whisparr_Movie_Path", movie.Path);
             environmentVariables.Add("Whisparr_Movie_ImdbId", movie.MovieMetadata.Value.ImdbId ?? string.Empty);
-            environmentVariables.Add("Whisparr_Movie_TmdbId", movie.MovieMetadata.Value.TmdbId.ToString());
+            environmentVariables.Add("Whisparr_Movie_TmdbId", movie.MovieMetadata.Value.ForeignId.ToString());
             environmentVariables.Add("Whisparr_Movie_Overview", movie.MovieMetadata.Value.Overview);
             environmentVariables.Add("Whisparr_Download_Client", message.DownloadClientName ?? string.Empty);
             environmentVariables.Add("Whisparr_Download_Client_Type", message.DownloadClientType ?? string.Empty);

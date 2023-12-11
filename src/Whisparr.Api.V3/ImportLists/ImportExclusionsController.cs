@@ -17,7 +17,7 @@ namespace Whisparr.Api.V3.ImportLists
         {
             _exclusionService = exclusionService;
 
-            SharedValidator.RuleFor(c => c.TmdbId).GreaterThan(0);
+            SharedValidator.RuleFor(c => c.ForeignId).NotEmpty();
             SharedValidator.RuleFor(c => c.MovieTitle).NotEmpty();
             SharedValidator.RuleFor(c => c.MovieYear).GreaterThan(0);
         }

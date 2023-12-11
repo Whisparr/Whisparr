@@ -40,6 +40,20 @@ namespace NzbDrone.Core.Indexers.FileList
             return pageableRequests;
         }
 
+        public virtual IndexerPageableRequestChain GetSearchRequests(SceneSearchCriteria searchCriteria)
+        {
+            var pageableRequests = new IndexerPageableRequestChain();
+
+            var releaseDate = searchCriteria.ReleaseDate?.ToString("yy.MM.dd") ?? string.Empty;
+
+            foreach (var sceneTitle in searchCriteria.SceneTitles)
+            {
+                pageableRequests.Add(GetRequest("search-torrents", string.Format("&type=name&query={0}{1}", Uri.EscapeDataString($"{sceneTitle.Trim()} {releaseDate}"))));
+            }
+
+            return pageableRequests;
+        }
+
         private IEnumerable<IndexerRequest> GetRequest(string searchType, string parameters)
         {
             var categoriesQuery = string.Join(",", Settings.Categories.Distinct());

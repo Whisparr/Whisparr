@@ -41,6 +41,12 @@ namespace NzbDrone.Core.Movies
             set { MovieMetadata.Value.Title = value; }
         }
 
+        public string ForeignId
+        {
+            get { return MovieMetadata.Value.ForeignId; }
+            set { MovieMetadata.Value.ForeignId = value; }
+        }
+
         public int TmdbId
         {
             get { return MovieMetadata.Value.TmdbId; }
@@ -79,7 +85,7 @@ namespace NzbDrone.Core.Movies
 
         public override string ToString()
         {
-            return string.Format("[{1} ({2})][{0}, {3}]", MovieMetadata.Value.ImdbId, MovieMetadata.Value.Title.NullSafe(), MovieMetadata.Value.Year.NullSafe(), MovieMetadata.Value.TmdbId);
+            return string.Format("[{1} ({2})][{0}, {3}]", MovieMetadata.Value.ImdbId, MovieMetadata.Value.Title.NullSafe(), MovieMetadata.Value.Year.NullSafe(), MovieMetadata.Value.ForeignId);
         }
 
         public void ApplyChanges(Movie otherMovie)

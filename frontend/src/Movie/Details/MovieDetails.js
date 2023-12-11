@@ -239,7 +239,6 @@ class MovieDetails extends Component {
       genres,
       collection,
       overview,
-      youTubeTrailerId,
       isAvailable,
       images,
       tags,
@@ -450,7 +449,6 @@ class MovieDetails extends Component {
                             <MovieDetailsLinks
                               tmdbId={tmdbId}
                               imdbId={imdbId}
-                              youTubeTrailerId={youTubeTrailerId}
                             />
                           }
                           position={tooltipPositions.BOTTOM}
@@ -712,7 +710,6 @@ MovieDetails.propTypes = {
   studio: PropTypes.string,
   genres: PropTypes.arrayOf(PropTypes.string).isRequired,
   collection: PropTypes.object,
-  youTubeTrailerId: PropTypes.string,
   isAvailable: PropTypes.bool.isRequired,
   releaseDate: PropTypes.string,
   overview: PropTypes.string.isRequired,

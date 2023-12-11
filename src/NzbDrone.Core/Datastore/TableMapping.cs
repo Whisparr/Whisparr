@@ -116,6 +116,7 @@ namespace NzbDrone.Core.Datastore
                   .Ignore(s => s.RootFolderPath)
                   .Ignore(s => s.Title)
                   .Ignore(s => s.Year)
+                  .Ignore(s => s.ForeignId)
                   .Ignore(s => s.TmdbId)
                   .Ignore(s => s.ImdbId)
                   .HasOne(a => a.MovieMetadata, a => a.MovieMetadataId);
@@ -123,6 +124,7 @@ namespace NzbDrone.Core.Datastore
             Mapper.Entity<ImportListMovie>("ImportListMovies").RegisterModel()
                   .Ignore(s => s.Title)
                   .Ignore(s => s.Year)
+                  .Ignore(s => s.ForeignId)
                   .Ignore(s => s.TmdbId)
                   .Ignore(s => s.ImdbId)
                   .HasOne(a => a.MovieMetadata, a => a.MovieMetadataId);

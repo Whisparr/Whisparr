@@ -55,7 +55,7 @@ namespace NzbDrone.Core.Test.MovieTests
         {
             var newMovie = new Movie
             {
-                TmdbId = 1,
+                ForeignId = "1",
                 RootFolderPath = @"C:\Test\Movies"
             };
 
@@ -72,7 +72,7 @@ namespace NzbDrone.Core.Test.MovieTests
         {
             var newMovie = new Movie
             {
-                TmdbId = 1,
+                ForeignId = "1",
                 RootFolderPath = @"C:\Test\Movies"
             };
 
@@ -89,7 +89,7 @@ namespace NzbDrone.Core.Test.MovieTests
         {
             var newMovie = new Movie
             {
-                TmdbId = 1,
+                ForeignId = "1",
                 Path = @"C:\Test\Movie\Title1"
             };
 
@@ -110,7 +110,7 @@ namespace NzbDrone.Core.Test.MovieTests
         {
             var newMovie = new Movie
             {
-                TmdbId = 1,
+                ForeignId = "1",
                 Path = @"C:\Test\Movie\Title1"
             };
 

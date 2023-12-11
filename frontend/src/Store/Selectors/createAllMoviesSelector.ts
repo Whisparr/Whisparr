@@ -5,7 +5,7 @@ function createAllMoviesSelector() {
   return createSelector(
     (state: AppState) => state.movies,
     (movies) => {
-      return movies.items;
+      return movies.items.filter((movie) => movie.itemType === 'movie');
     }
   );
 }

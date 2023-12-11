@@ -1,0 +1,29 @@
+.queue {
+  padding-left: 2px;
+  border-left: 4px solid var(--queueColor);
+}
+
+.continuing {
+  padding-left: 2px;
+  border-left: 4px solid var(--primaryColor);
+}
+
+.availNotMonitored {
+  padding-left: 2px;
+  border-left: 4px solid var(--darkGray);
+}
+
+.ended {
+  padding-left: 2px;
+  border-left: 4px solid var(--successColor);
+}
+
+.missingMonitored {
+  padding-left: 2px;
+  border-left: 4px solid var(--dangerColor);
+}
+
+.missingUnmonitored {
+  padding-left: 2px;
+  border-left: 4px solid var(--warningColor);
+}

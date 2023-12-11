@@ -31,6 +31,7 @@ namespace Whisparr.Api.V3.ImportLists
         public int Runtime { get; set; }
         public string ImdbId { get; set; }
         public int TmdbId { get; set; }
+        public string ForeignId { get; set; }
         public string Folder { get; set; }
         public List<string> Genres { get; set; }
         public Ratings Ratings { get; set; }
@@ -54,6 +55,7 @@ namespace Whisparr.Api.V3.ImportLists
             return new ImportListMoviesResource
             {
                 TmdbId = model.TmdbId,
+                ForeignId = model.ForeignId,
                 Title = model.Title,
                 SortTitle = model.MovieMetadata.Value.SortTitle,
                 OriginalLanguage = model.MovieMetadata.Value.OriginalLanguage,
@@ -86,6 +88,7 @@ namespace Whisparr.Api.V3.ImportLists
             return new ImportListMoviesResource
             {
                 TmdbId = model.TmdbId,
+                ForeignId = model.ForeignId,
                 Title = model.Title,
                 SortTitle = model.MovieMetadata.Value.SortTitle,
                 OriginalLanguage = model.MovieMetadata.Value.OriginalLanguage,

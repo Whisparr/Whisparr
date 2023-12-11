@@ -31,6 +31,8 @@ namespace Whisparr.Api.V3.Config
 
             SharedValidator.RuleFor(c => c.StandardMovieFormat).ValidMovieFormat();
             SharedValidator.RuleFor(c => c.MovieFolderFormat).ValidMovieFolderFormat();
+            SharedValidator.RuleFor(c => c.StandardSceneFormat).ValidMovieFormat();
+            SharedValidator.RuleFor(c => c.SceneFolderFormat).ValidMovieFolderFormat();
         }
 
         protected override NamingConfigResource GetResourceById(int id)
@@ -44,7 +46,7 @@ namespace Whisparr.Api.V3.Config
             var nameSpec = _namingConfigService.GetConfig();
             var resource = nameSpec.ToResource();
 
-            if (resource.StandardMovieFormat.IsNotNullOrWhiteSpace())
+            if (resource.StandardMovieFormat.IsNotNullOrWhiteSpace() || resource.StandardSceneFormat.IsNotNullOrWhiteSpace())
             {
                 var basicConfig = _filenameBuilder.GetBasicNamingConfig(nameSpec);
                 basicConfig.AddToResource(resource);
@@ -76,12 +78,21 @@ namespace Whisparr.Api.V3.Config
             var sampleResource = new NamingExampleResource();
 
             var movieSampleResult = _filenameSampleService.GetMovieSample(nameSpec);
+            var sceneSampleResult = _filenameSampleService.GetSceneSample(nameSpec);
 
             sampleResource.MovieExample = nameSpec.StandardMovieFormat.IsNullOrWhiteSpace()
                 ? "Invalid Format"
                 : movieSampleResult.FileName;
 
             sampleResource.MovieFolderExample = nameSpec.MovieFolderFormat.IsNullOrWhiteSpace()
+                ? "Invalid format"
+                : _filenameSampleService.GetMovieFolderSample(nameSpec);
+
+            sampleResource.SceneExample = nameSpec.StandardSceneFormat.IsNullOrWhiteSpace()
+                ? "Invalid Format"
+                : sceneSampleResult.FileName;
+
+            sampleResource.SceneFolderExample = nameSpec.SceneFolderFormat.IsNullOrWhiteSpace()
                 ? "Invalid format"
                 : _filenameSampleService.GetMovieFolderSample(nameSpec);
 

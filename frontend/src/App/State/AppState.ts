@@ -52,6 +52,7 @@ interface AppState {
   movieCollections: MovieCollectionAppState;
   movieFiles: MovieFilesAppState;
   movieIndex: MovieIndexAppState;
+  sceneIndex: MovieIndexAppState;
   movies: MoviesAppState;
   parse: ParseAppState;
   queue: QueueAppState;

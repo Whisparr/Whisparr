@@ -132,7 +132,7 @@ class MovieCreditPosters extends Component {
                 component={itemComponent}
                 posterWidth={posterWidth}
                 posterHeight={posterHeight}
-                tmdbId={credit.personTmdbId}
+                tmdbId={credit.personForeignId}
                 personName={credit.personName}
                 job={credit.job}
                 character={credit.character}

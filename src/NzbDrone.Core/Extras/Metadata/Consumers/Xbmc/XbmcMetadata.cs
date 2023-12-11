@@ -229,9 +229,9 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
 
                     details.Add(new XElement("lastplayed"));
 
-                    details.Add(new XElement("id", movie.TmdbId));
+                    details.Add(new XElement("id", movie.ForeignId));
 
-                    var uniqueId = new XElement("uniqueid", movie.TmdbId);
+                    var uniqueId = new XElement("uniqueid", movie.ForeignId);
                     uniqueId.SetAttributeValue("type", "tmdb");
                     uniqueId.SetAttributeValue("default", true);
                     details.Add(uniqueId);
@@ -371,7 +371,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
 
             if (Settings.MovieMetadataURL)
             {
-                xmlResult += "https://www.themoviedb.org/movie/" + movie.MovieMetadata.Value.TmdbId;
+                xmlResult += "https://www.themoviedb.org/movie/" + movie.MovieMetadata.Value.ForeignId;
                 xmlResult += Environment.NewLine;
 
                 xmlResult += "https://www.imdb.com/title/" + movie.MovieMetadata.Value.ImdbId;

@@ -1,0 +1,22 @@
+.progress {
+  composes: container from '~Components/ProgressBar.css';
+
+  border-radius: 0;
+  background-color: #5b5b5b;
+  color: var(--white);
+}
+
+.progressRadius {
+  composes: container from '~Components/ProgressBar.css';
+
+  border-radius: 0 0 5px 5px;
+  background-color: #5b5b5b;
+  color: var(--white);
+  transition: width 200ms ease;
+}
+
+.progressBar {
+  composes: progressBar from '~Components/ProgressBar.css';
+
+  transition: width 200ms ease;
+}

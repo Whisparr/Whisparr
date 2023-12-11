@@ -34,25 +34,25 @@ namespace NzbDrone.Core.Test.ImportList
 
             _existingMovies = Builder<Movie>.CreateListOfSize(3)
                 .TheFirst(1)
-                .With(s => s.TmdbId = 6)
+                .With(s => s.ForeignId = "ForeignId6")
                 .With(s => s.ImdbId = "6")
                 .TheNext(1)
-                .With(s => s.TmdbId = 7)
+                .With(s => s.ForeignId = "ForeignId7")
                 .With(s => s.ImdbId = "7")
                 .TheNext(1)
-                .With(s => s.TmdbId = 8)
+                .With(s => s.ForeignId = "ForeignId8")
                 .With(s => s.ImdbId = "8")
                 .Build().ToList();
 
             _list2Movies = Builder<ImportListMovie>.CreateListOfSize(3)
                 .TheFirst(1)
-                .With(s => s.TmdbId = 6)
+                .With(s => s.ForeignId = "ForeignId6")
                 .With(s => s.ImdbId = "6")
                 .TheNext(1)
-                .With(s => s.TmdbId = 7)
+                .With(s => s.ForeignId = "ForeignId7")
                 .With(s => s.ImdbId = "7")
                 .TheNext(1)
-                .With(s => s.TmdbId = 8)
+                .With(s => s.ForeignId = "ForeignId8")
                 .With(s => s.ImdbId = "8")
                 .Build().ToList();
 
@@ -85,8 +85,8 @@ namespace NzbDrone.Core.Test.ImportList
                   .Returns(false);
 
             Mocker.GetMock<IMovieService>()
-                  .Setup(v => v.AllMovieTmdbIds())
-                  .Returns(new List<int>());
+                  .Setup(v => v.AllMovieForeignIds())
+                  .Returns(new List<string>());
 
             Mocker.GetMock<IFetchAndParseImportList>()
                   .Setup(v => v.Fetch())
@@ -229,7 +229,7 @@ namespace NzbDrone.Core.Test.ImportList
         public void should_not_clean_on_clean_library_if_tmdb_match()
         {
             _importListFetch.Movies.ForEach(m => m.ListId = 1);
-            _importListFetch.Movies[0].TmdbId = 6;
+            _importListFetch.Movies[0].ForeignId = "ForeignId6";
 
             GivenList(1, true);
             GivenCleanLevel("keepAndUnmonitor");
@@ -252,7 +252,7 @@ namespace NzbDrone.Core.Test.ImportList
         public void should_fallback_to_imdbid_on_clean_library_if_tmdb_not_found()
         {
             _importListFetch.Movies.ForEach(m => m.ListId = 1);
-            _importListFetch.Movies[0].TmdbId = 0;
+            _importListFetch.Movies[0].ForeignId = "0";
             _importListFetch.Movies[0].ImdbId = "6";
 
             GivenList(1, true);
@@ -402,7 +402,7 @@ namespace NzbDrone.Core.Test.ImportList
             _list2Movies.ForEach(m => m.ListId = 2);
             _importListFetch.Movies.ForEach(m => m.ListId = 1);
             _importListFetch.Movies.AddRange(_list2Movies);
-            _importListFetch.Movies[0].TmdbId = 4;
+            _importListFetch.Movies[0].ForeignId = "ForeignId4";
 
             GivenList(1, true);
             GivenList(2, true);
@@ -429,12 +429,12 @@ namespace NzbDrone.Core.Test.ImportList
 
             Mocker.GetMock<IImportExclusionsService>()
                   .Setup(v => v.GetAllExclusions())
-                  .Returns(new List<ImportExclusion> { new ImportExclusion { TmdbId = _existingMovies[0].TmdbId } });
+                  .Returns(new List<ImportExclusion> { new ImportExclusion { ForeignId = _existingMovies[0].ForeignId } });
 
             Subject.Execute(_commandAll);
 
             Mocker.GetMock<IAddMovieService>()
-                  .Verify(v => v.AddMovies(It.Is<List<Movie>>(s => s.Count == 7 && s.All(m => m.TmdbId != _existingMovies[0].TmdbId)), true), Times.Once());
+                  .Verify(v => v.AddMovies(It.Is<List<Movie>>(s => s.Count == 7 && s.All(m => m.ForeignId != _existingMovies[0].ForeignId)), true), Times.Once());
         }
 
         [Test]
@@ -450,13 +450,13 @@ namespace NzbDrone.Core.Test.ImportList
             GivenCleanLevel("disabled");
 
             Mocker.GetMock<IMovieService>()
-                 .Setup(v => v.AllMovieTmdbIds())
-                 .Returns(new List<int> { _existingMovies[0].TmdbId });
+                 .Setup(v => v.AllMovieForeignIds())
+                 .Returns(new List<string> { _existingMovies[0].ForeignId });
 
             Subject.Execute(_commandAll);
 
             Mocker.GetMock<IAddMovieService>()
-                  .Verify(v => v.AddMovies(It.Is<List<Movie>>(s => s.Count == 7 && s.All(m => m.TmdbId != _existingMovies[0].TmdbId)), true), Times.Once());
+                  .Verify(v => v.AddMovies(It.Is<List<Movie>>(s => s.Count == 7 && s.All(m => m.ForeignId != _existingMovies[0].ForeignId)), true), Times.Once());
         }
     }
 }

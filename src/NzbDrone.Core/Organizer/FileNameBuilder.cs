@@ -43,6 +43,9 @@ namespace NzbDrone.Core.Organizer
         public static readonly Regex MovieTitleRegex = new Regex(@"(?<token>\{((?:(Movie|Original))(?<separator>[- ._])(Clean)?(Original)?(Title|Filename)(The)?)(?::(?<customFormat>[a-z0-9|]+))?\})",
                                                                             RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
+        public static readonly Regex SceneTitleRegex = new Regex(@"(?<token>\{((?:(Scene|Original))(?<separator>[- ._])(Clean)?(Original)?(Title|Filename)(The)?)(?::(?<customFormat>[a-z0-9|]+))?\})",
+                                                                            RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
         private static readonly Regex FileNameCleanupRegex = new Regex(@"([- ._])(\1)+", RegexOptions.Compiled);
         private static readonly Regex TrimSeparatorsRegex = new Regex(@"[- ._]$", RegexOptions.Compiled);
 
@@ -109,7 +112,17 @@ namespace NzbDrone.Core.Organizer
 
             UpdateMediaInfoIfNeeded(pattern, movieFile, movie);
 
-            AddMovieTokens(tokenHandlers, movie);
+            if (movie.MovieMetadata.Value.ItemType == ItemType.Movie)
+            {
+                AddMovieTokens(tokenHandlers, movie);
+            }
+            else
+            {
+                AddSiteTokens(tokenHandlers, movie);
+                AddSceneTokens(tokenHandlers, movie);
+                AddSceneTitlePlaceholderTokens(tokenHandlers);
+            }
+
             AddReleaseDateTokens(tokenHandlers, movie.Year);
             AddIdTokens(tokenHandlers, movie);
             AddQualityTokens(tokenHandlers, movie, movieFile);
@@ -257,6 +270,15 @@ namespace NzbDrone.Core.Organizer
             return name.Trim(' ', '.');
         }
 
+        public static string SlugTitle(string title)
+        {
+            title = title.Replace(" ", "");
+            title = ScenifyReplaceChars.Replace(title, " ");
+            title = ScenifyRemoveChars.Replace(title, string.Empty);
+
+            return title;
+        }
+
         private void AddMovieTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Movie movie)
         {
             tokenHandlers["{Movie Title}"] = m => GetLanguageTitle(movie, m.CustomFormat);
@@ -265,6 +287,42 @@ namespace NzbDrone.Core.Organizer
             tokenHandlers["{Movie TitleFirstCharacter}"] = m => TitleFirstCharacter(TitleThe(GetLanguageTitle(movie, m.CustomFormat)));
 
             tokenHandlers["{Movie Collection}"] = m => movie.MovieMetadata.Value.CollectionTitle ?? string.Empty;
+        }
+
+        private void AddSiteTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Movie movie)
+        {
+            tokenHandlers["{Site Title}"] = m => movie.MovieMetadata.Value.Studio;
+            tokenHandlers["{Site TitleSlug}"] = m => SlugTitle(movie.MovieMetadata.Value.Studio);
+            tokenHandlers["{Site CleanTitle}"] = m => CleanTitle(movie.MovieMetadata.Value.Studio);
+            tokenHandlers["{Site TitleThe}"] = m => TitleThe(movie.MovieMetadata.Value.Studio);
+            tokenHandlers["{Site TitleFirstCharacter}"] = m => TitleThe(movie.MovieMetadata.Value.Studio).Substring(0, 1).FirstCharToUpper();
+
+            // TODO: Network to Metamodel
+            // tokenHandlers["{Site Network}"] = m => series.Network ?? string.Empty;
+        }
+
+        private void AddSceneTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Movie movie)
+        {
+            if (movie.MovieMetadata.Value.ReleaseDate.HasValue)
+            {
+                tokenHandlers["{Release Date}"] = m => movie.MovieMetadata.Value.ReleaseDate.Value.ToString();
+            }
+            else
+            {
+                tokenHandlers["{Release Date}"] = m => "Unknown";
+            }
+        }
+
+        private void AddSceneTitlePlaceholderTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers)
+        {
+            tokenHandlers["{Scene Title}"] = m => null;
+            tokenHandlers["{Scene CleanTitle}"] = m => null;
+        }
+
+        private void AddSceneTitleTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Movie movie, int maxLength)
+        {
+            tokenHandlers["{Scene Title}"] = m => GetLanguageTitle(movie, m.CustomFormat);
+            tokenHandlers["{Scene CleanTitle}"] = m => CleanTitle(GetLanguageTitle(movie, m.CustomFormat));
         }
 
         private string GetLanguageTitle(Movie movie, string isoCodes)
@@ -294,7 +352,7 @@ namespace NzbDrone.Core.Organizer
         private void AddIdTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Movie movie)
         {
             tokenHandlers["{ImdbId}"] = m => movie.MovieMetadata.Value.ImdbId ?? string.Empty;
-            tokenHandlers["{TmdbId}"] = m => movie.MovieMetadata.Value.TmdbId.ToString();
+            tokenHandlers["{TmdbId}"] = m => movie.MovieMetadata.Value.ForeignId.ToString();
         }
 
         private void AddMovieFileTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, MovieFile movieFile, bool multipleTokens)

@@ -57,7 +57,6 @@ class AddNewMovieSearchResult extends Component {
     const {
       tmdbId,
       imdbId,
-      youTubeTrailerId,
       title,
       titleSlug,
       year,
@@ -230,7 +229,6 @@ class AddNewMovieSearchResult extends Component {
                 tooltip={
                   <MovieDetailsLinks
                     tmdbId={tmdbId}
-                    youTubeTrailerId={youTubeTrailerId}
                     imdbId={imdbId}
                   />
                 }
@@ -276,7 +274,6 @@ class AddNewMovieSearchResult extends Component {
 AddNewMovieSearchResult.propTypes = {
   tmdbId: PropTypes.number.isRequired,
   imdbId: PropTypes.string,
-  youTubeTrailerId: PropTypes.string,
   title: PropTypes.string.isRequired,
   titleSlug: PropTypes.string.isRequired,
   year: PropTypes.number.isRequired,

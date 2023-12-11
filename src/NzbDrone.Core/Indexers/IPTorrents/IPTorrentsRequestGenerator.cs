@@ -23,6 +23,11 @@ namespace NzbDrone.Core.Indexers.IPTorrents
             return new IndexerPageableRequestChain();
         }
 
+        public IndexerPageableRequestChain GetSearchRequests(SceneSearchCriteria searchCriteria)
+        {
+            return new IndexerPageableRequestChain();
+        }
+
         private IEnumerable<IndexerRequest> GetRssRequests()
         {
             yield return new IndexerRequest(Settings.BaseUrl, HttpAccept.Rss);

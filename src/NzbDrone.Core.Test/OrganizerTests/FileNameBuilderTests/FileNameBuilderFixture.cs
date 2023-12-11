@@ -481,7 +481,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         {
             Thread.CurrentThread.CurrentCulture = new CultureInfo(culture);
 
-            _movie.TmdbId = 124578;
+            _movie.ForeignId = "124578";
             _movie.Year = 2020;
             GivenMediaInfoModel();
 

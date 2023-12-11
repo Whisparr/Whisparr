@@ -63,9 +63,9 @@ function MovieIndexPoster(props: MovieIndexPosterProps) {
     monitored,
     status,
     images,
+    foreignId,
     tmdbId,
     imdbId,
-    youTubeTrailerId,
     hasFile,
     isAvailable,
     studio,
@@ -127,7 +127,7 @@ function MovieIndexPoster(props: MovieIndexPosterProps) {
     setIsDeleteMovieModalOpen(false);
   }, [setIsDeleteMovieModalOpen]);
 
-  const link = `/movie/${tmdbId}`;
+  const link = `/movie/${foreignId}`;
 
   const elementStyle = {
     width: `${posterWidth}px`,
@@ -167,13 +167,7 @@ function MovieIndexPoster(props: MovieIndexPosterProps) {
             <Popover
               anchor={<Icon name={icons.EXTERNAL_LINK} size={12} />}
               title={translate('Links')}
-              body={
-                <MovieDetailsLinks
-                  tmdbId={tmdbId}
-                  imdbId={imdbId}
-                  youTubeTrailerId={youTubeTrailerId}
-                />
-              }
+              body={<MovieDetailsLinks tmdbId={tmdbId} imdbId={imdbId} />}
             />
           </span>
         </Label>

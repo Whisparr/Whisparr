@@ -17,6 +17,7 @@ namespace NzbDrone.Core.Movies
         List<Movie> FindByTitles(List<string> titles);
         Movie FindByImdbId(string imdbid);
         Movie FindByTmdbId(int tmdbid);
+        Movie FindByForeignId(string foreignId);
         List<Movie> FindByTmdbId(List<int> tmdbids);
         List<Movie> MoviesBetweenDates(DateTime start, DateTime end, bool includeUnmonitored);
         PagingSpec<Movie> MoviesWithoutFiles(PagingSpec<Movie> pagingSpec);
@@ -26,6 +27,7 @@ namespace NzbDrone.Core.Movies
         Movie FindByPath(string path);
         Dictionary<int, string> AllMoviePaths();
         List<int> AllMovieTmdbIds();
+        List<string> AllMovieForeignIds();
         Dictionary<int, List<int>> AllMovieTags();
         bool ExistsByMetadataId(int metadataId);
         HashSet<int> AllMovieWithCollectionsTmdbIds();
@@ -143,6 +145,11 @@ namespace NzbDrone.Core.Movies
             return Query(x => x.MovieMetadata.Value.TmdbId == tmdbid).FirstOrDefault();
         }
 
+        public Movie FindByForeignId(string foreignId)
+        {
+            return Query(x => x.MovieMetadata.Value.ForeignId == foreignId).FirstOrDefault();
+        }
+
         public List<Movie> FindByTmdbId(List<int> tmdbids)
         {
             return Query(x => tmdbids.Contains(x.TmdbId));
@@ -228,6 +235,14 @@ namespace NzbDrone.Core.Movies
             using (var conn = _database.OpenConnection())
             {
                 return conn.Query<int>("SELECT \"TmdbId\" FROM \"MovieMetadata\" JOIN \"Movies\" ON (\"Movies\".\"MovieMetadataId\" = \"MovieMetadata\".\"Id\")").ToList();
+            }
+        }
+
+        public List<string> AllMovieForeignIds()
+        {
+            using (var conn = _database.OpenConnection())
+            {
+                return conn.Query<string>("SELECT \"ForeignId\" FROM \"MovieMetadata\" JOIN \"Movies\" ON (\"Movies\".\"MovieMetadataId\" = \"MovieMetadata\".\"Id\")").ToList();
             }
         }
 

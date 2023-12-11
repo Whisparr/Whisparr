@@ -9,8 +9,8 @@ namespace Whisparr.Api.V3.Credits
     public class CreditResource : RestResource
     {
         public string PersonName { get; set; }
-        public string CreditTmdbId { get; set; }
-        public int PersonTmdbId { get; set; }
+        public string CreditForeignId { get; set; }
+        public string PersonForeignId { get; set; }
         public int MovieMetadataId { get; set; }
         public List<MediaCover> Images { get; set; }
         public string Department { get; set; }
@@ -33,8 +33,8 @@ namespace Whisparr.Api.V3.Credits
             {
                 Id = model.Id,
                 MovieMetadataId = model.MovieMetadataId,
-                CreditTmdbId = model.CreditTmdbId,
-                PersonTmdbId = model.PersonTmdbId,
+                CreditForeignId = model.CreditForeignId,
+                PersonForeignId = model.PersonForeignId,
                 PersonName = model.Name,
                 Order = model.Order,
                 Character = model.Character,
@@ -68,8 +68,8 @@ namespace Whisparr.Api.V3.Credits
                 Job = resource.Job,
                 Type = resource.Type,
                 Images = resource.Images,
-                CreditTmdbId = resource.CreditTmdbId,
-                PersonTmdbId = resource.PersonTmdbId
+                CreditForeignId = resource.CreditForeignId,
+                PersonForeignId = resource.PersonForeignId
             };
         }
     }

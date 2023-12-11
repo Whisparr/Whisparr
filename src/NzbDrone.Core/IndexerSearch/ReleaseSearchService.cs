@@ -52,9 +52,23 @@ namespace NzbDrone.Core.IndexerSearch
         {
             var downloadDecisions = new List<DownloadDecision>();
 
-            var searchSpec = Get<MovieSearchCriteria>(movie, userInvokedSearch, interactiveSearch);
+            var decisions = new List<DownloadDecision>();
 
-            var decisions = await Dispatch(indexer => indexer.Fetch(searchSpec), searchSpec);
+            if (movie.MovieMetadata.Value.ItemType == ItemType.Movie)
+            {
+                var movieSearchSpec = Get<MovieSearchCriteria>(movie, userInvokedSearch, interactiveSearch);
+
+                decisions = await Dispatch(indexer => indexer.Fetch(movieSearchSpec), movieSearchSpec);
+            }
+            else
+            {
+                var sceneSearchSpec = Get<SceneSearchCriteria>(movie, userInvokedSearch, interactiveSearch);
+                sceneSearchSpec.ReleaseDate = DateOnly.FromDateTime(movie.MovieMetadata.Value.ReleaseDate.Value);
+                sceneSearchSpec.SiteTitle = movie.MovieMetadata.Value.Studio;
+
+                decisions = await Dispatch(indexer => indexer.Fetch(sceneSearchSpec), sceneSearchSpec);
+            }
+
             downloadDecisions.AddRange(decisions);
 
             return DeDupeDecisions(downloadDecisions);

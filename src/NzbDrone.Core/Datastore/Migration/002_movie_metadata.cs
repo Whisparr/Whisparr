@@ -9,8 +9,11 @@ namespace NzbDrone.Core.Datastore.Migration
         protected override void MainDbUpgrade()
         {
             Create.TableForModel("MovieMetadata")
-                .WithColumn("TmdbId").AsInt32().Unique()
+                .WithColumn("ForeignId").AsString().Unique()
+                .WithColumn("MetadataSource").AsInt32()
                 .WithColumn("ImdbId").AsString().Nullable()
+                .WithColumn("TmdbId").AsInt32().Nullable()
+                .WithColumn("StashId").AsString().Nullable()
                 .WithColumn("Images").AsString()
                 .WithColumn("Genres").AsString().Nullable()
                 .WithColumn("Title").AsString()
@@ -33,7 +36,8 @@ namespace NzbDrone.Core.Datastore.Migration
                 .WithColumn("Studio").AsString().Nullable()
                 .WithColumn("Overview").AsString().Nullable()
                 .WithColumn("Website").AsString().Nullable()
-                .WithColumn("Popularity").AsFloat().Nullable();
+                .WithColumn("Popularity").AsFloat().Nullable()
+                .WithColumn("ItemType").AsInt32().NotNullable().Indexed();
 
             // Add an MovieMetadataId column to Movies
             Alter.Table("Movies").AddColumn("MovieMetadataId").AsInt32().WithDefaultValue(0);

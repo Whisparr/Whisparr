@@ -43,7 +43,7 @@ namespace NzbDrone.Core.ImportLists.TMDb.Person
                         continue;
                     }
 
-                    movies.AddIfNotNull(new ImportListMovie { TmdbId = movie.Id });
+                    movies.AddIfNotNull(new ImportListMovie { ForeignId = movie.Id.ToString() });
                 }
             }
 
@@ -59,7 +59,7 @@ namespace NzbDrone.Core.ImportLists.TMDb.Person
 
                     if (crewTypes.Contains(movie.Department))
                     {
-                        movies.AddIfNotNull(new ImportListMovie { TmdbId = movie.Id });
+                        movies.AddIfNotNull(new ImportListMovie { ForeignId = movie.Id.ToString() });
                     }
                 }
             }

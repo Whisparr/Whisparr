@@ -59,6 +59,19 @@ const movieTokens = [
   { token: '{Release Year}', example: '2009' }
 ];
 
+const sceneTokens = [
+  { token: '{Scene Title}', example: 'Movie\'s Title' },
+  { token: '{Scene CleanTitle}', example: 'Movies Title' },
+  { token: '{Release Date}', example: '2009' }
+];
+
+const siteTokens = [
+  { token: '{Site Title}', example: 'Movie\'s Title' },
+  { token: '{Site CleanTitle}', example: 'Movies Title' },
+  { token: '{Site TitleThe}', example: 'Movie\'s Title, The' },
+  { token: '{Site TitleFirstCharacter}', example: 'M' }
+];
+
 const movieIdTokens = [
   { token: '{ImdbId}', example: 'tt12345' },
   { token: '{TmdbId}', example: '123456' }
@@ -242,6 +255,50 @@ class NamingModal extends Component {
               <div className={styles.groups}>
                 {
                   movieTokens.map(({ token, example }) => {
+                    return (
+                      <NamingOption
+                        key={token}
+                        name={name}
+                        value={value}
+                        token={token}
+                        example={example}
+                        tokenSeparator={tokenSeparator}
+                        tokenCase={tokenCase}
+                        onPress={this.onOptionPress}
+                      />
+                    );
+                  }
+                  )
+                }
+              </div>
+            </FieldSet>
+
+            <FieldSet legend={translate('Site')}>
+              <div className={styles.groups}>
+                {
+                  siteTokens.map(({ token, example }) => {
+                    return (
+                      <NamingOption
+                        key={token}
+                        name={name}
+                        value={value}
+                        token={token}
+                        example={example}
+                        tokenSeparator={tokenSeparator}
+                        tokenCase={tokenCase}
+                        onPress={this.onOptionPress}
+                      />
+                    );
+                  }
+                  )
+                }
+              </div>
+            </FieldSet>
+
+            <FieldSet legend={translate('Scene')}>
+              <div className={styles.groups}>
+                {
+                  sceneTokens.map(({ token, example }) => {
                     return (
                       <NamingOption
                         key={token}

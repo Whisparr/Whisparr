@@ -24,6 +24,7 @@ import * as providerOptions from './providerOptionActions';
 import * as queue from './queueActions';
 import * as releases from './releaseActions';
 import * as rootFolders from './rootFolderActions';
+import * as sceneIndex from './sceneIndexActions';
 import * as settings from './settingsActions';
 import * as system from './systemActions';
 import * as tags from './tagActions';
@@ -55,6 +56,7 @@ export default [
   movieHistory,
   movieIndex,
   movieCredits,
+  sceneIndex,
   settings,
   system,
   tags

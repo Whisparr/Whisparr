@@ -20,6 +20,12 @@ namespace NzbDrone.Core.ImportLists.ImportListMovies
             set { MovieMetadata.Value.Title = value; }
         }
 
+        public string ForeignId
+        {
+            get { return MovieMetadata.Value.ForeignId; }
+            set { MovieMetadata.Value.ForeignId = value; }
+        }
+
         public int TmdbId
         {
             get { return MovieMetadata.Value.TmdbId; }

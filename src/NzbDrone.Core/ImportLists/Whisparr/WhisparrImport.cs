@@ -59,7 +59,7 @@ namespace NzbDrone.Core.ImportLists.Whisparr
 
                     movies.Add(new ImportListMovie
                     {
-                        TmdbId = remoteMovie.TmdbId,
+                        ForeignId = remoteMovie.ForeignId,
                         Title = remoteMovie.Title,
                         Year = remoteMovie.Year
                     });

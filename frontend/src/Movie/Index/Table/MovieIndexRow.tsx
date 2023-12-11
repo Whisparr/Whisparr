@@ -69,7 +69,6 @@ function MovieIndexRow(props: MovieIndexRowProps) {
     isAvailable,
     hasFile,
     movieFile,
-    youTubeTrailerId,
     isSaving = false,
   } = movie;
 
@@ -320,11 +319,7 @@ function MovieIndexRow(props: MovieIndexRowProps) {
                 <Tooltip
                   anchor={<Icon name={icons.EXTERNAL_LINK} size={12} />}
                   tooltip={
-                    <MovieDetailsLinks
-                      tmdbId={tmdbId}
-                      imdbId={imdbId}
-                      youTubeTrailerId={youTubeTrailerId}
-                    />
+                    <MovieDetailsLinks tmdbId={tmdbId} imdbId={imdbId} />
                   }
                   canFlip={true}
                   kind={kinds.INVERSE}

@@ -46,11 +46,11 @@ namespace NzbDrone.Core.ImportLists.ImportListMovies
         {
             var existingListMovies = GetAllForLists(new List<int> { listId });
 
-            listMovies.ForEach(l => l.Id = existingListMovies.FirstOrDefault(e => e.TmdbId == l.TmdbId)?.Id ?? 0);
+            listMovies.ForEach(l => l.Id = existingListMovies.FirstOrDefault(e => e.ForeignId == l.ForeignId)?.Id ?? 0);
 
             _importListMovieRepository.InsertMany(listMovies.Where(l => l.Id == 0).ToList());
             _importListMovieRepository.UpdateMany(listMovies.Where(l => l.Id > 0).ToList());
-            _importListMovieRepository.DeleteMany(existingListMovies.Where(l => listMovies.All(x => x.TmdbId != l.TmdbId)).ToList());
+            _importListMovieRepository.DeleteMany(existingListMovies.Where(l => listMovies.All(x => x.ForeignId != l.ForeignId)).ToList());
 
             return listMovies;
         }

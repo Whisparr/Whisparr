@@ -5,10 +5,10 @@ import createAllMoviesSelector from './createAllMoviesSelector';
 
 function createExistingMovieSelector() {
   return createSelector(
-    (_: AppState, { tmdbId }: { tmdbId: number }) => tmdbId,
+    (_: AppState, { foreignId }: { foreignId: string }) => foreignId,
     createAllMoviesSelector(),
-    (tmdbId, movies) => {
-      return some(movies, { tmdbId });
+    (foreignId, movies) => {
+      return some(movies, { foreignId });
     }
   );
 }

@@ -6,12 +6,12 @@ class MovieTitleLink extends PureComponent {
 
   render() {
     const {
-      titleSlug,
+      foreignId,
       title,
       year
     } = this.props;
 
-    const link = `/movie/${titleSlug}`;
+    const link = `/movie/${foreignId}`;
 
     return (
       <Link
@@ -25,6 +25,7 @@ class MovieTitleLink extends PureComponent {
 }
 
 MovieTitleLink.propTypes = {
+  foreignId: PropTypes.string.isRequired,
   titleSlug: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   year: PropTypes.number

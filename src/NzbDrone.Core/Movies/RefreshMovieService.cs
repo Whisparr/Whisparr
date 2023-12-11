@@ -79,7 +79,7 @@ namespace NzbDrone.Core.Movies
 
             try
             {
-                var tuple = _movieInfo.GetMovieInfo(movie.TmdbId);
+                var tuple = movieMetadata.ItemType == ItemType.Movie ? _movieInfo.GetMovieInfo(movie.TmdbId) : _movieInfo.GetSceneInfo(movie.ForeignId);
                 movieInfo = tuple.Item1;
                 credits = tuple.Item2;
             }
@@ -96,10 +96,10 @@ namespace NzbDrone.Core.Movies
                 throw;
             }
 
-            if (movieMetadata.TmdbId != movieInfo.TmdbId)
+            if (movieMetadata.ForeignId != movieInfo.ForeignId)
             {
-                _logger.Warn("Movie '{0}' (TMDb: {1}) was replaced with '{2}' (TMDb: {3}), because the original was a duplicate.", movie.Title, movie.TmdbId, movieInfo.Title, movieInfo.TmdbId);
-                movieMetadata.TmdbId = movieInfo.TmdbId;
+                _logger.Warn("Movie '{0}' (TMDb: {1}) was replaced with '{2}' (TMDb: {3}), because the original was a duplicate.", movie.Title, movie.ForeignId, movieInfo.Title, movieInfo.ForeignId);
+                movieMetadata.ForeignId = movieInfo.ForeignId;
             }
 
             movieMetadata.Title = movieInfo.Title;
@@ -113,6 +113,7 @@ namespace NzbDrone.Core.Movies
             movieMetadata.Runtime = movieInfo.Runtime;
             movieMetadata.Ratings = movieInfo.Ratings;
             movieMetadata.ItemType = movieInfo.ItemType;
+            movieMetadata.MetadataSource = movieInfo.MetadataSource;
 
             // movie.Genres = movieInfo.Genres;
             movieMetadata.Website = movieInfo.Website;
@@ -245,7 +246,7 @@ namespace NzbDrone.Core.Movies
                     }
                     catch (MovieNotFoundException)
                     {
-                        _logger.Error("Movie '{0}' (TMDb {1}) was not found, it may have been removed from The Movie Database.", movie.Title, movie.TmdbId);
+                        _logger.Error("Movie '{0}' (TMDb {1}) was not found, it may have been removed from The Movie Database.", movie.Title, movie.ForeignId);
                     }
                     catch (Exception e)
                     {
@@ -261,7 +262,7 @@ namespace NzbDrone.Core.Movies
                 // TODO refresh all moviemetadata here, even if not used by a Movie
                 var allMovie = _movieService.GetAllMovies().OrderBy(c => c.MovieMetadata.Value.SortTitle).ToList();
 
-                var updatedTMDBMovies = new HashSet<int>();
+                var updatedTMDBMovies = new HashSet<string>();
 
                 if (message.LastStartTime.HasValue && message.LastStartTime.Value.AddDays(14) > DateTime.UtcNow)
                 {
@@ -271,7 +272,7 @@ namespace NzbDrone.Core.Movies
                 foreach (var movie in allMovie)
                 {
                     var movieLocal = movie;
-                    if ((updatedTMDBMovies.Count == 0 && _checkIfMovieShouldBeRefreshed.ShouldRefresh(movie.MovieMetadata)) || updatedTMDBMovies.Contains(movie.TmdbId) || message.Trigger == CommandTrigger.Manual)
+                    if ((updatedTMDBMovies.Count == 0 && _checkIfMovieShouldBeRefreshed.ShouldRefresh(movie.MovieMetadata)) || updatedTMDBMovies.Contains(movie.ForeignId) || message.Trigger == CommandTrigger.Manual)
                     {
                         try
                         {
@@ -279,7 +280,7 @@ namespace NzbDrone.Core.Movies
                         }
                         catch (MovieNotFoundException)
                         {
-                            _logger.Error("Movie '{0}' (TMDb {1}) was not found, it may have been removed from The Movie Database.", movieLocal.Title, movieLocal.TmdbId);
+                            _logger.Error("Movie '{0}' (TMDb {1}) was not found, it may have been removed from The Movie Database.", movieLocal.Title, movieLocal.ForeignId);
                             continue;
                         }
                         catch (Exception e)

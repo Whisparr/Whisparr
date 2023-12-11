@@ -25,7 +25,7 @@ namespace NzbDrone.Core.Test.MovieTests
         [TestCase("Special Agent Oso", "special agent oso")]
         public void should_normalize_title(string title, string expected)
         {
-            MovieTitleNormalizer.Normalize(title, 0).Should().Be(expected);
+            MovieTitleNormalizer.Normalize(title, "0").Should().Be(expected);
         }
     }
 }

@@ -85,7 +85,7 @@ namespace NzbDrone.Core.Movies
                         throw;
                     }
 
-                    _logger.Debug("TmdbId {0} was not added due to validation failures. {1}", m.TmdbId, ex.Message);
+                    _logger.Debug("TmdbId {0} was not added due to validation failures. {1}", m.ForeignId, ex.Message);
                 }
             }
 
@@ -101,15 +101,15 @@ namespace NzbDrone.Core.Movies
 
             try
             {
-                movie.MovieMetadata = _movieInfo.GetMovieInfo(newMovie.TmdbId).Item1;
+                movie.MovieMetadata = int.TryParse(newMovie.ForeignId, out var tmdbId) ? _movieInfo.GetMovieInfo(newMovie.TmdbId).Item1 : _movieInfo.GetSceneInfo(newMovie.ForeignId).Item1;
             }
             catch (MovieNotFoundException)
             {
-                _logger.Error("TmdbId {0} was not found, it may have been removed from TMDb. Path: {1}", newMovie.TmdbId, newMovie.Path);
+                _logger.Error("TmdbId {0} was not found, it may have been removed from TMDb. Path: {1}", newMovie.ForeignId, newMovie.Path);
 
                 throw new ValidationException(new List<ValidationFailure>
                                               {
-                                                  new ValidationFailure("TmdbId", $"A movie with this ID was not found. Path: {newMovie.Path}", newMovie.TmdbId)
+                                                  new ValidationFailure("TmdbId", $"A movie with this ID was not found. Path: {newMovie.Path}", newMovie.ForeignId)
                                               });
             }
 
@@ -127,7 +127,7 @@ namespace NzbDrone.Core.Movies
             }
 
             newMovie.MovieMetadata.Value.CleanTitle = newMovie.Title.CleanMovieTitle();
-            newMovie.MovieMetadata.Value.SortTitle = MovieTitleNormalizer.Normalize(newMovie.Title, newMovie.TmdbId);
+            newMovie.MovieMetadata.Value.SortTitle = MovieTitleNormalizer.Normalize(newMovie.Title, newMovie.ForeignId);
             newMovie.Added = DateTime.UtcNow;
 
             var validationResult = _addMovieValidator.Validate(newMovie);

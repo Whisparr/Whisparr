@@ -21,6 +21,7 @@ export const defaultState = {
   saveError: null,
   isDeleting: false,
   deleteError: null,
+  indexMode: 'movie',
   sortKey: 'sortTitle',
   sortDirection: sortDirections.ASCENDING,
   secondarySortKey: 'sortTitle',
@@ -423,6 +424,7 @@ export const SET_MOVIE_VIEW = 'movieIndex/setMovieView';
 export const SET_MOVIE_TABLE_OPTION = 'movieIndex/setMovieTableOption';
 export const SET_MOVIE_POSTER_OPTION = 'movieIndex/setMoviePosterOption';
 export const SET_MOVIE_OVERVIEW_OPTION = 'movieIndex/setMovieOverviewOption';
+export const SET_MOVIE_INDEX_MODE = 'movieIndex/setMovieIndexMode';
 
 //
 // Action Creators
@@ -433,6 +435,7 @@ export const setMovieView = createAction(SET_MOVIE_VIEW);
 export const setMovieTableOption = createAction(SET_MOVIE_TABLE_OPTION);
 export const setMoviePosterOption = createAction(SET_MOVIE_POSTER_OPTION);
 export const setMovieOverviewOption = createAction(SET_MOVIE_OVERVIEW_OPTION);
+export const setMovieIndexMode = createAction(SET_MOVIE_INDEX_MODE);
 
 //
 // Reducers
@@ -470,6 +473,10 @@ export const reducers = createHandleActions({
         ...payload
       }
     };
+  },
+
+  [SET_MOVIE_INDEX_MODE]: function(state, { payload }) {
+    return Object.assign({}, state, { indexMode: payload.indexMode });
   }
 
 }, defaultState, section);

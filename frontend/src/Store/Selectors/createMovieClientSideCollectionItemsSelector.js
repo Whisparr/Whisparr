@@ -2,11 +2,11 @@ import { createSelector, createSelectorCreator, defaultMemoize } from 'reselect'
 import hasDifferentItemsOrOrder from 'Utilities/Object/hasDifferentItemsOrOrder';
 import createClientSideCollectionSelector from './createClientSideCollectionSelector';
 
-function createUnoptimizedSelector(uiSection) {
+function createUnoptimizedSelector(uiSection, mediaType) {
   return createSelector(
     createClientSideCollectionSelector('movies', uiSection),
     (movies) => {
-      const items = movies.items.map((s) => {
+      const items = movies.items.filter((movie) => movie.itemType === mediaType).map((s) => {
         const {
           id,
           sortTitle,
@@ -37,9 +37,9 @@ const createMovieEqualSelector = createSelectorCreator(
   movieListEqual
 );
 
-function createMovieClientSideCollectionItemsSelector(uiSection) {
+function createMovieClientSideCollectionItemsSelector(uiSection, mediaType) {
   return createMovieEqualSelector(
-    createUnoptimizedSelector(uiSection),
+    createUnoptimizedSelector(uiSection, mediaType),
     (movies) => movies
   );
 }

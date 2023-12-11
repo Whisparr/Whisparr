@@ -7,6 +7,7 @@ namespace NzbDrone.Core.ImportLists.Whisparr
     {
         public string Title { get; set; }
         public string SortTitle { get; set; }
+        public string ForeignId { get; set; }
         public int TmdbId { get; set; }
         public string Overview { get; set; }
         public List<MediaCover.MediaCover> Images { get; set; }

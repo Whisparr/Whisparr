@@ -77,7 +77,7 @@ namespace NzbDrone.Core.Movies.Collections
         private MovieCollection SetPropertiesAndValidate(MovieCollection newCollection)
         {
             newCollection.CleanTitle = newCollection.Title.CleanMovieTitle();
-            newCollection.SortTitle = MovieTitleNormalizer.Normalize(newCollection.Title, newCollection.TmdbId);
+            newCollection.SortTitle = MovieTitleNormalizer.Normalize(newCollection.Title, newCollection.TmdbId.ToString());
             newCollection.Added = DateTime.UtcNow;
 
             return newCollection;

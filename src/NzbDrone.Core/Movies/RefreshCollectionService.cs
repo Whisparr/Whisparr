@@ -79,9 +79,9 @@ namespace NzbDrone.Core.Movies
 
             foreach (var remoteMovie in movies)
             {
-                var existing = existingMetaForCollection.FirstOrDefault(e => e.TmdbId == remoteMovie.TmdbId);
+                var existing = existingMetaForCollection.FirstOrDefault(e => e.ForeignId == remoteMovie.ForeignId);
 
-                if (existingMetaForCollection.Any(x => x.TmdbId == remoteMovie.TmdbId))
+                if (existingMetaForCollection.Any(x => x.ForeignId == remoteMovie.ForeignId))
                 {
                     existingMetaForCollection.Remove(existing);
                 }
@@ -122,14 +122,14 @@ namespace NzbDrone.Core.Movies
             {
                 var existingMovies = _movieService.AllMovieTmdbIds();
                 var collectionMovies = _movieMetadataService.GetMoviesByCollectionTmdbId(collection.TmdbId);
-                var excludedMovies = _importExclusionService.GetAllExclusions().Select(e => e.TmdbId);
-                var moviesToAdd = collectionMovies.Where(m => !existingMovies.Contains(m.TmdbId)).Where(m => !excludedMovies.Contains(m.TmdbId));
+                var excludedMovies = _importExclusionService.GetAllExclusions().Select(e => e.ForeignId);
+                var moviesToAdd = collectionMovies.Where(m => !existingMovies.Contains(m.TmdbId)).Where(m => !excludedMovies.Contains(m.ForeignId));
 
                 if (moviesToAdd.Any())
                 {
                     _addMovieService.AddMovies(moviesToAdd.Select(m => new Movie
                     {
-                        TmdbId = m.TmdbId,
+                        ForeignId = m.ForeignId,
                         Title = m.Title,
                         QualityProfileId = collection.QualityProfileId,
                         RootFolderPath = collection.RootFolderPath,

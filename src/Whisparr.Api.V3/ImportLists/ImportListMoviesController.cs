@@ -70,7 +70,7 @@ namespace Whisparr.Api.V3.ImportLists
                 var movie = x.First();
 
                 movie.Lists = x.SelectMany(m => m.Lists).ToHashSet();
-                movie.IsExcluded = listExclusions.Any(e => e.TmdbId == movie.TmdbId);
+                movie.IsExcluded = listExclusions.Any(e => e.ForeignId == movie.ForeignId);
                 movie.IsExisting = existingTmdbIds.Any(e => e == movie.TmdbId);
                 movie.IsRecommendation = x.Any(m => m.IsRecommendation);
 

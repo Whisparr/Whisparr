@@ -56,6 +56,7 @@ namespace Whisparr.Api.V3.Movies
         public string CleanTitle { get; set; }
         public string ImdbId { get; set; }
         public int TmdbId { get; set; }
+        public string ForeignId { get; set; }
         public string TitleSlug { get; set; }
         public string RootFolderPath { get; set; }
         public string Folder { get; set; }
@@ -87,6 +88,7 @@ namespace Whisparr.Api.V3.Movies
             return new MovieResource
             {
                 Id = model.Id,
+                ForeignId = model.ForeignId,
                 TmdbId = model.TmdbId,
                 Title = model.Title,
                 OriginalLanguage = model.MovieMetadata.Value.OriginalLanguage,
@@ -113,7 +115,7 @@ namespace Whisparr.Api.V3.Movies
                 Runtime = model.MovieMetadata.Value.Runtime,
                 CleanTitle = model.MovieMetadata.Value.CleanTitle,
                 ImdbId = model.ImdbId,
-                TitleSlug = model.MovieMetadata.Value.TmdbId.ToString(),
+                TitleSlug = model.MovieMetadata.Value.ForeignId.ToString(),
                 RootFolderPath = model.RootFolderPath,
                 Website = model.MovieMetadata.Value.Website,
                 Genres = model.MovieMetadata.Value.Genres,
@@ -141,6 +143,7 @@ namespace Whisparr.Api.V3.Movies
 
                 MovieMetadata = new MovieMetadata
                 {
+                    ForeignId = resource.ForeignId,
                     TmdbId = resource.TmdbId,
                     Title = resource.Title,
                     Genres = resource.Genres,

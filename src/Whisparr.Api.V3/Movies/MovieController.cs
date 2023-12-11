@@ -98,7 +98,7 @@ namespace Whisparr.Api.V3.Movies
                          .SetValidator(movieFolderAsRootFolderValidator)
                          .When(s => s.Path.IsNullOrWhiteSpace());
             PostValidator.RuleFor(s => s.Title).NotEmpty().When(s => s.TmdbId <= 0);
-            PostValidator.RuleFor(s => s.TmdbId).NotNull().NotEmpty().SetValidator(moviesExistsValidator);
+            PostValidator.RuleFor(s => s.ForeignId).NotNull().NotEmpty().SetValidator(moviesExistsValidator);
 
             PutValidator.RuleFor(s => s.Path).IsValidPath();
         }

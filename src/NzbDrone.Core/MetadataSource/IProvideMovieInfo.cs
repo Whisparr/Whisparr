@@ -10,9 +10,10 @@ namespace NzbDrone.Core.MetadataSource
     {
         MovieMetadata GetMovieByImdbId(string imdbId);
         Tuple<MovieMetadata, List<Credit>> GetMovieInfo(int tmdbId);
+        Tuple<MovieMetadata, List<Credit>> GetSceneInfo(string stashId);
         MovieCollection GetCollectionInfo(int tmdbId);
         List<MovieMetadata> GetBulkMovieInfo(List<int> tmdbIds);
 
-        HashSet<int> GetChangedMovies(DateTime startTime);
+        HashSet<string> GetChangedMovies(DateTime startTime);
     }
 }

@@ -46,7 +46,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             _logger = logger;
         }
 
-        public HashSet<int> GetChangedMovies(DateTime startTime)
+        public HashSet<string> GetChangedMovies(DateTime startTime)
         {
             // Round down to the hour to ensure we cover gap and don't kill cache every call
             var cacheAdjustedStart = startTime.AddMinutes(-15);
@@ -60,9 +60,9 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             request.AllowAutoRedirect = true;
             request.SuppressHttpError = true;
 
-            var response = _httpClient.Get<List<int>>(request);
+            var response = _httpClient.Get<List<string>>(request);
 
-            return new HashSet<int>(response.Resource);
+            return new HashSet<string>(response.Resource);
         }
 
         public Tuple<MovieMetadata, List<Credit>> GetMovieInfo(int tmdbId)
@@ -93,6 +93,38 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             credits.AddRange(httpResponse.Resource.Credits.Select(MapCast));
 
             var movie = MapMovie(httpResponse.Resource);
+
+            return new Tuple<MovieMetadata, List<Credit>>(movie, credits.ToList());
+        }
+
+        public Tuple<MovieMetadata, List<Credit>> GetSceneInfo(string stashId)
+        {
+            var httpRequest = _whisparrMetadata.Create()
+                                             .SetSegment("route", "scene")
+                                             .Resource(stashId)
+                                             .Build();
+
+            httpRequest.AllowAutoRedirect = true;
+            httpRequest.SuppressHttpError = true;
+
+            var httpResponse = _httpClient.Get<MovieResource>(httpRequest);
+
+            if (httpResponse.HasHttpError)
+            {
+                if (httpResponse.StatusCode == HttpStatusCode.NotFound)
+                {
+                    throw new MovieNotFoundException(stashId);
+                }
+                else
+                {
+                    throw new HttpException(httpRequest, httpResponse);
+                }
+            }
+
+            var movie = MapMovie(httpResponse.Resource);
+
+            var credits = new List<Credit>();
+            credits.AddRange(httpResponse.Resource.Credits.Select(c => MapSceneCast(c, movie.ForeignId)));
 
             return new Tuple<MovieMetadata, List<Credit>>(movie, credits.ToList());
         }
@@ -193,7 +225,12 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             var movie = new MovieMetadata();
             var altTitles = new List<AlternativeTitle>();
 
+            movie.ItemType = resource.ItemType;
+            movie.MetadataSource = resource.ItemType == ItemType.Movie ? Movies.MetadataSource.Tmdb : Movies.MetadataSource.Stash;
+
+            movie.ForeignId = resource.ItemType == ItemType.Movie ? resource.ForeignIds.TmdbId.ToString() : resource.ForeignIds.StashId;
             movie.TmdbId = resource.ForeignIds.TmdbId;
+            movie.StashId = resource.ForeignIds.StashId;
             movie.Title = resource.Title;
             movie.CleanTitle = resource.Title.CleanMovieTitle();
             movie.SortTitle = Parser.Parser.NormalizeTitle(resource.Title);
@@ -403,7 +440,29 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                     }
                 }
 
-                var searchTerm = parserTitle.Replace("_", "+").Replace(" ", "+").Replace(".", "+");
+                if (lowerTitle.StartsWith("stash:") || lowerTitle.StartsWith("stashid:"))
+                {
+                    var slug = lowerTitle.Split(':')[1].Trim();
+
+                    var stashId = slug;
+
+                    if (slug.IsNullOrWhiteSpace() || slug.Any(char.IsWhiteSpace))
+                    {
+                        return new List<Movie>();
+                    }
+
+                    try
+                    {
+                        var movieLookup = GetSceneInfo(stashId).Item1;
+                        return movieLookup == null ? new List<Movie>() : new List<Movie> { _movieService.FindByForeignId(movieLookup.StashId) ?? new Movie { MovieMetadata = movieLookup } };
+                    }
+                    catch (MovieNotFoundException)
+                    {
+                        return new List<Movie>();
+                    }
+                }
+
+                var searchTerm = parserTitle.Replace("_", " ").Replace(".", " ");
 
                 var firstChar = searchTerm.First();
 
@@ -439,7 +498,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
 
         private Movie MapSearchResult(MovieResource result)
         {
-            var movie = _movieService.FindByTmdbId(result.ForeignIds.TmdbId);
+            var movie = _movieService.FindByForeignId(result.ItemType == ItemType.Movie ? result.ForeignIds.TmdbId.ToString() : result.ForeignIds.StashId);
 
             if (movie == null)
             {
@@ -472,8 +531,24 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 Name = arg.Name,
                 Character = arg.Character,
                 Order = arg.Order,
-                PersonTmdbId = arg.ForeignIds.TmdbId,
-                CreditTmdbId = arg.CreditId,
+                PersonForeignId = arg.ForeignIds.TmdbId.ToString(),
+                CreditForeignId = arg.CreditId,
+                Type = CreditType.Cast,
+                Images = arg.Images.Select(MapImage).ToList()
+            };
+
+            return newActor;
+        }
+
+        private static Credit MapSceneCast(CastResource arg, string sceneForeignId)
+        {
+            var newActor = new Credit
+            {
+                Name = arg.Name,
+                Character = arg.Character,
+                Order = arg.Order,
+                PersonForeignId = arg.ForeignIds.StashId,
+                CreditForeignId = $"{sceneForeignId} - {arg.ForeignIds.StashId}",
                 Type = CreditType.Cast,
                 Images = arg.Images.Select(MapImage).ToList()
             };
@@ -524,6 +599,8 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                     return MediaCoverTypes.Fanart;
                 case "clearlogo":
                     return MediaCoverTypes.Clearlogo;
+                case "screenshot":
+                    return MediaCoverTypes.Screenshot;
                 default:
                     return MediaCoverTypes.Unknown;
             }

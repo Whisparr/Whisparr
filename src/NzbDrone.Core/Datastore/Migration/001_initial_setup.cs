@@ -116,8 +116,11 @@ namespace NzbDrone.Core.Datastore.Migration
                 .WithColumn("ReplaceIllegalCharacters").AsBoolean().WithDefaultValue(true)
                 .WithColumn("StandardMovieFormat").AsString().Nullable()
                 .WithColumn("MovieFolderFormat").AsString().Nullable()
+                .WithColumn("StandardSceneFormat").AsString().Nullable()
+                .WithColumn("SceneFolderFormat").AsString().Nullable()
                 .WithColumn("ColonReplacementFormat").AsInt32().NotNullable().WithDefaultValue(0)
-                .WithColumn("RenameMovies").AsBoolean().WithDefaultValue(false);
+                .WithColumn("RenameMovies").AsBoolean().WithDefaultValue(false)
+                .WithColumn("RenameScenes").AsBoolean().WithDefaultValue(false);
 
             Create.TableForModel("QualityDefinitions")
                 .WithColumn("Quality").AsInt32().Unique()
@@ -244,7 +247,7 @@ namespace NzbDrone.Core.Datastore.Migration
                     .WithColumn("SearchOnAdd").AsBoolean().WithDefaultValue(false);
 
             Create.TableForModel("ImportExclusions")
-                    .WithColumn("TmdbId").AsInt64().NotNullable().Unique().PrimaryKey()
+                    .WithColumn("ForeignId").AsString().NotNullable().Unique().PrimaryKey()
                     .WithColumn("MovieTitle").AsString().Nullable()
                     .WithColumn("MovieYear").AsInt64().Nullable().WithDefaultValue(0);
 
@@ -306,8 +309,8 @@ namespace NzbDrone.Core.Datastore.Migration
             Create.Index("IX_Movies_ImdbId").OnTable("Movies").OnColumn("ImdbId");
 
             Create.TableForModel("Credits").WithColumn("MovieId").AsInt32()
-                      .WithColumn("CreditTmdbId").AsString().Unique()
-                      .WithColumn("PersonTmdbId").AsInt32()
+                      .WithColumn("CreditForeignId").AsString().Unique()
+                      .WithColumn("PersonForeignId").AsString()
                       .WithColumn("Name").AsString()
                       .WithColumn("Images").AsString()
                       .WithColumn("Character").AsString().Nullable()

@@ -9,8 +9,9 @@ namespace NzbDrone.Core.Movies
     public interface IMovieMetadataRepository : IBasicRepository<MovieMetadata>
     {
         MovieMetadata FindByTmdbId(int tmdbId);
+        MovieMetadata FindByForeignId(string foreignId);
         MovieMetadata FindByImdbId(string imdbId);
-        List<MovieMetadata> FindById(List<int> tmdbIds);
+        List<MovieMetadata> FindById(List<string> tmdbIds);
         List<MovieMetadata> GetMoviesWithCollections();
         List<MovieMetadata> GetMoviesByCollectionTmdbId(int collectionId);
         bool UpsertMany(List<MovieMetadata> data);
@@ -31,14 +32,19 @@ namespace NzbDrone.Core.Movies
             return Query(x => x.TmdbId == tmdbId).FirstOrDefault();
         }
 
+        public MovieMetadata FindByForeignId(string foreignId)
+        {
+            return Query(x => x.ForeignId == foreignId).FirstOrDefault();
+        }
+
         public MovieMetadata FindByImdbId(string imdbId)
         {
             return Query(x => x.ImdbId == imdbId).FirstOrDefault();
         }
 
-        public List<MovieMetadata> FindById(List<int> tmdbIds)
+        public List<MovieMetadata> FindById(List<string> tmdbIds)
         {
-            return Query(x => Enumerable.Contains(tmdbIds, x.TmdbId));
+            return Query(x => Enumerable.Contains(tmdbIds, x.ForeignId));
         }
 
         public List<MovieMetadata> GetMoviesWithCollections()
@@ -53,14 +59,14 @@ namespace NzbDrone.Core.Movies
 
         public bool UpsertMany(List<MovieMetadata> data)
         {
-            var existingMetadata = FindById(data.Select(x => x.TmdbId).ToList());
+            var existingMetadata = FindById(data.Select(x => x.ForeignId).ToList());
             var updateMetadataList = new List<MovieMetadata>();
             var addMetadataList = new List<MovieMetadata>();
             var upToDateMetadataCount = 0;
 
             foreach (var meta in data)
             {
-                var existing = existingMetadata.SingleOrDefault(x => x.TmdbId == meta.TmdbId);
+                var existing = existingMetadata.SingleOrDefault(x => x.ForeignId == meta.ForeignId);
                 if (existing != null)
                 {
                     meta.UseDbFieldsFrom(existing);

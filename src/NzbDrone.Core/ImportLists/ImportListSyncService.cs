@@ -74,31 +74,31 @@ namespace NzbDrone.Core.ImportLists
             ProcessListItems(listItemsResult);
         }
 
-        private void ProcessMovieReport(ImportListDefinition importList, ImportListMovie report, List<ImportExclusion> listExclusions, List<int> dbMovies, List<Movie> moviesToAdd)
+        private void ProcessMovieReport(ImportListDefinition importList, ImportListMovie report, List<ImportExclusion> listExclusions, List<string> dbMovies, List<Movie> moviesToAdd)
         {
-            if (report.TmdbId == 0 || !importList.EnableAuto)
+            if (report.ForeignId.IsNullOrWhiteSpace() || !importList.EnableAuto)
             {
                 return;
             }
 
             // Check to see if movie in DB
-            if (dbMovies.Contains(report.TmdbId))
+            if (dbMovies.Contains(report.ForeignId))
             {
-                _logger.Debug("{0} [{1}] Rejected, Movie Exists in DB", report.TmdbId, report.Title);
+                _logger.Debug("{0} [{1}] Rejected, Movie Exists in DB", report.ForeignId, report.Title);
                 return;
             }
 
             // Check to see if movie excluded
-            var excludedMovie = listExclusions.SingleOrDefault(s => s.TmdbId == report.TmdbId);
+            var excludedMovie = listExclusions.SingleOrDefault(s => s.ForeignId == report.ForeignId);
 
             if (excludedMovie != null)
             {
-                _logger.Debug("{0} [{1}] Rejected due to list exlcusion", report.TmdbId, report.Title);
+                _logger.Debug("{0} [{1}] Rejected due to list exlcusion", report.ForeignId, report.Title);
                 return;
             }
 
             // Append Artist if not already in DB or already on add list
-            if (moviesToAdd.All(s => s.TmdbId != report.TmdbId))
+            if (moviesToAdd.All(s => s.ForeignId != report.ForeignId))
             {
                 var monitorType = importList.Monitor;
 
@@ -108,7 +108,7 @@ namespace NzbDrone.Core.ImportLists
                     RootFolderPath = importList.RootFolderPath,
                     QualityProfileId = importList.QualityProfileId,
                     Tags = importList.Tags,
-                    TmdbId = report.TmdbId,
+                    ForeignId = report.ForeignId,
                     Title = report.Title,
                     Year = report.Year,
                     ImdbId = report.ImdbId,
@@ -126,9 +126,9 @@ namespace NzbDrone.Core.ImportLists
         {
             listFetchResult.Movies = listFetchResult.Movies.DistinctBy(x =>
             {
-                if (x.TmdbId != 0)
+                if (x.ForeignId.IsNotNullOrWhiteSpace())
                 {
-                    return x.TmdbId.ToString();
+                    return x.ForeignId.ToString();
                 }
 
                 if (x.ImdbId.IsNotNullOrWhiteSpace())
@@ -142,7 +142,7 @@ namespace NzbDrone.Core.ImportLists
             var listedMovies = listFetchResult.Movies.ToList();
 
             var importExclusions = _exclusionService.GetAllExclusions();
-            var dbMovies = _movieService.AllMovieTmdbIds();
+            var dbMovies = _movieService.AllMovieForeignIds();
             var moviesToAdd = new List<Movie>();
 
             var groupedMovies = listedMovies.GroupBy(x => x.ListId);
@@ -153,7 +153,7 @@ namespace NzbDrone.Core.ImportLists
 
                 foreach (var movie in list)
                 {
-                    if (movie.TmdbId != 0)
+                    if (movie.ForeignId.IsNotNullOrWhiteSpace())
                     {
                         ProcessMovieReport(importList, movie, importExclusions, dbMovies, moviesToAdd);
                     }
@@ -195,7 +195,7 @@ namespace NzbDrone.Core.ImportLists
 
             foreach (var movie in moviesInLibrary)
             {
-                var movieExists = listMovies.Any(c => c.TmdbId == movie.TmdbId || c.ImdbId == movie.ImdbId);
+                var movieExists = listMovies.Any(c => c.ForeignId == movie.ForeignId || c.ImdbId == movie.ImdbId);
 
                 if (!movieExists)
                 {

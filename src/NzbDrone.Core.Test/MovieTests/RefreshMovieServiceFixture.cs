@@ -99,14 +99,14 @@ namespace NzbDrone.Core.Test.MovieTests
         public void should_update_if_tmdb_id_changed()
         {
             var newMovieInfo = _movie.JsonClone();
-            newMovieInfo.TmdbId = _movie.TmdbId + 1;
+            newMovieInfo.ForeignId = _movie.ForeignId + 1;
 
             GivenNewMovieInfo(newMovieInfo);
 
             Subject.Execute(new RefreshMovieCommand(new List<int> { _movie.Id }));
 
             Mocker.GetMock<IMovieMetadataService>()
-                .Verify(v => v.Upsert(It.Is<MovieMetadata>(s => s.TmdbId == newMovieInfo.TmdbId)));
+                .Verify(v => v.Upsert(It.Is<MovieMetadata>(s => s.ForeignId == newMovieInfo.ForeignId)));
 
             ExceptionVerification.ExpectedWarns(1);
         }

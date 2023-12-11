@@ -102,6 +102,27 @@ namespace NzbDrone.Core.Indexers.Newznab
             return pageableRequests;
         }
 
+        public virtual IndexerPageableRequestChain GetSearchRequests(SceneSearchCriteria searchCriteria)
+        {
+            var pageableRequests = new IndexerPageableRequestChain();
+
+            var releaseDate = searchCriteria.ReleaseDate?.ToString("yy.MM.dd") ?? string.Empty;
+
+            if (SupportsSearch)
+            {
+                var queryTitles = TextSearchEngine == "raw" ? searchCriteria.SceneTitles : searchCriteria.CleanSceneTitles;
+                foreach (var queryTitle in queryTitles)
+                {
+                    pageableRequests.Add(GetPagedRequests(MaxPages,
+                        Settings.Categories,
+                        "search",
+                        $"&q={NewsnabifyTitle(queryTitle)}+{releaseDate}"));
+                }
+            }
+
+            return pageableRequests;
+        }
+
         private void AddMovieIdPageableRequests(IndexerPageableRequestChain chain, int maxPages, IEnumerable<int> categories, SearchCriteriaBase searchCriteria)
         {
             var includeTmdbSearch = SupportsTmdbSearch && searchCriteria.Movie.MovieMetadata.Value.TmdbId > 0;
@@ -112,7 +133,7 @@ namespace NzbDrone.Core.Indexers.Newznab
 
                 if (includeTmdbSearch)
                 {
-                    ids += $"&tmdbid={searchCriteria.Movie.MovieMetadata.Value.TmdbId}";
+                    ids += $"&tmdbid={searchCriteria.Movie.MovieMetadata.Value.ForeignId}";
                 }
 
                 chain.Add(GetPagedRequests(maxPages, categories, "movie", ids));
@@ -124,7 +145,7 @@ namespace NzbDrone.Core.Indexers.Newznab
                     chain.Add(GetPagedRequests(maxPages,
                         categories,
                         "movie",
-                        $"&tmdbid={searchCriteria.Movie.MovieMetadata.Value.TmdbId}"));
+                        $"&tmdbid={searchCriteria.Movie.MovieMetadata.Value.ForeignId}"));
                 }
             }
 

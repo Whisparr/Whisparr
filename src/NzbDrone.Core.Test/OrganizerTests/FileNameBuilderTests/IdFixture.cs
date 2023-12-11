@@ -21,6 +21,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
                       .With(s => s.Title = "Movie Title")
                       .With(s => s.ImdbId = "tt12345")
                       .With(s => s.TmdbId = 123456)
+                      .With(s => s.ForeignId = "123456")
                       .Build();
 
             _namingConfig = NamingConfig.Default;
@@ -44,7 +45,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
             _namingConfig.MovieFolderFormat = "{Movie Title} ({TmdbId})";
 
             Subject.GetMovieFolder(_movie)
-                   .Should().Be($"Movie Title ({_movie.TmdbId})");
+                   .Should().Be($"Movie Title ({_movie.ForeignId})");
         }
 
         [Test]

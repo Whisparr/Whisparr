@@ -223,8 +223,30 @@ class AddNewMovieSearchResult extends Component {
               {
                 !!studioTitle &&
                   <Label size={sizes.LARGE}>
-                    {studioTitle}
+                    <Icon
+                      name={icons.STUDIO}
+                      size={13}
+                    />
+
+                    <span className={styles.studio}>
+                      {studioTitle}
+                    </span>
                   </Label>
+              }
+
+              {
+                genres.length > 0 ?
+                  <Label size={sizes.LARGE}>
+                    <Icon
+                      name={icons.GENRE}
+                      size={13}
+                    />
+
+                    <span className={styles.genres}>
+                      {genres.slice(0, 3).join(', ')}
+                    </span>
+                  </Label> :
+                  null
               }
 
               {
@@ -253,7 +275,7 @@ class AddNewMovieSearchResult extends Component {
                     />
 
                     <span className={styles.links}>
-                      Links
+                      {translate('Links')}
                     </span>
                   </Label>
                 }
@@ -308,6 +330,7 @@ AddNewMovieSearchResult.propTypes = {
   titleSlug: PropTypes.string.isRequired,
   year: PropTypes.number.isRequired,
   studioTitle: PropTypes.string,
+  genres: PropTypes.arrayOf(PropTypes.string),
   status: PropTypes.string.isRequired,
   itemType: PropTypes.string.isRequired,
   overview: PropTypes.string,

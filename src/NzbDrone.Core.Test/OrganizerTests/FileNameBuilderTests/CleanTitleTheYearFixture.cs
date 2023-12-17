@@ -30,11 +30,10 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
             _episode = Builder<Episode>.CreateNew()
                             .With(e => e.Title = "City Sushi")
                             .With(e => e.SeasonNumber = 15)
-                            .With(e => e.EpisodeNumber = 6)
                             .With(e => e.AbsoluteEpisodeNumber = 100)
                             .Build();
 
-            _episodeFile = new EpisodeFile { Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "SonarrTest" };
+            _episodeFile = new EpisodeFile { Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "WhisparrTest" };
 
             _namingConfig = NamingConfig.Default;
             _namingConfig.RenameEpisodes = true;
@@ -61,7 +60,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         {
             _series.Title = title;
             _series.Year = year;
-            _namingConfig.StandardEpisodeFormat = "{Series CleanTitleTheYear}";
+            _namingConfig.StandardEpisodeFormat = "{Site CleanTitleTheYear}";
 
             Subject.BuildFileName(new List<Episode> { _episode }, _series, _episodeFile)
                    .Should().Be(expected);
@@ -72,7 +71,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         {
             _series.Title = "The Alienist";
             _series.Year = 0;
-            _namingConfig.StandardEpisodeFormat = "{Series TitleTheYear}";
+            _namingConfig.StandardEpisodeFormat = "{Site TitleTheYear}";
 
             Subject.BuildFileName(new List<Episode> { _episode }, _series, _episodeFile)
                    .Should().Be("Alienist, The");

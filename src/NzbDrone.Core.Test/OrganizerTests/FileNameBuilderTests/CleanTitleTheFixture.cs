@@ -30,11 +30,10 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
             _episode = Builder<Episode>.CreateNew()
                             .With(e => e.Title = "City Sushi")
                             .With(e => e.SeasonNumber = 15)
-                            .With(e => e.EpisodeNumber = 6)
                             .With(e => e.AbsoluteEpisodeNumber = 100)
                             .Build();
 
-            _episodeFile = new EpisodeFile { Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "SonarrTest" };
+            _episodeFile = new EpisodeFile { Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "WhisparrTest" };
 
             _namingConfig = NamingConfig.Default;
             _namingConfig.RenameEpisodes = true;
@@ -64,7 +63,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         public void should_get_expected_title_back(string title, string expected)
         {
             _series.Title = title;
-            _namingConfig.StandardEpisodeFormat = "{Series CleanTitleThe}";
+            _namingConfig.StandardEpisodeFormat = "{Site CleanTitleThe}";
 
             Subject.BuildFileName(new List<Episode> { _episode }, _series, _episodeFile)
                    .Should().Be(expected);
@@ -77,7 +76,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         public void should_not_change_title(string title)
         {
             _series.Title = title;
-            _namingConfig.StandardEpisodeFormat = "{Series CleanTitleThe}";
+            _namingConfig.StandardEpisodeFormat = "{Site CleanTitleThe}";
 
             Subject.BuildFileName(new List<Episode> { _episode }, _series, _episodeFile)
                    .Should().Be(title);

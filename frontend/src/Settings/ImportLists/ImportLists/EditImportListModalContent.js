@@ -190,7 +190,7 @@ function EditImportListModalContent(props) {
 
               <FormGroup>
                 <FormLabel>
-                  {translate('MonitorNewSeasons')}
+                  {translate('MonitorNewScenes')}
                   <Popover
                     anchor={
                       <Icon
@@ -198,7 +198,7 @@ function EditImportListModalContent(props) {
                         name={icons.INFO}
                       />
                     }
-                    title={translate('MonitorNewSeasons')}
+                    title={translate('MonitorNewScenes')}
                     body={<SeriesMonitorNewItemsOptionsPopoverContent />}
                     position={tooltipPositions.RIGHT}
                   />
@@ -207,7 +207,7 @@ function EditImportListModalContent(props) {
                 <FormInputGroup
                   type={inputTypes.MONITOR_NEW_ITEMS_SELECT}
                   name="monitorNewItems"
-                  helpText={translate('MonitorNewSeasonsHelpText')}
+                  helpText={translate('MonitorNewScenesHelpText')}
                   {...monitorNewItems}
                   onChange={onInputChange}
                 />

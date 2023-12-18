@@ -4,7 +4,7 @@ const monitorNewItemsOptions = [
   {
     key: 'all',
     get value() {
-      return translate('MonitorAllSeasons');
+      return translate('MonitorAllScenes');
     }
   },
   {

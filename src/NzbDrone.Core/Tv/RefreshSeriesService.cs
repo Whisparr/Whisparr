@@ -143,8 +143,10 @@ namespace NzbDrone.Core.Tv
                         continue;
                     }
 
-                    _logger.Debug("New season ({0}) for series: [{1}] {2}, setting monitored to {3}", season.SeasonNumber, series.TvdbId, series.Title, series.Monitored.ToString().ToLowerInvariant());
-                    season.Monitored = series.Monitored;
+                    var monitorNewSeasons = series.MonitorNewItems == NewItemMonitorTypes.All;
+
+                    _logger.Debug("New season ({0}) for series: [{1}] {2}, setting monitored to {3}", season.SeasonNumber, series.TvdbId, series.Title, monitorNewSeasons.ToString().ToLowerInvariant());
+                    season.Monitored = monitorNewSeasons;
                 }
                 else
                 {

@@ -64,7 +64,7 @@ namespace NzbDrone.Core.Test.TvTests
 
             var newSeriesInfo = _series.JsonClone();
             newSeriesInfo.Seasons.Add(Builder<Season>.CreateNew()
-                                         .With(s => s.SeasonNumber = 2)
+                                         .With(s => s.SeasonNumber = 2024)
                                          .Build());
 
             GivenNewSeriesInfo(newSeriesInfo);
@@ -72,7 +72,7 @@ namespace NzbDrone.Core.Test.TvTests
             Subject.Execute(new RefreshSeriesCommand(new List<int> { _series.Id }));
 
             Mocker.GetMock<ISeriesService>()
-                .Verify(v => v.UpdateSeries(It.Is<Series>(s => s.Seasons.Count == 2 && s.Seasons.Single(season => season.SeasonNumber == 2).Monitored == true), It.IsAny<bool>(), It.IsAny<bool>()));
+                .Verify(v => v.UpdateSeries(It.Is<Series>(s => s.Seasons.Count == 2 && s.Seasons.Single(season => season.SeasonNumber == 2024).Monitored == true), It.IsAny<bool>(), It.IsAny<bool>()));
         }
 
         [Test]

@@ -6,12 +6,12 @@ class SceneTitleLink extends PureComponent {
 
   render() {
     const {
-      foreignId,
+      titleSlug,
       title,
       year
     } = this.props;
 
-    const link = `/scene/${foreignId}`;
+    const link = `/movie/${titleSlug}`;
 
     return (
       <Link

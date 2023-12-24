@@ -46,10 +46,6 @@ const links = [
     to: '/scenes',
     children: [
       {
-        title: () => translate('Performers'),
-        to: '/scenes/performers'
-      },
-      {
         title: () => translate('Sites'),
         to: '/scenes/sites'
       },
@@ -62,6 +58,12 @@ const links = [
         to: '/scenes/add/import'
       }
     ]
+  },
+
+  {
+    iconName: icons.MOVIE_CONTINUING,
+    title: () => translate('Performers'),
+    to: '/performers'
   },
 
   {

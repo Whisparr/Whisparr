@@ -14,7 +14,7 @@ import { clearMovieFiles, fetchMovieFiles } from 'Store/Actions/movieFileActions
 import { clearQueueDetails, fetchQueueDetails } from 'Store/Actions/queueActions';
 import { cancelFetchReleases, clearReleases } from 'Store/Actions/releaseActions';
 import { fetchImportListSchema } from 'Store/Actions/settingsActions';
-import createAllMoviesSelector from 'Store/Selectors/createAllMoviesSelector';
+import createAllItemsSelector from 'Store/Selectors/createAllItemsSelector';
 import createCommandsSelector from 'Store/Selectors/createCommandsSelector';
 import createDimensionsSelector from 'Store/Selectors/createDimensionsSelector';
 import { findCommand, isCommandExecuting } from 'Utilities/Command';
@@ -85,7 +85,7 @@ function createMapStateToProps() {
     selectMovieFiles,
     selectMovieCredits,
     selectExtraFiles,
-    createAllMoviesSelector(),
+    createAllItemsSelector(),
     createCommandsSelector(),
     createDimensionsSelector(),
     (state) => state.queue.details.items,

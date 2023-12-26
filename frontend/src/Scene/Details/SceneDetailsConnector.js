@@ -217,7 +217,7 @@ function createMapDispatchToProps(dispatch, props) {
       dispatch(executeCommand(payload));
     },
     onGoToScene(titleSlug) {
-      dispatch(push(`${window.Whisparr.urlBase}/scene/${titleSlug}`));
+      dispatch(push(`${window.Whisparr.urlBase}/movie/${titleSlug}`));
     },
     dispatchFetchSceneBlocklist({ sceneId }) {
       dispatch(fetchSceneBlocklist({ sceneId }));

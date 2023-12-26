@@ -121,7 +121,7 @@ function SceneIndexOverview(props: SceneIndexOverviewProps) {
     setIsDeleteSceneModalOpen(false);
   }, [setIsDeleteSceneModalOpen]);
 
-  const link = `/scene/${foreignId}`;
+  const link = `/movie/${foreignId}`;
 
   const elementStyle = {
     width: `${posterWidth}px`,

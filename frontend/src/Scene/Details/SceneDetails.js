@@ -388,7 +388,7 @@ class SceneDetails extends Component {
                         name={icons.ARROW_LEFT}
                         size={30}
                         title={translate('GoToInterp', [previousScene.title])}
-                        to={`/scene/${previousScene.titleSlug}`}
+                        to={`/movie/${previousScene.titleSlug}`}
                       />
 
                       <IconButton
@@ -396,7 +396,7 @@ class SceneDetails extends Component {
                         name={icons.ARROW_RIGHT}
                         size={30}
                         title={translate('GoToInterp', [nextScene.title])}
-                        to={`/scene/${nextScene.titleSlug}`}
+                        to={`/movie/${nextScene.titleSlug}`}
                       />
                     </div>
                   </div>
@@ -669,7 +669,7 @@ class SceneDetails extends Component {
             isOpen={isDeleteSceneModalOpen}
             sceneId={id}
             onModalClose={this.onDeleteSceneModalClose}
-            nextSceneRelativePath={`/scene/${nextScene.titleSlug}`}
+            nextSceneRelativePath={`/movie/${nextScene.titleSlug}`}
           />
 
           <InteractiveImportModal

@@ -15,12 +15,11 @@ using NzbDrone.Core.MetadataSource.SkyHook.Resource;
 using NzbDrone.Core.Movies;
 using NzbDrone.Core.Movies.AlternativeTitles;
 using NzbDrone.Core.Movies.Collections;
-using NzbDrone.Core.Movies.Credits;
 using NzbDrone.Core.Parser;
 
 namespace NzbDrone.Core.MetadataSource.SkyHook
 {
-    public class SkyHookProxy : IProvideMovieInfo, ISearchForNewMovie
+    public class SkyHookProxy : IProvideMovieInfo, ISearchForNewMovie, ISearchForNewEntity
     {
         private readonly IHttpClient _httpClient;
         private readonly Logger _logger;
@@ -65,7 +64,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             return new HashSet<string>(response.Resource);
         }
 
-        public Tuple<MovieMetadata, List<Credit>> GetMovieInfo(int tmdbId)
+        public MovieMetadata GetMovieInfo(int tmdbId)
         {
             var httpRequest = _whisparrMetadata.Create()
                                              .SetSegment("route", "movie")
@@ -89,15 +88,14 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 }
             }
 
-            var credits = new List<Credit>();
-            credits.AddRange(httpResponse.Resource.Credits.Select(MapCast));
-
             var movie = MapMovie(httpResponse.Resource);
 
-            return new Tuple<MovieMetadata, List<Credit>>(movie, credits.ToList());
+            movie.Credits.AddRange(httpResponse.Resource.Credits.Select(MapCast));
+
+            return movie;
         }
 
-        public Tuple<MovieMetadata, List<Credit>> GetSceneInfo(string stashId)
+        public MovieMetadata GetSceneInfo(string stashId)
         {
             var httpRequest = _whisparrMetadata.Create()
                                              .SetSegment("route", "scene")
@@ -123,10 +121,9 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
 
             var movie = MapMovie(httpResponse.Resource);
 
-            var credits = new List<Credit>();
-            credits.AddRange(httpResponse.Resource.Credits.Select(c => MapSceneCast(c, movie.ForeignId)));
+            movie.Credits.AddRange(httpResponse.Resource.Credits.Select(c => MapSceneCast(c, movie.ForeignId)));
 
-            return new Tuple<MovieMetadata, List<Credit>>(movie, credits.ToList());
+            return movie;
         }
 
         public MovieCollection GetCollectionInfo(int tmdbId)
@@ -296,7 +293,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                         return newMovie;
                     }
 
-                    newMovie = GetMovieInfo(movie.TmdbId).Item1;
+                    newMovie = GetMovieInfo(movie.TmdbId);
                 }
                 else if (movie.ImdbId.IsNotNullOrWhiteSpace())
                 {
@@ -344,6 +341,59 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             }
         }
 
+        public List<object> SearchForNewEntity(string title)
+        {
+            var lowerTitle = title.ToLower();
+            var result = new List<object>();
+
+            if (lowerTitle.StartsWith("tmdb:") || lowerTitle.StartsWith("tmdbid:") || lowerTitle.StartsWith("imdb:") || lowerTitle.StartsWith("imdbid:") || lowerTitle.StartsWith("stash:") || lowerTitle.StartsWith("stashId:"))
+            {
+                var movies = SearchForNewMovie(title);
+
+                foreach (var movie in movies)
+                {
+                    result.Add(movie);
+                }
+            }
+            else
+            {
+                var searchTerm = lowerTitle.Replace("_", " ").Replace(".", " ");
+
+                var request = _whisparrMetadata.Create()
+                    .SetSegment("route", "search")
+                    .AddQueryParam("q", searchTerm)
+                    .Build();
+
+                request.AllowAutoRedirect = true;
+                request.SuppressHttpError = true;
+
+                var httpResponse = _httpClient.Get<List<MovieResource>>(request);
+
+                var performersAdded = new List<string>();
+
+                foreach (var movie in httpResponse.Resource)
+                {
+                    foreach (var performer in movie.Credits)
+                    {
+                        if (performer.Performer.Name.ToLower().Contains(lowerTitle))
+                        {
+                            var mappedPerformer = MapPerformer(performer.Performer);
+
+                            if (mappedPerformer.ForeignId.IsNotNullOrWhiteSpace() && !performersAdded.Contains(mappedPerformer.ForeignId.ToLower()))
+                            {
+                                performersAdded.Add(mappedPerformer.ForeignId.ToLower());
+                                result.Add(MapPerformer(performer.Performer));
+                            }
+                        }
+                    }
+
+                    result.Add(MapSearchResult(movie));
+                }
+            }
+
+            return result;
+        }
+
         public List<Movie> SearchForNewMovie(string title)
         {
             try
@@ -384,7 +434,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                     {
                         try
                         {
-                            var movieLookup = GetMovieInfo(parserResult.TmdbId).Item1;
+                            var movieLookup = GetMovieInfo(parserResult.TmdbId);
                             return movieLookup == null ? new List<Movie>() : new List<Movie> { _movieService.FindByTmdbId(movieLookup.TmdbId) ?? new Movie { MovieMetadata = movieLookup } };
                         }
                         catch (Exception)
@@ -431,7 +481,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
 
                     try
                     {
-                        var movieLookup = GetMovieInfo(tmdbid).Item1;
+                        var movieLookup = GetMovieInfo(tmdbid);
                         return movieLookup == null ? new List<Movie>() : new List<Movie> { _movieService.FindByTmdbId(movieLookup.TmdbId) ?? new Movie { MovieMetadata = movieLookup } };
                     }
                     catch (MovieNotFoundException)
@@ -453,7 +503,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
 
                     try
                     {
-                        var movieLookup = GetSceneInfo(stashId).Item1;
+                        var movieLookup = GetSceneInfo(stashId);
                         return movieLookup == null ? new List<Movie>() : new List<Movie> { _movieService.FindByForeignId(movieLookup.StashId) ?? new Movie { MovieMetadata = movieLookup } };
                     }
                     catch (MovieNotFoundException)
@@ -528,29 +578,47 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
         {
             var newActor = new Credit
             {
-                Name = arg.Name,
                 Character = arg.Character,
                 Order = arg.Order,
-                PersonForeignId = arg.ForeignIds.TmdbId.ToString(),
                 CreditForeignId = arg.CreditId,
                 Type = CreditType.Cast,
-                Images = arg.Images.Select(MapImage).ToList()
+                Performer = new Performer
+                {
+                    Name = arg.Performer.Name,
+                    ForeignId = arg.Performer.ForeignIds.TmdbId.ToString(),
+                    Images = arg.Performer.Images.Select(MapImage).ToList(),
+                }
             };
 
             return newActor;
+        }
+
+        private Performer MapPerformer(PerformerResource performer)
+        {
+            var newPerformer = new Performer
+            {
+                Name = performer.Name,
+                ForeignId = performer.ForeignIds.StashId,
+                Images = performer.Images.Select(MapImage).ToList()
+            };
+
+            return newPerformer;
         }
 
         private static Credit MapSceneCast(CastResource arg, string sceneForeignId)
         {
             var newActor = new Credit
             {
-                Name = arg.Name,
                 Character = arg.Character,
                 Order = arg.Order,
-                PersonForeignId = arg.ForeignIds.StashId,
-                CreditForeignId = $"{sceneForeignId} - {arg.ForeignIds.StashId}",
+                CreditForeignId = $"{sceneForeignId} - {arg.Performer.ForeignIds.StashId}",
                 Type = CreditType.Cast,
-                Images = arg.Images.Select(MapImage).ToList()
+                Performer = new Performer
+                {
+                    Name = arg.Performer.Name,
+                    ForeignId = arg.Performer.ForeignIds.StashId,
+                    Images = arg.Performer.Images.Select(MapImage).ToList(),
+                }
             };
 
             return newActor;

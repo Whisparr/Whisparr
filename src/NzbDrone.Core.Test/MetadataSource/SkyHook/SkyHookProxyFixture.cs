@@ -21,7 +21,7 @@ namespace NzbDrone.Core.Test.MetadataSource.SkyHook
         [TestCase(37795, "Taboo II")]
         public void should_be_able_to_get_movie_detail(int tmdbId, string title)
         {
-            var details = Subject.GetMovieInfo(tmdbId).Item1;
+            var details = Subject.GetMovieInfo(tmdbId);
 
             ValidateMovie(details);
 

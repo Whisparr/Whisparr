@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using FizzWare.NBuilder;
 using Moq;
@@ -10,7 +9,6 @@ using NzbDrone.Core.MetadataSource;
 using NzbDrone.Core.Movies;
 using NzbDrone.Core.Movies.Collections;
 using NzbDrone.Core.Movies.Commands;
-using NzbDrone.Core.Movies.Credits;
 using NzbDrone.Core.RootFolders;
 using NzbDrone.Core.Test.Framework;
 using NzbDrone.Test.Common;
@@ -67,7 +65,7 @@ namespace NzbDrone.Core.Test.MovieTests
         {
             Mocker.GetMock<IProvideMovieInfo>()
                   .Setup(s => s.GetMovieInfo(_movie.TmdbId))
-                  .Returns(new Tuple<MovieMetadata, List<Credit>>(movie, new List<Credit>()));
+                  .Returns(movie);
         }
 
         [Test]

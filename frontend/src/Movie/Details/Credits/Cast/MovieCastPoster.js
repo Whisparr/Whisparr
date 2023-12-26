@@ -52,9 +52,8 @@ class MovieCastPoster extends Component {
 
   render() {
     const {
-      personName,
+      performer,
       character,
-      images,
       posterWidth,
       posterHeight,
       importList
@@ -98,7 +97,7 @@ class MovieCastPoster extends Component {
             <MovieHeadshot
               className={styles.poster}
               style={elementStyle}
-              images={images}
+              images={performer.images}
               size={250}
               lazy={false}
               overflow={true}
@@ -109,14 +108,14 @@ class MovieCastPoster extends Component {
             {
               hasPosterError &&
                 <div className={styles.overlayTitle}>
-                  {personName}
+                  {performer.name}
                 </div>
             }
           </div>
         </div>
 
         <div className={styles.title}>
-          {personName}
+          {performer.name}
         </div>
         <div className={styles.title}>
           {character}
@@ -134,10 +133,8 @@ class MovieCastPoster extends Component {
 }
 
 MovieCastPoster.propTypes = {
-  tmdbId: PropTypes.number.isRequired,
-  personName: PropTypes.string.isRequired,
-  character: PropTypes.string.isRequired,
-  images: PropTypes.arrayOf(PropTypes.object).isRequired,
+  performer: PropTypes.object.isRequired,
+  character: PropTypes.string,
   posterWidth: PropTypes.number.isRequired,
   posterHeight: PropTypes.number.isRequired,
   importList: PropTypes.object,

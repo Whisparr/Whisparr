@@ -48,7 +48,7 @@ namespace Whisparr.Api.V3.Movies
         public object SearchByTmdbId(int tmdbId)
         {
             var availDelay = _configService.AvailabilityDelay;
-            var result = new Movie { MovieMetadata = _movieInfo.GetMovieInfo(tmdbId).Item1 };
+            var result = new Movie { MovieMetadata = _movieInfo.GetMovieInfo(tmdbId) };
             return result.ToResource(availDelay);
         }
 

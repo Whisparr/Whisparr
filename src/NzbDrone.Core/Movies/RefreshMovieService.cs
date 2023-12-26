@@ -14,7 +14,6 @@ using NzbDrone.Core.MetadataSource;
 using NzbDrone.Core.Movies.AlternativeTitles;
 using NzbDrone.Core.Movies.Collections;
 using NzbDrone.Core.Movies.Commands;
-using NzbDrone.Core.Movies.Credits;
 using NzbDrone.Core.Movies.Events;
 using NzbDrone.Core.RootFolders;
 
@@ -28,7 +27,6 @@ namespace NzbDrone.Core.Movies
         private readonly IMovieMetadataService _movieMetadataService;
         private readonly IRootFolderService _folderService;
         private readonly IAlternativeTitleService _titleService;
-        private readonly ICreditService _creditService;
         private readonly IEventAggregator _eventAggregator;
         private readonly IDiskScanService _diskScanService;
         private readonly ICheckIfMovieShouldBeRefreshed _checkIfMovieShouldBeRefreshed;
@@ -42,7 +40,6 @@ namespace NzbDrone.Core.Movies
                                     IMovieMetadataService movieMetadataService,
                                     IRootFolderService folderService,
                                     IAlternativeTitleService titleService,
-                                    ICreditService creditService,
                                     IEventAggregator eventAggregator,
                                     IDiskScanService diskScanService,
                                     ICheckIfMovieShouldBeRefreshed checkIfMovieShouldBeRefreshed,
@@ -56,7 +53,6 @@ namespace NzbDrone.Core.Movies
             _movieMetadataService = movieMetadataService;
             _folderService = folderService;
             _titleService = titleService;
-            _creditService = creditService;
             _eventAggregator = eventAggregator;
             _diskScanService = diskScanService;
             _checkIfMovieShouldBeRefreshed = checkIfMovieShouldBeRefreshed;
@@ -75,13 +71,10 @@ namespace NzbDrone.Core.Movies
             _logger.ProgressInfo("Updating info for {0}", movie.Title);
 
             MovieMetadata movieInfo;
-            List<Credit> credits;
 
             try
             {
-                var tuple = movieMetadata.ItemType == ItemType.Movie ? _movieInfo.GetMovieInfo(movie.TmdbId) : _movieInfo.GetSceneInfo(movie.ForeignId);
-                movieInfo = tuple.Item1;
-                credits = tuple.Item2;
+                movieInfo = movieMetadata.ItemType == ItemType.Movie ? _movieInfo.GetMovieInfo(movie.TmdbId) : _movieInfo.GetSceneInfo(movie.ForeignId);
             }
             catch (MovieNotFoundException)
             {
@@ -114,6 +107,7 @@ namespace NzbDrone.Core.Movies
             movieMetadata.Ratings = movieInfo.Ratings;
             movieMetadata.ItemType = movieInfo.ItemType;
             movieMetadata.MetadataSource = movieInfo.MetadataSource;
+            movieMetadata.Credits = movieInfo.Credits;
 
             // movie.Genres = movieInfo.Genres;
             movieMetadata.Website = movieInfo.Website;
@@ -150,7 +144,6 @@ namespace NzbDrone.Core.Movies
             }
 
             _movieMetadataService.Upsert(movieMetadata);
-            _creditService.UpdateCredits(credits, movieMetadata);
 
             movie.MovieMetadata = movieMetadata;
 

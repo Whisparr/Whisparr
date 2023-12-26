@@ -29,8 +29,8 @@ class MovieCreditPosterConnector extends Component {
 
   onImportListSelect = () => {
     this.props.selectImportListSchema({ implementation: 'TMDbPersonImport', implementationName: 'TMDb Person', presetName: undefined });
-    this.props.setImportListFieldValue({ name: 'personId', value: this.props.tmdbId.toString() });
-    this.props.setImportListValue({ name: 'name', value: `${this.props.personName} - ${this.props.tmdbId}` });
+    this.props.setImportListFieldValue({ name: 'personId', value: this.props.performer.foreignId.toString() });
+    this.props.setImportListValue({ name: 'name', value: `${this.props.performer.name} - ${this.props.performer.foreignId}` });
   };
 
   //
@@ -38,16 +38,14 @@ class MovieCreditPosterConnector extends Component {
 
   render() {
     const {
-      tmdbId,
-      component: ItemComponent,
-      personName
+      performer,
+      component: ItemComponent
     } = this.props;
 
     return (
       <ItemComponent
         {...this.props}
-        tmdbId={tmdbId}
-        personName={personName}
+        performer={performer}
         onImportListSelect={this.onImportListSelect}
       />
     );
@@ -55,8 +53,7 @@ class MovieCreditPosterConnector extends Component {
 }
 
 MovieCreditPosterConnector.propTypes = {
-  tmdbId: PropTypes.number.isRequired,
-  personName: PropTypes.string.isRequired,
+  performer: PropTypes.object.isRequired,
   component: PropTypes.elementType.isRequired,
   selectImportListSchema: PropTypes.func.isRequired,
   setImportListFieldValue: PropTypes.func.isRequired,

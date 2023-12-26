@@ -37,12 +37,12 @@ namespace NzbDrone.Core.Datastore.Migration
                 .WithColumn("Overview").AsString().Nullable()
                 .WithColumn("Website").AsString().Nullable()
                 .WithColumn("Popularity").AsFloat().Nullable()
+                .WithColumn("Credits").AsString()
                 .WithColumn("ItemType").AsInt32().NotNullable().Indexed();
 
             // Add an MovieMetadataId column to Movies
             Alter.Table("Movies").AddColumn("MovieMetadataId").AsInt32().WithDefaultValue(0);
             Alter.Table("AlternativeTitles").AddColumn("MovieMetadataId").AsInt32().WithDefaultValue(0);
-            Alter.Table("Credits").AddColumn("MovieMetadataId").AsInt32().WithDefaultValue(0);
             Alter.Table("MovieTranslations").AddColumn("MovieMetadataId").AsInt32().WithDefaultValue(0);
             Alter.Table("ImportListMovies").AddColumn("MovieMetadataId").AsInt32().WithDefaultValue(0).Indexed();
 
@@ -56,11 +56,6 @@ namespace NzbDrone.Core.Datastore.Migration
                           SET ""MovieMetadataId"" = (SELECT ""Movies"".""MovieMetadataId"" 
                                                   FROM ""Movies"" 
                                                   WHERE ""Movies"".""Id"" = ""AlternativeTitles"".""MovieId"")");
-
-            Execute.Sql(@"UPDATE ""Credits""
-                          SET ""MovieMetadataId"" = (SELECT ""Movies"".""MovieMetadataId"" 
-                                                  FROM ""Movies"" 
-                                                  WHERE ""Movies"".""Id"" = ""Credits"".""MovieId"")");
 
             Execute.Sql(@"UPDATE ""MovieTranslations""
                           SET ""MovieMetadataId"" = (SELECT ""Movies"".""MovieMetadataId"" 
@@ -77,7 +72,6 @@ namespace NzbDrone.Core.Datastore.Migration
 
             // Remove Movie Link from Metadata Tables
             Delete.Column("MovieId").FromTable("AlternativeTitles");
-            Delete.Column("MovieId").FromTable("Credits");
             Delete.Column("MovieId").FromTable("MovieTranslations");
 
             // Remove the columns in Movies now in MovieMetadata

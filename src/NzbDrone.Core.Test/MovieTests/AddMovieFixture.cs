@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using FizzWare.NBuilder;
@@ -10,7 +9,6 @@ using NUnit.Framework;
 using NzbDrone.Core.Exceptions;
 using NzbDrone.Core.MetadataSource;
 using NzbDrone.Core.Movies;
-using NzbDrone.Core.Movies.Credits;
 using NzbDrone.Core.Organizer;
 using NzbDrone.Core.Test.Framework;
 using NzbDrone.Test.Common;
@@ -36,7 +34,7 @@ namespace NzbDrone.Core.Test.MovieTests
         {
             Mocker.GetMock<IProvideMovieInfo>()
                   .Setup(s => s.GetMovieInfo(tmdbId))
-                  .Returns(new Tuple<MovieMetadata, List<Credit>>(_fakeMovie, new List<Credit>()));
+                  .Returns(_fakeMovie);
         }
 
         private void GivenValidPath()

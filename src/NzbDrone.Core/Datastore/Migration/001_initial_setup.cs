@@ -308,19 +308,6 @@ namespace NzbDrone.Core.Datastore.Migration
             Create.Index("IX_Movies_CleanTitle").OnTable("Movies").OnColumn("CleanTitle");
             Create.Index("IX_Movies_ImdbId").OnTable("Movies").OnColumn("ImdbId");
 
-            Create.TableForModel("Credits").WithColumn("MovieId").AsInt32()
-                      .WithColumn("CreditForeignId").AsString().Unique()
-                      .WithColumn("PersonForeignId").AsString()
-                      .WithColumn("Name").AsString()
-                      .WithColumn("Images").AsString()
-                      .WithColumn("Character").AsString().Nullable()
-                      .WithColumn("Order").AsInt32()
-                      .WithColumn("Job").AsString().Nullable()
-                      .WithColumn("Department").AsString().Nullable()
-                      .WithColumn("Type").AsInt32();
-
-            Create.Index().OnTable("Credits").OnColumn("MovieId");
-
             Create.TableForModel("DownloadHistory")
                   .WithColumn("EventType").AsInt32().NotNullable()
                   .WithColumn("MovieId").AsInt32().NotNullable()

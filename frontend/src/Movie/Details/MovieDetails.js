@@ -248,7 +248,6 @@ class MovieDetails extends Component {
       isFetching,
       isSmallScreen,
       movieFilesError,
-      movieCreditsError,
       extraFilesError,
       hasMovieFiles,
       previousMovie,
@@ -614,14 +613,6 @@ class MovieDetails extends Component {
             }
 
             {
-              !isFetching && movieCreditsError ?
-                <Alert kind={kinds.DANGER}>
-                  {translate('LoadingMovieCreditsFailed')}
-                </Alert> :
-                null
-            }
-
-            {
               !isFetching && extraFilesError ?
                 <Alert kind={kinds.DANGER}>
                   {translate('LoadingMovieExtraFilesFailed')}
@@ -641,6 +632,7 @@ class MovieDetails extends Component {
 
             <FieldSet legend={translate('Cast')}>
               <MovieCastPostersConnector
+                movieId={id}
                 isSmallScreen={isSmallScreen}
               />
             </FieldSet>
@@ -724,7 +716,6 @@ MovieDetails.propTypes = {
   isSmallScreen: PropTypes.bool.isRequired,
   isSidebarVisible: PropTypes.bool.isRequired,
   movieFilesError: PropTypes.object,
-  movieCreditsError: PropTypes.object,
   extraFilesError: PropTypes.object,
   hasMovieFiles: PropTypes.bool.isRequired,
   previousMovie: PropTypes.object.isRequired,

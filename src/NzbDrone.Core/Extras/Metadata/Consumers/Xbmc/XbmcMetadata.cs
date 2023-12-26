@@ -15,7 +15,6 @@ using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.MediaFiles.MediaInfo;
 using NzbDrone.Core.Movies;
-using NzbDrone.Core.Movies.Credits;
 using NzbDrone.Core.Tags;
 
 namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
@@ -26,13 +25,11 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
         private readonly Logger _logger;
         private readonly IDetectXbmcNfo _detectNfo;
         private readonly IDiskProvider _diskProvider;
-        private readonly ICreditService _creditService;
         private readonly ITagRepository _tagRepository;
 
         public XbmcMetadata(IDetectXbmcNfo detectNfo,
                             IDiskProvider diskProvider,
                             IMapCoversToLocal mediaCoverService,
-                            ICreditService creditService,
                             ITagRepository tagRepository,
                             Logger logger)
         {
@@ -40,7 +37,6 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
             _mediaCoverService = mediaCoverService;
             _diskProvider = diskProvider;
             _detectNfo = detectNfo;
-            _creditService = creditService;
             _tagRepository = tagRepository;
         }
 
@@ -123,8 +119,6 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
                     Settings.MovieMetadataLanguage;
 
                 var selectedSettingsLanguage = Language.FindById(movieMetadataLanguage);
-
-                var credits = _creditService.GetAllCreditsForMovieMetadata(movie.MovieMetadataId);
 
                 var watched = GetExistingWatchedStatus(movie, movieFile.RelativePath);
 
@@ -267,19 +261,19 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
                         details.Add(new XElement("tag", tag.Label));
                     }
 
-                    foreach (var credit in credits)
+                    foreach (var credit in movie.MovieMetadata.Value.Credits)
                     {
-                        if (credit.Name != null && credit.Job == "Screenplay")
+                        if (credit.Performer.Name != null && credit.Job == "Screenplay")
                         {
-                            details.Add(new XElement("credits", credit.Name));
+                            details.Add(new XElement("credits", credit.Performer.Name));
                         }
                     }
 
-                    foreach (var credit in credits)
+                    foreach (var credit in movie.MovieMetadata.Value.Credits)
                     {
-                        if (credit.Name != null && credit.Job == "Director")
+                        if (credit.Performer.Name != null && credit.Job == "Director")
                         {
-                            details.Add(new XElement("director", credit.Name));
+                            details.Add(new XElement("director", credit.Performer.Name));
                         }
                     }
 
@@ -339,17 +333,17 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
                         fileInfo.Add(streamDetails);
                         details.Add(fileInfo);
 
-                        foreach (var credit in credits)
+                        foreach (var credit in movie.MovieMetadata.Value.Credits)
                         {
-                            if (credit.Name != null && credit.Character != null)
+                            if (credit.Performer.Name != null && credit.Character != null)
                             {
                                 var actorElement = new XElement("actor");
 
-                                actorElement.Add(new XElement("name", credit.Name));
+                                actorElement.Add(new XElement("name", credit.Performer.Name));
                                 actorElement.Add(new XElement("role", credit.Character));
                                 actorElement.Add(new XElement("order", credit.Order));
 
-                                var headshot = credit.Images.FirstOrDefault(m => m.CoverType == MediaCoverTypes.Headshot);
+                                var headshot = credit.Performer.Images.FirstOrDefault(m => m.CoverType == MediaCoverTypes.Headshot);
 
                                 if (headshot != null && headshot.RemoteUrl != null)
                                 {

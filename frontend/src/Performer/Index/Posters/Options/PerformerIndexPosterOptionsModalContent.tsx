@@ -10,7 +10,7 @@ import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { inputTypes } from 'Helpers/Props';
-import { setScenePosterOption } from 'Store/Actions/sceneIndexActions';
+import { setPerformerPosterOption } from 'Store/Actions/performerActions';
 import translate from 'Utilities/String/translate';
 import selectPosterOptions from '../selectPosterOptions';
 
@@ -52,7 +52,7 @@ function PerformerIndexPosterOptionsModalContent(
 
   const onPosterOptionChange = useCallback(
     ({ name, value }: { name: string; value: unknown }) => {
-      dispatch(setScenePosterOption({ [name]: value }));
+      dispatch(setPerformerPosterOption({ [name]: value }));
     },
     [dispatch]
   );

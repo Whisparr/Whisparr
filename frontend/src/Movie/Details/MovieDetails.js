@@ -36,7 +36,6 @@ import * as keyCodes from 'Utilities/Constants/keyCodes';
 import formatRuntime from 'Utilities/Date/formatRuntime';
 import formatBytes from 'Utilities/Number/formatBytes';
 import translate from 'Utilities/String/translate';
-import MovieCollectionLabelConnector from './../MovieCollectionLabelConnector';
 import MovieCastPostersConnector from './Credits/Cast/MovieCastPostersConnector';
 import MovieDetailsLinks from './MovieDetailsLinks';
 import MovieReleaseDates from './MovieReleaseDates';
@@ -237,7 +236,6 @@ class MovieDetails extends Component {
       monitored,
       studio,
       genres,
-      collection,
       overview,
       isAvailable,
       images,
@@ -548,21 +546,6 @@ class MovieDetails extends Component {
                       }
                     </span>
                   </InfoLabel>
-
-                  {
-                    !!collection &&
-                      <InfoLabel
-                        className={styles.detailsInfoLabel}
-                        title={translate('Collection')}
-                        size={sizes.LARGE}
-                      >
-                        <div className={styles.collection}>
-                          <MovieCollectionLabelConnector
-                            tmdbId={collection.tmdbId}
-                          />
-                        </div>
-                      </InfoLabel>
-                  }
 
                   {
                     !!studio && !isSmallScreen &&

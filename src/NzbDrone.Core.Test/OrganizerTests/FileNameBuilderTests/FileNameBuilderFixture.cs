@@ -133,16 +133,6 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         }
 
         [Test]
-        public void should_replace_movie_collection()
-        {
-            _namingConfig.StandardMovieFormat = "{Movie Collection}";
-            _movie.MovieMetadata.Value.CollectionTitle = "South Part Collection";
-
-            Subject.BuildFileName(_movie, _movieFile)
-                   .Should().Be("South Part Collection");
-        }
-
-        [Test]
         public void should_be_empty_for_null_collection()
         {
             _namingConfig.StandardMovieFormat = "{Movie Collection}";

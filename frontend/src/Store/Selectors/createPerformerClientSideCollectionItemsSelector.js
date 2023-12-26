@@ -4,20 +4,18 @@ import createClientSideCollectionSelector from './createClientSideCollectionSele
 
 function createUnoptimizedSelector(uiSection) {
   return createSelector(
-    createClientSideCollectionSelector('movies', uiSection),
-    (movies) => {
-      const items = movies.items.map((s) => s.credits.map((c) => {
+    createClientSideCollectionSelector('performers', uiSection),
+    (performers) => {
+      const items = performers.items.map((s) => {
         return {
-          id: c.performer.foreignId,
-          movieId: s.id,
-          sortTitle: c.performer.name
+          id: s.id,
+          foreignId: s.foreignId,
+          sortTitle: s.name
         };
-      })).flat();
-
-      console.log(items);
+      });
 
       return {
-        ...movies,
+        ...performers,
         items
       };
     }

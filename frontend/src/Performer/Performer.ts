@@ -1,12 +1,12 @@
+import ModelBase from 'App/ModelBase';
 import { Image } from 'Movie/Movie';
 
-interface Performer {
-  id: string;
+interface Performer extends ModelBase {
   foreignId: string;
   name: string;
   images: Image[];
   gender: string;
-  movieId: number;
+  sortTitle: string;
 }
 
 export default Performer;

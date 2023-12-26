@@ -24,9 +24,8 @@ namespace NzbDrone.Core.Movies
         public DateTime? ReleaseDate { get; set; }
         public int Year { get; set; }
         public Ratings Ratings { get; set; }
-
-        public int CollectionTmdbId { get; set; }
-        public string CollectionTitle { get; set; }
+        public string StudioForeignId { get; set; }
+        public string StudioTitle { get; set; }
         public DateTime? LastInfoSync { get; set; }
         public int Runtime { get; set; }
         public string Website { get; set; }
@@ -38,7 +37,6 @@ namespace NzbDrone.Core.Movies
         public string SortTitle { get; set; }
         public MovieStatusType Status { get; set; }
         public string Overview { get; set; }
-        public string Studio { get; set; }
         public Language OriginalLanguage { get; set; }
         public List<int> Recommendations { get; set; }
         public ItemType ItemType { get; set; }

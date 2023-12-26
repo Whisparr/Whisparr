@@ -42,8 +42,8 @@ const links = [
     to: '/scenes',
     children: [
       {
-        title: () => translate('Sites'),
-        to: '/scenes/sites'
+        title: () => translate('Studios'),
+        to: '/studios'
       },
       {
         title: () => translate('ImportLibrary'),

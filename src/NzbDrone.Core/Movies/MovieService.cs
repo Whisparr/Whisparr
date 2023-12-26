@@ -34,7 +34,6 @@ namespace NzbDrone.Core.Movies
         List<string> AllMovieForeignIds();
         bool MovieExists(Movie movie);
         List<Movie> GetMoviesByFileId(int fileId);
-        List<Movie> GetMoviesByCollectionTmdbId(int collectionId);
         List<Movie> GetMoviesBetweenDates(DateTime start, DateTime end, bool includeUnmonitored);
         PagingSpec<Movie> MoviesWithoutFiles(PagingSpec<Movie> pagingSpec);
         void DeleteMovie(int movieId, bool deleteFiles, bool addExclusion = false);
@@ -46,7 +45,6 @@ namespace NzbDrone.Core.Movies
         bool MoviePathExists(string folder);
         void RemoveAddOptions(Movie movie);
         bool ExistsByMetadataId(int metadataId);
-        HashSet<int> AllMovieWithCollectionsTmdbIds();
     }
 
     public class MovieService : IMovieService, IHandle<MovieFileAddedEvent>,
@@ -282,11 +280,6 @@ namespace NzbDrone.Core.Movies
             return _movieRepository.GetMoviesByFileId(fileId);
         }
 
-        public List<Movie> GetMoviesByCollectionTmdbId(int collectionId)
-        {
-            return _movieRepository.GetMoviesByCollectionTmdbId(collectionId);
-        }
-
         public List<Movie> GetMoviesBetweenDates(DateTime start, DateTime end, bool includeUnmonitored)
         {
             var movies = _movieRepository.MoviesBetweenDates(start.ToUniversalTime(), end.ToUniversalTime(), includeUnmonitored);
@@ -349,11 +342,6 @@ namespace NzbDrone.Core.Movies
         public bool ExistsByMetadataId(int metadataId)
         {
             return _movieRepository.ExistsByMetadataId(metadataId);
-        }
-
-        public HashSet<int> AllMovieWithCollectionsTmdbIds()
-        {
-            return _movieRepository.AllMovieWithCollectionsTmdbIds();
         }
 
         private Movie ReturnSingleMovieOrThrow(List<Movie> movies)

@@ -11,7 +11,6 @@ import * as importMovie from './importMovieActions';
 import * as interactiveImportActions from './interactiveImportActions';
 import * as movies from './movieActions';
 import * as movieBlocklist from './movieBlocklistActions';
-import * as movieCollections from './movieCollectionActions';
 import * as movieFiles from './movieFileActions';
 import * as movieHistory from './movieHistoryActions';
 import * as movieIndex from './movieIndexActions';
@@ -19,13 +18,14 @@ import * as oAuth from './oAuthActions';
 import * as organizePreview from './organizePreviewActions';
 import * as parse from './parseActions';
 import * as paths from './pathActions';
-import * as performerIndex from './performerIndexActions';
+import * as performers from './performerActions';
 import * as providerOptions from './providerOptionActions';
 import * as queue from './queueActions';
 import * as releases from './releaseActions';
 import * as rootFolders from './rootFolderActions';
 import * as sceneIndex from './sceneIndexActions';
 import * as settings from './settingsActions';
+import * as studios from './studioActions';
 import * as system from './systemActions';
 import * as tags from './tagActions';
 
@@ -52,12 +52,12 @@ export default [
   rootFolders,
   movies,
   movieBlocklist,
-  movieCollections,
   movieHistory,
   movieIndex,
-  performerIndex,
+  performers,
   sceneIndex,
   settings,
+  studios,
   system,
   tags
 ];

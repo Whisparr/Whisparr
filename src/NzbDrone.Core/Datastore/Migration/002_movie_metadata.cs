@@ -32,8 +32,6 @@ namespace NzbDrone.Core.Datastore.Migration
                 .WithColumn("Recommendations").AsString()
                 .WithColumn("Certification").AsString().Nullable()
                 .WithColumn("YouTubeTrailerId").AsString().Nullable()
-                .WithColumn("Collection").AsString().Nullable()
-                .WithColumn("Studio").AsString().Nullable()
                 .WithColumn("Overview").AsString().Nullable()
                 .WithColumn("Website").AsString().Nullable()
                 .WithColumn("Popularity").AsFloat().Nullable()

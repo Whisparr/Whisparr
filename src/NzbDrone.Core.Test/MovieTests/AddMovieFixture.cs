@@ -9,6 +9,8 @@ using NUnit.Framework;
 using NzbDrone.Core.Exceptions;
 using NzbDrone.Core.MetadataSource;
 using NzbDrone.Core.Movies;
+using NzbDrone.Core.Movies.Performers;
+using NzbDrone.Core.Movies.Studios;
 using NzbDrone.Core.Organizer;
 using NzbDrone.Core.Test.Framework;
 using NzbDrone.Test.Common;
@@ -25,8 +27,6 @@ namespace NzbDrone.Core.Test.MovieTests
         {
             _fakeMovie = Builder<MovieMetadata>
                 .CreateNew()
-                .With(x => x.CollectionTitle = null)
-                .With(x => x.CollectionTmdbId = 0)
                 .Build();
         }
 
@@ -34,7 +34,7 @@ namespace NzbDrone.Core.Test.MovieTests
         {
             Mocker.GetMock<IProvideMovieInfo>()
                   .Setup(s => s.GetMovieInfo(tmdbId))
-                  .Returns(_fakeMovie);
+                  .Returns(new System.Tuple<MovieMetadata, Studio, List<Performer>>(_fakeMovie, new Studio(), new List<Performer>()));
         }
 
         private void GivenValidPath()

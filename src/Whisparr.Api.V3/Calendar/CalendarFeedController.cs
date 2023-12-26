@@ -85,7 +85,7 @@ namespace Whisparr.Api.V3.Calendar
             occurrence.IsAllDay = true;
 
             occurrence.Description = movie.Overview;
-            occurrence.Categories = new List<string>() { movie.Studio };
+            occurrence.Categories = new List<string>() { movie.StudioTitle };
 
             occurrence.Summary = $"{movie.Title} " + summaryText;
         }

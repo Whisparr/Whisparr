@@ -57,8 +57,6 @@ namespace NzbDrone.Core.Organizer
             _movieMetadata = new MovieMetadata
             {
                 Title = "The Movie: Title",
-                CollectionTitle = "The Movie Collection",
-                CollectionTmdbId = 123654,
                 Year = 2010,
                 ImdbId = "tt0066921",
                 TmdbId = 345691,
@@ -69,8 +67,6 @@ namespace NzbDrone.Core.Organizer
             _sceneMetadata = new MovieMetadata
             {
                 Title = "The Scene: Title",
-                CollectionTitle = "The Scene Collection",
-                CollectionTmdbId = 123654,
                 Year = 2010,
                 ImdbId = "tt0066921",
                 StashId = "d8f9b8b4-7801-4fa6-bd18-0a4dbd0ce598",

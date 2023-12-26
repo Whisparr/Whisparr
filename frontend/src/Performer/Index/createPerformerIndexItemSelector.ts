@@ -2,12 +2,9 @@ import { createSelector } from 'reselect';
 import Performer from 'Performer/Performer';
 import { createPerformerSelector } from 'Store/Selectors/createPerformerSelector';
 
-function createPerformerIndexItemSelector(
-  movieId: number,
-  performerId: string
-) {
+function createPerformerIndexItemSelector(performerId: number) {
   return createSelector(
-    createPerformerSelector(movieId, performerId),
+    createPerformerSelector(performerId),
     (performer: Performer) => {
       return {
         performer,

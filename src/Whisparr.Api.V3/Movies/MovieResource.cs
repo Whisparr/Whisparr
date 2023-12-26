@@ -7,7 +7,6 @@ using NzbDrone.Core.DecisionEngine.Specifications;
 using NzbDrone.Core.Languages;
 using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.Movies;
-using NzbDrone.Core.Movies.Collections;
 using NzbDrone.Core.Parser;
 using Whisparr.Api.V3.MovieFiles;
 using Whisparr.Http.REST;
@@ -41,7 +40,8 @@ namespace Whisparr.Api.V3.Movies
         public string RemotePoster { get; set; }
         public int Year { get; set; }
         public bool HasFile { get; set; }
-        public string Studio { get; set; }
+        public string StudioTitle { get; set; }
+        public string StudioForeignId { get; set; }
 
         // View & Edit
         public string Path { get; set; }
@@ -66,7 +66,6 @@ namespace Whisparr.Api.V3.Movies
         public AddMovieOptions AddOptions { get; set; }
         public Ratings Ratings { get; set; }
         public MovieFileResource MovieFile { get; set; }
-        public MovieCollection Collection { get; set; }
         public List<Credit> Credits { get; set; }
         public ItemType ItemType { get; set; }
     }
@@ -83,8 +82,6 @@ namespace Whisparr.Api.V3.Movies
             var size = model.MovieFile?.Size ?? 0;
 
             var movieFile = model.MovieFile?.ToResource(model, upgradableSpecification, formatCalculationService);
-
-            var collection = model.MovieMetadata.Value.CollectionTmdbId > 0 ? new MovieCollection { Title = model.MovieMetadata.Value.CollectionTitle, TmdbId = model.MovieMetadata.Value.CollectionTmdbId } : null;
 
             return new MovieResource
             {
@@ -125,8 +122,8 @@ namespace Whisparr.Api.V3.Movies
                 AddOptions = model.AddOptions,
                 Ratings = model.MovieMetadata.Value.Ratings,
                 MovieFile = movieFile,
-                Studio = model.MovieMetadata.Value.Studio,
-                Collection = collection,
+                StudioTitle = model.MovieMetadata.Value.StudioTitle,
+                StudioForeignId = model.MovieMetadata.Value.StudioForeignId,
                 Credits = model.MovieMetadata.Value.Credits,
                 ItemType = model.MovieMetadata.Value.ItemType
             };
@@ -156,7 +153,7 @@ namespace Whisparr.Api.V3.Movies
                     Overview = resource.Overview,
                     Website = resource.Website,
                     Ratings = resource.Ratings,
-                    Studio = resource.Studio,
+                    StudioTitle = resource.StudioTitle,
                     Runtime = resource.Runtime,
                     CleanTitle = resource.CleanTitle,
                     ImdbId = resource.ImdbId,

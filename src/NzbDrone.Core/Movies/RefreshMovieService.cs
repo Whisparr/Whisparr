@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NLog;
+using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Instrumentation.Extensions;
 using NzbDrone.Core.AutoTagging;
 using NzbDrone.Core.Configuration;
@@ -12,9 +13,11 @@ using NzbDrone.Core.Messaging.Commands;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.MetadataSource;
 using NzbDrone.Core.Movies.AlternativeTitles;
-using NzbDrone.Core.Movies.Collections;
 using NzbDrone.Core.Movies.Commands;
 using NzbDrone.Core.Movies.Events;
+using NzbDrone.Core.Movies.Performers;
+using NzbDrone.Core.Movies.Studios;
+using NzbDrone.Core.Parser;
 using NzbDrone.Core.RootFolders;
 
 namespace NzbDrone.Core.Movies
@@ -23,10 +26,11 @@ namespace NzbDrone.Core.Movies
     {
         private readonly IProvideMovieInfo _movieInfo;
         private readonly IMovieService _movieService;
-        private readonly IAddMovieCollectionService _movieCollectionService;
         private readonly IMovieMetadataService _movieMetadataService;
         private readonly IRootFolderService _folderService;
         private readonly IAlternativeTitleService _titleService;
+        private readonly IPerformerService _performerService;
+        private readonly IStudioService _studioService;
         private readonly IEventAggregator _eventAggregator;
         private readonly IDiskScanService _diskScanService;
         private readonly ICheckIfMovieShouldBeRefreshed _checkIfMovieShouldBeRefreshed;
@@ -36,10 +40,11 @@ namespace NzbDrone.Core.Movies
 
         public RefreshMovieService(IProvideMovieInfo movieInfo,
                                     IMovieService movieService,
-                                    IAddMovieCollectionService movieCollectionService,
                                     IMovieMetadataService movieMetadataService,
                                     IRootFolderService folderService,
                                     IAlternativeTitleService titleService,
+                                    IStudioService studioService,
+                                    IPerformerService performerService,
                                     IEventAggregator eventAggregator,
                                     IDiskScanService diskScanService,
                                     ICheckIfMovieShouldBeRefreshed checkIfMovieShouldBeRefreshed,
@@ -49,10 +54,11 @@ namespace NzbDrone.Core.Movies
         {
             _movieInfo = movieInfo;
             _movieService = movieService;
-            _movieCollectionService = movieCollectionService;
             _movieMetadataService = movieMetadataService;
             _folderService = folderService;
             _titleService = titleService;
+            _studioService = studioService;
+            _performerService = performerService;
             _eventAggregator = eventAggregator;
             _diskScanService = diskScanService;
             _checkIfMovieShouldBeRefreshed = checkIfMovieShouldBeRefreshed;
@@ -71,10 +77,15 @@ namespace NzbDrone.Core.Movies
             _logger.ProgressInfo("Updating info for {0}", movie.Title);
 
             MovieMetadata movieInfo;
+            Studio studioInfo;
+            List<Performer> performerInfo;
 
             try
             {
-                movieInfo = movieMetadata.ItemType == ItemType.Movie ? _movieInfo.GetMovieInfo(movie.TmdbId) : _movieInfo.GetSceneInfo(movie.ForeignId);
+                var tupleInfo = movieMetadata.ItemType == ItemType.Movie ? _movieInfo.GetMovieInfo(movie.TmdbId) : _movieInfo.GetSceneInfo(movie.ForeignId);
+                movieInfo = tupleInfo.Item1;
+                studioInfo = tupleInfo.Item2;
+                performerInfo = tupleInfo.Item3;
             }
             catch (MovieNotFoundException)
             {
@@ -114,34 +125,51 @@ namespace NzbDrone.Core.Movies
 
             movieMetadata.Year = movieInfo.Year;
             movieMetadata.ReleaseDate = movieInfo.ReleaseDate;
-            movieMetadata.Studio = movieInfo.Studio;
+            movieMetadata.StudioTitle = movieInfo.StudioTitle;
             movieMetadata.OriginalLanguage = movieInfo.OriginalLanguage;
 
-            // add collection
-            if (movieInfo.CollectionTmdbId > 0)
+            if (movieInfo.StudioForeignId.IsNotNullOrWhiteSpace())
             {
-                var newCollection = _movieCollectionService.AddMovieCollection(new MovieCollection
+                var newCollection = _studioService.AddStudio(new Studio
                 {
-                    TmdbId = movieInfo.CollectionTmdbId,
-                    Title = movieInfo.CollectionTitle,
+                    ForeignId = studioInfo.ForeignId,
+                    Title = studioInfo.Title,
+                    Website = studioInfo.Website,
                     Monitored = movie.AddOptions?.Monitor == MonitorTypes.MovieAndCollection,
                     SearchOnAdd = movie.AddOptions?.SearchForMovie ?? false,
                     QualityProfileId = movie.QualityProfileId,
                     RootFolderPath = _folderService.GetBestRootFolderPath(movie.Path).TrimEnd('/', '\\', ' '),
-                    Tags = movie.Tags
+                    Tags = movie.Tags,
+                    CleanTitle = movieInfo.StudioTitle.CleanMovieTitle(),
+                    SortTitle = MovieTitleNormalizer.Normalize(movieInfo.StudioTitle, movieInfo.ForeignId),
+                    Images = studioInfo.Images,
+                    Added = DateTime.UtcNow
                 });
 
                 if (newCollection != null)
                 {
-                    movieMetadata.CollectionTmdbId = newCollection.TmdbId;
-                    movieMetadata.CollectionTitle = newCollection.Title;
+                    movieMetadata.StudioForeignId = newCollection.ForeignId;
+                    movieMetadata.StudioTitle = newCollection.Title;
                 }
             }
             else
             {
-                movieMetadata.CollectionTmdbId = 0;
-                movieMetadata.CollectionTitle = null;
+                movieMetadata.StudioForeignId = null;
+                movieMetadata.StudioTitle = null;
             }
+
+            performerInfo.ForEach(p =>
+            {
+                p.CleanName = p.Name.CleanMovieTitle();
+                p.Monitored = false;
+                p.RootFolderPath = _folderService.GetBestRootFolderPath(movie.Path).TrimEnd('/', '\\', ' ');
+                p.SearchOnAdd = false;
+                p.QualityProfileId = movie.QualityProfileId;
+                p.Tags = movie.Tags;
+                p.Added = DateTime.UtcNow;
+            });
+
+            _performerService.AddPerformers(performerInfo);
 
             _movieMetadataService.Upsert(movieMetadata);
 

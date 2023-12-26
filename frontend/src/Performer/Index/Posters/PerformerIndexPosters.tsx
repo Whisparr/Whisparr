@@ -52,7 +52,7 @@ interface PerformerIndexPostersProps {
 }
 
 const performerIndexSelector = createSelector(
-  (state: AppState) => state.performerIndex.posterOptions,
+  (state: AppState) => state.performers.posterOptions,
   (posterOptions) => {
     return {
       posterOptions,
@@ -87,7 +87,6 @@ const Cell: React.FC<GridChildComponentProps<CellItemData>> = ({
     >
       <PerformerIndexPoster
         performerId={performer.id}
-        movieId={performer.movieId}
         sortKey={sortKey}
         isSelectMode={isSelectMode}
         posterWidth={posterWidth}

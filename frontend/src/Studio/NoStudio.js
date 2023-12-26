@@ -1,0 +1,52 @@
+import PropTypes from 'prop-types';
+import React from 'react';
+import Button from 'Components/Link/Button';
+import { kinds } from 'Helpers/Props';
+import styles from 'Scene/NoScene.css';
+import translate from 'Utilities/String/translate';
+
+function NoStudio(props) {
+  const { totalItems } = props;
+
+  if (totalItems > 0) {
+    return (
+      <div>
+        <div className={styles.message}>
+          {translate('AllStudiosHiddenDueToFilter')}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <div className={styles.message}>
+        {translate('NoStudiosExist')}
+      </div>
+
+      <div className={styles.buttonContainer}>
+        <Button
+          to="/add/import"
+          kind={kinds.PRIMARY}
+        >
+          {translate('ImportExistingScenes')}
+        </Button>
+      </div>
+
+      <div className={styles.buttonContainer}>
+        <Button
+          to="/add/new"
+          kind={kinds.PRIMARY}
+        >
+          {translate('AddNewScene')}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+NoStudio.propTypes = {
+  totalItems: PropTypes.number.isRequired
+};
+
+export default NoStudio;

@@ -285,17 +285,15 @@ namespace NzbDrone.Core.Organizer
             tokenHandlers["{Movie CleanTitle}"] = m => CleanTitle(GetLanguageTitle(movie, m.CustomFormat));
             tokenHandlers["{Movie TitleThe}"] = m => TitleThe(movie.Title);
             tokenHandlers["{Movie TitleFirstCharacter}"] = m => TitleFirstCharacter(TitleThe(GetLanguageTitle(movie, m.CustomFormat)));
-
-            tokenHandlers["{Movie Collection}"] = m => movie.MovieMetadata.Value.CollectionTitle ?? string.Empty;
         }
 
         private void AddSiteTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Movie movie)
         {
-            tokenHandlers["{Site Title}"] = m => movie.MovieMetadata.Value.Studio;
-            tokenHandlers["{Site TitleSlug}"] = m => SlugTitle(movie.MovieMetadata.Value.Studio);
-            tokenHandlers["{Site CleanTitle}"] = m => CleanTitle(movie.MovieMetadata.Value.Studio);
-            tokenHandlers["{Site TitleThe}"] = m => TitleThe(movie.MovieMetadata.Value.Studio);
-            tokenHandlers["{Site TitleFirstCharacter}"] = m => TitleThe(movie.MovieMetadata.Value.Studio).Substring(0, 1).FirstCharToUpper();
+            tokenHandlers["{Site Title}"] = m => movie.MovieMetadata.Value.StudioTitle;
+            tokenHandlers["{Site TitleSlug}"] = m => SlugTitle(movie.MovieMetadata.Value.StudioTitle);
+            tokenHandlers["{Site CleanTitle}"] = m => CleanTitle(movie.MovieMetadata.Value.StudioTitle);
+            tokenHandlers["{Site TitleThe}"] = m => TitleThe(movie.MovieMetadata.Value.StudioTitle);
+            tokenHandlers["{Site TitleFirstCharacter}"] = m => TitleThe(movie.MovieMetadata.Value.StudioTitle).Substring(0, 1).FirstCharToUpper();
 
             // TODO: Network to Metamodel
             // tokenHandlers["{Site Network}"] = m => series.Network ?? string.Empty;

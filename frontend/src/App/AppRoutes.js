@@ -7,7 +7,6 @@ import QueueConnector from 'Activity/Queue/QueueConnector';
 import AddNewMovieConnector from 'AddMovie/AddNewMovie/AddNewMovieConnector';
 import ImportMovies from 'AddMovie/ImportMovie/ImportMovies';
 import CalendarPageConnector from 'Calendar/CalendarPageConnector';
-import CollectionConnector from 'Collection/CollectionConnector';
 import NotFound from 'Components/NotFound';
 import Switch from 'Components/Router/Switch';
 import MovieDetailsPageConnector from 'Movie/Details/MovieDetailsPageConnector';
@@ -27,6 +26,7 @@ import QualityConnector from 'Settings/Quality/QualityConnector';
 import Settings from 'Settings/Settings';
 import TagSettings from 'Settings/Tags/TagSettings';
 import UISettingsConnector from 'Settings/UI/UISettingsConnector';
+import StudioIndex from 'Studio/Index/StudioIndex';
 import BackupsConnector from 'System/Backup/BackupsConnector';
 import LogsTableConnector from 'System/Events/LogsTableConnector';
 import Logs from 'System/Logs/Logs';
@@ -85,13 +85,13 @@ function AppRoutes(props) {
       />
 
       <Route
-        path="/add/new"
-        component={AddNewMovieConnector}
+        path="/studios"
+        component={StudioIndex}
       />
 
       <Route
-        path="/collections"
-        component={CollectionConnector}
+        path="/add/new"
+        component={AddNewMovieConnector}
       />
 
       <Route

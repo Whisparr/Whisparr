@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.MediaCover;
-using NzbDrone.Core.Movies;
+using NzbDrone.Core.Movies.Performers;
 
 namespace Whisparr.Api.V3.Search
 {

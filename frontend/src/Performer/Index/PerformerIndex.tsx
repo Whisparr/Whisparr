@@ -8,8 +8,7 @@ import React, {
 import { useDispatch, useSelector } from 'react-redux';
 import { SelectProvider } from 'App/SelectContext';
 import ClientSideCollectionAppState from 'App/State/ClientSideCollectionAppState';
-import MoviesAppState from 'App/State/MoviesAppState';
-import PerformerIndexAppState from 'App/State/PerformerIndexAppState';
+import PerformersAppState from 'App/State/PerformersAppState';
 import Alert from 'Components/Alert';
 import LoadingIndicator from 'Components/Loading/LoadingIndicator';
 import PageContent from 'Components/Page/PageContent';
@@ -26,7 +25,7 @@ import NoPerformer from 'Performer/NoPerformer';
 import {
   setPerformerFilter,
   setPerformerSort,
-} from 'Store/Actions/performerIndexActions';
+} from 'Store/Actions/performerActions';
 import { fetchQueueDetails } from 'Store/Actions/queueActions';
 import scrollPositions from 'Store/scrollPositions';
 import createDimensionsSelector from 'Store/Selectors/createDimensionsSelector';
@@ -55,10 +54,9 @@ const PerformerIndex = withScrollPosition((props: PerformerIndexProps) => {
     sortKey,
     sortDirection,
     view,
-  }: MoviesAppState & PerformerIndexAppState & ClientSideCollectionAppState =
-    useSelector(
-      createPerformerClientSideCollectionItemsSelector('performerIndex')
-    );
+  }: PerformersAppState & ClientSideCollectionAppState = useSelector(
+    createPerformerClientSideCollectionItemsSelector('performers')
+  );
 
   const { isSmallScreen } = useSelector(createDimensionsSelector());
   const dispatch = useDispatch();
@@ -210,6 +208,7 @@ const PerformerIndex = withScrollPosition((props: PerformerIndexProps) => {
                   sortDirection={sortDirection}
                   jumpToCharacter={jumpToCharacter}
                   isSmallScreen={isSmallScreen}
+                  isSelectMode={false}
                 />
               </div>
             ) : null}
@@ -234,6 +233,6 @@ const PerformerIndex = withScrollPosition((props: PerformerIndexProps) => {
       </PageContent>
     </SelectProvider>
   );
-}, 'performerIndex');
+}, 'performers');
 
 export default PerformerIndex;

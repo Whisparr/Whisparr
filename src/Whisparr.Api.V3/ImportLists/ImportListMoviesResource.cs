@@ -4,7 +4,6 @@ using NzbDrone.Core.ImportLists.ImportListMovies;
 using NzbDrone.Core.Languages;
 using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.Movies;
-using NzbDrone.Core.Movies.Collections;
 using Whisparr.Http.REST;
 
 namespace Whisparr.Api.V3.ImportLists
@@ -35,7 +34,6 @@ namespace Whisparr.Api.V3.ImportLists
         public string Folder { get; set; }
         public List<string> Genres { get; set; }
         public Ratings Ratings { get; set; }
-        public MovieCollection Collection { get; set; }
         public bool IsExcluded { get; set; }
         public bool IsExisting { get; set; }
 
@@ -73,8 +71,7 @@ namespace Whisparr.Api.V3.ImportLists
                 Website = model.MovieMetadata.Value.Website,
                 Genres = model.MovieMetadata.Value.Genres,
                 Ratings = model.MovieMetadata.Value.Ratings,
-                Collection = new MovieCollection { Title = model.MovieMetadata.Value.CollectionTitle, TmdbId = model.MovieMetadata.Value.CollectionTmdbId },
-                Studio = model.MovieMetadata.Value.Studio
+                Studio = model.MovieMetadata.Value.StudioTitle
             };
         }
 
@@ -106,8 +103,7 @@ namespace Whisparr.Api.V3.ImportLists
                 Website = model.MovieMetadata.Value.Website,
                 Genres = model.MovieMetadata.Value.Genres,
                 Ratings = model.MovieMetadata.Value.Ratings,
-                Studio = model.MovieMetadata.Value.Studio,
-                Collection = new MovieCollection { Title = model.MovieMetadata.Value.CollectionTitle, TmdbId = model.MovieMetadata.Value.CollectionTmdbId },
+                Studio = model.MovieMetadata.Value.StudioTitle,
                 Lists = new HashSet<int> { model.ListId }
             };
         }

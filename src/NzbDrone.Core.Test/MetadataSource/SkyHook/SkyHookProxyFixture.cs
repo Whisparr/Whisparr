@@ -21,7 +21,7 @@ namespace NzbDrone.Core.Test.MetadataSource.SkyHook
         [TestCase(37795, "Taboo II")]
         public void should_be_able_to_get_movie_detail(int tmdbId, string title)
         {
-            var details = Subject.GetMovieInfo(tmdbId);
+            var details = Subject.GetMovieInfo(tmdbId).Item1;
 
             ValidateMovie(details);
 
@@ -37,7 +37,7 @@ namespace NzbDrone.Core.Test.MetadataSource.SkyHook
             movie.Overview.Should().NotBeNullOrWhiteSpace();
             movie.ReleaseDate.Should().HaveValue();
             movie.Images.Should().NotBeEmpty();
-            movie.Studio.Should().NotBeNullOrWhiteSpace();
+            movie.StudioTitle.Should().NotBeNullOrWhiteSpace();
             movie.Runtime.Should().BeGreaterThan(0);
 
             // series.TvRageId.Should().BeGreaterThan(0);

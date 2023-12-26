@@ -14,8 +14,7 @@ import selectPosterOptions from './selectPosterOptions';
 import styles from './PerformerIndexPoster.css';
 
 interface PerformerIndexPosterProps {
-  performerId: string;
-  movieId: number;
+  performerId: number;
   sortKey: string;
   isSelectMode: boolean;
   posterWidth: number;
@@ -23,11 +22,10 @@ interface PerformerIndexPosterProps {
 }
 
 function PerformerIndexPoster(props: PerformerIndexPosterProps) {
-  const { performerId, sortKey, isSelectMode, posterWidth, posterHeight } =
-    props;
+  const { performerId, posterWidth, posterHeight } = props;
 
   const { performer } = useSelector(
-    createPerformerIndexItemSelector(props.movieId, props.performerId)
+    createPerformerIndexItemSelector(performerId)
   );
 
   const safeForWorkMode = useSelector(

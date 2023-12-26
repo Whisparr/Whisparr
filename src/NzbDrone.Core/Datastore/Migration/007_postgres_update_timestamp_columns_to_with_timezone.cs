@@ -10,8 +10,6 @@ namespace NzbDrone.Core.Datastore.Migration
         {
             Alter.Table("Blocklist").AlterColumn("Date").AsDateTimeOffset().NotNullable();
             Alter.Table("Blocklist").AlterColumn("PublishedDate").AsDateTimeOffset().Nullable();
-            Alter.Table("Collections").AlterColumn("Added").AsDateTimeOffset().Nullable();
-            Alter.Table("Collections").AlterColumn("LastInfoSync").AsDateTimeOffset().Nullable();
             Alter.Table("Commands").AlterColumn("QueuedAt").AsDateTimeOffset().NotNullable();
             Alter.Table("Commands").AlterColumn("StartedAt").AsDateTimeOffset().Nullable();
             Alter.Table("Commands").AlterColumn("EndedAt").AsDateTimeOffset().Nullable();

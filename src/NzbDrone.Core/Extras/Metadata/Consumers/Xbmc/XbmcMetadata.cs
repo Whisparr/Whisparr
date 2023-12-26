@@ -244,16 +244,6 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
 
                     details.Add(new XElement("country"));
 
-                    if (Settings.AddCollectionName && movie.MovieMetadata.Value.CollectionTitle != null)
-                    {
-                        var setElement = new XElement("set");
-
-                        setElement.Add(new XElement("name", movie.MovieMetadata.Value.CollectionTitle));
-                        setElement.Add(new XElement("overview"));
-
-                        details.Add(setElement);
-                    }
-
                     var tags = _tagRepository.Get(movie.Tags);
 
                     foreach (var tag in tags)
@@ -284,7 +274,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
 
                     details.Add(new XElement("year", movie.Year));
 
-                    details.Add(new XElement("studio", movie.MovieMetadata.Value.Studio));
+                    details.Add(new XElement("studio", movie.MovieMetadata.Value.StudioTitle));
 
                     details.Add(new XElement("watched", watched));
 

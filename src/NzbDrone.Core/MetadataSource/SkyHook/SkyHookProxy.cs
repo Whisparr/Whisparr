@@ -14,7 +14,8 @@ using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.MetadataSource.SkyHook.Resource;
 using NzbDrone.Core.Movies;
 using NzbDrone.Core.Movies.AlternativeTitles;
-using NzbDrone.Core.Movies.Collections;
+using NzbDrone.Core.Movies.Performers;
+using NzbDrone.Core.Movies.Studios;
 using NzbDrone.Core.Parser;
 
 namespace NzbDrone.Core.MetadataSource.SkyHook
@@ -64,7 +65,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             return new HashSet<string>(response.Resource);
         }
 
-        public MovieMetadata GetMovieInfo(int tmdbId)
+        public Tuple<MovieMetadata, Studio, List<Performer>> GetMovieInfo(int tmdbId)
         {
             var httpRequest = _whisparrMetadata.Create()
                                              .SetSegment("route", "movie")
@@ -92,10 +93,12 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
 
             movie.Credits.AddRange(httpResponse.Resource.Credits.Select(MapCast));
 
-            return movie;
+            var performers = httpResponse.Resource.Credits.Select(c => MapPerformer(c.Performer)).DistinctBy(p => p.ForeignId).ToList();
+
+            return new Tuple<MovieMetadata, Studio, List<Performer>>(movie, MapStudio(httpResponse.Resource.Studio), performers);
         }
 
-        public MovieMetadata GetSceneInfo(string stashId)
+        public Tuple<MovieMetadata, Studio, List<Performer>> GetSceneInfo(string stashId)
         {
             var httpRequest = _whisparrMetadata.Create()
                                              .SetSegment("route", "scene")
@@ -123,36 +126,9 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
 
             movie.Credits.AddRange(httpResponse.Resource.Credits.Select(c => MapSceneCast(c, movie.ForeignId)));
 
-            return movie;
-        }
+            var performers = httpResponse.Resource.Credits.Select(c => MapPerformer(c.Performer)).DistinctBy(p => p.ForeignId).ToList();
 
-        public MovieCollection GetCollectionInfo(int tmdbId)
-        {
-            var httpRequest = _whisparrMetadata.Create()
-                                             .SetSegment("route", "movie/collection")
-                                             .Resource(tmdbId.ToString())
-                                             .Build();
-
-            httpRequest.AllowAutoRedirect = true;
-            httpRequest.SuppressHttpError = true;
-
-            var httpResponse = _httpClient.Get<CollectionResource>(httpRequest);
-
-            if (httpResponse.HasHttpError)
-            {
-                if (httpResponse.StatusCode == HttpStatusCode.NotFound)
-                {
-                    throw new MovieNotFoundException(tmdbId);
-                }
-                else
-                {
-                    throw new HttpException(httpRequest, httpResponse);
-                }
-            }
-
-            var collection = MapCollection(httpResponse.Resource);
-
-            return collection;
+            return new Tuple<MovieMetadata, Studio, List<Performer>>(movie, MapStudio(httpResponse.Resource.Studio), performers);
         }
 
         public List<MovieMetadata> GetBulkMovieInfo(List<int> tmdbIds)
@@ -259,7 +235,16 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 movie.Status = MovieStatusType.Released;
             }
 
-            movie.Studio = resource.Studio.Title;
+            if (resource.Studio.ForeignIds != null && resource.Studio.ForeignIds.StashId.IsNotNullOrWhiteSpace())
+            {
+                movie.StudioForeignId = resource.Studio.ForeignIds.StashId;
+                movie.StudioTitle = resource.Studio.Title;
+            }
+            else if (resource.Studio.ForeignIds != null && resource.Studio.ForeignIds.TmdbId > 0)
+            {
+                movie.StudioForeignId = resource.Studio.ForeignIds.TmdbId.ToString();
+                movie.StudioTitle = resource.Studio.Title;
+            }
 
             return movie;
         }
@@ -293,7 +278,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                         return newMovie;
                     }
 
-                    newMovie = GetMovieInfo(movie.TmdbId);
+                    newMovie = GetMovieInfo(movie.TmdbId).Item1;
                 }
                 else if (movie.ImdbId.IsNotNullOrWhiteSpace())
                 {
@@ -434,7 +419,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                     {
                         try
                         {
-                            var movieLookup = GetMovieInfo(parserResult.TmdbId);
+                            var movieLookup = GetMovieInfo(parserResult.TmdbId).Item1;
                             return movieLookup == null ? new List<Movie>() : new List<Movie> { _movieService.FindByTmdbId(movieLookup.TmdbId) ?? new Movie { MovieMetadata = movieLookup } };
                         }
                         catch (Exception)
@@ -481,7 +466,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
 
                     try
                     {
-                        var movieLookup = GetMovieInfo(tmdbid);
+                        var movieLookup = GetMovieInfo(tmdbid).Item1;
                         return movieLookup == null ? new List<Movie>() : new List<Movie> { _movieService.FindByTmdbId(movieLookup.TmdbId) ?? new Movie { MovieMetadata = movieLookup } };
                     }
                     catch (MovieNotFoundException)
@@ -503,7 +488,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
 
                     try
                     {
-                        var movieLookup = GetSceneInfo(stashId);
+                        var movieLookup = GetSceneInfo(stashId).Item1;
                         return movieLookup == null ? new List<Movie>() : new List<Movie> { _movieService.FindByForeignId(movieLookup.StashId) ?? new Movie { MovieMetadata = movieLookup } };
                     }
                     catch (MovieNotFoundException)
@@ -558,22 +543,6 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             return movie;
         }
 
-        private MovieCollection MapCollection(CollectionResource arg)
-        {
-            var collection = new MovieCollection
-            {
-                TmdbId = arg.TmdbId,
-                Title = arg.Name,
-                Overview = arg.Overview,
-                CleanTitle = arg.Name.CleanMovieTitle(),
-                SortTitle = Parser.Parser.NormalizeTitle(arg.Name),
-                Images = arg.Images?.Select(MapImage).ToList() ?? new List<MediaCover.MediaCover>(),
-                Movies = arg.Parts?.Select(x => MapMovie(x)).ToList() ?? new List<MovieMetadata>()
-            };
-
-            return collection;
-        }
-
         private static Credit MapCast(CastResource arg)
         {
             var newActor = new Credit
@@ -582,11 +551,11 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 Order = arg.Order,
                 CreditForeignId = arg.CreditId,
                 Type = CreditType.Cast,
-                Performer = new Performer
+                Performer = new CreditPerformer
                 {
                     Name = arg.Performer.Name,
                     ForeignId = arg.Performer.ForeignIds.TmdbId.ToString(),
-                    Images = arg.Performer.Images.Select(MapImage).ToList(),
+                    Images = arg.Performer.Images.Select(MapImage).ToList()
                 }
             };
 
@@ -598,8 +567,22 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             var newPerformer = new Performer
             {
                 Name = performer.Name,
+                Gender = performer.Gender,
                 ForeignId = performer.ForeignIds.StashId,
                 Images = performer.Images.Select(MapImage).ToList()
+            };
+
+            return newPerformer;
+        }
+
+        private Studio MapStudio(StudioResource studio)
+        {
+            var newPerformer = new Studio
+            {
+                Title = studio.Title,
+                Website = studio.Homepage,
+                ForeignId = studio.ForeignIds.StashId,
+                Images = studio.Images.Select(MapImage).ToList()
             };
 
             return newPerformer;
@@ -613,11 +596,11 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 Order = arg.Order,
                 CreditForeignId = $"{sceneForeignId} - {arg.Performer.ForeignIds.StashId}",
                 Type = CreditType.Cast,
-                Performer = new Performer
+                Performer = new CreditPerformer
                 {
                     Name = arg.Performer.Name,
                     ForeignId = arg.Performer.ForeignIds.StashId,
-                    Images = arg.Performer.Images.Select(MapImage).ToList(),
+                    Images = arg.Performer.Images.Select(MapImage).ToList()
                 }
             };
 

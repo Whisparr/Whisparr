@@ -4,7 +4,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.MetadataSource;
-using NzbDrone.Core.Movies;
+using NzbDrone.Core.Movies.Performers;
 using Whisparr.Api.V3.Movies;
 using Whisparr.Api.V3.Search;
 using Whisparr.Http;

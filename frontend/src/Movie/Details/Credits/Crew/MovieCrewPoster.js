@@ -56,7 +56,8 @@ class MovieCrewPoster extends Component {
       job,
       posterWidth,
       posterHeight,
-      importList
+      importList,
+      safeForWorkMode
     } = this.props;
 
     const {
@@ -95,6 +96,7 @@ class MovieCrewPoster extends Component {
             style={elementStyle}
           >
             <MovieHeadshot
+              blur={safeForWorkMode}
               className={styles.poster}
               style={elementStyle}
               images={performer.images}
@@ -138,6 +140,7 @@ MovieCrewPoster.propTypes = {
   posterWidth: PropTypes.number.isRequired,
   posterHeight: PropTypes.number.isRequired,
   importList: PropTypes.object,
+  safeForWorkMode: PropTypes.bool.isRequired,
   onImportListSelect: PropTypes.func.isRequired
 };
 

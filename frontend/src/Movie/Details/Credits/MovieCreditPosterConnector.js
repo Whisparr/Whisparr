@@ -8,9 +8,11 @@ import createMovieCreditListSelector from 'Store/Selectors/createMovieCreditList
 function createMapStateToProps() {
   return createSelector(
     createMovieCreditListSelector(),
-    (importList) => {
+    (state) => state.settings.safeForWorkMode,
+    (importList, safeForWorkMode) => {
       return {
-        importList
+        importList,
+        safeForWorkMode
       };
     }
   );

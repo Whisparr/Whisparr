@@ -155,32 +155,36 @@ class MovieImage extends Component {
             />
           }
         >
-          <img
-            className={classNames(
-              className,
-              blur && styles.blur
-            )}
-            style={style}
-            src={url}
-            onError={this.onError}
-            onLoad={this.onLoad}
-            rel="noreferrer"
-          />
+          <div className={styles.container}>
+            <img
+              className={classNames(
+                className,
+                blur && styles.blur
+              )}
+              style={style}
+              src={url}
+              onError={this.onError}
+              onLoad={this.onLoad}
+              rel="noreferrer"
+            />
+          </div>
         </LazyLoad>
       );
     }
 
     return (
-      <img
-        className={classNames(
-          className,
-          blur && styles.blur
-        )}
-        style={style}
-        src={isLoaded ? url : placeholder}
-        onError={this.onError}
-        onLoad={this.onLoad}
-      />
+      <div className={styles.container}>
+        <img
+          className={classNames(
+            className,
+            blur && styles.blur
+          )}
+          style={style}
+          src={isLoaded ? url : placeholder}
+          onError={this.onError}
+          onLoad={this.onLoad}
+        />
+      </div>
     );
   }
 }

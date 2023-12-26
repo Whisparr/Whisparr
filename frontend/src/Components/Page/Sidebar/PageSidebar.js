@@ -26,16 +26,12 @@ const links = [
     alias: '/movies',
     children: [
       {
-        title: () => translate('AddNew'),
-        to: '/add/new'
+        title: () => translate('Collections'),
+        to: '/collections'
       },
       {
         title: () => translate('ImportLibrary'),
         to: '/add/import'
-      },
-      {
-        title: () => translate('Collections'),
-        to: '/collections'
       }
     ]
   },
@@ -50,10 +46,6 @@ const links = [
         to: '/scenes/sites'
       },
       {
-        title: () => translate('AddNew'),
-        to: '/scenes/add/new'
-      },
-      {
         title: () => translate('ImportLibrary'),
         to: '/scenes/add/import'
       }
@@ -61,9 +53,15 @@ const links = [
   },
 
   {
-    iconName: icons.MOVIE_CONTINUING,
+    iconName: icons.INTERACTIVE,
     title: () => translate('Performers'),
     to: '/performers'
+  },
+
+  {
+    iconName: icons.ADD,
+    title: () => translate('Add New'),
+    to: '/add/new'
   },
 
   {

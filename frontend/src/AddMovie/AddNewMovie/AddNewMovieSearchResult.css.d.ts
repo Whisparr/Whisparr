@@ -12,6 +12,7 @@ interface CssExports {
   'poster': string;
   'posterContainer': string;
   'runtime': string;
+  'scene': string;
   'searchResult': string;
   'statusContainer': string;
   'title': string;

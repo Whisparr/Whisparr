@@ -36,6 +36,14 @@
   background-color: var(--defaultColor);
 }
 
+.scene {
+  position: relative;
+  display: block;
+  margin-right: 20px;
+  height: 167px;
+  background-color: var(--defaultColor);
+}
+
 .content {
   flex: 0 1 100%;
   overflow: hidden;

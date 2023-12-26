@@ -10,6 +10,7 @@ import MovieDetailsLinks from 'Movie/Details/MovieDetailsLinks';
 import MovieStatusLabel from 'Movie/Details/MovieStatusLabel';
 import MovieIndexProgressBar from 'Movie/Index/ProgressBar/MovieIndexProgressBar';
 import MoviePoster from 'Movie/MoviePoster';
+import ScenePoster from 'Scene/ScenePoster';
 import formatRuntime from 'Utilities/Date/formatRuntime';
 import firstCharToUpper from 'Utilities/String/firstCharToUpper';
 import translate from 'Utilities/String/translate';
@@ -88,13 +89,22 @@ class AddNewMovieSearchResult extends Component {
     } = this.state;
 
     const linkProps = isExistingMovie ? { to: `/movie/${titleSlug}` } : { onPress: this.onPress };
-    const posterWidth = 167;
-    const posterHeight = 250;
+    let ImageItem = MoviePoster;
+    let posterWidth = 167;
+    let posterHeight = 250;
+
+    if (itemType === 'scene') {
+      ImageItem = ScenePoster;
+      posterWidth = 300;
+      posterHeight = 167;
+    }
 
     const elementStyle = {
       width: `${posterWidth}px`,
       height: `${posterHeight}px`
     };
+
+    console.log(images);
 
     return (
       <div className={styles.searchResult}>
@@ -109,9 +119,9 @@ class AddNewMovieSearchResult extends Component {
               null :
               <div>
                 <div className={styles.posterContainer}>
-                  <MoviePoster
+                  <ImageItem
                     blur={safeForWorkMode}
-                    className={styles.poster}
+                    className={itemType === 'scene' ? styles.poster : styles.scene}
                     style={elementStyle}
                     images={images}
                     size={250}

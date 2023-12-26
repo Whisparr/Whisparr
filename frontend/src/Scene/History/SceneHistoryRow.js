@@ -9,9 +9,9 @@ import TableRowCell from 'Components/Table/Cells/TableRowCell';
 import TableRow from 'Components/Table/TableRow';
 import Tooltip from 'Components/Tooltip/Tooltip';
 import { icons, kinds, tooltipPositions } from 'Helpers/Props';
+import MovieQuality from 'Movie/MovieQuality';
 import SceneFormats from 'Scene/SceneFormats';
 import SceneLanguage from 'Scene/SceneLanguage';
-import SceneQuality from 'Scene/SceneQuality';
 import formatCustomFormatScore from 'Utilities/Number/formatCustomFormatScore';
 import translate from 'Utilities/String/translate';
 import styles from './SceneHistoryRow.css';
@@ -96,7 +96,7 @@ class SceneHistoryRow extends Component {
         </TableRowCell>
 
         <TableRowCell>
-          <SceneQuality
+          <MovieQuality
             quality={quality}
             isCutoffNotMet={qualityCutoffNotMet}
           />

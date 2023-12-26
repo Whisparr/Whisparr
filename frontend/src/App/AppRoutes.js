@@ -12,6 +12,7 @@ import NotFound from 'Components/NotFound';
 import Switch from 'Components/Router/Switch';
 import MovieDetailsPageConnector from 'Movie/Details/MovieDetailsPageConnector';
 import MovieIndex from 'Movie/Index/MovieIndex';
+import PerformerIndex from 'Performer/Index/PerformerIndex';
 import SceneIndex from 'Scene/Index/SceneIndex';
 import CustomFormatSettingsPage from 'Settings/CustomFormats/CustomFormatSettingsPage';
 import DownloadClientSettingsConnector from 'Settings/DownloadClients/DownloadClientSettingsConnector';
@@ -76,6 +77,11 @@ function AppRoutes(props) {
       <Route
         path="/scenes"
         component={SceneIndex}
+      />
+
+      <Route
+        path="/performers"
+        component={PerformerIndex}
       />
 
       <Route

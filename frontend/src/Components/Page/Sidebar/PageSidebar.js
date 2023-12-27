@@ -26,10 +26,6 @@ const links = [
     alias: '/movies',
     children: [
       {
-        title: () => translate('Collections'),
-        to: '/collections'
-      },
-      {
         title: () => translate('ImportLibrary'),
         to: '/add/import'
       }

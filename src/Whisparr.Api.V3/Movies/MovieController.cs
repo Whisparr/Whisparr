@@ -10,7 +10,6 @@ using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Datastore.Events;
 using NzbDrone.Core.DecisionEngine.Specifications;
-using NzbDrone.Core.Languages;
 using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.MediaFiles.Events;
@@ -121,7 +120,6 @@ namespace Whisparr.Api.V3.Movies
             }
             else
             {
-                var configLanguage = (Language)_configService.MovieInfoLanguage;
                 var availDelay = _configService.AvailabilityDelay;
 
                 var movieTask = Task.Run(() => _moviesService.GetAllMovies());

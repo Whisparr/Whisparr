@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using NzbDrone.Common.Extensions;
 
 namespace NzbDrone.Core.Movies.Performers
 {
@@ -28,8 +29,17 @@ namespace NzbDrone.Core.Movies.Performers
 
         public List<Performer> AddPerformers(List<Performer> performers)
         {
-            _performerRepo.InsertMany(performers);
-            return performers;
+            // TODO: Use a foreignId only pull
+            var allPerformers = _performerRepo.All();
+
+            performers = performers.Where(p => p.ForeignId.IsNotNullOrWhiteSpace()).ToList();
+
+            var existing = allPerformers.Where(x => performers.Any(a => a.ForeignId == x.ForeignId));
+            var performersToAdd = performers.Where(x => !allPerformers.Any(a => a.ForeignId == x.ForeignId)).ToList();
+
+            _performerRepo.InsertMany(performersToAdd);
+
+            return performersToAdd.Concat(existing).ToList();
         }
 
         public Performer GetById(int id)

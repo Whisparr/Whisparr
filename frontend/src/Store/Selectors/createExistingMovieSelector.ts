@@ -1,12 +1,12 @@
 import { some } from 'lodash';
 import { createSelector } from 'reselect';
 import AppState from 'App/State/AppState';
-import createAllMoviesSelector from './createAllMoviesSelector';
+import createAllItemsSelector from './createAllItemsSelector';
 
 function createExistingMovieSelector() {
   return createSelector(
     (_: AppState, { foreignId }: { foreignId: string }) => foreignId,
-    createAllMoviesSelector(),
+    createAllItemsSelector(),
     (foreignId, movies) => {
       return some(movies, { foreignId });
     }

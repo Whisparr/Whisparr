@@ -377,13 +377,6 @@ namespace NzbDrone.Core.Configuration
             set { SetValue("EnableColorImpairedMode", value); }
         }
 
-        public int MovieInfoLanguage
-        {
-            get { return GetValueInt("MovieInfoLanguage", (int)Language.English); }
-
-            set { SetValue("MovieInfoLanguage", value); }
-        }
-
         public int UILanguage
         {
             get { return GetValueInt("UILanguage", (int)Language.English); }

@@ -56,8 +56,7 @@ class AddNewMovieSearchResult extends Component {
 
   render() {
     const {
-      tmdbId,
-      imdbId,
+      foreignId,
       title,
       titleSlug,
       year,
@@ -238,8 +237,7 @@ class AddNewMovieSearchResult extends Component {
                 }
                 tooltip={
                   <MovieDetailsLinks
-                    tmdbId={tmdbId}
-                    imdbId={imdbId}
+                    tmdbId={foreignId}
                   />
                 }
                 canFlip={true}
@@ -268,7 +266,7 @@ class AddNewMovieSearchResult extends Component {
 
         <AddNewMovieModal
           isOpen={isNewAddMovieModalOpen && !isExistingMovie}
-          tmdbId={tmdbId}
+          foreignId={foreignId}
           title={title}
           year={year}
           overview={overview}
@@ -282,8 +280,7 @@ class AddNewMovieSearchResult extends Component {
 }
 
 AddNewMovieSearchResult.propTypes = {
-  tmdbId: PropTypes.number.isRequired,
-  imdbId: PropTypes.string,
+  foreignId: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   titleSlug: PropTypes.string.isRequired,
   year: PropTypes.number.isRequired,

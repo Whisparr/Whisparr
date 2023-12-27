@@ -128,7 +128,7 @@ namespace NzbDrone.Core.Movies
             movieMetadata.StudioTitle = movieInfo.StudioTitle;
             movieMetadata.OriginalLanguage = movieInfo.OriginalLanguage;
 
-            if (movieInfo.StudioForeignId.IsNotNullOrWhiteSpace())
+            if (studioInfo != null && studioInfo.ForeignId.IsNotNullOrWhiteSpace())
             {
                 var newCollection = _studioService.AddStudio(new Studio
                 {

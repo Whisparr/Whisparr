@@ -5,7 +5,6 @@ using NzbDrone.Core.Configuration;
 using NzbDrone.Core.ImportLists;
 using NzbDrone.Core.ImportLists.ImportExclusions;
 using NzbDrone.Core.ImportLists.ImportListMovies;
-using NzbDrone.Core.Languages;
 using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.MetadataSource;
 using NzbDrone.Core.Movies;
@@ -52,13 +51,11 @@ namespace Whisparr.Api.V3.ImportLists
         [HttpGet]
         public object GetDiscoverMovies()
         {
-            var movieLanguage = (Language)_configService.MovieInfoLanguage;
-
             var realResults = new List<ImportListMoviesResource>();
             var listExclusions = _importExclusionService.GetAllExclusions();
             var existingTmdbIds = _movieService.AllMovieTmdbIds();
 
-            var listMovies = MapToResource(_listMovieService.GetAllForLists(_importListFactory.Enabled().Select(x => x.Definition.Id).ToList()), movieLanguage).ToList();
+            var listMovies = MapToResource(_listMovieService.GetAllForLists(_importListFactory.Enabled().Select(x => x.Definition.Id).ToList())).ToList();
 
             realResults.AddRange(listMovies);
 
@@ -88,7 +85,7 @@ namespace Whisparr.Api.V3.ImportLists
             return _addMovieService.AddMovies(newMovies, true).ToResource(0);
         }
 
-        private IEnumerable<ImportListMoviesResource> MapToResource(IEnumerable<Movie> movies, Language language)
+        private IEnumerable<ImportListMoviesResource> MapToResource(IEnumerable<Movie> movies)
         {
             // Avoid calling for naming spec on every movie in filenamebuilder
             var namingConfig = _namingService.GetConfig();
@@ -111,7 +108,7 @@ namespace Whisparr.Api.V3.ImportLists
             }
         }
 
-        private IEnumerable<ImportListMoviesResource> MapToResource(IEnumerable<ImportListMovie> movies, Language language)
+        private IEnumerable<ImportListMoviesResource> MapToResource(IEnumerable<ImportListMovie> movies)
         {
             // Avoid calling for naming spec on every movie in filenamebuilder
             var namingConfig = _namingService.GetConfig();

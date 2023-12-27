@@ -147,7 +147,7 @@ class AddNewMovie extends Component {
                   items.map((item) => {
                     return (
                       <AddNewMovieSearchResultConnector
-                        key={item.tmdbId}
+                        key={item.foreignId}
                         colorImpairedMode={colorImpairedMode}
                         {...item}
                       />

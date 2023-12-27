@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using NzbDrone.Common.EnsureThat;
 
 namespace NzbDrone.Core.Movies.Studios
 {
@@ -23,6 +24,15 @@ namespace NzbDrone.Core.Movies.Studios
 
         public Studio AddStudio(Studio studio)
         {
+            Ensure.That(studio, () => studio).IsNotNull();
+
+            var existingStudio = _studioRepo.FindStudioByForeignId(studio.ForeignId);
+
+            if (existingStudio != null)
+            {
+                return existingStudio;
+            }
+
             return _studioRepo.Insert(studio);
         }
 

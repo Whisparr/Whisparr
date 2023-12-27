@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.DecisionEngine.Specifications;
-using NzbDrone.Core.Languages;
 using NzbDrone.Core.Movies;
 using NzbDrone.Core.Tags;
 using NzbDrone.SignalR;
@@ -81,7 +80,6 @@ namespace Whisparr.Api.V3.Calendar
         {
             var resources = new List<MovieResource>();
             var availDelay = _configService.AvailabilityDelay;
-            var language = (Language)_configService.MovieInfoLanguage;
 
             foreach (var movie in movies)
             {

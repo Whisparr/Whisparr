@@ -16,16 +16,18 @@ function createUnoptimizedSelector() {
   return createSelector(
     createClientSideCollectionSelector('movies', 'movieIndex'),
     (movies: MoviesAppState) => {
-      return movies.items.map((m) => {
-        const { monitored, status, hasFile, sizeOnDisk } = m;
+      return movies.items
+        .filter((movie) => movie.itemType === 'movie')
+        .map((m) => {
+          const { monitored, status, hasFile, sizeOnDisk } = m;
 
-        return {
-          monitored,
-          status,
-          hasFile,
-          sizeOnDisk,
-        };
-      });
+          return {
+            monitored,
+            status,
+            hasFile,
+            sizeOnDisk,
+          };
+        });
     }
   );
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Core.Configuration;
-using NzbDrone.Core.Languages;
 using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.MetadataSource;
 using NzbDrone.Core.Movies;
@@ -71,7 +70,6 @@ namespace Whisparr.Api.V3.Movies
 
         private IEnumerable<MovieResource> MapToResource(IEnumerable<Movie> movies)
         {
-            var movieInfoLanguage = (Language)_configService.MovieInfoLanguage;
             var availDelay = _configService.AvailabilityDelay;
             var namingConfig = _namingService.GetConfig();
 

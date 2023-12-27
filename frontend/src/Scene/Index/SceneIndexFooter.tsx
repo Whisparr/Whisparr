@@ -15,17 +15,19 @@ import styles from './SceneIndexFooter.css';
 function createUnoptimizedSelector() {
   return createSelector(
     createClientSideCollectionSelector('movies', 'sceneIndex'),
-    (scenes: MoviesAppState) => {
-      return scenes.items.map((m) => {
-        const { monitored, status, hasFile, sizeOnDisk } = m;
+    (movies: MoviesAppState) => {
+      return movies.items
+        .filter((movie) => movie.itemType === 'scene')
+        .map((m) => {
+          const { monitored, status, hasFile, sizeOnDisk } = m;
 
-        return {
-          monitored,
-          status,
-          hasFile,
-          sizeOnDisk,
-        };
-      });
+          return {
+            monitored,
+            status,
+            hasFile,
+            sizeOnDisk,
+          };
+        });
     }
   );
 }

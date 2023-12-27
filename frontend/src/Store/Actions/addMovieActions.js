@@ -87,7 +87,7 @@ export const actionHandlers = handleThunks({
     abortCurrentRequest = abortRequest;
 
     request.done((data) => {
-      data = data.map((movie) => ({ ...movie, internalId: movie.id, id: movie.tmdbId }));
+      data = data.map((movie) => ({ ...movie, internalId: movie.id, id: movie.foreignId }));
 
       dispatch(batchActions([
         update({ section, data }),
@@ -114,9 +114,9 @@ export const actionHandlers = handleThunks({
   [ADD_MOVIE]: function(getState, payload, dispatch) {
     dispatch(set({ section, isAdding: true }));
 
-    const tmdbId = payload.tmdbId;
+    const foreignId = payload.foreignId;
     const items = getState().addMovie.items;
-    const newMovie = getNewMovie(_.cloneDeep(_.find(items, { tmdbId })), payload);
+    const newMovie = getNewMovie(_.cloneDeep(_.find(items, { foreignId })), payload);
     newMovie.id = 0;
 
     const promise = createAjaxRequest({
@@ -129,7 +129,7 @@ export const actionHandlers = handleThunks({
 
     promise.done((data) => {
       const updatedItem = _.cloneDeep(data);
-      updatedItem.id = updatedItem.tmdbId;
+      updatedItem.id = updatedItem.foreignId;
       const actions = [
         updateItem({ section: 'movies', ...data }),
         updateItem({ section: 'addMovie', ...updatedItem }),
@@ -141,18 +141,6 @@ export const actionHandlers = handleThunks({
           addError: null
         })
       ];
-
-      if (!newMovie.collection) {
-        dispatch(batchActions(actions));
-        return;
-      }
-
-      const collectionToUpdate = getState().movieCollections.items.find((collection) => collection.tmdbId === newMovie.collection.tmdbId);
-
-      if (collectionToUpdate) {
-        const collectionData = { ...collectionToUpdate, missingMovies: Math.max(0, collectionToUpdate.missingMovies - 1 ) };
-        actions.push(updateItem({ section: 'movieCollections', ...collectionData }));
-      }
 
       dispatch(batchActions(actions));
     });

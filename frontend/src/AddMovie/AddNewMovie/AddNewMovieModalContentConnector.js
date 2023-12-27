@@ -57,7 +57,7 @@ class AddNewMovieModalContentConnector extends Component {
 
   onAddMoviePress = () => {
     const {
-      tmdbId,
+      foreignId,
       rootFolderPath,
       monitor,
       qualityProfileId,
@@ -66,7 +66,7 @@ class AddNewMovieModalContentConnector extends Component {
     } = this.props;
 
     this.props.addMovie({
-      tmdbId,
+      foreignId,
       rootFolderPath: rootFolderPath.value,
       monitor: monitor.value,
       qualityProfileId: qualityProfileId.value,
@@ -90,7 +90,7 @@ class AddNewMovieModalContentConnector extends Component {
 }
 
 AddNewMovieModalContentConnector.propTypes = {
-  tmdbId: PropTypes.number.isRequired,
+  foreignId: PropTypes.string.isRequired,
   rootFolderPath: PropTypes.object,
   monitor: PropTypes.object.isRequired,
   qualityProfileId: PropTypes.object,

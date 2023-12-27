@@ -95,7 +95,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
 
             var performers = httpResponse.Resource.Credits.Select(c => MapPerformer(c.Performer)).DistinctBy(p => p.ForeignId).ToList();
 
-            return new Tuple<MovieMetadata, Studio, List<Performer>>(movie, MapStudio(httpResponse.Resource.Studio), performers);
+            return new Tuple<MovieMetadata, Studio, List<Performer>>(movie, null, performers);
         }
 
         public Tuple<MovieMetadata, Studio, List<Performer>> GetSceneInfo(string stashId)

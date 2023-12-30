@@ -582,7 +582,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 Title = studio.Title,
                 Website = studio.Homepage,
                 ForeignId = studio.ForeignIds.StashId,
-                Images = studio.Images.Select(MapImage).ToList()
+                Images = studio.Images?.Select(MapImage).ToList() ?? new List<MediaCover.MediaCover>()
             };
 
             return newPerformer;
@@ -600,7 +600,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 {
                     Name = arg.Performer.Name,
                     ForeignId = arg.Performer.ForeignIds.StashId,
-                    Images = arg.Performer.Images.Select(MapImage).ToList()
+                    Images = arg.Performer.Images?.Select(MapImage).ToList() ?? new List<MediaCover.MediaCover>()
                 }
             };
 

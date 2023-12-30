@@ -8,7 +8,7 @@ namespace NzbDrone.Core.Datastore.Migration
     {
         protected override void MainDbUpgrade()
         {
-            Alter.Table("MovieMetadata").AddColumn("StudioForeignId").AsInt32().Nullable()
+            Alter.Table("MovieMetadata").AddColumn("StudioForeignId").AsString().Nullable()
                                         .AddColumn("StudioTitle").AsString().Nullable();
 
             Alter.Table("ImportLists").AddColumn("Monitor").AsInt32().Nullable();

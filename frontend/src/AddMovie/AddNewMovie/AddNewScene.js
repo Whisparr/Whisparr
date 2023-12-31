@@ -13,9 +13,9 @@ import getErrorMessage from 'Utilities/Object/getErrorMessage';
 import translate from 'Utilities/String/translate';
 import AddNewMovieSearchResultConnector from './AddNewMovie/AddNewMovieSearchResultConnector';
 import AddNewPerformerSearchResultConnector from './AddNewPerformer/AddNewPerformerSearchResultConnector';
-import styles from './AddNewMovie.css';
+import styles from '../AddNewMovie/AddNewMovie.css';
 
-class AddNewMovie extends Component {
+class AddNewScene extends Component {
 
   //
   // Lifecycle
@@ -105,7 +105,7 @@ class AddNewMovie extends Component {
               className={styles.searchInput}
               name="movieLookup"
               value={term}
-              placeholder="e.g. The Dark Knight, tmdb:155, imdb:tt0468569"
+              placeholder="e.g. The Dark Knight, stash:e7e4f9c0-3d9f-4136-b38b-9b49398c0ade"
               autoFocus={true}
               onChange={this.onSearchInputChange}
             />
@@ -224,7 +224,7 @@ class AddNewMovie extends Component {
   }
 }
 
-AddNewMovie.propTypes = {
+AddNewScene.propTypes = {
   term: PropTypes.string,
   isFetching: PropTypes.bool.isRequired,
   error: PropTypes.object,
@@ -237,4 +237,4 @@ AddNewMovie.propTypes = {
   colorImpairedMode: PropTypes.bool.isRequired
 };
 
-export default AddNewMovie;
+export default AddNewScene;

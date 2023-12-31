@@ -1,0 +1,195 @@
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import Icon from 'Components/Icon';
+import Label from 'Components/Label';
+import Link from 'Components/Link/Link';
+import Tooltip from 'Components/Tooltip/Tooltip';
+import { icons, kinds, sizes, tooltipPositions } from 'Helpers/Props';
+import MovieDetailsLinks from 'Movie/Details/MovieDetailsLinks';
+import MovieHeadshot from 'Movie/MovieHeadshot';
+import translate from 'Utilities/String/translate';
+import AddNewPerformerModal from './AddNewPerformerModal';
+import styles from './AddNewPerformerSearchResult.css';
+
+class AddNewPerformerSearchResult extends Component {
+
+  //
+  // Lifecycle
+
+  constructor(props, context) {
+    super(props, context);
+
+    this.state = {
+      isNewAddPerformerModalOpen: false
+    };
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!prevProps.isExistingPerformer && this.props.isExistingPerformer) {
+      this.onAddPerformerModalClose();
+    }
+  }
+
+  //
+  // Listeners
+
+  onPress = () => {
+    this.setState({ isNewAddPerformerModalOpen: true });
+  };
+
+  onAddPerformerModalClose = () => {
+    this.setState({ isNewAddPerformerModalOpen: false });
+  };
+
+  onExternalLinkPress = (event) => {
+    event.stopPropagation();
+  };
+
+  //
+  // Render
+
+  render() {
+    const {
+      foreignId,
+      name,
+      gender,
+      images,
+      isExistingPerformer,
+      isSmallScreen,
+      safeForWorkMode
+    } = this.props;
+
+    const {
+      isNewAddMovieModalOpen
+    } = this.state;
+
+    const linkProps = isExistingPerformer ? { to: `/performer/${foreignId}` } : { onPress: this.onPress };
+
+    const posterWidth = 167;
+    const posterHeight = 250;
+
+    const elementStyle = {
+      width: `${posterWidth}px`,
+      height: `${posterHeight}px`
+    };
+
+    return (
+      <div className={styles.searchResult}>
+        <Link
+          className={styles.underlay}
+          {...linkProps}
+        />
+
+        <div className={styles.overlay}>
+          {
+            isSmallScreen ?
+              null :
+              <div>
+                <div className={styles.posterContainer}>
+                  <MovieHeadshot
+                    blur={safeForWorkMode}
+                    className={styles.poster}
+                    style={elementStyle}
+                    images={images}
+                    size={250}
+                    overflow={true}
+                    lazy={false}
+                  />
+                </div>
+              </div>
+          }
+
+          <div className={styles.content}>
+            <div className={styles.titleRow}>
+              <div className={styles.titleContainer}>
+                <div className={styles.title}>
+                  {name}
+                </div>
+              </div>
+
+              <div className={styles.icons}>
+
+                {
+                  isExistingPerformer &&
+                    <Icon
+                      className={styles.alreadyExistsIcon}
+                      name={icons.CHECK_CIRCLE}
+                      size={36}
+                      title={translate('AlreadyInYourLibrary')}
+                    />
+                }
+              </div>
+            </div>
+
+            <div>
+              {
+                !!gender &&
+                  <span className={styles.gender}>
+                    {gender}
+                  </span>
+              }
+            </div>
+
+            <div>
+              <Label size={sizes.LARGE} kind={kinds.PINK}>
+                {translate('Performer')}
+              </Label>
+
+              <Tooltip
+                anchor={
+                  <Label
+                    size={sizes.LARGE}
+                  >
+                    <Icon
+                      name={icons.EXTERNAL_LINK}
+                      size={13}
+                    />
+
+                    <span className={styles.links}>
+                      Links
+                    </span>
+                  </Label>
+                }
+                tooltip={
+                  <MovieDetailsLinks
+                    tmdbId={foreignId}
+                  />
+                }
+                canFlip={true}
+                kind={kinds.INVERSE}
+                position={tooltipPositions.BOTTOM}
+              />
+            </div>
+          </div>
+        </div>
+
+        <AddNewPerformerModal
+          isOpen={isNewAddMovieModalOpen && !isExistingPerformer}
+          foreignId={foreignId}
+          name={name}
+          images={images}
+          onModalClose={this.onAddMovieModalClose}
+        />
+      </div>
+    );
+  }
+}
+
+AddNewPerformerSearchResult.propTypes = {
+  foreignId: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  titleSlug: PropTypes.string.isRequired,
+  year: PropTypes.number.isRequired,
+  gender: PropTypes.string.isRequired,
+  images: PropTypes.arrayOf(PropTypes.object).isRequired,
+  existingPerformerId: PropTypes.number,
+  isExistingPerformer: PropTypes.bool.isRequired,
+  isSmallScreen: PropTypes.bool.isRequired,
+  id: PropTypes.number,
+  queueItems: PropTypes.arrayOf(PropTypes.object),
+  monitored: PropTypes.bool.isRequired,
+  colorImpairedMode: PropTypes.bool,
+  safeForWorkMode: PropTypes.bool
+};
+
+export default AddNewPerformerSearchResult;

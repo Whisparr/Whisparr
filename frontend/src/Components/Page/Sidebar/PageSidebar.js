@@ -27,7 +27,11 @@ const links = [
     children: [
       {
         title: () => translate('ImportLibrary'),
-        to: '/add/import'
+        to: '/movies/add/import'
+      },
+      {
+        title: () => translate('AddMovie'),
+        to: '/add/new/movie'
       }
     ]
   },
@@ -44,6 +48,10 @@ const links = [
       {
         title: () => translate('ImportLibrary'),
         to: '/scenes/add/import'
+      },
+      {
+        title: () => translate('AddScene'),
+        to: '/add/new/scene'
       }
     ]
   },
@@ -52,12 +60,6 @@ const links = [
     iconName: icons.INTERACTIVE,
     title: () => translate('Performers'),
     to: '/performers'
-  },
-
-  {
-    iconName: icons.ADD,
-    title: () => translate('Add New'),
-    to: '/add/new'
   },
 
   {

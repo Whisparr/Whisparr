@@ -60,7 +60,7 @@ class AddNewMovieSearchResult extends Component {
       title,
       titleSlug,
       year,
-      studio,
+      studioTitle,
       status,
       itemType,
       overview,
@@ -102,8 +102,6 @@ class AddNewMovieSearchResult extends Component {
       width: `${posterWidth}px`,
       height: `${posterHeight}px`
     };
-
-    console.log(images);
 
     return (
       <div className={styles.searchResult}>
@@ -206,17 +204,20 @@ class AddNewMovieSearchResult extends Component {
                 {firstCharToUpper(itemType)}
               </Label>
 
-              <Label size={sizes.LARGE}>
-                <TmdbRating
-                  ratings={ratings}
-                  iconSize={13}
-                />
-              </Label>
+              {
+                itemType === 'movie' &&
+                  <Label size={sizes.LARGE}>
+                    <TmdbRating
+                      ratings={ratings}
+                      iconSize={13}
+                    />
+                  </Label>
+              }
 
               {
-                !!studio &&
+                !!studioTitle &&
                   <Label size={sizes.LARGE}>
-                    {studio}
+                    {studioTitle}
                   </Label>
               }
 
@@ -284,7 +285,7 @@ AddNewMovieSearchResult.propTypes = {
   title: PropTypes.string.isRequired,
   titleSlug: PropTypes.string.isRequired,
   year: PropTypes.number.isRequired,
-  studio: PropTypes.string,
+  studioTitle: PropTypes.string,
   status: PropTypes.string.isRequired,
   itemType: PropTypes.string.isRequired,
   overview: PropTypes.string,

@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.MetadataSource;
+using NzbDrone.Core.Movies;
 using NzbDrone.Core.Movies.Performers;
 using Whisparr.Api.V3.Movies;
 using Whisparr.Api.V3.Search;
@@ -11,20 +12,27 @@ using Whisparr.Http;
 
 namespace Readarr.Api.V1.Search
 {
-    [V3ApiController]
+    [V3ApiController("lookup")]
     public class SearchController : Controller
     {
-        private readonly ISearchForNewEntity _searchProxy;
+        private readonly ISearchForNewMovie _searchProxy;
 
-        public SearchController(ISearchForNewEntity searchProxy)
+        public SearchController(ISearchForNewMovie searchProxy)
         {
             _searchProxy = searchProxy;
         }
 
-        [HttpGet]
-        public object Search([FromQuery] string term)
+        [HttpGet("scene")]
+        public object SearchScene([FromQuery] string term)
         {
-            var searchResults = _searchProxy.SearchForNewEntity(term);
+            var searchResults = _searchProxy.SearchForNewEntity(term, ItemType.Scene);
+            return MapToResource(searchResults).ToList();
+        }
+
+        [HttpGet("movie")]
+        public object SearchMovie([FromQuery] string term)
+        {
+            var searchResults = _searchProxy.SearchForNewEntity(term, ItemType.Movie);
             return MapToResource(searchResults).ToList();
         }
 

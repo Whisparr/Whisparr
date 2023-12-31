@@ -5,6 +5,7 @@ import BlocklistConnector from 'Activity/Blocklist/BlocklistConnector';
 import HistoryConnector from 'Activity/History/HistoryConnector';
 import QueueConnector from 'Activity/Queue/QueueConnector';
 import AddNewMovieConnector from 'AddMovie/AddNewMovie/AddNewMovieConnector';
+import AddNewSceneConnector from 'AddMovie/AddNewMovie/AddNewSceneConnector';
 import ImportMovies from 'AddMovie/ImportMovie/ImportMovies';
 import CalendarPageConnector from 'Calendar/CalendarPageConnector';
 import NotFound from 'Components/NotFound';
@@ -90,8 +91,13 @@ function AppRoutes(props) {
       />
 
       <Route
-        path="/add/new"
+        path="/add/new/movie"
         component={AddNewMovieConnector}
+      />
+
+      <Route
+        path="/add/new/scene"
+        component={AddNewSceneConnector}
       />
 
       <Route

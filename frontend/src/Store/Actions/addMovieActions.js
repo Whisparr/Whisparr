@@ -45,6 +45,7 @@ export const persistState = [
 // Actions Types
 
 export const LOOKUP_MOVIE = 'addMovie/lookupMovie';
+export const LOOKUP_SCENE = 'addMovie/lookupScene';
 export const ADD_MOVIE = 'addMovie/addMovie';
 export const SET_ADD_MOVIE_VALUE = 'addMovie/setAddMovieValue';
 export const CLEAR_ADD_MOVIE = 'addMovie/clearAddMovie';
@@ -54,6 +55,7 @@ export const SET_ADD_MOVIE_DEFAULT = 'addMovie/setAddMovieDefault';
 // Action Creators
 
 export const lookupMovie = createThunk(LOOKUP_MOVIE);
+export const lookupScene = createThunk(LOOKUP_SCENE);
 export const addMovie = createThunk(ADD_MOVIE);
 export const clearAddMovie = createAction(CLEAR_ADD_MOVIE);
 export const setAddMovieDefault = createAction(SET_ADD_MOVIE_DEFAULT);
@@ -78,7 +80,48 @@ export const actionHandlers = handleThunks({
     }
 
     const { request, abortRequest } = createAjaxRequest({
-      url: '/movie/lookup',
+      url: '/lookup/movie',
+      data: {
+        term: payload.term
+      }
+    });
+
+    abortCurrentRequest = abortRequest;
+
+    request.done((data) => {
+      data = data.map((movie) => ({ ...movie, internalId: movie.id, id: movie.foreignId }));
+
+      dispatch(batchActions([
+        update({ section, data }),
+
+        set({
+          section,
+          isFetching: false,
+          isPopulated: true,
+          error: null
+        })
+      ]));
+    });
+
+    request.fail((xhr) => {
+      dispatch(set({
+        section,
+        isFetching: false,
+        isPopulated: false,
+        error: xhr.aborted ? null : xhr
+      }));
+    });
+  },
+
+  [LOOKUP_SCENE]: function(getState, payload, dispatch) {
+    dispatch(set({ section, isFetching: true }));
+
+    if (abortCurrentRequest) {
+      abortCurrentRequest();
+    }
+
+    const { request, abortRequest } = createAjaxRequest({
+      url: '/lookup/scene',
       data: {
         term: payload.term
       }

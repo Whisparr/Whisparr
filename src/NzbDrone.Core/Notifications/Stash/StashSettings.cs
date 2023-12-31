@@ -28,7 +28,7 @@ namespace NzbDrone.Core.Notifications.Stash
 
         public StashSettings()
         {
-            Port = 9998;
+            Port = 9999;
         }
 
         [FieldDefinition(0, Label = "Host")]

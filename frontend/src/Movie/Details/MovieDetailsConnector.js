@@ -32,14 +32,11 @@ const selectMovieFiles = createSelector(
 
     const hasMovieFiles = !!items.length;
 
-    const sizeOnDisk = items.map((item) => item.size).reduce((prev, curr) => prev + curr, 0);
-
     return {
       isMovieFilesFetching: isFetching,
       isMovieFilesPopulated: isPopulated,
       movieFilesError: error,
-      hasMovieFiles,
-      sizeOnDisk
+      hasMovieFiles
     };
   }
 );
@@ -86,8 +83,7 @@ function createMapStateToProps() {
         isMovieFilesFetching,
         isMovieFilesPopulated,
         movieFilesError,
-        hasMovieFiles,
-        sizeOnDisk
+        hasMovieFiles
       } = movieFiles;
 
       const {
@@ -136,7 +132,6 @@ function createMapStateToProps() {
         movieFilesError,
         extraFilesError,
         hasMovieFiles,
-        sizeOnDisk,
         previousMovie,
         nextMovie,
         isSmallScreen: dimensions.isSmallScreen,

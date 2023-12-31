@@ -633,7 +633,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
 
         private Gender MapGender(string gender)
         {
-            if (gender.IsNotNullOrWhiteSpace())
+            if (gender.IsNullOrWhiteSpace())
             {
                 return Gender.Female;
             }

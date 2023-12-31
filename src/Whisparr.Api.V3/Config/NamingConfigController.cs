@@ -31,8 +31,8 @@ namespace Whisparr.Api.V3.Config
 
             SharedValidator.RuleFor(c => c.StandardMovieFormat).ValidMovieFormat();
             SharedValidator.RuleFor(c => c.MovieFolderFormat).ValidMovieFolderFormat();
-            SharedValidator.RuleFor(c => c.StandardSceneFormat).ValidMovieFormat();
-            SharedValidator.RuleFor(c => c.SceneFolderFormat).ValidMovieFolderFormat();
+            SharedValidator.RuleFor(c => c.StandardSceneFormat).ValidSceneFormat();
+            SharedValidator.RuleFor(c => c.SceneFolderFormat).ValidSceneFolderFormat();
         }
 
         protected override NamingConfigResource GetResourceById(int id)

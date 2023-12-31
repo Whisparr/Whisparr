@@ -29,7 +29,7 @@ namespace NzbDrone.Core.Organizer
             ruleBuilder.SetValidator(new NotEmptyValidator(null));
             ruleBuilder.SetValidator(new IllegalCharactersValidator());
 
-            return ruleBuilder.SetValidator(new RegularExpressionValidator(FileNameBuilder.MovieTitleRegex)).WithMessage("Must contain scene title");
+            return ruleBuilder.SetValidator(new RegularExpressionValidator(FileNameBuilder.SceneTitleRegex)).WithMessage("Must contain scene title");
         }
 
         public static IRuleBuilderOptions<T, string> ValidSceneFormat<T>(this IRuleBuilder<T, string> ruleBuilder)
@@ -37,7 +37,7 @@ namespace NzbDrone.Core.Organizer
             ruleBuilder.SetValidator(new NotEmptyValidator(null));
             ruleBuilder.SetValidator(new IllegalCharactersValidator());
 
-            return ruleBuilder.SetValidator(new RegularExpressionValidator(FileNameBuilder.MovieTitleRegex)).WithMessage("Must contain scene title");
+            return ruleBuilder.SetValidator(new RegularExpressionValidator(FileNameBuilder.SceneTitleRegex)).WithMessage("Must contain scene title");
         }
     }
 

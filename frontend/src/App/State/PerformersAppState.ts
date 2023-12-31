@@ -1,9 +1,11 @@
 import SortDirection from 'Helpers/Props/SortDirection';
 import Performer from 'Performer/Performer';
-import AppSectionState from './AppSectionState';
+import AppSectionState, { AppSectionSaveState } from './AppSectionState';
 import { Filter, FilterBuilderProp } from './AppState';
 
-interface PerformersAppState extends AppSectionState<Performer> {
+interface PerformersAppState
+  extends AppSectionSaveState,
+    AppSectionState<Performer> {
   sortKey: string;
   sortDirection: SortDirection;
   secondarySortKey: string;

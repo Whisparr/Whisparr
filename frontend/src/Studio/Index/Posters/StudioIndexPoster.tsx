@@ -14,6 +14,8 @@ import translate from 'Utilities/String/translate';
 import createStudioIndexItemSelector from '../createStudioIndexItemSelector';
 import selectPosterOptions from './selectPosterOptions';
 import styles from './StudioIndexPoster.css';
+import EditStudioModalConnector from 'Studio/Edit/EditStudioModalConnector';
+import IconButton from 'Components/Link/IconButton';
 
 interface StudioIndexPosterProps {
   studioId: number;
@@ -33,6 +35,7 @@ function StudioIndexPoster(props: StudioIndexPosterProps) {
   );
 
   const { showName } = useSelector(selectPosterOptions);
+  const [isEditStudioModalOpen, setIsEditStudioModalOpen] = useState(false);
 
   const { title, monitored, images, foreignId } = studio;
 
@@ -52,6 +55,14 @@ function StudioIndexPoster(props: StudioIndexPosterProps) {
     setHasPosterError(false);
   }, [setHasPosterError]);
 
+  const onEditStudioPress = useCallback(() => {
+    setIsEditStudioModalOpen(true);
+  }, [setIsEditStudioModalOpen]);
+
+  const onEditStudioModalClose = useCallback(() => {
+    setIsEditStudioModalOpen(false);
+  }, [setIsEditStudioModalOpen]);
+
   const link = `/studio/${foreignId}`;
 
   const elementStyle = {
@@ -70,6 +81,12 @@ function StudioIndexPoster(props: StudioIndexPosterProps) {
         />
 
         <Label className={styles.controls}>
+          <IconButton
+            name={icons.EDIT}
+            title={translate('EditPerformer')}
+            onPress={onEditStudioPress}
+          />
+
           <span className={styles.externalLinks}>
             <Popover
               anchor={<Icon name={icons.EXTERNAL_LINK} size={12} />}
@@ -102,6 +119,12 @@ function StudioIndexPoster(props: StudioIndexPosterProps) {
           {title}
         </div>
       ) : null}
+
+      <EditStudioModalConnector
+        isOpen={isEditStudioModalOpen}
+        studioId={studioId}
+        onModalClose={onEditStudioModalClose}
+      />
     </div>
   );
 }

@@ -26,13 +26,13 @@ function movieListEqual(a, b) {
   return hasDifferentItemsOrOrder(a, b);
 }
 
-const createMovieEqualSelector = createSelectorCreator(
+const createPerformerEqualSelector = createSelectorCreator(
   defaultMemoize,
   movieListEqual
 );
 
 function createPerformerClientSideCollectionItemsSelector(uiSection) {
-  return createMovieEqualSelector(
+  return createPerformerEqualSelector(
     createUnoptimizedSelector(uiSection),
     (performers) => performers
   );

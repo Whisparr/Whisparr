@@ -3,12 +3,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import AppState from 'App/State/AppState';
 import Icon from 'Components/Icon';
 import Label from 'Components/Label';
+import IconButton from 'Components/Link/IconButton';
 import Link from 'Components/Link/Link';
 import MonitorToggleButton from 'Components/MonitorToggleButton';
 import Popover from 'Components/Tooltip/Popover';
 import { icons } from 'Helpers/Props';
 import MovieHeadshot from 'Movie/MovieHeadshot';
 import PerformerDetailsLinks from 'Performer/Details/PerformerDetailsLinks';
+import EditPerformerModalConnector from 'Performer/Edit/EditPerformerModalConnector';
 import { togglePerformerMonitored } from 'Store/Actions/performerActions';
 import translate from 'Utilities/String/translate';
 import createPerformerIndexItemSelector from '../createPerformerIndexItemSelector';
@@ -43,6 +45,8 @@ function PerformerIndexPoster(props: PerformerIndexPosterProps) {
   );
 
   const { showName } = useSelector(selectPosterOptions);
+  const [isEditPerformerModalOpen, setIsEditPerformerModalOpen] =
+    useState(false);
 
   const [hasPosterError, setHasPosterError] = useState(false);
 
@@ -53,6 +57,14 @@ function PerformerIndexPoster(props: PerformerIndexPosterProps) {
   const onPosterLoad = useCallback(() => {
     setHasPosterError(false);
   }, [setHasPosterError]);
+
+  const onEditPerformerPress = useCallback(() => {
+    setIsEditPerformerModalOpen(true);
+  }, [setIsEditPerformerModalOpen]);
+
+  const onEditPerformerModalClose = useCallback(() => {
+    setIsEditPerformerModalOpen(false);
+  }, [setIsEditPerformerModalOpen]);
 
   const link = `/performer/${foreignId}`;
 
@@ -72,6 +84,12 @@ function PerformerIndexPoster(props: PerformerIndexPosterProps) {
         />
 
         <Label className={styles.controls}>
+          <IconButton
+            name={icons.EDIT}
+            title={translate('EditPerformer')}
+            onPress={onEditPerformerPress}
+          />
+
           <span className={styles.externalLinks}>
             <Popover
               anchor={<Icon name={icons.EXTERNAL_LINK} size={12} />}
@@ -104,6 +122,12 @@ function PerformerIndexPoster(props: PerformerIndexPosterProps) {
           {name}
         </div>
       ) : null}
+
+      <EditPerformerModalConnector
+        isOpen={isEditPerformerModalOpen}
+        performerId={performerId}
+        onModalClose={onEditPerformerModalClose}
+      />
     </div>
   );
 }

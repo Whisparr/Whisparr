@@ -68,7 +68,7 @@ function SceneIndexPoster(props: SceneIndexPosterProps) {
     imdbId,
     hasFile,
     isAvailable,
-    studio,
+    studioTitle,
     added,
     year,
     releaseDate,
@@ -243,7 +243,7 @@ function SceneIndexPoster(props: SceneIndexPosterProps) {
       ) : null}
 
       <SceneIndexPosterInfo
-        studio={studio}
+        studio={studioTitle}
         qualityProfile={qualityProfile}
         added={added}
         year={year}

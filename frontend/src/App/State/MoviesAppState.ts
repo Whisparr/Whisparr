@@ -4,7 +4,6 @@ import AppSectionState, {
 } from 'App/State/AppSectionState';
 import Column from 'Components/Table/Column';
 import SortDirection from 'Helpers/Props/SortDirection';
-import MovieIndexMode from 'Movie/Index/MovieIndexMode';
 import Movie from 'Movie/Movie';
 import { Filter, FilterBuilderProp } from './AppState';
 
@@ -14,7 +13,6 @@ export interface MovieIndexAppState {
   secondarySortKey: string;
   secondarySortDirection: SortDirection;
   view: string;
-  indexMode: MovieIndexMode;
 
   posterOptions: {
     detailedProgressBar: boolean;

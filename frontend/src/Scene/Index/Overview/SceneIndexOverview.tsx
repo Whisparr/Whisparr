@@ -77,7 +77,7 @@ function SceneIndexOverview(props: SceneIndexOverviewProps) {
     foreignId,
     tmdbId,
     imdbId,
-    studio,
+    studioTitle,
     sizeOnDisk,
     added,
   } = scene;
@@ -222,7 +222,7 @@ function SceneIndexOverview(props: SceneIndexOverviewProps) {
               height={overviewHeight}
               monitored={monitored}
               qualityProfile={qualityProfile}
-              studio={studio}
+              studio={studioTitle}
               sizeOnDisk={sizeOnDisk}
               added={added}
               path={path}

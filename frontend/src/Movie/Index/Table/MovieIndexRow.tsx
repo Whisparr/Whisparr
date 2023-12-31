@@ -52,7 +52,7 @@ function MovieIndexRow(props: MovieIndexRowProps) {
     titleSlug,
     title,
     collection,
-    studio,
+    studioTitle,
     status,
     originalLanguage,
     added,
@@ -176,7 +176,7 @@ function MovieIndexRow(props: MovieIndexRowProps) {
         if (name === 'studio') {
           return (
             <VirtualTableRowCell key={name} className={styles[name]}>
-              {studio}
+              {studioTitle}
             </VirtualTableRowCell>
           );
         }

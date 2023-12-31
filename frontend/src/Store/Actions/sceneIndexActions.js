@@ -80,12 +80,6 @@ export const defaultState = {
       isModifiable: false
     },
     {
-      name: 'collection',
-      label: () => translate('Collection'),
-      isSortable: true,
-      isVisible: false
-    },
-    {
       name: 'studio',
       label: () => translate('Studio'),
       isSortable: true,
@@ -96,12 +90,6 @@ export const defaultState = {
       label: () => translate('QualityProfile'),
       isSortable: true,
       isVisible: true
-    },
-    {
-      name: 'originalLanguage',
-      label: () => translate('OriginalLanguage'),
-      isSortable: true,
-      isVisible: false
     },
     {
       name: 'added',
@@ -116,20 +104,8 @@ export const defaultState = {
       isVisible: false
     },
     {
-      name: 'inCinemas',
-      label: () => translate('InCinemas'),
-      isSortable: true,
-      isVisible: false
-    },
-    {
-      name: 'digitalRelease',
-      label: () => translate('DigitalRelease'),
-      isSortable: true,
-      isVisible: false
-    },
-    {
-      name: 'physicalRelease',
-      label: () => translate('PhysicalRelease'),
+      name: 'releaseDate',
+      label: () => translate('ReleaseDate'),
       isSortable: true,
       isVisible: false
     },
@@ -170,12 +146,6 @@ export const defaultState = {
       isVisible: false
     },
     {
-      name: 'rottenTomatoesRating',
-      label: () => translate('RottenTomatoesRating'),
-      isSortable: true,
-      isVisible: false
-    },
-    {
       name: 'tags',
       label: () => translate('Tags'),
       isSortable: false,
@@ -193,33 +163,15 @@ export const defaultState = {
     ...sortPredicates,
 
     studio: function(item) {
-      const studio = item.studio;
+      const studio = item.studioTitle;
 
       return studio ? studio.toLowerCase() : '';
-    },
-
-    collection: function(item) {
-      const { collection ={} } = item;
-
-      return collection.title;
-    },
-
-    originalLanguage: function(item) {
-      const { originalLanguage ={} } = item;
-
-      return originalLanguage.name;
     },
 
     tmdbRating: function(item) {
       const { ratings = {} } = item;
 
       return ratings.tmdb ? ratings.tmdb.value : 0;
-    },
-
-    rottenTomatoesRating: function(item) {
-      const { ratings = {} } = item;
-
-      return ratings.rottenTomatoes ? ratings.rottenTomatoes.value : -1;
     }
   },
 
@@ -247,25 +199,6 @@ export const defaultState = {
       type: filterBuilderTypes.STRING
     },
     {
-      name: 'originalLanguage',
-      label: () => translate('OriginalLanguage'),
-      type: filterBuilderTypes.EXACT,
-      optionsSelector: function(items) {
-        const collectionList = items.reduce((acc, scene) => {
-          if (scene.originalLanguage) {
-            acc.push({
-              id: scene.originalLanguage.name,
-              name: scene.originalLanguage.name
-            });
-          }
-
-          return acc;
-        }, []);
-
-        return collectionList.sort(sortByName);
-      }
-    },
-    {
       name: 'status',
       label: () => translate('ReleaseStatus'),
       type: filterBuilderTypes.EXACT,
@@ -277,10 +210,10 @@ export const defaultState = {
       type: filterBuilderTypes.EXACT,
       optionsSelector: function(items) {
         const tagList = items.reduce((acc, scene) => {
-          if (scene.studio) {
+          if (scene.studioTitle) {
             acc.push({
-              id: scene.studio,
-              name: scene.studio
+              id: scene.studioTitle,
+              name: scene.studioTitle
             });
           }
 
@@ -288,25 +221,6 @@ export const defaultState = {
         }, []);
 
         return tagList.sort(sortByName);
-      }
-    },
-    {
-      name: 'collection',
-      label: () => translate('Collection'),
-      type: filterBuilderTypes.ARRAY,
-      optionsSelector: function(items) {
-        const collectionList = items.reduce((acc, scene) => {
-          if (scene.collection && scene.collection.title) {
-            acc.push({
-              id: scene.collection.title,
-              name: scene.collection.title
-            });
-          }
-
-          return acc;
-        }, []);
-
-        return collectionList.sort(sortByName);
       }
     },
     {
@@ -327,20 +241,8 @@ export const defaultState = {
       type: filterBuilderTypes.NUMBER
     },
     {
-      name: 'inCinemas',
-      label: () => translate('InCinemas'),
-      type: filterBuilderTypes.DATE,
-      valueType: filterBuilderValueTypes.DATE
-    },
-    {
-      name: 'physicalRelease',
-      label: () => translate('PhysicalRelease'),
-      type: filterBuilderTypes.DATE,
-      valueType: filterBuilderValueTypes.DATE
-    },
-    {
-      name: 'digitalRelease',
-      label: () => translate('DigitalRelease'),
+      name: 'releaseDate',
+      label: () => translate('ReleaseDate'),
       type: filterBuilderTypes.DATE,
       valueType: filterBuilderValueTypes.DATE
     },
@@ -387,11 +289,6 @@ export const defaultState = {
     {
       name: 'tmdbVotes',
       label: () => translate('TmdbVotes'),
-      type: filterBuilderTypes.NUMBER
-    },
-    {
-      name: 'rottenTomatoesRating',
-      label: () => translate('RottenTomatoesRating'),
       type: filterBuilderTypes.NUMBER
     },
     {

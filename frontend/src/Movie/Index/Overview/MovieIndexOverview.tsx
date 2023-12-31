@@ -77,7 +77,7 @@ function MovieIndexOverview(props: MovieIndexOverviewProps) {
     foreignId,
     tmdbId,
     imdbId,
-    studio,
+    studioTitle,
     sizeOnDisk,
     added,
   } = movie;
@@ -222,7 +222,7 @@ function MovieIndexOverview(props: MovieIndexOverviewProps) {
               height={overviewHeight}
               monitored={monitored}
               qualityProfile={qualityProfile}
-              studio={studio}
+              studio={studioTitle}
               sizeOnDisk={sizeOnDisk}
               added={added}
               path={path}

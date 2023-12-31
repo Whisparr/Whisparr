@@ -7,8 +7,10 @@ import translate from 'Utilities/String/translate';
 import { updateItem } from './baseActions';
 import createFetchHandler from './Creators/createFetchHandler';
 import createHandleActions from './Creators/createHandleActions';
+import createSaveProviderHandler from './Creators/createSaveProviderHandler';
 import createSetClientSideCollectionFilterReducer from './Creators/Reducers/createSetClientSideCollectionFilterReducer';
 import createSetClientSideCollectionSortReducer from './Creators/Reducers/createSetClientSideCollectionSortReducer';
+import createSetSettingValueReducer from './Creators/Reducers/createSetSettingValueReducer';
 
 //
 // Variables
@@ -30,11 +32,20 @@ export const defaultState = {
   secondarySortKey: 'sortTitle',
   secondarySortDirection: sortDirections.ASCENDING,
   view: 'posters',
+  pendingChanges: {},
 
   posterOptions: {
     detailedProgressBar: false,
     size: 'large',
     showTitle: false
+  },
+
+  defaults: {
+    rootFolderPath: '',
+    monitor: 'movieOnly',
+    qualityProfileId: 0,
+    searchForMovie: true,
+    tags: []
   },
 
   selectedFilterKey: 'all',
@@ -58,6 +69,7 @@ export const defaultState = {
 };
 
 export const persistState = [
+  'studios.defaults',
   'studios.sortKey',
   'studios.sortDirection',
   'studios.selectedFilterKey',
@@ -69,6 +81,9 @@ export const persistState = [
 // Actions Types
 
 export const FETCH_STUDIOS = 'studios/fetchStudios';
+export const SAVE_STUDIO = 'studios/saveStudio';
+export const SAVE_STUDIOS = 'studios/saveStudios';
+export const SET_STUDIO_VALUE = 'studios/setStudioValue';
 
 export const TOGGLE_STUDIO_MONITORED = 'studios/toggleStudioMonitored';
 
@@ -80,6 +95,8 @@ export const SET_STUDIO_POSTER_OPTION = 'studios/setStudioPosterOption';
 // Action Creators
 
 export const fetchStudios = createThunk(FETCH_STUDIOS);
+export const saveStudio = createThunk(SAVE_STUDIO);
+export const saveStudios = createThunk(SAVE_STUDIOS);
 
 export const toggleStudioMonitored = createThunk(TOGGLE_STUDIO_MONITORED);
 
@@ -87,11 +104,19 @@ export const setStudioSort = createAction(SET_STUDIO_SORT);
 export const setStudioFilter = createAction(SET_STUDIO_FILTER);
 export const setStudioPosterOption = createAction(SET_STUDIO_POSTER_OPTION);
 
+export const setStudioValue = createAction(SET_STUDIO_VALUE, (payload) => {
+  return {
+    section,
+    ...payload
+  };
+});
+
 //
 // Action Handlers
 
 export const actionHandlers = handleThunks({
   [FETCH_STUDIOS]: createFetchHandler(section, '/studio'),
+  [SAVE_STUDIO]: createSaveProviderHandler(section, '/studio'),
   [TOGGLE_STUDIO_MONITORED]: (getState, payload, dispatch) => {
     const {
       studioId: id,
@@ -142,6 +167,7 @@ export const reducers = createHandleActions({
 
   [SET_STUDIO_SORT]: createSetClientSideCollectionSortReducer(section),
   [SET_STUDIO_FILTER]: createSetClientSideCollectionFilterReducer(section),
+  [SET_STUDIO_VALUE]: createSetSettingValueReducer(section),
 
   [SET_STUDIO_POSTER_OPTION]: function(state, { payload }) {
     const posterOptions = state.posterOptions;

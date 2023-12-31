@@ -80,12 +80,6 @@ export const defaultState = {
       isModifiable: false
     },
     {
-      name: 'collection',
-      label: () => translate('Collection'),
-      isSortable: true,
-      isVisible: false
-    },
-    {
       name: 'studio',
       label: () => translate('Studio'),
       isSortable: true,
@@ -96,12 +90,6 @@ export const defaultState = {
       label: () => translate('QualityProfile'),
       isSortable: true,
       isVisible: true
-    },
-    {
-      name: 'originalLanguage',
-      label: () => translate('OriginalLanguage'),
-      isSortable: true,
-      isVisible: false
     },
     {
       name: 'added',
@@ -116,20 +104,8 @@ export const defaultState = {
       isVisible: false
     },
     {
-      name: 'inCinemas',
-      label: () => translate('InCinemas'),
-      isSortable: true,
-      isVisible: false
-    },
-    {
-      name: 'digitalRelease',
-      label: () => translate('DigitalRelease'),
-      isSortable: true,
-      isVisible: false
-    },
-    {
-      name: 'physicalRelease',
-      label: () => translate('PhysicalRelease'),
+      name: 'releaseDate',
+      label: () => translate('ReleaseDate'),
       isSortable: true,
       isVisible: false
     },
@@ -166,12 +142,6 @@ export const defaultState = {
     {
       name: 'tmdbRating',
       label: () => translate('TmdbRating'),
-      isSortable: true,
-      isVisible: false
-    },
-    {
-      name: 'rottenTomatoesRating',
-      label: () => translate('RottenTomatoesRating'),
       isSortable: true,
       isVisible: false
     },
@@ -247,25 +217,6 @@ export const defaultState = {
       type: filterBuilderTypes.STRING
     },
     {
-      name: 'originalLanguage',
-      label: () => translate('OriginalLanguage'),
-      type: filterBuilderTypes.EXACT,
-      optionsSelector: function(items) {
-        const collectionList = items.reduce((acc, movie) => {
-          if (movie.originalLanguage) {
-            acc.push({
-              id: movie.originalLanguage.name,
-              name: movie.originalLanguage.name
-            });
-          }
-
-          return acc;
-        }, []);
-
-        return collectionList.sort(sortByName);
-      }
-    },
-    {
       name: 'status',
       label: () => translate('ReleaseStatus'),
       type: filterBuilderTypes.EXACT,
@@ -277,10 +228,10 @@ export const defaultState = {
       type: filterBuilderTypes.EXACT,
       optionsSelector: function(items) {
         const tagList = items.reduce((acc, movie) => {
-          if (movie.studio) {
+          if (movie.studioTitle) {
             acc.push({
-              id: movie.studio,
-              name: movie.studio
+              id: movie.studioTitle,
+              name: movie.studioTitle
             });
           }
 
@@ -288,25 +239,6 @@ export const defaultState = {
         }, []);
 
         return tagList.sort(sortByName);
-      }
-    },
-    {
-      name: 'collection',
-      label: () => translate('Collection'),
-      type: filterBuilderTypes.ARRAY,
-      optionsSelector: function(items) {
-        const collectionList = items.reduce((acc, movie) => {
-          if (movie.collection && movie.collection.title) {
-            acc.push({
-              id: movie.collection.title,
-              name: movie.collection.title
-            });
-          }
-
-          return acc;
-        }, []);
-
-        return collectionList.sort(sortByName);
       }
     },
     {
@@ -327,20 +259,8 @@ export const defaultState = {
       type: filterBuilderTypes.NUMBER
     },
     {
-      name: 'inCinemas',
-      label: () => translate('InCinemas'),
-      type: filterBuilderTypes.DATE,
-      valueType: filterBuilderValueTypes.DATE
-    },
-    {
-      name: 'physicalRelease',
-      label: () => translate('PhysicalRelease'),
-      type: filterBuilderTypes.DATE,
-      valueType: filterBuilderValueTypes.DATE
-    },
-    {
-      name: 'digitalRelease',
-      label: () => translate('DigitalRelease'),
+      name: 'releaseDate',
+      label: () => translate('ReleaseDate'),
       type: filterBuilderTypes.DATE,
       valueType: filterBuilderValueTypes.DATE
     },
@@ -387,11 +307,6 @@ export const defaultState = {
     {
       name: 'tmdbVotes',
       label: () => translate('TmdbVotes'),
-      type: filterBuilderTypes.NUMBER
-    },
-    {
-      name: 'rottenTomatoesRating',
-      label: () => translate('RottenTomatoesRating'),
       type: filterBuilderTypes.NUMBER
     },
     {

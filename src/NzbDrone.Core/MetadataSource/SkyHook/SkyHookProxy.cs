@@ -623,12 +623,31 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             var newPerformer = new Performer
             {
                 Name = performer.Name,
-                Gender = performer.Gender,
+                Gender = MapGender(performer.Gender),
                 ForeignId = performer.ForeignIds.StashId,
                 Images = performer.Images.Select(MapImage).ToList()
             };
 
             return newPerformer;
+        }
+
+        private Gender MapGender(string gender)
+        {
+            switch (gender.ToUpperInvariant())
+            {
+                case "TRANSGENDER_FEMALE":
+                    return Gender.TransFemale;
+                case "TRANSGENDER_MALE":
+                    return Gender.TransMale;
+                case "NON_BINARY":
+                    return Gender.NonBinary;
+                case "INTERSEX":
+                    return Gender.Intersex;
+                case "MALE":
+                    return Gender.Male;
+                default:
+                    return Gender.Female;
+            }
         }
 
         private Studio MapStudio(StudioResource studio)

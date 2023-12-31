@@ -111,7 +111,7 @@ $hoverScale: 1.05;
 
   position: relative;
   display: block;
-  background-color: var(--defaultColor);
+  background-color: #374151;
 }
 
 .nextAiring {

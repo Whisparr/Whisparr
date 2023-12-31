@@ -48,6 +48,13 @@ $hoverScale: 1.05;
   font-size: $smallFontSize;
 }
 
+.monitorToggleButton {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 3;
+}
+
 .controls {
   position: absolute;
   bottom: 10px;

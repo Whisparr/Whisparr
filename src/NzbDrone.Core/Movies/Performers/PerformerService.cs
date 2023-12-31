@@ -10,6 +10,7 @@ namespace NzbDrone.Core.Movies.Performers
         List<Performer> AddPerformers(List<Performer> performers);
         Performer GetById(int id);
         List<Performer> GetAllPerformers();
+        Performer Update(Performer performer);
         void RemovePerformer(Performer performer);
     }
 
@@ -50,6 +51,11 @@ namespace NzbDrone.Core.Movies.Performers
         public List<Performer> GetAllPerformers()
         {
             return _performerRepo.All().ToList();
+        }
+
+        public Performer Update(Performer performer)
+        {
+            return _performerRepo.Update(performer);
         }
 
         public void RemovePerformer(Performer performer)

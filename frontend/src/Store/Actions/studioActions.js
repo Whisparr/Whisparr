@@ -1,7 +1,10 @@
+import _ from 'lodash';
 import { createAction } from 'redux-actions';
 import { filterBuilderTypes, filterBuilderValueTypes, sortDirections } from 'Helpers/Props';
 import { createThunk, handleThunks } from 'Store/thunks';
+import createAjaxRequest from 'Utilities/createAjaxRequest';
 import translate from 'Utilities/String/translate';
+import { updateItem } from './baseActions';
 import createFetchHandler from './Creators/createFetchHandler';
 import createHandleActions from './Creators/createHandleActions';
 import createSetClientSideCollectionFilterReducer from './Creators/Reducers/createSetClientSideCollectionFilterReducer';
@@ -67,6 +70,8 @@ export const persistState = [
 
 export const FETCH_STUDIOS = 'studios/fetchStudios';
 
+export const TOGGLE_STUDIO_MONITORED = 'studios/toggleStudioMonitored';
+
 export const SET_STUDIO_SORT = 'studios/setStudioSort';
 export const SET_STUDIO_FILTER = 'studios/setStudioFilter';
 export const SET_STUDIO_POSTER_OPTION = 'studios/setStudioPosterOption';
@@ -76,6 +81,8 @@ export const SET_STUDIO_POSTER_OPTION = 'studios/setStudioPosterOption';
 
 export const fetchStudios = createThunk(FETCH_STUDIOS);
 
+export const toggleStudioMonitored = createThunk(TOGGLE_STUDIO_MONITORED);
+
 export const setStudioSort = createAction(SET_STUDIO_SORT);
 export const setStudioFilter = createAction(SET_STUDIO_FILTER);
 export const setStudioPosterOption = createAction(SET_STUDIO_POSTER_OPTION);
@@ -84,7 +91,48 @@ export const setStudioPosterOption = createAction(SET_STUDIO_POSTER_OPTION);
 // Action Handlers
 
 export const actionHandlers = handleThunks({
-  [FETCH_STUDIOS]: createFetchHandler(section, '/studio')
+  [FETCH_STUDIOS]: createFetchHandler(section, '/studio'),
+  [TOGGLE_STUDIO_MONITORED]: (getState, payload, dispatch) => {
+    const {
+      studioId: id,
+      monitored
+    } = payload;
+
+    const performer = _.find(getState().studios.items, { id });
+
+    dispatch(updateItem({
+      id,
+      section,
+      isSaving: true
+    }));
+
+    const promise = createAjaxRequest({
+      url: `/studio/${id}`,
+      method: 'PUT',
+      data: JSON.stringify({
+        ...performer,
+        monitored
+      }),
+      dataType: 'json'
+    }).request;
+
+    promise.done((data) => {
+      dispatch(updateItem({
+        id,
+        section,
+        isSaving: false,
+        monitored
+      }));
+    });
+
+    promise.fail((xhr) => {
+      dispatch(updateItem({
+        id,
+        section,
+        isSaving: false
+      }));
+    });
+  }
 });
 
 //

@@ -193,6 +193,62 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             return movie;
         }
 
+        public List<string> GetPerformerScenes(string stashId)
+        {
+            var httpRequest = _whisparrMetadata.Create()
+                                             .SetSegment("route", "performer")
+                                             .Resource($"{stashId}\\scenes")
+                                             .Build();
+
+            httpRequest.AllowAutoRedirect = true;
+            httpRequest.SuppressHttpError = true;
+
+            var httpResponse = _httpClient.Get<List<string>>(httpRequest);
+            var scenes = httpResponse.Resource;
+
+            if (httpResponse.HasHttpError)
+            {
+                if (httpResponse.StatusCode == HttpStatusCode.NotFound)
+                {
+                    throw new MovieNotFoundException(stashId);
+                }
+                else
+                {
+                    throw new HttpException(httpRequest, httpResponse);
+                }
+            }
+
+            return scenes;
+        }
+
+        public List<string> GetStudioScenes(string stashId)
+        {
+            var httpRequest = _whisparrMetadata.Create()
+                                             .SetSegment("route", "site")
+                                             .Resource($"{stashId}\\scenes")
+                                             .Build();
+
+            httpRequest.AllowAutoRedirect = true;
+            httpRequest.SuppressHttpError = true;
+
+            var httpResponse = _httpClient.Get<List<string>>(httpRequest);
+            var scenes = httpResponse.Resource;
+
+            if (httpResponse.HasHttpError)
+            {
+                if (httpResponse.StatusCode == HttpStatusCode.NotFound)
+                {
+                    throw new MovieNotFoundException(stashId);
+                }
+                else
+                {
+                    throw new HttpException(httpRequest, httpResponse);
+                }
+            }
+
+            return scenes;
+        }
+
         public MovieMetadata MapMovie(MovieResource resource)
         {
             var movie = new MovieMetadata();

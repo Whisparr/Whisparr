@@ -67,5 +67,14 @@ namespace Whisparr.Api.V3.Performers
                 Tags = resource.Tags
             };
         }
+
+        public static Performer ToModel(this PerformerResource resource, Performer performer)
+        {
+            var updatedPerformer = resource.ToModel();
+
+            performer.ApplyChanges(updatedPerformer);
+
+            return performer;
+        }
     }
 }

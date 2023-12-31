@@ -8,7 +8,7 @@ function StudioLogo(props) {
   return (
     <MovieImage
       {...props}
-      coverType="screenshot"
+      coverType="clearlogo"
       placeholder={posterPlaceholder}
     />
   );

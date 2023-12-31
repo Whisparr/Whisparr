@@ -1,11 +1,13 @@
 import React, { useCallback, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import AppState from 'App/State/AppState';
 import Icon from 'Components/Icon';
 import Label from 'Components/Label';
 import Link from 'Components/Link/Link';
+import MonitorToggleButton from 'Components/MonitorToggleButton';
 import Popover from 'Components/Tooltip/Popover';
 import { icons } from 'Helpers/Props';
+import { toggleStudioMonitored } from 'Store/Actions/studioActions';
 import StudioDetailsLinks from 'Studio/Details/StudioDetailsLinks';
 import StudioLogo from 'Studio/StudioLogo';
 import translate from 'Utilities/String/translate';
@@ -32,7 +34,13 @@ function StudioIndexPoster(props: StudioIndexPosterProps) {
 
   const { showName } = useSelector(selectPosterOptions);
 
-  const { title, images, foreignId } = studio;
+  const { title, monitored, images, foreignId } = studio;
+
+  const dispatch = useDispatch();
+
+  const onMonitoredPress = useCallback(() => {
+    dispatch(toggleStudioMonitored({ studioId, monitored: !monitored }));
+  }, [studioId, monitored, dispatch]);
 
   const [hasPosterError, setHasPosterError] = useState(false);
 
@@ -54,6 +62,13 @@ function StudioIndexPoster(props: StudioIndexPosterProps) {
   return (
     <div className={styles.content}>
       <div className={styles.posterContainer} title={title}>
+        <MonitorToggleButton
+          className={styles.monitorToggleButton}
+          monitored={monitored}
+          size={20}
+          onPress={onMonitoredPress}
+        />
+
         <Label className={styles.controls}>
           <span className={styles.externalLinks}>
             <Popover

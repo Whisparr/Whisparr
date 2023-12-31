@@ -71,5 +71,14 @@ namespace Whisparr.Api.V3.Studios
                 Tags = resource.Tags
             };
         }
+
+        public static Studio ToModel(this StudioResource resource, Studio studio)
+        {
+            var updatedStudio = resource.ToModel();
+
+            studio.ApplyChanges(updatedStudio);
+
+            return studio;
+        }
     }
 }

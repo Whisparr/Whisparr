@@ -14,9 +14,9 @@ import TagListConnector from 'Components/TagListConnector';
 import TmdbRating from 'Components/TmdbRating';
 import Tooltip from 'Components/Tooltip/Tooltip';
 import { icons, kinds } from 'Helpers/Props';
+import EditMovieModalConnector from 'Movie/Edit/EditMovieModalConnector';
 import DeleteSceneModal from 'Scene/Delete/DeleteSceneModal';
 import SceneDetailsLinks from 'Scene/Details/SceneDetailsLinks';
-import EditSceneModalConnector from 'Scene/Edit/EditSceneModalConnector';
 import createSceneIndexItemSelector from 'Scene/Index/createSceneIndexItemSelector';
 import SceneTitleLink from 'Scene/SceneTitleLink';
 import { executeCommand } from 'Store/Actions/commandActions';
@@ -354,11 +354,11 @@ function SceneIndexRow(props: SceneIndexRowProps) {
         return null;
       })}
 
-      <EditSceneModalConnector
+      <EditMovieModalConnector
         isOpen={isEditSceneModalOpen}
-        sceneId={sceneId}
+        movieId={sceneId}
         onModalClose={onEditSceneModalClose}
-        onDeleteScenePress={onDeleteScenePress}
+        onDeleteMoviePress={onDeleteScenePress}
       />
 
       <DeleteSceneModal

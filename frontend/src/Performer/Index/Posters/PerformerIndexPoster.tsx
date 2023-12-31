@@ -1,13 +1,15 @@
 import React, { useCallback, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import AppState from 'App/State/AppState';
 import Icon from 'Components/Icon';
 import Label from 'Components/Label';
 import Link from 'Components/Link/Link';
+import MonitorToggleButton from 'Components/MonitorToggleButton';
 import Popover from 'Components/Tooltip/Popover';
 import { icons } from 'Helpers/Props';
 import MovieHeadshot from 'Movie/MovieHeadshot';
 import PerformerDetailsLinks from 'Performer/Details/PerformerDetailsLinks';
+import { togglePerformerMonitored } from 'Store/Actions/performerActions';
 import translate from 'Utilities/String/translate';
 import createPerformerIndexItemSelector from '../createPerformerIndexItemSelector';
 import selectPosterOptions from './selectPosterOptions';
@@ -28,13 +30,19 @@ function PerformerIndexPoster(props: PerformerIndexPosterProps) {
     createPerformerIndexItemSelector(performerId)
   );
 
+  const { name, monitored, images, foreignId } = performer;
+
+  const dispatch = useDispatch();
+
+  const onMonitoredPress = useCallback(() => {
+    dispatch(togglePerformerMonitored({ performerId, monitored: !monitored }));
+  }, [performerId, monitored, dispatch]);
+
   const safeForWorkMode = useSelector(
     (state: AppState) => state.settings.safeForWorkMode
   );
 
   const { showName } = useSelector(selectPosterOptions);
-
-  const { name, images, foreignId } = performer;
 
   const [hasPosterError, setHasPosterError] = useState(false);
 
@@ -56,6 +64,13 @@ function PerformerIndexPoster(props: PerformerIndexPosterProps) {
   return (
     <div className={styles.content}>
       <div className={styles.posterContainer} title={name}>
+        <MonitorToggleButton
+          className={styles.monitorToggleButton}
+          monitored={monitored}
+          size={20}
+          onPress={onMonitoredPress}
+        />
+
         <Label className={styles.controls}>
           <span className={styles.externalLinks}>
             <Popover

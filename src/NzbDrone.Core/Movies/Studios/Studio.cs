@@ -25,5 +25,15 @@ namespace NzbDrone.Core.Movies.Studios
         public bool SearchOnAdd { get; set; }
         public DateTime? LastInfoSync { get; set; }
         public HashSet<int> Tags { get; set; }
+
+        public void ApplyChanges(Studio otherStudio)
+        {
+            QualityProfileId = otherStudio.QualityProfileId;
+
+            Monitored = otherStudio.Monitored;
+
+            RootFolderPath = otherStudio.RootFolderPath;
+            Tags = otherStudio.Tags;
+        }
     }
 }

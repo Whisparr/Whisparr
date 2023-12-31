@@ -11,9 +11,9 @@ import RottenTomatoRating from 'Components/RottenTomatoRating';
 import TmdbRating from 'Components/TmdbRating';
 import Popover from 'Components/Tooltip/Popover';
 import { icons } from 'Helpers/Props';
+import EditMovieModalConnector from 'Movie/Edit/EditMovieModalConnector';
 import DeleteSceneModal from 'Scene/Delete/DeleteSceneModal';
 import SceneDetailsLinks from 'Scene/Details/SceneDetailsLinks';
-import EditSceneModalConnector from 'Scene/Edit/EditSceneModalConnector';
 import SceneIndexProgressBar from 'Scene/Index/ProgressBar/SceneIndexProgressBar';
 import SceneIndexPosterSelect from 'Scene/Index/Select/SceneIndexPosterSelect';
 import ScenePoster from 'Scene/ScenePoster';
@@ -263,11 +263,11 @@ function SceneIndexPoster(props: SceneIndexPosterProps) {
         showRottenTomatoesRating={showRottenTomatoesRating}
       />
 
-      <EditSceneModalConnector
+      <EditMovieModalConnector
         isOpen={isEditSceneModalOpen}
-        sceneId={sceneId}
+        movieId={sceneId}
         onModalClose={onEditSceneModalClose}
-        onDeleteScenePress={onDeleteScenePress}
+        onDeleteMoviePress={onDeleteScenePress}
       />
 
       <DeleteSceneModal

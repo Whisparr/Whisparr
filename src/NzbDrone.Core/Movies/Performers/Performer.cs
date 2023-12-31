@@ -25,6 +25,16 @@ namespace NzbDrone.Core.Movies.Performers
         public bool SearchOnAdd { get; set; }
         public DateTime? LastInfoSync { get; set; }
         public HashSet<int> Tags { get; set; }
+
+        public void ApplyChanges(Performer otherPerformer)
+        {
+            QualityProfileId = otherPerformer.QualityProfileId;
+
+            Monitored = otherPerformer.Monitored;
+
+            RootFolderPath = otherPerformer.RootFolderPath;
+            Tags = otherPerformer.Tags;
+        }
     }
 
     public enum Gender

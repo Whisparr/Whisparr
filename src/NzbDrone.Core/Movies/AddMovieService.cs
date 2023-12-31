@@ -64,6 +64,7 @@ namespace NzbDrone.Core.Movies
         {
             var added = DateTime.UtcNow;
             var moviesToAdd = new List<Movie>();
+            var existingMovieForeignIds = _movieService.AllMovieForeignIds();
 
             foreach (var m in newMovies)
             {
@@ -75,6 +76,18 @@ namespace NzbDrone.Core.Movies
                     movie = SetPropertiesAndValidate(movie);
 
                     movie.Added = added;
+
+                    if (existingMovieForeignIds.Any(f => f == movie.ForeignId))
+                    {
+                        _logger.Debug("Foreign ID {0} was not added due to validation failure: Movie already exists in database", m.ForeignId);
+                        continue;
+                    }
+
+                    if (moviesToAdd.Any(f => f.ForeignId == movie.ForeignId))
+                    {
+                        _logger.Debug("Foreign ID {0} was not added due to validation failure: Movie already exists on list", m.ForeignId);
+                        continue;
+                    }
 
                     moviesToAdd.Add(movie);
                 }

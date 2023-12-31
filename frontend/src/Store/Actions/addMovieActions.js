@@ -159,7 +159,8 @@ export const actionHandlers = handleThunks({
 
     const foreignId = payload.foreignId;
     const items = getState().addMovie.items;
-    const newMovie = getNewMovie(_.cloneDeep(_.find(items, { foreignId })), payload);
+    const itemToAdd = _.find(items, { foreignId });
+    const newMovie = getNewMovie(_.cloneDeep(itemToAdd.movie), payload);
     newMovie.id = 0;
 
     const promise = createAjaxRequest({

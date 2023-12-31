@@ -41,6 +41,23 @@ const selectMovieFiles = createSelector(
   }
 );
 
+const selectMovieCredits = createSelector(
+  (state) => state.movieCredits,
+  (movieCredits) => {
+    const {
+      isFetching,
+      isPopulated,
+      error
+    } = movieCredits;
+
+    return {
+      isMovieCreditsFetching: isFetching,
+      isMovieCreditsPopulated: isPopulated,
+      movieCreditsError: error
+    };
+  }
+);
+
 const selectExtraFiles = createSelector(
   (state) => state.extraFiles,
   (extraFiles) => {

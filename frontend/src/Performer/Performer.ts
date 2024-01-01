@@ -3,8 +3,9 @@ import { Image } from 'Movie/Movie';
 
 interface Performer extends ModelBase {
   foreignId: string;
-  name: string;
+  fullName: string;
   monitored: boolean;
+  rootFolderPath: string;
   images: Image[];
   gender: string;
   sortTitle: string;

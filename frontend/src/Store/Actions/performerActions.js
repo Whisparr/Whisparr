@@ -11,6 +11,7 @@ import createSaveProviderHandler from './Creators/createSaveProviderHandler';
 import createSetClientSideCollectionFilterReducer from './Creators/Reducers/createSetClientSideCollectionFilterReducer';
 import createSetClientSideCollectionSortReducer from './Creators/Reducers/createSetClientSideCollectionSortReducer';
 import createSetSettingValueReducer from './Creators/Reducers/createSetSettingValueReducer';
+import createSetTableOptionReducer from './Creators/Reducers/createSetTableOptionReducer';
 
 //
 // Variables
@@ -27,9 +28,9 @@ export const defaultState = {
   items: [],
   isSaving: false,
   saveError: null,
-  sortKey: 'sortTitle',
+  sortKey: 'fullName',
   sortDirection: sortDirections.ASCENDING,
-  secondarySortKey: 'sortTitle',
+  secondarySortKey: 'fullName',
   secondarySortDirection: sortDirections.ASCENDING,
   view: 'posters',
   pendingChanges: {},
@@ -40,6 +41,9 @@ export const defaultState = {
     showName: false
   },
 
+  tableOptions: {
+  },
+
   defaults: {
     rootFolderPath: '',
     monitor: 'movieOnly',
@@ -47,6 +51,48 @@ export const defaultState = {
     searchForMovie: true,
     tags: []
   },
+
+  columns: [
+    {
+      name: 'status',
+      columnLabel: () => translate('Monitored'),
+      isSortable: true,
+      isVisible: true,
+      isModifiable: false
+    },
+    {
+      name: 'fullName',
+      label: () => translate('PerformerName'),
+      isSortable: true,
+      isVisible: true,
+      isModifiable: false
+    },
+    {
+      name: 'gender',
+      label: () => translate('Gender'),
+      isSortable: true,
+      isVisible: true,
+      isModifiable: false
+    },
+    {
+      name: 'qualityProfileId',
+      label: () => translate('QualityProfile'),
+      isSortable: true,
+      isVisible: true
+    },
+    {
+      name: 'rootFolderPath',
+      label: () => translate('RootFolder'),
+      isSortable: true,
+      isVisible: true
+    },
+    {
+      name: 'actions',
+      columnLabel: () => translate('Actions'),
+      isVisible: true,
+      isModifiable: false
+    }
+  ],
 
   sortPredicates: {
     gender: function(item) {
@@ -80,6 +126,8 @@ export const persistState = [
   'performers.defaults',
   'performers.sortKey',
   'performers.sortDirection',
+  'performers.view',
+  'performers.columns',
   'performers.selectedFilterKey',
   'performers.customFilters',
   'performers.posterOptions'
@@ -97,6 +145,8 @@ export const TOGGLE_PERFORMER_MONITORED = 'performers/togglePerformerMonitored';
 
 export const SET_PERFORMER_SORT = 'performers/setPerformerSort';
 export const SET_PERFORMER_FILTER = 'performers/setPerformerFilter';
+export const SET_PERFORMER_VIEW = 'performers/setPerformerView';
+export const SET_PERFORMER_TABLE_OPTION = 'performers/setPerformerTableOption';
 export const SET_PERFORMER_POSTER_OPTION = 'performers/setPerformerPosterOption';
 
 //
@@ -110,6 +160,8 @@ export const togglePerformerMonitored = createThunk(TOGGLE_PERFORMER_MONITORED);
 
 export const setPerformerSort = createAction(SET_PERFORMER_SORT);
 export const setPerformerFilter = createAction(SET_PERFORMER_FILTER);
+export const setPerformerView = createAction(SET_PERFORMER_VIEW);
+export const setPerformerTableOption = createAction(SET_PERFORMER_TABLE_OPTION);
 export const setPerformerPosterOption = createAction(SET_PERFORMER_POSTER_OPTION);
 
 export const setPerformerValue = createAction(SET_PERFORMER_VALUE, (payload) => {
@@ -175,6 +227,11 @@ export const reducers = createHandleActions({
 
   [SET_PERFORMER_SORT]: createSetClientSideCollectionSortReducer(section),
   [SET_PERFORMER_FILTER]: createSetClientSideCollectionFilterReducer(section),
+  [SET_PERFORMER_VIEW]: function(state, { payload }) {
+    return Object.assign({}, state, { view: payload.view });
+  },
+
+  [SET_PERFORMER_TABLE_OPTION]: createSetTableOptionReducer(section),
   [SET_PERFORMER_VALUE]: createSetSettingValueReducer(section),
 
   [SET_PERFORMER_POSTER_OPTION]: function(state, { payload }) {

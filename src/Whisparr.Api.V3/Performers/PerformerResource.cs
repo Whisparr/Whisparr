@@ -8,7 +8,7 @@ namespace Whisparr.Api.V3.Performers
 {
     public class PerformerResource : RestResource
     {
-        public string Name { get; set; }
+        public string FullName { get; set; }
         public Gender Gender { get; set; }
         public string ForeignId { get; set; }
         public List<MediaCover> Images { get; set; }
@@ -33,7 +33,7 @@ namespace Whisparr.Api.V3.Performers
                 Id = model.Id,
                 ForeignId = model.ForeignId,
                 Gender = model.Gender,
-                Name = model.Name,
+                FullName = model.Name,
                 Monitored = model.Monitored,
                 Images = model.Images,
                 QualityProfileId = model.QualityProfileId,
@@ -59,7 +59,7 @@ namespace Whisparr.Api.V3.Performers
             {
                 Id = resource.Id,
                 ForeignId = resource.ForeignId,
-                Name = resource.Name,
+                Name = resource.FullName,
                 Monitored = resource.Monitored,
                 QualityProfileId = resource.QualityProfileId,
                 RootFolderPath = resource.RootFolderPath,

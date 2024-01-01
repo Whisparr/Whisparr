@@ -31,7 +31,7 @@ function PerformerIndexPoster(props: PerformerIndexPosterProps) {
     createPerformerIndexItemSelector(performerId)
   );
 
-  const { name, images, foreignId } = performer;
+  const { fullName, images, foreignId } = performer;
 
   const safeForWorkMode = useSelector(
     (state: AppState) => state.settings.safeForWorkMode
@@ -68,7 +68,7 @@ function PerformerIndexPoster(props: PerformerIndexPosterProps) {
 
   return (
     <div className={styles.content}>
-      <div className={styles.posterContainer} title={name}>
+      <div className={styles.posterContainer} title={fullName}>
         {isSelectMode ? <MovieIndexPosterSelect movieId={performerId} /> : null}
 
         <Label className={styles.controls}>
@@ -100,14 +100,14 @@ function PerformerIndexPoster(props: PerformerIndexPosterProps) {
           />
 
           {hasPosterError ? (
-            <div className={styles.overlayTitle}>{name}</div>
+            <div className={styles.overlayTitle}>{fullName}</div>
           ) : null}
         </Link>
       </div>
 
       {showName ? (
-        <div className={styles.title} title={name}>
-          {name}
+        <div className={styles.title} title={fullName}>
+          {fullName}
         </div>
       ) : null}
 

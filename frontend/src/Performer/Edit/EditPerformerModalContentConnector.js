@@ -49,7 +49,7 @@ function createMapStateToProps() {
       const settings = selectSettings(movieSettings, pendingChanges, saveError);
 
       return {
-        name: performer.name,
+        fullName: performer.fullName,
         images: performer.images,
         overview: performer.overview,
         isSaving,

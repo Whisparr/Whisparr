@@ -1,3 +1,4 @@
+import Column from 'Components/Table/Column';
 import SortDirection from 'Helpers/Props/SortDirection';
 import Performer from 'Performer/Performer';
 import AppSectionState, { AppSectionSaveState } from './AppSectionState';
@@ -21,6 +22,7 @@ interface PerformersAppState
   selectedFilterKey: string;
   filterBuilderProps: FilterBuilderProp<Performer>[];
   filters: Filter[];
+  columns: Column[];
 }
 
 export default PerformersAppState;

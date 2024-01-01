@@ -18,6 +18,7 @@ import PageToolbar from 'Components/Page/Toolbar/PageToolbar';
 import PageToolbarButton from 'Components/Page/Toolbar/PageToolbarButton';
 import PageToolbarSection from 'Components/Page/Toolbar/PageToolbarSection';
 import PageToolbarSeparator from 'Components/Page/Toolbar/PageToolbarSeparator';
+import TableOptionsModalWrapper from 'Components/Table/TableOptions/TableOptionsModalWrapper';
 import withScrollPosition from 'Components/withScrollPosition';
 import { align, icons, kinds } from 'Helpers/Props';
 import SortDirection from 'Helpers/Props/SortDirection';
@@ -29,6 +30,8 @@ import NoPerformer from 'Performer/NoPerformer';
 import {
   setPerformerFilter,
   setPerformerSort,
+  setPerformerTableOption,
+  setPerformerView,
 } from 'Store/Actions/performerActions';
 import { fetchQueueDetails } from 'Store/Actions/queueActions';
 import scrollPositions from 'Store/scrollPositions';
@@ -37,10 +40,21 @@ import createPerformerClientSideCollectionItemsSelector from 'Store/Selectors/cr
 import translate from 'Utilities/String/translate';
 import PerformerIndexFilterMenu from './Menus/PerformerIndexFilterMenu';
 import PerformerIndexSortMenu from './Menus/PerformerIndexSortMenu';
+import PerformerIndexViewMenu from './Menus/PerformerIndexViewMenu';
 import PerformerIndexPosterOptionsModal from './Posters/Options/PerformerIndexPosterOptionsModal';
 import PerformerIndexPosters from './Posters/PerformerIndexPosters';
 import PerformerIndexSelectFooter from './Select/PerformerIndexSelectFooter';
+import PerformerIndexTable from './Table/PerformerIndexTable';
+import PerformerIndexTableOptions from './Table/PerformerIndexTableOptions';
 import styles from './PerformerIndex.css';
+
+function getViewComponent(view: string) {
+  if (view === 'posters') {
+    return PerformerIndexPosters;
+  }
+
+  return PerformerIndexTable;
+}
 
 interface PerformerIndexProps {
   initialScrollTop?: number;
@@ -53,6 +67,7 @@ const PerformerIndex = withScrollPosition((props: PerformerIndexProps) => {
     error,
     totalItems,
     items,
+    columns,
     selectedFilterKey,
     filters,
     customFilters,
@@ -79,6 +94,24 @@ const PerformerIndex = withScrollPosition((props: PerformerIndexProps) => {
   const onSelectModePress = useCallback(() => {
     setIsSelectMode(!isSelectMode);
   }, [isSelectMode, setIsSelectMode]);
+
+  const onTableOptionChange = useCallback(
+    (payload: unknown) => {
+      dispatch(setPerformerTableOption(payload));
+    },
+    [dispatch]
+  );
+
+  const onViewSelect = useCallback(
+    (value: string) => {
+      dispatch(setPerformerView({ view: value }));
+
+      if (scrollerRef.current) {
+        scrollerRef.current.scrollTo(0, 0);
+      }
+    },
+    [scrollerRef, dispatch]
+  );
 
   const onSortSelect = useCallback(
     (value: string) => {
@@ -119,7 +152,7 @@ const PerformerIndex = withScrollPosition((props: PerformerIndexProps) => {
 
   const jumpBarItems = useMemo(() => {
     // Reset if not sorting by sortTitle
-    if (sortKey !== 'sortTitle') {
+    if (sortKey !== 'fullName') {
       return {
         order: [],
       };
@@ -153,7 +186,7 @@ const PerformerIndex = withScrollPosition((props: PerformerIndexProps) => {
       order,
     };
   }, [items, sortKey, sortDirection]);
-  const ViewComponent = PerformerIndexPosters;
+  const ViewComponent = useMemo(() => getViewComponent(view), [view]);
 
   const isLoaded = !!(!error && isPopulated && items.length);
   const hasNoPerformer = !totalItems;
@@ -184,14 +217,33 @@ const PerformerIndex = withScrollPosition((props: PerformerIndexProps) => {
             alignContent={align.RIGHT}
             collapseButtons={false}
           >
-            <PageToolbarButton
-              label={translate('Options')}
-              iconName={icons.POSTER}
-              isDisabled={hasNoPerformer}
-              onPress={onOptionsPress}
-            />
+            {view === 'table' ? (
+              <TableOptionsModalWrapper
+                columns={columns}
+                optionsComponent={PerformerIndexTableOptions}
+                onTableOptionChange={onTableOptionChange}
+              >
+                <PageToolbarButton
+                  label={translate('Options')}
+                  iconName={icons.TABLE}
+                />
+              </TableOptionsModalWrapper>
+            ) : (
+              <PageToolbarButton
+                label={translate('Options')}
+                iconName={view === 'posters' ? icons.POSTER : icons.OVERVIEW}
+                isDisabled={hasNoPerformer}
+                onPress={onOptionsPress}
+              />
+            )}
 
             <PageToolbarSeparator />
+
+            <PerformerIndexViewMenu
+              view={view}
+              isDisabled={hasNoPerformer}
+              onViewSelect={onViewSelect}
+            />
 
             <PerformerIndexSortMenu
               sortKey={sortKey}

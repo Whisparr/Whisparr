@@ -10,7 +10,7 @@ function createUnoptimizedSelector(uiSection) {
         return {
           id: s.id,
           foreignId: s.foreignId,
-          sortTitle: s.name
+          sortTitle: s.fullName
         };
       });
 

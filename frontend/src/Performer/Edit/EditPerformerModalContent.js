@@ -33,9 +33,8 @@ class EditPerformerModalContent extends Component {
 
   render() {
     const {
-      name,
+      fullName,
       images,
-      overview,
       item,
       isSaving,
       onInputChange,
@@ -56,7 +55,7 @@ class EditPerformerModalContent extends Component {
     return (
       <ModalContent onModalClose={onModalClose}>
         <ModalHeader>
-          {translate('Edit')} - {name}
+          {translate('Edit')} - {fullName}
         </ModalHeader>
 
         <ModalBody>
@@ -73,10 +72,6 @@ class EditPerformerModalContent extends Component {
             }
 
             <div className={styles.info}>
-              <div className={styles.overview}>
-                {overview}
-              </div>
-
               <Form
                 {...otherProps}
               >
@@ -163,8 +158,7 @@ class EditPerformerModalContent extends Component {
 
 EditPerformerModalContent.propTypes = {
   performerId: PropTypes.number.isRequired,
-  name: PropTypes.string.isRequired,
-  overview: PropTypes.string.isRequired,
+  fullName: PropTypes.string.isRequired,
   images: PropTypes.arrayOf(PropTypes.object).isRequired,
   item: PropTypes.object.isRequired,
   isSaving: PropTypes.bool.isRequired,

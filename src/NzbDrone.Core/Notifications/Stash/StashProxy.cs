@@ -49,8 +49,6 @@ namespace NzbDrone.Core.Notifications.Stash
                 Query = $@"mutation {{
                             metadataScan(
                             input: {{
-                                useFileMetadata: false,
-                                stripFileExtension: true,
                                 scanGenerateCovers: {(settings.GenerateCovers ? "true" : "false")},
                                 scanGeneratePreviews: {(settings.GeneratePreviews ? "true" : "false")},
                                 scanGenerateImagePreviews: {(settings.GenerateImagePreviews ? "true" : "false")},

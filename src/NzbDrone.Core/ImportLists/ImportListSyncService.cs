@@ -109,6 +109,7 @@ namespace NzbDrone.Core.ImportLists
                     QualityProfileId = importList.QualityProfileId,
                     Tags = importList.Tags,
                     ForeignId = report.ForeignId,
+                    TmdbId = report.TmdbId,
                     Title = report.Title,
                     Year = report.Year,
                     ImdbId = report.ImdbId,

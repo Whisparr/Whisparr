@@ -114,7 +114,7 @@ namespace NzbDrone.Core.Movies
 
             try
             {
-                movie.MovieMetadata = int.TryParse(newMovie.ForeignId, out var tmdbId) ? _movieInfo.GetMovieInfo(newMovie.TmdbId).Item1 : _movieInfo.GetSceneInfo(newMovie.ForeignId).Item1;
+                movie.MovieMetadata = int.TryParse(newMovie.ForeignId, out var tmdbId) ? _movieInfo.GetMovieInfo(tmdbId).Item1 : _movieInfo.GetSceneInfo(newMovie.ForeignId).Item1;
             }
             catch (MovieNotFoundException)
             {

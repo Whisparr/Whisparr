@@ -8,7 +8,7 @@ namespace NzbDrone.Core.Datastore.Migration
     {
         protected override void MainDbUpgrade()
         {
-            Create.Index("IX_MovieMetadata_CollectionTmdbId").OnTable("MovieMetadata").OnColumn("StudioForeignId");
+            Create.Index("IX_MovieMetadata_StudioForeignId").OnTable("MovieMetadata").OnColumn("StudioForeignId");
             Create.Index("IX_MovieTranslations_MovieMetadataId").OnTable("MovieTranslations").OnColumn("MovieMetadataId");
         }
     }

@@ -106,13 +106,15 @@ namespace NzbDrone.Core.Organizer
                 return GetOriginalTitle(movieFile, false);
             }
 
-            var pattern = namingConfig.StandardMovieFormat;
+            var itemType = movie.MovieMetadata.Value.ItemType;
+
+            var pattern = itemType == ItemType.Movie ? namingConfig.StandardMovieFormat : namingConfig.StandardSceneFormat;
             var tokenHandlers = new Dictionary<string, Func<TokenMatch, string>>(FileNameBuilderTokenEqualityComparer.Instance);
             var multipleTokens = TitleRegex.Matches(pattern).Count > 1;
 
             UpdateMediaInfoIfNeeded(pattern, movieFile, movie);
 
-            if (movie.MovieMetadata.Value.ItemType == ItemType.Movie)
+            if (itemType == ItemType.Movie)
             {
                 AddMovieTokens(tokenHandlers, movie);
             }
@@ -120,7 +122,7 @@ namespace NzbDrone.Core.Organizer
             {
                 AddSiteTokens(tokenHandlers, movie);
                 AddSceneTokens(tokenHandlers, movie);
-                AddSceneTitlePlaceholderTokens(tokenHandlers);
+                AddSceneTitlePlaceholderTokens(tokenHandlers, movie);
             }
 
             AddReleaseDateTokens(tokenHandlers, movie.Year);
@@ -176,11 +178,23 @@ namespace NzbDrone.Core.Organizer
 
             var movieFile = movie.MovieFile;
 
-            var pattern = namingConfig.MovieFolderFormat;
+            var itemType = movie.MovieMetadata.Value.ItemType;
+
+            var pattern = itemType == ItemType.Movie ? namingConfig.MovieFolderFormat : namingConfig.SceneFolderFormat;
             var tokenHandlers = new Dictionary<string, Func<TokenMatch, string>>(FileNameBuilderTokenEqualityComparer.Instance);
             var multipleTokens = TitleRegex.Matches(pattern).Count > 1;
 
-            AddMovieTokens(tokenHandlers, movie);
+            if (itemType == ItemType.Movie)
+            {
+                AddMovieTokens(tokenHandlers, movie);
+            }
+            else
+            {
+                AddSiteTokens(tokenHandlers, movie);
+                AddSceneTokens(tokenHandlers, movie);
+                AddSceneTitlePlaceholderTokens(tokenHandlers, movie);
+            }
+
             AddReleaseDateTokens(tokenHandlers, movie.Year);
             AddIdTokens(tokenHandlers, movie);
 
@@ -311,10 +325,12 @@ namespace NzbDrone.Core.Organizer
             }
         }
 
-        private void AddSceneTitlePlaceholderTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers)
+        private void AddSceneTitlePlaceholderTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Movie movie)
         {
-            tokenHandlers["{Scene Title}"] = m => null;
-            tokenHandlers["{Scene CleanTitle}"] = m => null;
+            tokenHandlers["{Scene Title}"] = m => GetLanguageTitle(movie, m.CustomFormat);
+            tokenHandlers["{Scene CleanTitle}"] = m => CleanTitle(GetLanguageTitle(movie, m.CustomFormat));
+            tokenHandlers["{Scene TitleThe}"] = m => TitleThe(movie.Title);
+            tokenHandlers["{Scene TitleFirstCharacter}"] = m => TitleFirstCharacter(TitleThe(GetLanguageTitle(movie, m.CustomFormat)));
         }
 
         private void AddSceneTitleTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Movie movie, int maxLength)

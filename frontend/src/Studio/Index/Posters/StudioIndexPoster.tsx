@@ -3,19 +3,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import AppState from 'App/State/AppState';
 import Icon from 'Components/Icon';
 import Label from 'Components/Label';
+import IconButton from 'Components/Link/IconButton';
 import Link from 'Components/Link/Link';
 import MonitorToggleButton from 'Components/MonitorToggleButton';
 import Popover from 'Components/Tooltip/Popover';
 import { icons } from 'Helpers/Props';
 import { toggleStudioMonitored } from 'Store/Actions/studioActions';
 import StudioDetailsLinks from 'Studio/Details/StudioDetailsLinks';
+import EditStudioModalConnector from 'Studio/Edit/EditStudioModalConnector';
 import StudioLogo from 'Studio/StudioLogo';
 import translate from 'Utilities/String/translate';
 import createStudioIndexItemSelector from '../createStudioIndexItemSelector';
 import selectPosterOptions from './selectPosterOptions';
 import styles from './StudioIndexPoster.css';
-import EditStudioModalConnector from 'Studio/Edit/EditStudioModalConnector';
-import IconButton from 'Components/Link/IconButton';
 
 interface StudioIndexPosterProps {
   studioId: number;

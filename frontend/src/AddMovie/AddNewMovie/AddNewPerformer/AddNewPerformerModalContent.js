@@ -78,14 +78,11 @@ class AddNewPerformerModalContent extends Component {
                     type={inputTypes.ROOT_FOLDER_SELECT}
                     name="rootFolderPath"
                     valueOptions={{
-                      movieFolder: folder,
                       isWindows
                     }}
                     selectedValueOptions={{
-                      movieFolder: folder,
                       isWindows
                     }}
-                    helpText={translate('SubfolderWillBeCreatedAutomaticallyInterp', [folder])}
                     onChange={onInputChange}
                     {...rootFolderPath}
                   />

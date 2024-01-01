@@ -30,7 +30,7 @@ const links = [
         to: '/movies/add/import'
       },
       {
-        title: () => translate('AddMovie'),
+        title: () => translate('AddNew'),
         to: '/add/new/movie'
       }
     ]
@@ -50,7 +50,7 @@ const links = [
         to: '/scenes/add/import'
       },
       {
-        title: () => translate('AddScene'),
+        title: () => translate('AddNew'),
         to: '/add/new/scene'
       }
     ]

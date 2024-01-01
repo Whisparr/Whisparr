@@ -26,5 +26,7 @@
     "AptUpdater": "Usa apt per installare l'aggiornamento",
     "BackupNow": "Esegui backup ora",
     "Backups": "Backups",
-    "AddImportList": "Aggiungi lista da importare"
+    "AddImportList": "Aggiungi lista da importare",
+    "AddCondition": "Aggiungi Condizione",
+    "CloneCondition": "Duplica Condizione"
 }

@@ -12,10 +12,10 @@ import TmdbRating from 'Components/TmdbRating';
 import Popover from 'Components/Tooltip/Popover';
 import { icons } from 'Helpers/Props';
 import EditMovieModalConnector from 'Movie/Edit/EditMovieModalConnector';
+import MovieIndexPosterSelect from 'Movie/Index/Select/MovieIndexPosterSelect';
 import DeleteSceneModal from 'Scene/Delete/DeleteSceneModal';
 import SceneDetailsLinks from 'Scene/Details/SceneDetailsLinks';
 import SceneIndexProgressBar from 'Scene/Index/ProgressBar/SceneIndexProgressBar';
-import SceneIndexPosterSelect from 'Scene/Index/Select/SceneIndexPosterSelect';
 import ScenePoster from 'Scene/ScenePoster';
 import { executeCommand } from 'Store/Actions/commandActions';
 import createUISettingsSelector from 'Store/Selectors/createUISettingsSelector';
@@ -137,7 +137,7 @@ function SceneIndexPoster(props: SceneIndexPosterProps) {
   return (
     <div className={styles.content}>
       <div className={styles.posterContainer} title={title}>
-        {isSelectMode ? <SceneIndexPosterSelect sceneId={sceneId} /> : null}
+        {isSelectMode ? <MovieIndexPosterSelect movieId={sceneId} /> : null}
 
         <Label className={styles.controls}>
           <SpinnerIconButton

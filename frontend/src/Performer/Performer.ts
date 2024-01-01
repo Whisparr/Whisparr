@@ -8,6 +8,7 @@ interface Performer extends ModelBase {
   images: Image[];
   gender: string;
   sortTitle: string;
+  tags: number[];
 }
 
 export default Performer;

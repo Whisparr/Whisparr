@@ -197,14 +197,14 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
         {
             var httpRequest = _whisparrMetadata.Create()
                                              .SetSegment("route", "performer")
-                                             .Resource($"{stashId}\\scenes")
+                                             .Resource($"{stashId}\\works")
                                              .Build();
 
             httpRequest.AllowAutoRedirect = true;
             httpRequest.SuppressHttpError = true;
 
-            var httpResponse = _httpClient.Get<List<string>>(httpRequest);
-            var scenes = httpResponse.Resource;
+            var httpResponse = _httpClient.Get<PerformerWorksResource>(httpRequest);
+            var scenes = httpResponse.Resource.Scenes;
 
             if (httpResponse.HasHttpError)
             {

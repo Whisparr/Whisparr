@@ -21,6 +21,10 @@ import PageToolbarSeparator from 'Components/Page/Toolbar/PageToolbarSeparator';
 import withScrollPosition from 'Components/withScrollPosition';
 import { align, icons, kinds } from 'Helpers/Props';
 import SortDirection from 'Helpers/Props/SortDirection';
+import MovieIndexSelectAllButton from 'Movie/Index/Select/MovieIndexSelectAllButton';
+import MovieIndexSelectAllMenuItem from 'Movie/Index/Select/MovieIndexSelectAllMenuItem';
+import MovieIndexSelectModeButton from 'Movie/Index/Select/MovieIndexSelectModeButton';
+import MovieIndexSelectModeMenuItem from 'Movie/Index/Select/MovieIndexSelectModeMenuItem';
 import NoPerformer from 'Performer/NoPerformer';
 import {
   setPerformerFilter,
@@ -35,6 +39,7 @@ import PerformerIndexFilterMenu from './Menus/PerformerIndexFilterMenu';
 import PerformerIndexSortMenu from './Menus/PerformerIndexSortMenu';
 import PerformerIndexPosterOptionsModal from './Posters/Options/PerformerIndexPosterOptionsModal';
 import PerformerIndexPosters from './Posters/PerformerIndexPosters';
+import PerformerIndexSelectFooter from './Select/PerformerIndexSelectFooter';
 import styles from './PerformerIndex.css';
 
 interface PerformerIndexProps {
@@ -65,10 +70,15 @@ const PerformerIndex = withScrollPosition((props: PerformerIndexProps) => {
   const [jumpToCharacter, setJumpToCharacter] = useState<string | undefined>(
     undefined
   );
+  const [isSelectMode, setIsSelectMode] = useState(false);
 
   useEffect(() => {
     dispatch(fetchQueueDetails({ all: true }));
   }, [dispatch]);
+
+  const onSelectModePress = useCallback(() => {
+    setIsSelectMode(!isSelectMode);
+  }, [isSelectMode, setIsSelectMode]);
 
   const onSortSelect = useCallback(
     (value: string) => {
@@ -152,6 +162,24 @@ const PerformerIndex = withScrollPosition((props: PerformerIndexProps) => {
     <SelectProvider items={items}>
       <PageContent>
         <PageToolbar>
+          <PageToolbarSection>
+            <MovieIndexSelectModeButton
+              label={
+                isSelectMode
+                  ? translate('StopSelecting')
+                  : translate('EditPerformers')
+              }
+              iconName={isSelectMode ? icons.SERIES_ENDED : icons.EDIT}
+              isSelectMode={isSelectMode}
+              overflowComponent={MovieIndexSelectModeMenuItem}
+              onPress={onSelectModePress}
+            />
+            <MovieIndexSelectAllButton
+              label="SelectAll"
+              isSelectMode={isSelectMode}
+              overflowComponent={MovieIndexSelectAllMenuItem}
+            />
+          </PageToolbarSection>
           <PageToolbarSection
             alignContent={align.RIGHT}
             collapseButtons={false}
@@ -208,7 +236,7 @@ const PerformerIndex = withScrollPosition((props: PerformerIndexProps) => {
                   sortDirection={sortDirection}
                   jumpToCharacter={jumpToCharacter}
                   isSmallScreen={isSmallScreen}
-                  isSelectMode={false}
+                  isSelectMode={isSelectMode}
                 />
               </div>
             ) : null}
@@ -225,6 +253,8 @@ const PerformerIndex = withScrollPosition((props: PerformerIndexProps) => {
             />
           ) : null}
         </div>
+
+        {isSelectMode ? <PerformerIndexSelectFooter /> : null}
 
         <PerformerIndexPosterOptionsModal
           isOpen={isOptionsModalOpen}

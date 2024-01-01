@@ -1,17 +1,16 @@
 import React, { useCallback, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import AppState from 'App/State/AppState';
 import Icon from 'Components/Icon';
 import Label from 'Components/Label';
 import IconButton from 'Components/Link/IconButton';
 import Link from 'Components/Link/Link';
-import MonitorToggleButton from 'Components/MonitorToggleButton';
 import Popover from 'Components/Tooltip/Popover';
 import { icons } from 'Helpers/Props';
+import MovieIndexPosterSelect from 'Movie/Index/Select/MovieIndexPosterSelect';
 import MovieHeadshot from 'Movie/MovieHeadshot';
 import PerformerDetailsLinks from 'Performer/Details/PerformerDetailsLinks';
 import EditPerformerModalConnector from 'Performer/Edit/EditPerformerModalConnector';
-import { togglePerformerMonitored } from 'Store/Actions/performerActions';
 import translate from 'Utilities/String/translate';
 import createPerformerIndexItemSelector from '../createPerformerIndexItemSelector';
 import selectPosterOptions from './selectPosterOptions';
@@ -26,19 +25,13 @@ interface PerformerIndexPosterProps {
 }
 
 function PerformerIndexPoster(props: PerformerIndexPosterProps) {
-  const { performerId, posterWidth, posterHeight } = props;
+  const { performerId, isSelectMode, posterWidth, posterHeight } = props;
 
   const { performer } = useSelector(
     createPerformerIndexItemSelector(performerId)
   );
 
-  const { name, monitored, images, foreignId } = performer;
-
-  const dispatch = useDispatch();
-
-  const onMonitoredPress = useCallback(() => {
-    dispatch(togglePerformerMonitored({ performerId, monitored: !monitored }));
-  }, [performerId, monitored, dispatch]);
+  const { name, images, foreignId } = performer;
 
   const safeForWorkMode = useSelector(
     (state: AppState) => state.settings.safeForWorkMode
@@ -76,12 +69,7 @@ function PerformerIndexPoster(props: PerformerIndexPosterProps) {
   return (
     <div className={styles.content}>
       <div className={styles.posterContainer} title={name}>
-        <MonitorToggleButton
-          className={styles.monitorToggleButton}
-          monitored={monitored}
-          size={20}
-          onPress={onMonitoredPress}
-        />
+        {isSelectMode ? <MovieIndexPosterSelect movieId={performerId} /> : null}
 
         <Label className={styles.controls}>
           <IconButton

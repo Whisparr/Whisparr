@@ -10,10 +10,10 @@ import SpinnerIconButton from 'Components/Link/SpinnerIconButton';
 import Popover from 'Components/Tooltip/Popover';
 import { icons } from 'Helpers/Props';
 import EditMovieModalConnector from 'Movie/Edit/EditMovieModalConnector';
+import MovieIndexPosterSelect from 'Movie/Index/Select/MovieIndexPosterSelect';
 import DeleteSceneModal from 'Scene/Delete/DeleteSceneModal';
 import SceneDetailsLinks from 'Scene/Details/SceneDetailsLinks';
 import SceneIndexProgressBar from 'Scene/Index/ProgressBar/SceneIndexProgressBar';
-import SceneIndexPosterSelect from 'Scene/Index/Select/SceneIndexPosterSelect';
 import ScenePoster from 'Scene/ScenePoster';
 import { executeCommand } from 'Store/Actions/commandActions';
 import dimensions from 'Styles/Variables/dimensions';
@@ -141,7 +141,7 @@ function SceneIndexOverview(props: SceneIndexOverviewProps) {
       <div className={styles.content}>
         <div className={styles.poster}>
           <div className={styles.posterContainer}>
-            {isSelectMode ? <SceneIndexPosterSelect sceneId={sceneId} /> : null}
+            {isSelectMode ? <MovieIndexPosterSelect movieId={sceneId} /> : null}
             <Link className={styles.link} style={elementStyle} to={link}>
               <ScenePoster
                 blur={safeForWorkMode}

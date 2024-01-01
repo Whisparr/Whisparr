@@ -21,6 +21,10 @@ import PageToolbarSeparator from 'Components/Page/Toolbar/PageToolbarSeparator';
 import withScrollPosition from 'Components/withScrollPosition';
 import { align, icons, kinds } from 'Helpers/Props';
 import SortDirection from 'Helpers/Props/SortDirection';
+import MovieIndexSelectAllButton from 'Movie/Index/Select/MovieIndexSelectAllButton';
+import MovieIndexSelectAllMenuItem from 'Movie/Index/Select/MovieIndexSelectAllMenuItem';
+import MovieIndexSelectModeButton from 'Movie/Index/Select/MovieIndexSelectModeButton';
+import MovieIndexSelectModeMenuItem from 'Movie/Index/Select/MovieIndexSelectModeMenuItem';
 import { fetchQueueDetails } from 'Store/Actions/queueActions';
 import { setStudioFilter, setStudioSort } from 'Store/Actions/studioActions';
 import scrollPositions from 'Store/scrollPositions';
@@ -32,6 +36,7 @@ import StudioIndexFilterMenu from './Menus/StudioIndexFilterMenu';
 import StudioIndexSortMenu from './Menus/StudioIndexSortMenu';
 import StudioIndexPosterOptionsModal from './Posters/Options/StudioIndexPosterOptionsModal';
 import StudioIndexPosters from './Posters/StudioIndexPosters';
+import StudioIndexSelectFooter from './Select/StudioIndexSelectFooter';
 import styles from './StudioIndex.css';
 
 interface StudioIndexProps {
@@ -62,10 +67,15 @@ const StudioIndex = withScrollPosition((props: StudioIndexProps) => {
   const [jumpToCharacter, setJumpToCharacter] = useState<string | undefined>(
     undefined
   );
+  const [isSelectMode, setIsSelectMode] = useState(false);
 
   useEffect(() => {
     dispatch(fetchQueueDetails({ all: true }));
   }, [dispatch]);
+
+  const onSelectModePress = useCallback(() => {
+    setIsSelectMode(!isSelectMode);
+  }, [isSelectMode, setIsSelectMode]);
 
   const onSortSelect = useCallback(
     (value: string) => {
@@ -149,6 +159,24 @@ const StudioIndex = withScrollPosition((props: StudioIndexProps) => {
     <SelectProvider items={items}>
       <PageContent>
         <PageToolbar>
+          <PageToolbarSection>
+            <MovieIndexSelectModeButton
+              label={
+                isSelectMode
+                  ? translate('StopSelecting')
+                  : translate('EditPerformers')
+              }
+              iconName={isSelectMode ? icons.SERIES_ENDED : icons.EDIT}
+              isSelectMode={isSelectMode}
+              overflowComponent={MovieIndexSelectModeMenuItem}
+              onPress={onSelectModePress}
+            />
+            <MovieIndexSelectAllButton
+              label="SelectAll"
+              isSelectMode={isSelectMode}
+              overflowComponent={MovieIndexSelectAllMenuItem}
+            />
+          </PageToolbarSection>
           <PageToolbarSection
             alignContent={align.RIGHT}
             collapseButtons={false}
@@ -205,7 +233,7 @@ const StudioIndex = withScrollPosition((props: StudioIndexProps) => {
                   sortDirection={sortDirection}
                   jumpToCharacter={jumpToCharacter}
                   isSmallScreen={isSmallScreen}
-                  isSelectMode={false}
+                  isSelectMode={isSelectMode}
                 />
               </div>
             ) : null}
@@ -222,6 +250,8 @@ const StudioIndex = withScrollPosition((props: StudioIndexProps) => {
             />
           ) : null}
         </div>
+
+        {isSelectMode ? <StudioIndexSelectFooter /> : null}
 
         <StudioIndexPosterOptionsModal
           isOpen={isOptionsModalOpen}

@@ -1,9 +1,9 @@
 import SortDirection from 'Helpers/Props/SortDirection';
 import Studio from 'Studio/Studio';
-import AppSectionState from './AppSectionState';
+import AppSectionState, { AppSectionSaveState } from './AppSectionState';
 import { Filter, FilterBuilderProp } from './AppState';
 
-interface StudiosAppState extends AppSectionState<Studio> {
+interface StudiosAppState extends AppSectionSaveState, AppSectionState<Studio> {
   sortKey: string;
   sortDirection: SortDirection;
   secondarySortKey: string;

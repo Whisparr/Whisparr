@@ -3,7 +3,6 @@
 interface CssExports {
   'actions': string;
   'added': string;
-  'collection': string;
   'genres': string;
   'movieStatus': string;
   'originalLanguage': string;

@@ -51,7 +51,6 @@ function MovieIndexRow(props: MovieIndexRowProps) {
     monitored,
     titleSlug,
     title,
-    collection,
     studioTitle,
     status,
     originalLanguage,
@@ -161,14 +160,6 @@ function MovieIndexRow(props: MovieIndexRowProps) {
           return (
             <VirtualTableRowCell key={name} className={styles[name]}>
               <MovieTitleLink titleSlug={titleSlug} title={title} />
-            </VirtualTableRowCell>
-          );
-        }
-
-        if (name === 'collection') {
-          return (
-            <VirtualTableRowCell key={name} className={styles[name]}>
-              {collection ? collection.title : null}
             </VirtualTableRowCell>
           );
         }

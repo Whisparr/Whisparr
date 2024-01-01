@@ -24,6 +24,10 @@ import withScrollPosition from 'Components/withScrollPosition';
 import { align, icons, kinds } from 'Helpers/Props';
 import SortDirection from 'Helpers/Props/SortDirection';
 import InteractiveImportModal from 'InteractiveImport/InteractiveImportModal';
+import MovieIndexSelectAllButton from 'Movie/Index/Select/MovieIndexSelectAllButton';
+import MovieIndexSelectAllMenuItem from 'Movie/Index/Select/MovieIndexSelectAllMenuItem';
+import MovieIndexSelectModeButton from 'Movie/Index/Select/MovieIndexSelectModeButton';
+import MovieIndexSelectModeMenuItem from 'Movie/Index/Select/MovieIndexSelectModeMenuItem';
 import NoScene from 'Scene/NoScene';
 import { executeCommand } from 'Store/Actions/commandActions';
 import { fetchQueueDetails } from 'Store/Actions/queueActions';
@@ -48,11 +52,7 @@ import SceneIndexPosters from './Posters/SceneIndexPosters';
 import SceneIndexFooter from './SceneIndexFooter';
 import SceneIndexRefreshSceneButton from './SceneIndexRefreshSceneButton';
 import SceneIndexSearchButton from './SceneIndexSearchButton';
-import SceneIndexSelectAllButton from './Select/SceneIndexSelectAllButton';
-import SceneIndexSelectAllMenuItem from './Select/SceneIndexSelectAllMenuItem';
 import SceneIndexSelectFooter from './Select/SceneIndexSelectFooter';
-import SceneIndexSelectModeButton from './Select/SceneIndexSelectModeButton';
-import SceneIndexSelectModeMenuItem from './Select/SceneIndexSelectModeMenuItem';
 import SceneIndexTable from './Table/SceneIndexTable';
 import SceneIndexTableOptions from './Table/SceneIndexTableOptions';
 import styles from './SceneIndex.css';
@@ -260,7 +260,7 @@ const SceneIndex = withScrollPosition((props: SceneIndexProps) => {
 
             <PageToolbarSeparator />
 
-            <SceneIndexSelectModeButton
+            <MovieIndexSelectModeButton
               label={
                 isSelectMode
                   ? translate('StopSelecting')
@@ -268,14 +268,14 @@ const SceneIndex = withScrollPosition((props: SceneIndexProps) => {
               }
               iconName={isSelectMode ? icons.SERIES_ENDED : icons.EDIT}
               isSelectMode={isSelectMode}
-              overflowComponent={SceneIndexSelectModeMenuItem}
+              overflowComponent={MovieIndexSelectModeMenuItem}
               onPress={onSelectModePress}
             />
 
-            <SceneIndexSelectAllButton
+            <MovieIndexSelectAllButton
               label="SelectAll"
               isSelectMode={isSelectMode}
-              overflowComponent={SceneIndexSelectAllMenuItem}
+              overflowComponent={MovieIndexSelectAllMenuItem}
             />
           </PageToolbarSection>
 

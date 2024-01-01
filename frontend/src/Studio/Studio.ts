@@ -7,6 +7,7 @@ interface Studio extends ModelBase {
   monitored: boolean;
   images: Image[];
   sortTitle: string;
+  tags: number[];
 }
 
 export default Studio;

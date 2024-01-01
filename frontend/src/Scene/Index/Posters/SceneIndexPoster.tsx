@@ -64,8 +64,6 @@ function SceneIndexPoster(props: SceneIndexPosterProps) {
     status,
     images,
     foreignId,
-    tmdbId,
-    imdbId,
     hasFile,
     isAvailable,
     studioTitle,
@@ -167,7 +165,7 @@ function SceneIndexPoster(props: SceneIndexPosterProps) {
             <Popover
               anchor={<Icon name={icons.EXTERNAL_LINK} size={12} />}
               title={translate('Links')}
-              body={<SceneDetailsLinks tmdbId={tmdbId} imdbId={imdbId} />}
+              body={<SceneDetailsLinks foreignId={foreignId} />}
             />
           </span>
         </Label>

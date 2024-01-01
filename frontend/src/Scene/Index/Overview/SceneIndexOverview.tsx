@@ -75,8 +75,6 @@ function SceneIndexOverview(props: SceneIndexOverviewProps) {
     hasFile,
     isAvailable,
     foreignId,
-    tmdbId,
-    imdbId,
     studioTitle,
     sizeOnDisk,
     added,
@@ -179,7 +177,7 @@ function SceneIndexOverview(props: SceneIndexOverviewProps) {
                 <Popover
                   anchor={<Icon name={icons.EXTERNAL_LINK} size={12} />}
                   title={translate('Links')}
-                  body={<SceneDetailsLinks tmdbId={tmdbId} imdbId={imdbId} />}
+                  body={<SceneDetailsLinks foreignId={foreignId} />}
                 />
               </span>
 

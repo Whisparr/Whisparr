@@ -8,21 +8,34 @@ import styles from './StudioDetailsLinks.css';
 
 function StudioDetailsLinks(props) {
   const {
-    foreignId
+    foreignId,
+    website
   } = props;
 
   return (
     <div className={styles.links}>
       <Link
         className={styles.link}
-        to={`https://letterboxd.com/tmdb/${foreignId}`}
+        to={website}
       >
         <Label
           className={styles.linkLabel}
           kind={kinds.INFO}
           size={sizes.LARGE}
         >
-          {translate('Letterboxd')}
+          {translate('Homepage')}
+        </Label>
+      </Link>
+      <Link
+        className={styles.link}
+        to={`https://stashdb.org/studios/${foreignId}`}
+      >
+        <Label
+          className={styles.linkLabel}
+          kind={kinds.INFO}
+          size={sizes.LARGE}
+        >
+          {translate('StashDB')}
         </Label>
       </Link>
     </div>
@@ -30,7 +43,8 @@ function StudioDetailsLinks(props) {
 }
 
 StudioDetailsLinks.propTypes = {
-  foreignId: PropTypes.string.isRequired
+  foreignId: PropTypes.string.isRequired,
+  website: PropTypes.string
 };
 
 export default StudioDetailsLinks;

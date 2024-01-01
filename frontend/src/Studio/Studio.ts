@@ -9,6 +9,7 @@ interface Studio extends ModelBase {
   sortTitle: string;
   tags: number[];
   rootFolderPath: string;
+  website: string;
 }
 
 export default Studio;

@@ -63,8 +63,7 @@ function SceneIndexRow(props: SceneIndexRowProps) {
     genres = [],
     ratings,
     tags = [],
-    tmdbId,
-    imdbId,
+    foreignId,
     isAvailable,
     hasFile,
     movieFile,
@@ -309,9 +308,7 @@ function SceneIndexRow(props: SceneIndexRowProps) {
               <span className={styles.externalLinks}>
                 <Tooltip
                   anchor={<Icon name={icons.EXTERNAL_LINK} size={12} />}
-                  tooltip={
-                    <SceneDetailsLinks tmdbId={tmdbId} imdbId={imdbId} />
-                  }
+                  tooltip={<SceneDetailsLinks foreignId={foreignId} />}
                   canFlip={true}
                   kind={kinds.INVERSE}
                 />

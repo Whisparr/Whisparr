@@ -15,14 +15,14 @@ function PerformerDetailsLinks(props) {
     <div className={styles.links}>
       <Link
         className={styles.link}
-        to={`https://letterboxd.com/tmdb/${foreignId}`}
+        to={`https://stashdb.org/performers/${foreignId}`}
       >
         <Label
           className={styles.linkLabel}
           kind={kinds.INFO}
           size={sizes.LARGE}
         >
-          {translate('Letterboxd')}
+          {translate('StashDB')}
         </Label>
       </Link>
     </div>

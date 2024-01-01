@@ -31,7 +31,14 @@ function StudioIndexRow(props: StudioIndexRowProps) {
     createStudioIndexItemSelector(studioId)
   );
 
-  const { title, monitored, rootFolderPath, tags = [], foreignId } = studio;
+  const {
+    title,
+    monitored,
+    rootFolderPath,
+    tags = [],
+    foreignId,
+    website,
+  } = studio;
 
   const [isEditStudioModalOpen, setIsEditStudioModalOpen] = useState(false);
   const [selectState, selectDispatch] = useSelect();
@@ -124,7 +131,12 @@ function StudioIndexRow(props: StudioIndexRowProps) {
               <span className={styles.externalLinks}>
                 <Tooltip
                   anchor={<Icon name={icons.EXTERNAL_LINK} size={12} />}
-                  tooltip={<StudioDetailsLinks foreignId={foreignId} />}
+                  tooltip={
+                    <StudioDetailsLinks
+                      foreignId={foreignId}
+                      website={website}
+                    />
+                  }
                   canFlip={true}
                   kind={kinds.INVERSE}
                 />

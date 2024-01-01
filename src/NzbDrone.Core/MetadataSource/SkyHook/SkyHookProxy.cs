@@ -414,30 +414,23 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
 
                 var performersAdded = new List<string>();
 
-                if (itemType == ItemType.Movie)
+                foreach (var movie in httpResponse.Resource)
                 {
-                    result.AddRange(httpResponse.Resource.Select(MapSearchResult));
-                }
-                else
-                {
-                    foreach (var movie in httpResponse.Resource)
+                    foreach (var performer in movie.Credits)
                     {
-                        foreach (var performer in movie.Credits)
+                        if (performer.Performer.Name.ToLower().Contains(lowerTitle))
                         {
-                            if (performer.Performer.Name.ToLower().Contains(lowerTitle))
-                            {
-                                var mappedPerformer = MapPerformer(performer.Performer);
+                            var mappedPerformer = MapPerformer(performer.Performer);
 
-                                if (mappedPerformer.ForeignId.IsNotNullOrWhiteSpace() && !performersAdded.Contains(mappedPerformer.ForeignId.ToLower()))
-                                {
-                                    performersAdded.Add(mappedPerformer.ForeignId.ToLower());
-                                    result.Add(MapPerformer(performer.Performer));
-                                }
+                            if (mappedPerformer.ForeignId.IsNotNullOrWhiteSpace() && !performersAdded.Contains(mappedPerformer.ForeignId.ToLower()))
+                            {
+                                performersAdded.Add(mappedPerformer.ForeignId.ToLower());
+                                result.Add(MapPerformer(performer.Performer));
                             }
                         }
-
-                        result.Add(MapSearchResult(movie));
                     }
+
+                    result.Add(MapSearchResult(movie));
                 }
             }
 

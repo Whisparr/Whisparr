@@ -130,7 +130,8 @@ export const persistState = [
   'performers.columns',
   'performers.selectedFilterKey',
   'performers.customFilters',
-  'performers.posterOptions'
+  'performers.posterOptions',
+  'performers.tableOptions'
 ];
 
 //

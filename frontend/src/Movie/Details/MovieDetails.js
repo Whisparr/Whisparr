@@ -318,8 +318,8 @@ class MovieDetails extends Component {
             />
 
             <PageToolbarButton
-              label={translate('ManualImport')}
-              iconName={icons.INTERACTIVE}
+              label={translate('ManageFiles')}
+              iconName={icons.MOVIE_FILE}
               onPress={this.onInteractiveImportPress}
             />
 
@@ -643,6 +643,7 @@ class MovieDetails extends Component {
           <InteractiveImportModal
             isOpen={isInteractiveImportModalOpen}
             movieId={id}
+            modalTitle={translate('ManageFiles')}
             folder={path}
             allowMovieChange={false}
             showFilterExistingFiles={true}

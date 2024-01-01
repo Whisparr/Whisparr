@@ -2,8 +2,10 @@
 // Please do not change this file!
 interface CssExports {
   'actions': string;
+  'ethnicity': string;
   'fullName': string;
   'gender': string;
+  'hairColor': string;
   'qualityProfileId': string;
   'rootFolderPath': string;
   'status': string;

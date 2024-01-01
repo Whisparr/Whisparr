@@ -8,6 +8,9 @@ interface Performer extends ModelBase {
   rootFolderPath: string;
   images: Image[];
   gender: string;
+  ethnicity?: string;
+  hairColor?: string;
+  status: string;
   sortTitle: string;
   tags: number[];
 }

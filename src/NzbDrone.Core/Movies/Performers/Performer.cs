@@ -18,6 +18,12 @@ namespace NzbDrone.Core.Movies.Performers
         public string CleanName { get; set; }
         public List<MediaCover.MediaCover> Images { get; set; }
         public Gender Gender { get; set; }
+        public Ethnicity? Ethnicity { get; set; }
+        public HairColor? HairColor { get; set; }
+        public int? Age { get; set; }
+        public int? CareerStart { get; set; }
+        public int? CareerEnd { get; set; }
+        public PerformerStatus Status { get; set; }
         public string RootFolderPath { get; set; }
         public DateTime Added { get; set; }
         public bool Monitored { get; set; }
@@ -35,6 +41,38 @@ namespace NzbDrone.Core.Movies.Performers
             RootFolderPath = otherPerformer.RootFolderPath;
             Tags = otherPerformer.Tags;
         }
+    }
+
+    public enum PerformerStatus
+    {
+        Active,
+        Inactive,
+        Unknown
+    }
+
+    public enum Ethnicity
+    {
+        Caucasian,
+        Black,
+        Asian,
+        Indian,
+        Latin,
+        MiddleEastern,
+        Mixed,
+        Other
+    }
+
+    public enum HairColor
+    {
+        Blonde,
+        Brunette,
+        Black,
+        Red,
+        Auburn,
+        Grey,
+        Bald,
+        Various,
+        Other
     }
 
     public enum Gender

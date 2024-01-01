@@ -29,6 +29,8 @@
 }
 
 .gender,
+.ethnicity,
+.hairColor,
 .tags {
   composes: headerCell from '~Components/Table/VirtualTableHeaderCell.css';
 

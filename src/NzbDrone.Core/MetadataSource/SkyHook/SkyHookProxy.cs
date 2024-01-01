@@ -667,6 +667,12 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             {
                 Name = performer.Name,
                 Gender = MapGender(performer.Gender),
+                Status = performer.Status,
+                Age = performer.Age,
+                CareerStart = performer.CareerStart,
+                CareerEnd = performer.CareerEnd,
+                Ethnicity = MapEthnicity(performer.Ethnicity),
+                HairColor = MapHairColor(performer.HairColor),
                 ForeignId = performer.ForeignIds.StashId,
                 Images = performer.Images.Select(MapImage).ToList()
             };
@@ -695,6 +701,62 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                     return Gender.Male;
                 default:
                     return Gender.Female;
+            }
+        }
+
+        private HairColor? MapHairColor(string hairColor)
+        {
+            if (hairColor.IsNullOrWhiteSpace())
+            {
+                return null;
+            }
+
+            switch (hairColor.ToUpperInvariant())
+            {
+                case "BLONDE":
+                    return HairColor.Blonde;
+                case "BLACK":
+                    return HairColor.Black;
+                case "RED":
+                    return HairColor.Red;
+                case "AUBURN":
+                    return HairColor.Auburn;
+                case "GREY":
+                    return HairColor.Grey;
+                case "VARIOUS":
+                    return HairColor.Various;
+                case "BALD":
+                    return HairColor.Bald;
+                default:
+                    return HairColor.Other;
+            }
+        }
+
+        private Ethnicity? MapEthnicity(string ethnicity)
+        {
+            if (ethnicity.IsNullOrWhiteSpace())
+            {
+                return null;
+            }
+
+            switch (ethnicity.ToUpperInvariant())
+            {
+                case "CAUCASIAN":
+                    return Ethnicity.Caucasian;
+                case "BLACK":
+                    return Ethnicity.Black;
+                case "ASIAN":
+                    return Ethnicity.Asian;
+                case "INDIAN":
+                    return Ethnicity.Indian;
+                case "MIDDLE_EASTERN":
+                    return Ethnicity.MiddleEastern;
+                case "LATIN":
+                    return Ethnicity.Latin;
+                case "MIXED":
+                    return Ethnicity.Mixed;
+                default:
+                    return Ethnicity.Other;
             }
         }
 

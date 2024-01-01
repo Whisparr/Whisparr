@@ -30,6 +30,8 @@
 }
 
 .gender,
+.ethnicity,
+.hairColor,
 .tags {
   composes: cell;
 

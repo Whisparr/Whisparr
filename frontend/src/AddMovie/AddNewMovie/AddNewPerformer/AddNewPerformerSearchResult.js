@@ -10,6 +10,9 @@ import MovieHeadshot from 'Movie/MovieHeadshot';
 import translate from 'Utilities/String/translate';
 import AddNewPerformerModal from './AddNewPerformerModal';
 import styles from './AddNewPerformerSearchResult.css';
+import PerformerDetailsLinks from 'Performer/Details/PerformerDetailsLinks';
+import firstCharToUpper from 'Utilities/String/firstCharToUpper';
+import titleCase from 'Utilities/String/titleCase';
 
 class AddNewPerformerSearchResult extends Component {
 
@@ -53,6 +56,7 @@ class AddNewPerformerSearchResult extends Component {
       foreignId,
       name,
       gender,
+      status,
       images,
       isExistingPerformer,
       isSmallScreen,
@@ -122,18 +126,16 @@ class AddNewPerformerSearchResult extends Component {
             </div>
 
             <div>
-              {
-                !!gender &&
-                  <span className={styles.gender}>
-                    {gender}
-                  </span>
-              }
-            </div>
-
-            <div>
               <Label size={sizes.LARGE} kind={kinds.PINK}>
                 {translate('Performer')}
               </Label>
+
+              {
+                !!gender &&
+                  <Label size={sizes.LARGE} kind={kinds.DEFAULT}>
+                    {firstCharToUpper(gender)}
+                  </Label>
+              }
 
               <Tooltip
                 anchor={
@@ -151,14 +153,21 @@ class AddNewPerformerSearchResult extends Component {
                   </Label>
                 }
                 tooltip={
-                  <MovieDetailsLinks
-                    tmdbId={foreignId}
+                  <PerformerDetailsLinks
+                    foreignId={foreignId}
                   />
                 }
                 canFlip={true}
                 kind={kinds.INVERSE}
                 position={tooltipPositions.BOTTOM}
               />
+
+              {
+                status === 'inactive' &&
+                  <Label size={sizes.LARGE} kind={kinds.DANGER}>
+                    {firstCharToUpper(status)}
+                  </Label>
+              }
             </div>
           </div>
         </div>
@@ -181,6 +190,7 @@ AddNewPerformerSearchResult.propTypes = {
   titleSlug: PropTypes.string.isRequired,
   year: PropTypes.number.isRequired,
   gender: PropTypes.string.isRequired,
+  status: PropTypes.string.isRequired,
   images: PropTypes.arrayOf(PropTypes.object).isRequired,
   existingPerformerId: PropTypes.number,
   isExistingPerformer: PropTypes.bool.isRequired,

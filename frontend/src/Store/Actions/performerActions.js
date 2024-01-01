@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import _, { first } from 'lodash';
 import { createAction } from 'redux-actions';
 import { filterBuilderTypes, filterBuilderValueTypes, sortDirections } from 'Helpers/Props';
 import { createThunk, handleThunks } from 'Store/thunks';
@@ -12,6 +12,8 @@ import createSetClientSideCollectionFilterReducer from './Creators/Reducers/crea
 import createSetClientSideCollectionSortReducer from './Creators/Reducers/createSetClientSideCollectionSortReducer';
 import createSetSettingValueReducer from './Creators/Reducers/createSetSettingValueReducer';
 import createSetTableOptionReducer from './Creators/Reducers/createSetTableOptionReducer';
+import sortByName from 'Utilities/Array/sortByName';
+import firstCharToUpper from 'Utilities/String/firstCharToUpper';
 
 //
 // Variables
@@ -71,8 +73,19 @@ export const defaultState = {
       name: 'gender',
       label: () => translate('Gender'),
       isSortable: true,
-      isVisible: true,
-      isModifiable: false
+      isVisible: true
+    },
+    {
+      name: 'hairColor',
+      label: () => translate('HairColor'),
+      isSortable: true,
+      isVisible: true
+    },
+    {
+      name: 'ethnicity',
+      label: () => translate('Ethnicity'),
+      isSortable: true,
+      isVisible: true
     },
     {
       name: 'qualityProfileId',
@@ -118,6 +131,40 @@ export const defaultState = {
       label: () => translate('Gender'),
       type: filterBuilderTypes.EXACT,
       valueType: filterBuilderValueTypes.DEFAULT
+    },
+    {
+      name: 'hairColor',
+      label: () => translate('HairColor'),
+      type: filterBuilderTypes.EXACT,
+      optionsSelector: function(items) {
+        const tagList = ['blonde', 'black', 'red', 'auburn', 'grey', 'various', 'bald', 'other'];
+
+        const tags = tagList.map((tag) => {
+          return {
+            id: tag,
+            name: firstCharToUpper(tag)
+          };
+        });
+
+        return tags.sort(sortByName);
+      }
+    },
+    {
+      name: 'ethnicity',
+      label: () => translate('Ethnicity'),
+      type: filterBuilderTypes.EXACT,
+      optionsSelector: function(items) {
+        const tagList = ['caucasian', 'black', 'asian', 'latin', 'indian', 'middleEastern', 'other'];
+
+        const tags = tagList.map((tag) => {
+          return {
+            id: tag,
+            name: firstCharToUpper(tag)
+          };
+        });
+
+        return tags.sort(sortByName);
+      }
     }
   ]
 };

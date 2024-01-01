@@ -4,9 +4,11 @@ interface CssExports {
   'actions': string;
   'cell': string;
   'checkInput': string;
+  'ethnicity': string;
   'externalLinks': string;
   'fullName': string;
   'gender': string;
+  'hairColor': string;
   'qualityProfileId': string;
   'rootFolderPath': string;
   'status': string;

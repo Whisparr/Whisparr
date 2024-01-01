@@ -1,3 +1,4 @@
+import Column from 'Components/Table/Column';
 import SortDirection from 'Helpers/Props/SortDirection';
 import Studio from 'Studio/Studio';
 import AppSectionState, { AppSectionSaveState } from './AppSectionState';
@@ -19,6 +20,7 @@ interface StudiosAppState extends AppSectionSaveState, AppSectionState<Studio> {
   selectedFilterKey: string;
   filterBuilderProps: FilterBuilderProp<Studio>[];
   filters: Filter[];
+  columns: Column[];
 }
 
 export default StudiosAppState;

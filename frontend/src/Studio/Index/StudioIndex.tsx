@@ -18,6 +18,7 @@ import PageToolbar from 'Components/Page/Toolbar/PageToolbar';
 import PageToolbarButton from 'Components/Page/Toolbar/PageToolbarButton';
 import PageToolbarSection from 'Components/Page/Toolbar/PageToolbarSection';
 import PageToolbarSeparator from 'Components/Page/Toolbar/PageToolbarSeparator';
+import TableOptionsModalWrapper from 'Components/Table/TableOptions/TableOptionsModalWrapper';
 import withScrollPosition from 'Components/withScrollPosition';
 import { align, icons, kinds } from 'Helpers/Props';
 import SortDirection from 'Helpers/Props/SortDirection';
@@ -26,7 +27,12 @@ import MovieIndexSelectAllMenuItem from 'Movie/Index/Select/MovieIndexSelectAllM
 import MovieIndexSelectModeButton from 'Movie/Index/Select/MovieIndexSelectModeButton';
 import MovieIndexSelectModeMenuItem from 'Movie/Index/Select/MovieIndexSelectModeMenuItem';
 import { fetchQueueDetails } from 'Store/Actions/queueActions';
-import { setStudioFilter, setStudioSort } from 'Store/Actions/studioActions';
+import {
+  setStudioFilter,
+  setStudioSort,
+  setStudioTableOption,
+  setStudioView,
+} from 'Store/Actions/studioActions';
 import scrollPositions from 'Store/scrollPositions';
 import createDimensionsSelector from 'Store/Selectors/createDimensionsSelector';
 import createStudioClientSideCollectionItemsSelector from 'Store/Selectors/createStudioClientSideCollectionItemsSelector';
@@ -34,10 +40,21 @@ import NoStudio from 'Studio/NoStudio';
 import translate from 'Utilities/String/translate';
 import StudioIndexFilterMenu from './Menus/StudioIndexFilterMenu';
 import StudioIndexSortMenu from './Menus/StudioIndexSortMenu';
+import StudioIndexViewMenu from './Menus/StudioIndexViewMenu';
 import StudioIndexPosterOptionsModal from './Posters/Options/StudioIndexPosterOptionsModal';
 import StudioIndexPosters from './Posters/StudioIndexPosters';
 import StudioIndexSelectFooter from './Select/StudioIndexSelectFooter';
+import StudioIndexTable from './Table/StudioIndexTable';
+import StudioIndexTableOptions from './Table/StudioIndexTableOptions';
 import styles from './StudioIndex.css';
+
+function getViewComponent(view: string) {
+  if (view === 'posters') {
+    return StudioIndexPosters;
+  }
+
+  return StudioIndexTable;
+}
 
 interface StudioIndexProps {
   initialScrollTop?: number;
@@ -50,6 +67,7 @@ const StudioIndex = withScrollPosition((props: StudioIndexProps) => {
     error,
     totalItems,
     items,
+    columns,
     selectedFilterKey,
     filters,
     customFilters,
@@ -76,6 +94,24 @@ const StudioIndex = withScrollPosition((props: StudioIndexProps) => {
   const onSelectModePress = useCallback(() => {
     setIsSelectMode(!isSelectMode);
   }, [isSelectMode, setIsSelectMode]);
+
+  const onTableOptionChange = useCallback(
+    (payload: unknown) => {
+      dispatch(setStudioTableOption(payload));
+    },
+    [dispatch]
+  );
+
+  const onViewSelect = useCallback(
+    (value: string) => {
+      dispatch(setStudioView({ view: value }));
+
+      if (scrollerRef.current) {
+        scrollerRef.current.scrollTo(0, 0);
+      }
+    },
+    [scrollerRef, dispatch]
+  );
 
   const onSortSelect = useCallback(
     (value: string) => {
@@ -150,7 +186,7 @@ const StudioIndex = withScrollPosition((props: StudioIndexProps) => {
       order,
     };
   }, [items, sortKey, sortDirection]);
-  const ViewComponent = StudioIndexPosters;
+  const ViewComponent = useMemo(() => getViewComponent(view), [view]);
 
   const isLoaded = !!(!error && isPopulated && items.length);
   const hasNoStudio = !totalItems;
@@ -164,7 +200,7 @@ const StudioIndex = withScrollPosition((props: StudioIndexProps) => {
               label={
                 isSelectMode
                   ? translate('StopSelecting')
-                  : translate('EditPerformers')
+                  : translate('EditStudios')
               }
               iconName={isSelectMode ? icons.SERIES_ENDED : icons.EDIT}
               isSelectMode={isSelectMode}
@@ -181,14 +217,33 @@ const StudioIndex = withScrollPosition((props: StudioIndexProps) => {
             alignContent={align.RIGHT}
             collapseButtons={false}
           >
-            <PageToolbarButton
-              label={translate('Options')}
-              iconName={icons.POSTER}
-              isDisabled={hasNoStudio}
-              onPress={onOptionsPress}
-            />
+            {view === 'table' ? (
+              <TableOptionsModalWrapper
+                columns={columns}
+                optionsComponent={StudioIndexTableOptions}
+                onTableOptionChange={onTableOptionChange}
+              >
+                <PageToolbarButton
+                  label={translate('Options')}
+                  iconName={icons.TABLE}
+                />
+              </TableOptionsModalWrapper>
+            ) : (
+              <PageToolbarButton
+                label={translate('Options')}
+                iconName={view === 'posters' ? icons.POSTER : icons.OVERVIEW}
+                isDisabled={hasNoStudio}
+                onPress={onOptionsPress}
+              />
+            )}
 
             <PageToolbarSeparator />
+
+            <StudioIndexViewMenu
+              view={view}
+              isDisabled={hasNoStudio}
+              onViewSelect={onViewSelect}
+            />
 
             <StudioIndexSortMenu
               sortKey={sortKey}

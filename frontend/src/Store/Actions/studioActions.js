@@ -11,6 +11,7 @@ import createSaveProviderHandler from './Creators/createSaveProviderHandler';
 import createSetClientSideCollectionFilterReducer from './Creators/Reducers/createSetClientSideCollectionFilterReducer';
 import createSetClientSideCollectionSortReducer from './Creators/Reducers/createSetClientSideCollectionSortReducer';
 import createSetSettingValueReducer from './Creators/Reducers/createSetSettingValueReducer';
+import createSetTableOptionReducer from './Creators/Reducers/createSetTableOptionReducer';
 
 //
 // Variables
@@ -40,6 +41,9 @@ export const defaultState = {
     showTitle: false
   },
 
+  tableOptions: {
+  },
+
   defaults: {
     rootFolderPath: '',
     monitor: 'movieOnly',
@@ -47,6 +51,41 @@ export const defaultState = {
     searchForMovie: true,
     tags: []
   },
+
+  columns: [
+    {
+      name: 'status',
+      columnLabel: () => translate('Monitored'),
+      isSortable: true,
+      isVisible: true,
+      isModifiable: false
+    },
+    {
+      name: 'sortTitle',
+      label: () => translate('StudioTitle'),
+      isSortable: true,
+      isVisible: true,
+      isModifiable: false
+    },
+    {
+      name: 'qualityProfileId',
+      label: () => translate('QualityProfile'),
+      isSortable: true,
+      isVisible: true
+    },
+    {
+      name: 'rootFolderPath',
+      label: () => translate('RootFolder'),
+      isSortable: true,
+      isVisible: true
+    },
+    {
+      name: 'actions',
+      columnLabel: () => translate('Actions'),
+      isVisible: true,
+      isModifiable: false
+    }
+  ],
 
   selectedFilterKey: 'all',
 
@@ -72,9 +111,12 @@ export const persistState = [
   'studios.defaults',
   'studios.sortKey',
   'studios.sortDirection',
+  'studios.view',
+  'studios.columns',
   'studios.selectedFilterKey',
   'studios.customFilters',
-  'studios.posterOptions'
+  'studios.posterOptions',
+  'studios.tableOptions'
 ];
 
 //
@@ -89,6 +131,8 @@ export const TOGGLE_STUDIO_MONITORED = 'studios/toggleStudioMonitored';
 
 export const SET_STUDIO_SORT = 'studios/setStudioSort';
 export const SET_STUDIO_FILTER = 'studios/setStudioFilter';
+export const SET_STUDIO_VIEW = 'studios/setStudioView';
+export const SET_STUDIO_TABLE_OPTION = 'studios/setStudioTableOption';
 export const SET_STUDIO_POSTER_OPTION = 'studios/setStudioPosterOption';
 
 //
@@ -102,6 +146,8 @@ export const toggleStudioMonitored = createThunk(TOGGLE_STUDIO_MONITORED);
 
 export const setStudioSort = createAction(SET_STUDIO_SORT);
 export const setStudioFilter = createAction(SET_STUDIO_FILTER);
+export const setStudioView = createAction(SET_STUDIO_VIEW);
+export const setStudioTableOption = createAction(SET_STUDIO_TABLE_OPTION);
 export const setStudioPosterOption = createAction(SET_STUDIO_POSTER_OPTION);
 
 export const setStudioValue = createAction(SET_STUDIO_VALUE, (payload) => {
@@ -167,6 +213,11 @@ export const reducers = createHandleActions({
 
   [SET_STUDIO_SORT]: createSetClientSideCollectionSortReducer(section),
   [SET_STUDIO_FILTER]: createSetClientSideCollectionFilterReducer(section),
+  [SET_STUDIO_VIEW]: function(state, { payload }) {
+    return Object.assign({}, state, { view: payload.view });
+  },
+
+  [SET_STUDIO_TABLE_OPTION]: createSetTableOptionReducer(section),
   [SET_STUDIO_VALUE]: createSetSettingValueReducer(section),
 
   [SET_STUDIO_POSTER_OPTION]: function(state, { payload }) {

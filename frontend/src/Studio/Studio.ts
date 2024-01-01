@@ -8,6 +8,7 @@ interface Studio extends ModelBase {
   images: Image[];
   sortTitle: string;
   tags: number[];
+  rootFolderPath: string;
 }
 
 export default Studio;

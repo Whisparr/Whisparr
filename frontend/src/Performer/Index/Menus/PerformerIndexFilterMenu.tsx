@@ -2,7 +2,7 @@ import React from 'react';
 import { CustomFilter } from 'App/State/AppState';
 import FilterMenu from 'Components/Menu/FilterMenu';
 import { align } from 'Helpers/Props';
-import SceneIndexFilterModal from 'Scene/Index/SceneIndexFilterModal';
+import PerformerIndexFilterModal from 'Performer/Index/PerformerIndexFilterModal';
 
 interface PerformerIndexFilterMenuProps {
   selectedFilterKey: string | number;
@@ -28,7 +28,7 @@ function PerformerIndexFilterMenu(props: PerformerIndexFilterMenuProps) {
       selectedFilterKey={selectedFilterKey}
       filters={filters}
       customFilters={customFilters}
-      filterModalConnectorComponent={SceneIndexFilterModal}
+      filterModalConnectorComponent={PerformerIndexFilterModal}
       onFilterSelect={onFilterSelect}
     />
   );

@@ -1,1 +1,24 @@
-{}
+{
+    "Activity": "Aktivitāte",
+    "Add": "Pievienot",
+    "AddAutoTag": "Pievienot Automātisko Tagu",
+    "AddCondition": "Pievienot Nosacījumu",
+    "AddConditionImplementation": "Pievienot Nosacījumu - {implementationName}",
+    "AddConnectionImplementation": "Pievienot Savienojumu - {implementationName}",
+    "AddDownloadClient": "Pievienot Lejupielādes Klientu",
+    "About": "Par",
+    "Actions": "Darbības",
+    "AddConnection": "Pievienot Savienojumu",
+    "AddCustomFormat": "Pievienot Pielāgotu Formātu",
+    "AddDelayProfile": "Pievienot Aizkaves Profilu",
+    "EditCustomFormat": "Pievienot Pielāgotu Formātu",
+    "EditDelayProfile": "Pievienot Aizkaves Profilu",
+    "AddIndexerImplementation": "Pievienot Nosacījumu - {implementationName}",
+    "EditConditionImplementation": "Pievienot Nosacījumu - {implementationName}",
+    "EditConnectionImplementation": "Pievienot Savienojumu - {implementationName}",
+    "KeyboardShortcutsConfirmModal": "Apstiprināt Apstiprināšanas Modālu",
+    "New": "Jauns",
+    "ExportCustomFormat": "Pievienot Pielāgotu Formātu",
+    "ImportCustomFormat": "Pievienot Pielāgotu Formātu",
+    "EditIndexerImplementation": "Pievienot Nosacījumu - {implementationName}"
+}

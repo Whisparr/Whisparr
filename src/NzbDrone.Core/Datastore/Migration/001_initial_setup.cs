@@ -22,7 +22,8 @@ namespace NzbDrone.Core.Datastore.Migration
                 .WithColumn("Added").AsDateTimeOffset().Nullable()
                 .WithColumn("Tags").AsString().Nullable()
                 .WithColumn("AddOptions").AsString().Nullable()
-                .WithColumn("MovieFileId").AsInt32().WithDefaultValue(0);
+                .WithColumn("MovieFileId").AsInt32().WithDefaultValue(0)
+                .WithColumn("MovieMetadataId").AsInt32().Unique();
 
             Create.TableForModel("History")
                 .WithColumn("MovieId").AsInt32()
@@ -211,7 +212,8 @@ namespace NzbDrone.Core.Datastore.Migration
                     .WithColumn("RootFolderPath").AsString()
                     .WithColumn("QualityProfileId").AsInt32()
                     .WithColumn("Tags").AsString().Nullable()
-                    .WithColumn("SearchOnAdd").AsBoolean().WithDefaultValue(false);
+                    .WithColumn("SearchOnAdd").AsBoolean().WithDefaultValue(false)
+                    .WithColumn("Monitor").AsInt32().NotNullable();
 
             Create.TableForModel("ImportExclusions")
                     .WithColumn("ForeignId").AsString().NotNullable().Unique().PrimaryKey()
@@ -221,7 +223,8 @@ namespace NzbDrone.Core.Datastore.Migration
             Create.TableForModel("AlternativeTitles")
                       .WithColumn("Title").AsString().NotNullable()
                       .WithColumn("CleanTitle").AsString().Unique()
-                      .WithColumn("SourceType").AsInt64().WithDefaultValue(0);
+                      .WithColumn("SourceType").AsInt64().WithDefaultValue(0)
+                      .WithColumn("MovieMetadataId").AsInt32().WithDefaultValue(0).Indexed();
 
             Create.TableForModel("ExtraFiles")
                 .WithColumn("MovieId").AsInt32().NotNullable()
@@ -292,7 +295,8 @@ namespace NzbDrone.Core.Datastore.Migration
             Execute.Sql("DROP INDEX IF EXISTS \"IX_AlternativeTitles_CleanTitle\"");
 
             Create.TableForModel("ImportListMovies")
-                .WithColumn("ListId").AsInt32();
+                .WithColumn("ListId").AsInt32()
+                .WithColumn("MovieMetadataId").AsInt32().WithDefaultValue(0).Indexed();
 
             Create.Index().OnTable("AlternativeTitles").OnColumn("CleanTitle");
 
@@ -341,16 +345,7 @@ namespace NzbDrone.Core.Datastore.Migration
                 .WithColumn("StudioForeignId").AsString().Nullable().Indexed()
                 .WithColumn("StudioTitle").AsString().Nullable();
 
-            // Add an MovieMetadataId column to Movies
-            Alter.Table("Movies").AddColumn("MovieMetadataId").AsInt32().Unique();
-            Alter.Table("AlternativeTitles").AddColumn("MovieMetadataId").AsInt32().WithDefaultValue(0);
-            Alter.Table("ImportListMovies").AddColumn("MovieMetadataId").AsInt32().WithDefaultValue(0).Indexed();
-
-            Alter.Table("ImportLists").AddColumn("Monitor").AsInt32().NotNullable();
-
             Alter.Table("Notifications").AddColumn("OnMovieAdded").AsBoolean().WithDefaultValue(false);
-
-            Create.Index("IX_AlternativeTitles_MovieMetadataId").OnTable("AlternativeTitles").OnColumn("MovieMetadataId");
 
             Alter.Table("SubtitleFiles").AddColumn("LanguageTags").AsString().Nullable();
 

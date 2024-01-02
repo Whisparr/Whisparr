@@ -22,12 +22,10 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Aggregation.Aggregators
 
         public LocalMovie Aggregate(LocalMovie localMovie, DownloadClientItem downloadClientItem)
         {
-            var source = QualitySource.UNKNOWN;
+            var source = QualitySource.Unknown;
             var sourceConfidence = Confidence.Default;
             var resolution = 0;
             var resolutionConfidence = Confidence.Default;
-            var modifier = Modifier.NONE;
-            var modifierConfidence = Confidence.Default;
             var revision = new Revision(1);
             var revisionConfidence = Confidence.Default;
 
@@ -41,8 +39,8 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Aggregation.Aggregators
 
                 _logger.Trace("Considering Source {0} ({1}) Resolution {2} ({3}) Revision {4} from {5}", augmentedQuality.Source, augmentedQuality.SourceConfidence, augmentedQuality.Resolution, augmentedQuality.ResolutionConfidence, augmentedQuality.Revision, augmentQuality.Name);
 
-                if (source == QualitySource.UNKNOWN ||
-                    (augmentedQuality.SourceConfidence > sourceConfidence && augmentedQuality.Source != QualitySource.UNKNOWN))
+                if (source == QualitySource.Unknown ||
+                    (augmentedQuality.SourceConfidence > sourceConfidence && augmentedQuality.Source != QualitySource.Unknown))
                 {
                     source = augmentedQuality.Source;
                     sourceConfidence = augmentedQuality.SourceConfidence;
@@ -53,13 +51,6 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Aggregation.Aggregators
                 {
                     resolution = augmentedQuality.Resolution;
                     resolutionConfidence = augmentedQuality.ResolutionConfidence;
-                }
-
-                if (augmentedQuality.Modifier > modifier ||
-                    (augmentedQuality.ModifierConfidence > modifierConfidence && augmentedQuality.Modifier != Modifier.NONE))
-                {
-                    modifier = augmentedQuality.Modifier;
-                    modifierConfidence = augmentedQuality.ModifierConfidence;
                 }
 
                 if (augmentedQuality.Revision != null)
@@ -85,7 +76,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Aggregation.Aggregators
 
             _logger.Trace("Selected Source {0} ({1}) Resolution {2} ({3}) Revision {4}", source, sourceConfidence, resolution, resolutionConfidence, revision);
 
-            var quality = new QualityModel(QualityFinder.FindBySourceAndResolution(source, resolution, modifier), revision);
+            var quality = new QualityModel(QualityFinder.FindBySourceAndResolution(source, resolution), revision);
 
             if (resolutionConfidence == Confidence.MediaInfo)
             {

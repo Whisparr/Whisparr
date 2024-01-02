@@ -9,8 +9,6 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Aggregation.Aggregators.Augmenter
         public Confidence SourceConfidence { get; set; }
         public int Resolution { get; set; }
         public Confidence ResolutionConfidence { get; set; }
-        public Modifier Modifier { get; set; }
-        public Confidence ModifierConfidence { get; set; }
         public Revision Revision { get; set; }
         public Confidence RevisionConfidence { get; set; }
 
@@ -18,8 +16,6 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Aggregation.Aggregators.Augmenter
                                     Confidence sourceConfidence,
                                     int resolution,
                                     Confidence resolutionConfidence,
-                                    Modifier modifier,
-                                    Confidence modifierConfidence,
                                     Revision revision,
                                     Confidence revisionConfidence)
         {
@@ -27,30 +23,23 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Aggregation.Aggregators.Augmenter
             SourceConfidence = sourceConfidence;
             Resolution = resolution;
             ResolutionConfidence = resolutionConfidence;
-            Modifier = modifier;
-            ModifierConfidence = modifierConfidence;
             Revision = revision;
             RevisionConfidence = revisionConfidence;
         }
 
         public static AugmentQualityResult SourceOnly(QualitySource source, Confidence sourceConfidence)
         {
-            return new AugmentQualityResult(source, sourceConfidence, 0, Confidence.Default, Modifier.NONE, Confidence.Default, null, Confidence.Default);
+            return new AugmentQualityResult(source, sourceConfidence, 0, Confidence.Default, null, Confidence.Default);
         }
 
         public static AugmentQualityResult ResolutionOnly(int resolution, Confidence resolutionConfidence)
         {
-            return new AugmentQualityResult(QualitySource.UNKNOWN, Confidence.Default, resolution, resolutionConfidence, Modifier.NONE, Confidence.Default, null, Confidence.Default);
-        }
-
-        public static AugmentQualityResult ModifierOnly(Modifier modifier, Confidence modifierConfidence)
-        {
-            return new AugmentQualityResult(QualitySource.UNKNOWN, Confidence.Default, 0, Confidence.Default, modifier, modifierConfidence, null, Confidence.Default);
+            return new AugmentQualityResult(QualitySource.Unknown, Confidence.Default, resolution, resolutionConfidence, null, Confidence.Default);
         }
 
         public static AugmentQualityResult SourceAndResolutionOnly(QualitySource source, Confidence sourceConfidence, int resolution, Confidence resolutionConfidence)
         {
-            return new AugmentQualityResult(source, sourceConfidence, resolution, resolutionConfidence, Modifier.NONE, Confidence.Default, null, Confidence.Default);
+            return new AugmentQualityResult(source, sourceConfidence, resolution, resolutionConfidence, null, Confidence.Default);
         }
     }
 }

@@ -251,43 +251,6 @@ namespace NzbDrone.Core.Parser
                     return result;
                 }
 
-                if (sourceMatch.Groups["scr"].Success)
-                {
-                    result.Quality = Quality.DVDSCR;
-                    return result;
-                }
-
-                if (sourceMatch.Groups["cam"].Success)
-                {
-                    result.Quality = Quality.CAM;
-                    return result;
-                }
-
-                if (sourceMatch.Groups["ts"].Success)
-                {
-                    result.Quality = Quality.TELESYNC;
-                    result.Quality.Resolution = (int)resolution;
-                    return result;
-                }
-
-                if (sourceMatch.Groups["tc"].Success)
-                {
-                    result.Quality = Quality.TELECINE;
-                    return result;
-                }
-
-                if (sourceMatch.Groups["wp"].Success)
-                {
-                    result.Quality = Quality.WORKPRINT;
-                    return result;
-                }
-
-                if (sourceMatch.Groups["regional"].Success)
-                {
-                    result.Quality = Quality.REGIONAL;
-                    return result;
-                }
-
                 if (sourceMatch.Groups["hdtv"].Success)
                 {
                     if (MPEG2Regex.IsMatch(normalizedName))
@@ -464,14 +427,12 @@ namespace NzbDrone.Core.Parser
 
             if (resolution != Resolution.Unknown)
             {
-                var source = QualitySource.UNKNOWN;
-                var modifier = Modifier.NONE;
+                var source = QualitySource.Unknown;
 
                 if (remuxMatch)
                 {
                     result.SourceDetectionSource = QualityDetectionSource.Name;
-                    source = QualitySource.BLURAY;
-                    modifier = Modifier.REMUX;
+                    source = QualitySource.BlurayRaw;
                 }
                 else
                 {
@@ -495,9 +456,9 @@ namespace NzbDrone.Core.Parser
                 {
                     result.ResolutionDetectionSource = QualityDetectionSource.Name;
 
-                    result.Quality = source == QualitySource.UNKNOWN
+                    result.Quality = source == QualitySource.Unknown
                         ? Quality.HDTV2160p
-                        : QualityFinder.FindBySourceAndResolution(source, 2160, modifier);
+                        : QualityFinder.FindBySourceAndResolution(source, 2160);
 
                     return result;
                 }
@@ -506,9 +467,9 @@ namespace NzbDrone.Core.Parser
                 {
                     result.ResolutionDetectionSource = QualityDetectionSource.Name;
 
-                    result.Quality = source == QualitySource.UNKNOWN
+                    result.Quality = source == QualitySource.Unknown
                         ? Quality.HDTV1080p
-                        : QualityFinder.FindBySourceAndResolution(source, 1080, modifier);
+                        : QualityFinder.FindBySourceAndResolution(source, 1080);
 
                     return result;
                 }
@@ -517,9 +478,9 @@ namespace NzbDrone.Core.Parser
                 {
                     result.ResolutionDetectionSource = QualityDetectionSource.Name;
 
-                    result.Quality = source == QualitySource.UNKNOWN
+                    result.Quality = source == QualitySource.Unknown
                         ? Quality.HDTV720p
-                        : QualityFinder.FindBySourceAndResolution(source, 720, modifier);
+                        : QualityFinder.FindBySourceAndResolution(source, 720);
 
                     return result;
                 }
@@ -529,9 +490,9 @@ namespace NzbDrone.Core.Parser
                 {
                     result.ResolutionDetectionSource = QualityDetectionSource.Name;
 
-                    result.Quality = source == QualitySource.UNKNOWN
+                    result.Quality = source == QualitySource.Unknown
                         ? Quality.SDTV
-                        : QualityFinder.FindBySourceAndResolution(source, 480, modifier);
+                        : QualityFinder.FindBySourceAndResolution(source, 480);
 
                     return result;
                 }

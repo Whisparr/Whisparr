@@ -8,10 +8,10 @@ namespace NzbDrone.Core.Qualities
     {
         private static readonly Logger Logger = NzbDroneLogger.GetLogger(typeof(QualityFinder));
 
-        public static Quality FindBySourceAndResolution(QualitySource source, int resolution, Modifier modifer)
+        public static Quality FindBySourceAndResolution(QualitySource source, int resolution)
         {
             // Check for a perfect 3-way match
-            var matchingQuality = Quality.All.SingleOrDefault(q => q.Source == source && q.Resolution == resolution && q.Modifier == modifer);
+            var matchingQuality = Quality.All.SingleOrDefault(q => q.Source == source && q.Resolution == resolution);
 
             if (matchingQuality != null)
             {
@@ -19,7 +19,7 @@ namespace NzbDrone.Core.Qualities
             }
 
             // Check for Source and Modifier Match for Qualities with Unknown Resolution
-            var matchingQualitiesUnknownResolution = Quality.All.Where(q => q.Source == source && (q.Resolution == 0) && q.Modifier == modifer && q != Quality.Unknown);
+            var matchingQualitiesUnknownResolution = Quality.All.Where(q => q.Source == source && (q.Resolution == 0) && q != Quality.Unknown);
 
             if (matchingQualitiesUnknownResolution.Any())
             {
@@ -32,16 +32,13 @@ namespace NzbDrone.Core.Qualities
                 {
                     if (quality.Source >= source)
                     {
-                        Logger.Warn("Unable to find exact quality for {0},  {1}, and {2}. Using {3} as fallback", source, resolution, modifer, quality);
+                        Logger.Warn("Unable to find exact quality for {0}, and {1}. Using {3} as fallback", source, resolution, quality);
                         return quality;
                     }
                 }
             }
 
-            // Check for Modifier match
-            var matchingModifier = Quality.All.Where(q => q.Modifier == modifer);
-
-            var matchingResolution = matchingModifier.Where(q => q.Resolution == resolution)
+            var matchingResolution = Quality.All.Where(q => q.Resolution == resolution)
                                             .OrderBy(q => q.Source)
                                             .ToList();
 
@@ -56,7 +53,7 @@ namespace NzbDrone.Core.Qualities
                 }
             }
 
-            Logger.Warn("Unable to find exact quality for {0},  {1}, and {2}. Using {3} as fallback", source, resolution, modifer, nearestQuality);
+            Logger.Warn("Unable to find exact quality for {0}, and {1}. Using {3} as fallback", source, resolution, nearestQuality);
 
             return nearestQuality;
         }

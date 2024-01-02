@@ -26,10 +26,6 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Aggregation.Aggregators.Augmenter
                 ? Confidence.Tag
                 : Confidence.Fallback;
 
-            var modifierConfidence = quality.ModifierDetectionSource == QualityDetectionSource.Name
-                ? Confidence.Tag
-                : Confidence.Fallback;
-
             var revisionConfidence = quality.RevisionDetectionSource == QualityDetectionSource.Name
                 ? Confidence.Tag
                 : Confidence.Fallback;
@@ -38,8 +34,6 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Aggregation.Aggregators.Augmenter
                                             sourceConfidence,
                                             quality.Quality.Resolution,
                                             resolutionConfidence,
-                                            quality.Quality.Modifier,
-                                            modifierConfidence,
                                             quality.Revision,
                                             revisionConfidence);
         }

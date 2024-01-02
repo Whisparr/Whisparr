@@ -204,19 +204,19 @@ namespace NzbDrone.Core.Notifications.Trakt
 
             switch (source)
             {
-                case QualitySource.BLURAY:
+                case QualitySource.Bluray:
                     traktSource = "bluray";
                     break;
-                case QualitySource.WEBDL:
+                case QualitySource.Web:
                     traktSource = "digital";
                     break;
-                case QualitySource.WEBRIP:
+                case QualitySource.WebRip:
                     traktSource = "digital";
                     break;
                 case QualitySource.DVD:
                     traktSource = "dvd";
                     break;
-                case QualitySource.TV:
+                case QualitySource.Television:
                     traktSource = "dvd";
                     break;
             }

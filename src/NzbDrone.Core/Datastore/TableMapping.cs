@@ -127,6 +127,7 @@ namespace NzbDrone.Core.Datastore
                   .Ignore(s => s.ForeignId)
                   .Ignore(s => s.TmdbId)
                   .Ignore(s => s.ImdbId)
+                  .Ignore(s => s.StashId)
                   .HasOne(a => a.MovieMetadata, a => a.MovieMetadataId);
 
             Mapper.Entity<AlternativeTitle>("AlternativeTitles").RegisterModel();

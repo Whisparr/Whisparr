@@ -265,10 +265,6 @@ namespace NzbDrone.Core.Datastore.Migration
 
             Create.Index("IX_MovieFiles_MovieId").OnTable("MovieFiles").OnColumn("MovieId");
 
-            // Speed up release processing (these are present in Sonarr)
-            Create.Index("IX_Movies_CleanTitle").OnTable("Movies").OnColumn("CleanTitle");
-            Create.Index("IX_Movies_ImdbId").OnTable("Movies").OnColumn("ImdbId");
-
             Create.TableForModel("DownloadHistory")
                   .WithColumn("EventType").AsInt32().NotNullable()
                   .WithColumn("MovieId").AsInt32().NotNullable()
@@ -322,9 +318,9 @@ namespace NzbDrone.Core.Datastore.Migration
             Create.TableForModel("MovieMetadata")
                 .WithColumn("ForeignId").AsString().Unique()
                 .WithColumn("MetadataSource").AsInt32()
-                .WithColumn("ImdbId").AsString().Nullable()
-                .WithColumn("TmdbId").AsInt32().Nullable()
-                .WithColumn("StashId").AsString().Nullable()
+                .WithColumn("ImdbId").AsString().Nullable().Indexed()
+                .WithColumn("TmdbId").AsInt32().Nullable().Indexed()
+                .WithColumn("StashId").AsString().Nullable().Indexed()
                 .WithColumn("Images").AsString()
                 .WithColumn("Genres").AsString().Nullable()
                 .WithColumn("Title").AsString()

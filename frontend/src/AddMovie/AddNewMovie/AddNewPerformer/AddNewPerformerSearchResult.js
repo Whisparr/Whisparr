@@ -5,14 +5,12 @@ import Label from 'Components/Label';
 import Link from 'Components/Link/Link';
 import Tooltip from 'Components/Tooltip/Tooltip';
 import { icons, kinds, sizes, tooltipPositions } from 'Helpers/Props';
-import MovieDetailsLinks from 'Movie/Details/MovieDetailsLinks';
 import MovieHeadshot from 'Movie/MovieHeadshot';
+import PerformerDetailsLinks from 'Performer/Details/PerformerDetailsLinks';
+import firstCharToUpper from 'Utilities/String/firstCharToUpper';
 import translate from 'Utilities/String/translate';
 import AddNewPerformerModal from './AddNewPerformerModal';
 import styles from './AddNewPerformerSearchResult.css';
-import PerformerDetailsLinks from 'Performer/Details/PerformerDetailsLinks';
-import firstCharToUpper from 'Utilities/String/firstCharToUpper';
-import titleCase from 'Utilities/String/titleCase';
 
 class AddNewPerformerSearchResult extends Component {
 

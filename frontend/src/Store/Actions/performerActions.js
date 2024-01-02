@@ -1,8 +1,10 @@
-import _, { first } from 'lodash';
+import _ from 'lodash';
 import { createAction } from 'redux-actions';
 import { filterBuilderTypes, filterBuilderValueTypes, sortDirections } from 'Helpers/Props';
 import { createThunk, handleThunks } from 'Store/thunks';
+import sortByName from 'Utilities/Array/sortByName';
 import createAjaxRequest from 'Utilities/createAjaxRequest';
+import firstCharToUpper from 'Utilities/String/firstCharToUpper';
 import translate from 'Utilities/String/translate';
 import { updateItem } from './baseActions';
 import createFetchHandler from './Creators/createFetchHandler';
@@ -12,8 +14,6 @@ import createSetClientSideCollectionFilterReducer from './Creators/Reducers/crea
 import createSetClientSideCollectionSortReducer from './Creators/Reducers/createSetClientSideCollectionSortReducer';
 import createSetSettingValueReducer from './Creators/Reducers/createSetSettingValueReducer';
 import createSetTableOptionReducer from './Creators/Reducers/createSetTableOptionReducer';
-import sortByName from 'Utilities/Array/sortByName';
-import firstCharToUpper from 'Utilities/String/firstCharToUpper';
 
 //
 // Variables

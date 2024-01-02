@@ -26,8 +26,8 @@ namespace NzbDrone.Integration.Test.ApiTests
             var movie = EnsureMovie(42019, "Taboo", true);
 
             var request = Calendar.BuildRequest();
-            request.AddParameter("start", new DateTime(1980, 10, 1).ToString("s") + "Z");
-            request.AddParameter("end", new DateTime(1982, 10, 3).ToString("s") + "Z");
+            request.AddParameter("start", new DateTime(1985, 10, 1).ToString("s") + "Z");
+            request.AddParameter("end", new DateTime(1989, 10, 3).ToString("s") + "Z");
             var items = Calendar.Get<List<MovieResource>>(request);
 
             items = items.Where(v => v.Id == movie.Id).ToList();
@@ -42,8 +42,8 @@ namespace NzbDrone.Integration.Test.ApiTests
             var movie = EnsureMovie(42019, "Taboo", false);
 
             var request = Calendar.BuildRequest();
-            request.AddParameter("start", new DateTime(1980, 10, 1).ToString("s") + "Z");
-            request.AddParameter("end", new DateTime(1982, 10, 3).ToString("s") + "Z");
+            request.AddParameter("start", new DateTime(1985, 10, 1).ToString("s") + "Z");
+            request.AddParameter("end", new DateTime(1989, 10, 3).ToString("s") + "Z");
             request.AddParameter("unmonitored", "false");
             var items = Calendar.Get<List<MovieResource>>(request);
 
@@ -58,8 +58,8 @@ namespace NzbDrone.Integration.Test.ApiTests
             var movie = EnsureMovie(42019, "Taboo", false);
 
             var request = Calendar.BuildRequest();
-            request.AddParameter("start", new DateTime(1980, 10, 1).ToString("s") + "Z");
-            request.AddParameter("end", new DateTime(1982, 10, 3).ToString("s") + "Z");
+            request.AddParameter("start", new DateTime(1985, 10, 1).ToString("s") + "Z");
+            request.AddParameter("end", new DateTime(1989, 10, 3).ToString("s") + "Z");
             request.AddParameter("unmonitored", "true");
             var items = Calendar.Get<List<MovieResource>>(request);
 

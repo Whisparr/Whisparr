@@ -112,6 +112,7 @@ import {
   faTrashAlt as fasTrashAlt,
   faUser as fasUser,
   faUserPlus as fasUserPlus,
+  faVenusMars as fasVenusMars,
   faVial as fasVial,
   faVideo as fasVideo,
   faWrench as fasWrench
@@ -199,6 +200,7 @@ export const PARENT = fasLevelUpAlt;
 export const PARSE = fasCalculator;
 export const PAUSED = fasPause;
 export const PENDING = farClock;
+export const PERFORMER = fasVenusMars;
 export const PLAY = fasPlay;
 export const PROFILE = fasUser;
 export const POPULAR = fasFire;

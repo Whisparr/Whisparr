@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using NLog;
+using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Instrumentation.Extensions;
 using NzbDrone.Common.TPL;
 using NzbDrone.Core.ImportLists.ImportListMovies;
@@ -101,11 +102,11 @@ namespace NzbDrone.Core.ImportLists
 
                             if (!importListReports.AnyFailure)
                             {
-                                var alreadyMapped = result.Movies.Where(x => importListReports.Movies.Any(r => r.ForeignId == x.ForeignId));
-                                var listMovies = MapMovieReports(importListReports.Movies.Where(x => result.Movies.All(r => r.ForeignId != x.ForeignId))).Where(x => x.TmdbId > 0).ToList();
+                                var alreadyMapped = result.Movies.Where(x => importListReports.Movies.Any(r => r.ForeignId == x.TmdbId.ToString() || r.ForeignId == x.StashId));
+                                var listMovies = MapMovieReports(importListReports.Movies.Where(x => result.Movies.All(r => r.ForeignId != x.TmdbId.ToString() && r.ForeignId != x.StashId))).Where(x => x.ForeignId.IsNotNullOrWhiteSpace()).ToList();
 
                                 listMovies.AddRange(alreadyMapped);
-                                listMovies = listMovies.DistinctBy(x => x.TmdbId).ToList();
+                                listMovies = listMovies.DistinctBy(x => x.ForeignId).ToList();
                                 listMovies.ForEach(m => m.ListId = importList.Definition.Id);
 
                                 result.Movies.AddRange(listMovies);
@@ -161,8 +162,8 @@ namespace NzbDrone.Core.ImportLists
                     if (!importListReports.AnyFailure)
                     {
                         var listMovies = MapMovieReports(importListReports.Movies)
-                            .Where(x => x.TmdbId > 0)
-                            .DistinctBy(x => x.TmdbId)
+                            .Where(x => x.TmdbId > 0 || x.StashId.IsNotNullOrWhiteSpace())
+                            .DistinctBy(x => x.ForeignId)
                             .ToList();
 
                         listMovies.ForEach(m => m.ListId = importList.Definition.Id);
@@ -190,7 +191,7 @@ namespace NzbDrone.Core.ImportLists
 
         private List<ImportListMovie> MapMovieReports(IEnumerable<ImportListMovie> reports)
         {
-            var mappedMovies = reports.Select(m => _movieSearch.MapMovieToTmdbMovie(new MovieMetadata { Title = m.Title, ForeignId = m.ForeignId.ToString(), TmdbId = m.TmdbId, ImdbId = m.ImdbId, Year = m.Year }))
+            var mappedMovies = reports.Select(m => _movieSearch.MapMovieToTmdbMovie(new MovieMetadata { Title = m.Title, StashId = m.StashId, TmdbId = m.TmdbId, ImdbId = m.ImdbId, Year = m.Year }))
                 .Where(x => x != null)
                 .DistinctBy(x => x.ForeignId)
                 .ToList();

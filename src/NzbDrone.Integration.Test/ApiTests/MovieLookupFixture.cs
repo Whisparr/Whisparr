@@ -16,6 +16,7 @@ namespace NzbDrone.Integration.Test.ApiTests
         }
 
         [Test]
+        [Ignore("Not Implemented on Meta")]
         public void lookup_new_movie_by_imdbid()
         {
             var movie = Movies.Lookup("imdb:tt0081593");

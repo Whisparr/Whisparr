@@ -13,7 +13,7 @@ namespace NzbDrone.Integration.Test.ApiTests
         {
             WaitForCompletion(() => QualityProfiles.All().Count > 0);
 
-            foreach (var title in new[] { "The Dark Knight", "Pulp Fiction" })
+            foreach (var title in new[] { "Taboo", "Pulp Fiction" })
             {
                 var newMovie = Movies.Lookup(title).First();
 

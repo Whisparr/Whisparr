@@ -9,6 +9,8 @@ using NzbDrone.Core.ImportLists;
 using NzbDrone.Core.Languages;
 using NzbDrone.Core.Lifecycle;
 using NzbDrone.Core.Movies;
+using NzbDrone.Core.Movies.Performers;
+using NzbDrone.Core.Movies.Studios;
 using NzbDrone.Core.Profiles.Qualities;
 using NzbDrone.Core.Test.CustomFormats;
 using NzbDrone.Core.Test.Framework;
@@ -103,8 +105,20 @@ namespace NzbDrone.Core.Test.Profiles
                                                             .With(c => c.QualityProfileId = 2)
                                                             .Build().ToList();
 
+            var performerList = Builder<Performer>.CreateListOfSize(3)
+                                                            .All()
+                                                            .With(c => c.QualityProfileId = 2)
+                                                            .Build().ToList();
+
+            var studioList = Builder<Studio>.CreateListOfSize(3)
+                                                            .All()
+                                                            .With(c => c.QualityProfileId = 2)
+                                                            .Build().ToList();
+
             Mocker.GetMock<IMovieService>().Setup(c => c.GetAllMovies()).Returns(movieList);
             Mocker.GetMock<IImportListFactory>().Setup(c => c.All()).Returns(importList);
+            Mocker.GetMock<IPerformerService>().Setup(c => c.GetAllPerformers()).Returns(performerList);
+            Mocker.GetMock<IStudioService>().Setup(c => c.GetAllStudios()).Returns(studioList);
 
             Subject.Delete(1);
 

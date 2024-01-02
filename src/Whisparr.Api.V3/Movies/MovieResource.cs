@@ -57,6 +57,7 @@ namespace Whisparr.Api.V3.Movies
         public string ImdbId { get; set; }
         public int TmdbId { get; set; }
         public string ForeignId { get; set; }
+        public string StashId { get; set; }
         public string TitleSlug { get; set; }
         public string RootFolderPath { get; set; }
         public string Folder { get; set; }
@@ -88,6 +89,7 @@ namespace Whisparr.Api.V3.Movies
                 Id = model.Id,
                 ForeignId = model.ForeignId,
                 TmdbId = model.TmdbId,
+                StashId = model.MovieMetadata.Value.StashId,
                 Title = model.Title,
                 OriginalLanguage = model.MovieMetadata.Value.OriginalLanguage,
                 SortTitle = model.Title.NormalizeTitle(),

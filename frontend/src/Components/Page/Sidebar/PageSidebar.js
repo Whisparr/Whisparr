@@ -42,10 +42,6 @@ const links = [
     to: '/scenes',
     children: [
       {
-        title: () => translate('Studios'),
-        to: '/studios'
-      },
-      {
         title: () => translate('ImportLibrary'),
         to: '/scenes/add/import'
       },
@@ -57,7 +53,13 @@ const links = [
   },
 
   {
-    iconName: icons.INTERACTIVE,
+    iconName: icons.STUDIO,
+    title: () => translate('Studios'),
+    to: '/studios'
+  },
+
+  {
+    iconName: icons.PERFORMER,
     title: () => translate('Performers'),
     to: '/performers'
   },

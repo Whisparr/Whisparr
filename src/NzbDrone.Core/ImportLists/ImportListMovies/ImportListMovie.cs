@@ -38,6 +38,12 @@ namespace NzbDrone.Core.ImportLists.ImportListMovies
             set { MovieMetadata.Value.ImdbId = value; }
         }
 
+        public string StashId
+        {
+            get { return MovieMetadata.Value.StashId; }
+            set { MovieMetadata.Value.StashId = value; }
+        }
+
         public int Year
         {
             get { return MovieMetadata.Value.Year; }

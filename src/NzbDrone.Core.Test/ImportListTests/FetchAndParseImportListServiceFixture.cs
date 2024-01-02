@@ -39,7 +39,7 @@ namespace NzbDrone.Core.Test.ImportListTests
 
             Mocker.GetMock<ISearchForNewMovie>()
                 .Setup(v => v.MapMovieToTmdbMovie(It.IsAny<MovieMetadata>()))
-                .Returns<MovieMetadata>(m => new MovieMetadata { ForeignId = m.ForeignId });
+                .Returns<MovieMetadata>(m => new MovieMetadata { ForeignId = m.TmdbId.ToString(), TmdbId = m.TmdbId });
         }
 
         private void GivenList(int id, bool enabled, bool enabledAuto, ImportListFetchResult fetchResult)

@@ -403,6 +403,7 @@ namespace NzbDrone.Core.Datastore.Migration
                 .WithColumn("SortTitle").AsString().Nullable()
                 .WithColumn("CleanTitle").AsString()
                 .WithColumn("Overview").AsString().Nullable()
+                .WithColumn("Network").AsString().Nullable()
                 .WithColumn("Website").AsString().Nullable()
                 .WithColumn("Images").AsString().WithDefaultValue("[]")
                 .WithColumn("Monitored").AsBoolean().WithDefaultValue(false)

@@ -205,11 +205,9 @@ class SignalRConnector extends Component {
     }
   };
 
-  handleCollection = (body) => {
+  handlePerformer = (body) => {
     const action = body.action;
-    const section = 'movieCollections';
-
-    console.log(body);
+    const section = 'performers';
 
     if (action === 'updated') {
       this.props.dispatchUpdateItem({ section, ...body.resource });
@@ -234,6 +232,17 @@ class SignalRConnector extends Component {
 
   handleQueueStatus = (body) => {
     this.props.dispatchUpdate({ section: 'queue.status', data: body.resource });
+  };
+
+  handleStudio = (body) => {
+    const action = body.action;
+    const section = 'studios';
+
+    if (action === 'updated') {
+      this.props.dispatchUpdateItem({ section, ...body.resource });
+    } else if (action === 'deleted') {
+      this.props.dispatchRemoveItem({ section, id: body.resource.id });
+    }
   };
 
   handleVersion = (body) => {

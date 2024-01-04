@@ -68,7 +68,8 @@ namespace Whisparr.Api.V3.History
 
             if (eventTypes != null && eventTypes.Any())
             {
-                 pagingSpec.FilterExpressions.Add(v => eventTypes.Contains((int)v.EventType));
+                var filterValues = eventTypes.Cast<MovieHistoryEventType>().ToArray();
+                pagingSpec.FilterExpressions.Add(v => filterValues.Contains(v.EventType));
             }
 
             if (downloadId.IsNotNullOrWhiteSpace())

@@ -13,6 +13,8 @@ namespace Whisparr.Api.V3.Performers
         public HairColor? HairColor { get; set; }
         public Ethnicity? Ethnicity { get; set; }
         public PerformerStatus Status { get; set; }
+        public int? CareerStart { get; set; }
+        public int? CareerEnd { get; set; }
         public string ForeignId { get; set; }
         public List<MediaCover> Images { get; set; }
         public bool Monitored { get; set; }
@@ -39,6 +41,8 @@ namespace Whisparr.Api.V3.Performers
                 Ethnicity = model.Ethnicity,
                 HairColor = model.HairColor,
                 Status = model.Status,
+                CareerStart = model.CareerStart,
+                CareerEnd = model.CareerEnd,
                 FullName = model.Name,
                 Monitored = model.Monitored,
                 Images = model.Images,

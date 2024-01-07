@@ -131,7 +131,7 @@ function ParseResult(props: ParseResultProps) {
           data={
             movie ? (
               <MovieTitleLink
-                titleSlug={movie.titleSlug}
+                foreignId={movie.foreignId}
                 title={movie.title}
                 year={movie.year}
               />

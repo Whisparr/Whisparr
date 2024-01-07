@@ -86,7 +86,7 @@ class BlocklistRow extends Component {
               return (
                 <TableRowCell key={name}>
                   <MovieTitleLink
-                    titleSlug={movie.titleSlug}
+                    foreignId={movie.foreignId}
                     title={movie.title}
                   />
                 </TableRowCell>

@@ -49,7 +49,7 @@ function MovieIndexRow(props: MovieIndexRowProps) {
 
   const {
     monitored,
-    titleSlug,
+    foreignId,
     title,
     studioTitle,
     status,
@@ -159,7 +159,7 @@ function MovieIndexRow(props: MovieIndexRowProps) {
         if (name === 'sortTitle') {
           return (
             <VirtualTableRowCell key={name} className={styles[name]}>
-              <MovieTitleLink titleSlug={titleSlug} title={title} />
+              <MovieTitleLink foreignId={foreignId} title={title} />
             </VirtualTableRowCell>
           );
         }

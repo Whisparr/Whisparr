@@ -1,6 +1,6 @@
 {
   "name": "whisparr",
-  "version": "1.0.0",
+  "version": "3.0.0",
   "description": "Whisparr is a PVR for Usenet and BitTorrent users",
   "scripts": {
     "build": "webpack --config ./frontend/build/webpack.config.js",

@@ -19,6 +19,7 @@ import * as organizePreview from './organizePreviewActions';
 import * as parse from './parseActions';
 import * as paths from './pathActions';
 import * as performers from './performerActions';
+import * as performerScenes from './performerScenesActions';
 import * as providerOptions from './providerOptionActions';
 import * as queue from './queueActions';
 import * as releases from './releaseActions';
@@ -55,6 +56,7 @@ export default [
   movieHistory,
   movieIndex,
   performers,
+  performerScenes,
   sceneIndex,
   settings,
   studios,

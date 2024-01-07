@@ -19,6 +19,7 @@ namespace NzbDrone.Core.Movies
         Movie FindByTmdbId(int tmdbid);
         Movie FindByForeignId(string foreignId);
         List<Movie> FindByTmdbId(List<int> tmdbids);
+        List<Movie> FindByStudioAndDate(string studioForeignId, string date);
         List<Movie> MoviesBetweenDates(DateTime start, DateTime end, bool includeUnmonitored);
         PagingSpec<Movie> MoviesWithoutFiles(PagingSpec<Movie> pagingSpec);
         List<Movie> GetMoviesByFileId(int fileId);
@@ -131,6 +132,22 @@ namespace NzbDrone.Core.Movies
                 (movie, profile, file) => Map(movieDictionary, movie, profile, file));
 
             return movieDictionary.Values.ToList();
+        }
+
+        public List<Movie> FindByStudioAndDate(string studioForeignId, string date)
+        {
+            var builder = new SqlBuilder(_database.DatabaseType)
+                .Join<Movie, MovieMetadata>((m, p) => m.MovieMetadataId == p.Id)
+                .Where<MovieMetadata>(x => x.StudioForeignId == studioForeignId && x.ReleaseDate == date);
+
+            return _database.QueryJoined<Movie, MovieMetadata>(
+                builder,
+                (movie, metadata) =>
+                {
+                    movie.MovieMetadata = metadata;
+
+                    return movie;
+                }).AsList();
         }
 
         public Movie FindByImdbId(string imdbid)

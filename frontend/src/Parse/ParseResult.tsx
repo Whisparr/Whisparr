@@ -23,8 +23,11 @@ function ParseResult(props: ParseResultProps) {
 
   const {
     releaseTitle,
+    isScene,
     movieTitle,
     movieTitles,
+    studioTitle,
+    releaseDate,
     year,
     edition,
     releaseGroup,
@@ -44,12 +47,31 @@ function ParseResult(props: ParseResultProps) {
           data={releaseTitle}
         />
 
-        <ParseResultItem title={translate('MovieTitle')} data={movieTitle} />
-
         <ParseResultItem
-          title={translate('Year')}
-          data={year > 0 ? year : '-'}
+          title={translate('ReleaseType')}
+          data={isScene ? 'Scene' : 'Movie'}
         />
+
+        {isScene ? (
+          <ParseResultItem
+            title={translate('StudioTitle')}
+            data={studioTitle}
+          />
+        ) : (
+          <ParseResultItem title={translate('MovieTitle')} data={movieTitle} />
+        )}
+
+        {isScene ? (
+          <ParseResultItem
+            title={translate('ReleaseDate')}
+            data={releaseDate}
+          />
+        ) : (
+          <ParseResultItem
+            title={translate('Year')}
+            data={year > 0 ? year : '-'}
+          />
+        )}
 
         <ParseResultItem
           title={translate('Edition')}

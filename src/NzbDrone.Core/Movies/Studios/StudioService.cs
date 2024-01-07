@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NzbDrone.Common.EnsureThat;
+using NzbDrone.Core.Parser;
 
 namespace NzbDrone.Core.Movies.Studios
 {
@@ -11,6 +12,7 @@ namespace NzbDrone.Core.Movies.Studios
         Studio GetById(int id);
         List<Studio> GetAllStudios();
         Studio Update(Studio performer);
+        Studio FindByTitle(string title);
         void RemoveStudio(Studio studio);
     }
 
@@ -61,6 +63,13 @@ namespace NzbDrone.Core.Movies.Studios
         public void RemoveStudio(Studio studio)
         {
             _studioRepo.Delete(studio);
+        }
+
+        public Studio FindByTitle(string title)
+        {
+            var cleanTitle = title.CleanMovieTitle();
+
+            return _studioRepo.FindByTitle(cleanTitle);
         }
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using NzbDrone.Core.Movies.Performers;
 
 namespace NzbDrone.Core.Movies
 {
@@ -22,6 +23,7 @@ namespace NzbDrone.Core.Movies
 
         public string Name { get; set; }
         public string ForeignId { get; set; }
+        public Gender Gender { get; set; }
         public List<MediaCover.MediaCover> Images { get; set; }
     }
 

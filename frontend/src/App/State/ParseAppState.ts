@@ -7,9 +7,12 @@ import CustomFormat from 'typings/CustomFormat';
 
 export interface ParsedMovieInfo {
   releaseTitle: string;
+  isScene: boolean;
   originalTitle: string;
   movieTitle: string;
   movieTitles: string[];
+  studioTitle: string;
+  releaseDate: string;
   year: number;
   quality: QualityModel;
   languages: Language[];

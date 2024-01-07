@@ -5,6 +5,7 @@ using NLog;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.IndexerSearch.Definitions;
 using NzbDrone.Core.Movies;
+using NzbDrone.Core.Movies.Studios;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.Parser.RomanNumerals;
 
@@ -23,12 +24,15 @@ namespace NzbDrone.Core.Parser
         private static HashSet<ArabicRomanNumeral> _arabicRomanNumeralMappings;
 
         private readonly IMovieService _movieService;
+        private readonly IStudioService _studioService;
         private readonly Logger _logger;
 
         public ParsingService(IMovieService movieService,
+                              IStudioService studioService,
                               Logger logger)
         {
             _movieService = movieService;
+            _studioService = studioService;
             _logger = logger;
 
             if (_arabicRomanNumeralMappings == null)
@@ -123,26 +127,43 @@ namespace NzbDrone.Core.Parser
         {
             FindMovieResult result = null;
 
-            if (result == null && tmdbId > 0)
+            if (parsedMovieInfo.IsScene)
             {
-                result = TryGetMovieByTmdbId(parsedMovieInfo, tmdbId);
-            }
+                var studio = _studioService.FindByTitle(parsedMovieInfo.StudioTitle);
 
-            if (result == null)
-            {
-                if (searchCriteria != null)
+                if (studio != null)
                 {
-                    result = TryGetMovieBySearchCriteria(parsedMovieInfo, imdbId, tmdbId, searchCriteria);
+                    result = GetSceneMovie(studio, parsedMovieInfo.ReleaseDate, parsedMovieInfo.ReleaseTokens, searchCriteria);
                 }
-                else
+
+                if (result == null)
                 {
-                    result = TryGetMovieByTitleAndOrYear(parsedMovieInfo);
+                    _logger.Debug($"No matching scene for studio {parsedMovieInfo.StudioTitle} and release date {parsedMovieInfo.ReleaseDate}");
                 }
             }
-
-            if (result == null)
+            else
             {
-                _logger.Debug($"No matching movie for titles {string.Join(", ", parsedMovieInfo.MovieTitles)} ({parsedMovieInfo.Year})");
+                if (result == null && tmdbId > 0)
+                {
+                    result = TryGetMovieByTmdbId(parsedMovieInfo, tmdbId);
+                }
+
+                if (result == null)
+                {
+                    if (searchCriteria != null)
+                    {
+                        result = TryGetMovieBySearchCriteria(parsedMovieInfo, imdbId, tmdbId, searchCriteria);
+                    }
+                    else
+                    {
+                        result = TryGetMovieByTitleAndOrYear(parsedMovieInfo);
+                    }
+                }
+
+                if (result == null)
+                {
+                    _logger.Debug($"No matching movie for titles {string.Join(", ", parsedMovieInfo.MovieTitles)} ({parsedMovieInfo.Year})");
+                }
             }
 
             return result;
@@ -225,6 +246,23 @@ namespace NzbDrone.Core.Parser
             }
 
             return null;
+        }
+
+        private FindMovieResult GetSceneMovie(Studio studio, string airDate, string part, SearchCriteriaBase searchCriteria)
+        {
+            Movie movieInfo = null;
+
+            if (searchCriteria != null && searchCriteria.Movie.MovieMetadata.Value.ReleaseDate == airDate)
+            {
+                movieInfo = searchCriteria.Movie;
+            }
+
+            if (movieInfo == null)
+            {
+                movieInfo = _movieService.FindByStudioAndReleaseDate(studio.ForeignId, airDate, part);
+            }
+
+            return new FindMovieResult(movieInfo, MovieMatchType.Title);
         }
     }
 }

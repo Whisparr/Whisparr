@@ -9,6 +9,7 @@ using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.MediaFiles.Events;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.Movies.Events;
+using NzbDrone.Core.Movies.Performers;
 using NzbDrone.Core.Parser;
 using NzbDrone.Core.Parser.RomanNumerals;
 
@@ -28,6 +29,7 @@ namespace NzbDrone.Core.Movies
         Movie FindByTitle(string title, int year);
         Movie FindByTitle(List<string> titles, int? year, List<string> otherTitles, List<Movie> candidates);
         List<Movie> FindByTitleCandidates(List<string> titles, out List<string> otherTitles);
+        Movie FindByStudioAndReleaseDate(string studioForeignId, string releaseDate, string releaseTokens);
         Movie FindByPath(string path);
         Dictionary<int, string> AllMoviePaths();
         List<int> AllMovieTmdbIds();
@@ -342,6 +344,88 @@ namespace NzbDrone.Core.Movies
         public bool ExistsByMetadataId(int metadataId)
         {
             return _movieRepository.ExistsByMetadataId(metadataId);
+        }
+
+        public Movie FindByStudioAndReleaseDate(string studioForeignId, string releaseDate, string releaseTokens)
+        {
+            var movies = _movieRepository.FindByStudioAndDate(studioForeignId, releaseDate);
+
+            if (!movies.Any())
+            {
+                return null;
+            }
+
+            if (movies.Count == 1)
+            {
+                return movies.First();
+            }
+
+            var parsedMovieTitle = Parser.Parser.NormalizeEpisodeTitle(releaseTokens);
+
+            if (parsedMovieTitle.IsNotNullOrWhiteSpace())
+            {
+                var matches = new List<Movie>();
+
+                foreach (var movie in movies)
+                {
+                    var cleanTitle = movie.Title.IsNotNullOrWhiteSpace() ? Parser.Parser.NormalizeEpisodeTitle(movie.Title) : string.Empty;
+
+                    // If parsed title matches title, consider a match
+                    if (cleanTitle.IsNotNullOrWhiteSpace() && parsedMovieTitle.Equals(cleanTitle))
+                    {
+                        matches.Add(movie);
+                        continue;
+                    }
+
+                    var cleanPerformers = movie.MovieMetadata.Value.Credits.Select(a => Parser.Parser.NormalizeEpisodeTitle(a.Performer.Name))
+                                                                           .Where(x => x.IsNotNullOrWhiteSpace());
+
+                    if (cleanPerformers.Empty())
+                    {
+                        continue;
+                    }
+
+                    // If parsed title matches performer, consider a match
+                    if (cleanPerformers.Any(p => p.IsNotNullOrWhiteSpace() && parsedMovieTitle.Equals(p)))
+                    {
+                        matches.Add(movie);
+                        continue;
+                    }
+
+                    var cleanFemalePerformers = movie.MovieMetadata.Value.Credits.Where(a => a.Performer.Gender == Gender.Female)
+                                                                                 .Select(a => Parser.Parser.NormalizeEpisodeTitle(a.Performer.Name))
+                                                                                 .Where(x => x.IsNotNullOrWhiteSpace()).ToList();
+
+                    // If all female performers are in title, consider a match
+                    if (cleanFemalePerformers.Any() && cleanFemalePerformers.All(x => parsedMovieTitle.Contains(x)))
+                    {
+                        matches.Add(movie);
+                        continue;
+                    }
+
+                    if (cleanTitle.IsNullOrWhiteSpace())
+                    {
+                        continue;
+                    }
+
+                    // If parsed title contains a performer and the title then consider a match
+                    if (cleanPerformers.Any(x => parsedMovieTitle.Contains(x)) && parsedMovieTitle.Contains(cleanTitle))
+                    {
+                        matches.Add(movie);
+                        continue;
+                    }
+                }
+
+                if (matches.Count == 1)
+                {
+                    return matches.First();
+                }
+
+                movies = matches;
+            }
+
+            _logger.Debug("Multiple scenes with the same release date found. Date: {0}", releaseDate);
+            return null;
         }
 
         private Movie ReturnSingleMovieOrThrow(List<Movie> movies)

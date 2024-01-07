@@ -14,7 +14,7 @@ interface StudiosAppState extends AppSectionSaveState, AppSectionState<Studio> {
   posterOptions: {
     detailedProgressBar: boolean;
     size: string;
-    showName: boolean;
+    showTitle: boolean;
   };
 
   selectedFilterKey: string;

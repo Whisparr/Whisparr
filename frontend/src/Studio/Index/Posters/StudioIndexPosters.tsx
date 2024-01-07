@@ -138,7 +138,7 @@ export default function StudioIndexPosters(props: StudioIndexPostersProps) {
   const posterHeight = Math.ceil((170 / 250) * posterWidth);
 
   const rowHeight = useMemo(() => {
-    const { detailedProgressBar, showName } = posterOptions;
+    const { detailedProgressBar, showTitle } = posterOptions;
 
     const nextAiringHeight = 19;
 
@@ -149,7 +149,7 @@ export default function StudioIndexPosters(props: StudioIndexPostersProps) {
       isSmallScreen ? columnPaddingSmallScreen : columnPadding,
     ];
 
-    if (showName) {
+    if (showTitle) {
       heights.push(19);
     }
 

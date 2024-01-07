@@ -45,7 +45,7 @@ export const defaultState = {
   posterOptions: {
     detailedProgressBar: false,
     size: 'large',
-    showName: false
+    showName: true
   },
 
   tableOptions: {

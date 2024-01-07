@@ -33,7 +33,7 @@ function StudioIndexPoster(props: StudioIndexPosterProps) {
     (state: AppState) => state.settings.safeForWorkMode
   );
 
-  const { showName } = useSelector(selectPosterOptions);
+  const { showTitle } = useSelector(selectPosterOptions);
   const [isEditStudioModalOpen, setIsEditStudioModalOpen] = useState(false);
 
   const { title, images, foreignId } = studio;
@@ -105,7 +105,7 @@ function StudioIndexPoster(props: StudioIndexPosterProps) {
         </Link>
       </div>
 
-      {showName ? (
+      {showTitle ? (
         <div className={styles.title} title={title}>
           {title}
         </div>

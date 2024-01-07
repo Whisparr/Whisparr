@@ -46,7 +46,7 @@ function StudioIndexPosterOptionsModalContent(
 
   const posterOptions = useSelector(selectPosterOptions);
 
-  const { detailedProgressBar, size, showName } = posterOptions;
+  const { detailedProgressBar, size, showTitle } = posterOptions;
 
   const dispatch = useDispatch();
 
@@ -93,7 +93,7 @@ function StudioIndexPosterOptionsModalContent(
             <FormInputGroup
               type={inputTypes.CHECK}
               name="showTitle"
-              value={showName}
+              value={showTitle}
               helpText={translate('ShowStudioTitleHelpText')}
               onChange={onPosterOptionChange}
             />

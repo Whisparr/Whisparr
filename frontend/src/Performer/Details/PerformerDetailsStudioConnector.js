@@ -35,7 +35,7 @@ function createMapStateToProps() {
     createDimensionsSelector(),
     (studioForeignId, performerScenes, studio, scenes, performer, dimensions) => {
 
-      const scenesInStudio = scenes.filter((scene) => scene.studioForeignId === studioForeignId);
+      const scenesInStudio = scenes.filter((scene) => scene.studioForeignId === studioForeignId && scene.credits.some((credit) => credit.performer.foreignId === performer.foreignId));
 
       return {
         ...studio,

@@ -14,12 +14,23 @@ class ImportMovies extends Component {
       <Switch>
         <Route
           exact={true}
-          path="/add/import"
+          path="/add/import/movies"
           component={ImportMovieSelectFolderConnector}
         />
 
         <Route
-          path="/add/import/:rootFolderId"
+          exact={true}
+          path="/add/import/scenes"
+          component={ImportMovieSelectFolderConnector}
+        />
+
+        <Route
+          path="/add/import/movies/:rootFolderId"
+          component={ImportMovieConnector}
+        />
+
+        <Route
+          path="/add/import/scenes/:rootFolderId"
           component={ImportMovieConnector}
         />
       </Switch>

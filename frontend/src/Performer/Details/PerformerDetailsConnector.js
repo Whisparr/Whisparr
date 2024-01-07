@@ -26,7 +26,7 @@ const selectMovies = createSelector(
     } = movies;
 
     const filteredMovies = items.filter((movie) => movie.credits.some((credit) => credit.performer.foreignId === foreignId));
-    const studios = filteredMovies.map((movie) => movie.studioForeignId);
+    const studios = _.uniq(filteredMovies.map((movie) => movie.studioForeignId));
     const hasMovies = !!filteredMovies.filter((movie) => movie.itemType === 'movie').length;
     const hasScenes = !!filteredMovies.filter((movie) => movie.itemType === 'scene').length;
 

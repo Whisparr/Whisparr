@@ -25,7 +25,7 @@ function ImportMovieRootFolderRow(props) {
       <TableRowCell>
         <Link
           className={styles.link}
-          to={`/add/import/${id}`}
+          to={`/add/import/movies/${id}`}
         >
           {path}
         </Link>

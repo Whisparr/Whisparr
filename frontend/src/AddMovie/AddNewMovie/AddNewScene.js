@@ -91,7 +91,7 @@ class AddNewScene extends Component {
     const isFetching = this.state.isFetching;
 
     return (
-      <PageContent title={translate('AddNewMovie')}>
+      <PageContent title={translate('AddNewScene')}>
         <PageContentBody>
           <div className={styles.searchContainer}>
             <div className={styles.searchIconContainer}>
@@ -180,7 +180,7 @@ class AddNewScene extends Component {
                 </div>
                 <div>
                   <Link to="https://wiki.servarr.com/whisparr/faq#why-can-i-not-add-a-new-movie-to-whisparr">
-                    {translate('CantFindMovie')}
+                    {translate('CantFindScene')}
                   </Link>
                 </div>
               </div>
@@ -191,10 +191,10 @@ class AddNewScene extends Component {
               null :
               <div className={styles.message}>
                 <div className={styles.helpText}>
-                  {translate('AddNewMessage')}
+                  {translate('AddNewSceneMessage')}
                 </div>
                 <div>
-                  {translate('AddNewTmdbIdMessage')}
+                  {translate('AddNewStashIdMessage')}
                 </div>
               </div>
           }

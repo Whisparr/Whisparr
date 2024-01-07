@@ -20,12 +20,28 @@ function PerformerIndexSortMenu(props: PerformerIndexSortMenuProps) {
     <SortMenu isDisabled={isDisabled} alignMenu={align.RIGHT}>
       <MenuContent>
         <SortMenuItem
+          name="ethnicity"
+          sortKey={sortKey}
+          sortDirection={sortDirection}
+          onPress={onSortSelect}
+        >
+          {translate('Ethnicity')}
+        </SortMenuItem>
+        <SortMenuItem
           name="gender"
           sortKey={sortKey}
           sortDirection={sortDirection}
           onPress={onSortSelect}
         >
           {translate('Gender')}
+        </SortMenuItem>
+        <SortMenuItem
+          name="hairColor"
+          sortKey={sortKey}
+          sortDirection={sortDirection}
+          onPress={onSortSelect}
+        >
+          {translate('HairColor')}
         </SortMenuItem>
       </MenuContent>
     </SortMenu>

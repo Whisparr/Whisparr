@@ -191,7 +191,7 @@ class AddNewMovie extends Component {
               null :
               <div className={styles.message}>
                 <div className={styles.helpText}>
-                  {translate('AddNewMessage')}
+                  {translate('AddNewMovieMessage')}
                 </div>
                 <div>
                   {translate('AddNewTmdbIdMessage')}

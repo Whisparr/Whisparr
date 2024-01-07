@@ -27,7 +27,7 @@ const links = [
     children: [
       {
         title: () => translate('ImportLibrary'),
-        to: '/movies/add/import'
+        to: '/add/import/movies'
       },
       {
         title: () => translate('AddNew'),
@@ -43,7 +43,7 @@ const links = [
     children: [
       {
         title: () => translate('ImportLibrary'),
-        to: '/scenes/add/import'
+        to: '/add/import/scenes'
       },
       {
         title: () => translate('AddNew'),

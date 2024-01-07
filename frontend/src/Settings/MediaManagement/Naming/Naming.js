@@ -169,7 +169,7 @@ class Naming extends Component {
     }
 
     return (
-      <FieldSet legend={translate('MovieNaming')}>
+      <FieldSet legend={translate('Naming')}>
         {
           isFetching &&
             <LoadingIndicator />
@@ -203,7 +203,7 @@ class Naming extends Component {
                 <FormInputGroup
                   type={inputTypes.CHECK}
                   name="renameScenes"
-                  helpText={translate('RenameScenesHelpText')}
+                  helpText={translate('RenameMoviesHelpText')}
                   onChange={onInputChange}
                   {...settings.renameScenes}
                 />

@@ -27,6 +27,7 @@ import * as rootFolders from './rootFolderActions';
 import * as sceneIndex from './sceneIndexActions';
 import * as settings from './settingsActions';
 import * as studios from './studioActions';
+import * as studioScenes from './studioScenesActions';
 import * as system from './systemActions';
 import * as tags from './tagActions';
 
@@ -60,6 +61,7 @@ export default [
   sceneIndex,
   settings,
   studios,
+  studioScenes,
   system,
   tags
 ];

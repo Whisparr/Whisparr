@@ -28,6 +28,7 @@ import QualityConnector from 'Settings/Quality/QualityConnector';
 import Settings from 'Settings/Settings';
 import TagSettings from 'Settings/Tags/TagSettings';
 import UISettingsConnector from 'Settings/UI/UISettingsConnector';
+import StudioDetailsPageConnector from 'Studio/Details/StudioDetailsPageConnector';
 import StudioIndex from 'Studio/Index/StudioIndex';
 import BackupsConnector from 'System/Backup/BackupsConnector';
 import LogsTableConnector from 'System/Events/LogsTableConnector';
@@ -114,6 +115,11 @@ function AppRoutes(props) {
       <Route
         path="/performer/:foreignId"
         component={PerformerDetailsPageConnector}
+      />
+
+      <Route
+        path="/studio/:foreignId"
+        component={StudioDetailsPageConnector}
       />
 
       {/*

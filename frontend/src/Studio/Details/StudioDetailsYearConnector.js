@@ -1,0 +1,89 @@
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { createSelector } from 'reselect';
+import { executeCommand } from 'Store/Actions/commandActions';
+import { toggleMovieMonitored } from 'Store/Actions/movieActions';
+import { setStudioScenesSort, setStudioScenesTableOption } from 'Store/Actions/studioScenesActions';
+import createAllScenesSelector from 'Store/Selectors/createAllScenesSelector';
+import createDimensionsSelector from 'Store/Selectors/createDimensionsSelector';
+import createStudioSelector from 'Store/Selectors/createStudioSelector';
+import StudioDetailsYear from './StudioDetailsYear';
+
+function createMapStateToProps() {
+  return createSelector(
+    (state, { year }) => year,
+    (state, { studioForeignId }) => studioForeignId,
+    (state) => state.studioScenes,
+    createAllScenesSelector(),
+    createStudioSelector(),
+    createDimensionsSelector(),
+    (year, studioForeignId, studioScenes, scenes, studio, dimensions) => {
+
+      const scenesInYear = scenes.filter((scene) => scene.studioForeignId === studioForeignId && scene.year === year);
+
+      return {
+        year,
+        items: scenesInYear,
+        columns: studioScenes.columns,
+        sortKey: studioScenes.sortKey,
+        sortDirection: studioScenes.sortDirection,
+        studioMonitored: studio.monitored,
+        path: studio.path,
+        isSmallScreen: dimensions.isSmallScreen,
+        isSearching: false
+      };
+    }
+  );
+}
+
+const mapDispatchToProps = {
+  setStudioScenesSort,
+  setStudioScenesTableOption,
+  toggleMovieMonitored,
+  executeCommand
+};
+
+class StudioDetailsYearConnector extends Component {
+
+  onTableOptionChange = (payload) => {
+    this.props.setStudioScenesTableOption(payload);
+  };
+
+  onMonitorMoviePress = (movieId, monitored) => {
+    this.props.toggleMovieMonitored({
+      movieId,
+      monitored
+    });
+  };
+
+  onSortPress = (sortKey, sortDirection) => {
+    this.props.setStudioScenesSort({
+      sortKey,
+      sortDirection
+    });
+  };
+
+  //
+  // Render
+
+  render() {
+    return (
+      <StudioDetailsYear
+        {...this.props}
+        onTableOptionChange={this.onTableOptionChange}
+        onSortPress={this.onSortPress}
+        onMonitorMoviePress={this.onMonitorMoviePress}
+      />
+    );
+  }
+}
+
+StudioDetailsYearConnector.propTypes = {
+  studioId: PropTypes.number.isRequired,
+  setStudioScenesTableOption: PropTypes.func.isRequired,
+  setStudioScenesSort: PropTypes.func.isRequired,
+  toggleMovieMonitored: PropTypes.func.isRequired
+};
+
+export default connect(createMapStateToProps, mapDispatchToProps)(StudioDetailsYearConnector);

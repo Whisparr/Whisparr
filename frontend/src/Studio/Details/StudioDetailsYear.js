@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import moment from 'moment';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import Icon from 'Components/Icon';
@@ -10,7 +11,6 @@ import Menu from 'Components/Menu/Menu';
 import MenuButton from 'Components/Menu/MenuButton';
 import MenuContent from 'Components/Menu/MenuContent';
 import MenuItem from 'Components/Menu/MenuItem';
-import MonitorToggleButton from 'Components/MonitorToggleButton';
 import SpinnerIcon from 'Components/SpinnerIcon';
 import Table from 'Components/Table/Table';
 import TableBody from 'Components/Table/TableBody';
@@ -19,10 +19,10 @@ import { align, icons, kinds, sizes, sortDirections, tooltipPositions } from 'He
 import formatBytes from 'Utilities/Number/formatBytes';
 import translate from 'Utilities/String/translate';
 import SceneRowConnector from './SceneRowConnector';
-import StudioInfo from './StudioInfo';
-import styles from './PerformerDetailsStudio.css';
+import YearInfo from './YearInfo';
+import styles from './StudioDetailsYear.css';
 
-function getStudioStatistics(movies) {
+function getYearStatistics(movies) {
   let movieCount = 0;
   let movieFileCount = 0;
   let totalMovieCount = 0;
@@ -69,7 +69,7 @@ function getMovieCountKind(monitored, movieFileCount, movieCount) {
   return kinds.DANGER;
 }
 
-class PerformerDetailsStudio extends Component {
+class StudioDetailsYear extends Component {
 
   //
   // Lifecycle
@@ -92,18 +92,18 @@ class PerformerDetailsStudio extends Component {
 
   componentDidUpdate(prevProps) {
     const {
-      performerId,
+      studioId,
       items
     } = this.props;
 
-    if (prevProps.performerId !== performerId) {
+    if (prevProps.studioId !== studioId) {
       this._expandByDefault();
       return;
     }
 
     if (
-      getStudioStatistics(prevProps.items).movieFileCount > 0 &&
-      getStudioStatistics(items).movieFileCount === 0
+      getYearStatistics(prevProps.items).movieFileCount > 0 &&
+      getYearStatistics(items).movieFileCount === 0
     ) {
       this.setState({
         isOrganizeModalOpen: false,
@@ -117,16 +117,16 @@ class PerformerDetailsStudio extends Component {
 
   _expandByDefault() {
     const {
-      foreignId,
+      year,
       onExpandPress,
       items
     } = this.props;
 
     const expand = _.some(items, (item) => {
-      return item.monitored;
+      return year === moment().year();
     });
 
-    onExpandPress(foreignId, expand);
+    onExpandPress(year, expand);
   }
 
   //
@@ -142,11 +142,11 @@ class PerformerDetailsStudio extends Component {
 
   onExpandPress = () => {
     const {
-      foreignId,
+      year,
       isExpanded
     } = this.props;
 
-    this.props.onExpandPress(foreignId, !isExpanded);
+    this.props.onExpandPress(year, !isExpanded);
   };
 
   onMonitorMoviePress = (movieId, monitored, { shiftKey }) => {
@@ -160,15 +160,12 @@ class PerformerDetailsStudio extends Component {
 
   render() {
     const {
-      monitored,
-      title,
+      year,
       items,
-      isSaving,
       isExpanded,
       isSearching,
-      performerMonitored,
+      studioMonitored,
       isSmallScreen,
-      onMonitorStudioPress,
       onSearchPress,
       columns,
       sortKey,
@@ -183,7 +180,7 @@ class PerformerDetailsStudio extends Component {
       totalMovieCount,
       monitoredMovieCount,
       hasMonitoredMovies
-    } = getStudioStatistics(items);
+    } = getYearStatistics(items);
 
     const sizeOnDisk = 0;
 
@@ -193,15 +190,8 @@ class PerformerDetailsStudio extends Component {
       >
         <div className={styles.header}>
           <div className={styles.left}>
-            <MonitorToggleButton
-              monitored={monitored}
-              isSaving={isSaving}
-              size={24}
-              onPress={onMonitorStudioPress}
-            />
-
             <span className={styles.seasonNumber}>
-              {title}
+              {year}
             </span>
 
             <Popover
@@ -209,7 +199,7 @@ class PerformerDetailsStudio extends Component {
               canFlip={true}
               anchor={
                 <Label
-                  kind={getMovieCountKind(monitored, movieFileCount, movieCount)}
+                  kind={getMovieCountKind(true, movieFileCount, movieCount)}
                   size={sizes.LARGE}
                 >
                   <span>{movieFileCount} / {movieCount}</span>
@@ -218,7 +208,7 @@ class PerformerDetailsStudio extends Component {
               title={translate('SeasonInformation')}
               body={
                 <div>
-                  <StudioInfo
+                  <YearInfo
                     totalMovieCount={totalMovieCount}
                     monitoredMovieCount={monitoredMovieCount}
                     movieFileCount={movieFileCount}
@@ -270,7 +260,7 @@ class PerformerDetailsStudio extends Component {
 
                 <MenuContent className={styles.actionsMenuContent}>
                   <MenuItem
-                    isDisabled={isSearching || !hasMonitoredMovies || !performerMonitored}
+                    isDisabled={isSearching || !hasMonitoredMovies || !studioMonitored}
                     onPress={onSearchPress}
                   >
                     <SpinnerIcon
@@ -300,10 +290,10 @@ class PerformerDetailsStudio extends Component {
                 <SpinnerIconButton
                   className={styles.actionButton}
                   name={icons.SEARCH}
-                  title={hasMonitoredMovies && performerMonitored ? translate('SearchForMonitoredMoviesSeason') : translate('NoMonitoredMoviesSeason')}
+                  title={hasMonitoredMovies && studioMonitored ? translate('SearchForMonitoredMoviesSeason') : translate('NoMonitoredMoviesSeason')}
                   size={24}
                   isSpinning={isSearching}
-                  isDisabled={isSearching || !hasMonitoredMovies || !performerMonitored}
+                  isDisabled={isSearching || !hasMonitoredMovies || !studioMonitored}
                   onPress={onSearchPress}
                 />
 
@@ -370,11 +360,9 @@ class PerformerDetailsStudio extends Component {
   }
 }
 
-PerformerDetailsStudio.propTypes = {
-  performerId: PropTypes.number.isRequired,
-  title: PropTypes.string.isRequired,
-  foreignId: PropTypes.string.isRequired,
-  monitored: PropTypes.bool.isRequired,
+StudioDetailsYear.propTypes = {
+  studioId: PropTypes.number.isRequired,
+  year: PropTypes.number.isRequired,
   items: PropTypes.arrayOf(PropTypes.object).isRequired,
   columns: PropTypes.arrayOf(PropTypes.object).isRequired,
   sortKey: PropTypes.string.isRequired,
@@ -382,18 +370,17 @@ PerformerDetailsStudio.propTypes = {
   isSaving: PropTypes.bool,
   isExpanded: PropTypes.bool,
   isSearching: PropTypes.bool.isRequired,
-  performerMonitored: PropTypes.bool.isRequired,
+  studioMonitored: PropTypes.bool.isRequired,
   isSmallScreen: PropTypes.bool.isRequired,
   onTableOptionChange: PropTypes.func.isRequired,
   onSortPress: PropTypes.func.isRequired,
-  onMonitorStudioPress: PropTypes.func.isRequired,
   onExpandPress: PropTypes.func.isRequired,
   onMonitorMoviePress: PropTypes.func.isRequired,
   onSearchPress: PropTypes.func.isRequired
 };
 
-PerformerDetailsStudio.defaultProps = {
+StudioDetailsYear.defaultProps = {
   statistics: {}
 };
 
-export default PerformerDetailsStudio;
+export default StudioDetailsYear;

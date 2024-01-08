@@ -5,6 +5,7 @@ interface CssExports {
   'certification': string;
   'content': string;
   'exclusionIcon': string;
+  'genres': string;
   'icons': string;
   'links': string;
   'overlay': string;
@@ -15,6 +16,7 @@ interface CssExports {
   'scene': string;
   'searchResult': string;
   'statusContainer': string;
+  'studio': string;
   'title': string;
   'titleContainer': string;
   'titleRow': string;

@@ -61,6 +61,7 @@ class AddNewMovieSearchResult extends Component {
       titleSlug,
       year,
       studioTitle,
+      genres,
       status,
       itemType,
       overview,
@@ -221,6 +222,21 @@ class AddNewMovieSearchResult extends Component {
                   </Label>
               }
 
+              {
+                genres.length > 0 ?
+                  <Label size={sizes.LARGE}>
+                    <Icon
+                      name={icons.GENRE}
+                      size={13}
+                    />
+
+                    <span className={styles.genres}>
+                      {genres.slice(0, 3).join(', ')}
+                    </span>
+                  </Label> :
+                  null
+              }
+
               <Tooltip
                 anchor={
                   <Label
@@ -291,6 +307,7 @@ AddNewMovieSearchResult.propTypes = {
   overview: PropTypes.string,
   ratings: PropTypes.object.isRequired,
   folder: PropTypes.string.isRequired,
+  genres: PropTypes.arrayOf(PropTypes.string),
   images: PropTypes.arrayOf(PropTypes.object).isRequired,
   existingMovieId: PropTypes.number,
   isExistingMovie: PropTypes.bool.isRequired,
@@ -307,6 +324,10 @@ AddNewMovieSearchResult.propTypes = {
   movieRuntimeFormat: PropTypes.string.isRequired,
   certification: PropTypes.string,
   safeForWorkMode: PropTypes.bool
+};
+
+AddNewMovieSearchResult.defaultProps = {
+  genres: []
 };
 
 export default AddNewMovieSearchResult;

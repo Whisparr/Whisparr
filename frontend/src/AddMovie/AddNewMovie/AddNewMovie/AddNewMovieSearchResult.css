@@ -93,6 +93,11 @@
   margin-top: 20px;
 }
 
+.studio,
+.genres {
+  margin-left: 5px;
+}
+
 .links {
   margin-left: 8px;
   pointer-events: all;

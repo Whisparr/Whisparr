@@ -1,10 +1,10 @@
 import _ from 'lodash';
 import { createAction } from 'redux-actions';
-import { filterBuilderTypes, filterBuilderValueTypes, sortDirections } from 'Helpers/Props';
+import { filterBuilderTypes, sortDirections } from 'Helpers/Props';
 import { createThunk, handleThunks } from 'Store/thunks';
 import sortByName from 'Utilities/Array/sortByName';
 import createAjaxRequest from 'Utilities/createAjaxRequest';
-import firstCharToUpper from 'Utilities/String/firstCharToUpper';
+import camelCaseToString from 'Utilities/String/camelCaseToString';
 import translate from 'Utilities/String/translate';
 import { updateItem } from './baseActions';
 import createFetchHandler from './Creators/createFetchHandler';
@@ -133,7 +133,18 @@ export const defaultState = {
       name: 'gender',
       label: () => translate('Gender'),
       type: filterBuilderTypes.EXACT,
-      valueType: filterBuilderValueTypes.DEFAULT
+      optionsSelector: function(items) {
+        const tagList = ['male', 'female', 'transMale', 'transFemale', 'nonBinary', 'intersex'];
+
+        const tags = tagList.map((tag) => {
+          return {
+            id: tag,
+            name: camelCaseToString(tag)
+          };
+        });
+
+        return tags.sort(sortByName);
+      }
     },
     {
       name: 'hairColor',
@@ -145,7 +156,7 @@ export const defaultState = {
         const tags = tagList.map((tag) => {
           return {
             id: tag,
-            name: firstCharToUpper(tag)
+            name: camelCaseToString(tag)
           };
         });
 
@@ -162,7 +173,7 @@ export const defaultState = {
         const tags = tagList.map((tag) => {
           return {
             id: tag,
-            name: firstCharToUpper(tag)
+            name: camelCaseToString(tag)
           };
         });
 

@@ -171,16 +171,18 @@ class MovieImage extends Component {
     }
 
     return (
-      <img
-        className={classNames(
-          className,
-          blur && styles.blur
-        )}
-        style={style}
-        src={isLoaded ? url : placeholder}
-        onError={this.onError}
-        onLoad={this.onLoad}
-      />
+      <div className={classNames(styles.container, className)}>
+        <img
+          className={classNames(
+            styles.image,
+            blur && url && styles.blur
+          )}
+          style={style}
+          src={isLoaded ? url : placeholder}
+          onError={this.onError}
+          onLoad={this.onLoad}
+        />
+      </div>
     );
   }
 }

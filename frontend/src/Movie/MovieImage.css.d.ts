@@ -2,6 +2,8 @@
 // Please do not change this file!
 interface CssExports {
   'blur': string;
+  'container': string;
+  'image': string;
 }
 export const cssExports: CssExports;
 export default cssExports;

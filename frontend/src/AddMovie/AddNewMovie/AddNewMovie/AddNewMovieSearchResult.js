@@ -120,7 +120,7 @@ class AddNewMovieSearchResult extends Component {
                 <div className={styles.posterContainer}>
                   <ImageItem
                     blur={safeForWorkMode}
-                    className={itemType === 'scene' ? styles.poster : styles.scene}
+                    className={itemType === 'scene' ? styles.scene : styles.poster}
                     style={elementStyle}
                     images={images}
                     size={250}

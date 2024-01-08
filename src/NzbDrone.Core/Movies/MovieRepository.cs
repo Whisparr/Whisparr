@@ -137,14 +137,18 @@ namespace NzbDrone.Core.Movies
         public List<Movie> FindByStudioAndDate(string studioForeignId, string date)
         {
             var builder = new SqlBuilder(_database.DatabaseType)
+                .Join<Movie, QualityProfile>((m, p) => m.QualityProfileId == p.Id)
                 .Join<Movie, MovieMetadata>((m, p) => m.MovieMetadataId == p.Id)
+                .LeftJoin<Movie, MovieFile>((m, f) => m.Id == f.MovieId)
                 .Where<MovieMetadata>(x => x.StudioForeignId == studioForeignId && x.ReleaseDate == date);
 
-            return _database.QueryJoined<Movie, MovieMetadata>(
+            return _database.QueryJoined<Movie, QualityProfile, MovieMetadata, MovieFile>(
                 builder,
-                (movie, metadata) =>
+                (movie, profile, metadata, file) =>
                 {
+                    movie.QualityProfile = profile;
                     movie.MovieMetadata = metadata;
+                    movie.MovieFile = file;
 
                     return movie;
                 }).AsList();

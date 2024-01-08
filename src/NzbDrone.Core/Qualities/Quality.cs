@@ -113,7 +113,7 @@ namespace NzbDrone.Core.Qualities
         public static Quality WEBRip1080p => new Quality(15, "WEBRip-1080p", QualitySource.WebRip, 1080);
         public static Quality WEBRip2160p => new Quality(17, "WEBRip-2160p", QualitySource.WebRip, 2160);
 
-        public static Quality VR => new Quality(22, "VR", QualitySource.VR, 1080);
+        public static Quality VR => new Quality(32, "VR", QualitySource.VR, 1080);
 
         static Quality()
         {

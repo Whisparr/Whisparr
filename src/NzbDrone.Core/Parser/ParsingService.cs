@@ -66,6 +66,11 @@ namespace NzbDrone.Core.Parser
         {
             var parsedMovieInfo = Parser.ParseMovieTitle(title);
 
+            if (parsedMovieInfo == null)
+            {
+                return _movieService.FindByTitle(title);
+            }
+
             if (parsedMovieInfo.IsScene)
             {
                 var studio = _studioService.FindByTitle(parsedMovieInfo.StudioTitle);
@@ -77,11 +82,6 @@ namespace NzbDrone.Core.Parser
             }
             else
             {
-                if (parsedMovieInfo == null)
-                {
-                    return _movieService.FindByTitle(title);
-                }
-
                 var result = TryGetMovieByTitleAndOrYear(parsedMovieInfo);
 
                 if (result != null)

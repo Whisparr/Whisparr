@@ -66,6 +66,11 @@ namespace NzbDrone.Core.IndexerSearch
                 sceneSearchSpec.ReleaseDate = DateOnly.FromDateTime(movie.MovieMetadata.Value.ReleaseDateUtc.Value);
                 sceneSearchSpec.SiteTitle = movie.MovieMetadata.Value.StudioTitle;
 
+                if (sceneSearchSpec.SiteTitle != null)
+                {
+                    sceneSearchSpec.SceneTitles.Add(sceneSearchSpec.SiteTitle);
+                }
+
                 decisions = await Dispatch(indexer => indexer.Fetch(sceneSearchSpec), sceneSearchSpec);
             }
 

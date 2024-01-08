@@ -1,8 +1,6 @@
 import _ from 'lodash';
-import React from 'react';
 import { createAction } from 'redux-actions';
-import Icon from 'Components/Icon';
-import { filterBuilderTypes, filterBuilderValueTypes, icons, sortDirections } from 'Helpers/Props';
+import { filterBuilderTypes, filterBuilderValueTypes, sortDirections } from 'Helpers/Props';
 import { createThunk, handleThunks } from 'Store/thunks';
 import sortByName from 'Utilities/Array/sortByName';
 import createAjaxRequest from 'Utilities/createAjaxRequest';

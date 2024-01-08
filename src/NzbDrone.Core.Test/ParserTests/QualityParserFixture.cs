@@ -23,8 +23,10 @@ namespace NzbDrone.Core.Test.ParserTests
             new object[] { "SD DVD",  QualitySource.DVD, Resolution.Unknown },
             new object[] { "480p WEB-DL", QualitySource.Web, Resolution.R480p },
             new object[] { "HD TV", QualitySource.Television, Resolution.R720p },
-            new object[] { "1080p HD TV", QualitySource.Television, Resolution.R1080p },
-            new object[] { "2160p HD TV", QualitySource.Television, Resolution.R2160p },
+            new object[] { "1080p HDTV", QualitySource.Television, Resolution.R1080p },
+            new object[] { "2160p HDTV", QualitySource.Television, Resolution.R2160p },
+            new object[] { "1080p", QualitySource.Web, Resolution.R1080p },
+            new object[] { "2160p", QualitySource.Web, Resolution.R2160p },
             new object[] { "720p WEB-DL", QualitySource.Web, Resolution.R720p },
             new object[] { "1080p WEB-DL", QualitySource.Web, Resolution.R1080p },
             new object[] { "2160p WEB-DL", QualitySource.Web, Resolution.R2160p },
@@ -35,7 +37,6 @@ namespace NzbDrone.Core.Test.ParserTests
             new object[] { "2160p Remux", QualitySource.BlurayRaw, Resolution.R2160p },
         };
 
-        [TestCase("S07E23 .avi ", false)]
         [TestCase("Movie Name S02E01 HDTV XviD 2HD", false)]
         [TestCase("Movie Name S05E11 PROPER HDTV XviD 2HD", true)]
         [TestCase("Movie Name S02E08 HDTV x264 FTP", false)]
@@ -45,9 +46,6 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Movie Name S01E04 Mexicos Death Train DSR x264 MiNDTHEGAP", false)]
         [TestCase("Movie Name S11E03 has no periods or extension HDTV", false)]
         [TestCase("Movie Name.S04E05.HDTV.XviD-LOL", false)]
-        [TestCase("Some.Movie.S02E15.avi", false)]
-        [TestCase("Some.Movie.S02E15.xvid", false)]
-        [TestCase("Some.Movie.S02E15.divx", false)]
         [TestCase("Some.Movie.S03E06.HDTV-WiDE", false)]
         [TestCase("Movie Name.S10E27.WS.DSR.XviD-2HD", false)]
         [TestCase("Movie Name.S03.TVRip.XviD-NOGRP", false)]
@@ -79,6 +77,10 @@ namespace NzbDrone.Core.Test.ParserTests
             ParseAndVerifyQuality(title, QualitySource.DVDRaw, proper, Resolution.R480p);
         }
 
+        [TestCase("S07E23 .avi ", false)]
+        [TestCase("Some.Movie.S02E15.avi", false)]
+        [TestCase("Some.Movie.S02E15.xvid", false)]
+        [TestCase("Some.Movie.S02E15.divx", false)]
         [TestCase("Movie.Name.S01E10.The.Leviathan.480p.WEB-DL.x264-mSD", false)]
         [TestCase("Movie.Name.S04E10.Glee.Actually.480p.WEB-DL.x264-mSD", false)]
         [TestCase("Movie.Name.S06E11.The.Santa.Simulation.480p.WEB-DL.x264-mSD", false)]
@@ -441,6 +443,7 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Movie Name - S01E01 - Title.avi")]
         [TestCase("Movie.Title..9x18.sunshine_days.avi")]
         [TestCase("[CR] Movie Title - 004 [48CE2D0F].avi")]
+        [TestCase("Show - 23.01.23 - Title.f4v")]
         public void should_parse_quality_from_extension(string title)
         {
             var result = QualityParser.ParseQuality(title);

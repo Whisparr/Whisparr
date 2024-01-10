@@ -2,37 +2,41 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import { selectImportListSchema, setImportListFieldValue, setImportListValue } from 'Store/Actions/settingsActions';
-import createMovieCreditListSelector from 'Store/Selectors/createMovieCreditListSelector';
+import { togglePerformerMonitored } from 'Store/Actions/performerActions';
 
 function createMapStateToProps() {
   return createSelector(
-    createMovieCreditListSelector(),
+    (state, { performerForeignId }) => performerForeignId,
+    (state) => state.performers,
     (state) => state.settings.safeForWorkMode,
-    (importList, safeForWorkMode) => {
+    (performerForeignId, performers, safeForWorkMode) => {
+      const performer = performers.items.find((perf) => perf.foreignId === performerForeignId);
       return {
-        importList,
+        performer,
         safeForWorkMode
       };
     }
   );
 }
 
-const mapDispatchToProps = {
-  selectImportListSchema,
-  setImportListFieldValue,
-  setImportListValue
-};
+function createMapDispatchToProps(dispatch, props) {
+  return {
+    dispatchTogglePerformerMonitored(payload) {
+      dispatch(togglePerformerMonitored(payload));
+    }
+  };
+}
 
 class MovieCreditPosterConnector extends Component {
 
   //
   // Listeners
 
-  onImportListSelect = () => {
-    this.props.selectImportListSchema({ implementation: 'TMDbPersonImport', implementationName: 'TMDb Person', presetName: undefined });
-    this.props.setImportListFieldValue({ name: 'personId', value: this.props.performer.foreignId.toString() });
-    this.props.setImportListValue({ name: 'name', value: `${this.props.performer.name} - ${this.props.performer.foreignId}` });
+  onTogglePerformerMonitored = (monitored) => {
+    this.props.dispatchTogglePerformerMonitored({
+      performerId: this.props.performer.id,
+      monitored
+    });
   };
 
   //
@@ -48,7 +52,7 @@ class MovieCreditPosterConnector extends Component {
       <ItemComponent
         {...this.props}
         performer={performer}
-        onImportListSelect={this.onImportListSelect}
+        onTogglePerformerMonitored={this.onTogglePerformerMonitored}
       />
     );
   }
@@ -56,10 +60,9 @@ class MovieCreditPosterConnector extends Component {
 
 MovieCreditPosterConnector.propTypes = {
   performer: PropTypes.object.isRequired,
+  performerForeignId: PropTypes.string.isRequired,
   component: PropTypes.elementType.isRequired,
-  selectImportListSchema: PropTypes.func.isRequired,
-  setImportListFieldValue: PropTypes.func.isRequired,
-  setImportListValue: PropTypes.func.isRequired
+  dispatchTogglePerformerMonitored: PropTypes.func.isRequired
 };
 
-export default connect(createMapStateToProps, mapDispatchToProps)(MovieCreditPosterConnector);
+export default connect(createMapStateToProps, createMapDispatchToProps)(MovieCreditPosterConnector);

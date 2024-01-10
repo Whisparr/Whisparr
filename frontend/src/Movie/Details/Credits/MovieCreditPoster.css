@@ -61,6 +61,13 @@ $hoverScale: 1.05;
   }
 }
 
+.link {
+  composes: link from '~Components/Link/Link.css';
+
+  position: relative;
+  background-color: #374151;
+}
+
 @media only screen and (max-width: $breakpointSmall) {
   .container {
     padding: 5px;

@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import Link from 'Components/Link/Link';
 import MonitorToggleButton from 'Components/MonitorToggleButton';
 import MovieHeadshot from 'Movie/MovieHeadshot';
-import EditImportListModalConnector from 'Settings/ImportLists/ImportLists/EditImportListModalConnector';
 import styles from '../MovieCreditPoster.css';
 
 class MovieCastPoster extends Component {
@@ -14,26 +14,12 @@ class MovieCastPoster extends Component {
     super(props, context);
 
     this.state = {
-      hasPosterError: false,
-      isEditImportListModalOpen: false
+      hasPosterError: false
     };
   }
 
   //
   // Listeners
-
-  onEditImportListPress = () => {
-    this.setState({ isEditImportListModalOpen: true });
-  };
-
-  onAddImportListPress = () => {
-    this.props.onImportListSelect();
-    this.setState({ isEditImportListModalOpen: true });
-  };
-
-  onEditImportListModalClose = () => {
-    this.setState({ isEditImportListModalOpen: false });
-  };
 
   onPosterLoad = () => {
     if (this.state.hasPosterError) {
@@ -56,8 +42,8 @@ class MovieCastPoster extends Component {
       character,
       posterWidth,
       posterHeight,
-      importList,
-      safeForWorkMode
+      safeForWorkMode,
+      onTogglePerformerMonitored
     } = this.props;
 
     const {
@@ -74,8 +60,7 @@ class MovieCastPoster extends Component {
       width: `${posterWidth}px`
     };
 
-    const monitored = importList !== undefined && importList.enabled && importList.enableAuto;
-    const importListId = importList ? importList.id : 0;
+    const link = `/performer/${performer.foreignId}`;
 
     return (
       <div
@@ -86,49 +71,44 @@ class MovieCastPoster extends Component {
           <div className={styles.controls}>
             <MonitorToggleButton
               className={styles.action}
-              monitored={monitored}
+              monitored={performer.monitored}
               size={20}
-              onPress={importListId > 0 ? this.onEditImportListPress : this.onAddImportListPress}
+              onPress={onTogglePerformerMonitored}
             />
           </div>
 
           <div
             style={elementStyle}
           >
-            <MovieHeadshot
-              blur={safeForWorkMode}
-              className={styles.poster}
-              style={elementStyle}
-              images={performer.images}
-              size={250}
-              lazy={false}
-              overflow={true}
-              onError={this.onPosterLoadError}
-              onLoad={this.onPosterLoad}
-            />
+            <Link className={styles.link} to={link}>
+              <MovieHeadshot
+                blur={safeForWorkMode}
+                className={styles.poster}
+                style={elementStyle}
+                images={performer.images}
+                size={250}
+                lazy={false}
+                overflow={true}
+                onError={this.onPosterLoadError}
+                onLoad={this.onPosterLoad}
+              />
 
-            {
-              hasPosterError &&
-                <div className={styles.overlayTitle}>
-                  {performer.name}
-                </div>
-            }
+              {
+                hasPosterError &&
+                  <div className={styles.overlayTitle}>
+                    {performer.fullName}
+                  </div>
+              }
+            </Link>
           </div>
         </div>
 
         <div className={styles.title}>
-          {performer.name}
+          {performer.fullName}
         </div>
         <div className={styles.title}>
           {character}
         </div>
-
-        <EditImportListModalConnector
-          id={importListId}
-          isOpen={this.state.isEditImportListModalOpen}
-          onModalClose={this.onEditImportListModalClose}
-          onDeleteImportListPress={this.onDeleteImportListPress}
-        />
       </div>
     );
   }
@@ -139,9 +119,8 @@ MovieCastPoster.propTypes = {
   character: PropTypes.string,
   posterWidth: PropTypes.number.isRequired,
   posterHeight: PropTypes.number.isRequired,
-  importList: PropTypes.object,
   safeForWorkMode: PropTypes.bool.isRequired,
-  onImportListSelect: PropTypes.func.isRequired
+  onTogglePerformerMonitored: PropTypes.func.isRequired
 };
 
 export default MovieCastPoster;

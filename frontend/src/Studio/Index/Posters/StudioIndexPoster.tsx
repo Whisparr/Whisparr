@@ -62,8 +62,6 @@ function StudioIndexPoster(props: StudioIndexPosterProps) {
     width: `${posterWidth}px`,
     height: `${posterHeight}px`,
     'object-fit': 'contain',
-    'padding-right': '15px',
-    'padding-left': '5px',
   };
 
   return (

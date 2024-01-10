@@ -12,7 +12,6 @@ interface CssExports {
   'path': string;
   'qualityProfileId': string;
   'releaseDate': string;
-  'rottenTomatoesRating': string;
   'runtime': string;
   'sceneStatus': string;
   'sizeOnDisk': string;
@@ -20,7 +19,6 @@ interface CssExports {
   'status': string;
   'studio': string;
   'tags': string;
-  'tmdbRating': string;
   'year': string;
 }
 export const cssExports: CssExports;

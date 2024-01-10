@@ -19,6 +19,7 @@ namespace NzbDrone.Core.Movies.Studios
         public string Website { get; set; }
         public List<MediaCover.MediaCover> Images { get; set; }
         public string RootFolderPath { get; set; }
+        public string Network {  get; set; }
         public DateTime Added { get; set; }
         public bool Monitored { get; set; }
         public int QualityProfileId { get; set; }

@@ -5,13 +5,11 @@ import { MOVIE_SEARCH, REFRESH_MOVIE } from 'Commands/commandNames';
 import Icon from 'Components/Icon';
 import IconButton from 'Components/Link/IconButton';
 import SpinnerIconButton from 'Components/Link/SpinnerIconButton';
-import RottenTomatoRating from 'Components/RottenTomatoRating';
 import RelativeDateCellConnector from 'Components/Table/Cells/RelativeDateCellConnector';
 import VirtualTableRowCell from 'Components/Table/Cells/VirtualTableRowCell';
 import VirtualTableSelectCell from 'Components/Table/Cells/VirtualTableSelectCell';
 import Column from 'Components/Table/Column';
 import TagListConnector from 'Components/TagListConnector';
-import TmdbRating from 'Components/TmdbRating';
 import Tooltip from 'Components/Tooltip/Tooltip';
 import { icons, kinds } from 'Helpers/Props';
 import EditMovieModalConnector from 'Movie/Edit/EditMovieModalConnector';
@@ -61,7 +59,6 @@ function SceneIndexRow(props: SceneIndexRowProps) {
     path,
     sizeOnDisk,
     genres = [],
-    ratings,
     tags = [],
     foreignId,
     isAvailable,
@@ -274,22 +271,6 @@ function SceneIndexRow(props: SceneIndexRowProps) {
                 bottomRadius={false}
                 isStandAlone={true}
               />
-            </VirtualTableRowCell>
-          );
-        }
-
-        if (name === 'tmdbRating') {
-          return (
-            <VirtualTableRowCell key={name} className={styles[name]}>
-              <TmdbRating ratings={ratings} />
-            </VirtualTableRowCell>
-          );
-        }
-
-        if (name === 'rottenTomatoesRating') {
-          return (
-            <VirtualTableRowCell key={name} className={styles[name]}>
-              <RottenTomatoRating ratings={ratings} />
             </VirtualTableRowCell>
           );
         }

@@ -83,24 +83,6 @@ function SceneIndexSortMenu(props: SceneIndexSortMenuProps) {
         </SortMenuItem>
 
         <SortMenuItem
-          name="tmdbRating"
-          sortKey={sortKey}
-          sortDirection={sortDirection}
-          onPress={onSortSelect}
-        >
-          {translate('TmdbRating')}
-        </SortMenuItem>
-
-        <SortMenuItem
-          name="rottenTomatoesRating"
-          sortKey={sortKey}
-          sortDirection={sortDirection}
-          onPress={onSortSelect}
-        >
-          {translate('RottenTomatoesRating')}
-        </SortMenuItem>
-
-        <SortMenuItem
           name="path"
           sortKey={sortKey}
           sortDirection={sortDirection}

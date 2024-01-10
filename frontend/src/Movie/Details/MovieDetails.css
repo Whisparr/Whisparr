@@ -138,6 +138,7 @@
 .links,
 .rating,
 .year,
+.studio,
 .runtime {
   margin-right: 14px;
 }
@@ -165,7 +166,6 @@
 .sizeOnDisk,
 .qualityProfileName,
 .statusName,
-.studio,
 .collection,
 .genres {
   font-weight: 300;

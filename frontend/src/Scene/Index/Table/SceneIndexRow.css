@@ -72,13 +72,6 @@
   flex: 0 0 120px;
 }
 
-.tmdbRating,
-.rottenTomatoesRating {
-  composes: cell;
-
-  flex: 0 0 80px;
-}
-
 .tags {
   composes: cell;
 

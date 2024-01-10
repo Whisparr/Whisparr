@@ -235,7 +235,7 @@ class MovieDetails extends Component {
       sizeOnDisk,
       qualityProfileId,
       monitored,
-      studio,
+      studioTitle,
       genres,
       overview,
       isAvailable,
@@ -430,6 +430,13 @@ class MovieDetails extends Component {
                     }
 
                     {
+                      !!studioTitle &&
+                        <span className={styles.studio}>
+                          {studioTitle}
+                        </span>
+                    }
+
+                    {
                       !!runtime &&
                         <span className={styles.runtime}>
                           {formatRuntime(runtime, movieRuntimeFormat)}
@@ -551,19 +558,6 @@ class MovieDetails extends Component {
                   </InfoLabel>
 
                   {
-                    !!studio && !isSmallScreen &&
-                      <InfoLabel
-                        className={styles.detailsInfoLabel}
-                        title={translate('Studio')}
-                        size={sizes.LARGE}
-                      >
-                        <span className={styles.studio}>
-                          {studio}
-                        </span>
-                      </InfoLabel>
-                  }
-
-                  {
                     !!genres.length && !isSmallScreen &&
                       <InfoLabel
                         className={styles.detailsInfoLabel}
@@ -571,7 +565,7 @@ class MovieDetails extends Component {
                         size={sizes.LARGE}
                       >
                         <span className={styles.genres}>
-                          {genres.join(', ')}
+                          {genres.slice(0, 3).join(', ')}
                         </span>
                       </InfoLabel>
                   }
@@ -685,7 +679,7 @@ MovieDetails.propTypes = {
   qualityProfileId: PropTypes.number.isRequired,
   monitored: PropTypes.bool.isRequired,
   status: PropTypes.string.isRequired,
-  studio: PropTypes.string,
+  studioTitle: PropTypes.string,
   genres: PropTypes.arrayOf(PropTypes.string).isRequired,
   collection: PropTypes.object,
   isAvailable: PropTypes.bool.isRequired,

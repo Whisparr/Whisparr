@@ -779,6 +779,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 Title = studio.Title,
                 Website = studio.Homepage,
                 ForeignId = studio.ForeignIds.StashId,
+                Network = studio.Network,
                 Images = studio.Images?.Select(MapImage).ToList() ?? new List<MediaCover.MediaCover>()
             };
 

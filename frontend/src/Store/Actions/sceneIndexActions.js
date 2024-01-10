@@ -140,12 +140,6 @@ export const defaultState = {
       isVisible: true
     },
     {
-      name: 'tmdbRating',
-      label: () => translate('TmdbRating'),
-      isSortable: true,
-      isVisible: false
-    },
-    {
       name: 'tags',
       label: () => translate('Tags'),
       isSortable: false,
@@ -166,12 +160,6 @@ export const defaultState = {
       const studio = item.studioTitle;
 
       return studio ? studio.toLowerCase() : '';
-    },
-
-    tmdbRating: function(item) {
-      const { ratings = {} } = item;
-
-      return ratings.tmdb ? ratings.tmdb.value : 0;
     }
   },
 
@@ -280,16 +268,6 @@ export const defaultState = {
 
         return genreList.sort(sortByName);
       }
-    },
-    {
-      name: 'tmdbRating',
-      label: () => translate('TmdbRating'),
-      type: filterBuilderTypes.NUMBER
-    },
-    {
-      name: 'tmdbVotes',
-      label: () => translate('TmdbVotes'),
-      type: filterBuilderTypes.NUMBER
     },
     {
       name: 'tags',

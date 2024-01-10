@@ -215,7 +215,7 @@ class PerformerDetailsStudio extends Component {
                   <span>{movieFileCount} / {movieCount}</span>
                 </Label>
               }
-              title={translate('SeasonInformation')}
+              title={translate('StudioInformaton')}
               body={
                 <div>
                   <StudioInfo

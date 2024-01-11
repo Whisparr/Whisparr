@@ -19,7 +19,7 @@ import Column from 'Components/Table/Column';
 import VirtualTableRowButton from 'Components/Table/VirtualTableRowButton';
 import { scrollDirections } from 'Helpers/Props';
 import Movie from 'Movie/Movie';
-import createAllMoviesSelector from 'Store/Selectors/createAllMoviesSelector';
+import createAllItemsSelector from 'Store/Selectors/createAllItemsSelector';
 import dimensions from 'Styles/Variables/dimensions';
 import translate from 'Utilities/String/translate';
 import SelectMovieModalTableHeader from './SelectMovieModalTableHeader';
@@ -38,15 +38,15 @@ const columns = [
     isVisible: true,
   },
   {
-    name: 'imdbId',
-    label: () => translate('IMDbId'),
+    name: 'itemType',
+    label: () => translate('ItemType'),
     isVisible: true,
   },
   {
-    name: 'tmdbId',
-    label: () => translate('TMDBId'),
+    name: 'foreignId',
+    label: () => translate('ForeignId'),
     isVisible: true,
-  },
+  }
 ];
 
 const bodyPadding = parseInt(dimensions.pageContentBodyPadding);
@@ -103,7 +103,7 @@ function SelectMovieModalContent(props: SelectMovieModalContentProps) {
 
   const listRef = useRef<List<RowItemData>>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
-  const allMovies: Movie[] = useSelector(createAllMoviesSelector());
+  const allMovies: Movie[] = useSelector(createAllItemsSelector());
   const [filter, setFilter] = useState('');
   const [size, setSize] = useState({ width: 0, height: 0 });
   const windowHeight = window.innerHeight;

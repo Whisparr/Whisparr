@@ -35,7 +35,7 @@ function NoPerformer(props) {
 
       <div className={styles.buttonContainer}>
         <Button
-          to="/add/new"
+          to="/add/new/scene"
           kind={kinds.PRIMARY}
         >
           {translate('AddNewScene')}

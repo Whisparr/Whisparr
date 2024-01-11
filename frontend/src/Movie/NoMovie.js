@@ -35,7 +35,7 @@ function NoMovie(props) {
 
       <div className={styles.buttonContainer}>
         <Button
-          to="/add/new"
+          to="/add/new/movie"
           kind={kinds.PRIMARY}
         >
           {translate('AddNewMovie')}

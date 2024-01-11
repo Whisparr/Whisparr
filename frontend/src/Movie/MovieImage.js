@@ -65,7 +65,7 @@ class MovieImage extends Component {
 
     const nextImage = findImage(images, coverType);
 
-    if (nextImage && (!image || nextImage.url !== image.url)) {
+    if (nextImage && (!image || nextImage.url !== image.url || nextImage.remoteUrl !== image.remoteUrl)) {
       this.setState({
         image: nextImage,
         url: getUrl(nextImage, coverType, pixelRatio * size),

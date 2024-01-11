@@ -46,7 +46,7 @@ const columns = [
     name: 'foreignId',
     label: () => translate('ForeignId'),
     isVisible: true,
-  }
+  },
 ];
 
 const bodyPadding = parseInt(dimensions.pageContentBodyPadding);

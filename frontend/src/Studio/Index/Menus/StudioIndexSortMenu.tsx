@@ -27,6 +27,14 @@ function StudioIndexSortMenu(props: StudioIndexSortMenuProps) {
         >
           {translate('Title')}
         </SortMenuItem>
+        <SortMenuItem
+          name="network"
+          sortKey={sortKey}
+          sortDirection={sortDirection}
+          onPress={onSortSelect}
+        >
+          {translate('Network')}
+        </SortMenuItem>
       </MenuContent>
     </SortMenu>
   );

@@ -201,6 +201,7 @@ class StudioDetails extends Component {
       years,
       genres,
       images,
+      network,
       tags,
       isSaving,
       isRefreshing,
@@ -338,6 +339,10 @@ class StudioDetails extends Component {
                   <div>
                     <span className={styles.years}>
                       {runningYears}
+                    </span>
+
+                    <span className={styles.network}>
+                      {network}
                     </span>
 
                     {
@@ -537,6 +542,7 @@ StudioDetails.propTypes = {
   id: PropTypes.number.isRequired,
   foreignId: PropTypes.string,
   title: PropTypes.string.isRequired,
+  network: PropTypes.string.isRequired,
   rootFolderPath: PropTypes.string.isRequired,
   sizeOnDisk: PropTypes.number.isRequired,
   qualityProfileId: PropTypes.number.isRequired,

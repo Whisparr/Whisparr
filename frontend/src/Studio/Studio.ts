@@ -4,6 +4,7 @@ import { Image } from 'Movie/Movie';
 interface Studio extends ModelBase {
   foreignId: string;
   title: string;
+  network: string;
   monitored: boolean;
   images: Image[];
   sortTitle: string;

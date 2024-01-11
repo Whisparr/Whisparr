@@ -2,6 +2,7 @@
 // Please do not change this file!
 interface CssExports {
   'actions': string;
+  'network': string;
   'qualityProfileId': string;
   'rootFolderPath': string;
   'sortTitle': string;

@@ -33,6 +33,7 @@ function StudioIndexRow(props: StudioIndexRowProps) {
 
   const {
     title,
+    network,
     monitored,
     rootFolderPath,
     tags = [],
@@ -93,6 +94,14 @@ function StudioIndexRow(props: StudioIndexRowProps) {
           return (
             <VirtualTableRowCell key={name} className={styles[name]}>
               <StudioTitleLink foreignId={foreignId} title={title} />
+            </VirtualTableRowCell>
+          );
+        }
+
+        if (name === 'network') {
+          return (
+            <VirtualTableRowCell key={name} className={styles[name]}>
+              {network}
             </VirtualTableRowCell>
           );
         }

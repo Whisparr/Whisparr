@@ -12,6 +12,7 @@ namespace Whisparr.Api.V3.Studios
         public string SortTitle { get; set; }
         public string ForeignId { get; set; }
         public string Website { get; set; }
+        public string Network { get; set; }
         public List<MediaCover> Images { get; set; }
         public bool Monitored { get; set; }
         public string RootFolderPath { get; set; }
@@ -36,6 +37,7 @@ namespace Whisparr.Api.V3.Studios
                 Title = model.Title,
                 SortTitle = model.SortTitle,
                 Website = model.Website,
+                Network = model.Network,
                 Monitored = model.Monitored,
                 Images = model.Images,
                 QualityProfileId = model.QualityProfileId,
@@ -64,6 +66,7 @@ namespace Whisparr.Api.V3.Studios
                 Title = resource.Title,
                 SortTitle = resource.SortTitle,
                 Website = resource.Website,
+                Network = resource.Network,
                 Monitored = resource.Monitored,
                 QualityProfileId = resource.QualityProfileId,
                 RootFolderPath = resource.RootFolderPath,

@@ -5,6 +5,7 @@ interface CssExports {
   'cell': string;
   'checkInput': string;
   'externalLinks': string;
+  'network': string;
   'qualityProfileId': string;
   'rootFolderPath': string;
   'sortTitle': string;

@@ -136,6 +136,7 @@ namespace NzbDrone.Core.Movies
                     ForeignId = studioInfo.ForeignId,
                     Title = studioInfo.Title,
                     Website = studioInfo.Website,
+                    Network = studioInfo.Network,
                     Monitored = movie.AddOptions?.Monitor == MonitorTypes.MovieAndCollection,
                     SearchOnAdd = movie.AddOptions?.SearchForMovie ?? false,
                     QualityProfileId = movie.QualityProfileId,

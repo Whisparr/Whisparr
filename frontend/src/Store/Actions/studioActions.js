@@ -2,6 +2,7 @@ import _ from 'lodash';
 import { createAction } from 'redux-actions';
 import { filterBuilderTypes, filterBuilderValueTypes, sortDirections } from 'Helpers/Props';
 import { createThunk, handleThunks } from 'Store/thunks';
+import sortByName from 'Utilities/Array/sortByName';
 import createAjaxRequest from 'Utilities/createAjaxRequest';
 import translate from 'Utilities/String/translate';
 import { updateItem } from './baseActions';
@@ -68,6 +69,13 @@ export const defaultState = {
       isModifiable: false
     },
     {
+      name: 'network',
+      label: () => translate('Network'),
+      isSortable: true,
+      isVisible: true,
+      isModifiable: false
+    },
+    {
       name: 'qualityProfileId',
       label: () => translate('QualityProfile'),
       isSortable: true,
@@ -103,6 +111,25 @@ export const defaultState = {
       label: () => translate('Title'),
       type: filterBuilderTypes.EXACT,
       valueType: filterBuilderValueTypes.DEFAULT
+    },
+    {
+      name: 'network',
+      label: () => translate('Network'),
+      type: filterBuilderTypes.EXACT,
+      optionsSelector: function(items) {
+        const tagList = items.reduce((acc, studio) => {
+          if (studio.network) {
+            acc.push({
+              id: studio.network,
+              name: studio.network
+            });
+          }
+
+          return acc;
+        }, []);
+
+        return tagList.sort(sortByName);
+      }
     }
   ]
 };

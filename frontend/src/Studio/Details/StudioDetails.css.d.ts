@@ -9,9 +9,7 @@ interface CssExports {
   'details': string;
   'detailsLabel': string;
   'errorMessage': string;
-  'ethnicity': string;
   'filterIcon': string;
-  'gender': string;
   'genres': string;
   'header': string;
   'headerContent': string;
@@ -21,6 +19,7 @@ interface CssExports {
   'monitorToggleButton': string;
   'movieNavigationButton': string;
   'movieNavigationButtons': string;
+  'network': string;
   'overview': string;
   'path': string;
   'poster': string;

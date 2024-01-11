@@ -17,6 +17,7 @@
   flex: 4 0 110px;
 }
 
+.network,
 .qualityProfileId {
   composes: cell;
 

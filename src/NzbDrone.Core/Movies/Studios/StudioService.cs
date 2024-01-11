@@ -10,6 +10,7 @@ namespace NzbDrone.Core.Movies.Studios
         Studio AddStudio(Studio studio);
         List<Studio> AddStudios(List<Studio> studios);
         Studio GetById(int id);
+        Studio FindByForeignId(string foreignId);
         List<Studio> GetAllStudios();
         Studio Update(Studio performer);
         Studio FindByTitle(string title);
@@ -29,7 +30,7 @@ namespace NzbDrone.Core.Movies.Studios
         {
             Ensure.That(studio, () => studio).IsNotNull();
 
-            var existingStudio = _studioRepo.FindStudioByForeignId(studio.ForeignId);
+            var existingStudio = _studioRepo.FindByForeignId(studio.ForeignId);
 
             if (existingStudio != null)
             {
@@ -70,6 +71,11 @@ namespace NzbDrone.Core.Movies.Studios
             var cleanTitle = title.CleanMovieTitle();
 
             return _studioRepo.FindByTitle(cleanTitle);
+        }
+
+        public Studio FindByForeignId(string foreignId)
+        {
+            return _studioRepo.FindByForeignId(foreignId);
         }
     }
 }

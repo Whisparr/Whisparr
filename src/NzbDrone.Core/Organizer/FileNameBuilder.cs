@@ -14,6 +14,7 @@ using NzbDrone.Core.CustomFormats;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.MediaFiles.MediaInfo;
 using NzbDrone.Core.Movies;
+using NzbDrone.Core.Movies.Studios;
 using NzbDrone.Core.Qualities;
 
 namespace NzbDrone.Core.Organizer
@@ -33,6 +34,7 @@ namespace NzbDrone.Core.Organizer
 
         private readonly INamingConfigService _namingConfigService;
         private readonly IQualityDefinitionService _qualityDefinitionService;
+        private readonly IStudioService _studioService;
         private readonly IUpdateMediaInfo _mediaInfoUpdater;
         private readonly ICustomFormatCalculationService _formatCalculator;
         private readonly Logger _logger;
@@ -83,12 +85,14 @@ namespace NzbDrone.Core.Organizer
 
         public FileNameBuilder(INamingConfigService namingConfigService,
                                IQualityDefinitionService qualityDefinitionService,
+                               IStudioService studioService,
                                IUpdateMediaInfo mediaInfoUpdater,
                                ICustomFormatCalculationService formatCalculator,
                                Logger logger)
         {
             _namingConfigService = namingConfigService;
             _qualityDefinitionService = qualityDefinitionService;
+            _studioService = studioService;
             _mediaInfoUpdater = mediaInfoUpdater;
             _formatCalculator = formatCalculator;
             _logger = logger;
@@ -309,8 +313,15 @@ namespace NzbDrone.Core.Organizer
             tokenHandlers["{Studio TitleThe}"] = m => TitleThe(movie.MovieMetadata.Value.StudioTitle);
             tokenHandlers["{Studio TitleFirstCharacter}"] = m => TitleThe(movie.MovieMetadata.Value.StudioTitle).Substring(0, 1).FirstCharToUpper();
 
-            // TODO: Network to Metamodel
-            // tokenHandlers["{Site Network}"] = m => series.Network ?? string.Empty;
+            if (movie.MovieMetadata.Value.StudioForeignId.IsNotNullOrWhiteSpace())
+            {
+                var studio = _studioService.FindByForeignId(movie.MovieMetadata.Value.StudioForeignId);
+                tokenHandlers["{Studio Network}"] = m => studio.Network ?? string.Empty;
+            }
+            else
+            {
+                tokenHandlers["{Studio Network}"] = m => string.Empty;
+            }
         }
 
         private void AddSceneTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Movie movie)

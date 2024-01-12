@@ -36,7 +36,8 @@ const selectMovies = createSelector(
       moviesError: error,
       hasMovies,
       hasScenes,
-      years
+      years,
+      sizeOnDisk: _.sumBy(filteredMovies, 'sizeOnDisk')
     };
   }
 );
@@ -65,7 +66,8 @@ function createMapStateToProps() {
         moviesError,
         hasMovies,
         hasScenes,
-        years
+        years,
+        sizeOnDisk
       } = movies;
 
       const previousStudio = sortedStudios[studioIndex - 1] || _.last(sortedStudios);
@@ -85,6 +87,7 @@ function createMapStateToProps() {
       return {
         ...studio,
         years,
+        sizeOnDisk,
         hasMovies,
         hasScenes,
         moviesError,

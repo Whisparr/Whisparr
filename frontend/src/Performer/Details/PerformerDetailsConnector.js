@@ -26,7 +26,7 @@ const selectMovies = createSelector(
     } = movies;
 
     const filteredMovies = items.filter((movie) => movie.credits.some((credit) => credit.performer.foreignId === foreignId));
-    const studios = _.uniq(filteredMovies.map((movie) => movie.studioForeignId));
+    const studios = _.orderBy(_.uniqBy(filteredMovies.map((movie) => ({ title: movie.studioTitle, foreignId: movie.studioForeignId })), 'foreignId'), 'title');
     const hasMovies = !!filteredMovies.filter((movie) => movie.itemType === 'movie').length;
     const hasScenes = !!filteredMovies.filter((movie) => movie.itemType === 'scene').length;
 
@@ -36,7 +36,8 @@ const selectMovies = createSelector(
       moviesError: error,
       hasMovies,
       hasScenes,
-      studios
+      studios,
+      sizeOnDisk: _.sumBy(filteredMovies, 'sizeOnDisk')
     };
   }
 );
@@ -65,7 +66,8 @@ function createMapStateToProps() {
         moviesError,
         hasMovies,
         hasScenes,
-        studios
+        studios,
+        sizeOnDisk
       } = movies;
 
       const previousPerformer = sortedPerformers[performerIndex - 1] || _.last(sortedPerformers);
@@ -85,6 +87,7 @@ function createMapStateToProps() {
       return {
         ...performer,
         studios,
+        sizeOnDisk,
         hasMovies,
         hasScenes,
         moviesError,

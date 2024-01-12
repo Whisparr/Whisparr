@@ -57,6 +57,8 @@ class SceneRow extends Component {
       monitored,
       runtime,
       isAvailable,
+      hasFile,
+      movieFile,
       movieRuntimeFormat,
       releaseDate,
       title,
@@ -294,7 +296,8 @@ class SceneRow extends Component {
                   <MovieIndexProgressBar
                     movieId={id}
                     isAvailable={isAvailable}
-                    hasFile={!!movieFileId}
+                    hasFile={hasFile}
+                    movieFile={movieFile}
                     monitored={monitored}
                     detailedProgressBar={true}
                     bottomRadius={false}
@@ -327,6 +330,8 @@ SceneRow.propTypes = {
   foreignId: PropTypes.string.isRequired,
   movieFileId: PropTypes.number,
   isAvailable: PropTypes.bool.isRequired,
+  hasFile: PropTypes.bool.isRequired,
+  movieFile: PropTypes.object,
   monitored: PropTypes.bool.isRequired,
   releaseDate: PropTypes.string,
   runtime: PropTypes.number,

@@ -530,13 +530,13 @@ class PerformerDetails extends Component {
                     isPopulated && !!studios.length &&
                       <div>
                         {
-                          studios.slice(0).reverse().map((studio) => {
+                          studios.map((studio) => {
                             return (
                               <PerformerDetailsStudioConnector
-                                key={studio}
+                                key={studio.foreignId}
                                 performerId={id}
-                                studioForeignId={studio}
-                                isExpanded={expandedState[studio]}
+                                studioForeignId={studio.foreignId}
+                                isExpanded={expandedState[studio.foreignId]}
                                 onExpandPress={this.onExpandPress}
                               />
                             );
@@ -580,7 +580,7 @@ PerformerDetails.propTypes = {
   status: PropTypes.string.isRequired,
   careerStart: PropTypes.number,
   careerEnd: PropTypes.number,
-  studios: PropTypes.arrayOf(PropTypes.string).isRequired,
+  studios: PropTypes.arrayOf(PropTypes.object).isRequired,
   genres: PropTypes.arrayOf(PropTypes.string).isRequired,
   images: PropTypes.arrayOf(PropTypes.object).isRequired,
   tags: PropTypes.arrayOf(PropTypes.number).isRequired,

@@ -31,11 +31,11 @@ function getYearStatistics(movies) {
   const sizeOnDisk = 0;
 
   movies.forEach((movie) => {
-    if (movie.movieFileId || (movie.monitored && movie.isAvailable)) {
+    if (movie.movieFile || (movie.monitored && movie.isAvailable)) {
       movieCount++;
     }
 
-    if (movie.movieFileId) {
+    if (movie.movieFile) {
       movieFileCount++;
     }
 
@@ -182,7 +182,7 @@ class StudioDetailsYear extends Component {
       hasMonitoredMovies
     } = getYearStatistics(items);
 
-    const sizeOnDisk = 0;
+    const sizeOnDisk = _.sumBy(items, 'sizeOnDisk');
 
     return (
       <div

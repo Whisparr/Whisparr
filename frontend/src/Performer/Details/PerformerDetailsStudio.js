@@ -31,11 +31,11 @@ function getStudioStatistics(movies) {
   const sizeOnDisk = 0;
 
   movies.forEach((movie) => {
-    if (movie.movieFileId || (movie.monitored && movie.isAvailable)) {
+    if (movie.movieFile || (movie.monitored && movie.isAvailable)) {
       movieCount++;
     }
 
-    if (movie.movieFileId) {
+    if (movie.movieFile) {
       movieFileCount++;
     }
 
@@ -123,7 +123,7 @@ class PerformerDetailsStudio extends Component {
     } = this.props;
 
     const expand = _.some(items, (item) => {
-      return item.monitored;
+      return false;
     });
 
     onExpandPress(foreignId, expand);
@@ -185,7 +185,7 @@ class PerformerDetailsStudio extends Component {
       hasMonitoredMovies
     } = getStudioStatistics(items);
 
-    const sizeOnDisk = 0;
+    const sizeOnDisk = _.sumBy(items, 'sizeOnDisk');
 
     return (
       <div

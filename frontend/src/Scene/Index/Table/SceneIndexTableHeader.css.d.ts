@@ -4,13 +4,13 @@ interface CssExports {
   'actions': string;
   'added': string;
   'genres': string;
+  'movieStatus': string;
   'originalLanguage': string;
   'path': string;
   'qualityProfileId': string;
   'releaseDate': string;
   'rottenTomatoesRating': string;
   'runtime': string;
-  'sceneStatus': string;
   'sizeOnDisk': string;
   'sortTitle': string;
   'status': string;

@@ -134,7 +134,7 @@ export const defaultState = {
       isVisible: false
     },
     {
-      name: 'sceneStatus',
+      name: 'movieStatus',
       label: () => translate('Status'),
       isSortable: true,
       isVisible: true

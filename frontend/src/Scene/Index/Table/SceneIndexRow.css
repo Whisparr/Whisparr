@@ -45,7 +45,7 @@
   flex: 0 0 100px;
 }
 
-.sceneStatus {
+.movieStatus {
   composes: cell;
 
   display: flex;

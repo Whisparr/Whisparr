@@ -37,7 +37,7 @@
   flex: 0 0 100px;
 }
 
-.sceneStatus {
+.movieStatus {
   composes: headerCell from '~Components/Table/VirtualTableHeaderCell.css';
 
   flex: 0 0 150px;

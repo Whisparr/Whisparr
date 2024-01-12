@@ -8,12 +8,12 @@ interface CssExports {
   'collection': string;
   'externalLinks': string;
   'genres': string;
+  'movieStatus': string;
   'originalLanguage': string;
   'path': string;
   'qualityProfileId': string;
   'releaseDate': string;
   'runtime': string;
-  'sceneStatus': string;
   'sizeOnDisk': string;
   'sortTitle': string;
   'status': string;

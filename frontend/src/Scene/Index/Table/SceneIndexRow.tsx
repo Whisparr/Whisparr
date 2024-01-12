@@ -256,7 +256,7 @@ function SceneIndexRow(props: SceneIndexRowProps) {
           );
         }
 
-        if (name === 'sceneStatus') {
+        if (name === 'movieStatus') {
           return (
             <VirtualTableRowCell key={name} className={styles[name]}>
               <SceneIndexProgressBar

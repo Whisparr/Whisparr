@@ -1,11 +1,12 @@
 import _ from 'lodash';
 import { createAction } from 'redux-actions';
+import { batchActions } from 'redux-batched-actions';
 import { filterBuilderTypes, filterBuilderValueTypes, sortDirections } from 'Helpers/Props';
 import { createThunk, handleThunks } from 'Store/thunks';
 import sortByName from 'Utilities/Array/sortByName';
 import createAjaxRequest from 'Utilities/createAjaxRequest';
 import translate from 'Utilities/String/translate';
-import { updateItem } from './baseActions';
+import { set, updateItem } from './baseActions';
 import createFetchHandler from './Creators/createFetchHandler';
 import createHandleActions from './Creators/createHandleActions';
 import createSaveProviderHandler from './Creators/createSaveProviderHandler';
@@ -151,7 +152,7 @@ export const persistState = [
 
 export const FETCH_STUDIOS = 'studios/fetchStudios';
 export const SAVE_STUDIO = 'studios/saveStudio';
-export const SAVE_STUDIOS = 'studios/saveStudios';
+export const SAVE_STUDIO_EDITOR = 'studios/saveStudioEditor';
 export const SET_STUDIO_VALUE = 'studios/setStudioValue';
 
 export const TOGGLE_STUDIO_MONITORED = 'studios/toggleStudioMonitored';
@@ -167,7 +168,7 @@ export const SET_STUDIO_POSTER_OPTION = 'studios/setStudioPosterOption';
 
 export const fetchStudios = createThunk(FETCH_STUDIOS);
 export const saveStudio = createThunk(SAVE_STUDIO);
-export const saveStudios = createThunk(SAVE_STUDIOS);
+export const saveStudioEditor = createThunk(SAVE_STUDIO_EDITOR);
 
 export const toggleStudioMonitored = createThunk(TOGGLE_STUDIO_MONITORED);
 
@@ -190,13 +191,14 @@ export const setStudioValue = createAction(SET_STUDIO_VALUE, (payload) => {
 export const actionHandlers = handleThunks({
   [FETCH_STUDIOS]: createFetchHandler(section, '/studio'),
   [SAVE_STUDIO]: createSaveProviderHandler(section, '/studio'),
+
   [TOGGLE_STUDIO_MONITORED]: (getState, payload, dispatch) => {
     const {
       studioId: id,
       monitored
     } = payload;
 
-    const performer = _.find(getState().studios.items, { id });
+    const studio = _.find(getState().studios.items, { id });
 
     dispatch(updateItem({
       id,
@@ -208,7 +210,7 @@ export const actionHandlers = handleThunks({
       url: `/studio/${id}`,
       method: 'PUT',
       data: JSON.stringify({
-        ...performer,
+        ...studio,
         monitored
       }),
       dataType: 'json'
@@ -228,6 +230,46 @@ export const actionHandlers = handleThunks({
         id,
         section,
         isSaving: false
+      }));
+    });
+  },
+
+  [SAVE_STUDIO_EDITOR]: function(getState, payload, dispatch) {
+    dispatch(set({
+      section,
+      isSaving: true
+    }));
+
+    const promise = createAjaxRequest({
+      url: '/studio/editor',
+      method: 'PUT',
+      data: JSON.stringify(payload),
+      dataType: 'json'
+    }).request;
+
+    promise.done((data) => {
+      dispatch(batchActions([
+        ...data.map((studio) => {
+          return updateItem({
+            id: studio.id,
+            section: 'studios',
+            ...studio
+          });
+        }),
+
+        set({
+          section,
+          isSaving: false,
+          saveError: null
+        })
+      ]));
+    });
+
+    promise.fail((xhr) => {
+      dispatch(set({
+        section,
+        isSaving: false,
+        saveError: xhr
       }));
     });
   }

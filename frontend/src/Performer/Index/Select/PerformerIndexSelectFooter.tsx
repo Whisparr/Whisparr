@@ -5,7 +5,7 @@ import { useSelect } from 'App/SelectContext';
 import AppState from 'App/State/AppState';
 import SpinnerButton from 'Components/Link/SpinnerButton';
 import PageContentFooter from 'Components/Page/PageContentFooter';
-import { savePerformers } from 'Store/Actions/performerActions';
+import { savePerformerEditor } from 'Store/Actions/performerActions';
 import { fetchRootFolders } from 'Store/Actions/rootFolderActions';
 import translate from 'Utilities/String/translate';
 import getSelectedIds from 'Utilities/Table/getSelectedIds';
@@ -64,7 +64,7 @@ function PerformerIndexSelectFooter() {
       setIsEditModalOpen(false);
 
       dispatch(
-        savePerformers({
+        savePerformerEditor({
           ...payload,
           performerIds,
         })
@@ -87,7 +87,7 @@ function PerformerIndexSelectFooter() {
       setIsTagsModalOpen(false);
 
       dispatch(
-        savePerformers({
+        savePerformerEditor({
           performerIds,
           tags,
           applyTags,

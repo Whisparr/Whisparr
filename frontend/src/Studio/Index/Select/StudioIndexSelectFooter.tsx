@@ -6,7 +6,7 @@ import AppState from 'App/State/AppState';
 import SpinnerButton from 'Components/Link/SpinnerButton';
 import PageContentFooter from 'Components/Page/PageContentFooter';
 import { fetchRootFolders } from 'Store/Actions/rootFolderActions';
-import { saveStudios } from 'Store/Actions/studioActions';
+import { saveStudioEditor } from 'Store/Actions/studioActions';
 import translate from 'Utilities/String/translate';
 import getSelectedIds from 'Utilities/Table/getSelectedIds';
 import EditStudiosModal from './Edit/EditStudiosModal';
@@ -64,7 +64,7 @@ function StudioIndexSelectFooter() {
       setIsEditModalOpen(false);
 
       dispatch(
-        saveStudios({
+        saveStudioEditor({
           ...payload,
           studioIds,
         })
@@ -87,7 +87,7 @@ function StudioIndexSelectFooter() {
       setIsTagsModalOpen(false);
 
       dispatch(
-        saveStudios({
+        saveStudioEditor({
           studioIds,
           tags,
           applyTags,

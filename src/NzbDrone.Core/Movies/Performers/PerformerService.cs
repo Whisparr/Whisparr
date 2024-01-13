@@ -8,9 +8,11 @@ namespace NzbDrone.Core.Movies.Performers
     {
         Performer AddPerformer(Performer performer);
         List<Performer> AddPerformers(List<Performer> performers);
+        List<Performer> GetPerformers(IEnumerable<int> performerIds);
         Performer GetById(int id);
         List<Performer> GetAllPerformers();
         Performer Update(Performer performer);
+        List<Performer> Update(List<Performer> performers);
         void RemovePerformer(Performer performer);
     }
 
@@ -48,6 +50,11 @@ namespace NzbDrone.Core.Movies.Performers
             return _performerRepo.Get(id);
         }
 
+        public List<Performer> GetPerformers(IEnumerable<int> performerIds)
+        {
+            return _performerRepo.Get(performerIds).ToList();
+        }
+
         public List<Performer> GetAllPerformers()
         {
             return _performerRepo.All().ToList();
@@ -56,6 +63,13 @@ namespace NzbDrone.Core.Movies.Performers
         public Performer Update(Performer performer)
         {
             return _performerRepo.Update(performer);
+        }
+
+        public List<Performer> Update(List<Performer> performers)
+        {
+            _performerRepo.UpdateMany(performers);
+
+            return performers;
         }
 
         public void RemovePerformer(Performer performer)

@@ -1,12 +1,13 @@
 import _ from 'lodash';
 import { createAction } from 'redux-actions';
+import { batchActions } from 'redux-batched-actions';
 import { filterBuilderTypes, sortDirections } from 'Helpers/Props';
 import { createThunk, handleThunks } from 'Store/thunks';
 import sortByName from 'Utilities/Array/sortByName';
 import createAjaxRequest from 'Utilities/createAjaxRequest';
 import camelCaseToString from 'Utilities/String/camelCaseToString';
 import translate from 'Utilities/String/translate';
-import { updateItem } from './baseActions';
+import { set, updateItem } from './baseActions';
 import createFetchHandler from './Creators/createFetchHandler';
 import createHandleActions from './Creators/createHandleActions';
 import createSaveProviderHandler from './Creators/createSaveProviderHandler';
@@ -200,7 +201,7 @@ export const persistState = [
 
 export const FETCH_PERFORMERS = 'performers/fetchPerformers';
 export const SAVE_PERFORMER = 'performers/savePerformer';
-export const SAVE_PERFORMERS = 'performers/savePerformers';
+export const SAVE_PERFORMER_EDITOR = 'performers/savePerformerEditor';
 export const SET_PERFORMER_VALUE = 'performers/setPerformerValue';
 
 export const TOGGLE_PERFORMER_MONITORED = 'performers/togglePerformerMonitored';
@@ -216,7 +217,7 @@ export const SET_PERFORMER_POSTER_OPTION = 'performers/setPerformerPosterOption'
 
 export const fetchPerformers = createThunk(FETCH_PERFORMERS);
 export const savePerformer = createThunk(SAVE_PERFORMER);
-export const savePerformers = createThunk(SAVE_PERFORMERS);
+export const savePerformerEditor = createThunk(SAVE_PERFORMER_EDITOR);
 
 export const togglePerformerMonitored = createThunk(TOGGLE_PERFORMER_MONITORED);
 
@@ -239,6 +240,7 @@ export const setPerformerValue = createAction(SET_PERFORMER_VALUE, (payload) => 
 export const actionHandlers = handleThunks({
   [FETCH_PERFORMERS]: createFetchHandler(section, '/performer'),
   [SAVE_PERFORMER]: createSaveProviderHandler(section, '/performer'),
+
   [TOGGLE_PERFORMER_MONITORED]: (getState, payload, dispatch) => {
     const {
       performerId: id,
@@ -277,6 +279,46 @@ export const actionHandlers = handleThunks({
         id,
         section,
         isSaving: false
+      }));
+    });
+  },
+
+  [SAVE_PERFORMER_EDITOR]: function(getState, payload, dispatch) {
+    dispatch(set({
+      section,
+      isSaving: true
+    }));
+
+    const promise = createAjaxRequest({
+      url: '/performer/editor',
+      method: 'PUT',
+      data: JSON.stringify(payload),
+      dataType: 'json'
+    }).request;
+
+    promise.done((data) => {
+      dispatch(batchActions([
+        ...data.map((performer) => {
+          return updateItem({
+            id: performer.id,
+            section: 'performers',
+            ...performer
+          });
+        }),
+
+        set({
+          section,
+          isSaving: false,
+          saveError: null
+        })
+      ]));
+    });
+
+    promise.fail((xhr) => {
+      dispatch(set({
+        section,
+        isSaving: false,
+        saveError: xhr
       }));
     });
   }

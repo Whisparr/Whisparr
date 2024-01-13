@@ -9,10 +9,12 @@ namespace NzbDrone.Core.Movies.Studios
     {
         Studio AddStudio(Studio studio);
         List<Studio> AddStudios(List<Studio> studios);
+        List<Studio> GetStudios(IEnumerable<int> studioIds);
         Studio GetById(int id);
         Studio FindByForeignId(string foreignId);
         List<Studio> GetAllStudios();
         Studio Update(Studio performer);
+        List<Studio> Update(List<Studio> studios);
         Studio FindByTitle(string title);
         void RemoveStudio(Studio studio);
     }
@@ -51,6 +53,11 @@ namespace NzbDrone.Core.Movies.Studios
             return _studioRepo.Get(id);
         }
 
+        public List<Studio> GetStudios(IEnumerable<int> studioIds)
+        {
+            return _studioRepo.Get(studioIds).ToList();
+        }
+
         public List<Studio> GetAllStudios()
         {
             return _studioRepo.All().ToList();
@@ -59,6 +66,13 @@ namespace NzbDrone.Core.Movies.Studios
         public Studio Update(Studio studio)
         {
             return _studioRepo.Update(studio);
+        }
+
+        public List<Studio> Update(List<Studio> studios)
+        {
+            _studioRepo.UpdateMany(studios);
+
+            return studios;
         }
 
         public void RemoveStudio(Studio studio)

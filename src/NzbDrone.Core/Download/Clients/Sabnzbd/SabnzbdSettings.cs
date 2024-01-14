@@ -40,7 +40,7 @@ namespace NzbDrone.Core.Download.Clients.Sabnzbd
         {
             Host = "localhost";
             Port = 8080;
-            MovieCategory = "movies";
+            MovieCategory = "whisparr";
             RecentMoviePriority = (int)SabnzbdPriority.Default;
             OlderMoviePriority = (int)SabnzbdPriority.Default;
         }

@@ -29,7 +29,7 @@ namespace NzbDrone.Core.Download.Clients.Nzbget
         {
             Host = "localhost";
             Port = 6789;
-            MovieCategory = "Movies";
+            MovieCategory = "whisparr";
             Username = "nzbget";
             Password = "tegbzn6789";
             RecentMoviePriority = (int)NzbgetPriority.Normal;

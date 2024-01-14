@@ -169,8 +169,8 @@ class PerformerDetailsConnector extends Component {
 
   onRefreshPress = () => {
     this.props.dispatchExecuteCommand({
-      name: commandNames.REFRESH_MOVIE,
-      movieIds: [this.props.id]
+      name: commandNames.REFRESH_PERFORMER,
+      performerIds: [this.props.id]
     });
   };
 

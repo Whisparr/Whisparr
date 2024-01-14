@@ -212,6 +212,7 @@ EpisodeSummary.propTypes = {
   path: PropTypes.string,
   size: PropTypes.number,
   actors: PropTypes.arrayOf(PropTypes.object),
+  tvdbId: PropTypes.string,
   joinedPerformers: PropTypes.string,
   languages: PropTypes.arrayOf(PropTypes.object),
   quality: PropTypes.object,

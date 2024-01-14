@@ -94,6 +94,7 @@ class EpisodeSummary extends Component {
       path,
       size,
       actors,
+      tvdbId,
       languages,
       quality,
       customFormats,
@@ -102,7 +103,7 @@ class EpisodeSummary extends Component {
     } = this.props;
 
     const hasOverview = !!overview;
-
+    const sceneInfoLink = `https://metadataapi.net/scenes/${tvdbId}`
     return (
       <div>
         <div>
@@ -160,7 +161,12 @@ class EpisodeSummary extends Component {
               translate('NoEpisodeOverview')
           }
         </div>
-
+        <a 
+          className={styles.sceneInfoLink}
+          href={sceneInfoLink} target="_blank" 
+        >
+          {translate('SceneInfo')}
+        </a>
         {
           path ?
             <Table columns={columns}>

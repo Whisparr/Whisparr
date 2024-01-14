@@ -25,7 +25,8 @@ function createMapStateToProps() {
       const {
         releaseDate,
         overview,
-        actors
+        actors,
+        tvdbId
       } = episode;
 
       const {
@@ -45,6 +46,7 @@ function createMapStateToProps() {
         releaseDate,
         overview,
         actors,
+        tvdbId,
         mediaInfo,
         path,
         size,

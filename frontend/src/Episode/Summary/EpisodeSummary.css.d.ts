@@ -12,6 +12,7 @@ interface CssExports {
   'overview': string;
   'path': string;
   'quality': string;
+  'sceneInfoLink': string;
   'size': string;
 }
 export const cssExports: CssExports;

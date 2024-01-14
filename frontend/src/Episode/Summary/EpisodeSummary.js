@@ -103,7 +103,7 @@ class EpisodeSummary extends Component {
     } = this.props;
 
     const hasOverview = !!overview;
-    const sceneInfoLink = `https://metadataapi.net/scenes/${tvdbId}`
+    const sceneInfoLink = `https://metadataapi.net/scenes/${tvdbId}`;
     return (
       <div>
         <div>
@@ -161,9 +161,9 @@ class EpisodeSummary extends Component {
               translate('NoEpisodeOverview')
           }
         </div>
-        <a 
+        <a
           className={styles.sceneInfoLink}
-          href={sceneInfoLink} target="_blank" 
+          href={sceneInfoLink} target="_blank"
         >
           {translate('SceneInfo')}
         </a>

@@ -13,6 +13,7 @@ export const MOVE_MOVIE = 'MoveMovie';
 export const REFRESH_COLLECTIONS = 'RefreshCollections';
 export const REFRESH_MOVIE = 'RefreshMovie';
 export const REFRESH_PERFORMER = 'SyncPerformerItems';
+export const REFRESH_STUDIO = 'SyncStudioItems';
 export const RENAME_FILES = 'RenameFiles';
 export const RENAME_MOVIE = 'RenameMovie';
 export const RESET_API_KEY = 'ResetApiKey';

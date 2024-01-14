@@ -24,7 +24,6 @@ namespace NzbDrone.Core.Movies.Performers
         private readonly IEventAggregator _eventAggregator;
         private readonly IImportExclusionsService _importExclusionService;
 
-        private readonly RefreshMovieService _refreshMovieService;
         private readonly Logger _logger;
 
         public SyncPerformerItemsService(IProvideMovieInfo movieInfo,
@@ -45,7 +44,6 @@ namespace NzbDrone.Core.Movies.Performers
             _configService = configService;
             _diskScanService = diskScanService;
             _eventAggregator = eventAggregator;
-            _refreshMovieService = refreshMovieService;
             _importExclusionService = importExclusionsService;
             _logger = logger;
         }

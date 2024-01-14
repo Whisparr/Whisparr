@@ -197,7 +197,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
         {
             var httpRequest = _whisparrMetadata.Create()
                                              .SetSegment("route", "performer")
-                                             .Resource($"{stashId}\\works")
+                                             .Resource($"{stashId}/works")
                                              .Build();
 
             httpRequest.AllowAutoRedirect = true;
@@ -225,7 +225,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
         {
             var httpRequest = _whisparrMetadata.Create()
                                              .SetSegment("route", "site")
-                                             .Resource($"{stashId}\\scenes")
+                                             .Resource($"{stashId}/scenes")
                                              .Build();
 
             httpRequest.AllowAutoRedirect = true;

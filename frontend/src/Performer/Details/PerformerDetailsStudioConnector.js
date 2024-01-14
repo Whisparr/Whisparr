@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
+import * as commandNames from 'Commands/commandNames';
 import { executeCommand } from 'Store/Actions/commandActions';
 import { toggleMovieMonitored } from 'Store/Actions/movieActions';
 import { setPerformerScenesSort, setPerformerScenesTableOption } from 'Store/Actions/performerScenesActions';
@@ -84,6 +85,14 @@ class PerformerDetailsStudioConnector extends Component {
     });
   };
 
+  onSearchPress = () => {
+    this.props.executeCommand({
+      name: commandNames.PERFORMER_SEARCH,
+      performerIds: [this.props.performerId],
+      studioIds: [this.props.id]
+    });
+  };
+
   onSortPress = (sortKey, sortDirection) => {
     this.props.setPerformerScenesSort({
       sortKey,
@@ -100,6 +109,7 @@ class PerformerDetailsStudioConnector extends Component {
         {...this.props}
         onTableOptionChange={this.onTableOptionChange}
         onSortPress={this.onSortPress}
+        onSearchPress={this.onSearchPress}
         onMonitorStudioPress={this.onMonitorStudioPress}
         onMonitorMoviePress={this.onMonitorMoviePress}
       />
@@ -109,11 +119,13 @@ class PerformerDetailsStudioConnector extends Component {
 
 PerformerDetailsStudioConnector.propTypes = {
   id: PropTypes.number.isRequired,
+  items: PropTypes.array.isRequired,
   performerId: PropTypes.number.isRequired,
   setPerformerScenesTableOption: PropTypes.func.isRequired,
   setPerformerScenesSort: PropTypes.func.isRequired,
   toggleStudioMonitored: PropTypes.func.isRequired,
-  toggleMovieMonitored: PropTypes.func.isRequired
+  toggleMovieMonitored: PropTypes.func.isRequired,
+  executeCommand: PropTypes.func.isRequired
 };
 
 export default connect(createMapStateToProps, mapDispatchToProps)(PerformerDetailsStudioConnector);

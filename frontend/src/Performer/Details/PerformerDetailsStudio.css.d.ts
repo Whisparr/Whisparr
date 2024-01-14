@@ -18,6 +18,7 @@ interface CssExports {
   'season': string;
   'seasonNumber': string;
   'sizeOnDisk': string;
+  'studio': string;
 }
 export const cssExports: CssExports;
 export default cssExports;

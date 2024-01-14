@@ -79,7 +79,7 @@ function createMapStateToProps() {
         !movieRefreshingCommand.body.movieId
       );
       const isRefreshing = isMovieRefreshing || allMoviesRefreshing;
-      const isSearching = isCommandExecuting(findCommand(commands, { name: commandNames.MOVIE_SEARCH, movieIds: [studio.id] }));
+      const isSearching = isCommandExecuting(findCommand(commands, { name: commandNames.STUDIO_SEARCH, studioIds: [studio.id] }));
 
       const isFetching = isMoviesFetching;
       const isPopulated = isMoviesPopulated;
@@ -176,8 +176,8 @@ class StudioDetailsConnector extends Component {
 
   onSearchPress = () => {
     this.props.dispatchExecuteCommand({
-      name: commandNames.MOVIE_SEARCH,
-      movieIds: [this.props.id]
+      name: commandNames.STUDIO_SEARCH,
+      studioIds: [this.props.id]
     });
   };
 

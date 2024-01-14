@@ -30,6 +30,8 @@ namespace NzbDrone.Core.Movies
         Movie FindByTitle(List<string> titles, int? year, List<string> otherTitles, List<Movie> candidates);
         List<Movie> FindByTitleCandidates(List<string> titles, out List<string> otherTitles);
         Movie FindByStudioAndReleaseDate(string studioForeignId, string releaseDate, string releaseTokens);
+        List<Movie> GetByStudioForeignId(string studioForeignId);
+        List<Movie> GetByPerformerForeignId(string performerForeignId);
         Movie FindByPath(string path);
         Dictionary<int, string> AllMoviePaths();
         List<int> AllMovieTmdbIds();
@@ -197,6 +199,16 @@ namespace NzbDrone.Core.Movies
         public List<string> AllMovieForeignIds()
         {
             return _movieRepository.AllMovieForeignIds();
+        }
+
+        public List<Movie> GetByStudioForeignId(string studioForeignId)
+        {
+            return _movieRepository.GetByStudioForeignId(studioForeignId);
+        }
+
+        public List<Movie> GetByPerformerForeignId(string performerForeignId)
+        {
+            return _movieRepository.GetByPerformerForeignId(performerForeignId);
         }
 
         public void DeleteMovie(int movieId, bool deleteFiles, bool addExclusion = false)

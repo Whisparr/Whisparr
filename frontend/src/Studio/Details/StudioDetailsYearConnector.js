@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
+import * as commandNames from 'Commands/commandNames';
 import { executeCommand } from 'Store/Actions/commandActions';
 import { toggleMovieMonitored } from 'Store/Actions/movieActions';
 import { setStudioScenesSort, setStudioScenesTableOption } from 'Store/Actions/studioScenesActions';
@@ -57,6 +58,14 @@ class StudioDetailsYearConnector extends Component {
     });
   };
 
+  onSearchPress = () => {
+    this.props.executeCommand({
+      name: commandNames.STUDIO_SEARCH,
+      studioIds: [this.props.studioId],
+      years: [this.props.year]
+    });
+  };
+
   onSortPress = (sortKey, sortDirection) => {
     this.props.setStudioScenesSort({
       sortKey,
@@ -73,6 +82,7 @@ class StudioDetailsYearConnector extends Component {
         {...this.props}
         onTableOptionChange={this.onTableOptionChange}
         onSortPress={this.onSortPress}
+        onSearchPress={this.onSearchPress}
         onMonitorMoviePress={this.onMonitorMoviePress}
       />
     );
@@ -81,9 +91,11 @@ class StudioDetailsYearConnector extends Component {
 
 StudioDetailsYearConnector.propTypes = {
   studioId: PropTypes.number.isRequired,
+  year: PropTypes.number.isRequired,
   setStudioScenesTableOption: PropTypes.func.isRequired,
   setStudioScenesSort: PropTypes.func.isRequired,
-  toggleMovieMonitored: PropTypes.func.isRequired
+  toggleMovieMonitored: PropTypes.func.isRequired,
+  executeCommand: PropTypes.func.isRequired
 };
 
 export default connect(createMapStateToProps, mapDispatchToProps)(StudioDetailsYearConnector);

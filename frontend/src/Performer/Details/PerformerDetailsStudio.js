@@ -166,7 +166,6 @@ class PerformerDetailsStudio extends Component {
       isSaving,
       isExpanded,
       isSearching,
-      performerMonitored,
       isSmallScreen,
       onMonitorStudioPress,
       onSearchPress,
@@ -189,7 +188,7 @@ class PerformerDetailsStudio extends Component {
 
     return (
       <div
-        className={styles.season}
+        className={styles.studio}
       >
         <div className={styles.header}>
           <div className={styles.left}>
@@ -270,7 +269,7 @@ class PerformerDetailsStudio extends Component {
 
                 <MenuContent className={styles.actionsMenuContent}>
                   <MenuItem
-                    isDisabled={isSearching || !hasMonitoredMovies || !performerMonitored}
+                    isDisabled={isSearching || !hasMonitoredMovies}
                     onPress={onSearchPress}
                   >
                     <SpinnerIcon
@@ -300,10 +299,10 @@ class PerformerDetailsStudio extends Component {
                 <SpinnerIconButton
                   className={styles.actionButton}
                   name={icons.SEARCH}
-                  title={hasMonitoredMovies && performerMonitored ? translate('SearchForMonitoredMoviesSeason') : translate('NoMonitoredMoviesSeason')}
+                  title={hasMonitoredMovies ? translate('SearchForMonitoredMoviesSeason') : translate('NoMonitoredMoviesSeason')}
                   size={24}
                   isSpinning={isSearching}
-                  isDisabled={isSearching || !hasMonitoredMovies || !performerMonitored}
+                  isDisabled={isSearching || !hasMonitoredMovies}
                   onPress={onSearchPress}
                 />
 

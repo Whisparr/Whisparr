@@ -20,6 +20,8 @@ namespace NzbDrone.Core.Movies
         Movie FindByForeignId(string foreignId);
         List<Movie> FindByTmdbId(List<int> tmdbids);
         List<Movie> FindByStudioAndDate(string studioForeignId, string date);
+        List<Movie> GetByStudioForeignId(string studioForeignId);
+        List<Movie> GetByPerformerForeignId(string performerForeignId);
         List<Movie> MoviesBetweenDates(DateTime start, DateTime end, bool includeUnmonitored);
         PagingSpec<Movie> MoviesWithoutFiles(PagingSpec<Movie> pagingSpec);
         List<Movie> GetMoviesByFileId(int fileId);
@@ -149,6 +151,38 @@ namespace NzbDrone.Core.Movies
                     movie.QualityProfile = profile;
                     movie.MovieMetadata = metadata;
                     movie.MovieFile = file;
+
+                    return movie;
+                }).AsList();
+        }
+
+        public List<Movie> GetByStudioForeignId(string studioForeignId)
+        {
+            var builder = new SqlBuilder(_database.DatabaseType)
+                .Join<Movie, MovieMetadata>((m, p) => m.MovieMetadataId == p.Id)
+                .Where<MovieMetadata>(x => x.StudioForeignId == studioForeignId);
+
+            return _database.QueryJoined<Movie, MovieMetadata>(
+                builder,
+                (movie, metadata) =>
+                {
+                    movie.MovieMetadata = metadata;
+
+                    return movie;
+                }).AsList();
+        }
+
+        public List<Movie> GetByPerformerForeignId(string performerForeignId)
+        {
+            var builder = new SqlBuilder(_database.DatabaseType)
+                .Join<Movie, MovieMetadata>((m, p) => m.MovieMetadataId == p.Id)
+                .Where($"\"MovieMetadata\".\"Credits\" LIKE \"%{performerForeignId}%\"");
+
+            return _database.QueryJoined<Movie, MovieMetadata>(
+                builder,
+                (movie, metadata) =>
+                {
+                    movie.MovieMetadata = metadata;
 
                     return movie;
                 }).AsList();

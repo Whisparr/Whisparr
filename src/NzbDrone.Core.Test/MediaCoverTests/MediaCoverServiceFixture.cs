@@ -50,7 +50,47 @@ namespace NzbDrone.Core.Test.MediaCoverTests
 
             Subject.ConvertToLocalUrls(12, covers);
 
-            covers.Single().Url.Should().Be($"/MediaCover/12/banner.jpg?lastWrite={fileInfo.LastWriteTimeUtc.Ticks}");
+            covers.Single().Url.Should().Be($"/MediaCover/movie/12/banner.jpg?lastWrite={fileInfo.LastWriteTimeUtc.Ticks}");
+        }
+
+        [Test]
+        public void should_convert_performer_cover_urls_to_local()
+        {
+            var covers = new List<MediaCover.MediaCover>
+                {
+                    new MediaCover.MediaCover { CoverType = MediaCoverTypes.Banner }
+                };
+
+            var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "Files", "Media", "H264_sample.mp4");
+            var fileInfo = new FileInfo(path);
+
+            Mocker.GetMock<IDiskProvider>()
+                .Setup(c => c.GetFileInfo(It.IsAny<string>()))
+                .Returns(fileInfo);
+
+            Subject.ConvertToLocalPerformerUrls(12, covers);
+
+            covers.Single().Url.Should().Be($"/MediaCover/performer/12/banner.jpg?lastWrite={fileInfo.LastWriteTimeUtc.Ticks}");
+        }
+
+        [Test]
+        public void should_convert_studio_cover_urls_to_local()
+        {
+            var covers = new List<MediaCover.MediaCover>
+                {
+                    new MediaCover.MediaCover { CoverType = MediaCoverTypes.Banner }
+                };
+
+            var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "Files", "Media", "H264_sample.mp4");
+            var fileInfo = new FileInfo(path);
+
+            Mocker.GetMock<IDiskProvider>()
+                .Setup(c => c.GetFileInfo(It.IsAny<string>()))
+                .Returns(fileInfo);
+
+            Subject.ConvertToLocalStudioUrls(12, covers);
+
+            covers.Single().Url.Should().Be($"/MediaCover/studio/12/banner.jpg?lastWrite={fileInfo.LastWriteTimeUtc.Ticks}");
         }
 
         [Test]
@@ -70,7 +110,7 @@ namespace NzbDrone.Core.Test.MediaCoverTests
 
             Subject.ConvertToLocalUrls(12, covers);
 
-            covers.Single().Url.Should().Be("/MediaCover/12/banner.jpg");
+            covers.Single().Url.Should().Be("/MediaCover/movie/12/banner.jpg");
         }
 
         [Test]

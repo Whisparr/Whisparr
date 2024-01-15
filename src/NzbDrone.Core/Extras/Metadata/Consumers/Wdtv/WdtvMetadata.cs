@@ -139,7 +139,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Wdtv
                 return new List<ImageFileResult>();
             }
 
-            var source = _mediaCoverService.GetCoverPath(movie.Id, image.CoverType);
+            var source = _mediaCoverService.GetMovieCoverPath(movie.Id, image.CoverType);
             var destination = "folder" + Path.GetExtension(source);
 
             return new List<ImageFileResult>

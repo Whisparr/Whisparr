@@ -17,7 +17,6 @@ using NzbDrone.Core.Movies.Commands;
 using NzbDrone.Core.Movies.Events;
 using NzbDrone.Core.Movies.Performers;
 using NzbDrone.Core.Movies.Studios;
-using NzbDrone.Core.Parser;
 using NzbDrone.Core.RootFolders;
 
 namespace NzbDrone.Core.Movies
@@ -29,8 +28,8 @@ namespace NzbDrone.Core.Movies
         private readonly IMovieMetadataService _movieMetadataService;
         private readonly IRootFolderService _folderService;
         private readonly IAlternativeTitleService _titleService;
-        private readonly IPerformerService _performerService;
-        private readonly IStudioService _studioService;
+        private readonly IAddPerformerService _performerService;
+        private readonly IAddStudioService _studioService;
         private readonly IEventAggregator _eventAggregator;
         private readonly IDiskScanService _diskScanService;
         private readonly ICheckIfMovieShouldBeRefreshed _checkIfMovieShouldBeRefreshed;
@@ -43,8 +42,8 @@ namespace NzbDrone.Core.Movies
                                     IMovieMetadataService movieMetadataService,
                                     IRootFolderService folderService,
                                     IAlternativeTitleService titleService,
-                                    IStudioService studioService,
-                                    IPerformerService performerService,
+                                    IAddStudioService studioService,
+                                    IAddPerformerService performerService,
                                     IEventAggregator eventAggregator,
                                     IDiskScanService diskScanService,
                                     ICheckIfMovieShouldBeRefreshed checkIfMovieShouldBeRefreshed,
@@ -134,18 +133,11 @@ namespace NzbDrone.Core.Movies
                 var newCollection = _studioService.AddStudio(new Studio
                 {
                     ForeignId = studioInfo.ForeignId,
-                    Title = studioInfo.Title,
-                    Website = studioInfo.Website,
-                    Network = studioInfo.Network,
-                    Monitored = movie.AddOptions?.Monitor == MonitorTypes.MovieAndCollection,
+                    Monitored = false,
                     SearchOnAdd = movie.AddOptions?.SearchForMovie ?? false,
                     QualityProfileId = movie.QualityProfileId,
-                    RootFolderPath = _folderService.GetBestRootFolderPath(movie.Path).TrimEnd('/', '\\', ' '),
-                    Tags = movie.Tags,
-                    CleanTitle = movieInfo.StudioTitle.CleanMovieTitle(),
-                    SortTitle = MovieTitleNormalizer.Normalize(movieInfo.StudioTitle, movieInfo.ForeignId),
-                    Images = studioInfo.Images,
-                    Added = DateTime.UtcNow
+                    RootFolderPath = _folderService.GetBestRootFolderPath(movie.Path),
+                    Tags = movie.Tags
                 });
 
                 if (newCollection != null)
@@ -162,13 +154,11 @@ namespace NzbDrone.Core.Movies
 
             performerInfo.ForEach(p =>
             {
-                p.CleanName = p.Name.CleanMovieTitle();
                 p.Monitored = false;
                 p.RootFolderPath = _folderService.GetBestRootFolderPath(movie.Path);
-                p.SearchOnAdd = false;
+                p.SearchOnAdd = movie.AddOptions?.SearchForMovie ?? false;
                 p.QualityProfileId = movie.QualityProfileId;
                 p.Tags = movie.Tags;
-                p.Added = DateTime.UtcNow;
             });
 
             _performerService.AddPerformers(performerInfo);
@@ -285,17 +275,22 @@ namespace NzbDrone.Core.Movies
                 // TODO refresh all moviemetadata here, even if not used by a Movie
                 var allMovie = _movieService.GetAllMovies().OrderBy(c => c.MovieMetadata.Value.SortTitle).ToList();
 
-                var updatedTMDBMovies = new HashSet<string>();
+                var updatedMovies = new HashSet<string>();
+                var updatedScenes = new HashSet<string>();
 
                 if (message.LastStartTime.HasValue && message.LastStartTime.Value.AddDays(14) > DateTime.UtcNow)
                 {
-                    updatedTMDBMovies = _movieInfo.GetChangedMovies(message.LastStartTime.Value);
+                    updatedMovies = _movieInfo.GetChangedMovies(message.LastStartTime.Value).Select(x => x.ToString()).ToHashSet();
+                    updatedScenes = _movieInfo.GetChangedScenes(message.LastStartTime.Value);
                 }
 
                 foreach (var movie in allMovie)
                 {
                     var movieLocal = movie;
-                    if ((updatedTMDBMovies.Count == 0 && _checkIfMovieShouldBeRefreshed.ShouldRefresh(movie.MovieMetadata)) || updatedTMDBMovies.Contains(movie.ForeignId) || message.Trigger == CommandTrigger.Manual)
+                    if ((updatedMovies.Count == 0 && _checkIfMovieShouldBeRefreshed.ShouldRefresh(movie.MovieMetadata)) ||
+                        updatedMovies.Contains(movie.ForeignId) ||
+                        updatedScenes.Contains(movie.ForeignId) ||
+                        message.Trigger == CommandTrigger.Manual)
                     {
                         try
                         {
@@ -303,7 +298,7 @@ namespace NzbDrone.Core.Movies
                         }
                         catch (MovieNotFoundException)
                         {
-                            _logger.Error("Movie '{0}' (TMDb {1}) was not found, it may have been removed from The Movie Database.", movieLocal.Title, movieLocal.ForeignId);
+                            _logger.Error("Item '{0}' (ForeignId {1}) was not found, it may have been removed from The Movie Database.", movieLocal.Title, movieLocal.ForeignId);
                             continue;
                         }
                         catch (Exception e)

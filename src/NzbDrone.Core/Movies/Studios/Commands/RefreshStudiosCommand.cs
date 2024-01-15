@@ -2,18 +2,18 @@ using System.Collections.Generic;
 using System.Linq;
 using NzbDrone.Core.Messaging.Commands;
 
-namespace NzbDrone.Core.Movies.Commands
+namespace NzbDrone.Core.Movies.Studios.Commands
 {
-    public class SyncStudioItemsCommand : Command
+    public class RefreshStudiosCommand : Command
     {
         public List<int> StudioIds { get; set; }
 
-        public SyncStudioItemsCommand()
+        public RefreshStudiosCommand()
         {
             StudioIds = new List<int>();
         }
 
-        public SyncStudioItemsCommand(List<int> studioIds)
+        public RefreshStudiosCommand(List<int> studioIds)
         {
             StudioIds = studioIds;
         }

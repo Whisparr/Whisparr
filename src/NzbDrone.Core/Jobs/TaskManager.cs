@@ -16,6 +16,8 @@ using NzbDrone.Core.MediaFiles.Commands;
 using NzbDrone.Core.Messaging.Commands;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.Movies.Commands;
+using NzbDrone.Core.Movies.Performers.Commands;
+using NzbDrone.Core.Movies.Studios.Commands;
 using NzbDrone.Core.Update.Commands;
 
 namespace NzbDrone.Core.Jobs
@@ -92,13 +94,13 @@ namespace NzbDrone.Core.Jobs
                     new ScheduledTask
                     {
                         Interval = 24 * 60,
-                        TypeName = typeof(SyncPerformerItemsCommand).FullName
+                        TypeName = typeof(RefreshPerformersCommand).FullName
                     },
 
                     new ScheduledTask
                     {
                         Interval = 24 * 60,
-                        TypeName = typeof(SyncStudioItemsCommand).FullName
+                        TypeName = typeof(RefreshStudiosCommand).FullName
                     },
 
                     new ScheduledTask

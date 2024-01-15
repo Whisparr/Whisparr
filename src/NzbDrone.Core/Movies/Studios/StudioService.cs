@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using NzbDrone.Common.EnsureThat;
+using NzbDrone.Core.Messaging.Events;
+using NzbDrone.Core.Movies.Studios.Events;
 using NzbDrone.Core.Parser;
 
 namespace NzbDrone.Core.Movies.Studios
@@ -13,6 +14,7 @@ namespace NzbDrone.Core.Movies.Studios
         Studio GetById(int id);
         Studio FindByForeignId(string foreignId);
         List<Studio> GetAllStudios();
+        List<string> AllStudioForeignIds();
         Studio Update(Studio performer);
         List<Studio> Update(List<Studio> studios);
         Studio FindByTitle(string title);
@@ -22,29 +24,29 @@ namespace NzbDrone.Core.Movies.Studios
     public class StudioService : IStudioService
     {
         private readonly IStudioRepository _studioRepo;
+        private readonly IEventAggregator _eventAggregator;
 
-        public StudioService(IStudioRepository studioRepo)
+        public StudioService(IStudioRepository studioRepo, IEventAggregator eventAggregator)
         {
             _studioRepo = studioRepo;
+            _eventAggregator = eventAggregator;
         }
 
-        public Studio AddStudio(Studio studio)
+        public Studio AddStudio(Studio newStudio)
         {
-            Ensure.That(studio, () => studio).IsNotNull();
+            var studio = _studioRepo.Insert(newStudio);
 
-            var existingStudio = _studioRepo.FindByForeignId(studio.ForeignId);
+            _eventAggregator.PublishEvent(new StudioAddedEvent(GetById(studio.Id)));
 
-            if (existingStudio != null)
-            {
-                return existingStudio;
-            }
-
-            return _studioRepo.Insert(studio);
+            return studio;
         }
 
         public List<Studio> AddStudios(List<Studio> studios)
         {
             _studioRepo.InsertMany(studios);
+
+            _eventAggregator.PublishEvent(new StudiosAddedEvent(studios));
+
             return studios;
         }
 
@@ -90,6 +92,11 @@ namespace NzbDrone.Core.Movies.Studios
         public Studio FindByForeignId(string foreignId)
         {
             return _studioRepo.FindByForeignId(foreignId);
+        }
+
+        public List<string> AllStudioForeignIds()
+        {
+            return _studioRepo.AllStudioForeignIds();
         }
     }
 }

@@ -41,6 +41,7 @@ import translate from 'Utilities/String/translate';
 import PerformerIndexFilterMenu from './Menus/PerformerIndexFilterMenu';
 import PerformerIndexSortMenu from './Menus/PerformerIndexSortMenu';
 import PerformerIndexViewMenu from './Menus/PerformerIndexViewMenu';
+import PerformerIndexRefreshPerformerButton from './PerformerIndexRefreshPerformerButton';
 import PerformerIndexPosterOptionsModal from './Posters/Options/PerformerIndexPosterOptionsModal';
 import PerformerIndexPosters from './Posters/PerformerIndexPosters';
 import PerformerIndexSelectFooter from './Select/PerformerIndexSelectFooter';
@@ -196,6 +197,10 @@ const PerformerIndex = withScrollPosition((props: PerformerIndexProps) => {
       <PageContent>
         <PageToolbar>
           <PageToolbarSection>
+            <PerformerIndexRefreshPerformerButton
+              isSelectMode={isSelectMode}
+              selectedFilterKey={selectedFilterKey}
+            />
             <MovieIndexSelectModeButton
               label={
                 isSelectMode

@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using NLog;
+using NzbDrone.Common.Instrumentation.Extensions;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Exceptions;
 using NzbDrone.Core.ImportLists.ImportExclusions;
@@ -9,11 +11,12 @@ using NzbDrone.Core.MediaFiles.Events;
 using NzbDrone.Core.Messaging.Commands;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.MetadataSource;
-using NzbDrone.Core.Movies.Commands;
+using NzbDrone.Core.Movies.Studios.Commands;
+using NzbDrone.Core.Movies.Studios.Events;
 
 namespace NzbDrone.Core.Movies.Studios
 {
-    public class SyncStudioItemsService : IExecute<SyncStudioItemsCommand>
+    public class RefreshStudioService : IExecute<RefreshStudiosCommand>
     {
         private readonly IProvideMovieInfo _movieInfo;
         private readonly IStudioService _studioService;
@@ -26,7 +29,7 @@ namespace NzbDrone.Core.Movies.Studios
 
         private readonly Logger _logger;
 
-        public SyncStudioItemsService(IProvideMovieInfo movieInfo,
+        public RefreshStudioService(IProvideMovieInfo movieInfo,
                                         IStudioService studioService,
                                         IMovieService movieService,
                                         IAddMovieService addMovieService,
@@ -45,6 +48,47 @@ namespace NzbDrone.Core.Movies.Studios
             _eventAggregator = eventAggregator;
             _importExclusionService = importExclusionsService;
             _logger = logger;
+        }
+
+        private Studio RefreshStudioInfo(int studioId)
+        {
+            // Get the movie before updating, that way any changes made to the movie after the refresh started,
+            // but before this movie was refreshed won't be lost.
+            var studio = _studioService.GetById(studioId);
+
+            _logger.ProgressInfo("Updating info for {0}", studio.Title);
+
+            Studio studioInfo;
+
+            try
+            {
+                studioInfo = _movieInfo.GetStudioInfo(studio.ForeignId);
+            }
+            catch (MovieNotFoundException)
+            {
+                throw;
+            }
+
+            if (studio.ForeignId != studioInfo.ForeignId)
+            {
+                _logger.Warn("Studio '{0}' (StashDb: {1}) was replaced with '{2}' (StashDb: {3}), because the original was a duplicate.", studio.Title, studio.ForeignId, studio.Title, studio.ForeignId);
+                studio.ForeignId = studioInfo.ForeignId;
+            }
+
+            studio.Title = studioInfo.Title;
+            studio.Network = studioInfo.Network;
+            studio.Website = studioInfo.Website;
+            studio.Images = studioInfo.Images;
+            studio.LastInfoSync = DateTime.UtcNow;
+            studio.CleanTitle = studioInfo.CleanTitle;
+            studio.SortTitle = studioInfo.SortTitle;
+
+            _studioService.Update(studio);
+
+            _logger.Debug("Finished studio metadata refresh for {0}", studio.Title);
+            _eventAggregator.PublishEvent(new StudioUpdatedEvent(studio));
+
+            return studio;
         }
 
         private void SyncStudioItems(Studio studio)
@@ -108,7 +152,7 @@ namespace NzbDrone.Core.Movies.Studios
             }
         }
 
-        public void Execute(SyncStudioItemsCommand message)
+        public void Execute(RefreshStudiosCommand message)
         {
             if (message.StudioIds.Any())
             {
@@ -118,6 +162,15 @@ namespace NzbDrone.Core.Movies.Studios
                     var items = _movieService.GetByStudioForeignId(studio.ForeignId);
                     var trigger = message.Trigger;
                     var isNew = false;
+
+                    try
+                    {
+                        studio = RefreshStudioInfo(studioId);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.Error(e, "Couldn't refresh info for {0}", studio.Title);
+                    }
 
                     // Rescan before sync since syncing will add a new movie and scan automatically
                     foreach (var movieItem in items)
@@ -133,10 +186,26 @@ namespace NzbDrone.Core.Movies.Studios
             {
                 var allStudios = _studioService.GetAllStudios().OrderBy(c => c.SortTitle).ToList();
 
+                var updatedStudios = new HashSet<string>();
+
+                if (message.LastStartTime.HasValue && message.LastStartTime.Value.AddDays(14) > DateTime.UtcNow)
+                {
+                    updatedStudios = _movieInfo.GetChangedStudios(message.LastStartTime.Value);
+                }
+
                 foreach (var studio in allStudios)
                 {
+                    var studioLocal = studio;
+
                     try
                     {
+                        if ((updatedStudios.Count == 0 && studio.LastInfoSync < DateTime.UtcNow.AddDays(-14)) ||
+                            updatedStudios.Contains(studio.ForeignId) ||
+                            message.Trigger == CommandTrigger.Manual)
+                        {
+                            studioLocal = RefreshStudioInfo(studioLocal.Id);
+                        }
+
                         SyncStudioItems(studio);
                     }
                     catch (MovieNotFoundException)

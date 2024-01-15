@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.Linq;
+using Dapper;
 using NzbDrone.Core.Datastore;
 using NzbDrone.Core.Messaging.Events;
 
@@ -8,6 +10,7 @@ namespace NzbDrone.Core.Movies.Studios
     {
         Studio FindByForeignId(string foreignId);
         Studio FindByTitle(string title);
+        List<string> AllStudioForeignIds();
     }
 
     public class StudioRepository : BasicRepository<Studio>, IStudioRepository
@@ -25,6 +28,14 @@ namespace NzbDrone.Core.Movies.Studios
         public Studio FindByForeignId(string foreignId)
         {
             return Query(x => x.ForeignId == foreignId).FirstOrDefault();
+        }
+
+        public List<string> AllStudioForeignIds()
+        {
+            using (var conn = _database.OpenConnection())
+            {
+                return conn.Query<string>("SELECT \"ForeignId\" FROM \"Studios\"").ToList();
+            }
         }
     }
 }

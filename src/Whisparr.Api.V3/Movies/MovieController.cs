@@ -126,7 +126,7 @@ namespace Whisparr.Api.V3.Movies
 
                 if (!excludeLocalCovers)
                 {
-                    coverFileInfos = _coverMapper.GetCoverFileInfos();
+                    coverFileInfos = _coverMapper.GetMovieCoverFileInfos();
                 }
 
                 var movies = movieTask.GetAwaiter().GetResult();

@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using NLog;
+using NzbDrone.Common.Instrumentation.Extensions;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Exceptions;
 using NzbDrone.Core.ImportLists.ImportExclusions;
@@ -9,11 +11,12 @@ using NzbDrone.Core.MediaFiles.Events;
 using NzbDrone.Core.Messaging.Commands;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.MetadataSource;
-using NzbDrone.Core.Movies.Commands;
+using NzbDrone.Core.Movies.Performers.Commands;
+using NzbDrone.Core.Movies.Performers.Events;
 
 namespace NzbDrone.Core.Movies.Performers
 {
-    public class SyncPerformerItemsService : IExecute<SyncPerformerItemsCommand>
+    public class RefreshPerformerService : IExecute<RefreshPerformersCommand>
     {
         private readonly IProvideMovieInfo _movieInfo;
         private readonly IPerformerService _performerService;
@@ -26,14 +29,13 @@ namespace NzbDrone.Core.Movies.Performers
 
         private readonly Logger _logger;
 
-        public SyncPerformerItemsService(IProvideMovieInfo movieInfo,
+        public RefreshPerformerService(IProvideMovieInfo movieInfo,
                                         IPerformerService performerService,
                                         IMovieService movieService,
                                         IAddMovieService addMovieService,
                                         IConfigService configService,
                                         IDiskScanService diskScanService,
                                         IEventAggregator eventAggregator,
-                                        RefreshMovieService refreshMovieService,
                                         ImportExclusionsService importExclusionsService,
                                         Logger logger)
         {
@@ -46,6 +48,51 @@ namespace NzbDrone.Core.Movies.Performers
             _eventAggregator = eventAggregator;
             _importExclusionService = importExclusionsService;
             _logger = logger;
+        }
+
+        private Performer RefreshPerformerInfo(int performerId)
+        {
+            // Get the movie before updating, that way any changes made to the movie after the refresh started,
+            // but before this movie was refreshed won't be lost.
+            var performer = _performerService.GetById(performerId);
+
+            _logger.ProgressInfo("Updating info for {0}", performer.Name);
+
+            Performer performerInfo;
+
+            try
+            {
+                performerInfo = _movieInfo.GetPerformerInfo(performer.ForeignId);
+            }
+            catch (MovieNotFoundException)
+            {
+                throw;
+            }
+
+            if (performer.ForeignId != performerInfo.ForeignId)
+            {
+                _logger.Warn("Performer '{0}' (StashDb: {1}) was replaced with '{2}' (StashDb: {3}), because the original was a duplicate.", performer.Name, performer.ForeignId, performer.Name, performer.ForeignId);
+                performer.ForeignId = performerInfo.ForeignId;
+            }
+
+            performer.Name = performerInfo.Name;
+            performer.HairColor = performerInfo.HairColor;
+            performer.Ethnicity = performerInfo.Ethnicity;
+            performer.Status = performerInfo.Status;
+            performer.Images = performerInfo.Images;
+            performer.CareerStart = performerInfo.CareerEnd;
+            performer.CareerStart = performerInfo.CareerStart;
+            performer.LastInfoSync = DateTime.UtcNow;
+            performer.CleanName = performerInfo.CleanName;
+            performer.SortName = performerInfo.SortName;
+            performer.Age = performerInfo.Age;
+
+            _performerService.Update(performer);
+
+            _logger.Debug("Finished performer metadata refresh for {0}", performer.Name);
+            _eventAggregator.PublishEvent(new PerformerUpdatedEvent(performer));
+
+            return performer;
         }
 
         private void SyncPerformerItems(Performer performer)
@@ -109,7 +156,7 @@ namespace NzbDrone.Core.Movies.Performers
             }
         }
 
-        public void Execute(SyncPerformerItemsCommand message)
+        public void Execute(RefreshPerformersCommand message)
         {
             if (message.PerformerIds.Any())
             {
@@ -119,6 +166,15 @@ namespace NzbDrone.Core.Movies.Performers
                     var items = _movieService.GetByPerformerForeignId(performer.ForeignId);
                     var trigger = message.Trigger;
                     var isNew = false;
+
+                    try
+                    {
+                        performer = RefreshPerformerInfo(performerId);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.Error(e, "Couldn't refresh info for {0}", performer.Name);
+                    }
 
                     // Rescan before sync since syncing will add a new movie and scan automatically
                     foreach (var movieItem in items)
@@ -134,10 +190,26 @@ namespace NzbDrone.Core.Movies.Performers
             {
                 var allPerformers = _performerService.GetAllPerformers().OrderBy(c => c.SortName).ToList();
 
+                var updatePerformers = new HashSet<string>();
+
+                if (message.LastStartTime.HasValue && message.LastStartTime.Value.AddDays(14) > DateTime.UtcNow)
+                {
+                    updatePerformers = _movieInfo.GetChangedPerformers(message.LastStartTime.Value);
+                }
+
                 foreach (var performer in allPerformers)
                 {
+                    var performerLocal = performer;
+
                     try
                     {
+                        if ((updatePerformers.Count == 0 && performer.LastInfoSync < DateTime.UtcNow.AddDays(-14)) ||
+                            updatePerformers.Contains(performer.ForeignId) ||
+                            message.Trigger == CommandTrigger.Manual)
+                        {
+                            performerLocal = RefreshPerformerInfo(performerLocal.Id);
+                        }
+
                         SyncPerformerItems(performer);
                     }
                     catch (MovieNotFoundException)

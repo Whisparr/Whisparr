@@ -46,7 +46,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             _logger = logger;
         }
 
-        public HashSet<string> GetChangedMovies(DateTime startTime)
+        public HashSet<int> GetChangedMovies(DateTime startTime)
         {
             // Round down to the hour to ensure we cover gap and don't kill cache every call
             var cacheAdjustedStart = startTime.AddMinutes(-15);
@@ -54,6 +54,63 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
 
             var request = _whisparrMetadata.Create()
                 .SetSegment("route", "movie/changed")
+                .AddQueryParam("since", startDate)
+                .Build();
+
+            request.AllowAutoRedirect = true;
+            request.SuppressHttpError = true;
+
+            var response = _httpClient.Get<List<int>>(request);
+
+            return new HashSet<int>(response.Resource);
+        }
+
+        public HashSet<string> GetChangedScenes(DateTime startTime)
+        {
+            // Round down to the hour to ensure we cover gap and don't kill cache every call
+            var cacheAdjustedStart = startTime.AddMinutes(-15);
+            var startDate = cacheAdjustedStart.Date.AddHours(cacheAdjustedStart.Hour).ToString("s");
+
+            var request = _whisparrMetadata.Create()
+                .SetSegment("route", "scene/changed")
+                .AddQueryParam("since", startDate)
+                .Build();
+
+            request.AllowAutoRedirect = true;
+            request.SuppressHttpError = true;
+
+            var response = _httpClient.Get<List<string>>(request);
+
+            return new HashSet<string>(response.Resource);
+        }
+
+        public HashSet<string> GetChangedStudios(DateTime startTime)
+        {
+            // Round down to the hour to ensure we cover gap and don't kill cache every call
+            var cacheAdjustedStart = startTime.AddMinutes(-15);
+            var startDate = cacheAdjustedStart.Date.AddHours(cacheAdjustedStart.Hour).ToString("s");
+
+            var request = _whisparrMetadata.Create()
+                .SetSegment("route", "site/changed")
+                .AddQueryParam("since", startDate)
+                .Build();
+
+            request.AllowAutoRedirect = true;
+            request.SuppressHttpError = true;
+
+            var response = _httpClient.Get<List<string>>(request);
+
+            return new HashSet<string>(response.Resource);
+        }
+
+        public HashSet<string> GetChangedPerformers(DateTime startTime)
+        {
+            // Round down to the hour to ensure we cover gap and don't kill cache every call
+            var cacheAdjustedStart = startTime.AddMinutes(-15);
+            var startDate = cacheAdjustedStart.Date.AddHours(cacheAdjustedStart.Hour).ToString("s");
+
+            var request = _whisparrMetadata.Create()
+                .SetSegment("route", "performer/changed")
                 .AddQueryParam("since", startDate)
                 .Build();
 
@@ -191,6 +248,60 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             var movie = httpResponse.Resource.SelectList(MapMovie).FirstOrDefault();
 
             return movie;
+        }
+
+        public Performer GetPerformerInfo(string foreignId)
+        {
+            var httpRequest = _whisparrMetadata.Create()
+                                             .SetSegment("route", "performer")
+                                             .Resource(foreignId)
+                                             .Build();
+
+            httpRequest.AllowAutoRedirect = true;
+            httpRequest.SuppressHttpError = true;
+
+            var httpResponse = _httpClient.Get<PerformerResource>(httpRequest);
+
+            if (httpResponse.HasHttpError)
+            {
+                if (httpResponse.StatusCode == HttpStatusCode.NotFound)
+                {
+                    throw new MovieNotFoundException(foreignId);
+                }
+                else
+                {
+                    throw new HttpException(httpRequest, httpResponse);
+                }
+            }
+
+            return MapPerformer(httpResponse.Resource);
+        }
+
+        public Studio GetStudioInfo(string foreignId)
+        {
+            var httpRequest = _whisparrMetadata.Create()
+                                             .SetSegment("route", "site")
+                                             .Resource(foreignId)
+                                             .Build();
+
+            httpRequest.AllowAutoRedirect = true;
+            httpRequest.SuppressHttpError = true;
+
+            var httpResponse = _httpClient.Get<StudioResource>(httpRequest);
+
+            if (httpResponse.HasHttpError)
+            {
+                if (httpResponse.StatusCode == HttpStatusCode.NotFound)
+                {
+                    throw new MovieNotFoundException(foreignId);
+                }
+                else
+                {
+                    throw new HttpException(httpRequest, httpResponse);
+                }
+            }
+
+            return MapStudio(httpResponse.Resource);
         }
 
         public List<string> GetPerformerScenes(string stashId)
@@ -678,6 +789,8 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             var newPerformer = new Performer
             {
                 Name = performer.Name,
+                CleanName = performer.Name.CleanMovieTitle(),
+                SortName = Parser.Parser.NormalizeTitle(performer.Name),
                 Gender = MapGender(performer.Gender),
                 Status = performer.Status,
                 Age = performer.Age,
@@ -777,6 +890,8 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             var newPerformer = new Studio
             {
                 Title = studio.Title,
+                CleanTitle = studio.Title.CleanMovieTitle(),
+                SortTitle = Parser.Parser.NormalizeTitle(studio.Title),
                 Website = studio.Homepage,
                 ForeignId = studio.ForeignIds.StashId,
                 Network = studio.Network,

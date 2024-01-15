@@ -14,19 +14,33 @@ using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.Movies;
 using NzbDrone.Core.Movies.Events;
+using NzbDrone.Core.Movies.Performers;
+using NzbDrone.Core.Movies.Performers.Events;
+using NzbDrone.Core.Movies.Studios;
+using NzbDrone.Core.Movies.Studios.Events;
 
 namespace NzbDrone.Core.MediaCover
 {
     public interface IMapCoversToLocal
     {
-        Dictionary<string, FileInfo> GetCoverFileInfos();
+        Dictionary<string, FileInfo> GetMovieCoverFileInfos();
+        Dictionary<string, FileInfo> GetPerformerCoverFileInfos();
+        Dictionary<string, FileInfo> GetStudioCoverFileInfos();
         void ConvertToLocalUrls(int movieId, IEnumerable<MediaCover> covers, Dictionary<string, FileInfo> fileInfos = null);
+        void ConvertToLocalPerformerUrls(int performerId, IEnumerable<MediaCover> covers, Dictionary<string, FileInfo> fileInfos = null);
+        void ConvertToLocalStudioUrls(int studioId, IEnumerable<MediaCover> covers, Dictionary<string, FileInfo> fileInfos = null);
         void ConvertToLocalUrls(IEnumerable<Tuple<int, IEnumerable<MediaCover>>> items, Dictionary<string, FileInfo> coverFileInfos);
-        string GetCoverPath(int movieId, MediaCoverTypes coverType, int? height = null);
+        void ConvertToLocalPerformerUrls(IEnumerable<Tuple<int, IEnumerable<MediaCover>>> items, Dictionary<string, FileInfo> coverFileInfos);
+        void ConvertToLocalStudioUrls(IEnumerable<Tuple<int, IEnumerable<MediaCover>>> items, Dictionary<string, FileInfo> coverFileInfos);
+        string GetMovieCoverPath(int movieId, MediaCoverTypes coverType, int? height = null);
+        string GetPerformerCoverPath(int performerId, MediaCoverTypes coverType, int? height = null);
+        string GetStudioCoverPath(int studioId, MediaCoverTypes coverType, int? height = null);
     }
 
     public class MediaCoverService :
         IHandleAsync<MovieUpdatedEvent>,
+        IHandleAsync<PerformerUpdatedEvent>,
+        IHandleAsync<StudioUpdatedEvent>,
         IHandleAsync<MoviesDeletedEvent>,
         IMapCoversToLocal
     {
@@ -67,23 +81,40 @@ namespace NzbDrone.Core.MediaCover
             _coverRootFolder = appFolderInfo.GetMediaCoverPath();
         }
 
-        public string GetCoverPath(int movieId, MediaCoverTypes coverType, int? height = null)
+        public string GetMovieCoverPath(int movieId, MediaCoverTypes coverType, int? height = null)
         {
             var heightSuffix = height.HasValue ? "-" + height.ToString() : "";
 
             return Path.Combine(GetMovieCoverPath(movieId), coverType.ToString().ToLower() + heightSuffix + GetExtension(coverType));
         }
 
-        public Dictionary<string, FileInfo> GetCoverFileInfos()
+        public string GetPerformerCoverPath(int performerId, MediaCoverTypes coverType, int? height = null)
         {
-            if (!_diskProvider.FolderExists(_coverRootFolder))
-            {
-                return new Dictionary<string, FileInfo>();
-            }
+            var heightSuffix = height.HasValue ? "-" + height.ToString() : "";
 
-            return  _diskProvider
-                    .GetFileInfos(_coverRootFolder, true)
-                    .ToDictionary(x => x.FullName, PathEqualityComparer.Instance);
+            return Path.Combine(GetPerformerCoverPath(performerId), coverType.ToString().ToLower() + heightSuffix + GetExtension(coverType));
+        }
+
+        public string GetStudioCoverPath(int studioId, MediaCoverTypes coverType, int? height = null)
+        {
+            var heightSuffix = height.HasValue ? "-" + height.ToString() : "";
+
+            return Path.Combine(GetStudioCoverPath(studioId), coverType.ToString().ToLower() + heightSuffix + GetExtension(coverType));
+        }
+
+        public Dictionary<string, FileInfo> GetMovieCoverFileInfos()
+        {
+            return GetCoverFileInfos("movie");
+        }
+
+        public Dictionary<string, FileInfo> GetPerformerCoverFileInfos()
+        {
+            return GetCoverFileInfos("performer");
+        }
+
+        public Dictionary<string, FileInfo> GetStudioCoverFileInfos()
+        {
+            return GetCoverFileInfos("studio");
         }
 
         public void ConvertToLocalUrls(int movieId, IEnumerable<MediaCover> covers, Dictionary<string, FileInfo> fileInfos = null)
@@ -105,9 +136,97 @@ namespace NzbDrone.Core.MediaCover
                         continue;
                     }
 
-                    var filePath = GetCoverPath(movieId, mediaCover.CoverType);
+                    var filePath = GetMovieCoverPath(movieId, mediaCover.CoverType);
 
-                    mediaCover.Url = _configFileProvider.UrlBase + @"/MediaCover/" + movieId + "/" + mediaCover.CoverType.ToString().ToLower() + GetExtension(mediaCover.CoverType);
+                    mediaCover.Url = _configFileProvider.UrlBase + @"/MediaCover/movie/" + movieId + "/" + mediaCover.CoverType.ToString().ToLower() + GetExtension(mediaCover.CoverType);
+
+                    FileInfo file;
+                    var fileExists = false;
+                    if (fileInfos != null)
+                    {
+                        fileExists = fileInfos.TryGetValue(filePath, out file);
+                    }
+                    else
+                    {
+                        file = _diskProvider.GetFileInfo(filePath);
+                        fileExists = file.Exists;
+                    }
+
+                    if (fileExists)
+                    {
+                        var lastWrite = file.LastWriteTimeUtc;
+                        mediaCover.Url += "?lastWrite=" + lastWrite.Ticks;
+                    }
+                }
+            }
+        }
+
+        public void ConvertToLocalPerformerUrls(int performerId, IEnumerable<MediaCover> covers, Dictionary<string, FileInfo> fileInfos = null)
+        {
+            if (performerId == 0)
+            {
+                // Movie isn't in Whisparr yet, map via a proxy to circument referrer issues
+                foreach (var mediaCover in covers)
+                {
+                    mediaCover.Url = _mediaCoverProxy.RegisterUrl(mediaCover.RemoteUrl);
+                }
+            }
+            else
+            {
+                foreach (var mediaCover in covers)
+                {
+                    if (mediaCover.CoverType == MediaCoverTypes.Unknown)
+                    {
+                        continue;
+                    }
+
+                    var filePath = GetPerformerCoverPath(performerId, mediaCover.CoverType);
+
+                    mediaCover.Url = _configFileProvider.UrlBase + @"/MediaCover/performer/" + performerId + "/" + mediaCover.CoverType.ToString().ToLower() + GetExtension(mediaCover.CoverType);
+
+                    FileInfo file;
+                    var fileExists = false;
+                    if (fileInfos != null)
+                    {
+                        fileExists = fileInfos.TryGetValue(filePath, out file);
+                    }
+                    else
+                    {
+                        file = _diskProvider.GetFileInfo(filePath);
+                        fileExists = file.Exists;
+                    }
+
+                    if (fileExists)
+                    {
+                        var lastWrite = file.LastWriteTimeUtc;
+                        mediaCover.Url += "?lastWrite=" + lastWrite.Ticks;
+                    }
+                }
+            }
+        }
+
+        public void ConvertToLocalStudioUrls(int studioId, IEnumerable<MediaCover> covers, Dictionary<string, FileInfo> fileInfos = null)
+        {
+            if (studioId == 0)
+            {
+                // Movie isn't in Whisparr yet, map via a proxy to circument referrer issues
+                foreach (var mediaCover in covers)
+                {
+                    mediaCover.Url = _mediaCoverProxy.RegisterUrl(mediaCover.RemoteUrl);
+                }
+            }
+            else
+            {
+                foreach (var mediaCover in covers)
+                {
+                    if (mediaCover.CoverType == MediaCoverTypes.Unknown)
+                    {
+                        continue;
+                    }
+
+                    var filePath = GetStudioCoverPath(studioId, mediaCover.CoverType);
+
+                    mediaCover.Url = _configFileProvider.UrlBase + @"/MediaCover/studio/" + studioId + "/" + mediaCover.CoverType.ToString().ToLower() + GetExtension(mediaCover.CoverType);
 
                     FileInfo file;
                     var fileExists = false;
@@ -138,9 +257,35 @@ namespace NzbDrone.Core.MediaCover
             }
         }
 
+        public void ConvertToLocalPerformerUrls(IEnumerable<Tuple<int, IEnumerable<MediaCover>>> items, Dictionary<string, FileInfo> coverFileInfos)
+        {
+            foreach (var movie in items)
+            {
+                ConvertToLocalPerformerUrls(movie.Item1, movie.Item2, coverFileInfos);
+            }
+        }
+
+        public void ConvertToLocalStudioUrls(IEnumerable<Tuple<int, IEnumerable<MediaCover>>> items, Dictionary<string, FileInfo> coverFileInfos)
+        {
+            foreach (var movie in items)
+            {
+                ConvertToLocalStudioUrls(movie.Item1, movie.Item2, coverFileInfos);
+            }
+        }
+
         private string GetMovieCoverPath(int movieId)
         {
-            return Path.Combine(_coverRootFolder, movieId.ToString());
+            return Path.Combine(_coverRootFolder, "movie", movieId.ToString());
+        }
+
+        private string GetPerformerCoverPath(int performerId)
+        {
+            return Path.Combine(_coverRootFolder, "performer", performerId.ToString());
+        }
+
+        private string GetStudioCoverPath(int studioId)
+        {
+            return Path.Combine(_coverRootFolder, "studio", studioId.ToString());
         }
 
         private bool EnsureCovers(Movie movie)
@@ -155,7 +300,7 @@ namespace NzbDrone.Core.MediaCover
                     continue;
                 }
 
-                var fileName = GetCoverPath(movie.Id, cover.CoverType);
+                var fileName = GetMovieCoverPath(movie.Id, cover.CoverType);
                 var alreadyExists = false;
 
                 try
@@ -201,11 +346,143 @@ namespace NzbDrone.Core.MediaCover
             return updated;
         }
 
+        private bool EnsureCovers(Studio studio)
+        {
+            var updated = false;
+            var toResize = new List<Tuple<MediaCover, bool>>();
+
+            foreach (var cover in studio.Images)
+            {
+                if (cover.CoverType == MediaCoverTypes.Unknown)
+                {
+                    continue;
+                }
+
+                var fileName = GetStudioCoverPath(studio.Id, cover.CoverType);
+                var alreadyExists = false;
+
+                try
+                {
+                    alreadyExists = _coverExistsSpecification.AlreadyExists(cover.RemoteUrl, fileName);
+
+                    if (!alreadyExists)
+                    {
+                        DownloadCover(studio, cover);
+                        updated = true;
+                    }
+                }
+                catch (HttpException e)
+                {
+                    _logger.Warn("Couldn't download media cover for {0}. {1}", studio, e.Message);
+                }
+                catch (WebException e)
+                {
+                    _logger.Warn("Couldn't download media cover for {0}. {1}", studio, e.Message);
+                }
+                catch (Exception e)
+                {
+                    _logger.Error(e, "Couldn't download media cover for {0}", studio);
+                }
+
+                toResize.Add(Tuple.Create(cover, alreadyExists));
+            }
+
+            try
+            {
+                _semaphore.Wait();
+
+                foreach (var tuple in toResize)
+                {
+                    EnsureResizedCovers(studio, tuple.Item1, !tuple.Item2);
+                }
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
+
+            return updated;
+        }
+
+        private bool EnsureCovers(Performer performer)
+        {
+            var updated = false;
+            var toResize = new List<Tuple<MediaCover, bool>>();
+
+            foreach (var cover in performer.Images)
+            {
+                if (cover.CoverType == MediaCoverTypes.Unknown)
+                {
+                    continue;
+                }
+
+                var fileName = GetPerformerCoverPath(performer.Id, cover.CoverType);
+                var alreadyExists = false;
+
+                try
+                {
+                    alreadyExists = _coverExistsSpecification.AlreadyExists(cover.RemoteUrl, fileName);
+
+                    if (!alreadyExists)
+                    {
+                        DownloadCover(performer, cover);
+                        updated = true;
+                    }
+                }
+                catch (HttpException e)
+                {
+                    _logger.Warn("Couldn't download media cover for {0}. {1}", performer, e.Message);
+                }
+                catch (WebException e)
+                {
+                    _logger.Warn("Couldn't download media cover for {0}. {1}", performer, e.Message);
+                }
+                catch (Exception e)
+                {
+                    _logger.Error(e, "Couldn't download media cover for {0}", performer);
+                }
+
+                toResize.Add(Tuple.Create(cover, alreadyExists));
+            }
+
+            try
+            {
+                _semaphore.Wait();
+
+                foreach (var tuple in toResize)
+                {
+                    EnsureResizedCovers(performer, tuple.Item1, !tuple.Item2);
+                }
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
+
+            return updated;
+        }
+
         private void DownloadCover(Movie movie, MediaCover cover)
         {
-            var fileName = GetCoverPath(movie.Id, cover.CoverType);
+            var fileName = GetMovieCoverPath(movie.Id, cover.CoverType);
 
             _logger.Info("Downloading {0} for {1} {2}", cover.CoverType, movie, cover.RemoteUrl);
+            _httpClient.DownloadFile(cover.RemoteUrl, fileName);
+        }
+
+        private void DownloadCover(Performer performer, MediaCover cover)
+        {
+            var fileName = GetPerformerCoverPath(performer.Id, cover.CoverType);
+
+            _logger.Info("Downloading {0} for {1} {2}", cover.CoverType, performer, cover.RemoteUrl);
+            _httpClient.DownloadFile(cover.RemoteUrl, fileName);
+        }
+
+        private void DownloadCover(Studio studio, MediaCover cover)
+        {
+            var fileName = GetStudioCoverPath(studio.Id, cover.CoverType);
+
+            _logger.Info("Downloading {0} for {1} {2}", cover.CoverType, studio, cover.RemoteUrl);
             _httpClient.DownloadFile(cover.RemoteUrl, fileName);
         }
 
@@ -235,8 +512,8 @@ namespace NzbDrone.Core.MediaCover
 
             foreach (var height in heights)
             {
-                var mainFileName = GetCoverPath(movie.Id, cover.CoverType);
-                var resizeFileName = GetCoverPath(movie.Id, cover.CoverType, height);
+                var mainFileName = GetMovieCoverPath(movie.Id, cover.CoverType);
+                var resizeFileName = GetMovieCoverPath(movie.Id, cover.CoverType, height);
 
                 if (forceResize || !_diskProvider.FileExists(resizeFileName) || _diskProvider.GetFileSize(resizeFileName) == 0)
                 {
@@ -254,6 +531,96 @@ namespace NzbDrone.Core.MediaCover
             }
         }
 
+        private void EnsureResizedCovers(Studio studio, MediaCover cover, bool forceResize)
+        {
+            int[] heights;
+
+            switch (cover.CoverType)
+            {
+                default:
+                    return;
+
+                case MediaCoverTypes.Poster:
+                case MediaCoverTypes.Headshot:
+                    heights = new[] { 500, 250 };
+                    break;
+
+                case MediaCoverTypes.Banner:
+                    heights = new[] { 70, 35 };
+                    break;
+
+                case MediaCoverTypes.Fanart:
+                case MediaCoverTypes.Screenshot:
+                    heights = new[] { 360, 180 };
+                    break;
+            }
+
+            foreach (var height in heights)
+            {
+                var mainFileName = GetStudioCoverPath(studio.Id, cover.CoverType);
+                var resizeFileName = GetStudioCoverPath(studio.Id, cover.CoverType, height);
+
+                if (forceResize || !_diskProvider.FileExists(resizeFileName) || _diskProvider.GetFileSize(resizeFileName) == 0)
+                {
+                    _logger.Debug("Resizing {0}-{1} for {2}", cover.CoverType, height, studio);
+
+                    try
+                    {
+                        _resizer.Resize(mainFileName, resizeFileName, height);
+                    }
+                    catch
+                    {
+                        _logger.Debug("Couldn't resize media cover {0}-{1} for {2}, using full size image instead.", cover.CoverType, height, studio);
+                    }
+                }
+            }
+        }
+
+        private void EnsureResizedCovers(Performer performer, MediaCover cover, bool forceResize)
+        {
+            int[] heights;
+
+            switch (cover.CoverType)
+            {
+                default:
+                    return;
+
+                case MediaCoverTypes.Poster:
+                case MediaCoverTypes.Headshot:
+                    heights = new[] { 500, 250 };
+                    break;
+
+                case MediaCoverTypes.Banner:
+                    heights = new[] { 70, 35 };
+                    break;
+
+                case MediaCoverTypes.Fanart:
+                case MediaCoverTypes.Screenshot:
+                    heights = new[] { 360, 180 };
+                    break;
+            }
+
+            foreach (var height in heights)
+            {
+                var mainFileName = GetPerformerCoverPath(performer.Id, cover.CoverType);
+                var resizeFileName = GetPerformerCoverPath(performer.Id, cover.CoverType, height);
+
+                if (forceResize || !_diskProvider.FileExists(resizeFileName) || _diskProvider.GetFileSize(resizeFileName) == 0)
+                {
+                    _logger.Debug("Resizing {0}-{1} for {2}", cover.CoverType, height, performer);
+
+                    try
+                    {
+                        _resizer.Resize(mainFileName, resizeFileName, height);
+                    }
+                    catch
+                    {
+                        _logger.Debug("Couldn't resize media cover {0}-{1} for {2}, using full size image instead.", cover.CoverType, height, performer);
+                    }
+                }
+            }
+        }
+
         private string GetExtension(MediaCoverTypes coverType)
         {
             return coverType switch
@@ -263,11 +630,33 @@ namespace NzbDrone.Core.MediaCover
             };
         }
 
+        private Dictionary<string, FileInfo> GetCoverFileInfos(string subFolder)
+        {
+            if (!_diskProvider.FolderExists(_coverRootFolder))
+            {
+                return new Dictionary<string, FileInfo>();
+            }
+
+            return _diskProvider
+                    .GetFileInfos(Path.Combine(_coverRootFolder, subFolder), true)
+                    .ToDictionary(x => x.FullName, PathEqualityComparer.Instance);
+        }
+
         public void HandleAsync(MovieUpdatedEvent message)
         {
             var updated = EnsureCovers(message.Movie);
 
             _eventAggregator.PublishEvent(new MediaCoversUpdatedEvent(message.Movie, updated));
+        }
+
+        public void HandleAsync(PerformerUpdatedEvent message)
+        {
+            var updated = EnsureCovers(message.Performer);
+        }
+
+        public void HandleAsync(StudioUpdatedEvent message)
+        {
+            var updated = EnsureCovers(message.Studio);
         }
 
         public void HandleAsync(MoviesDeletedEvent message)

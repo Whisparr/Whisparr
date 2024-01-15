@@ -44,6 +44,7 @@ import StudioIndexViewMenu from './Menus/StudioIndexViewMenu';
 import StudioIndexPosterOptionsModal from './Posters/Options/StudioIndexPosterOptionsModal';
 import StudioIndexPosters from './Posters/StudioIndexPosters';
 import StudioIndexSelectFooter from './Select/StudioIndexSelectFooter';
+import StudioIndexRefreshStudioButton from './StudioIndexRefreshStudioButton';
 import StudioIndexTable from './Table/StudioIndexTable';
 import StudioIndexTableOptions from './Table/StudioIndexTableOptions';
 import styles from './StudioIndex.css';
@@ -196,6 +197,10 @@ const StudioIndex = withScrollPosition((props: StudioIndexProps) => {
       <PageContent>
         <PageToolbar>
           <PageToolbarSection>
+            <StudioIndexRefreshStudioButton
+              isSelectMode={isSelectMode}
+              selectedFilterKey={selectedFilterKey}
+            />
             <MovieIndexSelectModeButton
               label={
                 isSelectMode

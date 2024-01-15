@@ -632,7 +632,7 @@ namespace NzbDrone.Core.MediaCover
 
         private Dictionary<string, FileInfo> GetCoverFileInfos(string subFolder)
         {
-            if (!_diskProvider.FolderExists(_coverRootFolder))
+            if (!_diskProvider.FolderExists(Path.Combine(_coverRootFolder, subFolder)))
             {
                 return new Dictionary<string, FileInfo>();
             }

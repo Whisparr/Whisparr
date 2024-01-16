@@ -9,6 +9,7 @@ interface CssExports {
   'path': string;
   'qualityProfileId': string;
   'releaseDate': string;
+  'releaseGroups': string;
   'rottenTomatoesRating': string;
   'runtime': string;
   'sizeOnDisk': string;

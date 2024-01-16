@@ -13,6 +13,7 @@ import TagListConnector from 'Components/TagListConnector';
 import Tooltip from 'Components/Tooltip/Tooltip';
 import { icons, kinds } from 'Helpers/Props';
 import EditMovieModalConnector from 'Movie/Edit/EditMovieModalConnector';
+import { Statistics } from 'Movie/Movie';
 import DeleteSceneModal from 'Scene/Delete/DeleteSceneModal';
 import SceneDetailsLinks from 'Scene/Details/SceneDetailsLinks';
 import createSceneIndexItemSelector from 'Scene/Index/createSceneIndexItemSelector';
@@ -54,11 +55,11 @@ function SceneIndexRow(props: SceneIndexRowProps) {
     status,
     originalLanguage,
     added,
+    statistics = {} as Statistics,
     year,
     releaseDate,
     runtime,
     path,
-    sizeOnDisk,
     genres = [],
     tags = [],
     foreignId,
@@ -68,6 +69,8 @@ function SceneIndexRow(props: SceneIndexRowProps) {
     movieFile,
     isSaving = false,
   } = scene;
+
+  const { sizeOnDisk = 0, releaseGroups = [] } = statistics;
 
   const dispatch = useDispatch();
   const [isEditSceneModalOpen, setIsEditSceneModalOpen] = useState(false);
@@ -279,6 +282,20 @@ function SceneIndexRow(props: SceneIndexRowProps) {
                 bottomRadius={false}
                 isStandAlone={true}
               />
+            </VirtualTableRowCell>
+          );
+        }
+
+        if (name === 'releaseGroups') {
+          const joinedReleaseGroups = releaseGroups.join(', ');
+          const truncatedReleaseGroups =
+            releaseGroups.length > 3
+              ? `${releaseGroups.slice(0, 3).join(', ')}...`
+              : joinedReleaseGroups;
+
+          return (
+            <VirtualTableRowCell key={name} className={styles[name]}>
+              <span title={joinedReleaseGroups}>{truncatedReleaseGroups}</span>
             </VirtualTableRowCell>
           );
         }

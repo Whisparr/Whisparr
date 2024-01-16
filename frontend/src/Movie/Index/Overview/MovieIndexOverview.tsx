@@ -14,6 +14,7 @@ import MovieDetailsLinks from 'Movie/Details/MovieDetailsLinks';
 import EditMovieModalConnector from 'Movie/Edit/EditMovieModalConnector';
 import MovieIndexProgressBar from 'Movie/Index/ProgressBar/MovieIndexProgressBar';
 import MovieIndexPosterSelect from 'Movie/Index/Select/MovieIndexPosterSelect';
+import { Statistics } from 'Movie/Movie';
 import MoviePoster from 'Movie/MoviePoster';
 import { executeCommand } from 'Store/Actions/commandActions';
 import dimensions from 'Styles/Variables/dimensions';
@@ -71,15 +72,17 @@ function MovieIndexOverview(props: MovieIndexOverviewProps) {
     status,
     path,
     overview,
+    statistics = {} as Statistics,
     images,
     hasFile,
     isAvailable,
     foreignId,
     tmdbId,
     studioTitle,
-    sizeOnDisk,
     added,
   } = movie;
+
+  const { sizeOnDisk = 0 } = statistics;
 
   const dispatch = useDispatch();
   const [isEditMovieModalOpen, setIsEditMovieModalOpen] = useState(false);

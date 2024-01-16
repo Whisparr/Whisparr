@@ -131,6 +131,22 @@ export const filterPredicates = {
     return dateFilterPredicate(item.releaseDate, filterValue, type);
   },
 
+  releaseGroups: function(item, filterValue, type) {
+    const predicate = filterTypePredicates[type];
+    const { statistics = {} } = item;
+    const { releaseGroups = [] } = statistics;
+
+    return predicate(releaseGroups, filterValue);
+  },
+
+  sizeOnDisk: function(item, filterValue, type) {
+    const predicate = filterTypePredicates[type];
+    const { statistics = {} } = item;
+    const sizeOnDisk = statistics && statistics.sizeOnDisk ? statistics.sizeOnDisk : 0;
+
+    return predicate(sizeOnDisk, filterValue);
+  },
+
   tmdbRating: function(item, filterValue, type) {
     const predicate = filterTypePredicates[type];
 
@@ -222,6 +238,12 @@ export const sortPredicates = {
     }
 
     return Number.MAX_VALUE;
+  },
+
+  sizeOnDisk: function(item) {
+    const { statistics = {} } = item;
+
+    return statistics.sizeOnDisk || 0;
   }
 };
 

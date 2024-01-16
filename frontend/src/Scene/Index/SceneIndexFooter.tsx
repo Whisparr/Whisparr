@@ -19,13 +19,13 @@ function createUnoptimizedSelector() {
       return movies.items
         .filter((movie) => movie.itemType === 'scene')
         .map((m) => {
-          const { monitored, status, hasFile, sizeOnDisk } = m;
+          const { monitored, status, hasFile, statistics } = m;
 
           return {
             monitored,
             status,
             hasFile,
-            sizeOnDisk,
+            statistics,
           };
         });
     }
@@ -47,6 +47,10 @@ export default function SceneIndexFooter() {
   let totalFileSize = 0;
 
   scenes.forEach((s) => {
+    const { statistics = { sizeOnDisk: 0 } } = s;
+
+    const { sizeOnDisk = 0 } = statistics;
+
     if (s.hasFile) {
       sceneFiles += 1;
     }
@@ -55,7 +59,7 @@ export default function SceneIndexFooter() {
       monitored++;
     }
 
-    totalFileSize += s.sizeOnDisk;
+    totalFileSize += sizeOnDisk;
   });
 
   return (

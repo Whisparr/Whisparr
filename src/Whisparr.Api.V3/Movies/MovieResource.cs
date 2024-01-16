@@ -9,6 +9,7 @@ using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.Movies;
 using NzbDrone.Core.Parser;
 using Whisparr.Api.V3.MovieFiles;
+using Whisparr.Api.V3.Movies;
 using Whisparr.Http.REST;
 
 namespace Whisparr.Api.V3.Movies
@@ -39,13 +40,21 @@ namespace Whisparr.Api.V3.Movies
         // public bool Downloaded { get; set; }
         public string RemotePoster { get; set; }
         public int Year { get; set; }
+<<<<<<< HEAD:src/Whisparr.Api.V3/Movies/MovieResource.cs
         public bool HasFile { get; set; }
         public string StudioTitle { get; set; }
         public string StudioForeignId { get; set; }
+=======
+        public string YouTubeTrailerId { get; set; }
+        public string Studio { get; set; }
+>>>>>>> 35651ac59 (New: Release Groups for movie table index):src/Radarr.Api.V3/Movies/MovieResource.cs
 
         // View & Edit
         public string Path { get; set; }
         public int QualityProfileId { get; set; }
+
+        // Compatibility
+        public bool HasFile { get; set; }
 
         // Editing Only
         public bool Monitored { get; set; }
@@ -67,8 +76,14 @@ namespace Whisparr.Api.V3.Movies
         public AddMovieOptions AddOptions { get; set; }
         public Ratings Ratings { get; set; }
         public MovieFileResource MovieFile { get; set; }
+<<<<<<< HEAD:src/Whisparr.Api.V3/Movies/MovieResource.cs
         public List<Credit> Credits { get; set; }
         public ItemType ItemType { get; set; }
+=======
+        public MovieCollectionResource Collection { get; set; }
+        public float Popularity { get; set; }
+        public MovieStatisticsResource Statistics { get; set; }
+>>>>>>> 35651ac59 (New: Release Groups for movie table index):src/Radarr.Api.V3/Movies/MovieResource.cs
     }
 
     public static class MovieResourceMapper
@@ -80,8 +95,6 @@ namespace Whisparr.Api.V3.Movies
                 return null;
             }
 
-            var size = model.MovieFile?.Size ?? 0;
-
             var movieFile = model.MovieFile?.ToResource(model, upgradableSpecification, formatCalculationService);
 
             return new MovieResource
@@ -92,11 +105,17 @@ namespace Whisparr.Api.V3.Movies
                 StashId = model.MovieMetadata.Value.StashId,
                 Title = model.Title,
                 OriginalLanguage = model.MovieMetadata.Value.OriginalLanguage,
+<<<<<<< HEAD:src/Whisparr.Api.V3/Movies/MovieResource.cs
                 SortTitle = model.Title.NormalizeTitle(),
                 ReleaseDate = model.MovieMetadata.Value.ReleaseDate,
                 HasFile = model.HasFile,
+=======
+                SortTitle = translatedTitle.NormalizeTitle(),
+                InCinemas = model.MovieMetadata.Value.InCinemas,
+                PhysicalRelease = model.MovieMetadata.Value.PhysicalRelease,
+                DigitalRelease = model.MovieMetadata.Value.DigitalRelease,
+>>>>>>> 35651ac59 (New: Release Groups for movie table index):src/Radarr.Api.V3/Movies/MovieResource.cs
 
-                SizeOnDisk = size,
                 Status = model.MovieMetadata.Value.Status,
                 Overview = model.MovieMetadata.Value.Overview,
 

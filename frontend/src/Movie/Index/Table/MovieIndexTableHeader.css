@@ -24,6 +24,7 @@
 }
 
 .releaseDate,
+.releaseGroups,
 .genres {
   composes: headerCell from '~Components/Table/VirtualTableHeaderCell.css';
 

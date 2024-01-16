@@ -11,6 +11,7 @@ import Popover from 'Components/Tooltip/Popover';
 import { icons } from 'Helpers/Props';
 import EditMovieModalConnector from 'Movie/Edit/EditMovieModalConnector';
 import MovieIndexPosterSelect from 'Movie/Index/Select/MovieIndexPosterSelect';
+import { Statistics } from 'Movie/Movie';
 import DeleteSceneModal from 'Scene/Delete/DeleteSceneModal';
 import SceneDetailsLinks from 'Scene/Details/SceneDetailsLinks';
 import SceneIndexProgressBar from 'Scene/Index/ProgressBar/SceneIndexProgressBar';
@@ -71,14 +72,16 @@ function SceneIndexOverview(props: SceneIndexOverviewProps) {
     status,
     path,
     overview,
+    statistics = {} as Statistics,
     images,
     hasFile,
     isAvailable,
     foreignId,
     studioTitle,
-    sizeOnDisk,
     added,
   } = scene;
+
+  const { sizeOnDisk = 0 } = statistics;
 
   const dispatch = useDispatch();
   const [isEditSceneModalOpen, setIsEditSceneModalOpen] = useState(false);

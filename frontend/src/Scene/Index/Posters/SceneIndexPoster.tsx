@@ -13,6 +13,7 @@ import Popover from 'Components/Tooltip/Popover';
 import { icons } from 'Helpers/Props';
 import EditMovieModalConnector from 'Movie/Edit/EditMovieModalConnector';
 import MovieIndexPosterSelect from 'Movie/Index/Select/MovieIndexPosterSelect';
+import { Statistics } from 'Movie/Movie';
 import DeleteSceneModal from 'Scene/Delete/DeleteSceneModal';
 import SceneDetailsLinks from 'Scene/Details/SceneDetailsLinks';
 import SceneIndexProgressBar from 'Scene/Index/ProgressBar/SceneIndexProgressBar';
@@ -73,9 +74,11 @@ function SceneIndexPoster(props: SceneIndexPosterProps) {
     path,
     movieFile,
     ratings,
-    sizeOnDisk,
+    statistics = {} as Statistics,
     originalLanguage,
   } = scene;
+
+  const { sizeOnDisk = 0 } = statistics;
 
   const dispatch = useDispatch();
   const [hasPosterError, setHasPosterError] = useState(false);

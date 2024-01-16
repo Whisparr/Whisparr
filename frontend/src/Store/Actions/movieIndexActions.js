@@ -146,6 +146,12 @@ export const defaultState = {
       isVisible: false
     },
     {
+      name: 'releaseGroups',
+      label: () => translate('ReleaseGroup'),
+      isSortable: true,
+      isVisible: false
+    },
+    {
       name: 'tags',
       label: () => translate('Tags'),
       isSortable: true,
@@ -178,6 +184,17 @@ export const defaultState = {
       const { originalLanguage ={} } = item;
 
       return originalLanguage.name;
+    },
+
+    releaseGroups: function(item) {
+      const { statistics = {} } = item;
+      const { releaseGroups = [] } = statistics;
+
+      return releaseGroups.length ?
+        releaseGroups
+          .map((group) => group.toLowerCase())
+          .sort((a, b) => a.localeCompare(b)) :
+        undefined;
     },
 
     tmdbRating: function(item) {
@@ -215,6 +232,28 @@ export const defaultState = {
       name: 'title',
       label: () => translate('Title'),
       type: filterBuilderTypes.STRING
+    },
+    {
+      name: 'releaseGroups',
+      label: () => translate('ReleaseGroups'),
+      type: filterBuilderTypes.ARRAY,
+      optionsSelector: function(items) {
+        const groupList = items.reduce((acc, movie) => {
+          const { statistics = {} } = movie;
+          const { releaseGroups = [] } = statistics;
+
+          releaseGroups.forEach((releaseGroup) => {
+            acc.push({
+              id: releaseGroup,
+              name: releaseGroup
+            });
+          });
+
+          return acc;
+        }, []);
+
+        return groupList.sort(sortByName);
+      }
     },
     {
       name: 'status',

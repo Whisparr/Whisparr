@@ -13,6 +13,7 @@ interface CssExports {
   'path': string;
   'qualityProfileId': string;
   'releaseDate': string;
+  'releaseGroups': string;
   'runtime': string;
   'sizeOnDisk': string;
   'sortTitle': string;

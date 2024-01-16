@@ -11442,9 +11442,6 @@
             "type": "integer",
             "format": "int32"
           },
-          "hasFile": {
-            "type": "boolean"
-          },
           "youTubeTrailerId": {
             "type": "string",
             "nullable": true
@@ -11460,6 +11457,9 @@
           "qualityProfileId": {
             "type": "integer",
             "format": "int32"
+          },
+          "hasFile": {
+            "type": "boolean"
           },
           "monitored": {
             "type": "boolean"
@@ -11541,6 +11541,9 @@
           "popularity": {
             "type": "number",
             "format": "float"
+          },
+          "statistics": {
+            "$ref": "#/components/schemas/MovieStatisticsResource"
           }
         },
         "additionalProperties": false
@@ -11551,6 +11554,27 @@
           "minutes"
         ],
         "type": "string"
+      },
+      "MovieStatisticsResource": {
+        "type": "object",
+        "properties": {
+          "movieFileCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sizeOnDisk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "releaseGroups": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "MovieStatusType": {
         "enum": [

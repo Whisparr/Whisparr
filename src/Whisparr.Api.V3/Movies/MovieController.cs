@@ -184,6 +184,7 @@ namespace Whisparr.Api.V3.Movies
             }
 
             var movie = _moviesService.GetMovie(id);
+
             return MapToResource(movie);
         }
 

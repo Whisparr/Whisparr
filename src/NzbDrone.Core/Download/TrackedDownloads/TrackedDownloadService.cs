@@ -144,6 +144,7 @@ namespace NzbDrone.Core.Download.TrackedDownloads
                     var grabbedEvent = historyItems.FirstOrDefault(v => v.EventType == EpisodeHistoryEventType.Grabbed);
 
                     trackedDownload.Indexer = grabbedEvent?.Data["indexer"];
+                    trackedDownload.Added = grabbedEvent?.Date;
 
                     if (IsForceDownload(historyItems))
                     {

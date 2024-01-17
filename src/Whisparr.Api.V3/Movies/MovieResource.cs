@@ -87,6 +87,8 @@ namespace Whisparr.Api.V3.Movies
                 return null;
             }
 
+            var size = model.MovieFile?.Size ?? 0;
+
             var movieFile = model.MovieFile?.ToResource(model, upgradableSpecification, formatCalculationService);
 
             return new MovieResource
@@ -101,6 +103,7 @@ namespace Whisparr.Api.V3.Movies
                 SortTitle = model.Title.NormalizeTitle(),
                 ReleaseDate = model.MovieMetadata.Value.ReleaseDate,
 
+                SizeOnDisk = size,
                 Status = model.MovieMetadata.Value.Status,
                 Overview = model.MovieMetadata.Value.Overview,
 

@@ -8,6 +8,7 @@ using NzbDrone.Core.Languages;
 using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.Movies;
 using NzbDrone.Core.Parser;
+using Radarr.Api.V3.Movies;
 using Whisparr.Api.V3.MovieFiles;
 using Whisparr.Api.V3.Movies;
 using Whisparr.Http.REST;
@@ -43,8 +44,6 @@ namespace Whisparr.Api.V3.Movies
         public bool HasFile { get; set; }
         public string StudioTitle { get; set; }
         public string StudioForeignId { get; set; }
-
-        public bool HasFile { get; set; }
 
         // View & Edit
         public string Path { get; set; }
@@ -84,8 +83,6 @@ namespace Whisparr.Api.V3.Movies
                 return null;
             }
 
-            var size = model.MovieFile?.Size ?? 0;
-
             var movieFile = model.MovieFile?.ToResource(model, upgradableSpecification, formatCalculationService);
 
             return new MovieResource
@@ -98,9 +95,7 @@ namespace Whisparr.Api.V3.Movies
                 OriginalLanguage = model.MovieMetadata.Value.OriginalLanguage,
                 SortTitle = model.Title.NormalizeTitle(),
                 ReleaseDate = model.MovieMetadata.Value.ReleaseDate,
-                HasFile = model.HasFile,
 
-                SizeOnDisk = size,
                 Status = model.MovieMetadata.Value.Status,
                 Overview = model.MovieMetadata.Value.Overview,
 

@@ -6,6 +6,7 @@ using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.DecisionEngine.Specifications;
 using NzbDrone.Core.Movies;
+using NzbDrone.Core.MovieStats;
 using NzbDrone.Core.Tags;
 using NzbDrone.SignalR;
 using Whisparr.Api.V3.Movies;
@@ -18,18 +19,21 @@ namespace Whisparr.Api.V3.Calendar
     public class CalendarController : RestControllerWithSignalR<MovieResource, Movie>
     {
         private readonly IMovieService _moviesService;
+        private readonly IMovieStatisticsService _movieStatisticsService;
         private readonly IUpgradableSpecification _qualityUpgradableSpecification;
         private readonly ITagService _tagService;
         private readonly IConfigService _configService;
 
         public CalendarController(IBroadcastSignalRMessage signalR,
                             IMovieService moviesService,
+                            IMovieStatisticsService movieStatisticsService,
                             IUpgradableSpecification qualityUpgradableSpecification,
                             ITagService tagService,
                             IConfigService configService)
             : base(signalR)
         {
             _moviesService = moviesService;
+            _movieStatisticsService = movieStatisticsService;
             _qualityUpgradableSpecification = qualityUpgradableSpecification;
             _tagService = tagService;
             _configService = configService;
@@ -88,10 +92,25 @@ namespace Whisparr.Api.V3.Calendar
                     continue;
                 }
 
-                resources.Add(movie.ToResource(availDelay, _qualityUpgradableSpecification));
+                var resource = movie.ToResource(availDelay, _qualityUpgradableSpecification);
+                FetchAndLinkMovieStatistics(resource);
+
+                resources.Add(resource);
             }
 
             return resources;
+        }
+
+        private void FetchAndLinkMovieStatistics(MovieResource resource)
+        {
+            LinkMovieStatistics(resource, _movieStatisticsService.MovieStatistics(resource.Id));
+        }
+
+        private void LinkMovieStatistics(MovieResource resource, MovieStatistics movieStatistics)
+        {
+            resource.Statistics = movieStatistics.ToResource();
+            resource.HasFile = movieStatistics.MovieFileCount > 0;
+            resource.SizeOnDisk = movieStatistics.SizeOnDisk;
         }
     }
 }

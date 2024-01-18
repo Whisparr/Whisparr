@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NzbDrone.Core.MediaCover;
@@ -22,6 +23,8 @@ namespace Whisparr.Api.V3.Performers
         public int QualityProfileId { get; set; }
         public bool SearchOnAdd { get; set; }
         public HashSet<int> Tags { get; set; }
+        public string RemotePoster { get; internal set; }
+        public DateTime Added { get; internal set; }
     }
 
     public static class PerformerResourceMapper
@@ -74,7 +77,8 @@ namespace Whisparr.Api.V3.Performers
                 QualityProfileId = resource.QualityProfileId,
                 RootFolderPath = resource.RootFolderPath,
                 SearchOnAdd = resource.SearchOnAdd,
-                Tags = resource.Tags
+                Tags = resource.Tags,
+                Added = resource.Added,
             };
         }
 

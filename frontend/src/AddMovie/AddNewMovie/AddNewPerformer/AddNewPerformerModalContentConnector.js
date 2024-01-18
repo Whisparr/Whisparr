@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import { addMovie, setAddMovieDefault } from 'Store/Actions/addMovieActions';
+import { addPerformer, setAddPerformerDefault } from 'Store/Actions/addMovieActions';
 import createDimensionsSelector from 'Store/Selectors/createDimensionsSelector';
 import createSystemStatusSelector from 'Store/Selectors/createSystemStatusSelector';
 import selectSettings from 'Store/Selectors/selectSettings';
@@ -14,12 +14,12 @@ function createMapStateToProps() {
     createDimensionsSelector(),
     createSystemStatusSelector(),
     (state) => state.settings.safeForWorkMode,
-    (addMovieState, dimensions, systemStatus, safeForWorkMode) => {
+    (addPerformerState, dimensions, systemStatus, safeForWorkMode) => {
       const {
         isAdding,
         addError,
         defaults
-      } = addMovieState;
+      } = addPerformerState;
 
       const {
         settings,
@@ -40,10 +40,9 @@ function createMapStateToProps() {
     }
   );
 }
-
 const mapDispatchToProps = {
-  setAddMovieDefault,
-  addMovie
+  setAddPerformerDefault,
+  addPerformer
 };
 
 class AddNewPerformerModalContentConnector extends Component {
@@ -52,38 +51,37 @@ class AddNewPerformerModalContentConnector extends Component {
   // Listeners
 
   onInputChange = ({ name, value }) => {
-    this.props.setAddMovieDefault({ [name]: value });
+    this.props.setAddPerformerDefault({ [name]: value });
   };
 
-  onAddMoviePress = () => {
+  onAddPerformerPress = () => {
     const {
       foreignId,
       rootFolderPath,
       monitor,
       qualityProfileId,
-      searchForMovie,
+      searchForPerformer,
       tags
     } = this.props;
-
-    this.props.addMovie({
+    this.props.addPerformer({
       foreignId,
       rootFolderPath: rootFolderPath.value,
       monitor: monitor.value,
       qualityProfileId: qualityProfileId.value,
-      searchForMovie: searchForMovie.value,
+      searchForPerformer: searchForPerformer.value,
       tags: tags.value
     });
   };
 
   //
   // Render
-
+  
   render() {
     return (
       <AddNewPerformerModalContent
         {...this.props}
         onInputChange={this.onInputChange}
-        onAddMoviePress={this.onAddMoviePress}
+        onAddPerformerPress={this.onAddPerformerPress}
       />
     );
   }
@@ -94,11 +92,11 @@ AddNewPerformerModalContentConnector.propTypes = {
   rootFolderPath: PropTypes.object,
   monitor: PropTypes.object.isRequired,
   qualityProfileId: PropTypes.object,
-  searchForMovie: PropTypes.object.isRequired,
+  searchForPerformer: PropTypes.object.isRequired,
   tags: PropTypes.object.isRequired,
   onModalClose: PropTypes.func.isRequired,
-  setAddMovieDefault: PropTypes.func.isRequired,
-  addMovie: PropTypes.func.isRequired
+  setAddPerformerDefault: PropTypes.func.isRequired,
+  addPerformer: PropTypes.func.isRequired
 };
 
 export default connect(createMapStateToProps, mapDispatchToProps)(AddNewPerformerModalContentConnector);

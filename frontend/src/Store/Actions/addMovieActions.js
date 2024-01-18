@@ -41,7 +41,7 @@ export const defaultState = {
     qualityProfileId: 0,
     searchForPerformer: true,
     tags: []
-  },
+  }
 };
 
 export const persistState = [
@@ -267,7 +267,7 @@ export const actionHandlers = handleThunks({
         addError: xhr
       }));
     });
-  },
+  }
 });
 
 //

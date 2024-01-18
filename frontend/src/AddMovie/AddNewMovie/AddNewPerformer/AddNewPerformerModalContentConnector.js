@@ -75,7 +75,7 @@ class AddNewPerformerModalContentConnector extends Component {
 
   //
   // Render
-  
+
   render() {
     return (
       <AddNewPerformerModalContent

@@ -1091,6 +1091,7 @@
   "SearchOnAdd": "Search on Add",
   "SearchOnAddCollectionHelpText": "Search for movies on this collection when added to library",
   "SearchOnAddHelpText": "Search for movies on this list when added to library",
+  "SearchOnAddPerformerHelpText": "Search for movies/scenes on this performer when added to library",
   "SearchPerformer": "Search Performer",
   "SearchSelected": "Search Selected",
   "Seconds": "Seconds",

@@ -176,7 +176,7 @@ namespace NzbDrone.Core.Movies
         {
             var builder = new SqlBuilder(_database.DatabaseType)
                 .Join<Movie, MovieMetadata>((m, p) => m.MovieMetadataId == p.Id)
-                .Where($"\"MovieMetadata\".\"Credits\" LIKE \"%{performerForeignId}%\"");
+                .Where($"\"MovieMetadata\".\"Credits\" LIKE \'%{performerForeignId}%\'");
 
             return _database.QueryJoined<Movie, MovieMetadata>(
                 builder,

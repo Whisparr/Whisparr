@@ -89,6 +89,12 @@ export const defaultState = {
       isVisible: true
     },
     {
+      name: 'tags',
+      label: () => translate('Tags'),
+      isSortable: false,
+      isVisible: false
+    },
+    {
       name: 'actions',
       columnLabel: () => translate('Actions'),
       isVisible: true,
@@ -107,6 +113,18 @@ export const defaultState = {
   ],
 
   filterBuilderProps: [
+    {
+      name: 'monitored',
+      label: () => translate('Monitored'),
+      type: filterBuilderTypes.EXACT,
+      valueType: filterBuilderValueTypes.BOOL
+    },
+    {
+      name: 'qualityProfileId',
+      label: () => translate('QualityProfile'),
+      type: filterBuilderTypes.EXACT,
+      valueType: filterBuilderValueTypes.QUALITY_PROFILE
+    },
     {
       name: 'title',
       label: () => translate('Title'),
@@ -131,6 +149,12 @@ export const defaultState = {
 
         return tagList.sort(sortByName);
       }
+    },
+    {
+      name: 'tags',
+      label: () => translate('Tags'),
+      type: filterBuilderTypes.ARRAY,
+      valueType: filterBuilderValueTypes.TAG
     }
   ]
 };

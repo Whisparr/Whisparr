@@ -35,6 +35,14 @@ function StudioIndexSortMenu(props: StudioIndexSortMenuProps) {
         >
           {translate('Network')}
         </SortMenuItem>
+        <SortMenuItem
+          name="qualityProfileId"
+          sortKey={sortKey}
+          sortDirection={sortDirection}
+          onPress={onSortSelect}
+        >
+          {translate('QualityProfile')}
+        </SortMenuItem>
       </MenuContent>
     </SortMenu>
   );

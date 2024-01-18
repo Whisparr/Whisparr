@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { createAction } from 'redux-actions';
 import { batchActions } from 'redux-batched-actions';
-import { filterBuilderTypes, sortDirections } from 'Helpers/Props';
+import { filterBuilderTypes, filterBuilderValueTypes, sortDirections } from 'Helpers/Props';
 import { createThunk, handleThunks } from 'Store/thunks';
 import sortByName from 'Utilities/Array/sortByName';
 import createAjaxRequest from 'Utilities/createAjaxRequest';
@@ -104,6 +104,12 @@ export const defaultState = {
       isVisible: true
     },
     {
+      name: 'tags',
+      label: () => translate('Tags'),
+      isSortable: false,
+      isVisible: false
+    },
+    {
       name: 'actions',
       columnLabel: () => translate('Actions'),
       isVisible: true,
@@ -130,6 +136,18 @@ export const defaultState = {
   ],
 
   filterBuilderProps: [
+    {
+      name: 'monitored',
+      label: () => translate('Monitored'),
+      type: filterBuilderTypes.EXACT,
+      valueType: filterBuilderValueTypes.BOOL
+    },
+    {
+      name: 'qualityProfileId',
+      label: () => translate('QualityProfile'),
+      type: filterBuilderTypes.EXACT,
+      valueType: filterBuilderValueTypes.QUALITY_PROFILE
+    },
     {
       name: 'gender',
       label: () => translate('Gender'),
@@ -180,6 +198,12 @@ export const defaultState = {
 
         return tags.sort(sortByName);
       }
+    },
+    {
+      name: 'tags',
+      label: () => translate('Tags'),
+      type: filterBuilderTypes.ARRAY,
+      valueType: filterBuilderValueTypes.TAG
     }
   ]
 };

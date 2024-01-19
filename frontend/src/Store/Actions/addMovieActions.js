@@ -45,8 +45,8 @@ export const defaultState = {
 };
 
 export const persistState = [
-  'addMovie.defaults',
-  'addPerformer.defaults'
+  'addMovie.movieDefaults',
+  'addMovie.performerDefaults'
 ];
 
 //

@@ -38,7 +38,7 @@ function createMapStateToProps() {
         rootFoldersPopulated,
         rootFoldersError,
         qualityProfiles: qualityProfiles.items,
-        defaultQualityProfileId: addMovie.defaults.qualityProfileId
+        defaultQualityProfileId: addMovie.movieDefaults.qualityProfileId
       };
 
       if (items.length) {

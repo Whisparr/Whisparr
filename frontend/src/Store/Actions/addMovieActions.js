@@ -281,8 +281,8 @@ export const reducers = createHandleActions({
   [SET_ADD_MOVIE_DEFAULT]: function(state, { payload }) {
     const newState = getSectionState(state, section);
 
-    newState.defaults = {
-      ...newState.defaults,
+    newState.movieDefaults = {
+      ...newState.movieDefaults,
       ...payload
     };
 
@@ -291,8 +291,8 @@ export const reducers = createHandleActions({
   [SET_ADD_PERFORMER_DEFAULT]: function(state, { payload }) {
     const newState = getSectionState(state, section);
 
-    newState.defaults = {
-      ...newState.defaults,
+    newState.performerDefaults = {
+      ...newState.performerDefaults,
       ...payload
     };
 

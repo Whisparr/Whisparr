@@ -18,14 +18,14 @@ function createMapStateToProps() {
       const {
         isAdding,
         addError,
-        defaults
+        performerDefaults
       } = addPerformerState;
-
+      console.log("PerformerModalConnector: " + JSON.stringify(addPerformerState))
       const {
         settings,
         validationErrors,
         validationWarnings
-      } = selectSettings(defaults, {}, addError);
+      } = selectSettings(performerDefaults, {}, addError);
 
       return {
         isAdding,
@@ -63,6 +63,8 @@ class AddNewPerformerModalContentConnector extends Component {
       searchForPerformer,
       tags
     } = this.props;
+    console.log("ModelContentConnector: " + JSON.stringify(this.props))
+
     this.props.addPerformer({
       foreignId,
       rootFolderPath: rootFolderPath.value,

@@ -19,7 +19,7 @@ function createMapStateToProps() {
       const {
         monitor: defaultMonitor,
         qualityProfileId: defaultQualityProfileId
-      } = addMovie.defaults;
+      } = addMovie.movieDefaults;
 
       const {
         isLookingUpMovie,

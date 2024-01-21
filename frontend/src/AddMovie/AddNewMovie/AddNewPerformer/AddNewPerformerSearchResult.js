@@ -52,7 +52,7 @@ class AddNewPerformerSearchResult extends Component {
   render() {
     const {
       foreignId,
-      name,
+      fullName,
       gender,
       status,
       images,
@@ -62,7 +62,7 @@ class AddNewPerformerSearchResult extends Component {
     } = this.props;
 
     const {
-      isNewAddMovieModalOpen
+      isNewAddPerformerModalOpen
     } = this.state;
 
     const linkProps = isExistingPerformer ? { to: `/performer/${foreignId}` } : { onPress: this.onPress };
@@ -105,7 +105,7 @@ class AddNewPerformerSearchResult extends Component {
             <div className={styles.titleRow}>
               <div className={styles.titleContainer}>
                 <div className={styles.title}>
-                  {name}
+                  {fullName}
                 </div>
               </div>
 
@@ -171,11 +171,11 @@ class AddNewPerformerSearchResult extends Component {
         </div>
 
         <AddNewPerformerModal
-          isOpen={isNewAddMovieModalOpen && !isExistingPerformer}
+          isOpen={isNewAddPerformerModalOpen && !isExistingPerformer}
           foreignId={foreignId}
-          name={name}
+          fullName={fullName}
           images={images}
-          onModalClose={this.onAddMovieModalClose}
+          onModalClose={this.onAddPerformerModalClose}
         />
       </div>
     );
@@ -184,9 +184,7 @@ class AddNewPerformerSearchResult extends Component {
 
 AddNewPerformerSearchResult.propTypes = {
   foreignId: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-  titleSlug: PropTypes.string.isRequired,
-  year: PropTypes.number.isRequired,
+  fullName: PropTypes.string.isRequired,
   gender: PropTypes.string.isRequired,
   status: PropTypes.string.isRequired,
   images: PropTypes.arrayOf(PropTypes.object).isRequired,

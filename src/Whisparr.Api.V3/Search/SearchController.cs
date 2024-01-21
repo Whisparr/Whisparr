@@ -9,6 +9,7 @@ using NzbDrone.Core.Movies;
 using NzbDrone.Core.Movies.Performers;
 using NzbDrone.Core.Organizer;
 using Whisparr.Api.V3.Movies;
+using Whisparr.Api.V3.Performers;
 using Whisparr.Api.V3.Search;
 using Whisparr.Http;
 
@@ -81,14 +82,17 @@ namespace Readarr.Api.V1.Search
                 else if (result is Performer)
                 {
                     var performer = (Performer)result;
-                    resource.Performer = performer.ToResource();
-                    resource.ForeignId = performer.ForeignId;
+                    var performerResource = performer.ToResource();
+                    _coverMapper.ConvertToLocalUrls(performerResource.Id, performerResource.Images);
 
                     var cover = performer.Images.FirstOrDefault(c => c.CoverType == MediaCoverTypes.Headshot);
                     if (cover != null)
                     {
-                        resource.Performer.RemotePoster = cover.Url;
+                        performerResource.RemotePoster = cover.RemoteUrl;
                     }
+
+                    resource.Performer = performerResource;
+                    resource.ForeignId = performer.ForeignId;
                 }
                 else
                 {

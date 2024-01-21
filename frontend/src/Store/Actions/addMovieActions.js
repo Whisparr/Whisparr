@@ -28,17 +28,25 @@ export const defaultState = {
   addError: null,
   items: [],
 
-  defaults: {
+  movieDefaults: {
     rootFolderPath: '',
     monitor: 'movieOnly',
     qualityProfileId: 0,
     searchForMovie: true,
     tags: []
+  },
+  performerDefaults: {
+    rootFolderPath: '',
+    monitor: 'movieOnly',
+    qualityProfileId: 0,
+    searchForPerformer: true,
+    tags: []
   }
 };
 
 export const persistState = [
-  'addMovie.defaults'
+  'addMovie.movieDefaults',
+  'addMovie.performerDefaults'
 ];
 
 //
@@ -47,9 +55,12 @@ export const persistState = [
 export const LOOKUP_MOVIE = 'addMovie/lookupMovie';
 export const LOOKUP_SCENE = 'addMovie/lookupScene';
 export const ADD_MOVIE = 'addMovie/addMovie';
+export const ADD_PERFORMER = 'addMovie/addPerformer';
 export const SET_ADD_MOVIE_VALUE = 'addMovie/setAddMovieValue';
+export const SET_ADD_PERFORMER_VALUE = 'addMovie/setAddPerformerValue';
 export const CLEAR_ADD_MOVIE = 'addMovie/clearAddMovie';
 export const SET_ADD_MOVIE_DEFAULT = 'addMovie/setAddMovieDefault';
+export const SET_ADD_PERFORMER_DEFAULT = 'addMovie/setAddPerformerDefault';
 
 //
 // Action Creators
@@ -57,10 +68,18 @@ export const SET_ADD_MOVIE_DEFAULT = 'addMovie/setAddMovieDefault';
 export const lookupMovie = createThunk(LOOKUP_MOVIE);
 export const lookupScene = createThunk(LOOKUP_SCENE);
 export const addMovie = createThunk(ADD_MOVIE);
+export const addPerformer = createThunk(ADD_PERFORMER);
 export const clearAddMovie = createAction(CLEAR_ADD_MOVIE);
 export const setAddMovieDefault = createAction(SET_ADD_MOVIE_DEFAULT);
+export const setAddPerformerDefault = createAction(SET_ADD_PERFORMER_DEFAULT);
 
 export const setAddMovieValue = createAction(SET_ADD_MOVIE_VALUE, (payload) => {
+  return {
+    section,
+    ...payload
+  };
+});
+export const setAddPerformerValue = createAction(SET_ADD_PERFORMER_VALUE, (payload) => {
   return {
     section,
     ...payload
@@ -200,6 +219,54 @@ export const actionHandlers = handleThunks({
         addError: xhr
       }));
     });
+  },
+
+  [ADD_PERFORMER]: function(getState, payload, dispatch) {
+    dispatch(set({ section, isAdding: true }));
+
+    const foreignId = payload.foreignId;
+    const items = getState().addMovie.items;
+    const itemToAdd = _.find(items, { foreignId });
+    const newPerformer = getNewMovie(_.cloneDeep(itemToAdd.performer), payload);
+    newPerformer.id = 0;
+
+    const promise = createAjaxRequest({
+      url: '/performer',
+      method: 'POST',
+      dataType: 'json',
+      contentType: 'application/json',
+      data: JSON.stringify(newPerformer)
+    }).request;
+
+    promise.done((data) => {
+      const updatedItem = _.cloneDeep(data);
+      updatedItem.internalId = updatedItem.id;
+      updatedItem.id = updatedItem.foreignId;
+      delete updatedItem.images;
+
+      const actions = [
+        updateItem({ section: 'performers', ...data }),
+        updateItem({ section: 'addMovie', ...updatedItem }),
+
+        set({
+          section,
+          isAdding: false,
+          isAdded: true,
+          addError: null
+        })
+      ];
+
+      dispatch(batchActions(actions));
+    });
+
+    promise.fail((xhr) => {
+      dispatch(set({
+        section,
+        isAdding: false,
+        isAdded: false,
+        addError: xhr
+      }));
+    });
   }
 });
 
@@ -209,12 +276,23 @@ export const actionHandlers = handleThunks({
 export const reducers = createHandleActions({
 
   [SET_ADD_MOVIE_VALUE]: createSetSettingValueReducer(section),
+  [SET_ADD_PERFORMER_VALUE]: createSetSettingValueReducer(section),
 
   [SET_ADD_MOVIE_DEFAULT]: function(state, { payload }) {
     const newState = getSectionState(state, section);
 
-    newState.defaults = {
-      ...newState.defaults,
+    newState.movieDefaults = {
+      ...newState.movieDefaults,
+      ...payload
+    };
+
+    return updateSectionState(state, section, newState);
+  },
+  [SET_ADD_PERFORMER_DEFAULT]: function(state, { payload }) {
+    const newState = getSectionState(state, section);
+
+    newState.performerDefaults = {
+      ...newState.performerDefaults,
       ...payload
     };
 
@@ -223,7 +301,8 @@ export const reducers = createHandleActions({
 
   [CLEAR_ADD_MOVIE]: function(state) {
     const {
-      defaults,
+      movieDefaults,
+      performerDefaults,
       view,
       ...otherDefaultState
     } = defaultState;

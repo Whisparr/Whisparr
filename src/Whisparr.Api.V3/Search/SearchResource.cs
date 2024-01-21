@@ -1,4 +1,5 @@
 using Whisparr.Api.V3.Movies;
+using Whisparr.Api.V3.Performers;
 using Whisparr.Http.REST;
 
 namespace Whisparr.Api.V3.Search

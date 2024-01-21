@@ -18,14 +18,14 @@ function createMapStateToProps() {
       const {
         isAdding,
         addError,
-        defaults
+        movieDefaults
       } = addMovieState;
 
       const {
         settings,
         validationErrors,
         validationWarnings
-      } = selectSettings(defaults, {}, addError);
+      } = selectSettings(movieDefaults, {}, addError);
 
       return {
         isAdding,

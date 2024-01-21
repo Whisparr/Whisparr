@@ -8,15 +8,16 @@ function createMapStateToProps() {
   return createSelector(
     createExistingPerformerSelector(),
     createDimensionsSelector(),
+    (state) => state.queue.details.items,
     (state, { internalId }) => internalId,
-    (state) => state.settings.ui.item.movieRuntimeFormat,
     (state) => state.settings.safeForWorkMode,
-    (isExistingPerformer, dimensions, internalId, movieRuntimeFormat, safeForWorkMode) => {
+    (isExistingPerformer, dimensions, queueItems, internalId, safeForWorkMode) => {
+      const queueItem = queueItems.find((item) => internalId > 0 && item.movieId === internalId);
       return {
-        existingMovieId: internalId,
+        existingPerformerId: internalId,
         isExistingPerformer,
+        queueItem,
         isSmallScreen: dimensions.isSmallScreen,
-        movieRuntimeFormat,
         safeForWorkMode
       };
     }

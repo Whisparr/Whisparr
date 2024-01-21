@@ -14,8 +14,8 @@ function createImportMovieItemSelector() {
       const isExistingMovie = !!selectedMovie && _.some(movies, { foreignId: selectedMovie.foreignId });
 
       return {
-        defaultMonitor: addMovie.defaults.monitor,
-        defaultQualityProfileId: addMovie.defaults.qualityProfileId,
+        defaultMonitor: addMovie.movieDefaults.monitor,
+        defaultQualityProfileId: addMovie.movieDefaults.qualityProfileId,
         ...item,
         isExistingMovie
       };

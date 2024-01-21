@@ -12,6 +12,8 @@ interface Performer extends ModelBase {
   hairColor?: string;
   status: string;
   sortTitle: string;
+  added: string;
+  qualityProfileId: number;
   tags: number[];
 }
 

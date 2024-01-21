@@ -24,8 +24,8 @@ class AddNewPerformerModalContent extends Component {
     this.props.onInputChange({ name: 'qualityProfileId', value: parseInt(value) });
   };
 
-  onAddMoviePress = () => {
-    this.props.onAddMoviePress();
+  onAddPerformerPress = () => {
+    this.props.onAddPerformerPress();
   };
 
   //
@@ -33,13 +33,13 @@ class AddNewPerformerModalContent extends Component {
 
   render() {
     const {
-      name,
+      fullName,
       images,
       isAdding,
       rootFolderPath,
       monitor,
       qualityProfileId,
-      searchForMovie,
+      searchForPerformer,
       tags,
       isSmallScreen,
       safeForWorkMode,
@@ -51,7 +51,7 @@ class AddNewPerformerModalContent extends Component {
     return (
       <ModalContent onModalClose={onModalClose}>
         <ModalHeader>
-          {name}
+          {fullName}
         </ModalHeader>
 
         <ModalBody>
@@ -130,15 +130,15 @@ class AddNewPerformerModalContent extends Component {
         <ModalFooter className={styles.modalFooter}>
           <label className={styles.searchForMissingMovieLabelContainer}>
             <span className={styles.searchForMissingMovieLabel}>
-              {translate('StartSearchForMissingMovie')}
+              {translate('StartSearchForMissingPerformer')}
             </span>
 
             <CheckInput
               containerClassName={styles.searchForMissingMovieContainer}
               className={styles.searchForMissingMovieInput}
-              name="searchForMovie"
+              name="searchForPerformer"
               onChange={onInputChange}
-              {...searchForMovie}
+              {...searchForPerformer}
             />
           </label>
 
@@ -146,7 +146,7 @@ class AddNewPerformerModalContent extends Component {
             className={styles.addButton}
             kind={kinds.SUCCESS}
             isSpinning={isAdding}
-            onPress={this.onAddMoviePress}
+            onPress={this.onAddPerformerPress}
           >
             {translate('AddPerformer')}
           </SpinnerButton>
@@ -157,20 +157,20 @@ class AddNewPerformerModalContent extends Component {
 }
 
 AddNewPerformerModalContent.propTypes = {
-  name: PropTypes.string.isRequired,
+  fullName: PropTypes.string.isRequired,
   images: PropTypes.arrayOf(PropTypes.object).isRequired,
   isAdding: PropTypes.bool.isRequired,
   addError: PropTypes.object,
   rootFolderPath: PropTypes.object,
   monitor: PropTypes.object.isRequired,
   qualityProfileId: PropTypes.object,
-  searchForMovie: PropTypes.object.isRequired,
+  searchForPerformer: PropTypes.object.isRequired,
   tags: PropTypes.object.isRequired,
   isSmallScreen: PropTypes.bool.isRequired,
   isWindows: PropTypes.bool.isRequired,
   onModalClose: PropTypes.func.isRequired,
   onInputChange: PropTypes.func.isRequired,
-  onAddMoviePress: PropTypes.func.isRequired,
+  onAddPerformerPress: PropTypes.func.isRequired,
   safeForWorkMode: PropTypes.bool
 };
 

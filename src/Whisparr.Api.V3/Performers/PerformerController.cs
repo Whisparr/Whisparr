@@ -18,14 +18,17 @@ namespace Whisparr.Api.V3.Performers
     public class PerformerController : RestControllerWithSignalR<PerformerResource, Performer>, IHandle<PerformerUpdatedEvent>
     {
         private readonly IPerformerService _performerService;
+        private readonly IAddPerformerService _addPerformerService;
         private readonly IMapCoversToLocal _coverMapper;
 
         public PerformerController(IPerformerService performerService,
+                                   IAddPerformerService addPerformerService,
                                    IMapCoversToLocal coverMapper,
                                    IBroadcastSignalRMessage signalRBroadcaster)
         : base(signalRBroadcaster)
         {
             _performerService = performerService;
+            _addPerformerService = addPerformerService;
             _coverMapper = coverMapper;
         }
 
@@ -48,6 +51,14 @@ namespace Whisparr.Api.V3.Performers
             _coverMapper.ConvertToLocalPerformerUrls(performerResources.Select(x => Tuple.Create(x.Id, x.Images.AsEnumerable())), coverFileInfos);
 
             return performerResources;
+        }
+
+        [RestPostById]
+        public ActionResult<PerformerResource> AddPerformer(PerformerResource performerResource)
+        {
+            var performer = _addPerformerService.AddPerformer(performerResource.ToModel());
+
+            return Created(performer.Id);
         }
 
         [RestPutById]

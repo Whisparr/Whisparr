@@ -141,9 +141,10 @@ namespace NzbDrone.Core.Notifications.CustomScript
 
             if (message.OldMovieFiles.Any())
             {
-                environmentVariables.Add("Whisparr_DeletedRelativePaths", string.Join("|", message.OldMovieFiles.Select(e => e.RelativePath)));
-                environmentVariables.Add("Whisparr_DeletedPaths", string.Join("|", message.OldMovieFiles.Select(e => Path.Combine(movie.Path, e.RelativePath))));
-                environmentVariables.Add("Whisparr_DeletedDateAdded", string.Join("|", message.OldMovieFiles.Select(e => e.DateAdded)));
+                environmentVariables.Add("Whisparr_DeletedRelativePaths", string.Join("|", message.OldMovieFiles.Select(e => e.MovieFile.RelativePath)));
+                environmentVariables.Add("Whisparr_DeletedPaths", string.Join("|", message.OldMovieFiles.Select(e => Path.Combine(movie.Path, e.MovieFile.RelativePath))));
+                environmentVariables.Add("Whisparr_DeletedDateAdded", string.Join("|", message.OldMovieFiles.Select(e => e.MovieFile.DateAdded)));
+                environmentVariables.Add("Whisparr_DeletedRecycleBinPaths", string.Join("|", message.OldMovieFiles.Select(e => e.RecycleBinPath ?? string.Empty)));
             }
 
             ExecuteScript(environmentVariables);

@@ -169,9 +169,9 @@ namespace NzbDrone.Core.MediaFiles
 
             if (oldFiles.Any())
             {
-                environmentVariables.Add("Whisparr_DeletedRelativePaths", string.Join("|", oldFiles.Select(e => e.RelativePath)));
-                environmentVariables.Add("Whisparr_DeletedPaths", string.Join("|", oldFiles.Select(e => Path.Combine(movie.Path, e.RelativePath))));
-                environmentVariables.Add("Whisparr_DeletedDateAdded", string.Join("|", oldFiles.Select(e => e.DateAdded)));
+                environmentVariables.Add("Whisparr_DeletedRelativePaths", string.Join("|", oldFiles.Select(e => e.MovieFile.RelativePath)));
+                environmentVariables.Add("Whisparr_DeletedPaths", string.Join("|", oldFiles.Select(e => Path.Combine(movie.Path, e.MovieFile.RelativePath))));
+                environmentVariables.Add("Whisparr_DeletedDateAdded", string.Join("|", oldFiles.Select(e => e.MovieFile.DateAdded)));
             }
 
             _logger.Debug("Executing external script: {0}", _configService.ScriptImportPath);

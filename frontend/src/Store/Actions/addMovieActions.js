@@ -4,6 +4,7 @@ import { batchActions } from 'redux-batched-actions';
 import { createThunk, handleThunks } from 'Store/thunks';
 import createAjaxRequest from 'Utilities/createAjaxRequest';
 import getNewMovie from 'Utilities/Movie/getNewMovie';
+import getNewPerformer from 'Utilities/Performer/getNewPerformer';
 import getSectionState from 'Utilities/State/getSectionState';
 import updateSectionState from 'Utilities/State/updateSectionState';
 import { set, update, updateItem } from './baseActions';
@@ -39,7 +40,7 @@ export const defaultState = {
     rootFolderPath: '',
     monitor: 'movieOnly',
     qualityProfileId: 0,
-    searchForPerformer: true,
+    searchForMovie: true,
     tags: []
   }
 };
@@ -227,7 +228,7 @@ export const actionHandlers = handleThunks({
     const foreignId = payload.foreignId;
     const items = getState().addMovie.items;
     const itemToAdd = _.find(items, { foreignId });
-    const newPerformer = getNewMovie(_.cloneDeep(itemToAdd.performer), payload);
+    const newPerformer = getNewPerformer(_.cloneDeep(itemToAdd.performer), payload);
     newPerformer.id = 0;
 
     const promise = createAjaxRequest({

@@ -39,7 +39,7 @@ class AddNewPerformerModalContent extends Component {
       rootFolderPath,
       monitor,
       qualityProfileId,
-      searchForPerformer,
+      searchForMovie,
       tags,
       isSmallScreen,
       safeForWorkMode,
@@ -130,15 +130,15 @@ class AddNewPerformerModalContent extends Component {
         <ModalFooter className={styles.modalFooter}>
           <label className={styles.searchForMissingMovieLabelContainer}>
             <span className={styles.searchForMissingMovieLabel}>
-              {translate('StartSearchForMissingPerformer')}
+              {translate('SearchOnAddPerformerHelpText')}
             </span>
 
             <CheckInput
               containerClassName={styles.searchForMissingMovieContainer}
               className={styles.searchForMissingMovieInput}
-              name="searchForPerformer"
+              name="searchForMovie"
               onChange={onInputChange}
-              {...searchForPerformer}
+              {...searchForMovie}
             />
           </label>
 
@@ -164,7 +164,7 @@ AddNewPerformerModalContent.propTypes = {
   rootFolderPath: PropTypes.object,
   monitor: PropTypes.object.isRequired,
   qualityProfileId: PropTypes.object,
-  searchForPerformer: PropTypes.object.isRequired,
+  searchForMovie: PropTypes.object.isRequired,
   tags: PropTypes.object.isRequired,
   isSmallScreen: PropTypes.bool.isRequired,
   isWindows: PropTypes.bool.isRequired,

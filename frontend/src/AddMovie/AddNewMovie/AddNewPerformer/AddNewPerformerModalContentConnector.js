@@ -60,7 +60,7 @@ class AddNewPerformerModalContentConnector extends Component {
       rootFolderPath,
       monitor,
       qualityProfileId,
-      searchForPerformer,
+      searchForMovie,
       tags
     } = this.props;
 
@@ -69,7 +69,7 @@ class AddNewPerformerModalContentConnector extends Component {
       rootFolderPath: rootFolderPath.value,
       monitor: monitor.value,
       qualityProfileId: qualityProfileId.value,
-      searchForPerformer: searchForPerformer.value,
+      searchForMovie: searchForMovie.value,
       tags: tags.value
     });
   };
@@ -93,7 +93,7 @@ AddNewPerformerModalContentConnector.propTypes = {
   rootFolderPath: PropTypes.object,
   monitor: PropTypes.object.isRequired,
   qualityProfileId: PropTypes.object,
-  searchForPerformer: PropTypes.object.isRequired,
+  searchForMovie: PropTypes.object.isRequired,
   tags: PropTypes.object.isRequired,
   onModalClose: PropTypes.func.isRequired,
   setAddPerformerDefault: PropTypes.func.isRequired,

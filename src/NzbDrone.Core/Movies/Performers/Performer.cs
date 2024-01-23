@@ -35,7 +35,7 @@ namespace NzbDrone.Core.Movies.Performers
         public void ApplyChanges(Performer otherPerformer)
         {
             QualityProfileId = otherPerformer.QualityProfileId;
-
+            SearchOnAdd = otherPerformer.SearchOnAdd;
             Monitored = otherPerformer.Monitored;
 
             RootFolderPath = otherPerformer.RootFolderPath;

@@ -41,13 +41,15 @@ namespace Whisparr.Api.V3.Movies
         // public bool Downloaded { get; set; }
         public string RemotePoster { get; set; }
         public int Year { get; set; }
-        public bool HasFile { get; set; }
         public string StudioTitle { get; set; }
         public string StudioForeignId { get; set; }
 
         // View & Edit
         public string Path { get; set; }
         public int QualityProfileId { get; set; }
+
+        // Compatibility
+        public bool? HasFile { get; set; }
 
         // Editing Only
         public bool Monitored { get; set; }
@@ -175,9 +177,9 @@ namespace Whisparr.Api.V3.Movies
 
         public static Movie ToModel(this MovieResource resource, Movie movie)
         {
-            var updatedmovie = resource.ToModel();
+            var updatedMovie = resource.ToModel();
 
-            movie.ApplyChanges(updatedmovie);
+            movie.ApplyChanges(updatedMovie);
 
             return movie;
         }

@@ -21,7 +21,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Datastore\Migration\" />
     <Folder Include="IndexerTests\BroadcastheNetTests\" />
     <Folder Include="IndexerTests\FanzubTests\" />
     <Folder Include="IndexerTests\TorrentleechTests\" />

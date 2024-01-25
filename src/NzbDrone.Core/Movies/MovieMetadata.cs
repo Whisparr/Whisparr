@@ -27,6 +27,7 @@ namespace NzbDrone.Core.Movies
         public Ratings Ratings { get; set; }
         public string StudioForeignId { get; set; }
         public string StudioTitle { get; set; }
+        public string StudioNetwork { get; set; }
         public DateTime? LastInfoSync { get; set; }
         public int Runtime { get; set; }
         public string Website { get; set; }

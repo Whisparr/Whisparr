@@ -313,10 +313,14 @@ namespace NzbDrone.Core.Organizer
             tokenHandlers["{Studio TitleThe}"] = m => TitleThe(movie.MovieMetadata.Value.StudioTitle);
             tokenHandlers["{Studio TitleFirstCharacter}"] = m => TitleThe(movie.MovieMetadata.Value.StudioTitle).Substring(0, 1).FirstCharToUpper();
 
-            if (movie.MovieMetadata.Value.StudioForeignId.IsNotNullOrWhiteSpace())
+            if (movie.MovieMetadata.Value.StudioNetwork.IsNotNullOrWhiteSpace())
+            {
+                tokenHandlers["{Studio Network}"] = m => CleanTitle(movie.MovieMetadata.Value.StudioNetwork);
+            }
+            else if (movie.MovieMetadata.Value.StudioForeignId.IsNotNullOrWhiteSpace())
             {
                 var studio = _studioService.FindByForeignId(movie.MovieMetadata.Value.StudioForeignId);
-                tokenHandlers["{Studio Network}"] = m => studio.Network ?? string.Empty;
+                tokenHandlers["{Studio Network}"] = m => studio?.Network ?? string.Empty;
             }
             else
             {

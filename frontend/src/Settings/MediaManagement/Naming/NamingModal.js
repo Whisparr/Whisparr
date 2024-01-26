@@ -64,11 +64,15 @@ const sceneTokens = [
   { token: '{Scene CleanTitle}', example: 'Scenes Title' },
   { token: '{Scene TitleThe}', example: 'Scene\'s Title, The' },
   { token: '{Scene TitleFirstCharacter}', example: 'S' },
-  { token: '{Release Date}', example: '2009-02-04' }
+  { token: '{Scene Performers}', example: 'Abigail Mac Tera Patrick John Holmes' },
+  { token: '{Scene PerformersFemale}', example: 'Abigail Mac Tera Patrick' },
+  { token: '{Release Date}', example: '2009-02-04' },
+  { token: '{Release ShortDate}', example: '09 02 04' }
 ];
 
 const studioTokens = [
   { token: '{Studio Title}', example: 'Studio\'s Title' },
+  { token: '{Studio TitleSlug}', example: 'Studio\'sTitle' },
   { token: '{Studio CleanTitle}', example: 'Studios Title' },
   { token: '{Studio TitleThe}', example: 'Studio\'s Title, The' },
   { token: '{Studio TitleFirstCharacter}', example: 'S' },

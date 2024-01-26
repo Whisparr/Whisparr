@@ -14,6 +14,7 @@ using NzbDrone.Core.CustomFormats;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.MediaFiles.MediaInfo;
 using NzbDrone.Core.Movies;
+using NzbDrone.Core.Movies.Performers;
 using NzbDrone.Core.Movies.Studios;
 using NzbDrone.Core.Qualities;
 
@@ -291,8 +292,8 @@ namespace NzbDrone.Core.Organizer
         public static string SlugTitle(string title)
         {
             title = title.Replace(" ", "");
-            title = ScenifyReplaceChars.Replace(title, " ");
             title = ScenifyRemoveChars.Replace(title, string.Empty);
+            title = ScenifyReplaceChars.Replace(title, " ");
 
             return title;
         }
@@ -328,11 +329,21 @@ namespace NzbDrone.Core.Organizer
         {
             if (movie.MovieMetadata.Value.ReleaseDate.IsNotNullOrWhiteSpace())
             {
-                tokenHandlers["{Release Date}"] = m => movie.MovieMetadata.Value.ReleaseDate;
+                var releaseDate = movie.MovieMetadata.Value.ReleaseDate;
+                tokenHandlers["{Release Date}"] = m => releaseDate;
+                tokenHandlers["{Release ShortDate}"] = m => releaseDate.Replace("-", " ").Substring(2);
             }
             else
             {
                 tokenHandlers["{Release Date}"] = m => "Unknown";
+            }
+
+            if (movie.MovieMetadata.Value.Credits != null)
+            {
+                var credits = movie.MovieMetadata.Value.Credits;
+                tokenHandlers["{Scene Performers}"] = m => credits.Select(p => p.Performer.Name).Join(" ");
+                tokenHandlers["{Scene PerformersFemale}"] = m => credits.Where(a => a.Performer.Gender == Gender.Female)
+                                                                        .Select(a => a.Performer.Name).Join(" ");
             }
         }
 

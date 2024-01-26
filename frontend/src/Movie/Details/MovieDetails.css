@@ -55,9 +55,11 @@
 .screenShot {
   z-index: 2;
   flex-shrink: 0;
+  margin-top: 10px;
   margin-right: 35px;
   width: 368px;
-  height: 250px;
+  height: 207px;
+  object-fit: 'contain';
 }
 
 .info {

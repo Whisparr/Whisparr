@@ -35,6 +35,11 @@ export const defaultState = {
       isSortable: true
     },
     {
+      name: 'credits',
+      label: 'Performers',
+      isVisible: true
+    },
+    {
       name: 'path',
       label: () => translate('Path'),
       isVisible: false,

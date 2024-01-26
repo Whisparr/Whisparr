@@ -58,6 +58,7 @@ class SceneRow extends Component {
       hasFile,
       movieFile,
       monitored,
+      credits,
       runtime,
       movieRuntimeFormat,
       releaseDate,
@@ -110,6 +111,22 @@ class SceneRow extends Component {
                     foreignId={foreignId}
                     title={title}
                   />
+                </TableRowCell>
+              );
+            }
+
+            if (name === 'credits') {
+              const joinedPerformers = credits
+                .slice(0, 4)
+                .sort((a, b) => {
+                  return a.performer.name > b.performer.name ? 1 : -1;
+                })
+                .map((credit) => credit.performer.name)
+                .join(', ');
+
+              return (
+                <TableRowCell key={name} className={styles.performers}>
+                  <span title={joinedPerformers}>{joinedPerformers}</span>
                 </TableRowCell>
               );
             }
@@ -337,6 +354,8 @@ SceneRow.propTypes = {
   runtime: PropTypes.number,
   movieRuntimeFormat: PropTypes.string,
   title: PropTypes.string.isRequired,
+  credits: PropTypes.arrayOf(PropTypes.object),
+  joinedPerformers: PropTypes.string,
   isSaving: PropTypes.bool,
   movieFilePath: PropTypes.string,
   movieFileRelativePath: PropTypes.string,

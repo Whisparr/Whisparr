@@ -10,6 +10,12 @@
   width: 42px;
 }
 
+.performers {
+  composes: cell from '~Components/Table/Cells/TableRowCell.css';
+
+  width: 400px;
+}
+
 .runtime {
   composes: cell from '~Components/Table/Cells/TableRowCell.css';
 

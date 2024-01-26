@@ -97,12 +97,13 @@ class AddNewMovieSearchResult extends Component {
     if (itemType === 'scene') {
       ImageItem = ScenePoster;
       posterWidth = 300;
-      posterHeight = 167;
+      posterHeight = 169;
     }
 
     const elementStyle = {
       width: `${posterWidth}px`,
-      height: `${posterHeight}px`
+      height: `${posterHeight}px`,
+      objectFit: 'contain'
     };
 
     return (

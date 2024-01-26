@@ -231,7 +231,7 @@ class StudioDetails extends Component {
     const fanartUrl = getFanartUrl(images);
 
     const elementStyle = {
-      'object-fit': 'contain'
+      objectFit: 'contain'
     };
 
     return (

@@ -61,7 +61,6 @@ function StudioIndexPoster(props: StudioIndexPosterProps) {
   const elementStyle = {
     width: `${posterWidth}px`,
     height: `${posterHeight}px`,
-    'object-fit': 'contain',
   };
 
   return (

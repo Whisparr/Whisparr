@@ -6,6 +6,7 @@ interface CssExports {
   'customFormatScore': string;
   'languages': string;
   'monitored': string;
+  'performers': string;
   'releaseGroup': string;
   'runtime': string;
   'size': string;

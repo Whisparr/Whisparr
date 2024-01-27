@@ -49,13 +49,13 @@ namespace NzbDrone.Core.Parser
 
             if (result == null)
             {
-                _logger.Debug("Attempting to parse movie info using directory and file names. {0}", fileInfo.Directory.Name);
+                _logger.Debug("Attempting to parse movie info using directory and file names. '{0}'", fileInfo.Directory.Name);
                 result = Parser.ParseMovieTitle(fileInfo.Directory.Name + " " + fileInfo.Name);
             }
 
             if (result == null)
             {
-                _logger.Debug("Attempting to parse movie info using directory name. {0}", fileInfo.Directory.Name);
+                _logger.Debug("Attempting to parse movie info using directory name. '{0}'", fileInfo.Directory.Name);
                 result = Parser.ParseMovieTitle(fileInfo.Directory.Name + fileInfo.Extension);
             }
 
@@ -189,7 +189,7 @@ namespace NzbDrone.Core.Parser
 
                 if (result == null)
                 {
-                    _logger.Debug($"No matching movie for titles {string.Join(", ", parsedMovieInfo.MovieTitles)} ({parsedMovieInfo.Year})");
+                    _logger.Debug($"No matching movie for titles '{string.Join(", ", parsedMovieInfo.MovieTitles)} ({parsedMovieInfo.Year})'");
                 }
             }
 

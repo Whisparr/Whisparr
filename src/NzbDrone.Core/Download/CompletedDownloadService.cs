@@ -132,6 +132,8 @@ namespace NzbDrone.Core.Download
                 if (series == null)
                 {
                     trackedDownload.Warn("Series title mismatch; automatic import is not possible. Check the download troubleshooting entry on the wiki for common causes.");
+                    SendManualInteractionRequiredNotification(trackedDownload);
+
                     return;
                 }
 
@@ -142,16 +144,7 @@ namespace NzbDrone.Core.Download
                 if (seriesMatchType == SeriesMatchType.Id && releaseSource != ReleaseSourceType.InteractiveSearch)
                 {
                     trackedDownload.Warn("Found matching series via grab history, but release was matched to series by ID. Automatic import is not possible. See the FAQ for details.");
-
-                    if (!trackedDownload.HasNotifiedManualInteractionRequired)
-                    {
-                        trackedDownload.HasNotifiedManualInteractionRequired = true;
-
-                        var releaseInfo = new GrabbedReleaseInfo(grabbedHistories);
-                        var manualInteractionEvent = new ManualInteractionRequiredEvent(trackedDownload, releaseInfo);
-
-                        _eventAggregator.PublishEvent(manualInteractionEvent);
-                    }
+                    SendManualInteractionRequiredNotification(trackedDownload);
 
                     return;
                 }
@@ -172,6 +165,8 @@ namespace NzbDrone.Core.Download
             if (trackedDownload.RemoteEpisode == null)
             {
                 trackedDownload.Warn("Unable to parse download, automatic import is not possible.");
+                SendManualInteractionRequiredNotification(trackedDownload);
+
                 return;
             }
 
@@ -228,6 +223,7 @@ namespace NzbDrone.Core.Download
             if (statusMessages.Any())
             {
                 trackedDownload.Warn(statusMessages.ToArray());
+                SendManualInteractionRequiredNotification(trackedDownload);
             }
         }
 
@@ -292,6 +288,21 @@ namespace NzbDrone.Core.Download
 
             _logger.Debug("Not all episodes have been imported for the release '{0}'", trackedDownload.DownloadItem.Title);
             return false;
+        }
+
+        private void SendManualInteractionRequiredNotification(TrackedDownload trackedDownload)
+        {
+            if (!trackedDownload.HasNotifiedManualInteractionRequired)
+            {
+                var grabbedHistories = _historyService.FindByDownloadId(trackedDownload.DownloadItem.DownloadId).Where(h => h.EventType == EpisodeHistoryEventType.Grabbed).ToList();
+
+                trackedDownload.HasNotifiedManualInteractionRequired = true;
+
+                var releaseInfo = grabbedHistories.Count > 0 ? new GrabbedReleaseInfo(grabbedHistories) : null;
+                var manualInteractionEvent = new ManualInteractionRequiredEvent(trackedDownload, releaseInfo);
+
+                _eventAggregator.PublishEvent(manualInteractionEvent);
+            }
         }
 
         private void SetImportItem(TrackedDownload trackedDownload)

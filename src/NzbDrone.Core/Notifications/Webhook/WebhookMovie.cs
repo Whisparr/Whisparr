@@ -38,12 +38,6 @@ namespace NzbDrone.Core.Notifications.Webhook
             ItemType = movie.MovieMetadata.Value.ItemType.ToString();
         }
 
-        public WebhookMovie(Movie movie, IEnumerable<string> tags)
-            : this(movie)
-        {
-            Tags = tags;
-        }
-
         public WebhookMovie(Movie movie, MovieFile movieFile)
             : this(movie)
         {

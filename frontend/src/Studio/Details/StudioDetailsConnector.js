@@ -72,13 +72,13 @@ function createMapStateToProps() {
 
       const previousStudio = sortedStudios[studioIndex - 1] || _.last(sortedStudios);
       const nextStudio = sortedStudios[studioIndex + 1] || _.first(sortedStudios);
-      const isMovieRefreshing = isCommandExecuting(findCommand(commands, { name: commandNames.REFRESH_MOVIE, movieIds: [studio.id] }));
+      const isStudioRefreshing = isCommandExecuting(findCommand(commands, { name: commandNames.REFRESH_STUDIO, studioIds: [studio.id] }));
       const movieRefreshingCommand = findCommand(commands, { name: commandNames.REFRESH_MOVIE });
       const allMoviesRefreshing = (
         isCommandExecuting(movieRefreshingCommand) &&
         !movieRefreshingCommand.body.movieId
       );
-      const isRefreshing = isMovieRefreshing || allMoviesRefreshing;
+      const isRefreshing = isStudioRefreshing || allMoviesRefreshing;
       const isSearching = isCommandExecuting(findCommand(commands, { name: commandNames.STUDIO_SEARCH, studioIds: [studio.id] }));
 
       const isFetching = isMoviesFetching;
@@ -91,7 +91,7 @@ function createMapStateToProps() {
         hasMovies,
         hasScenes,
         moviesError,
-        isMovieRefreshing,
+        isStudioRefreshing,
         allMoviesRefreshing,
         isRefreshing,
         isSearching,
@@ -199,7 +199,7 @@ class StudioDetailsConnector extends Component {
 StudioDetailsConnector.propTypes = {
   id: PropTypes.number.isRequired,
   foreignId: PropTypes.string.isRequired,
-  isMovieRefreshing: PropTypes.bool.isRequired,
+  isStudioRefreshing: PropTypes.bool.isRequired,
   allMoviesRefreshing: PropTypes.bool.isRequired,
   isRefreshing: PropTypes.bool.isRequired,
   isSmallScreen: PropTypes.bool.isRequired,

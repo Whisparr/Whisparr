@@ -72,13 +72,13 @@ function createMapStateToProps() {
 
       const previousPerformer = sortedPerformers[performerIndex - 1] || _.last(sortedPerformers);
       const nextPerformer = sortedPerformers[performerIndex + 1] || _.first(sortedPerformers);
-      const isMovieRefreshing = isCommandExecuting(findCommand(commands, { name: commandNames.REFRESH_MOVIE, movieIds: [performer.id] }));
+      const isPerformerRefreshing = isCommandExecuting(findCommand(commands, { name: commandNames.REFRESH_PERFORMER, performerIds: [performer.id] }));
       const movieRefreshingCommand = findCommand(commands, { name: commandNames.REFRESH_MOVIE });
       const allMoviesRefreshing = (
         isCommandExecuting(movieRefreshingCommand) &&
         !movieRefreshingCommand.body.movieId
       );
-      const isRefreshing = isMovieRefreshing || allMoviesRefreshing;
+      const isRefreshing = isPerformerRefreshing || allMoviesRefreshing;
       const isSearching = isCommandExecuting(findCommand(commands, { name: commandNames.PERFORMER_SEARCH, performerIds: [performer.id] }));
 
       const isFetching = isMoviesFetching;
@@ -91,7 +91,7 @@ function createMapStateToProps() {
         hasMovies,
         hasScenes,
         moviesError,
-        isMovieRefreshing,
+        isPerformerRefreshing,
         allMoviesRefreshing,
         isRefreshing,
         isSearching,
@@ -199,7 +199,7 @@ class PerformerDetailsConnector extends Component {
 PerformerDetailsConnector.propTypes = {
   id: PropTypes.number.isRequired,
   foreignId: PropTypes.string.isRequired,
-  isMovieRefreshing: PropTypes.bool.isRequired,
+  isPerformerRefreshing: PropTypes.bool.isRequired,
   allMoviesRefreshing: PropTypes.bool.isRequired,
   isRefreshing: PropTypes.bool.isRequired,
   isSmallScreen: PropTypes.bool.isRequired,

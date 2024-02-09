@@ -805,7 +805,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             return newPerformer;
         }
 
-        private Gender MapGender(string gender)
+        private static Gender MapGender(string gender)
         {
             if (gender.IsNullOrWhiteSpace())
             {
@@ -913,7 +913,8 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 {
                     Name = arg.Performer.Name,
                     ForeignId = arg.Performer.ForeignIds.StashId,
-                    Images = arg.Performer.Images?.Select(MapImage).ToList() ?? new List<MediaCover.MediaCover>()
+                    Images = arg.Performer.Images?.Select(MapImage).ToList() ?? new List<MediaCover.MediaCover>(),
+                    Gender = MapGender(arg.Performer.Gender)
                 }
             };
 

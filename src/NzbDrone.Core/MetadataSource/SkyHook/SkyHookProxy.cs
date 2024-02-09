@@ -776,8 +776,9 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 Performer = new CreditPerformer
                 {
                     Name = arg.Performer.Name,
-                    ForeignId = arg.Performer.ForeignIds.TmdbId.ToString(),
-                    Images = arg.Performer.Images.Select(MapImage).ToList()
+                    ForeignId = arg.Performer.ForeignIds.StashId.ToString(),
+                    Images = arg.Performer.Images.Select(MapImage).ToList(),
+                    Gender = MapGender(arg.Performer.Gender)
                 }
             };
 

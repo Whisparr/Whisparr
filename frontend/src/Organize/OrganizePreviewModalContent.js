@@ -77,8 +77,11 @@ class OrganizePreviewModalContent extends Component {
       error,
       items,
       renameMovies,
+      renameScenes,
       standardMovieFormat,
+      standardSceneFormat,
       path,
+      itemType,
       onModalClose
     } = this.props;
 
@@ -89,6 +92,7 @@ class OrganizePreviewModalContent extends Component {
     } = this.state;
 
     const selectAllValue = getValue(allSelected, allUnselected);
+    const renameEnabled = (itemType === 'movie' && renameMovies) || (itemType === 'scene' && renameScenes);
 
     return (
       <ModalContent onModalClose={onModalClose}>
@@ -111,7 +115,7 @@ class OrganizePreviewModalContent extends Component {
             !isFetching && isPopulated && !items.length &&
               <div>
                 {
-                  renameMovies ?
+                  renameEnabled ?
                     <div>{translate('OrganizeNothingToRename')}</div> :
                     <div>{translate('OrganizeRenamingDisabled')}</div>
                 }
@@ -127,7 +131,10 @@ class OrganizePreviewModalContent extends Component {
                   </div>
 
                   <div>
-                    <InlineMarkdown data={translate('OrganizeNamingPattern', { standardMovieFormat })} blockClassName={styles.standardMovieFormat} />
+                    {itemType === 'movie' ?
+                      <InlineMarkdown data={translate('OrganizeMovieNamingPattern', { standardMovieFormat })} blockClassName={styles.standardMovieFormat} /> :
+                      <InlineMarkdown data={translate('OrganizeSceneNamingPattern', { standardSceneFormat })} blockClassName={styles.standardMovieFormat} />
+                    }
                   </div>
                 </Alert>
 
@@ -187,8 +194,11 @@ OrganizePreviewModalContent.propTypes = {
   error: PropTypes.object,
   items: PropTypes.arrayOf(PropTypes.object).isRequired,
   path: PropTypes.string.isRequired,
+  itemType: PropTypes.string.isRequired,
   renameMovies: PropTypes.bool,
+  renameScenes: PropTypes.bool,
   standardMovieFormat: PropTypes.string,
+  standardSceneFormat: PropTypes.string,
   onOrganizePress: PropTypes.func.isRequired,
   onModalClose: PropTypes.func.isRequired
 };

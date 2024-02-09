@@ -341,9 +341,11 @@ namespace NzbDrone.Core.Organizer
             if (movie.MovieMetadata.Value.Credits != null)
             {
                 var credits = movie.MovieMetadata.Value.Credits;
-                tokenHandlers["{Scene Performers}"] = m => credits.Select(p => p.Performer.Name).Join(" ");
-                tokenHandlers["{Scene PerformersFemale}"] = m => credits.Where(a => a.Performer.Gender == Gender.Female)
-                                                                        .Select(a => a.Performer.Name).Join(" ");
+                tokenHandlers["{Scene Performers}"] = m => credits.OrderBy(p => p.Performer.Name)
+                                                                  .Select(p => p.Performer.Name).Join(" ");
+                tokenHandlers["{Scene PerformersFemale}"] = m => credits.Where(p => p.Performer.Gender == Gender.Female)
+                                                                        .OrderBy(p => p.Performer.Name)
+                                                                        .Select(p => p.Performer.Name).Join(" ");
             }
         }
 

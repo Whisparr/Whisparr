@@ -20,8 +20,11 @@ function createMapStateToProps() {
       props.isPopulated = organizePreview.isPopulated && naming.isPopulated;
       props.error = organizePreview.error || naming.error;
       props.renameMovies = naming.item.renameMovies;
+      props.renameScenes = naming.item.renameScenes;
       props.standardMovieFormat = naming.item.standardMovieFormat;
+      props.standardSceneFormat = naming.item.standardSceneFormat;
       props.path = movie.path;
+      props.itemType = movie.itemType;
 
       return props;
     }

@@ -106,12 +106,12 @@ namespace NzbDrone.Core.Organizer
                 namingConfig = _namingConfigService.GetConfig();
             }
 
-            if (!namingConfig.RenameMovies)
+            var itemType = movie.MovieMetadata.Value.ItemType;
+
+            if ((itemType == ItemType.Movie && !namingConfig.RenameMovies) || (itemType == ItemType.Scene && !namingConfig.RenameScenes))
             {
                 return GetOriginalTitle(movieFile, false);
             }
-
-            var itemType = movie.MovieMetadata.Value.ItemType;
 
             var pattern = itemType == ItemType.Movie ? namingConfig.StandardMovieFormat : namingConfig.StandardSceneFormat;
             var tokenHandlers = new Dictionary<string, Func<TokenMatch, string>>(FileNameBuilderTokenEqualityComparer.Instance);

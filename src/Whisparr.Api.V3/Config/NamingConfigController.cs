@@ -46,12 +46,6 @@ namespace Whisparr.Api.V3.Config
             var nameSpec = _namingConfigService.GetConfig();
             var resource = nameSpec.ToResource();
 
-            if (resource.StandardMovieFormat.IsNotNullOrWhiteSpace() || resource.StandardSceneFormat.IsNotNullOrWhiteSpace())
-            {
-                var basicConfig = _filenameBuilder.GetBasicNamingConfig(nameSpec);
-                basicConfig.AddToResource(resource);
-            }
-
             return resource;
         }
 

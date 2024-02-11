@@ -13,9 +13,5 @@ namespace Whisparr.Api.V3.Config
         public string MovieFolderFormat { get; set; }
         public string StandardSceneFormat { get; set; }
         public string SceneFolderFormat { get; set; }
-        public bool IncludeQuality { get; set; }
-        public bool ReplaceSpaces { get; set; }
-        public string Separator { get; set; }
-        public string NumberStyle { get; set; }
     }
 }

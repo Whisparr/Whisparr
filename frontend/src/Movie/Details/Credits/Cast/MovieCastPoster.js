@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import Link from 'Components/Link/Link';
@@ -107,10 +108,10 @@ class MovieCastPoster extends Component {
           </div>
         </div>
 
-        <div className={styles.title}>
+        <div className={classNames(styles.title, 'swiper-no-swiping')}>
           {performer.fullName}
         </div>
-        <div className={styles.title}>
+        <div className={classNames(styles.title, 'swiper-no-swiping')}>
           {character}
         </div>
       </div>

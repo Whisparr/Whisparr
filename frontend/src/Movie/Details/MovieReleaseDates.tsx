@@ -18,6 +18,17 @@ function MovieReleaseDates(props: MovieReleaseDatesProps) {
     createUISettingsSelector()
   );
 
+  if (!releaseDate) {
+    return (
+      <div>
+        <div className={styles.dateIcon}>
+          <Icon name={icons.MISSING} />
+        </div>
+        {translate('NoMovieReleaseDatesAvailable')}
+      </div>
+    );
+  }
+
   return (
     <div>
       {releaseDate ? (

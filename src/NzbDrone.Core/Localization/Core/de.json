@@ -1415,7 +1415,7 @@
     "RefreshLists": "Listen aktualisieren",
     "RefreshMonitoredIntervalHelpText": "Wie häufig die beobachteten Downloads von Download-Clients aktualisiert werden sollen (min. 1 Minute)",
     "RefreshMovie": "Film aktualisieren",
-    "RegularExpressionsCanBeTested": "Reguläre Ausdrücke können [hier](http://regexstorm.net/tester) getestet werden.",
+    "RegularExpressionsCanBeTested": "Reguläre Ausdrücke können [hier]({url}) getestet werden.",
     "RegularExpressionsTutorialLink": "Weitere Details zu regulären Ausdrücken finden Sie [hier](https://www.regular-expressions.info/tutorial.html).",
     "RejectionCount": "Anzahl der Ablehnungen",
     "Rejections": "Ablehnungen",

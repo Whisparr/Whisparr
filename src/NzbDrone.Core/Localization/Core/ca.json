@@ -1437,7 +1437,7 @@
     "RefreshLists": "Actualitza llistes",
     "RefreshMonitoredIntervalHelpText": "Amb quina freqüència s'actualitzen les baixades monitorades dels clients de descàrrega, mínim 1 minut",
     "RefreshMovie": "Actualitza pel·lícula",
-    "RegularExpressionsCanBeTested": "Les expressions regulars es poden provar [aquí](http://regexstorm.net/tester).",
+    "RegularExpressionsCanBeTested": "Les expressions regulars es poden provar [aquí]({url}).",
     "RegularExpressionsTutorialLink": "Podeu trobar més detalls sobre les expressions regulars [aquí](https://www.regular-expressions.info/tutorial.html).",
     "RejectionCount": "Recompte de rebuigs",
     "Rejections": "Rebutjats",

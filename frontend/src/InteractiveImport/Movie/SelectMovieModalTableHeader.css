@@ -1,18 +1,33 @@
-.title {
-  composes: headerCell from '~Components/Table/VirtualTableHeaderCell.css';
-
-  flex: 4 0 140px;
+.studioTitle {
+  /* composes: headerCell from '~Components/Table/VirtualTableHeaderCell.css'; */
+  flex: 0 0 150px;
+  font-weight: bold;
 }
 
-.year {
-  composes: headerCell  from '~Components/Table/VirtualTableHeaderCell.css';
+.title {
+  /* composes: headerCell from '~Components/Table/VirtualTableHeaderCell.css'; */
+  flex: 1 0 300px;
+  margin-right: 10px;
+  font-weight: bold;
+}
 
-  flex: 0 0 70px;
+.performers {
+  /* composes: headerCell from '~Components/Table/VirtualTableHeaderCell.css'; */
+  flex: 1 0 200px;
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.releaseDate {
+  /* composes: headerCell from '~Components/Table/VirtualTableHeaderCell.css'; */
+  flex: 0 0 120px;
+  margin-left: auto;
+  font-weight: bold;
 }
 
 .imdbId,
 .tmdbId {
-  composes: headerCell  from '~Components/Table/VirtualTableHeaderCell.css';
+  /* composes: headerCell from '~Components/Table/VirtualTableHeaderCell.css'; */
 
   flex: 0 0 110px;
 }

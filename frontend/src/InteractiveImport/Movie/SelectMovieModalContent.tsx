@@ -28,23 +28,23 @@ import styles from './SelectMovieModalContent.css';
 
 const columns = [
   {
+    name: 'studioTitle',
+    label: () => translate('Studio'),
+    isVisible: true,
+  },
+  {
     name: 'title',
     label: () => translate('Title'),
     isVisible: true,
   },
   {
-    name: 'year',
-    label: () => translate('Year'),
+    name: 'performers',
+    label: () => translate('Performers'),
     isVisible: true,
   },
   {
-    name: 'itemType',
-    label: () => translate('ItemType'),
-    isVisible: true,
-  },
-  {
-    name: 'foreignId',
-    label: () => translate('ForeignId'),
+    name: 'releaseDate',
+    label: () => translate('ReleaseDate'),
     isVisible: true,
   },
 ];
@@ -80,6 +80,8 @@ const Row: React.FC<ListChildComponentProps<RowItemData>> = ({
     <VirtualTableRowButton
       style={{
         display: 'flex',
+        'align-items': 'center',
+        'border-top': '1px solid #858585',
         justifyContent: 'space-between',
         ...style,
       }}
@@ -90,7 +92,9 @@ const Row: React.FC<ListChildComponentProps<RowItemData>> = ({
         title={movie.title}
         tmdbId={movie.tmdbId}
         imdbId={movie.imdbId}
-        year={movie.year}
+        credits={movie.credits}
+        studioTitle={movie.studioTitle}
+        releaseDate={movie.releaseDate}
         columns={columns}
         onMovieSelect={onMovieSelect}
       />

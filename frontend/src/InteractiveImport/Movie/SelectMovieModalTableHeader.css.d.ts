@@ -2,9 +2,11 @@
 // Please do not change this file!
 interface CssExports {
   'imdbId': string;
+  'performers': string;
+  'releaseDate': string;
+  'studioTitle': string;
   'title': string;
   'tmdbId': string;
-  'year': string;
 }
 export const cssExports: CssExports;
 export default cssExports;

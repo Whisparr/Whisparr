@@ -1,25 +1,61 @@
 .cell {
-  composes: cell from '~Components/Table/Cells/VirtualTableRowCell.css';
-
-  display: flex;
+  /* composes: cell from '~Components/Table/Cells/VirtualTableRowCell.css'; */
   align-items: center;
 }
 
-.title {
-  composes: cell;
-
-  flex: 4 0 140px;
+.studioTitle {
+  /* composes: cell; */
+  display: flex;
+  align-content: center;
+  align-items: center;
+  flex: 0 1 150px;
+  flex-wrap: nowrap;
+  min-height: 35px;
+  border-top: 1px;
+  text-overflow: ellipsis;
 }
 
-.year {
-  composes: cell;
+.title {
+  /* composes: cell; */
+  display: flex;
+  align-content: center;
+  align-items: center;
+  flex: 1 0 300px;
+  flex-wrap: nowrap;
+  overflow: hidden;
+  margin-right: 10px;
+  min-width: 1px;
+  min-height: 35px;
+  text-overflow: clip;
+  white-space: nowrap;
+}
 
-  flex: 0 0 70px;
+.performers {
+  display: flex;
+  align-content: center;
+  align-items: center;
+  flex: 1 0 200px;
+  flex-wrap: wrap;
+  overflow: hidden;
+  margin-right: 10px;
+  min-width: 1px;
+  max-height: 35px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.releaseDate {
+  /* composes: cell; */
+  display: flex;
+  align-content: center;
+  align-items: center;
+  flex: 0 0 120px;
+  min-height: 35px;
 }
 
 .tmdbId,
 .imdbId {
-  composes: cell;
+  /* composes: cell; */
 
   flex: 0 0 110px;
 }

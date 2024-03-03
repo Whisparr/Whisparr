@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NLog;
+using NzbDrone.Core.Datastore;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.Movies;
 using NzbDrone.Core.Movies.Events;
@@ -16,6 +17,7 @@ namespace NzbDrone.Core.ImportLists.ImportExclusions
         bool IsExcluded(string foreignId, ImportExclusionType type);
         ImportListExclusion AddExclusion(ImportListExclusion exclusion);
         List<ImportListExclusion> AddExclusions(List<ImportListExclusion> exclusions);
+        PagingSpec<ImportListExclusion> Paged(PagingSpec<ImportListExclusion> pagingSpec);
         void RemoveExclusion(ImportListExclusion exclusion);
         ImportListExclusion GetById(int id);
         ImportListExclusion GetByForeignId(string foreignId);
@@ -106,6 +108,11 @@ namespace NzbDrone.Core.ImportLists.ImportExclusions
             }
 
             return _exclusionRepository.Update(exclusion);
+        }
+
+        public PagingSpec<ImportListExclusion> Paged(PagingSpec<ImportListExclusion> pagingSpec)
+        {
+            return _exclusionRepository.GetPaged(pagingSpec);
         }
 
         public void HandleAsync(MoviesDeletedEvent message)

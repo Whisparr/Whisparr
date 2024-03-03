@@ -1,0 +1,13 @@
+.actions {
+  composes: cell from '~Components/Table/Cells/TableRowCell.css';
+
+  width: 35px;
+  white-space: nowrap;
+}
+
+.foreignId {
+  composes: cell from '~Components/Table/Cells/TableRowCell.css';
+
+  max-width: 250px;
+  white-space: nowrap;
+}

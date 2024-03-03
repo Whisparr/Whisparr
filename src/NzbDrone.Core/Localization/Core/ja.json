@@ -935,7 +935,7 @@
     "Title": "題名",
     "Titles": "タイトル",
     "TMDBId": "TMDbID",
-    "TmdbIdHelpText": "除外する映画のTMDbID",
+    "TmdbIdExcludeHelpText": "除外する映画のTMDbID",
     "Today": "今日",
     "Tomorrow": "明日",
     "TorrentDelay": "トレント遅延",

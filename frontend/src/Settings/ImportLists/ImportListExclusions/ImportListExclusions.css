@@ -1,3 +1,10 @@
+.actions {
+  composes: headerCell from '~Components/Table/TableHeaderCell.css';
+
+  width: 35px;
+  white-space: nowrap;
+}
+
 .importExclusionFilterForm {
   display: flex;
   align-items: center;

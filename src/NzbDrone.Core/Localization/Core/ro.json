@@ -1019,7 +1019,7 @@
     "Title": "Titlu",
     "Titles": "Titluri",
     "TMDBId": "Cod TMDb",
-    "TmdbIdHelpText": "Codul TMDb al filmului de exclus",
+    "TmdbIdExcludeHelpText": "Codul TMDb al filmului de exclus",
     "Today": "Astăzi",
     "Tomorrow": "Mâine",
     "TorrentDelay": "Întârziere Torrent",

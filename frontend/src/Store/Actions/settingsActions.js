@@ -93,6 +93,7 @@ export const defaultState = {
 
 export const persistState = [
   'settings.advancedSettings',
+  'settings.importListExclusions.pageSize',
   'settings.safeForWorkMode'
 ];
 

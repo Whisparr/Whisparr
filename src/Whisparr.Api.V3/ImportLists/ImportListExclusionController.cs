@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Core.ImportLists.ImportExclusions;
 using Whisparr.Http;
+using Whisparr.Http.Extensions;
 using Whisparr.Http.REST;
 using Whisparr.Http.REST.Attributes;
 
@@ -24,6 +26,7 @@ namespace Whisparr.Api.V3.ImportLists
 
         [HttpGet]
         [Produces("application/json")]
+        [Obsolete("Deprecated")]
         public List<ImportListExclusionResource> GetImportListExclusions()
         {
             return _importListExclusionService.GetAllExclusions().ToResource();
@@ -32,6 +35,16 @@ namespace Whisparr.Api.V3.ImportLists
         protected override ImportListExclusionResource GetResourceById(int id)
         {
             return _importListExclusionService.GetById(id).ToResource();
+        }
+
+        [HttpGet("paged")]
+        [Produces("application/json")]
+        public PagingResource<ImportListExclusionResource> GetImportListExclusionsPaged([FromQuery] PagingRequestResource paging)
+        {
+            var pagingResource = new PagingResource<ImportListExclusionResource>(paging);
+            var pageSpec = pagingResource.MapToPagingSpec<ImportListExclusionResource, ImportListExclusion>();
+
+            return pageSpec.ApplyToPage(_importListExclusionService.Paged, ImportListExclusionResourceMapper.ToResource);
         }
 
         [RestPostById]

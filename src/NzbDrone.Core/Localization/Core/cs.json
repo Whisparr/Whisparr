@@ -1087,7 +1087,7 @@
     "Title": "Titul",
     "Titles": "Názvy",
     "TMDBId": "ID TMDb",
-    "TmdbIdHelpText": "ID TMDb filmu, které se má vyloučit",
+    "TmdbIdExcludeHelpText": "ID TMDb filmu, které se má vyloučit",
     "Today": "Dnes",
     "Tomorrow": "Zítra",
     "TorrentDelay": "Torrent Delay",

@@ -959,7 +959,7 @@
     "Title": "Titill",
     "Titles": "Titlar",
     "TMDBId": "TMDb kt",
-    "TmdbIdHelpText": "TMDb auðkenni myndarinnar til að útiloka",
+    "TmdbIdExcludeHelpText": "TMDb auðkenni myndarinnar til að útiloka",
     "Today": "Í dag",
     "Tomorrow": "Á morgun",
     "TorrentDelay": "Torrent Delay",

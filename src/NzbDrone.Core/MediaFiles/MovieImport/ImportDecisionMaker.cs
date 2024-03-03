@@ -27,6 +27,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
     {
         private readonly IEnumerable<IImportDecisionEngineSpecification> _specifications;
         private readonly IMediaFileService _mediaFileService;
+        private readonly IMovieService _movieService;
         private readonly IAggregationService _aggregationService;
         private readonly IDiskProvider _diskProvider;
         private readonly IDetectSample _detectSample;
@@ -36,6 +37,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
 
         public ImportDecisionMaker(IEnumerable<IImportDecisionEngineSpecification> specifications,
                                    IMediaFileService mediaFileService,
+                                   IMovieService movieService,
                                    IAggregationService aggregationService,
                                    IDiskProvider diskProvider,
                                    IDetectSample detectSample,
@@ -45,6 +47,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
         {
             _specifications = specifications;
             _mediaFileService = mediaFileService;
+            _movieService = movieService;
             _aggregationService = aggregationService;
             _diskProvider = diskProvider;
             _detectSample = detectSample;
@@ -126,16 +129,38 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
             {
                 _aggregationService.Augment(localMovie, downloadClientItem);
 
-                if (localMovie.Movie == null)
+                if (localMovie.Movie.MovieMetadata.Value.ItemType == ItemType.Movie)
                 {
-                    decision = new ImportDecision(localMovie, new Rejection("Invalid movie"));
+                    if (localMovie.Movie == null)
+                    {
+                        decision = new ImportDecision(localMovie, new Rejection("Invalid movie"));
+                    }
+                    else
+                    {
+                        localMovie.CustomFormats = _formatCalculator.ParseCustomFormat(localMovie);
+                        localMovie.CustomFormatScore = localMovie.Movie.QualityProfile?.CalculateCustomFormatScore(localMovie.CustomFormats) ?? 0;
+
+                        decision = GetDecision(localMovie, downloadClientItem);
+                    }
                 }
                 else
                 {
-                    localMovie.CustomFormats = _formatCalculator.ParseCustomFormat(localMovie);
-                    localMovie.CustomFormatScore = localMovie.Movie.QualityProfile?.CalculateCustomFormatScore(localMovie.CustomFormats) ?? 0;
+                    var matchedMovie = GetMovieMatch(localMovie);
+                    if (matchedMovie == null)
+                    {
+                        decision = new ImportDecision(localMovie, new Rejection("Invalid movie"));
+                    }
+                    else if (matchedMovie.Title != localMovie.Movie.Title)
+                    {
+                        decision = new ImportDecision(localMovie, new Rejection("Invalid movie"));
+                    }
+                    else
+                    {
+                        localMovie.CustomFormats = _formatCalculator.ParseCustomFormat(localMovie);
+                        localMovie.CustomFormatScore = localMovie.Movie.QualityProfile?.CalculateCustomFormatScore(localMovie.CustomFormats) ?? 0;
 
-                    decision = GetDecision(localMovie, downloadClientItem);
+                        decision = GetDecision(localMovie, downloadClientItem);
+                    }
                 }
             }
             catch (AugmentingFailedException)
@@ -203,6 +228,14 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
 
                 return true;
             });
+        }
+
+        private Movie GetMovieMatch(LocalMovie localMovie)
+        {
+            var studioForeignId = localMovie.Movie.MovieMetadata.Value.StudioForeignId;
+            var releaseDate = localMovie.FileMovieInfo.ReleaseDate;
+            var releaseTokens = localMovie.FileMovieInfo.ReleaseTitle;
+            return _movieService.FindByStudioAndReleaseDate(studioForeignId, releaseDate, releaseTokens);
         }
     }
 }

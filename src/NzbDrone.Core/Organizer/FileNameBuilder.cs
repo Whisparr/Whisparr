@@ -46,6 +46,9 @@ namespace NzbDrone.Core.Organizer
         public static readonly Regex MovieTitleRegex = new Regex(@"(?<token>\{((?:(Movie|Original))(?<separator>[- ._])(Clean)?(Original)?(Title|Filename)(The)?)(?::(?<customFormat>[a-z0-9|]+))?\})",
                                                                             RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
+        public static readonly Regex SceneFolderRegex = new Regex(@"(?<token>\{((?:(Studio|Original))(?<separator>[- ._])(Clean)?(Original)?(Title)(The)?)(?::(?<customFormat>[a-z0-9|]+))?\})",
+                                                                    RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
         public static readonly Regex SceneTitleRegex = new Regex(@"(?<token>\{((?:(Scene|Original))(?<separator>[- ._])(Clean)?(Original)?(Title|Filename)(The)?)(?::(?<customFormat>[a-z0-9|]+))?\})",
                                                                             RegexOptions.Compiled | RegexOptions.IgnoreCase);
 

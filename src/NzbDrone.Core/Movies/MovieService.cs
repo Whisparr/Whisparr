@@ -367,10 +367,11 @@ namespace NzbDrone.Core.Movies
                 return null;
             }
 
-            if (movies.Count == 1)
+            // Removed, if the release isn't in the db and has the same date but isn't a match
+            /*if (movies.Count == 1)
             {
                 return movies.First();
-            }
+            }*/
 
             var parsedMovieTitle = Parser.Parser.NormalizeEpisodeTitle(releaseTokens);
 

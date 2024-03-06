@@ -112,7 +112,7 @@ class AddNewSeriesSearchResult extends Component {
 
                 <Link
                   className={styles.tvdbLink}
-                  to={`https://metadataapi.net/sites/${tvdbId}`}
+                  to={`https://theporndb.net/sites/${tvdbId}`}
                   onPress={this.onTVDBLinkPress}
                 >
                   <Icon

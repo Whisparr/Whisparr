@@ -14,7 +14,7 @@ function SeriesDetailsLinks(props) {
     <div className={styles.links}>
       <Link
         className={styles.link}
-        to={`https://metadataapi.net/sites/${tvdbId}`}
+        to={`https://theporndb.net/sites/${tvdbId}`}
       >
         <Label
           className={styles.linkLabel}

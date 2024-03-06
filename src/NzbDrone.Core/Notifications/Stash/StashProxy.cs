@@ -28,7 +28,7 @@ namespace NzbDrone.Core.Notifications.Stash
                 $@"metadataIdentify(
                     input: {{
                         sources: [
-                            {{source: {{stash_box_endpoint:""https://metadataapi.net/graphql""}} }}, 
+                            {{source: {{stash_box_endpoint:""https://theporndb.net/graphql""}} }}, 
                             {{source: {{scraper_id: ""builtin_autotag""}}, options: {{setOrganized: false}} }}
                         ],
                         options: {{

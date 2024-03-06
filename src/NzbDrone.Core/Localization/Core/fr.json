@@ -1058,7 +1058,7 @@
     "ReleaseProfileTagHelpText": "Les profils de version s'appliqueront aux sites avec au moins une balise correspondante. Laisser vide pour postuler à tous les sites",
     "SeasonNumber": "Numéro de saison",
     "SeasonPack": "Pack Saison",
-    "SiteAndEpisodeInformationIsProvidedByTheTPDB": "Les informations sur le site et les épisodes sont fournies par TPDB. [Veuillez envisager de les soutenir](https://www.metadataapi.net).",
+    "SiteAndEpisodeInformationIsProvidedByTheTPDB": "Les informations sur le site et les épisodes sont fournies par TPDB. [Veuillez envisager de les soutenir](https://theporndb.net).",
     "SiteFolderFormat": "Format du dossier du site",
     "SiteFolderFormatHelpText": "Utilisé lors de l'ajout d'une nouvelle série ou du déplacement d'une série via l'éditeur de séries",
     "SiteFolderImportedTooltip": "Épisode importé du dossier du site",

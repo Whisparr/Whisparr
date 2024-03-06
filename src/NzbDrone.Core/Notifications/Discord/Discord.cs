@@ -262,7 +262,7 @@ namespace NzbDrone.Core.Notifications.Discord
                     Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
                     IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
                 },
-                Url = $"https://metadataapi.net/sites/{series.TvdbId}",
+                Url = $"https://theporndb.net/sites/{series.TvdbId}",
                 Title = GetTitle(series, episodes),
                 Description = "Episode Deleted",
                 Color = (int)DiscordColors.Danger,
@@ -289,7 +289,7 @@ namespace NzbDrone.Core.Notifications.Discord
                     Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
                     IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
                 },
-                Url = $"https://metadataapi.net/sites/{series.TvdbId}",
+                Url = $"https://theporndb.net/sites/{series.TvdbId}",
                 Title = series.Title,
                 Description = "Site Added",
                 Color = (int)DiscordColors.Success,
@@ -328,7 +328,7 @@ namespace NzbDrone.Core.Notifications.Discord
                     Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
                     IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
                 },
-                Url = $"https://metadataapi.net/sites/{series.TvdbId}",
+                Url = $"https://theporndb.net/sites/{series.TvdbId}",
                 Title = series.Title,
                 Description = deleteMessage.DeletedFilesMessage,
                 Color = (int)DiscordColors.Danger,

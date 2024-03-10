@@ -147,7 +147,8 @@ const editionTokens = [
 ];
 
 const customFormatTokens = [
-  { token: '{Custom Formats}', example: 'Surround Sound x264' }
+  { token: '{Custom Formats}', example: 'Surround Sound x264' },
+  { token: '{Custom Format:FormatName}', example: 'AMZN' }
 ];
 
 const originalTokens = [

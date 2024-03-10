@@ -22,10 +22,17 @@ function createMapStateToProps() {
     (year, studioForeignId, studioScenes, scenes, studio, dimensions) => {
 
       const scenesInYear = scenes.filter((scene) => scene.studioForeignId === studioForeignId && scene.year === year);
+      const sortedScenes =scenesInYear.sort(
+        (a, b) => {
+          if (studioScenes.sortDirection === 'ascending') {
+            return new Date(a.releaseDate) - new Date(b.releaseDate);
+          }
+          return new Date(b.releaseDate) - new Date(a.releaseDate);
+        });
 
       return {
         year,
-        items: scenesInYear,
+        items: sortedScenes,
         columns: studioScenes.columns,
         sortKey: studioScenes.sortKey,
         sortDirection: studioScenes.sortDirection,

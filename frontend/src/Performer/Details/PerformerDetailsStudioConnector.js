@@ -37,10 +37,17 @@ function createMapStateToProps() {
     (studioForeignId, performerScenes, studio, scenes, performer, dimensions) => {
 
       const scenesInStudio = scenes.filter((scene) => scene.studioForeignId === studioForeignId && scene.credits.some((credit) => credit.performer.foreignId === performer.foreignId));
+      const sortedScenes =scenesInStudio.sort(
+        (a, b) => {
+          if (performerScenes.sortDirection === 'ascending') {
+            return new Date(a.releaseDate) - new Date(b.releaseDate);
+          }
+          return new Date(b.releaseDate) - new Date(a.releaseDate);
+        });
 
       return {
         ...studio,
-        items: scenesInStudio,
+        items: sortedScenes,
         columns: performerScenes.columns,
         sortKey: performerScenes.sortKey,
         sortDirection: performerScenes.sortDirection,

@@ -16,9 +16,9 @@ export const section = 'studioScenes';
 // State
 
 export const defaultState = {
-  sortKey: 'fullName',
-  sortDirection: sortDirections.ASCENDING,
-  secondarySortKey: 'fullName',
+  sortKey: 'releaseDate',
+  sortDirection: sortDirections.DESCENDING,
+  secondarySortKey: 'title',
   secondarySortDirection: sortDirections.ASCENDING,
 
   columns: [

@@ -16,6 +16,7 @@ import EditMovieModalConnector from 'Movie/Edit/EditMovieModalConnector';
 import DeleteSceneModal from 'Scene/Delete/DeleteSceneModal';
 import SceneDetailsLinks from 'Scene/Details/SceneDetailsLinks';
 import createSceneIndexItemSelector from 'Scene/Index/createSceneIndexItemSelector';
+import SceneStudioTitleLink from 'Scene/SceneStudioTitleLink';
 import SceneTitleLink from 'Scene/SceneTitleLink';
 import { executeCommand } from 'Store/Actions/commandActions';
 import createUISettingsSelector from 'Store/Selectors/createUISettingsSelector';
@@ -61,6 +62,7 @@ function SceneIndexRow(props: SceneIndexRowProps) {
     genres = [],
     tags = [],
     foreignId,
+    studioForeignId,
     isAvailable,
     hasFile,
     movieFile,
@@ -142,7 +144,7 @@ function SceneIndexRow(props: SceneIndexRowProps) {
             <SceneStatusCell
               key={name}
               className={styles[name]}
-              sceneId={sceneId}
+              movieId={sceneId}
               monitored={monitored}
               status={status}
               isSelectMode={isSelectMode}
@@ -163,7 +165,13 @@ function SceneIndexRow(props: SceneIndexRowProps) {
         if (name === 'studio') {
           return (
             <VirtualTableRowCell key={name} className={styles[name]}>
-              {studioTitle}
+              <SceneStudioTitleLink
+                studioForeignId={studioForeignId}
+                studioTitle={studioTitle}
+                className={styles.studio}
+              >
+                {studioTitle}
+              </SceneStudioTitleLink>
             </VirtualTableRowCell>
           );
         }

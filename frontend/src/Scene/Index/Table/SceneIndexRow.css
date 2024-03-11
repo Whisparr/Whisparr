@@ -18,10 +18,24 @@
   flex: 4 0 110px;
 }
 
+.sortTitle>a {
+  flex: 4 0 110px;
+  overflow: hidden;
+  width: max-content;
+  text-overflow: ellipsis;
+}
+
 .studio {
   composes: cell;
 
   flex: 2 0 90px;
+}
+
+.studio>a:link,
+.studio>a:visited,
+.studio>a:hover,
+.studio>a:active {
+  color: var(--white);
 }
 
 .originalLanguage,

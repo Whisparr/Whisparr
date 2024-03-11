@@ -11,7 +11,7 @@ import styles from './SceneStatusCell.css';
 
 interface SceneStatusCellProps {
   className: string;
-  sceneId: number;
+  movieId: number;
   monitored: boolean;
   status: string;
   isSelectMode: boolean;
@@ -22,7 +22,7 @@ interface SceneStatusCellProps {
 function SceneStatusCell(props: SceneStatusCellProps) {
   const {
     className,
-    sceneId,
+    movieId,
     monitored,
     status,
     isSelectMode,
@@ -36,8 +36,8 @@ function SceneStatusCell(props: SceneStatusCellProps) {
   const dispatch = useDispatch();
 
   const onMonitoredPress = useCallback(() => {
-    dispatch(toggleMovieMonitored({ sceneId, monitored: !monitored }));
-  }, [sceneId, monitored, dispatch]);
+    dispatch(toggleMovieMonitored({ movieId, monitored: !monitored }));
+  }, [movieId, monitored, dispatch]);
 
   return (
     <Component className={className} {...otherProps}>

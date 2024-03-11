@@ -228,7 +228,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             episode.Runtime = oracleEpisode.Duration.GetValueOrDefault();
 
             episode.AirDate = oracleEpisode.ReleaseDate;
-            episode.AirDateUtc = DateTime.Parse(episode.AirDate, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.AdjustToUniversal);
+            episode.AirDateUtc = DateTime.Parse(episode.AirDate, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
             episode.Actors = oracleEpisode.Credits.Select(MapActors).ToList();
 
             episode.Ratings = new Ratings();

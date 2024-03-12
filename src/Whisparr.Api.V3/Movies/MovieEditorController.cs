@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.DecisionEngine.Specifications;
+using NzbDrone.Core.Languages;
+using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.Messaging.Commands;
 using NzbDrone.Core.Movies;
 using NzbDrone.Core.Movies.Commands;
@@ -20,11 +22,15 @@ namespace Whisparr.Api.V3.Movies
         private readonly IUpgradableSpecification _upgradableSpecification;
 
         public MovieEditorController(IMovieService movieService,
+            IMovieTranslationService movieTranslationService,
+            IMapCoversToLocal coverMapper,
             IConfigService configService,
             IManageCommandQueue commandQueueManager,
             IUpgradableSpecification upgradableSpecification)
         {
             _movieService = movieService;
+            _movieTranslationService = movieTranslationService;
+            _coverMapper = coverMapper;
             _configService = configService;
             _commandQueueManager = commandQueueManager;
             _upgradableSpecification = upgradableSpecification;
@@ -95,7 +101,11 @@ namespace Whisparr.Api.V3.Movies
 
             foreach (var movie in updatedMovies)
             {
-                moviesResources.Add(movie.ToResource(availabilityDelay, _upgradableSpecification));
+                var movieResource = movie.ToResource(availabilityDelay, translation, _upgradableSpecification);
+
+                MapCoversToLocal(movieResource);
+
+                moviesResources.Add(movieResource);
             }
 
             return Accepted(moviesResources);
@@ -107,6 +117,11 @@ namespace Whisparr.Api.V3.Movies
             _movieService.DeleteMovies(resource.MovieIds, resource.DeleteFiles, resource.AddImportExclusion);
 
             return new { };
+        }
+
+        private void MapCoversToLocal(MovieResource movie)
+        {
+            _coverMapper.ConvertToLocalUrls(movie.Id, movie.Images);
         }
     }
 }

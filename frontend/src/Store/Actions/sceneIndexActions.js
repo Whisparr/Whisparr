@@ -193,7 +193,7 @@ export const defaultState = {
       valueType: filterBuilderValueTypes.RELEASE_STATUS
     },
     {
-      name: 'studio',
+      name: 'studioTitle',
       label: () => translate('Studio'),
       type: filterBuilderTypes.EXACT,
       optionsSelector: function(items) {

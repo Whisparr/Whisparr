@@ -203,8 +203,29 @@ function getActiveParent(pathname) {
       });
     }
 
+    // force "Scenes" sidebar when viewing scene detail
+    const uuidRegex = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi;
+    const movieId = pathname.split('movie/')[1];
+
+    if (pathname.contains('movie/') && uuidRegex.test(movieId)) {
+      activeParent = '/scenes';
+      return false;
+    }
+
+    // force Studios highlight when viewing a studio
+    if (pathname.contains('/studio/')) {
+      activeParent = '/studios';
+      return false;
+    }
+
+    // force Performers highlight when viewing a performer
+    if (pathname.contains('/performer/')) {
+      activeParent = '/performers';
+      return false;
+    }
+
     if (
-      (link.to !== '/' && pathname.startsWith(link.to)) ||
+      (pathname.startsWith(link.to)) ||
       (link.alias && pathname.startsWith(link.alias))
     ) {
       activeParent = link.to;

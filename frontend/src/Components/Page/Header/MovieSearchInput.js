@@ -11,7 +11,9 @@ import FuseWorker from './fuse.worker';
 import MovieSearchResult from './MovieSearchResult';
 import styles from './MovieSearchInput.css';
 
-const ADD_NEW_TYPE = 'addNew';
+const ADD_NEW_TYPE_MOVIE = 'addNewMovie';
+const ADD_NEW_TYPE_SCENE = 'addNewScene';
+
 
 class MovieSearchInput extends Component {
 
@@ -89,10 +91,17 @@ class MovieSearchInput extends Component {
   }
 
   renderSuggestion(item, { query }) {
-    if (item.type === ADD_NEW_TYPE) {
+    if (item.type === ADD_NEW_TYPE_MOVIE) {
       return (
         <div className={styles.addNewMovieSuggestion}>
-          Search for {query}
+          Movie: "{query}""
+        </div>
+      );
+    }
+    if (item.type === ADD_NEW_TYPE_SCENE) {
+      return (
+        <div className={styles.addNewMovieSuggestion}>
+          Scene: "{query}""
         </div>
       );
     }
@@ -251,9 +260,13 @@ class MovieSearchInput extends Component {
   };
 
   onSuggestionSelected = (event, { suggestion }) => {
-    if (suggestion.type === ADD_NEW_TYPE) {
+    if (suggestion.type === ADD_NEW_TYPE_MOVIE) {
       this.props.onGoToAddNewMovie(this.state.value);
-    } else {
+    }
+    if (suggestion.type === ADD_NEW_TYPE_SCENE) {
+      this.props.onGoToAddNewScene(this.state.value);
+    }
+    else {
       this.goToMovie(suggestion);
     }
   };
@@ -279,14 +292,19 @@ class MovieSearchInput extends Component {
     }
 
     suggestionGroups.push({
-      title: translate('AddNewMovie'),
+      title: translate('AddNew'),
       suggestions: [
         {
-          type: ADD_NEW_TYPE,
+          type: ADD_NEW_TYPE_MOVIE,
           title: value
+        },
+        {
+          type: ADD_NEW_TYPE_SCENE,
+          title: value          
         }
       ]
-    });
+    }
+    );
 
     const inputProps = {
       ref: this.setInputRef,
@@ -340,6 +358,7 @@ MovieSearchInput.propTypes = {
   movies: PropTypes.arrayOf(PropTypes.object).isRequired,
   onGoToMovie: PropTypes.func.isRequired,
   onGoToAddNewMovie: PropTypes.func.isRequired,
+  onGoToAddNewScene: PropTypes.func.isRequired,  
   bindShortcut: PropTypes.func.isRequired
 };
 

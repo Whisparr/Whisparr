@@ -69,7 +69,11 @@ function createMapDispatchToProps(dispatch, props) {
     },
 
     onGoToAddNewMovie(query) {
-      dispatch(push(`${window.Whisparr.urlBase}/add/new?term=${encodeURIComponent(query)}`));
+      dispatch(push(`${window.Whisparr.urlBase}/add/new/movie?term=${encodeURIComponent(query)}`));
+    },
+
+    onGoToAddNewScene(query) {
+      dispatch(push(`${window.Whisparr.urlBase}/add/new/scene?term=${encodeURIComponent(query)}`));
     }
   };
 }

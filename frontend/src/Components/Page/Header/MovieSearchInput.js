@@ -14,7 +14,6 @@ import styles from './MovieSearchInput.css';
 const ADD_NEW_TYPE_MOVIE = 'addNewMovie';
 const ADD_NEW_TYPE_SCENE = 'addNewScene';
 
-
 class MovieSearchInput extends Component {
 
   //
@@ -71,17 +70,17 @@ class MovieSearchInput extends Component {
 
   renderSectionTitle(section) {
     return (
-      <div className={styles.sectionTitle}>
-        {section.title}
+      <div className={styles.sectionContainer}>
+        <div className={styles.sectionTitle}>
+          {section.title}
 
-        {
-          section.loading &&
-            <LoadingIndicator
-              className={styles.loading}
+          {section.loading &&
+            <LoadingIndicator className={styles.loading}
               rippleClassName={styles.ripple}
               size={20}
             />
-        }
+          }
+        </div>
       </div>
     );
   }
@@ -94,14 +93,14 @@ class MovieSearchInput extends Component {
     if (item.type === ADD_NEW_TYPE_MOVIE) {
       return (
         <div className={styles.addNewMovieSuggestion}>
-          Movie: "{query}""
+          Movie: "{query}"
         </div>
       );
     }
     if (item.type === ADD_NEW_TYPE_SCENE) {
       return (
         <div className={styles.addNewMovieSuggestion}>
-          Scene: "{query}""
+          Scene: "{query}"
         </div>
       );
     }
@@ -265,8 +264,7 @@ class MovieSearchInput extends Component {
     }
     if (suggestion.type === ADD_NEW_TYPE_SCENE) {
       this.props.onGoToAddNewScene(this.state.value);
-    }
-    else {
+    } else {
       this.goToMovie(suggestion);
     }
   };
@@ -285,7 +283,7 @@ class MovieSearchInput extends Component {
 
     if (suggestions.length || loading) {
       suggestionGroups.push({
-        title: translate('ExistingMovies'),
+        title: translate('ExistingMoviesAndScenes'),
         loading,
         suggestions
       });
@@ -300,7 +298,7 @@ class MovieSearchInput extends Component {
         },
         {
           type: ADD_NEW_TYPE_SCENE,
-          title: value          
+          title: value
         }
       ]
     }
@@ -358,7 +356,7 @@ MovieSearchInput.propTypes = {
   movies: PropTypes.arrayOf(PropTypes.object).isRequired,
   onGoToMovie: PropTypes.func.isRequired,
   onGoToAddNewMovie: PropTypes.func.isRequired,
-  onGoToAddNewScene: PropTypes.func.isRequired,  
+  onGoToAddNewScene: PropTypes.func.isRequired,
   bindShortcut: PropTypes.func.isRequired
 };
 

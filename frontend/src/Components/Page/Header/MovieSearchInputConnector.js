@@ -1,14 +1,14 @@
 import { push } from 'connected-react-router';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import createAllMoviesSelector from 'Store/Selectors/createAllMoviesSelector';
+import createAllItemsSelector from 'Store/Selectors/createAllItemsSelector';
 import createDeepEqualSelector from 'Store/Selectors/createDeepEqualSelector';
 import createTagsSelector from 'Store/Selectors/createTagsSelector';
 import MovieSearchInput from './MovieSearchInput';
 
 function createCleanMovieSelector() {
   return createSelector(
-    createAllMoviesSelector(),
+    createAllItemsSelector(),
     createTagsSelector(),
     (state) => state.settings.safeForWorkMode,
     (allMovies, allTags, safeForWorkMode) => {
@@ -22,6 +22,10 @@ function createCleanMovieSelector() {
           alternateTitles = [],
           tmdbId,
           imdbId,
+          stashId,
+          studioTitle,
+          releaseDate,
+          itemType,
           tags = []
         } = movie;
 
@@ -34,6 +38,10 @@ function createCleanMovieSelector() {
           alternateTitles,
           tmdbId,
           imdbId,
+          stashId,
+          studioTitle,
+          releaseDate,
+          itemType,
           safeForWorkMode,
           firstCharacter: title.charAt(0).toLowerCase(),
           tags: tags.reduce((acc, id) => {

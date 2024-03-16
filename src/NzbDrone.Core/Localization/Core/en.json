@@ -388,7 +388,7 @@
   "EditGroups": "Edit Groups",
   "EditImportListExclusion": "Edit Import List Exclusion",
   "EditImportListImplementation": "Edit Import List - {implementationName}",
-  "EditIndexerImplementation": "Edit Indexer - {implementationName}",
+  "EditIndexerImplementation": "Edit Indexer - {indexerName}",
   "EditListExclusion": "Edit List Exclusion",
   "EditMetadata": "Edit {metadataType} Metadata",
   "EditQualityProfile": "Edit Quality Profile",

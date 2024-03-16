@@ -124,6 +124,7 @@ function SceneIndexOverview(props: SceneIndexOverviewProps) {
   const elementStyle = {
     width: `${posterWidth}px`,
     height: `${posterHeight}px`,
+    'object-fit': 'cover',
   };
 
   const contentHeight = useMemo(() => {

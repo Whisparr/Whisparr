@@ -47,7 +47,9 @@ import styles from './MovieDetails.css';
 
 const defaultFontSize = parseInt(fonts.defaultFontSize);
 const lineHeight = parseFloat(fonts.lineHeight);
-
+const screenshotStyle = {
+  'object-fit': 'cover'
+};
 function getFanartUrl(images) {
   return _.find(images, { coverType: 'fanart' })?.url;
 }
@@ -357,7 +359,7 @@ class MovieDetails extends Component {
             </div>
 
             <div className={styles.headerContent}>
-              <ImageComponent
+              <ImageComponent style={screenshotStyle}
                 blur={safeForWorkMode}
                 className={itemType === 'movie' ? styles.poster : styles.screenShot}
                 images={images}
@@ -406,43 +408,39 @@ class MovieDetails extends Component {
 
                 <div className={styles.details}>
                   <div>
-                    {
-                      !!certification &&
-                        <span className={styles.certification}>
-                          {certification}
-                        </span>
+                    {!!certification &&
+                      <span className={styles.certification}>
+                        {certification}
+                      </span>
                     }
 
-                    {
-                      year > 0 &&
-                        <span className={styles.year}>
-                          <Popover
-                            anchor={
-                              year
-                            }
-                            title={translate('ReleaseDates')}
-                            body={
-                              <MovieReleaseDates
-                                releaseDate={releaseDate}
-                              />
-                            }
-                            position={tooltipPositions.BOTTOM}
-                          />
-                        </span>
+                    {year > 0 &&
+                      <span className={styles.year}>
+                        <Popover
+                          anchor={
+                            year
+                          }
+                          title={translate('ReleaseDates')}
+                          body={
+                            <MovieReleaseDates
+                              releaseDate={releaseDate}
+                            />
+                          }
+                          position={tooltipPositions.BOTTOM}
+                        />
+                      </span>
                     }
 
-                    {
-                      !!studioTitle &&
-                        <span className={styles.studio}>
-                          <MovieStudioLink foreignId={studioForeignId} studioTitle={studioTitle} />
-                        </span>
+                    {!!studioTitle &&
+                      <span className={styles.studio}>
+                        <MovieStudioLink foreignId={studioForeignId} studioTitle={studioTitle} />
+                      </span>
                     }
 
-                    {
-                      !!runtime &&
-                        <span className={styles.runtime}>
-                          {formatRuntime(runtime, movieRuntimeFormat)}
-                        </span>
+                    {!!runtime &&
+                      <span className={styles.runtime}>
+                        {formatRuntime(runtime, movieRuntimeFormat)}
+                      </span>
                     }
 
                     {
@@ -465,44 +463,41 @@ class MovieDetails extends Component {
                       </span>
                     }
 
-                    {
-                      !!tags.length &&
-                        <span>
-                          <Tooltip
-                            anchor={
-                              <Icon
-                                name={icons.TAGS}
-                                size={20}
-                              />
-                            }
-                            tooltip={
-                              <MovieTagsConnector movieId={id} />
-                            }
-                            position={tooltipPositions.BOTTOM}
-                          />
-                        </span>
+                    {!!tags.length &&
+                      <span>
+                        <Tooltip
+                          anchor={
+                            <Icon
+                              name={icons.TAGS}
+                              size={20}
+                            />
+                          }
+                          tooltip={
+                            <MovieTagsConnector movieId={id} />
+                          }
+                          position={tooltipPositions.BOTTOM}
+                        />
+                      </span>
                     }
                   </div>
                 </div>
 
                 <div className={styles.details}>
-                  {
-                    !!ratings.tmdb &&
-                      <span className={styles.rating}>
-                        <TmdbRating
-                          ratings={ratings}
-                          iconSize={20}
-                        />
-                      </span>
+                  {!!ratings.tmdb &&
+                    <span className={styles.rating}>
+                      <TmdbRating
+                        ratings={ratings}
+                        iconSize={20}
+                      />
+                    </span>
                   }
-                  {
-                    !!ratings.rottenTomatoes &&
-                      <span className={styles.rating}>
-                        <RottenTomatoRating
-                          ratings={ratings}
-                          iconSize={20}
-                        />
-                      </span>
+                  {!!ratings.rottenTomatoes &&
+                    <span className={styles.rating}>
+                      <RottenTomatoRating
+                        ratings={ratings}
+                        iconSize={20}
+                      />
+                    </span>
                   }
                 </div>
 
@@ -559,17 +554,16 @@ class MovieDetails extends Component {
                     </span>
                   </InfoLabel>
 
-                  {
-                    !!genres.length && !isSmallScreen &&
-                      <InfoLabel
-                        className={styles.detailsInfoLabel}
-                        title={translate('Genres')}
-                        size={sizes.LARGE}
-                      >
-                        <span className={styles.genres}>
-                          {genres.slice(0, 3).join(', ')}
-                        </span>
-                      </InfoLabel>
+                  {!!genres.length && !isSmallScreen &&
+                    <InfoLabel
+                      className={styles.detailsInfoLabel}
+                      title={translate('Genres')}
+                      size={sizes.LARGE}
+                    >
+                      <span className={styles.genres}>
+                        {genres.slice(0, 3).join(', ')}
+                      </span>
+                    </InfoLabel>
                   }
                 </div>
 

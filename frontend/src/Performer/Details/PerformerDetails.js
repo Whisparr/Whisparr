@@ -236,6 +236,9 @@ class PerformerDetails extends Component {
     const runningYears = statusDetails.title === translate('Inactive') ? `${careerStart}-${careerEnd}` : `${careerStart}-`;
 
     const fanartUrl = getFanartUrl(images);
+    const elementStyle = {
+      'object-fit': 'cover'
+    };
 
     return (
       <PageContent title={fullName}>
@@ -293,6 +296,7 @@ class PerformerDetails extends Component {
               <MovieHeadshot
                 blur={safeForWorkMode}
                 className={styles.poster}
+                style={elementStyle}
                 images={images}
                 size={250}
                 lazy={false}
@@ -339,25 +343,22 @@ class PerformerDetails extends Component {
 
                 <div className={styles.details}>
                   <div>
-                    {
-                      !!gender &&
-                        <span className={styles.gender}>
-                          {firstCharToUpper(gender)}
-                        </span>
+                    {!!gender &&
+                      <span className={styles.gender}>
+                        {firstCharToUpper(gender)}
+                      </span>
                     }
 
-                    {
-                      !!ethnicity &&
-                        <span className={styles.ethnicity}>
-                          {firstCharToUpper(ethnicity)}
-                        </span>
+                    {!!ethnicity &&
+                      <span className={styles.ethnicity}>
+                        {firstCharToUpper(ethnicity)}
+                      </span>
                     }
 
-                    {
-                      !!careerStart &&
-                        <span className={styles.years}>
-                          {runningYears}
-                        </span>
+                    {!!careerStart &&
+                      <span className={styles.years}>
+                        {runningYears}
+                      </span>
                     }
 
                     {
@@ -379,22 +380,21 @@ class PerformerDetails extends Component {
                       </span>
                     }
 
-                    {
-                      !!tags.length &&
-                        <span>
-                          <Tooltip
-                            anchor={
-                              <Icon
-                                name={icons.TAGS}
-                                size={20}
-                              />
-                            }
-                            tooltip={
-                              <PerformerTagsConnector performerId={id} />
-                            }
-                            position={tooltipPositions.BOTTOM}
-                          />
-                        </span>
+                    {!!tags.length &&
+                      <span>
+                        <Tooltip
+                          anchor={
+                            <Icon
+                              name={icons.TAGS}
+                              size={20}
+                            />
+                          }
+                          tooltip={
+                            <PerformerTagsConnector performerId={id} />
+                          }
+                          position={tooltipPositions.BOTTOM}
+                        />
+                      </span>
                     }
                   </div>
                 </div>
@@ -489,17 +489,16 @@ class PerformerDetails extends Component {
                     position={tooltipPositions.BOTTOM}
                   />
 
-                  {
-                    !!genres.length && !isSmallScreen &&
-                      <Label
-                        className={styles.detailsInfoLabel}
-                        title={translate('Genres')}
-                        size={sizes.LARGE}
-                      >
-                        <span className={styles.genres}>
-                          {genres.join(', ')}
-                        </span>
-                      </Label>
+                  {!!genres.length && !isSmallScreen &&
+                    <Label
+                      className={styles.detailsInfoLabel}
+                      title={translate('Genres')}
+                      size={sizes.LARGE}
+                    >
+                      <span className={styles.genres}>
+                        {genres.join(', ')}
+                      </span>
+                    </Label>
                   }
                 </div>
               </div>
@@ -523,29 +522,26 @@ class PerformerDetails extends Component {
                 null
             }
 
-            {
-              !isFetching && isPopulated && hasScenes ?
-                <FieldSet legend={translate('Scenes')}>
-                  {
-                    isPopulated && !!studios.length &&
-                      <div>
-                        {
-                          studios.map((studio) => {
-                            return (
-                              <PerformerDetailsStudioConnector
-                                key={studio.foreignId}
-                                performerId={id}
-                                studioForeignId={studio.foreignId}
-                                isExpanded={expandedState[studio.foreignId]}
-                                onExpandPress={this.onExpandPress}
-                              />
-                            );
-                          })
-                        }
-                      </div>
-                  }
-                </FieldSet> :
-                null
+            {!isFetching && isPopulated && hasScenes ?
+              <FieldSet legend={translate('Scenes')}>
+                {isPopulated && !!studios.length &&
+                  <div>
+                    {studios.map((studio) => {
+                      return (
+                        <PerformerDetailsStudioConnector
+                          key={studio.foreignId}
+                          performerId={id}
+                          studioForeignId={studio.foreignId}
+                          isExpanded={expandedState[studio.foreignId]}
+                          onExpandPress={this.onExpandPress}
+                        />
+                      );
+                    })
+                    }
+                  </div>
+                }
+              </FieldSet> :
+              null
             }
           </div>
 

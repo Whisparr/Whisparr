@@ -415,6 +415,7 @@
   "ExcludeTitle": "Exclude {0}? This will prevent {appName} from automatically adding via list sync.",
   "Existing": "Existing",
   "ExistingMovies": "Existing Movie(s)",
+  "ExistingMoviesAndScenes": "Existing Movies & Scenes",
   "ExistingTag": "Existing tag",
   "ExportCustomFormat": "Export Custom Format",
   "Extension": "Extension",

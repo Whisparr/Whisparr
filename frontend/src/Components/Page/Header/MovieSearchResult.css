@@ -1,20 +1,71 @@
 .result {
   display: flex;
+  align-items: center;
+  flex-direction: row;
   padding: 3px;
+  border-top: 1px solid var(--borderColor);
   cursor: pointer;
 }
 
 .poster {
-  width: 35px;
-  height: 50px;
+  display: flex;
+  align-content: center;
+  align-items: center;
+  width: 80px;
+
+}
+
+.screenshot {
+  margin-top: 5px;
+  width: 80px;
 }
 
 .titles {
-  flex: 1 1 1px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.titleContainer {
+  display: flex;
+  align-content: center;
+  flex-wrap: nowrap;
+  min-width: 1px;
 }
 
 .title {
-  flex: 1 1 1px;
+  overflow: hidden;
+  margin-left: 5px;
+  max-width: 500px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.studioTitle {
+  display: flex;
+  align-content: center;
+  float: left;
+  margin-left: 5px;
+  font-size: 12px;
+}
+
+.releaseDate {
+  display: flex;
+  align-content: center;
+  float: left;
+  overflow: hidden;
+  margin-left: 5px;
+  font-size: 12px;
+}
+
+.itemTypeContainer {
+  display: flex;
+}
+
+.itemType {
+  display: inline-flex;
+  float: left;
   margin-left: 5px;
 }
 

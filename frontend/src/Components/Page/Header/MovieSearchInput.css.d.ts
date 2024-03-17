@@ -11,6 +11,7 @@ interface CssExports {
   'loading': string;
   'movieContainer': string;
   'ripple': string;
+  'sectionContainer': string;
   'sectionTitle': string;
   'wrapper': string;
 }

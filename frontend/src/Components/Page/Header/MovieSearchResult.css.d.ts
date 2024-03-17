@@ -2,10 +2,16 @@
 // Please do not change this file!
 interface CssExports {
   'alternateTitle': string;
+  'itemType': string;
+  'itemTypeContainer': string;
   'poster': string;
+  'releaseDate': string;
   'result': string;
+  'screenshot': string;
+  'studioTitle': string;
   'tagContainer': string;
   'title': string;
+  'titleContainer': string;
   'titles': string;
 }
 export const cssExports: CssExports;

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import Label from 'Components/Label';
+import RelativeDateCellConnector from 'Components/Table/Cells/RelativeDateCellConnector';
 import VirtualTableRowCell from 'Components/Table/Cells/VirtualTableRowCell';
 import styles from './SelectMovieRow.css';
 
@@ -17,27 +17,40 @@ class SelectMovieRow extends Component {
   // Render
 
   render() {
+    const joinedPerformers = this.props.credits
+      .slice(0, 5)
+      .sort((a, b) => {
+        return a.performer.name > b.performer.name ? 1 : -1;
+      })
+      .map((credit) => credit.performer.name)
+      .join(', ');
+
+    const {
+      studioTitle,
+      title,
+      releaseDate
+    } = this.props;
     return (
       <>
-        <VirtualTableRowCell className={styles.title}>
-          {this.props.title}
+        <VirtualTableRowCell className={styles.studioTitle} title={studioTitle}>
+          {studioTitle}
         </VirtualTableRowCell>
 
-        <VirtualTableRowCell className={styles.year}>
-          {this.props.year}
+        <VirtualTableRowCell className={styles.title} title={title}>
+          {title}
+        </VirtualTableRowCell>
+        <VirtualTableRowCell className={styles.performers} title={joinedPerformers}>
+          {joinedPerformers}
         </VirtualTableRowCell>
 
-        <VirtualTableRowCell className={styles.imdbId}>
-          {
-            this.props.imdbId ?
-              <Label>{this.props.imdbId}</Label> :
-              null
-          }
+        <VirtualTableRowCell className={styles.releaseDate}>
+          <RelativeDateCellConnector
+            key={name}
+            date={releaseDate}
+            className={styles.releaseDate}
+          />
         </VirtualTableRowCell>
 
-        <VirtualTableRowCell className={styles.tmdbId}>
-          <Label>{this.props.tmdbId}</Label>
-        </VirtualTableRowCell>
       </>
     );
   }
@@ -46,9 +59,11 @@ class SelectMovieRow extends Component {
 SelectMovieRow.propTypes = {
   id: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
+  studioTitle: PropTypes.string.isRequired,
+  releaseDate: PropTypes.string.isRequired,
   tmdbId: PropTypes.number.isRequired,
   imdbId: PropTypes.string,
-  year: PropTypes.number.isRequired,
+  credits: PropTypes.array,
   onMovieSelect: PropTypes.func.isRequired
 };
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Equ;
 using NzbDrone.Core.Languages;
+using NzbDrone.Core.MetadataSource.SkyHook.Resource;
 
 namespace NzbDrone.Core.Movies
 {
@@ -26,6 +27,7 @@ namespace NzbDrone.Core.Movies
         public int Year { get; set; }
         public Ratings Ratings { get; set; }
         public string StudioForeignId { get; set; }
+        public StudioResource Studio { get; set; }
         public string StudioTitle { get; set; }
         public DateTime? LastInfoSync { get; set; }
         public int Runtime { get; set; }

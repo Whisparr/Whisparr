@@ -145,6 +145,13 @@
   margin-right: 14px;
 }
 
+.studio>a:link,
+.studio>a:visited,
+.studio>a:hover,
+.studio>a:active {
+  color: var(--white);
+}
+
 .certification {
   margin-right: 15px;
   padding: 0 5px;

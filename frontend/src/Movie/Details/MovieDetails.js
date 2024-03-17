@@ -41,6 +41,7 @@ import MovieCastPostersConnector from './Credits/Cast/MovieCastPostersConnector'
 import MovieDetailsLinks from './MovieDetailsLinks';
 import MovieReleaseDates from './MovieReleaseDates';
 import MovieStatusLabel from './MovieStatusLabel';
+import MovieStudioLink from './MovieStudioLink';
 import MovieTagsConnector from './MovieTagsConnector';
 import styles from './MovieDetails.css';
 
@@ -236,6 +237,7 @@ class MovieDetails extends Component {
       qualityProfileId,
       monitored,
       studioTitle,
+      studioForeignId,
       genres,
       overview,
       isAvailable,
@@ -432,7 +434,7 @@ class MovieDetails extends Component {
                     {
                       !!studioTitle &&
                         <span className={styles.studio}>
-                          {studioTitle}
+                          <MovieStudioLink foreignId={studioForeignId} studioTitle={studioTitle} />
                         </span>
                     }
 
@@ -680,6 +682,7 @@ MovieDetails.propTypes = {
   monitored: PropTypes.bool.isRequired,
   status: PropTypes.string.isRequired,
   studioTitle: PropTypes.string,
+  studioForeignId: PropTypes.string,
   genres: PropTypes.arrayOf(PropTypes.string).isRequired,
   collection: PropTypes.object,
   isAvailable: PropTypes.bool.isRequired,

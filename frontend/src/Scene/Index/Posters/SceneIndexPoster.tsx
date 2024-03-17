@@ -130,6 +130,7 @@ function SceneIndexPoster(props: SceneIndexPosterProps) {
   const elementStyle = {
     width: `${posterWidth}px`,
     height: `${posterHeight}px`,
+    'object-fit': 'cover',
   };
 
   return (

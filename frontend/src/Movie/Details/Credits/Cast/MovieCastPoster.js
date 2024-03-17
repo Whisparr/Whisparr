@@ -53,7 +53,8 @@ class MovieCastPoster extends Component {
     const elementStyle = {
       width: `${posterWidth}px`,
       height: `${posterHeight}px`,
-      borderRadius: '5px'
+      borderRadius: '5px',
+      'object-fit': 'cover'
     };
 
     const contentStyle = {
@@ -93,11 +94,10 @@ class MovieCastPoster extends Component {
                 onLoad={this.onPosterLoad}
               />
 
-              {
-                hasPosterError &&
-                  <div className={styles.overlayTitle}>
-                    {performer.fullName}
-                  </div>
+              {hasPosterError &&
+                <div className={styles.overlayTitle}>
+                  {performer.fullName}
+                </div>
               }
             </Link>
           </div>

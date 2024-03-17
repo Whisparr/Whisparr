@@ -28,7 +28,8 @@ const selectMovies = createSelector(
     const filteredMovies = items.filter((movie) => movie.studioForeignId === foreignId);
     const years = _.uniq(filteredMovies.map((movie) => movie.year)).sort();
     const hasMovies = !!filteredMovies.filter((movie) => movie.itemType === 'movie').length;
-    const hasScenes = !!filteredMovies.filter((movie) => movie.itemType === 'scene').length;
+    const totalSceneCount = filteredMovies.filter((movie) => movie.itemType === 'scene').length;
+    const hasScenes = !!totalSceneCount;
 
     return {
       isMoviesFetching: isFetching,
@@ -36,6 +37,8 @@ const selectMovies = createSelector(
       moviesError: error,
       hasMovies,
       hasScenes,
+      totalSceneCount,
+      sceneCount: _.sumBy(filteredMovies, 'hasFile'),
       years,
       sizeOnDisk: _.sumBy(filteredMovies, 'sizeOnDisk')
     };
@@ -66,6 +69,8 @@ function createMapStateToProps() {
         moviesError,
         hasMovies,
         hasScenes,
+        totalSceneCount,
+        sceneCount,
         years,
         sizeOnDisk
       } = movies;
@@ -90,6 +95,8 @@ function createMapStateToProps() {
         sizeOnDisk,
         hasMovies,
         hasScenes,
+        totalSceneCount,
+        sceneCount,
         moviesError,
         isStudioRefreshing,
         allMoviesRefreshing,

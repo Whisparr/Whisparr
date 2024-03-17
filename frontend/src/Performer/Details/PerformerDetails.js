@@ -217,6 +217,8 @@ class PerformerDetails extends Component {
       isSmallScreen,
       hasMovies,
       hasScenes,
+      totalSceneCount,
+      sceneCount,
       previousPerformer,
       nextPerformer,
       onMonitorTogglePress,
@@ -462,6 +464,21 @@ class PerformerDetails extends Component {
                     </span>
                   </Label>
 
+                  <Label
+                    className={styles.detailsLabel}
+                    title={statusDetails.message}
+                    size={sizes.LARGE}
+                  >
+                    <Icon
+                      name={icons.SCENE}
+                      size={17}
+                    />
+
+                    <span className={styles.qualityProfileName}>
+                      Scenes: {sceneCount || 0}/{totalSceneCount}
+                    </span>
+                  </Label>
+
                   <Tooltip
                     anchor={
                       <Label
@@ -596,6 +613,8 @@ PerformerDetails.propTypes = {
   moviesError: PropTypes.object,
   hasMovies: PropTypes.bool.isRequired,
   hasScenes: PropTypes.bool.isRequired,
+  totalSceneCount: PropTypes.number.isRequired,
+  sceneCount: PropTypes.number.isRequired,
   safeForWorkMode: PropTypes.bool
 };
 

@@ -224,25 +224,43 @@ namespace NzbDrone.Core.MediaCover
                         continue;
                     }
 
-                    var filePath = GetStudioCoverPath(studioId, mediaCover.CoverType);
+                    var filePath = GetStudioCoverPath(studioId);
+                    var extension = GetExtension(mediaCover.CoverType);
 
-                    mediaCover.Url = _configFileProvider.UrlBase + @"/MediaCover/studio/" + studioId + "/" + mediaCover.CoverType.ToString().ToLower() + GetExtension(mediaCover.CoverType);
+                    // get files in studio folder
+                    var pathExists = _diskProvider.FolderExists(filePath);
+                    if (!pathExists)
+                    {
+                        _logger.Trace("Studio folder didn't exist, creating {0}", filePath);
+                        _diskProvider.CreateFolder(filePath);
+                    }
+
+                    var files = _diskProvider.GetFiles(filePath, false);
+                    if (files.Any())
+                    {
+                        var info = _diskProvider.GetFileInfo(files.First());
+                        extension = info.Extension;
+                    }
+
+                    mediaCover.Url = _configFileProvider.UrlBase + @"/MediaCover/studio/" + studioId + "/" + mediaCover.CoverType.ToString().ToLower() + extension;
 
                     FileInfo file;
                     var fileExists = false;
+                    var testPath = Path.Join(filePath, mediaCover.CoverType.ToString() + extension);
                     if (fileInfos != null)
                     {
-                        fileExists = fileInfos.TryGetValue(filePath, out file);
+                        fileExists = fileInfos.TryGetValue(testPath, out file);
                     }
                     else
                     {
-                        file = _diskProvider.GetFileInfo(filePath);
+                        file = _diskProvider.GetFileInfo(testPath);
                         fileExists = file.Exists;
                     }
 
                     if (fileExists)
                     {
                         var lastWrite = file.LastWriteTimeUtc;
+                        _logger.Trace("Studio cover already exists, last write time {0}", lastWrite);
                         mediaCover.Url += "?lastWrite=" + lastWrite.Ticks;
                     }
                 }
@@ -480,10 +498,40 @@ namespace NzbDrone.Core.MediaCover
 
         private void DownloadCover(Studio studio, MediaCover cover)
         {
-            var fileName = GetStudioCoverPath(studio.Id, cover.CoverType);
+            var req = new HttpRequest(cover.RemoteUrl);
+            var imageResponse = _httpClient.Execute(req);
+            var extension = imageResponse.Headers.ContentType switch
+            {
+                "image/svg+xml" => ".svg",
+                "image/png" => ".png",
+                "image/jpeg " => ".jpg",
+                _ => ".png",
+            };
+            var filePath = GetStudioCoverPath(studio.Id);
+            filePath = Path.Join(filePath, cover.CoverType.ToString().ToLower() + extension);
+            var fileInfo = _diskProvider.GetFileInfo(filePath);
+            if (fileInfo.Directory != null && !fileInfo.Directory.Exists)
+            {
+                fileInfo.Directory.Create();
+            }
 
-            _logger.Info("Downloading {0} for {1} {2}", cover.CoverType, studio, cover.RemoteUrl);
-            _httpClient.DownloadFile(cover.RemoteUrl, fileName);
+            _logger.Trace("Writing studio cover to {0}", filePath);
+            File.WriteAllBytes(filePath, imageResponse.ResponseData);
+        }
+
+        private bool RemoteUrlHasExtension(MediaCover cover)
+        {
+            var url = cover.RemoteUrl.Split('?')[0]; // ignore URL params
+            url = url.Split('/').Last();
+            var extension = url.Contains('.') ? url.Substring(url.LastIndexOf('.')) : "";
+            if (extension.Length > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         private void EnsureResizedCovers(Movie movie, MediaCover cover, bool forceResize)

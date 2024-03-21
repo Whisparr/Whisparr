@@ -5,7 +5,10 @@ import SpinnerIconButton from 'Components/Link/SpinnerIconButton';
 import { icons } from 'Helpers/Props';
 import styles from './MonitorToggleButton.css';
 
-function getTooltip(monitored, isDisabled) {
+function getTooltip(monitored, isDisabled, tooltip) {
+  if (tooltip) {
+    return tooltip;
+  }
   if (isDisabled) {
     return 'Cannot toggle monitored state when movie is unmonitored';
   }
@@ -36,6 +39,7 @@ class MonitorToggleButton extends Component {
       className,
       monitored,
       isDisabled,
+      tooltip,
       isSaving,
       size,
       ...otherProps
@@ -51,7 +55,7 @@ class MonitorToggleButton extends Component {
         )}
         name={iconName}
         size={size}
-        title={getTooltip(monitored, isDisabled)}
+        title={getTooltip(monitored, isDisabled, tooltip)}
         isDisabled={isDisabled}
         isSpinning={isSaving}
         {...otherProps}
@@ -66,6 +70,7 @@ MonitorToggleButton.propTypes = {
   monitored: PropTypes.bool.isRequired,
   size: PropTypes.number,
   isDisabled: PropTypes.bool.isRequired,
+  tooltip: PropTypes.string,
   isSaving: PropTypes.bool.isRequired,
   onPress: PropTypes.func.isRequired
 };

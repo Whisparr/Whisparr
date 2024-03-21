@@ -76,7 +76,6 @@ function MovieIndexOverview(props: MovieIndexOverviewProps) {
     isAvailable,
     foreignId,
     tmdbId,
-    imdbId,
     studioTitle,
     sizeOnDisk,
     added,
@@ -179,7 +178,7 @@ function MovieIndexOverview(props: MovieIndexOverviewProps) {
                 <Popover
                   anchor={<Icon name={icons.EXTERNAL_LINK} size={12} />}
                   title={translate('Links')}
-                  body={<MovieDetailsLinks tmdbId={tmdbId} imdbId={imdbId} />}
+                  body={<MovieDetailsLinks tmdbId={tmdbId} />}
                 />
               </span>
 

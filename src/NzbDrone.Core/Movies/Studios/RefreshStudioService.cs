@@ -13,6 +13,7 @@ using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.MetadataSource;
 using NzbDrone.Core.Movies.Studios.Commands;
 using NzbDrone.Core.Movies.Studios.Events;
+using NzbDrone.Core.Parser;
 
 namespace NzbDrone.Core.Movies.Studios
 {
@@ -80,7 +81,7 @@ namespace NzbDrone.Core.Movies.Studios
             studio.Website = studioInfo.Website;
             studio.Images = studioInfo.Images;
             studio.LastInfoSync = DateTime.UtcNow;
-            studio.CleanTitle = studioInfo.CleanTitle;
+            studio.CleanTitle = studioInfo.Title.CleanStudioTitle();
             studio.SortTitle = studioInfo.SortTitle;
 
             _studioService.Update(studio);

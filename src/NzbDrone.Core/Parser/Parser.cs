@@ -484,6 +484,16 @@ namespace NzbDrone.Core.Parser
             return value;
         }
 
+        public static string CleanStudioTitle(this string title)
+        {
+            if (title.IsNotNullOrWhiteSpace())
+            {
+                return string.Empty;
+            }
+
+            return title.Replace(" ", "").CleanMovieTitle();
+        }
+
         public static string CleanMovieTitle(this string title)
         {
             // If Title only contains numbers return it as is.

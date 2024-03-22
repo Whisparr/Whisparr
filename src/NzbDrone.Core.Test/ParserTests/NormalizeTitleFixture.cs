@@ -186,5 +186,14 @@ namespace NzbDrone.Core.Test.ParserTests
         {
             "Tokyo Ghoul A".CleanMovieTitle().Should().Be("tokyoghoula");
         }
+
+        [Test]
+        public void should_parse_null_string()
+        {
+            string test = null;
+
+            test.CleanMovieTitle().Should().Be("");
+            "".CleanMovieTitle().Should().Be("");
+        }
     }
 }

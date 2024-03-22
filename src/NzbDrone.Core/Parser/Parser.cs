@@ -493,6 +493,11 @@ namespace NzbDrone.Core.Parser
 
         public static string CleanMovieTitle(this string title)
         {
+            if (title.IsNullOrWhiteSpace())
+            {
+                return string.Empty;
+            }
+
             // If Title only contains numbers return it as is.
             if (long.TryParse(title, out _))
             {

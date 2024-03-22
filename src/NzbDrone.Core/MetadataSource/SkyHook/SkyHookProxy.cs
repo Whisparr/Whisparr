@@ -891,7 +891,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             var newPerformer = new Studio
             {
                 Title = studio.Title,
-                CleanTitle = studio.Title.CleanMovieTitle(),
+                CleanTitle = studio.Title.CleanStudioTitle(),
                 SortTitle = Parser.Parser.NormalizeTitle(studio.Title),
                 Website = studio.Homepage,
                 ForeignId = studio.ForeignIds.StashId,

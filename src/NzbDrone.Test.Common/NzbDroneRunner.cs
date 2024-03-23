@@ -80,6 +80,7 @@ namespace NzbDrone.Test.Common
                 if (statusCall.ResponseStatus == ResponseStatus.Completed)
                 {
                     TestContext.Progress.WriteLine($"Whisparr {Port} is started. Running Tests");
+                    Thread.Sleep(2000); //Avoids error when starting to run tests too quickly
                     return;
                 }
 

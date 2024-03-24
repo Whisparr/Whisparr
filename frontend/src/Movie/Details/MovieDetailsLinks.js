@@ -9,80 +9,39 @@ import styles from './MovieDetailsLinks.css';
 function MovieDetailsLinks(props) {
   const {
     tmdbId,
-    imdbId
+    stashId
   } = props;
 
   return (
     <div className={styles.links}>
-      <Link
-        className={styles.link}
-        to={`https://www.themoviedb.org/movie/${tmdbId}`}
-      >
-        <Label
-          className={styles.linkLabel}
-          kind={kinds.INFO}
-          size={sizes.LARGE}
+      {!!tmdbId &&
+        <Link
+          className={styles.link}
+          to={`https://www.themoviedb.org/movie/${tmdbId}`}
         >
-          {translate('TMDb')}
-        </Label>
-      </Link>
-
-      <Link
-        className={styles.link}
-        to={`https://trakt.tv/search/tmdb/${tmdbId}?id_type=movie`}
-      >
-        <Label
-          className={styles.linkLabel}
-          kind={kinds.INFO}
-          size={sizes.LARGE}
-        >
-          {translate('Trakt')}
-        </Label>
-      </Link>
-
-      <Link
-        className={styles.link}
-        to={`https://letterboxd.com/tmdb/${tmdbId}`}
-      >
-        <Label
-          className={styles.linkLabel}
-          kind={kinds.INFO}
-          size={sizes.LARGE}
-        >
-          {translate('Letterboxd')}
-        </Label>
-      </Link>
-
-      {
-        !!imdbId &&
-          <Link
-            className={styles.link}
-            to={`https://imdb.com/title/${imdbId}/`}
+          <Label
+            className={styles.linkLabel}
+            kind={kinds.INFO}
+            size={sizes.LARGE}
           >
-            <Label
-              className={styles.linkLabel}
-              kind={kinds.INFO}
-              size={sizes.LARGE}
-            >
-              {translate('IMDb')}
-            </Label>
-          </Link>
+            {translate('TMDb')}
+          </Label>
+        </Link>
       }
 
-      {
-        !!imdbId &&
-          <Link
-            className={styles.link}
-            to={`https://moviechat.org/${imdbId}/`}
+      {!!stashId &&
+        <Link
+          className={styles.link}
+          to={`https://stashdb.org/scenes/${stashId}/`}
+        >
+          <Label
+            className={styles.linkLabel}
+            kind={kinds.INFO}
+            size={sizes.LARGE}
           >
-            <Label
-              className={styles.linkLabel}
-              kind={kinds.INFO}
-              size={sizes.LARGE}
-            >
-              {translate('MovieChat')}
-            </Label>
-          </Link>
+            {translate('StashDB')}
+          </Label>
+        </Link>
       }
     </div>
   );
@@ -90,7 +49,7 @@ function MovieDetailsLinks(props) {
 
 MovieDetailsLinks.propTypes = {
   tmdbId: PropTypes.number.isRequired,
-  imdbId: PropTypes.string
+  stashId: PropTypes.string
 };
 
 export default MovieDetailsLinks;

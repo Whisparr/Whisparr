@@ -227,7 +227,7 @@ class MovieDetails extends Component {
     const {
       id,
       tmdbId,
-      imdbId,
+      stashId,
       title,
       year,
       releaseDate,
@@ -455,7 +455,7 @@ class MovieDetails extends Component {
                           tooltip={
                             <MovieDetailsLinks
                               tmdbId={tmdbId}
-                              imdbId={imdbId}
+                              stashId={stashId}
                             />
                           }
                           position={tooltipPositions.BOTTOM}
@@ -665,7 +665,7 @@ class MovieDetails extends Component {
 MovieDetails.propTypes = {
   id: PropTypes.number.isRequired,
   tmdbId: PropTypes.number.isRequired,
-  imdbId: PropTypes.string,
+  stashId: PropTypes.string,
   title: PropTypes.string.isRequired,
   year: PropTypes.number.isRequired,
   runtime: PropTypes.number.isRequired,

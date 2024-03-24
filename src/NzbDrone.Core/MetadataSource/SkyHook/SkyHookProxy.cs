@@ -407,11 +407,13 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             {
                 movie.StudioForeignId = resource.Studio.ForeignIds.StashId;
                 movie.StudioTitle = resource.Studio.Title;
+                movie.Studio = resource.Studio;
             }
             else if (resource.Studio.ForeignIds != null && resource.Studio.ForeignIds.TmdbId > 0)
             {
                 movie.StudioForeignId = resource.Studio.ForeignIds.TmdbId.ToString();
                 movie.StudioTitle = resource.Studio.Title;
+                movie.Studio = resource.Studio;
             }
 
             return movie;

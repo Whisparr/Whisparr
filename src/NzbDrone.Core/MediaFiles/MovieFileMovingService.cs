@@ -91,7 +91,7 @@ namespace NzbDrone.Core.MediaFiles
                 localMovie.Movie.Path = _buildMoviePaths.BuildPath(localMovie.Movie, false);
             }
 
-            var newFileName = _buildFileNames.BuildFileName(localMovie.Movie, movieFile);
+            var newFileName = _buildFileNames.BuildFileName(localMovie.Movie, movieFile, null, localMovie.CustomFormats);
             var filePath = _buildFileNames.BuildFilePath(localMovie.Movie, newFileName, Path.GetExtension(localMovie.Path));
 
             EnsureMovieFolder(movieFile, localMovie, filePath);
@@ -109,7 +109,7 @@ namespace NzbDrone.Core.MediaFiles
                 localMovie.Movie.Path = _buildMoviePaths.BuildPath(localMovie.Movie, false);
             }
 
-            var newFileName = _buildFileNames.BuildFileName(localMovie.Movie, movieFile);
+            var newFileName = _buildFileNames.BuildFileName(localMovie.Movie, movieFile, null, localMovie.CustomFormats);
             var filePath = _buildFileNames.BuildFilePath(localMovie.Movie, newFileName, Path.GetExtension(localMovie.Path));
 
             EnsureMovieFolder(movieFile, localMovie, filePath);

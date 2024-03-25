@@ -37,7 +37,7 @@ namespace NzbDrone.Core.IndexerSearch
                 var studio = _studioService.GetById(studioId);
                 var userInvokedSearch = message.Trigger == CommandTrigger.Manual;
 
-                var items = _movieService.GetByStudioForeignId(studio.ForeignId);
+                var items = _movieService.GetByStudioForeignId(studio.ForeignId).Where(m => m.Monitored).ToList();
 
                 if (message.Years.Count > 0)
                 {

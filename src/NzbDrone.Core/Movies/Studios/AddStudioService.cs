@@ -123,7 +123,7 @@ namespace NzbDrone.Core.Movies.Studios
 
         private Studio SetPropertiesAndValidate(Studio newStudio)
         {
-            newStudio.CleanTitle = newStudio.Title.CleanMovieTitle();
+            newStudio.CleanTitle = newStudio.Title.CleanStudioTitle();
             newStudio.SortTitle = MovieTitleNormalizer.Normalize(newStudio.Title, newStudio.ForeignId);
             newStudio.Added = DateTime.UtcNow;
 

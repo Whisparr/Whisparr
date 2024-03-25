@@ -62,7 +62,7 @@ function getMovieCountKind(monitored, movieFileCount, movieCount) {
     return kinds.SUCCESS;
   }
 
-  if (!monitored) {
+  if (!movieCount) {
     return kinds.WARNING;
   }
 
@@ -162,6 +162,7 @@ class PerformerDetailsStudio extends Component {
     const {
       monitored,
       title,
+      foreignId,
       items,
       isSaving,
       isExpanded,
@@ -185,6 +186,7 @@ class PerformerDetailsStudio extends Component {
     } = getStudioStatistics(items);
 
     const sizeOnDisk = _.sumBy(items, 'sizeOnDisk');
+    const studioLink = `/studio/${foreignId}`;
 
     return (
       <div
@@ -194,13 +196,17 @@ class PerformerDetailsStudio extends Component {
           <div className={styles.left}>
             <MonitorToggleButton
               monitored={monitored}
+              isDisabled={true}
+              tooltip={translate('PerformerStudioLinkTooltip')}
               isSaving={isSaving}
               size={24}
               onPress={onMonitorStudioPress}
             />
 
-            <span className={styles.seasonNumber}>
-              {title}
+            <span className={styles.studioLink}>
+              <Link to={studioLink} title={title}>
+                {title}
+              </Link>
             </span>
 
             <Popover
@@ -247,9 +253,8 @@ class PerformerDetailsStudio extends Component {
               title={isExpanded ? translate('HideMovies') : translate('ShowMovies')}
               size={24}
             />
-            {
-              !isSmallScreen &&
-                <span>&nbsp;</span>
+            {!isSmallScreen &&
+              <span>&nbsp;</span>
             }
           </Link>
 
@@ -320,48 +325,47 @@ class PerformerDetailsStudio extends Component {
         </div>
 
         <div>
-          {
-            isExpanded &&
-              <div className={styles.movies}>
-                {
-                  items.length ?
-                    <Table
-                      columns={columns}
-                      sortKey={sortKey}
-                      sortDirection={sortDirection}
-                      onSortPress={onSortPress}
-                      onTableOptionChange={onTableOptionChange}
-                    >
-                      <TableBody>
-                        {
-                          items.map((item) => {
-                            return (
-                              <SceneRowConnector
-                                key={item.id}
-                                columns={columns}
-                                {...item}
-                                onMonitorMoviePress={this.onMonitorMoviePress}
-                              />
-                            );
-                          })
-                        }
-                      </TableBody>
-                    </Table> :
+          {isExpanded &&
+            <div className={styles.movies}>
+              {
+                items.length ?
+                  <Table
+                    columns={columns}
+                    sortKey={sortKey}
+                    sortDirection={sortDirection}
+                    onSortPress={onSortPress}
+                    onTableOptionChange={onTableOptionChange}
+                  >
+                    <TableBody>
+                      {
+                        items.map((item) => {
+                          return (
+                            <SceneRowConnector
+                              key={item.id}
+                              columns={columns}
+                              {...item}
+                              onMonitorMoviePress={this.onMonitorMoviePress}
+                            />
+                          );
+                        })
+                      }
+                    </TableBody>
+                  </Table> :
 
-                    <div className={styles.noMovies}>
-                      {translate('NoMoviesInThisSeason')}
-                    </div>
-                }
-                <div className={styles.collapseButtonContainer}>
-                  <IconButton
-                    iconClassName={styles.collapseButtonIcon}
-                    name={icons.COLLAPSE}
-                    size={20}
-                    title={translate('HideMovies')}
-                    onPress={this.onExpandPress}
-                  />
-                </div>
+                  <div className={styles.noMovies}>
+                    {translate('NoMoviesInThisSeason')}
+                  </div>
+              }
+              <div className={styles.collapseButtonContainer}>
+                <IconButton
+                  iconClassName={styles.collapseButtonIcon}
+                  name={icons.COLLAPSE}
+                  size={20}
+                  title={translate('HideMovies')}
+                  onPress={this.onExpandPress}
+                />
               </div>
+            </div>
           }
         </div>
       </div>

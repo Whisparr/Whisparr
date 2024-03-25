@@ -1043,6 +1043,7 @@
   "Performer": "Performer",
   "PerformerName": "Name",
   "PerformersSelectedInterp": "{count} Performer(s) Selected",
+  "PerformerStudioLinkTooltip": "Click Studio name to toggle from Details view",
   "Permissions": "Permissions",
   "PhysicalRelease": "Physical Release",
   "PhysicalReleaseDate": "Physical Release Date",

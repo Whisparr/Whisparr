@@ -332,6 +332,34 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             return scenes;
         }
 
+        public List<int> GetPerformerMovies(string stashId)
+        {
+            var httpRequest = _whisparrMetadata.Create()
+                                             .SetSegment("route", "performer")
+                                             .Resource($"{stashId}/works")
+                                             .Build();
+
+            httpRequest.AllowAutoRedirect = true;
+            httpRequest.SuppressHttpError = true;
+
+            var httpResponse = _httpClient.Get<PerformerWorksResource>(httpRequest);
+            var movies = httpResponse.Resource.Movies.ConvertAll(int.Parse);
+
+            if (httpResponse.HasHttpError)
+            {
+                if (httpResponse.StatusCode == HttpStatusCode.NotFound)
+                {
+                    throw new MovieNotFoundException(stashId);
+                }
+                else
+                {
+                    throw new HttpException(httpRequest, httpResponse);
+                }
+            }
+
+            return movies;
+        }
+
         public List<string> GetStudioScenes(string stashId)
         {
             var httpRequest = _whisparrMetadata.Create()

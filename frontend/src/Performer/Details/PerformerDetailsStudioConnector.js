@@ -7,7 +7,7 @@ import { executeCommand } from 'Store/Actions/commandActions';
 import { toggleMovieMonitored } from 'Store/Actions/movieActions';
 import { setPerformerScenesSort, setPerformerScenesTableOption } from 'Store/Actions/performerScenesActions';
 import { toggleStudioMonitored } from 'Store/Actions/studioActions';
-import createAllScenesSelector from 'Store/Selectors/createAllScenesSelector';
+import createClientSideCollectionSelector from 'Store/Selectors/createClientSideCollectionSelector';
 import createDimensionsSelector from 'Store/Selectors/createDimensionsSelector';
 import createPerformerSelector from 'Store/Selectors/createPerformerSelector';
 import PerformerDetailsStudio from './PerformerDetailsStudio';
@@ -29,28 +29,20 @@ function createStudioByForeignIdSelector() {
 function createMapStateToProps() {
   return createSelector(
     (state, { studioForeignId }) => studioForeignId,
-    (state) => state.performerScenes,
     createStudioByForeignIdSelector(),
-    createAllScenesSelector(),
+    createClientSideCollectionSelector('movies', 'performerScenes'),
     createPerformerSelector(),
     createDimensionsSelector(),
-    (studioForeignId, performerScenes, studio, scenes, performer, dimensions) => {
+    (studioForeignId, studio, scenes, performer, dimensions) => {
 
-      const scenesInStudio = scenes.filter((scene) => scene.studioForeignId === studioForeignId && scene.credits.some((credit) => credit.performer.foreignId === performer.foreignId));
-      const sortedScenes =scenesInStudio.sort(
-        (a, b) => {
-          if (performerScenes.sortDirection === 'ascending') {
-            return new Date(a.releaseDate) - new Date(b.releaseDate);
-          }
-          return new Date(b.releaseDate) - new Date(a.releaseDate);
-        });
+      const scenesInStudio = scenes.items.filter((scene) => scene.studioForeignId === studioForeignId && scene.credits.some((credit) => credit.performer.foreignId === performer.foreignId));
 
       return {
         ...studio,
-        items: sortedScenes,
-        columns: performerScenes.columns,
-        sortKey: performerScenes.sortKey,
-        sortDirection: performerScenes.sortDirection,
+        items: scenesInStudio,
+        columns: scenes.columns,
+        sortKey: scenes.sortKey,
+        sortDirection: scenes.sortDirection,
         performerMonitored: performer.monitored,
         path: performer.path,
         isSmallScreen: dimensions.isSmallScreen,

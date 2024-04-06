@@ -72,11 +72,13 @@ const fileNameTokens = [
 ];
 
 const movieTokens = [
-  { token: '{Movie Title}', example: 'Movie\'s Title' },
-  { token: '{Movie CleanTitle}', example: 'Movies Title' },
-  { token: '{Movie TitleThe}', example: 'Movie\'s Title, The' },
+  { token: '{Movie Title}', example: 'Movie\'s Title', footNote: 1 },
+  { token: '{Movie CleanTitle}', example: 'Movies Title', footNote: 1 },
+  { token: '{Movie TitleThe}', example: 'Movie\'s Title, The', footNote: 1 },
   { token: '{Movie TitleFirstCharacter}', example: 'M' },
-  { token: '{Movie Collection}', example: 'The Movie Collection' },
+  { token: '{Movie TitleFirstCharacter:DE}', example: 'T' },
+  { token: '{Movie Collection}', example: 'The Movie Collection', footNote: 1 },
+  { token: '{Movie Certification}', example: 'R' },
   { token: '{Release Year}', example: '2009' }
 ];
 
@@ -139,11 +141,11 @@ const mediaInfoTokens = [
 ];
 
 const releaseGroupTokens = [
-  { token: '{Release Group}', example: 'Rls Grp' }
+  { token: '{Release Group}', example: 'Rls Grp', footNote: 1 }
 ];
 
 const editionTokens = [
-  { token: '{Edition Tags}', example: 'IMAX' }
+  { token: '{Edition Tags}', example: 'IMAX', footNote: 1 }
 ];
 
 const customFormatTokens = [
@@ -299,7 +301,7 @@ class NamingModal extends Component {
                   <FieldSet legend={translate('Movie')}>
                     <div className={styles.groups}>
                       {
-                        movieTokens.map(({ token, example }) => {
+                        movieTokens.map(({ token, example, footNote }) => {
                           return (
                             <NamingOption
                               key={token}
@@ -307,6 +309,7 @@ class NamingModal extends Component {
                               value={value}
                               token={token}
                               example={example}
+                              footNote={footNote}
                               tokenSeparator={tokenSeparator}
                               tokenCase={tokenCase}
                               onPress={this.onOptionPress}
@@ -316,6 +319,11 @@ class NamingModal extends Component {
                         )
                       }
                     </div>
+
+              <div className={styles.footNote}>
+                <Icon className={styles.icon} name={icons.FOOTNOTE} />
+                <InlineMarkdown data={translate('MovieFootNote')} />
+              </div>
                   </FieldSet>
 
                   <FieldSet legend={translate('MovieID')}>
@@ -469,7 +477,7 @@ class NamingModal extends Component {
                   <FieldSet legend={translate('ReleaseGroup')}>
                     <div className={styles.groups}>
                       {
-                        releaseGroupTokens.map(({ token, example }) => {
+                        releaseGroupTokens.map(({ token, example, footNote }) => {
                           return (
                             <NamingOption
                               key={token}
@@ -477,6 +485,7 @@ class NamingModal extends Component {
                               value={value}
                               token={token}
                               example={example}
+                              footNote={footNote}
                               tokenSeparator={tokenSeparator}
                               tokenCase={tokenCase}
                               onPress={this.onOptionPress}
@@ -486,12 +495,17 @@ class NamingModal extends Component {
                         )
                       }
                     </div>
+
+                    <div className={styles.footNote}>
+                      <Icon className={styles.icon} name={icons.FOOTNOTE} />
+                      <InlineMarkdown data={translate('ReleaseGroupFootNote')} />
+                    </div>
                   </FieldSet>
 
                   <FieldSet legend={translate('Edition')}>
                     <div className={styles.groups}>
                       {
-                        editionTokens.map(({ token, example }) => {
+                        editionTokens.map(({ token, example, footNote }) => {
                           return (
                             <NamingOption
                               key={token}
@@ -499,6 +513,7 @@ class NamingModal extends Component {
                               value={value}
                               token={token}
                               example={example}
+                              footNote={footNote}
                               tokenSeparator={tokenSeparator}
                               tokenCase={tokenCase}
                               onPress={this.onOptionPress}
@@ -507,6 +522,11 @@ class NamingModal extends Component {
                         }
                         )
                       }
+                    </div>
+
+                    <div className={styles.footNote}>
+                      <Icon className={styles.icon} name={icons.FOOTNOTE} />
+                      <InlineMarkdown data={translate('EditionFootNote')} />
                     </div>
                   </FieldSet>
 

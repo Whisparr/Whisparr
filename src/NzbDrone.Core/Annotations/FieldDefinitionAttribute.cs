@@ -85,6 +85,7 @@ namespace NzbDrone.Core.Annotations
         TagSelect,
         RootFolder,
         QualityProfile,
+        MovieTag,
         Date
     }
 

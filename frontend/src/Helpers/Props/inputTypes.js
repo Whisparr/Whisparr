@@ -18,6 +18,7 @@ export const INDEXER_FLAGS_SELECT = 'indexerFlagsSelect';
 export const LANGUAGE_SELECT = 'languageSelect';
 export const DOWNLOAD_CLIENT_SELECT = 'downloadClientSelect';
 export const SELECT = 'select';
+export const MOVIE_TAG = 'movieTag';
 export const DYNAMIC_SELECT = 'dynamicSelect';
 export const TAG = 'tag';
 export const TEXT = 'text';
@@ -47,6 +48,7 @@ export const all = [
   INDEXER_FLAGS_SELECT,
   LANGUAGE_SELECT,
   SELECT,
+  MOVIE_TAG,
   DYNAMIC_SELECT,
   TAG,
   TEXT,

@@ -2362,6 +2362,39 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "seriesIds",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          },
+          {
+            "name": "languages",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          },
+          {
+            "name": "quality",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
           }
         ],
         "responses": {
@@ -5449,6 +5482,43 @@
               "type": "boolean",
               "default": false
             }
+          },
+          {
+            "name": "seriesIds",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          },
+          {
+            "name": "protocol",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/DownloadProtocol"
+            }
+          },
+          {
+            "name": "languages",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          },
+          {
+            "name": "quality",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
           }
         ],
         "responses": {
@@ -7879,6 +7949,9 @@
           },
           "autoRedownloadFailed": {
             "type": "boolean"
+          },
+          "autoRedownloadFailedFromInteractiveSearch": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -8490,6 +8563,10 @@
             "type": "string",
             "nullable": true
           },
+          "passwordConfirmation": {
+            "type": "string",
+            "nullable": true
+          },
           "logLevel": {
             "type": "string",
             "nullable": true
@@ -8745,11 +8822,17 @@
           "enableAutomaticAdd": {
             "type": "boolean"
           },
+          "searchForMissingEpisodes": {
+            "type": "boolean"
+          },
           "shouldMonitor": {
             "$ref": "#/components/schemas/ImportListMonitorTypes"
           },
           "siteMonitorType": {
             "$ref": "#/components/schemas/MonitorTypes"
+          },
+          "monitorNewItems": {
+            "$ref": "#/components/schemas/NewItemMonitorTypes"
           },
           "rootFolderPath": {
             "type": "string",
@@ -9624,6 +9707,13 @@
           }
         },
         "additionalProperties": false
+      },
+      "NewItemMonitorTypes": {
+        "enum": [
+          "all",
+          "none"
+        ],
+        "type": "string"
       },
       "NotificationResource": {
         "type": "object",
@@ -10579,6 +10669,10 @@
             "format": "int32",
             "nullable": true
           },
+          "downloadClient": {
+            "type": "string",
+            "nullable": true
+          },
           "shouldOverride": {
             "type": "boolean",
             "nullable": true
@@ -10848,6 +10942,9 @@
             "type": "boolean",
             "nullable": true
           },
+          "monitorNewItems": {
+            "$ref": "#/components/schemas/NewItemMonitorTypes"
+          },
           "qualityProfileId": {
             "type": "integer",
             "format": "int32",
@@ -10959,6 +11056,9 @@
           },
           "monitored": {
             "type": "boolean"
+          },
+          "monitorNewItems": {
+            "$ref": "#/components/schemas/NewItemMonitorTypes"
           },
           "useSceneNumbering": {
             "type": "boolean"

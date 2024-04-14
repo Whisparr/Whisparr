@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using FluentValidation;
 using NzbDrone.Core.Annotations;
-using NzbDrone.Core.ThingiProvider;
 using NzbDrone.Core.Validation;
 
 namespace NzbDrone.Core.ImportLists.Whisparr
@@ -16,13 +15,12 @@ namespace NzbDrone.Core.ImportLists.Whisparr
         }
     }
 
-    public class WhisparrSettings : IProviderConfig
+    public class WhisparrSettings : ImportListSettingsBase<WhisparrSettings>
     {
         private static readonly WhisparrSettingsValidator Validator = new WhisparrSettingsValidator();
 
         public WhisparrSettings()
         {
-            BaseUrl = "";
             ApiKey = "";
             ProfileIds = Array.Empty<int>();
             TagIds = Array.Empty<int>();
@@ -30,7 +28,7 @@ namespace NzbDrone.Core.ImportLists.Whisparr
         }
 
         [FieldDefinition(0, Label = "Full URL", HelpText = "URL, including port, of the Whisparr instance to import from (Whisparr 3.0 or higher)")]
-        public string BaseUrl { get; set; }
+        public string BaseUrl { get; set; } = string.Empty;
 
         [FieldDefinition(1, Label = "API Key", Privacy = PrivacyLevel.ApiKey, HelpText = "Apikey of the Whisparr instance to import from (Whisparr 3.0 or higher)")]
         public string ApiKey { get; set; }
@@ -44,7 +42,7 @@ namespace NzbDrone.Core.ImportLists.Whisparr
         [FieldDefinition(4, Type = FieldType.Select, SelectOptionsProviderAction = "getRootFolders", Label = "Root Folders", HelpText = "Root Folders from the source instance to import from")]
         public IEnumerable<string> RootFolderPaths { get; set; }
 
-        public NzbDroneValidationResult Validate()
+        public override NzbDroneValidationResult Validate()
         {
             return new NzbDroneValidationResult(Validator.Validate(this));
         }

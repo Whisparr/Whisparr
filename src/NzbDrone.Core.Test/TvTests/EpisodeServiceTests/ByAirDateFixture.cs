@@ -15,10 +15,10 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeServiceTests
         private const int SERIES_ID = 1;
         private const string AIR_DATE = "2014-04-02";
 
-        private Episode CreateEpisode(int seasonNumber, int episodeNumber, string performer = null, string title = null)
+        private Episode CreateEpisode(int seasonNumber, int episodeNumber, string performer = null, string title = null, string aridate = AIR_DATE)
         {
             var episode = Builder<Episode>.CreateNew()
-                                          .With(e => e.SeriesId = 1)
+                                          .With(e => e.SeriesId = SERIES_ID)
                                           .With(e => e.SeasonNumber = seasonNumber)
                                           .With(e => e.Title = title)
                                           .With(e => e.Actors = new List<Actor>
@@ -26,10 +26,10 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeServiceTests
                                               new Actor
                                               {
                                                   Name = performer,
-                                                  Gender = Gender.Other
+                                                  Gender = Gender.Female,
                                               }
                                           })
-                                          .With(e => e.AirDate = AIR_DATE)
+                                          .With(e => e.AirDate = aridate)
                                           .BuildNew();
 
             return episode;
@@ -88,6 +88,24 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeServiceTests
 
             Subject.FindEpisode(SERIES_ID, AIR_DATE, " - Jenna Jay - Get Some - [WEBDL-1080p]").Should().Be(episode1);
             Subject.FindEpisode(SERIES_ID, AIR_DATE, " - Jenna Jay - Good Times - [WEBDL-1080p]").Should().Be(episode2);
+        }
+
+        [Test]
+        public void should_get_episode_when_two_regular_episodes_with_perfomer_in_title_share_the_same_air_date_and_performer_and_part_is_provided()
+        {
+            var title1 = "EvilAngel - 2021-02-24 - Whitney Wright POV Anal & A2M";
+            var title2 = "EvilAngel - 2021-02-24 - BTS Whitney Wright POV Anal & A2M";
+
+            var seriesTitleInfo1 = Parser.Parser.ParseTitle(title1);
+            var seriesTitleInfo2 = Parser.Parser.ParseTitle(title2);
+
+            var episode1 = CreateEpisode(2023, 1, "Whitney Wright", "Whitney Wright: POV Anal & A2M", "2021-02-24");
+            var episode2 = CreateEpisode(2023, 2, "Whitney Wright", "BTS-Whitney Wright: POV Anal & A2M", "2021-02-24");
+
+            GivenEpisodes(episode1, episode2);
+
+            Subject.FindEpisode(SERIES_ID, seriesTitleInfo1.AirDate, seriesTitleInfo1.ReleaseTokens).Should().Be(episode1);
+            Subject.FindEpisode(SERIES_ID, seriesTitleInfo1.AirDate, seriesTitleInfo2.ReleaseTokens).Should().Be(episode2);
         }
 
         [Test]

@@ -238,57 +238,7 @@ namespace NzbDrone.Core.Tv
 
             if (parsedEpisodeTitle.IsNotNullOrWhiteSpace())
             {
-                var matches = new List<Episode>();
-
-                foreach (var episode in episodes)
-                {
-                    var cleanTitle = episode.Title.IsNotNullOrWhiteSpace() ? Parser.Parser.NormalizeEpisodeTitle(episode.Title) : string.Empty;
-
-                    // If parsed title matches title, consider a match
-                    if (cleanTitle.IsNotNullOrWhiteSpace() && parsedEpisodeTitle.Equals(cleanTitle))
-                    {
-                        matches.Add(episode);
-                        continue;
-                    }
-
-                    var cleanPerformers = episode.Actors.Select(a => Parser.Parser.NormalizeEpisodeTitle(a.Name))
-                                                        .Where(x => x.IsNotNullOrWhiteSpace());
-
-                    if (cleanPerformers.Empty())
-                    {
-                        continue;
-                    }
-
-                    // If parsed title matches performer, consider a match
-                    if (cleanPerformers.Any(p => p.IsNotNullOrWhiteSpace() && parsedEpisodeTitle.Equals(p)))
-                    {
-                        matches.Add(episode);
-                        continue;
-                    }
-
-                    var cleanFemalePerformers = episode.Actors.Where(a => a.Gender == Gender.Female)
-                                                              .Select(a => Parser.Parser.NormalizeEpisodeTitle(a.Name))
-                                                              .Where(x => x.IsNotNullOrWhiteSpace()).ToList();
-
-                    // If all female performers are in title, consider a match
-                    if (cleanFemalePerformers.Any() && cleanFemalePerformers.All(x => parsedEpisodeTitle.Contains(x)))
-                    {
-                        matches.Add(episode);
-                        continue;
-                    }
-
-                    if (cleanTitle.IsNullOrWhiteSpace())
-                    {
-                        continue;
-                    }
-
-                    // If parsed title contains a performer and the title then consider a match
-                    if (cleanPerformers.Any(x => parsedEpisodeTitle.Contains(x)) && parsedEpisodeTitle.Contains(cleanTitle))
-                    {
-                        matches.Add(episode);
-                        continue;
-                    }
-                }
+                var matches = MatchEpisodes(parsedEpisodeTitle, episodes);
 
                 if (matches.Count == 1)
                 {
@@ -300,6 +250,88 @@ namespace NzbDrone.Core.Tv
 
             _logger.Debug("Multiple episodes with the same air date found. Date: {0}", date);
             return null;
+        }
+
+        private List<Episode> MatchEpisodes(string parsedEpisodeTitle, List<Episode> episodes, int matchLevel = 0)
+        {
+            var matches = new List<Episode>();
+
+            foreach (var episode in episodes)
+            {
+                var cleanTitle = episode.Title.IsNotNullOrWhiteSpace() ? Parser.Parser.NormalizeEpisodeTitle(episode.Title) : string.Empty;
+
+                // If parsed title matches title, consider a match
+                if (cleanTitle.IsNotNullOrWhiteSpace() && parsedEpisodeTitle.Equals(cleanTitle))
+                {
+                    matches.Add(episode);
+                    continue;
+                }
+
+                // Check for character substitution
+                if (cleanTitle.IsNotNullOrWhiteSpace() && parsedEpisodeTitle.Replace(" ", "").Equals(cleanTitle.Replace(" ", "")))
+                {
+                    matches.Add(episode);
+                    continue;
+                }
+
+                if (matchLevel > 2)
+                {
+                    continue;
+                }
+
+                var cleanPerformers = episode.Actors.Select(a => Parser.Parser.NormalizeEpisodeTitle(a.Name))
+                                                    .Where(x => x.IsNotNullOrWhiteSpace());
+
+                if (cleanPerformers.Empty())
+                {
+                    continue;
+                }
+
+                // If parsed title matches performer, consider a match
+                if (cleanPerformers.Any(p => p.IsNotNullOrWhiteSpace() && parsedEpisodeTitle.Equals(p)))
+                {
+                    matches.Add(episode);
+                    continue;
+                }
+
+                if (matchLevel > 1)
+                {
+                    continue;
+                }
+
+                var cleanFemalePerformers = episode.Actors.Where(a => a.Gender == Gender.Female)
+                                                          .Select(a => Parser.Parser.NormalizeEpisodeTitle(a.Name))
+                                                          .Where(x => x.IsNotNullOrWhiteSpace()).ToList();
+
+                if (cleanTitle.IsNotNullOrWhiteSpace())
+                {
+                    // If parsed title contains a performer and the title then consider a match
+                    if (cleanPerformers.Any(x => parsedEpisodeTitle.Contains(x)) && parsedEpisodeTitle.Contains(cleanTitle))
+                    {
+                        matches.Add(episode);
+                        continue;
+                    }
+                }
+
+                if (matchLevel > 0)
+                {
+                    continue;
+                }
+
+                // If all female performers are in title, consider a match
+                if (cleanFemalePerformers.Any() && cleanFemalePerformers.All(x => parsedEpisodeTitle.Contains(x)))
+                {
+                    matches.Add(episode);
+                    continue;
+                }
+            }
+
+            if (matches.Count > 1 && matchLevel < 2)
+            {
+                matches = MatchEpisodes(parsedEpisodeTitle, matches, matchLevel + 1);
+            }
+
+            return matches;
         }
     }
 }

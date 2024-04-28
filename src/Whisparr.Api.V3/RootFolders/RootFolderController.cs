@@ -50,7 +50,8 @@ namespace Whisparr.Api.V3.RootFolders
         }
 
         [RestPostById]
-        public ActionResult<RootFolderResource> CreateRootFolder(RootFolderResource rootFolderResource)
+        [Consumes("application/json")]
+        public ActionResult<RootFolderResource> CreateRootFolder([FromBody] RootFolderResource rootFolderResource)
         {
             var model = rootFolderResource.ToModel();
 

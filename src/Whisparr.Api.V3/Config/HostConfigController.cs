@@ -122,7 +122,7 @@ namespace Whisparr.Api.V3.Config
         }
 
         [RestPutById]
-        public ActionResult<HostConfigResource> SaveHostConfig(HostConfigResource resource)
+        public ActionResult<HostConfigResource> SaveHostConfig([FromBody] HostConfigResource resource)
         {
             var dictionary = resource.GetType()
                                      .GetProperties(BindingFlags.Instance | BindingFlags.Public)

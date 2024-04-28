@@ -46,14 +46,16 @@ namespace Whisparr.Api.V3.ImportLists
         }
 
         [RestPutById]
-        public ActionResult<ImportExclusionsResource> UpdateExclusion(ImportExclusionsResource exclusionResource)
+        [Consumes("application/json")]
+        public ActionResult<ImportExclusionsResource> UpdateExclusion([FromBody] ImportExclusionsResource exclusionResource)
         {
             var model = exclusionResource.ToModel();
             return Accepted(_exclusionService.Update(model));
         }
 
         [RestPostById]
-        public ActionResult<ImportExclusionsResource> AddExclusion(ImportExclusionsResource exclusionResource)
+        [Consumes("application/json")]
+        public ActionResult<ImportExclusionsResource> AddExclusion([FromBody] ImportExclusionsResource exclusionResource)
         {
             var model = exclusionResource.ToModel();
 

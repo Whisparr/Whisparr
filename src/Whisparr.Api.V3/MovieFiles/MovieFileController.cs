@@ -102,7 +102,7 @@ namespace Whisparr.Api.V3.MovieFiles
 
         [RestPutById]
         [Consumes("application/json")]
-        public ActionResult<MovieFileResource> SetMovieFile(MovieFileResource movieFileResource)
+        public ActionResult<MovieFileResource> SetMovieFile([FromBody] MovieFileResource movieFileResource)
         {
             var movieFile = _mediaFileService.GetMovie(movieFileResource.Id);
             movieFile.IndexerFlags = (IndexerFlags)movieFileResource.IndexerFlags;

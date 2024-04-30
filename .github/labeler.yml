@@ -23,6 +23,9 @@
     - any-glob-to-any-file:
       - src/NzbDrone.Core/Extras/Metadata/*
 
+'Area: Metadata':
+  - src/NzbDrone.Core/Extras/Metadata/*
+
 'Area: Indexer':
   - changed-files:
     - any-glob-to-any-file:

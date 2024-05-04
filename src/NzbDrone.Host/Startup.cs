@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using DryIoc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
@@ -28,6 +29,7 @@ using NzbDrone.SignalR;
 using Whisparr.Api.V3.System;
 using Whisparr.Http;
 using Whisparr.Http.Authentication;
+using Whisparr.Http.ClientSchema;
 using Whisparr.Http.ErrorManagement;
 using Whisparr.Http.Frontend;
 using Whisparr.Http.Middleware;
@@ -213,6 +215,7 @@ namespace NzbDrone.Host
         }
 
         public void Configure(IApplicationBuilder app,
+                              IContainer container,
                               IStartupContext startupContext,
                               Lazy<IMainDatabase> mainDatabaseFactory,
                               Lazy<ILogDatabase> logDatabaseFactory,
@@ -243,6 +246,7 @@ namespace NzbDrone.Host
             _ = logDatabaseFactory.Value;
 
             dbTarget.Register();
+            SchemaBuilder.Initialize(container);
 
             if (OsInfo.IsNotWindows)
             {

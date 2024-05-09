@@ -111,7 +111,8 @@
         height: 35px;
         border: 1px solid #dde6e9;
         border-radius: 4px;
-        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+box-shadow: inset 0 1px 1px var(--inputBoxShadowColor);
+        color: var(--textColor);
       }
 
       .form-input:focus {
@@ -288,5 +289,58 @@
 
       loginFailedDiv.classList.remove("hidden");
     }
+
+    var light = {
+      white: '#fff',
+      pageBackground: '#f5f7fa',
+      textColor: '#515253',
+      themeDarkColor: '#3a3f51',
+      panelBackground: '#fff',
+      inputBackgroundColor: '#fff',
+      inputBorderColor: '#dde6e9',
+      inputBoxShadowColor: 'rgba(0, 0, 0, 0.075)',
+      inputFocusBorderColor: '#66afe9',
+      inputFocusBoxShadowColor: 'rgba(102, 175, 233, 0.6)',
+      primaryBackgroundColor: '#5d9cec',
+      primaryBorderColor: '#5899eb',
+      primaryHoverBackgroundColor: '#4b91ea',
+      primaryHoverBorderColor: '#3483e7',
+      failedColor: '#f05050',
+      forgotPasswordColor: '#909fa7',
+      forgotPasswordAltColor: '#748690'
+    };
+
+    var dark = {
+      white: '#fff',
+      pageBackground: '#202020',
+      textColor: '#ccc',
+      themeDarkColor: '#494949',
+      panelBackground: '#111',
+      inputBackgroundColor: '#333',
+      inputBorderColor: '#dde6e9',
+      inputBoxShadowColor: 'rgba(0, 0, 0, 0.075)',
+      inputFocusBorderColor: '#66afe9',
+      inputFocusBoxShadowColor: 'rgba(102, 175, 233, 0.6)',
+      primaryBackgroundColor: '#5d9cec',
+      primaryBorderColor: '#5899eb',
+      primaryHoverBackgroundColor: '#4b91ea',
+      primaryHoverBorderColor: '#3483e7',
+      failedColor: '#f05050',
+      forgotPasswordColor: '#737d83',
+      forgotPasswordAltColor: '#546067'
+    };
+
+    var theme = "_THEME_";
+    var defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var finalTheme = theme === 'dark' || (theme === 'auto' && defaultDark) ?
+      dark :
+      light;
+
+    Object.entries(finalTheme).forEach(([key, value]) => {
+      document.documentElement.style.setProperty(
+        `--${key}`,
+        value
+      );
+    });
   </script>
 </html>

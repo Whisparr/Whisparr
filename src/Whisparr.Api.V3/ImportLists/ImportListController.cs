@@ -1,3 +1,4 @@
+using FluentValidation;
 using NzbDrone.Core.ImportLists;
 using NzbDrone.Core.Validation;
 using NzbDrone.Core.Validation.Paths;
@@ -11,13 +12,18 @@ namespace Whisparr.Api.V3.ImportLists
         public static readonly ImportListBulkResourceMapper BulkResourceMapper = new ();
         public ImportListController(
             IImportListFactory importListFactory,
+            RootFolderExistsValidator rootFolderExistsValidator,
             QualityProfileExistsValidator qualityProfileExistsValidator,
             ImportListResourceMapper resourceMapper)
             : base(importListFactory, "importlist", resourceMapper, BulkResourceMapper)
         {
-            SharedValidator.RuleFor(c => c.RootFolderPath).IsValidPath();
-            SharedValidator.RuleFor(c => c.QualityProfileId).ValidId();
-            SharedValidator.RuleFor(c => c.QualityProfileId).SetValidator(qualityProfileExistsValidator);
+            SharedValidator.RuleFor(c => c.RootFolderPath).Cascade(CascadeMode.Stop)
+                .IsValidPath()
+                .SetValidator(rootFolderExistsValidator);
+
+            SharedValidator.RuleFor(c => c.QualityProfileId).Cascade(CascadeMode.Stop)
+                .ValidId()
+                .SetValidator(qualityProfileExistsValidator);
         }
     }
 }

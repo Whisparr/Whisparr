@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Core.Blocklisting;
 using NzbDrone.Core.CustomFormats;
 using NzbDrone.Core.Datastore;
+using NzbDrone.Core.Indexers;
 using Whisparr.Http;
 using Whisparr.Http.Extensions;
 using Whisparr.Http.REST.Attributes;
@@ -25,12 +26,22 @@ namespace Whisparr.Api.V3.Blocklist
 
         [HttpGet]
         [Produces("application/json")]
-        public PagingResource<BlocklistResource> GetBlocklist([FromQuery] PagingRequestResource paging)
+        public PagingResource<BlocklistResource> GetBlocklist([FromQuery] PagingRequestResource paging, [FromQuery] int[] movieIds = null, [FromQuery] DownloadProtocol[] protocols = null)
         {
             var pagingResource = new PagingResource<BlocklistResource>(paging);
             var pagingSpec = pagingResource.MapToPagingSpec<BlocklistResource, NzbDrone.Core.Blocklisting.Blocklist>("date", SortDirection.Descending);
 
-            return pagingSpec.ApplyToPage(_blocklistService.Paged, model => BlocklistResourceMapper.MapToResource(model, _formatCalculator));
+            if (movieIds?.Any() == true)
+            {
+                pagingSpec.FilterExpressions.Add(b => movieIds.Contains(b.MovieId));
+            }
+
+            if (protocols?.Any() == true)
+            {
+                pagingSpec.FilterExpressions.Add(b => protocols.Contains(b.Protocol));
+            }
+
+            return pagingSpec.ApplyToPage(b => _blocklistService.Paged(pagingSpec), b => BlocklistResourceMapper.MapToResource(b, _formatCalculator));
         }
 
         [HttpGet("movie")]

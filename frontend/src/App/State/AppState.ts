@@ -1,4 +1,5 @@
 import InteractiveImportAppState from 'App/State/InteractiveImportAppState';
+import BlocklistAppState from './BlocklistAppState';
 import CalendarAppState from './CalendarAppState';
 import CommandAppState from './CommandAppState';
 import HistoryAppState from './HistoryAppState';
@@ -56,6 +57,7 @@ export interface AppSectionState {
 
 interface AppState {
   app: AppSectionState;
+  blocklist: BlocklistAppState;
   calendar: CalendarAppState;
   commands: CommandAppState;
   history: HistoryAppState;

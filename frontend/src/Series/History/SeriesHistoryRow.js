@@ -122,6 +122,8 @@ class SeriesHistoryRow extends Component {
 
         <RelativeDateCellConnector
           date={date}
+          includeSeconds={true}
+          includeTime={true}
         />
 
         <TableRowCell className={styles.details}>

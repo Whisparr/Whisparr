@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.Movies;
 
@@ -18,6 +19,8 @@ namespace NzbDrone.Core.Notifications.Webhook
         public string StashId { get; set; }
         public string Overview { get; set; }
         public string ItemType { get; set; }
+        public List<string> Genres { get; set; }
+        public List<WebhookImage> Images { get; set; }
         public List<string> Tags { get; set; }
 
         public WebhookMovie()
@@ -35,6 +38,8 @@ namespace NzbDrone.Core.Notifications.Webhook
             ImdbId = movie.ImdbId;
             StashId = movie.MovieMetadata.Value.StashId;
             Overview = movie.MovieMetadata.Value.Overview;
+            Genres = movie.MovieMetadata.Value.Genres;
+            Images = movie.MovieMetadata.Value.Images.Select(i => new WebhookImage(i)).ToList();
             Tags = tags;
             ItemType = movie.MovieMetadata.Value.ItemType.ToString();
         }

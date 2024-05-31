@@ -261,7 +261,7 @@ namespace NzbDrone.Core.Notifications
 
         public void Handle(ManualInteractionRequiredEvent message)
         {
-            var movie = message.RemoteMovie.Movie;
+            var movie = message.RemoteMovie?.Movie;
             var mess = "";
 
             if (movie != null)
@@ -283,7 +283,7 @@ namespace NzbDrone.Core.Notifications
             {
                 Message = mess,
                 Movie = movie,
-                Quality = message.RemoteMovie.ParsedMovieInfo.Quality,
+                Quality = message.RemoteMovie?.ParsedMovieInfo.Quality,
                 RemoteMovie = message.RemoteMovie,
                 TrackedDownload = message.TrackedDownload,
                 DownloadClientInfo = message.TrackedDownload.DownloadItem?.DownloadClientInfo,

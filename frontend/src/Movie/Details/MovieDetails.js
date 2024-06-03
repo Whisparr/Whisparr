@@ -242,8 +242,10 @@ class MovieDetails extends Component {
     const marqueeWidth = isSmallScreen ? titleWidth : (titleWidth - 150);
     const ImageComponent = itemType === 'movie' ? MoviePoster : ScenePoster;
 
+    const pageTitle = `${title}${year > 0 ? ` (${year})` : ''}`;
+
     return (
-      <PageContent title={title}>
+      <PageContent title={pageTitle}>
         <PageToolbar>
           <PageToolbarSection>
             <PageToolbarButton

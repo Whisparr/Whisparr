@@ -423,10 +423,12 @@ namespace NzbDrone.Core.Configuration
 
                         var xDoc = XDocument.Parse(_diskProvider.ReadAllText(_configFile));
                         var config = xDoc.Descendants(CONFIG_ELEMENT_NAME).ToList();
+                        var xDoc = XDocument.Parse(_diskProvider.ReadAllText(_configFile));
+                        var config = xDoc.Descendants(CONFIG_ELEMENT_NAME).ToList();
 
                         if (config.Count != 1)
                         {
-                            throw new InvalidConfigFileException($"{_configFile} is invalid. Please delete the config file and Whisparr will recreate it.");
+                            throw new InvalidConfigFileException($"{_configFile} is invalid. Please delete the config file and Sonarr will recreate it.");
                         }
 
                         return xDoc;

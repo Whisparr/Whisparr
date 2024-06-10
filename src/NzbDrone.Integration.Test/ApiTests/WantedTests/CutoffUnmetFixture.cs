@@ -13,7 +13,7 @@ namespace NzbDrone.Integration.Test.ApiTests.WantedTests
         public void cutoff_should_have_monitored_items()
         {
             EnsureQualityProfileCutoff(1, Quality.HDTV720p, true);
-            var movie = EnsureMovie(680, "Pulp Fiction", true);
+            var movie = EnsureMovie(42019, "Taboo", true);
             EnsureMovieFile(movie, Quality.SDTV);
 
             var result = WantedCutoffUnmet.GetPaged(0, 15, "movieMetadata.year", "desc");
@@ -26,7 +26,7 @@ namespace NzbDrone.Integration.Test.ApiTests.WantedTests
         public void cutoff_should_not_have_unmonitored_items()
         {
             EnsureQualityProfileCutoff(1, Quality.HDTV720p, true);
-            var movie = EnsureMovie(680, "Pulp Fiction", false);
+            var movie = EnsureMovie(42019, "Taboo", false);
             EnsureMovieFile(movie, Quality.SDTV);
 
             var result = WantedCutoffUnmet.GetPaged(0, 15, "movieMetadata.year", "desc");
@@ -39,12 +39,12 @@ namespace NzbDrone.Integration.Test.ApiTests.WantedTests
         public void cutoff_should_have_series()
         {
             EnsureQualityProfileCutoff(1, Quality.HDTV720p, true);
-            var movie = EnsureMovie(680, "Pulp Fiction", true);
+            var movie = EnsureMovie(42019, "Taboo", true);
             EnsureMovieFile(movie, Quality.SDTV);
 
             var result = WantedCutoffUnmet.GetPaged(0, 15, "movieMetadata.year", "desc");
 
-            result.Records.First().Title.Should().Be("Pulp Fiction");
+            result.Records.First().Title.Should().Be("Taboo");
         }
 
         [Test]
@@ -52,7 +52,7 @@ namespace NzbDrone.Integration.Test.ApiTests.WantedTests
         public void cutoff_should_have_unmonitored_items()
         {
             EnsureQualityProfileCutoff(1, Quality.HDTV720p, true);
-            var movie = EnsureMovie(680, "Pulp Fiction", false);
+            var movie = EnsureMovie(42019, "Taboo", false);
             EnsureMovieFile(movie, Quality.SDTV);
 
             var result = WantedCutoffUnmet.GetPaged(0, 15, "movieMetadata.year", "desc", "monitored", false);

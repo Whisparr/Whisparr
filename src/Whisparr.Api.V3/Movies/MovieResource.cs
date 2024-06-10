@@ -14,6 +14,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using Whisparr.Api.V3.MovieFiles;
 using Whisparr.Api.V3.Movies;
 using Whisparr.Http.REST;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Whisparr.Api.V3.Movies
 {

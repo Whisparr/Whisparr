@@ -13,6 +13,7 @@ using NzbDrone.Core.Parser;
 using Whisparr.Api.V3.MovieFiles;
 using Whisparr.Api.V3.Movies;
 using Whisparr.Http.REST;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Whisparr.Api.V3.Movies
 {
@@ -81,6 +82,7 @@ namespace Whisparr.Api.V3.Movies
 
         // Hiding this so people don't think its usable (only used to set the initial state)
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        [SwaggerIgnore]
         public bool Grabbed { get; set; }
     }
 

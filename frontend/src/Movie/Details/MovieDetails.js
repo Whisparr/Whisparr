@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import TextTruncate from 'react-text-truncate';
@@ -49,7 +48,8 @@ const screenshotStyle = {
   'object-fit': 'cover'
 };
 function getFanartUrl(images) {
-  return _.find(images, { coverType: 'fanart' })?.url;
+  const image = images.find((img) => img.coverType === 'fanart');
+  return image?.url ?? image?.remoteUrl;
 }
 
 class MovieDetails extends Component {

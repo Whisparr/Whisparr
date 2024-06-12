@@ -40,6 +40,14 @@ namespace NzbDrone.Core.Movies
                 _commandQueueManager.Push(new MoviesSearchCommand { MovieIds = new List<int> { movie.Id } });
             }
 
+            if (addOptions.Monitor == MonitorTypes.MovieAndCollection && movie.MovieMetadata.Value.CollectionTmdbId > 0)
+            {
+                var collection = _collectionService.FindByTmdbId(movie.MovieMetadata.Value.CollectionTmdbId);
+                collection.Monitored = true;
+
+                _collectionService.UpdateCollection(collection);
+            }
+
             movie.AddOptions = null;
             _movieService.RemoveAddOptions(movie);
         }

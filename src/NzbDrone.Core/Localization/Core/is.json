@@ -262,7 +262,7 @@
     "DeleteSpecificationHelpText": "Ertu viss um að þú viljir eyða gæðasniðinu {0}",
     "DeleteTag": "Eyða tagi",
     "DeleteTagMessageText": "Ertu viss um að þú viljir eyða merkinu '{0}'?",
-    "DeleteTheMovieFolder": "Kvikmyndamöppunni „{0}“ og öllu innihaldi hennar verður eytt.",
+    "DeleteMovieFolderConfirmation": "Kvikmyndamöppunni „{0}“ og öllu innihaldi hennar verður eytt.",
     "DestinationPath": "Áfangastaður Slóð",
     "DestinationRelativePath": "Hlutfallsleg leið áfangastaðar",
     "DetailedProgressBar": "Ítarlegur framfarastiku",

@@ -256,7 +256,7 @@
     "DeleteSpecificationHelpText": "Bạn có chắc chắn muốn xóa cấu hình chất lượng không {0}",
     "DeleteTag": "Xóa thẻ",
     "DeleteTagMessageText": "Bạn có chắc chắn muốn xóa thẻ '{0}' không?",
-    "DeleteTheMovieFolder": "Thư mục phim '{0}' và tất cả nội dung của nó sẽ bị xóa.",
+    "DeleteMovieFolderConfirmation": "Thư mục phim '{0}' và tất cả nội dung của nó sẽ bị xóa.",
     "DestinationPath": "Đường dẫn đích",
     "DestinationRelativePath": "Đường dẫn tương đối đích",
     "DetailedProgressBar": "Thanh tiến trình chi tiết",

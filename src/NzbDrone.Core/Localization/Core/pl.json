@@ -297,7 +297,7 @@
     "DeleteSpecificationHelpText": "Czy na pewno chcesz usunąć tag „{0}”?",
     "DeleteTag": "Usuń tag",
     "DeleteTagMessageText": "Czy na pewno chcesz usunąć tag „{0}”?",
-    "DeleteTheMovieFolder": "Folder '{0}' i cała jego zawartość zostaną usunięte.",
+    "DeleteMovieFolderConfirmation": "Folder '{0}' i cała jego zawartość zostaną usunięte.",
     "DestinationPath": "Ścieżka docelowa",
     "DestinationRelativePath": "Względna ścieżka celu",
     "DetailedProgressBar": "Szczegółowy pasek postępu",

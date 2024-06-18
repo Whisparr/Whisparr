@@ -17,6 +17,7 @@ import { bulkDeleteMovie, setDeleteOption } from 'Store/Actions/movieActions';
 import createAllMoviesSelector from 'Store/Selectors/createAllMoviesSelector';
 import { CheckInputChanged } from 'typings/inputs';
 import formatBytes from 'Utilities/Number/formatBytes';
+import formatBytes from 'Utilities/Number/formatBytes';
 import translate from 'Utilities/String/translate';
 import styles from './DeleteMovieModalContent.css';
 
@@ -88,7 +89,8 @@ function DeleteMovieModalContent(props: DeleteMovieModalContentProps) {
 
   const { totalMovieFileCount, totalSizeOnDisk } = useMemo(() => {
     return movies.reduce(
-      (acc, { statistics = {} }) => {
+      (acc, m) => {
+        const { statistics = { movieFileCount: 0, sizeOnDisk: 0 } } = m;
         const { movieFileCount = 0, sizeOnDisk = 0 } = statistics;
 
         acc.totalMovieFileCount += movieFileCount;
@@ -105,6 +107,11 @@ function DeleteMovieModalContent(props: DeleteMovieModalContentProps) {
 
   return (
     <ModalContent onModalClose={onModalClose}>
+      <ModalHeader>
+        {movies.length > 1
+          ? translate('DeleteSelectedMovies')
+          : translate('DeleteSelectedMovie')}
+      </ModalHeader>
       <ModalHeader>
         {movies.length > 1
           ? translate('DeleteSelectedMovies')
@@ -131,11 +138,21 @@ function DeleteMovieModalContent(props: DeleteMovieModalContentProps) {
                 ? translate('DeleteMovieFolders')
                 : translate('DeleteMovieFolder')}
             </FormLabel>
+            <FormLabel>
+              {movies.length > 1
+                ? translate('DeleteMovieFolders')
+                : translate('DeleteMovieFolder')}
+            </FormLabel>
 
             <FormInputGroup
               type={inputTypes.CHECK}
               name="deleteFiles"
               value={deleteFiles}
+              helpText={
+                movies.length > 1
+                  ? translate('DeleteMovieFoldersHelpText')
+                  : translate('DeleteMovieFolderHelpText')
+              }
               helpText={
                 movies.length > 1
                   ? translate('DeleteMovieFoldersHelpText')
@@ -150,25 +167,32 @@ function DeleteMovieModalContent(props: DeleteMovieModalContentProps) {
         <div className={styles.message}>
           {deleteFiles
             ? translate('DeleteMovieFolderCountWithFilesConfirmation', {
-                count: movies.length,
-              })
+              count: movies.length,
+            })
             : translate('DeleteMovieFolderCountConfirmation', {
-                count: movies.length,
-              })}
+              count: movies.length,
+            })}
+          {deleteFiles
+            ? translate('DeleteMovieFolderCountWithFilesConfirmation', {
+              count: movies.length,
+            })
+            : translate('DeleteMovieFolderCountConfirmation', {
+              count: movies.length,
+            })}
         </div>
 
         <ul>
-          {movies.map(({ title, path, statistics = {} }) => {
-            const { movieFileCount = 0, sizeOnDisk = 0 } = statistics;
+          {movies.map((m) => {
+            const { movieFileCount = 0, sizeOnDisk = 0 } = m.statistics;
 
             return (
-              <li key={title}>
-                <span>{title}</span>
+              <li key={m.title}>
+                <span>{m.title}</span>
 
                 {deleteFiles && (
                   <span>
                     <span className={styles.pathContainer}>
-                      -<span className={styles.path}>{path}</span>
+                      -<span className={styles.path}>{m.path}</span>
                     </span>
 
                     {!!movieFileCount && (
@@ -187,6 +211,15 @@ function DeleteMovieModalContent(props: DeleteMovieModalContentProps) {
             );
           })}
         </ul>
+
+        {deleteFiles && !!totalMovieFileCount ? (
+          <div className={styles.deleteFilesMessage}>
+            {translate('DeleteMovieFolderMovieCount', {
+              movieFileCount: totalMovieFileCount,
+              size: formatBytes(totalSizeOnDisk),
+            })}
+          </div>
+        ) : null}
 
         {deleteFiles && !!totalMovieFileCount ? (
           <div className={styles.deleteFilesMessage}>

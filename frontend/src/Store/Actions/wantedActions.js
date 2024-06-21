@@ -26,6 +26,7 @@ export const defaultState = {
     sortDirection: sortDirections.ASCENDING,
     error: null,
     items: [],
+    itemMap: [],
 
     columns: [
       {
@@ -35,10 +36,16 @@ export const defaultState = {
         isVisible: true
       },
       {
+        name: 'movieMetadata.releaseDate',
+        label: () => translate('ReleaseDate'),
+        isSortable: true,
+        isVisible: true
+      },
+      {
         name: 'movieMetadata.year',
         label: () => translate('Year'),
         isSortable: true,
-        isVisible: true
+        isVisible: false
       },
       {
         name: 'status',
@@ -88,6 +95,7 @@ export const defaultState = {
     sortKey: 'movieMetadata.sortTitle',
     sortDirection: sortDirections.ASCENDING,
     items: [],
+    itemMap: [],
 
     columns: [
       {
@@ -101,6 +109,12 @@ export const defaultState = {
         label: () => translate('Year'),
         isSortable: true,
         isVisible: true
+      },
+      {
+        name: 'movieMetadata.releaseDate',
+        label: () => translate('ReleaseDate'),
+        isSortable: true,
+        isVisible: false
       },
       {
         name: 'languages',
@@ -278,6 +292,7 @@ export const reducers = createHandleActions({
       isPopulated: false,
       error: null,
       items: [],
+      itemMap: {},
       totalPages: 0,
       totalRecords: 0
     }
@@ -290,6 +305,7 @@ export const reducers = createHandleActions({
       isPopulated: false,
       error: null,
       items: [],
+      itemMap: {},
       totalPages: 0,
       totalRecords: 0
     }

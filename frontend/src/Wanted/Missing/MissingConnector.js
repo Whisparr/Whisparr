@@ -15,13 +15,15 @@ import Missing from './Missing';
 
 function createMapStateToProps() {
   return createSelector(
-    (state) => state.wanted.missing,
+    (state) => state.wanted.missing || {}, // ensure slice exists
     createCommandExecutingSelector(commandNames.MISSING_MOVIES_SEARCH),
     (missing, isSearchingForMissingMovies) => {
+      const items = Array.isArray(missing.items) ? missing.items : []; // guard against race condition
       return {
         isSearchingForMissingMovies,
-        isSaving: missing.items.filter((m) => m.isSaving).length > 1,
-        ...missing
+        isSaving: items.filter((m) => m.isSaving).length > 1,
+        ...missing,
+        items // override with guaranteed array
       };
     }
   );

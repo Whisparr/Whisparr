@@ -1821,6 +1821,7 @@
   "UnableToAddANewNotificationPleaseTryAgain": "Unable to add a new notification, please try again.",
   "UnableToAddANewQualityProfilePleaseTryAgain": "Unable to add a new quality profile, please try again.",
   "UnableToAddANewRemotePathMappingPleaseTryAgain": "Unable to add a new remote path mapping, please try again.",
+  "UnableToImportAutomatically": "Unable to Import Automatically",
   "UnableToLoadAltTitle": "Unable to load alternative titles.",
   "UnableToLoadCollections": "Unable to load collections",
   "UnableToLoadManualImportItems": "Unable to load manual import items",

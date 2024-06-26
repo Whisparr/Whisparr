@@ -27,7 +27,6 @@ namespace NzbDrone.Core.ImportLists.TMDb.Company
         private IEnumerable<ImportListRequest> GetMoviesRequest()
         {
             Logger.Info("Importing TMDb movies from company: {0}", Settings.CompanyId);
-            Logger.Info("Importing TMDb movies from company: {0}", Settings.CompanyId);
 
             var requestBuilder = RequestBuilder.Create()
                 .SetSegment("api", "3")
@@ -57,9 +56,9 @@ namespace NzbDrone.Core.ImportLists.TMDb.Company
 
             for (var page = 1; page <= totalPages; page++)
             {
-                requestBuilder.AddQueryParam("page", page, true);
+                requestBuilder.AddQueryParam("page", pageNumber, true);
 
-                Logger.Debug("Importing TMDb movies from: {0}", requestBuilder.ResourceUrl);
+                Logger.Debug("Importing TMDb movies from: {0}", request.Url);
 
                 var pageBuilder = requestBuilder.Clone().AddQueryParam("page", page.ToString());
                 yield return new ImportListRequest(pageBuilder.Accept(HttpAccept.Json).Build());

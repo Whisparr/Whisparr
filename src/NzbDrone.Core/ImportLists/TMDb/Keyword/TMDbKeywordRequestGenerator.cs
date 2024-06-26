@@ -24,14 +24,15 @@ namespace NzbDrone.Core.ImportLists.TMDb.Keyword
 
         private IEnumerable<ImportListRequest> GetMoviesRequest()
         {
-            Logger.Info($"Importing TMDb movies from keyword Id: {Settings.KeywordId}");
+            Logger.Info("Importing TMDb movies from keyword Id: {0}", Settings.KeywordId);
 
             var requestBuilder = RequestBuilder.Create()
-                                               .SetSegment("api", "3")
-                                               .SetSegment("route", "keyword")
-                                               .SetSegment("id", $"{Settings.KeywordId}")
-                                               .SetSegment("secondaryRoute", "/movies")
-                                               .AddQueryParam("include_adult", true);
+                .SetSegment("api", "3")
+                .SetSegment("route", "discover")
+                .SetSegment("id", "movie")
+                .SetSegment("secondaryRoute", "")
+                .AddQueryParam("include_adult", true)
+                .AddQueryParam("with_keywords", Settings.KeywordId);
 
             var jsonResponse = JsonConvert.DeserializeObject<MovieSearchResource>(HttpClient.Execute(requestBuilder.Build()).Content);
 
@@ -43,7 +44,7 @@ namespace NzbDrone.Core.ImportLists.TMDb.Keyword
 
                 var request = requestBuilder.Build();
 
-                Logger.Debug($"Importing TMDb movies from: {request.Url}");
+                Logger.Debug("Importing TMDb movies from: {0}", request.Url);
 
                 yield return new ImportListRequest(request);
             }

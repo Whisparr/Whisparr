@@ -328,7 +328,7 @@ class MovieDetails extends Component {
                 blur={safeForWorkMode}
                 className={itemType === 'movie' ? styles.poster : styles.screenShot}
                 images={images}
-                size={250}
+                size={500}
                 lazy={false}
               />
 

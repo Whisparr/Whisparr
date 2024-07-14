@@ -79,7 +79,7 @@ function MovieIndexPoster(props: MovieIndexPosterProps) {
     ratings,
     statistics = {} as Statistics,
     originalLanguage,
-    tags = [],
+    tags,
   } = movie;
 
   const { sizeOnDisk = 0 } = statistics;

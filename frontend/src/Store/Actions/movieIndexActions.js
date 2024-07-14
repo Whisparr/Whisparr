@@ -37,6 +37,7 @@ export const defaultState = {
     showReleaseDate: false,
     showTmdbRating: false,
     showRottenTomatoesRating: false,
+    showTags: false,
     showSearchAction: false
   },
 
@@ -49,6 +50,7 @@ export const defaultState = {
     showAdded: false,
     showPath: false,
     showSizeOnDisk: false,
+    showTags: false,
     showSearchAction: false
   },
 

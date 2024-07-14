@@ -6,6 +6,7 @@ import Label from 'Components/Label';
 import IconButton from 'Components/Link/IconButton';
 import Link from 'Components/Link/Link';
 import SpinnerIconButton from 'Components/Link/SpinnerIconButton';
+import TagListConnector from 'Components/TagListConnector';
 import { icons } from 'Helpers/Props';
 import DeleteSeriesModal from 'Series/Delete/DeleteSeriesModal';
 import EditSeriesModalConnector from 'Series/Edit/EditSeriesModalConnector';
@@ -46,6 +47,7 @@ function SeriesIndexPoster(props: SeriesIndexPosterProps) {
     showTitle,
     showMonitored,
     showQualityProfile,
+    showTags,
     showSearchAction,
   } = useSelector(selectPosterOptions);
 
@@ -65,6 +67,7 @@ function SeriesIndexPoster(props: SeriesIndexPosterProps) {
     added,
     statistics = {} as Statistics,
     images,
+    tags,
   } = series;
 
   const {
@@ -214,6 +217,14 @@ function SeriesIndexPoster(props: SeriesIndexPosterProps) {
       {showQualityProfile && !!qualityProfile?.name ? (
         <div className={styles.title} title={translate('QualityProfile')}>
           {qualityProfile.name}
+        </div>
+      ) : null}
+
+      {showTags && tags.length ? (
+        <div className={styles.tags}>
+          <div className={styles.tagsList}>
+            <TagListConnector tags={tags} />
+          </div>
         </div>
       ) : null}
 

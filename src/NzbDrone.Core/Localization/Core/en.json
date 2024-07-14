@@ -1343,6 +1343,8 @@
   "ShowSearchHelpText": "Show search button on hover",
   "ShowSeasonCount": "Show Season Count",
   "ShowSizeOnDisk": "Show Size on Disk",
+  "ShowTags": "Show Tags",
+  "ShowTagsHelpText": "Show tags under poster",
   "ShowTitle": "Show Title",
   "ShowTitleHelpText": "Show site title under poster",
   "ShownClickToHide": "Shown, click to hide",

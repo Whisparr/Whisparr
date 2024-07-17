@@ -21,6 +21,7 @@ import { scrollDirections } from 'Helpers/Props';
 import Movie from 'Movie/Movie';
 import createAllItemsSelector from 'Store/Selectors/createAllItemsSelector';
 import dimensions from 'Styles/Variables/dimensions';
+import sortByProp from 'Utilities/Array/sortByProp';
 import translate from 'Utilities/String/translate';
 import SelectMovieModalTableHeader from './SelectMovieModalTableHeader';
 import SelectMovieRow from './SelectMovieRow';
@@ -176,9 +177,7 @@ function SelectMovieModalContent(props: SelectMovieModalContentProps) {
   }
 
   const items = useMemo(() => {
-    const sorted = [...allMovies].sort((a, b) =>
-      a.sortTitle.localeCompare(b.sortTitle)
-    );
+    const sorted = [...allMovies].sort(sortByProp('sortTitle'));
 
     const normalizedFilter = normalize(filter);
 

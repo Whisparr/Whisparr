@@ -3,7 +3,7 @@ import { createAction } from 'redux-actions';
 import { batchActions } from 'redux-batched-actions';
 import { filterBuilderTypes, filterBuilderValueTypes, sortDirections } from 'Helpers/Props';
 import { createThunk, handleThunks } from 'Store/thunks';
-import sortByName from 'Utilities/Array/sortByName';
+import sortByProp from 'Utilities/Array/sortByProp';
 import createAjaxRequest from 'Utilities/createAjaxRequest';
 import camelCaseToString from 'Utilities/String/camelCaseToString';
 import translate from 'Utilities/String/translate';
@@ -152,7 +152,7 @@ export const defaultState = {
   ],
 
   sortPredicates: {
-    gender: function(item) {
+    gender: function (item) {
       const gender = item.gender;
 
       return gender ? gender.toLowerCase() : '';
@@ -210,7 +210,7 @@ export const defaultState = {
       name: 'status',
       label: () => translate('Status'),
       type: filterBuilderTypes.EXACT,
-      optionsSelector: function(items) {
+      optionsSelector: function (items) {
         const tagList = ['active', 'inactive', 'unknown'];
 
         const tags = tagList.map((tag) => {
@@ -220,7 +220,7 @@ export const defaultState = {
           };
         });
 
-        return tags.sort(sortByName);
+        return tags.sort(sortByProp('status'));
       }
     },
     {
@@ -239,7 +239,7 @@ export const defaultState = {
       name: 'monitor',
       label: () => translate('Monitor'),
       type: filterBuilderTypes.EXACT,
-      optionsSelector: function(items) {
+      optionsSelector: function (items) {
         const tagList = ['movieOnly', 'all', 'none'];
 
         const tags = tagList.map((tag) => {
@@ -262,7 +262,7 @@ export const defaultState = {
       name: 'gender',
       label: () => translate('Gender'),
       type: filterBuilderTypes.EXACT,
-      optionsSelector: function(items) {
+      optionsSelector: function (items) {
         const tagList = [
           'male',
           'female',
@@ -286,7 +286,7 @@ export const defaultState = {
       name: 'hairColor',
       label: () => translate('HairColor'),
       type: filterBuilderTypes.EXACT,
-      optionsSelector: function(items) {
+      optionsSelector: function (items) {
         const tagList = [
           'blonde',
           'black',
@@ -312,7 +312,7 @@ export const defaultState = {
       name: 'ethnicity',
       label: () => translate('Ethnicity'),
       type: filterBuilderTypes.EXACT,
-      optionsSelector: function(items) {
+      optionsSelector: function (items) {
         const tagList = [
           'caucasian',
           'black',
@@ -456,7 +456,7 @@ export const actionHandlers = handleThunks({
     });
   },
 
-  [SAVE_PERFORMER_EDITOR]: function(getState, payload, dispatch) {
+  [SAVE_PERFORMER_EDITOR]: function (getState, payload, dispatch) {
     dispatch(set({
       section,
       isSaving: true
@@ -504,7 +504,7 @@ export const reducers = createHandleActions({
 
   [SET_PERFORMER_SORT]: createSetClientSideCollectionSortReducer(section),
   [SET_PERFORMER_FILTER]: createSetClientSideCollectionFilterReducer(section),
-  [SET_PERFORMER_VIEW]: function(state, { payload }) {
+  [SET_PERFORMER_VIEW]: function (state, { payload }) {
     return Object.assign({}, state, { view: payload.view });
   },
 
@@ -519,7 +519,7 @@ export const reducers = createHandleActions({
     };
   },
 
-  [SET_PERFORMER_POSTER_OPTION]: function(state, { payload }) {
+  [SET_PERFORMER_POSTER_OPTION]: function (state, { payload }) {
     const posterOptions = state.posterOptions;
 
     return {

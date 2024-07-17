@@ -1,6 +1,6 @@
 import { createAction } from 'redux-actions';
 import { filterBuilderTypes, filterBuilderValueTypes, sortDirections } from 'Helpers/Props';
-import sortByName from 'Utilities/Array/sortByName';
+import sortByProp from 'Utilities/Array/sortByProp';
 import translate from 'Utilities/String/translate';
 import createHandleActions from './Creators/createHandleActions';
 import createSetClientSideCollectionFilterReducer from './Creators/Reducers/createSetClientSideCollectionFilterReducer';
@@ -168,25 +168,25 @@ export const defaultState = {
   sortPredicates: {
     ...sortPredicates,
 
-    studio: function(item) {
+    studio: function (item) {
       const studio = item.studio;
 
       return studio ? studio.toLowerCase() : '';
     },
 
-    collection: function(item) {
-      const { collection ={} } = item;
+    collection: function (item) {
+      const { collection = {} } = item;
 
       return collection.title;
     },
 
-    originalLanguage: function(item) {
-      const { originalLanguage ={} } = item;
+    originalLanguage: function (item) {
+      const { originalLanguage = {} } = item;
 
       return originalLanguage.name;
     },
 
-    releaseGroups: function(item) {
+    releaseGroups: function (item) {
       const { statistics = {} } = item;
       const { releaseGroups = [] } = statistics;
 
@@ -197,13 +197,13 @@ export const defaultState = {
         undefined;
     },
 
-    tmdbRating: function(item) {
+    tmdbRating: function (item) {
       const { ratings = {} } = item;
 
       return ratings.tmdb ? ratings.tmdb.value : 0;
     },
 
-    rottenTomatoesRating: function(item) {
+    rottenTomatoesRating: function (item) {
       const { ratings = {} } = item;
 
       return ratings.rottenTomatoes ? ratings.rottenTomatoes.value : -1;
@@ -237,7 +237,7 @@ export const defaultState = {
       name: 'releaseGroups',
       label: () => translate('ReleaseGroups'),
       type: filterBuilderTypes.ARRAY,
-      optionsSelector: function(items) {
+      optionsSelector: function (items) {
         const groupList = items.reduce((acc, movie) => {
           const { statistics = {} } = movie;
           const { releaseGroups = [] } = statistics;
@@ -252,7 +252,7 @@ export const defaultState = {
           return acc;
         }, []);
 
-        return groupList.sort(sortByName);
+        return groupList.sort(sortByProp('name'));
       }
     },
     {
@@ -265,7 +265,7 @@ export const defaultState = {
       name: 'studio',
       label: () => translate('Studio'),
       type: filterBuilderTypes.EXACT,
-      optionsSelector: function(items) {
+      optionsSelector: function (items) {
         const tagList = items.reduce((acc, movie) => {
           if (movie.studioTitle) {
             acc.push({
@@ -277,7 +277,7 @@ export const defaultState = {
           return acc;
         }, []);
 
-        return tagList.sort(sortByName);
+        return tagList.sort(sortByProp('name'));
       }
     },
     {
@@ -323,7 +323,7 @@ export const defaultState = {
       name: 'genres',
       label: () => translate('Genres'),
       type: filterBuilderTypes.ARRAY,
-      optionsSelector: function(items) {
+      optionsSelector: function (items) {
         const genreList = items.reduce((acc, movie) => {
           movie.genres.forEach((genre) => {
             acc.push({
@@ -335,7 +335,7 @@ export const defaultState = {
           return acc;
         }, []);
 
-        return genreList.sort(sortByName);
+        return genreList.sort(sortByProp('name'));
       }
     },
     {
@@ -399,13 +399,13 @@ export const reducers = createHandleActions({
   [SET_MOVIE_SORT]: createSetClientSideCollectionSortReducer(section),
   [SET_MOVIE_FILTER]: createSetClientSideCollectionFilterReducer(section),
 
-  [SET_MOVIE_VIEW]: function(state, { payload }) {
+  [SET_MOVIE_VIEW]: function (state, { payload }) {
     return Object.assign({}, state, { view: payload.view });
   },
 
   [SET_MOVIE_TABLE_OPTION]: createSetTableOptionReducer(section),
 
-  [SET_MOVIE_POSTER_OPTION]: function(state, { payload }) {
+  [SET_MOVIE_POSTER_OPTION]: function (state, { payload }) {
     const posterOptions = state.posterOptions;
 
     return {
@@ -417,7 +417,7 @@ export const reducers = createHandleActions({
     };
   },
 
-  [SET_MOVIE_OVERVIEW_OPTION]: function(state, { payload }) {
+  [SET_MOVIE_OVERVIEW_OPTION]: function (state, { payload }) {
     const overviewOptions = state.overviewOptions;
 
     return {
@@ -429,7 +429,7 @@ export const reducers = createHandleActions({
     };
   },
 
-  [SET_MOVIE_INDEX_MODE]: function(state, { payload }) {
+  [SET_MOVIE_INDEX_MODE]: function (state, { payload }) {
     return Object.assign({}, state, { indexMode: payload.indexMode });
   }
 

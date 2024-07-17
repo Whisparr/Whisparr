@@ -3,7 +3,7 @@ import { createAction } from 'redux-actions';
 import { batchActions } from 'redux-batched-actions';
 import { filterBuilderTypes, filterBuilderValueTypes, sortDirections } from 'Helpers/Props';
 import { createThunk, handleThunks } from 'Store/thunks';
-import sortByName from 'Utilities/Array/sortByName';
+import sortByProp from 'Utilities/Array/sortByProp';
 import createAjaxRequest from 'Utilities/createAjaxRequest';
 import translate from 'Utilities/String/translate';
 import { set, updateItem } from './baseActions';
@@ -164,7 +164,7 @@ export const defaultState = {
       name: 'network',
       label: () => translate('Network'),
       type: filterBuilderTypes.EXACT,
-      optionsSelector: function(items) {
+      optionsSelector: function (items) {
         const tagList = items.reduce((acc, studio) => {
           if (studio.network) {
             acc.push({
@@ -176,7 +176,7 @@ export const defaultState = {
           return acc;
         }, []);
 
-        return tagList.sort(sortByName);
+        return tagList.sort(sortByProp);
       }
     },
     {
@@ -302,7 +302,7 @@ export const actionHandlers = handleThunks({
     });
   },
 
-  [SAVE_STUDIO_EDITOR]: function(getState, payload, dispatch) {
+  [SAVE_STUDIO_EDITOR]: function (getState, payload, dispatch) {
     dispatch(set({
       section,
       isSaving: true
@@ -350,7 +350,7 @@ export const reducers = createHandleActions({
 
   [SET_STUDIO_SORT]: createSetClientSideCollectionSortReducer(section),
   [SET_STUDIO_FILTER]: createSetClientSideCollectionFilterReducer(section),
-  [SET_STUDIO_VIEW]: function(state, { payload }) {
+  [SET_STUDIO_VIEW]: function (state, { payload }) {
     return Object.assign({}, state, { view: payload.view });
   },
 
@@ -365,7 +365,7 @@ export const reducers = createHandleActions({
     };
   },
 
-  [SET_STUDIO_POSTER_OPTION]: function(state, { payload }) {
+  [SET_STUDIO_POSTER_OPTION]: function (state, { payload }) {
     const posterOptions = state.posterOptions;
 
     return {

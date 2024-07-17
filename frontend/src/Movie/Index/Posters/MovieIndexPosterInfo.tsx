@@ -1,6 +1,7 @@
 import React from 'react';
 import Icon from 'Components/Icon';
 import RottenTomatoRating from 'Components/RottenTomatoRating';
+import TagListConnector from 'Components/TagListConnector';
 import TmdbRating from 'Components/TmdbRating';
 import { icons } from 'Helpers/Props';
 import Language from 'Language/Language';
@@ -23,6 +24,7 @@ interface MovieIndexPosterInfoProps {
   ratings: Ratings;
   originalLanguage: Language;
   sizeOnDisk?: number;
+  tags: number[];
   sortKey: string;
   showRelativeDates: boolean;
   showReleaseDate: boolean;
@@ -31,6 +33,7 @@ interface MovieIndexPosterInfoProps {
   timeFormat: string;
   showTmdbRating: boolean;
   showRottenTomatoesRating: boolean;
+  showTags: boolean;
 }
 
 function MovieIndexPosterInfo(props: MovieIndexPosterInfoProps) {
@@ -45,6 +48,7 @@ function MovieIndexPosterInfo(props: MovieIndexPosterInfoProps) {
     ratings,
     originalLanguage,
     sizeOnDisk,
+    tags = [],
     sortKey,
     showRelativeDates,
     showReleaseDate,
@@ -53,6 +57,7 @@ function MovieIndexPosterInfo(props: MovieIndexPosterInfoProps) {
     timeFormat,
     showTmdbRating,
     showRottenTomatoesRating,
+    showTags,
   } = props;
 
   if (sortKey === 'studio' && studio) {
@@ -138,6 +143,16 @@ function MovieIndexPosterInfo(props: MovieIndexPosterInfoProps) {
     return (
       <div className={styles.info}>
         <RottenTomatoRating ratings={ratings} iconSize={12} />
+      </div>
+    );
+  }
+
+  if (!showTags && sortKey === 'tags' && tags.length) {
+    return (
+      <div className={styles.tags}>
+        <div className={styles.tagsList}>
+          <TagListConnector tags={tags} />
+        </div>
       </div>
     );
   }

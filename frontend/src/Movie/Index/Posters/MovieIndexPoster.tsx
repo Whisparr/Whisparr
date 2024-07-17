@@ -79,7 +79,7 @@ function MovieIndexPoster(props: MovieIndexPosterProps) {
     ratings,
     statistics = {} as Statistics,
     originalLanguage,
-    tags,
+    tags = [],
   } = movie;
 
   const { sizeOnDisk = 0 } = statistics;
@@ -272,8 +272,10 @@ function MovieIndexPoster(props: MovieIndexPosterProps) {
         sortKey={sortKey}
         path={path}
         originalLanguage={originalLanguage}
+        tags={tags}
         showTmdbRating={showTmdbRating}
         showRottenTomatoesRating={showRottenTomatoesRating}
+        showTags={showTags}
       />
 
       <EditMovieModalConnector

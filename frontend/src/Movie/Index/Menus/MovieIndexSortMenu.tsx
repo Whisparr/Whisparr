@@ -126,6 +126,15 @@ function MovieIndexSortMenu(props: MovieIndexSortMenuProps) {
         >
           {translate('OriginalLanguage')}
         </SortMenuItem>
+
+        <SortMenuItem
+          name="tags"
+          sortKey={sortKey}
+          sortDirection={sortDirection}
+          onPress={onSortSelect}
+        >
+          {translate('Tags')}
+        </SortMenuItem>
       </MenuContent>
     </SortMenu>
   );

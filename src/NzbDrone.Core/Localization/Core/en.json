@@ -921,6 +921,7 @@
   "Never": "Never",
   "New": "New",
   "NextAiring": "Next Airing",
+  "NextAiringDate": "Next Airing: {date}",
   "NextExecution": "Next Execution",
   "No": "No",
   "NoBackupsAreAvailable": "No backups are available",

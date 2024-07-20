@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import RelativeDateCellConnector from 'Components/Table/Cells/RelativeDateCellConnector';
+import RelativeDateCell from 'Components/Table/Cells/RelativeDateCell';
 import VirtualTableRowCell from 'Components/Table/Cells/VirtualTableRowCell';
 import styles from './SelectMovieRow.css';
 
@@ -44,7 +44,7 @@ class SelectMovieRow extends Component {
         </VirtualTableRowCell>
 
         <VirtualTableRowCell className={styles.releaseDate}>
-          <RelativeDateCellConnector
+          <RelativeDateCell
             key={name}
             date={releaseDate}
             className={styles.releaseDate}

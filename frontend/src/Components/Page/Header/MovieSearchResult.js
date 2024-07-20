@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import Label from 'Components/Label';
-import RelativeDateCellConnector from 'Components/Table/Cells/RelativeDateCellConnector';
+import RelativeDateCell from 'Components/Table/Cells/RelativeDateCell';
 import { kinds } from 'Helpers/Props';
 import MoviePoster from 'Movie/MoviePoster';
 import ScenePoster from 'Scene/ScenePoster';
@@ -137,7 +137,7 @@ function MovieSearchResult(props) {
             </div>
           }
 
-          <RelativeDateCellConnector
+          <RelativeDateCell
             key={'releaseDare'}
             className={styles.releaseDate}
             date={releaseDate}

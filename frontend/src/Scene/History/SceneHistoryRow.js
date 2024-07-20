@@ -4,7 +4,7 @@ import HistoryDetailsModal from 'Activity/History/Details/HistoryDetailsModal';
 import HistoryEventTypeCell from 'Activity/History/HistoryEventTypeCell';
 import IconButton from 'Components/Link/IconButton';
 import ConfirmModal from 'Components/Modal/ConfirmModal';
-import RelativeDateCellConnector from 'Components/Table/Cells/RelativeDateCellConnector';
+import RelativeDateCell from 'Components/Table/Cells/RelativeDateCell';
 import TableRowCell from 'Components/Table/Cells/TableRowCell';
 import TableRow from 'Components/Table/TableRow';
 import Tooltip from 'Components/Tooltip/Tooltip';
@@ -119,7 +119,7 @@ class SceneHistoryRow extends Component {
           />
         </TableRowCell>
 
-        <RelativeDateCellConnector
+        <RelativeDateCell
           date={date}
         />
 

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import IconButton from 'Components/Link/IconButton';
 import ConfirmModal from 'Components/Modal/ConfirmModal';
-import RelativeDateCellConnector from 'Components/Table/Cells/RelativeDateCellConnector';
+import RelativeDateCell from 'Components/Table/Cells/RelativeDateCell';
 import VirtualTableRowCell from 'Components/Table/Cells/VirtualTableRowCell';
 import VirtualTableSelectCell from 'Components/Table/Cells/VirtualTableSelectCell';
 import { icons, kinds } from 'Helpers/Props';
@@ -156,7 +156,7 @@ class UnmappedFilesTableRow extends Component {
 
           if (name === 'dateAdded') {
             return (
-              <RelativeDateCellConnector
+              <RelativeDateCell
                 key={name}
                 className={styles[name]}
                 date={dateAdded}

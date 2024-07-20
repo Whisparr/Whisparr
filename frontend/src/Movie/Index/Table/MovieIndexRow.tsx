@@ -210,6 +210,7 @@ function MovieIndexRow(props: MovieIndexRowProps) {
           );
         }
 
+
         if (name === 'releaseDate') {
           return (
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment

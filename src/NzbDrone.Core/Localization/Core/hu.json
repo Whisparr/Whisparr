@@ -314,7 +314,7 @@
     "DeleteDownloadClient": "Letöltőkliens törlése",
     "DeleteDownloadClientMessageText": "Biztosan törli a(z) \"{name}\" letöltési klienst?",
     "DeletedReasonManual": "A fájlt a felhasználói felületen keresztül törölte",
-    "DeletedReasonMissingFromDisk": "A(z) {appName} nem találta a fájlt a lemezen, ezért a fájlt leválasztották a filmről az adatbázisban",
+    "DeletedReasonMovieMissingFromDisk": "A(z) {appName} nem találta a fájlt a lemezen, ezért a fájlt leválasztották a filmről az adatbázisban",
     "DeletedReasonUpgrade": "A fájl törlésre került a frissítés importálásához",
     "DeleteEmptyFolders": "Üres Mappa Törlése",
     "DeleteEmptyFoldersHelpText": "Törölje az üres filmmappákat a lemezfrissítés és a filmfájlok törlése során",

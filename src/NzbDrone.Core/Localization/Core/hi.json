@@ -234,7 +234,7 @@
     "DeletedMsg": "मूवी को TMDb से हटा दिया गया था",
     "DeleteDownloadClient": "डाउनलोड क्लाइंट हटाएं",
     "DeleteDownloadClientMessageText": "क्या आप वाकई डाउनलोड क्लाइंट '{0}' को हटाना चाहते हैं?",
-    "DeletedReasonMissingFromDisk": "Whisparr डिस्क पर फ़ाइल खोजने में असमर्थ था इसलिए इसे हटा दिया गया था",
+    "DeletedReasonMovieMissingFromDisk": "{appName} डिस्क पर फ़ाइल खोजने में असमर्थ था इसलिए इसे हटा दिया गया था",
     "DeletedReasonUpgrade": "नवीनीकरण को आयात करने के लिए फ़ाइल हटा दी गई थी",
     "DeleteEmptyFolders": "खाली फ़ोल्डर हटाएँ",
     "DeleteEmptyFoldersHelpText": "डिस्क स्कैन के दौरान और मूवी फ़ाइलों को हटाए जाने के दौरान खाली मूवी फ़ोल्डर हटाएं",

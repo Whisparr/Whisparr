@@ -328,7 +328,7 @@
     "DeleteDownloadClient": "Download-Client löschen",
     "DeleteDownloadClientMessageText": "Bist du sicher, dass du den Download Client '{name}' wirklich löschen willst?",
     "DeletedReasonManual": "Die Datei wurde über die Benutzeroberfläche gelöscht",
-    "DeletedReasonMissingFromDisk": "{appName} konnte die Datei auf der Festplatte nicht finden, daher wurde die Verknüpfung der Datei mit der Episode in der Datenbank aufgehoben",
+    "DeletedReasonMovieMissingFromDisk": "{appName} konnte die Datei auf der Festplatte nicht finden, daher wurde die Verknüpfung der Datei mit der Episode in der Datenbank aufgehoben",
     "DeletedReasonUpgrade": "Die Datei wurde gelöscht, um ein Upgrade zu importieren",
     "DeleteEmptyFolders": "Leere Ordner löschen",
     "DeleteEmptyFoldersHelpText": "Lösche leere Filmeordner während des Scans oder wenn Filmdateien gelöscht werden",

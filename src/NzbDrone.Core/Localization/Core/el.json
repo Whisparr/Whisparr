@@ -268,7 +268,7 @@
     "DeletedMsg": "Η ταινία διαγράφηκε από το TMDb",
     "DeleteDownloadClient": "Διαγραφή προγράμματος-πελάτη λήψης",
     "DeleteDownloadClientMessageText": "Είστε βέβαιοι ότι θέλετε να διαγράψετε τον πελάτη λήψης \"{0}\";",
-    "DeletedReasonMissingFromDisk": "Ο Whisparr δεν μπόρεσε να βρει το αρχείο στο δίσκο και έτσι καταργήθηκε",
+    "DeletedReasonMovieMissingFromDisk": "Ο {appName} δεν μπόρεσε να βρει το αρχείο στο δίσκο και έτσι καταργήθηκε",
     "DeletedReasonUpgrade": "Το αρχείο διαγράφηκε για εισαγωγή μιας αναβάθμισης",
     "DeleteEmptyFolders": "Διαγραφή κενών φακέλων",
     "DeleteEmptyFoldersHelpText": "Διαγραφή κενών φακέλων ταινιών κατά τη σάρωση δίσκου και όταν διαγράφονται τα αρχεία ταινίας",

@@ -236,6 +236,7 @@
     "DeleteDownloadClient": "حذف Download Client",
     "DeleteDownloadClientMessageText": "هل أنت متأكد أنك تريد حذف برنامج التنزيل \"{0}\"؟",
     "DeletedReasonMissingFromDisk": "لم يتمكن Whisparr من العثور على الملف على القرص لذا تمت إزالته",
+    "DeletedReasonMovieMissingFromDisk": "لم يتمكن {appName} من العثور على الملف على القرص لذا تمت إزالته",
     "DeletedReasonUpgrade": "تم حذف الملف لاستيراد ترقية",
     "DeleteEmptyFolders": "احذف المجلدات الفارغة",
     "DeleteEmptyFoldersHelpText": "احذف مجلدات الأفلام الفارغة أثناء فحص القرص وعند حذف ملفات الأفلام",

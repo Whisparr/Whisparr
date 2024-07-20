@@ -241,7 +241,7 @@
     "DeletedMsg": "הסרט נמחק מ- TMDb",
     "DeleteDownloadClient": "מחק את לקוח ההורדות",
     "DeleteDownloadClientMessageText": "האם אתה בטוח שברצונך למחוק את לקוח ההורדות '{0}'?",
-    "DeletedReasonMissingFromDisk": "Whisparr לא הצליח למצוא את הקובץ בדיסק ולכן הוא הוסר",
+    "DeletedReasonMovieMissingFromDisk": "{appName} לא הצליח למצוא את הקובץ בדיסק ולכן הוא הוסר",
     "DeletedReasonUpgrade": "הקובץ נמחק כדי לייבא שדרוג",
     "DeleteEmptyFolders": "מחק תיקיות ריקות",
     "DeleteEmptyFoldersHelpText": "מחק תיקיות סרטים ריקות במהלך סריקת הדיסק וכאשר קבצי סרט נמחקים",

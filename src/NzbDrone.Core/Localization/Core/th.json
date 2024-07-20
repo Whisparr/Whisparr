@@ -230,7 +230,7 @@
     "DeletedMovieDescription": "ภาพยนตร์ถูกลบออกจาก TMDb",
     "DeleteDownloadClient": "ลบไคลเอนต์ดาวน์โหลด",
     "DeleteDownloadClientMessageText": "แน่ใจไหมว่าต้องการลบไคลเอนต์ดาวน์โหลด \"{0}\"",
-    "DeletedReasonMissingFromDisk": "Whisparr ไม่พบไฟล์บนดิสก์ดังนั้นจึงถูกลบออก",
+    "DeletedReasonMovieMissingFromDisk": "{appName} ไม่พบไฟล์บนดิสก์ดังนั้นจึงถูกลบออก",
     "DeletedReasonUpgrade": "ไฟล์ถูกลบเพื่อนำเข้าการอัปเกรด",
     "DeleteEmptyFolders": "ลบโฟลเดอร์ว่าง",
     "DeleteEmptyFoldersHelpText": "ลบโฟลเดอร์ภาพยนตร์ว่างในระหว่างการสแกนดิสก์และเมื่อไฟล์ภาพยนตร์ถูกลบ",

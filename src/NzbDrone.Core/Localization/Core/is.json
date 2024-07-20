@@ -234,7 +234,7 @@
     "DeletedMsg": "Kvikmynd var eytt úr TMDb",
     "DeleteDownloadClient": "Eyða niðurhals viðskiptavinur",
     "DeleteDownloadClientMessageText": "Ertu viss um að þú viljir eyða niðurhalsviðskiptavininum '{0}'?",
-    "DeletedReasonMissingFromDisk": "Whisparr gat ekki fundið skrána á disknum svo hún var fjarlægð",
+    "DeletedReasonMovieMissingFromDisk": "{appName} gat ekki fundið skrána á disknum svo hún var fjarlægð",
     "DeletedReasonUpgrade": "Skrá var eytt til að flytja inn uppfærslu",
     "DeleteEmptyFolders": "Eyða tómum möppum",
     "DeleteEmptyFoldersHelpText": "Eyddu tómum kvikmyndamöppum við skönnun á diski og þegar kvikmyndaskrám er eytt",

@@ -255,7 +255,7 @@
     "DeletedMovieDescription": "Phim đã bị xóa khỏi TMDb",
     "DeleteDownloadClient": "Xóa ứng dụng khách tải xuống",
     "DeleteDownloadClientMessageText": "Bạn có chắc chắn muốn xóa ứng dụng khách tải xuống '{0}' không?",
-    "DeletedReasonMissingFromDisk": "Whisparr không thể tìm thấy tệp trên đĩa nên nó đã bị xóa",
+    "DeletedReasonMovieMissingFromDisk": "{appName} không thể tìm thấy tệp trên đĩa nên nó đã bị xóa",
     "DeletedReasonUpgrade": "Tệp đã bị xóa để nhập bản nâng cấp",
     "DeleteEmptyFolders": "Xóa các thư mục trống",
     "DeleteEmptyFoldersHelpText": "Xóa các thư mục phim trống trong khi quét đĩa và khi các tệp phim bị xóa",

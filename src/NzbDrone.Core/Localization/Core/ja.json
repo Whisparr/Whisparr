@@ -228,7 +228,7 @@
     "DeletedMsg": "映画はTMDbから削除されました",
     "DeleteDownloadClient": "ダウンロードクライアントを削除する",
     "DeleteDownloadClientMessageText": "ダウンロードクライアント「{0}」を削除してもよろしいですか？",
-    "DeletedReasonMissingFromDisk": "Whisparrはディスク上でファイルを見つけることができなかったため、削除されました",
+    "DeletedReasonMovieMissingFromDisk": "{appName}はディスク上でファイルを見つけることができなかったため、削除されました",
     "DeletedReasonUpgrade": "アップグレードをインポートするためにファイルが削除されました",
     "DeleteEmptyFolders": "空のフォルダを削除する",
     "DeleteEmptyFoldersHelpText": "ディスクスキャン中およびムービーファイルが削除されたときに空のムービーフォルダを削除します",

@@ -272,7 +272,7 @@
     "DeletedMsg": "Филмът беше изтрит от TMDb",
     "DeleteDownloadClient": "Изтриване на клиент за изтегляне",
     "DeleteDownloadClientMessageText": "Наистина ли искате да изтриете клиента за изтегляне '{0}'?",
-    "DeletedReasonMissingFromDisk": "Whisparr не можа да намери файла на диска, така че той беше премахнат",
+    "DeletedReasonMovieMissingFromDisk": "{appName} не можа да намери файла на диска, така че той беше премахнат",
     "DeletedReasonUpgrade": "Файлът беше изтрит за импортиране на надстройка",
     "DeleteEmptyFolders": "Изтрийте празни папки",
     "DeleteEmptyFoldersHelpText": "Изтрийте празни папки с филми по време на сканиране на диска и когато файловете с филми се изтриват",

@@ -7,7 +7,7 @@ import styles from '../styles.css';
 function Donations() {
   return (
     <FieldSet legend={translate('Donations')}>
-      <div className={styles.logoContainer} title="Radarr">
+      <div className={styles.logoContainer} title="Whisparr">
         <Link to="https://whisparr.com/donate">
           <img
             className={styles.logo}

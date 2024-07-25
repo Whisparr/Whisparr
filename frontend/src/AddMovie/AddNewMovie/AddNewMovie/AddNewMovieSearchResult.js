@@ -135,16 +135,16 @@ class AddNewMovieSearchResult extends Component {
 
                 {
                   isExistingMovie &&
-                    <MovieIndexProgressBar
-                      movieId={existingMovieId}
-                      movieFile={movieFile}
-                      monitored={monitored}
-                      hasFile={hasMovieFile}
-                      status={status}
-                      width={posterWidth}
-                      detailedProgressBar={true}
-                      isAvailable={isAvailable}
-                    />
+                  <MovieIndexProgressBar
+                    movieId={existingMovieId}
+                    movieFile={movieFile}
+                    monitored={monitored}
+                    hasFile={hasMovieFile}
+                    status={status}
+                    width={posterWidth}
+                    detailedProgressBar={true}
+                    isAvailable={isAvailable}
+                  />
                 }
               </div>
           }
@@ -169,22 +169,22 @@ class AddNewMovieSearchResult extends Component {
 
                 {
                   isExistingMovie &&
-                    <Icon
-                      className={styles.alreadyExistsIcon}
-                      name={icons.CHECK_CIRCLE}
-                      size={36}
-                      title={translate('AlreadyInYourLibrary')}
-                    />
+                  <Icon
+                    className={styles.alreadyExistsIcon}
+                    name={icons.CHECK_CIRCLE}
+                    size={36}
+                    title={translate('AlreadyInYourLibrary')}
+                  />
                 }
 
                 {
                   isExclusionMovie &&
-                    <Icon
-                      className={styles.exclusionIcon}
-                      name={icons.DANGER}
-                      size={36}
-                      title={translate('MovieIsOnImportExclusionList')}
-                    />
+                  <Icon
+                    className={styles.exclusionIcon}
+                    name={icons.DANGER}
+                    size={36}
+                    title={translate('MovieIsOnImportExclusionList')}
+                  />
                 }
               </div>
             </div>
@@ -192,16 +192,16 @@ class AddNewMovieSearchResult extends Component {
             <div>
               {
                 !!certification &&
-                  <span className={styles.certification}>
-                    {certification}
-                  </span>
+                <span className={styles.certification}>
+                  {certification}
+                </span>
               }
 
               {
                 !!runtime &&
-                  <span className={styles.runtime}>
-                    {formatRuntime(runtime, movieRuntimeFormat)}
-                  </span>
+                <span className={styles.runtime}>
+                  {formatRuntime(runtime, movieRuntimeFormat)}
+                </span>
               }
             </div>
 
@@ -212,12 +212,12 @@ class AddNewMovieSearchResult extends Component {
 
               {
                 itemType === 'movie' &&
-                  <Label size={sizes.LARGE}>
-                    <TmdbRating
-                      ratings={ratings}
-                      iconSize={13}
-                    />
-                  </Label>
+                <Label size={sizes.LARGE}>
+                  <TmdbRating
+                    ratings={ratings}
+                    iconSize={13}
+                  />
+                </Label>
               }
 
               {
@@ -263,6 +263,20 @@ class AddNewMovieSearchResult extends Component {
                   null
               }
 
+              {
+                genres.length > 0 ?
+                  <Label size={sizes.LARGE}>
+                    <Icon
+                      name={icons.GENRE}
+                      size={13}
+                    />
+                    <span className={styles.genres}>
+                      {genres.slice(0, 3).join(', ')}
+                    </span>
+                  </Label> :
+                  null
+              }
+
               <Tooltip
                 anchor={
                   <Label
@@ -290,15 +304,15 @@ class AddNewMovieSearchResult extends Component {
 
               {
                 isExistingMovie && isSmallScreen &&
-                  <MovieStatusLabel
-                    hasMovieFiles={hasMovieFile}
-                    monitored={monitored}
-                    isAvailable={isAvailable}
-                    queueItem={queueItem}
-                    id={id}
-                    useLabel={true}
-                    colorImpairedMode={colorImpairedMode}
-                  />
+                <MovieStatusLabel
+                  hasMovieFiles={hasMovieFile}
+                  monitored={monitored}
+                  isAvailable={isAvailable}
+                  queueItem={queueItem}
+                  id={id}
+                  useLabel={true}
+                  colorImpairedMode={colorImpairedMode}
+                />
               }
             </div>
 

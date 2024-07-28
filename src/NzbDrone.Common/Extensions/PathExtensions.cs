@@ -92,26 +92,23 @@ namespace NzbDrone.Common.Extensions
 
         public static string GetParentPath(this string childPath)
         {
-            var cleanPath = childPath.GetCleanPath();
+            var path = new OsPath(childPath).Directory;
 
-            if (cleanPath.IsNullOrWhiteSpace())
-            {
-                return null;
-            }
-
-            return Directory.GetParent(cleanPath)?.FullName;
+            return path == OsPath.Null ? null : path.PathWithoutTrailingSlash;
         }
 
         public static string GetParentName(this string childPath)
         {
-            var cleanPath = childPath.GetCleanPath();
+            var path = new OsPath(childPath).Directory;
 
-            if (cleanPath.IsNullOrWhiteSpace())
-            {
-                return null;
-            }
+            return path == OsPath.Null ? null : path.Name;
+        }
 
-            return Directory.GetParent(cleanPath)?.Name;
+        public static string GetDirectoryName(this string childPath)
+        {
+            var path = new OsPath(childPath);
+
+            return path == OsPath.Null ? null : path.Name;
         }
 
         public static string GetCleanPath(this string path)
@@ -130,32 +127,17 @@ namespace NzbDrone.Common.Extensions
 
         public static bool IsParentPath(this string parentPath, string childPath)
         {
-            if (parentPath.IsNullOrWhiteSpace() || childPath.IsNullOrWhiteSpace())
-            {
-                return false;
-            }
+            var parent = new OsPath(parentPath);
+            var child = new OsPath(childPath);
 
-            if (parentPath != "/" && !parentPath.EndsWith(":\\"))
+            while (child.Directory != OsPath.Null)
             {
-                parentPath = parentPath.TrimEnd(Path.DirectorySeparatorChar);
-            }
-
-            if (childPath != "/" && !parentPath.EndsWith(":\\"))
-            {
-                childPath = childPath.TrimEnd(Path.DirectorySeparatorChar);
-            }
-
-            var parent = new DirectoryInfo(parentPath);
-            var child = new DirectoryInfo(childPath);
-
-            while (child.Parent != null)
-            {
-                if (child.Parent.FullName.Equals(parent.FullName, DiskProviderBase.PathStringComparison))
+                if (child.Directory.Equals(parent, true))
                 {
                     return true;
                 }
 
-                child = child.Parent;
+                child = child.Directory;
             }
 
             return false;

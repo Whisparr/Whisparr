@@ -18,6 +18,7 @@ namespace NzbDrone.Core.Movies.Studios
         Studio Update(Studio performer);
         List<Studio> Update(List<Studio> studios);
         Studio FindByTitle(string title);
+        List<Studio> FindAllByTitle(string title);
         void RemoveStudio(Studio studio);
     }
 
@@ -84,9 +85,16 @@ namespace NzbDrone.Core.Movies.Studios
 
         public Studio FindByTitle(string title)
         {
-            var cleanTitle = title.CleanMovieTitle();
+            var cleanTitle = title.CleanStudioTitle();
 
             return _studioRepo.FindByTitle(cleanTitle);
+        }
+
+        public List<Studio> FindAllByTitle(string title)
+        {
+            var cleanTitle = title.CleanStudioTitle();
+
+            return _studioRepo.FindAllByTitle(cleanTitle);
         }
 
         public Studio FindByForeignId(string foreignId)

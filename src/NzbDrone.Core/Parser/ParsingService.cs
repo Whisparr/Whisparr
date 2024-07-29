@@ -73,11 +73,20 @@ namespace NzbDrone.Core.Parser
 
             if (parsedMovieInfo.IsScene)
             {
-                var studio = _studioService.FindByTitle(parsedMovieInfo.StudioTitle);
+                var studios = _studioService.FindAllByTitle(parsedMovieInfo.StudioTitle);
 
-                if (studio != null)
+                if (studios != null && studios.Count > 0)
                 {
-                    return _movieService.FindByStudioAndReleaseDate(studio.ForeignId, parsedMovieInfo.ReleaseDate, parsedMovieInfo.ReleaseTokens);
+                    Movie movie = null;
+                    foreach (var studio in studios)
+                    {
+                        if (movie == null)
+                        {
+                            movie = _movieService.FindByStudioAndReleaseDate(studio.ForeignId, parsedMovieInfo.ReleaseDate, parsedMovieInfo.ReleaseTokens);
+                        }
+                    }
+
+                    return movie;
                 }
             }
             else
@@ -141,11 +150,17 @@ namespace NzbDrone.Core.Parser
 
             if (parsedMovieInfo.IsScene)
             {
-                var studio = _studioService.FindByTitle(parsedMovieInfo.StudioTitle);
+                var studios = _studioService.FindAllByTitle(parsedMovieInfo.StudioTitle);
 
-                if (studio != null)
+                if (studios != null && studios.Count > 0)
                 {
-                    result = GetSceneMovie(studio, parsedMovieInfo.ReleaseDate, parsedMovieInfo.ReleaseTokens, searchCriteria);
+                    foreach (var studio in studios)
+                    {
+                        if (result == null)
+                        {
+                            result = GetSceneMovie(studio, parsedMovieInfo.ReleaseDate, parsedMovieInfo.ReleaseTokens, searchCriteria);
+                        }
+                    }
                 }
 
                 if (result == null)

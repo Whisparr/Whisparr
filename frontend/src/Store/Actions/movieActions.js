@@ -9,8 +9,7 @@ import createAjaxRequest from 'Utilities/createAjaxRequest';
 import dateFilterPredicate from 'Utilities/Date/dateFilterPredicate';
 import padNumber from 'Utilities/Number/padNumber';
 import translate from 'Utilities/String/translate';
-import { set, updateItem } from './baseActions';
-import createFetchHandler from './Creators/createFetchHandler';
+import { set, update, updateItem } from './baseActions';
 import createHandleActions from './Creators/createHandleActions';
 import createRemoveItemHandler from './Creators/createRemoveItemHandler';
 import createSaveProviderHandler from './Creators/createSaveProviderHandler';
@@ -322,7 +321,72 @@ function getSaveAjaxOptions({ ajaxOptions, payload }) {
 
 export const actionHandlers = handleThunks({
 
-  [FETCH_MOVIES]: createFetchHandler(section, '/movie'),
+  [FETCH_MOVIES]: (getState, payload, dispatch) => {
+    dispatch(set({ section, isFetching: true }));
+
+    const {
+      ...otherPayload
+    } = payload;
+
+    const { request, abortRequest } = createAjaxRequest({
+      url: '/movie/list',
+      data: otherPayload,
+      traditional: true
+    });
+
+    request.done((movieids) => {
+      const requests = [];
+
+      const chunkSize = 50000;
+      for (let i = 0; i < movieids.length; i += chunkSize) {
+        const chunk = movieids.slice(i, i + chunkSize);
+
+        const promise = createAjaxRequest({
+          url: '/movie/bulk',
+          method: 'POST',
+          contentType: 'application/json',
+          dataType: 'json',
+          data: JSON.stringify(chunk)
+        });
+
+        requests.push(promise.request);
+      }
+
+      Promise.all(requests)
+        .catch((xhr) => {
+          dispatch(set({
+            section,
+            isFetching: false,
+            isPopulated: false,
+            error: xhr.aborted ? null : xhr
+          }));
+        })
+        .then((results) => {
+          const data = results.flat();
+          dispatch(batchActions([
+            update({ section, data }),
+
+            set({
+              section,
+              isFetching: false,
+              isPopulated: true,
+              error: null
+            })
+          ]));
+        });
+    });
+
+    request.fail((xhr) => {
+      dispatch(set({
+        section,
+        isFetching: false,
+        isPopulated: false,
+        error: xhr.aborted ? null : xhr
+      }));
+    });
+
+    return abortRequest;
+  },
   [SAVE_MOVIE]: createSaveProviderHandler(section, '/movie', { getAjaxOptions: getSaveAjaxOptions }),
   [DELETE_MOVIE]: (getState, payload, dispatch) => {
     createRemoveItemHandler(section, '/movie')(getState, payload, dispatch);

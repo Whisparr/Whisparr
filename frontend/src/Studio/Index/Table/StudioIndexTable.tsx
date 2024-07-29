@@ -7,8 +7,14 @@ import AppState from 'App/State/AppState';
 import Scroller from 'Components/Scroller/Scroller';
 import Column from 'Components/Table/Column';
 import useMeasure from 'Helpers/Hooks/useMeasure';
-import ScrollDirection from 'Helpers/Props/ScrollDirection';
-import SortDirection from 'Helpers/Props/SortDirection';
+import {
+  HORIZONTAL,
+  type ScrollDirection
+} from 'Helpers/Props/scrollDirections';
+
+import {
+  type SortDirection
+} from 'Helpers/Props/sortDirections';
 import Studio from 'Studio/Studio';
 import dimensions from 'Styles/Variables/dimensions';
 import getIndexOfFirstCharacter from 'Utilities/Array/getIndexOfFirstCharacter';
@@ -32,6 +38,7 @@ interface StudioIndexTableProps {
   items: Studio[];
   sortKey: string;
   sortDirection?: SortDirection;
+  scrollDirection?: ScrollDirection;
   jumpToCharacter?: string;
   scrollTop?: number;
   scrollerRef: RefObject<HTMLElement>;
@@ -176,7 +183,7 @@ function StudioIndexTable(props: StudioIndexTableProps) {
     <div ref={measureRef}>
       <Scroller
         className={styles.tableScroller}
-        scrollDirection={ScrollDirection.Horizontal}
+        scrollDirection={HORIZONTAL}
       >
         <StudioIndexTableHeader
           columns={columns}

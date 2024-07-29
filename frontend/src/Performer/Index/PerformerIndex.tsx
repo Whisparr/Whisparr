@@ -22,7 +22,7 @@ import PageToolbarSeparator from 'Components/Page/Toolbar/PageToolbarSeparator';
 import TableOptionsModalWrapper from 'Components/Table/TableOptions/TableOptionsModalWrapper';
 import withScrollPosition from 'Components/withScrollPosition';
 import { align, icons, kinds } from 'Helpers/Props';
-import SortDirection from 'Helpers/Props/SortDirection';
+import { DESCENDING }from 'Helpers/Props/sortDirections';
 import MovieIndexSelectAllButton from 'Movie/Index/Select/MovieIndexSelectAllButton';
 import MovieIndexSelectAllMenuItem from 'Movie/Index/Select/MovieIndexSelectAllMenuItem';
 import MovieIndexSelectModeButton from 'Movie/Index/Select/MovieIndexSelectModeButton';
@@ -185,7 +185,7 @@ const PerformerIndex = withScrollPosition((props: PerformerIndexProps) => {
     const order = Object.keys(characters).sort();
 
     // Reverse if sorting descending
-    if (sortDirection === SortDirection.Descending) {
+    if (sortDirection === DESCENDING) {
       order.reverse();
     }
 

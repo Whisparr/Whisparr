@@ -7,6 +7,7 @@ import MovieCollectionAppState from './MovieCollectionAppState';
 import MovieFilesAppState from './MovieFilesAppState';
 import MoviesAppState, { MovieIndexAppState } from './MoviesAppState';
 import ParseAppState from './ParseAppState';
+import PathsAppState from './PathsAppState';
 import PerformersAppState from './PerformersAppState';
 import QueueAppState from './QueueAppState';
 import RootFolderAppState from './RootFolderAppState';
@@ -74,6 +75,7 @@ interface AppState {
   studios: StudiosAppState;
   movies: MoviesAppState;
   parse: ParseAppState;
+  paths: PathsAppState;
   queue: QueueAppState;
   rootFolders: RootFolderAppState;
   settings: SettingsAppState;

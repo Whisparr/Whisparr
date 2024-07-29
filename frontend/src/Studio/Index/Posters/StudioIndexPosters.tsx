@@ -5,7 +5,7 @@ import { FixedSizeGrid as Grid, GridChildComponentProps } from 'react-window';
 import { createSelector } from 'reselect';
 import AppState from 'App/State/AppState';
 import useMeasure from 'Helpers/Hooks/useMeasure';
-import SortDirection from 'Helpers/Props/SortDirection';
+import { SortDirection } from 'Helpers/Props/sortDirections';
 import StudioIndexPoster from 'Studio/Index/Posters/StudioIndexPoster';
 import Studio from 'Studio/Studio';
 import dimensions from 'Styles/Variables/dimensions';

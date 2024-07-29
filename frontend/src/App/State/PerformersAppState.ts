@@ -1,5 +1,5 @@
 import Column from 'Components/Table/Column';
-import SortDirection from 'Helpers/Props/SortDirection';
+import { SortDirection }from 'Helpers/Props/sortDirections';
 import Performer from 'Performer/Performer';
 import AppSectionState, { AppSectionSaveState } from './AppSectionState';
 import { Filter, FilterBuilderProp } from './AppState';

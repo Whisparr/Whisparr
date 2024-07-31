@@ -212,6 +212,7 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Manual
         {
             DownloadClientItem downloadClientItem = null;
             Series series = null;
+            TrackedDownload trackedDownload = null;
 
             var directoryInfo = new DirectoryInfo(baseFolder);
 
@@ -233,7 +234,7 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Manual
 
             if (downloadId.IsNotNullOrWhiteSpace())
             {
-                var trackedDownload = _trackedDownloadService.Find(downloadId);
+                trackedDownload = _trackedDownloadService.Find(downloadId);
                 downloadClientItem = trackedDownload.DownloadItem;
 
                 if (series == null)
@@ -268,6 +269,11 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Manual
             var folderInfo = Parser.Parser.ParseTitle(directoryInfo.Name);
             var seriesFiles = _diskScanService.FilterPaths(rootFolder, _diskScanService.GetVideoFiles(baseFolder).ToList());
             var decisions = _importDecisionMaker.GetImportDecisions(seriesFiles, series, downloadClientItem, folderInfo, SceneSource(series, baseFolder), filterExistingFiles);
+
+            foreach (var decision in decisions)
+            {
+                decision.LocalEpisode.IndexerFlags = trackedDownload?.RemoteEpisode?.Release?.IndexerFlags ?? 0;
+            }
 
             return decisions.Select(decision => MapItem(decision, rootFolder, downloadId, directoryInfo.Name)).ToList();
         }
@@ -328,7 +334,10 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Manual
 
                 if (importDecisions.Any())
                 {
-                    return MapItem(importDecisions.First(), rootFolder, downloadId, null);
+                    var importDecision = importDecisions.First();
+                    importDecision.LocalEpisode.IndexerFlags = trackedDownload?.RemoteEpisode?.Release?.IndexerFlags ?? 0;
+
+                    return MapItem(importDecision, rootFolder, downloadId, null);
                 }
             }
             catch (Exception ex)

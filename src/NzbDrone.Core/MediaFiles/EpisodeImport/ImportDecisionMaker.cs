@@ -30,6 +30,7 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport
         private readonly IAggregationService _aggregationService;
         private readonly IDiskProvider _diskProvider;
         private readonly IDetectSample _detectSample;
+        private readonly ITrackedDownloadService _trackedDownloadService;
         private readonly ICustomFormatCalculationService _formatCalculator;
         private readonly ITrackedDownloadService _trackedDownloadService;
         private readonly Logger _logger;
@@ -39,6 +40,7 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport
                                    IAggregationService aggregationService,
                                    IDiskProvider diskProvider,
                                    IDetectSample detectSample,
+                                   ITrackedDownloadService trackedDownloadService,
                                    ICustomFormatCalculationService formatCalculator,
                                    ITrackedDownloadService trackedDownloadService,
                                    Logger logger)
@@ -48,6 +50,7 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport
             _aggregationService = aggregationService;
             _diskProvider = diskProvider;
             _detectSample = detectSample;
+            _trackedDownloadService = trackedDownloadService;
             _formatCalculator = formatCalculator;
             _trackedDownloadService = trackedDownloadService;
             _logger = logger;
@@ -142,6 +145,16 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport
                 }
                 else
                 {
+                    if (downloadClientItem?.DownloadId.IsNotNullOrWhiteSpace() == true)
+                    {
+                        var trackedDownload = _trackedDownloadService.Find(downloadClientItem.DownloadId);
+
+                        if (trackedDownload?.RemoteEpisode?.Release?.IndexerFlags != null)
+                        {
+                            localEpisode.IndexerFlags = trackedDownload.RemoteEpisode.Release.IndexerFlags;
+                        }
+                    }
+
                     localEpisode.CustomFormats = _formatCalculator.ParseCustomFormat(localEpisode);
                     localEpisode.CustomFormatScore = localEpisode.Series.QualityProfile?.Value.CalculateCustomFormatScore(localEpisode.CustomFormats) ?? 0;
 

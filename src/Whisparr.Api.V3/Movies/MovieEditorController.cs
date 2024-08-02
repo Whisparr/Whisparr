@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Configuration;
@@ -18,6 +19,7 @@ namespace Whisparr.Api.V3.Movies
         private readonly IMovieService _movieService;
         private readonly IConfigService _configService;
         private readonly IManageCommandQueue _commandQueueManager;
+        private readonly MovieEditorValidator _movieEditorValidator;
         private readonly IUpgradableSpecification _upgradableSpecification;
         private readonly IMapCoversToLocal _coverMapper;
 
@@ -25,12 +27,14 @@ namespace Whisparr.Api.V3.Movies
             IMapCoversToLocal coverMapper,
             IConfigService configService,
             IManageCommandQueue commandQueueManager,
+            MovieEditorValidator movieEditorValidator,
             IUpgradableSpecification upgradableSpecification)
         {
             _movieService = movieService;
             _coverMapper = coverMapper;
             _configService = configService;
             _commandQueueManager = commandQueueManager;
+            _movieEditorValidator = movieEditorValidator;
             _upgradableSpecification = upgradableSpecification;
         }
 
@@ -79,6 +83,13 @@ namespace Whisparr.Api.V3.Movies
                             movie.Tags = new HashSet<int>(newTags);
                             break;
                     }
+                }
+
+                var validationResult = _movieEditorValidator.Validate(movie);
+
+                if (!validationResult.IsValid)
+                {
+                    throw new ValidationException(validationResult.Errors);
                 }
             }
 

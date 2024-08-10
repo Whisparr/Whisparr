@@ -21,7 +21,7 @@ class ImportListExclusions extends Component {
     super(props, context);
 
     this.state = {
-      isAddImportExclusionModalOpen: false,
+      isAddImportListExclusionModalOpen: false,
       selectedExclusionType: 'all',
       selectedExclusions: new Set(),
       sortColumn: null, // 'type', 'foreignId', or 'title'
@@ -32,12 +32,12 @@ class ImportListExclusions extends Component {
   //
   // Listeners
 
-  onAddImportExclusionPress = () => {
-    this.setState({ isAddImportExclusionModalOpen: true });
+  onAddImportListExclusionPress = () => {
+    this.setState({ isAddImportListExclusionModalOpen: true });
   };
 
   onModalClose = () => {
-    this.setState({ isAddImportExclusionModalOpen: false });
+    this.setState({ isAddImportListExclusionModalOpen: false });
   };
 
   onInputChange = (option) => {
@@ -105,7 +105,7 @@ class ImportListExclusions extends Component {
   // Render
 
   render() {
-    const { items, onConfirmDeleteImportExclusion, ...otherProps } = this.props;
+    const { items, onConfirmDeleteImportListExclusion, ...otherProps } = this.props;
     const { selectedExclusionType, selectedExclusions } = this.state;
 
     let filteredItems =
@@ -254,7 +254,7 @@ class ImportListExclusions extends Component {
           </div>
 
           <EditImportListExclusionModalConnector
-            isOpen={this.state.isAddImportExclusionModalOpen}
+            isOpen={this.state.isAddImportListExclusionModalOpen}
             onModalClose={this.onModalClose}
           />
         </PageSectionContent>
@@ -267,7 +267,7 @@ ImportListExclusions.propTypes = {
   isFetching: PropTypes.bool.isRequired,
   error: PropTypes.object,
   items: PropTypes.arrayOf(PropTypes.object).isRequired,
-  onConfirmDeleteImportExclusion: PropTypes.func.isRequired
+  onConfirmDeleteImportListExclusion: PropTypes.func.isRequired
 };
 
 export default ImportListExclusions;

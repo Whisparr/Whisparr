@@ -3,7 +3,7 @@
 interface CssExports {
   'actions': string;
   'addButton': string;
-  'addImportExclusion': string;
+  'addImportListExclusion': string;
   'checkboxContainer': string;
   'foreignId': string;
   'importExclusionDropdownContainer': string;

@@ -72,7 +72,7 @@
   flex: 0 0 48px;
 }
 
-.addImportExclusion {
+.addImportListExclusion {
   display: flex;
   justify-content: flex-end;
   flex: 1 0 auto;

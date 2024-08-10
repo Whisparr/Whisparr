@@ -5,7 +5,7 @@ import { createSelector } from 'reselect';
 import { clearAddMovie, lookupScene } from 'Store/Actions/addMovieActions';
 import { clearQueueDetails, fetchQueueDetails } from 'Store/Actions/queueActions';
 import { fetchRootFolders } from 'Store/Actions/rootFolderActions';
-import { fetchImportExclusions } from 'Store/Actions/Settings/importExclusions';
+import { fetchImportListExclusions } from 'Store/Actions/Settings/importListExclusions';
 import createUISettingsSelector from 'Store/Selectors/createUISettingsSelector';
 import parseUrl from 'Utilities/String/parseUrl';
 import AddNewScene from './AddNewScene';

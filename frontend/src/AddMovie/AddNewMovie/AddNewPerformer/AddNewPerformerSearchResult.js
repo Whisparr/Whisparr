@@ -67,14 +67,6 @@ class AddNewPerformerSearchResult extends Component {
 
     const linkProps = isExistingPerformer ? { to: `/performer/${foreignId}` } : { onPress: this.onPress };
 
-    const posterWidth = 167;
-    const posterHeight = 250;
-
-    const elementStyle = {
-      width: `${posterWidth}px`,
-      height: `${posterHeight}px`
-    };
-
     return (
       <div className={styles.searchResult}>
         <Link
@@ -91,11 +83,9 @@ class AddNewPerformerSearchResult extends Component {
                   <MovieHeadshot
                     blur={safeForWorkMode}
                     className={styles.poster}
-                    style={elementStyle}
                     images={images}
                     size={250}
                     overflow={true}
-                    lazy={false}
                   />
                 </div>
               </div>

@@ -12,6 +12,7 @@ import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { inputTypes, kinds } from 'Helpers/Props';
 import MoviePoster from 'Movie/MoviePoster';
+import ScenePoster from 'Scene/ScenePoster';
 import translate from 'Utilities/String/translate';
 import styles from './AddNewMovieModalContent.css';
 
@@ -51,6 +52,8 @@ class AddNewMovieModalContent extends Component {
       onInputChange
     } = this.props;
 
+    const ImageComponent = images[0].coverType === 'poster' ? MoviePoster : ScenePoster;
+
     return (
       <ModalContent onModalClose={onModalClose}>
         <ModalHeader>
@@ -66,14 +69,13 @@ class AddNewMovieModalContent extends Component {
           <div className={styles.container}>
             {
               !isSmallScreen &&
-                <div className={styles.poster}>
-                  <MoviePoster
-                    blur={safeForWorkMode}
-                    className={styles.poster}
-                    images={images}
-                    size={250}
-                  />
-                </div>
+                <ImageComponent
+                  blur={safeForWorkMode}
+                  className={images[0].coverType === 'poster' ? styles.poster : styles.screenShot}
+                  images={images}
+                  size={250}
+                  lazy={false}
+                />
             }
 
             <div className={styles.info}>

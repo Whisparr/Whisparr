@@ -15,6 +15,7 @@ namespace NzbDrone.Core.Movies
     {
         bool MoviePathExists(string path);
         List<Movie> FindByTitles(List<string> titles);
+        IEnumerable<Movie> FindByIds(List<int> ids);
         Movie FindByImdbId(string imdbid);
         Movie FindByTmdbId(int tmdbid);
         Movie FindByForeignId(string foreignId);
@@ -28,6 +29,7 @@ namespace NzbDrone.Core.Movies
         PagingSpec<Movie> MoviesWhereCutoffUnmet(PagingSpec<Movie> pagingSpec, List<QualitiesBelowCutoff> qualitiesBelowCutoff);
         Movie FindByPath(string path);
         Dictionary<int, string> AllMoviePaths();
+        List<int> AllMovieIds();
         List<int> AllMovieTmdbIds();
         List<string> AllMovieForeignIds();
         Dictionary<int, List<int>> AllMovieTags();
@@ -77,6 +79,31 @@ namespace NzbDrone.Core.Movies
                 (movie, profile, file) => Map(movieDictionary, movie, profile, file));
 
             return movieDictionary.Values.ToList();
+        }
+
+        public IEnumerable<Movie> FindByIds(List<int> ids)
+        {
+            // the skips the join on profile and alternative title and populates manually
+            // to avoid repeatedly deserializing the same profile / movie
+            var builder = new SqlBuilder(_database.DatabaseType)
+                .LeftJoin<Movie, MovieFile>((m, f) => m.MovieFileId == f.Id)
+                .LeftJoin<Movie, MovieMetadata>((m, f) => m.MovieMetadataId == f.Id)
+                .Where<Movie>(m => ids.Contains(m.Id));
+
+            var profiles = _profileRepository.All().ToDictionary(x => x.Id);
+
+            var data = _database.QueryJoined<Movie, MovieFile, MovieMetadata>(
+                builder,
+                (movie, file, metadata) =>
+                {
+                    movie.MovieFile = file;
+                    movie.MovieMetadata = metadata;
+                    movie.QualityProfile = profiles[movie.QualityProfileId];
+
+                    return movie;
+                });
+
+            return data;
         }
 
         public override IEnumerable<Movie> All()
@@ -276,6 +303,14 @@ namespace NzbDrone.Core.Movies
             {
                 var strSql = "SELECT \"Id\" AS \"Key\", \"Path\" AS \"Value\" FROM \"Movies\"";
                 return conn.Query<KeyValuePair<int, string>>(strSql).ToDictionary(x => x.Key, x => x.Value);
+            }
+        }
+
+        public List<int> AllMovieIds()
+        {
+            using (var conn = _database.OpenConnection())
+            {
+                return conn.Query<int>("SELECT \"Id\" FROM \"Movies\" ").ToList();
             }
         }
 

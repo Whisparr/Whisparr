@@ -22,6 +22,7 @@ namespace NzbDrone.Core.Movies
         PagingSpec<Movie> Paged(PagingSpec<Movie> pagingSpec);
         Movie AddMovie(Movie newMovie);
         List<Movie> AddMovies(List<Movie> newMovies);
+        List<Movie> FindByIds(List<int> ids);
         Movie FindByImdbId(string imdbid);
         Movie FindByTmdbId(int tmdbid);
         Movie FindByForeignId(string foreignId);
@@ -34,6 +35,7 @@ namespace NzbDrone.Core.Movies
         List<Movie> GetByPerformerForeignId(string performerForeignId);
         Movie FindByPath(string path);
         Dictionary<int, string> AllMoviePaths();
+        List<int> AllMovieIds();
         List<int> AllMovieTmdbIds();
         List<string> AllMovieForeignIds();
         bool MovieExists(Movie movie);
@@ -167,6 +169,11 @@ namespace NzbDrone.Core.Movies
             return _movieRepository.FindByTitles(lookupTitles);
         }
 
+        public List<Movie> FindByIds(List<int> ids)
+        {
+            return _movieRepository.FindByIds(ids).ToList();
+        }
+
         public Movie FindByImdbId(string imdbid)
         {
             return _movieRepository.FindByImdbId(imdbid);
@@ -190,6 +197,11 @@ namespace NzbDrone.Core.Movies
         public Dictionary<int, string> AllMoviePaths()
         {
             return _movieRepository.AllMoviePaths();
+        }
+
+        public List<int> AllMovieIds()
+        {
+            return _movieRepository.AllMovieIds();
         }
 
         public List<int> AllMovieTmdbIds()

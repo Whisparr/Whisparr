@@ -304,7 +304,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             return MapStudio(httpResponse.Resource);
         }
 
-        public List<string> GetPerformerScenes(string stashId)
+        public (List<string> Scenes, List<int> Movies) GetPerformerWorks(string stashId)
         {
             var httpRequest = _whisparrMetadata.Create()
                                              .SetSegment("route", "performer")
@@ -316,6 +316,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
 
             var httpResponse = _httpClient.Get<PerformerWorksResource>(httpRequest);
             var scenes = httpResponse.Resource.Scenes;
+            var movies = httpResponse.Resource.Movies.ConvertAll(int.Parse);
 
             if (httpResponse.HasHttpError)
             {
@@ -329,7 +330,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 }
             }
 
-            return scenes;
+            return (scenes, movies);
         }
 
         public List<string> GetStudioScenes(string stashId)
@@ -893,7 +894,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             var newPerformer = new Studio
             {
                 Title = studio.Title,
-                CleanTitle = studio.Title.CleanMovieTitle(),
+                CleanTitle = studio.Title.CleanStudioTitle(),
                 SortTitle = Parser.Parser.NormalizeTitle(studio.Title),
                 Website = studio.Homepage,
                 ForeignId = studio.ForeignIds.StashId,

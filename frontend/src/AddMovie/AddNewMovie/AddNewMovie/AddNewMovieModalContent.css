@@ -11,6 +11,14 @@
   flex: 0 0 170px;
   margin-right: 20px;
   height: 250px;
+  object-fit: cover;
+}
+
+.screenShot {
+  flex: 0 0 300px;
+  margin-right: 20px;
+  height: 169px;
+  object-fit: cover;
 }
 
 .info {

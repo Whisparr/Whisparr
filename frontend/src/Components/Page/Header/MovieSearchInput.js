@@ -134,7 +134,9 @@ class MovieSearchInput extends Component {
       return;
     }
 
-    this.setState({ value: newValue });
+    this.setState({
+      value: newValue.replace(/[^a-zA-Z ]/g, '')
+    });
   };
 
   onKeyDown = (event) => {

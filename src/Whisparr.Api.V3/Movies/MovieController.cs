@@ -157,6 +157,32 @@ namespace Whisparr.Api.V3.Movies
             return MapToResource(movie);
         }
 
+        [HttpGet("list")]
+        public List<int> ListMovies()
+        {
+            var moviesResources = new List<MovieResource>();
+
+            var movieTask = Task.Run(() => _moviesService.AllMovieIds());
+
+            return movieTask.GetAwaiter().GetResult();
+        }
+
+        [HttpPost("bulk")]
+        public List<MovieResource> GetResourceByIds([FromBody] List<int> ids)
+        {
+            var moviesResources = new List<MovieResource>();
+
+            var availDelay = _configService.AvailabilityDelay;
+            var movies = _moviesService.FindByIds(ids);
+
+            foreach (var movie in movies)
+            {
+                moviesResources.Add(movie.ToResource(availDelay, _qualityUpgradableSpecification));
+            }
+
+            return moviesResources;
+        }
+
         protected MovieResource MapToResource(Movie movie)
         {
             if (movie == null)

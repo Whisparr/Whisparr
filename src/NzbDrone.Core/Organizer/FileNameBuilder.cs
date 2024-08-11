@@ -195,11 +195,11 @@ namespace NzbDrone.Core.Organizer
             }
             else
             {
-                AddStudioTokens(tokenHandlers, movie);
                 AddSceneTokens(tokenHandlers, movie);
                 AddSceneTitlePlaceholderTokens(tokenHandlers, movie);
             }
 
+            AddStudioTokens(tokenHandlers, movie);
             AddReleaseDateTokens(tokenHandlers, movie.Year);
             AddIdTokens(tokenHandlers, movie);
 
@@ -308,16 +308,23 @@ namespace NzbDrone.Core.Organizer
 
         private void AddStudioTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Movie movie)
         {
-            tokenHandlers["{Studio Title}"] = m => movie.MovieMetadata.Value.StudioTitle;
-            tokenHandlers["{Studio TitleSlug}"] = m => SlugTitle(movie.MovieMetadata.Value.StudioTitle);
-            tokenHandlers["{Studio CleanTitle}"] = m => CleanTitle(movie.MovieMetadata.Value.StudioTitle);
-            tokenHandlers["{Studio TitleThe}"] = m => TitleThe(movie.MovieMetadata.Value.StudioTitle);
-            tokenHandlers["{Studio TitleFirstCharacter}"] = m => TitleThe(movie.MovieMetadata.Value.StudioTitle).Substring(0, 1).FirstCharToUpper();
+            if (movie.MovieMetadata.Value.StudioTitle.IsNotNullOrWhiteSpace())
+            {
+                tokenHandlers["{Studio Title}"] = m => movie.MovieMetadata.Value.StudioTitle;
+                tokenHandlers["{Studio TitleSlug}"] = m => SlugTitle(movie.MovieMetadata.Value.StudioTitle);
+                tokenHandlers["{Studio CleanTitle}"] = m => CleanTitle(movie.MovieMetadata.Value.StudioTitle);
+                tokenHandlers["{Studio TitleThe}"] = m => TitleThe(movie.MovieMetadata.Value.StudioTitle);
+                tokenHandlers["{Studio TitleFirstCharacter}"] = m => TitleThe(movie.MovieMetadata.Value.StudioTitle).Substring(0, 1).FirstCharToUpper();
+            }
 
-            if (movie.MovieMetadata.Value.StudioForeignId.IsNotNullOrWhiteSpace())
+            if (movie.MovieMetadata.Value.Studio != null && movie.MovieMetadata.Value.Studio.Network.IsNotNullOrWhiteSpace())
+            {
+                tokenHandlers["{Studio Network}"] = m => movie.MovieMetadata.Value.Studio.Network;
+            }
+            else if (movie.MovieMetadata.Value.StudioForeignId.IsNotNullOrWhiteSpace())
             {
                 var studio = _studioService.FindByForeignId(movie.MovieMetadata.Value.StudioForeignId);
-                tokenHandlers["{Studio Network}"] = m => studio.Network ?? string.Empty;
+                tokenHandlers["{Studio Network}"] = m => studio?.Network ?? string.Empty;
             }
             else
             {

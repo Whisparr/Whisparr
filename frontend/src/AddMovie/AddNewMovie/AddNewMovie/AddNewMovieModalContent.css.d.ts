@@ -8,6 +8,7 @@ interface CssExports {
   'modalFooter': string;
   'overview': string;
   'poster': string;
+  'screenShot': string;
   'searchForMissingMovieContainer': string;
   'searchForMissingMovieInput': string;
   'searchForMissingMovieLabel': string;

@@ -9,17 +9,24 @@
   }
 }
 
+.studioLink {
+  margin-right: 10px;
+  margin-left: 5px;
+}
+
+.studioLink>a:link,
+.studioLink>a:visited,
+.studioLink>a:hover,
+.studioLink>a:active {
+  color: inherit;
+}
+
 .header {
   position: relative;
   display: flex;
   align-items: center;
   width: 100%;
   font-size: 24px;
-}
-
-.seasonNumber {
-  margin-right: 10px;
-  margin-left: 5px;
 }
 
 .movieCountTooltip {

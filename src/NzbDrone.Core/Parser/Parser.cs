@@ -41,6 +41,10 @@ namespace NzbDrone.Core.Parser
             new Regex(@"^(?<studiotitle>.+?)?[-_. ]+(?<airyear>(19|20)\d{2})(?<airmonth>[0-1][0-9])(?<airday>[0-3][0-9])",
                 RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
+            // SCENE with airdate after title studio - title (dd.mm.yyyy)
+            new Regex(@"^(?<studiotitle>.+?)?[-_. ]+(?<releasetoken>.+?)\((?<airday>[0-3][0-9])\.(?<airmonth>[0-1][0-9])\.(?<airyear>(19|20)\d{2})",
+                RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
             // SCENE with airdate (18.04.28, 2018.04.28, 18-04-28, 18 04 28, 18_04_28)
             new Regex(@"^(?<studiotitle>.+?)?[-_. ]+(?<airyear>\d{2}|\d{4})[-_. ]+(?<airmonth>[0-1][0-9])[-_. ]+(?<airday>[0-3][0-9])",
                 RegexOptions.IgnoreCase | RegexOptions.Compiled),
@@ -143,6 +147,9 @@ namespace NzbDrone.Core.Parser
         private static readonly RegexReplace SimpleTitleRegex = new RegexReplace(@"(?:(480|540|576|720|1080|2160)[ip]|[xh][\W_]?26[45]|DD\W?5\W1|[<>?*]|848x480|1280x720|1920x1080|3840x2160|4096x2160|(8|10)b(it)?|10-bit)\s*?(?![a-b0-9])",
                                                                 string.Empty,
                                                                 RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        private static readonly Regex SpecialEpisodeTitleRegex = new Regex(@"(?<episodetitle>.+?)(?:\[.*(?:480p|720p|1080p|2160p|HDTV|WEB|WEBRip|WEB-?DL).*\]|\.XXX\.(?:480p|720p|1080p|2160p|HDTV|WEB|WEBRip|WEB-?DL).*|(?:480p|720p|1080p|2160p|HDTV|WEB|WEBRip|WEB-?DL)|$)",
+                          RegexOptions.Compiled);
 
         private static readonly Regex SimpleReleaseTitleRegex = new Regex(@"\s*(?:[<>?*|])", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
@@ -496,6 +503,11 @@ namespace NzbDrone.Core.Parser
 
         public static string CleanMovieTitle(this string title)
         {
+            if (title.IsNullOrWhiteSpace())
+            {
+                return string.Empty;
+            }
+
             // If Title only contains numbers return it as is.
             if (long.TryParse(title, out _))
             {
@@ -503,6 +515,40 @@ namespace NzbDrone.Core.Parser
             }
 
             return ReplaceGermanUmlauts(NormalizeRegex.Replace(title, string.Empty).ToLower()).RemoveAccent();
+        }
+
+        public static string CleanEpisodeTitle(this string title)
+        {
+            if (title.IsNullOrWhiteSpace())
+            {
+                return string.Empty;
+            }
+
+            var allRegexes = ReportTitleRegex.ToList();
+
+            foreach (var regex in allRegexes)
+            {
+                if (title.IsNullOrWhiteSpace())
+                {
+                    return string.Empty;
+                }
+
+                var match = regex.Matches(title);
+
+                if (match.Count != 0)
+                {
+                    var result = ParseMatchCollection(match, title);
+
+                    if (result != null)
+                    {
+                        var simpleReleaseTitle = SimpleReleaseTitleRegex.Replace(title, string.Empty);
+
+                        title = result.PrimaryMovieTitle;
+                    }
+                }
+            }
+
+            return title;
         }
 
         public static string NormalizeEpisodeTitle(this string title)
@@ -774,14 +820,28 @@ namespace NzbDrone.Core.Parser
 
                 if (result.ReleaseTokens.IsNullOrWhiteSpace())
                 {
+                    var releaseTokens = releaseTitle;
+                    var matchstart = releaseTitle.IndexOf(matchCollection[0].Value);
+                    if (studioTitle.IsNullOrWhiteSpace() && matchstart > 0)
+                    {
+                        studioTitle = releaseTitle.Substring(0, matchstart);
+                        lastSeasonEpisodeStringIndex += matchstart;
+                        studioTitle = RequestInfoRegex.Replace(studioTitle, "").Trim(' ');
+                    }
+
                     if (lastSeasonEpisodeStringIndex != releaseTitle.Length)
                     {
-                        result.ReleaseTokens = releaseTitle.Substring(lastSeasonEpisodeStringIndex);
+                        releaseTokens = releaseTitle.Substring(lastSeasonEpisodeStringIndex);
                     }
-                    else
+
+                    var match = SpecialEpisodeTitleRegex.Match(releaseTokens);
+
+                    if (match != null && match.Groups["episodetitle"].Value.IsNotNullOrWhiteSpace())
                     {
-                        result.ReleaseTokens = releaseTitle;
+                        releaseTokens = match.Groups["episodetitle"].Value;
                     }
+
+                    result.ReleaseTokens = releaseTokens;
                 }
 
                 result.StudioTitle = studioTitle;

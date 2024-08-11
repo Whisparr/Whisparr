@@ -42,7 +42,7 @@ namespace NzbDrone.Core.IndexerSearch
                 var performer = _performerService.GetById(performerId);
                 var userInvokedSearch = message.Trigger == CommandTrigger.Manual;
 
-                var items = _movieService.GetByPerformerForeignId(performer.ForeignId);
+                var items = _movieService.GetByPerformerForeignId(performer.ForeignId).Where(m => m.Monitored).ToList();
 
                 if (message.StudioIds.Count > 0)
                 {

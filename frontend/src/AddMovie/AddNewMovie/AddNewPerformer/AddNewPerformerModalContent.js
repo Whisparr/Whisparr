@@ -11,7 +11,7 @@ import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { inputTypes, kinds } from 'Helpers/Props';
-import MoviePoster from 'Movie/MoviePoster';
+import MovieHeadshot from 'Movie/MovieHeadshot';
 import translate from 'Utilities/String/translate';
 import styles from './AddNewPerformerModalContent.css';
 
@@ -59,11 +59,12 @@ class AddNewPerformerModalContent extends Component {
             {
               !isSmallScreen &&
                 <div className={styles.poster}>
-                  <MoviePoster
+                  <MovieHeadshot
                     blur={safeForWorkMode}
                     className={styles.poster}
                     images={images}
                     size={250}
+                    overflow={true}
                   />
                 </div>
             }

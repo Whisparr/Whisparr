@@ -16,9 +16,9 @@ interface CssExports {
   'movieCountTooltip': string;
   'noEpisodes': string;
   'season': string;
-  'seasonNumber': string;
   'sizeOnDisk': string;
   'studio': string;
+  'studioLink': string;
 }
 export const cssExports: CssExports;
 export default cssExports;

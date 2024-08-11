@@ -36,7 +36,7 @@ class MovieCastPoster extends Component {
   //
   // Render
 
-  render() {
+  render() {    
     const {
       performer,
       character,
@@ -60,7 +60,11 @@ class MovieCastPoster extends Component {
     const contentStyle = {
       width: `${posterWidth}px`
     };
-
+    
+    if(!performer?.foreignId) {
+      return null;
+    }
+    
     const link = `/performer/${performer.foreignId}`;
 
     return (

@@ -59,6 +59,7 @@
 .title {
   display: flex;
   align-items: center;
+  display: flex;
   flex: 1 1 0;
   overflow: hidden;
   min-width: 0;

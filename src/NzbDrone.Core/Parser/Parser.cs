@@ -486,7 +486,7 @@ namespace NzbDrone.Core.Parser
 
         public static string CleanStudioTitle(this string title)
         {
-            if (title.IsNotNullOrWhiteSpace())
+            if (title.IsNullOrWhiteSpace())
             {
                 return string.Empty;
             }

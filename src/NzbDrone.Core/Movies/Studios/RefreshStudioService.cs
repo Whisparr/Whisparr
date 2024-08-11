@@ -25,7 +25,7 @@ namespace NzbDrone.Core.Movies.Studios
         private readonly IConfigService _configService;
         private readonly IDiskScanService _diskScanService;
         private readonly IEventAggregator _eventAggregator;
-        private readonly IImportExclusionsService _importExclusionService;
+        private readonly IImportListExclusionService _importListExclusionService;
 
         private readonly Logger _logger;
 
@@ -36,7 +36,7 @@ namespace NzbDrone.Core.Movies.Studios
                                         IConfigService configService,
                                         IDiskScanService diskScanService,
                                         IEventAggregator eventAggregator,
-                                        IImportExclusionsService importExclusionsService,
+                                        IImportListExclusionService importListExclusionService,
                                         Logger logger)
         {
             _movieInfo = movieInfo;
@@ -46,7 +46,7 @@ namespace NzbDrone.Core.Movies.Studios
             _configService = configService;
             _diskScanService = diskScanService;
             _eventAggregator = eventAggregator;
-            _importExclusionService = importExclusionsService;
+            _importListExclusionService = importListExclusionService;
             _logger = logger;
         }
 
@@ -103,7 +103,7 @@ namespace NzbDrone.Core.Movies.Studios
 
                 var existingMovies = _movieService.AllMovieForeignIds();
                 var studioScenes = _movieInfo.GetStudioScenes(studio.ForeignId);
-                var excludedScenes = _importExclusionService.GetAllExclusions().Select(e => e.ForeignId);
+                var excludedScenes = _importListExclusionService.GetAllExclusions().Select(e => e.ForeignId);
                 var scenesToAdd = studioScenes.Where(m => !existingMovies.Contains(m)).Where(m => !excludedScenes.Contains(m));
                 var scenesAdded = 0;
 

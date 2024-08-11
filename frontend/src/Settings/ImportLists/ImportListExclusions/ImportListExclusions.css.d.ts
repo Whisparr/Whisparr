@@ -8,8 +8,8 @@ interface CssExports {
   'foreignId': string;
   'importExclusionDropdownContainer': string;
   'importExclusionFilterForm': string;
-  'importExclusionInfoContainer': string;
-  'importExclusionRow': string;
+  'importListExclusionInfoContainer': string;
+  'importListExclusionRow': string;
   'importListExclusionsHeader': string;
   'title': string;
   'type': string;

@@ -26,7 +26,7 @@ namespace NzbDrone.Core.Movies.Performers
         private readonly IConfigService _configService;
         private readonly IDiskScanService _diskScanService;
         private readonly IEventAggregator _eventAggregator;
-        private readonly IImportExclusionsService _importExclusionService;
+        private readonly IImportListExclusionService _importListExclusionService;
 
         private readonly Logger _logger;
 
@@ -37,7 +37,7 @@ namespace NzbDrone.Core.Movies.Performers
                                         IConfigService configService,
                                         IDiskScanService diskScanService,
                                         IEventAggregator eventAggregator,
-                                        ImportExclusionsService importExclusionsService,
+                                        ImportListExclusionService importListExclusionsService,
                                         Logger logger)
         {
             _movieInfo = movieInfo;
@@ -47,7 +47,7 @@ namespace NzbDrone.Core.Movies.Performers
             _configService = configService;
             _diskScanService = diskScanService;
             _eventAggregator = eventAggregator;
-            _importExclusionService = importExclusionsService;
+            _importListExclusionService = importListExclusionsService;
             _logger = logger;
         }
 
@@ -105,7 +105,7 @@ namespace NzbDrone.Core.Movies.Performers
 
                 var existingScenes = _movieService.AllMovieForeignIds().Where(s => s.Contains('-')).ToList();
                 var performerWork = _movieInfo.GetPerformerWorks(performer.ForeignId);
-                var excludedScenes = _importExclusionService.GetAllExclusions().Select(e => e.ForeignId);
+                var excludedScenes = _importListExclusionService.GetAllExclusions().Select(e => e.ForeignId);
                 var scenesToAdd = performerWork.Scenes.Where(m => !existingScenes.Contains(m)).Where(m => !excludedScenes.Contains(m));
                 var scenesAdded = 0;
 
@@ -135,7 +135,7 @@ namespace NzbDrone.Core.Movies.Performers
 
                 var tmbdId = 0;
                 var existingMovies = _movieService.AllMovieTmdbIds();
-                var excludedMovies = _importExclusionService.GetAllExclusions().Select(e => int.TryParse(e.ForeignId, out tmbdId)).Select(e => tmbdId).Where(e => e != 0).ToList();
+                var excludedMovies = _importListExclusionService.GetAllExclusions().Select(e => int.TryParse(e.ForeignId, out tmbdId)).Select(e => tmbdId).Where(e => e != 0).ToList();
                 var moviesToAdd = performerWork.Movies.Where(m => !existingMovies.Contains(m)).Where(m => !excludedMovies.Contains(m));
                 var moviesAdded = 0;
 

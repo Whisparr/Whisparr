@@ -71,11 +71,11 @@ class ImportListExclusions extends Component {
   };
 
   onDeleteSelected = () => {
-    const { onConfirmDeleteImportExclusion } = this.props;
+    const { onConfirmDeleteImportListExclusion } = this.props;
     const selectedIds = Array.from(this.state.selectedExclusions);
     if (selectedIds.length > 0) {
       selectedIds.forEach((id) => {
-        onConfirmDeleteImportExclusion(id);
+        onConfirmDeleteImportListExclusion(id);
       });
       // Optionally clear selection after delete:
       this.setState({ selectedExclusions: new Set() });
@@ -217,7 +217,7 @@ class ImportListExclusions extends Component {
             <div className={styles.actions}>
               <Link
                 className={styles.addButton}
-                onPress={this.onAddImportExclusionPress}
+                onPress={this.onAddImportListExclusionPress}
               >
                 <Icon name={icons.ADD} />
               </Link>
@@ -226,7 +226,7 @@ class ImportListExclusions extends Component {
 
           <div>
             {filteredItems.map((item, index) => (
-              <div key={item.id} className={styles.importExclusionRow}>
+              <div key={item.id} className={styles.importListExclusionRow}>
                 <div className={styles.checkboxContainer}>
                   <CheckInput
                     {...otherProps}
@@ -245,8 +245,8 @@ class ImportListExclusions extends Component {
                   {...item}
                   {...otherProps}
                   index={index}
-                  onConfirmDeleteImportExclusion={
-                    onConfirmDeleteImportExclusion
+                  onConfirmDeleteImportListExclusion={
+                    onConfirmDeleteImportListExclusion
                   }
                 />
               </div>

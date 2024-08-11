@@ -60,7 +60,7 @@ class ImportListExclusion extends Component {
     } = this.props;
 
     return (
-      <div className={styles.importListExclusion}>
+      <div className={styles.importListExclusionInfoContainer}>
         <div className={styles.type}>{type}</div>
         <div className={styles.foreignId}>{foreignId}</div>
         <div className={styles.title} title={movieTitle}><span>{movieTitle}</span></div>

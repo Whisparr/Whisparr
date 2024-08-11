@@ -4,7 +4,7 @@ using NzbDrone.Core.ImportLists.ImportExclusions;
 
 namespace Whisparr.Api.V3.ImportLists
 {
-    public class ImportExclusionsResource : ProviderResource<ImportExclusionsResource>
+    public class ImportListExclusionResource : ProviderResource<ImportListExclusionResource>
     {
         // public int Id { get; set; }
         public string ForeignId { get; set; }
@@ -13,16 +13,16 @@ namespace Whisparr.Api.V3.ImportLists
         public int? MovieYear { get; set; }
     }
 
-    public static class ImportExclusionsResourceMapper
+    public static class ImportListExclusionResourceMapper
     {
-        public static ImportExclusionsResource ToResource(this ImportExclusion model)
+        public static ImportListExclusionResource ToResource(this ImportListExclusion model)
         {
             if (model == null)
             {
                 return null;
             }
 
-            return new ImportExclusionsResource
+            return new ImportListExclusionResource
             {
                 Id = model.Id,
                 ForeignId = model.ForeignId,
@@ -32,14 +32,14 @@ namespace Whisparr.Api.V3.ImportLists
             };
         }
 
-        public static List<ImportExclusionsResource> ToResource(this IEnumerable<ImportExclusion> exclusions)
+        public static List<ImportListExclusionResource> ToResource(this IEnumerable<ImportListExclusion> exclusions)
         {
             return exclusions.Select(ToResource).ToList();
         }
 
-        public static ImportExclusion ToModel(this ImportExclusionsResource resource)
+        public static ImportListExclusion ToModel(this ImportListExclusionResource resource)
         {
-            return new ImportExclusion
+            return new ImportListExclusion
             {
                 Id = resource.Id,
                 ForeignId = resource.ForeignId,
@@ -49,7 +49,7 @@ namespace Whisparr.Api.V3.ImportLists
             };
         }
 
-        public static List<ImportExclusion> ToModel(this IEnumerable<ImportExclusionsResource> resources)
+        public static List<ImportListExclusion> ToModel(this IEnumerable<ImportListExclusionResource> resources)
         {
             return resources.Select(ToModel).ToList();
         }

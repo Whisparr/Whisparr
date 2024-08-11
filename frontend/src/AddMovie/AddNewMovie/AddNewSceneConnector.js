@@ -33,7 +33,7 @@ const mapDispatchToProps = {
   lookupScene,
   clearAddMovie,
   fetchRootFolders,
-  fetchImportExclusions,
+  fetchImportListExclusions,
   fetchQueueDetails,
   clearQueueDetails
 };
@@ -51,7 +51,7 @@ class AddNewSceneConnector extends Component {
 
   componentDidMount() {
     this.props.fetchRootFolders();
-    this.props.fetchImportExclusions();
+    this.props.fetchImportListExclusions();
     this.props.fetchQueueDetails();
   }
 
@@ -110,7 +110,7 @@ AddNewSceneConnector.propTypes = {
   lookupScene: PropTypes.func.isRequired,
   clearAddMovie: PropTypes.func.isRequired,
   fetchRootFolders: PropTypes.func.isRequired,
-  fetchImportExclusions: PropTypes.func.isRequired,
+  fetchListImportExclusions: PropTypes.func.isRequired,
   fetchQueueDetails: PropTypes.func.isRequired,
   clearQueueDetails: PropTypes.func.isRequired
 };

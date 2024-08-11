@@ -35,7 +35,7 @@ namespace NzbDrone.Core.Movies
         private readonly IProvideMovieInfo _movieInfo;
         private readonly IBuildFileNames _fileNameBuilder;
         private readonly IAddMovieValidator _addMovieValidator;
-        private readonly IImportExclusionsService _importExclusionService;
+        private readonly IImportListExclusionService _importListExclusionService;
         private readonly IRootFolderService _rootFolderService;
         private readonly Logger _logger;
 
@@ -45,7 +45,7 @@ namespace NzbDrone.Core.Movies
                                 IProvideMovieInfo movieInfo,
                                 IBuildFileNames fileNameBuilder,
                                 IAddMovieValidator addMovieValidator,
-                                ImportExclusionsService importExclusionsService,
+                                ImportListExclusionService importListExclusionService,
                                 IRootFolderService rootFolderService,
                                 Logger logger)
         {
@@ -55,7 +55,7 @@ namespace NzbDrone.Core.Movies
             _movieInfo = movieInfo;
             _fileNameBuilder = fileNameBuilder;
             _addMovieValidator = addMovieValidator;
-            _importExclusionService = importExclusionsService;
+            _importListExclusionService = importListExclusionService;
             _rootFolderService = rootFolderService;
             _logger = logger;
         }
@@ -217,16 +217,16 @@ namespace NzbDrone.Core.Movies
 
             // Check if previosly excluded
             var type = newMovie.MovieMetadata.Value.ItemType == ItemType.Scene ? ImportExclusionType.Scene : ImportExclusionType.Movie;
-            if (!_importExclusionService.IsExcluded(newMovie.ForeignId, type))
+            if (!_importListExclusionService.IsExcluded(newMovie.ForeignId, type))
             {
-                var newExclusion = new ImportExclusion { ForeignId = newMovie.ForeignId, Type = type, MovieTitle = newMovie.Title, MovieYear = newMovie.Year };
+                var newExclusion = new ImportListExclusion { ForeignId = newMovie.ForeignId, Type = type, MovieTitle = newMovie.Title, MovieYear = newMovie.Year };
                 if (newMovie.MovieMetadata?.Value?.Studio != null)
                 {
                     var stashId = newMovie.MovieMetadata.Value.Studio.ForeignIds.StashId;
-                    var excludedStudio = _importExclusionService.IsExcluded(stashId, ImportExclusionType.Studio);
+                    var excludedStudio = _importListExclusionService.IsExcluded(stashId, ImportExclusionType.Studio);
                     if (excludedStudio)
                     {
-                        _importExclusionService.AddExclusion(newExclusion);
+                        _importListExclusionService.AddExclusion(newExclusion);
                         throw new ValidationException($"Studio: [{newMovie.MovieMetadata.Value.Studio.Title}] has been excluded");
                     }
                     else
@@ -237,7 +237,7 @@ namespace NzbDrone.Core.Movies
                             var dateTime = (DateTime)studio.AfterDate;
                             if (newMovie.MovieMetadata?.Value?.ReleaseDateUtc < dateTime)
                             {
-                                _importExclusionService.AddExclusion(newExclusion);
+                                _importListExclusionService.AddExclusion(newExclusion);
                                 throw new ValidationException($"Date: [{newMovie.MovieMetadata?.Value.ReleaseDate}] has been excluded before {dateTime.ToString("yyyy-MM-dd")}");
                             }
                         }
@@ -245,34 +245,34 @@ namespace NzbDrone.Core.Movies
                 }
 
                 var performerForeignIds = newMovie.MovieMetadata.Value.Credits.Select(c => c.PerformerForeignId);
-                var excludedItems = _importExclusionService.GetAllByType(ImportExclusionType.Performer);
+                var excludedItems = _importListExclusionService.GetAllByType(ImportExclusionType.Performer);
                 if (excludedItems != null)
                 {
                     var excludedPerformers = excludedItems.Where(e => performerForeignIds.Contains(e.ForeignId)).ToList();
                     if (excludedPerformers.Any())
                     {
-                        _importExclusionService.AddExclusion(newExclusion);
+                        _importListExclusionService.AddExclusion(newExclusion);
                         throw new ValidationException($"Performer: [{string.Join(",", excludedPerformers.Select(ep => ep.MovieTitle).ToList())}] has been excluded");
                     }
                 }
 
                 var tagNames = newMovie.MovieMetadata.Value.Genres;
-                var excludedTags = _importExclusionService.GetAllByType(ImportExclusionType.Tag);
+                var excludedTags = _importListExclusionService.GetAllByType(ImportExclusionType.Tag);
                 var exclusions = excludedTags.Where(e => tagNames.Contains(e.MovieTitle, StringComparer.OrdinalIgnoreCase)).ToList();
 
                 if (exclusions.Any())
                 {
-                    _importExclusionService.AddExclusion(newExclusion);
+                    _importListExclusionService.AddExclusion(newExclusion);
                     throw new ValidationException($"Tag(s): [{string.Join(",", exclusions.Select(et => et.MovieTitle).ToList())}] excluded");
                 }
             }
             else
             {
                 // Clean up exclusion on manual add
-                var exclusion = _importExclusionService.GetByForeignId(newMovie.ForeignId);
+                var exclusion = _importListExclusionService.GetByForeignId(newMovie.ForeignId);
                 if (exclusion != null && exclusion.Type == type)
                 {
-                    _importExclusionService.RemoveExclusion(exclusion);
+                    _importListExclusionService.RemoveExclusion(exclusion);
                 }
             }
 

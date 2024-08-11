@@ -29,7 +29,7 @@ namespace Whisparr.Api.V3.Performers
         private readonly IMapCoversToLocal _coverMapper;
         private readonly IMovieService _moviesService;
         private readonly IMovieStatisticsService _movieStatisticsService;
-        private readonly IImportExclusionsService _exclusionService;
+        private readonly IImportListExclusionService _exclusionService;
         private readonly IConfigService _configService;
         private readonly bool _useCache;
         private readonly ICached<PerformerResource> _performerResourceCache;
@@ -39,7 +39,7 @@ namespace Whisparr.Api.V3.Performers
                                    IMapCoversToLocal coverMapper,
                                    IMovieService moviesService,
                                    IMovieStatisticsService movieStatisticsService,
-                                   IImportExclusionsService exclusionService,
+                                   IImportListExclusionService exclusionService,
                                    ICacheManager cacheManager,
                                    IConfigService configService,
                                    IBroadcastSignalRMessage signalRBroadcaster)
@@ -148,7 +148,7 @@ namespace Whisparr.Api.V3.Performers
 
             if (addImportExclusion)
             {
-                var exclusion = new ImportExclusion();
+                var exclusion = new ImportListExclusion();
                 exclusion.ForeignId = performer.ForeignId;
                 exclusion.MovieTitle = performer.Name;
                 exclusion.Type = ImportExclusionType.Performer;

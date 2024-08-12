@@ -495,7 +495,7 @@ namespace NzbDrone.Core.Parser
         {
             if (title.IsNotNullOrWhiteSpace())
             {
-                return title.CleanMovieTitle().Replace(" ", "");
+                return title.Replace(" ", "").CleanMovieTitle();
             }
 
             return string.Empty;

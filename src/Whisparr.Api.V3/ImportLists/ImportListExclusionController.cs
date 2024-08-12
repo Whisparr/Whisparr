@@ -15,11 +15,15 @@ namespace Whisparr.Api.V3.ImportLists
     {
         private readonly IImportListExclusionService _importListExclusionService;
 
-        public ImportListExclusionController(IImportListExclusionService importListExclusionService)
+        public ImportListExclusionController(IImportListExclusionService importListExclusionService,
+                                             ImportListExclusionExistsValidator importListExclusionExistsValidator)
         {
             _importListExclusionService = importListExclusionService;
 
-            SharedValidator.RuleFor(c => c.ForeignId).NotEmpty();
+            SharedValidator.RuleFor(c => c.ForeignId).Cascade(CascadeMode.Stop)
+                .NotEmpty()
+                .SetValidator(importListExclusionExistsValidator);
+
             SharedValidator.RuleFor(c => c.MovieTitle).NotEmpty();
             SharedValidator.RuleFor(c => c.MovieYear).GreaterThan(0);
         }

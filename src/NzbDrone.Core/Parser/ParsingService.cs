@@ -289,6 +289,11 @@ namespace NzbDrone.Core.Parser
                 movieInfo = _movieService.FindByStudioAndReleaseDate(studio.ForeignId, airDate, part);
             }
 
+            if (movieInfo == null)
+            {
+                return null;
+            }
+
             return new FindMovieResult(movieInfo, MovieMatchType.Title);
         }
     }

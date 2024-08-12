@@ -92,7 +92,7 @@ namespace NzbDrone.Core.Movies.Studios
 
         public List<Studio> FindAllByTitle(string title)
         {
-            var cleanTitle = title.CleanStudioTitle();
+            var cleanTitle = title.CleanStudioTitle().ToLower();
 
             return _studioRepo.FindAllByTitle(cleanTitle);
         }

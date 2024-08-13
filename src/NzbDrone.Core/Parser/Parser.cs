@@ -39,10 +39,18 @@ namespace NzbDrone.Core.Parser
 
             // SCENE with non-separated airdate after title (20180428)
             new Regex(@"^(?<studiotitle>.+?)?[-_. ]+(?<airyear>(19|20)\d{2})(?<airmonth>[0-1][0-9])(?<airday>[0-3][0-9])",
+            RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
+            // SCENE with airdate after title [studio] title (dd.mm.yyyy)
+            new Regex(@"\[(?<studiotitle>.+?)\]+[-_. ]+(?<releasetoken>.+?)(?<airday>[0-3][0-9])\.(?<airmonth>[0-1][0-9])\.(?<airyear>(19|20)\d{2})\)",
                 RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
             // SCENE with airdate after title studio - title (dd.mm.yyyy)
-            new Regex(@"^(?<studiotitle>.+?)?[-_. ]+(?<releasetoken>.+?)\((?<airday>[0-3][0-9])\.(?<airmonth>[0-1][0-9])\.(?<airyear>(19|20)\d{2})",
+            new Regex(@"(?<studiotitle>.+?)?[-]+(?<releasetoken>.+?)\((?<airday>[0-3][0-9])\.(?<airmonth>[0-1][0-9])\.(?<airyear>(19|20)\d{2})\)",
+                RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
+            // SCENE with Episode numbers after studio E1234 title
+            new Regex(@"(?<studiotitle>.+?)?[-_. ]+(?<episode>[eE]+\d{1,6})",
                 RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
             // SCENE with airdate (18.04.28, 2018.04.28, 18-04-28, 18 04 28, 18_04_28)
@@ -148,7 +156,7 @@ namespace NzbDrone.Core.Parser
                                                                 string.Empty,
                                                                 RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        private static readonly Regex SpecialEpisodeTitleRegex = new Regex(@"(?<episodetitle>.+?)(?:\[.*(?:480p|720p|1080p|2160p|HDTV|WEB|WEBRip|WEB-?DL).*\]|\.XXX\.(?:480p|720p|1080p|2160p|HDTV|WEB|WEBRip|WEB-?DL).*|(?:480p|720p|1080p|2160p|HDTV|WEB|WEBRip|WEB-?DL)|$)",
+        private static readonly Regex SpecialEpisodeTitleRegex = new Regex(@"(?<episodetitle>.+?)(?:\[.*(?:480p|720p|1080p|2160p|HDTV|WEB|WEBRip|WEB-?DL).*\]|[. ]XXX[. ](?:480p|720p|1080p|2160p|HDTV|WEB|WEBRip|WEB-?DL).*|(?:480p|720p|1080p|2160p|HDTV|WEB|WEBRip|WEB-?DL)|$)",
                           RegexOptions.Compiled);
 
         private static readonly Regex SimpleReleaseTitleRegex = new Regex(@"\s*(?:[<>?*|])", RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -188,8 +196,8 @@ namespace NzbDrone.Core.Parser
         // groups whose releases end with RlsGroup) or RlsGroup]
         private static readonly Regex ExceptionReleaseGroupRegex = new Regex(@"(?<releasegroup>(Joy|FreetheFish|afm72|Anna|Bandi|Ghost|Kappa|MONOLITH|Qman|RZeroX|SAMPA|Silence|theincognito|t3nzin|Vyndros|HDO|DusIctv|DHD|SEV|CtrlHD|-ZR-|ADC|XZVN|RH|Kametsu|r00t|HONE|Vyndros)(?=\]|\)))", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-       // Handle Exception Release Groups that don't follow -RlsGrp; Manual List
-       // name only...BE VERY CAREFUL WITH THIS, HIGH CHANCE OF FALSE POSITIVES
+        // Handle Exception Release Groups that don't follow -RlsGrp; Manual List
+        // name only...BE VERY CAREFUL WITH THIS, HIGH CHANCE OF FALSE POSITIVES
         private static readonly Regex ExceptionReleaseGroupRegexExact = new Regex(@"(?<releasegroup>KRaLiMaRKo|E\.N\.D|D\-Z0N3|Koten_Gars|BluDragon|ZØNEHD|Tigole|HQMUX|VARYG|YIFY|YTS(.(MX|LT|AG))?)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex WordDelimiterRegex = new Regex(@"(\s|\.|,|_|-|=|'|\|)+", RegexOptions.Compiled);
@@ -296,6 +304,10 @@ namespace NzbDrone.Core.Parser
                 foreach (var regex in allRegexes)
                 {
                     var match = regex.Matches(simpleTitle);
+                    if (match.Count == 0)
+                    {
+                        match = regex.Matches(originalTitle);
+                    }
 
                     if (match.Count != 0)
                     {
@@ -386,6 +398,11 @@ namespace NzbDrone.Core.Parser
 
         public static string ParseImdbId(string title)
         {
+            if (title.IsNullOrWhiteSpace())
+            {
+                return string.Empty;
+            }
+
             var match = ReportImdbId.Match(title);
             if (match.Success)
             {
@@ -403,6 +420,11 @@ namespace NzbDrone.Core.Parser
 
         public static int ParseTmdbId(string title)
         {
+            if (title.IsNullOrWhiteSpace())
+            {
+                return 0;
+            }
+
             var match = ReportTmdbId.Match(title);
             if (match.Success)
             {
@@ -417,6 +439,11 @@ namespace NzbDrone.Core.Parser
 
         public static string ParseEdition(string languageTitle)
         {
+            if (languageTitle.IsNullOrWhiteSpace())
+            {
+                return string.Empty;
+            }
+
             var editionMatch = ReportEditionRegex.Match(languageTitle);
 
             if (editionMatch.Success && editionMatch.Groups["edition"].Value != null &&
@@ -430,6 +457,11 @@ namespace NzbDrone.Core.Parser
 
         public static string ReplaceGermanUmlauts(string s)
         {
+            if (s.IsNullOrWhiteSpace())
+            {
+                return string.Empty;
+            }
+
             var t = s;
             t = t.Replace("ä", "ae");
             t = t.Replace("ö", "oe");
@@ -553,6 +585,11 @@ namespace NzbDrone.Core.Parser
 
         public static string NormalizeEpisodeTitle(this string title)
         {
+            if (title.IsNullOrWhiteSpace())
+            {
+                return string.Empty;
+            }
+
             title = SpecialEpisodeWordRegex.Replace(title, string.Empty);
             title = PunctuationRegex.Replace(title, " ");
             title = DuplicateSpacesRegex.Replace(title, " ");
@@ -563,6 +600,11 @@ namespace NzbDrone.Core.Parser
 
         public static string NormalizeTitle(this string title)
         {
+            if (title.IsNullOrWhiteSpace())
+            {
+                return string.Empty;
+            }
+
             title = WordDelimiterRegex.Replace(title, " ");
             title = PunctuationRegex.Replace(title, string.Empty);
             title = CommonWordRegex.Replace(title, string.Empty);
@@ -574,11 +616,36 @@ namespace NzbDrone.Core.Parser
 
         public static string SimplifyReleaseTitle(this string title)
         {
+            if (title.IsNullOrWhiteSpace())
+            {
+                return string.Empty;
+            }
+
             return SimpleReleaseTitleRegex.Replace(title, string.Empty);
+        }
+
+        public static string TrimAtEnd(this string title, string textToTrim)
+        {
+            if (title.IsNullOrWhiteSpace())
+            {
+                return string.Empty;
+            }
+
+            if (title.EndsWith(textToTrim))
+            {
+                title = title.Remove(title.Length - textToTrim.Length);
+            }
+
+            return title.Trim();
         }
 
         public static string ParseHardcodeSubs(string title)
         {
+            if (title.IsNullOrWhiteSpace())
+            {
+                return string.Empty;
+            }
+
             var subMatch = HardcodedSubsRegex.Matches(title).OfType<Match>().LastOrDefault();
 
             if (subMatch != null && subMatch.Success)
@@ -598,6 +665,11 @@ namespace NzbDrone.Core.Parser
 
         public static string ParseReleaseGroup(string title)
         {
+            if (title.IsNullOrWhiteSpace())
+            {
+                return string.Empty;
+            }
+
             title = title.Trim();
             title = RemoveFileExtension(title);
             title = WebsitePrefixRegex.Replace(title);
@@ -650,23 +722,28 @@ namespace NzbDrone.Core.Parser
 
         public static string RemoveFileExtension(string title)
         {
-            title = FileExtensionRegex.Replace(title, m =>
-                {
-                    var extension = m.Value.ToLower();
-                    if (MediaFiles.MediaFileExtensions.Extensions.Contains(extension) || new[] { ".par2", ".nzb" }.Contains(extension))
-                    {
-                        return string.Empty;
-                    }
+            if (title.IsNullOrWhiteSpace())
+            {
+                return string.Empty;
+            }
 
-                    return m.Value;
-                });
+            title = FileExtensionRegex.Replace(title, m =>
+            {
+                var extension = m.Value.ToLower();
+                if (MediaFiles.MediaFileExtensions.Extensions.Contains(extension) || new[] { ".par2", ".nzb" }.Contains(extension))
+                {
+                    return string.Empty;
+                }
+
+                return m.Value;
+            });
 
             return title;
         }
 
         private static ParsedMovieInfo ParseMatchCollection(MatchCollection matchCollection, string releaseTitle)
         {
-            if (!matchCollection[0].Groups["airyear"].Success)
+            if (!matchCollection[0].Groups["airyear"].Success && !matchCollection[0].Groups["episode"].Success)
             {
                 if (!matchCollection[0].Groups["title"].Success || matchCollection[0].Groups["title"].Value == "(")
                 {
@@ -756,62 +833,76 @@ namespace NzbDrone.Core.Parser
             }
             else
             {
-                int.TryParse(matchCollection[0].Groups["airyear"].Value, out var airYear);
+                var result = new ParsedMovieInfo
+                {
+                    ReleaseTitle = releaseTitle,
+                };
 
-                var studioTitle = matchCollection[0].Groups["studiotitle"].Value.Replace('.', ' ').Replace('_', ' ');
+                if (matchCollection[0].Groups["airyear"].Success)
+                {
+                    int.TryParse(matchCollection[0].Groups["airyear"].Value, out var airYear);
+
+                    if (airYear <= 99)
+                    {
+                        airYear = CultureInfo.CurrentCulture.Calendar.ToFourDigitYear(airYear);
+                    }
+
+                    // Try to Parse as a daily show
+                    var airmonth = Convert.ToInt32(matchCollection[0].Groups["airmonth"].Value);
+                    var airday = Convert.ToInt32(matchCollection[0].Groups["airday"].Value);
+
+                    // Swap day and month if month is bigger than 12 (scene fail)
+                    if (airmonth > 12)
+                    {
+                        var tempDay = airday;
+                        airday = airmonth;
+                        airmonth = tempDay;
+                    }
+
+                    DateTime airDate;
+
+                    try
+                    {
+                        airDate = new DateTime(airYear, airmonth, airday);
+                    }
+                    catch (Exception)
+                    {
+                        throw new InvalidDateException("Invalid date found: {0}-{1}-{2}", airYear, airmonth, airday);
+                    }
+
+                    // Check if episode is in the future (most likely a parse error)
+                    if (airDate > DateTime.Now.AddDays(1).Date)
+                    {
+                        throw new InvalidDateException("Invalid date found: {0}", airDate);
+                    }
+
+                    // If the parsed air date is before 1970 and the title year wasn't matched (not a match for the Plex DVR format) throw an error
+                    if (airDate < new DateTime(1970, 1, 1) && matchCollection[0].Groups["titleyear"].Value.IsNullOrWhiteSpace())
+                    {
+                        throw new InvalidDateException("Invalid date found: {0}", airDate);
+                    }
+
+                    result.ReleaseDate = airDate.ToString(Movie.RELEASE_DATE_FORMAT);
+                }
+
+                var studioTitle = matchCollection[0].Groups["studiotitle"].Value.TrimAtEnd(".com").Replace('.', ' ').Replace('_', ' ');
                 studioTitle = RequestInfoRegex.Replace(studioTitle, "").Trim(' ');
 
                 var lastSeasonEpisodeStringIndex = matchCollection[0].Groups["studiotitle"].EndIndex();
 
-                if (airYear <= 99)
+                if (result.ReleaseDate.IsNotNullOrWhiteSpace())
                 {
-                    airYear = CultureInfo.CurrentCulture.Calendar.ToFourDigitYear(airYear);
+                    lastSeasonEpisodeStringIndex = Math.Max(lastSeasonEpisodeStringIndex, matchCollection[0].Groups["airyear"].EndIndex());
+                    lastSeasonEpisodeStringIndex = Math.Max(lastSeasonEpisodeStringIndex, matchCollection[0].Groups["airmonth"].EndIndex());
+                    lastSeasonEpisodeStringIndex = Math.Max(lastSeasonEpisodeStringIndex, matchCollection[0].Groups["airday"].EndIndex());
                 }
 
-                // Try to Parse as a daily show
-                var airmonth = Convert.ToInt32(matchCollection[0].Groups["airmonth"].Value);
-                var airday = Convert.ToInt32(matchCollection[0].Groups["airday"].Value);
-
-                // Swap day and month if month is bigger than 12 (scene fail)
-                if (airmonth > 12)
+                if (matchCollection[0].Groups["episode"].Success)
                 {
-                    var tempDay = airday;
-                    airday = airmonth;
-                    airmonth = tempDay;
+                    result.Episode = matchCollection[0].Groups["episode"].Value;
+
+                    lastSeasonEpisodeStringIndex = Math.Max(lastSeasonEpisodeStringIndex, matchCollection[0].Groups["episode"].EndIndex());
                 }
-
-                DateTime airDate;
-
-                try
-                {
-                    airDate = new DateTime(airYear, airmonth, airday);
-                }
-                catch (Exception)
-                {
-                    throw new InvalidDateException("Invalid date found: {0}-{1}-{2}", airYear, airmonth, airday);
-                }
-
-                // Check if episode is in the future (most likely a parse error)
-                if (airDate > DateTime.Now.AddDays(1).Date)
-                {
-                    throw new InvalidDateException("Invalid date found: {0}", airDate);
-                }
-
-                // If the parsed air date is before 1970 and the title year wasn't matched (not a match for the Plex DVR format) throw an error
-                if (airDate < new DateTime(1970, 1, 1) && matchCollection[0].Groups["titleyear"].Value.IsNullOrWhiteSpace())
-                {
-                    throw new InvalidDateException("Invalid date found: {0}", airDate);
-                }
-
-                lastSeasonEpisodeStringIndex = Math.Max(lastSeasonEpisodeStringIndex, matchCollection[0].Groups["airyear"].EndIndex());
-                lastSeasonEpisodeStringIndex = Math.Max(lastSeasonEpisodeStringIndex, matchCollection[0].Groups["airmonth"].EndIndex());
-                lastSeasonEpisodeStringIndex = Math.Max(lastSeasonEpisodeStringIndex, matchCollection[0].Groups["airday"].EndIndex());
-
-                var result = new ParsedMovieInfo
-                {
-                    ReleaseTitle = releaseTitle,
-                    ReleaseDate = airDate.ToString(Movie.RELEASE_DATE_FORMAT),
-                };
 
                 if (matchCollection[0].Groups["releasetoken"].Success)
                 {
@@ -821,13 +912,6 @@ namespace NzbDrone.Core.Parser
                 if (result.ReleaseTokens.IsNullOrWhiteSpace())
                 {
                     var releaseTokens = releaseTitle;
-                    var matchstart = releaseTitle.IndexOf(matchCollection[0].Value);
-                    if (studioTitle.IsNullOrWhiteSpace() && matchstart > 0)
-                    {
-                        studioTitle = releaseTitle.Substring(0, matchstart);
-                        lastSeasonEpisodeStringIndex += matchstart;
-                        studioTitle = RequestInfoRegex.Replace(studioTitle, "").Trim(' ');
-                    }
 
                     if (lastSeasonEpisodeStringIndex != releaseTitle.Length)
                     {

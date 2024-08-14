@@ -32,7 +32,8 @@ namespace NzbDrone.Core.Indexers.FileList
             {
                 foreach (var queryTitle in searchCriteria.CleanSceneTitles)
                 {
-                    var titleYearSearchQuery = string.Format("{0}+{1}", queryTitle, searchCriteria.Movie.Year);
+                    var titleYearSearchQuery = Settings.ExcludeSceneDateWhileGrabbing ? string.Format("{0}", queryTitle) : 
+                        string.Format("{0}+{1}", queryTitle, searchCriteria.Movie.Year);
                     pageableRequests.Add(GetRequest("search-torrents", string.Format("&type=name&query={0}", titleYearSearchQuery.Trim())));
                 }
             }
@@ -44,7 +45,12 @@ namespace NzbDrone.Core.Indexers.FileList
         {
             var pageableRequests = new IndexerPageableRequestChain();
 
-            var releaseDate = searchCriteria.ReleaseDate?.ToString("yy.MM.dd") ?? string.Empty;
+            var releaseDate = string.Empty;
+
+            // If the indexer is configured to include the date (default = true)
+            if (!Settings.ExcludeSceneDateWhileGrabbing) {
+                releaseDate = searchCriteria.ReleaseDate?.ToString("yy.MM.dd") 
+            }
 
             foreach (var sceneTitle in searchCriteria.SceneTitles)
             {

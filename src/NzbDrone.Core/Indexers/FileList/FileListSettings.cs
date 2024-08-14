@@ -67,6 +67,9 @@ namespace NzbDrone.Core.Indexers.FileList
         [FieldDefinition(8, Type = FieldType.Checkbox, Label = "Reject Blocklisted Torrent Hashes While Grabbing", HelpText = "If a torrent is blocked by hash it may not properly be rejected during RSS/Search for some indexers, enabling this will allow it to be rejected after the torrent is grabbed, but before it is sent to the client.", Advanced = true)]
         public bool RejectBlocklistedTorrentHashesWhileGrabbing { get; set; }
 
+        [FieldDefinition(9, Type = FieldType.Checkbox, Label = "Exclude scene date when grabbing", HelpText = "By default the scene name and studio name will be combined with the scene date (YY.MM.DD) when searching.  When this option is checked, it will not.", Advanced = true)]
+        public bool ExcludeSceneDateWhileGrabbing { get; set; }
+
         public NzbDroneValidationResult Validate()
         {
             return new NzbDroneValidationResult(Validator.Validate(this));

@@ -16,7 +16,7 @@ namespace NzbDrone.Core.IndexerSearch.Definitions
         // (?<!\d{2}) is a negative lookbehind that ensures the dot is not preceded by two digits.
         // (?!\d{2}) is a negative lookahead that ensures the dot is not followed by two digits.
         private static readonly Regex Dots = new Regex(@"(?<!\d{2})\.(?!\d{2})", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        private static readonly Regex NonWord = new Regex(@"[\W]", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex NonWord = new Regex(@"[^\w\.]", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private static readonly Regex BeginningThe = new Regex(@"^the\s", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         public Movie Movie { get; set; }

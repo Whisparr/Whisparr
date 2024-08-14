@@ -49,7 +49,7 @@ namespace NzbDrone.Core.Indexers.FileList
 
             // If the indexer is configured to include the date (default = true)
             if (!Settings.ExcludeSceneDateWhileGrabbing) {
-                releaseDate = searchCriteria.ReleaseDate?.ToString("yy.MM.dd") 
+                releaseDate = searchCriteria.ReleaseDate?.ToString("yy.MM.dd");
             }
 
             foreach (var sceneTitle in searchCriteria.SceneTitles)

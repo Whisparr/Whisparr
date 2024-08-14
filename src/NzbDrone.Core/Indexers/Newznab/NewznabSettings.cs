@@ -77,6 +77,9 @@ namespace NzbDrone.Core.Indexers.Newznab
         [FieldDefinition(5, Label = "Additional Parameters", HelpText = "Additional Newznab parameters", Advanced = true)]
         public string AdditionalParameters { get; set; }
 
+        [FieldDefinition(6, Type = FieldType.Checkbox, Label = "Exclude scene date when grabbing", HelpText = "By default the scene name and studio name will be combined with the scene date (YY.MM.DD) when searching.  When this option is checked, it will not.", Advanced = true)]
+        public bool ExcludeSceneDateWhileGrabbing { get; set; }
+
         // Field 8 is used by TorznabSettings MinimumSeeders
         // If you need to add another field here, update TorznabSettings as well and this comment
         public virtual NzbDroneValidationResult Validate()

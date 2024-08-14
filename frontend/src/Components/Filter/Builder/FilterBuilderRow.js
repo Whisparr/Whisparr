@@ -14,7 +14,7 @@ import LanguageFilterBuilderRowValue from './LanguageFilterBuilderRowValue';
 import MovieFilterBuilderRowValue from './MovieFilterBuilderRowValue';
 import ProtocolFilterBuilderRowValue from './ProtocolFilterBuilderRowValue';
 import QualityFilterBuilderRowValueConnector from './QualityFilterBuilderRowValueConnector';
-import QualityProfileFilterBuilderRowValueConnector from './QualityProfileFilterBuilderRowValueConnector';
+import QualityProfileFilterBuilderRowValue from './QualityProfileFilterBuilderRowValue';
 import ReleaseStatusFilterBuilderRowValue from './ReleaseStatusFilterBuilderRowValue';
 import TagFilterBuilderRowValueConnector from './TagFilterBuilderRowValueConnector';
 import styles from './FilterBuilderRow.css';
@@ -77,7 +77,7 @@ function getRowValueConnector(selectedFilterBuilderProp) {
       return QualityFilterBuilderRowValueConnector;
 
     case filterBuilderValueTypes.QUALITY_PROFILE:
-      return QualityProfileFilterBuilderRowValueConnector;
+      return QualityProfileFilterBuilderRowValue;
 
     case filterBuilderValueTypes.MOVIE:
       return MovieFilterBuilderRowValue;

@@ -109,7 +109,8 @@ namespace NzbDrone.Core.Indexers.Newznab
             var releaseDate = string.Empty;
 
             // If the indexer is configured to include the date (default = true)
-            if (!Settings.ExcludeSceneDateWhileGrabbing) {
+            if (!Settings.ExcludeSceneDateWhileGrabbing)
+            {
                 releaseDate = searchCriteria.ReleaseDate?.ToString("yy.MM.dd");
             }
 
@@ -161,9 +162,10 @@ namespace NzbDrone.Core.Indexers.Newznab
                 foreach (var queryTitle in queryTitles)
                 {
                     var searchQuery = queryTitle;
-                    
+
                     // If the indexer is configured to include the date (default = true)
-                    if (!Settings.ExcludeSceneDateWhileGrabbing) {
+                    if (!Settings.ExcludeSceneDateWhileGrabbing)
+                    {
                         searchQuery = $"{searchQuery} {searchCriteria.Movie.Year}";
                     }
 

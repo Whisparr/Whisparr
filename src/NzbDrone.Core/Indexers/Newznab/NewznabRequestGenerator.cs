@@ -106,20 +106,6 @@ namespace NzbDrone.Core.Indexers.Newznab
         {
             var pageableRequests = new IndexerPageableRequestChain();
 
-            var searchQuery = string.Empty;
-
-            // If the indexer is configured to include the date (default = true)
-            if (!Settings.ExcludeSceneDateWhileGrabbing)
-            {
-                searchQuery = searchCriteria.ReleaseDate?.ToString("yy.MM.dd");
-            }
-
-            // If the indexer is configured to include the studio
-            if (Settings.IncludeStudioInSceneSearch)
-            {
-                searchQuery = $"{searchQuery} {searchCriteria.Movie.MovieMetadata.Value.StudioTitle}";
-            }
-
             if (SupportsSearch)
             {
                 var queryTitles = TextSearchEngine == "raw" ? searchCriteria.SceneTitles : searchCriteria.CleanSceneTitles;
@@ -128,7 +114,7 @@ namespace NzbDrone.Core.Indexers.Newznab
                     pageableRequests.Add(GetPagedRequests(MaxPages,
                         Settings.Categories,
                         "search",
-                        $"&q={NewsnabifyTitle(queryTitle)}+{NewsnabifyTitle(searchQuery)}"));
+                        $"&q={NewsnabifyTitle(queryTitle)}"));
                 }
             }
 
@@ -168,18 +154,6 @@ namespace NzbDrone.Core.Indexers.Newznab
                 foreach (var queryTitle in queryTitles)
                 {
                     var searchQuery = queryTitle;
-
-                    // If the indexer is configured to include the date (default = true)
-                    if (!Settings.ExcludeSceneDateWhileGrabbing)
-                    {
-                        searchQuery = $"{searchQuery} {searchCriteria.Movie.Year}";
-                    }
-
-                    // If the indexer is configured to include the studio
-                    if (Settings.IncludeStudioInSceneSearch)
-                    {
-                        searchQuery = $"{searchQuery} {searchCriteria.Movie.MovieMetadata.Value.StudioTitle}";
-                    }
 
                     chain.Add(GetPagedRequests(MaxPages,
                         Settings.Categories,

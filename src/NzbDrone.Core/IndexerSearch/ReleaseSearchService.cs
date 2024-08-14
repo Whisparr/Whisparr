@@ -58,6 +58,9 @@ namespace NzbDrone.Core.IndexerSearch
             {
                 var movieSearchSpec = Get<MovieSearchCriteria>(movie, userInvokedSearch, interactiveSearch);
 
+                // For movies, the year only is appended
+                movieSearchSpec.SceneTitles = movieSearchSpec.SceneTitles.Select(title => $"{title} {movie.Year}").ToList();
+
                 decisions = await Dispatch(indexer => indexer.Fetch(movieSearchSpec), movieSearchSpec);
             }
             else
@@ -66,14 +69,33 @@ namespace NzbDrone.Core.IndexerSearch
                 sceneSearchSpec.ReleaseDate = DateOnly.FromDateTime(movie.MovieMetadata.Value.ReleaseDateUtc.Value);
                 sceneSearchSpec.SiteTitle = movie.MovieMetadata.Value.StudioTitle;
 
+                // When we search a studio name, we inject the date at the search service level.
+                // This was previously done at indexer level, however this denies us an opportunity to issue queries which may not include the date,
+                // but could include other identifying information to provide more options for the release to be found by the matcher.
+                var releaseDateString = sceneSearchSpec.ReleaseDate?.ToString("yy.MM.dd") ?? string.Empty;
+
+                // The sceneSearchSpec.SceneTitles list contains MovieMetadata.Title, we will inject the date here vs in the indexers.
+                var originalTitles = sceneSearchSpec.SceneTitles;
+                sceneSearchSpec.SceneTitles = originalTitles.Select(title => $"{title} {releaseDateString}").ToList();
+
                 if (sceneSearchSpec.SiteTitle != null)
                 {
-                    sceneSearchSpec.SceneTitles.Add(sceneSearchSpec.SiteTitle);
-                }
+                    // Search for Site Title + Date
+                    sceneSearchSpec.SceneTitles.Add($"{sceneSearchSpec.SiteTitle} {releaseDateString}");
 
-                if (sceneSearchSpec.SiteTitle.Contains(' ', StringComparison.Ordinal))
-                {
-                    sceneSearchSpec.SceneTitles.Add(sceneSearchSpec.SiteTitle.Replace(" ", "", StringComparison.Ordinal));
+                    // Search for Site Title + Scene Name
+                    sceneSearchSpec.SceneTitles.AddRange(originalTitles.Select(title => $"{title} {sceneSearchSpec.SiteTitle}").ToList());
+
+                    if (sceneSearchSpec.SiteTitle.Contains(' ', StringComparison.Ordinal))
+                    {
+                        var noSpacesSiteTitle = sceneSearchSpec.SiteTitle.Replace(" ", "", StringComparison.Ordinal);
+
+                        // Search for SiteTitle (no spaces) + Date
+                        sceneSearchSpec.SceneTitles.Add($"{noSpacesSiteTitle} {releaseDateString}");
+
+                        // Search for SiteTitle (no spaces) + Scene Name
+                        sceneSearchSpec.SceneTitles.AddRange(originalTitles.Select(title => $"{title} {noSpacesSiteTitle}").ToList());
+                    }
                 }
 
                 decisions = await Dispatch(indexer => indexer.Fetch(sceneSearchSpec), sceneSearchSpec);

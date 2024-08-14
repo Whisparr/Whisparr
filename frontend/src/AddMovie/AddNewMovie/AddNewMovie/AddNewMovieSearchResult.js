@@ -90,6 +90,8 @@ class AddNewMovieSearchResult extends Component {
     } = this.state;
 
     const linkProps = isExistingMovie ? { to: `/movie/${titleSlug}` } : { onPress: this.onPress };
+    const providerProps = itemType === 'movie' ? { tmdbId: foreignId } : { stashId: foreignId };
+
     let ImageItem = MoviePoster;
     let posterWidth = 167;
     let posterHeight = 250;
@@ -256,7 +258,7 @@ class AddNewMovieSearchResult extends Component {
                 }
                 tooltip={
                   <MovieDetailsLinks
-                    tmdbId={foreignId}
+                    {...providerProps}
                   />
                 }
                 canFlip={true}

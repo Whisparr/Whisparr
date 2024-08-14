@@ -44,11 +44,9 @@ namespace NzbDrone.Core.Indexers.FileList
         {
             var pageableRequests = new IndexerPageableRequestChain();
 
-            var releaseDate = searchCriteria.ReleaseDate?.ToString("yy.MM.dd") ?? string.Empty;
-
             foreach (var sceneTitle in searchCriteria.SceneTitles)
             {
-                pageableRequests.Add(GetRequest("search-torrents", string.Format("&type=name&query={0}{1}", Uri.EscapeDataString($"{sceneTitle.Trim()} {releaseDate}"))));
+                pageableRequests.Add(GetRequest("search-torrents", string.Format("&type=name&query={0}{1}", Uri.EscapeDataString($"{sceneTitle.Trim()}"))));
             }
 
             return pageableRequests;

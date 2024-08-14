@@ -204,7 +204,7 @@ namespace NzbDrone.Core.IndexerSearch
                 movie.MovieMetadata.Value.Title
             };
 
-            spec.SceneTitles = queryTranslations.Distinct().Where(t => t.IsNotNullOrWhiteSpace()).ToList();
+            spec.SceneTitles = queryTranslations.Where(t => t.IsNotNullOrWhiteSpace()).Distinct(StringComparer.InvariantCultureIgnoreCase).ToList();
 
             return spec;
         }

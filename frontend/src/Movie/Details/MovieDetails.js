@@ -242,10 +242,10 @@ class MovieDetails extends Component {
     const marqueeWidth = isSmallScreen ? titleWidth : (titleWidth - 150);
     const ImageComponent = itemType === 'movie' ? MoviePoster : ScenePoster;
 
-    const pageTitle = `${title}${year > 0 ? ` (${year})` : ''}`;
+    const titleWithYear = `${title}${year > 0 ? ` (${year})` : ''}`;
 
     return (
-      <PageContent title={pageTitle}>
+      <PageContent title={titleWithYear}>
         <PageToolbar>
           <PageToolbarSection>
             <PageToolbarButton
@@ -610,6 +610,7 @@ class MovieDetails extends Component {
           <MovieInteractiveSearchModalConnector
             isOpen={isInteractiveSearchModalOpen}
             movieId={id}
+            movieTitle={title}
             onModalClose={this.onInteractiveSearchModalClose}
           />
         </PageContentBody>

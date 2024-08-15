@@ -1128,7 +1128,7 @@
     "CreateEmptyMovieFoldersHelpText": "Създайте липсващи папки с филми по време на сканиране на диска",
     "DeleteBackup": "Изтриване на резервно копие",
     "DeleteCustomFormat": "Изтриване на потребителски формат",
-    "DeletedMsg": "Филмът беше изтрит от TMDb",
+    "DeletedMovieDescription": "Филмът беше изтрит от TMDb",
     "DeleteDownloadClient": "Изтриване на клиент за изтегляне",
     "DeleteMovieFolder": "Изтриване на папка за филми",
     "ExcludeTitle": "Да се изключи ли {0}? Това ще попречи на {appName} да добавя автоматично чрез синхронизиране на списъка.",

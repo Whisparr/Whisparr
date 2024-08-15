@@ -1,10 +1,10 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import getStatusStyle from 'Calendar/getStatusStyle';
 import Icon from 'Components/Icon';
 import Link from 'Components/Link/Link';
 import { icons, kinds } from 'Helpers/Props';
-import getStatusStyle from 'Utilities/Movie/getStatusStyle';
 import firstCharToUpper from 'Utilities/String/firstCharToUpper';
 import translate from 'Utilities/String/translate';
 import CalendarEventQueueDetails from './CalendarEventQueueDetails';
@@ -36,7 +36,7 @@ class CalendarEvent extends Component {
 
     const isDownloading = !!(queueItem || grabbed);
     const isMonitored = monitored;
-    const statusStyle = getStatusStyle(null, isMonitored, hasFile, isAvailable, 'style', isDownloading);
+    const statusStyle = getStatusStyle(hasFile, isDownloading, isMonitored, isAvailable);
     const joinedGenres = genres.slice(0, 2).join(', ');
     const link = `/movie/${titleSlug}`;
 

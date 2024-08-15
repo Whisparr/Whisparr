@@ -22,6 +22,7 @@ import { icons, kinds, sizes, tooltipPositions } from 'Helpers/Props';
 import InteractiveImportModal from 'InteractiveImport/InteractiveImportModal';
 import DeleteMovieModal from 'Movie/Delete/DeleteMovieModal';
 import EditMovieModalConnector from 'Movie/Edit/EditMovieModalConnector';
+import getMovieStatusDetails from 'Movie/getMovieStatusDetails';
 import MovieHistoryModal from 'Movie/History/MovieHistoryModal';
 import MoviePoster from 'Movie/MoviePoster';
 import MovieInteractiveSearchModalConnector from 'Movie/Search/MovieInteractiveSearchModalConnector';
@@ -203,6 +204,8 @@ class MovieDetails extends Component {
       studioForeignId,
       genres,
       overview,
+      status,
+      studio,
       isAvailable,
       images,
       tags,
@@ -237,6 +240,8 @@ class MovieDetails extends Component {
       overviewHeight,
       titleWidth
     } = this.state;
+
+    const statusDetails = getMovieStatusDetails(status);
 
     const fanartUrl = getFanartUrl(images);
     const marqueeWidth = isSmallScreen ? titleWidth : (titleWidth - 150);
@@ -451,7 +456,7 @@ class MovieDetails extends Component {
                 <div className={styles.detailsLabels}>
                   <InfoLabel
                     className={styles.detailsInfoLabel}
-                    title={translate('Path')}
+                    name={translate('Path')}
                     size={sizes.LARGE}
                   >
                     <span className={styles.path}>
@@ -461,12 +466,14 @@ class MovieDetails extends Component {
 
                   <InfoLabel
                     className={styles.detailsInfoLabel}
-                    title={translate('Status')}
+                    name={translate('Status')}
+                    title={statusDetails.message}
                     kind={kinds.DELETE}
                     size={sizes.LARGE}
                   >
                     <span className={styles.statusName}>
                       <MovieStatusLabel
+                        status={status}
                         hasMovieFiles={hasMovieFiles}
                         monitored={monitored}
                         isAvailable={isAvailable}
@@ -477,7 +484,7 @@ class MovieDetails extends Component {
 
                   <InfoLabel
                     className={styles.detailsInfoLabel}
-                    title={translate('QualityProfile')}
+                    name={translate('QualityProfile')}
                     size={sizes.LARGE}
                   >
                     <span className={styles.qualityProfileName}>
@@ -491,7 +498,7 @@ class MovieDetails extends Component {
 
                   <InfoLabel
                     className={styles.detailsInfoLabel}
-                    title={translate('Size')}
+                    name={translate('Size')}
                     size={sizes.LARGE}
                   >
                     <span className={styles.sizeOnDisk}>
@@ -509,6 +516,20 @@ class MovieDetails extends Component {
                         {code}
                       </span>
                     </InfoLabel>
+                  }
+
+                  {
+                    studio && !isSmallScreen ?
+                      <InfoLabel
+                        className={styles.detailsInfoLabel}
+                        name={translate('Studio')}
+                        size={sizes.LARGE}
+                      >
+                        <span className={styles.studio}>
+                          {studio}
+                        </span>
+                      </InfoLabel> :
+                      null
                   }
 
                   {!!genres.length && !isSmallScreen &&
@@ -634,6 +655,7 @@ MovieDetails.propTypes = {
   qualityProfileId: PropTypes.number.isRequired,
   monitored: PropTypes.bool.isRequired,
   status: PropTypes.string.isRequired,
+  studio: PropTypes.string,
   studioTitle: PropTypes.string,
   studioForeignId: PropTypes.string,
   genres: PropTypes.arrayOf(PropTypes.string).isRequired,

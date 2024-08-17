@@ -30,7 +30,7 @@ namespace NzbDrone.Core.Movies.Studios
         public void ApplyChanges(Studio otherStudio)
         {
             QualityProfileId = otherStudio.QualityProfileId;
-
+            SearchOnAdd = otherStudio.SearchOnAdd;
             Monitored = otherStudio.Monitored;
 
             RootFolderPath = otherStudio.RootFolderPath;

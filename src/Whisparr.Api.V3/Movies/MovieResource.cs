@@ -8,7 +8,6 @@ using NzbDrone.Core.Languages;
 using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.Movies;
 using NzbDrone.Core.Parser;
-using Radarr.Api.V3.Movies;
 using Whisparr.Api.V3.MovieFiles;
 using Whisparr.Api.V3.Movies;
 using Whisparr.Http.REST;

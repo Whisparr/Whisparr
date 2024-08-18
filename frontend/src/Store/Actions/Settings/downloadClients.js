@@ -98,8 +98,8 @@ export default {
     sortKey: 'name',
     sortDirection: sortDirections.ASCENDING,
     sortPredicates: {
-      name: function(item) {
-        return item.name.toLowerCase();
+      name: ({ name }) => {
+        return name.toLocaleLowerCase();
       }
     }
   },

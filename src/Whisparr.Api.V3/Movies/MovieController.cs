@@ -182,6 +182,8 @@ namespace Whisparr.Api.V3.Movies
         {
             var moviesResources = new List<MovieResource>();
 
+            var movieStats = _movieStatisticsService.MovieStatistics(ids);
+            var sdict = movieStats.ToDictionary(x => x.MovieId);
             var availDelay = _configService.AvailabilityDelay;
             var movies = _moviesService.FindByIds(ids);
 
@@ -189,6 +191,8 @@ namespace Whisparr.Api.V3.Movies
             {
                 moviesResources.Add(movie.ToResource(availDelay, _qualityUpgradableSpecification));
             }
+
+            LinkMovieStatistics(moviesResources, sdict);
 
             return moviesResources;
         }

@@ -10,6 +10,8 @@ namespace NzbDrone.Core.MovieStats
     public interface IMovieStatisticsRepository
     {
         List<MovieStatistics> MovieStatistics();
+
+        List<MovieStatistics> MovieStatistics(List<int> ids);
         List<MovieStatistics> MovieStatistics(int movieId);
     }
 
@@ -29,6 +31,12 @@ namespace NzbDrone.Core.MovieStats
         {
             return MapResults(Query(MoviesBuilder(), _selectMoviesTemplate),
                 Query(MovieFilesBuilder(), _selectMovieFilesTemplate));
+        }
+
+        public List<MovieStatistics> MovieStatistics(List<int> ids)
+        {
+            return MapResults(Query(MoviesBuilder().Where<Movie>(m => ids.Contains(m.Id)), _selectMoviesTemplate),
+                Query(MovieFilesBuilder().Where<MovieFile>(m => ids.Contains(m.Id)), _selectMovieFilesTemplate));
         }
 
         public List<MovieStatistics> MovieStatistics(int movieId)

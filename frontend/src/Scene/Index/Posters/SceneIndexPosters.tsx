@@ -223,10 +223,15 @@ export default function SceneIndexPosters(props: SceneIndexPostersProps) {
     if (isSmallScreen) {
       const padding = bodyPaddingSmallScreen - 5;
 
-      setSize({
-        width: window.innerWidth - padding * 2,
-        height: window.innerHeight,
-      });
+      const width = window.innerWidth - padding * 2;
+      const height = window.innerHeight;
+
+      if (width !== size.width || height !== size.height) {
+        setSize({
+          width,
+          height,
+        });
+      }
 
       return;
     }

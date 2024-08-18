@@ -6,6 +6,7 @@ namespace NzbDrone.Core.MovieStats
     public interface IMovieStatisticsService
     {
         List<MovieStatistics> MovieStatistics();
+        List<MovieStatistics> MovieStatistics(List<int> ids);
         MovieStatistics MovieStatistics(int movieId);
     }
 
@@ -21,6 +22,13 @@ namespace NzbDrone.Core.MovieStats
         public List<MovieStatistics> MovieStatistics()
         {
             var movieStatistics = _movieStatisticsRepository.MovieStatistics();
+
+            return movieStatistics.GroupBy(m => m.MovieId).Select(m => m.First()).ToList();
+        }
+
+        public List<MovieStatistics> MovieStatistics(List<int> ids)
+        {
+            var movieStatistics = _movieStatisticsRepository.MovieStatistics(ids);
 
             return movieStatistics.GroupBy(m => m.MovieId).Select(m => m.First()).ToList();
         }

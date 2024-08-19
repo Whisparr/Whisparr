@@ -38,7 +38,7 @@ namespace Whisparr.Api.V3
                 Tags = definition.Tags,
                 Fields = SchemaBuilder.ToSchema(definition.Settings),
 
-                // whisparr/supported is an disambagation page. the # should be a header on the page with appropiate details/link
+                // whisparr/supported is an disambiguation page. the # should be a header on the page with appropriate details/link
                 InfoLink = string.Format("https://wiki.servarr.com/whisparr/supported#{0}",
                     definition.Implementation.ToLower())
             };

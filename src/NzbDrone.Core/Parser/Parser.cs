@@ -49,10 +49,6 @@ namespace NzbDrone.Core.Parser
             new Regex(@"(?<studiotitle>.+?)?[-]+(?<releasetoken>.+?)\((?<airday>[0-3][0-9])\.(?<airmonth>[0-1][0-9])\.(?<airyear>(19|20)\d{2})\)",
                 RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
-            // SCENE with Episode numbers after studio E1234 title
-            new Regex(@"(?<studiotitle>.+?)?[-_. ]+(?<episode>[eE]+\d{1,6})",
-                RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
             // SCENE with airdate (18.04.28, 2018.04.28, 18-04-28, 18 04 28, 18_04_28)
             new Regex(@"^(?<studiotitle>.+?)?[-_. ]+(?<airyear>\d{2}|\d{4})[-_. ]+(?<airmonth>[0-1][0-9])[-_. ]+(?<airday>[0-3][0-9])",
                 RegexOptions.IgnoreCase | RegexOptions.Compiled),
@@ -92,6 +88,10 @@ namespace NzbDrone.Core.Parser
 
             // That did not work? Maybe some tool uses [] for years. Who would do that?
             new Regex(@"^(?<title>(?![(\[]).+?)?(?:(?:[-_\W](?<![)!]))*(?<year>(1(8|9)|20)\d{2}(?!p|i|\d+|\W\d+)))+(\W+|_|$)(?!\\)", RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
+            // SCENE with Episode numbers after studio E1234 title
+            new Regex(@"(?<studiotitle>.+?)?[-_. ]+(?<episode>[eE]+\d{1,6})",
+                RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
             // As a last resort for movies that have ( or [ in their title.
             new Regex(@"^(?<title>.+?)?(?:(?:[-_\W](?<![)\[!]))*(?<year>(1(8|9)|20)\d{2}(?!p|i|\d+|\]|\W\d+)))+(\W+|_|$)(?!\\)", RegexOptions.IgnoreCase | RegexOptions.Compiled),

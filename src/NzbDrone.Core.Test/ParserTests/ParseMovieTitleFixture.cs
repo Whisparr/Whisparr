@@ -7,6 +7,8 @@ namespace NzbDrone.Core.Test.ParserTests
     [TestFixture]
     public class ParseMovieTitleFixture : CoreTest
     {
+        [TestCase("Studio 2020-05-29 Title Vol 1 E2", true)]
+        [TestCase("LoveHerBoobs 24 06 11 Peachy Alice Successful Provocation XXX 720p AV1 XLeech.mkv", true)]
         [TestCase("Studio.E1224.Title.XXX.720p.HEVC.x265.PRT[XvX]", true)]
         [TestCase("[Studio] Performer Name (Title / 08.01.2021) [2021 г., Big Tits, Blowjob, Brunette, Chubby, Curvy, Cowgirl, Reverse Cowgirl, Cumshots, Facials, Long Hair, Doggy Style, Hardcore, Missionary, PAWG, POV, Trimmed Pussy, Tattoo, Czech, VR, 8K, 3840p] [Oculus Rift / Vive]", true)]
         [TestCase("[Studio.com] Performer & Performer - Studio Title (18.05.2019) [2019 г., Anal, IR, Rim Job, Ass To Mouth, Big Cocks, Black, Blowjobs, Brunettes, Deep Throat, Facial, Gaping, Natural, Teen, 1080p]", true)]
@@ -24,6 +26,8 @@ namespace NzbDrone.Core.Test.ParserTests
             Parser.Parser.ParseMovieTitle(title).IsScene.Should().Be(expected);
         }
 
+        [TestCase("Studio 2020-05-29 Title Vol 1 E2", "Studio")]
+        [TestCase("LoveHerBoobs 24 06 11 Peachy Alice Successful Provocation XXX 720p AV1 XLeech.mkv", "LoveHerBoobs")]
         [TestCase("Studio.E1224.Title.XXX.720p.HEVC.x265.PRT[XvX]", "Studio")]
         [TestCase("[Studio] Performer Name (Title / 08.01.2021) [2021 г., Big Tits, Blowjob, Brunette, Chubby, Curvy, Cowgirl, Reverse Cowgirl, Cumshots, Facials, Long Hair, Doggy Style, Hardcore, Missionary, PAWG, POV, Trimmed Pussy, Tattoo, Czech, VR, 8K, 3840p] [Oculus Rift / Vive]", "Studio")]
         [TestCase("[Studio.com] Performer & Performer - Studio Title (18.05.2019) [2019 г., Anal, IR, Rim Job, Ass To Mouth, Big Cocks, Black, Blowjobs, Brunettes, Deep Throat, Facial, Gaping, Natural, Teen, 1080p]", "Studio")]
@@ -40,6 +44,8 @@ namespace NzbDrone.Core.Test.ParserTests
             Parser.Parser.ParseMovieTitle(title).StudioTitle.Should().Be(result);
         }
 
+        [TestCase("Studio 2020-05-29 Title Vol 1 E2", "2020-05-29")]
+        [TestCase("LoveHerBoobs 24 06 11 Peachy Alice Successful Provocation XXX 720p AV1 XLeech.mkv", "2024-06-11")]
         [TestCase("[Studio] Performer Name (Title / 08.01.2021) [2021 г., Big Tits, Blowjob, Brunette, Chubby, Curvy, Cowgirl, Reverse Cowgirl, Cumshots, Facials, Long Hair, Doggy Style, Hardcore, Missionary, PAWG, POV, Trimmed Pussy, Tattoo, Czech, VR, 8K, 3840p] [Oculus Rift / Vive]", "2021-01-08")]
         [TestCase("[Studio.com] Performer & Performer - Studio Title (18.05.2019) [2019 г., Anal, IR, Rim Job, Ass To Mouth, Big Cocks, Black, Blowjobs, Brunettes, Deep Throat, Facial, Gaping, Natural, Teen, 1080p]", "2019-05-18")]
         [TestCase("[random.com][Studio] Performer name - Title(01.04.2020) rq.mp4", "2020-04-01")]
@@ -55,6 +61,8 @@ namespace NzbDrone.Core.Test.ParserTests
             Parser.Parser.ParseMovieTitle(title).ReleaseDate.Should().Be(result);
         }
 
+        [TestCase("Studio 2020-05-29 Title Vol 1 E2", "title vol 1 e2")]
+        [TestCase("LoveHerBoobs 24 06 11 Peachy Alice Successful Provocation XXX 720p AV1 XLeech.mkv", "peachy alice successful provocation")]
         [TestCase("Studio.E1224.Title.XXX.720p.HEVC.x265.PRT[XvX]", "title")]
         [TestCase("[Studio] Performer Name (Title / 08.01.2021) [2021 г., Big Tits, Blowjob, Brunette, Chubby, Curvy, Cowgirl, Reverse Cowgirl, Cumshots, Facials, Long Hair, Doggy Style, Hardcore, Missionary, PAWG, POV, Trimmed Pussy, Tattoo, Czech, VR, 8K, 3840p] [Oculus Rift / Vive]", "performer name title")]
         [TestCase("[Studio.com] Performer & Performer - Studio Title (18.05.2019) [2019 г., Anal, IR, Rim Job, Ass To Mouth, Big Cocks, Black, Blowjobs, Brunettes, Deep Throat, Facial, Gaping, Natural, Teen, 1080p]", "performer performer studio title")]

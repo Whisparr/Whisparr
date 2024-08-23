@@ -46,6 +46,8 @@ interface Movie extends ModelBase {
   title: string;
   credits: Array<object>;
   titleSlug: string;
+  originalTitle: string;
+  originalLanguage: Language;
   collection: Collection;
   studioTitle: string;
   studioForeignId: string;
@@ -53,7 +55,6 @@ interface Movie extends ModelBase {
   added: string;
   year: number;
   releaseDate: string;
-  originalLanguage: Language;
   runtime: number;
   path: string;
   genres: string[];

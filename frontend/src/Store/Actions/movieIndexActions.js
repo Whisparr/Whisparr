@@ -112,6 +112,12 @@ export const defaultState = {
       isVisible: false
     },
     {
+      name: 'releaseDate',
+      label: () => translate('ReleaseDate'),
+      isSortable: true,
+      isVisible: false
+    },
+    {
       name: 'runtime',
       label: () => translate('Runtime'),
       isSortable: true,
@@ -298,6 +304,12 @@ export const defaultState = {
       name: 'year',
       label: () => translate('Year'),
       type: filterBuilderTypes.NUMBER
+    },
+    {
+      name: 'releaseDate',
+      label: () => translate('ReleaseDate'),
+      type: filterBuilderTypes.DATE,
+      valueType: filterBuilderValueTypes.DATE
     },
     {
       name: 'releaseDate',

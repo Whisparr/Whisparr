@@ -122,7 +122,19 @@ function MovieIndexPosterInfo(props: MovieIndexPosterInfoProps) {
 
     return (
       <div className={styles.info}>
-        <Icon name={icons.DISC} /> {digitalReleaseDate}
+        <Icon name={icons.MOVIE_FILE} /> {digitalReleaseDate}
+      </div>
+    );
+  }
+
+  if (sortKey === 'releaseDate' && releaseDate && !showReleaseDate) {
+    return (
+      <div className={styles.info} title={translate('ReleaseDate')}>
+        <Icon name={icons.CALENDAR} />{' '}
+        {getRelativeDate(releaseDate, shortDateFormat, showRelativeDates, {
+          timeFormat,
+          timeForToday: false,
+        })}
       </div>
     );
   }

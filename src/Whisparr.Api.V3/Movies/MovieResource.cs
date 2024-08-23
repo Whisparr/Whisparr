@@ -37,7 +37,7 @@ namespace Whisparr.Api.V3.Movies
         public long? SizeOnDisk { get; set; }
         public MovieStatusType Status { get; set; }
         public string Overview { get; set; }
-        public string ReleaseDate { get; set; }
+        public DateTime? ReleaseDate { get; set; }
         public string PhysicalReleaseNote { get; set; }
         public List<MediaCover> Images { get; set; }
         public string Website { get; set; }
@@ -114,7 +114,7 @@ namespace Whisparr.Api.V3.Movies
                 Code = model.MovieMetadata.Value.Code,
                 OriginalLanguage = model.MovieMetadata.Value.OriginalLanguage,
                 SortTitle = model.Title.NormalizeTitle(),
-                ReleaseDate = model.MovieMetadata.Value.ReleaseDate,
+                ReleaseDate = model.GetReleaseDate(),
 
                 SizeOnDisk = size,
                 Status = model.MovieMetadata.Value.Status,
@@ -172,7 +172,7 @@ namespace Whisparr.Api.V3.Movies
                     Genres = resource.Genres,
                     Images = resource.Images,
                     SortTitle = resource.SortTitle,
-                    ReleaseDate = resource.ReleaseDate,
+                    ReleaseDateUtc = resource.ReleaseDate,
                     Year = resource.Year,
                     Overview = resource.Overview,
                     Website = resource.Website,

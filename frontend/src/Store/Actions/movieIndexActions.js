@@ -154,6 +154,18 @@ export const defaultState = {
       isVisible: false
     },
     {
+      name: 'popularity',
+      label: () => translate('Popularity'),
+      isSortable: true,
+      isVisible: false
+    },
+    {
+      name: 'certification',
+      label: () => translate('Certification'),
+      isSortable: true,
+      isVisible: false
+    },
+    {
       name: 'releaseGroups',
       label: () => translate('ReleaseGroup'),
       isSortable: true,
@@ -204,18 +216,6 @@ export const defaultState = {
           .sort((a, b) => a.localeCompare(b)) :
         undefined;
     },
-
-    tmdbRating: function(item) {
-      const { ratings = {} } = item;
-
-      return ratings.tmdb ? ratings.tmdb.value : 0;
-    },
-
-    rottenTomatoesRating: function(item) {
-      const { ratings = {} } = item;
-
-      return ratings.rottenTomatoes ? ratings.rottenTomatoes.value : -1;
-    }
   },
 
   selectedFilterKey: 'all',

@@ -284,15 +284,23 @@ function MovieIndexRow(props: MovieIndexRowProps) {
         if (name === 'tmdbRating') {
           return (
             <VirtualTableRowCell key={name} className={styles[name]}>
-              <TmdbRating ratings={ratings} />
+              {ratings.tmdb ? <TmdbRating ratings={ratings} /> : null}
             </VirtualTableRowCell>
           );
         }
 
-        if (name === 'rottenTomatoesRating') {
+        if (name === 'popularity') {
           return (
             <VirtualTableRowCell key={name} className={styles[name]}>
-              <RottenTomatoRating ratings={ratings} />
+              <MoviePopularityIndex popularity={popularity} />
+            </VirtualTableRowCell>
+          );
+        }
+
+        if (name === 'certification') {
+          return (
+            <VirtualTableRowCell key={name} className={styles[name]}>
+              {certification}
             </VirtualTableRowCell>
           );
         }

@@ -149,12 +149,9 @@ export default function MovieIndexPosters(props: MovieIndexPostersProps) {
       showTags,
     } = posterOptions;
 
-    const nextAiringHeight = 19;
-
     const heights = [
       posterHeight,
       detailedProgressBar ? detailedProgressBarHeight : progressBarHeight,
-      nextAiringHeight,
       isSmallScreen ? columnPaddingSmallScreen : columnPadding,
     ];
 
@@ -207,11 +204,6 @@ export default function MovieIndexPosters(props: MovieIndexPostersProps) {
         break;
       case 'tmdbRating':
         if (!showTmdbRating) {
-          heights.push(19);
-        }
-        break;
-      case 'rottenTomatoesRating':
-        if (!showRottenTomatoesRating) {
           heights.push(19);
         }
         break;

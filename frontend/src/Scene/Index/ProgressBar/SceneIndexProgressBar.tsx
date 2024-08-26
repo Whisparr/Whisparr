@@ -70,14 +70,7 @@ function SceneIndexProgressBar(props: SceneIndexProgressBarProps) {
       className={styles.progressBar}
       containerClassName={containerClassName}
       progress={progress}
-      kind={getStatusStyle(
-        status,
-        monitored,
-        hasFile,
-        isAvailable,
-        'kinds',
-        queueDetails.count > 0
-      )}
+      kind={getStatusStyle(monitored, hasFile, isAvailable, false)}
       size={detailedProgressBar ? sizes.MEDIUM : sizes.SMALL}
       showText={detailedProgressBar}
       width={width}

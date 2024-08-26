@@ -23,5 +23,7 @@ export const all = [
   PURPLE,
   SUCCESS,
   WARNING,
-  QUEUE
-];
+  QUEUE,
+] as const;
+
+export type Kind = (typeof all)[number];

@@ -5,4 +5,13 @@ export const LARGE = 'large';
 export const EXTRA_LARGE = 'extraLarge';
 export const EXTRA_EXTRA_LARGE = 'extraExtraLarge';
 
-export const all = [EXTRA_SMALL, SMALL, MEDIUM, LARGE, EXTRA_LARGE, EXTRA_EXTRA_LARGE];
+export const all = [
+  EXTRA_SMALL,
+  SMALL,
+  MEDIUM,
+  LARGE,
+  EXTRA_LARGE,
+  EXTRA_EXTRA_LARGE,
+] as const;
+
+export type Size = (typeof all)[number];

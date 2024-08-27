@@ -16,7 +16,7 @@ import {
   faKeyboard as farKeyboard,
   faObjectGroup as farObjectGroup,
   faObjectUngroup as farObjectUngroup,
-  faSquare as farSquare
+  faSquare as farSquare,
 } from '@fortawesome/free-regular-svg-icons';
 //
 // Solid
@@ -117,7 +117,7 @@ import {
   faVenusMars as fasVenusMars,
   faVial as fasVial,
   faVideo as fasVideo,
-  faWrench as fasWrench
+  faWrench as fasWrench,
 } from '@fortawesome/free-solid-svg-icons';
 
 //

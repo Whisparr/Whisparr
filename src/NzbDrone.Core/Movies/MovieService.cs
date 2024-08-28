@@ -447,7 +447,7 @@ namespace NzbDrone.Core.Movies
                                                                                  .Select(a => Parser.Parser.NormalizeEpisodeTitle(a.Character))
                                                                                  .Where(x => x.IsNotNullOrWhiteSpace()).ToList();
 
-                    // If all female performers are in title, consider a match
+                    // If all female characters are in title, consider a match
                     if (cleanFemaleCharacters.Any() && cleanFemalePerformers.All(x => parsedMovieTitle.Contains(x)))
                     {
                         matches.Add(movie);
@@ -466,8 +466,22 @@ namespace NzbDrone.Core.Movies
                         continue;
                     }
 
-                    // If parsed title contains a performer and the title then consider a match
+                    // If parsed title contains a character and the title then consider a match
                     if (cleanCharacters.Any() && cleanCharacters.Any(x => parsedMovieTitle.Contains(x)) && parsedMovieTitle.Contains(cleanTitle))
+                    {
+                        matches.Add(movie);
+                        continue;
+                    }
+
+                    // If parsed title contains all performer and the not title then consider a match
+                    if (cleanPerformers.All(x => parsedMovieTitle.Contains(x)) && !parsedMovieTitle.Contains(cleanTitle))
+                    {
+                        matches.Add(movie);
+                        continue;
+                    }
+
+                    // If parsed title contains all character and the not title then consider a match
+                    if (cleanCharacters.Any() && cleanCharacters.All(x => parsedMovieTitle.Contains(x)) && !parsedMovieTitle.Contains(cleanTitle))
                     {
                         matches.Add(movie);
                         continue;

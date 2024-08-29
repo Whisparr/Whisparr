@@ -186,7 +186,9 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Kometa
 
         private string GetEpisodeImageFilename(Series series, EpisodeFile episodeFile)
         {
-            var filename = string.Format("S{0:00}E{1:00}.jpg", episodeFile.SeasonNumber, episodeFile.Episodes.Value.FirstOrDefault()?.EpisodeNumber);
+            var episode = episodeFile.Episodes.Value.FirstOrDefault();
+            var episodeNumber = episode?.AbsoluteEpisodeNumber ?? episode?.Id ?? 1;
+            var filename = string.Format("S{0:00}E{1:00}.jpg", episodeFile.SeasonNumber, episodeNumber);
             return Path.Combine(series.Path, filename);
         }
     }

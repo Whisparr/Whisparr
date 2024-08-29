@@ -41,6 +41,7 @@ export const defaultState = {
     rootFolderPath: '',
     monitor: 'movieOnly',
     qualityProfileId: 0,
+    minimumAvailability: 'released',
     searchForMovie: true,
     tags: []
   },

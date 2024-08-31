@@ -46,7 +46,7 @@ function SceneIndexPosterInfo(props: SceneIndexPosterInfoProps) {
     showReleaseDate,
     shortDateFormat,
     longDateFormat,
-    timeFormat,
+    timeFormat
   } = props;
 
   if (sortKey === 'studio' && studio) {

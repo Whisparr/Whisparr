@@ -70,6 +70,7 @@ function CutoffUnmetRow(props) {
                 key={name}
                 className={styles[name]}
                 date={inCinemas}
+                timeForToday={false}
               />
             );
           }

@@ -46,7 +46,7 @@ function SceneIndexPosterInfo(props: SceneIndexPosterInfoProps) {
     showReleaseDate,
     shortDateFormat,
     longDateFormat,
-    timeFormat,
+    timeFormat
   } = props;
 
   if (sortKey === 'studio' && studio) {
@@ -72,8 +72,13 @@ function SceneIndexPosterInfo(props: SceneIndexPosterInfoProps) {
   if (sortKey === 'added' && added) {
     const addedDate = getRelativeDate({
       date: added,
+    const addedDate = getRelativeDate({
+      date: added,
       shortDateFormat,
       showRelativeDates,
+      timeFormat,
+      timeForToday: false,
+    });
       timeFormat,
       timeForToday: false,
     });
@@ -97,6 +102,16 @@ function SceneIndexPosterInfo(props: SceneIndexPosterInfoProps) {
   }
 
   if (sortKey === 'releaseDate' && releaseDate && !showReleaseDate) {
+    return (
+      <div className={styles.info} title={translate('ReleaseDate')}>
+        <Icon name={icons.CALENDAR} />{' '}
+        {getRelativeDate({
+          date: releaseDate,
+          shortDateFormat,
+          showRelativeDates,
+          timeFormat,
+          timeForToday: false,
+        })}
     return (
       <div className={styles.info} title={translate('ReleaseDate')}>
         <Icon name={icons.CALENDAR} />{' '}

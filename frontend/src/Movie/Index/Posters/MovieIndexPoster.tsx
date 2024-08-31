@@ -230,7 +230,10 @@ function MovieIndexPoster(props: MovieIndexPosterProps) {
       {showReleaseDate && releaseDate ? (
         <div className={styles.title} title={translate('ReleaseDate')}>
           <Icon name={icons.CALENDAR} />{' '}
-          {getRelativeDate(releaseDate, shortDateFormat, showRelativeDates, {
+          {getRelativeDate({
+            date: releaseDate,
+            shortDateFormat,
+            showRelativeDates,
             timeFormat,
             timeForToday: false,
           })}

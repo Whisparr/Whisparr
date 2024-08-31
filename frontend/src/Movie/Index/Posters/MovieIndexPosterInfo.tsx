@@ -78,15 +78,13 @@ function MovieIndexPosterInfo(props: MovieIndexPosterInfoProps) {
   }
 
   if (sortKey === 'added' && added) {
-    const addedDate = getRelativeDate(
-      added,
+    const addedDate = getRelativeDate({
+      date: added,
       shortDateFormat,
       showRelativeDates,
-      {
-        timeFormat,
-        timeForToday: false,
-      }
-    );
+      timeFormat,
+      timeForToday: false,
+    });
 
     return (
       <div
@@ -107,28 +105,13 @@ function MovieIndexPosterInfo(props: MovieIndexPosterInfoProps) {
   }
 
   if (sortKey === 'releaseDate' && releaseDate && !showReleaseDate) {
-    const digitalReleaseDate = getRelativeDate(
-      releaseDate,
-      shortDateFormat,
-      showRelativeDates,
-      {
-        timeFormat,
-        timeForToday: false,
-      }
-    );
-
-    return (
-      <div className={styles.info}>
-        <Icon name={icons.MOVIE_FILE} /> {digitalReleaseDate}
-      </div>
-    );
-  }
-
-  if (sortKey === 'releaseDate' && releaseDate && !showReleaseDate) {
     return (
       <div className={styles.info} title={translate('ReleaseDate')}>
         <Icon name={icons.CALENDAR} />{' '}
-        {getRelativeDate(releaseDate, shortDateFormat, showRelativeDates, {
+        {getRelativeDate({
+          date: releaseDate,
+          shortDateFormat,
+          showRelativeDates,
           timeFormat,
           timeForToday: false,
         })}

@@ -1,6 +1,5 @@
 import React from 'react';
 import Icon from 'Components/Icon';
-import TmdbRating from 'Components/TmdbRating';
 import { icons } from 'Helpers/Props';
 import Language from 'Language/Language';
 import { Ratings } from 'Movie/Movie';
@@ -40,7 +39,6 @@ function SceneIndexPosterInfo(props: SceneIndexPosterInfoProps) {
     year,
     releaseDate,
     path,
-    ratings,
     originalLanguage,
     sizeOnDisk,
     sortKey,
@@ -48,8 +46,7 @@ function SceneIndexPosterInfo(props: SceneIndexPosterInfoProps) {
     showReleaseDate,
     shortDateFormat,
     longDateFormat,
-    timeFormat,
-    showTmdbRating,
+    timeFormat
   } = props;
 
   if (sortKey === 'studio' && studio) {
@@ -73,15 +70,13 @@ function SceneIndexPosterInfo(props: SceneIndexPosterInfoProps) {
   }
 
   if (sortKey === 'added' && added) {
-    const addedDate = getRelativeDate(
-      added,
+    const addedDate = getRelativeDate({
+      date: added,
       shortDateFormat,
       showRelativeDates,
-      {
-        timeFormat,
-        timeForToday: false,
-      }
-    );
+      timeFormat,
+      timeForToday: false,
+    });
 
     return (
       <div
@@ -102,27 +97,16 @@ function SceneIndexPosterInfo(props: SceneIndexPosterInfoProps) {
   }
 
   if (sortKey === 'releaseDate' && releaseDate && !showReleaseDate) {
-    const digitalReleaseDate = getRelativeDate(
-      releaseDate,
-      shortDateFormat,
-      showRelativeDates,
-      {
-        timeFormat,
-        timeForToday: false,
-      }
-    );
-
     return (
-      <div className={styles.info}>
-        <Icon name={icons.DISC} /> {digitalReleaseDate}
-      </div>
-    );
-  }
-
-  if (!showTmdbRating && sortKey === 'tmdbRating' && !!ratings.tmdb) {
-    return (
-      <div className={styles.info}>
-        <TmdbRating ratings={ratings} iconSize={12} />
+      <div className={styles.info} title={translate('ReleaseDate')}>
+        <Icon name={icons.CALENDAR} />{' '}
+        {getRelativeDate({
+          date: releaseDate,
+          shortDateFormat,
+          showRelativeDates,
+          timeFormat,
+          timeForToday: false,
+        })}
       </div>
     );
   }

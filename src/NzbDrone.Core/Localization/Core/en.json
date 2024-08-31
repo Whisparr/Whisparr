@@ -298,6 +298,7 @@
   "DateAdded": "Date Added",
   "Dates": "Dates",
   "Day": "Day",
+  "DayOfWeekAt": "{day} at {time}",
   "Days": "Days",
   "DBMigration": "DB Migration",
   "ddmmyyyy": "dd.mm.yyyy",
@@ -1807,7 +1808,9 @@
   "TmdbRating": "TMDb Rating",
   "TmdbVotes": "TMDb Votes",
   "Today": "Today",
+  "TodayAt": "Today at {time}",
   "Tomorrow": "Tomorrow",
+  "TomorrowAt": "Tomorrow at {time}",
   "TorrentBlackhole": "Torrent Blackhole",
   "TorrentBlackholeSaveMagnetFiles": "Save Magnet Files",
   "TorrentBlackholeSaveMagnetFilesExtension": "Save Magnet Files Extension",
@@ -1955,6 +1958,7 @@
   "YesCancel": "Yes, Cancel",
   "YesMoveFiles": "Yes, Move the Files",
   "Yesterday": "Yesterday",
+  "YesterdayAt": "Yesterday at {time}",
   "YouCanAlsoSearch": "You can also search using TMDb ID or IMDb ID of a movie. e.g. `tmdb:71663`",
   "yymmdd": "yy.mm.dd"
 }

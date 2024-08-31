@@ -73,15 +73,13 @@ function SceneIndexPosterInfo(props: SceneIndexPosterInfoProps) {
   }
 
   if (sortKey === 'added' && added) {
-    const addedDate = getRelativeDate(
-      added,
+    const addedDate = getRelativeDate({
+      date: added,
       shortDateFormat,
       showRelativeDates,
-      {
-        timeFormat,
-        timeForToday: false,
-      }
-    );
+      timeFormat,
+      timeForToday: false,
+    });
 
     return (
       <div
@@ -102,19 +100,16 @@ function SceneIndexPosterInfo(props: SceneIndexPosterInfoProps) {
   }
 
   if (sortKey === 'releaseDate' && releaseDate && !showReleaseDate) {
-    const digitalReleaseDate = getRelativeDate(
-      releaseDate,
-      shortDateFormat,
-      showRelativeDates,
-      {
-        timeFormat,
-        timeForToday: false,
-      }
-    );
-
     return (
-      <div className={styles.info}>
-        <Icon name={icons.DISC} /> {digitalReleaseDate}
+      <div className={styles.info} title={translate('ReleaseDate')}>
+        <Icon name={icons.CALENDAR} />{' '}
+        {getRelativeDate({
+          date: releaseDate,
+          shortDateFormat,
+          showRelativeDates,
+          timeFormat,
+          timeForToday: false,
+        })}
       </div>
     );
   }

@@ -221,9 +221,12 @@ function SceneIndexPoster(props: SceneIndexPosterProps) {
       ) : null}
 
       {showReleaseDate && releaseDate ? (
-        <div className={styles.title}>
-          <Icon name={icons.DISC} />{' '}
-          {getRelativeDate(releaseDate, shortDateFormat, showRelativeDates, {
+        <div className={styles.title} title={translate('ReleaseDate')}>
+          <Icon name={icons.CALENDAR} />{' '}
+          {getRelativeDate({
+            date: releaseDate,
+            shortDateFormat,
+            showRelativeDates,
             timeFormat,
             timeForToday: false,
           })}

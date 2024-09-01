@@ -19,13 +19,14 @@ function ImportMovieRootFolderRow(props) {
   } = props;
 
   const unmappedFoldersCount = unmappedFolders.length || '-';
+  const linkProps = window.location.pathname === '/add/import/movies' ? { to: `/add/import/movies/${id}` } : { to: `/add/import/scenes/${id}` };
 
   return (
     <TableRow>
       <TableRowCell>
         <Link
           className={styles.link}
-          to={`/add/import/movies/${id}`}
+          {...linkProps}
         >
           {path}
         </Link>

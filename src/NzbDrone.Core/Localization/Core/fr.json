@@ -601,7 +601,7 @@
     "NamingSettingsLoadError": "Impossible de charger les paramètres de dénomination",
     "NegateHelpText": "Si cette case est cochée, le format personnalisé ne s'appliquera pas si cette condition {implementationName} correspond.",
     "Never": "Jamais",
-    "NoChanges": "Aucuns changements",
+    "NoChanges": "Aucun changement",
     "NoLimitForAnyRuntime": "Aucune limite pour aucune durée d'exécution",
     "NoLinks": "Aucun lien",
     "NoMatchFound": "Pas de résultat trouvé !",

@@ -8218,6 +8218,11 @@
           "releaseDate": {
             "$ref": "#/components/schemas/DateOnly"
           },
+          "lastSearchTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
           "runtime": {
             "type": "integer",
             "format": "int32"

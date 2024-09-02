@@ -1,11 +1,14 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 import Button from 'Components/Link/Button';
 import { kinds } from 'Helpers/Props';
 import translate from 'Utilities/String/translate';
 import styles from './NoMovie.css';
 
-function NoMovie(props) {
+interface NoMovieProps {
+  totalItems: number;
+}
+
+function NoMovie(props: NoMovieProps) {
   const { totalItems } = props;
 
   if (totalItems > 0) {
@@ -44,9 +47,5 @@ function NoMovie(props) {
     </div>
   );
 }
-
-NoMovie.propTypes = {
-  totalItems: PropTypes.number.isRequired
-};
 
 export default NoMovie;

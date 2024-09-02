@@ -18,8 +18,10 @@ export type SeriesMonitor =
 
 export type MonitorNewItems = 'all' | 'none';
 
+export type CoverType = 'poster' | 'banner' | 'fanart' | 'season';
+
 export interface Image {
-  coverType: string;
+  coverType: CoverType;
   url: string;
   remoteUrl: string;
 }

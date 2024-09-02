@@ -1,11 +1,15 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 import Button from 'Components/Link/Button';
 import { kinds } from 'Helpers/Props';
 import translate from 'Utilities/String/translate';
 import styles from './NoSeries.css';
 
-function NoSeries(props) {
+interface NoSeriesProps {
+  totalItems: number;
+  seriesType?: string;
+}
+
+function NoSeries(props: NoSeriesProps) {
   const { totalItems, seriesType } = props;
 
   const addNewPath = seriesType === 'jav' ? '/jav/add/new' : '/add/new';
@@ -49,10 +53,5 @@ function NoSeries(props) {
     </div>
   );
 }
-
-NoSeries.propTypes = {
-  totalItems: PropTypes.number.isRequired,
-  seriesType: PropTypes.string
-};
 
 export default NoSeries;

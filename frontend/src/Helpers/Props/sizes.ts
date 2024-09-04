@@ -14,4 +14,10 @@ export const all = [
   EXTRA_EXTRA_LARGE,
 ] as const;
 
-export type Size = (typeof all)[number];
+export type Size =
+  | 'extraSmall'
+  | 'small'
+  | 'medium'
+  | 'large'
+  | 'extraLarge'
+  | 'extraExtraLarge';

@@ -2,11 +2,12 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import ProgressBar from 'Components/ProgressBar';
 import { sizes } from 'Helpers/Props';
+import { MovieStatus } from 'Movie/Movie';
 import { MovieFile } from 'MovieFile/MovieFile';
 import createSceneQueueItemsDetailsSelector, {
   SceneQueueDetails,
 } from 'Scene/Index/createSceneQueueDetailsSelector';
-import getStatusStyle from 'Utilities/Movie/getStatusStyle';
+import getProgressBarKind from 'Utilities/Movie/getProgressBarKind';
 import translate from 'Utilities/String/translate';
 import styles from './SceneIndexProgressBar.css';
 
@@ -14,7 +15,7 @@ interface SceneIndexProgressBarProps {
   sceneId: number;
   sceneFile: MovieFile;
   monitored: boolean;
-  status: string;
+  status: MovieStatus;
   hasFile: boolean;
   isAvailable: boolean;
   width: number;
@@ -70,7 +71,13 @@ function SceneIndexProgressBar(props: SceneIndexProgressBarProps) {
       className={styles.progressBar}
       containerClassName={containerClassName}
       progress={progress}
-      kind={getStatusStyle(monitored, hasFile, isAvailable, false)}
+      kind={getProgressBarKind(
+        status,
+        monitored,
+        hasFile,
+        isAvailable,
+        queueDetails.count > 0
+      )}
       size={detailedProgressBar ? sizes.MEDIUM : sizes.SMALL}
       showText={detailedProgressBar}
       width={width}

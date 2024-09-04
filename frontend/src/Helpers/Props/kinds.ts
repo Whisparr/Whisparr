@@ -26,4 +26,16 @@ export const all = [
   QUEUE,
 ] as const;
 
-export type Kind = (typeof all)[number];
+export type Kind =
+  | 'danger'
+  | 'default'
+  | 'delete'
+  | 'disabled'
+  | 'info'
+  | 'inverse'
+  | 'pink'
+  | 'primary'
+  | 'purple'
+  | 'success'
+  | 'warning'
+  | 'queue';

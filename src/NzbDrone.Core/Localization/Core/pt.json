@@ -761,6 +761,8 @@
     "MovieChat": "Bate-papo sobre o filme",
     "MovieCollectionMissingRoot": "Falta a pasta base para a coleção de filmes: {0}",
     "MovieCollectionMultipleMissingRoots": "Faltam várias pastas base para as coleções de filmes: {0}",
+    "MovieCollectionFolderMultipleMissingRootsHealthCheckMessage": "Faltam várias pastas base para as coleções de filmes: {rootFoldersInfo}",
+    "MovieCollectionRootFolderMissingRootHealthCheckMessage": "Falta a pasta base para a coleção de filmes: {rootFolderInfo}",
     "MovieDetailsNextMovie": "Detalhes do filme: próximo filme",
     "MovieDetailsPreviousMovie": "Detalhes do filme: filme anterior",
     "MovieEditor": "Editor de filmes",

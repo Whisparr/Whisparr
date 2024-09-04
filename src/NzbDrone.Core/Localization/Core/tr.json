@@ -971,6 +971,8 @@
     "MovieChat": "Film Sohbeti",
     "MovieCollectionMissingRoot": "Film koleksiyonu için eksik kök klasör: {0}",
     "MovieCollectionMultipleMissingRoots": "Film koleksiyonları için birden fazla kök klasör eksik: {0}",
+    "MovieCollectionFolderMultipleMissingRootsHealthCheckMessage": "Film koleksiyonları için birden fazla kök klasör eksik: {rootFoldersInfo}",
+    "MovieCollectionRootFolderMissingRootHealthCheckMessage": "Film koleksiyonu için eksik kök klasör: {rootFolderInfo}",
     "MovieDetailsNextMovie": "Film Ayrıntıları: Sonraki Film",
     "MovieDetailsPreviousMovie": "Film Detayları: Önceki Film",
     "MovieDownloaded": "Film İndirildi",

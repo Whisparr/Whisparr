@@ -1031,6 +1031,8 @@
     "MovieChat": "Bate-papo sobre o filme",
     "MovieCollectionMissingRoot": "Pasta raiz ausente para a coleção de filmes: {0}",
     "MovieCollectionMultipleMissingRoots": "Estão faltando várias pastas raízes para coleções de filmes: {0}",
+    "MovieCollectionFolderMultipleMissingRootsHealthCheckMessage": "Estão faltando várias pastas raízes para coleções de filmes: {rootFoldersInfo}",
+    "MovieCollectionRootFolderMissingRootHealthCheckMessage": "Pasta raiz ausente para a coleção de filmes: {rootFolderInfo}",
     "MovieDetailsNextMovie": "Detalhes do filme: próximo filme",
     "MovieDetailsPreviousMovie": "Detalhes do filme: Filme anterior",
     "MovieDownloaded": "Filme Baixado",

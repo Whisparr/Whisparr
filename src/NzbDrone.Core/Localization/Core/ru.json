@@ -951,6 +951,8 @@
     "MovieChat": "Чат по фильму",
     "MovieCollectionMissingRoot": "Отсутствует корневая папка для коллекции фильмов: {0}",
     "MovieCollectionMultipleMissingRoots": "Для коллекций фильмов отсутствуют несколько корневых папок: {0}",
+    "MovieCollectionFolderMultipleMissingRootsHealthCheckMessage": "Для коллекций фильмов отсутствуют несколько корневых папок: {rootFoldersInfo}",
+    "MovieCollectionRootFolderMissingRootHealthCheckMessage": "Отсутствует корневая папка для коллекции фильмов: {rootFolderInfo}",
     "MovieDetailsNextMovie": "Подробности фильма: следующий фильм",
     "MovieDetailsPreviousMovie": "Подробности фильма: предыдущий фильм",
     "MovieDownloadFailedTooltip": "Ошибка загрузки фильма",

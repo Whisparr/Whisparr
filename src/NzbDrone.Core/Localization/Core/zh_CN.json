@@ -975,6 +975,8 @@
     "MovieChat": "电影聊天",
     "MovieCollectionMissingRoot": "电影集合丢失根目录文件夹: {0}",
     "MovieCollectionMultipleMissingRoots": "电影集合丢失集合根目录文件夹",
+    "MovieCollectionFolderMultipleMissingRootsHealthCheckMessage": "电影集合丢失集合根目录文件夹",
+    "MovieCollectionRootFolderMissingRootHealthCheckMessage": "电影集合丢失根目录文件夹: {rootFolderInfo}",
     "MovieDetailsNextMovie": "影片详细：下一个",
     "MovieDetailsPreviousMovie": "影片详细：前一个",
     "MovieDownloaded": "电影已下载",

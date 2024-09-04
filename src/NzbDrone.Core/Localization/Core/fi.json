@@ -1008,6 +1008,8 @@
     "MovieChat": "Elokuvakeskustelu",
     "MovieCollectionMissingRoot": "Elokuvakokoelman juurikansio puuttuu: {0}",
     "MovieCollectionMultipleMissingRoots": "Useiden elokuvakokoelmien juurikansiot puuttuvat: {0}",
+    "MovieCollectionFolderMultipleMissingRootsHealthCheckMessage": "Useiden elokuvakokoelmien juurikansiot puuttuvat: {rootFoldersInfo}",
+    "MovieCollectionRootFolderMissingRootHealthCheckMessage": "Elokuvakokoelman juurikansio puuttuu: {rootFolderInfo}",
     "MovieDetailsNextMovie": "Elokuvan tiedot: Seuraava elokuva",
     "MovieDetailsPreviousMovie": "Elokuvan tiedot: Edellinen elokuva",
     "MovieDownloadFailedTooltip": "Elokuvan lataus epäonnistui",
@@ -1816,7 +1818,8 @@
     "Trace": "Jäljitys",
     "Trailer": "Perävaunu",
     "Trakt": "Trakt",
-    "Trending": "Trendaava""Trigger": "Laukaisija",
+    "Trending": "Trendaava",
+    "Trigger": "Laukaisija",
     "True": "Tosi",
     "Type": "Tyyppi",
     "TypeOfList": "{typeOfList}-lista",
@@ -1936,5 +1939,5 @@
     "YesMoveFiles": "Kyllä, siirrä tiedostot",
     "Yesterday": "Eilen",
     "YouCanAlsoSearch": "Voit etsiä myös elokuvien TMDB tai IMDb ID-tunnisteilla (esim. \"tmdb:71663\").",
-    "yymmdd": "vv.kk.pv",
+    "yymmdd": "vv.kk.pv"
 }

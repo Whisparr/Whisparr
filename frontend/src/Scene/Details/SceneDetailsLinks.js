@@ -15,7 +15,7 @@ function SceneDetailsLinks(props) {
     <div className={styles.links}>
       <Link
         className={styles.link}
-        to={`https://www.stashdb.org/scenes/${foreignId}`}
+        to={`https://stashdb.org/scenes/${foreignId}`}
       >
         <Label
           className={styles.linkLabel}

@@ -78,6 +78,7 @@ namespace Whisparr.Api.V3.Movies
         public MovieFileResource MovieFile { get; set; }
         public List<Credit> Credits { get; set; }
         public ItemType ItemType { get; set; }
+        public DateTime? LastSearchTime { get; set; }
         public MovieStatisticsResource Statistics { get; set; }
 
         // Hiding this so people don't think its usable (only used to set the initial state)
@@ -149,7 +150,8 @@ namespace Whisparr.Api.V3.Movies
                 StudioTitle = model.MovieMetadata.Value.StudioTitle,
                 StudioForeignId = model.MovieMetadata.Value.StudioForeignId,
                 Credits = model.MovieMetadata.Value.Credits,
-                ItemType = model.MovieMetadata.Value.ItemType
+                ItemType = model.MovieMetadata.Value.ItemType,
+                LastSearchTime = model.LastSearchTime,
             };
         }
 

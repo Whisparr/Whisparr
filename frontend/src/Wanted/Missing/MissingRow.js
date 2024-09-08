@@ -19,6 +19,7 @@ function MissingRow(props) {
     titleSlug,
     foreignId,
     releaseDate,
+    lastSearchTime,
     isSelected,
     columns,
     onSelectedChange
@@ -115,6 +116,7 @@ MissingRow.propTypes = {
   movieFileId: PropTypes.number,
   title: PropTypes.string.isRequired,
   year: PropTypes.number.isRequired,
+  lastSearchTime: PropTypes.string,
   titleSlug: PropTypes.string.isRequired,
   releaseDate: PropTypes.string,
   isSelected: PropTypes.bool,

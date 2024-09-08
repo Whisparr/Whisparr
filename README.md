@@ -1,9 +1,8 @@
 # Whisparr
 
-[![Build Status](https://dev.azure.com/Servarr/Whisparr/_apis/build/status/Whisparr.Whisparr?branchName=develop)](https://dev.azure.com/Servarr/Whisparr/_build/latest?definitionId=1&branchName=develop)
-[![Translated](https://translate.servarr.com/widgets/servarr/-/whisparr/svg-badge.svg)](https://translate.servarr.com/engage/whisparr/?utm_source=widget)
-[![Docker Pulls](https://img.shields.io/docker/pulls/linuxserver/whisparr.svg)](https://wiki.servarr.com/whisparr/installation/docker)
-![Github Downloads](https://img.shields.io/github/downloads/Whisparr/Whisparr/total.svg)
+[![Build Status](https://dev.azure.com/Servarr/Whisparr/_apis/build/status/Whisparr.Whisparr?branchName=eros)](https://dev.azure.com/Servarr/Whisparr/_build/latest?definitionId=1&branchName=eros)
+[![Translation status](https://translate.servarr.com/widget/servarr/whisparr/svg-badge.svg)](https://translate.servarr.com/engage/servarr/?utm_source=widget)
+[![Docker](https://img.shields.io/badge/Docker-Info-blue)](https://wiki.servarr.com/whisparr/installation/docker)
 [![Backers on Open Collective](https://opencollective.com/Whisparr/backers/badge.svg)](#backers)
 [![Sponsors on Open Collective](https://opencollective.com/Whisparr/sponsors/badge.svg)](#sponsors)
 [![Mega Sponsors on Open Collective](https://opencollective.com/Whisparr/megasponsors/badge.svg)](#mega-sponsors)
@@ -87,4 +86,4 @@ This project is also supported by DigitalOcean
 ### License
 
 * [GNU GPL v3](http://www.gnu.org/licenses/gpl.html)
-* Copyright 2010-2022
+* Copyright 2010-2025

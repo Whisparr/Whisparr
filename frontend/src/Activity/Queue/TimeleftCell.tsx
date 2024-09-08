@@ -37,9 +37,11 @@ function TimeleftCell(props: TimeleftCellProps) {
     const date = getRelativeDate({
       date: estimatedCompletionTime,
       shortDateFormat,
-      showRelativeDates
+      showRelativeDates,
     });
-    const time = formatTime(estimatedCompletionTime, timeFormat, { includeMinuteZero: true });
+    const time = formatTime(estimatedCompletionTime, timeFormat, {
+      includeMinuteZero: true,
+    });
 
     return (
       <TableRowCell className={styles.timeleft}>
@@ -57,9 +59,11 @@ function TimeleftCell(props: TimeleftCellProps) {
     const date = getRelativeDate({
       date: estimatedCompletionTime,
       shortDateFormat,
-      showRelativeDates
+      showRelativeDates,
     });
-    const time = formatTime(estimatedCompletionTime, timeFormat, { includeMinuteZero: true });
+    const time = formatTime(estimatedCompletionTime, timeFormat, {
+      includeMinuteZero: true,
+    });
 
     return (
       <TableRowCell className={styles.timeleft}>

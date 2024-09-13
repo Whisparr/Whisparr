@@ -8,6 +8,7 @@ namespace NzbDrone.Core.ImportLists
         Plex,
         Simkl,
         Other,
-        Advanced
+        Advanced,
+        StashDB
     }
 }

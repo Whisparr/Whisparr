@@ -34,7 +34,7 @@ namespace NzbDrone.Core.Download.Clients.Transmission
             Host = "localhost";
             Port = 9091;
             UrlBase = "/transmission/";
-            MovieCategory = "radarr";
+            MovieCategory = "whisparr";
         }
 
         // TODO: Remove this in v6

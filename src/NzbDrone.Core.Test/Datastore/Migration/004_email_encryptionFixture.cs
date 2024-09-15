@@ -26,7 +26,7 @@ namespace NzbDrone.Core.Test.Datastore.Migration
                     IncludeHealthWarnings = true,
                     OnRename = true,
                     OnMovieDelete = false,
-                    Name = "Mail Radarr",
+                    Name = "Mail Whisparr",
                     Implementation = "Email",
                     Tags = "[]",
                     Settings = new EmailSettings234
@@ -62,7 +62,7 @@ namespace NzbDrone.Core.Test.Datastore.Migration
                     IncludeHealthWarnings = true,
                     OnRename = true,
                     OnMovieDelete = false,
-                    Name = "Mail Radarr",
+                    Name = "Mail Whisparr",
                     Implementation = "Email",
                     Tags = "[]",
                     Settings = new EmailSettings234
@@ -98,7 +98,7 @@ namespace NzbDrone.Core.Test.Datastore.Migration
                     IncludeHealthWarnings = true,
                     OnRename = true,
                     OnMovieDelete = false,
-                    Name = "Mail Radarr",
+                    Name = "Mail Whisparr",
                     Implementation = "Email",
                     Tags = "[]",
                     Settings = new { }.ToJson(),

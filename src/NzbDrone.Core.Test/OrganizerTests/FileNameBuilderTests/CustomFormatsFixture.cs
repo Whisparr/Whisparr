@@ -36,7 +36,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
             Mocker.GetMock<INamingConfigService>()
                   .Setup(c => c.GetConfig()).Returns(_namingConfig);
 
-            _movieFile = new MovieFile { Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "RadarrTest" };
+            _movieFile = new MovieFile { Quality = new QualityModel(Quality.HDTV720p), ReleaseGroup = "WhisparrTest" };
 
             _customFormats = new List<CustomFormat>()
             {

@@ -69,7 +69,7 @@ namespace NzbDrone.Core.Notifications.Telegram
 
                 var links = new List<TelegramLink>
                 {
-                    new ("Radarr.video", "https://radarr.video")
+                    new ("whisparr.com", "https://whisparr.com")
                 };
 
                 var testMessageTitle = settings.IncludeAppNameInTitle ? brandedTitle : title;

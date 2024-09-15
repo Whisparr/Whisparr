@@ -496,7 +496,7 @@ namespace NzbDrone.Core.Download.Clients.Sabnzbd
                 return new NzbDroneValidationFailure("MovieCategory", "Disable TV Sorting")
                 {
                     InfoLink = _proxy.GetBaseUrl(Settings, "config/sorting/"),
-                    DetailedDescription = "You must disable sorting for the category Radarr uses to prevent import issues. Go to Sabnzbd to fix it."
+                    DetailedDescription = "You must disable sorting for the category whisparr uses to prevent import issues. Go to Sabnzbd to fix it."
                 };
             }
 

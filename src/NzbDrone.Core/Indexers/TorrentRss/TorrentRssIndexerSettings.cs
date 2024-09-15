@@ -57,7 +57,7 @@ namespace NzbDrone.Core.Indexers.TorrentRss
         [FieldDefinition(7, Type = FieldType.Select, SelectOptions = typeof(FailDownloads), Label = "IndexerSettingsFailDownloads", HelpText = "IndexerSettingsFailDownloadsHelpText", Advanced = true)]
         public IEnumerable<int> FailDownloads { get; set; }
 
-        [FieldDefinition(8, Type = FieldType.Select, SelectOptions = typeof(IndexerFlags), Label = "IndexerSettingsRequiredFlags", HelpText = "IndexerSettingsRequiredFlagsHelpText", HelpLink = "https://wiki.servarr.com/radarr/settings#indexer-flags", Advanced = true)]
+        [FieldDefinition(8, Type = FieldType.Select, SelectOptions = typeof(IndexerFlags), Label = "IndexerSettingsRequiredFlags", HelpText = "IndexerSettingsRequiredFlagsHelpText", HelpLink = "https://wiki.servarr.com/whisparr/settings#indexer-flags", Advanced = true)]
         public IEnumerable<int> RequiredFlags { get; set; }
 
         public NzbDroneValidationResult Validate()

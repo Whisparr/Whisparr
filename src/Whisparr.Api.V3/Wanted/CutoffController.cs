@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.CustomFormats;
@@ -43,13 +44,16 @@ namespace Whisparr.Api.V3.Wanted
         public PagingResource<MovieResource> GetCutoffUnmetMovies([FromQuery] PagingRequestResource paging, bool monitored = true)
         {
             var pagingResource = new PagingResource<MovieResource>(paging);
-            var pagingSpec = new PagingSpec<Movie>
-            {
-                Page = pagingResource.Page,
-                PageSize = pagingResource.PageSize,
-                SortKey = pagingResource.SortKey,
-                SortDirection = pagingResource.SortDirection
-            };
+            var pagingSpec = pagingResource.MapToPagingSpec<MovieResource, Movie>(
+                "movieMetadata.sortTitle",
+                SortDirection.Ascending,
+                new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    "movieMetadata.sortTitle",
+                    "movieMetadata.year",
+                    "movieMetadata.releaseDate",
+                    "movies.lastSearchTime"
+                });
 
             pagingSpec.FilterExpressions.Add(v => v.Monitored == monitored);
 

@@ -64,15 +64,15 @@ namespace Whisparr.Api.V3.ImportLists
         {
             var pagingResource = new PagingResource<ImportListExclusionResource>(paging);
             var pageSpec = pagingResource.MapToPagingSpec<ImportListExclusionResource, ImportListExclusion>(
-                "id",
-                SortDirection.Descending,
                 new HashSet<string>(StringComparer.OrdinalIgnoreCase)
                 {
                     "id",
                     "foreignId",
                     "movieTitle",
                     "movieYear"
-                });
+                },
+                "id",
+                SortDirection.Descending);
 
             return pageSpec.ApplyToPage(_importListExclusionService.Paged, ImportListExclusionResourceMapper.ToResource);
         }

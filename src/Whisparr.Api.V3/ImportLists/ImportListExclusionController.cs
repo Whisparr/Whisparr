@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using NzbDrone.Core.Datastore;
 using NzbDrone.Core.ImportLists.Exclusions;
 using Whisparr.Http;
 using Whisparr.Http.Extensions;
@@ -45,7 +46,15 @@ namespace Whisparr.Api.V3.ImportLists
         public PagingResource<ImportListExclusionResource> GetImportListExclusionsPaged([FromQuery] PagingRequestResource paging)
         {
             var pagingResource = new PagingResource<ImportListExclusionResource>(paging);
-            var pageSpec = pagingResource.MapToPagingSpec<ImportListExclusionResource, ImportListExclusion>();
+            var pageSpec = pagingResource.MapToPagingSpec<ImportListExclusionResource, ImportListExclusion>(
+                new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    "id",
+                    "tvdbId",
+                    "title"
+                },
+                "id",
+                SortDirection.Descending);
 
             return pageSpec.ApplyToPage(_importListExclusionService.Paged, ImportListExclusionResourceMapper.ToResource);
         }

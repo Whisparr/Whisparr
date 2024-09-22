@@ -50,8 +50,8 @@ namespace Whisparr.Api.V3.ImportLists
                 new HashSet<string>(StringComparer.OrdinalIgnoreCase)
                 {
                     "id",
-                    "tvdbId",
-                    "title"
+                    "title",
+                    "tvdbId"
                 },
                 "id",
                 SortDirection.Descending);

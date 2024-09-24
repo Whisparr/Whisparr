@@ -407,7 +407,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
 
             movie.ItemType = resource.ItemType;
 
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
 
             movie.Status = MovieStatusType.Announced;
 

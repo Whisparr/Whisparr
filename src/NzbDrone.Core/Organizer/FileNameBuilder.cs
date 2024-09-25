@@ -126,6 +126,11 @@ namespace NzbDrone.Core.Organizer
                 }
             }
 
+            if (namingConfig.StandardMovieFormat.IsNullOrWhiteSpace())
+            {
+                throw new NamingFormatException("Standard movie format cannot be empty");
+            }
+
             var pattern = itemType == ItemType.Movie ? namingConfig.StandardMovieFormat : namingConfig.StandardSceneFormat;
             var tokenHandlers = new Dictionary<string, Func<TokenMatch, string>>(FileNameBuilderTokenEqualityComparer.Instance);
             var multipleTokens = TitleRegex.Matches(pattern).Count > 1;

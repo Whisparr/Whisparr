@@ -196,7 +196,7 @@ class Naming extends Component {
               {
                 replaceIllegalCharacters && settings.colonReplacementFormat.value === 5 ?
                   <FormGroup>
-                    <FormLabel>{translate('ColonReplacement')}</FormLabel>
+                    <FormLabel>{translate('CustomColonReplacement')}</FormLabel>
 
                     <FormInputGroup
                       type={inputTypes.TEXT}

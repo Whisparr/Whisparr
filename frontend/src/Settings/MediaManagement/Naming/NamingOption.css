@@ -39,11 +39,16 @@
   flex: 0 0 50%;
   padding: 6px;
   background-color: var(--popoverBodyBackgroundColor);
+  word-break: break-all;
 
   .footNote {
     padding: 2px;
     color: #aaa;
   }
+}
+
+.title {
+  text-transform: none;
 }
 
 .lower {

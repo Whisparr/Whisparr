@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using NzbDrone.Common.Extensions;
 using NzbDrone.Core.CustomFormats;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.MediaFiles.MediaInfo;
@@ -13,6 +14,7 @@ namespace NzbDrone.Core.Organizer
         string GetMovieFolderSample(NamingConfig nameSpec);
         SampleResult GetSceneSample(NamingConfig nameSpec);
         string GetSceneFolderSample(NamingConfig nameSpec);
+        string GetSceneImportFolderSample(string path);
    }
 
     public class FileNameSampleService : IFilenameSampleService
@@ -30,7 +32,7 @@ namespace NzbDrone.Core.Organizer
         {
             _buildFileNames = buildFileNames;
 
-            var mediaInfo = new MediaInfoModel()
+            var mediaInfo = new MediaInfoModel
             {
                 VideoFormat = "AVC",
                 VideoBitDepth = 10,
@@ -136,6 +138,16 @@ namespace NzbDrone.Core.Organizer
         public string GetSceneFolderSample(NamingConfig nameSpec)
         {
             return _buildFileNames.GetMovieFolder(_scene, nameSpec);
+        }
+
+        public string GetSceneImportFolderSample(string path)
+        {
+            if (path.IsNotNullOrWhiteSpace())
+            {
+                return path;
+            }
+
+            return "import/";
         }
 
         private string BuildSample(Movie movie, MovieFile movieFile, NamingConfig nameSpec)

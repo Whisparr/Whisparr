@@ -96,7 +96,7 @@ namespace Whisparr.Api.V3.Config
 
             sampleResource.SceneImportFolderExample = nameSpec.SceneImportFolderFormat.IsNullOrWhiteSpace()
                 ? "Invalid format"
-                : _filenameSampleService.GetMovieFolderSample(nameSpec);
+                : _filenameSampleService.GetSceneImportFolderSample(nameSpec.SceneImportFolderFormat);
 
             sampleResource.MaxFilePathLengthExample = NamingConfig.Default.MaxFilePathLength;
             sampleResource.MaxFolderPathLengthExample = NamingConfig.Default.MaxFolderPathLength;

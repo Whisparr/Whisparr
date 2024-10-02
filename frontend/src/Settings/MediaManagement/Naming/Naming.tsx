@@ -50,6 +50,7 @@ interface NamingModalOptions {
     | 'movieFolderFormat'
     | 'standardSceneFormat'
     | 'sceneFolderFormat'
+    | 'sceneImportFolderFormat'
   >;
   movie?: boolean;
   scene?: boolean;
@@ -182,7 +183,9 @@ function Naming() {
     }
 
     if (examples.sceneImportFolderExample) {
-      sceneImportFolderFormatHelpTexts.push('Example: import/');
+      sceneImportFolderFormatHelpTexts.push(
+        `Example: ${examples.sceneImportFolderExample}`
+      );
     } else {
       sceneImportFolderFormatErrors.push({
         message: translate('InvalidFormat'),
@@ -338,6 +341,9 @@ function Naming() {
                 translate('MovieFolderFormatHelpText'),
                 ...movieFolderFormatHelpTexts,
               ]}
+              helpTextWarning={translate(
+                'MovieFolderFormatHelpTextDeprecatedWarning'
+              )}
               errors={[
                 ...movieFolderFormatErrors,
                 ...settings.movieFolderFormat.errors,
@@ -394,6 +400,9 @@ function Naming() {
                 ''
               }
               helpTexts={sceneFolderFormatHelpTexts}
+              helpTextWarning={translate(
+                'SceneFolderFormatHelpTextDeprecatedWarning'
+              )}
               errors={[
                 ...sceneFolderFormatErrors,
                 ...settings.sceneFolderFormat.errors,
@@ -417,7 +426,13 @@ function Naming() {
                 settings.sceneImportFolderFormat ??
                 ''
               }
-              helpTexts={sceneImportFolderFormatHelpTexts}
+              helpTexts={[
+                translate('SceneImportFolderFormatHelpText'),
+                ...sceneImportFolderFormatHelpTexts,
+              ]}
+              helpTextWarning={translate(
+                'SceneImportFolderFormatHelpTextRelativePath'
+              )}
               errors={[
                 ...sceneImportFolderFormatErrors,
                 ...settings.sceneImportFolderFormat.errors,

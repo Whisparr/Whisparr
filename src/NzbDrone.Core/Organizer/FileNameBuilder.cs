@@ -218,8 +218,6 @@ namespace NzbDrone.Core.Organizer
                 namingConfig = _namingConfigService.GetConfig();
             }
 
-            var movieFile = movie.MovieFile;
-
             var itemType = movie.MovieMetadata.Value.ItemType;
 
             var pattern = itemType == ItemType.Movie ? namingConfig.MovieFolderFormat : namingConfig.SceneFolderFormat;
@@ -239,6 +237,8 @@ namespace NzbDrone.Core.Organizer
             AddStudioTokens(tokenHandlers, movie);
             AddReleaseDateTokens(tokenHandlers, movie.Year);
             AddIdTokens(tokenHandlers, movie);
+
+            var movieFile = movie.MovieFile;
 
             if (movie.MovieFile != null)
             {

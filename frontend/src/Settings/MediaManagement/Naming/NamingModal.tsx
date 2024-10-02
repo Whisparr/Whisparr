@@ -260,6 +260,7 @@ interface NamingModalProps {
     | 'movieFolderFormat'
     | 'standardSceneFormat'
     | 'sceneFolderFormat'
+    | 'sceneImportFolderFormat'
   >;
   value: string;
   movie?: boolean;

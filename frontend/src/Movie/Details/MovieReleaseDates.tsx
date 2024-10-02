@@ -2,7 +2,9 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import Icon from 'Components/Icon';
 import { icons } from 'Helpers/Props';
+import Movie from 'Movie/Movie';
 import createUISettingsSelector from 'Store/Selectors/createUISettingsSelector';
+import formatDate from 'Utilities/Date/formatDate';
 import getRelativeDate from 'Utilities/Date/getRelativeDate';
 import translate from 'Utilities/String/translate';
 import styles from './MovieReleaseDates.css';
@@ -36,6 +38,7 @@ function MovieReleaseDates(props: MovieReleaseDatesProps) {
           <div className={styles.dateIcon}>
             <Icon name={icons.CALENDAR} />
           </div>
+
           {getRelativeDate({
             date: releaseDate,
             shortDateFormat,

@@ -20,6 +20,7 @@ import { Statistics } from 'Movie/Movie';
 import MoviePoster from 'Movie/MoviePoster';
 import { executeCommand } from 'Store/Actions/commandActions';
 import createUISettingsSelector from 'Store/Selectors/createUISettingsSelector';
+import formatDate from 'Utilities/Date/formatDate';
 import getRelativeDate from 'Utilities/Date/getRelativeDate';
 import translate from 'Utilities/String/translate';
 import createMovieIndexItemSelector from '../createMovieIndexItemSelector';
@@ -228,7 +229,13 @@ function MovieIndexPoster(props: MovieIndexPosterProps) {
       ) : null}
 
       {showReleaseDate && releaseDate ? (
-        <div className={styles.title} title={translate('ReleaseDate')}>
+        <div
+          className={styles.title}
+          title={`${translate('ReleaseDate')}: ${formatDate(
+            releaseDate,
+            longDateFormat
+          )}`}
+        >
           <Icon name={icons.CALENDAR} />{' '}
           {getRelativeDate({
             date: releaseDate,

@@ -6,6 +6,7 @@ import { icons } from 'Helpers/Props';
 import Language from 'Language/Language';
 import { Ratings } from 'Movie/Movie';
 import QualityProfile from 'typings/QualityProfile';
+import formatDate from 'Utilities/Date/formatDate';
 import formatDateTime from 'Utilities/Date/formatDateTime';
 import getRelativeDate from 'Utilities/Date/getRelativeDate';
 import formatBytes from 'Utilities/Number/formatBytes';
@@ -106,7 +107,13 @@ function MovieIndexPosterInfo(props: MovieIndexPosterInfoProps) {
 
   if (sortKey === 'releaseDate' && releaseDate && !showReleaseDate) {
     return (
-      <div className={styles.info} title={translate('ReleaseDate')}>
+      <div
+        className={styles.info}
+        title={`${translate('ReleaseDate')}: ${formatDate(
+          releaseDate,
+          longDateFormat
+        )}`}
+      >
         <Icon name={icons.CALENDAR} />{' '}
         {getRelativeDate({
           date: releaseDate,

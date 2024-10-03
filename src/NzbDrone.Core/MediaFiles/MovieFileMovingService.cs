@@ -32,9 +32,9 @@ namespace NzbDrone.Core.MediaFiles
         private readonly IDiskProvider _diskProvider;
         private readonly IMediaFileAttributeService _mediaFileAttributeService;
         private readonly IImportScript _scriptImportDecider;
+        private readonly IRootFolderService _rootFolderService;
         private readonly IEventAggregator _eventAggregator;
         private readonly IConfigService _configService;
-        private readonly IRootFolderService _rootFolderService;
         private readonly Logger _logger;
 
         public MovieFileMovingService(IUpdateMovieFileService updateMovieFileService,
@@ -45,9 +45,9 @@ namespace NzbDrone.Core.MediaFiles
                                 IDiskProvider diskProvider,
                                 IMediaFileAttributeService mediaFileAttributeService,
                                 IImportScript scriptImportDecider,
+                                IRootFolderService rootFolderService,
                                 IEventAggregator eventAggregator,
                                 IConfigService configService,
-                                IRootFolderService rootFolderService,
                                 Logger logger)
         {
             _updateMovieFileService = updateMovieFileService;
@@ -58,9 +58,9 @@ namespace NzbDrone.Core.MediaFiles
             _diskProvider = diskProvider;
             _mediaFileAttributeService = mediaFileAttributeService;
             _scriptImportDecider = scriptImportDecider;
+            _rootFolderService = rootFolderService;
             _eventAggregator = eventAggregator;
             _configService = configService;
-            _rootFolderService = rootFolderService;
             _logger = logger;
         }
 
@@ -198,13 +198,17 @@ namespace NzbDrone.Core.MediaFiles
         private void EnsureMovieFolder(MovieFile movieFile, Movie movie, string filePath)
         {
             var movieFileFolder = Path.GetDirectoryName(filePath);
-
             var movieFolder = movie.Path;
             var rootFolder = _rootFolderService.GetBestRootFolderPath(movieFolder);
 
+            if (rootFolder.IsNullOrWhiteSpace())
+            {
+                throw new RootFolderNotFoundException($"Root folder was not found, '{movieFolder}' is not a subdirectory of a defined root folder.");
+            }
+
             if (!_diskProvider.FolderExists(rootFolder))
             {
-                throw new RootFolderNotFoundException(string.Format("Root folder '{0}' was not found.", rootFolder));
+                throw new RootFolderNotFoundException($"Root folder '{rootFolder}' was not found.");
             }
 
             var changed = false;

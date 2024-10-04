@@ -66,10 +66,45 @@ const caseOptions: { key: TokenCase; value: string }[] = [
   },
 ];
 
-const fileNameTokens = [
+const movieFileNameTokens = [
   {
-    token: '{Movie Title} - {Quality Full}',
-    example: 'Movie Title (2010) - HDTV-720p Proper',
+    token:
+      '{Movie Title} ({Release Year}) - {Edition Tags }{[Custom Formats]}{[Quality Full]}{-Release Group}',
+    example:
+      'The Movie - Title (2010) - Ultimate Extended Edition [Surround Sound x264][Bluray-1080p Proper]-EVOLVE',
+  },
+  {
+    token:
+      '{Movie CleanTitle} {Release Year} - {Edition Tags }{[Custom Formats]}{[Quality Full]}{-Release Group}',
+    example:
+      'The Movie Title 2010 - Ultimate Extended Edition [Surround Sound x264][Bluray-1080p Proper]-EVOLVE',
+  },
+  {
+    token:
+      '{Movie.CleanTitle}{.Release.Year}{.Edition.Tags}{.Custom.Formats}{.Quality.Full}{-Release Group}',
+    example:
+      'The.Movie.Title.2010.Ultimate.Extended.Edition.Surround.Sound.x264.Bluray-1080p.Proper-EVOLVE',
+  },
+];
+
+const sceneFileNameTokens = [
+  {
+    token:
+      '[{studio cleantitleslug}] {release-date}.{scene.cleantitle}.{scene.performers}',
+    example:
+      '[studiotitle] 2010-01-01.the.scene.title',
+  },
+  {
+    token:
+      '{Studio Title}- {Scene Title} - {Release Date} - {Scene PerformersFemale} [{Quality Title}]',
+    example:
+      'Studio Title - The Scene Title - 2010-01-01 - [Bluray-1080p]',
+  },
+  {
+    token:
+      '{Studio CleanTitleSlug}.{Scene.CleanTitle}.{Release Date}{.Quality.Title}{-Release Group}',
+    example:
+      'StudioTitle.The.Scene.Title.2010-01-01.Bluray-1080p-EVOLVE',
   },
 ];
 
@@ -183,7 +218,6 @@ interface NamingModalProps {
   isOpen: boolean;
   name: keyof Pick<NamingConfig, 'standardMovieFormat' | 'movieFolderFormat' | 'standardSceneFormat' | 'sceneFolderFormat'>;
   value: string;
-  advancedSettings: boolean;
   movie?: boolean;
   scene?: boolean;
   additional?: boolean;
@@ -196,7 +230,6 @@ function NamingModal(props: NamingModalProps) {
     isOpen,
     name,
     value,
-    advancedSettings,
     movie = false,
     scene = false,
     additional = false,
@@ -266,7 +299,7 @@ function NamingModal(props: NamingModalProps) {
   >
     <ModalContent onModalClose={onModalClose}>
       <ModalHeader>
-        {translate('FileNameTokens')}
+        {translate('movieFileNameTokens')}
       </ModalHeader>
 
       <ModalBody>
@@ -288,30 +321,24 @@ function NamingModal(props: NamingModalProps) {
           />
         </div>
 
-        {
-          !advancedSettings &&
-          <FieldSet legend={translate('FileNames')}>
-            <div className={styles.groups}>
-              {
-                fileNameTokens.map(({ token, example }) => {
-                  return (
-                    <NamingOption
-                      key={token}
-                      token={token}
-                      example={example}
-                      isFullFilename={true}
-                      tokenSeparator={tokenSeparator}
-                      tokenCase={tokenCase}
-                      size={sizes.LARGE}
-                      onPress={handleOptionPress}
-                    />
-                  );
-                }
-                )
-              }
-            </div>
-          </FieldSet>
-        }
+          {movie ? (
+            <FieldSet legend={translate('FileNames')}>
+              <div className={styles.groups}>
+                {movieFileNameTokens.map(({ token, example }) => (
+                  <NamingOption
+                    key={token}
+                    token={token}
+                    example={example}
+                    isFullFilename={true}
+                    tokenSeparator={tokenSeparator}
+                    tokenCase={tokenCase}
+                    size={sizes.LARGE}
+                    onPress={handleOptionPress}
+                  />
+                ))}
+              </div>
+            </FieldSet>
+          ) : null}
 
         {
           movie &&
@@ -363,6 +390,25 @@ function NamingModal(props: NamingModalProps) {
             </FieldSet>
           </div>
         }
+
+        {scene ? (
+          <FieldSet legend={translate('FileNames')}>
+            <div className={styles.groups}>
+              {sceneFileNameTokens.map(({ token, example }) => (
+                <NamingOption
+                  key={token}
+                  token={token}
+                  example={example}
+                  isFullFilename={false}
+                  tokenSeparator={tokenSeparator}
+                  tokenCase={tokenCase}
+                  size={sizes.LARGE}
+                  onPress={handleOptionPress}
+                />
+              ))}
+            </div>
+          </FieldSet>
+        ) : null}
 
         {
           scene &&

@@ -67,6 +67,7 @@ const caseOptions: { key: TokenCase; value: string }[] = [
 ];
 
 const movieFileNameTokens = [
+const movieFileNameTokens = [
   {
     token:
       '{Movie Title} ({Release Year}) - {Edition Tags }{[Custom Formats]}{[Quality Full]}{-Release Group}',
@@ -91,17 +92,20 @@ const sceneFileNameTokens = [
   {
     token:
       '[{studio cleantitleslug}] {release-date}.{scene.cleantitle}.{scene.performers}',
-    example: '[studiotitle] 2010-01-01.the.scene.title',
+    example:
+      '[studiotitle] 2010-01-01.the.scene.title',
   },
   {
     token:
       '{Studio Title}- {Scene Title} - {Release Date} - {Scene PerformersFemale} [{Quality Title}]',
-    example: 'Studio Title - The Scene Title - 2010-01-01 - [Bluray-1080p]',
+    example:
+      'Studio Title - The Scene Title - 2010-01-01 - [Bluray-1080p]',
   },
   {
     token:
       '{Studio CleanTitleSlug}.{Scene.CleanTitle}.{Release Date}{.Quality.Title}{-Release Group}',
-    example: 'StudioTitle.The.Scene.Title.2010-01-01.Bluray-1080p-EVOLVE',
+    example:
+      'StudioTitle.The.Scene.Title.2010-01-01.Bluray-1080p-EVOLVE',
   },
 ];
 
@@ -412,7 +416,27 @@ function NamingModal(props: NamingModalProps) {
                 ))}
               </div>
             </FieldSet>
-          ) : null}
+          </div>
+        }
+
+        {scene ? (
+          <FieldSet legend={translate('FileNames')}>
+            <div className={styles.groups}>
+              {sceneFileNameTokens.map(({ token, example }) => (
+                <NamingOption
+                  key={token}
+                  token={token}
+                  example={example}
+                  isFullFilename={false}
+                  tokenSeparator={tokenSeparator}
+                  tokenCase={tokenCase}
+                  size={sizes.LARGE}
+                  onPress={handleOptionPress}
+                />
+              ))}
+            </div>
+          </FieldSet>
+        ) : null}
 
           {scene && (
             <div>

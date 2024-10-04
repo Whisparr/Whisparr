@@ -147,7 +147,7 @@ namespace NzbDrone.Core.Movies
                     Monitored = false,
                     SearchOnAdd = movie.AddOptions?.SearchForMovie ?? false,
                     QualityProfileId = movie.QualityProfileId,
-                    RootFolderPath = _folderService.GetBestRootFolderPath(movie.Path),
+                    RootFolderPath = _folderService.GetBestRootFolderPath(movie.Path).GetCleanPath(),
                     Tags = movie.Tags
                 }, true);
 

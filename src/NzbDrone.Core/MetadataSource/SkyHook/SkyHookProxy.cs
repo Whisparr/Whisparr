@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using NLog;
 using NzbDrone.Common.Cloud;
@@ -525,8 +526,9 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             var lowerTitle = title.ToLower();
             var result = new List<object>();
 
-            if (lowerTitle.StartsWith("tmdb:") || lowerTitle.StartsWith("tmdbid:") || lowerTitle.StartsWith("imdb:") || lowerTitle.StartsWith("imdbid:") || lowerTitle.StartsWith("stash:") || lowerTitle.StartsWith("stashId:"))
+            if (lowerTitle.StartsWith("tmdb:") || lowerTitle.StartsWith("tmdbid:") || lowerTitle.StartsWith("imdb:") || lowerTitle.StartsWith("imdbid:") || lowerTitle.StartsWith("stash:") || lowerTitle.StartsWith("stashid:") || lowerTitle.StartsWith("https:"))
             {
+                _logger.Debug($"Searching for {itemType.ToString()} - {title}");
                 var movies = itemType == ItemType.Movie ? SearchForNewMovie(title) : SearchForNewScene(title);
 
                 foreach (var movie in movies)
@@ -608,6 +610,14 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
         {
             try
             {
+                var regex = new Regex("^https://www.themoviedb.org/movie/(?<tmdbid>[0-9]+).*$");
+                var match = regex.Match(title);
+
+                if (match.Success)
+                {
+                    title = "tmdb:" + match.Groups["tmdbid"].Value;
+                }
+
                 var lowerTitle = title.ToLower();
 
                 lowerTitle = lowerTitle.Replace(".", "");
@@ -742,6 +752,16 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
 
                 lowerTitle = lowerTitle.Replace(".", "");
 
+                // Allow search to accept a full StashDB URL
+                var regex = new Regex(@"^https://stashdb\.org/scenes/(?<stashid>[A-Za-z0-9\-]+).*$", RegexOptions.Compiled);
+                var match = regex.Match(title);
+
+                if (match.Success)
+                {
+                    lowerTitle = "stash:" + match.Groups["stashid"].Value;
+                    _logger.Debug($"Search based on StashDB URL.  Re-writing as {lowerTitle}");
+                }
+
                 if (lowerTitle.StartsWith("stash:") || lowerTitle.StartsWith("stashid:"))
                 {
                     var slug = lowerTitle.Split(':')[1].Trim();
@@ -758,8 +778,9 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                         var movieLookup = GetSceneInfo(stashId).Item1;
                         return movieLookup == null ? new List<Movie>() : new List<Movie> { _movieService.FindByForeignId(movieLookup.StashId) ?? new Movie { MovieMetadata = movieLookup } };
                     }
-                    catch (MovieNotFoundException)
+                    catch (MovieNotFoundException ex)
                     {
+                        _logger.Debug(ex, $"Movie not found");
                         return new List<Movie>();
                     }
                 }

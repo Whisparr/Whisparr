@@ -23,6 +23,8 @@ namespace NzbDrone.Core.Test.MetadataSource.SkyHook
         // [TestCase("The Man from U.N.C.L.E.", "The Man from U.N.C.L.E.")]
         // [TestCase("imdb:tt0081593", "Taboo")]
         // [TestCase("imdb:tt0084755", "Taboo II")]
+        [TestCase("https://stashdb.org/scenes/019ac9b6-b854-7f30-99a5-ba094cd8dd42", "019ac9b6-b854-7f30-99a5-ba094cd8dd42")]
+        [TestCase("https://www.themoviedb.org/movie/775-le-voyage-dans-la-lune", "A Trip to the Moon")]
         public void successful_search(string title, string expected)
         {
             var result = Subject.SearchForNewMovie(title);
@@ -41,6 +43,8 @@ namespace NzbDrone.Core.Test.MetadataSource.SkyHook
         [TestCase("tmdbid:1")]
         [TestCase("adjalkwdjkalwdjklawjdlKAJD;EF")]
         [TestCase("imdb: tt9805708")]
+        [TestCase("https://www.UNKNOWN-DOMAIN.com/title/tt0033467/")]
+        [TestCase("https://www.themoviedb.org/MALFORMED/775-le-voyage-dans-la-lune")]
         public void no_search_result(string term)
         {
             var result = Subject.SearchForNewMovie(term);

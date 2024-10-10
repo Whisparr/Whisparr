@@ -730,17 +730,17 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             catch (HttpException ex)
             {
                 _logger.Warn(ex);
-                throw new SkyHookException("Search for '{0}' failed. Unable to communicate with WhisparrAPI.", ex, title);
+                throw new SkyHookException("Search for '{0}' failed. Unable to communicate with WhisparrAPI. {1}", ex, title, ex.Message);
             }
             catch (WebException ex)
             {
                 _logger.Warn(ex);
-                throw new SkyHookException("Search for '{0}' failed. Unable to communicate with WhisparrAPI.", ex, title, ex.Message);
+                throw new SkyHookException("Search for '{0}' failed. Unable to communicate with WhisparrAPI. {1}", ex, title, ex.Message);
             }
             catch (Exception ex)
             {
                 _logger.Warn(ex);
-                throw new SkyHookException("Search for '{0}' failed. Invalid response received from WhisparrAPI.", ex, title);
+                throw new SkyHookException("Search for '{0}' failed. Invalid response received from WhisparrAPI. {1}", ex, title, ex.Message);
             }
         }
 

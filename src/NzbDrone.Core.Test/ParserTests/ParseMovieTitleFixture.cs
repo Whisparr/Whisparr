@@ -65,7 +65,7 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("LoveHerBoobs 24 06 11 Peachy Alice Successful Provocation XXX 720p AV1 XLeech.mkv", "peachy alice successful provocation")]
         [TestCase("Studio.E1224.Title.XXX.720p.HEVC.x265.PRT[XvX]", "title")]
         [TestCase("[Studio] Performer Name (Title / 08.01.2021) [2021 г., Big Tits, Blowjob, Brunette, Chubby, Curvy, Cowgirl, Reverse Cowgirl, Cumshots, Facials, Long Hair, Doggy Style, Hardcore, Missionary, PAWG, POV, Trimmed Pussy, Tattoo, Czech, VR, 8K, 3840p] [Oculus Rift / Vive]", "performer name title")]
-        [TestCase("[Studio.com] Performer & Performer - Studio Title (18.05.2019) [2019 г., Anal, IR, Rim Job, Ass To Mouth, Big Cocks, Black, Blowjobs, Brunettes, Deep Throat, Facial, Gaping, Natural, Teen, 1080p]", "performer performer studio title")]
+        [TestCase("[Studio.com] Performer & Performer - Studio Title (18.05.2019) [2019 г., Anal, IR, Rim Job, Ass To Mouth, Big Cocks, Black, Blowjobs, Brunettes, Deep Throat, Facial, Gaping, Natural, Teen, 1080p]", "performer and performer studio title")]
         [TestCase("[random.com][Studio] Performer name - Title(01.04.2020) rq.mp4", "performer name title")]
         [TestCase("Reflective Desire - 2022-12-01 - Chuck Faerie Vespa - Pussyfootin' - WEBDL-2160p h264", "chuck faerie vespa pussyfootin")]
         [TestCase("MollyRedWolf - 2022-04-14 - MollyRedWolf - Komi-San.I want you - WEBDL-720p x265", "mollyredwolf komi san i want you")]

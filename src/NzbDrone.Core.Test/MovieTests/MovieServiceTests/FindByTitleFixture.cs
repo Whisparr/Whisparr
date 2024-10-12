@@ -23,6 +23,7 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
             var dualCredits = new List<Credit> { new Credit { Character = "Quinn", Performer = new CreditPerformer { Name = "Quinn Waters", Gender = Gender.Female } }, new Credit { Character = "Carrie", Performer = new CreditPerformer { Name = "Carrie Sage", Gender = Gender.Female } } };
             var differentCredits = new List<Credit> { new Credit { Character = "Angie", Performer = new CreditPerformer { Name = "Angela White", Gender = Gender.Female } } };
             var invalidCredits = new List<Credit> { new Credit { Character = "Invalid", Performer = new CreditPerformer { Name = "Invalid Name", Gender = Gender.Female } } };
+            var bellaCredits = new List<Credit> { new Credit { Character = "", Performer = new CreditPerformer { Name = "Violet Myers", Gender = Gender.Female } }, new Credit { Character = "", Performer = new CreditPerformer { Name = "Victor Ray", Gender = Gender.Male } } };
 
             var scenes = Builder<Movie>.CreateListOfSize(2000)
                                         .TheFirst(1)
@@ -84,6 +85,14 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
                                         .With(x => x.Title = "Other Title")
                                         .With(x => x.MovieMetadata.Value.ReleaseDate = "2019-05-18")
                                         .With(x => x.MovieMetadata.Value.Credits = credits)
+                                        .TheNext(1)
+                                        .With(x => x.Title = "Episode 200: Violet & Victor")
+                                        .With(x => x.MovieMetadata.Value.ReleaseDate = "2024-08-15")
+                                        .With(x => x.MovieMetadata.Value.Credits = bellaCredits)
+                                        .TheNext(1)
+                                        .With(x => x.Title = "Cash For Kisses On Valentines Day - S25:E7")
+                                        .With(x => x.MovieMetadata.Value.ReleaseDate = "2024-02-07")
+                                        .With(x => x.MovieMetadata.Value.Credits = credits)
                                         .TheRest()
                                         .With(x => x.Title = "Title")
                                         .With(x => x.MovieMetadata.Value.ReleaseDate = "2024-06-12")
@@ -123,6 +132,14 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
                 .Setup(s => s.FindByStudioAndDate(It.Is<string>(s => s.Equals("Studio")), It.Is<string>(d => d.Equals("2019-05-18"))))
                 .Returns(scenes.Where(s => s.MovieMetadata.Value.ReleaseDate.Equals("2019-05-18")).Append(scenes.First()).ToList());
 
+            Mocker.GetMock<IMovieRepository>()
+                .Setup(s => s.FindByStudioAndDate(It.Is<string>(s => s.Equals("Bellesa House")), It.Is<string>(d => d.Equals("2024-08-15"))))
+                .Returns(scenes.Where(s => s.MovieMetadata.Value.ReleaseDate.Equals("2024-08-15")).Append(scenes.First()).ToList());
+
+            Mocker.GetMock<IMovieRepository>()
+                .Setup(s => s.FindByStudioAndDate(It.Is<string>(s => s.Equals("Step Siblings Caught")), It.Is<string>(d => d.Equals("2024-02-07"))))
+                .Returns(scenes.Where(s => s.MovieMetadata.Value.ReleaseDate.Equals("2024-02-07")).Append(scenes.First()).ToList());
+
             _candidates = Builder<Movie>.CreateListOfSize(3)
                                         .TheFirst(1)
                                         .With(x => x.MovieMetadata.Value.CleanTitle = "batman")
@@ -147,15 +164,20 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
         }
 
         [TestCase("Studio 2020-05-29 Title Vol 1 E2", 2)]
+        [TestCase("Studio 2020-05-29 Title Vol 1 E2_1", 2)]
         [TestCase("[Studio] Quinn Waters (Title / 08.01.2021) [2021 г., Big Tits, Blowjob, Brunette, Chubby, Curvy, Cowgirl, Reverse Cowgirl, Cumshots, Facials, Long Hair, Doggy Style, Hardcore, Missionary, PAWG, POV, Trimmed Pussy, Tattoo, Czech, VR, 8K, 3840p] [Oculus Rift / Vive]", 7)]
         [TestCase("Studio.21.01.08.Title", 7)]
         [TestCase("Studio.21.01.08.Quinn Waters", 7)]
         [TestCase("Studio.21.01.08.Quinn", 7)]
+        [TestCase("Studio.21.01.09.Quinn and Carrie", 8)]
         [TestCase("Studio.21.01.09.Quinn & Carrie", 8)]
         [TestCase("Studio.21.01.09.Quinn & Carrie - Other Title", 8)]
         [TestCase("Studio.21.01.08.Carrie", 10)]
         [TestCase("Studio.21.01.08.Carrie Sage", 10)]
         [TestCase("Studio - 2024-07-30 - Milk & Chocolate Before Bed", 6)]
+        [TestCase("Bellesa House 2024-08-15 Episode 200 Violet And Victor", 16)]
+        [TestCase("Bellesa House 2024-08-15 Episode 200 Violet & Victor", 16)]
+        [TestCase("Step Siblings Caught 2024-02-07 Cash For Kisses On Valentines Day - S25E7", 17)]
         public void should_find_by_studio_and_release_date(string title, int id)
         {
             var parsedMovieInfo = Parser.Parser.ParseMovieTitle(title);

@@ -40,6 +40,7 @@ class EditPerformerModalContent extends Component {
       onInputChange,
       onModalClose,
       isSmallScreen,
+      safeForWorkMode,
       ...otherProps
     } = this.props;
 
@@ -64,6 +65,7 @@ class EditPerformerModalContent extends Component {
               !isSmallScreen &&
                 <div className={styles.poster}>
                   <MovieHeadshot
+                    blur={safeForWorkMode}
                     className={styles.poster}
                     images={images}
                     size={250}
@@ -164,6 +166,7 @@ EditPerformerModalContent.propTypes = {
   isSaving: PropTypes.bool.isRequired,
   isPathChanging: PropTypes.bool.isRequired,
   isSmallScreen: PropTypes.bool.isRequired,
+  safeForWorkMode: PropTypes.bool.isRequired,
   onInputChange: PropTypes.func.isRequired,
   onSavePress: PropTypes.func.isRequired,
   onModalClose: PropTypes.func.isRequired

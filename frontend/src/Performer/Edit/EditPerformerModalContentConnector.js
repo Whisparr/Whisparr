@@ -30,7 +30,8 @@ function createMapStateToProps() {
     createPerformerSelector(),
     createIsPathChangingSelector(),
     createDimensionsSelector(),
-    (performersState, performer, isPathChanging, dimensions) => {
+    (state) => state.settings.safeForWorkMode,
+    (performersState, performer, isPathChanging, dimensions, safeForWorkMode) => {
       const {
         isSaving,
         saveError,
@@ -58,6 +59,7 @@ function createMapStateToProps() {
         originalPath: performer.path,
         item: settings.settings,
         isSmallScreen: dimensions.isSmallScreen,
+        safeForWorkMode,
         ...settings
       };
     }

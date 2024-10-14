@@ -230,6 +230,7 @@ namespace NzbDrone.Core.Movies
 
             _movieRepository.Delete(movieId);
             _eventAggregator.PublishEvent(new MoviesDeletedEvent(new List<Movie> { movie }, deleteFiles, addExclusion));
+
             _logger.Info("Deleted movie {0}", movie);
         }
 
@@ -262,6 +263,7 @@ namespace NzbDrone.Core.Movies
             var storedMovie = GetMovie(movie.Id);
 
             var updatedMovie = _movieRepository.Update(movie);
+
             _eventAggregator.PublishEvent(new MovieEditedEvent(updatedMovie, storedMovie));
 
             return updatedMovie;
@@ -378,16 +380,31 @@ namespace NzbDrone.Core.Movies
 
         public Movie FindByStudioAndReleaseDate(string studioForeignId, string releaseDate, string releaseTokens)
         {
-            var movies = _movieRepository.FindByStudioAndDate(studioForeignId, releaseDate);
-
-            if (!movies.Any())
+            if (string.IsNullOrEmpty(studioForeignId))
             {
-                return null;
+                studioForeignId = string.Empty;
             }
 
-            if (movies.Count == 1)
+            if (string.IsNullOrEmpty(releaseDate))
             {
-                return movies.First();
+                releaseDate = string.Empty;
+            }
+
+            if (string.IsNullOrEmpty(releaseTokens))
+            {
+                releaseTokens = string.Empty;
+            }
+
+            var movies = new List<Movie>();
+
+            if (releaseDate.IsNotNullOrWhiteSpace())
+            {
+                movies = _movieRepository.FindByStudioAndDate(studioForeignId, releaseDate);
+            }
+
+            if (movies == null || !movies.Any())
+            {
+                return null;
             }
 
             var parsedMovieTitle = Parser.Parser.NormalizeEpisodeTitle(releaseTokens);
@@ -398,19 +415,19 @@ namespace NzbDrone.Core.Movies
 
                 if (matches.Count == 1)
                 {
-                    return matches.First();
+                    return matches.First().Key;
                 }
 
-                movies = matches;
+                movies = matches.Keys.ToList();
             }
 
             _logger.Debug("Multiple scenes with the same release date found. Date: {0}", releaseDate);
             return null;
         }
 
-        private List<Movie> MatchMovies(string parsedMovieTitle, string releaseDate, List<Movie> movies, int matchLevel = 0)
+        private Dictionary<Movie, MovieParseMatchType> MatchMovies(string parsedMovieTitle, string releaseDate, List<Movie> movies)
         {
-            var matches = new List<Movie>();
+            var matches = new Dictionary<Movie, MovieParseMatchType>();
 
             _logger.Debug("Checking {0} against {1} movies", parsedMovieTitle, movies.Count);
 
@@ -422,20 +439,14 @@ namespace NzbDrone.Core.Movies
                 if (cleanTitle.IsNotNullOrWhiteSpace() && parsedMovieTitle.Equals(cleanTitle))
                 {
                     _logger.Debug("Match {0} against {1} [Title]", parsedMovieTitle, cleanTitle);
-                    matches.Add(movie);
+                    matches.Add(movie, MovieParseMatchType.Title);
                     continue;
                 }
 
-                // Strip any Spaces from Normalization
                 if (cleanTitle.IsNotNullOrWhiteSpace() && Parser.Parser.StripSpaces(parsedMovieTitle).Equals(Parser.Parser.StripSpaces(cleanTitle)))
                 {
                     _logger.Debug("Match {0} against {1} [Title]", parsedMovieTitle, cleanTitle);
-                    matches.Add(movie);
-                    continue;
-                }
-
-                if (matchLevel > 5)
-                {
+                    matches.Add(movie, MovieParseMatchType.Title);
                     continue;
                 }
 
@@ -451,12 +462,7 @@ namespace NzbDrone.Core.Movies
                 if (cleanPerformers.Any(p => p.IsNotNullOrWhiteSpace() && parsedMovieTitle.Equals(p)))
                 {
                     _logger.Debug("Match {0} against {1} [Performers]", parsedMovieTitle, cleanPerformers.Join(", "));
-                    matches.Add(movie);
-                    continue;
-                }
-
-                if (matchLevel > 4)
-                {
+                    matches.Add(movie, MovieParseMatchType.PerformersTitle);
                     continue;
                 }
 
@@ -467,12 +473,7 @@ namespace NzbDrone.Core.Movies
                 if (cleanCharacters.Any() && cleanCharacters.Any(c => c.IsNotNullOrWhiteSpace() && parsedMovieTitle.Equals(c)))
                 {
                     _logger.Debug("Match {0} against {1} [Characters]", parsedMovieTitle, cleanCharacters.Join(", "));
-                    matches.Add(movie);
-                    continue;
-                }
-
-                if (matchLevel > 3)
-                {
+                    matches.Add(movie, MovieParseMatchType.CharactersTitle);
                     continue;
                 }
 
@@ -484,7 +485,7 @@ namespace NzbDrone.Core.Movies
                 if (cleanFemalePerformers.Any() && cleanFemalePerformers.All(x => parsedMovieTitle.Contains(x)))
                 {
                     _logger.Debug("Match {0} against {1} [Female Performers]", parsedMovieTitle, cleanFemalePerformers.Join(", "));
-                    matches.Add(movie);
+                    matches.Add(movie, MovieParseMatchType.Performers);
                     continue;
                 }
 
@@ -492,11 +493,11 @@ namespace NzbDrone.Core.Movies
                                                                              .Select(a => Parser.Parser.NormalizeEpisodeTitle(a.Character))
                                                                              .Where(x => x.IsNotNullOrWhiteSpace()).ToList();
 
-                // If all female characters are in title, consider a match
+                // If all female performers are in title, consider a match
                 if (cleanFemaleCharacters.Any() && cleanFemalePerformers.All(x => parsedMovieTitle.Contains(x)))
                 {
                     _logger.Debug("Match {0} against {1} [Female Characters]", parsedMovieTitle, cleanFemaleCharacters.Join(", "));
-                    matches.Add(movie);
+                    matches.Add(movie, MovieParseMatchType.Characters);
                     continue;
                 }
 
@@ -505,29 +506,19 @@ namespace NzbDrone.Core.Movies
                     continue;
                 }
 
-                if (matchLevel > 2)
-                {
-                    continue;
-                }
-
                 // If parsed title contains a performer and the title then consider a match
                 if (cleanPerformers.Any(x => parsedMovieTitle.Contains(x)) && parsedMovieTitle.Contains(cleanTitle))
                 {
                     _logger.Debug("Match {0} against {1} {2} [Title & Performer]", parsedMovieTitle, cleanTitle, cleanPerformers.Join(", "));
-                    matches.Add(movie);
+                    matches.Add(movie, MovieParseMatchType.PerformerTitle);
                     continue;
                 }
 
-                // If parsed title contains a character and the title then consider a match
+                // If parsed title contains a performer and the title then consider a match
                 if (cleanCharacters.Any() && cleanCharacters.Any(x => parsedMovieTitle.Contains(x)) && parsedMovieTitle.Contains(cleanTitle))
                 {
                     _logger.Debug("Match {0} against {1} {2} [Title & Character]", parsedMovieTitle, cleanTitle, cleanCharacters.Join(", "));
-                    matches.Add(movie);
-                    continue;
-                }
-
-                if (matchLevel > 1)
-                {
+                    matches.Add(movie, MovieParseMatchType.CharacterTitle);
                     continue;
                 }
 
@@ -535,7 +526,7 @@ namespace NzbDrone.Core.Movies
                 if (cleanPerformers.All(x => parsedMovieTitle.Contains(x)) && !parsedMovieTitle.Contains(cleanTitle))
                 {
                     _logger.Debug("Match {0} against {1} {2} [Performers & NOT Title]", parsedMovieTitle, cleanTitle, cleanPerformers.Join(", "));
-                    matches.Add(movie);
+                    matches.Add(movie, MovieParseMatchType.PerformersNotTitle);
                     continue;
                 }
 
@@ -543,15 +534,23 @@ namespace NzbDrone.Core.Movies
                 if (cleanCharacters.Any() && cleanCharacters.All(x => parsedMovieTitle.Contains(x)) && !parsedMovieTitle.Contains(cleanTitle))
                 {
                     _logger.Debug("Match {0} against {1} {2} [Characters & NOT Title]", parsedMovieTitle, cleanTitle, cleanCharacters.Join(", "));
-                    matches.Add(movie);
+                    matches.Add(movie, MovieParseMatchType.CharactersNotTitle);
                     continue;
                 }
             }
 
-            if (matches.Count > 1 && matchLevel < 6)
+            // Find the best match
+            if (matches.Count > 1)
             {
-                _logger.Debug("matched {0} against {1} and found {2}", matches.Count, parsedMovieTitle, string.Join(", ", movies));
-                matches = MatchMovies(parsedMovieTitle, releaseDate, matches, matchLevel + 1);
+                foreach (var movieMatchType in (MovieParseMatchType[])Enum.GetValues(typeof(MovieParseMatchType)))
+                {
+                    var filteredMatches = matches.Where(m => m.Value > movieMatchType).ToDictionary(x => x.Key, x => x.Value);
+                    if (filteredMatches.Count == 1)
+                    {
+                        matches = filteredMatches;
+                        break;
+                    }
+                }
             }
 
             return matches;

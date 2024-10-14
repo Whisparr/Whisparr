@@ -1,1 +1,26 @@
-{}
+{
+    "About": "Par",
+    "Movie": "Filma",
+    "AcceptConfirmationModal": "Apstiprināt Apstiprināšanas Modālu",
+    "Actions": "Darbības",
+    "Activity": "Aktivitāte",
+    "Add": "Pievienot",
+    "AddAutoTag": "Pievienot Automātisko Tagu",
+    "AddCondition": "Pievienot Nosacījumu",
+    "AddConditionImplementation": "Pievienot Nosacījumu - {implementationName}",
+    "AddConnection": "Pievienot Savienojumu",
+    "AddConnectionImplementation": "Pievienot Savienojumu - {implementationName}",
+    "AddCustomFormat": "Pievienot Pielāgotu Formātu",
+    "AddDelayProfile": "Pievienot Aizkaves Profilu",
+    "AddDownloadClient": "Pievienot Lejupielādes Klientu",
+    "AddIndexerImplementation": "Pievienot Nosacījumu - {implementationName}",
+    "EditConditionImplementation": "Pievienot Nosacījumu - {implementationName}",
+    "EditConnectionImplementation": "Pievienot Savienojumu - {implementationName}",
+    "EditCustomFormat": "Pievienot Pielāgotu Formātu",
+    "EditDelayProfile": "Pievienot Aizkaves Profilu",
+    "EditIndexerImplementation": "Pievienot Nosacījumu - {implementationName}",
+    "ExportCustomFormat": "Pievienot Pielāgotu Formātu",
+    "ImportCustomFormat": "Pievienot Pielāgotu Formātu",
+    "Movies": "Filmu",
+    "New": "Jauns"
+}

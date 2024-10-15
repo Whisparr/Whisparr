@@ -106,8 +106,6 @@ namespace NzbDrone.Core.Indexers.Newznab
         {
             var pageableRequests = new IndexerPageableRequestChain();
 
-            var releaseDate = searchCriteria.ReleaseDate?.ToString("yy.MM.dd") ?? string.Empty;
-
             if (SupportsSearch)
             {
                 var queryTitles = TextSearchEngine == "raw" ? searchCriteria.SceneTitles : searchCriteria.CleanSceneTitles;
@@ -116,7 +114,7 @@ namespace NzbDrone.Core.Indexers.Newznab
                     pageableRequests.Add(GetPagedRequests(MaxPages,
                         Settings.Categories,
                         "search",
-                        $"&q={NewsnabifyTitle(queryTitle)}+{releaseDate}"));
+                        $"&q={NewsnabifyTitle(queryTitle)}"));
                 }
             }
 
@@ -156,8 +154,6 @@ namespace NzbDrone.Core.Indexers.Newznab
                 foreach (var queryTitle in queryTitles)
                 {
                     var searchQuery = queryTitle;
-
-                    searchQuery = $"{searchQuery} {searchCriteria.Movie.Year}";
 
                     chain.Add(GetPagedRequests(MaxPages,
                         Settings.Categories,

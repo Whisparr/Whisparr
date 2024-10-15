@@ -61,6 +61,10 @@ class MovieCastPoster extends Component {
       width: `${posterWidth}px`
     };
 
+    if (!performer?.foreignId) {
+      return null;
+    }
+
     const link = `/performer/${performer.foreignId}`;
 
     return (

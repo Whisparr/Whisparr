@@ -1751,5 +1751,7 @@
     "YesCancel": "Sim, Cancelar",
     "YesMoveFiles": "Sim, mova os arquivos",
     "Yesterday": "Ontem",
-    "YouCanAlsoSearch": "Você também pode pesquisar usando TMDb ID ou IMDb ID de um filme. Por exemplo: `tmdb: 71663`"
+    "YouCanAlsoSearch": "Você também pode pesquisar usando TMDb ID ou IMDb ID de um filme. Por exemplo: `tmdb: 71663`",
+    "SkipFreeSpaceCheckWhenImportingHelpText": "Use quando {appName} não conseguir detectar espaço livre em sua pasta raiz durante a importação do arquivo",
+    "StudioInformaton": "Informações do Estúdio"
 }

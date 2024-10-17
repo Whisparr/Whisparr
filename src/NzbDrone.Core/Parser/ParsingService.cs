@@ -77,16 +77,26 @@ namespace NzbDrone.Core.Parser
 
                 if (studios != null && studios.Count > 0)
                 {
-                    Movie movie = null;
+                    var movies = new List<Movie>();
+
                     foreach (var studio in studios)
                     {
-                        if (movie == null)
+                        var movie = _movieService.FindByStudioAndReleaseDate(studio.ForeignId, parsedMovieInfo.ReleaseDate, parsedMovieInfo.ReleaseTokens);
+
+                        if (movie != null)
                         {
-                            movie = _movieService.FindByStudioAndReleaseDate(studio.ForeignId, parsedMovieInfo.ReleaseDate, parsedMovieInfo.ReleaseTokens);
+                            movies.Add(movie);
                         }
                     }
 
-                    return movie;
+                    if (movies.Count == 1)
+                    {
+                        return movies.First();
+                    }
+                }
+                else
+                {
+                    _logger.Debug("Could not find Studio name. '{0}'", parsedMovieInfo.StudioTitle);
                 }
             }
             else

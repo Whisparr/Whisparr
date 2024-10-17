@@ -307,9 +307,8 @@ namespace Whisparr.Api.V3.Movies
                 {
                     MovieId = movie.Id,
                     SourcePath = sourcePath,
-                    DestinationPath = destinationPath,
-                    Trigger = CommandTrigger.Manual
-                });
+                    DestinationPath = destinationPath
+                }, trigger: CommandTrigger.Manual);
             }
 
             var model = moviesResource.ToModel(movie);

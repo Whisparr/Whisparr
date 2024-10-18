@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -77,16 +78,28 @@ namespace NzbDrone.Core.Parser
 
                 if (studios != null && studios.Count > 0)
                 {
-                    Movie movie = null;
+                    var movies = new List<Movie>();
+
                     foreach (var studio in studios)
                     {
-                        if (movie == null)
+                        var movie = _movieService.FindByStudioAndReleaseDate(studio.ForeignId, parsedMovieInfo.ReleaseDate, parsedMovieInfo.ReleaseTokens);
+
+                        if (movie != null)
                         {
-                            movie = _movieService.FindByStudioAndReleaseDate(studio.ForeignId, parsedMovieInfo.ReleaseDate, parsedMovieInfo.ReleaseTokens);
+                            movies.Add(movie);
                         }
                     }
 
-                    return movie;
+                    if (movies.Count == 1)
+                    {
+                        return movies.First();
+                    }
+
+                    return null;
+                }
+                else
+                {
+                    _logger.Debug("Could not find Studio name. '{0}'", parsedMovieInfo.StudioTitle);
                 }
             }
             else
@@ -163,9 +176,9 @@ namespace NzbDrone.Core.Parser
                     }
                 }
 
-                if (result == null)
+                if (result?.Movie == null)
                 {
-                    _logger.Debug($"No matching scene for studio {parsedMovieInfo.StudioTitle} and release date {parsedMovieInfo.ReleaseDate}");
+                    _logger.Debug($"No matching scene '{searchCriteria}' for studio {parsedMovieInfo.StudioTitle} and release date '{parsedMovieInfo.ReleaseDate}' '{parsedMovieInfo.ReleaseTokens}'");
                 }
             }
             else
@@ -278,15 +291,36 @@ namespace NzbDrone.Core.Parser
         private FindMovieResult GetSceneMovie(Studio studio, string airDate, string part, SearchCriteriaBase searchCriteria)
         {
             Movie movieInfo = null;
-
-            if (searchCriteria != null && searchCriteria.Movie.MovieMetadata.Value.ReleaseDate == airDate)
+            Movie movie = null;
+            try
             {
-                movieInfo = searchCriteria.Movie;
+                movie = _movieService.FindByStudioAndReleaseDate(studio.ForeignId, airDate, part);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("FindByStudioAndReleaseDate Failed for {0] {1} {2} {3}", studio?.ForeignId, airDate, part, ex.Message);
             }
 
-            if (movieInfo == null)
+            if (movie != null && searchCriteria != null)
             {
-                movieInfo = _movieService.FindByStudioAndReleaseDate(studio.ForeignId, airDate, part);
+                if (movie.ForeignId != null && searchCriteria.Movie.ForeignId == movie.ForeignId)
+                {
+                    movieInfo = searchCriteria.Movie;
+                }
+
+                if (movie.TmdbId != 0 && searchCriteria.Movie.TmdbId == movie.TmdbId)
+                {
+                    movieInfo = searchCriteria.Movie;
+                }
+
+                if (movieInfo != null)
+                {
+                    return new FindMovieResult(movieInfo, MovieMatchType.Id);
+                }
+            }
+            else
+            {
+                movieInfo = movie;
             }
 
             if (movieInfo == null)

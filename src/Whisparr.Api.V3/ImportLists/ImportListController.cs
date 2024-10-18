@@ -2,6 +2,7 @@ using FluentValidation;
 using NzbDrone.Core.ImportLists;
 using NzbDrone.Core.Validation;
 using NzbDrone.Core.Validation.Paths;
+using NzbDrone.SignalR;
 using Whisparr.Http;
 
 namespace Whisparr.Api.V3.ImportLists
@@ -10,12 +11,13 @@ namespace Whisparr.Api.V3.ImportLists
     public class ImportListController : ProviderControllerBase<ImportListResource, ImportListBulkResource, IImportList, ImportListDefinition>
     {
         public static readonly ImportListBulkResourceMapper BulkResourceMapper = new ();
-        public ImportListController(
+
+        public ImportListController(IBroadcastSignalRMessage signalRBroadcaster,
             IImportListFactory importListFactory,
             RootFolderExistsValidator rootFolderExistsValidator,
-            QualityProfileExistsValidator qualityProfileExistsValidator,
-            ImportListResourceMapper resourceMapper)
-            : base(importListFactory, "importlist", resourceMapper, BulkResourceMapper)
+            ImportListResourceMapper resourceMapper,
+            QualityProfileExistsValidator qualityProfileExistsValidator)
+            : base(signalRBroadcaster, importListFactory, "importlist", resourceMapper, BulkResourceMapper)
         {
             SharedValidator.RuleFor(c => c.RootFolderPath).Cascade(CascadeMode.Stop)
                 .IsValidPath()

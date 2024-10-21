@@ -376,12 +376,22 @@ class MovieDetails extends Component {
                         <span className={styles.year}>
                           <Popover
                             anchor={
-                              year
+                              year > 0 ? (
+                                year
+                              ) : (
+                                <Icon
+                                  name={icons.WARNING}
+                                  kind={kinds.WARNING}
+                                  size={20}
+                                />
+                              )
                             }
                             title={translate('ReleaseDates')}
                             body={
                               <MovieReleaseDates
-                                releaseDate={releaseDate}
+                                inCinemas={inCinemas}
+                                digitalRelease={digitalRelease}
+                                physicalRelease={physicalRelease}
                               />
                             }
                             position={tooltipPositions.BOTTOM}

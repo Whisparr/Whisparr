@@ -205,7 +205,7 @@ function MovieIndexRow(props: MovieIndexRowProps) {
         if (name === 'year') {
           return (
             <VirtualTableRowCell key={name} className={styles[name]}>
-              {year}
+              {year > 0 ? year : null}
             </VirtualTableRowCell>
           );
         }

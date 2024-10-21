@@ -190,6 +190,7 @@ class MovieDetails extends Component {
     const {
       id,
       tmdbId,
+      foreignId,
       stashId,
       title,
       code,
@@ -371,24 +372,30 @@ class MovieDetails extends Component {
                         null
                     }
 
-                    {
-                      year > 0 ?
-                        <span className={styles.year}>
-                          <Popover
-                            anchor={
-                              year
-                            }
-                            title={translate('ReleaseDates')}
-                            body={
-                              <MovieReleaseDates
-                                releaseDate={releaseDate}
-                              />
-                            }
-                            position={tooltipPositions.BOTTOM}
+                    <span className={styles.year}>
+                      <Popover
+                        anchor={
+                          year > 0 ? (
+                            year
+                          ) : (
+                            <Icon
+                              name={icons.WARNING}
+                              kind={kinds.WARNING}
+                              size={20}
+                            />
+                          )
+                        }
+                        title={translate('ReleaseDates')}
+                        body={
+                          <MovieReleaseDates
+                            foreignId={foreignId}
+                            itemType={itemType}
+                            releaseDate={releaseDate}
                           />
-                        </span> :
-                        null
-                    }
+                        }
+                        position={tooltipPositions.BOTTOM}
+                      />
+                    </span>
 
                     {!!studioTitle &&
                       <span className={styles.studio}>
@@ -646,6 +653,7 @@ class MovieDetails extends Component {
 MovieDetails.propTypes = {
   id: PropTypes.number.isRequired,
   tmdbId: PropTypes.number.isRequired,
+  foreignId: PropTypes.string,
   stashId: PropTypes.string,
   title: PropTypes.string.isRequired,
   code: PropTypes.string,

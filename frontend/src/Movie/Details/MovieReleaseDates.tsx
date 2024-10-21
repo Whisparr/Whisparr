@@ -1,22 +1,32 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import Icon from 'Components/Icon';
+import InlineMarkdown from 'Components/Markdown/InlineMarkdown';
 import { icons } from 'Helpers/Props';
 import createUISettingsSelector from 'Store/Selectors/createUISettingsSelector';
 import getRelativeDate from 'Utilities/Date/getRelativeDate';
 import translate from 'Utilities/String/translate';
+import Movie from '../Movie';
 import styles from './MovieReleaseDates.css';
 
-interface MovieReleaseDatesProps {
-  releaseDate: string;
-}
+type MovieReleaseDatesProps = Pick<
+  Movie,
+  'foreignId' | 'releaseDate' | 'itemType'
+>;
 
-function MovieReleaseDates(props: MovieReleaseDatesProps) {
-  const { releaseDate } = props;
-
+function MovieReleaseDates({
+  foreignId,
+  itemType,
+  releaseDate,
+}: MovieReleaseDatesProps) {
   const { showRelativeDates, shortDateFormat, timeFormat } = useSelector(
     createUISettingsSelector()
   );
+
+  const urlFragment =
+    itemType === 'movie'
+      ? 'https://www.themoviedb.org/movie/'
+      : 'https://stashdb.org/scenes/';
 
   if (!releaseDate) {
     return (
@@ -24,7 +34,12 @@ function MovieReleaseDates(props: MovieReleaseDatesProps) {
         <div className={styles.dateIcon}>
           <Icon name={icons.MISSING} />
         </div>
-        {translate('NoMovieReleaseDatesAvailable')}
+
+        <InlineMarkdown
+          data={translate('NoMovieReleaseDatesAvailable', {
+            url: `${urlFragment}${foreignId}`,
+          })}
+        />
       </div>
     );
   }

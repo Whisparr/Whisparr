@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Datastore.Events;
 using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.Messaging.Events;
@@ -39,9 +40,23 @@ namespace Whisparr.Api.V3.Studios
         }
 
         [HttpGet]
-        public List<StudioResource> GetStudios()
+        public List<StudioResource> GetStudios(string stashId)
         {
-            var studioResources = _studioService.GetAllStudios().ToResource();
+            var studioResources = new List<StudioResource>();
+
+            if (stashId.IsNotNullOrWhiteSpace())
+            {
+                var studio = _studioService.FindByForeignId(stashId);
+
+                if (studio != null)
+                {
+                    studioResources.AddIfNotNull(studio.ToResource());
+                }
+            }
+            else
+            {
+                studioResources = _studioService.GetAllStudios().ToResource();
+            }
 
             var coverFileInfos = _coverMapper.GetStudioCoverFileInfos();
 

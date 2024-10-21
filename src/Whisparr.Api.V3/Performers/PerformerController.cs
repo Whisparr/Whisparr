@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Datastore.Events;
 using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.Messaging.Events;
@@ -42,9 +43,23 @@ namespace Whisparr.Api.V3.Performers
         }
 
         [HttpGet]
-        public List<PerformerResource> GetPerformers()
+        public List<PerformerResource> GetPerformers(string stashId)
         {
-            var performerResources = _performerService.GetAllPerformers().ToResource();
+            var performerResources = new List<PerformerResource>();
+
+            if (stashId.IsNotNullOrWhiteSpace())
+            {
+                var performer = _performerService.FindByForeignId(stashId);
+
+                if (performer != null)
+                {
+                    performerResources.AddIfNotNull(performer.ToResource());
+                }
+            }
+            else
+            {
+                performerResources = _performerService.GetAllPerformers().ToResource();
+            }
 
             var coverFileInfos = _coverMapper.GetPerformerCoverFileInfos();
 

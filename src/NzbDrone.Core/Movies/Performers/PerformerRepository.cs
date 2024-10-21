@@ -8,6 +8,7 @@ namespace NzbDrone.Core.Movies.Performers
 {
     public interface IPerformerRepository : IBasicRepository<Performer>
     {
+        Performer FindByForeignId(string foreignId);
         List<string> AllPerformerForeignIds();
     }
 
@@ -16,6 +17,11 @@ namespace NzbDrone.Core.Movies.Performers
         public PerformerRepository(IMainDatabase database, IEventAggregator eventAggregator)
             : base(database, eventAggregator)
         {
+        }
+
+        public Performer FindByForeignId(string foreignId)
+        {
+            return Query(x => x.ForeignId == foreignId).FirstOrDefault();
         }
 
         public List<string> AllPerformerForeignIds()

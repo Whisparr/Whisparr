@@ -12,6 +12,7 @@ namespace NzbDrone.Core.Movies.Performers
         List<Performer> AddPerformers(List<Performer> performers);
         List<Performer> GetPerformers(IEnumerable<int> performerIds);
         Performer GetById(int id);
+        Performer FindByForeignId(string foreignId);
         List<Performer> GetAllPerformers();
         List<string> AllPerformerForeignIds();
         Performer Update(Performer performer);
@@ -58,6 +59,11 @@ namespace NzbDrone.Core.Movies.Performers
         public Performer GetById(int id)
         {
             return _performerRepo.Get(id);
+        }
+
+        public Performer FindByForeignId(string foreignId)
+        {
+            return _performerRepo.FindByForeignId(foreignId);
         }
 
         public List<Performer> GetPerformers(IEnumerable<int> performerIds)

@@ -365,7 +365,7 @@ class MovieDetails extends Component {
                   <div>
                     {
                       certification ?
-                        <span className={styles.certification}>
+                        <span className={styles.certification} title={translate('Certification')}>
                           {certification}
                         </span> :
                         null
@@ -404,11 +404,12 @@ class MovieDetails extends Component {
                       </span>
                     }
 
-                    {runtime ?
-                      <span className={styles.runtime}>
-                        {formatRuntime(runtime, movieRuntimeFormat)}
-                      </span> :
-                      null
+                    {
+                      runtime ?
+                        <span className={styles.runtime} title={translate('Runtime')}>
+                          {formatRuntime(runtime, movieRuntimeFormat)}
+                        </span> :
+                        null
                     }
 
                     {

@@ -30,6 +30,7 @@ namespace NzbDrone.Core.Parser
                                                                             (?<chinese>\[(?:CH[ST]|BIG5|GB)\]|简|繁|字幕)|
                                                                             (?<ukrainian>(?:(?:\dx)?UKR))|
                                                                             (?<spanish>\b(?:español|castellano)\b)|
+                                                                            (?<catalan>\b(?:catalan?|catalán|català)\b)|
                                                                             (?<latvian>\b(?:lat|lav|lv)\b)|
                                                                             (?<telugu>\btel\b)|
                                                                             (?<vietnamese>\bVIE\b)",
@@ -203,11 +204,6 @@ namespace NzbDrone.Core.Parser
                 languages.Add(Language.SpanishLatino);
             }
 
-            if (lowerTitle.Contains("catalan"))
-            {
-                languages.Add(Language.Catalan);
-            }
-
             if (lowerTitle.Contains("tamil"))
             {
                 languages.Add(Language.Tamil);
@@ -341,6 +337,11 @@ namespace NzbDrone.Core.Parser
                 if (match.Groups["spanish"].Success)
                 {
                     languages.Add(Language.Spanish);
+                }
+
+                if (match.Groups["catalan"].Success)
+                {
+                    languages.Add(Language.Catalan);
                 }
 
                 if (match.Groups["ukrainian"].Success)

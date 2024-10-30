@@ -9,6 +9,7 @@ using NzbDrone.Core.DecisionEngine;
 using NzbDrone.Core.Indexers;
 using NzbDrone.Core.IndexerSearch.Definitions;
 using NzbDrone.Core.Movies;
+using NzbDrone.Core.Movies.Studios;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.Profiles.Qualities;
 
@@ -25,18 +26,21 @@ namespace NzbDrone.Core.IndexerSearch
         private readonly IIndexerFactory _indexerFactory;
         private readonly IMakeDownloadDecision _makeDownloadDecision;
         private readonly IMovieService _movieService;
+        private readonly IStudioService _studioService;
         private readonly IQualityProfileService _qualityProfileService;
         private readonly Logger _logger;
 
         public ReleaseSearchService(IIndexerFactory indexerFactory,
                                 IMakeDownloadDecision makeDownloadDecision,
                                 IMovieService movieService,
+                                IStudioService studioService,
                                 IQualityProfileService qualityProfileService,
                                 Logger logger)
         {
             _indexerFactory = indexerFactory;
             _makeDownloadDecision = makeDownloadDecision;
             _movieService = movieService;
+            _studioService = studioService;
             _qualityProfileService = qualityProfileService;
             _logger = logger;
         }
@@ -58,6 +62,9 @@ namespace NzbDrone.Core.IndexerSearch
             {
                 var movieSearchSpec = Get<MovieSearchCriteria>(movie, userInvokedSearch, interactiveSearch);
 
+                // For movies, the year only is appended
+                movieSearchSpec.SceneTitles = movieSearchSpec.SceneTitles.Select(title => $"{title} {movie.Year}").ToList();
+
                 decisions = await Dispatch(indexer => indexer.Fetch(movieSearchSpec), movieSearchSpec);
             }
             else
@@ -66,14 +73,48 @@ namespace NzbDrone.Core.IndexerSearch
                 sceneSearchSpec.ReleaseDate = DateOnly.FromDateTime(movie.MovieMetadata.Value.ReleaseDateUtc.Value);
                 sceneSearchSpec.SiteTitle = movie.MovieMetadata.Value.StudioTitle;
 
+                var releaseDateStrings = new List<string>();
+
+                // When we search a studio name, we inject the date at the search service level.
+                // This was previously done at indexer level, however this denies us an opportunity to issue queries which may not include the date,
+                // but could include other identifying information to provide more options for the release to be found by the matcher.
+                if ((sceneSearchSpec.ReleaseDate?.ToString("yy.MM.dd") ?? string.Empty).IsNullOrWhiteSpace())
+                {
+                    releaseDateStrings.Add(string.Empty);
+                }
+                else
+                {
+                    releaseDateStrings.Add(sceneSearchSpec.ReleaseDate?.ToString("yy.MM.dd") ?? string.Empty);
+                    releaseDateStrings.Add(sceneSearchSpec.ReleaseDate?.ToString("dd.MM.yyyy") ?? string.Empty);
+                }
+
+                // The sceneSearchSpec.SceneTitles list contains MovieMetadata.Title, we will inject the date here vs in the indexers.
+                var originalTitles = sceneSearchSpec.SceneTitles;
+                foreach (var releaseDateString in releaseDateStrings)
+                {
+                    // Search for Site Title + Scene Name
+                    sceneSearchSpec.SceneTitles = originalTitles.Select(title => $"{title} {releaseDateString}").ToList();
+                }
+
                 if (sceneSearchSpec.SiteTitle != null)
                 {
                     sceneSearchSpec.SceneTitles.Add(sceneSearchSpec.SiteTitle);
-                }
+                    var studioTitles = _studioService.FindAllByTitle(sceneSearchSpec.SiteTitle);
+                    foreach (var studioTitle in studioTitles)
+                    {
+                        // Full Studio Name (Couch Casting-X)
+                        sceneSearchSpec.SceneTitles = generateSceneTitles(sceneSearchSpec.SceneTitles, studioTitle.Title, releaseDateStrings, originalTitles);
 
-                if (sceneSearchSpec.SiteTitle.Contains(' ', StringComparison.Ordinal))
-                {
-                    sceneSearchSpec.SceneTitles.Add(sceneSearchSpec.SiteTitle.Replace(" ", "", StringComparison.Ordinal));
+                        // Studio with spaces and other characters removed (CouchCastingX)
+                        sceneSearchSpec.SceneTitles = generateSceneTitles(sceneSearchSpec.SceneTitles, studioTitle.CleanTitle, releaseDateStrings, originalTitles);
+
+                        // Remove just the space (CouchCasting-X)
+                        if (studioTitle.Title.Contains(' ', StringComparison.Ordinal))
+                        {
+                            var noSpacesSiteTitle = studioTitle.Title.Replace(" ", "", StringComparison.Ordinal);
+                            sceneSearchSpec.SceneTitles = generateSceneTitles(sceneSearchSpec.SceneTitles, noSpacesSiteTitle, releaseDateStrings, originalTitles);
+                        }
+                    }
                 }
 
                 decisions = await Dispatch(indexer => indexer.Fetch(sceneSearchSpec), sceneSearchSpec);
@@ -82,6 +123,30 @@ namespace NzbDrone.Core.IndexerSearch
             downloadDecisions.AddRange(decisions);
 
             return DeDupeDecisions(downloadDecisions);
+        }
+
+        private List<string> generateSceneTitles(List<string> sceneTitles, string studioTitle, List<string> releaseDateStrings, List<string> originalTitles)
+        {
+            // Search for Studio + Scene Name
+            foreach (var originalTitle in originalTitles)
+            {
+                // Search for Studio + Date
+                if (!sceneTitles.Contains($"{studioTitle} {originalTitle}"))
+                {
+                    sceneTitles.Add($"{studioTitle} {originalTitle}");
+                }
+            }
+
+            // Search for Studio + Date
+            foreach (var releaseDateString in releaseDateStrings)
+            {
+                if (!sceneTitles.Contains($"{studioTitle} {releaseDateString}"))
+                {
+                    sceneTitles.Add($"{studioTitle} {releaseDateString}");
+                }
+            }
+
+            return sceneTitles;
         }
 
         private TSpec Get<TSpec>(Movie movie, bool userInvokedSearch, bool interactiveSearch)

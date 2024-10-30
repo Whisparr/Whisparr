@@ -185,7 +185,7 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
 
             var page = results.GetTier(0).First().First();
 
-            page.Url.Query.Should().Contain("q=Some%20Movie%20and%20Title%20Words%202021");
+            page.Url.Query.Should().Contain("q=Some%20Movie%20and%20Title%20Words");
             page.Url.Query.Should().Contain("and");
             page.Url.Query.Should().NotContain(" & ");
             page.Url.Query.Should().NotContain("%26");

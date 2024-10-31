@@ -200,12 +200,16 @@ namespace NzbDrone.Core.Parser
         // name only...BE VERY CAREFUL WITH THIS, HIGH CHANCE OF FALSE POSITIVES
         private static readonly Regex ExceptionReleaseGroupRegexExact = new Regex(@"(?<releasegroup>KRaLiMaRKo|E\.N\.D|D\-Z0N3|Koten_Gars|BluDragon|ZØNEHD|Tigole|HQMUX|VARYG|YIFY|YTS(.(MX|LT|AG))?)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        private static readonly Regex WordDelimiterRegex = new Regex(@"(\s|\.|,|_|-|=|'|\|)+", RegexOptions.Compiled);
+        private static readonly Regex WordDelimiterRegex = new Regex(@"(\s|\.|,|_|-|=|’|'|\|)+", RegexOptions.Compiled);
         private static readonly Regex SpecialCharRegex = new Regex(@"(\&|\:|\\|\/)+", RegexOptions.Compiled);
         private static readonly Regex PunctuationRegex = new Regex(@"[^\w\s]", RegexOptions.Compiled);
         private static readonly Regex CommonWordRegex = new Regex(@"\b(a|an|the|and|or|of)\b\s?", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private static readonly Regex SpecialEpisodeWordRegex = new Regex(@"\b(part|special|edition|christmas)\b\s?", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private static readonly Regex DuplicateSpacesRegex = new Regex(@"\s{2,}", RegexOptions.Compiled);
+        private static readonly Regex NamerDuplicateRegex = new Regex(@"_\d$", RegexOptions.Compiled);
+
+        private static readonly Regex EmojiRegex = new Regex(@"\p{Cs}", RegexOptions.Compiled);
+        private static readonly Regex UniCodeRegex = new Regex(@"[^\u0000-\u007F]+", RegexOptions.Compiled);
 
         private static readonly Regex RequestInfoRegex = new Regex(@"^(?:\[.+?\])+", RegexOptions.Compiled);
 
@@ -590,8 +594,14 @@ namespace NzbDrone.Core.Parser
                 return string.Empty;
             }
 
+            // Standard & as and
+            title = title.Replace(" & ", " and ");
+
             title = SpecialEpisodeWordRegex.Replace(title, string.Empty);
             title = PunctuationRegex.Replace(title, " ");
+            title = EmojiRegex.Replace(title, " ");
+            title = UniCodeRegex.Replace(title, " ");
+            title = NamerDuplicateRegex.Replace(title, " ");
             title = DuplicateSpacesRegex.Replace(title, " ");
 
             return title.Trim()
@@ -622,6 +632,16 @@ namespace NzbDrone.Core.Parser
             }
 
             return SimpleReleaseTitleRegex.Replace(title, string.Empty);
+        }
+
+        public static string StripSpaces(this string title)
+        {
+            if (title.IsNullOrWhiteSpace())
+            {
+                return string.Empty;
+            }
+
+            return title.Replace(" ", string.Empty);
         }
 
         public static string TrimAtEnd(this string title, string textToTrim)

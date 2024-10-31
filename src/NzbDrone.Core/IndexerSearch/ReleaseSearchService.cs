@@ -90,15 +90,18 @@ namespace NzbDrone.Core.IndexerSearch
 
                 // The sceneSearchSpec.SceneTitles list contains MovieMetadata.Title, we will inject the date here vs in the indexers.
                 var originalTitles = sceneSearchSpec.SceneTitles;
+                sceneSearchSpec.SceneTitles = new List<string>();
+
+                // Search for Scene Name
+                sceneSearchSpec.SceneTitles.Add(sceneSearchSpec.Movie.Title);
                 foreach (var releaseDateString in releaseDateStrings)
                 {
-                    // Search for Site Title + Scene Name
-                    sceneSearchSpec.SceneTitles = originalTitles.Select(title => $"{title} {releaseDateString}").ToList();
+                    // Search for Scene Name + Date
+                    sceneSearchSpec.SceneTitles.AddRange(originalTitles.Select(title => $"{title} {releaseDateString}").ToList());
                 }
 
                 if (sceneSearchSpec.SiteTitle != null)
                 {
-                    sceneSearchSpec.SceneTitles.Add(sceneSearchSpec.SiteTitle);
                     var studioTitles = _studioService.FindAllByTitle(sceneSearchSpec.SiteTitle);
                     foreach (var studioTitle in studioTitles)
                     {

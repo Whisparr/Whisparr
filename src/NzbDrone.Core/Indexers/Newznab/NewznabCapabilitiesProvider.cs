@@ -41,6 +41,11 @@ namespace NzbDrone.Core.Indexers.Newznab
         {
             var capabilities = new NewznabCapabilities();
 
+            if (indexerSettings.BaseUrl.IsNullOrWhiteSpace())
+            {
+                return capabilities;
+            }
+
             var url = string.Format("{0}{1}?t=caps", indexerSettings.BaseUrl.TrimEnd('/'), indexerSettings.ApiPath.TrimEnd('/'));
 
             if (indexerSettings.ApiKey.IsNotNullOrWhiteSpace())

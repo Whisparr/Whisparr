@@ -91,7 +91,7 @@ namespace NzbDrone.Core.Movies.Studios
                         throw;
                     }
 
-                    _logger.Debug("StashId {0} was not added due to validation failures. {1}", m.ForeignId, ex.Message);
+                    _logger.Error("StashId {0} was not added due to validation failures. {1}", m.ForeignId, ex.Message);
                 }
             }
 

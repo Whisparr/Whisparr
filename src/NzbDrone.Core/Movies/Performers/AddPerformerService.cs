@@ -84,7 +84,7 @@ namespace NzbDrone.Core.Movies.Performers
                         throw;
                     }
 
-                    _logger.Debug("TmdbId {0} was not added due to validation failures. {1}", m.ForeignId, ex.Message);
+                    _logger.Error("{0} was not added due to validation failures. {1}", m.ForeignId, ex.Message);
                 }
             }
 

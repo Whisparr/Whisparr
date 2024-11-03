@@ -101,7 +101,7 @@ namespace NzbDrone.Core.Movies
                         throw;
                     }
 
-                    _logger.Debug("Foreign ID {0} was not added due to validation failures. {1}", m.ForeignId, ex.Message);
+                    _logger.Error("Foreign ID {0} was not added due to validation failures. {1}", m.ForeignId, ex.Message);
                 }
                 catch (HttpException ex)
                 {
@@ -118,11 +118,33 @@ namespace NzbDrone.Core.Movies
                         throw;
                     }
 
-                    _logger.Debug("Foreign ID {0} was not added due to connection failures. {1}", m.ForeignId, ex.Message);
+                    _logger.Error("Foreign ID {0} was not added due to connection failures. {1}", m.ForeignId, ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    if (!ignoreErrors)
+                    {
+                        throw;
+                    }
+
+                    _logger.Error("Foreign ID {0} was not added due to failures. {1}", m.ForeignId, ex.Message);
                 }
             }
 
-            _movieMetadataService.UpsertMany(moviesToAdd.Select(x => x.MovieMetadata.Value).ToList());
+            try
+            {
+                _movieMetadataService.UpsertMany(moviesToAdd.Select(x => x.MovieMetadata.Value).ToList());
+            }
+            catch (Exception ex)
+            {
+                if (!ignoreErrors)
+                {
+                    throw;
+                }
+
+                _logger.Debug("Failures adding metadata.", ex.Message);
+            }
+
             moviesToAdd.ForEach(x => x.MovieMetadataId = x.MovieMetadata.Value.Id);
 
             return _movieService.AddMovies(moviesToAdd);
@@ -138,11 +160,12 @@ namespace NzbDrone.Core.Movies
             }
             catch (MovieNotFoundException)
             {
-                _logger.Error("TmdbId {0} was not found, it may have been removed from TMDb. Path: {1}", newMovie.ForeignId, newMovie.Path);
+                var source = string.IsNullOrEmpty(newMovie.ForeignId) ? "TMDb" : "StashDB";
+                _logger.Error("{1} was not found, it may have been removed from {0}. Path: {2}", source, newMovie.ForeignId, newMovie.Path);
 
                 throw new ValidationException(new List<ValidationFailure>
                                               {
-                                                  new ValidationFailure("TmdbId", $"A movie with this ID was not found. Path: {newMovie.Path}", newMovie.ForeignId)
+                                                 new ValidationFailure(source, $"A movie with this ID was not found. Path: {newMovie.Path}", newMovie.ForeignId)
                                               });
             }
 

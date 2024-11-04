@@ -29,7 +29,6 @@ namespace NzbDrone.Core.MovieStats
         public List<MovieStatistics> MovieStatistics(List<int> ids)
         {
             var movieStatistics = _movieStatisticsRepository.MovieStatistics(ids);
-
             return movieStatistics.GroupBy(m => m.MovieId).Select(m => m.First()).ToList();
         }
 

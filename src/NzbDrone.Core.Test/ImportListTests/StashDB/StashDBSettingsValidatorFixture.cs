@@ -1,6 +1,6 @@
 using FluentAssertions;
 using NUnit.Framework;
-using NzbDrone.Core.ImportLists.StashDB;
+using NzbDrone.Core.ImportLists.StashDB.Favorite;
 using NzbDrone.Core.Test.Framework;
 
 namespace NzbDrone.Core.Test.ImportListTests.StashDB
@@ -11,7 +11,7 @@ namespace NzbDrone.Core.Test.ImportListTests.StashDB
         [TestCase(null)]
         public void invalid_api_key_should_not_validate(string apiKey)
         {
-            var settings = new StashDBSettings
+            var settings = new StashDBFavoriteSettings
             {
                 ApiKey = apiKey,
             };
@@ -24,7 +24,7 @@ namespace NzbDrone.Core.Test.ImportListTests.StashDB
         [TestCase("anotherValidApiKey456")]
         public void valid_api_key_should_validate(string apiKey)
         {
-            var settings = new StashDBSettings
+            var settings = new StashDBFavoriteSettings
             {
                 ApiKey = apiKey,
             };

@@ -6,11 +6,11 @@ using NzbDrone.Core.Configuration;
 using NzbDrone.Core.MetadataSource;
 using NzbDrone.Core.Parser;
 
-namespace NzbDrone.Core.ImportLists.StashDB
+namespace NzbDrone.Core.ImportLists.StashDB.Performer
 {
-    public class StashDBImport : HttpImportListBase<StashDBSettings>
+    public class StashDBPerformerImport : StashDBImportBase<StashDBPerformerSettings>
     {
-        public StashDBImport(IWhisparrCloudRequestBuilder requestBuilder,
+        public StashDBPerformerImport(IWhisparrCloudRequestBuilder requestBuilder,
                                     IHttpClient httpClient,
                                     IImportListStatusService importListStatusService,
                                     IConfigService configService,
@@ -19,28 +19,22 @@ namespace NzbDrone.Core.ImportLists.StashDB
                                     Logger logger)
             : base(httpClient, importListStatusService, configService, parsingService, logger)
         {
-            _skyhookProxy = skyhookProxy;
+            // _skyhookProxy = skyhookProxy;
             _requestBuilder = requestBuilder.StashDB;
         }
 
         private readonly IHttpRequestBuilderFactory _requestBuilder;
 
-        public readonly ISearchForNewMovie _skyhookProxy;
         public override int PageSize => 100;
-        public override string Name => "StashDB Favorites";
+        public override string Name => "StashDB Performer";
         public override bool Enabled => true;
         public override bool EnableAuto => false;
         public override ImportListType ListType => ImportListType.StashDB;
-        public override TimeSpan MinRefreshInterval => TimeSpan.FromHours(12);
-
-        public override IParseImportListResponse GetParser()
-        {
-            return new StashDBParser();
-        }
+        public override TimeSpan MinRefreshInterval => TimeSpan.FromHours(1);
 
         public override IImportListRequestGenerator GetRequestGenerator()
         {
-            return new StashDBRequestGenerator(PageSize, MaxNumResultsPerQuery)
+            return new StashDBPerformerRequestGenerator(PageSize, MaxNumResultsPerQuery)
             {
                 RequestBuilder = _requestBuilder,
                 Settings = Settings,

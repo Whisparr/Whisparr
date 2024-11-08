@@ -65,6 +65,14 @@ namespace Whisparr.Api.V3.Studios
             return studioResources;
         }
 
+        [RestPostById]
+        public ActionResult<StudioResource> AddStudio(StudioResource studioResource)
+        {
+            var studio = _studioService.AddStudio(studioResource.ToModel());
+
+            return Created(studio.Id);
+        }
+
         [RestPutById]
         public ActionResult<StudioResource> Update(StudioResource resource)
         {

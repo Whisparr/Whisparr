@@ -230,18 +230,12 @@ function EnhancedSelectInput<V, T extends EnhancedSelectInputValue<V>>(
   }, [handleWindowClick]);
 
   const handlePress = useCallback(() => {
-    if (isOpen) {
-      removeListener();
-    } else {
-      addListener();
-    }
-
     if (!isOpen && onOpen) {
       onOpen();
     }
 
     setIsOpen(!isOpen);
-  }, [isOpen, setIsOpen, addListener, removeListener, onOpen]);
+  }, [isOpen, setIsOpen, onOpen]);
 
   const handleSelect = useCallback(
     (newValue: ArrayElement<V>) => {
@@ -407,6 +401,16 @@ function EnhancedSelectInput<V, T extends EnhancedSelectInputValue<V>>(
       updater.current();
     }
   });
+
+  useEffect(() => {
+    if (isOpen) {
+      addListener();
+    } else {
+      removeListener();
+    }
+
+    return removeListener;
+  }, [isOpen, addListener, removeListener]);
 
   return (
     <div>

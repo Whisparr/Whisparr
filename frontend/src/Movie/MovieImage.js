@@ -32,6 +32,16 @@ class MovieImage extends Component {
       size
     } = props;
 
+    if (!images) {
+      this.state = {
+        image: null,
+        url: '',
+        isLoaded: false,
+        hasError: true
+      };
+      return null;
+    }
+
     const image = findImage(images, coverType);
 
     this.state = {

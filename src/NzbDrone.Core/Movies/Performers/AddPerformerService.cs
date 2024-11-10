@@ -105,7 +105,7 @@ namespace NzbDrone.Core.Movies.Performers
                         throw;
                     }
 
-                    _logger.Debug("StashId {0} was not added due to Exception. {1}", m.ForeignId, ex.Message);
+                    _logger.Error("StashId {0} was not added due to Exception. {1}", m.ForeignId, ex.Message);
                 }
             }
 

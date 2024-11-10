@@ -88,7 +88,34 @@ namespace NzbDrone.Core.Movies
 
         public override string ToString()
         {
-            return string.Format("[{1} ({2})][{0}, {3}]", MovieMetadata.Value.ImdbId, MovieMetadata.Value.Title.NullSafe(), MovieMetadata.Value.Year.NullSafe(), MovieMetadata.Value.ForeignId);
+            var result = string.Empty;
+
+            if (MovieMetadata.Value.ItemType == ItemType.Scene)
+            {
+                if (MovieMetadata.Value.Title != null)
+                {
+                    result += string.Format("[{0} - {1} - {2}]", MovieMetadata.Value.StudioTitle.NullSafe(), MovieMetadata.Value.ReleaseDate.NullSafe(), MovieMetadata.Value.Title.NullSafe());
+                }
+            }
+            else
+            {
+                if (MovieMetadata.Value.Title != null)
+                {
+                    result += string.Format("[{0} ({1})]", MovieMetadata.Value.Title.NullSafe(), MovieMetadata.Value.Year.NullSafe());
+                }
+            }
+
+            if (MovieMetadata.Value.ImdbId != null)
+            {
+                result += $"[{MovieMetadata.Value.ImdbId}]";
+            }
+
+            if (MovieMetadata.Value.ForeignId != null)
+            {
+                result += $"[{MovieMetadata.Value.ForeignId}]";
+            }
+
+            return result;
         }
 
         public void ApplyChanges(Movie otherMovie)

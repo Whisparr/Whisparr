@@ -13,7 +13,7 @@ namespace NzbDrone.Core.Movies.Studios
 {
     public interface IAddStudioService
     {
-        Studio AddStudio(Studio newStudio);
+        Studio AddStudio(Studio newStudio, bool ignoreErrors = false);
         List<Studio> AddStudios(List<Studio> newStudios, bool ignoreErrors = false);
     }
 
@@ -32,7 +32,7 @@ namespace NzbDrone.Core.Movies.Studios
             _logger = logger;
         }
 
-        public Studio AddStudio(Studio newStudio)
+        public Studio AddStudio(Studio newStudio, bool ignoreErrors = false)
         {
             Ensure.That(newStudio, () => newStudio).IsNotNull();
 
@@ -48,7 +48,19 @@ namespace NzbDrone.Core.Movies.Studios
 
             _logger.Info("Adding Studio {0}", newStudio.Title);
 
-            _studioService.AddStudio(newStudio);
+            try
+            {
+                _studioService.AddStudio(newStudio);
+            }
+            catch (Exception ex)
+            {
+                if (!ignoreErrors)
+                {
+                    throw;
+                }
+
+                _logger.Error("Error Adding Studio {0}", newStudio.Title, ex);
+            }
 
             return newStudio;
         }
@@ -92,6 +104,15 @@ namespace NzbDrone.Core.Movies.Studios
                     }
 
                     _logger.Error("StashId {0} was not added due to validation failures. {1}", m.ForeignId, ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    if (!ignoreErrors)
+                    {
+                        throw;
+                    }
+
+                    _logger.Error("StashId {0} was not added due to an exception. {1}", m.ForeignId, ex.Message);
                 }
             }
 

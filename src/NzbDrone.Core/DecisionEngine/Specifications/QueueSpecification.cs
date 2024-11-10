@@ -47,6 +47,11 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
                 var remoteMovie = queueItem.RemoteMovie;
                 var qualityProfile = subject.Movie.QualityProfile;
 
+                if (qualityProfile == null)
+                {
+                    continue;
+                }
+
                 // To avoid a race make sure it's not FailedPending (failed awaiting removal/search).
                 // Failed items (already searching for a replacement) won't be part of the queue since
                 // it's a copy, of the tracked download, not a reference.

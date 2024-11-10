@@ -4,11 +4,11 @@ using Newtonsoft.Json;
 using NLog;
 using NzbDrone.Common.Http;
 
-namespace NzbDrone.Core.ImportLists.StashDB
+namespace NzbDrone.Core.ImportLists.StashDB.Favorite
 {
-    public class StashDBRequestGenerator : IImportListRequestGenerator
+    public class StashDBFavoriteRequestGenerator : IImportListRequestGenerator
     {
-        public StashDBRequestGenerator(int pageSize, int maxResultsPerQuery)
+        public StashDBFavoriteRequestGenerator(int pageSize, int maxResultsPerQuery)
         {
             _pageSize = pageSize;
             _maxResultsPerQuery = maxResultsPerQuery;
@@ -16,7 +16,7 @@ namespace NzbDrone.Core.ImportLists.StashDB
 
         private readonly int _pageSize;
         private readonly int _maxResultsPerQuery;
-        public StashDBSettings Settings { get; set; }
+        public StashDBFavoriteSettings Settings { get; set; }
         public IHttpClient HttpClient { get; set; }
         public IHttpRequestBuilderFactory RequestBuilder { get; set; }
         public Logger Logger { get; set; }
@@ -33,7 +33,7 @@ namespace NzbDrone.Core.ImportLists.StashDB
         {
             Logger.Info($"Importing StashDB scenes from favorites: {Settings.Filter}");
 
-            var querySceneQuery = new QuerySceneQuery(1, _pageSize, Settings.Filter, Settings.Sort);
+            var querySceneQuery = new QueryFavoriteSceneQuery(1, _pageSize, Settings.Filter, Settings.Sort);
 
             var requestBuilder = RequestBuilder
                                         .Create()

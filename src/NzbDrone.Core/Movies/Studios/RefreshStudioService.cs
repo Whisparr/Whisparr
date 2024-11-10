@@ -102,6 +102,7 @@ namespace NzbDrone.Core.Movies.Studios
                 var studioScenes = _movieInfo.GetStudioScenes(studio.ForeignId);
                 var excludedScenes = _importExclusionService.GetAllExclusions().Select(e => e.ForeignId);
                 var scenesToAdd = studioScenes.Where(m => !existingMovies.Contains(m)).Where(m => !excludedScenes.Contains(m));
+                var scenesAdded = 0;
 
                 if (scenesToAdd.Any())
                 {
@@ -121,8 +122,10 @@ namespace NzbDrone.Core.Movies.Studios
 
                     foreach (var sceneList in sceneLists)
                     {
-                        _addMovieService.AddMovies(sceneList.ToList(), true);
+                        scenesAdded += _addMovieService.AddMovies(sceneList.ToList(), true).Count;
                     }
+
+                    _logger.Info("Synced studio {0} has {1} movies adding {2} and added {3}", studio.Title, studioScenes.Count, scenesToAdd.Count(), scenesAdded);
                 }
             }
         }

@@ -103,10 +103,11 @@ namespace NzbDrone.Core.Movies.Performers
                 // Chunk the into smaller lists
                 var chunkSize = 10;
 
-                var existingScenes = _movieService.AllMovieForeignIds();
+                var existingScenes = _movieService.AllMovieForeignIds().Where(s => s.Contains('-')).ToList();
                 var performerWork = _movieInfo.GetPerformerWorks(performer.ForeignId);
                 var excludedScenes = _importExclusionService.GetAllExclusions().Select(e => e.ForeignId);
                 var scenesToAdd = performerWork.Scenes.Where(m => !existingScenes.Contains(m)).Where(m => !excludedScenes.Contains(m));
+                var scenesAdded = 0;
 
                 if (scenesToAdd.Any())
                 {
@@ -126,14 +127,17 @@ namespace NzbDrone.Core.Movies.Performers
 
                     foreach (var sceneList in sceneLists)
                     {
-                        _addMovieService.AddMovies(sceneList.ToList(), true);
+                        scenesAdded += _addMovieService.AddMovies(sceneList.ToList(), true).Count;
                     }
                 }
+
+                _logger.Info("Synced performer {0} has {1} scenes adding {2} and added {3}", performer.Name, performerWork.Scenes.Count, scenesToAdd.Count(), scenesAdded);
 
                 var tmbdId = 0;
                 var existingMovies = _movieService.AllMovieTmdbIds();
                 var excludedMovies = _importExclusionService.GetAllExclusions().Select(e => int.TryParse(e.ForeignId, out tmbdId)).Select(e => tmbdId).Where(e => e != 0).ToList();
                 var moviesToAdd = performerWork.Movies.Where(m => !existingMovies.Contains(m)).Where(m => !excludedMovies.Contains(m));
+                var moviesAdded = 0;
 
                 if (moviesToAdd.Any())
                 {
@@ -153,9 +157,11 @@ namespace NzbDrone.Core.Movies.Performers
 
                     foreach (var movieList in movieLists)
                     {
-                        _addMovieService.AddMovies(movieList.ToList(), true);
+                        moviesAdded += _addMovieService.AddMovies(movieList.ToList(), true).Count;
                     }
                 }
+
+                _logger.Info("Synced performer {0} has {1} movies adding {2} and added {3}", performer.Name, performerWork.Movies.Count, moviesToAdd.Count(), moviesAdded);
             }
         }
 

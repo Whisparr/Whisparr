@@ -6,7 +6,7 @@ import * as commandNames from 'Commands/commandNames';
 import { executeCommand } from 'Store/Actions/commandActions';
 import { toggleMovieMonitored } from 'Store/Actions/movieActions';
 import { setStudioScenesSort, setStudioScenesTableOption } from 'Store/Actions/studioScenesActions';
-import createAllScenesSelector from 'Store/Selectors/createAllScenesSelector';
+import createClientSideCollectionSelector from 'Store/Selectors/createClientSideCollectionSelector';
 import createDimensionsSelector from 'Store/Selectors/createDimensionsSelector';
 import createStudioSelector from 'Store/Selectors/createStudioSelector';
 import StudioDetailsYear from './StudioDetailsYear';
@@ -15,27 +15,19 @@ function createMapStateToProps() {
   return createSelector(
     (state, { year }) => year,
     (state, { studioForeignId }) => studioForeignId,
-    (state) => state.studioScenes,
-    createAllScenesSelector(),
+    createClientSideCollectionSelector('movies', 'studioScenes'),
     createStudioSelector(),
     createDimensionsSelector(),
-    (year, studioForeignId, studioScenes, scenes, studio, dimensions) => {
+    (year, studioForeignId, scenes, studio, dimensions) => {
 
-      const scenesInYear = scenes.filter((scene) => scene.studioForeignId === studioForeignId && scene.year === year);
-      const sortedScenes =scenesInYear.sort(
-        (a, b) => {
-          if (studioScenes.sortDirection === 'ascending') {
-            return new Date(a.releaseDate) - new Date(b.releaseDate);
-          }
-          return new Date(b.releaseDate) - new Date(a.releaseDate);
-        });
+      const scenesInYear = scenes.items.filter((scene) => scene.studioForeignId === studioForeignId && scene.year === year);
 
       return {
         year,
-        items: sortedScenes,
-        columns: studioScenes.columns,
-        sortKey: studioScenes.sortKey,
-        sortDirection: studioScenes.sortDirection,
+        items: scenesInYear,
+        columns: scenes.columns,
+        sortKey: scenes.sortKey,
+        sortDirection: scenes.sortDirection,
         studioMonitored: studio.monitored,
         path: studio.path,
         isSmallScreen: dimensions.isSmallScreen,

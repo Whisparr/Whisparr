@@ -46,13 +46,10 @@ namespace NzbDrone.Core.ImportLists.StashDB.Favorite
 
     public class QueryFavoriteSceneQueryVariables : QuerySceneQueryVariablesBase
     {
-        [JsonProperty("favorites")]
-        public FavoriteFilter Filter { get; set; }
-
         public QueryFavoriteSceneQueryVariables(int page, int pageSize, FavoriteFilter filter, SceneSort sort)
             : base(page, pageSize, sort)
         {
-            Filter = filter;
+            Input.favorites = filter;
         }
     }
 }

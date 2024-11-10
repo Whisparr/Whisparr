@@ -22,7 +22,7 @@ namespace NzbDrone.Core.ImportLists.StashDB
         public override bool Enabled => true;
         public override bool EnableAuto => false;
         public override ImportListType ListType => ImportListType.StashDB;
-        public override TimeSpan MinRefreshInterval => TimeSpan.FromHours(1);
+        public override TimeSpan MinRefreshInterval => TimeSpan.FromHours(12);
 
         public override IParseImportListResponse GetParser()
         {

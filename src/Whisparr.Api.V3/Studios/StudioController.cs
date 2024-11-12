@@ -19,14 +19,17 @@ namespace Whisparr.Api.V3.Studios
     public class StudioController : RestControllerWithSignalR<StudioResource, Studio>, IHandle<StudioUpdatedEvent>
     {
         private readonly IStudioService _studioService;
+        private readonly IAddStudioService _addStudioService;
         private readonly IMapCoversToLocal _coverMapper;
 
         public StudioController(IStudioService studioService,
+                                IAddStudioService addStudioService,
                                 IMapCoversToLocal coverMapper,
                                 IBroadcastSignalRMessage signalRBroadcaster)
         : base(signalRBroadcaster)
         {
             _studioService = studioService;
+            _addStudioService = addStudioService;
             _coverMapper = coverMapper;
         }
 
@@ -68,7 +71,7 @@ namespace Whisparr.Api.V3.Studios
         [RestPostById]
         public ActionResult<StudioResource> AddStudio(StudioResource studioResource)
         {
-            var studio = _studioService.AddStudio(studioResource.ToModel());
+            var studio = _addStudioService.AddStudio(studioResource.ToModel());
 
             return Created(studio.Id);
         }

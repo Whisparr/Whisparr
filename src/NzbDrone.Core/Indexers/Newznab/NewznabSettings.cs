@@ -58,6 +58,7 @@ namespace NzbDrone.Core.Indexers.Newznab
             ApiPath = "/api";
             Categories = new[] { 6000, 6010, 6020, 6030, 6040, 6045, 6050, 6070, 6080, 6090 };
             MultiLanguages = Array.Empty<int>();
+            FailDownloads = Array.Empty<int>();
         }
 
         [FieldDefinition(0, Label = "URL")]
@@ -79,7 +80,10 @@ namespace NzbDrone.Core.Indexers.Newznab
         [FieldDefinition(5, Type = FieldType.Select, SelectOptions = typeof(RealLanguageFieldConverter), Label = "IndexerSettingsMultiLanguageRelease", HelpText = "IndexerSettingsMultiLanguageReleaseHelpText", Advanced = true)]
         public IEnumerable<int> MultiLanguages { get; set; }
 
-        [FieldDefinition(6, Type = FieldType.Checkbox, Label = "IndexerSettingsRemoveYear", HelpText = "IndexerSettingsRemoveYearHelpText", Advanced = true)]
+        [FieldDefinition(6, Type = FieldType.Select, SelectOptions = typeof(FailDownloads), Label = "IndexerSettingsFailDownloads", HelpText = "IndexerSettingsFailDownloadsHelpText", Advanced = true)]
+        public IEnumerable<int> FailDownloads { get; set; }
+
+        [FieldDefinition(7, Type = FieldType.Checkbox, Label = "IndexerSettingsRemoveYear", HelpText = "IndexerSettingsRemoveYearHelpText", Advanced = true)]
         public bool RemoveYear { get; set; }
 
         // Field 8 is used by TorznabSettings MinimumSeeders

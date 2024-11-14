@@ -38,6 +38,7 @@ namespace NzbDrone.Core.Indexers.FileList
             };
 
             MultiLanguages = Array.Empty<int>();
+            FailDownloads = Array.Empty<int>();
             RequiredFlags = Array.Empty<int>();
         }
 
@@ -67,6 +68,9 @@ namespace NzbDrone.Core.Indexers.FileList
 
         [FieldDefinition(7, Type = FieldType.Select, SelectOptions = typeof(RealLanguageFieldConverter), Label = "IndexerSettingsMultiLanguageRelease", HelpText = "IndexerSettingsMultiLanguageReleaseHelpText", Advanced = true)]
         public IEnumerable<int> MultiLanguages { get; set; }
+
+        [FieldDefinition(8, Type = FieldType.Select, SelectOptions = typeof(FailDownloads), Label = "IndexerSettingsFailDownloads", HelpText = "IndexerSettingsFailDownloadsHelpText", Advanced = true)]
+        public IEnumerable<int> FailDownloads { get; set; }
 
         public NzbDroneValidationResult Validate()
         {

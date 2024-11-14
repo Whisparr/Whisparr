@@ -8,7 +8,7 @@ namespace NzbDrone.Core.ImportLists.StashDB.Studio
         private QueryStudioSceneQueryVariables _variables;
         private string _query;
 
-        public QueryStudioSceneQuery(int page, int pageSize, List<string> studios, List<string> tags, bool onlyFavoriteStudios, SceneSort sort)
+        public QueryStudioSceneQuery(int page, int pageSize, List<string> studios, List<string> tags, FilterModifier tagsFilter, bool onlyFavoriteStudios, SceneSort sort)
         {
             _query = @"query Scenes($input: SceneQueryInput!) {
                          queryScenes(input: $input) {
@@ -20,7 +20,7 @@ namespace NzbDrone.Core.ImportLists.StashDB.Studio
                            count
                          }
                         }";
-            _variables = new QueryStudioSceneQueryVariables(page, pageSize, studios, tags, onlyFavoriteStudios, sort);
+            _variables = new QueryStudioSceneQueryVariables(page, pageSize, studios, tags, tagsFilter, onlyFavoriteStudios, sort);
         }
 
         public string Query
@@ -47,14 +47,14 @@ namespace NzbDrone.Core.ImportLists.StashDB.Studio
 
     public class QueryStudioSceneQueryVariables : QuerySceneQueryVariablesBase
     {
-        public QueryStudioSceneQueryVariables(int page, int pageSize, List<string> studios, List<string> tags, bool onlyFavoritePerformers, SceneSort sort)
+        public QueryStudioSceneQueryVariables(int page, int pageSize, List<string> studios, List<string> tags, FilterModifier tagsFilter, bool onlyFavoritePerformers, SceneSort sort)
             : base(page, pageSize, sort)
         {
-            Input.studios = new FilterType(studios);
+            Input.studios = new FilterType(FilterModifier.INCLUDES, studios);
 
             if (tags.Count > 0)
             {
-                Input.tags = new FilterType(tags);
+                Input.tags = new FilterType(tagsFilter, tags);
             }
 
             if (onlyFavoritePerformers)

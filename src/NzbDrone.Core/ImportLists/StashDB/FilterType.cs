@@ -6,13 +6,13 @@ namespace NzbDrone.Core.ImportLists.StashDB
     public class FilterType
     {
         [JsonProperty("modifier")]
-        public string Modifier { get; set; }
+        public FilterModifier Modifier { get; set; }
         [JsonProperty("value")]
         public List<string> Value { get; set; }
 
-        public FilterType(List<string> value)
+        public FilterType(FilterModifier filterModifier, List<string> value)
         {
-            Modifier = "INCLUDES";
+            Modifier = filterModifier;
             Value = value;
         }
     }

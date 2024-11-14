@@ -36,7 +36,7 @@ namespace NzbDrone.Core.ImportLists.StashDB
         [FieldDefinition(0, Label = "Api Key", Privacy = PrivacyLevel.ApiKey, HelpText = "Your StashDB Api Key")]
         public string ApiKey { get; set; }
 
-        [FieldDefinition(5, Label = "Limit", HelpText = "Limit the number of movies to get")]
+        [FieldDefinition(1, Label = "Limit", HelpText = "Limit the number of movies to get")]
         public int Limit { get; set; }
 
         [FieldDefinition(2, Label = "Sort Date Descending", Type = FieldType.Select, SelectOptions = typeof(SceneSort), HelpText = "Descending sort by date style")]

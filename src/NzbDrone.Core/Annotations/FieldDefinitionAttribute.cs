@@ -101,7 +101,8 @@ namespace NzbDrone.Core.Annotations
         RootFolder,
         QualityProfile,
         MovieTag,
-        Date
+        Date,
+        KeyValueList,
     }
 
     public enum HiddenType

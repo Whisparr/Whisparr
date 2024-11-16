@@ -18,7 +18,7 @@ namespace NzbDrone.Core.ImportLists.StashDB.Favorite
     {
         protected override AbstractValidator<StashDBFavoriteSettings> Validator => new StashDBFavoriteSettingsValidator();
 
-        [FieldDefinition(1, Label = "Favorite Filter", Type = FieldType.Select, SelectOptions = typeof(FavoriteFilter), HelpText = "Filter by favorited entity")]
+        [FieldDefinition(3, Label = "Favorite Filter", Type = FieldType.Select, SelectOptions = typeof(FavoriteFilter), HelpText = "Filter by favorited entity")]
         public FavoriteFilter Filter { get; set; }
     }
 }

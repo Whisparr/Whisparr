@@ -34,7 +34,7 @@ namespace NzbDrone.Core.ImportLists.StashDB.Studio
 
         public override IImportListRequestGenerator GetRequestGenerator()
         {
-            return new StashDBStudioRequestGenerator(PageSize, MaxNumResultsPerQuery)
+            return new StashDBStudioRequestGenerator(PageSize, Settings.Limit)
             {
                 RequestBuilder = _requestBuilder,
                 Settings = Settings,

@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DryIoc.ImTools;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Datastore.Events;
 using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.Messaging.Events;
+using NzbDrone.Core.Movies;
 using NzbDrone.Core.Movies.Studios;
 using NzbDrone.Core.Movies.Studios.Events;
 using NzbDrone.SignalR;
@@ -19,15 +21,21 @@ namespace Whisparr.Api.V3.Studios
     public class StudioController : RestControllerWithSignalR<StudioResource, Studio>, IHandle<StudioUpdatedEvent>
     {
         private readonly IStudioService _studioService;
+        private readonly IAddStudioService _addStudioService;
         private readonly IMapCoversToLocal _coverMapper;
+        private readonly IMovieService _moviesService;
 
         public StudioController(IStudioService studioService,
+                                IAddStudioService addStudioService,
                                 IMapCoversToLocal coverMapper,
+                                IMovieService moviesService,
                                 IBroadcastSignalRMessage signalRBroadcaster)
         : base(signalRBroadcaster)
         {
             _studioService = studioService;
+            _addStudioService = addStudioService;
             _coverMapper = coverMapper;
+            _moviesService = moviesService;
         }
 
         protected override StudioResource GetResourceById(int id)
@@ -68,7 +76,7 @@ namespace Whisparr.Api.V3.Studios
         [RestPostById]
         public ActionResult<StudioResource> AddStudio(StudioResource studioResource)
         {
-            var studio = _studioService.AddStudio(studioResource.ToModel());
+            var studio = _addStudioService.AddStudio(studioResource.ToModel());
 
             return Created(studio.Id);
         }
@@ -83,6 +91,25 @@ namespace Whisparr.Api.V3.Studios
             BroadcastResourceChange(ModelAction.Updated, updatedStudio.ToResource());
 
             return Accepted(updatedStudio);
+        }
+
+        [RestDeleteById]
+        public void DeleteStudio(int id, bool deleteFiles = false, bool addImportExclusion = false)
+        {
+            var studio = _studioService.GetById(id);
+
+            if (studio == null)
+            {
+                return;
+            }
+
+            // Get the scenes for the studio
+            var scenes = _moviesService.GetByStudioForeignId(studio.ForeignId);
+            var sceneIds = scenes.Map(x => x.Id).ToList();
+            _moviesService.DeleteMovies(sceneIds, deleteFiles, addImportExclusion);
+
+            // Remove the studio now that the associated scenes have been removed
+            _studioService.RemoveStudio(studio);
         }
 
         public void Handle(StudioUpdatedEvent message)

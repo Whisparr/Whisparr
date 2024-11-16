@@ -161,7 +161,7 @@ namespace NzbDrone.Core.Parser
         {
             FindMovieResult result = null;
 
-            if (parsedMovieInfo.IsScene)
+            if (parsedMovieInfo.IsScene || searchCriteria?.Movie.MovieMetadata?.Value.ItemType == ItemType.Scene)
             {
                 var studios = _studioService.FindAllByTitle(parsedMovieInfo.StudioTitle);
 
@@ -169,7 +169,7 @@ namespace NzbDrone.Core.Parser
                 {
                     foreach (var studio in studios)
                     {
-                        if (result == null)
+                        if (result == null && studio != null)
                         {
                             result = GetSceneMovie(studio, parsedMovieInfo.ReleaseDate, parsedMovieInfo.ReleaseTokens, searchCriteria);
                         }
@@ -178,7 +178,7 @@ namespace NzbDrone.Core.Parser
 
                 if (result?.Movie == null)
                 {
-                    _logger.Debug($"No matching scene '{searchCriteria}' for studio {parsedMovieInfo.StudioTitle} and release date '{parsedMovieInfo.ReleaseDate}' '{parsedMovieInfo.ReleaseTokens}'");
+                    _logger.Debug($"No matching scene '{searchCriteria}' for '{parsedMovieInfo}'");
                 }
             }
             else
@@ -230,7 +230,7 @@ namespace NzbDrone.Core.Parser
             if (parsedMovieInfo.Year > 1800)
             {
                 movieByTitleAndOrYear = _movieService.FindByTitle(parsedMovieInfo.MovieTitles, parsedMovieInfo.Year, otherTitles, candidates);
-                if (movieByTitleAndOrYear != null)
+                if (movieByTitleAndOrYear != null && movieByTitleAndOrYear.MovieMetadata?.Value.ItemType == ItemType.Movie)
                 {
                     return new FindMovieResult(movieByTitleAndOrYear, MovieMatchType.Title);
                 }
@@ -239,7 +239,7 @@ namespace NzbDrone.Core.Parser
             }
 
             movieByTitleAndOrYear = _movieService.FindByTitle(parsedMovieInfo.MovieTitles, null, otherTitles, candidates);
-            if (movieByTitleAndOrYear != null)
+            if (movieByTitleAndOrYear != null && movieByTitleAndOrYear.MovieMetadata?.Value.ItemType == ItemType.Movie)
             {
                 return new FindMovieResult(movieByTitleAndOrYear, MovieMatchType.Title);
             }

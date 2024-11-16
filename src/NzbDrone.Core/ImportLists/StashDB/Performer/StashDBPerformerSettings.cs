@@ -22,16 +22,22 @@ namespace NzbDrone.Core.ImportLists.StashDB.Performer
     {
         protected override AbstractValidator<StashDBPerformerSettings> Validator => new StashDBPerformerSettingsValidator();
 
-        [FieldDefinition(0, Label = "Performers stashIDs",  HelpText = "Enter Performers StashIDs, Comma Seperated")]
+        [FieldDefinition(3, Label = "Performers StashIDs",  HelpText = "Enter Performers StashIDs, comma seperated")]
         public string Performers { get; set; }
 
-        [FieldDefinition(0, Label = "Studios stashIDs", HelpText = "Enter studios StashIDs, Comma Seperated (Optional)")]
+        [FieldDefinition(4, Label = "Studios StashIDs", HelpText = "Enter studios StashIDs, comma seperated (Optional)")]
         public string Studios { get; set; }
 
-        [FieldDefinition(0, Label = "Tag stashIds", HelpText = "Enter studios StashIDs, Comma Seperated  (Optional)")]
+        [FieldDefinition(5, Label = "Studios Filter", Type = FieldType.Select, SelectOptions = typeof(FilterModifier), HelpText = "Filter studios by")]
+        public FilterModifier StudiosFilter { get; set; }
+
+        [FieldDefinition(6, Label = "Tag StashIDs", HelpText = "Enter tag StashIDs, comma seperated  (Optional)")]
         public string Tags { get; set; }
 
-        [FieldDefinition(0, Label = "Only favorite studios", Type = FieldType.Checkbox,  HelpText = "Filter by favorite studios")]
+        [FieldDefinition(7, Label = "Tags Filter", Type = FieldType.Select, SelectOptions = typeof(FilterModifier), HelpText = "Filter tags by")]
+        public FilterModifier TagsFilter { get; set; }
+
+        [FieldDefinition(8, Label = "Only Favorite Studios", Type = FieldType.Checkbox,  HelpText = "Filter by favorite studios")]
         public bool OnlyFavoriteStudios { get; set; }
     }
 }

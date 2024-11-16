@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using DryIoc.ImTools;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
@@ -203,6 +204,18 @@ namespace Whisparr.Api.V3.Movies
             LinkMovieStatistics(moviesResources, sdict);
 
             return moviesResources;
+        }
+
+        [HttpGet("listByPerformerForeignId")]
+        public List<int> ListByPerformerForeignId(string performerForeignId)
+        {
+            return _moviesService.GetByPerformerForeignId(performerForeignId).Map(x => x.Id).ToList();
+        }
+
+        [HttpGet("listByStudioForeignId")]
+        public List<int> ListByStudioForeignId(string studioForeignId)
+        {
+            return _moviesService.GetByStudioForeignId(studioForeignId).Map(x => x.Id).ToList();
         }
 
         protected MovieResource MapToResource(Movie movie)

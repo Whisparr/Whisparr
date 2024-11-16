@@ -62,8 +62,11 @@ namespace NzbDrone.Core.IndexerSearch
             {
                 var movieSearchSpec = Get<MovieSearchCriteria>(movie, userInvokedSearch, interactiveSearch);
 
-                // For movies, the year only is appended
-                movieSearchSpec.SceneTitles = movieSearchSpec.SceneTitles.Select(title => $"{title} {movie.Year}").ToList();
+                // For movies, add search with year
+                if (movie.Year > 1900)
+                {
+                    movieSearchSpec.SceneTitles.AddRange(movieSearchSpec.SceneTitles.Select(title => $"{title} {movie.Year}").ToList());
+                }
 
                 decisions = await Dispatch(indexer => indexer.Fetch(movieSearchSpec), movieSearchSpec);
             }

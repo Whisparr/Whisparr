@@ -190,5 +190,47 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
             page.Url.Query.Should().NotContain(" & ");
             page.Url.Query.Should().NotContain("%26");
         }
+
+        [Test]
+        public void test_scene_raw()
+        {
+            _capabilities.SupportedMovieSearchParameters = new[] { "q" };
+            _capabilities.TextSearchEngine = "raw";
+
+            var sceneSearchCriteria = new SceneSearchCriteria
+            {
+                Movie = new Movies.Movie { Title = "Some Movie & Title: Words", ForeignId = "123", },
+                SceneTitles = new List<string> { "Studio 24.01.01" },
+                ReleaseDate = new System.DateOnly(2024, 01, 01)
+            };
+
+            var results = Subject.GetSearchRequests(sceneSearchCriteria);
+
+            var page = results.GetTier(0).First().First();
+
+            page.Url.Query.Should().Contain("q=Studio");
+            page.Url.Query.Should().Contain("24.01.01");
+        }
+
+        [Test]
+        public void test_scene()
+        {
+            _capabilities.SupportedMovieSearchParameters = new[] { "q" };
+            _capabilities.TextSearchEngine = "sphinx";
+
+            var sceneSearchCriteria = new SceneSearchCriteria
+            {
+                Movie = new Movies.Movie { Title = "Some Movie & Title: Words", ForeignId = "123", },
+                SceneTitles = new List<string> { "Studio 24.01.01" },
+                ReleaseDate = new System.DateOnly(2024, 01, 01)
+            };
+
+            var results = Subject.GetSearchRequests(sceneSearchCriteria);
+
+            var page = results.GetTier(0).First().First();
+
+            page.Url.Query.Should().Contain("q=Studio");
+            page.Url.Query.Should().Contain("24.01.01");
+        }
     }
 }

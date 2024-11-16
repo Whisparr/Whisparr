@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
 using NzbDrone.Core.IndexerSearch.Definitions;
@@ -108,13 +109,28 @@ namespace NzbDrone.Core.Indexers.Newznab
 
             if (SupportsSearch)
             {
-                var queryTitles = TextSearchEngine == "raw" ? searchCriteria.SceneTitles : searchCriteria.CleanSceneTitles;
+                var raw = TextSearchEngine == "raw";
+                var queryTitles = raw ? searchCriteria.SceneTitles : searchCriteria.CleanSceneTitles;
+
+                var releaseDateStrings = new Dictionary<string, string>();
+                if (searchCriteria.ReleaseDate != null)
+                {
+                    var releaseDateValue = searchCriteria.ReleaseDate?.ToString("yy.MM.dd") ?? string.Empty;
+                    var releaseDateKey = raw ? releaseDateValue : releaseDateValue.Replace(".", "");
+
+                    releaseDateStrings.Add(releaseDateKey, releaseDateValue);
+
+                    releaseDateValue = searchCriteria.ReleaseDate?.ToString("dd.MM.yyyy") ?? string.Empty;
+                    releaseDateKey = raw ? releaseDateValue : releaseDateValue.Replace(".", "");
+                    releaseDateStrings.Add(releaseDateKey, releaseDateValue);
+                }
+
                 foreach (var queryTitle in queryTitles)
                 {
                     pageableRequests.Add(GetPagedRequests(MaxPages,
                         Settings.Categories,
                         "search",
-                        $"&q={NewsnabifyTitle(queryTitle)}"));
+                        $"&q={NewsnabifyTitle(queryTitle, releaseDateStrings)}"));
                 }
             }
 
@@ -158,7 +174,7 @@ namespace NzbDrone.Core.Indexers.Newznab
                     chain.Add(GetPagedRequests(MaxPages,
                         Settings.Categories,
                         "search",
-                        $"&q={NewsnabifyTitle(searchQuery)}"));
+                        $"&q={NewsnabifyTitle(searchQuery, null)}"));
                 }
             }
         }
@@ -192,10 +208,25 @@ namespace NzbDrone.Core.Indexers.Newznab
             }
         }
 
-        private static string NewsnabifyTitle(string title)
+        private static string NewsnabifyTitle(string title, Dictionary<string, string> releaseDateStrings)
         {
             var newtitle = title.Replace("+", " ");
-            return Uri.EscapeDataString(newtitle);
+
+            // Format the query with the date correctly
+            if (releaseDateStrings != null)
+            {
+                foreach (var releaseDateString in releaseDateStrings)
+                {
+                    if (releaseDateString.Key.IsNotNullOrWhiteSpace() && releaseDateString.Value.IsNotNullOrWhiteSpace())
+                    {
+                        newtitle = Regex.Replace(newtitle, $"{releaseDateString.Key}", $"{releaseDateString.Value}");
+                    }
+                }
+            }
+
+            newtitle = Uri.EscapeDataString(newtitle);
+
+            return newtitle;
         }
 
         public Func<IDictionary<string, string>> GetCookies { get; set; }

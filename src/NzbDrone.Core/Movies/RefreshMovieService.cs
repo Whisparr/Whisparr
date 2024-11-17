@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NLog;
+using NzbDrone.Common.Disk;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Instrumentation.Extensions;
 using NzbDrone.Core.AutoTagging;
@@ -27,6 +28,8 @@ namespace NzbDrone.Core.Movies
         private readonly IMovieService _movieService;
         private readonly IMovieMetadataService _movieMetadataService;
         private readonly IRootFolderService _folderService;
+        private readonly IDiskProvider _diskProvider;
+        private readonly IBuildMoviePaths _buildMoviePaths;
         private readonly IAlternativeTitleService _titleService;
         private readonly IAddPerformerService _performerService;
         private readonly IAddStudioService _studioService;
@@ -41,6 +44,8 @@ namespace NzbDrone.Core.Movies
                                     IMovieService movieService,
                                     IMovieMetadataService movieMetadataService,
                                     IRootFolderService folderService,
+                                    IDiskProvider diskProvider,
+                                    IBuildMoviePaths buildMoviePaths,
                                     IAlternativeTitleService titleService,
                                     IAddStudioService studioService,
                                     IAddPerformerService performerService,
@@ -55,6 +60,8 @@ namespace NzbDrone.Core.Movies
             _movieService = movieService;
             _movieMetadataService = movieMetadataService;
             _folderService = folderService;
+            _diskProvider = diskProvider;
+            _buildMoviePaths = buildMoviePaths;
             _titleService = titleService;
             _studioService = studioService;
             _performerService = performerService;
@@ -138,7 +145,7 @@ namespace NzbDrone.Core.Movies
                     QualityProfileId = movie.QualityProfileId,
                     RootFolderPath = _folderService.GetBestRootFolderPath(movie.Path),
                     Tags = movie.Tags
-                });
+                }, true);
 
                 if (newCollection != null)
                 {
@@ -161,11 +168,23 @@ namespace NzbDrone.Core.Movies
                 p.Tags = movie.Tags;
             });
 
-            _performerService.AddPerformers(performerInfo);
+            _performerService.AddPerformers(performerInfo, true);
 
             _movieMetadataService.Upsert(movieMetadata);
 
             movie.MovieMetadata = movieMetadata;
+
+            var movieFolderExists = _diskProvider.FolderExists(movie.Path);
+            if (!movie.HasFile && !movieFolderExists)
+            {
+                var path = movie.Path;
+                movie.Path = _buildMoviePaths.BuildPath(movie, false);
+                if (path != movie.Path)
+                {
+                    _logger.ProgressInfo("Updating path for {0} to {1}", movie.Title, movie.Path);
+                    _movieService.UpdateMovie(movie);
+                }
+            }
 
             _logger.Debug("Finished movie metadata refresh for {0}", movieMetadata.Title);
             _eventAggregator.PublishEvent(new MovieUpdatedEvent(movie));
@@ -272,9 +291,6 @@ namespace NzbDrone.Core.Movies
             }
             else
             {
-                // TODO refresh all moviemetadata here, even if not used by a Movie
-                var allMovie = _movieService.GetAllMovies().OrderBy(c => c.MovieMetadata.Value.SortTitle).ToList();
-
                 var updatedMovies = new HashSet<string>();
                 var updatedScenes = new HashSet<string>();
 
@@ -284,36 +300,42 @@ namespace NzbDrone.Core.Movies
                     updatedScenes = _movieInfo.GetChangedScenes(message.LastStartTime.Value);
                 }
 
-                foreach (var movie in allMovie)
+                var movieLists = _movieService.AllMovieIds().Chunk(1000);
+                foreach (var movieList in movieLists)
                 {
-                    var movieLocal = movie;
-                    if ((updatedMovies.Count == 0 && _checkIfMovieShouldBeRefreshed.ShouldRefresh(movie.MovieMetadata)) ||
-                        updatedMovies.Contains(movie.ForeignId) ||
-                        updatedScenes.Contains(movie.ForeignId) ||
-                        message.Trigger == CommandTrigger.Manual)
-                    {
-                        try
-                        {
-                            movieLocal = RefreshMovieInfo(movieLocal.Id);
-                        }
-                        catch (MovieNotFoundException)
-                        {
-                            _logger.Error("Item '{0}' (ForeignId {1}) was not found, it may have been removed from The Movie Database.", movieLocal.Title, movieLocal.ForeignId);
-                            continue;
-                        }
-                        catch (Exception e)
-                        {
-                            _logger.Error(e, "Couldn't refresh info for {0}", movieLocal);
-                        }
+                    var allMovie = _movieService.GetMovies(movieList).ToList();
 
-                        UpdateTags(movie);
-                        RescanMovie(movieLocal, false, trigger);
-                    }
-                    else
+                    foreach (var movie in allMovie)
                     {
-                        _logger.Debug("Skipping refresh of movie: {0}", movieLocal.Title);
-                        UpdateTags(movie);
-                        RescanMovie(movieLocal, false, trigger);
+                        var movieLocal = movie;
+                        if ((updatedMovies.Count == 0 && _checkIfMovieShouldBeRefreshed.ShouldRefresh(movie.MovieMetadata)) ||
+                            updatedMovies.Contains(movie.ForeignId) ||
+                            updatedScenes.Contains(movie.ForeignId) ||
+                            message.Trigger == CommandTrigger.Manual)
+                        {
+                            try
+                            {
+                                movieLocal = RefreshMovieInfo(movieLocal.Id);
+                            }
+                            catch (MovieNotFoundException)
+                            {
+                                _logger.Error("Item '{0}' (ForeignId {1}) was not found, it may have been removed from The Movie Database.", movieLocal.Title, movieLocal.ForeignId);
+                                continue;
+                            }
+                            catch (Exception e)
+                            {
+                                _logger.Error(e, "Couldn't refresh info for {0}", movieLocal);
+                            }
+
+                            UpdateTags(movie);
+                            RescanMovie(movieLocal, false, trigger);
+                        }
+                        else
+                        {
+                            _logger.Debug("Skipping refresh of movie: {0}", movieLocal.Title);
+                            UpdateTags(movie);
+                            RescanMovie(movieLocal, false, trigger);
+                        }
                     }
                 }
             }

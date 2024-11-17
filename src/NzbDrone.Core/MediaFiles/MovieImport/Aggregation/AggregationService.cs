@@ -47,7 +47,14 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Aggregation
             {
                 if (isMediaFile)
                 {
-                    throw new AugmentingFailedException("Unable to parse movie info from path: {0}", localMovie.Path);
+                    try
+                    {
+                        localMovie.Size = _diskProvider.GetFileSize(localMovie.Path);
+                    }
+                    catch (Exception)
+                    {
+                        throw new AugmentingFailedException("Unable to parse movie info from path: {0}", localMovie.Path);
+                    }
                 }
             }
 

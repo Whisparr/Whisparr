@@ -2,12 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NLog;
+using NzbDrone.Common.Cache;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Datastore;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.MediaFiles.Events;
 using NzbDrone.Core.Messaging.Events;
+using NzbDrone.Core.MetadataSource.SkyHook.Resource;
 using NzbDrone.Core.Movies.Events;
 using NzbDrone.Core.Movies.Performers;
 using NzbDrone.Core.Parser;
@@ -61,18 +63,21 @@ namespace NzbDrone.Core.Movies
         private readonly IConfigService _configService;
         private readonly IEventAggregator _eventAggregator;
         private readonly IBuildMoviePaths _moviePathBuilder;
+        private readonly ICached<MovieResource> _movieResourcesCache;
         private readonly Logger _logger;
 
         public MovieService(IMovieRepository movieRepository,
                             IEventAggregator eventAggregator,
                             IConfigService configService,
                             IBuildMoviePaths moviePathBuilder,
+                            ICacheManager cacheManager,
                             Logger logger)
         {
             _movieRepository = movieRepository;
             _eventAggregator = eventAggregator;
             _configService = configService;
             _moviePathBuilder = moviePathBuilder;
+            _movieResourcesCache = cacheManager.GetCache<MovieResource>(typeof(MovieResource), "movieResources");
             _logger = logger;
         }
 
@@ -231,6 +236,7 @@ namespace NzbDrone.Core.Movies
             _movieRepository.Delete(movieId);
             _eventAggregator.PublishEvent(new MoviesDeletedEvent(new List<Movie> { movie }, deleteFiles, addExclusion));
             _logger.Info("Deleted movie {0}", movie);
+            _movieResourcesCache.Remove($"{movieId}");
         }
 
         public void DeleteMovies(List<int> movieIds, bool deleteFiles, bool addExclusion = false)
@@ -243,6 +249,7 @@ namespace NzbDrone.Core.Movies
 
             foreach (var movie in moviesToDelete)
             {
+                _movieResourcesCache.Remove($"{movie.Id}");
                 _logger.Info("Deleted movie {0}", movie);
             }
         }
@@ -263,7 +270,7 @@ namespace NzbDrone.Core.Movies
 
             var updatedMovie = _movieRepository.Update(movie);
             _eventAggregator.PublishEvent(new MovieEditedEvent(updatedMovie, storedMovie));
-
+            _movieResourcesCache.Remove($"{movie.Id}");
             return updatedMovie;
         }
 
@@ -284,6 +291,8 @@ namespace NzbDrone.Core.Movies
                 {
                     _logger.Trace("Not changing path for: {0}", m.Title);
                 }
+
+                _movieResourcesCache.Remove($"{m.Id}");
             }
 
             _movieRepository.UpdateMany(movie);

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using DryIoc.ImTools;
 using Microsoft.AspNetCore.Mvc;
+using NzbDrone.Common.Cache;
 using NzbDrone.Common.Extensions;
+using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Datastore.Events;
 using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.Messaging.Events;
@@ -24,18 +26,26 @@ namespace Whisparr.Api.V3.Performers
         private readonly IAddPerformerService _addPerformerService;
         private readonly IMapCoversToLocal _coverMapper;
         private readonly IMovieService _moviesService;
+        private readonly IConfigService _configService;
+        private readonly bool _useCache;
+        private readonly ICached<PerformerResource> _performerResourceCache;
 
         public PerformerController(IPerformerService performerService,
                                    IAddPerformerService addPerformerService,
                                    IMapCoversToLocal coverMapper,
                                    IMovieService moviesService,
+                                   ICacheManager cacheManager,
+                                   IConfigService configService,
                                    IBroadcastSignalRMessage signalRBroadcaster)
         : base(signalRBroadcaster)
         {
             _performerService = performerService;
             _addPerformerService = addPerformerService;
+            _configService = configService;
             _coverMapper = coverMapper;
             _moviesService = moviesService;
+            _useCache = _configService.WhisparrCacheAPI;
+            _performerResourceCache = cacheManager.GetCache<PerformerResource>(typeof(PerformerResource), "performerResources");
         }
 
         protected override PerformerResource GetResourceById(int id)
@@ -52,23 +62,37 @@ namespace Whisparr.Api.V3.Performers
         {
             var performerResources = new List<PerformerResource>();
 
-            if (stashId.IsNotNullOrWhiteSpace())
+            if (_useCache)
             {
-                var performer = _performerService.FindByForeignId(stashId);
-
-                if (performer != null)
+                if (stashId.IsNotNullOrWhiteSpace())
                 {
-                    performerResources.AddIfNotNull(performer.ToResource());
+                    performerResources.AddIfNotNull(GetPerformerResource(stashId));
+                }
+                else
+                {
+                    performerResources = GetPerformerResources();
                 }
             }
             else
             {
-                performerResources = _performerService.GetAllPerformers().ToResource();
+                if (stashId.IsNotNullOrWhiteSpace())
+                {
+                    var performer = _performerService.FindByForeignId(stashId);
+
+                    if (performer != null)
+                    {
+                        performerResources.AddIfNotNull(performer.ToResource());
+                    }
+                }
+                else
+                {
+                    performerResources = _performerService.GetAllPerformers().ToResource();
+                }
+
+                var coverFileInfos = _coverMapper.GetPerformerCoverFileInfos();
+
+                _coverMapper.ConvertToLocalPerformerUrls(performerResources.Select(x => Tuple.Create(x.Id, x.Images.AsEnumerable())), coverFileInfos);
             }
-
-            var coverFileInfos = _coverMapper.GetPerformerCoverFileInfos();
-
-            _coverMapper.ConvertToLocalPerformerUrls(performerResources.Select(x => Tuple.Create(x.Id, x.Images.AsEnumerable())), coverFileInfos);
 
             return performerResources;
         }
@@ -115,6 +139,85 @@ namespace Whisparr.Api.V3.Performers
         public void Handle(PerformerUpdatedEvent message)
         {
             BroadcastResourceChange(ModelAction.Updated, message.Performer.ToResource());
+        }
+
+        private PerformerResource GetPerformerResource(string performerForeignId)
+        {
+            var performerForeignIds = new List<string> { performerForeignId };
+            return GetMovieResources(performerForeignIds).FirstOrDefault();
+        }
+
+        private List<PerformerResource> GetPerformerResources()
+        {
+            var allPerformerForeignIds = _performerService.AllPerformerForeignIds();
+            return GetMovieResources(allPerformerForeignIds);
+        }
+
+        private List<PerformerResource> GetMovieResources(List<string> performerForeignIds)
+        {
+            var performerResources = new List<PerformerResource>();
+
+            var getIds = new List<string>();
+            foreach (var id in performerForeignIds)
+            {
+                var performerResource = _performerResourceCache.Find(id);
+                if (performerResource == null)
+                {
+                    getIds.Add(id);
+                }
+                else
+                {
+                    performerResources.AddIfNotNull(performerResource);
+                }
+            }
+
+            if (getIds.Count > 0)
+            {
+                try
+                {
+                    _performerResourceCache.Lock.Wait();
+
+                    // Recheck outstanding Ids
+                    getIds.Clear();
+                    foreach (var id in performerForeignIds)
+                    {
+                        var performerResource = _performerResourceCache.Find(id);
+                        if (performerResource == null)
+                        {
+                            getIds.Add(id);
+                        }
+                        else
+                        {
+                            performerResources.AddIfNotNull(performerResource);
+                        }
+                    }
+
+                    if (getIds.Count > 0)
+                    {
+                        var performers = _performerService.FindByForeignIds(getIds);
+
+                        foreach (var performer in performers)
+                        {
+                            performerResources.AddIfNotNull(performer.ToResource());
+                        }
+
+                        var coverFileInfos = _coverMapper.GetPerformerCoverFileInfos();
+
+                        _coverMapper.ConvertToLocalPerformerUrls(performerResources.Select(x => Tuple.Create(x.Id, x.Images.AsEnumerable())), coverFileInfos);
+
+                        foreach (var performerResource in performerResources)
+                        {
+                            _performerResourceCache.Set(performerResource.ForeignId, performerResource);
+                        }
+                    }
+                }
+                finally
+                {
+                    _performerResourceCache.Lock.Release();
+                }
+            }
+
+            return performerResources;
         }
     }
 }

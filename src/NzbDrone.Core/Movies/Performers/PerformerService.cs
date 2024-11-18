@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
+using NzbDrone.Common.Cache;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Messaging.Events;
+using NzbDrone.Core.MetadataSource.SkyHook.Resource;
 using NzbDrone.Core.Movies.Performers.Events;
 
 namespace NzbDrone.Core.Movies.Performers
@@ -13,6 +15,7 @@ namespace NzbDrone.Core.Movies.Performers
         List<Performer> GetPerformers(IEnumerable<int> performerIds);
         Performer GetById(int id);
         Performer FindByForeignId(string foreignId);
+        List<Performer> FindByForeignIds(List<string> foreignIds);
         List<Performer> GetAllPerformers();
         List<string> AllPerformerForeignIds();
         Performer Update(Performer performer);
@@ -23,12 +26,14 @@ namespace NzbDrone.Core.Movies.Performers
     public class PerformerService : IPerformerService
     {
         private readonly IPerformerRepository _performerRepo;
+        private readonly ICached<PerformerResource> _performerResourceCache;
         private readonly IEventAggregator _eventAggregator;
 
-        public PerformerService(IPerformerRepository performerRepo, IEventAggregator eventAggregator)
+        public PerformerService(IPerformerRepository performerRepo, ICacheManager cacheManager, IEventAggregator eventAggregator)
         {
             _performerRepo = performerRepo;
             _eventAggregator = eventAggregator;
+            _performerResourceCache = cacheManager.GetCache<PerformerResource>(typeof(PerformerResource), "performerResources");
         }
 
         public Performer AddPerformer(Performer newPerformer)
@@ -66,6 +71,11 @@ namespace NzbDrone.Core.Movies.Performers
             return _performerRepo.FindByForeignId(foreignId);
         }
 
+        public List<Performer> FindByForeignIds(List<string> foreignIds)
+        {
+            return _performerRepo.FindByForeignIds(foreignIds);
+        }
+
         public List<Performer> GetPerformers(IEnumerable<int> performerIds)
         {
             return _performerRepo.Get(performerIds).ToList();
@@ -78,12 +88,19 @@ namespace NzbDrone.Core.Movies.Performers
 
         public Performer Update(Performer performer)
         {
-            return _performerRepo.Update(performer);
+            var newPerformer = _performerRepo.Update(performer);
+            _performerResourceCache.Remove(newPerformer.ForeignId);
+            return newPerformer;
         }
 
         public List<Performer> Update(List<Performer> performers)
         {
             _performerRepo.UpdateMany(performers);
+
+            foreach (var performer in performers)
+            {
+                _performerResourceCache.Remove(performer.ForeignId);
+            }
 
             return performers;
         }
@@ -91,6 +108,7 @@ namespace NzbDrone.Core.Movies.Performers
         public void RemovePerformer(Performer performer)
         {
             _performerRepo.Delete(performer);
+            _performerResourceCache.Remove(performer.ForeignId);
         }
 
         public List<string> AllPerformerForeignIds()

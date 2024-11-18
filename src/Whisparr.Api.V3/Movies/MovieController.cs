@@ -7,6 +7,7 @@ using DryIoc.ImTools;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
+using NzbDrone.Common.Cache;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Datastore.Events;
@@ -48,6 +49,8 @@ namespace Whisparr.Api.V3.Movies
         private readonly IRootFolderService _rootFolderService;
         private readonly IUpgradableSpecification _qualityUpgradableSpecification;
         private readonly IConfigService _configService;
+        private readonly bool _useCache;
+        private readonly ICached<MovieResource> _movieResourcesCache;
         private readonly Logger _logger;
 
         public MovieController(IBroadcastSignalRMessage signalRBroadcaster,
@@ -68,6 +71,7 @@ namespace Whisparr.Api.V3.Movies
                            SystemFolderValidator systemFolderValidator,
                            QualityProfileExistsValidator qualityProfileExistsValidator,
                            MovieFolderAsRootFolderValidator movieFolderAsRootFolderValidator,
+                           ICacheManager cacheManager,
                            Logger logger)
             : base(signalRBroadcaster)
         {
@@ -78,8 +82,11 @@ namespace Whisparr.Api.V3.Movies
             _configService = configService;
             _coverMapper = coverMapper;
             _commandQueueManager = commandQueueManager;
+            _useCache = _configService.WhisparrCacheAPI;
             _rootFolderService = rootFolderService;
             _logger = logger;
+
+            _movieResourcesCache = cacheManager.GetCache<MovieResource>(typeof(MovieResource), "movieResources");
 
             SharedValidator.RuleFor(s => s.QualityProfileId).ValidId();
 
@@ -190,18 +197,24 @@ namespace Whisparr.Api.V3.Movies
         public List<MovieResource> GetResourceByIds([FromBody] List<int> ids)
         {
             var moviesResources = new List<MovieResource>();
-
-            var movieStats = _movieStatisticsService.MovieStatistics(ids);
-            var sdict = movieStats.ToDictionary(x => x.MovieId);
-            var availDelay = _configService.AvailabilityDelay;
-            var movies = _moviesService.FindByIds(ids);
-
-            foreach (var movie in movies)
+            if (_useCache)
             {
-                moviesResources.Add(movie.ToResource(availDelay, _qualityUpgradableSpecification));
+                moviesResources = GetMovieResources(ids);
             }
+            else
+            {
+                var movieStats = _movieStatisticsService.MovieStatistics(ids);
+                var sdict = movieStats.ToDictionary(x => x.MovieId);
+                var availDelay = _configService.AvailabilityDelay;
+                var movies = _moviesService.FindByIds(ids);
 
-            LinkMovieStatistics(moviesResources, sdict);
+                foreach (var movie in movies)
+                {
+                    moviesResources.Add(movie.ToResource(availDelay, _qualityUpgradableSpecification));
+                }
+
+                LinkMovieStatistics(moviesResources, sdict);
+            }
 
             return moviesResources;
         }
@@ -209,7 +222,18 @@ namespace Whisparr.Api.V3.Movies
         [HttpGet("listByPerformerForeignId")]
         public List<int> ListByPerformerForeignId(string performerForeignId)
         {
-            return _moviesService.GetByPerformerForeignId(performerForeignId).Map(x => x.Id).ToList();
+            var moviesList = new List<int>();
+            if (_useCache)
+            {
+                var moviesResources = GetMovieResources();
+                moviesList = moviesResources.Where(m => m.Credits.Where(c => c.Performer.ForeignId == performerForeignId).Any()).Map(x => x.Id).ToList();
+            }
+            else
+            {
+                moviesList = _moviesService.GetByPerformerForeignId(performerForeignId).Map(x => x.Id).ToList();
+            }
+
+            return moviesList;
         }
 
         [HttpGet("listByStudioForeignId")]
@@ -362,6 +386,117 @@ namespace Whisparr.Api.V3.Movies
             {
                 BroadcastResourceChange(ModelAction.Updated, message.Movie.Id);
             }
+        }
+
+        private MovieResource GetMovieResource(int id)
+        {
+            return _movieResourcesCache.Get(id.ToString(), () =>
+            {
+                var ids = new List<int>() { id };
+
+                var moviesResources = new List<MovieResource>();
+                var movieStats = _movieStatisticsService.MovieStatistics(ids);
+                var sdict = movieStats.ToDictionary(x => x.MovieId);
+                var availDelay = _configService.AvailabilityDelay;
+                var movies = _moviesService.FindByIds(ids);
+
+                foreach (var movie in movies)
+                {
+                    try
+                    {
+                        moviesResources.Add(movie.ToResource(availDelay, _qualityUpgradableSpecification));
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.Error(e, "Error Converting  '{0}' to Resource", movie);
+                    }
+                }
+
+                LinkMovieStatistics(moviesResources, sdict);
+
+                return moviesResources.FirstOrDefault();
+            });
+        }
+
+        private List<MovieResource> GetMovieResources()
+        {
+            var ids = ListMovies();
+            return GetMovieResources(ids);
+        }
+
+        private List<MovieResource> GetMovieResources(List<int> ids)
+        {
+            var moviesResources = new List<MovieResource>();
+
+            var getIds = new List<int>();
+            foreach (var id in ids)
+            {
+                var movieResource = _movieResourcesCache.Find(id.ToString());
+                if (movieResource == null)
+                {
+                    getIds.Add(id);
+                }
+                else
+                {
+                    moviesResources.AddIfNotNull(movieResource);
+                }
+            }
+
+            if (getIds.Count > 0)
+            {
+                try
+                {
+                    _movieResourcesCache.Lock.Wait();
+
+                    // Recheck outstanding Ids
+                    getIds.Clear();
+                    foreach (var id in ids)
+                    {
+                        var movieResource = _movieResourcesCache.Find(id.ToString());
+                        if (movieResource == null)
+                        {
+                            getIds.Add(id);
+                        }
+                        else
+                        {
+                            moviesResources.AddIfNotNull(movieResource);
+                        }
+                    }
+
+                    if (getIds.Count > 0)
+                    {
+                        var movieStats = _movieStatisticsService.MovieStatistics(getIds);
+                        var sdict = movieStats.ToDictionary(x => x.MovieId);
+                        var availDelay = _configService.AvailabilityDelay;
+                        var movies = _moviesService.FindByIds(getIds);
+
+                        foreach (var movie in movies)
+                        {
+                            try
+                            {
+                                moviesResources.Add(movie.ToResource(availDelay, _qualityUpgradableSpecification));
+                            }
+                            catch (Exception e)
+                            {
+                                _logger.Error(e, "Error Converting  '{0}' to Resource", movie);
+                            }
+                        }
+
+                        LinkMovieStatistics(moviesResources, sdict);
+
+                        foreach (var moviesResource in moviesResources)
+                        {
+                            _movieResourcesCache.Set(moviesResource.Id.ToString(), moviesResource);
+                        }
+                    }
+                }
+                finally
+                {
+                    _movieResourcesCache.Lock.Release();
+                }
+            }
+
+            return moviesResources;
         }
     }
 }

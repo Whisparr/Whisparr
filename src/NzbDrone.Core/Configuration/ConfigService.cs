@@ -428,6 +428,13 @@ namespace NzbDrone.Core.Configuration
 
         public string ApplicationUrl => GetValue("ApplicationUrl", string.Empty);
 
+        public bool WhisparrCacheAPI
+        {
+            get { return GetValueBoolean("WhisparrCacheAPI", false); }
+
+            set { SetValue("WhisparrCacheAPI", value); }
+        }
+
         private string GetValue(string key)
         {
             return GetValue(key, string.Empty);

@@ -1771,6 +1771,8 @@
   "WeekColumnHeaderHelpText": "Shown above each column when week is the active view",
   "Weeks": "Weeks",
   "WhatsNew": "What's new?",
+  "WhisparrCacheAPI": "Cache API",
+  "CacheAPIHelpText": "Cache API calls to movie/scene and performers",
   "WhisparrCalendarFeed": "{appName} Calendar Feed",
   "WhisparrSupportsAnyDownloadClient": "{appName} supports many popular torrent and usenet download clients.",
   "WhisparrSupportsAnyIndexer": "{appName} supports any indexer that uses the Newznab standard, as well as other indexers listed below.",

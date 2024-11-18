@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace NzbDrone.Common.Cache
 {
@@ -18,5 +19,6 @@ namespace NzbDrone.Common.Cache
         T Find(string key);
 
         ICollection<T> Values { get; }
+        SemaphoreSlim Lock { get; }
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace NzbDrone.Core.ImportLists.StashDB.Favorite
@@ -7,7 +8,7 @@ namespace NzbDrone.Core.ImportLists.StashDB.Favorite
         private QueryFavoriteSceneQueryVariables _variables;
         private string _query;
 
-        public QueryFavoriteSceneQuery(int page, int pageSize, FavoriteFilter filter, SceneSort sort)
+        public QueryFavoriteSceneQuery(int page, int pageSize, FavoriteFilter filter, List<string> tags, FilterModifier tagsFilter, SceneSort sort)
         {
             _query = @"query Scenes($input: SceneQueryInput!) {
                          queryScenes(input: $input) {
@@ -19,7 +20,7 @@ namespace NzbDrone.Core.ImportLists.StashDB.Favorite
                            count
                          }
                         }";
-            _variables = new QueryFavoriteSceneQueryVariables(page, pageSize, filter, sort);
+            _variables = new QueryFavoriteSceneQueryVariables(page, pageSize, filter, tags, tagsFilter, sort);
         }
 
         public string Query
@@ -46,10 +47,15 @@ namespace NzbDrone.Core.ImportLists.StashDB.Favorite
 
     public class QueryFavoriteSceneQueryVariables : QuerySceneQueryVariablesBase
     {
-        public QueryFavoriteSceneQueryVariables(int page, int pageSize, FavoriteFilter filter, SceneSort sort)
+        public QueryFavoriteSceneQueryVariables(int page, int pageSize, FavoriteFilter filter, List<string> tags, FilterModifier tagsFilter, SceneSort sort)
             : base(page, pageSize, sort)
         {
             Input.favorites = filter;
+
+            if (tags.Count > 0)
+            {
+                Input.tags = new FilterType(tagsFilter, tags);
+            }
         }
     }
 }

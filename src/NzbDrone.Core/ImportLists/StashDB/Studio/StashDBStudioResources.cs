@@ -61,6 +61,8 @@ namespace NzbDrone.Core.ImportLists.StashDB.Studio
             {
                 Input.favorites = FavoriteFilter.PERFORMER;
             }
+
+            Input.sort = sort;
         }
     }
 }

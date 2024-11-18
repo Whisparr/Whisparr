@@ -15,6 +15,7 @@ function WhisparrSettings(props) {
   } = props;
 
   const {
+    whisparrAutoMatchOnDate,
     whisparrCacheAPI
   } = settings;
 
@@ -28,14 +29,29 @@ function WhisparrSettings(props) {
         advancedSettings={advancedSettings}
         isAdvanced={true}
       >
-        <FormLabel>{translate('CacheAPI')}</FormLabel>
+        <FormLabel>{translate('WhisparrCacheAPI')}</FormLabel>
 
         <FormInputGroup
           type={inputTypes.CHECK}
           name="whisparrCacheAPI"
-          helpText={translate('CacheAPIHelpText')}
+          helpText={translate('WhisparrCacheAPIHelpText')}
           onChange={onInputChange}
           {...whisparrCacheAPI}
+        />
+      </FormGroup>
+
+      <FormGroup
+        advancedSettings={advancedSettings}
+        isAdvanced={true}
+      >
+        <FormLabel>{translate('WhisparrAutoMatchOnDate')}</FormLabel>
+
+        <FormInputGroup
+          type={inputTypes.CHECK}
+          name="whisparrAutoMatchOnDate"
+          helpText={translate('WhisparrAutoMatchOnDateHelpText')}
+          onChange={onInputChange}
+          {...whisparrAutoMatchOnDate}
         />
       </FormGroup>
 

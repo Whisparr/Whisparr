@@ -44,6 +44,7 @@ namespace Whisparr.Api.V3.Config
         public string BackupFolder { get; set; }
         public int BackupInterval { get; set; }
         public int BackupRetention { get; set; }
+        public bool WhisparrAutoMatchOnDate { get; set; }
         public bool WhisparrCacheAPI { get; set; }
     }
 
@@ -89,6 +90,7 @@ namespace Whisparr.Api.V3.Config
                 BackupInterval = configService.BackupInterval,
                 BackupRetention = configService.BackupRetention,
                 ApplicationUrl = configService.ApplicationUrl,
+                WhisparrAutoMatchOnDate = configService.WhisparrAutoMatchOnDate,
                 WhisparrCacheAPI = configService.WhisparrCacheAPI
             };
         }

@@ -421,7 +421,7 @@ namespace NzbDrone.Core.Movies
             // This should be removed to stop any false positives.
             // Whispar may only have a single scene for the studio date but more actually exist
             // Example Monitor a performer but not the studio
-            if (movies.Count == 1)
+            if (movies.Count == 1 && _configService.WhisparrAutoMatchOnDate)
             {
                 return movies.First();
             }

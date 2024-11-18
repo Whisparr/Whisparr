@@ -101,6 +101,8 @@ namespace NzbDrone.Core.Configuration
         int BackupRetention { get; }
 
         // Whisparr
+        bool WhisparrAutoMatchOnDate { get; }
+
         bool WhisparrCacheAPI { get; }
 
         CertificateValidationType CertificateValidation { get; }

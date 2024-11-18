@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using NzbDrone.Common.EnsureThat;
 
 namespace NzbDrone.Common.Cache
@@ -31,12 +32,14 @@ namespace NzbDrone.Common.Cache
         private readonly ConcurrentDictionary<string, CacheItem> _store;
         private readonly TimeSpan? _defaultLifeTime;
         private readonly bool _rollingExpiry;
+        private readonly SemaphoreSlim _lock;
 
         public Cached(TimeSpan? defaultLifeTime = null, bool rollingExpiry = false)
         {
             _store = new ConcurrentDictionary<string, CacheItem>();
             _defaultLifeTime = defaultLifeTime;
             _rollingExpiry = rollingExpiry;
+            _lock = new SemaphoreSlim(1, 1);
         }
 
         public void Set(string key, T value, TimeSpan? lifeTime = null)
@@ -131,6 +134,8 @@ namespace NzbDrone.Common.Cache
                 return _store.Values.Select(c => c.Object).ToList();
             }
         }
+
+        public SemaphoreSlim Lock => _lock;
 
         private bool TryRemove(string key, CacheItem value)
         {

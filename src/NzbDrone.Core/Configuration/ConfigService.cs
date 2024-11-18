@@ -471,6 +471,13 @@ namespace NzbDrone.Core.Configuration
             set { SetValue("WhisparrAutoMatchOnDate", value); }
         }
 
+        public bool WhisparrCacheMovieAPI
+        {
+            get { return GetValueBoolean("WhisparrCacheMovieAPI", false); }
+
+            set { SetValue("WhisparrCacheMovieAPI", value); }
+        }
+
         private string GetValue(string key)
         {
             return GetValue(key, string.Empty);

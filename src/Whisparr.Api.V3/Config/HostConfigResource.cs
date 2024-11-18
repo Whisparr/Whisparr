@@ -45,6 +45,7 @@ namespace Whisparr.Api.V3.Config
         public int BackupInterval { get; set; }
         public int BackupRetention { get; set; }
         public bool WhisparrAutoMatchOnDate { get; set; }
+        public bool WhisparrCacheMovieAPI { get; set; }
     }
 
     public static class HostConfigResourceMapper
@@ -89,7 +90,8 @@ namespace Whisparr.Api.V3.Config
                 BackupInterval = configService.BackupInterval,
                 BackupRetention = configService.BackupRetention,
                 ApplicationUrl = configService.ApplicationUrl,
-                WhisparrAutoMatchOnDate = configService.WhisparrAutoMatchOnDate
+                WhisparrAutoMatchOnDate = configService.WhisparrAutoMatchOnDate,
+                WhisparrCacheMovieAPI = configService.WhisparrCacheMovieAPI
             };
         }
     }

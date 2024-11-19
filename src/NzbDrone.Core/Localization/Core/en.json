@@ -1824,7 +1824,13 @@
   "SupportedListsMoreInfo": "For more information on the individual import lists, click on the info buttons.",
   "SupportedListsMovie": "{appName} supports any RSS movie lists as well as the one stated below.",
   "System": "System",
+<<<<<<< HEAD
   "SystemTimeCheckMessage": "System time is off by more than 1 day. Scheduled tasks may not run correctly until the time is corrected",
+=======
+  "SystemTimeHealthCheckMessage": "System time is off by more than 1 day. Scheduled tasks may not run correctly until the time is corrected",
+  "TMDBId": "TMDb Id",
+  "TMDb": "TMDb",
+>>>>>>> 2607c67912 (Fixed: Prevent lack of internet from stopping all health checks from running)
   "Table": "Table",
   "TableOptions": "Table Options",
   "TableOptionsButton": "Table Options Button",

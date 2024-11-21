@@ -172,9 +172,11 @@ function SelectMovieModalContent(props: SelectMovieModalContentProps) {
 
     return sorted.filter(
       (item) =>
-        item.sortTitle.includes(
-          filter.toLowerCase().replace(/[^a-zA-Z ]/g, '')
-        ) || item.tmdbId.toString() === filter
+        item.cleanTitle.includes(
+          filter.toLowerCase().replace(/[^a-zA-Z0-9]/g, '')
+        ) ||
+        item.stashId === filter ||
+        item.tmdbId.toString() === filter
     );
   }, [allMovies, filter]);
 

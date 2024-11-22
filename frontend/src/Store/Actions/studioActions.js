@@ -46,6 +46,10 @@ export const defaultState = {
   tableOptions: {
   },
 
+  deleteOptions: {
+    addImportExclusion: false
+  },
+
   defaults: {
     rootFolderPath: '',
     monitor: 'movieOnly',
@@ -179,6 +183,8 @@ export const SAVE_STUDIO = 'studios/saveStudio';
 export const SAVE_STUDIO_EDITOR = 'studios/saveStudioEditor';
 export const SET_STUDIO_VALUE = 'studios/setStudioValue';
 
+export const SET_DELETE_OPTION = 'studios/setDeleteOption';
+
 export const TOGGLE_STUDIO_MONITORED = 'studios/toggleStudioMonitored';
 
 export const SET_STUDIO_SORT = 'studios/setStudioSort';
@@ -195,6 +201,17 @@ export const saveStudio = createThunk(SAVE_STUDIO);
 export const saveStudioEditor = createThunk(SAVE_STUDIO_EDITOR);
 
 export const toggleStudioMonitored = createThunk(TOGGLE_STUDIO_MONITORED);
+
+export const deleteStudio = createThunk(DELETE_STUDIO, (payload) => {
+  return {
+    ...payload,
+    queryParams: {
+      deleteFiles: payload.deleteFiles
+    }
+  };
+});
+
+export const setDeleteOption = createAction(SET_DELETE_OPTION);
 
 export const setStudioSort = createAction(SET_STUDIO_SORT);
 export const setStudioFilter = createAction(SET_STUDIO_FILTER);
@@ -312,6 +329,14 @@ export const reducers = createHandleActions({
 
   [SET_STUDIO_TABLE_OPTION]: createSetTableOptionReducer(section),
   [SET_STUDIO_VALUE]: createSetSettingValueReducer(section),
+  [SET_DELETE_OPTION]: (state, { payload }) => {
+    return {
+      ...state,
+      deleteOptions: {
+        ...payload
+      }
+    };
+  },
 
   [SET_STUDIO_POSTER_OPTION]: function(state, { payload }) {
     const posterOptions = state.posterOptions;

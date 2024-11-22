@@ -16,6 +16,8 @@ namespace NzbDrone.Core.Movies.Studios
         public string Title { get; set; }
         public string SortTitle { get; set; }
         public string CleanTitle { get; set; }
+        public string SearchTitle { get; set; }
+        public string CleanSearchTitle { get; set; }
         public string Website { get; set; }
         public List<MediaCover.MediaCover> Images { get; set; }
         public string RootFolderPath { get; set; }

@@ -18,6 +18,7 @@ import Tooltip from 'Components/Tooltip/Tooltip';
 import { icons, kinds, sizes, tooltipPositions } from 'Helpers/Props';
 import MovieInteractiveSearchModalConnector from 'Movie/Search/MovieInteractiveSearchModalConnector';
 import QualityProfileNameConnector from 'Settings/Profiles/Quality/QualityProfileNameConnector';
+import DeleteStudioModalConnector from 'Studio/Delete/DeleteStudioModalConnector';
 import EditStudioModalConnector from 'Studio/Edit/EditStudioModalConnector';
 import StudioLogo from 'Studio/StudioLogo';
 import * as keyCodes from 'Utilities/Constants/keyCodes';
@@ -79,6 +80,14 @@ class StudioDetails extends Component {
   //
   // Listeners
 
+  onDeleteMoviePress = () => {
+    this.setState({ isDeleteMovieModalOpen: true });
+  };
+
+  onDeleteMovieModalClose = () => {
+    this.setState({ isDeleteMovieModalOpen: false });
+  };
+
   onEditMoviePress = () => {
     this.setState({ isEditMovieModalOpen: true });
   };
@@ -127,6 +136,7 @@ class StudioDetails extends Component {
     if (
       touchStart < 50 ||
       this.props.isSidebarVisible ||
+      this.state.isDeleteMovieModalOpen ||
       this.state.isEditMovieModalOpen ||
       this.state.isInteractiveSearchModalOpen
     ) {
@@ -224,6 +234,7 @@ class StudioDetails extends Component {
 
     const {
       isEditMovieModalOpen,
+      isDeleteMovieModalOpen,
       isInteractiveSearchModalOpen,
       expandedState
     } = this.state;
@@ -271,6 +282,12 @@ class StudioDetails extends Component {
               label={translate('Edit')}
               iconName={icons.EDIT}
               onPress={this.onEditMoviePress}
+            />
+
+            <PageToolbarButton
+              label={translate('Delete')}
+              iconName={icons.DELETE}
+              onPress={this.onDeleteMoviePress}
             />
           </PageToolbarSection>
         </PageToolbar>
@@ -540,6 +557,13 @@ class StudioDetails extends Component {
             isOpen={isEditMovieModalOpen}
             studioId={id}
             onModalClose={this.onEditMovieModalClose}
+            onDeleteMoviePress={this.onDeleteMoviePress}
+          />
+
+          <DeleteStudioModalConnector
+            isOpen={isDeleteMovieModalOpen}
+            studioId={id}
+            onModalClose={this.onDeleteMovieModalClose}
             onDeleteMoviePress={this.onDeleteMoviePress}
           />
 

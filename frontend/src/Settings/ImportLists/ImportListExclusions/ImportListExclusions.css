@@ -4,13 +4,14 @@
   font-weight: bold;
 }
 
+.foreignId,
 .title {
   flex: 0 0 600px;
 }
 
-.tmdbId,
+.type,
 .movieYear {
-  flex: 0 0 70px;
+  flex: 0 0 100px;
 }
 
 .addImportExclusion {

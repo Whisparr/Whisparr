@@ -43,6 +43,7 @@ function createMapStateToProps() {
         minimumAvailability: studio.minimumAvailability,
         rootFolderPath: studio.rootFolderPath,
         tags: studio.tags,
+        searchTitle: studio.searchTitle,
         searchOnAdd: studio.searchOnAdd
       };
 

@@ -19,7 +19,6 @@ namespace Whisparr.Api.V3.ImportLists
 
             SharedValidator.RuleFor(c => c.ForeignId).NotEmpty();
             SharedValidator.RuleFor(c => c.MovieTitle).NotEmpty();
-            SharedValidator.RuleFor(c => c.MovieYear).GreaterThan(0);
         }
 
         [HttpGet]

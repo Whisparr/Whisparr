@@ -5,6 +5,7 @@ using DryIoc.ImTools;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Datastore.Events;
+using NzbDrone.Core.ImportLists.ImportExclusions;
 using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.Movies;
@@ -24,11 +25,13 @@ namespace Whisparr.Api.V3.Studios
         private readonly IAddStudioService _addStudioService;
         private readonly IMapCoversToLocal _coverMapper;
         private readonly IMovieService _moviesService;
+        private readonly IImportExclusionsService _exclusionService;
 
         public StudioController(IStudioService studioService,
                                 IAddStudioService addStudioService,
                                 IMapCoversToLocal coverMapper,
                                 IMovieService moviesService,
+                                IImportExclusionsService exclusionService,
                                 IBroadcastSignalRMessage signalRBroadcaster)
         : base(signalRBroadcaster)
         {
@@ -36,6 +39,7 @@ namespace Whisparr.Api.V3.Studios
             _addStudioService = addStudioService;
             _coverMapper = coverMapper;
             _moviesService = moviesService;
+            _exclusionService = exclusionService;
         }
 
         protected override StudioResource GetResourceById(int id)
@@ -106,7 +110,17 @@ namespace Whisparr.Api.V3.Studios
             // Get the scenes for the studio
             var scenes = _moviesService.GetByStudioForeignId(studio.ForeignId);
             var sceneIds = scenes.Map(x => x.Id).ToList();
-            _moviesService.DeleteMovies(sceneIds, deleteFiles, addImportExclusion);
+            _moviesService.DeleteMovies(sceneIds, deleteFiles);
+
+            if (addImportExclusion)
+            {
+                var exclusion = new ImportExclusion();
+                exclusion.ForeignId = studio.ForeignId;
+                exclusion.MovieTitle = studio.Title;
+                exclusion.Type = ImportExclusionType.Studio;
+
+                _exclusionService.AddExclusion(exclusion);
+            }
 
             // Remove the studio now that the associated scenes have been removed
             _studioService.RemoveStudio(studio);

@@ -33,9 +33,17 @@ function EditImportListExclusionModalContent(props) {
 
   const {
     movieTitle = '',
-    tmdbId,
+    foreignId = '',
+    type = 'scene',
     movieYear
   } = item;
+
+  const typeOptions = [
+    { key: 'movie', value: translate('Movie') },
+    { key: 'scene', value: translate('Scene') },
+    { key: 'studio', value: translate('Studio') },
+    { key: 'performer', value: translate('Performer') }
+  ];
 
   return (
     <ModalContent onModalClose={onModalClose}>
@@ -62,27 +70,41 @@ function EditImportListExclusionModalContent(props) {
               {...otherProps}
             >
               <FormGroup>
-                <FormLabel>{translate('TMDBId')}</FormLabel>
+                <FormLabel>{translate('ForiegnId')}</FormLabel>
 
                 <FormInputGroup
-                  type={inputTypes.NUMBER}
-                  name="tmdbId"
-                  helpText={translate('TmdbIdHelpText')}
-                  {...tmdbId}
+                  type={inputTypes.TEXT}
+                  name="foreignId"
+                  helpText={translate('ForiegnIdHelpText')}
+                  {...foreignId}
                   onChange={onInputChange}
                 />
               </FormGroup>
 
               <FormGroup>
-                <FormLabel>{translate('MovieTitle')}</FormLabel>
+                <FormLabel>{translate('ExclusionTitle')}</FormLabel>
 
                 <FormInputGroup
                   type={inputTypes.TEXT}
                   name="movieTitle"
-                  helpText={translate('MovieTitleHelpText')}
+                  helpText={translate('ExclusionTitleHelpText')}
                   {...movieTitle}
                   onChange={onInputChange}
                 />
+              </FormGroup>
+
+              <FormGroup>
+                <FormLabel>{translate('ExclusionType')}</FormLabel>
+
+                <FormInputGroup
+                  type={inputTypes.SELECT}
+                  name="type"
+                  {...type}
+                  values={typeOptions}
+                  helpText={translate('ExclusionTypeHelpText')}
+                  onChange={onInputChange}
+                />
+
               </FormGroup>
 
               <FormGroup>

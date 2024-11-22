@@ -3,10 +3,11 @@
 interface CssExports {
   'addButton': string;
   'addImportExclusion': string;
+  'foreignId': string;
   'importListExclusionsHeader': string;
   'movieYear': string;
   'title': string;
-  'tmdbId': string;
+  'type': string;
 }
 export const cssExports: CssExports;
 export default cssExports;

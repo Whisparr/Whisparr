@@ -9,6 +9,7 @@ namespace Whisparr.Api.V3.ImportLists
         // public int Id { get; set; }
         public string ForeignId { get; set; }
         public string MovieTitle { get; set; }
+        public ImportExclusionType Type { get; set; }
         public int MovieYear { get; set; }
     }
 
@@ -26,6 +27,7 @@ namespace Whisparr.Api.V3.ImportLists
                 Id = model.Id,
                 ForeignId = model.ForeignId,
                 MovieTitle = model.MovieTitle,
+                Type = model.Type,
                 MovieYear = model.MovieYear
             };
         }
@@ -42,6 +44,7 @@ namespace Whisparr.Api.V3.ImportLists
                 Id = resource.Id,
                 ForeignId = resource.ForeignId,
                 MovieTitle = resource.MovieTitle,
+                Type = resource.Type,
                 MovieYear = resource.MovieYear
             };
         }

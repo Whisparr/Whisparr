@@ -10,6 +10,7 @@ namespace Whisparr.Api.V3.Studios
     {
         public string Title { get; set; }
         public string SortTitle { get; set; }
+        public string SearchTitle { get; set; }
         public string ForeignId { get; set; }
         public string Website { get; set; }
         public string Network { get; set; }
@@ -36,6 +37,7 @@ namespace Whisparr.Api.V3.Studios
                 ForeignId = model.ForeignId,
                 Title = model.Title,
                 SortTitle = model.SortTitle,
+                SearchTitle = model.SearchTitle,
                 Website = model.Website,
                 Network = model.Network,
                 Monitored = model.Monitored,
@@ -65,6 +67,7 @@ namespace Whisparr.Api.V3.Studios
                 ForeignId = resource.ForeignId,
                 Title = resource.Title,
                 SortTitle = resource.SortTitle,
+                SearchTitle = resource.SearchTitle,
                 Website = resource.Website,
                 Network = resource.Network,
                 Monitored = resource.Monitored,

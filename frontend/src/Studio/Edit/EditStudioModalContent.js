@@ -50,6 +50,7 @@ class EditStudioModalContent extends Component {
       // Id,
       rootFolderPath,
       tags,
+      searchTitle,
       searchOnAdd
     } = item;
 
@@ -123,6 +124,17 @@ class EditStudioModalContent extends Component {
                     name="tags"
                     onChange={onInputChange}
                     {...tags}
+                  />
+                </FormGroup>
+
+                <FormGroup>
+                  <FormLabel>{translate('SearchTitle')}</FormLabel>
+
+                  <FormInputGroup
+                    type={inputTypes.TEXT}
+                    name="searchTitle"
+                    onChange={onInputChange}
+                    {...searchTitle}
                   />
                 </FormGroup>
 

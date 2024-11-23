@@ -6,6 +6,7 @@ import translate from 'Utilities/String/translate';
 import AutoCompleteInput from './AutoCompleteInput';
 import CaptchaInputConnector from './CaptchaInputConnector';
 import CheckInput from './CheckInput';
+import DateInput from './DateInput';
 import DeviceInputConnector from './DeviceInputConnector';
 import DownloadClientSelectInputConnector from './DownloadClientSelectInputConnector';
 import EnhancedSelectInput from './EnhancedSelectInput';
@@ -40,6 +41,9 @@ function getComponent(type) {
 
     case inputTypes.CHECK:
       return CheckInput;
+
+    case inputTypes.DATE:
+      return DateInput;
 
     case inputTypes.DEVICE:
       return DeviceInputConnector;

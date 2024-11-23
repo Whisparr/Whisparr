@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using Newtonsoft.Json;
+using NzbDrone.Common.Extensions;
 
 namespace NzbDrone.Core.ImportLists.StashDB
 {
@@ -39,12 +40,21 @@ namespace NzbDrone.Core.ImportLists.StashDB
         [JsonProperty("input")]
         public dynamic Input { get; set; }
 
-        public QuerySceneQueryVariablesBase(int page, int pageSize, SceneSort sort)
+        public QuerySceneQueryVariablesBase(int page, int pageSize, SceneSort sort, string dateAfter)
         {
             Input = new ExpandoObject();
             Input.page = page;
             Input.per_page = pageSize;
             Input.sort = sort;
+            if (dateAfter.IsNotNullOrWhiteSpace())
+            {
+                dynamic date = new ExpandoObject();
+
+                date.modifier = "GREATER_THAN";
+                date.value = dateAfter;
+
+                Input.date = date;
+            }
         }
     }
 }

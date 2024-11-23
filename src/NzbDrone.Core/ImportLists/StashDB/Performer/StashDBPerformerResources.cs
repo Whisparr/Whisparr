@@ -8,7 +8,7 @@ namespace NzbDrone.Core.ImportLists.StashDB.Performer
         private QueryPerformerSceneQueryVariables _variables;
         private string _query;
 
-        public QueryPerformerSceneQuery(int page, int pageSize, List<string> performers, List<string> studios, FilterModifier studiosFilter, List<string> tags, FilterModifier tagsFilter, bool onlyFavoriteStudios, SceneSort sort)
+        public QueryPerformerSceneQuery(int page, int pageSize, List<string> performers, List<string> studios, FilterModifier studiosFilter, List<string> tags, FilterModifier tagsFilter, bool onlyFavoriteStudios, SceneSort sort, string afterDate)
         {
             _query = @"query Scenes($input: SceneQueryInput!) {
                          queryScenes(input: $input) {
@@ -20,7 +20,7 @@ namespace NzbDrone.Core.ImportLists.StashDB.Performer
                            count
                          }
                         }";
-            _variables = new QueryPerformerSceneQueryVariables(page, pageSize, performers, studios, studiosFilter, tags, tagsFilter, onlyFavoriteStudios, sort);
+            _variables = new QueryPerformerSceneQueryVariables(page, pageSize, performers, studios, studiosFilter, tags, tagsFilter, onlyFavoriteStudios, sort, afterDate);
         }
 
         public string Query
@@ -47,8 +47,8 @@ namespace NzbDrone.Core.ImportLists.StashDB.Performer
 
     public class QueryPerformerSceneQueryVariables : QuerySceneQueryVariablesBase
     {
-        public QueryPerformerSceneQueryVariables(int page, int pageSize, List<string> performers, List<string> studios, FilterModifier studiosFilter, List<string> tags, FilterModifier tagsFilter, bool onlyFavoriteStudios, SceneSort sort)
-            : base(page, pageSize, sort)
+        public QueryPerformerSceneQueryVariables(int page, int pageSize, List<string> performers, List<string> studios, FilterModifier studiosFilter, List<string> tags, FilterModifier tagsFilter, bool onlyFavoriteStudios, SceneSort sort, string afterDate)
+            : base(page, pageSize, sort, afterDate)
         {
             Input.performers = new FilterType(FilterModifier.INCLUDES, performers);
             if (studios.Count > 0)

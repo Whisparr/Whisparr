@@ -31,6 +31,7 @@ namespace NzbDrone.Core.ImportLists.StashDB
             Limit = 100;
             Sort = SceneSort.CREATED;
             ApiKey = "";
+            AfterDate = null;
         }
 
         [FieldDefinition(0, Label = "Api Key", Privacy = PrivacyLevel.ApiKey, HelpText = "Your StashDB Api Key")]
@@ -41,6 +42,9 @@ namespace NzbDrone.Core.ImportLists.StashDB
 
         [FieldDefinition(2, Label = "Sort Date Descending", Type = FieldType.Select, SelectOptions = typeof(SceneSort), HelpText = "Descending sort by date style")]
         public SceneSort Sort { get; set; }
+
+        [FieldDefinition(2, Label = "Scenes Released after", Type = FieldType.Date, HelpText = "Scenes with the release date after")]
+        public string AfterDate { get; set; }
 
         public NzbDroneValidationResult Validate()
         {

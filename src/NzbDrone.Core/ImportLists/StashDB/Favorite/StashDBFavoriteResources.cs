@@ -8,7 +8,7 @@ namespace NzbDrone.Core.ImportLists.StashDB.Favorite
         private QueryFavoriteSceneQueryVariables _variables;
         private string _query;
 
-        public QueryFavoriteSceneQuery(int page, int pageSize, FavoriteFilter filter, List<string> tags, FilterModifier tagsFilter, SceneSort sort)
+        public QueryFavoriteSceneQuery(int page, int pageSize, FavoriteFilter filter, List<string> tags, FilterModifier tagsFilter, SceneSort sort, string afterDate)
         {
             _query = @"query Scenes($input: SceneQueryInput!) {
                          queryScenes(input: $input) {
@@ -20,7 +20,7 @@ namespace NzbDrone.Core.ImportLists.StashDB.Favorite
                            count
                          }
                         }";
-            _variables = new QueryFavoriteSceneQueryVariables(page, pageSize, filter, tags, tagsFilter, sort);
+            _variables = new QueryFavoriteSceneQueryVariables(page, pageSize, filter, tags, tagsFilter, sort, afterDate);
         }
 
         public string Query
@@ -47,8 +47,8 @@ namespace NzbDrone.Core.ImportLists.StashDB.Favorite
 
     public class QueryFavoriteSceneQueryVariables : QuerySceneQueryVariablesBase
     {
-        public QueryFavoriteSceneQueryVariables(int page, int pageSize, FavoriteFilter filter, List<string> tags, FilterModifier tagsFilter, SceneSort sort)
-            : base(page, pageSize, sort)
+        public QueryFavoriteSceneQueryVariables(int page, int pageSize, FavoriteFilter filter, List<string> tags, FilterModifier tagsFilter, SceneSort sort, string dateAfter)
+            : base(page, pageSize, sort, dateAfter)
         {
             Input.favorites = filter;
 

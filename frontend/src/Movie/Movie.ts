@@ -59,6 +59,7 @@ interface Movie extends ModelBase {
   added: string;
   year: number;
   releaseDate: string;
+  rootFolderPath: string;
   runtime: number;
   path: string;
   genres: string[];

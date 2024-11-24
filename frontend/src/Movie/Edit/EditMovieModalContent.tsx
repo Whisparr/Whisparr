@@ -4,11 +4,12 @@ import AppState from 'App/State/AppState';
 import { CheckInputProps } from 'Components/Form/CheckInput';
 import Form from 'Components/Form/Form';
 import FormGroup from 'Components/Form/FormGroup';
+import FormInputButton from 'Components/Form/FormInputButton';
 import FormInputGroup from 'Components/Form/FormInputGroup';
 import FormLabel from 'Components/Form/FormLabel';
-import { PathInputProps } from 'Components/Form/PathInput';
 import { QualityProfileSelectInputProps } from 'Components/Form/Select/QualityProfileSelectInput';
 import { MovieTagInputProps } from 'Components/Form/Tag/MovieTagInput';
+import Icon from 'Components/Icon';
 import Button from 'Components/Link/Button';
 import SpinnerErrorButton from 'Components/Link/SpinnerErrorButton';
 import ModalBody from 'Components/Modal/ModalBody';
@@ -16,7 +17,7 @@ import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import usePrevious from 'Helpers/Hooks/usePrevious';
-import { inputTypes, kinds, sizes } from 'Helpers/Props';
+import { icons, inputTypes, kinds, sizes } from 'Helpers/Props';
 import MoveMovieModal from 'Movie/MoveMovie/MoveMovieModal';
 import useMovie from 'Movie/useMovie';
 import { saveMovie, setMovieValue } from 'Store/Actions/movieActions';
@@ -24,6 +25,8 @@ import selectSettings from 'Store/Selectors/selectSettings';
 import { InputChanged } from 'typings/inputs';
 import { ValidationError, ValidationWarning } from 'typings/pending';
 import translate from 'Utilities/String/translate';
+import RootFolderModal from './RootFolder/RootFolderModal';
+import { RootFolderUpdated } from './RootFolder/RootFolderModalContent';
 import styles from './EditMovieModalContent.css';
 
 export interface EditMovieModalContentProps {
@@ -38,7 +41,14 @@ function EditMovieModalContent({
   onDeleteMoviePress,
 }: EditMovieModalContentProps) {
   const dispatch = useDispatch();
-  const { title, monitored, qualityProfileId, path, tags } = useMovie(movieId)!;
+  const {
+    title,
+    monitored,
+    qualityProfileId,
+    path,
+    tags,
+    rootFolderPath: initialRootFolderPath,
+  } = useMovie(movieId)!;
 
   const { isSaving, saveError, pendingChanges } = useSelector(
     (state: AppState) => state.movies
@@ -46,7 +56,11 @@ function EditMovieModalContent({
 
   const wasSaving = usePrevious(isSaving);
 
-  const isPathChanging = pendingChanges?.path && path !== pendingChanges.path;
+  const [isRootFolderModalOpen, setIsRootFolderModalOpen] = useState(false);
+
+  const [rootFolderPath, setRootFolderPath] = useState(initialRootFolderPath);
+
+  const isPathChanging = pendingChanges.path && path !== pendingChanges.path;
 
   const [isConfirmMoveModalOpen, setIsConfirmMoveModalOpen] = useState(false);
 
@@ -77,6 +91,8 @@ function EditMovieModalContent({
       | undefined;
     pending?: boolean;
   }
+
+  type PathSetting = Setting & { value: string };
 
   interface SelectSettingsResult {
     settings: Record<string, Setting>;
@@ -110,12 +126,50 @@ function EditMovieModalContent({
 
   const { settings, ...otherSettings } = memoResult;
 
+  const rawPathSetting = settings.path;
+
+  const pathSetting = useMemo<PathSetting>(() => {
+    if (!rawPathSetting) {
+      return {
+        value: '',
+        errors: [],
+        warnings: [],
+      };
+    }
+
+    return {
+      ...rawPathSetting,
+      value:
+        typeof rawPathSetting.value === 'string' ? rawPathSetting.value : '',
+    };
+  }, [rawPathSetting]);
+
   const handleInputChange = useCallback(
     ({ name, value }: InputChanged) => {
       // @ts-expect-error actions aren't typed
       dispatch(setMovieValue({ name, value }));
     },
     [dispatch]
+  );
+
+  const handleRootFolderPress = useCallback(() => {
+    setIsRootFolderModalOpen(true);
+  }, []);
+
+  const handleRootFolderModalClose = useCallback(() => {
+    setIsRootFolderModalOpen(false);
+  }, []);
+
+  const handleRootFolderChange = useCallback(
+    ({
+      path: newPath,
+      rootFolderPath: newRootFolderPath,
+    }: RootFolderUpdated) => {
+      setIsRootFolderModalOpen(false);
+      setRootFolderPath(newRootFolderPath);
+      handleInputChange({ name: 'path', value: newPath });
+    },
+    [handleInputChange]
   );
 
   const handleCancelPress = useCallback(() => {
@@ -195,10 +249,17 @@ function EditMovieModalContent({
             <FormInputGroup
               type={inputTypes.PATH}
               name="path"
-              {...(settings.path as unknown as Omit<
-                PathInputProps,
-                'className' | 'name'
-              >)}
+              {...pathSetting}
+              buttons={[
+                <FormInputButton
+                  key="fileBrowser"
+                  kind={kinds.DEFAULT}
+                  title={translate('RootFolder')}
+                  onPress={handleRootFolderPress}
+                >
+                  <Icon name={icons.ROOT_FOLDER} />
+                </FormInputButton>,
+              ]}
               includeFiles={false}
               onChange={handleInputChange}
             />
@@ -239,6 +300,14 @@ function EditMovieModalContent({
           {translate('Save')}
         </SpinnerErrorButton>
       </ModalFooter>
+
+      <RootFolderModal
+        isOpen={isRootFolderModalOpen}
+        movieId={movieId}
+        rootFolderPath={rootFolderPath}
+        onSavePress={handleRootFolderChange}
+        onModalClose={handleRootFolderModalClose}
+      />
 
       <MoveMovieModal
         originalPath={path}

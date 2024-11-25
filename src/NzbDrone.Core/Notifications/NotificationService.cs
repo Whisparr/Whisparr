@@ -44,19 +44,29 @@ namespace NzbDrone.Core.Notifications
 
         private string GetMessage(Movie movie, QualityModel quality)
         {
-            var qualityString = quality.Quality.ToString();
-            var imdbUrl = "https://www.imdb.com/title/" + movie.MovieMetadata.Value.ImdbId + "/";
+            var qualityString = quality?.Quality.ToString();
 
-            if (quality.Revision.Version > 1)
+            var url = "";
+
+            if (movie?.MovieMetadata?.Value?.ItemType == ItemType.Movie)
+            {
+                url = "https://www.imdb.com/title/" + movie?.MovieMetadata?.Value?.ImdbId + "/";
+            }
+            else
+            {
+                url = "https://stashdb.org/scenes/" + movie?.MovieMetadata?.Value?.ForeignId;
+            }
+
+            if (quality?.Revision?.Version > 1)
             {
                 qualityString += " Proper";
             }
 
             return string.Format("{0} ({1}) [{2}] {3}",
-                                    movie.Title,
-                                    movie.Year,
+                                    movie?.Title,
+                                    movie?.Year,
                                     qualityString,
-                                    imdbUrl);
+                                    url);
         }
 
         private bool ShouldHandleMovie(ProviderDefinition definition, Movie movie)
@@ -97,8 +107,8 @@ namespace NzbDrone.Core.Notifications
         {
             var grabMessage = new GrabMessage
             {
-                Message = GetMessage(message.Movie.Movie, message.Movie.ParsedMovieInfo.Quality),
-                Quality = message.Movie.ParsedMovieInfo.Quality,
+                Message = GetMessage(message.Movie?.Movie, message.Movie.ParsedMovieInfo?.Quality),
+                Quality = message.Movie?.ParsedMovieInfo?.Quality,
                 Movie = message.Movie.Movie,
                 RemoteMovie = message.Movie,
                 DownloadClientType = message.DownloadClient,
@@ -135,15 +145,15 @@ namespace NzbDrone.Core.Notifications
 
             var downloadMessage = new DownloadMessage
             {
-                Message = GetMessage(message.MovieInfo.Movie, message.MovieInfo.Quality),
+                Message = GetMessage(message.MovieInfo?.Movie, message.MovieInfo?.Quality),
                 MovieInfo = message.MovieInfo,
                 MovieFile = message.ImportedMovie,
-                Movie = message.MovieInfo.Movie,
+                Movie = message.MovieInfo?.Movie,
                 OldMovieFiles = message.OldFiles,
-                SourcePath = message.MovieInfo.Path,
+                SourcePath = message.MovieInfo?.Path,
                 DownloadClientInfo = message.DownloadClientInfo,
                 DownloadId = message.DownloadId,
-                Release = message.MovieInfo.Release
+                Release = message.MovieInfo?.Release
             };
 
             foreach (var notification in _notificationFactory.OnDownloadEnabled())
@@ -254,35 +264,42 @@ namespace NzbDrone.Core.Notifications
 
         public void Handle(ManualInteractionRequiredEvent message)
         {
-            var manualInteractionMessage = new ManualInteractionRequiredMessage
+            try
             {
-                Message = GetMessage(message.RemoteMovie.Movie, message.RemoteMovie.ParsedMovieInfo.Quality),
-                Movie = message.RemoteMovie.Movie,
-                Quality = message.RemoteMovie.ParsedMovieInfo.Quality,
-                RemoteMovie = message.RemoteMovie,
-                TrackedDownload = message.TrackedDownload,
-                DownloadClientInfo = message.TrackedDownload.DownloadItem.DownloadClientInfo,
-                DownloadId = message.TrackedDownload.DownloadItem.DownloadId,
-                Release = message.Release
-            };
-
-            foreach (var notification in _notificationFactory.OnManualInteractionEnabled())
-            {
-                try
+                var manualInteractionMessage = new ManualInteractionRequiredMessage
                 {
-                    if (!ShouldHandleMovie(notification.Definition, message.RemoteMovie.Movie))
+                    Message = GetMessage(message.RemoteMovie?.Movie, message.RemoteMovie?.ParsedMovieInfo?.Quality),
+                    Movie = message.RemoteMovie?.Movie,
+                    Quality = message.RemoteMovie?.ParsedMovieInfo?.Quality,
+                    RemoteMovie = message.RemoteMovie,
+                    TrackedDownload = message.TrackedDownload,
+                    DownloadClientInfo = message.TrackedDownload?.DownloadItem?.DownloadClientInfo,
+                    DownloadId = message.TrackedDownload?.DownloadItem?.DownloadId,
+                    Release = message.Release
+                };
+
+                foreach (var notification in _notificationFactory.OnManualInteractionEnabled())
+                {
+                    try
                     {
-                        continue;
-                    }
+                        if (!ShouldHandleMovie(notification.Definition, message.RemoteMovie.Movie))
+                        {
+                            continue;
+                        }
 
-                    notification.OnManualInteractionRequired(manualInteractionMessage);
-                    _notificationStatusService.RecordSuccess(notification.Definition.Id);
+                        notification.OnManualInteractionRequired(manualInteractionMessage);
+                        _notificationStatusService.RecordSuccess(notification.Definition.Id);
+                    }
+                    catch (Exception ex)
+                    {
+                        _notificationStatusService.RecordFailure(notification.Definition.Id);
+                        _logger.Error(ex, "Unable to send OnManualInteractionRequired notification to {0}", notification.Definition.Name);
+                    }
                 }
-                catch (Exception ex)
-                {
-                    _notificationStatusService.RecordFailure(notification.Definition.Id);
-                    _logger.Error(ex, "Unable to send OnManualInteractionRequired notification to {0}", notification.Definition.Name);
-                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Unable to send OnManualInteractionRequired message Remote Movie: {0}, Release Title: {1}, Download Item Title: {2} ", message.RemoteMovie.ToString(), message.Release?.Title, message.TrackedDownload?.DownloadItem?.Title);
             }
         }
 

@@ -224,6 +224,11 @@ namespace NzbDrone.Core.Parser
                 languages.Add(Language.Kannada);
             }
 
+            if (lowerTitle.Contains("albanian"))
+            {
+                languages.Add(Language.Albanian);
+            }
+
             // Case sensitive
             var caseSensitiveMatches = CaseSensitiveLanguageRegex.Matches(title);
 

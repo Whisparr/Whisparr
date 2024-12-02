@@ -53,7 +53,8 @@ namespace Whisparr.Api.V3.Movies
         }
 
         [HttpGet("tmdb")]
-        public object SearchByTmdbId(int tmdbId)
+        [Produces("application/json")]
+        public MovieResource SearchByTmdbId(int tmdbId)
         {
             var availDelay = _configService.AvailabilityDelay;
             var result = new Movie { MovieMetadata = _movieInfo.GetMovieInfo(tmdbId).Item1 };
@@ -61,7 +62,8 @@ namespace Whisparr.Api.V3.Movies
         }
 
         [HttpGet("imdb")]
-        public object SearchByImdbId(string imdbId)
+        [Produces("application/json")]
+        public MovieResource SearchByImdbId(string imdbId)
         {
             var result = new Movie { MovieMetadata = _movieInfo.GetMovieByImdbId(imdbId) };
 
@@ -70,7 +72,8 @@ namespace Whisparr.Api.V3.Movies
         }
 
         [HttpGet]
-        public object Search([FromQuery] string term)
+        [Produces("application/json")]
+        public IEnumerable<MovieResource> Search([FromQuery] string term)
         {
             var searchResults = _searchProxy.SearchForNewMovie(term);
 

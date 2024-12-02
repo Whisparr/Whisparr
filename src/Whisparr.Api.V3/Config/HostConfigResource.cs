@@ -45,6 +45,7 @@ namespace Whisparr.Api.V3.Config
         public string BackupFolder { get; set; }
         public int BackupInterval { get; set; }
         public int BackupRetention { get; set; }
+        public bool TrustCgnatIpAddresses { get; set; }
         public string WhisparrAlwaysExcludePerformersTag { get; set; }
         public string WhisparrAlwaysExcludeStudiosTag { get; set; }
         public string WhisparrAlwaysExcludeStudiosAfterTag { get; set; }

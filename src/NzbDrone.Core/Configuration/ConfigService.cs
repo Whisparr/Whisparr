@@ -471,6 +471,12 @@ namespace NzbDrone.Core.Configuration
 
         public string ApplicationUrl => GetValue("ApplicationUrl", string.Empty);
 
+        public bool TrustCgnatIpAddresses
+        {
+            get { return GetValueBoolean("TrustCgnatIpAddresses", false); }
+            set { SetValue("TrustCgnatIpAddresses", value); }
+        }
+
         public string WhisparrAlwaysExcludePerformersTag
         {
             get { return GetValue("WhisparrAlwaysExcludePerformersTag", ""); }

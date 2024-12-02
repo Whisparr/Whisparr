@@ -5,8 +5,8 @@ using FluentAssertions;
 using NUnit.Framework;
 using NzbDrone.Core.Messaging.Commands;
 using NzbDrone.Integration.Test.Client;
-using Radarr.Api.V3.Queue;
-using Radarr.Http;
+using Whisparr.Api.V3.Queue;
+using Whisparr.Http;
 
 namespace NzbDrone.Integration.Test.ApiTests
 {

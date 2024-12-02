@@ -1,5 +1,5 @@
-﻿using Radarr.Api.V3.Queue;
-using RestSharp;
+﻿using RestSharp;
+using Whisparr.Api.V3.Queue;
 
 namespace NzbDrone.Integration.Test.Client
 {

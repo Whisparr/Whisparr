@@ -17,13 +17,12 @@ function createMapStateToProps() {
   return createSelector(
     (state) => state.wanted.missing || {}, // ensure slice exists
     createCommandExecutingSelector(commandNames.MISSING_MOVIES_SEARCH),
-    (missing, isSearchingForMissingMovies) => {
-      const items = Array.isArray(missing.items) ? missing.items : []; // guard against race condition
+    createCommandExecutingSelector(commandNames.MOVIE_SEARCH),
+    (missing, isSearchingForMissingMovies, isSearchingForSelectedMissingMovies) => {
       return {
-        isSearchingForMissingMovies,
-        isSaving: items.filter((m) => m.isSaving).length > 1,
-        ...missing,
-        items // override with guaranteed array
+        isSearchingForMissingMovies: isSearchingForMissingMovies || isSearchingForSelectedMissingMovies,
+        isSaving: missing.items.filter((m) => m.isSaving).length > 1,
+        ...missing
       };
     }
   );

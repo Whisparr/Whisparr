@@ -428,6 +428,13 @@ namespace NzbDrone.Core.Configuration
 
         public string ApplicationUrl => GetValue("ApplicationUrl", string.Empty);
 
+        public bool WhisparrAutoMatchOnDate
+        {
+            get { return GetValueBoolean("WhisparrAutoMatchOnDate", true); }
+
+            set { SetValue("WhisparrAutoMatchOnDate", value); }
+        }
+
         private string GetValue(string key)
         {
             return GetValue(key, string.Empty);

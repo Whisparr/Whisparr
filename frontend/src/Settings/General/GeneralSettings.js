@@ -17,6 +17,7 @@ import LoggingSettings from './LoggingSettings';
 import ProxySettings from './ProxySettings';
 import SecuritySettings from './SecuritySettings';
 import UpdateSettings from './UpdateSettings';
+import WhisparrSettings from './WhisparrSettings';
 
 const requiresRestartKeys = [
   'bindAddress',
@@ -175,6 +176,12 @@ class GeneralSettings extends Component {
                 />
 
                 <BackupSettings
+                  advancedSettings={advancedSettings}
+                  settings={settings}
+                  onInputChange={onInputChange}
+                />
+
+                <WhisparrSettings
                   advancedSettings={advancedSettings}
                   settings={settings}
                   onInputChange={onInputChange}

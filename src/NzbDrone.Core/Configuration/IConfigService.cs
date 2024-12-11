@@ -62,6 +62,12 @@ namespace NzbDrone.Core.Configuration
 
         string ListSyncLevel { get; set; }
         string ImportExclusions { get; set; }
+        bool SearchTitleOnly { get; set; }
+        bool SearchTitleDate { get; set; }
+        bool SearchStudioDate { get; set; }
+        bool SearchStudioTitle { get; set; }
+        SearchDateFormatType SearchDateFormat { get; set; }
+        SearchStudioFormatType SearchStudioFormat { get; set; }
 
         // UI
         int FirstDayOfWeek { get; set; }

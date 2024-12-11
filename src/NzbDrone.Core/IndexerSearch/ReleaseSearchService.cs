@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using NLog;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Instrumentation.Extensions;
+using NzbDrone.Core.Configuration;
 using NzbDrone.Core.DecisionEngine;
 using NzbDrone.Core.Indexers;
 using NzbDrone.Core.IndexerSearch.Definitions;
@@ -28,6 +29,7 @@ namespace NzbDrone.Core.IndexerSearch
         private readonly IMovieService _movieService;
         private readonly IStudioService _studioService;
         private readonly IQualityProfileService _qualityProfileService;
+        private readonly IConfigService _configService;
         private readonly Logger _logger;
 
         public ReleaseSearchService(IIndexerFactory indexerFactory,
@@ -35,6 +37,7 @@ namespace NzbDrone.Core.IndexerSearch
                                 IMovieService movieService,
                                 IStudioService studioService,
                                 IQualityProfileService qualityProfileService,
+                                IConfigService configService,
                                 Logger logger)
         {
             _indexerFactory = indexerFactory;
@@ -42,6 +45,7 @@ namespace NzbDrone.Core.IndexerSearch
             _movieService = movieService;
             _studioService = studioService;
             _qualityProfileService = qualityProfileService;
+            _configService = configService;
             _logger = logger;
         }
 
@@ -81,14 +85,17 @@ namespace NzbDrone.Core.IndexerSearch
                 // When we search a studio name, we inject the date at the search service level.
                 // This was previously done at indexer level, however this denies us an opportunity to issue queries which may not include the date,
                 // but could include other identifying information to provide more options for the release to be found by the matcher.
-                if ((sceneSearchSpec.ReleaseDate?.ToString("yy.MM.dd") ?? string.Empty).IsNullOrWhiteSpace())
+                if ((sceneSearchSpec.ReleaseDate?.ToString("yy.MM.dd") ?? string.Empty).IsNotNullOrWhiteSpace())
                 {
-                    releaseDateStrings.Add(string.Empty);
-                }
-                else
-                {
-                    releaseDateStrings.Add(sceneSearchSpec.ReleaseDate?.ToString("yy.MM.dd") ?? string.Empty);
-                    releaseDateStrings.Add(sceneSearchSpec.ReleaseDate?.ToString("dd.MM.yyyy") ?? string.Empty);
+                    if (_configService.SearchDateFormat == SearchDateFormatType.YYMMDD || _configService.SearchDateFormat == SearchDateFormatType.BOTH)
+                    {
+                        releaseDateStrings.Add(sceneSearchSpec.ReleaseDate?.ToString("yy.MM.dd") ?? string.Empty);
+                    }
+
+                    if (_configService.SearchDateFormat == SearchDateFormatType.DDMMYYYY || _configService.SearchDateFormat == SearchDateFormatType.BOTH)
+                    {
+                        releaseDateStrings.Add(sceneSearchSpec.ReleaseDate?.ToString("dd.MM.yyyy") ?? string.Empty);
+                    }
                 }
 
                 // The sceneSearchSpec.SceneTitles list contains MovieMetadata.Title, we will inject the date here vs in the indexers.
@@ -96,11 +103,18 @@ namespace NzbDrone.Core.IndexerSearch
                 sceneSearchSpec.SceneTitles = new List<string>();
 
                 // Search for Scene Name
-                sceneSearchSpec.SceneTitles.Add(sceneSearchSpec.Movie.Title);
-                foreach (var releaseDateString in releaseDateStrings)
+                if (_configService.SearchTitleOnly)
                 {
-                    // Search for Scene Name + Date
-                    sceneSearchSpec.SceneTitles.AddRange(originalTitles.Select(title => $"{title} {releaseDateString}").ToList());
+                    sceneSearchSpec.SceneTitles.Add(sceneSearchSpec.Movie.Title);
+                }
+
+                if (_configService.SearchTitleDate)
+                {
+                    foreach (var releaseDateString in releaseDateStrings)
+                    {
+                        // Search for Scene Name + Date
+                        sceneSearchSpec.SceneTitles.AddRange(originalTitles.Select(title => $"{title} {releaseDateString}").ToList());
+                    }
                 }
 
                 if (sceneSearchSpec.SiteTitle != null)
@@ -108,17 +122,16 @@ namespace NzbDrone.Core.IndexerSearch
                     var studioTitles = _studioService.FindAllByTitle(sceneSearchSpec.SiteTitle);
                     foreach (var studioTitle in studioTitles)
                     {
-                        // Full Studio Name (Couch Casting-X)
-                        sceneSearchSpec.SceneTitles = generateSceneTitles(sceneSearchSpec.SceneTitles, studioTitle.Title, releaseDateStrings, originalTitles);
-
-                        // Studio with spaces and other characters removed (CouchCastingX)
-                        sceneSearchSpec.SceneTitles = generateSceneTitles(sceneSearchSpec.SceneTitles, studioTitle.CleanTitle, releaseDateStrings, originalTitles);
-
-                        // Remove just the space (CouchCasting-X)
-                        if (studioTitle.Title.Contains(' ', StringComparison.Ordinal))
+                        if (_configService.SearchStudioFormat == SearchStudioFormatType.ORIGINAL || _configService.SearchStudioFormat == SearchStudioFormatType.BOTH)
                         {
-                            var noSpacesSiteTitle = studioTitle.Title.Replace(" ", "", StringComparison.Ordinal);
-                            sceneSearchSpec.SceneTitles = generateSceneTitles(sceneSearchSpec.SceneTitles, noSpacesSiteTitle, releaseDateStrings, originalTitles);
+                            // Full Studio Name (Couch Casting-X)
+                            sceneSearchSpec.SceneTitles = generateSceneTitles(sceneSearchSpec.SceneTitles, studioTitle.Title, releaseDateStrings, originalTitles);
+                        }
+
+                        if (_configService.SearchStudioFormat == SearchStudioFormatType.CLEAN || _configService.SearchStudioFormat == SearchStudioFormatType.BOTH)
+                        {
+                            // Studio with spaces and other characters removed (CouchCastingX)
+                            sceneSearchSpec.SceneTitles = generateSceneTitles(sceneSearchSpec.SceneTitles, studioTitle.CleanTitle, releaseDateStrings, originalTitles);
                         }
                     }
                 }
@@ -133,22 +146,28 @@ namespace NzbDrone.Core.IndexerSearch
 
         private List<string> generateSceneTitles(List<string> sceneTitles, string studioTitle, List<string> releaseDateStrings, List<string> originalTitles)
         {
-            // Search for Studio + Scene Name
-            foreach (var originalTitle in originalTitles)
+            if (_configService.SearchStudioTitle)
             {
-                // Search for Studio + Date
-                if (!sceneTitles.Contains($"{studioTitle} {originalTitle}"))
+                // Search for Studio + Scene Name
+                foreach (var originalTitle in originalTitles)
                 {
-                    sceneTitles.Add($"{studioTitle} {originalTitle}");
+                    // Search for Studio + Date
+                    if (!sceneTitles.Contains($"{studioTitle} {originalTitle}"))
+                    {
+                        sceneTitles.Add($"{studioTitle} {originalTitle}");
+                    }
                 }
             }
 
-            // Search for Studio + Date
-            foreach (var releaseDateString in releaseDateStrings)
+            if (_configService.SearchStudioDate)
             {
-                if (!sceneTitles.Contains($"{studioTitle} {releaseDateString}"))
+                // Search for Studio + Date
+                foreach (var releaseDateString in releaseDateStrings)
                 {
-                    sceneTitles.Add($"{studioTitle} {releaseDateString}");
+                    if (!sceneTitles.Contains($"{studioTitle} {releaseDateString}"))
+                    {
+                        sceneTitles.Add($"{studioTitle} {releaseDateString}");
+                    }
                 }
             }
 

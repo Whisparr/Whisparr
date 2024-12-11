@@ -13,6 +13,12 @@ namespace Whisparr.Api.V3.Config
         public int AvailabilityDelay { get; set; }
         public bool AllowHardcodedSubs { get; set; }
         public string WhitelistedHardcodedSubs { get; set; }
+        public bool SearchTitleOnly { get; set; }
+        public bool SearchTitleDate { get; set; }
+        public bool SearchStudioDate { get; set; }
+        public bool SearchStudioTitle { get; set; }
+        public SearchDateFormatType SearchDateFormat { get; set; }
+        public SearchStudioFormatType SearchStudioFormat { get; set; }
     }
 
     public static class IndexerConfigResourceMapper
@@ -29,6 +35,12 @@ namespace Whisparr.Api.V3.Config
                 AvailabilityDelay = model.AvailabilityDelay,
                 AllowHardcodedSubs = model.AllowHardcodedSubs,
                 WhitelistedHardcodedSubs = model.WhitelistedHardcodedSubs,
+                SearchTitleOnly = model.SearchTitleOnly,
+                SearchTitleDate = model.SearchTitleDate,
+                SearchStudioDate = model.SearchStudioDate,
+                SearchStudioTitle = model.SearchStudioTitle,
+                SearchDateFormat = model.SearchDateFormat,
+                SearchStudioFormat = model.SearchStudioFormat,
             };
         }
     }

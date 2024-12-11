@@ -127,6 +127,42 @@ namespace NzbDrone.Core.Configuration
             set { SetValue("ImportExclusions", value); }
         }
 
+        public bool SearchTitleOnly
+        {
+            get { return GetValueBoolean("SearchTitleOnly"); }
+            set { SetValue("SearchTitleOnly", value); }
+        }
+
+        public bool SearchTitleDate
+        {
+            get { return GetValueBoolean("SearchTitleDate"); }
+            set { SetValue("SearchTitleDate", value); }
+        }
+
+        public bool SearchStudioDate
+        {
+            get { return GetValueBoolean("SearchStudioDate", true); }
+            set { SetValue("SearchStudioDate", value); }
+        }
+
+        public bool SearchStudioTitle
+        {
+            get { return GetValueBoolean("SearchStudioTitle"); }
+            set { SetValue("SearchStudioTitle", value); }
+        }
+
+        public SearchDateFormatType SearchDateFormat
+        {
+            get { return GetValueEnum("SearchDateFormat", SearchDateFormatType.YYMMDD); }
+            set { SetValue("SearchDateFormat", value); }
+        }
+
+        public SearchStudioFormatType SearchStudioFormat
+        {
+            get { return GetValueEnum("SearchStudioFormat", SearchStudioFormatType.CLEAN); }
+            set { SetValue("SearchStudioFormat", value); }
+        }
+
         public int MaximumSize
         {
             get { return GetValueInt("MaximumSize", 0); }

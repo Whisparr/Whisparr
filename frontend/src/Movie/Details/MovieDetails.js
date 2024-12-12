@@ -35,6 +35,7 @@ import formatBytes from 'Utilities/Number/formatBytes';
 import translate from 'Utilities/String/translate';
 import MovieCastPostersConnector from './Credits/Cast/MovieCastPostersConnector';
 import MovieDetailsLinks from './MovieDetailsLinks';
+import MovieGenres from './MovieGenres';
 import MovieReleaseDates from './MovieReleaseDates';
 import MovieStatusLabel from './MovieStatusLabel';
 import MovieStudioLink from './MovieStudioLink';
@@ -540,16 +541,16 @@ class MovieDetails extends Component {
                       null
                   }
 
-                  {!!genres.length && !isSmallScreen &&
-                    <InfoLabel
-                      className={styles.detailsInfoLabel}
-                      title={translate('Genres')}
-                      size={sizes.LARGE}
-                    >
-                      <span className={styles.genres}>
-                        {genres.slice(0, 3).join(', ')}
-                      </span>
-                    </InfoLabel>
+                  {
+                    genres.length && !isSmallScreen ?
+                      <InfoLabel
+                        className={styles.detailsInfoLabel}
+                        name={translate('Genres')}
+                        size={sizes.LARGE}
+                      >
+                        <MovieGenres className={styles.genres} genres={genres} />
+                      </InfoLabel> :
+                      null
                   }
                 </div>
 

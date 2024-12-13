@@ -11,6 +11,7 @@ import { icons, kinds, sizes, tooltipPositions } from 'Helpers/Props';
 import MovieDetailsLinks from 'Movie/Details/MovieDetailsLinks';
 import MovieStatusLabel from 'Movie/Details/MovieStatusLabel';
 import MovieIndexProgressBar from 'Movie/Index/ProgressBar/MovieIndexProgressBar';
+import MovieGenres from 'Movie/MovieGenres';
 import MoviePoster from 'Movie/MoviePoster';
 import ScenePoster from 'Scene/ScenePoster';
 import createUISettingsSelector from 'Store/Selectors/createUISettingsSelector';
@@ -310,19 +311,14 @@ class AddNewMovieSearchResult extends Component {
 
               {
                 genres.length > 0 ?
-                  genres.slice(0, 10).map((genre, index) => {
-                    return (
-                      <Label key={genre} size={sizes.LARGE}>
-                        <Icon
-                          name={icons.TAGS}
-                          size={13}
-                        />
-                        <span className={styles.genres}>
-                          {genre}
-                        </span>
-                      </Label>
-                    );
-                  }) : null
+                  <Label size={sizes.LARGE}>
+                    <Icon
+                      name={icons.GENRE}
+                      size={13}
+                    />
+                    <MovieGenres className={styles.genres} genres={genres} />
+                  </Label> :
+                  null
               }
 
               <Tooltip
@@ -347,7 +343,7 @@ class AddNewMovieSearchResult extends Component {
                 }
                 canFlip={true}
                 kind={kinds.INVERSE}
-                position={tooltipPositions.BOTTOM}
+                position={tooltipPositions.TOP}
               />
 
               {

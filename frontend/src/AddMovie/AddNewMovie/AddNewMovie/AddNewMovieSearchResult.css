@@ -98,6 +98,10 @@
   margin-left: 5px;
 }
 
+.genres {
+  pointer-events: all;
+}
+
 .links {
   margin-left: 5px;
   pointer-events: all;

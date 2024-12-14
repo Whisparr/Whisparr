@@ -7,15 +7,16 @@
   line-height: 30px;
 }
 
+.foreignId,
 .movieTitle {
   @add-mixin truncate;
 
   flex: 0 0 600px;
 }
 
-.tmdbId,
+.type,
 .movieYear {
-  flex: 0 0 70px;
+  flex: 0 0 100px;
 }
 
 .actions {

@@ -5,6 +5,7 @@ using DryIoc.ImTools;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Datastore.Events;
+using NzbDrone.Core.ImportLists.ImportExclusions;
 using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.Movies;
@@ -24,11 +25,13 @@ namespace Whisparr.Api.V3.Performers
         private readonly IAddPerformerService _addPerformerService;
         private readonly IMapCoversToLocal _coverMapper;
         private readonly IMovieService _moviesService;
+        private readonly IImportExclusionsService _exclusionService;
 
         public PerformerController(IPerformerService performerService,
                                    IAddPerformerService addPerformerService,
                                    IMapCoversToLocal coverMapper,
                                    IMovieService moviesService,
+                                   IImportExclusionsService exclusionService,
                                    IBroadcastSignalRMessage signalRBroadcaster)
         : base(signalRBroadcaster)
         {
@@ -36,6 +39,7 @@ namespace Whisparr.Api.V3.Performers
             _addPerformerService = addPerformerService;
             _coverMapper = coverMapper;
             _moviesService = moviesService;
+            _exclusionService = exclusionService;
         }
 
         protected override PerformerResource GetResourceById(int id)
@@ -106,7 +110,17 @@ namespace Whisparr.Api.V3.Performers
             // Get the scenes for the performer
             var scenes = _moviesService.GetByPerformerForeignId(performer.ForeignId);
             var sceneIds = scenes.Map(x => x.Id).ToList();
-            _moviesService.DeleteMovies(sceneIds, deleteFiles, addImportExclusion);
+            _moviesService.DeleteMovies(sceneIds, deleteFiles);
+
+            if (addImportExclusion)
+            {
+                var exclusion = new ImportExclusion();
+                exclusion.ForeignId = performer.ForeignId;
+                exclusion.MovieTitle = performer.Name;
+                exclusion.Type = ImportExclusionType.Performer;
+
+                _exclusionService.AddExclusion(exclusion);
+            }
 
             // Remove the performer now that the associated scenes have been removed
             _performerService.RemovePerformer(performer);

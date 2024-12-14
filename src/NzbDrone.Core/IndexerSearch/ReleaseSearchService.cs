@@ -122,16 +122,23 @@ namespace NzbDrone.Core.IndexerSearch
                     var studioTitles = _studioService.FindAllByTitle(sceneSearchSpec.SiteTitle);
                     foreach (var studioTitle in studioTitles)
                     {
-                        if (_configService.SearchStudioFormat == SearchStudioFormatType.ORIGINAL || _configService.SearchStudioFormat == SearchStudioFormatType.BOTH)
+                        if (studioTitle.SearchTitle.IsNotNullOrWhiteSpace())
                         {
-                            // Full Studio Name (Couch Casting-X)
-                            sceneSearchSpec.SceneTitles = generateSceneTitles(sceneSearchSpec.SceneTitles, studioTitle.Title, releaseDateStrings, originalTitles);
+                            sceneSearchSpec.SceneTitles = generateSceneTitles(sceneSearchSpec.SceneTitles, studioTitle.SearchTitle, releaseDateStrings, originalTitles);
                         }
-
-                        if (_configService.SearchStudioFormat == SearchStudioFormatType.CLEAN || _configService.SearchStudioFormat == SearchStudioFormatType.BOTH)
+                        else
                         {
-                            // Studio with spaces and other characters removed (CouchCastingX)
-                            sceneSearchSpec.SceneTitles = generateSceneTitles(sceneSearchSpec.SceneTitles, studioTitle.CleanTitle, releaseDateStrings, originalTitles);
+                            if (_configService.SearchStudioFormat == SearchStudioFormatType.ORIGINAL || _configService.SearchStudioFormat == SearchStudioFormatType.BOTH)
+                            {
+                                // Full Studio Name (Couch Casting-X)
+                                sceneSearchSpec.SceneTitles = generateSceneTitles(sceneSearchSpec.SceneTitles, studioTitle.Title, releaseDateStrings, originalTitles);
+                            }
+
+                            if (_configService.SearchStudioFormat == SearchStudioFormatType.CLEAN || _configService.SearchStudioFormat == SearchStudioFormatType.BOTH)
+                            {
+                                // Studio with spaces and other characters removed (CouchCastingX)
+                                sceneSearchSpec.SceneTitles = generateSceneTitles(sceneSearchSpec.SceneTitles, studioTitle.CleanTitle, releaseDateStrings, originalTitles);
+                            }
                         }
                     }
                 }

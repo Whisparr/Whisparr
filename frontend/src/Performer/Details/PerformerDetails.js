@@ -18,6 +18,7 @@ import Tooltip from 'Components/Tooltip/Tooltip';
 import { icons, kinds, sizes, tooltipPositions } from 'Helpers/Props';
 import MovieHeadshot from 'Movie/MovieHeadshot';
 import MovieInteractiveSearchModalConnector from 'Movie/Search/MovieInteractiveSearchModalConnector';
+import DeletePerformerModalConnector from 'Performer/Delete/DeletePerformerModalConnector';
 import EditPerformerModalConnector from 'Performer/Edit/EditPerformerModalConnector';
 import { getPerformerStatusDetails } from 'Performer/PerformerStatus';
 import QualityProfileNameConnector from 'Settings/Profiles/Quality/QualityProfileNameConnector';
@@ -54,6 +55,7 @@ class PerformerDetails extends Component {
 
     this.state = {
       isEditMovieModalOpen: false,
+      isDeleteMovieModalOpen: false,
       isInteractiveSearchModalOpen: false,
       allExpanded: false,
       allCollapsed: false,
@@ -80,6 +82,14 @@ class PerformerDetails extends Component {
 
   //
   // Listeners
+
+  onDeleteMoviePress = () => {
+    this.setState({ isDeleteMovieModalOpen: true });
+  };
+
+  onDeleteMovieModalClose = () => {
+    this.setState({ isDeleteMovieModalOpen: false });
+  };
 
   onEditMoviePress = () => {
     this.setState({ isEditMovieModalOpen: true });
@@ -129,6 +139,7 @@ class PerformerDetails extends Component {
     if (
       touchStart < 50 ||
       this.props.isSidebarVisible ||
+      this.state.isDeleteMovieModalOpen ||
       this.state.isEditMovieModalOpen ||
       this.state.isInteractiveSearchModalOpen
     ) {
@@ -229,6 +240,7 @@ class PerformerDetails extends Component {
     } = this.props;
 
     const {
+      isDeleteMovieModalOpen,
       isEditMovieModalOpen,
       isInteractiveSearchModalOpen,
       expandedState
@@ -277,6 +289,12 @@ class PerformerDetails extends Component {
               label={translate('Edit')}
               iconName={icons.EDIT}
               onPress={this.onEditMoviePress}
+            />
+
+            <PageToolbarButton
+              label={translate('Delete')}
+              iconName={icons.DELETE}
+              onPress={this.onDeleteMoviePress}
             />
           </PageToolbarSection>
         </PageToolbar>
@@ -562,11 +580,16 @@ class PerformerDetails extends Component {
             }
           </div>
 
+          <DeletePerformerModalConnector
+            isOpen={isDeleteMovieModalOpen}
+            performerId={id}
+            onModalClose={this.onDeleteMovieModalClose}
+          />
+
           <EditPerformerModalConnector
             isOpen={isEditMovieModalOpen}
             performerId={id}
             onModalClose={this.onEditMovieModalClose}
-            onDeleteMoviePress={this.onDeleteMoviePress}
           />
 
           <MovieInteractiveSearchModalConnector

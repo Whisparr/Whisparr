@@ -6,11 +6,12 @@ namespace NzbDrone.Core.ImportLists.ImportExclusions
     {
         public string ForeignId { get; set; }
         public string MovieTitle { get; set; }
+        public ImportExclusionType Type { get; set; }
         public int MovieYear { get; set; }
 
         public new string ToString()
         {
-            return string.Format("Excluded Movie: [{0}][{1} {2}]", ForeignId, MovieTitle, MovieYear);
+            return string.Format("Excluded Movie: [{0}][{1}][{2} {3}]", Type, ForeignId, MovieTitle, MovieYear);
         }
     }
 }

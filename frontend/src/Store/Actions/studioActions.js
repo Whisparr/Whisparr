@@ -9,6 +9,7 @@ import translate from 'Utilities/String/translate';
 import { set, updateItem } from './baseActions';
 import createFetchHandler from './Creators/createFetchHandler';
 import createHandleActions from './Creators/createHandleActions';
+import createRemoveItemHandler from './Creators/createRemoveItemHandler';
 import createSaveProviderHandler from './Creators/createSaveProviderHandler';
 import createSetClientSideCollectionFilterReducer from './Creators/Reducers/createSetClientSideCollectionFilterReducer';
 import createSetClientSideCollectionSortReducer from './Creators/Reducers/createSetClientSideCollectionSortReducer';
@@ -44,6 +45,10 @@ export const defaultState = {
   },
 
   tableOptions: {
+  },
+
+  deleteOptions: {
+    addImportExclusion: false
   },
 
   defaults: {
@@ -176,8 +181,11 @@ export const persistState = [
 
 export const FETCH_STUDIOS = 'studios/fetchStudios';
 export const SAVE_STUDIO = 'studios/saveStudio';
+export const DELETE_STUDIO = 'studios/deleteStudio';
 export const SAVE_STUDIO_EDITOR = 'studios/saveStudioEditor';
 export const SET_STUDIO_VALUE = 'studios/setStudioValue';
+
+export const SET_DELETE_OPTION = 'studios/setDeleteOption';
 
 export const TOGGLE_STUDIO_MONITORED = 'studios/toggleStudioMonitored';
 
@@ -195,6 +203,17 @@ export const saveStudio = createThunk(SAVE_STUDIO);
 export const saveStudioEditor = createThunk(SAVE_STUDIO_EDITOR);
 
 export const toggleStudioMonitored = createThunk(TOGGLE_STUDIO_MONITORED);
+
+export const deleteStudio = createThunk(DELETE_STUDIO, (payload) => {
+  return {
+    ...payload,
+    queryParams: {
+      deleteFiles: payload.deleteFiles
+    }
+  };
+});
+
+export const setDeleteOption = createAction(SET_DELETE_OPTION);
 
 export const setStudioSort = createAction(SET_STUDIO_SORT);
 export const setStudioFilter = createAction(SET_STUDIO_FILTER);
@@ -215,6 +234,7 @@ export const setStudioValue = createAction(SET_STUDIO_VALUE, (payload) => {
 export const actionHandlers = handleThunks({
   [FETCH_STUDIOS]: createFetchHandler(section, '/studio'),
   [SAVE_STUDIO]: createSaveProviderHandler(section, '/studio'),
+  [DELETE_STUDIO]: createRemoveItemHandler(section, '/studio'),
 
   [TOGGLE_STUDIO_MONITORED]: (getState, payload, dispatch) => {
     const {
@@ -312,6 +332,14 @@ export const reducers = createHandleActions({
 
   [SET_STUDIO_TABLE_OPTION]: createSetTableOptionReducer(section),
   [SET_STUDIO_VALUE]: createSetSettingValueReducer(section),
+  [SET_DELETE_OPTION]: (state, { payload }) => {
+    return {
+      ...state,
+      deleteOptions: {
+        ...payload
+      }
+    };
+  },
 
   [SET_STUDIO_POSTER_OPTION]: function(state, { payload }) {
     const posterOptions = state.posterOptions;

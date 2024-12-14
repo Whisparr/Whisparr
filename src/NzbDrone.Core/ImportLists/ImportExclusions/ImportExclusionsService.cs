@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NLog;
 using NzbDrone.Core.Messaging.Events;
+using NzbDrone.Core.Movies;
 using NzbDrone.Core.Movies.Events;
 
 namespace NzbDrone.Core.ImportLists.ImportExclusions
@@ -68,6 +69,12 @@ namespace NzbDrone.Core.ImportLists.ImportExclusions
 
         public ImportExclusion Update(ImportExclusion exclusion)
         {
+            int.TryParse(exclusion.ForeignId, out var tmbdId);
+            if (exclusion.Type == ImportExclusionType.Scene && tmbdId != 0)
+            {
+                exclusion.Type = ImportExclusionType.Movie;
+            }
+
             return _exclusionRepository.Update(exclusion);
         }
 
@@ -77,7 +84,7 @@ namespace NzbDrone.Core.ImportLists.ImportExclusions
             {
                 _logger.Debug("Adding {0} Deleted Movies to Import Exclusions", message.Movies.Count);
 
-                var exclusions = message.Movies.Select(m => new ImportExclusion { ForeignId = m.ForeignId, MovieTitle = m.Title, MovieYear = m.Year }).ToList();
+                var exclusions = message.Movies.Select(m => new ImportExclusion { ForeignId = m.ForeignId, Type = ToImportExclusionType(m.MovieMetadata.Value.ItemType), MovieTitle = m.Title, MovieYear = m.Year }).ToList();
                 _exclusionRepository.InsertMany(DeDupeExclusions(exclusions));
             }
         }
@@ -90,6 +97,16 @@ namespace NzbDrone.Core.ImportLists.ImportExclusions
                 .DistinctBy(x => x.ForeignId)
                 .Where(x => !existingExclusions.Contains(x.ForeignId))
                 .ToList();
+        }
+
+        private ImportExclusionType ToImportExclusionType(ItemType itemType)
+        {
+            if (itemType == ItemType.Movie)
+            {
+                return ImportExclusionType.Movie;
+            }
+
+            return ImportExclusionType.Scene;
         }
     }
 }

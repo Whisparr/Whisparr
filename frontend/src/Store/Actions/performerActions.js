@@ -10,6 +10,7 @@ import translate from 'Utilities/String/translate';
 import { set, updateItem } from './baseActions';
 import createFetchHandler from './Creators/createFetchHandler';
 import createHandleActions from './Creators/createHandleActions';
+import createRemoveItemHandler from './Creators/createRemoveItemHandler';
 import createSaveProviderHandler from './Creators/createSaveProviderHandler';
 import createSetClientSideCollectionFilterReducer from './Creators/Reducers/createSetClientSideCollectionFilterReducer';
 import createSetClientSideCollectionSortReducer from './Creators/Reducers/createSetClientSideCollectionSortReducer';
@@ -48,6 +49,10 @@ export const defaultState = {
   },
 
   tableOptions: {
+  },
+
+  deleteOptions: {
+    addImportExclusion: false
   },
 
   defaults: {
@@ -228,6 +233,9 @@ export const SAVE_PERFORMER = 'performers/savePerformer';
 export const SAVE_PERFORMER_EDITOR = 'performers/savePerformerEditor';
 export const SET_PERFORMER_VALUE = 'performers/setPerformerValue';
 
+export const DELETE_PERFORMER = 'performers/deletePerformer';
+export const SET_DELETE_OPTION = 'performers/setDeleteOption';
+
 export const TOGGLE_PERFORMER_MONITORED = 'performers/togglePerformerMonitored';
 
 export const SET_PERFORMER_SORT = 'performers/setPerformerSort';
@@ -242,6 +250,17 @@ export const SET_PERFORMER_POSTER_OPTION = 'performers/setPerformerPosterOption'
 export const fetchPerformers = createThunk(FETCH_PERFORMERS);
 export const savePerformer = createThunk(SAVE_PERFORMER);
 export const savePerformerEditor = createThunk(SAVE_PERFORMER_EDITOR);
+
+export const deletePerformer = createThunk(DELETE_PERFORMER, (payload) => {
+  return {
+    ...payload,
+    queryParams: {
+      deleteFiles: payload.deleteFiles
+    }
+  };
+});
+
+export const setDeleteOption = createAction(SET_DELETE_OPTION);
 
 export const togglePerformerMonitored = createThunk(TOGGLE_PERFORMER_MONITORED);
 
@@ -264,6 +283,7 @@ export const setPerformerValue = createAction(SET_PERFORMER_VALUE, (payload) => 
 export const actionHandlers = handleThunks({
   [FETCH_PERFORMERS]: createFetchHandler(section, '/performer'),
   [SAVE_PERFORMER]: createSaveProviderHandler(section, '/performer'),
+  [DELETE_PERFORMER]: createRemoveItemHandler(section, '/performer'),
 
   [TOGGLE_PERFORMER_MONITORED]: (getState, payload, dispatch) => {
     const {
@@ -361,6 +381,14 @@ export const reducers = createHandleActions({
 
   [SET_PERFORMER_TABLE_OPTION]: createSetTableOptionReducer(section),
   [SET_PERFORMER_VALUE]: createSetSettingValueReducer(section),
+  [SET_DELETE_OPTION]: (state, { payload }) => {
+    return {
+      ...state,
+      deleteOptions: {
+        ...payload
+      }
+    };
+  },
 
   [SET_PERFORMER_POSTER_OPTION]: function(state, { payload }) {
     const posterOptions = state.posterOptions;

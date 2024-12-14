@@ -21,6 +21,48 @@ function IndexerOptions(props) {
     onWhitelistedSubtitleChange
   } = props;
 
+  const searchDateFormatOptions = [
+    {
+      key: 'yymmdd',
+      get value() {
+        return translate('yymmdd');
+      }
+    },
+    {
+      key: 'ddmmyyyy',
+      get value() {
+        return translate('ddmmyyyy');
+      }
+    },
+    {
+      key: 'both',
+      get value() {
+        return translate('Both');
+      }
+    }
+  ];
+
+  const searchStudioFormatOptions = [
+    {
+      key: 'original',
+      get value() {
+        return translate('Original');
+      }
+    },
+    {
+      key: 'clean',
+      get value() {
+        return translate('Clean');
+      }
+    },
+    {
+      key: 'both',
+      get value() {
+        return translate('Both');
+      }
+    }
+  ];
+
   return (
     <FieldSet legend={translate('Options')}>
       {
@@ -153,6 +195,98 @@ function IndexerOptions(props) {
                 helpText={translate('AllowHardcodedSubsHelpText')}
                 onChange={onInputChange}
                 {...settings.allowHardcodedSubs}
+              />
+            </FormGroup>
+
+            <FormGroup
+              advancedSettings={advancedSettings}
+              isAdvanced={true}
+            >
+              <FormLabel>{translate('SearchTitleOnly')}</FormLabel>
+
+              <FormInputGroup
+                type={inputTypes.CHECK}
+                name="searchTitleOnly"
+                helpText={translate('SearchTitleOnlyHelpText')}
+                onChange={onInputChange}
+                {...settings.searchTitleOnly}
+              />
+            </FormGroup>
+
+            <FormGroup
+              advancedSettings={advancedSettings}
+              isAdvanced={true}
+            >
+              <FormLabel>{translate('SearchTitleDate')}</FormLabel>
+
+              <FormInputGroup
+                type={inputTypes.CHECK}
+                name="searchTitleDate"
+                helpText={translate('SearchTitleDateHelpText')}
+                onChange={onInputChange}
+                {...settings.searchTitleDate}
+              />
+            </FormGroup>
+
+            <FormGroup
+              advancedSettings={advancedSettings}
+              isAdvanced={true}
+            >
+              <FormLabel>{translate('SearchStudioDate')}</FormLabel>
+
+              <FormInputGroup
+                type={inputTypes.CHECK}
+                name="searchStudioDate"
+                helpText={translate('SearchStudioDateHelpText')}
+                onChange={onInputChange}
+                {...settings.searchStudioDate}
+              />
+            </FormGroup>
+
+            <FormGroup
+              advancedSettings={advancedSettings}
+              isAdvanced={true}
+            >
+              <FormLabel>{translate('SearchStudioTitle')}</FormLabel>
+
+              <FormInputGroup
+                type={inputTypes.CHECK}
+                name="searchStudioTitle"
+                helpText={translate('SearchStudioTitleHelpText')}
+                onChange={onInputChange}
+                {...settings.searchStudioTitle}
+              />
+            </FormGroup>
+
+            <FormGroup
+              advancedSettings={advancedSettings}
+              isAdvanced={true}
+            >
+              <FormLabel>{translate('SearchDateFormat')}</FormLabel>
+
+              <FormInputGroup
+                type={inputTypes.SELECT}
+                name="searchDateFormat"
+                values={searchDateFormatOptions}
+                helpText={translate('SearchDateFormatHelpText')}
+                onChange={onInputChange}
+                {...settings.searchDateFormat}
+              />
+            </FormGroup>
+
+            <FormGroup
+              advancedSettings={advancedSettings}
+              isAdvanced={true}
+            >
+              <FormLabel>{translate('SearchStudioFormat')}</FormLabel>
+
+              <FormInputGroup
+                type={inputTypes.SELECT}
+                name="searchStudioFormat"
+                values={searchStudioFormatOptions}
+                helpText={translate('SearchStudioFormatHelpText')}
+                onChange={onInputChange}
+                {...settings.searchStudioFormat}
               />
             </FormGroup>
           </Form>

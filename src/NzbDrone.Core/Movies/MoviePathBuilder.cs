@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Organizer;
@@ -26,7 +26,11 @@ namespace NzbDrone.Core.Movies
         {
             if (movie.RootFolderPath.IsNullOrWhiteSpace())
             {
-                throw new ArgumentException("Root folder was not provided", nameof(movie));
+                movie.RootFolderPath = _rootFolderService.GetBestRootFolderPath(movie.Path);
+                if (movie.RootFolderPath.IsNullOrWhiteSpace())
+                {
+                    throw new ArgumentException("Root folder was not provided", nameof(movie));
+                }
             }
 
             if (useExistingRelativeFolder && movie.Path.IsNotNullOrWhiteSpace())

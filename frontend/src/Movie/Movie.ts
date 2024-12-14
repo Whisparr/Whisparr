@@ -28,9 +28,11 @@ export interface Ratings {
 interface Movie extends ModelBase {
   tmdbId: number;
   imdbId: string;
+  stashId: string;
   itemType: string;
   foreignId: string;
   sortTitle: string;
+  cleanTitle: string;
   overview: string;
   monitored: boolean;
   status: string;

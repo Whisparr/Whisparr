@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using NLog;
+using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
 
 namespace NzbDrone.Core.ImportLists.StashDB.Favorite
@@ -31,9 +33,17 @@ namespace NzbDrone.Core.ImportLists.StashDB.Favorite
 
         private IEnumerable<ImportListRequest> GetSceneRequest()
         {
-            Logger.Info($"Importing StashDB scenes from favorites: {Settings.Filter}");
+            var parameterLog = $"Importing StashDB scenes from favorites: {Settings.Filter}";
 
-            var querySceneQuery = new QueryFavoriteSceneQuery(1, _pageSize, Settings.Filter, Settings.Sort);
+            var tags = SettingToList(Settings.Tags);
+            if (tags.Count > 0)
+            {
+                parameterLog += $"\r\n Tags: {tags.Join(",")}";
+            }
+
+            Logger.Info(parameterLog);
+
+            var querySceneQuery = new QueryFavoriteSceneQuery(1, _pageSize, Settings.Filter, tags, Settings.TagsFilter, Settings.Sort);
 
             var requestBuilder = RequestBuilder
                                         .Create()
@@ -65,6 +75,18 @@ namespace NzbDrone.Core.ImportLists.StashDB.Favorite
             }
 
             return requests;
+        }
+
+        private List<string> SettingToList(string value)
+        {
+            var list = new List<string>();
+
+            if (!string.IsNullOrEmpty(value?.Trim()))
+            {
+                list = Array.ConvertAll(value.Split(","), x => x.Trim()).Where(x => !string.IsNullOrEmpty(x)).ToList();
+            }
+
+            return list;
         }
     }
 }

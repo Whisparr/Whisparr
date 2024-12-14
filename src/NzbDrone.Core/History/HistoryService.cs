@@ -238,7 +238,16 @@ namespace NzbDrone.Core.History
         public void Handle(MovieFileRenamedEvent message)
         {
             var sourcePath = message.OriginalPath;
-            var sourceRelativePath = message.Movie.Path.GetRelativePath(message.OriginalPath);
+            var sourceRelativePath = "";
+            try
+            {
+                sourceRelativePath = message.Movie.Path.GetRelativePath(message.OriginalPath);
+            }
+            catch
+            {
+                _logger.Error("Trying to RelativePath for {0} with {1}", message.Movie.Path, message.OriginalPath);
+            }
+
             var path = Path.Combine(message.Movie.Path, message.MovieFile.RelativePath);
             var relativePath = message.MovieFile.RelativePath;
 

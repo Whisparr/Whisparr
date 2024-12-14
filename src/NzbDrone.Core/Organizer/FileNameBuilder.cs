@@ -24,6 +24,7 @@ namespace NzbDrone.Core.Organizer
     {
         string BuildFileName(Movie movie, MovieFile movieFile, NamingConfig namingConfig = null, List<CustomFormat> customFormats = null);
         string BuildFilePath(Movie movie, string fileName, string extension);
+        string BuildFilePath(string path, string fileName, string extension);
         string GetMovieFolder(Movie movie, NamingConfig namingConfig = null);
     }
 
@@ -164,6 +165,13 @@ namespace NzbDrone.Core.Organizer
             Ensure.That(extension, () => extension).IsNotNullOrWhiteSpace();
 
             var path = movie.Path;
+
+            return Path.Combine(path, fileName + extension);
+        }
+
+        public string BuildFilePath(string path, string fileName, string extension)
+        {
+            Ensure.That(extension, () => extension).IsNotNullOrWhiteSpace();
 
             return Path.Combine(path, fileName + extension);
         }

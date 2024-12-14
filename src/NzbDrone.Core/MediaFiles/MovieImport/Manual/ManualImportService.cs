@@ -169,14 +169,13 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Manual
                 // Filter paths based on the rootFolder, so files in subfolders that should be ignored are ignored.
                 // It will lead to some extra directories being checked for files, but it saves the processing of them and is cleaner than
                 // teaching FilterPaths to know whether it's processing a file or a folder and changing it's filtering based on that.
-                // If the movie is unknown for the directory and there are more than 100 files in the folder don't process the items before returning.
+                // If the movie is unknown for the directory and there are more than 100 files in the folder process the first 100 items before returning.
                 var files = _diskScanService.FilterPaths(rootFolder, _diskScanService.GetVideoFiles(baseFolder, false));
 
                 if (files.Count > 100)
                 {
-                    _logger.Warn("Unable to determine movie from folder name and found more than 100 files. Skipping parsing");
-
-                    return ProcessDownloadDirectory(rootFolder, files);
+                    _logger.Warn("Found more than 100 files to import. Using only the first 100");
+                    files = files.GetRange(0, 99);
                 }
 
                 var subfolders = _diskScanService.FilterPaths(rootFolder, _diskProvider.GetDirectories(baseFolder));

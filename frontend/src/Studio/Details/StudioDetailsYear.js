@@ -123,7 +123,7 @@ class StudioDetailsYear extends Component {
     } = this.props;
 
     const expand = _.some(items, (item) => {
-      return year === moment().year();
+      return year === moment().year() && items.length < 60;
     });
 
     onExpandPress(year, expand);

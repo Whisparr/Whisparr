@@ -101,6 +101,9 @@ namespace NzbDrone.Core.Parser
             new Regex(@"^(?<title>.+?)?(?:(?:[-_\W](?<![)\[!]))*(?<year>(1(8|9)|20)\d{2}(?!p|i|\d+|\]|\W\d+)))+(\W+|_|$)(?!\\)", RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
             new Regex(@"^(?<title>(?![(\[]).+?)?(XXX)(\W+|_|$)(?!\\)", RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
+            // StashId
+            new Regex(@"(?<stashid>.{8}-.{4}-.{4}-.{4}-.{12})", RegexOptions.IgnoreCase | RegexOptions.Compiled),
         };
 
         private static readonly Regex[] ReportTitleFolderRegex = new[]
@@ -162,6 +165,8 @@ namespace NzbDrone.Core.Parser
 
         private static readonly Regex SpecialEpisodeTitleRegex = new Regex(@"(?<episodetitle>.+?)(?:\[.*(?:480p|720p|1080p|2160p|HDTV|WEB|WEBRip|WEB-?DL).*\]|[. ]XXX[. ](?:480p|720p|1080p|2160p|HDTV|WEB|WEBRip|WEB-?DL).*|(?:480p|720p|1080p|2160p|HDTV|WEB|WEBRip|WEB-?DL)|$)",
                           RegexOptions.Compiled);
+
+        private static readonly Regex StashIdRegex = new Regex(@"(?<stashid>.{8}-.{4}-.{4}-.{4}-.{12})", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex SimpleReleaseTitleRegex = new Regex(@"\s*(?:[<>?*|])", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
@@ -767,7 +772,7 @@ namespace NzbDrone.Core.Parser
 
         private static ParsedMovieInfo ParseMatchCollection(MatchCollection matchCollection, string releaseTitle)
         {
-            if (!matchCollection[0].Groups["airyear"].Success && !matchCollection[0].Groups["episode"].Success)
+            if (!matchCollection[0].Groups["airyear"].Success && !matchCollection[0].Groups["episode"].Success && !matchCollection[0].Groups["stashid"].Success)
             {
                 if (!matchCollection[0].Groups["title"].Success || matchCollection[0].Groups["title"].Value == "(")
                 {
@@ -950,6 +955,12 @@ namespace NzbDrone.Core.Parser
                     }
 
                     result.ReleaseTokens = releaseTokens;
+                }
+
+                var m = StashIdRegex.Match(result.ReleaseTokens);
+                if (m != null && m.Groups["stashid"].Success)
+                {
+                    result.StashId = m.Groups["stashid"].Value;
                 }
 
                 result.StudioTitle = studioTitle;

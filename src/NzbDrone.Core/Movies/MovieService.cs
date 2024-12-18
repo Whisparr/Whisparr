@@ -5,12 +5,15 @@ using NLog;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Datastore;
+using NzbDrone.Core.IndexerSearch.Definitions;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.MediaFiles.Events;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.Movies.Events;
 using NzbDrone.Core.Movies.Performers;
+using NzbDrone.Core.Movies.Studios;
 using NzbDrone.Core.Parser;
+using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.Parser.RomanNumerals;
 
 namespace NzbDrone.Core.Movies
@@ -30,7 +33,7 @@ namespace NzbDrone.Core.Movies
         Movie FindByTitle(string title, int year);
         Movie FindByTitle(List<string> titles, int? year, List<string> otherTitles, List<Movie> candidates);
         List<Movie> FindByTitleCandidates(List<string> titles, out List<string> otherTitles);
-        Movie FindByStudioAndReleaseDate(string studioForeignId, string releaseDate, string releaseTokens);
+        Movie FindScene(ParsedMovieInfo parsedMovieInfo, bool interactiveSearch = false, SearchCriteriaBase searchCriteria = null);
         List<Movie> GetByStudioForeignId(string studioForeignId);
         List<Movie> GetByPerformerForeignId(string performerForeignId);
         Movie FindByPath(string path);
@@ -58,18 +61,21 @@ namespace NzbDrone.Core.Movies
                                                IHandle<MovieFileDeletedEvent>
     {
         private readonly IMovieRepository _movieRepository;
+        private readonly IStudioService _studioService;
         private readonly IConfigService _configService;
         private readonly IEventAggregator _eventAggregator;
         private readonly IBuildMoviePaths _moviePathBuilder;
         private readonly Logger _logger;
 
         public MovieService(IMovieRepository movieRepository,
+                            IStudioService studioService,
                             IEventAggregator eventAggregator,
                             IConfigService configService,
                             IBuildMoviePaths moviePathBuilder,
                             Logger logger)
         {
             _movieRepository = movieRepository;
+            _studioService = studioService;
             _eventAggregator = eventAggregator;
             _configService = configService;
             _moviePathBuilder = moviePathBuilder;
@@ -376,7 +382,47 @@ namespace NzbDrone.Core.Movies
             return _movieRepository.ExistsByMetadataId(metadataId);
         }
 
-        public Movie FindByStudioAndReleaseDate(string studioForeignId, string releaseDate, string releaseTokens)
+        public Movie FindScene(ParsedMovieInfo parsedMovieInfo, bool interactive = false, SearchCriteriaBase searchCriteria = null)
+        {
+            Movie result = null;
+            if (parsedMovieInfo.StashId.IsNotNullOrWhiteSpace())
+            {
+                result = FindByForeignId(parsedMovieInfo.StashId);
+            }
+
+            if (result == null)
+            {
+                var studios = _studioService.FindAllByTitle(parsedMovieInfo.StudioTitle);
+
+                if (studios != null && studios.Count > 0)
+                {
+                    var movies = new List<Movie>();
+
+                    foreach (var studio in studios)
+                    {
+                        var movie = FindByStudioAndReleaseDate(studio.ForeignId, parsedMovieInfo.ReleaseDate, parsedMovieInfo.ReleaseTokens, interactive, searchCriteria);
+
+                        if (movie != null)
+                        {
+                            movies.Add(movie);
+                        }
+                    }
+
+                    if (movies.Count == 1)
+                    {
+                        result = movies.First();
+                    }
+                }
+                else
+                {
+                    _logger.Debug("Could not find Studio name. '{0}'", parsedMovieInfo.StudioTitle);
+                }
+            }
+
+            return result;
+        }
+
+        private Movie FindByStudioAndReleaseDate(string studioForeignId, string releaseDate, string releaseTokens, bool interactiveSearch = false, SearchCriteriaBase searchCriteria = null)
         {
             if (string.IsNullOrEmpty(studioForeignId))
             {
@@ -441,6 +487,15 @@ namespace NzbDrone.Core.Movies
             foreach (var movie in movies)
             {
                 var cleanTitle = movie.Title.IsNotNullOrWhiteSpace() ? Parser.Parser.NormalizeEpisodeTitle(movie.Title) : string.Empty;
+                var foreignId = movie.ForeignId.IsNotNullOrWhiteSpace() ? Parser.Parser.NormalizeEpisodeTitle(movie.ForeignId) : string.Empty;
+
+                // If parsed title matches title, consider a match
+                if (cleanTitle.IsNotNullOrWhiteSpace() && parsedMovieTitle.Contains(foreignId))
+                {
+                    _logger.Debug("Match {0} against {1} [StashId]", parsedMovieTitle, movie.ForeignId);
+                    matches.Add(movie, MovieParseMatchType.StashId);
+                    continue;
+                }
 
                 // If parsed title matches title, consider a match
                 if (cleanTitle.IsNotNullOrWhiteSpace() && parsedMovieTitle.Equals(cleanTitle))

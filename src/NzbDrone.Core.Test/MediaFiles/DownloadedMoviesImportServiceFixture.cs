@@ -66,7 +66,7 @@ namespace NzbDrone.Core.Test.MediaFiles
         private void GivenValidMovie()
         {
             Mocker.GetMock<IParsingService>()
-                  .Setup(s => s.GetMovie(It.IsAny<string>()))
+                  .Setup(s => s.GetMovie(It.IsAny<string>(), false))
                   .Returns(Builder<Movie>.CreateNew().Build());
         }
 
@@ -98,7 +98,7 @@ namespace NzbDrone.Core.Test.MediaFiles
         {
             Subject.ProcessRootFolder(new DirectoryInfo(_droneFactory));
 
-            Mocker.GetMock<IParsingService>().Verify(c => c.GetMovie("foldername"), Times.Once());
+            Mocker.GetMock<IParsingService>().Verify(c => c.GetMovie("foldername", false), Times.Once());
         }
 
         [Test]
@@ -117,7 +117,7 @@ namespace NzbDrone.Core.Test.MediaFiles
         [Test]
         public void should_skip_if_no_series_found()
         {
-            Mocker.GetMock<IParsingService>().Setup(c => c.GetMovie("foldername")).Returns((Movie)null);
+            Mocker.GetMock<IParsingService>().Setup(c => c.GetMovie("foldername", false)).Returns((Movie)null);
 
             Subject.ProcessRootFolder(new DirectoryInfo(_droneFactory));
 
@@ -276,10 +276,10 @@ namespace NzbDrone.Core.Test.MediaFiles
             Subject.ProcessRootFolder(new DirectoryInfo(_droneFactory));
 
             Mocker.GetMock<IParsingService>()
-                .Verify(v => v.GetMovie(folderName), Times.Once());
+                .Verify(v => v.GetMovie(folderName, false), Times.Once());
 
             Mocker.GetMock<IParsingService>()
-                .Verify(v => v.GetMovie(It.Is<string>(s => s.StartsWith(prefix))), Times.Never());
+                .Verify(v => v.GetMovie(It.Is<string>(s => s.StartsWith(prefix)), false), Times.Never());
         }
 
         [Test]
@@ -404,7 +404,7 @@ namespace NzbDrone.Core.Test.MediaFiles
             Subject.ProcessPath(folderName).Should().BeEmpty();
 
             Mocker.GetMock<IParsingService>()
-                .Verify(v => v.GetMovie(It.IsAny<string>()), Times.Never());
+                .Verify(v => v.GetMovie(It.IsAny<string>(), false), Times.Never());
 
             ExceptionVerification.ExpectedErrors(1);
         }

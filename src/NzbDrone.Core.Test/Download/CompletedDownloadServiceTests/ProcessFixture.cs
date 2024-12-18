@@ -56,7 +56,7 @@ namespace NzbDrone.Core.Test.Download.CompletedDownloadServiceTests
                   .Returns(new List<MovieHistory>());
 
             Mocker.GetMock<IParsingService>()
-                  .Setup(s => s.GetMovie("Drone.S01E01.HDTV"))
+                  .Setup(s => s.GetMovie("Drone.S01E01.HDTV", false))
                   .Returns(remoteMovie.Movie);
         }
 
@@ -78,7 +78,7 @@ namespace NzbDrone.Core.Test.Download.CompletedDownloadServiceTests
         private void GivenMovieMatch()
         {
             Mocker.GetMock<IParsingService>()
-                  .Setup(s => s.GetMovie(It.IsAny<string>()))
+                  .Setup(s => s.GetMovie(It.IsAny<string>(), false))
                   .Returns(_trackedDownload.RemoteMovie.Movie);
         }
 
@@ -94,11 +94,11 @@ namespace NzbDrone.Core.Test.Download.CompletedDownloadServiceTests
                   });
 
             Mocker.GetMock<IParsingService>()
-                  .Setup(s => s.GetMovie(It.IsAny<string>()))
+                  .Setup(s => s.GetMovie(It.IsAny<string>(), false))
                   .Returns((Movie)null);
 
             Mocker.GetMock<IParsingService>()
-                  .Setup(s => s.GetMovie("Droned S01E01"))
+                  .Setup(s => s.GetMovie("Droned S01E01", false))
                   .Returns(BuildRemoteMovie().Movie);
         }
 
@@ -170,7 +170,7 @@ namespace NzbDrone.Core.Test.Download.CompletedDownloadServiceTests
         public void should_not_process_when_there_is_a_title_mismatch()
         {
             Mocker.GetMock<IParsingService>()
-                  .Setup(s => s.GetMovie("Drone.S01E01.HDTV"))
+                  .Setup(s => s.GetMovie("Drone.S01E01.HDTV", false))
                   .Returns((Movie)null);
 
             Subject.Check(_trackedDownload);

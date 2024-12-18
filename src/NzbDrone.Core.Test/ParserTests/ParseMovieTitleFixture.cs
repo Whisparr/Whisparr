@@ -23,6 +23,7 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Studio.21.04.09.Title.XXX.480p.MP4-XXX", true)]
         [TestCase("Studio.22.10.18.Title.XXX.720p.HEVC.x265.PRT[XvX]", true)]
         [TestCase("Studio - 2017-08-04 - Some Title. [WEBDL-480p]", true)]
+        [TestCase("something random 77f1b861-91c1-4e6f-b0b1-3b1c46733fb2 anything", true)] // StashId
         [TestCase("Movie.2009.S01E14.English.HDTV.XviD-LOL", false)] // Movie
         public void should_parse_as_scene(string title, bool expected)
         {

@@ -54,7 +54,7 @@ namespace NzbDrone.Core.Test.Download
                   .Returns(new MovieHistory());
 
             Mocker.GetMock<IParsingService>()
-                  .Setup(s => s.GetMovie("Drone.1998"))
+                  .Setup(s => s.GetMovie("Drone.1998", false))
                   .Returns(remoteMovie.Movie);
 
             Mocker.GetMock<IHistoryService>()
@@ -83,18 +83,18 @@ namespace NzbDrone.Core.Test.Download
                .Returns(new MovieHistory() { SourceTitle = "Droned 1998" });
 
             Mocker.GetMock<IParsingService>()
-               .Setup(s => s.GetMovie(It.IsAny<string>()))
+               .Setup(s => s.GetMovie(It.IsAny<string>(), false))
                .Returns((Movie)null);
 
             Mocker.GetMock<IParsingService>()
-                .Setup(s => s.GetMovie("Droned 1998"))
+                .Setup(s => s.GetMovie("Droned 1998", false))
                 .Returns(BuildRemoteMovie().Movie);
         }
 
         private void GivenSeriesMatch()
         {
             Mocker.GetMock<IParsingService>()
-                  .Setup(s => s.GetMovie(It.IsAny<string>()))
+                  .Setup(s => s.GetMovie(It.IsAny<string>(), false))
                   .Returns(_trackedDownload.RemoteMovie.Movie);
         }
 

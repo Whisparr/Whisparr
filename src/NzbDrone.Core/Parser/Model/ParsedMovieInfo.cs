@@ -26,6 +26,7 @@ namespace NzbDrone.Core.Parser.Model
         public string Episode { get; set; }
         public string Edition { get; set; }
         public int Year { get; set; }
+        public string StashId { get; set; }
         public string ImdbId { get; set; }
         public int TmdbId { get; set; }
         public string HardcodedSubs { get; set; }
@@ -50,11 +51,7 @@ namespace NzbDrone.Core.Parser.Model
         {
             get
             {
-                return ReleaseDate.IsNotNullOrWhiteSpace() || Episode.IsNotNullOrWhiteSpace();
-            }
-
-            private set
-            {
+                return ReleaseDate.IsNotNullOrWhiteSpace() || Episode.IsNotNullOrWhiteSpace() || StashId.IsNotNullOrWhiteSpace();
             }
         }
 

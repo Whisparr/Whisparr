@@ -14,7 +14,7 @@ namespace NzbDrone.Core.Parser
 {
     public interface IParsingService
     {
-        Movie GetMovie(string title);
+        Movie GetMovie(string title, bool interactive = false);
         RemoteMovie Map(ParsedMovieInfo parsedMovieInfo, string imdbId, int tmdbId, SearchCriteriaBase searchCriteria = null);
         RemoteMovie Map(ParsedMovieInfo parsedMovieInfo, int movieId);
         ParsedMovieInfo ParseMinimalPathMovieInfo(string path);
@@ -63,7 +63,7 @@ namespace NzbDrone.Core.Parser
             return result;
         }
 
-        public Movie GetMovie(string title)
+        public Movie GetMovie(string title, bool interactive = false)
         {
             var parsedMovieInfo = Parser.ParseMovieTitle(title);
 
@@ -74,33 +74,7 @@ namespace NzbDrone.Core.Parser
 
             if (parsedMovieInfo.IsScene)
             {
-                var studios = _studioService.FindAllByTitle(parsedMovieInfo.StudioTitle);
-
-                if (studios != null && studios.Count > 0)
-                {
-                    var movies = new List<Movie>();
-
-                    foreach (var studio in studios)
-                    {
-                        var movie = _movieService.FindByStudioAndReleaseDate(studio.ForeignId, parsedMovieInfo.ReleaseDate, parsedMovieInfo.ReleaseTokens);
-
-                        if (movie != null)
-                        {
-                            movies.Add(movie);
-                        }
-                    }
-
-                    if (movies.Count == 1)
-                    {
-                        return movies.First();
-                    }
-
-                    return null;
-                }
-                else
-                {
-                    _logger.Debug("Could not find Studio name. '{0}'", parsedMovieInfo.StudioTitle);
-                }
+                return _movieService.FindScene(parsedMovieInfo, interactive, null);
             }
             else
             {
@@ -163,18 +137,7 @@ namespace NzbDrone.Core.Parser
 
             if (parsedMovieInfo.IsScene || searchCriteria?.Movie.MovieMetadata?.Value.ItemType == ItemType.Scene)
             {
-                var studios = _studioService.FindAllByTitle(parsedMovieInfo.StudioTitle);
-
-                if (studios != null && studios.Count > 0)
-                {
-                    foreach (var studio in studios)
-                    {
-                        if (result == null && studio != null)
-                        {
-                            result = GetSceneMovie(studio, parsedMovieInfo.ReleaseDate, parsedMovieInfo.ReleaseTokens, searchCriteria);
-                        }
-                    }
-                }
+                result = GetSceneMovie(parsedMovieInfo, searchCriteria);
 
                 if (result?.Movie == null)
                 {
@@ -288,17 +251,17 @@ namespace NzbDrone.Core.Parser
             return null;
         }
 
-        private FindMovieResult GetSceneMovie(Studio studio, string airDate, string part, SearchCriteriaBase searchCriteria)
+        private FindMovieResult GetSceneMovie(ParsedMovieInfo parsedMovieInfo, SearchCriteriaBase searchCriteria)
         {
             Movie movieInfo = null;
             Movie movie = null;
             try
             {
-                movie = _movieService.FindByStudioAndReleaseDate(studio.ForeignId, airDate, part);
+                movie = _movieService.FindScene(parsedMovieInfo, false, searchCriteria);
             }
             catch (Exception ex)
             {
-                _logger.Error("FindByStudioAndReleaseDate Failed for {0] {1} {2} {3}", studio?.ForeignId, airDate, part, ex.Message);
+                _logger.Error("FindScene Failed for {0] {1} {2} {3}", parsedMovieInfo.StudioTitle, parsedMovieInfo.ReleaseDate, parsedMovieInfo.ReleaseTitle, ex.Message);
             }
 
             if (movie != null && searchCriteria != null)

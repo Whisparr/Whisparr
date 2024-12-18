@@ -43,7 +43,7 @@ namespace NzbDrone.Core.Test.Download.Pending.PendingReleaseServiceTests
                   .Returns(new List<Movie> { _movie });
 
             Mocker.GetMock<IParsingService>()
-                  .Setup(s => s.GetMovie(It.IsAny<string>()))
+                  .Setup(s => s.GetMovie(It.IsAny<string>(), false))
                   .Returns(_movie);
         }
 

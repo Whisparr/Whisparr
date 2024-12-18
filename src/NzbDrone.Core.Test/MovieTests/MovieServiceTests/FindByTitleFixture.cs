@@ -6,6 +6,7 @@ using Moq;
 using NUnit.Framework;
 using NzbDrone.Core.Movies;
 using NzbDrone.Core.Movies.Performers;
+using NzbDrone.Core.Movies.Studios;
 using NzbDrone.Core.Test.Framework;
 
 namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
@@ -56,6 +57,8 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
                                         .With(x => x.MovieMetadata.Value.Studio = studio)
                                         .TheNext(1)
                                         .With(x => x.Title = "Milk & Chocolate Before Bed🥛🕟😵‍💫🕦🥛")
+                                        .With(x => x.ForeignId = "f3967398-1475-4e00-a7a0-935d7fd5dee1")
+                                        .With(x => x.MovieMetadata.Value.ForeignId = "f3967398-1475-4e00-a7a0-935d7fd5dee1")
                                         .With(x => x.MovieMetadata.Value.ReleaseDate = "2024-07-30")
                                         .With(x => x.MovieMetadata.Value.Credits = credits)
                                         .With(x => x.MovieMetadata.Value.Studio = studio)
@@ -131,6 +134,18 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
                                         .With(x => x.MovieMetadata.Value.Studio = studio)
                                         .Build()
                                         .ToList();
+
+            var studios = new List<Studio>
+            {
+                new Studio { ForeignId = "Studio" },
+                new Studio { ForeignId = "EvilAngel" },
+                new Studio { ForeignId = "Bellesa House" },
+                new Studio { ForeignId = "Step Siblings Caught" }
+            };
+
+            Mocker.GetMock<IStudioService>()
+                .Setup(s => s.FindAllByTitle(It.IsAny<string>()))
+                .Returns(studios);
 
             Mocker.GetMock<IMovieRepository>()
                 .Setup(s => s.GetByStudioForeignId(It.Is<string>(s => s.Equals("Studio"))))
@@ -215,6 +230,8 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
         [TestCase("Studio.21.01.08.Carrie", 10)]
         [TestCase("Studio.21.01.08.Carrie Sage", 10)]
         [TestCase("Studio - 2024-07-30 - Milk & Chocolate Before Bed", 6)]
+        [TestCase("Studio - 2024-07-30 - [f3967398-1475-4e00-a7a0-935d7fd5dee1]", 6)]
+        [TestCase("2024-07-30 - [f3967398-1475-4e00-a7a0-935d7fd5dee1]", 6)]
         [TestCase("Bellesa House 2024-08-15 Episode 200 Violet And Victor", 16)]
         [TestCase("Bellesa House 2024-08-15 Episode 200 Violet & Victor", 16)]
         [TestCase("Step Siblings Caught 2024-02-07 Cash For Kisses On Valentines Day - S25E7", 17)]
@@ -228,7 +245,7 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
 
             if (parsedMovieInfo.IsScene)
             {
-                var movie = Subject.FindByStudioAndReleaseDate(parsedMovieInfo.StudioTitle, parsedMovieInfo.ReleaseDate, parsedMovieInfo.ReleaseTokens);
+                var movie = Subject.FindScene(parsedMovieInfo, false, null);
 
                 if (id != null)
                 {

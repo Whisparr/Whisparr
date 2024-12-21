@@ -1,11 +1,16 @@
 import Column from 'Components/Table/Column';
-import SortDirection from 'Helpers/Props/SortDirection';
+import { SortDirection } from 'Helpers/Props/SortDirection';
+import { ValidationFailure } from 'typings/pending';
 import { Filter, FilterBuilderProp } from './AppState';
 
 export interface Error {
-  responseJSON: {
-    message: string;
-  };
+  status?: number;
+  responseJSON:
+    | {
+        message: string | undefined;
+      }
+    | ValidationFailure[]
+    | undefined;
 }
 
 export interface AppSectionDeleteState {
@@ -38,9 +43,15 @@ export interface AppSectionSchemaState<T> {
   isSchemaFetching: boolean;
   isSchemaPopulated: boolean;
   schemaError: Error;
-  schema: {
-    items: T[];
-  };
+  schema: T[];
+  selectedSchema?: T;
+}
+
+export interface AppSectionItemSchemaState<T> {
+  isSchemaFetching: boolean;
+  isSchemaPopulated: boolean;
+  schemaError: Error;
+  schema: T;
 }
 
 export interface AppSectionItemState<T> {
@@ -49,6 +60,17 @@ export interface AppSectionItemState<T> {
   error: Error;
   pendingChanges: Partial<T>;
   item: T;
+}
+
+export interface AppSectionProviderState<T>
+  extends AppSectionDeleteState,
+    AppSectionSaveState {
+  isFetching: boolean;
+  isPopulated: boolean;
+  isTesting?: boolean;
+  error: Error;
+  items: T[];
+  pendingChanges?: Partial<T>;
 }
 
 interface AppSectionState<T> {

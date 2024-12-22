@@ -124,7 +124,7 @@ const PerformerIndex = withScrollPosition((props: PerformerIndexProps) => {
   );
 
   const onFilterSelect = useCallback(
-    (value: string) => {
+    (value: string | number) => {
       dispatch(setPerformerFilter({ selectedFilterKey: value }));
     },
     [dispatch]

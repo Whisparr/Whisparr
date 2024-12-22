@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 import Button from 'Components/Link/Button';
 import SpinnerButton from 'Components/Link/SpinnerButton';
@@ -39,8 +38,6 @@ interface HistoryDetailsModalProps {
   data: HistoryData;
   downloadId?: string;
   isMarkingAsFailed?: boolean;
-  shortDateFormat?: string;
-  timeFormat?: string;
   onMarkAsFailedPress: () => void;
   onModalClose: () => void;
 }
@@ -52,9 +49,7 @@ function HistoryDetailsModal(props: HistoryDetailsModalProps) {
     sourceTitle,
     data,
     downloadId,
-    isMarkingAsFailed,
-    shortDateFormat,
-    timeFormat,
+    isMarkingAsFailed = false,
     onMarkAsFailedPress,
     onModalClose,
   } = props;
@@ -70,8 +65,6 @@ function HistoryDetailsModal(props: HistoryDetailsModalProps) {
             sourceTitle={sourceTitle}
             data={data}
             downloadId={downloadId}
-            shortDateFormat={shortDateFormat || ''}
-            timeFormat={timeFormat || ''}
           />
         </ModalBody>
 
@@ -93,22 +86,5 @@ function HistoryDetailsModal(props: HistoryDetailsModalProps) {
     </Modal>
   );
 }
-
-HistoryDetailsModal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  eventType: PropTypes.string.isRequired,
-  sourceTitle: PropTypes.string.isRequired,
-  data: PropTypes.object.isRequired,
-  downloadId: PropTypes.string,
-  isMarkingAsFailed: PropTypes.bool.isRequired,
-  shortDateFormat: PropTypes.string.isRequired,
-  timeFormat: PropTypes.string.isRequired,
-  onMarkAsFailedPress: PropTypes.func.isRequired,
-  onModalClose: PropTypes.func.isRequired,
-};
-
-HistoryDetailsModal.defaultProps = {
-  isMarkingAsFailed: false,
-};
 
 export default HistoryDetailsModal;

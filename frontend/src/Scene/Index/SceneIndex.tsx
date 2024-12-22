@@ -148,7 +148,7 @@ const SceneIndex = withScrollPosition((props: SceneIndexProps) => {
   );
 
   const onFilterSelect = useCallback(
-    (value: string) => {
+    (value: string | number) => {
       dispatch(setSceneFilter({ selectedFilterKey: value }));
     },
     [dispatch]

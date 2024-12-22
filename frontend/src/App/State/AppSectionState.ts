@@ -1,6 +1,6 @@
 import Column from 'Components/Table/Column';
 import SortDirection from 'Helpers/Props/SortDirection';
-import { FilterBuilderProp, PropertyFilter } from './AppState';
+import { Filter, FilterBuilderProp } from './AppState';
 
 export interface Error {
   responseJSON: {
@@ -30,7 +30,7 @@ export interface TableAppSectionState {
 
 export interface AppSectionFilterState<T> {
   selectedFilterKey: string;
-  filters: PropertyFilter[];
+  filters: Filter[];
   filterBuilderProps: FilterBuilderProp<T>[];
 }
 

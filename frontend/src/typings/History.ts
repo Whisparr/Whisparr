@@ -83,6 +83,6 @@ export default interface History {
   date: string;
   downloadId: string;
   eventType: HistoryEventType;
-  data: unknown;
+  data: HistoryData;
   id: number;
 }

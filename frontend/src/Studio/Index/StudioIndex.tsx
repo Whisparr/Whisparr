@@ -123,7 +123,7 @@ const StudioIndex = withScrollPosition((props: StudioIndexProps) => {
   );
 
   const onFilterSelect = useCallback(
-    (value: string) => {
+    (value: string | number) => {
       dispatch(setStudioFilter({ selectedFilterKey: value }));
     },
     [dispatch]

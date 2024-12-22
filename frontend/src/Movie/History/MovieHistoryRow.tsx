@@ -124,8 +124,6 @@ function MovieHistoryRow({
         sourceTitle={sourceTitle}
         data={data}
         downloadId={downloadId}
-        shortDateFormat=""
-        timeFormat=""
         onMarkAsFailedPress={handleMarkAsFailedPress}
         onModalClose={handleDetailsModalClose}
       />

@@ -36,8 +36,6 @@ interface HistoryRowProps {
   date: string;
   data: HistoryData;
   downloadId?: string;
-  shortDateFormat: string;
-  timeFormat: string;
   isMarkingAsFailed?: boolean;
   markAsFailedError?: object;
   columns: Column[];
@@ -57,8 +55,6 @@ function HistoryRow(props: HistoryRowProps) {
     date,
     data,
     downloadId,
-    shortDateFormat,
-    timeFormat,
     isMarkingAsFailed = false,
     markAsFailedError,
     columns,
@@ -223,8 +219,6 @@ function HistoryRow(props: HistoryRowProps) {
         data={data}
         downloadId={downloadId}
         isMarkingAsFailed={isMarkingAsFailed}
-        shortDateFormat={shortDateFormat}
-        timeFormat={timeFormat}
         onMarkAsFailedPress={handleMarkAsFailedPress}
         onModalClose={handleDetailsModalClose}
       />

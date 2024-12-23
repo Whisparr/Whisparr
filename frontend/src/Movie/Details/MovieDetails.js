@@ -28,7 +28,7 @@ import MovieImage from 'Movie/MovieImage';
 import MovieInteractiveSearchModal from 'Movie/Search/MovieInteractiveSearchModal';
 import MovieFileEditorTable from 'MovieFile/Editor/MovieFileEditorTable';
 import ExtraFileTable from 'MovieFile/Extras/ExtraFileTable';
-import OrganizePreviewModalConnector from 'Organize/OrganizePreviewModalConnector';
+import OrganizePreviewModal from 'Organize/OrganizePreviewModal';
 import QualityProfileNameConnector from 'Settings/Profiles/Quality/QualityProfileNameConnector';
 import fonts from 'Styles/Variables/fonts';
 import formatRuntime from 'Utilities/Date/formatRuntime';
@@ -604,7 +604,7 @@ class MovieDetails extends Component {
             }
           </div>
 
-          <OrganizePreviewModalConnector
+          <OrganizePreviewModal
             isOpen={isOrganizeModalOpen}
             movieId={id}
             onModalClose={this.onOrganizeModalClose}

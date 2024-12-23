@@ -1,6 +1,6 @@
 import React from 'react';
 import Icon from 'Components/Icon';
-import TagListConnector from 'Components/TagListConnector';
+import MovieTagList from 'Components/MovieTagList';
 import TmdbRating from 'Components/TmdbRating';
 import { icons } from 'Helpers/Props';
 import Language from 'Language/Language';
@@ -138,7 +138,7 @@ function MovieIndexPosterInfo(props: MovieIndexPosterInfoProps) {
     return (
       <div className={styles.tags}>
         <div className={styles.tagsList}>
-          <TagListConnector tags={tags} />
+          <MovieTagList tags={tags} />
         </div>
       </div>
     );

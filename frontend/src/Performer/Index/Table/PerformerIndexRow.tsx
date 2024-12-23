@@ -3,10 +3,10 @@ import { useSelector } from 'react-redux';
 import { useSelect } from 'App/SelectContext';
 import Icon from 'Components/Icon';
 import IconButton from 'Components/Link/IconButton';
+import MovieTagList from 'Components/MovieTagList';
 import VirtualTableRowCell from 'Components/Table/Cells/VirtualTableRowCell';
 import VirtualTableSelectCell from 'Components/Table/Cells/VirtualTableSelectCell';
 import Column from 'Components/Table/Column';
-import TagListConnector from 'Components/TagListConnector';
 import Tooltip from 'Components/Tooltip/Tooltip';
 import { icons, kinds } from 'Helpers/Props';
 import PerformerDetailsLinks from 'Performer/Details/PerformerDetailsLinks';
@@ -177,7 +177,7 @@ function PerformerIndexRow(props: PerformerIndexRowProps) {
         if (name === 'tags') {
           return (
             <VirtualTableRowCell key={name} className={styles[name]}>
-              <TagListConnector tags={tags} />
+              <MovieTagList tags={tags} />
             </VirtualTableRowCell>
           );
         }

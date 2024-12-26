@@ -6,8 +6,7 @@ import {
   saveImportList,
   setImportListFieldValue,
   setImportListValue,
-  testImportList,
-  toggleAdvancedSettings
+  testImportList
 } from 'Store/Actions/settingsActions';
 import createProviderSettingsSelector from 'Store/Selectors/createProviderSettingsSelector';
 import EditImportListModalContent from './EditImportListModalContent';
@@ -39,8 +38,7 @@ const mapDispatchToProps = {
   setImportListValue,
   setImportListFieldValue,
   saveImportList,
-  testImportList,
-  toggleAdvancedSettings
+  testImportList
 };
 
 class EditImportListModalContentConnector extends Component {
@@ -73,10 +71,6 @@ class EditImportListModalContentConnector extends Component {
     this.props.testImportList({ id: this.props.id });
   };
 
-  onAdvancedSettingsPress = () => {
-    this.props.toggleAdvancedSettings();
-  };
-
   //
   // Render
 
@@ -86,7 +80,6 @@ class EditImportListModalContentConnector extends Component {
         {...this.props}
         onSavePress={this.onSavePress}
         onTestPress={this.onTestPress}
-        onAdvancedSettingsPress={this.onAdvancedSettingsPress}
         onInputChange={this.onInputChange}
         onFieldChange={this.onFieldChange}
       />
@@ -104,7 +97,6 @@ EditImportListModalContentConnector.propTypes = {
   setImportListFieldValue: PropTypes.func.isRequired,
   saveImportList: PropTypes.func.isRequired,
   testImportList: PropTypes.func.isRequired,
-  toggleAdvancedSettings: PropTypes.func.isRequired,
   onModalClose: PropTypes.func.isRequired
 };
 

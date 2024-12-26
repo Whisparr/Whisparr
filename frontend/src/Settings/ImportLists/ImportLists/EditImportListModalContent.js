@@ -34,7 +34,6 @@ function EditImportListModalContent(props) {
     onModalClose,
     onSavePress,
     onTestPress,
-    onAdvancedSettingsPress,
     onDeleteImportListPress,
     ...otherProps
   } = props;
@@ -227,7 +226,6 @@ function EditImportListModalContent(props) {
 
         <AdvancedSettingsButton
           advancedSettings={advancedSettings}
-          onAdvancedSettingsPress={onAdvancedSettingsPress}
           showLabel={false}
         />
 
@@ -271,7 +269,6 @@ EditImportListModalContent.propTypes = {
   onModalClose: PropTypes.func.isRequired,
   onSavePress: PropTypes.func.isRequired,
   onTestPress: PropTypes.func.isRequired,
-  onAdvancedSettingsPress: PropTypes.func.isRequired,
   onDeleteImportListPress: PropTypes.func
 };
 

@@ -1734,6 +1734,7 @@
   "ReleaseGroupFootNote": "Optionally control truncation to a maximum number of bytes including ellipsis (`...`). Truncating from the end (e.g. `{Release Group:30}`) or the beginning (e.g. `{Release Group:-30}`) are both supported.`).",
   "ReleaseGroups": "Release Groups",
   "ReleaseHash": "Release Hash",
+  "ReleaseProfile": "Release Profile",
   "ReleaseProfileIndexerHelpText": "Specify what indexer the profile applies to",
   "ReleaseProfileIndexerHelpTextWarning": "Setting a specific indexer on a release profile will cause this profile to only apply to releases from that indexer.",
   "ReleaseProfiles": "Release Profiles",

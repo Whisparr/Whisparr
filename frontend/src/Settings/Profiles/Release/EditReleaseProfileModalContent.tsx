@@ -43,7 +43,11 @@ function createReleaseProfileSelector(id?: number) {
         releaseProfiles;
 
       const mapping = id ? items.find((i) => i.id === id) : newReleaseProfile;
-      const settings = selectSettings(mapping, pendingChanges, saveError);
+      const settings = selectSettings(
+        mapping ?? newReleaseProfile,
+        pendingChanges,
+        saveError
+      );
 
       return {
         id,

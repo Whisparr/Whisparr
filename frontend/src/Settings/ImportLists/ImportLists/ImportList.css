@@ -17,3 +17,9 @@
   flex-wrap: wrap;
   margin-top: 5px;
 }
+
+.nameContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

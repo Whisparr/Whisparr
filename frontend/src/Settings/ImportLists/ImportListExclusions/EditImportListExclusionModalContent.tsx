@@ -200,7 +200,7 @@ function EditImportListExclusionModalContent({
           >
             {translate('Delete')}
           </Button>
-        )}
+        ) : null}
 
         <Button onPress={onModalClose}>{translate('Cancel')}</Button>
 

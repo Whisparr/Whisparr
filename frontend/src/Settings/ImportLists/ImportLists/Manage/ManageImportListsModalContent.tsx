@@ -53,6 +53,12 @@ const COLUMNS = [
     isVisible: true,
   },
   {
+    name: 'minimumAvailability',
+    label: () => translate('MinimumAvailability'),
+    isSortable: true,
+    isVisible: true,
+  },
+  {
     name: 'rootFolderPath',
     label: () => translate('RootFolder'),
     isSortable: true,
@@ -222,6 +228,7 @@ function ManageImportListsModalContent(
                 return (
                   <ManageImportListsModalRow
                     key={item.id}
+                    implementation=""
                     isSelected={selectedState[item.id]}
                     {...item}
                     columns={COLUMNS}

@@ -108,7 +108,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.QBittorrentTests
             Subject.Definition.Settings.As<QBittorrentSettings>().RecentTvPriority = (int)QBittorrentPriority.First;
         }
 
-        protected void GivenGlobalSeedLimits(float maxRatio, int maxSeedingTime = -1, QBittorrentMaxRatioAction maxRatioAction = QBittorrentMaxRatioAction.Pause)
+        protected void GivenGlobalSeedLimits(float maxRatio, int maxSeedingTime = -1, int maxInactiveSeedingTime = -1, QBittorrentMaxRatioAction maxRatioAction = QBittorrentMaxRatioAction.Pause)
         {
             Mocker.GetMock<IQBittorrentProxy>()
                   .Setup(s => s.GetConfig(It.IsAny<QBittorrentSettings>()))
@@ -118,7 +118,9 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.QBittorrentTests
                       MaxRatio = maxRatio,
                       MaxRatioEnabled = maxRatio >= 0,
                       MaxSeedingTime = maxSeedingTime,
-                      MaxSeedingTimeEnabled = maxSeedingTime >= 0
+                      MaxSeedingTimeEnabled = maxSeedingTime >= 0,
+                      MaxInactiveSeedingTime = maxInactiveSeedingTime,
+                      MaxInactiveSeedingTimeEnabled = maxInactiveSeedingTime >= 0
                   });
         }
 
@@ -615,7 +617,9 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.QBittorrentTests
             float ratio = 0.1f,
             float ratioLimit = -2,
             int seedingTime = 1,
-            int seedingTimeLimit = -2)
+            int seedingTimeLimit = -2,
+            int inactiveSeedingTimeLimit = -2,
+            long lastActivity = -1)
         {
             var torrent = new QBittorrentTorrent
             {
@@ -629,7 +633,9 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.QBittorrentTests
                 SavePath = "",
                 Ratio = ratio,
                 RatioLimit = ratioLimit,
-                SeedingTimeLimit = seedingTimeLimit
+                SeedingTimeLimit = seedingTimeLimit,
+                InactiveSeedingTimeLimit = inactiveSeedingTimeLimit,
+                LastActivity = lastActivity == -1 ? DateTimeOffset.UtcNow.ToUnixTimeSeconds() : lastActivity
             };
 
             GivenTorrents(new List<QBittorrentTorrent>() { torrent });

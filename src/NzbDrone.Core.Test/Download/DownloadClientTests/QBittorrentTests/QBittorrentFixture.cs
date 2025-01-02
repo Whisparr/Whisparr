@@ -815,6 +815,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.QBittorrentTests
             item.CanBeRemoved.Should().BeTrue();
             item.CanMoveFiles.Should().BeTrue();
         }
+        
         [Test]
         [TestCase("pausedUP")]
         [TestCase("stoppedUP")]
@@ -827,7 +828,6 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.QBittorrentTests
             item.CanBeRemoved.Should().BeFalse();
             item.CanMoveFiles.Should().BeFalse();
         }
-
 
         [Test]
         [TestCase("pausedUP")]

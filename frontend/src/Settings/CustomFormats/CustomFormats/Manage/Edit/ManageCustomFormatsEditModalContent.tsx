@@ -8,6 +8,7 @@ import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { inputTypes } from 'Helpers/Props';
+import { EnhancedSelectInputChanged } from 'typings/inputs';
 import translate from 'Utilities/String/translate';
 import styles from './ManageCustomFormatsEditModalContent.css';
 
@@ -51,7 +52,7 @@ function ManageCustomFormatsEditModalContent(
   const { customFormatIds, onSavePress, onModalClose } = props;
 
   const [includeCustomFormatWhenRenaming, setIncludeCustomFormatWhenRenaming] =
-    useState(NO_CHANGE);
+    useState<string | number>(NO_CHANGE);
 
   const save = useCallback(() => {
     let hasChanges = false;
@@ -71,7 +72,7 @@ function ManageCustomFormatsEditModalContent(
   }, [includeCustomFormatWhenRenaming, onSavePress, onModalClose]);
 
   const onInputChange = useCallback(
-    ({ name, value }: { name: string; value: string }) => {
+    ({ name, value }: EnhancedSelectInputChanged<string | number>) => {
       switch (name) {
         case 'includeCustomFormatWhenRenaming':
           setIncludeCustomFormatWhenRenaming(value);

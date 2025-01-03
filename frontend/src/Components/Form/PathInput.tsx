@@ -27,7 +27,7 @@ interface Path {
   type?: 'file' | 'directory' | string;
 }
 
-interface PathInputProps {
+export interface PathInputProps {
   className?: string;
   name: string;
   value?: string;

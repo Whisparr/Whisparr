@@ -1,10 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import AppState from 'App/State/AppState';
+import { CheckInputProps } from 'Components/Form/CheckInput';
 import Form from 'Components/Form/Form';
 import FormGroup from 'Components/Form/FormGroup';
 import FormInputGroup from 'Components/Form/FormInputGroup';
 import FormLabel from 'Components/Form/FormLabel';
+import { PathInputProps } from 'Components/Form/PathInput';
+import { QualityProfileSelectInputProps } from 'Components/Form/Select/QualityProfileSelectInput';
+import { MovieTagInputProps } from 'Components/Form/Tag/MovieTagInput';
 import Button from 'Components/Link/Button';
 import SpinnerErrorButton from 'Components/Link/SpinnerErrorButton';
 import ModalBody from 'Components/Modal/ModalBody';
@@ -45,8 +49,15 @@ function EditMovieModalContent({
   const isPathChanging = pendingChanges?.path && path !== pendingChanges.path;
 
   const [isConfirmMoveModalOpen, setIsConfirmMoveModalOpen] = useState(false);
+
   interface Setting {
-    value?: unknown;
+    value?:
+      | string
+      | boolean
+      | number
+      | Array<string | number>
+      | null
+      | undefined;
     errors: Array<{
       message: string;
       link?: string;
@@ -57,7 +68,13 @@ function EditMovieModalContent({
       link?: string;
       detailedMessage?: string;
     }>;
-    previousValue?: unknown;
+    previousValue?:
+      | string
+      | boolean
+      | number
+      | Array<string | number>
+      | null
+      | undefined;
     pending?: boolean;
   }
 
@@ -150,7 +167,10 @@ function EditMovieModalContent({
               type={inputTypes.CHECK}
               name="monitored"
               helpText={translate('MonitoredMovieHelpText')}
-              {...settings.monitored}
+              {...(settings.monitored as unknown as Omit<
+                CheckInputProps,
+                'className' | 'name'
+              >)}
               onChange={handleInputChange}
             />
           </FormGroup>
@@ -161,7 +181,10 @@ function EditMovieModalContent({
             <FormInputGroup
               type={inputTypes.QUALITY_PROFILE_SELECT}
               name="qualityProfileId"
-              {...settings.qualityProfileId}
+              {...(settings.qualityProfileId as unknown as Omit<
+                QualityProfileSelectInputProps,
+                'className' | 'name'
+              >)}
               onChange={handleInputChange}
             />
           </FormGroup>
@@ -172,7 +195,11 @@ function EditMovieModalContent({
             <FormInputGroup
               type={inputTypes.PATH}
               name="path"
-              {...settings.path}
+              {...(settings.path as unknown as Omit<
+                PathInputProps,
+                'className' | 'name'
+              >)}
+              includeFiles={false}
               onChange={handleInputChange}
             />
           </FormGroup>
@@ -183,7 +210,10 @@ function EditMovieModalContent({
             <FormInputGroup
               type={inputTypes.TAG}
               name="tags"
-              {...settings.tags}
+              {...(settings.tags as unknown as Omit<
+                MovieTagInputProps,
+                'className' | 'name'
+              >)}
               onChange={handleInputChange}
             />
           </FormGroup>

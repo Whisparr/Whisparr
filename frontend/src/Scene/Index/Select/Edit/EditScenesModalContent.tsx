@@ -9,6 +9,7 @@ import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { inputTypes } from 'Helpers/Props';
 import MoveSceneModal from 'Scene/MoveScene/MoveSceneModal';
+import { EnhancedSelectInputChanged } from 'typings/inputs';
 import translate from 'Utilities/String/translate';
 import styles from './EditScenesModalContent.css';
 
@@ -52,11 +53,11 @@ const monitoredOptions = [
 function EditScenesModalContent(props: EditScenesModalContentProps) {
   const { sceneIds, onSavePress, onModalClose } = props;
 
-  const [monitored, setMonitored] = useState(NO_CHANGE);
+  const [monitored, setMonitored] = useState<string | number>(NO_CHANGE);
   const [qualityProfileId, setQualityProfileId] = useState<string | number>(
     NO_CHANGE
   );
-  const [rootFolderPath, setRootFolderPath] = useState(NO_CHANGE);
+  const [rootFolderPath, setRootFolderPath] = useState<string | number>(NO_CHANGE);
   const [isConfirmMoveModalOpen, setIsConfirmMoveModalOpen] = useState(false);
 
   const save = useCallback(
@@ -76,7 +77,7 @@ function EditScenesModalContent(props: EditScenesModalContentProps) {
 
       if (rootFolderPath !== NO_CHANGE) {
         hasChanges = true;
-        payload.rootFolderPath = rootFolderPath;
+        payload.rootFolderPath = rootFolderPath as string;
         payload.moveFiles = moveFiles;
       }
 
@@ -90,7 +91,7 @@ function EditScenesModalContent(props: EditScenesModalContentProps) {
   );
 
   const onInputChange = useCallback(
-    ({ name, value }: { name: string; value: string }) => {
+    ({ name, value }: EnhancedSelectInputChanged<string | number>) => {
       switch (name) {
         case 'monitored':
           setMonitored(value);
@@ -168,7 +169,7 @@ function EditScenesModalContent(props: EditScenesModalContentProps) {
           <FormInputGroup
             type={inputTypes.ROOT_FOLDER_SELECT}
             name="rootFolderPath"
-            value={rootFolderPath}
+            value={rootFolderPath as string}
             includeNoChange={true}
             includeNoChangeDisabled={false}
             selectedValueOptions={{ includeFreeSpace: false }}
@@ -194,7 +195,7 @@ function EditScenesModalContent(props: EditScenesModalContentProps) {
 
       <MoveSceneModal
         isOpen={isConfirmMoveModalOpen}
-        destinationRootFolder={rootFolderPath}
+        destinationRootFolder={rootFolderPath as string}
         onModalClose={onCancelPress}
         onSavePress={onDoNotMoveScenePress}
         onMoveScenePress={onMoveScenePress}

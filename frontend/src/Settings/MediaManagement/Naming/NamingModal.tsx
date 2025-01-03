@@ -185,7 +185,7 @@ const sceneTokens = [
     example: 'Lulu Chu Jenna Gargles Izzy Wilde',
   },
   {
-    token: '{Scene PerformersOtherAlias}',
+    token: '{Scene CleanPerformersOtherAlias}',
     example: 'Other Performers (Alias)',
   },
 

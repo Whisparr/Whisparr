@@ -56,7 +56,7 @@ function createQualityProfilesSelector(
   );
 }
 
-interface QualityProfileSelectInputProps
+export interface QualityProfileSelectInputProps
   extends Omit<
     EnhancedSelectInputProps<
       number | string,

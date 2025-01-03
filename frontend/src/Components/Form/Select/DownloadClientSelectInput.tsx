@@ -51,7 +51,7 @@ function createDownloadClientsSelector(
   );
 }
 
-interface DownloadClientSelectInputProps
+export interface DownloadClientSelectInputProps
   extends Omit<
     EnhancedSelectInputProps<number, EnhancedSelectInputValue<number>>,
     'values'

@@ -69,7 +69,7 @@ function createProviderOptionsSelector(
   );
 }
 
-interface ProviderOptionSelectInputProps
+export interface ProviderOptionSelectInputProps
   extends Omit<
     EnhancedSelectInputProps<unknown, EnhancedSelectInputValue<unknown>>,
     'values'

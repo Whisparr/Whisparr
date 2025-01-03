@@ -8,6 +8,7 @@ import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { inputTypes } from 'Helpers/Props';
+import { EnhancedSelectInputChanged } from 'typings/inputs';
 import translate from 'Utilities/String/translate';
 import styles from './EditPerformersModalContent.css';
 
@@ -50,11 +51,11 @@ const monitoredOptions = [
 function EditPerformersModalContent(props: EditPerformersModalContentProps) {
   const { performerIds, onSavePress, onModalClose } = props;
 
-  const [monitored, setMonitored] = useState(NO_CHANGE);
+  const [monitored, setMonitored] = useState<string | number>(NO_CHANGE);
   const [qualityProfileId, setQualityProfileId] = useState<string | number>(
     NO_CHANGE
   );
-  const [rootFolderPath, setRootFolderPath] = useState(NO_CHANGE);
+  const [rootFolderPath, setRootFolderPath] = useState<string | number>(NO_CHANGE);
 
   const save = useCallback(() => {
     let hasChanges = false;
@@ -72,7 +73,7 @@ function EditPerformersModalContent(props: EditPerformersModalContentProps) {
 
     if (rootFolderPath !== NO_CHANGE) {
       hasChanges = true;
-      payload.rootFolderPath = rootFolderPath;
+      payload.rootFolderPath = rootFolderPath as string;
     }
 
     if (hasChanges) {
@@ -83,7 +84,7 @@ function EditPerformersModalContent(props: EditPerformersModalContentProps) {
   }, [monitored, qualityProfileId, rootFolderPath, onSavePress, onModalClose]);
 
   const onInputChange = useCallback(
-    ({ name, value }: { name: string; value: string }) => {
+    ({ name, value }: EnhancedSelectInputChanged<string | number>) => {
       switch (name) {
         case 'monitored':
           setMonitored(value);
@@ -143,7 +144,7 @@ function EditPerformersModalContent(props: EditPerformersModalContentProps) {
           <FormInputGroup
             type={inputTypes.ROOT_FOLDER_SELECT}
             name="rootFolderPath"
-            value={rootFolderPath}
+            value={rootFolderPath as string}
             includeNoChange={true}
             includeNoChangeDisabled={false}
             selectedValueOptions={{ includeFreeSpace: false }}

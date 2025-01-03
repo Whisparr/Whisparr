@@ -10,6 +10,7 @@ import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { inputTypes, kinds, sizes } from 'Helpers/Props';
 import translate from 'Utilities/String/translate';
+import { EnhancedSelectInputValue } from 'Components/Form/Select/EnhancedSelectInput';
 import styles from './RemoveQueueItemModal.css';
 
 export interface RemovePressProps {
@@ -78,17 +79,17 @@ function RemoveQueueItemModal(props: RemoveQueueItemModalProps) {
     };
   }, [sourceTitle, selectedCount]);
 
-  const removalMethodOptions = useMemo(() => {
+  const removalMethodOptions: EnhancedSelectInputValue<RemovalMethod>[] = useMemo(() => {
     return [
       {
-        key: 'removeFromClient',
+        key: 'removeFromClient' as RemovalMethod,
         value: translate('RemoveFromDownloadClient'),
         hint: multipleSelected
           ? translate('RemoveMultipleFromDownloadClientHint')
           : translate('RemoveFromDownloadClientHint'),
       },
       {
-        key: 'changeCategory',
+        key: 'changeCategory' as RemovalMethod,
         value: translate('ChangeCategory'),
         isDisabled: !canChangeCategory,
         hint: multipleSelected
@@ -96,7 +97,7 @@ function RemoveQueueItemModal(props: RemoveQueueItemModalProps) {
           : translate('ChangeCategoryHint'),
       },
       {
-        key: 'ignore',
+        key: 'ignore' as RemovalMethod,
         value: multipleSelected
           ? translate('IgnoreDownloads')
           : translate('IgnoreDownload'),
@@ -108,15 +109,15 @@ function RemoveQueueItemModal(props: RemoveQueueItemModalProps) {
     ];
   }, [canChangeCategory, canIgnore, multipleSelected]);
 
-  const blocklistMethodOptions = useMemo(() => {
+  const blocklistMethodOptions: EnhancedSelectInputValue<BlocklistMethod>[] = useMemo(() => {
     return [
       {
-        key: 'doNotBlocklist',
+        key: 'doNotBlocklist' as BlocklistMethod,
         value: translate('DoNotBlocklist'),
         hint: translate('DoNotBlocklistHint'),
       },
       {
-        key: 'blocklistAndSearch',
+        key: 'blocklistAndSearch' as BlocklistMethod,
         value: translate('BlocklistAndSearch'),
         isDisabled: isPending,
         hint: multipleSelected
@@ -124,7 +125,7 @@ function RemoveQueueItemModal(props: RemoveQueueItemModalProps) {
           : translate('BlocklistAndSearchHint'),
       },
       {
-        key: 'blocklistOnly',
+        key: 'blocklistOnly' as BlocklistMethod,
         value: translate('BlocklistOnly'),
         hint: multipleSelected
           ? translate('BlocklistMultipleOnlyHint')

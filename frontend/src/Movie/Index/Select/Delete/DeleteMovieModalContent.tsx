@@ -151,7 +151,7 @@ function DeleteMovieModalContent(props: DeleteMovieModalContentProps) {
                   ? translate('DeleteMovieFoldersHelpText')
                   : translate('DeleteMovieFolderHelpText')
               }
-              kind={kinds.DANGER}
+              kind="danger"
               onChange={onDeleteFilesChange}
             />
           </FormGroup>

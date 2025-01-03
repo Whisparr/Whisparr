@@ -573,7 +573,7 @@ class MovieDetails extends Component {
 
                 <Measure onMeasure={this.onMeasure}>
                   <div className={styles.overview}>
-                    <TextTruncate
+                    <TextTruncate className={styles.overview}
                       line={Math.floor(overviewHeight / (defaultFontSize * lineHeight))}
                       text={overview}
                     />

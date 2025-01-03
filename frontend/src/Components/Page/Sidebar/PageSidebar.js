@@ -20,10 +20,27 @@ const SIDEBAR_WIDTH = parseInt(dimensions.sidebarWidth);
 
 const links = [
   {
+    iconName: icons.SCENE,
+    title: () => translate('Scenes'),
+    to: '/',
+    alias: '/scenes',
+    children: [
+      // Hide until library import is usable for Scenes
+      /* {
+          title: () => translate('ImportLibrary'),
+          to: '/add/import/scenes'
+      },*/
+      {
+        title: () => translate('AddNew'),
+        to: '/add/new/scene'
+      }
+    ]
+  },
+
+  {
     iconName: icons.FILM,
     title: () => translate('Movies'),
-    to: '/',
-    alias: '/movies',
+    to: '/movies',
     children: [
       {
         title: () => translate('ImportLibrary'),
@@ -32,22 +49,6 @@ const links = [
       {
         title: () => translate('AddNew'),
         to: '/add/new/movie'
-      }
-    ]
-  },
-
-  {
-    iconName: icons.SCENE,
-    title: () => translate('Scenes'),
-    to: '/scenes',
-    children: [
-      {
-        title: () => translate('ImportLibrary'),
-        to: '/add/import/scenes'
-      },
-      {
-        title: () => translate('AddNew'),
-        to: '/add/new/scene'
       }
     ]
   },
@@ -208,7 +209,13 @@ function getActiveParent(pathname) {
     const movieId = pathname.split('movie/')[1];
 
     if (pathname.contains('movie/') && uuidRegex.test(movieId)) {
-      activeParent = '/scenes';
+      activeParent = '/';
+      return false;
+    }
+
+    // force "Movies" sidebar when viewing movie detail
+    if (pathname.contains('movie/')) {
+      activeParent = '/movies';
       return false;
     }
 

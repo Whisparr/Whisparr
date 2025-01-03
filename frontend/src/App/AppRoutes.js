@@ -52,7 +52,7 @@ function AppRoutes(props) {
       <Route
         exact={true}
         path="/"
-        component={MovieIndex}
+        component={SceneIndex}
       />
 
       {

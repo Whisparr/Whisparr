@@ -123,11 +123,6 @@ export const defaultState = {
         isVisible: false
       },
       {
-        name: 'languages',
-        label: () => translate('Languages'),
-        isVisible: false
-      },
-      {
         name: 'movies.lastSearchTime',
         label: () => translate('LastSearched'),
         isSortable: true,

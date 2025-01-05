@@ -8,23 +8,25 @@ import MovieSearchCell from 'Movie/MovieSearchCell';
 import MovieStatus from 'Movie/MovieStatus';
 import MovieTitleLink from 'Movie/MovieTitleLink';
 import { SelectStateInputProps } from 'typings/props';
-import styles from './CutoffUnmetRow.css';
+import styles from './MissingRow.css';
 
-interface CutoffUnmetRowProps {
+interface MissingRowProps {
   id: number;
   foreignId: string;
   movieFileId?: number;
-  releaseDate?: string;
+  inCinemas?: string;
+  digitalRelease?: string;
+  physicalRelease?: string;
   lastSearchTime?: string;
   title: string;
   year: number;
-  titleSlug: string;
+  releaseDate?: string;
   isSelected?: boolean;
   columns: Column[];
   onSelectedChange: (options: SelectStateInputProps) => void;
 }
 
-function CutoffUnmetRow({
+function MissingRow({
   id,
   foreignId,
   movieFileId,
@@ -35,8 +37,8 @@ function CutoffUnmetRow({
   isSelected,
   columns,
   onSelectedChange,
-}: CutoffUnmetRowProps) {
-  if (!movieFileId) {
+}: MissingRowProps) {
+  if (!title) {
     return null;
   }
 
@@ -93,7 +95,7 @@ function CutoffUnmetRow({
               <MovieStatus
                 movieId={id}
                 movieFileId={movieFileId}
-                movieEntity="wanted.cutoffUnmet"
+                movieEntity="wanted.missing"
               />
             </TableRowCell>
           );
@@ -104,7 +106,7 @@ function CutoffUnmetRow({
             <MovieSearchCell
               key={name}
               movieId={id}
-              movieEntity="wanted.cutoffUnmet"
+              movieEntity="wanted.missing"
             />
           );
         }
@@ -115,4 +117,4 @@ function CutoffUnmetRow({
   );
 }
 
-export default CutoffUnmetRow;
+export default MissingRow;

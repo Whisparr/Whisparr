@@ -25,6 +25,7 @@ import SettingsAppState from './SettingsAppState';
 import StudiosAppState from './StudiosAppState';
 import SystemAppState from './SystemAppState';
 import TagsAppState from './TagsAppState';
+import WantedAppState from './WantedAppState';
 
 interface FilterBuilderPropOption {
   id: string;
@@ -48,14 +49,14 @@ export interface PropertyFilter {
 export interface Filter {
   key: string;
   label: string | (() => string);
-  filers: PropertyFilter[];
+  filters: PropertyFilter[];
 }
 
 export interface CustomFilter {
   id: number;
   type: string;
   label: string;
-  filers: PropertyFilter[];
+  filters: PropertyFilter[];
 }
 
 export interface PathsAppState {
@@ -116,6 +117,7 @@ interface AppState {
   settings: SettingsAppState;
   system: SystemAppState;
   tags: TagsAppState;
+  wanted: WantedAppState;
 }
 
 export default AppState;

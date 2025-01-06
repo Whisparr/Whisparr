@@ -7,6 +7,7 @@ import CustomFiltersAppState from './CustomFiltersAppState';
 import ExtraFilesAppState from './ExtraFilesAppState';
 import HistoryAppState, { MovieHistoryAppState } from './HistoryAppState';
 import InteractiveImportAppState from './InteractiveImportAppState';
+import MessagesAppState from './MessagesAppState';
 import MovieBlocklistAppState from './MovieBlocklistAppState';
 import MovieCollectionAppState from './MovieCollectionAppState';
 import MovieFilesAppState from './MovieFilesAppState';
@@ -81,6 +82,7 @@ export interface AppSectionState {
     isPopulated: boolean;
   };
   isSidebarVisible?: boolean;
+  messages: MessagesAppState;
 }
 
 interface AppState {

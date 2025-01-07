@@ -15,7 +15,7 @@ namespace NzbDrone.Core.Parser
         private static readonly Logger Logger = NzbDroneLogger.GetLogger(typeof(LanguageParser));
 
         private static readonly Regex LanguageRegex = new Regex(@"(?:\W|_|^)(?<italian>\b(?:ita|italian)\b)|
-                                                                            (?<german>german\b|videomann|ger[. ]dub)|
+                                                                            (?<german>german\b|videomann|ger[. ]dub|\bger\b)|
                                                                             (?<flemish>flemish)|
                                                                             (?<bulgarian>bgaudio)|
                                                                             (?<romanian>rodubbed)|
@@ -43,6 +43,7 @@ namespace NzbDrone.Core.Parser
                                                                                                           (?<polish>\bPL\b)|
                                                                                                           (?<bulgarian>\bBG\b)|
                                                                                                           (?<slovak>\bSK\b)|
+                                                                                                          (?<german>\bDE\b)|
                                                                                                           (?<spanish>\b(?<!DTS[._ -])ES\b))(?:(?i)(?![\W|_|^]SUB))",
                                                                 RegexOptions.Compiled | RegexOptions.IgnorePatternWhitespace);
 
@@ -279,6 +280,11 @@ namespace NzbDrone.Core.Parser
                 if (match.Groups["spanish"].Captures.Any())
                 {
                     languages.Add(Language.Spanish);
+                }
+
+                if (match.Groups["german"].Captures.Any())
+                {
+                    languages.Add(Language.German);
                 }
             }
 

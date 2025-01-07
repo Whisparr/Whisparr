@@ -19,6 +19,7 @@ import useModalOpenState from 'Helpers/Hooks/useModalOpenState';
 import usePrevious from 'Helpers/Hooks/usePrevious';
 import useSelectState from 'Helpers/Hooks/useSelectState';
 import { icons, kinds } from 'Helpers/Props';
+import { SortDirection } from 'Helpers/Props/SortDirection';
 import {
   bulkDeleteImportListExclusions,
   clearImportListExclusions,
@@ -162,8 +163,8 @@ function ImportListExclusions() {
   });
 
   const handleSortPress = useCallback(
-    (sortKey: { sortKey: string }) => {
-      dispatch(setImportListExclusionSort({ sortKey }));
+    (sortKey: string, sortDirection?: SortDirection) => {
+      dispatch(setImportListExclusionSort({ sortKey, sortDirection }));
     },
     [dispatch]
   );

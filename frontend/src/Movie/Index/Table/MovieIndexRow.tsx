@@ -235,12 +235,8 @@ function MovieIndexRow(props: MovieIndexRowProps) {
 
         if (name === 'path') {
           return (
-            <VirtualTableRowCell
-              key={name}
-              className={styles[name]}
-              title={path}
-            >
-              {path}
+            <VirtualTableRowCell key={name} className={styles[name]}>
+              <span title={path}>{path}</span>
             </VirtualTableRowCell>
           );
         }

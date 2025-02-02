@@ -7,7 +7,6 @@ using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Instrumentation.Extensions;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.CustomFormats;
-using NzbDrone.Core.DecisionEngine;
 using NzbDrone.Core.Download;
 using NzbDrone.Core.Download.TrackedDownloads;
 using NzbDrone.Core.MediaFiles.MediaInfo;
@@ -236,10 +235,9 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
 
                 if (localMovie.Movie.MovieMetadata.Value.ItemType == ItemType.Movie)
                 {
-                    decision = new ImportDecision(localMovie, new Rejection("Invalid movie"));
                     if (localMovie.Movie == null)
                     {
-                        decision = new ImportDecision(localMovie, new Rejection("Invalid movie"));
+                        decision = new ImportDecision(localMovie, new ImportRejection(ImportRejectionReason.InvalidMovie, "Invalid movie"));
                     }
                     else
                     {
@@ -275,7 +273,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
                         matchedMovie = _movieService.FindScene(fileMovieInfo);
                         if (matchedMovie.Title != localMovie.Movie.Title)
                         {
-                            decision = new ImportDecision(localMovie, new Rejection("Invalid movie"));
+                            decision = new ImportDecision(localMovie, new ImportRejection(ImportRejectionReason.UnknownMovie, "Movie title does not match identified scene title"));
                         }
                     }
 
@@ -300,7 +298,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
                             _logger.Warn($"{rejection} for {localMovie.Movie.ToString()}");
                             if (_configService.WhisparrValidateRuntime)
                             {
-                                decision = new ImportDecision(localMovie, new Rejection($"Runtime of {localMovie.Movie.MovieMetadata.Value.Runtime} expected but {runtime} Found"));
+                                decision = new ImportDecision(localMovie, new ImportRejection(ImportRejectionReason.Error, $"Runtime of {localMovie.Movie.MovieMetadata.Value.Runtime} expected but {runtime} Found"));
                             }
                         }
                     }
@@ -308,13 +306,13 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
             }
             catch (AugmentingFailedException)
             {
-                decision = new ImportDecision(localMovie, new Rejection("Unable to parse file"));
+                decision = new ImportDecision(localMovie, new ImportRejection(ImportRejectionReason.UnableToParse, "Unable to parse file"));
             }
             catch (Exception ex)
             {
                 _logger.Error(ex, "Couldn't import file. {0}", localMovie.Path);
 
-                decision = new ImportDecision(localMovie, new Rejection("Unexpected error processing file"));
+                decision = new ImportDecision(localMovie, new ImportRejection(ImportRejectionReason.Error, "Unexpected error processing file"));
             }
 
             if (decision == null)
@@ -333,7 +331,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
             return decision;
         }
 
-        private Rejection EvaluateSpec(IImportDecisionEngineSpecification spec, LocalMovie localMovie, DownloadClientItem downloadClientItem)
+        private ImportRejection EvaluateSpec(IImportDecisionEngineSpecification spec, LocalMovie localMovie, DownloadClientItem downloadClientItem)
         {
             try
             {
@@ -341,7 +339,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
 
                 if (!result.Accepted)
                 {
-                    return new Rejection(result.Reason);
+                    return new ImportRejection(result.Reason, result.Message);
                 }
             }
             catch (NotImplementedException e)
@@ -352,7 +350,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
             catch (Exception ex)
             {
                 _logger.Error(ex, "Couldn't evaluate decision on {0}", localMovie.Path);
-                return new Rejection($"{spec.GetType().Name}: {ex.Message}");
+                return new ImportRejection(ImportRejectionReason.DecisionError, $"{spec.GetType().Name}: {ex.Message}");
             }
 
             return null;

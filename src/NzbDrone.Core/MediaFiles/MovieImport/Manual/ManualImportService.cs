@@ -8,7 +8,6 @@ using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Instrumentation.Extensions;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.CustomFormats;
-using NzbDrone.Core.DecisionEngine;
 using NzbDrone.Core.Download;
 using NzbDrone.Core.Download.TrackedDownloads;
 using NzbDrone.Core.Languages;
@@ -292,7 +291,11 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Manual
                     // Augment movie file so imported files have all additional information an automatic import would
                     localMovie = _aggregationService.Augment(localMovie, null);
 
-                    return MapItem(new ImportDecision(localMovie, new Rejection("Unknown Movie")), rootFolder, downloadId, null);
+                    return MapItem(new ImportDecision(localMovie,
+                        new ImportRejection(ImportRejectionReason.UnknownMovie, "Unknown Movie")),
+                        rootFolder,
+                        downloadId,
+                        null);
                 }
 
                 var importDecisions = _importDecisionMaker.GetImportDecisions(new List<string> { file }, movie, trackedDownload?.DownloadItem, null, SceneSource(movie, baseFolder), false);
@@ -314,7 +317,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Manual
                 RelativePath = rootFolder.GetRelativePath(file),
                 Name = Path.GetFileNameWithoutExtension(file),
                 Size = _diskProvider.GetFileSize(file),
-                Rejections = new List<Rejection>()
+                Rejections = new List<ImportRejection>()
             };
         }
 

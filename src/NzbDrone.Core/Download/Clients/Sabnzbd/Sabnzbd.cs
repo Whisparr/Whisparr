@@ -282,6 +282,10 @@ namespace NzbDrone.Core.Download.Clients.Sabnzbd
                     out var daysRetention);
                 status.RemovesCompletedDownloads = daysRetention < 14;
             }
+            else if (config.Misc.history_retention.IsNullOrWhiteSpace())
+            {
+                status.RemovesCompletedDownloads = false;
+            }
             else
             {
                 status.RemovesCompletedDownloads = config.Misc.history_retention != "0";

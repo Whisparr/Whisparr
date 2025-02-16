@@ -17,7 +17,7 @@ import PageToolbarSeparator from 'Components/Page/Toolbar/PageToolbarSeparator';
 import TmdbRating from 'Components/TmdbRating';
 import Popover from 'Components/Tooltip/Popover';
 import Tooltip from 'Components/Tooltip/Tooltip';
-import { icons, kinds, sizes, tooltipPositions } from 'Helpers/Props';
+import { icons, kinds, sizes, sortDirections, tooltipPositions } from 'Helpers/Props';
 import InteractiveImportModal from 'InteractiveImport/InteractiveImportModal';
 import DeleteMovieModal from 'Movie/Delete/DeleteMovieModal';
 import EditMovieModalConnector from 'Movie/Edit/EditMovieModalConnector';
@@ -632,11 +632,15 @@ class MovieDetails extends Component {
           <InteractiveImportModal
             isOpen={isInteractiveImportModalOpen}
             movieId={id}
-            modalTitle={translate('ManageFiles')}
+            title={title}
             folder={path}
+            initialSortKey="relativePath"
+            initialSortDirection={sortDirections.ASCENDING}
+            showMovie={false}
             allowMovieChange={false}
-            showFilterExistingFiles={true}
+            showDelete={true}
             showImportMode={false}
+            modalTitle={translate('ManageFiles')}
             onModalClose={this.onInteractiveImportModalClose}
           />
 

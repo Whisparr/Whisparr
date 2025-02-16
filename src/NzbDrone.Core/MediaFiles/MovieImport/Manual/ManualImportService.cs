@@ -25,6 +25,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Manual
 {
     public interface IManualImportService
     {
+        List<ManualImportItem> GetMediaFiles(int movieId);
         List<ManualImportItem> GetMediaFiles(string path, string downloadId, int? movieId, bool filterExistingFiles);
         ManualImportItem ReprocessItem(string path, string downloadId, int movieId, string releaseGroup, QualityModel quality, List<Language> languages, int indexerFlags);
     }
@@ -41,6 +42,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Manual
         private readonly IAggregationService _aggregationService;
         private readonly ITrackedDownloadService _trackedDownloadService;
         private readonly IDownloadedMovieImportService _downloadedMovieImportService;
+        private readonly IMediaFileService _mediaFileService;
         private readonly ICustomFormatCalculationService _formatCalculator;
         private readonly IEventAggregator _eventAggregator;
         private readonly IConfigService _configService;
@@ -57,6 +59,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Manual
                                    IImportApprovedMovie importApprovedMovie,
                                    ITrackedDownloadService trackedDownloadService,
                                    IDownloadedMovieImportService downloadedMovieImportService,
+                                   IMediaFileService mediaFileService,
                                    ICustomFormatCalculationService formatCalculator,
                                    IEventAggregator eventAggregator,
                                    IConfigService configService,
@@ -73,11 +76,41 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Manual
             _importApprovedMovie = importApprovedMovie;
             _trackedDownloadService = trackedDownloadService;
             _downloadedMovieImportService = downloadedMovieImportService;
+            _mediaFileService = mediaFileService;
             _formatCalculator = formatCalculator;
             _eventAggregator = eventAggregator;
             _configService = configService;
             _studioService = studioService;
             _logger = logger;
+        }
+
+        public List<ManualImportItem> GetMediaFiles(int movieId)
+        {
+            var movie = _movieService.GetMovie(movieId);
+            var directoryInfo = new DirectoryInfo(movie.Path);
+            var movieFiles = _mediaFileService.GetFilesByMovie(movieId);
+
+            var items = movieFiles.Select(movieFile => MapItem(movieFile, movie, directoryInfo.Name)).ToList();
+
+            var mediaFiles = _diskScanService.FilterPaths(movie.Path, _diskScanService.GetVideoFiles(movie.Path)).ToList();
+            var unmappedFiles = MediaFileService.FilterExistingFiles(mediaFiles, movieFiles, movie);
+
+            items.AddRange(unmappedFiles.Select(file =>
+                new ManualImportItem
+                {
+                    Path = Path.Combine(movie.Path, file),
+                    FolderName = directoryInfo.Name,
+                    RelativePath = movie.Path.GetRelativePath(file),
+                    Name = Path.GetFileNameWithoutExtension(file),
+                    Movie = movie,
+                    ReleaseGroup = string.Empty,
+                    Quality = new QualityModel(Quality.Unknown),
+                    Languages = new List<Language> { Language.Unknown },
+                    Size = _diskProvider.GetFileSize(file),
+                    Rejections = Enumerable.Empty<ImportRejection>()
+                }));
+
+            return items;
         }
 
         public List<ManualImportItem> GetMediaFiles(string path, string downloadId, int? movieId, bool filterExistingFiles)
@@ -381,6 +414,27 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Manual
                 item.CustomFormats = _formatCalculator.ParseCustomFormat(decision.LocalMovie);
                 item.CustomFormatScore = item.Movie.QualityProfile?.CalculateCustomFormatScore(item.CustomFormats) ?? 0;
             }
+
+            return item;
+        }
+
+        private ManualImportItem MapItem(MovieFile movieFile, Movie movie, string folderName)
+        {
+            var item = new ManualImportItem();
+
+            item.Path = Path.Combine(movie.Path, movieFile.RelativePath);
+            item.FolderName = folderName;
+            item.RelativePath = movieFile.RelativePath;
+            item.Name = Path.GetFileNameWithoutExtension(movieFile.Path);
+            item.Movie = movie;
+            item.ReleaseGroup = movieFile.ReleaseGroup;
+            item.Quality = movieFile.Quality;
+            item.Languages = movieFile.Languages;
+            item.IndexerFlags = (int)movieFile.IndexerFlags;
+            item.Size = _diskProvider.GetFileSize(item.Path);
+            item.Rejections = Enumerable.Empty<ImportRejection>();
+            item.MovieFileId = movieFile.Id;
+            item.CustomFormats = _formatCalculator.ParseCustomFormat(movieFile, movie);
 
             return item;
         }

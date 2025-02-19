@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using FluentValidation.Results;
 using NzbDrone.Common.Extensions;
+using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Localization;
 using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.MediaFiles;
@@ -19,12 +20,14 @@ namespace NzbDrone.Core.Notifications.Discord
     {
         private readonly IDiscordProxy _proxy;
         private readonly ITagRepository _tagRepository;
+        private readonly IConfigFileProvider _configFileProvider;
         private readonly ILocalizationService _localizationService;
 
-        public Discord(IDiscordProxy proxy, ITagRepository tagRepository, ILocalizationService localizationService)
+        public Discord(IDiscordProxy proxy, ITagRepository tagRepository, IConfigFileProvider configFileProvider, ILocalizationService localizationService)
         {
             _proxy = proxy;
             _tagRepository = tagRepository;
+            _configFileProvider = configFileProvider;
             _localizationService = localizationService;
         }
 
@@ -37,8 +40,8 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 Author = new DiscordAuthor
                 {
-                    Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
-                    IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
+                    Name = Settings.Author.IsNullOrWhiteSpace() ? _configFileProvider.InstanceName : Settings.Author,
+                    IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/eros/Logo/256.png"
                 },
                 Url = GetUrl(message.Movie.MovieMetadata.Value.ForeignId),
                 Description = "Movie Grabbed",
@@ -141,8 +144,8 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 Author = new DiscordAuthor
                 {
-                    Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
-                    IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
+                    Name = Settings.Author.IsNullOrWhiteSpace() ? _configFileProvider.InstanceName : Settings.Author,
+                    IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/eros/Logo/256.png"
                 },
                 Url = GetUrl(message.Movie.MovieMetadata.Value.ForeignId),
                 Description = isUpgrade ? "Movie Upgraded" : "Movie Imported",
@@ -256,8 +259,8 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 Author = new DiscordAuthor
                 {
-                    Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
-                    IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
+                    Name = Settings.Author.IsNullOrWhiteSpace() ? _configFileProvider.InstanceName : Settings.Author,
+                    IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/eros/Logo/256.png"
                 },
                 Url = GetUrl(movie.MovieMetadata.Value.ForeignId),
                 Title = movie.Title,
@@ -313,8 +316,8 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 Author = new DiscordAuthor
                 {
-                    Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
-                    IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
+                    Name = Settings.Author.IsNullOrWhiteSpace() ? _configFileProvider.InstanceName : Settings.Author,
+                    IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/eros/Logo/256.png"
                 },
                 Url = GetUrl(movie.MovieMetadata.Value.ForeignId),
                 Title = movie.Title,
@@ -354,8 +357,8 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 Author = new DiscordAuthor
                 {
-                    Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
-                    IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
+                    Name = Settings.Author.IsNullOrWhiteSpace() ? _configFileProvider.InstanceName : Settings.Author,
+                    IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/eros/Logo/256.png"
                 },
                 Url = GetUrl(movie.MovieMetadata.Value.ForeignId),
                 Title = GetTitle(movie),
@@ -380,8 +383,8 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 Author = new DiscordAuthor
                 {
-                    Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
-                    IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
+                    Name = Settings.Author.IsNullOrWhiteSpace() ? _configFileProvider.InstanceName : Settings.Author,
+                    IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/eros/Logo/256.png"
                 },
                 Title = healthCheck.Source.Name,
                 Description = healthCheck.Message,
@@ -400,8 +403,8 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 Author = new DiscordAuthor
                 {
-                    Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
-                    IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
+                    Name = Settings.Author.IsNullOrWhiteSpace() ? _configFileProvider.InstanceName : Settings.Author,
+                    IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/eros/Logo/256.png"
                 },
                 Title = "Health Issue Resolved: " + previousCheck.Source.Name,
                 Description = $"The following issue is now resolved: {previousCheck.Message}",
@@ -420,8 +423,8 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 Author = new DiscordAuthor
                 {
-                    Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
-                    IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
+                    Name = Settings.Author.IsNullOrWhiteSpace() ? _configFileProvider.InstanceName : Settings.Author,
+                    IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/eros/Logo/256.png"
                 },
                 Title = APPLICATION_UPDATE_TITLE,
                 Timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
@@ -454,8 +457,8 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 Author = new DiscordAuthor
                 {
-                    Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
-                    IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
+                    Name = Settings.Author.IsNullOrWhiteSpace() ? _configFileProvider.InstanceName : Settings.Author,
+                    IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/eros/Logo/256.png"
                 },
                 Url = GetUrl(movie.MovieMetadata.Value.ForeignId),
                 Description = "Manual interaction needed",

@@ -581,6 +581,7 @@
   "DownloadClientTransmissionSettingsDirectoryHelpText": "Optional location to put downloads in, leave blank to use the default Transmission location",
   "DownloadClientTransmissionSettingsUrlBaseHelpText": "Adds a prefix to the {clientName} rpc url, eg {url}, defaults to '{defaultUrl}'",
   "DownloadClientUnavailable": "Download Client Unavailable",
+  "DownloadClientUTorrentProviderMessage": "Because uTorrent is known for cryptoware, malware and ads we'd suggest switching to a better client like qBittorrent, Deluge or ruTorrent.",
   "DownloadClientUTorrentTorrentStateError": "uTorrent is reporting an error",
   "DownloadClientValidationApiKeyRequired": "API Key Required",
   "DownloadClientValidationAuthenticationFailure": "Authentication Failure",

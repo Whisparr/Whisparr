@@ -290,7 +290,7 @@ namespace NzbDrone.Core.Organizer
             title = EmojiRegex.Replace(title, " ");
             title = ScenifyRemoveChars.Replace(title, string.Empty);
 
-            return title.Trim();
+            return title.RemoveDiacritics();
         }
 
         public static string TitleThe(string title)

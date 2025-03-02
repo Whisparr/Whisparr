@@ -1,15 +1,18 @@
-import InteractiveImportAppState from 'App/State/InteractiveImportAppState';
 import BlocklistAppState from './BlocklistAppState';
 import CalendarAppState from './CalendarAppState';
 import CommandAppState from './CommandAppState';
 import HistoryAppState from './HistoryAppState';
+import InteractiveImportAppState from './InteractiveImportAppState';
+import MovieBlocklistAppState from './MovieBlocklistAppState';
 import MovieCollectionAppState from './MovieCollectionAppState';
 import MovieFilesAppState from './MovieFilesAppState';
+import MovieHistoryAppState from './MovieHistoryAppState';
 import MoviesAppState, { MovieIndexAppState } from './MoviesAppState';
 import MovieSearchAppState from './MovieSearchAppState';
 import ParseAppState from './ParseAppState';
 import PerformersAppState from './PerformersAppState';
 import QueueAppState from './QueueAppState';
+import ReleasesAppState from './ReleasesAppState';
 import RootFolderAppState from './RootFolderAppState';
 import SettingsAppState from './SettingsAppState';
 import StudiosAppState from './StudiosAppState';
@@ -67,8 +70,10 @@ interface AppState {
   commands: CommandAppState;
   history: HistoryAppState;
   interactiveImport: InteractiveImportAppState;
+  movieBlocklist: MovieBlocklistAppState;
   movieCollections: MovieCollectionAppState;
   movieFiles: MovieFilesAppState;
+  movieHistory: MovieHistoryAppState;
   movieIndex: MovieIndexAppState;
   movieSearch: MovieSearchAppState;
   sceneIndex: MovieIndexAppState;
@@ -77,6 +82,7 @@ interface AppState {
   movies: MoviesAppState;
   parse: ParseAppState;
   queue: QueueAppState;
+  releases: ReleasesAppState;
   rootFolders: RootFolderAppState;
   settings: SettingsAppState;
   system: SystemAppState;

@@ -20,7 +20,7 @@ import Tooltip from 'Components/Tooltip/Tooltip';
 import { icons, kinds, sizes, sortDirections, tooltipPositions } from 'Helpers/Props';
 import InteractiveImportModal from 'InteractiveImport/InteractiveImportModal';
 import DeleteMovieModal from 'Movie/Delete/DeleteMovieModal';
-import EditMovieModalConnector from 'Movie/Edit/EditMovieModalConnector';
+import EditMovieModal from 'Movie/Edit/EditMovieModal';
 import getMovieStatusDetails from 'Movie/getMovieStatusDetails';
 import MovieHistoryModal from 'Movie/History/MovieHistoryModal';
 import MovieGenres from 'Movie/MovieGenres';
@@ -610,7 +610,7 @@ class MovieDetails extends Component {
             onModalClose={this.onOrganizeModalClose}
           />
 
-          <EditMovieModalConnector
+          <EditMovieModal
             isOpen={isEditMovieModalOpen}
             movieId={id}
             onModalClose={this.onEditMovieModalClose}

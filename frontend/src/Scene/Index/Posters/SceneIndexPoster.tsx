@@ -10,7 +10,7 @@ import SpinnerIconButton from 'Components/Link/SpinnerIconButton';
 import TmdbRating from 'Components/TmdbRating';
 import Popover from 'Components/Tooltip/Popover';
 import { icons } from 'Helpers/Props';
-import EditMovieModalConnector from 'Movie/Edit/EditMovieModalConnector';
+import EditMovieModal from 'Movie/Edit/EditMovieModal';
 import MovieIndexPosterSelect from 'Movie/Index/Select/MovieIndexPosterSelect';
 import { Statistics } from 'Movie/Movie';
 import DeleteSceneModal from 'Scene/Delete/DeleteSceneModal';
@@ -259,7 +259,7 @@ function SceneIndexPoster(props: SceneIndexPosterProps) {
         showTmdbRating={showTmdbRating}
       />
 
-      <EditMovieModalConnector
+      <EditMovieModal
         isOpen={isEditSceneModalOpen}
         movieId={sceneId}
         onModalClose={onEditSceneModalClose}

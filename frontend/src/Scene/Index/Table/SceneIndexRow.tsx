@@ -12,7 +12,7 @@ import Column from 'Components/Table/Column';
 import TagListConnector from 'Components/TagListConnector';
 import Tooltip from 'Components/Tooltip/Tooltip';
 import { icons, kinds } from 'Helpers/Props';
-import EditMovieModalConnector from 'Movie/Edit/EditMovieModalConnector';
+import EditMovieModal from 'Movie/Edit/EditMovieModal';
 import { Statistics } from 'Movie/Movie';
 import DeleteSceneModal from 'Scene/Delete/DeleteSceneModal';
 import SceneDetailsLinks from 'Scene/Details/SceneDetailsLinks';
@@ -348,7 +348,7 @@ function SceneIndexRow(props: SceneIndexRowProps) {
         return null;
       })}
 
-      <EditMovieModalConnector
+      <EditMovieModal
         isOpen={isEditSceneModalOpen}
         movieId={sceneId}
         onModalClose={onEditSceneModalClose}

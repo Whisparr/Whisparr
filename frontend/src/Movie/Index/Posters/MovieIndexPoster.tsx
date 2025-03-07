@@ -13,7 +13,7 @@ import Popover from 'Components/Tooltip/Popover';
 import { icons } from 'Helpers/Props';
 import DeleteMovieModal from 'Movie/Delete/DeleteMovieModal';
 import MovieDetailsLinks from 'Movie/Details/MovieDetailsLinks';
-import EditMovieModalConnector from 'Movie/Edit/EditMovieModalConnector';
+import EditMovieModal from 'Movie/Edit/EditMovieModal';
 import MovieIndexProgressBar from 'Movie/Index/ProgressBar/MovieIndexProgressBar';
 import MovieIndexPosterSelect from 'Movie/Index/Select/MovieIndexPosterSelect';
 import { Statistics } from 'Movie/Movie';
@@ -283,7 +283,7 @@ function MovieIndexPoster(props: MovieIndexPosterProps) {
         showTags={showTags}
       />
 
-      <EditMovieModalConnector
+      <EditMovieModal
         isOpen={isEditMovieModalOpen}
         movieId={movieId}
         onModalClose={onEditMovieModalClose}

@@ -12,7 +12,7 @@ import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import usePrevious from 'Helpers/Hooks/usePrevious';
-import { inputTypes, kinds } from 'Helpers/Props';
+import { inputTypes, kinds, sizes } from 'Helpers/Props';
 import MoveMovieModal from 'Movie/MoveMovie/MoveMovieModal';
 import useMovie from 'Movie/useMovie';
 import { saveMovie, setMovieValue } from 'Store/Actions/movieActions';
@@ -150,7 +150,7 @@ function EditMovieModalContent({
 
       <ModalBody>
         <Form {...otherSettings}>
-          <FormGroup>
+          <FormGroup size={sizes.MEDIUM}>
             <FormLabel>{translate('Monitored')}</FormLabel>
 
             <FormInputGroup
@@ -162,7 +162,7 @@ function EditMovieModalContent({
             />
           </FormGroup>
 
-          <FormGroup>
+          <FormGroup size={sizes.MEDIUM}>
             <FormLabel>{translate('QualityProfile')}</FormLabel>
 
             <FormInputGroup
@@ -173,7 +173,7 @@ function EditMovieModalContent({
             />
           </FormGroup>
 
-          <FormGroup>
+          <FormGroup size={sizes.MEDIUM}>
             <FormLabel>{translate('Path')}</FormLabel>
 
             <FormInputGroup
@@ -184,7 +184,7 @@ function EditMovieModalContent({
             />
           </FormGroup>
 
-          <FormGroup>
+          <FormGroup size={sizes.MEDIUM}>
             <FormLabel>{translate('Tags')}</FormLabel>
 
             <FormInputGroup

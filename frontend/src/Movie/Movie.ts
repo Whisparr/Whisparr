@@ -18,6 +18,7 @@ export interface Image {
 }
 
 export interface Collection {
+  tmdbId: number;
   title: string;
 }
 

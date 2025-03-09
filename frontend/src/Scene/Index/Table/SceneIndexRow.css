@@ -35,7 +35,7 @@
 .studio>a:visited,
 .studio>a:hover,
 .studio>a:active {
-  color: var(--white);
+  color: var(--defaultColor);
 }
 
 .originalLanguage,

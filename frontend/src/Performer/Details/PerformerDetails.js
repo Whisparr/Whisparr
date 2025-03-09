@@ -21,7 +21,7 @@ import MovieHeadshot from 'Movie/MovieHeadshot';
 import DeletePerformerModalConnector from 'Performer/Delete/DeletePerformerModalConnector';
 import EditPerformerModalConnector from 'Performer/Edit/EditPerformerModalConnector';
 import { getPerformerStatusDetails } from 'Performer/PerformerStatus';
-import QualityProfileNameConnector from 'Settings/Profiles/Quality/QualityProfileNameConnector';
+import QualityProfileName from 'Settings/Profiles/Quality/QualityProfileName';
 import * as keyCodes from 'Utilities/Constants/keyCodes';
 import formatBytes from 'Utilities/Number/formatBytes';
 import firstCharToUpper from 'Utilities/String/firstCharToUpper';
@@ -427,7 +427,7 @@ class PerformerDetails extends Component {
 
                     <span className={styles.qualityProfileName}>
                       {qualityProfileId ?
-                        <QualityProfileNameConnector
+                        <QualityProfileName
                           qualityProfileId={qualityProfileId}
                         /> :
                         null

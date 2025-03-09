@@ -40,7 +40,7 @@ import MovieInteractiveSearchModal from 'Movie/Search/MovieInteractiveSearchModa
 import MovieFileEditorTable from 'MovieFile/Editor/MovieFileEditorTable';
 import ExtraFileTable from 'MovieFile/Extras/ExtraFileTable';
 import OrganizePreviewModal from 'Organize/OrganizePreviewModal';
-import QualityProfileNameConnector from 'Settings/Profiles/Quality/QualityProfileNameConnector';
+import QualityProfileName from 'Settings/Profiles/Quality/QualityProfileName';
 import fonts from 'Styles/Variables/fonts';
 import formatRuntime from 'Utilities/Date/formatRuntime';
 import formatBytes from 'Utilities/Number/formatBytes';
@@ -510,9 +510,7 @@ class MovieDetails extends Component<Props, State> {
                     size={sizes.LARGE}
                   >
                     <span className={styles.qualityProfileName}>
-                      <QualityProfileNameConnector
-                        qualityProfileId={qualityProfileId}
-                      />
+                      <QualityProfileName qualityProfileId={qualityProfileId} />
                     </span>
                   </InfoLabel>
 

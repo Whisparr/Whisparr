@@ -17,7 +17,7 @@ import PageToolbarSection from 'Components/Page/Toolbar/PageToolbarSection';
 import PageToolbarSeparator from 'Components/Page/Toolbar/PageToolbarSeparator';
 import Tooltip from 'Components/Tooltip/Tooltip';
 import { icons, kinds, sizes, tooltipPositions } from 'Helpers/Props';
-import QualityProfileNameConnector from 'Settings/Profiles/Quality/QualityProfileNameConnector';
+import QualityProfileName from 'Settings/Profiles/Quality/QualityProfileName';
 import DeleteStudioModalConnector from 'Studio/Delete/DeleteStudioModalConnector';
 import EditStudioModalConnector from 'Studio/Edit/EditStudioModalConnector';
 import StudioLogo from 'Studio/StudioLogo';
@@ -430,7 +430,7 @@ class StudioDetails extends Component {
 
                     <span className={styles.qualityProfileName}>
                       {
-                        <QualityProfileNameConnector
+                        <QualityProfileName
                           qualityProfileId={qualityProfileId}
                         />
                       }

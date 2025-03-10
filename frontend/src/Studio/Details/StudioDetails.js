@@ -182,7 +182,7 @@ class StudioDetails extends Component {
     this.setState(getExpandedState(selectAll(expandedState, !allExpanded)));
   };
 
-  onExpandPress = (studioId, isExpanded) => {
+  onExpandPress = (year, isExpanded) => {
     this.setState((state) => {
       const convertedState = {
         allSelected: state.allExpanded,
@@ -190,7 +190,7 @@ class StudioDetails extends Component {
         selectedState: state.expandedState
       };
 
-      const newState = toggleSelected(convertedState, [], studioId, isExpanded, false);
+      const newState = toggleSelected(convertedState, [], year, isExpanded, false);
 
       return getExpandedState(newState);
     });
@@ -236,8 +236,17 @@ class StudioDetails extends Component {
       isEditMovieModalOpen,
       isDeleteMovieModalOpen,
       isInteractiveSearchModalOpen,
-      expandedState
+      expandedState,
+      allExpanded,
+      allCollapsed
     } = this.state;
+
+    let expandIcon = icons.EXPAND_INDETERMINATE;
+    if (allExpanded) {
+      expandIcon = icons.COLLAPSE;
+    } else if (allCollapsed) {
+      expandIcon = icons.EXPAND;
+    }
 
     const runningYears = `${years[0]}-${years.slice(-1)}`;
 
@@ -290,6 +299,15 @@ class StudioDetails extends Component {
               onPress={this.onDeleteMoviePress}
             />
           </PageToolbarSection>
+
+          <PageToolbarSection alignContent="right">
+            <PageToolbarButton
+              label={allExpanded ? 'Collapse All' : 'Expand All'}
+              iconName={expandIcon}
+              onPress={this.onExpandAllPress}
+            />
+          </PageToolbarSection>
+
         </PageToolbar>
 
         <PageContentBody innerClassName={styles.innerContentBody}>

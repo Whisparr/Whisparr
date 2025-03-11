@@ -177,11 +177,7 @@ class PerformerDetails extends Component {
   };
 
   onExpandAllPress = () => {
-    const {
-      allExpanded,
-      expandedState
-    } = this.state;
-
+    const { allExpanded, expandedState } = this.state;
     this.setState(getExpandedState(selectAll(expandedState, !allExpanded)));
   };
 
@@ -243,8 +239,17 @@ class PerformerDetails extends Component {
       isDeleteMovieModalOpen,
       isEditMovieModalOpen,
       isInteractiveSearchModalOpen,
-      expandedState
+      expandedState,
+      allExpanded,
+      allCollapsed
     } = this.state;
+
+    let expandIcon = icons.EXPAND_INDETERMINATE;
+    if (allExpanded) {
+      expandIcon = icons.COLLAPSE;
+    } else if (allCollapsed) {
+      expandIcon = icons.EXPAND;
+    }
 
     const statusDetails = getPerformerStatusDetails(status);
     const runningYears = statusDetails.title === translate('Inactive') ? `${careerStart}-${careerEnd}` : `${careerStart}-`;
@@ -290,6 +295,14 @@ class PerformerDetails extends Component {
               iconName={icons.EDIT}
               onPress={this.onEditMoviePress}
             />
+
+            <PageToolbarSection alignContent="right">
+              <PageToolbarButton
+                label={allExpanded ? 'Collapse All' : 'Expand All'}
+                iconName={expandIcon}
+                onPress={this.onExpandAllPress}
+              />
+            </PageToolbarSection>
 
             <PageToolbarButton
               label={translate('Delete')}

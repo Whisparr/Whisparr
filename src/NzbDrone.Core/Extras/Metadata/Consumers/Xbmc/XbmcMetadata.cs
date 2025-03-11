@@ -130,7 +130,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
                 using (var xw = XmlWriter.Create(sb, xws))
                 {
                     var doc = new XDocument();
-                    var thumbnail = movie.MovieMetadata.Value.Images.SingleOrDefault(i => i.CoverType == MediaCoverTypes.Screenshot);
+                    var thumbnail = movie.MovieMetadata.Value.Images.FirstOrDefault(i => i.CoverType == MediaCoverTypes.Screenshot);
                     var posters = movie.MovieMetadata.Value.Images.Where(i => i.CoverType == MediaCoverTypes.Poster);
                     var fanarts = movie.MovieMetadata.Value.Images.Where(i => i.CoverType == MediaCoverTypes.Fanart);
 

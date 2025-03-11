@@ -132,7 +132,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Wdtv
             }
 
             // Because we only support one image, attempt to get the Poster type, then if that fails grab the first
-            var image = movie.MovieMetadata.Value.Images.SingleOrDefault(c => c.CoverType == MediaCoverTypes.Poster) ?? movie.MovieMetadata.Value.Images.FirstOrDefault();
+            var image = movie.MovieMetadata.Value.Images.FirstOrDefault(c => c.CoverType == MediaCoverTypes.Poster) ?? movie.MovieMetadata.Value.Images.FirstOrDefault();
             if (image == null)
             {
                 _logger.Trace("Failed to find suitable Movie image for movie {0}.", movie.Title);

@@ -1,20 +1,29 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import Link from 'Components/Link/Link';
+import Tooltip from '../Components/Tooltip/Tooltip';
 
-function SeriesTitleLink({ titleSlug, title }) {
+function SeriesTitleLink({ titleSlug, title, tvdbId }) {
   const link = `/site/${titleSlug}`;
 
   return (
-    <Link to={link}>
-      {title}
-    </Link>
+    <Tooltip
+      anchor={
+        <Link to={link}>
+          {title}
+        </Link>
+      }
+      tooltip={tvdbId ? `${tvdbId}` : 'No TVDB ID available'}
+      kind="inverse"
+      position="top"
+    />
   );
 }
 
 SeriesTitleLink.propTypes = {
   titleSlug: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired
+  title: PropTypes.string.isRequired,
+  tvdbId: PropTypes.number
 };
 
 export default SeriesTitleLink;

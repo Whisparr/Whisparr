@@ -1,9 +1,9 @@
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import { createSelector } from 'reselect';
 import { deletePerformer, setDeleteOption } from 'Store/Actions/performerActions';
 import createPerformerSelector from 'Store/Selectors/createPerformerSelector';
 import DeletePerformerModalContent from './DeletePerformerModalContent';
-import { withRouter } from "react-router-dom";
 
 function createMapStateToProps() {
   return createSelector(

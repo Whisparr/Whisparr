@@ -1,4 +1,5 @@
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import { createSelector } from 'reselect';
 import { deleteStudio, setDeleteOption } from 'Store/Actions/studioActions';
 import createStudioSelector from 'Store/Selectors/createStudioSelector';
@@ -37,8 +38,9 @@ function createMapDispatchToProps(dispatch, props) {
       );
 
       props.onModalClose(true);
+      props.history.push('/studios');
     }
   };
 }
 
-export default connect(createMapStateToProps, createMapDispatchToProps)(DeleteStudioModalContent);
+export default withRouter(connect(createMapStateToProps, createMapDispatchToProps)(DeleteStudioModalContent));

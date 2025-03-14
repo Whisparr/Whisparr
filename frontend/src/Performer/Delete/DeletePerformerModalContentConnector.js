@@ -3,6 +3,7 @@ import { createSelector } from 'reselect';
 import { deletePerformer, setDeleteOption } from 'Store/Actions/performerActions';
 import createPerformerSelector from 'Store/Selectors/createPerformerSelector';
 import DeletePerformerModalContent from './DeletePerformerModalContent';
+import { withRouter } from "react-router-dom";
 
 function createMapStateToProps() {
   return createSelector(
@@ -37,8 +38,9 @@ function createMapDispatchToProps(dispatch, props) {
       );
 
       props.onModalClose(true);
+      props.history.push('/performers');
     }
   };
 }
 
-export default connect(createMapStateToProps, createMapDispatchToProps)(DeletePerformerModalContent);
+export default withRouter(connect(createMapStateToProps, createMapDispatchToProps)(DeletePerformerModalContent));

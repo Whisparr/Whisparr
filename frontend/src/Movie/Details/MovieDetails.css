@@ -131,9 +131,6 @@
 }
 
 .details {
-  overflow-x: hidden;
-  overflow-y: scroll;
-  margin-bottom: 8px;
   padding-left: 7px;
   font-weight: 300;
   font-size: 20px;

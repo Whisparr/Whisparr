@@ -296,6 +296,12 @@ class PerformerDetails extends Component {
               onPress={this.onEditMoviePress}
             />
 
+            <PageToolbarButton
+              label={translate('Delete')}
+              iconName={icons.DELETE}
+              onPress={this.onDeleteMoviePress}
+            />
+
             <PageToolbarSection alignContent="right">
               <PageToolbarButton
                 label={allExpanded ? 'Collapse All' : 'Expand All'}
@@ -303,12 +309,6 @@ class PerformerDetails extends Component {
                 onPress={this.onExpandAllPress}
               />
             </PageToolbarSection>
-
-            <PageToolbarButton
-              label={translate('Delete')}
-              iconName={icons.DELETE}
-              onPress={this.onDeleteMoviePress}
-            />
           </PageToolbarSection>
         </PageToolbar>
 

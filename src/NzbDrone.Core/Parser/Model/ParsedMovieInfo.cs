@@ -24,6 +24,7 @@ namespace NzbDrone.Core.Parser.Model
         public string ReleaseHash { get; set; }
         public string ReleaseDate { get; set; }
         public string Episode { get; set; }
+        public string Code { get; set; }
         public string Edition { get; set; }
         public int Year { get; set; }
         public string StashId { get; set; }
@@ -51,7 +52,7 @@ namespace NzbDrone.Core.Parser.Model
         {
             get
             {
-                return ReleaseDate.IsNotNullOrWhiteSpace() || Episode.IsNotNullOrWhiteSpace() || StashId.IsNotNullOrWhiteSpace();
+                return ReleaseDate.IsNotNullOrWhiteSpace() || Episode.IsNotNullOrWhiteSpace() || Code.IsNotNullOrWhiteSpace() || StashId.IsNotNullOrWhiteSpace();
             }
         }
 

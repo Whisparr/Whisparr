@@ -390,6 +390,11 @@ namespace NzbDrone.Core.Movies
                 result = FindByForeignId(parsedMovieInfo.StashId);
             }
 
+            if (result == null && parsedMovieInfo.Code.IsNotNullOrWhiteSpace())
+            {
+                result = FindByTitle(parsedMovieInfo.Code);
+            }
+
             if (result == null)
             {
                 var studios = _studioService.FindAllByTitle(parsedMovieInfo.StudioTitle);

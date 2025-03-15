@@ -127,6 +127,21 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
                                         .With(x => x.MovieMetadata.Value.ReleaseDate = "2021-02-24")
                                         .With(x => x.MovieMetadata.Value.Studio = evilStudio)
                                         .With(x => x.MovieMetadata.Value.Credits = evilCredits)
+                                        .TheNext(1)
+                                        .With(x => x.Title = "SGKI-011")
+                                        .With(x => x.MovieMetadata.Value.CleanTitle = "sgki011")
+                                        .With(x => x.MovieMetadata.Value.Studio = studio)
+                                        .With(x => x.MovieMetadata.Value.ReleaseDate = "2025-01-01")
+                                        .TheNext(1)
+                                        .With(x => x.Title = "JUNY-018")
+                                        .With(x => x.MovieMetadata.Value.CleanTitle = "juny018")
+                                        .With(x => x.MovieMetadata.Value.Studio = studio)
+                                        .With(x => x.MovieMetadata.Value.ReleaseDate = "2025-01-01")
+                                        .TheNext(1)
+                                        .With(x => x.Title = "NHDTB-508")
+                                        .With(x => x.MovieMetadata.Value.CleanTitle = "nhdtb508")
+                                        .With(x => x.MovieMetadata.Value.Studio = studio)
+                                        .With(x => x.MovieMetadata.Value.ReleaseDate = "2025-01-01")
                                         .TheRest()
                                         .With(x => x.Title = "Title For the Rest")
                                         .With(x => x.MovieMetadata.Value.ReleaseDate = "2024-06-12")
@@ -146,6 +161,10 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
             Mocker.GetMock<IStudioService>()
                 .Setup(s => s.FindAllByTitle(It.IsAny<string>()))
                 .Returns(studios);
+
+            Mocker.GetMock<IMovieRepository>()
+                .Setup(s => s.FindByTitles(It.IsAny<List<string>>()))
+                .Returns(scenes);
 
             Mocker.GetMock<IMovieRepository>()
                 .Setup(s => s.GetByStudioForeignId(It.Is<string>(s => s.Equals("Studio"))))
@@ -218,6 +237,9 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
             movie.Year.Should().Be(2000);
         }
 
+        [TestCase("SGKI-011", 20)]
+        [TestCase("JUNY-018", 21)]
+        [TestCase("NHDTB-508", 22)]
         [TestCase("Studio 2020-05-29 Title Vol 1 E2", 2)]
         [TestCase("Studio 2020-05-29 Title Vol 1 E2_1", 2)]
         [TestCase("[Studio] Quinn Waters (Title / 08.01.2021) [2021 г., Big Tits, Blowjob, Brunette, Chubby, Curvy, Cowgirl, Reverse Cowgirl, Cumshots, Facials, Long Hair, Doggy Style, Hardcore, Missionary, PAWG, POV, Trimmed Pussy, Tattoo, Czech, VR, 8K, 3840p] [Oculus Rift / Vive]", 7)]

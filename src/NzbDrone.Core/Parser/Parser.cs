@@ -104,6 +104,9 @@ namespace NzbDrone.Core.Parser
 
             // StashId
             new Regex(@"(?<stashid>.{8}-.{4}-.{4}-.{4}-.{12})", RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
+            // JAV
+            new Regex(@"(?<code>[A-Z]{3,5}-[0-9]{3,4})", RegexOptions.IgnoreCase | RegexOptions.Compiled),
         };
 
         private static readonly Regex[] ReportTitleFolderRegex = new[]
@@ -772,7 +775,7 @@ namespace NzbDrone.Core.Parser
 
         private static ParsedMovieInfo ParseMatchCollection(MatchCollection matchCollection, string releaseTitle)
         {
-            if (!matchCollection[0].Groups["airyear"].Success && !matchCollection[0].Groups["episode"].Success && !matchCollection[0].Groups["stashid"].Success)
+            if (!matchCollection[0].Groups["airyear"].Success && !matchCollection[0].Groups["code"].Success  && !matchCollection[0].Groups["episode"].Success && !matchCollection[0].Groups["stashid"].Success)
             {
                 if (!matchCollection[0].Groups["title"].Success || matchCollection[0].Groups["title"].Value == "(")
                 {
@@ -961,6 +964,11 @@ namespace NzbDrone.Core.Parser
                 if (m != null && m.Groups["stashid"].Success)
                 {
                     result.StashId = m.Groups["stashid"].Value;
+                }
+
+                if (matchCollection[0].Groups["code"].Success)
+                {
+                    result.Code = matchCollection[0].Groups["code"].Value;
                 }
 
                 result.StudioTitle = studioTitle;

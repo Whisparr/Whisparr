@@ -78,7 +78,7 @@ namespace NzbDrone.Core.DecisionEngine
                 {
                     var parsedMovieInfo = Parser.Parser.ParseMovieTitle(report.Title);
 
-                    if (parsedMovieInfo != null && ((!parsedMovieInfo.PrimaryMovieTitle.IsNullOrWhiteSpace() && !parsedMovieInfo.IsScene) || (!parsedMovieInfo.StudioTitle.IsNullOrWhiteSpace() && parsedMovieInfo.IsScene)))
+                    if (parsedMovieInfo != null && ((!parsedMovieInfo.PrimaryMovieTitle.IsNullOrWhiteSpace() && !parsedMovieInfo.IsScene) || (!parsedMovieInfo.StudioTitle.IsNullOrWhiteSpace() && parsedMovieInfo.IsScene) || (!parsedMovieInfo.Code.IsNullOrWhiteSpace() && parsedMovieInfo.IsScene)))
                     {
                         var remoteMovie = _parsingService.Map(parsedMovieInfo, report.ImdbId.ToString(), report.TmdbId, searchCriteria);
                         remoteMovie.Release = report;
@@ -113,7 +113,7 @@ namespace NzbDrone.Core.DecisionEngine
                         }
 
                         if ((parsedMovieInfo.PrimaryMovieTitle.IsNullOrWhiteSpace() && !parsedMovieInfo.IsScene) ||
-                            (parsedMovieInfo.StudioTitle.IsNullOrWhiteSpace() && parsedMovieInfo.IsScene))
+                            ((parsedMovieInfo.StudioTitle.IsNullOrWhiteSpace() && parsedMovieInfo.IsScene) && (parsedMovieInfo.Code.IsNullOrWhiteSpace() && parsedMovieInfo.IsScene)))
                         {
                             var remoteMovie = new RemoteMovie
                             {

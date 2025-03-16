@@ -106,7 +106,7 @@ namespace NzbDrone.Core.Parser
             new Regex(@"(?<stashid>.{8}-.{4}-.{4}-.{4}-.{12})", RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
             // JAV
-            new Regex(@"(?<code>[A-Z]{3,5}-[0-9]{3,4})", RegexOptions.IgnoreCase | RegexOptions.Compiled),
+            new Regex(@"^(?<code>[A-Z]{3,5}[- ][0-9]{3,4})", RegexOptions.IgnoreCase | RegexOptions.Compiled),
         };
 
         private static readonly Regex[] ReportTitleFolderRegex = new[]

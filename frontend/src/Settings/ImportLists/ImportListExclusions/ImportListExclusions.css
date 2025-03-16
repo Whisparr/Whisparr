@@ -1,12 +1,16 @@
 .importListExclusionsHeader {
   display: flex;
   margin-bottom: 10px;
+  border-bottom: 1px solid var(--borderColor);
   font-weight: bold;
 }
 
-.foreignId,
+.foreignId {
+  flex: 1 1 300px;
+}
+
 .title {
-  flex: 0 0 600px;
+  flex: 1 1 600px;
 }
 
 .type,
@@ -17,6 +21,7 @@
 .addImportExclusion {
   display: flex;
   justify-content: flex-end;
+  flex: 1 0 auto;
   padding-right: 10px;
 }
 

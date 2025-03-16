@@ -60,6 +60,14 @@ class ImportListExclusions extends Component {
             <div className={styles.title}>
               {translate('ExclusionTitle')}
             </div>
+            <div className={styles.addImportExclusion}>
+              <Link
+                className={styles.addButton}
+                onPress={this.onAddImportExclusionPress}
+              >
+                <Icon name={icons.ADD} />
+              </Link>
+            </div>
           </div>
 
           <div>
@@ -76,15 +84,6 @@ class ImportListExclusions extends Component {
                 );
               })
             }
-          </div>
-
-          <div className={styles.addImportExclusion}>
-            <Link
-              className={styles.addButton}
-              onPress={this.onAddImportExclusionPress}
-            >
-              <Icon name={icons.ADD} />
-            </Link>
           </div>
 
           <EditImportListExclusionModalConnector

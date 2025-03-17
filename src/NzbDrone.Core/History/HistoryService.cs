@@ -220,6 +220,7 @@ namespace NzbDrone.Core.History
                 history.Data.Add("DownloadClientName", message.DownloadClientInfo?.Name);
                 history.Data.Add("ReleaseGroup", message.EpisodeInfo.ReleaseGroup);
                 history.Data.Add("CustomFormatScore", message.EpisodeInfo.CustomFormatScore.ToString());
+                history.Data.Add("Size", message.EpisodeInfo.Size.ToString());
 
                 _historyRepository.Insert(history);
             }
@@ -245,6 +246,7 @@ namespace NzbDrone.Core.History
                 history.Data.Add("DownloadClientName", message.TrackedDownload?.DownloadItem.DownloadClientInfo.Name);
                 history.Data.Add("Message", message.Message);
                 history.Data.Add("ReleaseGroup", message.TrackedDownload?.RemoteEpisode?.ParsedEpisodeInfo?.ReleaseGroup);
+                history.Data.Add("Size", message.TrackedDownload?.DownloadItem.TotalSize.ToString());
 
                 _historyRepository.Insert(history);
             }
@@ -278,6 +280,7 @@ namespace NzbDrone.Core.History
 
                 history.Data.Add("Reason", message.Reason.ToString());
                 history.Data.Add("ReleaseGroup", message.EpisodeFile.ReleaseGroup);
+                history.Data.Add("Size", message.EpisodeFile.Size.ToString());
 
                 _historyRepository.Insert(history);
             }
@@ -308,6 +311,7 @@ namespace NzbDrone.Core.History
                 history.Data.Add("Path", path);
                 history.Data.Add("RelativePath", relativePath);
                 history.Data.Add("ReleaseGroup", message.EpisodeFile.ReleaseGroup);
+                history.Data.Add("Size", message.EpisodeFile.Size.ToString());
 
                 _historyRepository.Insert(history);
             }
@@ -335,6 +339,7 @@ namespace NzbDrone.Core.History
                 history.Data.Add("DownloadClientName", message.DownloadClientInfo.Name);
                 history.Data.Add("Message", message.Message);
                 history.Data.Add("ReleaseGroup", message.TrackedDownload?.RemoteEpisode?.ParsedEpisodeInfo?.ReleaseGroup);
+                history.Data.Add("Size", message.TrackedDownload?.DownloadItem.TotalSize.ToString());
 
                 historyToAdd.Add(history);
             }

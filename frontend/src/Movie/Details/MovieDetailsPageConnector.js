@@ -30,9 +30,11 @@ function createMapStateToProps() {
       const movieIndex = _.findIndex(items, { titleSlug });
 
       if (movieIndex > -1) {
+        const itemType = items[movieIndex].itemType;
         return {
           isFetching,
           isPopulated,
+          itemType,
           titleSlug
         };
       }
@@ -62,7 +64,11 @@ class MovieDetailsPageConnector extends Component {
 
   componentDidUpdate(prevProps) {
     if (!this.props.titleSlug) {
-      this.props.push(`${window.Whisparr.urlBase}/`);
+      if (prevProps.itemType === 'scene') {
+        this.props.push(`${window.Whisparr.urlBase}/`);
+      } else {
+        this.props.push(`${window.Whisparr.urlBase}/movies`);
+      }
       return;
     }
   }
@@ -113,6 +119,7 @@ class MovieDetailsPageConnector extends Component {
 }
 
 MovieDetailsPageConnector.propTypes = {
+  itemType: PropTypes.string,
   titleSlug: PropTypes.string,
   isFetching: PropTypes.bool.isRequired,
   isPopulated: PropTypes.bool.isRequired,

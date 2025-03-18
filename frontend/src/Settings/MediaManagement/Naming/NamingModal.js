@@ -95,6 +95,7 @@ const studioTokens = [
   { token: '{Studio Title}', example: 'Studio\'s Title' },
   { token: '{Studio TitleSlug}', example: 'Studio\'sTitle' },
   { token: '{Studio CleanTitle}', example: 'Studios Title' },
+  { token: '{Studio CleanTitleSlug}', example: 'StudiosTitle' },
   { token: '{Studio TitleThe}', example: 'Studio\'s Title, The' },
   { token: '{Studio TitleFirstCharacter}', example: 'S' },
   { token: '{Studio Network}', example: 'Brazzers' }

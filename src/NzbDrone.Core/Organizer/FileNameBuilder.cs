@@ -315,6 +315,7 @@ namespace NzbDrone.Core.Organizer
                 tokenHandlers["{Studio Title}"] = m => movie.MovieMetadata.Value.StudioTitle;
                 tokenHandlers["{Studio TitleSlug}"] = m => SlugTitle(movie.MovieMetadata.Value.StudioTitle);
                 tokenHandlers["{Studio CleanTitle}"] = m => CleanTitle(movie.MovieMetadata.Value.StudioTitle);
+                tokenHandlers["{Studio CleanTitleSlug}"] = m => SlugTitle(CleanTitle(movie.MovieMetadata.Value.StudioTitle));
                 tokenHandlers["{Studio TitleThe}"] = m => TitleThe(movie.MovieMetadata.Value.StudioTitle);
                 tokenHandlers["{Studio TitleFirstCharacter}"] = m => TitleThe(movie.MovieMetadata.Value.StudioTitle).Substring(0, 1).FirstCharToUpper();
             }

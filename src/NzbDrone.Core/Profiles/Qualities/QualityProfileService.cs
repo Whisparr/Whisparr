@@ -187,7 +187,10 @@ namespace NzbDrone.Core.Profiles.Qualities
                 Quality.WEBDL2160p,
                 Quality.WEBRip2160p,
                 Quality.Bluray2160p,
-                Quality.Remux2160p);
+                Quality.Remux2160p,
+                Quality.WEBDL2880p, // 5K
+                Quality.WEBDL3160p, // 6K
+                Quality.WEBDL4320p); // 8K
 
             AddDefaultProfile("HD - 720p/1080p",
                 Quality.Bluray720p,

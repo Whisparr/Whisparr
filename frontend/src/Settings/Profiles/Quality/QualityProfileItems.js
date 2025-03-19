@@ -47,6 +47,7 @@ class QualityProfileItems extends Component {
   // Render
 
   render() {
+
     const {
       editGroups,
       dropQualityIndex,
@@ -56,7 +57,6 @@ class QualityProfileItems extends Component {
       warnings,
       ...otherProps
     } = this.props;
-
     const {
       qualitiesHeight,
       qualitiesHeightEditGroups

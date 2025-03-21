@@ -62,6 +62,8 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [TestCase("[a] title", "a title")]
         [TestCase("backslash \\ backlash", "backslash backlash")]
         [TestCase("I'm the Boss", "Im the Boss")]
+        [TestCase("Horny Host Can’t Help Herself", "Horny Host Cant Help Herself")]
+        [TestCase("You’re the Babe for the Job", "Youre the Babe for the Job")]
 
         // [TestCase("", "")]
         public void should_get_expected_title_back(string title, string expected)

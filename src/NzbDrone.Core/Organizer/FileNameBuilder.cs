@@ -52,8 +52,11 @@ namespace NzbDrone.Core.Organizer
         private static readonly Regex FileNameCleanupRegex = new Regex(@"([- ._])(\1)+", RegexOptions.Compiled);
         private static readonly Regex TrimSeparatorsRegex = new Regex(@"[- ._]$", RegexOptions.Compiled);
 
-        private static readonly Regex ScenifyRemoveChars = new Regex(@"(?<=\s)(,|<|>|\/|\\|;|:|'|""|\||`|~|!|\?|@|$|%|^|\*|-|_|=){1}(?=\s)|('|:|\?|,)(?=(?:(?:s|m)\s)|\s|$)|(\(|\)|\[|\]|\{|\})", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex ScenifyRemoveChars = new Regex(@"(?<=\s)(,|<|>|\/|\\|;|:|'|""|\||`|’|~|!|\?|@|$|%|^|\*|-|_|=){1}(?=\s)|('|`|’|:|\?|,)(?=(?:(?:s|m|t|re)\s)|\s|$)|(\(|\)|\[|\]|\{|\})", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         private static readonly Regex ScenifyReplaceChars = new Regex(@"[\/]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+        private static readonly Regex EmojiRegex = new Regex(@"\p{Cs}", RegexOptions.Compiled);
+        private static readonly Regex WordDelimiterRegex = new Regex(@"(’|')+", RegexOptions.Compiled);
 
         private static readonly Regex TitlePrefixRegex = new Regex(@"^(The|An|A) (.*?)((?: *\([^)]+\))*)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
@@ -241,9 +244,10 @@ namespace NzbDrone.Core.Organizer
         {
             title = title.Replace("&", "and");
             title = ScenifyReplaceChars.Replace(title, " ");
+            title = EmojiRegex.Replace(title, " ");
             title = ScenifyRemoveChars.Replace(title, string.Empty);
 
-            return title;
+            return title.Trim();
         }
 
         public static string TitleThe(string title)

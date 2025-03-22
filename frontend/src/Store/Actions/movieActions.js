@@ -344,6 +344,14 @@ function getSaveAjaxOptions({ ajaxOptions, payload }) {
 export const actionHandlers = handleThunks({
 
   [FETCH_MOVIES]: (getState, payload, dispatch) => {
+    if (getState().movies.isPopulated) {
+      return;
+    }
+
+    if (getState().movies.isFetching) {
+      return;
+    }
+
     dispatch(set({ section, isFetching: true }));
 
     const {

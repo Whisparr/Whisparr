@@ -2,6 +2,7 @@ import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import Alert from 'Components/Alert';
+import Delayed from 'Components/Delayed';
 import FieldSet from 'Components/FieldSet';
 import Icon from 'Components/Icon';
 import Label from 'Components/Label';
@@ -533,14 +534,16 @@ class StudioDetails extends Component {
                         {
                           years.slice(0).reverse().map((year) => {
                             return (
-                              <StudioDetailsYearConnector
-                                key={year}
-                                studioId={id}
-                                studioForeignId={foreignId}
-                                year={year}
-                                isExpanded={expandedState[year]}
-                                onExpandPress={this.onExpandPress}
-                              />
+                              <Delayed key={year} waitBeforeShow={50}>
+                                <StudioDetailsYearConnector
+                                  key={year}
+                                  studioId={id}
+                                  studioForeignId={foreignId}
+                                  year={year}
+                                  isExpanded={expandedState[year]}
+                                  onExpandPress={this.onExpandPress}
+                                />
+                              </Delayed>
                             );
                           })
                         }

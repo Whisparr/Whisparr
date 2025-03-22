@@ -1,33 +1,75 @@
+import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import * as commandNames from 'Commands/commandNames';
+import { sortDirections } from 'Helpers/Props';
 import { executeCommand } from 'Store/Actions/commandActions';
 import { toggleMovieMonitored } from 'Store/Actions/movieActions';
 import { setStudioScenesSort, setStudioScenesTableOption } from 'Store/Actions/studioScenesActions';
-import createClientSideCollectionSelector from 'Store/Selectors/createClientSideCollectionSelector';
 import createDimensionsSelector from 'Store/Selectors/createDimensionsSelector';
 import createStudioSelector from 'Store/Selectors/createStudioSelector';
 import StudioDetailsYear from './StudioDetailsYear';
+
+function getSortClause(sortKey, sortDirection, sortPredicates) {
+  if (sortPredicates && sortPredicates.hasOwnProperty(sortKey)) {
+    return function(item) {
+      return sortPredicates[sortKey](item, sortDirection);
+    };
+  }
+
+  return function(item) {
+    return item[sortKey];
+  };
+}
+
+function sort(items, state) {
+  const {
+    sortKey,
+    sortDirection,
+    sortPredicates,
+    secondarySortKey,
+    secondarySortDirection
+  } = state;
+
+  const clauses = [];
+  const orders = [];
+
+  clauses.push(getSortClause(sortKey, sortDirection, sortPredicates));
+  orders.push(sortDirection === sortDirections.ASCENDING ? 'asc' : 'desc');
+
+  if (secondarySortKey &&
+      secondarySortDirection &&
+      (sortKey !== secondarySortKey ||
+       sortDirection !== secondarySortDirection)) {
+    clauses.push(getSortClause(secondarySortKey, secondarySortDirection, sortPredicates));
+    orders.push(secondarySortDirection === sortDirections.ASCENDING ? 'asc' : 'desc');
+  }
+
+  return _.orderBy(items, clauses, orders);
+}
 
 function createMapStateToProps() {
   return createSelector(
     (state, { year }) => year,
     (state, { studioForeignId }) => studioForeignId,
-    createClientSideCollectionSelector('movies', 'studioScenes'),
+    (state) => state.movies,
     createStudioSelector(),
     createDimensionsSelector(),
-    (year, studioForeignId, scenes, studio, dimensions) => {
+    (state) => _.get(state, 'studioScenes'),
+    (year, studioForeignId, scenes, studio, dimensions, studioScenes) => {
 
       const scenesInYear = scenes.items.filter((scene) => scene.studioForeignId === studioForeignId && scene.year === year);
+      // Sort once filtered
+      sort(scenesInYear, studioScenes);
 
       return {
         year,
         items: scenesInYear,
-        columns: scenes.columns,
-        sortKey: scenes.sortKey,
-        sortDirection: scenes.sortDirection,
+        columns: studioScenes.columns,
+        sortKey: studioScenes.sortKey,
+        sortDirection: studioScenes.sortDirection,
         studioMonitored: studio.monitored,
         path: studio.path,
         isSmallScreen: dimensions.isSmallScreen,

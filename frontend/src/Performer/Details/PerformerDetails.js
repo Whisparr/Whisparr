@@ -2,6 +2,7 @@ import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import Alert from 'Components/Alert';
+import Delayed from 'Components/Delayed';
 import FieldSet from 'Components/FieldSet';
 import Icon from 'Components/Icon';
 import Label from 'Components/Label';
@@ -556,13 +557,15 @@ class PerformerDetails extends Component {
                   <div>
                     {studios.map((studio) => {
                       return (
-                        <PerformerDetailsStudioConnector
-                          key={studio.foreignId}
-                          performerId={id}
-                          studioForeignId={studio.foreignId}
-                          isExpanded={expandedState[studio.foreignId]}
-                          onExpandPress={this.onExpandPress}
-                        />
+                        <Delayed key={studio.foreignId} waitBeforeShow={50}>
+                          <PerformerDetailsStudioConnector
+                            key={studio.foreignId}
+                            performerId={id}
+                            studioForeignId={studio.foreignId}
+                            isExpanded={expandedState[studio.foreignId]}
+                            onExpandPress={this.onExpandPress}
+                          />
+                        </Delayed>
                       );
                     })
                     }

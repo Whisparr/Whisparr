@@ -1,16 +1,55 @@
+import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import * as commandNames from 'Commands/commandNames';
+import { sortDirections } from 'Helpers/Props';
 import { executeCommand } from 'Store/Actions/commandActions';
 import { toggleMovieMonitored } from 'Store/Actions/movieActions';
 import { setPerformerScenesSort, setPerformerScenesTableOption } from 'Store/Actions/performerScenesActions';
 import { toggleStudioMonitored } from 'Store/Actions/studioActions';
-import createClientSideCollectionSelector from 'Store/Selectors/createClientSideCollectionSelector';
 import createDimensionsSelector from 'Store/Selectors/createDimensionsSelector';
 import createPerformerSelector from 'Store/Selectors/createPerformerSelector';
 import PerformerDetailsStudio from './PerformerDetailsStudio';
+
+function getSortClause(sortKey, sortDirection, sortPredicates) {
+  if (sortPredicates && sortPredicates.hasOwnProperty(sortKey)) {
+    return function(item) {
+      return sortPredicates[sortKey](item, sortDirection);
+    };
+  }
+
+  return function(item) {
+    return item[sortKey];
+  };
+}
+
+function sort(items, state) {
+  const {
+    sortKey,
+    sortDirection,
+    sortPredicates,
+    secondarySortKey,
+    secondarySortDirection
+  } = state;
+
+  const clauses = [];
+  const orders = [];
+
+  clauses.push(getSortClause(sortKey, sortDirection, sortPredicates));
+  orders.push(sortDirection === sortDirections.ASCENDING ? 'asc' : 'desc');
+
+  if (secondarySortKey &&
+      secondarySortDirection &&
+      (sortKey !== secondarySortKey ||
+       sortDirection !== secondarySortDirection)) {
+    clauses.push(getSortClause(secondarySortKey, secondarySortDirection, sortPredicates));
+    orders.push(secondarySortDirection === sortDirections.ASCENDING ? 'asc' : 'desc');
+  }
+
+  return _.orderBy(items, clauses, orders);
+}
 
 function createStudioByForeignIdSelector() {
   return createSelector(
@@ -30,19 +69,22 @@ function createMapStateToProps() {
   return createSelector(
     (state, { studioForeignId }) => studioForeignId,
     createStudioByForeignIdSelector(),
-    createClientSideCollectionSelector('movies', 'performerScenes'),
+    (state) => state.movies,
     createPerformerSelector(),
     createDimensionsSelector(),
-    (studioForeignId, studio, scenes, performer, dimensions) => {
+    (state) => _.get(state, 'performerScenes'),
+    (studioForeignId, studio, scenes, performer, dimensions, performerScenes) => {
 
       const scenesInStudio = scenes.items.filter((scene) => scene.studioForeignId === studioForeignId && scene.credits.some((credit) => credit.performer.foreignId === performer.foreignId));
+      // Sort once filtered
+      sort(scenesInStudio, performerScenes);
 
       return {
         ...studio,
         items: scenesInStudio,
-        columns: scenes.columns,
-        sortKey: scenes.sortKey,
-        sortDirection: scenes.sortDirection,
+        columns: performerScenes.columns,
+        sortKey: performerScenes.sortKey,
+        sortDirection: performerScenes.sortDirection,
         performerMonitored: performer.monitored,
         path: performer.path,
         isSmallScreen: dimensions.isSmallScreen,

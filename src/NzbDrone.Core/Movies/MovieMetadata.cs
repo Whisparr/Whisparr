@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Equ;
 using NzbDrone.Core.Languages;
 using NzbDrone.Core.MetadataSource.SkyHook.Resource;
+using NzbDrone.Core.Movies.Credits;
 
 namespace NzbDrone.Core.Movies
 {

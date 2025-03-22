@@ -11,6 +11,7 @@ using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.Movies;
 using NzbDrone.Core.Movies.Studios;
 using NzbDrone.Core.Movies.Studios.Events;
+using NzbDrone.Core.MovieStats;
 using NzbDrone.SignalR;
 using Whisparr.Http;
 using Whisparr.Http.REST;
@@ -25,12 +26,14 @@ namespace Whisparr.Api.V3.Studios
         private readonly IAddStudioService _addStudioService;
         private readonly IMapCoversToLocal _coverMapper;
         private readonly IMovieService _moviesService;
+        private readonly IMovieStatisticsService _movieStatisticsService;
         private readonly IImportExclusionsService _exclusionService;
 
         public StudioController(IStudioService studioService,
                                 IAddStudioService addStudioService,
                                 IMapCoversToLocal coverMapper,
                                 IMovieService moviesService,
+                                IMovieStatisticsService movieStatisticsService,
                                 IImportExclusionsService exclusionService,
                                 IBroadcastSignalRMessage signalRBroadcaster)
         : base(signalRBroadcaster)
@@ -39,6 +42,7 @@ namespace Whisparr.Api.V3.Studios
             _addStudioService = addStudioService;
             _coverMapper = coverMapper;
             _moviesService = moviesService;
+            _movieStatisticsService = movieStatisticsService;
             _exclusionService = exclusionService;
         }
 
@@ -47,6 +51,8 @@ namespace Whisparr.Api.V3.Studios
             var resource = _studioService.GetById(id).ToResource();
 
             _coverMapper.ConvertToLocalStudioUrls(resource.Id, resource.Images);
+
+            FetchAndLinkMovies(resource);
 
             return resource;
         }
@@ -73,6 +79,8 @@ namespace Whisparr.Api.V3.Studios
             var coverFileInfos = _coverMapper.GetStudioCoverFileInfos();
 
             _coverMapper.ConvertToLocalStudioUrls(studioResources.Select(x => Tuple.Create(x.Id, x.Images.AsEnumerable())), coverFileInfos);
+
+            // LinkMovies(studioResources);
 
             return studioResources;
         }
@@ -128,7 +136,38 @@ namespace Whisparr.Api.V3.Studios
 
         public void Handle(StudioUpdatedEvent message)
         {
+            var resource = message.Studio.ToResource();
+
+            // FetchAndLinkMovies(resource);
             BroadcastResourceChange(ModelAction.Updated, message.Studio.ToResource());
+        }
+
+        private void FetchAndLinkMovies(StudioResource resource)
+        {
+            LinkMovies(resource, _moviesService.GetByStudioForeignId(resource.ForeignId));
+        }
+
+        private void LinkMovies(List<StudioResource> resources)
+        {
+            foreach (var performer in resources)
+            {
+                FetchAndLinkMovies(performer);
+            }
+        }
+
+        private void LinkMovies(StudioResource resource, List<Movie> movies)
+        {
+            var scenes = movies.Where(x => x.MovieMetadata.Value.ItemType == ItemType.Scene);
+            resource.HasScenes = scenes.Any();
+            resource.HasMovies = movies.Where(x => x.MovieMetadata.Value.ItemType == ItemType.Movie).Any();
+
+            resource.Years = scenes.OrderBy(x => x.Year).Map(x => x.Year).Distinct().ToList();
+
+            resource.SceneCount = movies.Where(x => x.HasFile).Count();
+            resource.TotalSceneCount = movies.Count;
+            var ids = movies.Map(x => x.Id).ToList();
+            var movieStats = _movieStatisticsService.MovieStatistics(ids);
+            resource.SizeOnDisk = movieStats.Sum(x => x.SizeOnDisk);
         }
     }
 }

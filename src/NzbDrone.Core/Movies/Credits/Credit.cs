@@ -1,13 +1,14 @@
 using System.Collections.Generic;
+using NzbDrone.Core.Datastore;
 using NzbDrone.Core.Movies.Performers;
 
-namespace NzbDrone.Core.Movies
+namespace NzbDrone.Core.Movies.Credits
 {
-    public class Credit
+    public class Credit : ModelBase
     {
-        public string CreditForeignId { get; set; }
-        public string Department { get; set; }
         public string Job { get; set; }
+        public int MovieMetadataId { get; set; }
+        public string PerformerForeignId { get; set; }
         public string Character { get; set; }
         public int Order { get; set; }
         public CreditType Type { get; set; }

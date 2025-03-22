@@ -15,6 +15,7 @@ using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.MetadataSource;
 using NzbDrone.Core.Movies.AlternativeTitles;
 using NzbDrone.Core.Movies.Commands;
+using NzbDrone.Core.Movies.Credits;
 using NzbDrone.Core.Movies.Events;
 using NzbDrone.Core.Movies.Performers;
 using NzbDrone.Core.Movies.Studios;
@@ -32,6 +33,7 @@ namespace NzbDrone.Core.Movies
         private readonly IBuildMoviePaths _buildMoviePaths;
         private readonly IAlternativeTitleService _titleService;
         private readonly IAddPerformerService _performerService;
+        private readonly ICreditService _creditService;
         private readonly IAddStudioService _studioService;
         private readonly IEventAggregator _eventAggregator;
         private readonly IDiskScanService _diskScanService;
@@ -49,6 +51,7 @@ namespace NzbDrone.Core.Movies
                                     IAlternativeTitleService titleService,
                                     IAddStudioService studioService,
                                     IAddPerformerService performerService,
+                                    ICreditService creditService,
                                     IEventAggregator eventAggregator,
                                     IDiskScanService diskScanService,
                                     ICheckIfMovieShouldBeRefreshed checkIfMovieShouldBeRefreshed,
@@ -65,6 +68,7 @@ namespace NzbDrone.Core.Movies
             _titleService = titleService;
             _studioService = studioService;
             _performerService = performerService;
+            _creditService = creditService;
             _eventAggregator = eventAggregator;
             _diskScanService = diskScanService;
             _checkIfMovieShouldBeRefreshed = checkIfMovieShouldBeRefreshed;
@@ -125,8 +129,7 @@ namespace NzbDrone.Core.Movies
             movieMetadata.ItemType = movieInfo.ItemType;
             movieMetadata.MetadataSource = movieInfo.MetadataSource;
             movieMetadata.Credits = movieInfo.Credits;
-
-            // movie.Genres = movieInfo.Genres;
+            movieMetadata.Genres = movieInfo.Genres;
             movieMetadata.Website = movieInfo.Website;
 
             movieMetadata.Year = movieInfo.Year;
@@ -171,6 +174,7 @@ namespace NzbDrone.Core.Movies
             _performerService.AddPerformers(performerInfo, true);
 
             _movieMetadataService.Upsert(movieMetadata);
+            _creditService.UpdateCredits(movieInfo.Credits, movieMetadata);
 
             movie.MovieMetadata = movieMetadata;
 

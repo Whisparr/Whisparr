@@ -21,6 +21,12 @@ namespace Whisparr.Api.V3.Studios
         public int QualityProfileId { get; set; }
         public bool SearchOnAdd { get; set; }
         public HashSet<int> Tags { get; set; }
+        public bool HasMovies { get; set; }
+        public bool HasScenes { get; set; }
+        public int TotalSceneCount { get; internal set; }
+        public int SceneCount { get; set; }
+        public List<int> Years { get; set; }
+        public long SizeOnDisk { get; set; }
         public string RemotePoster { get; internal set; }
     }
 

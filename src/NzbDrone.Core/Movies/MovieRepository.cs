@@ -6,6 +6,7 @@ using NzbDrone.Core.Datastore;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.Movies.AlternativeTitles;
+using NzbDrone.Core.Movies.Credits;
 using NzbDrone.Core.Profiles.Qualities;
 using NzbDrone.Core.Qualities;
 
@@ -205,7 +206,8 @@ namespace NzbDrone.Core.Movies
         {
             var builder = new SqlBuilder(_database.DatabaseType)
                 .Join<Movie, MovieMetadata>((m, p) => m.MovieMetadataId == p.Id)
-                .Where($"\"MovieMetadata\".\"Credits\" LIKE \'%{performerForeignId}%\'");
+                .Join<MovieMetadata, Credit>((m, p) => m.Id == p.MovieMetadataId)
+                .Where<Credit>(x => x.PerformerForeignId == performerForeignId);
 
             return _database.QueryJoined<Movie, MovieMetadata>(
                 builder,

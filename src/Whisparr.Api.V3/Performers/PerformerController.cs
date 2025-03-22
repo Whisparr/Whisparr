@@ -11,6 +11,7 @@ using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.Movies;
 using NzbDrone.Core.Movies.Performers;
 using NzbDrone.Core.Movies.Performers.Events;
+using NzbDrone.Core.MovieStats;
 using NzbDrone.SignalR;
 using Whisparr.Http;
 using Whisparr.Http.REST;
@@ -25,12 +26,14 @@ namespace Whisparr.Api.V3.Performers
         private readonly IAddPerformerService _addPerformerService;
         private readonly IMapCoversToLocal _coverMapper;
         private readonly IMovieService _moviesService;
+        private readonly IMovieStatisticsService _movieStatisticsService;
         private readonly IImportExclusionsService _exclusionService;
 
         public PerformerController(IPerformerService performerService,
                                    IAddPerformerService addPerformerService,
                                    IMapCoversToLocal coverMapper,
                                    IMovieService moviesService,
+                                   IMovieStatisticsService movieStatisticsService,
                                    IImportExclusionsService exclusionService,
                                    IBroadcastSignalRMessage signalRBroadcaster)
         : base(signalRBroadcaster)
@@ -39,6 +42,7 @@ namespace Whisparr.Api.V3.Performers
             _addPerformerService = addPerformerService;
             _coverMapper = coverMapper;
             _moviesService = moviesService;
+            _movieStatisticsService = movieStatisticsService;
             _exclusionService = exclusionService;
         }
 
@@ -47,6 +51,8 @@ namespace Whisparr.Api.V3.Performers
             var resource = _performerService.GetById(id).ToResource();
 
             _coverMapper.ConvertToLocalPerformerUrls(resource.Id, resource.Images);
+
+            FetchAndLinkMovies(resource);
 
             return resource;
         }
@@ -73,6 +79,8 @@ namespace Whisparr.Api.V3.Performers
             var coverFileInfos = _coverMapper.GetPerformerCoverFileInfos();
 
             _coverMapper.ConvertToLocalPerformerUrls(performerResources.Select(x => Tuple.Create(x.Id, x.Images.AsEnumerable())), coverFileInfos);
+
+            // LinkMovies(performerResources);
 
             return performerResources;
         }
@@ -128,7 +136,38 @@ namespace Whisparr.Api.V3.Performers
 
         public void Handle(PerformerUpdatedEvent message)
         {
-            BroadcastResourceChange(ModelAction.Updated, message.Performer.ToResource());
+            var resource = message.Performer.ToResource();
+
+            // FetchAndLinkMovies(resource);
+            BroadcastResourceChange(ModelAction.Updated, resource);
+        }
+
+        private void FetchAndLinkMovies(PerformerResource resource)
+        {
+            LinkMovies(resource, _moviesService.GetByPerformerForeignId(resource.ForeignId));
+        }
+
+        private void LinkMovies(List<PerformerResource> resources)
+        {
+            foreach (var performer in resources)
+            {
+                FetchAndLinkMovies(performer);
+            }
+        }
+
+        private void LinkMovies(PerformerResource resource, List<Movie> movies)
+        {
+            var scenes = movies.Where(x => x.MovieMetadata.Value.ItemType == ItemType.Scene);
+            resource.HasScenes = scenes.Any();
+            resource.HasMovies = movies.Where(x => x.MovieMetadata.Value.ItemType == ItemType.Movie).Any();
+
+            resource.Studios = scenes.Map(x => new StudioResource() { ForeignId = x.MovieMetadata.Value.StudioForeignId, Title = x.MovieMetadata.Value.StudioTitle }).DistinctBy(x => x.ForeignId).OrderBy(x => x.Title).ToList();
+
+            resource.SceneCount = movies.Where(x => x.HasFile).Count();
+            resource.TotalSceneCount = movies.Count;
+            var ids = movies.Map(x => x.Id).ToList();
+            var movieStats = _movieStatisticsService.MovieStatistics(ids);
+            resource.SizeOnDisk = movieStats.Sum(x => x.SizeOnDisk);
         }
     }
 }

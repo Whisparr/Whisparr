@@ -7,6 +7,7 @@ using NzbDrone.Core.DecisionEngine.Specifications;
 using NzbDrone.Core.Languages;
 using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.Movies;
+using NzbDrone.Core.Movies.Credits;
 using NzbDrone.Core.Parser;
 using Whisparr.Api.V3.MovieFiles;
 using Whisparr.Api.V3.Movies;
@@ -18,6 +19,7 @@ namespace Whisparr.Api.V3.Movies
     {
         public MovieResource()
         {
+            Genres = new List<string>();
             Monitored = true;
         }
 

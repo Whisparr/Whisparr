@@ -14,6 +14,7 @@ using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.MetadataSource.SkyHook.Resource;
 using NzbDrone.Core.Movies;
 using NzbDrone.Core.Movies.AlternativeTitles;
+using NzbDrone.Core.Movies.Credits;
 using NzbDrone.Core.Movies.Performers;
 using NzbDrone.Core.Movies.Studios;
 using NzbDrone.Core.Parser;
@@ -815,8 +816,8 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             {
                 Character = arg.Character,
                 Order = arg.Order,
-                CreditForeignId = arg.CreditId,
                 Type = CreditType.Cast,
+                PerformerForeignId = arg.Performer.ForeignIds.StashId,
                 Performer = new CreditPerformer
                 {
                     Name = arg.Performer.Name,
@@ -952,8 +953,8 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             {
                 Character = arg.Character,
                 Order = arg.Order,
-                CreditForeignId = $"{sceneForeignId} - {arg.Performer.ForeignIds.StashId}",
                 Type = CreditType.Cast,
+                PerformerForeignId = arg.Performer.ForeignIds.StashId,
                 Performer = new CreditPerformer
                 {
                     Name = arg.Performer.Name,

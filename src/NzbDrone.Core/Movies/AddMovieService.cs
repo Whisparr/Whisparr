@@ -232,8 +232,8 @@ namespace NzbDrone.Core.Movies
                     }
                 }
 
-                var creditForeignIds = newMovie.MovieMetadata.Value.Credits.Select(c => c.CreditForeignId);
-                var excludedPerformers = excludedItems.Where(e => creditForeignIds.Contains(e.ForeignId) && e.Type == ImportExclusionType.Performer).ToList();
+                var performerForeignIds = newMovie.MovieMetadata.Value.Credits.Select(c => c.PerformerForeignId);
+                var excludedPerformers = excludedItems.Where(e => performerForeignIds.Contains(e.ForeignId) && e.Type == ImportExclusionType.Performer).ToList();
                 if (excludedPerformers.Any())
                 {
                     var newExclusion = new ImportExclusion { ForeignId = newMovie.ForeignId, Type = newMovie.MovieMetadata.Value.ItemType == ItemType.Scene ? ImportExclusionType.Scene : ImportExclusionType.Movie, MovieTitle = newMovie.Title, MovieYear = newMovie.Year };

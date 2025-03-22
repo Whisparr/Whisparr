@@ -25,6 +25,18 @@ namespace Whisparr.Api.V3.Performers
         public HashSet<int> Tags { get; set; }
         public string RemotePoster { get; internal set; }
         public DateTime Added { get; internal set; }
+        public bool HasMovies { get; set; }
+        public bool HasScenes { get; set; }
+        public int TotalSceneCount { get; internal set; }
+        public int SceneCount { get; set; }
+        public List<StudioResource> Studios { get; set; }
+        public long SizeOnDisk { get; set; }
+    }
+
+    public class StudioResource
+    {
+        public string Title { get; set; }
+        public string ForeignId { get; set; }
     }
 
     public static class PerformerResourceMapper

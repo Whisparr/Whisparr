@@ -29,6 +29,7 @@ using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.Messaging.Commands;
 using NzbDrone.Core.Movies;
 using NzbDrone.Core.Movies.AlternativeTitles;
+using NzbDrone.Core.Movies.Credits;
 using NzbDrone.Core.Movies.Performers;
 using NzbDrone.Core.Movies.Studios;
 using NzbDrone.Core.Notifications;
@@ -177,6 +178,8 @@ namespace NzbDrone.Core.Datastore
             Mapper.Entity<Studio>("Studios").RegisterModel();
 
             Mapper.Entity<AutoTagging.AutoTag>("AutoTagging").RegisterModel();
+
+            Mapper.Entity<Credit>("Credits").RegisterModel();
         }
 
         private static void RegisterMappers()

@@ -11,6 +11,7 @@ import Menu from 'Components/Menu/Menu';
 import MenuButton from 'Components/Menu/MenuButton';
 import MenuContent from 'Components/Menu/MenuContent';
 import MenuItem from 'Components/Menu/MenuItem';
+import MonitorToggleButton from 'Components/MonitorToggleButton';
 import SpinnerIcon from 'Components/SpinnerIcon';
 import Table from 'Components/Table/Table';
 import TableBody from 'Components/Table/TableBody';
@@ -149,6 +150,17 @@ class StudioDetailsYear extends Component {
     this.props.onExpandPress(year, !isExpanded);
   };
 
+  onMonitorYearPress = () => {
+    const { items, onMonitorMoviePress } = this.props;
+
+    const allMonitored = items.every((scene) => scene.monitored);
+    const newMonitoredState = !allMonitored;
+
+    items.forEach((scene) => {
+      onMonitorMoviePress(scene.id, newMonitoredState);
+    });
+  };
+
   onMonitorMoviePress = (movieId, monitored, { shiftKey }) => {
     this.setState({ lastToggledMovie: movieId });
 
@@ -190,6 +202,12 @@ class StudioDetailsYear extends Component {
       >
         <div className={styles.header}>
           <div className={styles.left}>
+            <MonitorToggleButton
+              monitored={monitoredMovieCount === totalMovieCount}
+              isDisabled={!studioMonitored}
+              size={24}
+              onPress={this.onMonitorYearPress}
+            />
             <span className={styles.seasonNumber}>
               {year}
             </span>

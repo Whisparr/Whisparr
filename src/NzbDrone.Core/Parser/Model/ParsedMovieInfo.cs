@@ -20,6 +20,7 @@ namespace NzbDrone.Core.Parser.Model
         public string StudioTitle { get; set; }
         public QualityModel Quality { get; set; }
         public List<Language> Languages { get; set; }
+        public string FirstPerformer { get; set; }
         public string ReleaseGroup { get; set; }
         public string ReleaseHash { get; set; }
         public string ReleaseDate { get; set; }

@@ -19,7 +19,7 @@ namespace NzbDrone.Core.RootFolders
         List<RootFolder> AllWithUnmappedFolders();
         RootFolder Add(RootFolder rootDir);
         void Remove(int id);
-        RootFolder Get(int id, bool timeout);
+        RootFolder Get(int id, bool timeout, bool getMovieFolder);
         string GetBestRootFolderPath(string path, List<RootFolder> rootFolders = null);
     }
 
@@ -132,7 +132,7 @@ namespace NzbDrone.Core.RootFolders
             _rootFolderRepository.Delete(id);
         }
 
-        private List<UnmappedFolder> GetUnmappedFolders(string path, Dictionary<int, string> moviePaths)
+        private List<UnmappedFolder> GetUnmappedFolders(string path, Dictionary<int, string> moviePaths, bool getMovieFolder = false)
         {
             _logger.Debug("Generating list of unmapped folders");
 
@@ -152,7 +152,7 @@ namespace NzbDrone.Core.RootFolders
             var subFolderDepth = _namingConfigService.GetConfig().MovieFolderFormat.Count(f => f == Path.DirectorySeparatorChar);
             var possibleMovieFolders = _diskProvider.GetDirectories(path).ToList();
 
-            if (subFolderDepth > 0)
+            if (subFolderDepth > 0 && !getMovieFolder)
             {
                 for (var i = 0; i < subFolderDepth; i++)
                 {
@@ -189,12 +189,27 @@ namespace NzbDrone.Core.RootFolders
             return results.OrderBy(u => u.Name, StringComparer.InvariantCultureIgnoreCase).ToList();
         }
 
-        public RootFolder Get(int id, bool timeout)
+        public RootFolder Get(int id, bool timeout, bool getMovieFolder = false)
         {
             var rootFolder = _rootFolderRepository.Get(id);
+
+            if (getMovieFolder)
+            {
+                var namingConfig = _namingConfigService.GetConfig();
+                var moviesFolderFormat = namingConfig.MovieFolderFormat;
+                var moviesFolderName = moviesFolderFormat.Split(new char[] { '\\', '/' }, StringSplitOptions.RemoveEmptyEntries)[0];
+
+                if (moviesFolderName == moviesFolderFormat)
+                {
+                    moviesFolderName = string.Empty;
+                }
+
+                rootFolder.Path = Path.Combine(rootFolder.Path, moviesFolderName);
+            }
+
             var moviePaths = _movieRepository.AllMoviePaths();
 
-            GetDetails(rootFolder, moviePaths, timeout);
+            GetDetails(rootFolder, moviePaths, timeout, getMovieFolder);
 
             return rootFolder;
         }
@@ -215,7 +230,7 @@ namespace NzbDrone.Core.RootFolders
             return possibleRootFolder?.Path;
         }
 
-        private void GetDetails(RootFolder rootFolder, Dictionary<int, string> moviePaths, bool timeout)
+        private void GetDetails(RootFolder rootFolder, Dictionary<int, string> moviePaths, bool timeout, bool getMovieFolder = false)
         {
             Task.Run(() =>
             {
@@ -224,7 +239,7 @@ namespace NzbDrone.Core.RootFolders
                     rootFolder.Accessible = true;
                     rootFolder.FreeSpace = _diskProvider.GetAvailableSpace(rootFolder.Path);
                     rootFolder.TotalSpace = _diskProvider.GetTotalSize(rootFolder.Path);
-                    rootFolder.UnmappedFolders = GetUnmappedFolders(rootFolder.Path, moviePaths);
+                    rootFolder.UnmappedFolders = GetUnmappedFolders(rootFolder.Path, moviePaths, getMovieFolder);
                 }
             }).Wait(timeout ? 5000 : -1);
         }

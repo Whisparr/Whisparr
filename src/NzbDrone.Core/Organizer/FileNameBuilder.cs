@@ -26,6 +26,7 @@ namespace NzbDrone.Core.Organizer
         string BuildFilePath(Movie movie, string fileName, string extension);
         string BuildFilePath(string path, string fileName, string extension);
         string GetMovieFolder(Movie movie, NamingConfig namingConfig = null);
+        string CleanTitle(string title);
     }
 
     public class FileNameBuilder : IBuildFileNames
@@ -44,6 +45,9 @@ namespace NzbDrone.Core.Organizer
                                                              RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
         public static readonly Regex MovieTitleRegex = new Regex(@"(?<token>\{((?:(Movie|Original))(?<separator>[- ._])(Clean)?(Original)?(Title|Filename)(The)?)(?::(?<customFormat>[a-z0-9|]+))?\})",
+                                                                            RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+        public static readonly Regex SceneFolderRegex = new Regex(@"(?<token>\{((?:(Studio|Original))(?<separator>[- ._])(Clean)?(Original)?(Title|Filename)(The)?)(?::(?<customFormat>[a-z0-9|]+))?\})",
                                                                             RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         public static readonly Regex SceneTitleRegex = new Regex(@"(?<token>\{((?:(Scene|Original))(?<separator>[- ._])(Clean)?(Original)?(Title|Filename)(The)?)(?::(?<customFormat>[a-z0-9|]+))?\})",
@@ -240,7 +244,7 @@ namespace NzbDrone.Core.Organizer
             return Path.Combine(components.ToArray());
         }
 
-        public static string CleanTitle(string title)
+        public string CleanTitle(string title)
         {
             title = title.Replace("&", "and");
             title = ScenifyReplaceChars.Replace(title, " ");

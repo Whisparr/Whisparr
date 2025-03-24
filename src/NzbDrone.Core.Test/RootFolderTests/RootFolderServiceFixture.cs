@@ -305,5 +305,47 @@ namespace NzbDrone.Core.Test.RootFolderTests
 
             unmappedFolders.Count.Should().Be(3);
         }
+
+        [Test]
+        public void should_get_movies_folders()
+        {
+            _namingConfig.MovieFolderFormat = "movies\\{Movie Title}".AsOsAgnostic();
+
+            var rootFolderPath = @"C:\Test".AsOsAgnostic();
+            var rootFolder = Builder<RootFolder>.CreateNew()
+                .With(r => r.Path = rootFolderPath)
+                .Build();
+
+            var subFolderPath = Path.Combine(rootFolderPath, "movies");
+
+            var subFolders = new[]
+            {
+                "Movie1",
+                "Movie2",
+                "Movie3",
+            };
+
+            var folders = subFolders.Select(f => Path.Combine(subFolderPath, f)).ToArray();
+
+            Mocker.GetMock<IRootFolderRepository>()
+                .Setup(s => s.Get(It.IsAny<int>()))
+                .Returns(rootFolder);
+
+            Mocker.GetMock<IMovieRepository>()
+                .Setup(s => s.AllMoviePaths())
+                .Returns(new Dictionary<int, string>());
+
+            Mocker.GetMock<IDiskProvider>()
+                .Setup(s => s.GetDirectories(rootFolder.Path))
+                .Returns(new[] { subFolderPath });
+
+            Mocker.GetMock<IDiskProvider>()
+                .Setup(s => s.GetDirectories(subFolderPath))
+                .Returns(folders);
+
+            var unmappedFolders = Subject.Get(rootFolder.Id, false, true).UnmappedFolders;
+
+            unmappedFolders.Count.Should().Be(3);
+        }
     }
 }

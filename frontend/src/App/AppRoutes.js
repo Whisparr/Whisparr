@@ -36,6 +36,7 @@ import Logs from 'System/Logs/Logs';
 import Status from 'System/Status/Status';
 import Tasks from 'System/Tasks/Tasks';
 import UpdatesConnector from 'System/Updates/UpdatesConnector';
+import UnmappedFilesTableConnector from 'UnmappedFiles/UnmappedFilesTableConnector';
 import getPathWithUrlBase from 'Utilities/getPathWithUrlBase';
 
 function AppRoutes(props) {
@@ -120,6 +121,11 @@ function AppRoutes(props) {
       <Route
         path="/studio/:foreignId"
         component={StudioDetailsPageConnector}
+      />
+
+      <Route
+        path="/unmapped"
+        component={UnmappedFilesTableConnector}
       />
 
       {/*

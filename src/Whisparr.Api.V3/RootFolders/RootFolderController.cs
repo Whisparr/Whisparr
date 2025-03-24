@@ -44,8 +44,9 @@ namespace Whisparr.Api.V3.RootFolders
         protected override RootFolderResource GetResourceById(int id)
         {
             var timeout = Request?.GetBooleanQueryParameter("timeout", true) ?? true;
+            var getMovieFolder = Request?.GetBooleanQueryParameter("getMovieFolder", true) ?? true;
 
-            return _rootFolderService.Get(id, timeout).ToResource();
+            return _rootFolderService.Get(id, timeout, getMovieFolder).ToResource();
         }
 
         [RestPostById]

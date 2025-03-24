@@ -33,6 +33,7 @@ namespace Whisparr.Api.V3.Config
             SharedValidator.RuleFor(c => c.MovieFolderFormat).ValidMovieFolderFormat();
             SharedValidator.RuleFor(c => c.StandardSceneFormat).ValidSceneFormat();
             SharedValidator.RuleFor(c => c.SceneFolderFormat).ValidSceneFolderFormat();
+            SharedValidator.RuleFor(c => c.SceneImportFolderFormat).ValidSceneImportFolderFormat();
         }
 
         protected override NamingConfigResource GetResourceById(int id)
@@ -87,6 +88,10 @@ namespace Whisparr.Api.V3.Config
                 : sceneSampleResult.FileName;
 
             sampleResource.SceneFolderExample = nameSpec.SceneFolderFormat.IsNullOrWhiteSpace()
+                ? "Invalid format"
+                : _filenameSampleService.GetMovieFolderSample(nameSpec);
+
+            sampleResource.SceneImportFolderExample = nameSpec.SceneImportFolderFormat.IsNullOrWhiteSpace()
                 ? "Invalid format"
                 : _filenameSampleService.GetMovieFolderSample(nameSpec);
 

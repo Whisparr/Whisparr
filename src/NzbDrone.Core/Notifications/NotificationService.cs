@@ -26,9 +26,11 @@ namespace NzbDrone.Core.Notifications
           IHandle<HealthCheckRestoredEvent>,
           IHandle<UpdateInstalledEvent>,
           IHandle<ManualInteractionRequiredEvent>,
+          IHandleAsync<CleanCompletedEvent>,
           IHandleAsync<DeleteCompletedEvent>,
           IHandleAsync<DownloadsProcessedEvent>,
           IHandleAsync<RenameCompletedEvent>,
+          IHandleAsync<RescanCompletedEvent>,
           IHandleAsync<HealthCheckCompleteEvent>
     {
         private readonly INotificationFactory _notificationFactory;
@@ -138,11 +140,6 @@ namespace NzbDrone.Core.Notifications
 
         public void Handle(MovieFileImportedEvent message)
         {
-            if (!message.NewDownload)
-            {
-                return;
-            }
-
             var downloadMessage = new DownloadMessage
             {
                 Message = GetMessage(message.MovieInfo?.Movie, message.MovieInfo?.Quality),
@@ -306,16 +303,31 @@ namespace NzbDrone.Core.Notifications
         public void Handle(MovieFileDeletedEvent message)
         {
             var deleteMessage = new MovieFileDeleteMessage();
-            deleteMessage.Message = GetMessage(message.MovieFile.Movie, message.MovieFile.Quality);
+
+            if (message.MovieFile.Movie == null)
+            {
+                deleteMessage.Message = message.MovieFile.OriginalFilePath;
+                deleteMessage.Movie = new Movie();
+            }
+            else
+            {
+                deleteMessage.Message = GetMessage(message.MovieFile.Movie, message.MovieFile.Quality);
+                deleteMessage.Movie = message.MovieFile.Movie;
+            }
+
             deleteMessage.MovieFile = message.MovieFile;
-            deleteMessage.Movie = message.MovieFile.Movie;
             deleteMessage.Reason = message.Reason;
 
             foreach (var notification in _notificationFactory.OnMovieFileDeleteEnabled())
             {
                 try
                 {
-                    if (message.Reason != MediaFiles.DeleteMediaFileReason.Upgrade || ((NotificationDefinition)notification.Definition).OnMovieFileDeleteForUpgrade)
+                    if (message.Reason == MediaFiles.DeleteMediaFileReason.Manual)
+                    {
+                        _notificationStatusService.RecordSuccess(notification.Definition.Id);
+                    }
+                    else if ((message.Reason != MediaFiles.DeleteMediaFileReason.Upgrade && message.MovieFile.Movie.Title != null)
+                        || ((NotificationDefinition)notification.Definition).OnMovieFileDeleteForUpgrade)
                     {
                         if (ShouldHandleMovie(notification.Definition, message.MovieFile.Movie))
                         {
@@ -409,6 +421,11 @@ namespace NzbDrone.Core.Notifications
             }
         }
 
+        public void HandleAsync(CleanCompletedEvent message)
+        {
+            ProcessQueue();
+        }
+
         public void HandleAsync(DeleteCompletedEvent message)
         {
             ProcessQueue();
@@ -420,6 +437,11 @@ namespace NzbDrone.Core.Notifications
         }
 
         public void HandleAsync(RenameCompletedEvent message)
+        {
+            ProcessQueue();
+        }
+
+        public void HandleAsync(RescanCompletedEvent message)
         {
             ProcessQueue();
         }

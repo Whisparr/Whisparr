@@ -30,6 +30,7 @@ import * as studios from './studioActions';
 import * as studioScenes from './studioScenesActions';
 import * as system from './systemActions';
 import * as tags from './tagActions';
+import * as unmappedMovieFiles from './unmappedMovieFileActions';
 
 export default [
   addMovie,
@@ -40,6 +41,7 @@ export default [
   commands,
   customFilters,
   movieFiles,
+  unmappedMovieFiles,
   extraFiles,
   history,
   importMovie,

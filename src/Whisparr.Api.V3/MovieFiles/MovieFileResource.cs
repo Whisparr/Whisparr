@@ -33,7 +33,7 @@ namespace Whisparr.Api.V3.MovieFiles
 
     public static class MovieFileResourceMapper
     {
-        private static MovieFileResource ToResource(this MovieFile model)
+        public static MovieFileResource ToResource(this MovieFile model)
         {
             if (model == null)
             {
@@ -68,13 +68,21 @@ namespace Whisparr.Api.V3.MovieFiles
                 return null;
             }
 
+            string path = null;
+            var qualitySpecification = false;
+            if (movie.Id != 0)
+            {
+                path = Path.Combine(movie.Path, model.RelativePath);
+                qualitySpecification = upgradableSpecification?.QualityCutoffNotMet(movie.QualityProfile, model.Quality) ?? false;
+            }
+
             var resource = new MovieFileResource
             {
                 Id = model.Id,
 
                 MovieId = model.MovieId,
                 RelativePath = model.RelativePath,
-                Path = Path.Combine(movie.Path, model.RelativePath),
+                Path = path,
                 Size = model.Size,
                 DateAdded = model.DateAdded,
                 SceneName = model.SceneName,
@@ -84,7 +92,7 @@ namespace Whisparr.Api.V3.MovieFiles
                 Edition = model.Edition,
                 ReleaseGroup = model.ReleaseGroup,
                 MediaInfo = model.MediaInfo.ToResource(model.SceneName),
-                QualityCutoffNotMet = upgradableSpecification?.QualityCutoffNotMet(movie.QualityProfile, model.Quality) ?? false,
+                QualityCutoffNotMet = qualitySpecification,
                 OriginalFilePath = model.OriginalFilePath
             };
 

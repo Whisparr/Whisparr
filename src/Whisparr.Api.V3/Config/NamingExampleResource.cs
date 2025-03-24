@@ -8,6 +8,7 @@ namespace Whisparr.Api.V3.Config
         public string MovieFolderExample { get; set; }
         public string SceneExample { get; set; }
         public string SceneFolderExample { get; set; }
+        public string SceneImportFolderExample { get; set; }
     }
 
     public static class NamingConfigResourceMapper
@@ -25,7 +26,8 @@ namespace Whisparr.Api.V3.Config
                 StandardMovieFormat = model.StandardMovieFormat,
                 MovieFolderFormat = model.MovieFolderFormat,
                 StandardSceneFormat = model.StandardSceneFormat,
-                SceneFolderFormat = model.SceneFolderFormat
+                SceneFolderFormat = model.SceneFolderFormat,
+                SceneImportFolderFormat = model.SceneImportFolderFormat
             };
         }
 
@@ -43,6 +45,7 @@ namespace Whisparr.Api.V3.Config
                 MovieFolderFormat = resource.MovieFolderFormat,
                 StandardSceneFormat = resource.StandardSceneFormat,
                 SceneFolderFormat = resource.SceneFolderFormat,
+                SceneImportFolderFormat = resource.SceneImportFolderFormat,
             };
         }
     }

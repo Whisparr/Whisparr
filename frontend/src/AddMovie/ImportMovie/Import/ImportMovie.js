@@ -76,7 +76,10 @@ class ImportMovie extends Component {
   };
 
   onImportPress = () => {
-    this.props.onImportPress(this.getSelectedIds());
+    this.props.onImportPress({
+      ids: this.getSelectedIds(),
+      rootFolderId: this.props.rootFolderId
+    });
   };
 
   //
@@ -153,6 +156,7 @@ class ImportMovie extends Component {
               selectedIds={this.getSelectedIds()}
               onInputChange={this.onInputChange}
               onImportPress={this.onImportPress}
+              rootFolderId={rootFolderId}
             /> :
             null
         }

@@ -37,6 +37,7 @@ namespace NzbDrone.Core.MediaFiles
         private readonly IImportApprovedMovie _importApprovedMovies;
         private readonly IConfigService _configService;
         private readonly IMovieService _movieService;
+        private readonly IMediaFileRepository _mediaFileRepository;
         private readonly IMediaFileService _mediaFileService;
         private readonly IMediaFileTableCleanupService _mediaFileTableCleanupService;
         private readonly IRootFolderService _rootFolderService;
@@ -49,6 +50,7 @@ namespace NzbDrone.Core.MediaFiles
                                IImportApprovedMovie importApprovedMovies,
                                IConfigService configService,
                                IMovieService movieService,
+                               IMediaFileRepository mediaFileRepository,
                                IMediaFileService mediaFileService,
                                IMediaFileTableCleanupService mediaFileTableCleanupService,
                                IRootFolderService rootFolderService,
@@ -61,6 +63,7 @@ namespace NzbDrone.Core.MediaFiles
             _importApprovedMovies = importApprovedMovies;
             _configService = configService;
             _movieService = movieService;
+            _mediaFileRepository = mediaFileRepository;
             _mediaFileService = mediaFileService;
             _mediaFileTableCleanupService = mediaFileTableCleanupService;
             _rootFolderService = rootFolderService;
@@ -177,6 +180,26 @@ namespace NzbDrone.Core.MediaFiles
             var possibleExtraFiles = FilterPaths(movie.Path, filesOnDisk);
 
             RemoveEmptyMovieFolder(movie.Path);
+
+            // Check if movie is a scene, then cleanup the unmapped scene
+            if (movie.MovieMetadata.Value.ItemType == ItemType.Scene)
+            {
+                var existingUnmappedFiles = _mediaFileRepository.GetUnmappedFiles();
+                if (existingUnmappedFiles != null)
+                {
+                    foreach (var unmappedFile in existingUnmappedFiles)
+                    {
+                        if (unmappedFile.OriginalFilePath.Contains(movie.Path))
+                        {
+                            var reason = DeleteMediaFileReason.Manual;
+                            _mediaFileRepository.Delete(unmappedFile);
+                            _eventAggregator.PublishEvent(new MovieFileDeletedEvent(unmappedFile, reason));
+                            break;
+                        }
+                    }
+                }
+            }
+
             CompletedScanning(movie, possibleExtraFiles);
         }
 

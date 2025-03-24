@@ -739,6 +739,12 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
 
                 return httpResponse.Resource.SelectList(MapSearchResult);
             }
+            catch (UnexpectedHtmlContentException ex)
+            {
+                _logger.Warn(ex);
+                _logger.Warn("Search for '{0}' failed. StashDb returned a HTML Response.", ex, title, ex.Message);
+                return new List<Movie>();
+            }
             catch (HttpException ex)
             {
                 _logger.Warn(ex);
@@ -748,6 +754,12 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             {
                 _logger.Warn(ex);
                 throw new SkyHookException("Search for '{0}' failed. Unable to communicate with StashDb.", ex, title, ex.Message);
+            }
+            catch (JsonException ex)
+            {
+                _logger.Warn(ex);
+                _logger.Warn("Search for '{0}' failed. StashDb returned a JSON response.", ex, title, ex.Message);
+                return new List<Movie>();
             }
             catch (Exception ex)
             {
@@ -763,6 +775,14 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             if (movie == null)
             {
                 movie = new Movie { MovieMetadata = MapMovie(result) };
+            }
+
+            if (result.ItemType == ItemType.Scene)
+            {
+                foreach (var performer in result.Credits)
+                {
+                    movie.MovieMetadata.Value.Credits.Add(MapCast(performer));
+                }
             }
 
             return movie;

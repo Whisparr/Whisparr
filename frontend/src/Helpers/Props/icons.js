@@ -31,6 +31,7 @@ import {
   faBookmark as fasBookmark,
   faBookReader as fasBookReader,
   faBroadcastTower as fasBroadcastTower,
+  faBroom as faBroom,
   faBug as fasBug,
   faBuilding as fasBuilding,
   faBullhorn as fasBullhorn,
@@ -81,7 +82,6 @@ import {
   faMinus as fasMinus,
   faPause as fasPause,
   faPlay as fasPlay,
-  faPlus as fasPlus,
   faPowerOff as fasPowerOff,
   faQuestion as fasQuestion,
   faQuestionCircle as fasQuestionCircle,
@@ -91,6 +91,7 @@ import {
   faRss as fasRss,
   faSave as fasSave,
   faSearch as fasSearch,
+  faSearchPlus as fasSearchPlus,
   faSignOutAlt as fasSignOutAlt,
   faSitemap as fasSitemap,
   faSort as fasSort,
@@ -124,7 +125,7 @@ import {
 
 export const ACTIONS = fasBolt;
 export const ACTIVITY = farClock;
-export const ADD = fasPlus;
+export const ADD = fasSearchPlus;
 export const ALTERNATE_TITLES = farClone;
 export const ADVANCED_SETTINGS = fasCog;
 export const ANNOUNCED = fasBullhorn;
@@ -143,6 +144,7 @@ export const CHECK_SQUARE = fasSquareCheck;
 export const CIRCLE = fasCircle;
 export const CIRCLE_DOWN = fasCircleDown;
 export const CIRCLE_OUTLINE = farCircle;
+export const CLEAN = faBroom;
 export const CLEAR = fasTrashAlt;
 export const CLIPBOARD = fasCopy;
 export const CLOSE = fasTimes;

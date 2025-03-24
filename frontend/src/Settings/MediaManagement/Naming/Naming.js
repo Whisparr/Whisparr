@@ -133,6 +133,8 @@ class Naming extends Component {
     const standardSceneFormatErrors = [];
     const sceneFolderFormatHelpTexts = [];
     const sceneFolderFormatErrors = [];
+    const sceneImportFolderFormatHelpTexts = [];
+    const sceneImportFolderFormatErrors = [];
 
     if (examplesPopulated) {
       if (examples.movieExample) {
@@ -163,6 +165,14 @@ class Naming extends Component {
         sceneFolderFormatHelpTexts.push(`Example: ${examples.sceneFolderExample}`);
       } else {
         sceneFolderFormatErrors.push({ get message() {
+          return translate('InvalidFormat');
+        } });
+      }
+
+      if (examples.sceneImportFolderExample) {
+        sceneImportFolderFormatHelpTexts.push(`Example: ${examples.sceneImportFolderExample}`);
+      } else {
+        sceneImportFolderFormatErrors.push({ get message() {
           return translate('InvalidFormat');
         } });
       }
@@ -306,6 +316,22 @@ class Naming extends Component {
                   {...settings.sceneFolderFormat}
                   helpTexts={['Used when adding a new scene or moving scenes via the editor', ...sceneFolderFormatHelpTexts]}
                   errors={[...sceneFolderFormatErrors, ...settings.sceneFolderFormat.errors]}
+                />
+              </FormGroup>
+
+              <FormGroup
+                advancedSettings={advancedSettings}
+                isAdvanced={true}
+              >
+                <FormLabel>{translate('SceneImportFolderFormat')}</FormLabel>
+
+                <FormInputGroup
+                  inputClassName={styles.namingInput}
+                  type={inputTypes.TEXT}
+                  name="sceneImportFolderFormat"
+                  onChange={onInputChange}
+                  {...settings.sceneImportFolderFormat}
+                  helpTexts={['Used when adding a new scene or moving scenes via the editor']}
                 />
               </FormGroup>
 

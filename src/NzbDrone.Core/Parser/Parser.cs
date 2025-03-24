@@ -27,6 +27,11 @@ namespace NzbDrone.Core.Parser
 
         private static readonly Regex[] ReportTitleRegex = new[]
         {
+            // (?P<site>.+?)?[\s\.\-](?P<date>\d{2}[\s\.\-]\d{2}[\s\.\-]\d{2})[\s\.\-](?P<performer>\w+.+?)?[\s\.\-](?P<title>.*?(?=(?:[\s\.\-]mp4)|$))
+            // SCENE with airdate (18.04.28, 2018.04.28, 18-04-28, 18 04 28, 18_04_28) and performer
+            new Regex(@"^(?<studiotitle>.+?)?[-_. ]+(?<airyear>\d{2}|\d{4})[-_. ]+(?<airmonth>[0-1][0-9])[-_. ]+(?<airday>[0-3][0-9])[-_. ]+(?<performer>\w+.+?)?[-_. ](?<title>.*?(?=(?:[-_. ]mp4)|$))",
+                RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
             // SCENE - Site title in brackets with full year in date then episode info
             // [Site] 19-07-2023 - Loli - Beautiful Episode 2160p {RlsGroup}
             new Regex("^\\[(?<studiotitle>.+?)\\][-_. ]+(?<airday>[0-3][0-9])(?![-_. ]+[0-3][0-9])?[-_. ]+(?<airmonth>[0-1][0-9])[-_. ]+(?<airyear>(19|20)\\d{2})",
@@ -39,7 +44,7 @@ namespace NzbDrone.Core.Parser
 
             // SCENE with non-separated airdate after title (20180428)
             new Regex(@"^(?<studiotitle>.+?)?[-_. ]+(?<airyear>(19|20)\d{2})(?<airmonth>[0-1][0-9])(?<airday>[0-3][0-9])",
-            RegexOptions.IgnoreCase | RegexOptions.Compiled),
+                RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
             // SCENE with airdate after title [studio] title (dd.mm.yyyy)
             new Regex(@"\[(?<studiotitle>.+?)\]+[-_. ]+(?<releasetoken>.+?)(?<airday>[0-3][0-9])\.(?<airmonth>[0-1][0-9])\.(?<airyear>(19|20)\d{2})\)",
@@ -971,6 +976,8 @@ namespace NzbDrone.Core.Parser
                     result.Code = matchCollection[0].Groups["code"].Value;
                 }
 
+                var firstPerformer = matchCollection[0].Groups["performer"].Value.Replace('.', ' ');
+                result.FirstPerformer = firstPerformer;
                 result.StudioTitle = studioTitle;
 
                 Logger.Debug("Scene Parsed. {0}", result);

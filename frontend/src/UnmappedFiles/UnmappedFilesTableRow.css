@@ -1,0 +1,28 @@
+.path {
+  composes: cell from '~Components/Table/Cells/VirtualTableRowCell.css';
+
+  flex: 4 0 400px;
+  font-size: 13px;
+  font-family: $monoSpaceFontFamily;
+}
+
+.quality,
+.dateAdded,
+.size {
+  composes: cell from '~Components/Table/Cells/VirtualTableRowCell.css';
+
+  flex: 0 0 120px;
+  white-space: nowrap;
+}
+
+.actions {
+  composes: cell from '~Components/Table/Cells/VirtualTableRowCell.css';
+
+  flex: 0 0 95px;
+}
+
+.checkInput {
+  composes: input from '~Components/Form/CheckInput.css';
+
+  margin-top: 0;
+}

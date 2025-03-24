@@ -204,7 +204,6 @@ class StudioDetailsYear extends Component {
           <div className={styles.left}>
             <MonitorToggleButton
               monitored={monitoredMovieCount === totalMovieCount}
-              isDisabled={!studioMonitored}
               size={24}
               onPress={this.onMonitorYearPress}
             />

@@ -81,7 +81,6 @@ class PerformerDetailsStudio extends Component {
       isOrganizeModalOpen: false,
       isManageMoviesOpen: false,
       isHistoryModalOpen: false,
-      isInteractiveSearchModalOpen: false,
       lastToggledMovie: null
     };
   }
@@ -131,14 +130,6 @@ class PerformerDetailsStudio extends Component {
 
   //
   // Listeners
-
-  onInteractiveSearchPress = () => {
-    this.setState({ isInteractiveSearchModalOpen: true });
-  };
-
-  onInteractiveSearchModalClose = () => {
-    this.setState({ isInteractiveSearchModalOpen: false });
-  };
 
   onExpandPress = () => {
     const {

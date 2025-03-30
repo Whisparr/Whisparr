@@ -31,6 +31,8 @@ namespace NzbDrone.Core.Movies.Studios
 
         public void ApplyChanges(Studio otherStudio)
         {
+            SearchTitle = otherStudio.SearchTitle;
+            CleanSearchTitle = otherStudio.CleanSearchTitle;
             QualityProfileId = otherStudio.QualityProfileId;
             SearchOnAdd = otherStudio.SearchOnAdd;
             Monitored = otherStudio.Monitored;

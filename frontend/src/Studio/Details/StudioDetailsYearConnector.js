@@ -60,9 +60,9 @@ function createMapStateToProps() {
     (state) => _.get(state, 'studioScenes'),
     (year, studioForeignId, scenes, studio, dimensions, studioScenes) => {
 
-      const scenesInYear = scenes.items.filter((scene) => scene.studioForeignId === studioForeignId && scene.year === year);
+      let scenesInYear = scenes.items.filter((scene) => scene.studioForeignId === studioForeignId && scene.year === year);
       // Sort once filtered
-      sort(scenesInYear, studioScenes);
+      scenesInYear = sort(scenesInYear, studioScenes);
 
       return {
         year,

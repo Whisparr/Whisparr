@@ -75,9 +75,9 @@ function createMapStateToProps() {
     (state) => _.get(state, 'performerScenes'),
     (studioForeignId, studio, scenes, performer, dimensions, performerScenes) => {
 
-      const scenesInStudio = scenes.items.filter((scene) => scene.studioForeignId === studioForeignId && scene.credits.some((credit) => credit.performer.foreignId === performer.foreignId));
+      let scenesInStudio = scenes.items.filter((scene) => scene.studioForeignId === studioForeignId && scene.credits.some((credit) => credit.performer.foreignId === performer.foreignId));
       // Sort once filtered
-      sort(scenesInStudio, performerScenes);
+      scenesInStudio = sort(scenesInStudio, performerScenes);
 
       return {
         ...studio,

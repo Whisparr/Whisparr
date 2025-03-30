@@ -11,6 +11,7 @@ using NzbDrone.Core.CustomFormats;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.MediaFiles.MediaInfo;
 using NzbDrone.Core.Movies;
+using NzbDrone.Core.Movies.Performers;
 using NzbDrone.Core.Organizer;
 using NzbDrone.Core.Qualities;
 using NzbDrone.Core.Test.Framework;
@@ -21,19 +22,60 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
     public class FileNameBuilderFixture : CoreTest<FileNameBuilder>
     {
         private Movie _movie;
+        private Movie _scene;
         private MovieFile _movieFile;
         private NamingConfig _namingConfig;
 
         [SetUp]
         public void Setup()
         {
+            var studio = new Core.MetadataSource.SkyHook.Resource.StudioResource { Title = "Brazzers Exxtra", Network = "Brazzers" };
+            var credits = new List<Credit>
+            {
+                new Credit { Performer = new CreditPerformer { Name = "Gal Ritchie", Gender = Gender.Female } },
+                new Credit { Performer = new CreditPerformer { Name = "Mick Blue", Gender = Gender.Male } },
+                new Credit { Performer = new CreditPerformer { Name = "Angela White", Gender = Gender.Female } },
+                new Credit { Performer = new CreditPerformer { Name = "Scott Nails", Gender = Gender.Male } },
+                new Credit { Performer = new CreditPerformer { Name = "Manuel Ferrara", Gender = Gender.Male } },
+                new Credit { Performer = new CreditPerformer { Name = "Van Wylde", Gender = Gender.Male } },
+                new Credit { Performer = new CreditPerformer { Name = "Ricky Johnson", Gender = Gender.Male } },
+                new Credit { Performer = new CreditPerformer { Name = "Cherie DeVille", Gender = Gender.Female } },
+                new Credit { Performer = new CreditPerformer { Name = "Lily Lou", Gender = Gender.Female } },
+                new Credit { Performer = new CreditPerformer { Name = "J Mac", Gender = Gender.Male } },
+                new Credit { Performer = new CreditPerformer { Name = "Kira Noir", Gender = Gender.Female } },
+                new Credit { Performer = new CreditPerformer { Name = "Alexis Fawx", Gender = Gender.Female } },
+                new Credit { Performer = new CreditPerformer { Name = "Isiah Maxwell", Gender = Gender.Male } },
+                new Credit { Performer = new CreditPerformer { Name = "Queenie Sateen", Gender = Gender.Female } },
+                new Credit { Performer = new CreditPerformer { Name = "Keiran Lee", Gender = Gender.Male } },
+                new Credit { Performer = new CreditPerformer { Name = "Kayley Gunner", Gender = Gender.Female } },
+                new Credit { Performer = new CreditPerformer { Name = "Ryan Reid", Gender = Gender.Male } },
+                new Credit { Performer = new CreditPerformer { Name = "Alex Jones", Gender = Gender.Male } },
+                new Credit { Performer = new CreditPerformer { Name = "Hollywood Cash", Gender = Gender.Female } },
+                new Credit { Performer = new CreditPerformer { Name = "Monique Alexander", Gender = Gender.Female } },
+                new Credit { Performer = new CreditPerformer { Name = "Abigaiil Morris", Gender = Gender.Female } },
+                new Credit { Performer = new CreditPerformer { Name = "Luna Star", Gender = Gender.Female } }
+            };
+
             _movie = Builder<Movie>
                     .CreateNew()
                     .With(s => s.Title = "South Park")
                     .Build();
 
+            _scene = Builder<Movie>
+                    .CreateNew()
+                    .With(s => s.Title = "Brazzers Presents: 20 For 20")
+                    .With(x => x.ForeignId = "358e54fc-7d56-490c-b64c-5e8cb747cdcd")
+                    .With(x => x.MovieMetadata.Value.ForeignId = "358e54fc-7d56-490c-b64c-5e8cb747cdcd")
+                    .With(x => x.MovieMetadata.Value.ReleaseDate = "2024-06-20")
+                    .With(x => x.MovieMetadata.Value.Credits = credits)
+                    .With(x => x.MovieMetadata.Value.Studio = studio)
+                    .With(x => x.MovieMetadata.Value.StudioTitle = studio.Title)
+                    .With(x => x.MovieMetadata.Value.ItemType = ItemType.Scene)
+                    .Build();
+
             _namingConfig = NamingConfig.Default;
             _namingConfig.RenameMovies = true;
+            _namingConfig.RenameScenes = true;
 
             Mocker.GetMock<INamingConfigService>()
                   .Setup(c => c.GetConfig()).Returns(_namingConfig);
@@ -57,6 +99,35 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         private void GivenReal()
         {
             _movieFile.Quality.Revision.Real = 1;
+        }
+
+        [Test]
+        public void scene_basic_format()
+        {
+            _namingConfig.StandardSceneFormat = "{Studio Title} - {Release-Date} - {Scene Title}";
+
+            Subject.BuildFileName(_scene, _movieFile)
+                   .Should().Be("Brazzers Exxtra - 2024-06-20 - Brazzers Presents 20 For 20");
+        }
+
+        [Test]
+        public void scene_performers_format()
+        {
+            _namingConfig.StandardSceneFormat = "{Studio Title} - {Release-Date} - {Scene Title} [{Scene Performers}]";
+
+            // First 4 performers
+            Subject.BuildFileName(_scene, _movieFile)
+                   .Should().Be("Brazzers Exxtra - 2024-06-20 - Brazzers Presents 20 For 20 [Abigaiil Morris Alex Jones Alexis Fawx Angela White]");
+        }
+
+        [Test]
+        public void scene_felame_performers_format()
+        {
+            _namingConfig.StandardSceneFormat = "{Studio Title} - {Release-Date} - {Scene Title} [{Scene PerformersFemale}]";
+
+            // First 4 female performers
+            Subject.BuildFileName(_scene, _movieFile)
+                   .Should().Be("Brazzers Exxtra - 2024-06-20 - Brazzers Presents 20 For 20 [Abigaiil Morris Alexis Fawx Angela White Cherie DeVille]");
         }
 
         [Test]

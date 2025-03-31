@@ -1093,6 +1093,7 @@
   "Metadata": "Metadata",
   "MetadataIncorrectUrlWarning": "The metadata URL is set for Whisparr version 2.x, but you are running version 3.x.  This happens if you do an unsupported in-place upgrade.  Please downgrade back to version 2.",
   "MetadataLoadError": "Unable to load Metadata",
+  "MetadataMediaBrowserDeprecated": "Media Browser metadata is deprecated, support will be removed completely in {version}.",
   "MetadataSettings": "Metadata Settings",
   "MetadataSettingsMovieImages": "Movie Images",
   "MetadataSettingsMovieSummary": "Create metadata files when movies are imported or refreshed",

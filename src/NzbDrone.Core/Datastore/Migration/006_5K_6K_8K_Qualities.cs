@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using FluentMigrator;
-using NzbDrone.Common.Serializer;
 using NzbDrone.Core.Datastore.Migration.Framework;
 
 namespace NzbDrone.Core.Datastore.Migration
@@ -12,17 +10,13 @@ namespace NzbDrone.Core.Datastore.Migration
     {
         protected override void MainDbUpgrade()
         {
-            Execute.WithConnection(PerformHighWebDlQualityMigration);
+            Execute.WithConnection(UpdateQualityDefinitions);
         }
 
-        private void PerformHighWebDlQualityMigration(IDbConnection conn, IDbTransaction tran)
+        private void UpdateQualityDefinitions(IDbConnection conn, IDbTransaction tran)
         {
             var updater = new ProfileUpdater125(conn, tran);
-
-            updater.SplitQualityAppend(18, 33);
-            updater.SplitQualityAppend(33, 34);
-            updater.SplitQualityAppend(34, 35);
-
+            updater.UpdateQualityToQualityDefinition();
             updater.Commit();
         }
     }
@@ -55,85 +49,34 @@ namespace NzbDrone.Core.Datastore.Migration
         private readonly IDbConnection _connection;
         private readonly IDbTransaction _transaction;
 
-        private List<Profile125> _profiles;
-        private HashSet<Profile125> _changedProfiles = new HashSet<Profile125>();
-
         public ProfileUpdater125(IDbConnection conn, IDbTransaction tran)
         {
             _connection = conn;
             _transaction = tran;
-
-            _profiles = GetProfiles();
         }
 
         public void Commit()
         {
-            foreach (var profile in _changedProfiles)
-            {
-                using (var updateProfileCmd = _connection.CreateCommand())
-                {
-                    updateProfileCmd.Transaction = _transaction;
-                    updateProfileCmd.CommandText = "UPDATE \"Profiles\" SET \"Name\" = ?, \"Cutoff\" = ?, \"Items\" = ?, \"Language\" = ? WHERE \"Id\" = ?";
-                    updateProfileCmd.AddParameter(profile.Name);
-                    updateProfileCmd.AddParameter(profile.Cutoff);
-                    updateProfileCmd.AddParameter(profile.Items.ToJson());
-                    updateProfileCmd.AddParameter(profile.Language);
-                    updateProfileCmd.AddParameter(profile.Id);
-
-                    updateProfileCmd.ExecuteNonQuery();
-                }
-            }
-
-            _changedProfiles.Clear();
         }
 
-        public void SplitQualityAppend(int find, int quality)
+        public void UpdateQualityToQualityDefinition()
         {
-            foreach (var profile in _profiles)
+            var definitions = new List<QualityDefinition125>();
+            using (var getDefinitions = _connection.CreateCommand())
             {
-                if (profile.Items.Any(v => v.Quality == quality))
+                getDefinitions.Transaction = _transaction;
+                getDefinitions.CommandText = @"SELECT ""Id"", ""Quality"" FROM ""QualityDefinitions""";
+
+                using (var definitionsReader = getDefinitions.ExecuteReader())
                 {
-                    continue;
-                }
-
-                var findIndex = profile.Items.FindIndex(v => v.Quality == find);
-
-                profile.Items.Insert(findIndex + 1, new ProfileItem125
-                {
-                    Quality = quality,
-                    Allowed = false
-                });
-
-                _changedProfiles.Add(profile);
-            }
-        }
-
-        private List<Profile125> GetProfiles()
-        {
-            var profiles = new List<Profile125>();
-
-            using (var getProfilesCmd = _connection.CreateCommand())
-            {
-                getProfilesCmd.Transaction = _transaction;
-                getProfilesCmd.CommandText = @"SELECT ""Id"", ""Name"", ""Cutoff"", ""Items"", ""Language"" FROM ""QualityProfiles""";
-
-                using (var profileReader = getProfilesCmd.ExecuteReader())
-                {
-                    while (profileReader.Read())
+                    while (definitionsReader.Read())
                     {
-                        profiles.Add(new Profile125
-                        {
-                            Id = profileReader.GetInt32(0),
-                            Name = profileReader.GetString(1),
-                            Cutoff = profileReader.GetInt32(2),
-                            Items = Json.Deserialize<List<ProfileItem125>>(profileReader.GetString(3)),
-                            Language = profileReader.IsDBNull(4) ? 0 : profileReader.GetInt32(4)
-                        });
+                        var id = definitionsReader.GetInt32(0);
+                        var quality = definitionsReader.GetInt32(1);
+                        definitions.Add(new QualityDefinition125 { Id = id, Quality = quality });
                     }
                 }
             }
-
-            return profiles;
         }
     }
 }

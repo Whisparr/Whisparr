@@ -61,6 +61,19 @@ namespace NzbDrone.Core.Datastore.Migration
 
         public void UpdateQualityToQualityDefinition()
         {
+            using (var insertDefinitions = _connection.CreateCommand())
+            {
+                insertDefinitions.Transaction = _transaction;
+                insertDefinitions.CommandText = @"
+            INSERT OR IGNORE INTO QualityDefinitions (Id, Quality, MinSize, MaxSize, PreferredSize)
+            VALUES
+            (23, 33, 0, 100, 95),
+            (24, 34, 0, 100, 95),
+            (25, 35, 0, 100, 95);
+        ";
+                insertDefinitions.ExecuteNonQuery();
+            }
+
             var definitions = new List<QualityDefinition125>();
             using (var getDefinitions = _connection.CreateCommand())
             {

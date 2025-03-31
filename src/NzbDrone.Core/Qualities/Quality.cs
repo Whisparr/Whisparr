@@ -189,10 +189,10 @@ namespace NzbDrone.Core.Qualities
 
                 new QualityDefinition(Quality.BRDISK)      { Weight = 28, MinSize = 0, MaxSize = null, PreferredSize = null },
                 new QualityDefinition(Quality.RAWHD)       { Weight = 29, MinSize = 0, MaxSize = null, PreferredSize = null },
-                new QualityDefinition(Quality.VR)          { Weight = 30, MinSize = 4, MaxSize = null, PreferredSize = null },
                 new QualityDefinition(Quality.WEBDL2880p)  { Weight = 25, MinSize = 0, MaxSize = null, PreferredSize = null },
                 new QualityDefinition(Quality.WEBDL3160p)  { Weight = 26, MinSize = 0, MaxSize = null, PreferredSize = null },
                 new QualityDefinition(Quality.WEBDL4320p)  { Weight = 27, MinSize = 0, MaxSize = null, PreferredSize = null },
+                new QualityDefinition(Quality.VR)          { Weight = 30, MinSize = 4, MaxSize = null, PreferredSize = null },
             };
         }
 

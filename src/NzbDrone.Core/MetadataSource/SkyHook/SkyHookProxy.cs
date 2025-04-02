@@ -828,6 +828,8 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                     return Gender.Intersex;
                 case "MALE":
                     return Gender.Male;
+                case "OTHER":
+                    return Gender.Other;
                 default:
                     return Gender.Female;
             }

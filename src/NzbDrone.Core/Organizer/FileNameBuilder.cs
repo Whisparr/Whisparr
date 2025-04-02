@@ -369,22 +369,7 @@ namespace NzbDrone.Core.Organizer
                     .Select(p => p.Performer.Name)
                     .Take(4)
                     .Join(" ");
-                tokenHandlers["{Scene PerformersTSMale}"] = m => credits.Where(p => p.Performer.Gender == Gender.TransMale)
-                    .OrderBy(p => p.Performer.Name)
-                    .Select(p => p.Performer.Name)
-                    .Take(4)
-                    .Join(" ");
-                tokenHandlers["{Scene PerformersTSFemale}"] = m => credits.Where(p => p.Performer.Gender == Gender.TransFemale)
-                    .OrderBy(p => p.Performer.Name)
-                    .Select(p => p.Performer.Name)
-                    .Take(4)
-                    .Join(" ");
-                tokenHandlers["{Scene PerformersIntersex}"] = m => credits.Where(p => p.Performer.Gender == Gender.Intersex)
-                    .OrderBy(p => p.Performer.Name)
-                    .Select(p => p.Performer.Name)
-                    .Take(4)
-                    .Join(" ");
-                tokenHandlers["{Scene PerformersNonBinary}"] = m => credits.Where(p => p.Performer.Gender == Gender.NonBinary)
+                tokenHandlers["{Scene PerformersOther}"] = m => credits.Where(p => p.Performer.Gender == Gender.Other)
                     .OrderBy(p => p.Performer.Name)
                     .Select(p => p.Performer.Name)
                     .Take(4)

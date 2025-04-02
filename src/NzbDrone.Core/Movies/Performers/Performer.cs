@@ -82,6 +82,7 @@ namespace NzbDrone.Core.Movies.Performers
         TransMale,
         TransFemale,
         Intersex,
-        NonBinary
+        NonBinary,
+        Other
     }
 }

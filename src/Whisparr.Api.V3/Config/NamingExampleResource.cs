@@ -9,6 +9,7 @@ namespace Whisparr.Api.V3.Config
         public string SceneExample { get; set; }
         public string SceneFolderExample { get; set; }
         public string SceneImportFolderExample { get; set; }
+        public string RootSceneFolderExample { get; internal set; }
     }
 
     public static class NamingConfigResourceMapper

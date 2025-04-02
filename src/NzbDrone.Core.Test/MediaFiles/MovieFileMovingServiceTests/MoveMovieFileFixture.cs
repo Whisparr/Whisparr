@@ -40,7 +40,7 @@ namespace NzbDrone.Core.Test.MediaFiles.MovieFileMovingServiceTests
                                                  .Build();
 
             Mocker.GetMock<IBuildFileNames>()
-                  .Setup(s => s.BuildFileName(It.IsAny<Movie>(), It.IsAny<MovieFile>(), null, null))
+                  .Setup(s => s.BuildFileName(It.IsAny<Movie>(), It.IsAny<MovieFile>(), null, null, false))
                   .Returns("File Name");
 
             Mocker.GetMock<IBuildFileNames>()

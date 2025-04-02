@@ -22,7 +22,7 @@ namespace NzbDrone.Core.Organizer
 {
     public interface IBuildFileNames
     {
-        string BuildFileName(Movie movie, MovieFile movieFile, NamingConfig namingConfig = null, List<CustomFormat> customFormats = null);
+        string BuildFileName(Movie movie, MovieFile movieFile, NamingConfig namingConfig = null, List<CustomFormat> customFormats = null, bool sample = false);
         string BuildFilePath(Movie movie, string fileName, string extension);
         string BuildFilePath(string path, string fileName, string extension);
         string GetMovieFolder(Movie movie, NamingConfig namingConfig = null);
@@ -48,6 +48,12 @@ namespace NzbDrone.Core.Organizer
                                                                             RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         public static readonly Regex SceneFolderRegex = new Regex(@"(?<token>\{((?:(Studio|Original))(?<separator>[- ._])(Clean)?(Original)?(Title|Filename)(The)?)(?::(?<customFormat>[a-z0-9|]+))?\})",
+                                                                            RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+        public static readonly Regex MainMovieFolderRegex = new Regex(@"^(?<main>[^{]+)(?<token>\{((?:(Movie|Original))(?<separator>[- ._])(Clean)?(Original)?(Title|Filename)(The)?)(?::(?<customFormat>[a-z0-9|]+))?\})",
+                                                                            RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+        public static readonly Regex MainSceneFolderRegex = new Regex(@"^(?<main>[^{]+)(?<token>\{((?:(Studio|Original))(?<separator>[- ._])(Clean)?(Original)?(Title|Filename)(The)?)(?::(?<customFormat>[a-z0-9|]+))?\})",
                                                                             RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         public static readonly Regex SceneTitleRegex = new Regex(@"(?<token>\{((?:(Scene|Original))(?<separator>[- ._])(Clean)?(Original)?(Title|Filename)(The)?)(?::(?<customFormat>[a-z0-9|]+))?\})",
@@ -106,7 +112,7 @@ namespace NzbDrone.Core.Organizer
             _logger = logger;
         }
 
-        public string BuildFileName(Movie movie, MovieFile movieFile, NamingConfig namingConfig = null, List<CustomFormat> customFormats = null)
+        public string BuildFileName(Movie movie, MovieFile movieFile, NamingConfig namingConfig = null, List<CustomFormat> customFormats = null, bool sample = false)
         {
             if (namingConfig == null)
             {
@@ -117,7 +123,10 @@ namespace NzbDrone.Core.Organizer
 
             if ((itemType == ItemType.Movie && !namingConfig.RenameMovies) || (itemType == ItemType.Scene && !namingConfig.RenameScenes))
             {
+                if (!sample)
+                {
                 return GetOriginalTitle(movieFile, false);
+                }
             }
 
             var pattern = itemType == ItemType.Movie ? namingConfig.StandardMovieFormat : namingConfig.StandardSceneFormat;
@@ -360,10 +369,19 @@ namespace NzbDrone.Core.Organizer
             {
                 var credits = movie.MovieMetadata.Value.Credits;
                 tokenHandlers["{Scene Performers}"] = m => credits.OrderBy(p => p.Performer.Name)
-                                                                  .Select(p => p.Performer.Name).Join(" ");
+                    .Select(p => p.Performer.Name)
+                    .Take(4)
+                    .Join(" ");
                 tokenHandlers["{Scene PerformersFemale}"] = m => credits.Where(p => p.Performer.Gender == Gender.Female)
-                                                                        .OrderBy(p => p.Performer.Name)
-                                                                        .Select(p => p.Performer.Name).Join(" ");
+                    .OrderBy(p => p.Performer.Name)
+                    .Select(p => p.Performer.Name)
+                    .Take(4)
+                    .Join(" ");
+                tokenHandlers["{Scene PerformersMale}"] = m => credits.Where(p => p.Performer.Gender == Gender.Male)
+                    .OrderBy(p => p.Performer.Name)
+                    .Select(p => p.Performer.Name)
+                    .Take(4)
+                    .Join(" ");
             }
         }
 

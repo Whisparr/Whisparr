@@ -9,9 +9,13 @@ using NzbDrone.Common.EnsureThat;
 using NzbDrone.Common.Http;
 using NzbDrone.Core.Exceptions;
 using NzbDrone.Core.ImportLists.ImportExclusions;
+using NzbDrone.Core.Messaging.Commands;
 using NzbDrone.Core.MetadataSource;
+using NzbDrone.Core.Movies.Commands;
+using NzbDrone.Core.Movies.Studios;
 using NzbDrone.Core.Organizer;
 using NzbDrone.Core.Parser;
+using NzbDrone.Core.RootFolders;
 
 namespace NzbDrone.Core.Movies
 {
@@ -21,30 +25,38 @@ namespace NzbDrone.Core.Movies
         List<Movie> AddMovies(List<Movie> newMovies, bool ignoreErrors = false);
     }
 
-    public class AddMovieService : IAddMovieService
+    public class AddMovieService :
+        IAddMovieService,
+        IExecute<AddMoviesCommand>
     {
         private readonly IMovieService _movieService;
+        private readonly IAddStudioService _addStudioService;
         private readonly IMovieMetadataService _movieMetadataService;
         private readonly IProvideMovieInfo _movieInfo;
         private readonly IBuildFileNames _fileNameBuilder;
         private readonly IAddMovieValidator _addMovieValidator;
         private readonly IImportExclusionsService _importExclusionService;
+        private readonly IRootFolderService _rootFolderService;
         private readonly Logger _logger;
 
         public AddMovieService(IMovieService movieService,
+                                IAddStudioService addStudioService,
                                 IMovieMetadataService movieMetadataService,
                                 IProvideMovieInfo movieInfo,
                                 IBuildFileNames fileNameBuilder,
                                 IAddMovieValidator addMovieValidator,
                                 ImportExclusionsService importExclusionsService,
+                                IRootFolderService rootFolderService,
                                 Logger logger)
         {
             _movieService = movieService;
+            _addStudioService = addStudioService;
             _movieMetadataService = movieMetadataService;
             _movieInfo = movieInfo;
             _fileNameBuilder = fileNameBuilder;
             _addMovieValidator = addMovieValidator;
             _importExclusionService = importExclusionsService;
+            _rootFolderService = rootFolderService;
             _logger = logger;
         }
 
@@ -93,6 +105,12 @@ namespace NzbDrone.Core.Movies
                     {
                         _logger.Debug("Foreign ID {0} was not added due to validation failure: Movie already exists on list", m.ForeignId);
                         continue;
+                    }
+
+                    if (m.RootFolderPath == null)
+                    {
+                        var rootFolder = _rootFolderService.GetBestRootFolderPath(m.Path);
+                        movie.RootFolderPath = rootFolder;
                     }
 
                     moviesToAdd.Add(movie);
@@ -225,6 +243,11 @@ namespace NzbDrone.Core.Movies
             }
 
             return newMovie;
+        }
+
+        public void Execute(AddMoviesCommand message)
+        {
+            AddMovies(message.Movies);
         }
     }
 }

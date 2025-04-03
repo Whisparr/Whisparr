@@ -11,6 +11,7 @@ using NzbDrone.Core.DecisionEngine;
 using NzbDrone.Core.Download;
 using NzbDrone.Core.Download.TrackedDownloads;
 using NzbDrone.Core.Languages;
+using NzbDrone.Core.MediaFiles.Events;
 using NzbDrone.Core.MediaFiles.MovieImport.Aggregation;
 using NzbDrone.Core.Messaging.Commands;
 using NzbDrone.Core.Messaging.Events;
@@ -33,6 +34,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Manual
         private readonly IParsingService _parsingService;
         private readonly IDiskScanService _diskScanService;
         private readonly IMakeImportDecision _importDecisionMaker;
+        private readonly IMediaFileRepository _mediaFileRepository;
         private readonly IMovieService _movieService;
         private readonly IImportApprovedMovie _importApprovedMovie;
         private readonly IAggregationService _aggregationService;
@@ -46,6 +48,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Manual
                                    IParsingService parsingService,
                                    IDiskScanService diskScanService,
                                    IMakeImportDecision importDecisionMaker,
+                                   IMediaFileRepository mediaFileRepository,
                                    IMovieService movieService,
                                    IAggregationService aggregationService,
                                    IImportApprovedMovie importApprovedMovie,
@@ -59,6 +62,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Manual
             _parsingService = parsingService;
             _diskScanService = diskScanService;
             _importDecisionMaker = importDecisionMaker;
+            _mediaFileRepository = mediaFileRepository;
             _movieService = movieService;
             _aggregationService = aggregationService;
             _importApprovedMovie = importApprovedMovie;
@@ -227,17 +231,26 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Manual
 
                 if (movie == null)
                 {
+                    movie = _movieService.FindByPath(baseFolder);
+                }
+
+                if (movie == null)
+                {
+                    var fileMovieInfo = Parser.Parser.ParseMoviePath(file) ?? new ParsedMovieInfo();
                     var localMovie = new LocalMovie();
                     localMovie.Path = file;
                     localMovie.ReleaseGroup = Parser.Parser.ParseReleaseGroup(file);
-                    localMovie.Quality = QualityParser.ParseQuality(file);
                     localMovie.Languages = LanguageParser.ParseLanguages(file);
                     localMovie.Size = _diskProvider.GetFileSize(file);
+                    localMovie.FileMovieInfo = fileMovieInfo;
+
+                    // Augment movie file so imported files have all additional information an automatic import would
+                    localMovie = _aggregationService.Augment(localMovie, null);
 
                     return MapItem(new ImportDecision(localMovie, new Rejection("Unknown Movie")), rootFolder, downloadId, null);
                 }
 
-                var importDecisions = _importDecisionMaker.GetImportDecisions(new List<string> { file }, movie, trackedDownload?.DownloadItem, null, SceneSource(movie, baseFolder));
+                var importDecisions = _importDecisionMaker.GetImportDecisions(new List<string> { file }, movie, trackedDownload?.DownloadItem, null, SceneSource(movie, baseFolder), false);
 
                 if (importDecisions.Any())
                 {
@@ -394,6 +407,26 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Manual
                         TrackedDownload = trackedDownload,
                         ImportResult = importResult
                     });
+                }
+
+                // Check if movie is a scene, then cleanup the unmapped scene
+                if (movie.MovieMetadata.Value.ItemType != ItemType.Scene)
+                {
+                    continue;
+                }
+
+                var unmappedFiles = _mediaFileRepository.GetUnmappedFiles();
+                if (unmappedFiles != null)
+                {
+                    foreach (var unmappedFile in unmappedFiles)
+                    {
+                        if (unmappedFile.OriginalFilePath == file.Path)
+                        {
+                            var reason = DeleteMediaFileReason.Manual;
+                            _mediaFileRepository.Delete(unmappedFile);
+                            _eventAggregator.PublishEvent(new MovieFileDeletedEvent(unmappedFile, reason));
+                        }
+                    }
                 }
             }
 

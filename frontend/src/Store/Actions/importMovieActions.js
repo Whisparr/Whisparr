@@ -209,7 +209,7 @@ export const actionHandlers = handleThunks({
   [IMPORT_MOVIE]: function(getState, payload, dispatch) {
     dispatch(set({ section, isImporting: true }));
 
-    const ids = payload.ids;
+    const { ids, rootFolderId } = payload.ids;
     const items = getState().importMovie.items;
     const addedIds = [];
 
@@ -251,7 +251,7 @@ export const actionHandlers = handleThunks({
         ...addedIds.map((id) => removeItem({ section, id }))
       ]));
 
-      dispatch(fetchRootFolders());
+      dispatch(fetchRootFolders({ id: rootFolderId, timeout: true, getMovieFolder: true }));
     });
 
     promise.fail((xhr) => {

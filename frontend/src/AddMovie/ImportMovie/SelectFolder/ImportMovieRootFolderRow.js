@@ -19,7 +19,7 @@ function ImportMovieRootFolderRow(props) {
   } = props;
 
   const unmappedFoldersCount = unmappedFolders.length || '-';
-  const linkProps = window.location.pathname === '/add/import/movies' ? { to: `/add/import/movies/${id}` } : { to: `/add/import/scenes/${id}` };
+  const linkProps = window.location.pathname === '/add/import/scenes' ? { to: '/unmapped' } : { to: `/add/import/movies/${id}` };
 
   return (
     <TableRow>

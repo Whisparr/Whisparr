@@ -78,7 +78,7 @@ class ImportMovieConnector extends Component {
       dispatchSetAddMovieDefault
     } = this.props;
 
-    dispatchFetchRootFolders({ id: rootFolderId, timeout: false });
+    dispatchFetchRootFolders({ id: rootFolderId, timeout: false, getMovieFolder: true });
 
     let setDefaults = false;
     const setDefaultPayload = {};

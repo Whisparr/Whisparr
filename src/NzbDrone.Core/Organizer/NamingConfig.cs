@@ -11,8 +11,9 @@ namespace NzbDrone.Core.Organizer
             ReplaceIllegalCharacters = true,
             ColonReplacementFormat = 0,
             MultiEpisodeStyle = 0,
-            MovieFolderFormat = "{Movie Title} ({Release Year})",
-            SceneFolderFormat = "{Studio Title}/{Scene Title} - {Release Date}",
+            MovieFolderFormat = "movies/{Movie Title} ({Release Year})",
+            SceneFolderFormat = "scenes/{Studio Title}/{Scene Title} - {Release Date}",
+            SceneImportFolderFormat = "import/",
             StandardMovieFormat = "{Movie Title} ({Release Year}) {Quality Full}",
             StandardSceneFormat = "{Scene Title} - {Release Date} {Quality Full}"
         };
@@ -26,6 +27,7 @@ namespace NzbDrone.Core.Organizer
         public string StandardSceneFormat { get; set; }
         public string MovieFolderFormat { get; set; }
         public string SceneFolderFormat { get; set; }
+        public string SceneImportFolderFormat { get; set; }
     }
 
     public enum ColonReplacementFormat

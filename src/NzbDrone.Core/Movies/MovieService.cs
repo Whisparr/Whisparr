@@ -43,6 +43,7 @@ namespace NzbDrone.Core.Movies
         List<string> AllMovieForeignIds();
         bool MovieExists(Movie movie);
         List<Movie> GetMoviesByFileId(int fileId);
+        List<Movie> GetMoviesByFileId(IEnumerable<int> fileId);
         List<Movie> GetMoviesBetweenDates(DateTime start, DateTime end, bool includeUnmonitored);
         PagingSpec<Movie> MoviesWithoutFiles(PagingSpec<Movie> pagingSpec);
         void DeleteMovie(int movieId, bool deleteFiles, bool addExclusion = false);
@@ -55,6 +56,8 @@ namespace NzbDrone.Core.Movies
         bool MoviePathExists(string folder);
         void RemoveAddOptions(Movie movie);
         bool ExistsByMetadataId(int metadataId);
+        void SetFileIds(List<Movie> movies);
+        Dictionary<Movie, MovieParseMatchType> MatchMovies(string parsedMovieTitle, string releaseDate, List<Movie> movies);
     }
 
     public class MovieService : IMovieService, IHandle<MovieFileAddedEvent>,
@@ -100,8 +103,10 @@ namespace NzbDrone.Core.Movies
         public Movie AddMovie(Movie newMovie)
         {
             var movie = _movieRepository.Insert(newMovie);
-
-            _eventAggregator.PublishEvent(new MovieAddedEvent(GetMovie(movie.Id)));
+            if (movie.Title != null)
+            {
+                _eventAggregator.PublishEvent(new MovieAddedEvent(GetMovie(movie.Id)));
+            }
 
             return movie;
         }
@@ -318,6 +323,11 @@ namespace NzbDrone.Core.Movies
             return _movieRepository.GetMoviesByFileId(fileId);
         }
 
+        public List<Movie> GetMoviesByFileId(IEnumerable<int> fileId)
+        {
+            return _movieRepository.GetMoviesByFileId(fileId);
+        }
+
         public List<Movie> GetMoviesBetweenDates(DateTime start, DateTime end, bool includeUnmonitored)
         {
             var movies = _movieRepository.MoviesBetweenDates(start.ToUniversalTime(), end.ToUniversalTime(), includeUnmonitored);
@@ -460,11 +470,8 @@ namespace NzbDrone.Core.Movies
                 return null;
             }
 
-            if (movies.Count == 1 && _configService.WhisparrAutoMatchOnDate)
-            {
-                return movies.First();
-            }
-
+            // Movies with more than one movieFile is in the list, so filter to only one
+            movies = movies.DistinctBy(movie => movie.Id).ToList();
             var parsedMovieTitle = Parser.Parser.NormalizeEpisodeTitle(releaseTokens);
 
             if (parsedMovieTitle.IsNotNullOrWhiteSpace())
@@ -483,7 +490,7 @@ namespace NzbDrone.Core.Movies
             return null;
         }
 
-        private Dictionary<Movie, MovieParseMatchType> MatchMovies(string parsedMovieTitle, string releaseDate, List<Movie> movies)
+        public Dictionary<Movie, MovieParseMatchType> MatchMovies(string parsedMovieTitle, string releaseDate, List<Movie> movies)
         {
             var matches = new Dictionary<Movie, MovieParseMatchType>();
 
@@ -643,14 +650,22 @@ namespace NzbDrone.Core.Movies
             throw new MultipleMoviesFoundException(movies, "Expected one movie, but found {0}. Matching movies: {1}", movies.Count, string.Join(",", movies));
         }
 
+        public void SetFileIds(List<Movie> movies)
+        {
+            _movieRepository.SetFileId(movies);
+        }
+
         public void Handle(MovieFileAddedEvent message)
         {
-            var movie = message.MovieFile.Movie;
-            movie.MovieFileId = message.MovieFile.Id;
-            _movieRepository.Update(movie);
+            if (message.MovieFile.Movie != null)
+            {
+                var movie = message.MovieFile.Movie;
+                movie.MovieFileId = message.MovieFile.Id;
+                _movieRepository.Update(movie);
 
-            // _movieRepository.SetFileId(message.MovieFile.Id, message.MovieFile.Movie.Value.Id);
-            _logger.Info("Assigning file [{0}] to movie [{1}]", message.MovieFile.RelativePath, message.MovieFile.Movie);
+                // _movieRepository.SetFileId(message.MovieFile.Id, message.MovieFile.Movie.Value.Id);
+                _logger.Info("Assigning file [{0}] to movie [{1}]", message.MovieFile.RelativePath, message.MovieFile.Movie);
+            }
         }
 
         public void Handle(MovieFileDeletedEvent message)

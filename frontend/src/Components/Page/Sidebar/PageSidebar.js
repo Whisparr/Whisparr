@@ -25,14 +25,17 @@ const links = [
     to: '/',
     alias: '/scenes',
     children: [
-      // Hide until library import is usable for Scenes
-      /* {
-          title: () => translate('ImportLibrary'),
-          to: '/add/import/scenes'
-      },*/
+      {
+        title: () => translate('ImportLibrary'),
+        to: '/add/import/scenes'
+      },
       {
         title: () => translate('AddNew'),
         to: '/add/new/scene'
+      },
+      {
+        title: () => translate('UnmappedFiles'),
+        to: '/unmapped'
       }
     ]
   },

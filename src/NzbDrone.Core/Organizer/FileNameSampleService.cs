@@ -13,7 +13,7 @@ namespace NzbDrone.Core.Organizer
         string GetMovieFolderSample(NamingConfig nameSpec);
         SampleResult GetSceneSample(NamingConfig nameSpec);
         string GetSceneFolderSample(NamingConfig nameSpec);
-    }
+   }
 
     public class FileNameSampleService : IFilenameSampleService
     {
@@ -67,10 +67,11 @@ namespace NzbDrone.Core.Organizer
             _sceneMetadata = new MovieMetadata
             {
                 Title = "The Scene: Title",
-                Year = 2010,
+                ReleaseDate = "2010-01-01",
                 ImdbId = "tt0066921",
                 StashId = "d8f9b8b4-7801-4fa6-bd18-0a4dbd0ce598",
                 ForeignId = "d8f9b8b4-7801-4fa6-bd18-0a4dbd0ce598",
+                StudioTitle = "Studio Title",
                 ItemType = ItemType.Scene
             };
 
@@ -124,7 +125,7 @@ namespace NzbDrone.Core.Organizer
         {
             var result = new SampleResult
             {
-                FileName = BuildSample(_movie, _movieFile, nameSpec),
+                FileName = BuildSample(_scene, _movieFile, nameSpec),
             };
 
             return result;
@@ -132,14 +133,20 @@ namespace NzbDrone.Core.Organizer
 
         public string GetSceneFolderSample(NamingConfig nameSpec)
         {
-            return _buildFileNames.GetMovieFolder(_movie, nameSpec);
+            return _buildFileNames.GetMovieFolder(_scene, nameSpec);
         }
 
         private string BuildSample(Movie movie, MovieFile movieFile, NamingConfig nameSpec)
         {
             try
             {
-                return _buildFileNames.BuildFileName(movie, movieFile, nameSpec, _customFormats);
+                var sample = false;
+                if (movie.MovieMetadata.Value.ItemType == ItemType.Scene)
+                {
+                    sample = true;
+                }
+
+                return _buildFileNames.BuildFileName(movie, movieFile, nameSpec, _customFormats, sample);
             }
             catch (NamingFormatException)
             {

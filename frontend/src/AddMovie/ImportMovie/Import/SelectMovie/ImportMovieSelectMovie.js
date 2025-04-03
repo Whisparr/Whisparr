@@ -131,7 +131,6 @@ class ImportMovieSelectMovie extends Component {
               id={this._buttonId}
             >
               <Link
-                ref={ref}
                 className={styles.button}
                 component="div"
                 onPress={this.onPress}

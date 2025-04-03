@@ -46,10 +46,24 @@ namespace Whisparr.Api.V3.MovieFiles
             _qualityUpgradableSpecification = qualityUpgradableSpecification;
         }
 
+        private MovieFileResource MapToResource(MovieFile movieFile)
+        {
+            if (movieFile.MovieId > 0)
+            {
+                return movieFile.ToResource(movieFile.Movie, _qualityUpgradableSpecification, _formatCalculator);
+            }
+
+            return movieFile.ToResource();
+        }
+
         protected override MovieFileResource GetResourceById(int id)
         {
             var movieFile = _mediaFileService.GetMovie(id);
-            var movie = _movieService.GetMovie(movieFile.MovieId);
+            var movie = new Movie();
+            if (movieFile.MovieId != 0)
+            {
+                movie = _movieService.GetMovie(movieFile.MovieId);
+            }
 
             var resource = movieFile.ToResource(movie, _qualityUpgradableSpecification, _formatCalculator);
 
@@ -58,8 +72,14 @@ namespace Whisparr.Api.V3.MovieFiles
 
         [HttpGet]
         [Produces("application/json")]
-        public List<MovieFileResource> GetMovieFiles([FromQuery(Name = "movieId")] List<int> movieIds, [FromQuery] List<int> movieFileIds)
+        public List<MovieFileResource> GetMovieFiles([FromQuery(Name = "movieId")] List<int> movieIds, [FromQuery] List<int> movieFileIds, bool? unmapped)
         {
+            if (unmapped.HasValue && unmapped.Value)
+            {
+                var files = _mediaFileService.GetUnmappedFiles();
+                return files.ConvertAll(f => MapToResource(f));
+            }
+
             if (!movieIds.Any() && !movieFileIds.Any())
             {
                 throw new BadRequestException("movieId or movieFileIds must be provided");
@@ -152,15 +172,22 @@ namespace Whisparr.Api.V3.MovieFiles
         public void DeleteMovieFile(int id)
         {
             var movieFile = _mediaFileService.GetMovie(id);
-
             if (movieFile == null)
             {
                 throw new NzbDroneClientException(global::System.Net.HttpStatusCode.NotFound, "Movie file not found");
             }
 
-            var movie = _movieService.GetMovie(movieFile.MovieId);
+            // Unmapped files won't have a movie
+            if (movieFile.MovieId == 0)
+            {
+                _mediaFileDeletionService.DeleteMovieFile(movieFile);
+            }
+            else
+            {
+                var movie = _movieService.GetMovie(movieFile.MovieId);
 
-            _mediaFileDeletionService.DeleteMovieFile(movie, movieFile);
+                _mediaFileDeletionService.DeleteMovieFile(movie, movieFile);
+            }
         }
 
         [HttpDelete("bulk")]
@@ -168,11 +195,19 @@ namespace Whisparr.Api.V3.MovieFiles
         public object DeleteMovieFiles([FromBody] MovieFileListResource resource)
         {
             var movieFiles = _mediaFileService.GetMovies(resource.MovieFileIds);
-            var movie = _movieService.GetMovie(movieFiles.First().MovieId);
 
             foreach (var movieFile in movieFiles)
             {
-                _mediaFileDeletionService.DeleteMovieFile(movie, movieFile);
+                if (movieFile.MovieId == 0)
+                {
+                    _mediaFileDeletionService.DeleteMovieFile(movieFile);
+                }
+                else
+                {
+                    var movie = _movieService.GetMovie(movieFiles.First().MovieId);
+
+                    _mediaFileDeletionService.DeleteMovieFile(movie, movieFile);
+                }
             }
 
             return new { };

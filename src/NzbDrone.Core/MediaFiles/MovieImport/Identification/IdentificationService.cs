@@ -90,19 +90,19 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
             var folderRegex = new Regex(@"(?<airyear>\d{2}|\d{4})[-_. ]+(?<airmonth>[0-1][0-9])[-_. ]+(?<airday>[0-3][0-9])",
                 RegexOptions.IgnoreCase | RegexOptions.Compiled);
             var folder = Directory.GetParent(file).Name;
-
             var match = folderRegex.Match(folder);
-            if (match.Success)
-            {
-                var sceneSearch = folder.Replace(" - ", " ");
-                searchResults = _searchProxy.SearchForNewScene(sceneSearch);
-                releaseDate = match.Groups[0].ToString();
-            }
-            else if (parsedMovieInfo.StashId.IsNotNullOrWhiteSpace())
+
+            if (parsedMovieInfo.StashId.IsNotNullOrWhiteSpace())
             {
                 // Search by StashId
                 searchResults = _searchProxy.SearchForNewScene(parsedMovieInfo.StashId);
                 searchedByStashId = true;
+            }
+            else if (match.Success)
+            {
+                var sceneSearch = folder.Replace(" - ", " ");
+                searchResults = _searchProxy.SearchForNewScene(sceneSearch);
+                releaseDate = match.Groups[0].ToString();
             }
             else
             {
@@ -113,6 +113,11 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
             // Get the best match for the movie
             var result = new Movie();
 
+            if (parsedMovieInfo.ReleaseTokens.IsNullOrWhiteSpace())
+            {
+                parsedMovieInfo.ReleaseTokens = string.Empty;
+            }
+
             var tempTitle = string.Join(" ", parsedMovieInfo.ReleaseTokens.Split("."));
             var parsedMovieTitle = Parser.Parser.NormalizeEpisodeTitle(tempTitle);
             if (searchedByStashId && searchResults.Count == 1)
@@ -120,7 +125,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
                 // If we searched by StashId and found results, use the first result directly
                 result = searchResults.First();
             }
-            else if (parsedMovieTitle != null && !searchedByStashId)
+            else if (parsedMovieTitle.IsNotNullOrWhiteSpace() && !searchedByStashId)
             {
                 var matches = _movieService.MatchMovies(parsedMovieTitle, releaseDate, searchResults);
 
@@ -132,7 +137,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
 
             var movie = new Movie();
 
-            if (result.Title != null)
+            if (result.Title.IsNotNullOrWhiteSpace())
             {
                 movie = result;
                 var sourcePath = file.ToString();

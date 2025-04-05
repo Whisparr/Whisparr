@@ -252,6 +252,11 @@ namespace NzbDrone.Core.Organizer
 
         public string CleanTitle(string title)
         {
+            if (title.IsNullOrWhiteSpace())
+            {
+                return string.Empty;
+            }
+
             title = title.Replace("&", "and");
             title = ScenifyReplaceChars.Replace(title, " ");
             title = EmojiRegex.Replace(title, " ");

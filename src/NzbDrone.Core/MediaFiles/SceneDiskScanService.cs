@@ -199,7 +199,7 @@ namespace NzbDrone.Core.MediaFiles
         {
             var rootFolder = folder;
             var namingConfig = _namingConfigService.GetConfig();
-            var pattern = namingConfig.SceneImportFolderFormat;
+            var pattern = namingConfig.SceneImportFolderFormat ?? NamingConfig.Default.SceneImportFolderFormat;
             var sceneImportFolderName = pattern.Split(new char[] { '\\', '/' }, StringSplitOptions.RemoveEmptyEntries)[0];
             return Path.Combine(rootFolder, sceneImportFolderName);
         }

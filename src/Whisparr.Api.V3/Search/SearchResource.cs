@@ -1,5 +1,6 @@
 using Whisparr.Api.V3.Movies;
 using Whisparr.Api.V3.Performers;
+using Whisparr.Api.V3.Studios;
 using Whisparr.Http.REST;
 
 namespace Whisparr.Api.V3.Search
@@ -10,5 +11,6 @@ namespace Whisparr.Api.V3.Search
         public string ForeignId { get; set; }
         public MovieResource Movie { get; set; }
         public PerformerResource Performer { get; set; }
+        public StudioResource Studio { get; set; }
     }
 }

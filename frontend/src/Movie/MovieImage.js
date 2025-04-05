@@ -9,7 +9,10 @@ function findImage(images, coverType) {
 }
 
 function getUrl(image, coverType, size) {
-  const imageUrl = image?.url ?? image?.remoteUrl;
+  let imageUrl = image?.url ?? image?.remoteUrl;
+  if (coverType === 'clearlogo') {
+    imageUrl = image?.remoteUrl;
+  }
 
   if (imageUrl) {
     return imageUrl.replace(`${coverType}.jpg`, `${coverType}-${size}.jpg`);

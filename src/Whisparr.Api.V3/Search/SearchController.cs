@@ -7,13 +7,14 @@ using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.MetadataSource;
 using NzbDrone.Core.Movies;
 using NzbDrone.Core.Movies.Performers;
+using NzbDrone.Core.Movies.Studios;
 using NzbDrone.Core.Organizer;
 using Whisparr.Api.V3.Movies;
 using Whisparr.Api.V3.Performers;
-using Whisparr.Api.V3.Search;
+using Whisparr.Api.V3.Studios;
 using Whisparr.Http;
 
-namespace Readarr.Api.V1.Search
+namespace Whisparr.Api.V3.Search
 {
     [V3ApiController("lookup")]
     public class SearchController : Controller
@@ -51,7 +52,7 @@ namespace Readarr.Api.V1.Search
             return MapToResource(searchResults).ToList();
         }
 
-        private IEnumerable<SearchResource> MapToResource(IEnumerable<object> results)
+        public IEnumerable<SearchResource> MapToResource(IEnumerable<object> results)
         {
             var id = 1;
             var availDelay = _configService.AvailabilityDelay;
@@ -93,6 +94,21 @@ namespace Readarr.Api.V1.Search
 
                     resource.Performer = performerResource;
                     resource.ForeignId = performer.ForeignId;
+                }
+                else if (result is Studio)
+                {
+                    var studio = (Studio)result;
+                    var studioResource = studio.ToResource();
+                    _coverMapper.ConvertToLocalUrls(studioResource.Id, studioResource.Images);
+
+                    var cover = studio.Images.FirstOrDefault();
+                    if (cover != null)
+                    {
+                        studioResource.RemotePoster = cover.RemoteUrl;
+                    }
+
+                    resource.Studio = studioResource;
+                    resource.ForeignId = studio.ForeignId;
                 }
                 else
                 {

@@ -21,6 +21,7 @@ namespace Whisparr.Api.V3.Studios
         public int QualityProfileId { get; set; }
         public bool SearchOnAdd { get; set; }
         public HashSet<int> Tags { get; set; }
+        public string RemotePoster { get; internal set; }
     }
 
     public static class StudioResourceMapper

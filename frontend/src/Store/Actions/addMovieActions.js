@@ -7,6 +7,7 @@ import getNewMovie from 'Utilities/Movie/getNewMovie';
 import getNewPerformer from 'Utilities/Performer/getNewPerformer';
 import getSectionState from 'Utilities/State/getSectionState';
 import updateSectionState from 'Utilities/State/updateSectionState';
+import getNewStudio from 'Utilities/Studio/getNewStudio';
 import { set, update, updateItem } from './baseActions';
 import createHandleActions from './Creators/createHandleActions';
 import createSetSettingValueReducer from './Creators/Reducers/createSetSettingValueReducer';
@@ -42,12 +43,20 @@ export const defaultState = {
     qualityProfileId: 0,
     searchForMovie: true,
     tags: []
+  },
+  studioDefaults: {
+    rootFolderPath: '',
+    monitor: 'movieOnly',
+    qualityProfileId: 0,
+    searchForMovie: false,
+    tags: []
   }
 };
 
 export const persistState = [
   'addMovie.movieDefaults',
-  'addMovie.performerDefaults'
+  'addMovie.performerDefaults',
+  'addMovie.studioDefaults'
 ];
 
 //
@@ -57,11 +66,14 @@ export const LOOKUP_MOVIE = 'addMovie/lookupMovie';
 export const LOOKUP_SCENE = 'addMovie/lookupScene';
 export const ADD_MOVIE = 'addMovie/addMovie';
 export const ADD_PERFORMER = 'addMovie/addPerformer';
+export const ADD_STUDIO = 'addMovie/addStudio';
 export const SET_ADD_MOVIE_VALUE = 'addMovie/setAddMovieValue';
 export const SET_ADD_PERFORMER_VALUE = 'addMovie/setAddPerformerValue';
+export const SET_ADD_STUDIO_VALUE = 'addMovie/setAddStudioValue';
 export const CLEAR_ADD_MOVIE = 'addMovie/clearAddMovie';
 export const SET_ADD_MOVIE_DEFAULT = 'addMovie/setAddMovieDefault';
 export const SET_ADD_PERFORMER_DEFAULT = 'addMovie/setAddPerformerDefault';
+export const SET_ADD_STUDIO_DEFAULT = 'addMovie/setAddStudioDefault';
 
 //
 // Action Creators
@@ -70,9 +82,11 @@ export const lookupMovie = createThunk(LOOKUP_MOVIE);
 export const lookupScene = createThunk(LOOKUP_SCENE);
 export const addMovie = createThunk(ADD_MOVIE);
 export const addPerformer = createThunk(ADD_PERFORMER);
+export const addStudio = createThunk(ADD_STUDIO);
 export const clearAddMovie = createAction(CLEAR_ADD_MOVIE);
 export const setAddMovieDefault = createAction(SET_ADD_MOVIE_DEFAULT);
 export const setAddPerformerDefault = createAction(SET_ADD_PERFORMER_DEFAULT);
+export const setAddStudioDefault = createAction(SET_ADD_STUDIO_DEFAULT);
 
 export const setAddMovieValue = createAction(SET_ADD_MOVIE_VALUE, (payload) => {
   return {
@@ -86,7 +100,12 @@ export const setAddPerformerValue = createAction(SET_ADD_PERFORMER_VALUE, (paylo
     ...payload
   };
 });
-
+export const setAddStudioValue = createAction(SET_ADD_STUDIO_VALUE, (payload) => {
+  return {
+    section,
+    ...payload
+  };
+});
 //
 // Action Handlers
 
@@ -268,6 +287,54 @@ export const actionHandlers = handleThunks({
         addError: xhr
       }));
     });
+  },
+
+  [ADD_STUDIO]: function(getState, payload, dispatch) {
+    dispatch(set({ section, isAdding: true }));
+
+    const foreignId = payload.foreignId;
+    const items = getState().addMovie.items;
+    const itemToAdd = _.find(items, { foreignId });
+    const newStudio = getNewStudio(_.cloneDeep(itemToAdd.studio), payload);
+    newStudio.id = 0;
+
+    const promise = createAjaxRequest({
+      url: '/studio',
+      method: 'POST',
+      dataType: 'json',
+      contentType: 'application/json',
+      data: JSON.stringify(newStudio)
+    }).request;
+
+    promise.done((data) => {
+      const updatedItem = _.cloneDeep(data);
+      updatedItem.internalId = updatedItem.id;
+      updatedItem.id = updatedItem.foreignId;
+      delete updatedItem.images;
+
+      const actions = [
+        updateItem({ section: 'studios', ...data }),
+        updateItem({ section: 'addMovie', ...updatedItem }),
+
+        set({
+          section,
+          isAdding: false,
+          isAdded: true,
+          addError: null
+        })
+      ];
+
+      dispatch(batchActions(actions));
+    });
+
+    promise.fail((xhr) => {
+      dispatch(set({
+        section,
+        isAdding: false,
+        isAdded: false,
+        addError: xhr
+      }));
+    });
   }
 });
 
@@ -278,6 +345,7 @@ export const reducers = createHandleActions({
 
   [SET_ADD_MOVIE_VALUE]: createSetSettingValueReducer(section),
   [SET_ADD_PERFORMER_VALUE]: createSetSettingValueReducer(section),
+  [SET_ADD_STUDIO_VALUE]: createSetSettingValueReducer(section),
 
   [SET_ADD_MOVIE_DEFAULT]: function(state, { payload }) {
     const newState = getSectionState(state, section);
@@ -299,11 +367,22 @@ export const reducers = createHandleActions({
 
     return updateSectionState(state, section, newState);
   },
+  [SET_ADD_STUDIO_DEFAULT]: function(state, { payload }) {
+    const newState = getSectionState(state, section);
+
+    newState.studioDefaults = {
+      ...newState.studioDefaults,
+      ...payload
+    };
+
+    return updateSectionState(state, section, newState);
+  },
 
   [CLEAR_ADD_MOVIE]: function(state) {
     const {
       movieDefaults,
       performerDefaults,
+      studioDefaults,
       view,
       ...otherDefaultState
     } = defaultState;

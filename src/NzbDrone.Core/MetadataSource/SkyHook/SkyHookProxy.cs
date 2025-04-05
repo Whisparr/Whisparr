@@ -539,6 +539,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 var httpResponse = _httpClient.Get<List<MovieResource>>(request);
 
                 var performersAdded = new List<string>();
+                var studiosAdded = new List<string>();
 
                 foreach (var movie in httpResponse.Resource)
                 {
@@ -556,9 +557,29 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                         }
                     }
 
+                    if (movie.Studio.Title.ToLower().Contains(lowerTitle))
+                    {
+                        var mappedStudio = MapStudio(movie.Studio);
+
+                        if (mappedStudio.ForeignId.IsNotNullOrWhiteSpace() && !studiosAdded.Contains(mappedStudio.ForeignId.ToLower()))
+                        {
+                            studiosAdded.Add(mappedStudio.ForeignId.ToLower());
+                            result.Add(mappedStudio);
+                        }
+                    }
+
                     result.Add(MapSearchResult(movie));
                 }
             }
+
+            // Sort results so exact matches come first
+            result = result.OrderByDescending(item => item switch
+            {
+                Movie movie => movie.MovieMetadata.Value.Title.ToLower() == lowerTitle,
+                Performer performer => performer.Name.ToLower() == lowerTitle,
+                Studio studio => studio.Title.ToLower() == lowerTitle,
+                _ => false
+            }).ToList();
 
             return result;
         }

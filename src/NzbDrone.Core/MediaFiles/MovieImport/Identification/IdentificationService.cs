@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using NLog;
 using NzbDrone.Common.Disk;
+using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.MediaFiles.MovieImport.Aggregation;
@@ -83,6 +84,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
             string term;
 
             var searchResults = new List<Movie>();
+            var searchedByStashId = false;
 
             // Try to see if the scene has been organized into a folder already
             var folderRegex = new Regex(@"(?<airyear>\d{2}|\d{4})[-_. ]+(?<airmonth>[0-1][0-9])[-_. ]+(?<airday>[0-3][0-9])",
@@ -96,6 +98,12 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
                 searchResults = _searchProxy.SearchForNewScene(sceneSearch);
                 releaseDate = match.Groups[0].ToString();
             }
+            else if (parsedMovieInfo.StashId.IsNotNullOrWhiteSpace())
+            {
+                // Search by StashId
+                searchResults = _searchProxy.SearchForNewScene(parsedMovieInfo.StashId);
+                searchedByStashId = true;
+            }
             else
             {
                 term = $"{studioTitleSlug} {releaseDate} {firstPerformer}";
@@ -107,7 +115,12 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
 
             var tempTitle = string.Join(" ", parsedMovieInfo.ReleaseTokens.Split("."));
             var parsedMovieTitle = Parser.Parser.NormalizeEpisodeTitle(tempTitle);
-            if (parsedMovieTitle != null)
+            if (searchedByStashId && searchResults.Count == 1)
+            {
+                // If we searched by StashId and found results, use the first result directly
+                result = searchResults.First();
+            }
+            else if (parsedMovieTitle != null && !searchedByStashId)
             {
                 var matches = _movieService.MatchMovies(parsedMovieTitle, releaseDate, searchResults);
 

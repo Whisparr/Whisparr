@@ -26,11 +26,17 @@ namespace NzbDrone.Core.Notifications.Stash
         public override void OnMovieRename(Movie movie, List<RenamedMovieFile> renamedFiles)
         {
             _stashService.Update(Settings, movie);
+            _stashService.Clean(Settings, movie);
+        }
+
+        public override void OnMovieFileDelete(MovieFileDeleteMessage deleteMessage)
+        {
+            _stashService.Clean(Settings, deleteMessage.Movie);
         }
 
         public override void OnMovieDelete(MovieDeleteMessage deleteMessage)
         {
-            _stashService.Update(Settings, deleteMessage.Movie);
+            _stashService.Clean(Settings, deleteMessage.Movie);
         }
 
         public override ValidationResult Test()

@@ -12,6 +12,7 @@ namespace NzbDrone.Core.Notifications.Stash
     public interface IStashService
     {
         void GetStatus(StashSettings settings);
+        void Clean(StashSettings settings, Movie movie);
         void Update(StashSettings settings, Movie movie);
         ValidationFailure Test(StashSettings settings);
     }
@@ -25,6 +26,21 @@ namespace NzbDrone.Core.Notifications.Stash
         {
             _proxy = proxy;
             _logger = logger;
+        }
+
+        public void Clean(StashSettings settings, Movie movie)
+        {
+            var seriesLocation = new OsPath(movie.Path);
+            var mappedPath = seriesLocation;
+
+            if (settings.MapTo.IsNotNullOrWhiteSpace())
+            {
+                mappedPath = new OsPath(settings.MapTo) + (seriesLocation - new OsPath(settings.MapFrom));
+
+                _logger.Trace("Mapping Path from {0} to {1} for partial scan", seriesLocation, mappedPath);
+            }
+
+            _proxy.Clean(settings, mappedPath.FullPath);
         }
 
         public void Update(StashSettings settings, Movie movie)

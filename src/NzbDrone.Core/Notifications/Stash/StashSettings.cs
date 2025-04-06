@@ -61,16 +61,31 @@ namespace NzbDrone.Core.Notifications.Stash
         [FieldDefinition(9, Label = "Run Identify Task", HelpText = "Run Metadata Identify task on new files", Type = FieldType.Checkbox)]
         public bool MetadataIdentify { get; set; }
 
-        [FieldDefinition(10, Label = "Identify: Include Male Performers", HelpText = "Include Male Performers during Identify task", Type = FieldType.Checkbox)]
+        [FieldDefinition(10, Label = "Identify: Stash Box Endpoint", HelpText = "The Url for the Stash Box Endpoint (https://stashdb.org/graphql)", Type = FieldType.Textbox)]
+        public string StashBoxEndpoint { get; set; }
+
+        [FieldDefinition(11, Label = "Identify: Builtin Autotag", HelpText = "The Source Builtin Autotag", Type = FieldType.Checkbox)]
+        public bool BuiltinAutotag { get; set; }
+
+        [FieldDefinition(12, Label = "Identify: Include Male Performers", HelpText = "Include Male Performers during Identify task", Type = FieldType.Checkbox)]
         public bool IncludeMalePerformers { get; set; }
 
-        [FieldDefinition(11, Label = "Identify: Set Organized", HelpText = "Use Set Organized during Identify task", Type = FieldType.Checkbox)]
+        [FieldDefinition(13, Label = "Identify: Set Cover Image", HelpText = "Set the cover image during Identify task", Type = FieldType.Checkbox)]
+        public bool SetCoverImage { get; set; }
+
+        [FieldDefinition(14, Label = "Identify: Skip Multiple Matches", HelpText = "Skip matches that have more than one result", Type = FieldType.Checkbox)]
+        public bool SkipMultipleMatches { get; set; }
+
+        [FieldDefinition(15, Label = "Identify: Skip Multiple Match Tag", HelpText = "Tag skipped matches with", Type = FieldType.Number)]
+        public int SkipMultipleMatchTag { get; set; }
+
+        [FieldDefinition(16, Label = "Identify: Set Organized", HelpText = "Use Set Organized during Identify task", Type = FieldType.Checkbox)]
         public bool SetOrganized { get; set; }
 
-        [FieldDefinition(12, Label = "Map Paths From", Type = FieldType.Textbox, Advanced = true, HelpText = "Whisparr Path, Used to modify site paths when Stash sees library path location differently from Whisparr")]
+        [FieldDefinition(17, Label = "Map Paths From", Type = FieldType.Textbox, Advanced = true, HelpText = "Whisparr Path, Used to modify site paths when Stash sees library path location differently from Whisparr")]
         public string MapFrom { get; set; }
 
-        [FieldDefinition(13, Label = "Map Paths To", Type = FieldType.Textbox, Advanced = true, HelpText = "Stash Path, Used to modify site paths when Stash sees library path location differently from Whisparr")]
+        [FieldDefinition(18, Label = "Map Paths To", Type = FieldType.Textbox, Advanced = true, HelpText = "Stash Path, Used to modify site paths when Stash sees library path location differently from Whisparr")]
         public string MapTo { get; set; }
 
         [JsonIgnore]

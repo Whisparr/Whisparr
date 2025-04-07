@@ -12,7 +12,8 @@ namespace NzbDrone.Core.Movies
     public enum MonitorTypes
     {
         MovieOnly,
-        MovieAndCollection,
+        MovieAndScene,
+        SceneOnly,
         None
     }
 }

@@ -2,6 +2,8 @@ import ModelBase from 'App/ModelBase';
 import Language from 'Language/Language';
 import { MovieFile } from 'MovieFile/MovieFile';
 
+export type MovieMonitor = 'movieOnly' | 'sceneOnly' | 'movieAndScene' | 'none';
+
 export type MovieStatus =
   | 'tba'
   | 'announced'
@@ -35,6 +37,11 @@ export interface RatingValues {
 
 export interface Ratings {
   tmdb: RatingValues;
+}
+
+export interface MovieAddOptions {
+  monitor: MovieMonitor;
+  searchForMovie: boolean;
 }
 
 interface Movie extends ModelBase {
@@ -75,6 +82,7 @@ interface Movie extends ModelBase {
   lastSearchTime?: string;
   isAvailable: boolean;
   isSaving?: boolean;
+  addOptions: MovieAddOptions;
 }
 
 export default Movie;

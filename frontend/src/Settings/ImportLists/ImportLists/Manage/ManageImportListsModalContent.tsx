@@ -228,7 +228,6 @@ function ManageImportListsModalContent(
                 return (
                   <ManageImportListsModalRow
                     key={item.id}
-                    implementation=""
                     isSelected={selectedState[item.id]}
                     {...item}
                     columns={COLUMNS}

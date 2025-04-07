@@ -1,11 +1,12 @@
-import ModelBase from 'App/ModelBase';
-import MovieMonitor from 'Movie/Movie';
+import { MovieMonitor } from 'Movie/Movie';
+import Provider from './Provider';
 
-interface ImportList extends ModelBase {
+interface ImportList extends Provider {
   enable: boolean;
   enabled: boolean;
   enableAuto: boolean;
   qualityProfileId: number;
+  minimumAvailability: string;
   rootFolderPath: string;
   monitor: MovieMonitor;
   searchOnAdd: boolean;

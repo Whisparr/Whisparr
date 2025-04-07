@@ -200,10 +200,9 @@ function EditImportListExclusionModalContent({
           >
             {translate('Delete')}
           </Button>
-        ) : null}
-
+        )}
+        : null
         <Button onPress={onModalClose}>{translate('Cancel')}</Button>
-
         <SpinnerErrorButton
           isSpinning={isSaving}
           error={saveError}

@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import MovieMinimumAvailabilityPopoverContent from 'AddMovie/MovieMinimumAvailabilityPopoverContent';
 import { ImportListAppState } from 'App/State/SettingsAppState';
 import Alert from 'Components/Alert';
 import Form from 'Components/Form/Form';
@@ -8,7 +7,6 @@ import FormGroup from 'Components/Form/FormGroup';
 import FormInputGroup from 'Components/Form/FormInputGroup';
 import FormLabel from 'Components/Form/FormLabel';
 import ProviderFieldFormGroup from 'Components/Form/ProviderFieldFormGroup';
-import Icon from 'Components/Icon';
 import Button from 'Components/Link/Button';
 import SpinnerErrorButton from 'Components/Link/SpinnerErrorButton';
 import LoadingIndicator from 'Components/Loading/LoadingIndicator';
@@ -16,10 +14,9 @@ import ModalBody from 'Components/Modal/ModalBody';
 import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
-import Popover from 'Components/Tooltip/Popover';
 import usePrevious from 'Helpers/Hooks/usePrevious';
 import useShowAdvancedSettings from 'Helpers/Hooks/useShowAdvancedSettings';
-import { icons, inputTypes, kinds, tooltipPositions } from 'Helpers/Props';
+import { inputTypes, kinds } from 'Helpers/Props';
 import AdvancedSettingsButton from 'Settings/AdvancedSettingsButton';
 import {
   saveImportList,
@@ -73,7 +70,6 @@ function EditImportListModalContent({
     enableAuto,
     minRefreshInterval,
     monitor,
-    minimumAvailability,
     rootFolderPath,
     qualityProfileId,
     searchOnAdd,
@@ -115,8 +111,12 @@ function EditImportListModalContent({
     <ModalContent onModalClose={onModalClose}>
       <ModalHeader>
         {id
-          ? translate('EditImportListImplementation', { implementationName })
-          : translate('AddImportListImplementation', { implementationName })}
+          ? translate('EditImportListImplementation', {
+              implementationName: implementationName ?? '',
+            })
+          : translate('AddImportListImplementation', {
+              implementationName: implementationName ?? '',
+            })}
       </ModalHeader>
 
       <ModalBody>
@@ -192,29 +192,6 @@ function EditImportListModalContent({
                 name="searchOnAdd"
                 helpText={translate('ListSearchOnAddMovieHelpText')}
                 {...searchOnAdd}
-                onChange={handleInputChange}
-              />
-            </FormGroup>
-
-            <FormGroup>
-              <FormLabel>
-                {translate('MinimumAvailability')}
-
-                <Popover
-                  anchor={
-                    <Icon className={styles.labelIcon} name={icons.INFO} />
-                  }
-                  title={translate('MinimumAvailability')}
-                  body={<MovieMinimumAvailabilityPopoverContent />}
-                  position={tooltipPositions.RIGHT}
-                />
-              </FormLabel>
-
-              <FormInputGroup
-                type={inputTypes.AVAILABILITY_SELECT}
-                name="minimumAvailability"
-                {...minimumAvailability}
-                helpLink="https://wiki.servarr.com/radarr/faq#what-is-minimum-availability"
                 onChange={handleInputChange}
               />
             </FormGroup>

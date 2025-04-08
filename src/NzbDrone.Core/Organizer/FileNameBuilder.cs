@@ -477,21 +477,28 @@ namespace NzbDrone.Core.Organizer
             tokenHandlers["{Episode Performers}"] = m =>
             {
                 var allPerformers = episodes.SelectMany(e => e.Actors.Select(a => a.Name)).Distinct().Take(4).ToList();
-                return string.Join(", ", allPerformers);
+                return string.Join(" ", allPerformers);
             };
             tokenHandlers["{Episode PerformersFemale}"] = m =>
             {
                 var femalePerformers = episodes
                     .SelectMany(e => e.Actors.Where(a => a.Gender == Gender.Female).Select(a => a.Name)).Distinct()
                     .Take(4).ToList();
-                return string.Join(", ", femalePerformers);
+                return string.Join(" ", femalePerformers);
             };
             tokenHandlers["{Episode PerformersMale}"] = m =>
             {
                 var malePerformers = episodes
                     .SelectMany(e => e.Actors.Where(a => a.Gender == Gender.Male).Select(a => a.Name)).Distinct()
                     .Take(4).ToList();
-                return string.Join(", ", malePerformers);
+                return string.Join(" ", malePerformers);
+            };
+            tokenHandlers["{Episode PerformersOther}"] = m =>
+            {
+                var otherPerformers = episodes
+                    .SelectMany(e => e.Actors.Where(a => a.Gender == Gender.Other).Select(a => a.Name)).Distinct()
+                    .Take(4).ToList();
+                return string.Join(" ", otherPerformers);
             };
         }
 

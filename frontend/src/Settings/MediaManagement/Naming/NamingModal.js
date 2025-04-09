@@ -115,7 +115,7 @@ const episodeTitleTokens = [
   { token: '{Episode PerformersFemale}', example: 'Lola Luv' },
   { token: '{Episode PerformersMale}', example: 'Brad Harden' },
   { token: '{Episode PerformersOther}', example: 'Mirage Desire' },
-  { token: '{TpdbSceneId}', example: '12345' },
+  { token: '{TpdbSceneId}', example: '12345' }
 ];
 
 const qualityTokens = [

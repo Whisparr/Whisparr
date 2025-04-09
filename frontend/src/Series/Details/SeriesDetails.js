@@ -527,6 +527,24 @@ class SeriesDetails extends Component {
                       </Label>
                   }
 
+                  {
+                    !!tvdbId && (
+                      <Label
+                        className={styles.detailsLabel}
+                        title={translate('TPDB ID')}
+                        size={sizes.LARGE}
+                      >
+                        <Icon
+                          name={icons.NETWORK}
+                          size={17}
+                        />
+                        <span className={styles.qualityProfileName}>
+                          {tvdbId}
+                        </span>
+                      </Label>
+                    )
+                  }
+
                   <Tooltip
                     anchor={
                       <Label
@@ -543,6 +561,7 @@ class SeriesDetails extends Component {
                         </span>
                       </Label>
                     }
+
                     tooltip={
                       <SeriesDetailsLinks
                         tvdbId={tvdbId}

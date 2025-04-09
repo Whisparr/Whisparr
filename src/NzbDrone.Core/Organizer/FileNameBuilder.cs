@@ -500,6 +500,11 @@ namespace NzbDrone.Core.Organizer
                     .Take(4).ToList();
                 return string.Join(" ", otherPerformers);
             };
+            tokenHandlers["{TpdbSceneId}"] = m =>
+            {
+                var scene = episodes.FirstOrDefault();
+                return scene?.TvdbId.ToString() ?? "Unknown";
+            };
         }
 
         private void AddEpisodeTitlePlaceholderTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers)

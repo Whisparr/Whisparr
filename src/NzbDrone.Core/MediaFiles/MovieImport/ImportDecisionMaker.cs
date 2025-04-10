@@ -269,6 +269,14 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
                     localMovie.CustomFormatScore = localMovie.Movie.QualityProfile?.CalculateCustomFormatScore(localMovie.CustomFormats) ?? 0;
 
                     decision = GetDecision(localMovie, downloadClientItem);
+
+                    if (localMovie.MediaInfo?.RunTime != null && localMovie.Movie.MovieMetadata.Value.Runtime > 0)
+                    {
+                        if (localMovie.MediaInfo.RunTime.Minutes < localMovie.Movie.MovieMetadata.Value.Runtime - 1 || localMovie.MediaInfo.RunTime.Minutes > localMovie.Movie.MovieMetadata.Value.Runtime + 1)
+                        {
+                            decision = new ImportDecision(localMovie, new Rejection($"Runtime of {localMovie.Movie.MovieMetadata.Value.Runtime} expected but {localMovie.MediaInfo.RunTime.Minutes} Found"));
+                        }
+                    }
                 }
             }
             catch (AugmentingFailedException)

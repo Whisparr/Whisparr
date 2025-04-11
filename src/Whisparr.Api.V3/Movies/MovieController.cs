@@ -192,6 +192,7 @@ namespace Whisparr.Api.V3.Movies
             var moviesResources = new List<MovieResource>();
 
             var movieStats = _movieStatisticsService.MovieStatistics(ids);
+            var coverFileInfos = _coverMapper.GetMovieCoverFileInfos();
             var sdict = movieStats.ToDictionary(x => x.MovieId);
             var availDelay = _configService.AvailabilityDelay;
             var movies = _moviesService.FindByIds(ids);
@@ -202,6 +203,7 @@ namespace Whisparr.Api.V3.Movies
             }
 
             LinkMovieStatistics(moviesResources, sdict);
+            MapCoversToLocal(moviesResources, coverFileInfos);
 
             return moviesResources;
         }

@@ -179,7 +179,7 @@ function SceneIndexPoster(props: SceneIndexPosterProps) {
             blur={safeForWorkMode}
             style={elementStyle}
             images={images}
-            size={250}
+            size={180}
             lazy={false}
             overflow={true}
             onError={onPosterLoadError}

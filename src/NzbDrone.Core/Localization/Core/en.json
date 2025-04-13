@@ -1804,6 +1804,8 @@
   "WhatsNew": "What's new?",
   "WhisparrAutoMatchOnDate": "Match scene on Date Only",
   "WhisparrAutoMatchOnDateHelpText": "If checked Whisparr will accept a scene on just studio and date. Can cause false positives",
+  "WhisparrValidateRuntime": "Validate the runtime",
+  "WhisparrValidateRuntimeHelpText": "Validates the runtime minutes with the expected time of the scene",
   "WhisparrCalendarFeed": "{appName} Calendar Feed",
   "WhisparrSupportsAnyDownloadClient": "{appName} supports many popular torrent and usenet download clients.",
   "WhisparrSupportsAnyIndexer": "{appName} supports any indexer that uses the Newznab standard, as well as other indexers listed below.",

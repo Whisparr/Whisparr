@@ -15,7 +15,8 @@ function WhisparrSettings(props) {
   } = props;
 
   const {
-    whisparrAutoMatchOnDate
+    whisparrAutoMatchOnDate,
+    whisparrValidateRuntime
   } = settings;
 
   if (!advancedSettings) {
@@ -36,6 +37,20 @@ function WhisparrSettings(props) {
           helpText={translate('WhisparrAutoMatchOnDateHelpText')}
           onChange={onInputChange}
           {...whisparrAutoMatchOnDate}
+        />
+      </FormGroup>
+      <FormGroup
+        advancedSettings={advancedSettings}
+        isAdvanced={true}
+      >
+        <FormLabel>{translate('WhisparrValidateRuntime')}</FormLabel>
+
+        <FormInputGroup
+          type={inputTypes.CHECK}
+          name="whisparrValidateRuntime"
+          helpText={translate('WhisparrValidateRuntimeHelpText')}
+          onChange={onInputChange}
+          {...whisparrValidateRuntime}
         />
       </FormGroup>
     </FieldSet>

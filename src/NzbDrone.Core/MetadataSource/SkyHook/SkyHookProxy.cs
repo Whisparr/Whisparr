@@ -34,12 +34,22 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
         public SkyHookProxy(IHttpClient httpClient,
             IWhisparrCloudRequestBuilder requestBuilder,
             IConfigService configService,
+            IConfigFileProvider configFileProvider,
             IMovieService movieService,
             IMovieMetadataService movieMetadataService,
             Logger logger)
         {
             _httpClient = httpClient;
-            _whisparrMetadata = requestBuilder.WhisparrMetadata;
+
+            var whisparrMetadata = configFileProvider.WhisparrMetadata;
+            if (whisparrMetadata.IsNullOrWhiteSpace())
+            {
+                whisparrMetadata  = "https://api.whisparr.com/v4/{route}";
+            }
+
+            logger.Info($"Using WhisparrMetadata {whisparrMetadata}");
+            _whisparrMetadata = new HttpRequestBuilder(whisparrMetadata)
+                .CreateFactory();
             _configService = configService;
             _movieService = movieService;
             _movieMetadataService = movieMetadataService;
@@ -546,7 +556,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 {
                     foreach (var performer in movie.Credits)
                     {
-                        if (performer.Performer.Name.ToLower().Contains(lowerTitle))
+                        if (performer.Performer?.Name != null && performer.Performer.Name.ToLower().Contains(lowerTitle))
                         {
                             var mappedPerformer = MapPerformer(performer.Performer);
 

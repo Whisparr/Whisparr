@@ -61,6 +61,7 @@ namespace NzbDrone.Core.Configuration
         string PostgresMainDb { get; }
         string PostgresLogDb { get; }
         string Theme { get; }
+        string WhisparrMetadata { get; }
     }
 
     public class ConfigFileProvider : IConfigFileProvider
@@ -150,6 +151,22 @@ namespace NzbDrone.Core.Configuration
                 }
 
                 return bindAddress;
+            }
+        }
+
+        public string WhisparrMetadata
+        {
+            get
+            {
+                const string defaultValue = "https://api.whisparr.com/v4/{route}";
+
+                var whisparrMetadata = GetValue("WhisparrMetadata", defaultValue);
+                if (string.IsNullOrWhiteSpace(whisparrMetadata))
+                {
+                    return defaultValue;
+                }
+
+                return whisparrMetadata;
             }
         }
 
@@ -262,28 +279,28 @@ namespace NzbDrone.Core.Configuration
         public string GetValue(string key, object defaultValue, bool persist = true)
         {
             return _cache.Get(key, () =>
+            {
+                var xDoc = LoadConfigFile();
+                var config = xDoc.Descendants(CONFIG_ELEMENT_NAME).Single();
+
+                var parentContainer = config;
+
+                var valueHolder = parentContainer.Descendants(key).ToList();
+
+                if (valueHolder.Count == 1)
                 {
-                    var xDoc = LoadConfigFile();
-                    var config = xDoc.Descendants(CONFIG_ELEMENT_NAME).Single();
+                    return valueHolder.First().Value.Trim();
+                }
 
-                    var parentContainer = config;
+                // Save the value
+                if (persist)
+                {
+                    SetValue(key, defaultValue);
+                }
 
-                    var valueHolder = parentContainer.Descendants(key).ToList();
-
-                    if (valueHolder.Count == 1)
-                    {
-                        return valueHolder.First().Value.Trim();
-                    }
-
-                    // Save the value
-                    if (persist)
-                    {
-                        SetValue(key, defaultValue);
-                    }
-
-                    // return the default value
-                    return defaultValue.ToString();
-                });
+                // return the default value
+                return defaultValue.ToString();
+            });
         }
 
         public void SetValue(string key, object value)

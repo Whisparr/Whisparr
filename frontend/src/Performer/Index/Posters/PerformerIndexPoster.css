@@ -23,6 +23,7 @@ $hoverScale: 1.05;
   position: relative;
   display: block;
   background-color: var(--defaultColor);
+  object-fit: cover;
 }
 
 .overlayTitle {

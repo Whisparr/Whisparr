@@ -243,10 +243,6 @@ class StudioDetails extends Component {
 
     const fanartUrl = getFanartUrl(images);
 
-    const elementStyle = {
-      objectFit: 'contain'
-    };
-
     return (
       <PageContent title={title}>
         <PageToolbar>
@@ -310,7 +306,6 @@ class StudioDetails extends Component {
               <StudioLogo
                 safeForWorkMode={safeForWorkMode}
                 className={styles.poster}
-                style={elementStyle}
                 images={images}
                 size={250}
                 lazy={false}

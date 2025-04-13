@@ -1,5 +1,7 @@
+/* eslint-disable simple-import-sort/imports */
 import BlocklistAppState from './BlocklistAppState';
 import CalendarAppState from './CalendarAppState';
+import CaptchaAppState from './CaptchaAppState';
 import CommandAppState from './CommandAppState';
 import HistoryAppState, { MovieHistoryAppState } from './HistoryAppState';
 import InteractiveImportAppState from './InteractiveImportAppState';
@@ -8,9 +10,11 @@ import MovieCollectionAppState from './MovieCollectionAppState';
 import MovieFilesAppState from './MovieFilesAppState';
 import MoviesAppState, { MovieIndexAppState } from './MoviesAppState';
 import MovieSearchAppState from './MovieSearchAppState';
+import OAuthAppState from './OAuthAppState';
 import OrganizePreviewAppState from './OrganizePreviewAppState';
 import ParseAppState from './ParseAppState';
 import PerformersAppState from './PerformersAppState';
+import ProviderOptionsAppState from './ProviderOptionsAppState';
 import QueueAppState from './QueueAppState';
 import ReleasesAppState from './ReleasesAppState';
 import RootFolderAppState from './RootFolderAppState';
@@ -51,6 +55,13 @@ export interface CustomFilter {
   filers: PropertyFilter[];
 }
 
+export interface PathsAppState {
+  currentPath: string;
+  directories: Array<{ path: string; type?: string }>;
+  files: Array<{ path: string; type?: string }>;
+  isFetching?: boolean;
+}
+
 export interface AppSectionState {
   isConnected: boolean;
   isReconnecting: boolean;
@@ -67,6 +78,7 @@ interface AppState {
   app: AppSectionState;
   blocklist: BlocklistAppState;
   calendar: CalendarAppState;
+  captcha: CaptchaAppState;
   commands: CommandAppState;
   history: HistoryAppState;
   interactiveImport: InteractiveImportAppState;
@@ -80,8 +92,11 @@ interface AppState {
   performers: PerformersAppState;
   studios: StudiosAppState;
   movies: MoviesAppState;
+  oAuth: OAuthAppState;
   organizePreview: OrganizePreviewAppState;
   parse: ParseAppState;
+  paths: PathsAppState;
+  providerOptions: ProviderOptionsAppState;
   queue: QueueAppState;
   releases: ReleasesAppState;
   rootFolders: RootFolderAppState;

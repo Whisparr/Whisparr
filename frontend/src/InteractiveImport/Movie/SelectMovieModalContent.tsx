@@ -22,6 +22,7 @@ import { scrollDirections } from 'Helpers/Props';
 import Movie from 'Movie/Movie';
 import { searchMoviesModal } from 'Store/Actions/movieSearchActions';
 import dimensions from 'Styles/Variables/dimensions';
+import { InputChanged } from 'typings/inputs';
 import translate from 'Utilities/String/translate';
 import SelectMovieModalTableHeader from './SelectMovieModalTableHeader';
 import SelectMovieRow from './SelectMovieRow';
@@ -165,7 +166,7 @@ function SelectMovieModalContent(props: SelectMovieModalContentProps) {
   );
 
   const onFilterChange = useCallback(
-    ({ value }: { value: string }) => {
+    ({ value }: InputChanged<string>) => {
       setFilter(value); // update instantly
       if (value.length >= 3 || value.length === 0) {
         // debounce API call to avoid flooding

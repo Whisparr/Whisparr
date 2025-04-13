@@ -18,6 +18,7 @@ import useMovie from 'Movie/useMovie';
 import { saveMovie, setMovieValue } from 'Store/Actions/movieActions';
 import selectSettings from 'Store/Selectors/selectSettings';
 import { InputChanged } from 'typings/inputs';
+import { ValidationError, ValidationWarning } from 'typings/pending';
 import translate from 'Utilities/String/translate';
 import styles from './EditMovieModalContent.css';
 
@@ -41,18 +42,18 @@ function EditMovieModalContent({
 
   const wasSaving = usePrevious(isSaving);
 
-  const isPathChanging = pendingChanges.path && path !== pendingChanges.path;
+  const isPathChanging = pendingChanges?.path && path !== pendingChanges.path;
 
   const [isConfirmMoveModalOpen, setIsConfirmMoveModalOpen] = useState(false);
   interface Setting {
     value?: unknown;
     errors: Array<{
-      message?: string;
+      message: string;
       link?: string;
       detailedMessage?: string;
     }>;
     warnings: Array<{
-      message?: string;
+      message: string;
       link?: string;
       detailedMessage?: string;
     }>;
@@ -62,16 +63,8 @@ function EditMovieModalContent({
 
   interface SelectSettingsResult {
     settings: Record<string, Setting>;
-    validationErrors: Array<{
-      message?: string;
-      link?: string;
-      detailedMessage?: string;
-    }>;
-    validationWarnings: Array<{
-      message?: string;
-      link?: string;
-      detailedMessage?: string;
-    }>;
+    validationErrors: ValidationError[];
+    validationWarnings: ValidationWarning[];
     hasPendingChanges: boolean;
     hasSettings: boolean;
     pendingChanges: unknown;
@@ -219,7 +212,7 @@ function EditMovieModalContent({
 
       <MoveMovieModal
         originalPath={path}
-        destinationPath={pendingChanges.path}
+        destinationPath={pendingChanges?.path as string | undefined}
         isOpen={isConfirmMoveModalOpen}
         onModalClose={handleCancelPress}
         onSavePress={handleSavePress}

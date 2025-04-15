@@ -20,6 +20,7 @@ namespace Whisparr.Api.V3.Studios
         public string RootFolderPath { get; set; }
         public int QualityProfileId { get; set; }
         public bool SearchOnAdd { get; set; }
+        public List<string> Aliases { get; set; }
         public HashSet<int> Tags { get; set; }
         public bool HasMovies { get; set; }
         public bool HasScenes { get; set; }
@@ -53,6 +54,7 @@ namespace Whisparr.Api.V3.Studios
                 QualityProfileId = model.QualityProfileId,
                 RootFolderPath = model.RootFolderPath,
                 SearchOnAdd = model.SearchOnAdd,
+                Aliases = model.Aliases,
                 Tags = model.Tags
             };
         }
@@ -83,6 +85,7 @@ namespace Whisparr.Api.V3.Studios
                 QualityProfileId = resource.QualityProfileId,
                 RootFolderPath = resource.RootFolderPath,
                 SearchOnAdd = resource.SearchOnAdd,
+                Aliases = resource.Aliases,
                 Tags = resource.Tags
             };
         }

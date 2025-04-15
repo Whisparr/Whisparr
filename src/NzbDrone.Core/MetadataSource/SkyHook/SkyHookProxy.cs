@@ -376,6 +376,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             movie.Title = resource.Title;
             movie.CleanTitle = resource.Title.CleanMovieTitle();
             movie.SortTitle = Parser.Parser.NormalizeTitle(resource.Title);
+            movie.Code = resource.Code;
             movie.Overview = resource.Overview;
 
             movie.Website = resource.Homepage;
@@ -938,6 +939,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 Title = studio.Title,
                 CleanTitle = studio.Title.CleanStudioTitle(),
                 SortTitle = Parser.Parser.NormalizeTitle(studio.Title),
+                Aliases = studio.Aliases,
                 Website = studio.Homepage,
                 ForeignId = studio.ForeignIds.StashId,
                 Network = studio.Network,

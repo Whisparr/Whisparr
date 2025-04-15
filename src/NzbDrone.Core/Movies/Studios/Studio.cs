@@ -16,6 +16,7 @@ namespace NzbDrone.Core.Movies.Studios
         public string Title { get; set; }
         public string SortTitle { get; set; }
         public string CleanTitle { get; set; }
+        public List<string> Aliases { get; set; }
         public string SearchTitle { get; set; }
         public string CleanSearchTitle { get; set; }
         public string Website { get; set; }

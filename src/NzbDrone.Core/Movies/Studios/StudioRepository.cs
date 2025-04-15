@@ -3,6 +3,7 @@ using System.Linq;
 using Dapper;
 using NzbDrone.Core.Datastore;
 using NzbDrone.Core.Messaging.Events;
+using NzbDrone.Core.Parser;
 
 namespace NzbDrone.Core.Movies.Studios
 {
@@ -28,7 +29,7 @@ namespace NzbDrone.Core.Movies.Studios
 
         public List<Studio> FindAllByTitle(string title)
         {
-            return Query(x => x.CleanTitle == title || x.CleanSearchTitle == title);
+            return All().Where(x => x.CleanTitle == title || x.CleanSearchTitle == title || x.Aliases.Where(x => x.CleanStudioTitle().ToLower() == title).Any()).ToList();
         }
 
         public Studio FindByForeignId(string foreignId)

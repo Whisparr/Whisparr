@@ -36,6 +36,7 @@ namespace NzbDrone.Core.Movies
         public string ImdbId { get; set; }
         public int TmdbId { get; set; }
         public string StashId { get; set; }
+        public string Code { get; set; }
         public string Title { get; set; }
         public string CleanTitle { get; set; }
         public string SortTitle { get; set; }

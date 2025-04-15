@@ -36,6 +36,7 @@ function StudioIndexRow(props: StudioIndexRowProps) {
     network,
     monitored,
     rootFolderPath,
+    aliases = [],
     tags = [],
     foreignId,
     website,
@@ -130,6 +131,14 @@ function StudioIndexRow(props: StudioIndexRowProps) {
           return (
             <VirtualTableRowCell key={name} className={styles[name]}>
               <TagListConnector tags={tags} />
+            </VirtualTableRowCell>
+          );
+        }
+
+        if (name === 'aliases') {
+          return (
+            <VirtualTableRowCell key={name} className={styles[name]}>
+              {aliases}
             </VirtualTableRowCell>
           );
         }

@@ -29,6 +29,7 @@ namespace Whisparr.Api.V3.Movies
 
         // View Only
         public string Title { get; set; }
+        public string Code { get; set; }
         public Language OriginalLanguage { get; set; }
         public string SortTitle { get; set; }
         public long? SizeOnDisk { get; set; }
@@ -95,6 +96,7 @@ namespace Whisparr.Api.V3.Movies
                 TmdbId = model.TmdbId,
                 StashId = model.MovieMetadata.Value.StashId,
                 Title = model.Title,
+                Code = model.MovieMetadata.Value.Code,
                 OriginalLanguage = model.MovieMetadata.Value.OriginalLanguage,
                 SortTitle = model.Title.NormalizeTitle(),
                 ReleaseDate = model.MovieMetadata.Value.ReleaseDate,

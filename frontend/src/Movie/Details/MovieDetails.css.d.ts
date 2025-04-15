@@ -5,6 +5,7 @@ interface CssExports {
   'backdrop': string;
   'backdropOverlay': string;
   'certification': string;
+  'code': string;
   'collection': string;
   'contentContainer': string;
   'details': string;

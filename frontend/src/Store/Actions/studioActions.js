@@ -94,6 +94,12 @@ export const defaultState = {
       isVisible: true
     },
     {
+      name: 'aliases',
+      label: () => translate('Aliases'),
+      isSortable: true,
+      isVisible: true
+    },
+    {
       name: 'tags',
       label: () => translate('Tags'),
       isSortable: false,

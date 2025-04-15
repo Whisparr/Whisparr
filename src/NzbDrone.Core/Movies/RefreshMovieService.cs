@@ -117,6 +117,7 @@ namespace NzbDrone.Core.Movies
             }
 
             movieMetadata.Title = movieInfo.Title;
+            movieMetadata.Code = movieInfo.Code;
             movieMetadata.ImdbId = movieInfo.ImdbId;
             movieMetadata.Overview = movieInfo.Overview;
             movieMetadata.Status = movieInfo.Status;

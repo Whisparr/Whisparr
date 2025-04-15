@@ -2,6 +2,7 @@
 // Please do not change this file!
 interface CssExports {
   'actions': string;
+  'aliases': string;
   'cell': string;
   'checkInput': string;
   'externalLinks': string;

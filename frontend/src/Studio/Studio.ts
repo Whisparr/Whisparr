@@ -9,6 +9,7 @@ interface Studio extends ModelBase {
   images: Image[];
   sortTitle: string;
   tags: number[];
+  aliases: string[];
   rootFolderPath: string;
   website: string;
 }

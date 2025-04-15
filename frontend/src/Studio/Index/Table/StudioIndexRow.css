@@ -30,6 +30,12 @@
   flex: 1 0 150px;
 }
 
+.aliases {
+  composes: cell;
+
+  flex: 1 0 60px;
+}
+
 .tags {
   composes: cell;
 

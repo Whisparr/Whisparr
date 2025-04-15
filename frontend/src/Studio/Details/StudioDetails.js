@@ -194,6 +194,7 @@ class StudioDetails extends Component {
       id,
       foreignId,
       title,
+      aliases,
       rootFolderPath,
       sizeOnDisk,
       qualityProfileId,
@@ -503,6 +504,24 @@ class StudioDetails extends Component {
                         </span>
                       </Label>
                   }
+
+                  {
+                    !!aliases && !!aliases.length &&
+                      <Label
+                        className={styles.detailsInfoLabel}
+                        title={translate('Aliases')}
+                        size={sizes.LARGE}
+                      >
+                        <Icon
+                          name={icons.TAGS}
+                          size={17}
+                        />
+
+                        <span className={styles.aliases}>
+                          {aliases.join(', ')}
+                        </span>
+                      </Label>
+                  }
                 </div>
               </div>
             </div>
@@ -578,6 +597,7 @@ StudioDetails.propTypes = {
   id: PropTypes.number.isRequired,
   foreignId: PropTypes.string,
   title: PropTypes.string.isRequired,
+  aliases: PropTypes.arrayOf(PropTypes.string),
   network: PropTypes.string.isRequired,
   rootFolderPath: PropTypes.string.isRequired,
   sizeOnDisk: PropTypes.number.isRequired,

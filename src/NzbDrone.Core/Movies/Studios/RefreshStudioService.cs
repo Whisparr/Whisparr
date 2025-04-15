@@ -82,8 +82,11 @@ namespace NzbDrone.Core.Movies.Studios
             studio.LastInfoSync = DateTime.UtcNow;
             studio.CleanTitle = studioInfo.CleanTitle;
             studio.SortTitle = studioInfo.SortTitle;
+            studio.Aliases = studioInfo.Aliases;
 
             _studioService.Update(studio);
+
+            // Aliases
 
             _logger.Debug("Finished studio metadata refresh for {0}", studio.Title);
             _eventAggregator.PublishEvent(new StudioUpdatedEvent(studio));

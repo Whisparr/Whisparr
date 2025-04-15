@@ -139,6 +139,7 @@
 .qualityProfileName,
 .statusName,
 .studio,
+.aliases,
 .genres {
   margin-left: 8px;
   font-weight: 300;

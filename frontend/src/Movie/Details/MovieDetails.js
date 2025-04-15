@@ -189,6 +189,7 @@ class MovieDetails extends Component {
       tmdbId,
       stashId,
       title,
+      code,
       year,
       releaseDate,
       runtime,
@@ -498,6 +499,18 @@ class MovieDetails extends Component {
                     </span>
                   </InfoLabel>
 
+                  {!!code && !!code.length &&
+                    <InfoLabel
+                      className={styles.detailsInfoLabel}
+                      title={translate('Code')}
+                      size={sizes.LARGE}
+                    >
+                      <span className={styles.code}>
+                        {code}
+                      </span>
+                    </InfoLabel>
+                  }
+
                   {!!genres.length && !isSmallScreen &&
                     <InfoLabel
                       className={styles.detailsInfoLabel}
@@ -610,6 +623,7 @@ MovieDetails.propTypes = {
   tmdbId: PropTypes.number.isRequired,
   stashId: PropTypes.string,
   title: PropTypes.string.isRequired,
+  code: PropTypes.string,
   year: PropTypes.number.isRequired,
   runtime: PropTypes.number.isRequired,
   certification: PropTypes.string,

@@ -124,20 +124,20 @@ namespace NzbDrone.Core.IndexerSearch
                     {
                         if (studioTitle.SearchTitle.IsNotNullOrWhiteSpace())
                         {
-                            sceneSearchSpec.SceneTitles = generateSceneTitles(sceneSearchSpec.SceneTitles, studioTitle.SearchTitle, releaseDateStrings, originalTitles);
+                            sceneSearchSpec.SceneTitles = generateSceneTitles(sceneSearchSpec.SceneTitles, studioTitle.Aliases, studioTitle.SearchTitle, releaseDateStrings, originalTitles);
                         }
                         else
                         {
                             if (_configService.SearchStudioFormat == SearchStudioFormatType.ORIGINAL || _configService.SearchStudioFormat == SearchStudioFormatType.BOTH)
                             {
                                 // Full Studio Name (Couch Casting-X)
-                                sceneSearchSpec.SceneTitles = generateSceneTitles(sceneSearchSpec.SceneTitles, studioTitle.Title, releaseDateStrings, originalTitles);
+                                sceneSearchSpec.SceneTitles = generateSceneTitles(sceneSearchSpec.SceneTitles, studioTitle.Aliases, studioTitle.Title, releaseDateStrings, originalTitles);
                             }
 
                             if (_configService.SearchStudioFormat == SearchStudioFormatType.CLEAN || _configService.SearchStudioFormat == SearchStudioFormatType.BOTH)
                             {
                                 // Studio with spaces and other characters removed (CouchCastingX)
-                                sceneSearchSpec.SceneTitles = generateSceneTitles(sceneSearchSpec.SceneTitles, studioTitle.CleanTitle, releaseDateStrings, originalTitles);
+                                sceneSearchSpec.SceneTitles = generateSceneTitles(sceneSearchSpec.SceneTitles, studioTitle.Aliases, studioTitle.CleanTitle, releaseDateStrings, originalTitles);
                             }
                         }
                     }
@@ -151,29 +151,35 @@ namespace NzbDrone.Core.IndexerSearch
             return DeDupeDecisions(downloadDecisions);
         }
 
-        private List<string> generateSceneTitles(List<string> sceneTitles, string studioTitle, List<string> releaseDateStrings, List<string> originalTitles)
+        private List<string> generateSceneTitles(List<string> sceneTitles, List<string> studioAliases, string studioTitle, List<string> releaseDateStrings, List<string> originalTitles)
         {
-            if (_configService.SearchStudioTitle)
+            var studios = studioAliases;
+            studios.Add(studioTitle);
+
+            foreach (var studio in studios)
             {
-                // Search for Studio + Scene Name
-                foreach (var originalTitle in originalTitles)
+                if (_configService.SearchStudioTitle)
                 {
-                    // Search for Studio + Date
-                    if (!sceneTitles.Contains($"{studioTitle} {originalTitle}"))
+                    // Search for Studio + Scene Name
+                    foreach (var originalTitle in originalTitles)
                     {
-                        sceneTitles.Add($"{studioTitle} {originalTitle}");
+                        // Search for Studio + Date
+                        if (!sceneTitles.Contains($"{studio} {originalTitle}"))
+                        {
+                            sceneTitles.Add($"{studio} {originalTitle}");
+                        }
                     }
                 }
-            }
 
-            if (_configService.SearchStudioDate)
-            {
-                // Search for Studio + Date
-                foreach (var releaseDateString in releaseDateStrings)
+                if (_configService.SearchStudioDate)
                 {
-                    if (!sceneTitles.Contains($"{studioTitle} {releaseDateString}"))
+                    // Search for Studio + Date
+                    foreach (var releaseDateString in releaseDateStrings)
                     {
-                        sceneTitles.Add($"{studioTitle} {releaseDateString}");
+                        if (!sceneTitles.Contains($"{studio} {releaseDateString}"))
+                        {
+                            sceneTitles.Add($"{studio} {releaseDateString}");
+                        }
                     }
                 }
             }

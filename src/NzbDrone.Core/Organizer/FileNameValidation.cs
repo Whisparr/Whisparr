@@ -50,6 +50,7 @@ namespace NzbDrone.Core.Organizer
         {
             ruleBuilder.SetValidator(new NotEmptyValidator(null));
             ruleBuilder.SetValidator(new IllegalCharactersValidator());
+            ruleBuilder.SetValidator(new IllegalMovieFolderTokensValidator());
 
             return ruleBuilder.SetValidator(new RegularExpressionValidator(FileNameBuilder.MainFolderRegex)).WithMessage("Must start with a relative path inside root folder, ex. 'scenes/'");
         }
@@ -83,6 +84,30 @@ namespace NzbDrone.Core.Organizer
             }
 
             return FileNameBuilder.MovieTitleRegex.IsMatch(value);
+        }
+    }
+
+    public class IllegalMovieFolderTokensValidator : PropertyValidator
+    {
+        protected override string GetDefaultMessageTemplate() => "Must not contain deprecated tokens derived from file properties: {tokens}";
+
+        protected override bool IsValid(PropertyValidatorContext context)
+        {
+            if (context.PropertyValue is not string value)
+            {
+                return false;
+            }
+
+            var match = FileNameValidation.DeprecatedMovieFolderTokensRegex.Matches(value);
+
+            if (match.Any())
+            {
+                context.MessageFormatter.AppendArgument("tokens", string.Join(", ", match.Select(c => c.Value).ToArray()));
+
+                return false;
+            }
+
+            return true;
         }
     }
 

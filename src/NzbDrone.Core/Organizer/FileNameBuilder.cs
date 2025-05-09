@@ -373,17 +373,17 @@ namespace NzbDrone.Core.Organizer
                 tokenHandlers["{Scene Performers}"] = m => credits.OrderBy(p => p.Performer.Name)
                     .Select(p => p.Performer.Name)
                     .Take(4)
-                    .Join(" ");
+                    .Join(", ");
                 tokenHandlers["{Scene PerformersFemale}"] = m => credits.Where(p => p.Performer.Gender == Gender.Female)
                     .OrderBy(p => p.Performer.Name)
                     .Select(p => p.Performer.Name)
                     .Take(4)
-                    .Join(" ");
+                    .Join(", ");
                 tokenHandlers["{Scene PerformersMale}"] = m => credits.Where(p => p.Performer.Gender == Gender.Male)
                     .OrderBy(p => p.Performer.Name)
                     .Select(p => p.Performer.Name)
                     .Take(4)
-                    .Join(" ");
+                    .Join(", ");
             }
         }
 

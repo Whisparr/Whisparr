@@ -108,6 +108,7 @@ namespace NzbDrone.Core.Configuration
 
         // Whisparr
         bool WhisparrAutoMatchOnDate { get; }
+        bool WhisparrValidateRuntime { get; }
 
         CertificateValidationType CertificateValidation { get; }
         string ApplicationUrl { get; }

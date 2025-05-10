@@ -150,7 +150,7 @@ function SceneIndexOverview(props: SceneIndexOverviewProps) {
                 className={styles.poster}
                 style={elementStyle}
                 images={images}
-                size={250}
+                size={180}
                 lazy={false}
                 overflow={true}
               />

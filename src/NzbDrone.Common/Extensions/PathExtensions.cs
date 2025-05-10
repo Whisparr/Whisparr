@@ -110,6 +110,11 @@ namespace NzbDrone.Common.Extensions
 
         public static string GetCleanPath(this string path)
         {
+            if (path.IsNullOrWhiteSpace())
+            {
+                return null;
+            }
+
             var cleanPath = OsInfo.IsWindows
                 ? PARENT_PATH_END_SLASH_REGEX.Replace(path, "")
                 : path.TrimEnd(Path.DirectorySeparatorChar);
@@ -119,6 +124,11 @@ namespace NzbDrone.Common.Extensions
 
         public static bool IsParentPath(this string parentPath, string childPath)
         {
+            if (parentPath.IsNullOrWhiteSpace() || childPath.IsNullOrWhiteSpace())
+            {
+                return false;
+            }
+
             if (parentPath != "/" && !parentPath.EndsWith(":\\"))
             {
                 parentPath = parentPath.TrimEnd(Path.DirectorySeparatorChar);

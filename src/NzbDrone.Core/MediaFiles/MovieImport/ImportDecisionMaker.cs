@@ -5,6 +5,7 @@ using NLog;
 using NzbDrone.Common.Disk;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Instrumentation.Extensions;
+using NzbDrone.Core.Configuration;
 using NzbDrone.Core.CustomFormats;
 using NzbDrone.Core.DecisionEngine;
 using NzbDrone.Core.Download;
@@ -38,6 +39,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
         private readonly IParsingService _parsingService;
         private readonly ICustomFormatCalculationService _formatCalculator;
         private readonly IVideoFileInfoReader _videoFileInfoReader;
+        private readonly IConfigService _configService;
         private readonly Logger _logger;
 
         public ImportDecisionMaker(IEnumerable<IImportDecisionEngineSpecification> specifications,
@@ -50,6 +52,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
                                    IParsingService parsingService,
                                    ICustomFormatCalculationService formatCalculator,
                                    IVideoFileInfoReader videoFileInfoReader,
+                                   IConfigService configService,
                                    Logger logger)
         {
             _specifications = specifications;
@@ -62,6 +65,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
             _parsingService = parsingService;
             _formatCalculator = formatCalculator;
             _videoFileInfoReader = videoFileInfoReader;
+            _configService = configService;
             _logger = logger;
         }
 
@@ -270,11 +274,17 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
 
                     decision = GetDecision(localMovie, downloadClientItem);
 
-                    if (localMovie.MediaInfo?.RunTime != null && localMovie.Movie.MovieMetadata.Value.Runtime > 0)
+                    if (localMovie.MediaInfo?.RunTime != null && localMovie.MediaInfo.RunTime.TotalMinutes > 0 && localMovie.Movie.MovieMetadata.Value.Runtime > 0)
                     {
-                        if (localMovie.MediaInfo.RunTime.Minutes < localMovie.Movie.MovieMetadata.Value.Runtime - 1 || localMovie.MediaInfo.RunTime.Minutes > localMovie.Movie.MovieMetadata.Value.Runtime + 1)
+                        var runtime = localMovie.MediaInfo.RunTime.TotalMinutes;
+
+                        if (runtime < localMovie.Movie.MovieMetadata.Value.Runtime - 1 || runtime > localMovie.Movie.MovieMetadata.Value.Runtime + 1)
                         {
-                            decision = new ImportDecision(localMovie, new Rejection($"Runtime of {localMovie.Movie.MovieMetadata.Value.Runtime} expected but {localMovie.MediaInfo.RunTime.Minutes} Found"));
+                            _logger.Warn($"Runtime of {localMovie.Movie.MovieMetadata.Value.Runtime} expected but {runtime} Found");
+                            if (_configService.WhisparrValidateRuntime)
+                            {
+                                decision = new ImportDecision(localMovie, new Rejection($"Runtime of {localMovie.Movie.MovieMetadata.Value.Runtime} expected but {runtime} Found"));
+                            }
                         }
                     }
                 }

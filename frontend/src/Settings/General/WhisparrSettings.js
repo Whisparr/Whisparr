@@ -16,7 +16,8 @@ function WhisparrSettings(props) {
 
   const {
     whisparrAutoMatchOnDate,
-    whisparrCacheMovieAPI
+    whisparrCacheMovieAPI,
+    whisparrValidateRuntime
   } = settings;
 
   if (!advancedSettings) {
@@ -51,6 +52,20 @@ function WhisparrSettings(props) {
           helpText={translate('WhisparrCacheMovieAPIHelpText')}
           onChange={onInputChange}
           {...whisparrCacheMovieAPI}
+        />
+      </FormGroup>
+      <FormGroup
+        advancedSettings={advancedSettings}
+        isAdvanced={true}
+      >
+        <FormLabel>{translate('WhisparrValidateRuntime')}</FormLabel>
+
+        <FormInputGroup
+          type={inputTypes.CHECK}
+          name="whisparrValidateRuntime"
+          helpText={translate('WhisparrValidateRuntimeHelpText')}
+          onChange={onInputChange}
+          {...whisparrValidateRuntime}
         />
       </FormGroup>
     </FieldSet>

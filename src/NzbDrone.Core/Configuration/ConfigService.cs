@@ -477,7 +477,7 @@ namespace NzbDrone.Core.Configuration
 
             set { SetValue("WhisparrCacheMovieAPI", value); }
         }
-        
+
         public bool WhisparrValidateRuntime
         {
             get { return GetValueBoolean("WhisparrValidateRuntime", false); }

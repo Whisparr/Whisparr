@@ -30,7 +30,7 @@ namespace NzbDrone.Core.Movies
         IExecute<AddMoviesCommand>
     {
         private readonly IMovieService _movieService;
-        private readonly IAddStudioService _addStudioService;
+        private readonly IStudioService _studioService;
         private readonly IMovieMetadataService _movieMetadataService;
         private readonly IProvideMovieInfo _movieInfo;
         private readonly IBuildFileNames _fileNameBuilder;
@@ -40,7 +40,7 @@ namespace NzbDrone.Core.Movies
         private readonly Logger _logger;
 
         public AddMovieService(IMovieService movieService,
-                                IAddStudioService addStudioService,
+                                IStudioService studioService,
                                 IMovieMetadataService movieMetadataService,
                                 IProvideMovieInfo movieInfo,
                                 IBuildFileNames fileNameBuilder,
@@ -50,7 +50,7 @@ namespace NzbDrone.Core.Movies
                                 Logger logger)
         {
             _movieService = movieService;
-            _addStudioService = addStudioService;
+            _studioService = studioService;
             _movieMetadataService = movieMetadataService;
             _movieInfo = movieInfo;
             _fileNameBuilder = fileNameBuilder;
@@ -215,30 +215,54 @@ namespace NzbDrone.Core.Movies
                 throw new ValidationException(validationResult.Errors);
             }
 
-            var excludedItems = _importExclusionService.GetAllExclusions();
-
             // Check if previosly excluded
-            if (excludedItems != null && !excludedItems.Where(x => x.ForeignId == newMovie.ForeignId).Any())
+            var type = newMovie.MovieMetadata.Value.ItemType == ItemType.Scene ? ImportExclusionType.Scene : ImportExclusionType.Movie;
+            if (!_importExclusionService.IsExcluded(newMovie.ForeignId, type))
             {
+                var newExclusion = new ImportExclusion { ForeignId = newMovie.ForeignId, Type = type, MovieTitle = newMovie.Title, MovieYear = newMovie.Year };
                 if (newMovie.MovieMetadata?.Value?.Studio != null)
                 {
                     var stashId = newMovie.MovieMetadata.Value.Studio.ForeignIds.StashId;
-                    var excludedStudio = excludedItems.Where(e => e.ForeignId == stashId && e.Type == ImportExclusionType.Studio).FirstOrDefault();
-                    if (excludedStudio != null)
+                    var excludedStudio = _importExclusionService.IsExcluded(stashId, ImportExclusionType.Studio);
+                    if (excludedStudio)
                     {
-                        var newExclusion = new ImportExclusion { ForeignId = newMovie.ForeignId, Type = newMovie.MovieMetadata.Value.ItemType == ItemType.Scene ? ImportExclusionType.Scene : ImportExclusionType.Movie, MovieTitle = newMovie.Title, MovieYear = newMovie.Year };
                         _importExclusionService.AddExclusion(newExclusion);
-                        throw new ValidationException($"Studio: {excludedStudio.MovieTitle} has been excluded");
+                        throw new ValidationException($"Studio: {newMovie.MovieMetadata.Value.Studio.Title} has been excluded");
+                    }
+                    else
+                    {
+                        var studio = _studioService.FindByForeignId(stashId);
+                        if (studio?.AfterDate != null)
+                        {
+                            var dateTime = (DateTime)studio.AfterDate;
+                            if (newMovie.MovieMetadata?.Value?.ReleaseDateUtc < dateTime)
+                            {
+                                _importExclusionService.AddExclusion(newExclusion);
+                                throw new ValidationException($"Date: {newMovie.MovieMetadata?.Value.ReleaseDate} has been excluded before {dateTime.ToString("yyyy-MM-dd")}");
+                            }
+                        }
                     }
                 }
 
                 var performerForeignIds = newMovie.MovieMetadata.Value.Credits.Select(c => c.PerformerForeignId);
-                var excludedPerformers = excludedItems.Where(e => performerForeignIds.Contains(e.ForeignId) && e.Type == ImportExclusionType.Performer).ToList();
-                if (excludedPerformers.Any())
+                var excludedItems = _importExclusionService.GetAllByType(ImportExclusionType.Performer);
+                if (excludedItems != null)
                 {
-                    var newExclusion = new ImportExclusion { ForeignId = newMovie.ForeignId, Type = newMovie.MovieMetadata.Value.ItemType == ItemType.Scene ? ImportExclusionType.Scene : ImportExclusionType.Movie, MovieTitle = newMovie.Title, MovieYear = newMovie.Year };
-                    _importExclusionService.AddExclusion(newExclusion);
-                    throw new ValidationException($"Performer: {string.Join(",", excludedPerformers.Select(ep => ep.MovieTitle).ToList())} has been excluded");
+                    var excludedPerformers = excludedItems.Where(e => performerForeignIds.Contains(e.ForeignId)).ToList();
+                    if (excludedPerformers.Any())
+                    {
+                        _importExclusionService.AddExclusion(newExclusion);
+                        throw new ValidationException($"Performer: {string.Join(",", excludedPerformers.Select(ep => ep.MovieTitle).ToList())} has been excluded");
+                    }
+                }
+            }
+            else
+            {
+                // Clean up exclusion on manual add
+                var exclusion = _importExclusionService.GetByForeignId(newMovie.ForeignId);
+                if (exclusion != null && exclusion.Type == type)
+                {
+                    _importExclusionService.RemoveExclusion(exclusion);
                 }
             }
 

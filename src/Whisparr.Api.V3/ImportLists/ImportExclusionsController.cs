@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using NzbDrone.Common.Extensions;
 using NzbDrone.Core.ImportLists.ImportExclusions;
 using Whisparr.Http;
 using Whisparr.Http.REST;
@@ -22,9 +23,21 @@ namespace Whisparr.Api.V3.ImportLists
         }
 
         [HttpGet]
-        public List<ImportExclusionsResource> GetAll()
+        public List<ImportExclusionsResource> GetAll(string stashId)
         {
-            return _exclusionService.GetAllExclusions().ToResource();
+            var importExclusionsResources = new List<ImportExclusionsResource>();
+
+            if (stashId.IsNotNullOrWhiteSpace())
+            {
+                var exclusion = _exclusionService.GetByForeignId(stashId);
+                importExclusionsResources.AddIfNotNull(exclusion.ToResource());
+            }
+            else
+            {
+                importExclusionsResources = _exclusionService.GetAllExclusions().ToResource();
+            }
+
+            return importExclusionsResources;
         }
 
         protected override ImportExclusionsResource GetResourceById(int id)

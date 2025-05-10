@@ -39,6 +39,7 @@ function createMapStateToProps() {
 
       const studioSettings = {
         monitored: studio.monitored,
+        afterDate: studio.afterDate,
         qualityProfileId: studio.qualityProfileId,
         minimumAvailability: studio.minimumAvailability,
         rootFolderPath: studio.rootFolderPath,

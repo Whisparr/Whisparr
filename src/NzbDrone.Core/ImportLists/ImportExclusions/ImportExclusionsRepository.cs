@@ -8,9 +8,11 @@ namespace NzbDrone.Core.ImportLists.ImportExclusions
 {
     public interface IImportExclusionsRepository : IBasicRepository<ImportExclusion>
     {
-        bool IsMovieExcluded(string tmdbid);
-        ImportExclusion GetByTmdbid(string tmdbid);
-        List<string> AllExcludedTmdbIds();
+        bool IsExcluded(string foreignId, ImportExclusionType type);
+        ImportExclusion GetByForeignId(string foreignId);
+        List<ImportExclusion> AllByType(ImportExclusionType type);
+        List<string> AllForeignIds();
+        List<int> AllIds();
     }
 
     public class ImportExclusionsRepository : BasicRepository<ImportExclusion>, IImportExclusionsRepository
@@ -20,21 +22,34 @@ namespace NzbDrone.Core.ImportLists.ImportExclusions
         {
         }
 
-        public bool IsMovieExcluded(string tmdbid)
+        public bool IsExcluded(string foreignId, ImportExclusionType type)
         {
-            return Query(x => x.ForeignId == tmdbid).Any();
+            return Query(x => x.ForeignId == foreignId).Any(x => x.Type == type);
         }
 
-        public ImportExclusion GetByTmdbid(string tmdbid)
+        public ImportExclusion GetByForeignId(string foreignId)
         {
-            return Query(x => x.ForeignId == tmdbid).First();
+            return Query(x => x.ForeignId == foreignId).First();
         }
 
-        public List<string> AllExcludedTmdbIds()
+        public List<ImportExclusion> AllByType(ImportExclusionType type)
+        {
+            return All().Where(x => x.Type == type).ToList();
+        }
+
+        public List<string> AllForeignIds()
         {
             using var conn = _database.OpenConnection();
 
             return conn.Query<string>("SELECT \"ForeignId\" FROM \"ImportExclusions\"").ToList();
+        }
+
+        public List<int> AllIds()
+        {
+            using (var conn = _database.OpenConnection())
+            {
+                return conn.Query<int>("SELECT \"Id\" FROM \"ImportExclusions\" ").ToList();
+            }
         }
     }
 }

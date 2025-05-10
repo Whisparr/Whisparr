@@ -10,11 +10,16 @@ namespace NzbDrone.Core.ImportLists.ImportExclusions
     public interface IImportExclusionsService
     {
         List<ImportExclusion> GetAllExclusions();
-        bool IsMovieExcluded(string foreignId);
+        List<ImportExclusion> GetAllByType(ImportExclusionType type);
+        List<int> AllIds();
+        List<string> AllForeignIds();
+        bool IsExcluded(string foreignId, ImportExclusionType type);
         ImportExclusion AddExclusion(ImportExclusion exclusion);
         List<ImportExclusion> AddExclusions(List<ImportExclusion> exclusions);
         void RemoveExclusion(ImportExclusion exclusion);
         ImportExclusion GetById(int id);
+        ImportExclusion GetByForeignId(string foreignId);
+        List<ImportExclusion> GetByIds(List<int> ids);
         ImportExclusion Update(ImportExclusion exclusion);
     }
 
@@ -32,9 +37,9 @@ namespace NzbDrone.Core.ImportLists.ImportExclusions
 
         public ImportExclusion AddExclusion(ImportExclusion exclusion)
         {
-            if (_exclusionRepository.IsMovieExcluded(exclusion.ForeignId))
+            if (_exclusionRepository.IsExcluded(exclusion.ForeignId, exclusion.Type))
             {
-                return _exclusionRepository.GetByTmdbid(exclusion.ForeignId);
+                return _exclusionRepository.GetByForeignId(exclusion.ForeignId);
             }
 
             return _exclusionRepository.Insert(exclusion);
@@ -47,14 +52,29 @@ namespace NzbDrone.Core.ImportLists.ImportExclusions
             return exclusions;
         }
 
+        public List<int> AllIds()
+        {
+            return _exclusionRepository.AllIds();
+        }
+
+        public List<string> AllForeignIds()
+        {
+            return _exclusionRepository.AllForeignIds();
+        }
+
         public List<ImportExclusion> GetAllExclusions()
         {
             return _exclusionRepository.All().ToList();
         }
 
-        public bool IsMovieExcluded(string foreignId)
+        public List<ImportExclusion> GetAllByType(ImportExclusionType type)
         {
-            return _exclusionRepository.IsMovieExcluded(foreignId);
+            return _exclusionRepository.AllByType(type);
+        }
+
+        public bool IsExcluded(string foreignId, ImportExclusionType type)
+        {
+            return _exclusionRepository.IsExcluded(foreignId, type);
         }
 
         public void RemoveExclusion(ImportExclusion exclusion)
@@ -65,6 +85,16 @@ namespace NzbDrone.Core.ImportLists.ImportExclusions
         public ImportExclusion GetById(int id)
         {
             return _exclusionRepository.Get(id);
+        }
+
+        public List<ImportExclusion> GetByIds(List<int> ids)
+        {
+            return _exclusionRepository.Get(ids).ToList();
+        }
+
+        public ImportExclusion GetByForeignId(string foreignId)
+        {
+            return _exclusionRepository.GetByForeignId(foreignId);
         }
 
         public ImportExclusion Update(ImportExclusion exclusion)
@@ -91,7 +121,7 @@ namespace NzbDrone.Core.ImportLists.ImportExclusions
 
         private List<ImportExclusion> DeDupeExclusions(List<ImportExclusion> exclusions)
         {
-            var existingExclusions = _exclusionRepository.AllExcludedTmdbIds();
+            var existingExclusions = _exclusionRepository.AllForeignIds();
 
             return exclusions
                 .DistinctBy(x => x.ForeignId)

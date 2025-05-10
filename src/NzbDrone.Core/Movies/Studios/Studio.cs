@@ -22,9 +22,10 @@ namespace NzbDrone.Core.Movies.Studios
         public string Website { get; set; }
         public List<MediaCover.MediaCover> Images { get; set; }
         public string RootFolderPath { get; set; }
-        public string Network {  get; set; }
+        public string Network { get; set; }
         public DateTime Added { get; set; }
         public bool Monitored { get; set; }
+        public DateTime? AfterDate { get; set; }
         public int QualityProfileId { get; set; }
         public bool SearchOnAdd { get; set; }
         public DateTime? LastInfoSync { get; set; }
@@ -37,6 +38,7 @@ namespace NzbDrone.Core.Movies.Studios
             QualityProfileId = otherStudio.QualityProfileId;
             SearchOnAdd = otherStudio.SearchOnAdd;
             Monitored = otherStudio.Monitored;
+            AfterDate = otherStudio.AfterDate;
 
             RootFolderPath = otherStudio.RootFolderPath;
             Tags = otherStudio.Tags;

@@ -10,6 +10,7 @@ namespace NzbDrone.Core.Datastore.Migration
         {
             Alter.Table("MovieMetadata").AddColumn("Code").AsString().Nullable();
             Alter.Table("Studios").AddColumn("Aliases").AsString().Nullable();
+            Alter.Table("Studios").AddColumn("AfterDate").AsDate().Nullable();
         }
     }
 }

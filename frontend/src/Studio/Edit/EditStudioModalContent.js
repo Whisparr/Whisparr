@@ -46,6 +46,7 @@ class EditStudioModalContent extends Component {
 
     const {
       monitored,
+      afterDate,
       qualityProfileId,
       // Id,
       rootFolderPath,
@@ -89,6 +90,18 @@ class EditStudioModalContent extends Component {
                     name="monitored"
                     helpText={translate('MonitoredStudioHelpText')}
                     {...monitored}
+                    onChange={onInputChange}
+                  />
+                </FormGroup>
+
+                <FormGroup>
+                  <FormLabel>{translate('MonitorAfter')}</FormLabel>
+
+                  <FormInputGroup
+                    type={inputTypes.DATE}
+                    name="afterDate"
+                    helpText={translate('MonitorAfterStudioHelpText')}
+                    {...afterDate}
                     onChange={onInputChange}
                   />
                 </FormGroup>
@@ -176,7 +189,7 @@ class EditStudioModalContent extends Component {
 EditStudioModalContent.propTypes = {
   studioId: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
-  overview: PropTypes.string.isRequired,
+  overview: PropTypes.string,
   images: PropTypes.arrayOf(PropTypes.object).isRequired,
   item: PropTypes.object.isRequired,
   isSaving: PropTypes.bool.isRequired,

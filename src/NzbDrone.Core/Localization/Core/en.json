@@ -914,6 +914,8 @@
   "Mode": "Mode",
   "Monday": "Monday",
   "Monitor": "Monitor",
+  "MonitorAfter": "Add After Date",
+  "MonitorAfterStudioHelpText": "Add Items after the date, ignored if empty",
   "MonitorCollection": "Monitor Collection",
   "Monitored": "Monitored",
   "MonitoredHelpText": "Download movie if available",

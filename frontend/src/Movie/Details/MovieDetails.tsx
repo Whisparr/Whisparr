@@ -642,7 +642,6 @@ class MovieDetails extends Component<Props, State> {
           <MovieInteractiveSearchModal
             isOpen={isInteractiveSearchModalOpen}
             movieId={id}
-            movieTitle={title}
             onModalClose={this.onInteractiveSearchModalClose}
           />
         </PageContentBody>

@@ -10,7 +10,6 @@ using NzbDrone.Core.IndexerSearch.Definitions;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.MediaFiles.Events;
 using NzbDrone.Core.Messaging.Events;
-using NzbDrone.Core.MetadataSource.SkyHook.Resource;
 using NzbDrone.Core.Movies.Events;
 using NzbDrone.Core.Movies.Performers;
 using NzbDrone.Core.Movies.Studios;
@@ -70,7 +69,8 @@ namespace NzbDrone.Core.Movies
         private readonly IConfigService _configService;
         private readonly IEventAggregator _eventAggregator;
         private readonly IBuildMoviePaths _moviePathBuilder;
-        private readonly ICached<MovieResource> _movieResourcesCache;
+        private readonly ICacheManager _cacheManager;
+        private readonly string _cacheName;
         private readonly Logger _logger;
 
         public MovieService(IMovieRepository movieRepository,
@@ -86,7 +86,11 @@ namespace NzbDrone.Core.Movies
             _eventAggregator = eventAggregator;
             _configService = configService;
             _moviePathBuilder = moviePathBuilder;
-            _movieResourcesCache = cacheManager.GetCache<MovieResource>(typeof(MovieResource), "movieResources");
+            _cacheManager = cacheManager;
+
+            var t = Type.GetType("Whisparr.Api.V3.Movies.MovieResource");
+            _cacheName = $"{t?.FullName}_movieResources";
+
             _logger = logger;
         }
 
@@ -247,7 +251,8 @@ namespace NzbDrone.Core.Movies
             _movieRepository.Delete(movieId);
             _eventAggregator.PublishEvent(new MoviesDeletedEvent(new List<Movie> { movie }, deleteFiles, addExclusion));
             _logger.Info("Deleted movie {0}", movie);
-            _movieResourcesCache.Remove($"{movieId}");
+
+            RemoveMovieResourcesCache($"{movieId}");
         }
 
         public void DeleteMovies(List<int> movieIds, bool deleteFiles, bool addExclusion = false)
@@ -260,7 +265,7 @@ namespace NzbDrone.Core.Movies
 
             foreach (var movie in moviesToDelete)
             {
-                _movieResourcesCache.Remove($"{movie.Id}");
+                RemoveMovieResourcesCache($"{movie.Id}");
                 _logger.Info("Deleted movie {0}", movie);
             }
         }
@@ -281,7 +286,8 @@ namespace NzbDrone.Core.Movies
 
             var updatedMovie = _movieRepository.Update(movie);
             _eventAggregator.PublishEvent(new MovieEditedEvent(updatedMovie, storedMovie));
-            _movieResourcesCache.Remove($"{movie.Id}");
+
+            RemoveMovieResourcesCache($"{movie.Id}");
 
             return updatedMovie;
         }
@@ -304,7 +310,7 @@ namespace NzbDrone.Core.Movies
                     _logger.Trace("Not changing path for: {0}", m.Title);
                 }
 
-                _movieResourcesCache.Remove($"{m.Id}");
+                RemoveMovieResourcesCache($"{m.Id}");
             }
 
             _movieRepository.UpdateMany(movie);
@@ -691,6 +697,15 @@ namespace NzbDrone.Core.Movies
                 }
 
                 UpdateMovie(movie);
+            }
+        }
+
+        private void RemoveMovieResourcesCache(string cacheKey)
+        {
+            var movieResourcesCache = _cacheManager.FindCache(_cacheName);
+            if (movieResourcesCache != null)
+            {
+                movieResourcesCache.Remove(cacheKey);
             }
         }
     }

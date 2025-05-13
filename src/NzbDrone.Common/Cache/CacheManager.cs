@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using NzbDrone.Common.EnsureThat;
 
@@ -6,6 +6,7 @@ namespace NzbDrone.Common.Cache
 {
     public interface ICacheManager
     {
+        ICached FindCache(string name);
         ICached<T> GetCache<T>(Type host);
         ICached<T> GetCache<T>(Type host, string name);
         ICached<T> GetRollingCache<T>(Type host, string name, TimeSpan defaultLifeTime);
@@ -29,6 +30,11 @@ namespace NzbDrone.Common.Cache
         }
 
         public ICollection<ICached> Caches => _cache.Values;
+
+        public ICached FindCache(string name)
+        {
+            return _cache.Find(name);
+        }
 
         public ICached<T> GetCache<T>(Type host)
         {

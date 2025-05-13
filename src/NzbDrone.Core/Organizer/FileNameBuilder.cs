@@ -224,7 +224,6 @@ namespace NzbDrone.Core.Organizer
 
             var pattern = itemType == ItemType.Movie ? namingConfig.MovieFolderFormat : namingConfig.SceneFolderFormat;
             var tokenHandlers = new Dictionary<string, Func<TokenMatch, string>>(FileNameBuilderTokenEqualityComparer.Instance);
-            var multipleTokens = TitleRegex.Matches(pattern).Count > 1;
 
             if (itemType == ItemType.Movie)
             {
@@ -239,20 +238,6 @@ namespace NzbDrone.Core.Organizer
             AddStudioTokens(tokenHandlers, movie);
             AddReleaseDateTokens(tokenHandlers, movie.Year);
             AddIdTokens(tokenHandlers, movie);
-
-            var movieFile = movie.MovieFile;
-
-            if (movie.MovieFile != null)
-            {
-                AddQualityTokens(tokenHandlers, movie, movieFile);
-                AddMediaInfoTokens(tokenHandlers, movieFile);
-                AddMovieFileTokens(tokenHandlers, movieFile, multipleTokens);
-                AddEditionTagsTokens(tokenHandlers, movieFile);
-            }
-            else
-            {
-                AddMovieFileTokens(tokenHandlers, new MovieFile { SceneName = $"{movie.Title} {movie.Year}", RelativePath = $"{movie.Title} {movie.Year}" }, multipleTokens);
-            }
 
             var splitPatterns = pattern.Split(new char[] { '\\', '/' }, StringSplitOptions.RemoveEmptyEntries);
             var components = new List<string>();

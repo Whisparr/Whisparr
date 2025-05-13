@@ -29,7 +29,7 @@ namespace NzbDrone.Core.Movies.Studios
 
         public List<Studio> FindAllByTitle(string title)
         {
-            return All().Where(x => x.CleanTitle == title || x.CleanSearchTitle == title || x.Aliases.Where(x => x.CleanStudioTitle().ToLower() == title).Any()).ToList();
+            return All().Where(x => x.CleanTitle == title || x.CleanSearchTitle == title || (x.Aliases != null && x.Aliases.Where(x => x.CleanStudioTitle()?.ToLower() == title).Any())).ToList();
         }
 
         public Studio FindByForeignId(string foreignId)

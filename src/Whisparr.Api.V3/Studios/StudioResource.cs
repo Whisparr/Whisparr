@@ -85,11 +85,11 @@ namespace Whisparr.Api.V3.Studios
                 Website = resource.Website,
                 Network = resource.Network,
                 Monitored = resource.Monitored,
-                AfterDate = DateTime.Parse(resource.AfterDate),
+                AfterDate = resource.AfterDate == null ?  null : DateTime.Parse(resource.AfterDate),
                 QualityProfileId = resource.QualityProfileId,
                 RootFolderPath = resource.RootFolderPath,
                 SearchOnAdd = resource.SearchOnAdd,
-                Aliases = resource.Aliases,
+                Aliases = resource.Aliases ?? new List<string>(),
                 Tags = resource.Tags
             };
         }

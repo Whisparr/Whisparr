@@ -10,6 +10,7 @@ namespace NzbDrone.Core.Movies.Studios
         {
             Images = new List<MediaCover.MediaCover>();
             Tags = new HashSet<int>();
+            Aliases = new List<string>();
         }
 
         public string ForeignId { get; set; }

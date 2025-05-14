@@ -153,7 +153,7 @@ namespace NzbDrone.Core.IndexerSearch
 
         private List<string> generateSceneTitles(List<string> sceneTitles, List<string> studioAliases, string studioTitle, List<string> releaseDateStrings, List<string> originalTitles)
         {
-            var studios = studioAliases;
+            var studios = new List<string>(studioAliases ?? new List<string>());
             studios.Add(studioTitle);
 
             foreach (var studio in studios)

@@ -204,8 +204,6 @@ function MovieSearchInput() {
   );
 
   const requestSuggestions = useDebouncedCallback((value: string) => {
-    console.warn({ value });
-
     if (!isLoading.current) {
       return;
     }

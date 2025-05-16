@@ -44,7 +44,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             var whisparrMetadata = configFileProvider.WhisparrMetadata;
             if (whisparrMetadata.IsNullOrWhiteSpace())
             {
-                whisparrMetadata  = "https://api.whisparr.com/v4/{route}";
+                whisparrMetadata = "https://api.whisparr.com/v4/{route}";
             }
 
             logger.Info($"Using WhisparrMetadata {whisparrMetadata}");
@@ -546,9 +546,17 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                     .Build();
 
                 request.AllowAutoRedirect = true;
-                request.SuppressHttpError = true;
 
-                var httpResponse = _httpClient.Get<List<MovieResource>>(request);
+                HttpResponse<List<MovieResource>> httpResponse;
+                try
+                {
+                    httpResponse = _httpClient.Get<List<MovieResource>>(request);
+                }
+                catch (HttpException ex)
+                {
+                    _logger.Warn(ex);
+                    throw new SkyHookException("Search for '{0}' failed. Unable to communicate with StashDb.", ex, title);
+                }
 
                 var performersAdded = new List<string>();
                 var studiosAdded = new List<string>();

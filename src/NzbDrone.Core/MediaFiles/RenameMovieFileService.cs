@@ -30,6 +30,7 @@ namespace NzbDrone.Core.MediaFiles
         private readonly IEventAggregator _eventAggregator;
         private readonly IBuildFileNames _filenameBuilder;
         private readonly IDiskProvider _diskProvider;
+        private readonly IBuildMoviePaths _buildMoviePaths;
         private readonly Logger _logger;
 
         public RenameMovieFileService(IMovieService movieService,
@@ -38,6 +39,7 @@ namespace NzbDrone.Core.MediaFiles
                                       IEventAggregator eventAggregator,
                                       IBuildFileNames filenameBuilder,
                                       IDiskProvider diskProvider,
+                                      IBuildMoviePaths buildMoviePaths,
                                       Logger logger)
         {
             _movieService = movieService;
@@ -46,6 +48,7 @@ namespace NzbDrone.Core.MediaFiles
             _eventAggregator = eventAggregator;
             _filenameBuilder = filenameBuilder;
             _diskProvider = diskProvider;
+            _buildMoviePaths = buildMoviePaths;
             _logger = logger;
         }
 
@@ -62,6 +65,11 @@ namespace NzbDrone.Core.MediaFiles
             foreach (var file in files)
             {
                 var movieFilePath = Path.Combine(movie.Path, file.RelativePath);
+                var path = _buildMoviePaths.BuildPath(movie, false);
+                if (path != null)
+                {
+                    movie.Path = path;
+                }
 
                 var newName = _filenameBuilder.BuildFileName(movie, file);
                 var newPath = _filenameBuilder.BuildFilePath(movie, newName, Path.GetExtension(movieFilePath));
@@ -92,16 +100,22 @@ namespace NzbDrone.Core.MediaFiles
                 try
                 {
                     _logger.Debug("Renaming movie file: {0}", movieFile);
-                    _movieFileMover.MoveMovieFile(movieFile, movie);
+                    _movieFileMover.MoveMovieFile(movieFile, movie, true);
+
+                    var path = _buildMoviePaths.BuildPath(movie, false);
+                    if (path != null)
+                    {
+                        movie.Path = path;
+                    }
 
                     _mediaFileService.Update(movieFile);
                     _movieService.UpdateMovie(movie);
                     renamed.Add(new RenamedMovieFile
-                                {
-                                    MovieFile = movieFile,
-                                    PreviousRelativePath = previousRelativePath,
-                                    PreviousPath = previousPath
-                                });
+                    {
+                        MovieFile = movieFile,
+                        PreviousRelativePath = previousRelativePath,
+                        PreviousPath = previousPath
+                    });
 
                     _logger.Debug("Renamed movie file: {0}", movieFile);
 

@@ -1,6 +1,8 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Net;
+using DryIoc.ImTools;
 using NLog;
 using NzbDrone.Common.Disk;
 using NzbDrone.Common.Extensions;
@@ -127,24 +129,25 @@ namespace NzbDrone.Core.MediaFiles
         {
             if (message.DeleteFiles)
             {
-                var allMovies = _movieService.AllMoviePaths();
+                var movieIds = message.Movies.Map(m => m.Id).ToList();
+                var allMovies = _movieService.FindByIds(movieIds);
 
                 foreach (var movie in message.Movies)
                 {
                     foreach (var s in allMovies)
                     {
-                        if (s.Key == movie.Id)
+                        if (s.Id == movie.Id)
                         {
                             continue;
                         }
 
-                        if (movie.Path.IsParentPath(s.Value))
+                        if (movie.Path.IsParentPath(s.Path))
                         {
                             _logger.Error("Movie path: '{0}' is a parent of another movie, not deleting files.", movie.Path);
                             return;
                         }
 
-                        if (movie.Path.PathEquals(s.Value))
+                        if (movie.Path.PathEquals(s.Path))
                         {
                             _logger.Error("Movie path: '{0}' is the same as another movie, not deleting files.", movie.Path);
                             return;

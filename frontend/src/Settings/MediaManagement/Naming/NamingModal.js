@@ -88,6 +88,9 @@ const sceneTokens = [
   { token: '{Scene Performers}', example: 'Abigail Mac Tera Patrick John Holmes' },
   { token: '{Scene PerformersFemale}', example: 'Abigail Mac Tera Patrick' },
   { token: '{Scene PerformersMale}', example: 'Johnny Sins' },
+  { token: '{Scene PerformersAlias}', example: 'Performers (Alias)' },
+  { token: '{Scene PerformersFemaleAlias}', example: 'Female Performers (Alias)' },
+  { token: '{Scene PerformersMaleAlias}', example: 'Male Performers (Alias)' },
   { token: '{Release Date}', example: '2009-02-04' },
   { token: '{Release ShortDate}', example: '09 02 04' }
 ];

@@ -384,6 +384,20 @@ namespace NzbDrone.Core.Organizer
                     .Select(p => p.Performer.Name)
                     .Take(4)
                     .Join(" ");
+                tokenHandlers["{Scene PerformersFemaleAlias}"] = m => credits.Where(p => p.Performer.Gender == Gender.Female)
+                    .OrderBy(p => p.Performer.Name)
+                    .Select(p => !string.IsNullOrWhiteSpace(p.Character) ? p.Character : p.Performer.Name)
+                    .Take(4)
+                    .Join(" ");
+                tokenHandlers["{Scene PerformersMaleAlias}"] = m => credits.Where(p => p.Performer.Gender == Gender.Male)
+                    .OrderBy(p => p.Performer.Name)
+                    .Select(p => !string.IsNullOrWhiteSpace(p.Character) ? p.Character : p.Performer.Name)
+                    .Take(4)
+                    .Join(" ");
+                tokenHandlers["{Scene PerformersAlias}"] = m => credits.OrderBy(p => p.Performer.Name)
+                    .Select(p => !string.IsNullOrWhiteSpace(p.Character) ? p.Character : p.Performer.Name)
+                    .Take(4)
+                    .Join(" ");
             }
         }
 

@@ -54,7 +54,12 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
                 new Credit { Performer = new CreditPerformer { Name = "Hollywood Cash", Gender = Gender.Female } },
                 new Credit { Performer = new CreditPerformer { Name = "Monique Alexander", Gender = Gender.Female } },
                 new Credit { Performer = new CreditPerformer { Name = "Abigaiil Morris", Gender = Gender.Female } },
-                new Credit { Performer = new CreditPerformer { Name = "Luna Star", Gender = Gender.Female } }
+                new Credit { Performer = new CreditPerformer { Name = "Luna Star", Gender = Gender.Female } },
+                new Credit { Character = "Luna", Performer = new CreditPerformer { Name = "Luna Star", Gender = Gender.Female } },
+                new Credit { Character = "Johnny Hammer", Performer = new CreditPerformer { Name = "Johnny Sins", Gender = Gender.Male } },
+                new Credit { Character = "", Performer = new CreditPerformer { Name = "Angela White", Gender = Gender.Female } },
+                new Credit { Character = "Scott the Hammer", Performer = new CreditPerformer { Name = "Scott Nails", Gender = Gender.Male } },
+                new Credit { Character = null, Performer = new CreditPerformer { Name = "Manuel Ferrara", Gender = Gender.Male } }
             };
 
             _movie = Builder<Movie>
@@ -100,6 +105,36 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         private void GivenReal()
         {
             _movieFile.Quality.Revision.Real = 1;
+        }
+
+        [Test]
+        public void scene_performers_alias_format()
+        {
+            _namingConfig.StandardSceneFormat = "{Studio Title} - {Release-Date} - {Scene Title} [{Scene PerformersAlias}]";
+
+            // Aliases should be used if present, otherwise fallback to real name.
+            Subject.BuildFileName(_scene, _movieFile)
+                .Should().Be("Brazzers Exxtra - 2024-06-20 - Brazzers Presents 20 For 20 [Luna Johnny Hammer Angela White Scott the Hammer]");
+        }
+
+        [Test]
+        public void scene_female_performers_alias_format()
+        {
+            _namingConfig.StandardSceneFormat = "{Studio Title} - {Release-Date} - {Scene Title} [{Scene PerformersFemaleAlias}]";
+
+            // Only female aliases, fallback to real name if alias is not present
+            Subject.BuildFileName(_scene, _movieFile)
+                .Should().Be("Brazzers Exxtra - 2024-06-20 - Brazzers Presents 20 For 20 [Luna Angela White]");
+        }
+
+        [Test]
+        public void scene_male_performers_alias_format()
+        {
+            _namingConfig.StandardSceneFormat = "{Studio Title} - {Release-Date} - {Scene Title} [{Scene PerformersMaleAlias}]";
+
+            // Only male aliases, fallback to real name if alias is not present
+            Subject.BuildFileName(_scene, _movieFile)
+                .Should().Be("Brazzers Exxtra - 2024-06-20 - Brazzers Presents 20 For 20 [Johnny Hammer Scott the Hammer Manuel Ferrara]");
         }
 
         [Test]

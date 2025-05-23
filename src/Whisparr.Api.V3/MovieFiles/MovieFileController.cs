@@ -202,6 +202,11 @@ namespace Whisparr.Api.V3.MovieFiles
         [Consumes("application/json")]
         public object DeleteMovieFiles([FromBody] MovieFileListResource resource)
         {
+            if (!resource.MovieFileIds.Any())
+            {
+                throw new BadRequestException("movieFileIds must be provided");
+            }
+
             var movieFiles = _mediaFileService.GetMovies(resource.MovieFileIds);
 
             foreach (var movieFile in movieFiles)

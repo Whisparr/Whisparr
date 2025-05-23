@@ -6,7 +6,7 @@ namespace Whisparr.Api.V3.MovieFiles
 {
     public class MovieFileListResource
     {
-        public List<int> MovieFileIds { get; set; }
+        public List<int> MovieFileIds { get; set; } = new ();
         public List<Language> Languages { get; set; }
         public QualityModel Quality { get; set; }
         public string Edition { get; set; }

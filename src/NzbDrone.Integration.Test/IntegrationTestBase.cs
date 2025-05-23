@@ -18,6 +18,7 @@ using NzbDrone.Integration.Test.Client;
 using NzbDrone.SignalR;
 using NzbDrone.Test.Common.Categories;
 using RestSharp;
+using Whisparr.Api.V3.AutoTagging;
 using Whisparr.Api.V3.Blocklist;
 using Whisparr.Api.V3.Config;
 using Whisparr.Api.V3.DownloadClient;
@@ -36,6 +37,7 @@ namespace NzbDrone.Integration.Test
     {
         protected RestClient RestClient { get; private set; }
 
+        public ClientBase<AutoTaggingResource> AutoTagging;
         public ClientBase<BlocklistResource> Blocklist;
         public CommandClient Commands;
         public ClientBase<TaskResource> Tasks;
@@ -99,6 +101,7 @@ namespace NzbDrone.Integration.Test
             RestClient.AddDefaultHeader("Authentication", ApiKey);
             RestClient.AddDefaultHeader("X-Api-Key", ApiKey);
 
+            AutoTagging = new ClientBase<AutoTaggingResource>(RestClient, ApiKey);
             Blocklist = new ClientBase<BlocklistResource>(RestClient, ApiKey);
             Commands = new CommandClient(RestClient, ApiKey);
             Tasks = new ClientBase<TaskResource>(RestClient, ApiKey, "system/task");

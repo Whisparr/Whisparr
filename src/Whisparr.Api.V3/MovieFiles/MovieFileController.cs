@@ -204,7 +204,7 @@ namespace Whisparr.Api.V3.MovieFiles
         {
             if (!resource.MovieFileIds.Any())
             {
-                throw new BadRequestException("movieFileIds must be provided");
+                throw new NzbDrone.Core.Exceptions.BadRequestException("movieFileIds must be provided");
             }
 
             var movieFiles = _mediaFileService.GetMovies(resource.MovieFileIds);

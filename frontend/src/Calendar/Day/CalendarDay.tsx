@@ -1,23 +1,51 @@
 import classNames from 'classnames';
 import moment from 'moment';
 import React from 'react';
+import { useSelector } from 'react-redux';
+import { createSelector } from 'reselect';
+import AppState from 'App/State/AppState';
 import * as calendarViews from 'Calendar/calendarViews';
-import CalendarEventConnector from 'Calendar/Events/CalendarEventConnector';
-import CalendarEvent from 'typings/CalendarEvent';
+import CalendarEvent from 'Calendar/Events/CalendarEvent';
+import { CalendarEvent as CalendarEventModel } from 'typings/Calendar';
 import styles from './CalendarDay.css';
+
+function sort(items: CalendarEventModel[]) {
+  return items.sort((a, b) => {
+    const aDate = moment(a.releaseDate).unix();
+    const bDate = moment(b.releaseDate).unix();
+
+    return aDate - bDate;
+  });
+}
+
+function createCalendarEventsConnector(date: string) {
+  return createSelector(
+    (state: AppState) => state.calendar.items,
+    (items) => {
+      const momentDate = moment(date);
+
+      const filtered = items.filter(({ releaseDate }) => {
+        return releaseDate && momentDate.isSame(moment(releaseDate), 'day');
+      });
+
+      return sort(
+        filtered.map((item) => ({
+          isGroup: false,
+          ...item,
+        }))
+      );
+    }
+  );
+}
 
 interface CalendarDayProps {
   date: string;
-  time: string;
   isTodaysDate: boolean;
-  events: CalendarEvent[];
-  view: string;
-  onEventModalOpenToggle(...args: unknown[]): unknown;
 }
 
-function CalendarDay(props: CalendarDayProps) {
-  const { date, time, isTodaysDate, events, view, onEventModalOpenToggle } =
-    props;
+function CalendarDay({ date, isTodaysDate }: CalendarDayProps) {
+  const { time, view } = useSelector((state: AppState) => state.calendar);
+  const events = useSelector(createCalendarEventsConnector(date));
 
   const ref = React.useRef<HTMLDivElement>(null);
 
@@ -50,13 +78,7 @@ function CalendarDay(props: CalendarDayProps) {
       <div>
         {events.map((event) => {
           return (
-            <CalendarEventConnector
-              key={event.id}
-              {...event}
-              movieId={event.id}
-              date={date as string}
-              onEventModalOpenToggle={onEventModalOpenToggle}
-            />
+            <CalendarEvent key={event.id} {...event} date={date as string} />
           );
         })}
       </div>

@@ -8,7 +8,7 @@ import AddNewPerformerConnector from 'AddMovie/AddNewMovie/AddNewPerformerConnec
 import AddNewSceneConnector from 'AddMovie/AddNewMovie/AddNewSceneConnector';
 import AddNewStudioConnector from 'AddMovie/AddNewMovie/AddNewStudioConnector';
 import ImportMovies from 'AddMovie/ImportMovie/ImportMovies';
-import CalendarPageConnector from 'Calendar/CalendarPageConnector';
+import CalendarPage from 'Calendar/CalendarPage';
 import NotFound from 'Components/NotFound';
 import Switch from 'Components/Router/Switch';
 import MovieDetailsPageConnector from 'Movie/Details/MovieDetailsPageConnector';
@@ -99,7 +99,7 @@ function AppRoutes() {
         Calendar
       */}
 
-      <Route path="/calendar" component={CalendarPageConnector} />
+      <Route path="/calendar" component={CalendarPage} />
 
       {/*
         Activity

@@ -68,6 +68,7 @@ interface Movie extends ModelBase {
   statistics: Statistics;
   tags: number[];
   images: Image[];
+  movieFileId: number;
   movieFile?: MovieFile;
   hasFile: boolean;
   grabbed?: boolean;

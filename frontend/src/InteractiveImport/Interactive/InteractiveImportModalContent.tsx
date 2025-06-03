@@ -252,6 +252,7 @@ function InteractiveImportModalContent(
     createClientSideCollectionSelector('interactiveImport')
   );
 
+  const [showOnlyUnmatched, setShowOnlyUnmatched] = useState(false);
   const { isDeleting, deleteError } = useSelector(episodeFilesInfoSelector);
   const importMode = useSelector(importModeSelector);
 
@@ -398,6 +399,10 @@ function InteractiveImportModalContent(
       setWithoutEpisodeFileIdRowsSelected,
     ]
   );
+
+  const onShowOnlyUnmatchedToggle = useCallback(() => {
+    setShowOnlyUnmatched((prev) => !prev);
+  }, []);
 
   const onValidRowChange = useCallback(
     (id: number, isValid: boolean) => {
@@ -732,6 +737,10 @@ function InteractiveImportModalContent(
     error,
     translate('InteractiveImportLoadError')
   );
+  const filteredItems = useMemo(() => {
+    if (!showOnlyUnmatched) return items;
+    return items.filter((item) => item.episodes.length === 0);
+  }, [items, showOnlyUnmatched]);
 
   return (
     <ModalContent onModalClose={onModalClose}>
@@ -774,11 +783,22 @@ function InteractiveImportModalContent(
           </div>
         )}
 
+        <div className={styles.filterContainer}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <input
+              type="checkbox"
+              checked={showOnlyUnmatched}
+              onChange={onShowOnlyUnmatchedToggle}
+            />
+            {translate('ShowOnlyUnmatched')}
+          </label>
+        </div>
+
         {isFetching ? <LoadingIndicator /> : null}
 
         {error ? <div>{errorMessage}</div> : null}
 
-        {isPopulated && !!items.length && !isFetching && !isFetching ? (
+        {isPopulated && !!filteredItems.length && !isFetching ? (
           <Table
             columns={columns}
             horizontalScroll={true}
@@ -791,25 +811,23 @@ function InteractiveImportModalContent(
             onSelectAllChange={onSelectAllChange}
           >
             <TableBody>
-              {items.map((item) => {
-                return (
-                  <InteractiveImportRow
-                    key={item.id}
-                    isSelected={selectedState[item.id]}
-                    {...item}
-                    allowSeriesChange={allowSeriesChange}
-                    columns={columns}
-                    modalTitle={modalTitle}
-                    onSelectedChange={onSelectedChange}
-                    onValidRowChange={onValidRowChange}
-                  />
-                );
-              })}
+              {filteredItems.map((item) => (
+                <InteractiveImportRow
+                  key={item.id}
+                  isSelected={selectedState[item.id]}
+                  {...item}
+                  allowSeriesChange={allowSeriesChange}
+                  columns={columns}
+                  modalTitle={modalTitle}
+                  onSelectedChange={onSelectedChange}
+                  onValidRowChange={onValidRowChange}
+                />
+              ))}
             </TableBody>
           </Table>
         ) : null}
 
-        {isPopulated && !items.length && !isFetching
+        {isPopulated && !filteredItems.length && !isFetching
           ? translate('InteractiveImportNoFilesFound')
           : null}
       </ModalBody>

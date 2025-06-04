@@ -35,7 +35,6 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
             {
                 new Credit { Performer = new CreditPerformer { Name = "Gal Ritchie", Gender = Gender.Female } },
                 new Credit { Performer = new CreditPerformer { Name = "Mick Blue", Gender = Gender.Male } },
-                new Credit { Performer = new CreditPerformer { Name = "Angela White", Gender = Gender.Female } },
                 new Credit { Performer = new CreditPerformer { Name = "Scott Nails", Gender = Gender.Male } },
                 new Credit { Performer = new CreditPerformer { Name = "Manuel Ferrara", Gender = Gender.Male } },
                 new Credit { Performer = new CreditPerformer { Name = "Van Wylde", Gender = Gender.Male } },
@@ -57,7 +56,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
                 new Credit { Performer = new CreditPerformer { Name = "Luna Star", Gender = Gender.Female } },
                 new Credit { Character = "Luna", Performer = new CreditPerformer { Name = "Luna Star", Gender = Gender.Female } },
                 new Credit { Character = "Johnny Hammer", Performer = new CreditPerformer { Name = "Johnny Sins", Gender = Gender.Male } },
-                new Credit { Character = "", Performer = new CreditPerformer { Name = "Angela White", Gender = Gender.Female } },
+                new Credit { Character = "Angie", Performer = new CreditPerformer { Name = "Angela White", Gender = Gender.Female } },
                 new Credit { Character = "Scott the Hammer", Performer = new CreditPerformer { Name = "Scott Nails", Gender = Gender.Male } },
                 new Credit { Character = null, Performer = new CreditPerformer { Name = "Manuel Ferrara", Gender = Gender.Male } }
             };
@@ -114,7 +113,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
             // Aliases should be used if present, otherwise fallback to real name.
             Subject.BuildFileName(_scene, _movieFile)
-                .Should().Be("Brazzers Exxtra - 2024-06-20 - Brazzers Presents 20 For 20 [Luna Johnny Hammer Angela White Scott the Hammer]");
+                .Should().Be("Brazzers Exxtra - 2024-06-20 - Brazzers Presents 20 For 20 [Abigaiil Morris Alex Jones Alexis Fawx Angie]");
         }
 
         [Test]
@@ -124,7 +123,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
             // Only female aliases, fallback to real name if alias is not present
             Subject.BuildFileName(_scene, _movieFile)
-                .Should().Be("Brazzers Exxtra - 2024-06-20 - Brazzers Presents 20 For 20 [Luna Angela White]");
+                .Should().Be("Brazzers Exxtra - 2024-06-20 - Brazzers Presents 20 For 20 [Abigaiil Morris Alexis Fawx Angie Cherie DeVille]");
         }
 
         [Test]
@@ -134,7 +133,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
             // Only male aliases, fallback to real name if alias is not present
             Subject.BuildFileName(_scene, _movieFile)
-                .Should().Be("Brazzers Exxtra - 2024-06-20 - Brazzers Presents 20 For 20 [Johnny Hammer Scott the Hammer Manuel Ferrara]");
+                .Should().Be("Brazzers Exxtra - 2024-06-20 - Brazzers Presents 20 For 20 [Alex Jones Isiah Maxwell J Mac Johnny Hammer]");
         }
 
         [Test]

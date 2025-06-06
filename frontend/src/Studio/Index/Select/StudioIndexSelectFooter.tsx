@@ -5,10 +5,12 @@ import { useSelect } from 'App/SelectContext';
 import AppState from 'App/State/AppState';
 import SpinnerButton from 'Components/Link/SpinnerButton';
 import PageContentFooter from 'Components/Page/PageContentFooter';
+import { kinds } from 'Helpers/Props';
 import { fetchRootFolders } from 'Store/Actions/rootFolderActions';
 import { saveStudioEditor } from 'Store/Actions/studioActions';
 import translate from 'Utilities/String/translate';
 import getSelectedIds from 'Utilities/Table/getSelectedIds';
+import DeleteStudioModal from './Delete/DeleteStudioModal';
 import EditStudiosModal from './Edit/EditStudiosModal';
 import TagsModal from './Tags/TagsModal';
 import styles from './StudioIndexSelectFooter.css';
@@ -40,6 +42,8 @@ function StudioIndexSelectFooter() {
   const [isTagsModalOpen, setIsTagsModalOpen] = useState(false);
   const [isSavingStudios, setIsSavingStudios] = useState(false);
   const [isSavingTags, setIsSavingTags] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const [selectState] = useSelect();
   const { selectedState } = selectState;
@@ -97,10 +101,36 @@ function StudioIndexSelectFooter() {
     [studioIds, dispatch]
   );
 
+  const onDeletePress = useCallback(() => {
+    setIsDeleteModalOpen(true);
+  }, [setIsDeleteModalOpen]);
+
+  const onDeleteModalClose = useCallback(() => {
+    setIsDeleteModalOpen(false);
+  }, []);
+
+  const onDeleteConfirm = useCallback(
+    (options: { addListExclusion: boolean; deleteFiles: boolean }) => {
+      setIsDeleting(true);
+      setIsDeleteModalOpen(false);
+
+      dispatch(
+        saveStudioEditor({
+          studioIds,
+          delete: true,
+          addListExclusion: options.addListExclusion,
+          deleteFiles: options.deleteFiles,
+        })
+      );
+    },
+    [studioIds, dispatch]
+  );
+
   useEffect(() => {
     if (!isSaving) {
       setIsSavingStudios(false);
       setIsSavingTags(false);
+      setIsDeleting(false);
     }
   }, [isSaving]);
 
@@ -129,6 +159,15 @@ function StudioIndexSelectFooter() {
           >
             {translate('SetTags')}
           </SpinnerButton>
+
+          <SpinnerButton
+            isSpinning={isSaving && isDeleting}
+            isDisabled={!anySelected}
+            onPress={onDeletePress}
+            kind={kinds.DANGER}
+          >
+            {translate('Delete')}
+          </SpinnerButton>
         </div>
       </div>
 
@@ -148,6 +187,13 @@ function StudioIndexSelectFooter() {
         studioIds={studioIds}
         onApplyTagsPress={onApplyTagsPress}
         onModalClose={onTagsModalClose}
+      />
+
+      <DeleteStudioModal
+        isOpen={isDeleteModalOpen}
+        studioIds={studioIds}
+        onDeletePress={onDeleteConfirm}
+        onModalClose={onDeleteModalClose}
       />
     </PageContentFooter>
   );

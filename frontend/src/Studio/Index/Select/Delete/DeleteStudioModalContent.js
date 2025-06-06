@@ -11,9 +11,9 @@ import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { inputTypes, kinds, sizes } from 'Helpers/Props';
 import translate from 'Utilities/String/translate';
-import styles from './DeletePerformerModal.css';
+import styles from './DeleteStudioModal.css';
 
-class DeletePerformerModalContent extends Component {
+class DeleteStudioModalContent extends Component {
 
   //
   // Lifecycle
@@ -29,16 +29,18 @@ class DeletePerformerModalContent extends Component {
 
   //
   // Listeners
+  onDeleteOptionChange = ({ value }) => {
+    this.setState({ addImportExclusion: value });
+  };
 
   onDeleteFilesChange = ({ value }) => {
     this.setState({ deleteFiles: value });
   };
 
-  onDeletePerformerConfirmed = () => {
+  onDeleteStudioConfirmed = () => {
     const deleteFiles = this.state.deleteFiles;
-    const addImportExclusion = this.props.deleteOptions.addImportExclusion;
+    const addImportExclusion = this.state.addImportExclusion;
 
-    this.setState({ deleteFiles: false });
     this.props.onDeletePress(deleteFiles, addImportExclusion);
   };
 
@@ -47,27 +49,24 @@ class DeletePerformerModalContent extends Component {
 
   render() {
     const {
-      fullName,
-      deleteOptions,
-      onModalClose,
-      onDeleteOptionChange
+      onModalClose
     } = this.props;
 
     const deleteFiles = this.state.deleteFiles;
-    const addImportExclusion = deleteOptions.addImportExclusion;
+    const addImportExclusion = this.state.addImportExclusion;
 
     return (
       <ModalContent
         onModalClose={onModalClose}
       >
         <ModalHeader>
-          {translate('DeleteHeader', [fullName])}
+          {translate('DeleteStudiosModalHeader')}
         </ModalHeader>
 
         <ModalBody>
           <FormGroup>
             <InfoLabel size={sizes.LARGE} className={styles.warningText}>
-              {translate('DeletePerformerModalWarning', [fullName])}
+              {translate('DeleteStudiosModalWarning')}
             </InfoLabel>
           </FormGroup>
           <FormGroup>
@@ -81,7 +80,7 @@ class DeletePerformerModalContent extends Component {
               value={addImportExclusion}
               helpText={translate('AddImportExclusionHelpText')}
               kind={kinds.DANGER}
-              onChange={onDeleteOptionChange}
+              onChange={this.onDeleteOptionChange}
             />
           </FormGroup>
 
@@ -107,7 +106,7 @@ class DeletePerformerModalContent extends Component {
 
           <Button
             kind={kinds.DANGER}
-            onPress={this.onDeletePerformerConfirmed}
+            onPress={this.onDeleteStudioConfirmed}
           >
             {translate('Delete')}
           </Button>
@@ -117,19 +116,17 @@ class DeletePerformerModalContent extends Component {
   }
 }
 
-DeletePerformerModalContent.propTypes = {
-  performerId: PropTypes.number.isRequired,
-  fullName: PropTypes.string.isRequired,
-  images: PropTypes.arrayOf(PropTypes.object).isRequired,
-  item: PropTypes.object.isRequired,
+DeleteStudioModalContent.propTypes = {
+  studioIds: PropTypes.arrayOf(PropTypes.number),
   deleteOptions: PropTypes.object.isRequired,
   onDeleteOptionChange: PropTypes.func.isRequired,
+  onDeleteFilesChange: PropTypes.func.isRequired,
   onDeletePress: PropTypes.func.isRequired,
   onModalClose: PropTypes.func.isRequired
 };
 
-DeletePerformerModalContent.defaultProps = {
+DeleteStudioModalContent.defaultProps = {
   statistics: {}
 };
 
-export default DeletePerformerModalContent;
+export default DeleteStudioModalContent;

@@ -5,10 +5,12 @@ import { useSelect } from 'App/SelectContext';
 import AppState from 'App/State/AppState';
 import SpinnerButton from 'Components/Link/SpinnerButton';
 import PageContentFooter from 'Components/Page/PageContentFooter';
+import { kinds } from 'Helpers/Props';
 import { savePerformerEditor } from 'Store/Actions/performerActions';
 import { fetchRootFolders } from 'Store/Actions/rootFolderActions';
 import translate from 'Utilities/String/translate';
 import getSelectedIds from 'Utilities/Table/getSelectedIds';
+import DeletePerformerModal from './Delete/DeletePerformerModal';
 import EditPerformersModal from './Edit/EditPerformersModal';
 import TagsModal from './Tags/TagsModal';
 import styles from './PerformerIndexSelectFooter.css';
@@ -40,6 +42,8 @@ function PerformerIndexSelectFooter() {
   const [isTagsModalOpen, setIsTagsModalOpen] = useState(false);
   const [isSavingPerformers, setIsSavingPerformers] = useState(false);
   const [isSavingTags, setIsSavingTags] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isDeleteModalOpen, setIsPerformerModalOpen] = useState(false);
 
   const [selectState] = useSelect();
   const { selectedState } = selectState;
@@ -97,10 +101,36 @@ function PerformerIndexSelectFooter() {
     [performerIds, dispatch]
   );
 
+  const onDeletePress = useCallback(() => {
+    setIsPerformerModalOpen(true);
+  }, [setIsPerformerModalOpen]);
+
+  const onDeleteModalClose = useCallback(() => {
+    setIsPerformerModalOpen(false);
+  }, []);
+
+  const onDeleteConfirm = useCallback(
+    (options: { addListExclusion: boolean; deleteFiles: boolean }) => {
+      setIsDeleting(true);
+      setIsPerformerModalOpen(false);
+
+      dispatch(
+        savePerformerEditor({
+          performerIds,
+          delete: true,
+          addListExclusion: options.addListExclusion,
+          deleteFiles: options.deleteFiles,
+        })
+      );
+    },
+    [performerIds, dispatch]
+  );
+
   useEffect(() => {
     if (!isSaving) {
       setIsSavingPerformers(false);
       setIsSavingTags(false);
+      setIsDeleting(false);
     }
   }, [isSaving]);
 
@@ -129,6 +159,15 @@ function PerformerIndexSelectFooter() {
           >
             {translate('SetTags')}
           </SpinnerButton>
+
+          <SpinnerButton
+            isSpinning={isSaving && isDeleting}
+            isDisabled={!anySelected}
+            onPress={onDeletePress}
+            kind={kinds.DANGER}
+          >
+            {translate('Delete')}
+          </SpinnerButton>
         </div>
       </div>
 
@@ -148,6 +187,13 @@ function PerformerIndexSelectFooter() {
         performerIds={performerIds}
         onApplyTagsPress={onApplyTagsPress}
         onModalClose={onTagsModalClose}
+      />
+
+      <DeletePerformerModal
+        isOpen={isDeleteModalOpen}
+        performerIds={performerIds}
+        onDeletePress={onDeleteConfirm}
+        onModalClose={onDeleteModalClose}
       />
     </PageContentFooter>
   );

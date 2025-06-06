@@ -29,6 +29,9 @@ class DeletePerformerModalContent extends Component {
 
   //
   // Listeners
+  onDeleteOptionChange = ({ value }) => {
+    this.setState({ addImportExclusion: value });
+  };
 
   onDeleteFilesChange = ({ value }) => {
     this.setState({ deleteFiles: value });
@@ -36,9 +39,8 @@ class DeletePerformerModalContent extends Component {
 
   onDeletePerformerConfirmed = () => {
     const deleteFiles = this.state.deleteFiles;
-    const addImportExclusion = this.props.deleteOptions.addImportExclusion;
+    const addImportExclusion = this.state.addImportExclusion;
 
-    this.setState({ deleteFiles: false });
     this.props.onDeletePress(deleteFiles, addImportExclusion);
   };
 
@@ -47,27 +49,23 @@ class DeletePerformerModalContent extends Component {
 
   render() {
     const {
-      fullName,
-      deleteOptions,
-      onModalClose,
-      onDeleteOptionChange
+      onModalClose
     } = this.props;
 
     const deleteFiles = this.state.deleteFiles;
-    const addImportExclusion = deleteOptions.addImportExclusion;
+    const addImportExclusion = this.state.addImportExclusion;
 
     return (
       <ModalContent
         onModalClose={onModalClose}
       >
         <ModalHeader>
-          {translate('DeleteHeader', [fullName])}
+          {translate('DeletePerformersModalHeader')}
         </ModalHeader>
-
         <ModalBody>
           <FormGroup>
             <InfoLabel size={sizes.LARGE} className={styles.warningText}>
-              {translate('DeletePerformerModalWarning', [fullName])}
+              {translate('DeletePerformersModalWarning')}
             </InfoLabel>
           </FormGroup>
           <FormGroup>
@@ -81,7 +79,7 @@ class DeletePerformerModalContent extends Component {
               value={addImportExclusion}
               helpText={translate('AddImportExclusionHelpText')}
               kind={kinds.DANGER}
-              onChange={onDeleteOptionChange}
+              onChange={this.onDeleteOptionChange}
             />
           </FormGroup>
 
@@ -112,18 +110,16 @@ class DeletePerformerModalContent extends Component {
             {translate('Delete')}
           </Button>
         </ModalFooter>
-      </ModalContent>
+      </ModalContent >
     );
   }
 }
 
 DeletePerformerModalContent.propTypes = {
-  performerId: PropTypes.number.isRequired,
-  fullName: PropTypes.string.isRequired,
-  images: PropTypes.arrayOf(PropTypes.object).isRequired,
-  item: PropTypes.object.isRequired,
+  PerformerIndexPosterOptionsModalContentIds: PropTypes.arrayOf(PropTypes.number),
   deleteOptions: PropTypes.object.isRequired,
   onDeleteOptionChange: PropTypes.func.isRequired,
+  onDeleteFilesChange: PropTypes.func.isRequired,
   onDeletePress: PropTypes.func.isRequired,
   onModalClose: PropTypes.func.isRequired
 };

@@ -1127,7 +1127,7 @@ stages:
       condition: |
         and
         (
-          and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop')),
+          and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/eros')),
           and(succeeded(), eq(dependencies.Prepare.outputs['setVar.backendNotUpdated'], '0'))
         )
 
@@ -1148,14 +1148,14 @@ stages:
       - bash: |
           git config --global user.email "development@lidarr.audio"
           git config --global user.name "Servarr"
-          git checkout -b api-docs
+          git checkout -b eros-api-docs
           git add .
           git status
           if git status | grep modified
           then
             git commit -am 'Automated API Docs update'
-            git push -f --set-upstream origin api-docs
-            curl -X POST -H "Authorization: token ${GITHUBTOKEN}" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/whisparr/whisparr/pulls -d '{"head":"api-docs","base":"develop","title":"Update API docs"}'
+            git push -f --set-upstream origin eros-api-docs
+            curl -X POST -H "Authorization: token ${GITHUBTOKEN}" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/whisparr/whisparr/pulls -d '{"head":"eros-api-docs","base":"eros","title":"Update API docs"}'
           else
             echo "No changes since last run"
           fi

@@ -160,6 +160,7 @@ namespace Whisparr.Api.V3.Performers
             _performerService.RemovePerformer(performer);
         }
 
+        [NonAction]
         public void Handle(PerformerUpdatedEvent message)
         {
             var resource = message.Performer.ToResource();
@@ -187,7 +188,7 @@ namespace Whisparr.Api.V3.Performers
             resource.HasScenes = scenes.Any();
             resource.HasMovies = movies.Where(x => x.MovieMetadata.Value.ItemType == ItemType.Movie).Any();
 
-            resource.Studios = scenes.Map(x => new StudioResource() { ForeignId = x.MovieMetadata.Value.StudioForeignId, Title = x.MovieMetadata.Value.StudioTitle }).DistinctBy(x => x.ForeignId).OrderBy(x => x.Title).ToList();
+            resource.Studios = scenes.Map(x => new PerformerStudioResource() { ForeignId = x.MovieMetadata.Value.StudioForeignId, Title = x.MovieMetadata.Value.StudioTitle }).DistinctBy(x => x.ForeignId).OrderBy(x => x.Title).ToList();
 
             resource.SceneCount = movies.Where(x => x.HasFile).Count();
             resource.TotalSceneCount = movies.Count;

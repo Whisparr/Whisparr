@@ -134,6 +134,7 @@ namespace Whisparr.Api.V3.Studios
             _studioService.RemoveStudio(studio);
         }
 
+        [NonAction]
         public void Handle(StudioUpdatedEvent message)
         {
             var resource = message.Studio.ToResource();

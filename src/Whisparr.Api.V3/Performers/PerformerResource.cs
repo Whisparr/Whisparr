@@ -29,11 +29,11 @@ namespace Whisparr.Api.V3.Performers
         public bool HasScenes { get; set; }
         public int TotalSceneCount { get; internal set; }
         public int SceneCount { get; set; }
-        public List<StudioResource> Studios { get; set; }
+        public List<PerformerStudioResource> Studios { get; set; }
         public long SizeOnDisk { get; set; }
     }
 
-    public class StudioResource
+    public class PerformerStudioResource
     {
         public string Title { get; set; }
         public string ForeignId { get; set; }

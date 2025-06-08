@@ -52,7 +52,7 @@ namespace Whisparr.Api.V3.Search
             return MapToResource(searchResults).ToList();
         }
 
-        public IEnumerable<SearchResource> MapToResource(IEnumerable<object> results)
+        private IEnumerable<SearchResource> MapToResource(IEnumerable<object> results)
         {
             var id = 1;
             var availDelay = _configService.AvailabilityDelay;

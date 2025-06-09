@@ -106,7 +106,7 @@ namespace Whisparr.Api.V3.Performers
 
             _coverMapper.ConvertToLocalPerformerUrls(performerResources.Select(x => Tuple.Create(x.Id, x.Images.AsEnumerable())), coverFileInfos);
 
-            // LinkMovies(performerResources);
+            LinkMovies(performerResources);
 
             return performerResources;
         }
@@ -165,7 +165,7 @@ namespace Whisparr.Api.V3.Performers
         {
             var resource = message.Performer.ToResource();
 
-            // FetchAndLinkMovies(resource);
+            FetchAndLinkMovies(resource);
             BroadcastResourceChange(ModelAction.Updated, resource);
         }
 

@@ -80,7 +80,7 @@ namespace Whisparr.Api.V3.Studios
 
             _coverMapper.ConvertToLocalStudioUrls(studioResources.Select(x => Tuple.Create(x.Id, x.Images.AsEnumerable())), coverFileInfos);
 
-            // LinkMovies(studioResources);
+            LinkMovies(studioResources);
 
             return studioResources;
         }
@@ -139,7 +139,7 @@ namespace Whisparr.Api.V3.Studios
         {
             var resource = message.Studio.ToResource();
 
-            // FetchAndLinkMovies(resource);
+            FetchAndLinkMovies(resource);
             BroadcastResourceChange(ModelAction.Updated, message.Studio.ToResource());
         }
 

@@ -25,9 +25,9 @@ namespace NzbDrone.Core.Movies
                 return false;
             }
 
-            if (movie.LastInfoSync < DateTime.UtcNow.AddDays(-180))
+            if (movie.LastInfoSync < DateTime.UtcNow.AddDays(-60))
             {
-                _logger.Trace("Movie {0} last updated more than 180 days ago, should refresh.", movie.Title);
+                _logger.Trace("Movie {0} last updated more than 60 days ago, should refresh.", movie.Title);
                 return true;
             }
 

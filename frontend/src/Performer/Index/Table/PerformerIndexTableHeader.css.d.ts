@@ -10,6 +10,7 @@ interface CssExports {
   'rootFolderPath': string;
   'status': string;
   'tags': string;
+  'totalSceneCount': string;
   'year': string;
 }
 export const cssExports: CssExports;

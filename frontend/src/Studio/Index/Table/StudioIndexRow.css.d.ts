@@ -12,6 +12,7 @@ interface CssExports {
   'sortTitle': string;
   'status': string;
   'tags': string;
+  'totalSceneCount': string;
 }
 export const cssExports: CssExports;
 export default cssExports;

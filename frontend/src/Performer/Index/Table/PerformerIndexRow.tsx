@@ -39,6 +39,8 @@ function PerformerIndexRow(props: PerformerIndexRowProps) {
     hairColor,
     ethnicity,
     rootFolderPath,
+    sceneCount,
+    totalSceneCount,
     tags = [],
     foreignId,
   } = performer;
@@ -149,6 +151,14 @@ function PerformerIndexRow(props: PerformerIndexRowProps) {
           return (
             <VirtualTableRowCell key={name} className={styles[name]}>
               <TagListConnector tags={tags} />
+            </VirtualTableRowCell>
+          );
+        }
+
+        if (name === 'totalSceneCount') {
+          return (
+            <VirtualTableRowCell key={name} className={styles[name]}>
+              {sceneCount} / {totalSceneCount}
             </VirtualTableRowCell>
           );
         }

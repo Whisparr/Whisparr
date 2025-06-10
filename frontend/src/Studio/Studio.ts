@@ -8,6 +8,10 @@ interface Studio extends ModelBase {
   monitored: boolean;
   images: Image[];
   sortTitle: string;
+  sceneCount: number;
+  totalSceneCount: number;
+  hasScenes: boolean;
+  hasMovies: boolean;
   tags: number[];
   aliases: string[];
   rootFolderPath: string;

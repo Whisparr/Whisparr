@@ -106,6 +106,12 @@ export const defaultState = {
       isVisible: false
     },
     {
+      name: 'totalSceneCount',
+      label: () => translate('Scenes'),
+      isSortable: true,
+      isVisible: true
+    },
+    {
       name: 'actions',
       columnLabel: () => translate('Actions'),
       isVisible: true,
@@ -140,6 +146,18 @@ export const defaultState = {
       name: 'title',
       label: () => translate('Title'),
       type: filterBuilderTypes.EXACT,
+      valueType: filterBuilderValueTypes.DEFAULT
+    },
+    {
+      name: 'sceneCount',
+      label: () => translate('SceneCount'),
+      type: filterBuilderTypes.NUMBER,
+      valueType: filterBuilderValueTypes.DEFAULT
+    },
+    {
+      name: 'totalSceneCount',
+      label: () => translate('TotalSceneCount'),
+      type: filterBuilderTypes.NUMBER,
       valueType: filterBuilderValueTypes.DEFAULT
     },
     {

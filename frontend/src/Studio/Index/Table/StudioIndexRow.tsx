@@ -38,6 +38,8 @@ function StudioIndexRow(props: StudioIndexRowProps) {
     rootFolderPath,
     aliases = [],
     tags = [],
+    sceneCount,
+    totalSceneCount,
     foreignId,
     website,
   } = studio;
@@ -139,6 +141,14 @@ function StudioIndexRow(props: StudioIndexRowProps) {
           return (
             <VirtualTableRowCell key={name} className={styles[name]}>
               {aliases}
+            </VirtualTableRowCell>
+          );
+        }
+
+        if (name === 'totalSceneCount') {
+          return (
+            <VirtualTableRowCell key={name} className={styles[name]}>
+              {sceneCount} / {totalSceneCount}
             </VirtualTableRowCell>
           );
         }

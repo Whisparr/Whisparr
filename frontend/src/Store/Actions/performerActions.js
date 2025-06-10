@@ -115,6 +115,12 @@ export const defaultState = {
       isVisible: false
     },
     {
+      name: 'totalSceneCount',
+      label: () => translate('Scenes'),
+      isSortable: true,
+      isVisible: true
+    },
+    {
       name: 'actions',
       columnLabel: () => translate('Actions'),
       isVisible: true,
@@ -146,6 +152,47 @@ export const defaultState = {
       label: () => translate('Monitored'),
       type: filterBuilderTypes.EXACT,
       valueType: filterBuilderValueTypes.BOOL
+    },
+    {
+      name: 'sceneCount',
+      label: () => translate('SceneCount'),
+      type: filterBuilderTypes.NUMBER,
+      valueType: filterBuilderValueTypes.DEFAULT
+    },
+    {
+      name: 'totalSceneCount',
+      label: () => translate('TotalSceneCount'),
+      type: filterBuilderTypes.NUMBER,
+      valueType: filterBuilderValueTypes.DEFAULT
+    },
+    {
+      name: 'fullName',
+      label: () => translate('PerformerName'),
+      type: filterBuilderTypes.EXACT,
+      valueType: filterBuilderValueTypes.DEFAULT
+    },
+    {
+      name: 'rootFolderPath',
+      label: () => translate('RootFolder'),
+      type: filterBuilderTypes.EXACT,
+      valueType: filterBuilderValueTypes.FOLDER
+    },
+    {
+      name: 'monitor',
+      label: () => translate('Monitor'),
+      type: filterBuilderTypes.EXACT,
+      optionsSelector: function(items) {
+        const tagList = ['movieOnly', 'all', 'none'];
+
+        const tags = tagList.map((tag) => {
+          return {
+            id: tag,
+            name: camelCaseToString(tag)
+          };
+        });
+
+        return tags.sort(sortByName);
+      }
     },
     {
       name: 'qualityProfileId',

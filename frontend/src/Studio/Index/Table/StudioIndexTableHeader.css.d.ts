@@ -2,12 +2,14 @@
 // Please do not change this file!
 interface CssExports {
   'actions': string;
+  'aliases': string;
   'network': string;
   'qualityProfileId': string;
   'rootFolderPath': string;
   'sortTitle': string;
   'status': string;
   'tags': string;
+  'totalSceneCount': string;
 }
 export const cssExports: CssExports;
 export default cssExports;

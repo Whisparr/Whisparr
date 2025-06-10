@@ -18,6 +18,7 @@
 }
 
 .network,
+.totalSceneCount,
 .qualityProfileId {
   composes: cell;
 

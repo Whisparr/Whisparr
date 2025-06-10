@@ -10,6 +10,10 @@ interface Performer extends ModelBase {
   gender: string;
   ethnicity?: string;
   hairColor?: string;
+  sceneCount: number;
+  totalSceneCount: number;
+  hasScenes: boolean;
+  hasMovies: boolean;
   status: string;
   sortTitle: string;
   added: string;

@@ -85,7 +85,7 @@ namespace Whisparr.Api.V3.Studios
                 Website = resource.Website,
                 Network = resource.Network,
                 Monitored = resource.Monitored,
-                AfterDate = resource.AfterDate == null ?  null : DateTime.Parse(resource.AfterDate),
+                AfterDate = string.IsNullOrWhiteSpace(resource.AfterDate) ? null : DateTime.Parse(resource.AfterDate),
                 QualityProfileId = resource.QualityProfileId,
                 RootFolderPath = resource.RootFolderPath,
                 SearchOnAdd = resource.SearchOnAdd,

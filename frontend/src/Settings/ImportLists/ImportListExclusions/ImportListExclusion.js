@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import Icon from 'Components/Icon';
@@ -7,7 +6,7 @@ import ConfirmModal from 'Components/Modal/ConfirmModal';
 import { icons, kinds } from 'Helpers/Props';
 import translate from 'Utilities/String/translate';
 import EditImportListExclusionModalConnector from './EditImportListExclusionModalConnector';
-import styles from './ImportListExclusion.css';
+import styles from './ImportListExclusions.css';
 
 class ImportListExclusion extends Component {
 
@@ -61,14 +60,10 @@ class ImportListExclusion extends Component {
     } = this.props;
 
     return (
-      <div
-        className={classNames(
-          styles.importExclusion
-        )}
-      >
+      <div className={styles.importExclusionInfoContainer}>
         <div className={styles.type}>{type}</div>
         <div className={styles.foreignId}>{foreignId}</div>
-        <div className={styles.movieTitle}>{movieTitle}</div>
+        <div className={styles.title} title={movieTitle}><span>{movieTitle}</span></div>
 
         <div className={styles.actions}>
           <Link

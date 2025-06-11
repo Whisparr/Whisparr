@@ -1,21 +1,75 @@
+.importExclusionFilterForm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: 16px;
+
+  padding: 10px;
+  width: 100%;
+}
+
+.importExclusionDropdownContainer {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  min-width: 120px;
+  max-width: 120px;
+  width: 120px;
+}
+
+.importExclusionRow,
 .importListExclusionsHeader {
   display: flex;
-  margin-bottom: 10px;
+  align-items: center;
   border-bottom: 1px solid var(--borderColor);
-  font-weight: bold;
+  line-height: 36px;
+}
+
+.importExclusionInfoContainer {
+  display: flex !important;
+  align-items: center;
+  min-width: 0;
+  width: 100%;
+}
+
+.checkboxContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 36px;
+  margin-bottom: 7px;
+}
+
+.type {
+  display: flex;
+  align-items: center;
+  flex: 0 0 100px;
+  padding: 0 8px;
 }
 
 .foreignId {
-  flex: 1 1 300px;
+  display: flex;
+  align-items: center;
+
+  flex: 0 0 310px;
+  padding: 0 8px;
 }
 
 .title {
-  flex: 1 1 600px;
+  align-items: center;
+  flex: 1 1 0;
+  overflow: hidden;
+  min-width: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.type,
-.movieYear {
-  flex: 0 0 100px;
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 48px;
 }
 
 .addImportExclusion {

@@ -140,49 +140,58 @@ class Naming extends Component {
       if (examples.movieExample) {
         standardMovieFormatHelpTexts.push(`${translate('Movie')}: ${examples.movieExample}`);
       } else {
-        standardMovieFormatErrors.push({ get message() {
-          return translate('MovieInvalidFormat');
-        } });
+        standardMovieFormatErrors.push({
+          get message() {
+            return translate('MovieInvalidFormat');
+          }
+        });
       }
 
       if (examples.movieFolderExample) {
         movieFolderFormatHelpTexts.push(`${translate('Example')}: ${examples.movieFolderExample}`);
       } else {
-        movieFolderFormatErrors.push({ get message() {
-          return translate('InvalidFormat');
-        } });
+        movieFolderFormatErrors.push({
+          get message() {
+            return translate('InvalidFormat');
+          }
+        });
       }
 
       if (examples.sceneExample) {
         standardSceneFormatHelpTexts.push(`Example: ${examples.sceneExample}`);
       } else {
-        standardSceneFormatErrors.push({ get message() {
-          return translate('InvalidFormat');
-        } });
+        standardSceneFormatErrors.push({
+          get message() {
+            return translate('InvalidFormat');
+          }
+        });
       }
 
       if (examples.sceneFolderExample) {
         sceneFolderFormatHelpTexts.push(`Example: ${examples.sceneFolderExample}`);
       } else {
-        sceneFolderFormatErrors.push({ get message() {
-          return translate('InvalidFormat');
-        } });
+        sceneFolderFormatErrors.push({
+          get message() {
+            return translate('InvalidFormat');
+          }
+        });
       }
 
       if (examples.sceneImportFolderExample) {
         sceneImportFolderFormatHelpTexts.push(`Example: ${examples.sceneImportFolderExample}`);
       } else {
-        sceneImportFolderFormatErrors.push({ get message() {
-          return translate('InvalidFormat');
-        } });
+        sceneImportFolderFormatErrors.push({
+          get message() {
+            return translate('InvalidFormat');
+          }
+        });
       }
     }
 
     return (
       <FieldSet legend={translate('Naming')}>
         {
-          isFetching &&
-            <LoadingIndicator />
+          isFetching && <LoadingIndicator />
         }
 
         {
@@ -331,7 +340,7 @@ class Naming extends Component {
                   name="sceneImportFolderFormat"
                   onChange={onInputChange}
                   {...settings.sceneImportFolderFormat}
-                  helpTexts={['Used when adding a new scene or moving scenes via the editor']}
+                  helpTexts={['Path relative to default root folder', 'Used in Scenes > Unmapped Files > Add Scenes, to import scenes', 'Recommended: import/']}
                 />
               </FormGroup>
 

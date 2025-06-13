@@ -183,7 +183,7 @@ namespace NzbDrone.Core.MediaFiles
                     Title = m.MovieMetadata.Value.StudioTitle,
                     RootFolderPath = m.RootFolderPath,
                     Monitored = false,
-                }).ToList());
+                }).ToList(), true);
 
                 _commandQueueManager.PushMany(scene_list.Select(s => new AddMoviesCommand(new List<Movie> { s })).ToList());
             }
@@ -242,7 +242,7 @@ namespace NzbDrone.Core.MediaFiles
 
         public List<string> FilterPaths(string basePath, IEnumerable<string> paths, bool filterExtras = true)
         {
-            var filteredPaths =  paths.Where(path => !ExcludedSubFoldersRegex.IsMatch(basePath.GetRelativePath(path)))
+            var filteredPaths = paths.Where(path => !ExcludedSubFoldersRegex.IsMatch(basePath.GetRelativePath(path)))
                                       .Where(path => !ExcludedFilesRegex.IsMatch(Path.GetFileName(path)))
                                       .ToList();
 

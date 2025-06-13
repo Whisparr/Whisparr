@@ -57,8 +57,8 @@ body:
   attributes:
     label: What branch are you running?
     options:
-      - Main
-      - Develop
+      - Develop (V2)
+      - Eros (V3)
       - Other (This issue will be closed)
   validations:
     required: true

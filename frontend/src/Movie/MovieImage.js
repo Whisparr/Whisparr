@@ -10,7 +10,7 @@ function findImage(images, coverType) {
 
 function getUrl(image, coverType, size) {
   let imageUrl = image?.url ?? image?.remoteUrl;
-  if (coverType === 'clearlogo' && imageUrl.startsWith('/MediaCoverProxy/')) {
+  if (coverType === 'clearlogo' && imageUrl?.startsWith('/MediaCoverProxy/')) {
     imageUrl = image?.remoteUrl;
   }
 

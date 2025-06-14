@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Datastore;
 
 namespace NzbDrone.Core.Movies.Studios
@@ -43,6 +44,11 @@ namespace NzbDrone.Core.Movies.Studios
 
             RootFolderPath = otherStudio.RootFolderPath;
             Tags = otherStudio.Tags;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("[{0}]", Title.NullSafe());
         }
     }
 }

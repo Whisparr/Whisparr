@@ -24,14 +24,7 @@ namespace NzbDrone.Core.MediaCover
 
         public bool AlreadyExists(string url, string path)
         {
-            if (!_diskProvider.FileExists(path))
-            {
-                return false;
-            }
-
-            var headers = _httpClient.Head(new HttpRequest(url)).Headers;
-            var fileSize = _diskProvider.GetFileSize(path);
-            return fileSize == headers.ContentLength;
+            return _diskProvider.FileExists(path);
         }
     }
 }

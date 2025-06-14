@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Datastore;
 
 namespace NzbDrone.Core.Movies.Performers
@@ -40,6 +41,11 @@ namespace NzbDrone.Core.Movies.Performers
 
             RootFolderPath = otherPerformer.RootFolderPath;
             Tags = otherPerformer.Tags;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("[{0}]", Name.NullSafe());
         }
     }
 

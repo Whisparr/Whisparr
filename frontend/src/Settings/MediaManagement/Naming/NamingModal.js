@@ -92,7 +92,8 @@ const sceneTokens = [
   { token: '{Scene PerformersFemaleAlias}', example: 'Female Performers (Alias)' },
   { token: '{Scene PerformersMaleAlias}', example: 'Male Performers (Alias)' },
   { token: '{Release Date}', example: '2009-02-04' },
-  { token: '{Release ShortDate}', example: '09 02 04' }
+  { token: '{Release ShortDate}', example: '09 02 04' },
+  { token: '{Scene ID}', example: '12345' }
 ];
 
 const studioTokens = [

@@ -403,11 +403,11 @@ namespace NzbDrone.Core.Organizer
             if (!string.IsNullOrWhiteSpace(movie.MovieMetadata.Value.Code))
             {
                 var code = movie.MovieMetadata.Value.Code;
-                tokenHandlers["{Scene ID}"] = m => code;
+                tokenHandlers["{Scene Code}"] = m => code;
             }
             else
             {
-                tokenHandlers["{Scene ID}"] = m => string.Empty;
+                tokenHandlers["{Scene Code}"] = m => string.Empty;
             }
         }
 

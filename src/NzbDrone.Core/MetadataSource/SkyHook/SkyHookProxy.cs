@@ -816,13 +816,13 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             if (movie == null)
             {
                 movie = new Movie { MovieMetadata = MapMovie(result) };
-            }
 
-            if (result.ItemType == ItemType.Scene)
-            {
-                foreach (var performer in result.Credits)
+                if (result.ItemType == ItemType.Scene)
                 {
-                    movie.MovieMetadata.Value.Credits.Add(MapCast(performer));
+                    foreach (var performer in result.Credits)
+                    {
+                        movie.MovieMetadata.Value.Credits.Add(MapCast(performer));
+                    }
                 }
             }
 

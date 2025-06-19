@@ -42,7 +42,8 @@ function EditImportListExclusionModalContent(props) {
     { key: 'movie', value: translate('Movie') },
     { key: 'scene', value: translate('Scene') },
     { key: 'studio', value: translate('Studio') },
-    { key: 'performer', value: translate('Performer') }
+    { key: 'performer', value: translate('Performer') },
+    { key: 'tag', value: translate('Tag') }
   ];
 
   return (

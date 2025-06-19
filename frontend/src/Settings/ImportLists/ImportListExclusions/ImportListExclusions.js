@@ -103,7 +103,8 @@ class ImportListExclusions extends Component {
       { key: 'scene', value: translate('Scene') },
       { key: 'movie', value: translate('Movie') },
       { key: 'studio', value: translate('Studio') },
-      { key: 'performer', value: translate('Performer') }
+      { key: 'performer', value: translate('Performer') },
+      { key: 'tag', value: translate('Tag') }
     ];
 
     const allIds = filteredItems.map((item) => item.id);

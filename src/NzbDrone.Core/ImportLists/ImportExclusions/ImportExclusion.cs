@@ -11,7 +11,7 @@ namespace NzbDrone.Core.ImportLists.ImportExclusions
 
         public new string ToString()
         {
-            return string.Format("Excluded Movie: [{0}][{1}][{2} {3}]", Type, ForeignId, MovieTitle, MovieYear);
+            return string.Format("Exclusion: [{0}][{1}][{2} {3}]", Type, ForeignId, MovieTitle, MovieYear);
         }
     }
 }

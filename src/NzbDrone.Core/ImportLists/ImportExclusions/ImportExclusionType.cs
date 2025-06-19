@@ -5,6 +5,7 @@ namespace NzbDrone.Core.ImportLists.ImportExclusions
         Scene,
         Movie,
         Studio,
-        Performer
+        Performer,
+        Tag
     }
 }

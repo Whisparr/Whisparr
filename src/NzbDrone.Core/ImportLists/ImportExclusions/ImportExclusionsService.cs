@@ -69,7 +69,7 @@ namespace NzbDrone.Core.ImportLists.ImportExclusions
 
         public List<ImportExclusion> GetAllByType(ImportExclusionType type)
         {
-            return _exclusionRepository.AllByType(type);
+            return _exclusionRepository.AllByType(type) ?? new List<ImportExclusion>();
         }
 
         public bool IsExcluded(string foreignId, ImportExclusionType type)

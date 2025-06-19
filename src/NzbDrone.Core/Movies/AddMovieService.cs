@@ -227,7 +227,7 @@ namespace NzbDrone.Core.Movies
                     if (excludedStudio)
                     {
                         _importExclusionService.AddExclusion(newExclusion);
-                        throw new ValidationException($"Studio: {newMovie.MovieMetadata.Value.Studio.Title} has been excluded");
+                        throw new ValidationException($"Studio: [{newMovie.MovieMetadata.Value.Studio.Title}] has been excluded");
                     }
                     else
                     {
@@ -238,7 +238,7 @@ namespace NzbDrone.Core.Movies
                             if (newMovie.MovieMetadata?.Value?.ReleaseDateUtc < dateTime)
                             {
                                 _importExclusionService.AddExclusion(newExclusion);
-                                throw new ValidationException($"Date: {newMovie.MovieMetadata?.Value.ReleaseDate} has been excluded before {dateTime.ToString("yyyy-MM-dd")}");
+                                throw new ValidationException($"Date: [{newMovie.MovieMetadata?.Value.ReleaseDate}] has been excluded before {dateTime.ToString("yyyy-MM-dd")}");
                             }
                         }
                     }
@@ -252,8 +252,18 @@ namespace NzbDrone.Core.Movies
                     if (excludedPerformers.Any())
                     {
                         _importExclusionService.AddExclusion(newExclusion);
-                        throw new ValidationException($"Performer: {string.Join(",", excludedPerformers.Select(ep => ep.MovieTitle).ToList())} has been excluded");
+                        throw new ValidationException($"Performer: [{string.Join(",", excludedPerformers.Select(ep => ep.MovieTitle).ToList())}] has been excluded");
                     }
+                }
+
+                var tagNames = newMovie.MovieMetadata.Value.Genres;
+                var excludedTags = _importExclusionService.GetAllByType(ImportExclusionType.Tag);
+                var exclusions = excludedTags.Where(e => tagNames.Contains(e.MovieTitle, StringComparer.OrdinalIgnoreCase)).ToList();
+
+                if (exclusions.Any())
+                {
+                    _importExclusionService.AddExclusion(newExclusion);
+                    throw new ValidationException($"Tag(s): [{string.Join(",", excludedTags.Select(et => et.MovieTitle).ToList())}] excluded");
                 }
             }
             else

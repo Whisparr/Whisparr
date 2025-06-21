@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
@@ -13,10 +14,15 @@ namespace NzbDrone.Integration.Test.ApiTests
         {
             WaitForCompletion(() => QualityProfiles.All().Count > 0);
 
-            foreach (var title in new[] { "Taboo", "Pulp Fiction" })
+            foreach (var title in new[] { "Taboo", "Sinner" })
             {
-                var newMovie = Movies.Lookup(title).First();
+                var lookupResults = Movies.Lookup(title);
+                if (!lookupResults.Any())
+                {
+                    throw new InvalidOperationException($"No movie found for title '{title}' in Movies.Lookup.");
+                }
 
+                var newMovie = lookupResults.First();
                 newMovie.QualityProfileId = 1;
                 newMovie.Path = string.Format(@"C:\Test\{0}", title).AsOsAgnostic();
 

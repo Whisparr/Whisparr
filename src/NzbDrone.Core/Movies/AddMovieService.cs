@@ -263,7 +263,7 @@ namespace NzbDrone.Core.Movies
                 if (exclusions.Any())
                 {
                     _importExclusionService.AddExclusion(newExclusion);
-                    throw new ValidationException($"Tag(s): [{string.Join(",", excludedTags.Select(et => et.MovieTitle).ToList())}] excluded");
+                    throw new ValidationException($"Tag(s): [{string.Join(",", exclusions.Select(et => et.MovieTitle).ToList())}] excluded");
                 }
             }
             else

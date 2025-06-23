@@ -632,9 +632,11 @@ namespace NzbDrone.Core.Movies
             // Find the best match
             if (matches.Count > 1)
             {
-                foreach (var movieMatchType in (MovieParseMatchType[])Enum.GetValues(typeof(MovieParseMatchType)))
+                var movieParseMatchTypes = (MovieParseMatchType[])Enum.GetValues(typeof(MovieParseMatchType));
+
+                foreach (var movieMatchType in movieParseMatchTypes)
                 {
-                    var filteredMatches = matches.Where(m => m.Value > movieMatchType).ToDictionary(x => x.Key, x => x.Value);
+                    var filteredMatches = matches.Where(m => (int)m.Value < (int)movieMatchType).ToDictionary(x => x.Key, x => x.Value);
                     if (releaseDate.IsNotNullOrWhiteSpace() && (int)movieMatchType < 2)
                     {
                         filteredMatches = new Dictionary<Movie, MovieParseMatchType>();

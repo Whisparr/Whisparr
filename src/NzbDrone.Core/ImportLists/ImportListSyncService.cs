@@ -43,6 +43,8 @@ namespace NzbDrone.Core.ImportLists
 
         private void SyncAll()
         {
+            _logger.Debug("Starting Import List Sync All");
+
             if (_importListFactory.Enabled().Empty())
             {
                 _logger.Debug("No enabled import lists, skipping sync and cleaning");
@@ -54,11 +56,13 @@ namespace NzbDrone.Core.ImportLists
 
             if (listItemsResult.SyncedLists == 0)
             {
+                _logger.Debug("No lists were synced, skipping cleaning and processing");
                 return;
             }
 
             if (!listItemsResult.AnyFailure)
             {
+                _logger.Debug("All lists were synced successfully, cleaning library");
                 CleanLibrary();
             }
 
@@ -125,6 +129,7 @@ namespace NzbDrone.Core.ImportLists
 
         private void ProcessListItems(ImportListFetchResult listFetchResult)
         {
+            _logger.Info("Processing {0} movies from {1} lists", listFetchResult.Movies.Count, listFetchResult.SyncedLists);
             listFetchResult.Movies = listFetchResult.Movies.DistinctBy(x =>
             {
                 if (x.ForeignId.IsNotNullOrWhiteSpace())
@@ -184,19 +189,22 @@ namespace NzbDrone.Core.ImportLists
         {
             if (_configService.ListSyncLevel == "disabled")
             {
+                _logger.Debug("List sync level is set to 'disabled', skipping library cleaning");
                 return;
             }
 
             var listMovies = _listMovieService.GetAllListMovies();
+            _logger.Debug("Found {0} movies in lists", listMovies.Count);
 
             // TODO use AllMovieTmdbIds here?
             var moviesInLibrary = _movieService.GetAllMovies();
+            _logger.Debug("Found {0} movies in library", moviesInLibrary.Count);
 
             var moviesToUpdate = new List<Movie>();
 
             foreach (var movie in moviesInLibrary)
             {
-                var movieExists = listMovies.Any(c => c.ForeignId == movie.ForeignId || c.ImdbId == movie.ImdbId);
+                var movieExists = listMovies.Any(c => c.ForeignId == movie.ForeignId);
 
                 if (!movieExists)
                 {
@@ -219,6 +227,10 @@ namespace NzbDrone.Core.ImportLists
                             _movieService.DeleteMovie(movie.Id, true);
                             break;
                     }
+                }
+                else
+                {
+                    _logger.Trace("{0} was in your library and found in your lists.  Keeping.", movie.ForeignId);
                 }
             }
 

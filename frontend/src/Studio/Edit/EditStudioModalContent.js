@@ -124,7 +124,7 @@ class EditStudioModalContent extends Component {
                     type={inputTypes.ROOT_FOLDER_SELECT}
                     name="rootFolderPath"
                     {...rootFolderPath}
-                    includeMissingValue={true}
+                    includeMissingValue={false}
                     onChange={onInputChange}
                   />
                 </FormGroup>

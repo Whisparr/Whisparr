@@ -8,6 +8,7 @@ using NzbDrone.Core.Qualities;
 using Whisparr.Api.V3.CustomFormats;
 using Whisparr.Api.V3.Movies;
 using Whisparr.Http;
+using Whisparr.Http.REST;
 
 namespace Whisparr.Api.V3.ManualImport
 {
@@ -37,6 +38,11 @@ namespace Whisparr.Api.V3.ManualImport
         [Consumes("application/json")]
         public object ReprocessItems([FromBody] List<ManualImportReprocessResource> items)
         {
+            if (items is { Count: 0 })
+            {
+                throw new BadRequestException("items must be provided");
+            }
+
             foreach (var item in items)
             {
                 var processedItem = _manualImportService.ReprocessItem(item.Path, item.DownloadId, item.MovieId, item.ReleaseGroup, item.Quality, item.Languages, item.IndexerFlags);

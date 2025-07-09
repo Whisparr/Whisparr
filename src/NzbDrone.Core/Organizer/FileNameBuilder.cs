@@ -465,13 +465,26 @@ namespace NzbDrone.Core.Organizer
 
         private void AddEpisodeTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, List<Episode> episodes)
         {
-            if (!episodes.First().AirDate.IsNullOrWhiteSpace())
+            var airDate = episodes.First().AirDate;
+
+            if (!airDate.IsNullOrWhiteSpace())
             {
-                tokenHandlers["{Release Date}"] = m => episodes.First().AirDate.Replace('-', ' ');
+                tokenHandlers["{Release Date}"] = m =>
+                {
+                    var sep = m.Separator == "-" ? "-" : " ";
+                    return airDate.Replace('-', sep[0]);
+                };
+
+                tokenHandlers["{Release ShortDate}"] = m =>
+                {
+                    var sep = m.Separator == "-" ? "-" : " ";
+                    return airDate.Substring(2).Replace('-', sep[0]);
+                };
             }
             else
             {
                 tokenHandlers["{Release Date}"] = m => "Unknown";
+                tokenHandlers["{Release ShortDate}"] = m => "Unknown";
             }
 
             tokenHandlers["{Episode Performers}"] = m =>

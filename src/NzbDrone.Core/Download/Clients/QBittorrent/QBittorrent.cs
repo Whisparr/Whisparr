@@ -235,7 +235,7 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
 
                 // Avoid removing torrents that haven't reached the global max ratio.
                 // Removal also requires the torrent to be paused, in case a higher max ratio was set on the torrent itself (which is not exposed by the api).
-                item.CanMoveFiles = item.CanBeRemoved = torrent.State == "pausedUP" && HasReachedSeedLimit(torrent, config);
+                item.CanMoveFiles = item.CanBeRemoved = torrent.State is "pausedUP" or "stoppedUP" && HasReachedSeedLimit(torrent, config);
 
                 switch (torrent.State)
                 {
@@ -244,7 +244,8 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
                         item.Message = "qBittorrent is reporting an error";
                         break;
 
-                    case "pausedDL": // torrent is paused and has NOT finished downloading
+                    case "stoppedDL": // torrent is stopped and has NOT finished downloading
+                    case "pausedDL": // torrent is paused and has NOT finished downloading (qBittorrent < 5)
                         item.Status = DownloadItemStatus.Paused;
                         break;
 
@@ -255,7 +256,8 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
                         item.Status = DownloadItemStatus.Queued;
                         break;
 
-                    case "pausedUP": // torrent is paused and has finished downloading:
+                    case "pausedUP": // torrent is paused and has finished downloading (qBittorent < 5)
+                    case "stoppedUP": // torrent is stopped and has finished downloading
                     case "uploading": // torrent is being seeded and data is being transferred
                     case "stalledUP": // torrent is being seeded, but no connection were made
                     case "queuedUP": // queuing is enabled and torrent is queued for upload
@@ -615,7 +617,7 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
                 }
             }
 
-            if (HasReachedSeedingTimeLimit(torrent, config))
+            if (HasReachedSeedingTimeLimit(torrent, config) || HasReachedInactiveSeedingTimeLimit(torrent, config))
             {
                 return true;
             }
@@ -685,6 +687,26 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
             }
 
             return false;
+        }
+
+        protected bool HasReachedInactiveSeedingTimeLimit(QBittorrentTorrent torrent, QBittorrentPreferences config)
+        {
+            long inactiveSeedingTimeLimit;
+
+            if (torrent.InactiveSeedingTimeLimit >= 0)
+            {
+                inactiveSeedingTimeLimit = torrent.InactiveSeedingTimeLimit * 60;
+            }
+            else if (torrent.InactiveSeedingTimeLimit == -2 && config.MaxInactiveSeedingTimeEnabled)
+            {
+                inactiveSeedingTimeLimit = config.MaxInactiveSeedingTime * 60;
+            }
+            else
+            {
+                return false;
+            }
+
+            return DateTimeOffset.UtcNow.ToUnixTimeSeconds() - torrent.LastActivity > inactiveSeedingTimeLimit;
         }
 
         protected void FetchTorrentDetails(QBittorrentTorrent torrent)

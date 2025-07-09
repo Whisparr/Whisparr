@@ -105,6 +105,8 @@ const seriesIdTokens = [
 const airDateTokens = [
   { token: '{Release-Date}', example: '2016-03-20' },
   { token: '{Release Date}', example: '2016 03 20' },
+  { token: '{Release-ShortDate}', example: '16-03-20' },
+  { token: '{Release ShortDate}', example: '16 03 20' },
   { token: '{Episode Year}', example: '2016' }
 ];
 

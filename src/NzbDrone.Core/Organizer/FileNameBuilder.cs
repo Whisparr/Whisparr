@@ -465,13 +465,20 @@ namespace NzbDrone.Core.Organizer
 
         private void AddEpisodeTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, List<Episode> episodes)
         {
-            if (!episodes.First().AirDate.IsNullOrWhiteSpace())
+            var airDate = episodes.First().AirDate;
+
+            if (!airDate.IsNullOrWhiteSpace())
             {
-                tokenHandlers["{Release Date}"] = m => episodes.First().AirDate.Replace('-', ' ');
+                tokenHandlers["{Release-Date}"] = m =>
+                    DateTime.TryParse(airDate, out var parsedFull) ? parsedFull.ToString("yyyy-MM-dd") : "Unknown";
+
+                tokenHandlers["{Release-ShortDate}"] = m =>
+                    DateTime.TryParse(airDate, out var parsedShort) ? parsedShort.ToString("yy-MM-dd") : "Unknown";
             }
             else
             {
-                tokenHandlers["{Release Date}"] = m => "Unknown";
+                tokenHandlers["{Release-Date}"] = m => "Unknown";
+                tokenHandlers["{Release-ShortDate}"] = m => "Unknown";
             }
 
             tokenHandlers["{Episode Performers}"] = m =>
@@ -479,6 +486,7 @@ namespace NzbDrone.Core.Organizer
                 var allPerformers = episodes.SelectMany(e => e.Actors.Select(a => a.Name)).Distinct().Take(4).ToList();
                 return string.Join(" ", allPerformers);
             };
+
             tokenHandlers["{Episode PerformersFemale}"] = m =>
             {
                 var femalePerformers = episodes
@@ -486,6 +494,7 @@ namespace NzbDrone.Core.Organizer
                     .Take(4).ToList();
                 return string.Join(" ", femalePerformers);
             };
+
             tokenHandlers["{Episode PerformersMale}"] = m =>
             {
                 var malePerformers = episodes
@@ -493,6 +502,7 @@ namespace NzbDrone.Core.Organizer
                     .Take(4).ToList();
                 return string.Join(" ", malePerformers);
             };
+
             tokenHandlers["{Episode PerformersOther}"] = m =>
             {
                 var otherPerformers = episodes
@@ -500,6 +510,7 @@ namespace NzbDrone.Core.Organizer
                     .Take(4).ToList();
                 return string.Join(" ", otherPerformers);
             };
+
             tokenHandlers["{TpdbSceneId}"] = m =>
             {
                 var scene = episodes.FirstOrDefault();

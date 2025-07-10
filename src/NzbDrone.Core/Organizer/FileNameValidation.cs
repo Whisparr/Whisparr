@@ -14,6 +14,8 @@ namespace NzbDrone.Core.Organizer
 
         internal static readonly Regex OriginalTokenRegex = new Regex(@"(\{original[- ._](?:title|filename)\})",
                                                                             RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        internal static readonly Regex ShortDateTokenRegex = new Regex(@"\{release[- _\.]?shortdate\}",
+            RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         public static IRuleBuilderOptions<T, string> ValidEpisodeFormat<T>(this IRuleBuilder<T, string> ruleBuilder)
         {
@@ -42,7 +44,7 @@ namespace NzbDrone.Core.Organizer
 
     public class ValidStandardEpisodeFormatValidator : PropertyValidator
     {
-        protected override string GetDefaultMessageTemplate() => "Must contain release date OR Original Title";
+        protected override string GetDefaultMessageTemplate() => "Must contain Release Date, Release ShortDate OR Original Title";
 
         protected override bool IsValid(PropertyValidatorContext context)
         {
@@ -52,7 +54,8 @@ namespace NzbDrone.Core.Organizer
             }
 
             return FileNameBuilder.AirDateRegex.IsMatch(value) ||
-                   FileNameValidation.OriginalTokenRegex.IsMatch(value);
+                   FileNameValidation.OriginalTokenRegex.IsMatch(value) ||
+                   FileNameValidation.ShortDateTokenRegex.IsMatch(value);
         }
     }
 

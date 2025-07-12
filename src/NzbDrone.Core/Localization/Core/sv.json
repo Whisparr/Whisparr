@@ -1076,5 +1076,13 @@
     "YesCancel": "Ja, avbryt",
     "YesMoveFiles": "Ja, flytta filerna",
     "Yesterday": "Igår",
-    "YouCanAlsoSearch": "Du kan också söka med TMDb-id eller IMDb-id för en film t.ex. `tmdb:71663`"
+    "YouCanAlsoSearch": "Du kan också söka med TMDb-id eller IMDb-id för en film t.ex. `tmdb:71663`",
+    "AddReleaseProfile": "Redigera fördröjningsprofil",
+    "AllTitles": "Samtliga filer",
+    "Clone": "Avsluta",
+    "EditReleaseProfile": "Redigera fördröjningsprofil",
+    "Reddit": "Reddit",
+    "ExclusionTitle": "Titel",
+    "ExclusionType": "Typ",
+    "IMDb": "IMDb"
 }

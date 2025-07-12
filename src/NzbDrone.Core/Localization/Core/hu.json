@@ -1424,5 +1424,10 @@
     "WouldYouLikeToRestoreBackup": "Szeretné visszaállítani a(z) „{name}” biztonsági másolatot?",
     "Year": "Év",
     "Yes": "Igen",
-    "YesCancel": "Igen, elvet"
+    "YesCancel": "Igen, elvet",
+    "ExclusionTitle": "Cím",
+    "ExclusionType": "Típus",
+    "DateAdded": "Hozzáadás dátuma",
+    "UnmappedFiles": "Leképezés nélküli fájlok",
+    "DeleteSelected": "Kijelöltek eltávolítása"
 }

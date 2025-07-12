@@ -20,7 +20,7 @@
     "AddCondition": "Legg til betingelse",
     "AddConditionError": "Ikke mulig å legge til ny betingelse, vennligst prøv igjen",
     "AddConditionImplementation": "Legg til betingelse - {implementationName}",
-    "AddConnection": "Legg til kobling",
+    "AddConnection": "Legg til tilkobling",
     "AddConnectionImplementation": "Legg til betingelse - {implementationName}",
     "AddCustomFormat": "Legg til egendefinert format",
     "AddCustomFormatError": "Ikke mulig å legge til ny automatisk tagg, vennligst prøv igjen",
@@ -309,5 +309,15 @@
     "UrlBase": "URL Base",
     "Usenet": "Usenet",
     "Username": "Brukernavn",
-    "YouCanAlsoSearch": "Du kan også søke ved hjelp av TMDb -ID for en film. f.eks. 'tmdb: 71663'"
+    "YouCanAlsoSearch": "Du kan også søke ved hjelp av TMDb -ID for en film. f.eks. 'tmdb: 71663'",
+    "Clone": "Lukk",
+    "Reason": "Sesong",
+    "FailedLoadingSearchResults": "Kunne ikke laste søkeresultat, vennligst prøv igjen.",
+    "ExclusionTitle": "Tittel",
+    "AddDownloadClientImplementation": "Ny Nedlastingsklient - {implementationName}",
+    "AddImportList": "Ny Importliste",
+    "AddImportListImplementation": "Legg til importliste - {implementationName}",
+    "AddRemotePathMappingError": "Kunne ikke legge til ny ekstern stimapping, vennligst prøv igjen.",
+    "AddRootFolderError": "Kunne ikke legge til rotmappe",
+    "History": "Historikk"
 }

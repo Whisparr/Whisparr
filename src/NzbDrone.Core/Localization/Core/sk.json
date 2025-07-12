@@ -279,5 +279,9 @@
     "UrlBase": "Základ URL",
     "Usenet": "Usenet",
     "Username": "Používateľské meno",
-    "YouCanAlsoSearch": "Môžete takisto vyhľadávať pomocou TMDb ID filmu. napr. 'tmdb:71663'"
+    "YouCanAlsoSearch": "Môžete takisto vyhľadávať pomocou TMDb ID filmu. napr. 'tmdb:71663'",
+    "AllTitles": "Všetky súbory",
+    "Clone": "Zatvoriť",
+    "Reason": "Séria",
+    "ExclusionTitle": "Názov"
 }

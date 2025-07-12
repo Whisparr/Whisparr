@@ -22,5 +22,7 @@
     "ExportCustomFormat": "Pievienot Pielāgotu Formātu",
     "ImportCustomFormat": "Pievienot Pielāgotu Formātu",
     "Movies": "Filmu",
-    "New": "Jauns"
+    "New": "Jauns",
+    "AddReleaseProfile": "Pievienot Aizkaves Profilu",
+    "EditReleaseProfile": "Pievienot Aizkaves Profilu"
 }

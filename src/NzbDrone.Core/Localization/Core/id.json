@@ -11,7 +11,7 @@
     "Activity": "Aktivitas",
     "Add": "Tambah",
     "AddCustomFormat": "Tambahkan Format Khusus",
-    "AddDownloadClient": "Tambahkan Klien Pengunduhan",
+    "AddDownloadClient": "Tambahkan Download Client",
     "Added": "Ditambahkan",
     "AddedToDownloadQueue": "Ditambahkan ke antrean pengunduhan",
     "AddIndexer": "Tambahkan Pengindeks",
@@ -172,5 +172,9 @@
     "Week": "Minggu",
     "Weeks": "Minggu",
     "Yesterday": "Kemarin",
-    "YouCanAlsoSearch": "Kamu juga bisa menelusuri menggunakan Id TMDb filmnya, misalnya 'tmdb:71663'"
+    "YouCanAlsoSearch": "Kamu juga bisa menelusuri menggunakan Id TMDb filmnya, misalnya 'tmdb:71663'",
+    "Clone": "Tutup",
+    "EnableSsl": "Aktifkan RSS",
+    "AddDelayProfile": "Tambah Delay Profile",
+    "AddCustomFormatError": "Tidak dapat menambahkan format khusus baru, coba lagi."
 }

@@ -877,7 +877,7 @@
     "RefreshMovie": "Film vernieuwen",
     "RegularExpressionsCanBeTested": "Reguliere expressies kunnen [hier] worden getest (http:://regexstorm.net/tester).",
     "RejectionCount": "Afwijzingsniveau",
-    "Release": "Uitgebracht",
+    "Release": "Uitgave",
     "ReleaseBranchCheckOfficialBranchMessage": "Branch {0} is geen geldige {appName} release branch, u zult geen updates ontvangen",
     "Released": "Uitgebracht",
     "ReleaseDate": "Uitgave Datums",
@@ -1211,5 +1211,11 @@
     "YesCancel": "Ja, Annuleren",
     "YesMoveFiles": "Ja, verplaats de bestanden",
     "Yesterday": "Gisteren",
-    "YouCanAlsoSearch": "U kunt ook zoeken met het TMDb Id of het IMDb Id van een film. Bijv. `tmdb:71663`"
+    "YouCanAlsoSearch": "U kunt ook zoeken met het TMDb Id of het IMDb Id van een film. Bijv. `tmdb:71663`",
+    "Reddit": "Reddit",
+    "IMDb": "IMDb",
+    "Socks4": "Socks4",
+    "ExclusionTitle": "Titel",
+    "ExclusionType": "Type",
+    "UnmappedFiles": "Niet-toegewezen Mappen"
 }

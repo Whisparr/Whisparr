@@ -1047,5 +1047,13 @@
     "YesCancel": "ใช่ยกเลิก",
     "YesMoveFiles": "ใช่ย้ายไฟล์",
     "Yesterday": "เมื่อวานนี้",
-    "YouCanAlsoSearch": "คุณยังสามารถค้นหาโดยใช้ TMDb ID หรือ IMDb ID ของภาพยนตร์ เช่น. `tmdb: 71663`"
+    "YouCanAlsoSearch": "คุณยังสามารถค้นหาโดยใช้ TMDb ID หรือ IMDb ID ของภาพยนตร์ เช่น. `tmdb: 71663`",
+    "AddReleaseProfile": "แก้ไขโปรไฟล์ความล่าช้า",
+    "AllTitles": "เอกสารทั้งหมด",
+    "Clone": "ปิด",
+    "EditReleaseProfile": "แก้ไขโปรไฟล์ความล่าช้า",
+    "Discord": "ไม่ลงรอยกัน",
+    "ExclusionTitle": "หัวข้อ",
+    "ExclusionType": "ประเภท",
+    "UnmappedFiles": "โฟลเดอร์ที่ไม่ได้แมป"
 }

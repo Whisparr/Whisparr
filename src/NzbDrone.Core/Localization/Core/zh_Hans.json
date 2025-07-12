@@ -1,0 +1,20 @@
+{
+    "About": "关于",
+    "Add": "添加",
+    "Always": "总是",
+    "Analytics": "分析",
+    "Username": "用户名",
+    "AcceptConfirmationModal": "中文",
+    "Activity": "111",
+    "YouCanAlsoSearch": "你可以通过TMDB或IMDB的ID进行搜索，如:`tmdb:71663`",
+    "yymmdd": "年.月.日",
+    "YesCancel": "确认 ,取消",
+    "Yesterday": "昨天",
+    "Backup": "备份",
+    "BackupNow": "立即备份",
+    "Updates": "更新",
+    "UseProxy": "使用代理",
+    "Uptime": "运行时间",
+    "Warn": "警告",
+    "AddAutoTagError": "添加"
+}

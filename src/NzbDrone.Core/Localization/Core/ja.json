@@ -1025,5 +1025,15 @@
     "YesCancel": "はい、キャンセル",
     "YesMoveFiles": "はい、ファイルを移動します",
     "Yesterday": "昨日",
-    "YouCanAlsoSearch": "映画のTMDbIDまたはIMDbIDを使用して検索することもできます。例えば`tmdb：71663`"
+    "YouCanAlsoSearch": "映画のTMDbIDまたはIMDbIDを使用して検索することもできます。例えば`tmdb：71663`",
+    "AddReleaseProfile": "遅延プロファイルの編集",
+    "AllTitles": "すべてのファイル",
+    "Clone": "閉じる",
+    "EditReleaseProfile": "遅延プロファイルの編集",
+    "Trakt": "Trakt",
+    "NetCore": ".NET",
+    "IMDb": "IMDb",
+    "ExclusionTitle": "題名",
+    "ExclusionType": "タイプ",
+    "UnmappedFiles": "マップされていないフォルダ"
 }

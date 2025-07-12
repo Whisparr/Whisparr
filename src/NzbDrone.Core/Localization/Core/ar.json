@@ -1056,5 +1056,12 @@
     "YesCancel": "نعم إلغاء",
     "YesMoveFiles": "نعم ، انقل الملفات",
     "Yesterday": "في الامس",
-    "YouCanAlsoSearch": "يمكنك أيضًا البحث باستخدام معرف TMDb أو معرف IMDb للفيلم. على سبيل المثال \"tmdb: 71663\""
+    "YouCanAlsoSearch": "يمكنك أيضًا البحث باستخدام معرف TMDb أو معرف IMDb للفيلم. على سبيل المثال \"tmdb: 71663\"",
+    "AddReleaseProfile": "تحرير ملف تعريف التأخير",
+    "AllTitles": "كل الملفات",
+    "Clone": "قريب",
+    "EditReleaseProfile": "تحرير ملف تعريف التأخير",
+    "ExclusionTitle": "عنوان",
+    "ExclusionType": "اكتب",
+    "UnmappedFiles": "المجلدات غير المعينة"
 }

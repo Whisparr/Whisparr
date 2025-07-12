@@ -20,9 +20,9 @@
     "Actions": "פעולות",
     "Activity": "פעילות",
     "Add": "הוסף",
-    "AddAutoTag": "הוסף טגית אוטומטית",
-    "AddAutoTagError": "לא ניתן להוסיף רשימה חדשה, אנא נסה שוב.",
-    "AddConditionError": "לא ניתן להוסיף תנאי חדש, נסה שוב.",
+    "AddAutoTag": "הוסף תג אוטומטית",
+    "AddAutoTagError": "לא ניתן להוסיף תג חדש, נסה שנית.",
+    "AddConditionError": "לא ניתן להוסיף תנאי חדש, נסה שנית.",
     "AddCustomFormat": "הוסף פורמט מותאם אישית",
     "AddCustomFormatError": "לא ניתן להוסיף פורמט מותאם אישית חדש, נסה שוב.",
     "AddDelayProfile": "הוסף פרופיל עיכוב",
@@ -1068,5 +1068,13 @@
     "YesCancel": "כן, בטל",
     "YesMoveFiles": "כן, העבר את הקבצים",
     "Yesterday": "אתמול",
-    "YouCanAlsoSearch": "ניתן גם לחפש באמצעות מזהה TMDb או מזהה IMDb של סרט. לְמָשָׁל 'tmdb: 71663'"
+    "YouCanAlsoSearch": "ניתן גם לחפש באמצעות מזהה TMDb או מזהה IMDb של סרט. לְמָשָׁל 'tmdb: 71663'",
+    "AddReleaseProfile": "ערוך פרופיל עיכוב",
+    "AllTitles": "כל הקבצים",
+    "Clone": "סגור",
+    "EditReleaseProfile": "ערוך פרופיל עיכוב",
+    "AddCondition": "הוסף תנאי",
+    "ExclusionTitle": "כותרת",
+    "ExclusionType": "סוּג",
+    "UnmappedFiles": "תיקיות לא ממופות"
 }

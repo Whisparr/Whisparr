@@ -1053,5 +1053,12 @@
     "YesCancel": "Já, hætta við",
     "YesMoveFiles": "Já, hreyfðu skrárnar",
     "Yesterday": "Í gær",
-    "YouCanAlsoSearch": "Þú getur líka leitað með því að nota TMDb auðkenni eða IMDb auðkenni kvikmyndar. t.d. `tmdb: 71663`"
+    "YouCanAlsoSearch": "Þú getur líka leitað með því að nota TMDb auðkenni eða IMDb auðkenni kvikmyndar. t.d. `tmdb: 71663`",
+    "AddReleaseProfile": "Breyta seinkunarprófíl",
+    "AllTitles": "Allar skrár",
+    "Clone": "Lokaðu",
+    "EditReleaseProfile": "Breyta seinkunarprófíl",
+    "ExclusionTitle": "Titill",
+    "ExclusionType": "Tegund",
+    "UnmappedFiles": "Ókortlagðar möppur"
 }

@@ -1036,5 +1036,16 @@
     "YesCancel": "हाँ, रद्द करें",
     "YesMoveFiles": "हाँ, फ़ाइलें स्थानांतरित करें",
     "Yesterday": "बिता कल",
-    "YouCanAlsoSearch": "आप किसी मूवी की TMDb ID या IMDb ID का उपयोग करके भी खोज सकते हैं। जैसे `TMDb: 71663`"
+    "YouCanAlsoSearch": "आप किसी मूवी की TMDb ID या IMDb ID का उपयोग करके भी खोज सकते हैं। जैसे `TMDb: 71663`",
+    "AllTitles": "सारे दस्तावेज",
+    "BranchUpdate": "रेडर को अपडेट करने के लिए उपयोग करने के लिए शाखा",
+    "Clone": "बंद करे",
+    "EditReleaseProfile": "देरी प्रोफ़ाइल संपादित करें",
+    "OnLatestVersion": "रेडर का नवीनतम संस्करण पहले से ही स्थापित है",
+    "AddReleaseProfile": "देरी प्रोफ़ाइल संपादित करें",
+    "IMDb": "आईएमडीबी",
+    "Trakt": "Trakt",
+    "ExclusionTitle": "शीर्षक",
+    "ExclusionType": "प्रकार",
+    "UnmappedFiles": "बिना मोड़े हुए फोल्डर"
 }

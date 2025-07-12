@@ -1179,5 +1179,12 @@
     "WhitelistedSubtitleTags": "Ετικέτες υπότιτλων στη λίστα επιτρεπόμενων",
     "Wiki": "Wiki",
     "Year": "Ετος",
-    "Yes": "Ναί"
+    "Yes": "Ναί",
+    "AllTitles": "Ολα τα αρχεία",
+    "DownloadIgnored": "Λήψη Εισήχθη",
+    "IMDb": "IMDb",
+    "ExclusionTitle": "Τίτλος",
+    "ExclusionType": "Τύπος",
+    "DateAdded": "Ημερομηνία προστέθηκε",
+    "DeleteSelected": "Διαγραφή επιλεγμένων"
 }

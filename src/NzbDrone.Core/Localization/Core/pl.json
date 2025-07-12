@@ -1173,5 +1173,12 @@
     "YesCancel": "Tak, anuluj",
     "YesMoveFiles": "Tak, przenieś pliki",
     "Yesterday": "Wczoraj",
-    "YouCanAlsoSearch": "Możesz również wyszukiwać za pomocą TMDb ID lub IMDb ID filmu. na przykład `tmdb: 71663`"
+    "YouCanAlsoSearch": "Możesz również wyszukiwać za pomocą TMDb ID lub IMDb ID filmu. na przykład `tmdb: 71663`",
+    "Clone": "Zamknij",
+    "ExclusionTitle": "Tytuł",
+    "ExclusionType": "Rodzaj",
+    "Or": "lub",
+    "True": "Prawda",
+    "Umask": "Umask",
+    "UnmappedFiles": "Niezmapowane foldery"
 }

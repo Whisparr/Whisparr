@@ -5,6 +5,7 @@ import Label from 'Components/Label';
 import ConfirmModal from 'Components/Modal/ConfirmModal';
 import { kinds } from 'Helpers/Props';
 import formatShortTimeSpan from 'Utilities/Date/formatShortTimeSpan';
+import getRelativeDate from 'Utilities/Date/getRelativeDate';
 import translate from 'Utilities/String/translate';
 import EditImportListModalConnector from './EditImportListModalConnector';
 import styles from './ImportList.css';
@@ -58,7 +59,8 @@ class ImportList extends Component {
       name,
       enabled,
       enableAuto,
-      minRefreshInterval
+      minRefreshInterval,
+      lastInfoSync
     } = this.props;
 
     return (
@@ -100,6 +102,22 @@ class ImportList extends Component {
           </Label>
         </div>
 
+        {lastInfoSync && <div className={styles.enabled}>
+          <Label kind={kinds.DEFAULT} title='List Refresh Time'>
+            {`${translate('Refreshed')}: ${getRelativeDate(
+              lastInfoSync,
+              'MM/DD/YYYY',
+              true,
+              {
+                timeFormat: 'HH:mm',
+                includeSeconds: false,
+                timeForToday: true
+              })
+            }`}
+          </Label>
+        </div>
+        }
+
         <EditImportListModalConnector
           id={id}
           isOpen={this.state.isEditImportListModalOpen}
@@ -127,7 +145,8 @@ ImportList.propTypes = {
   enabled: PropTypes.bool.isRequired,
   enableAuto: PropTypes.bool.isRequired,
   minRefreshInterval: PropTypes.string.isRequired,
-  onConfirmDeleteImportList: PropTypes.func.isRequired
+  onConfirmDeleteImportList: PropTypes.func.isRequired,
+  lastInfoSync: PropTypes.string
 };
 
 export default ImportList;

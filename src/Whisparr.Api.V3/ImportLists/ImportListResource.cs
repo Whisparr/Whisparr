@@ -15,10 +15,18 @@ namespace Whisparr.Api.V3.ImportLists
         public ImportListType ListType { get; set; }
         public int ListOrder { get; set; }
         public TimeSpan MinRefreshInterval { get; set; }
+        public DateTime? LastInfoSync { get; set; }
     }
 
     public class ImportListResourceMapper : ProviderResourceMapper<ImportListResource, ImportListDefinition>
     {
+        private readonly IImportListStatusService _importListStatusService;
+
+        public ImportListResourceMapper(IImportListStatusService importListStatusService)
+        {
+            _importListStatusService = importListStatusService;
+        }
+
         public override ImportListResource ToResource(ImportListDefinition definition)
         {
             if (definition == null)
@@ -37,6 +45,7 @@ namespace Whisparr.Api.V3.ImportLists
             resource.ListType = definition.ListType;
             resource.ListOrder = (int)definition.ListType;
             resource.MinRefreshInterval = definition.MinRefreshInterval;
+            resource.LastInfoSync = _importListStatusService.GetLastSyncListInfo(definition.Id);
 
             return resource;
         }

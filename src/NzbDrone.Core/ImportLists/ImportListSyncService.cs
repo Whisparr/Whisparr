@@ -43,7 +43,7 @@ namespace NzbDrone.Core.ImportLists
 
         private void SyncAll()
         {
-            _logger.Debug("Starting Import List Sync All");
+            _logger.Trace("Starting Import List Sync All");
 
             if (_importListFactory.Enabled().Empty())
             {

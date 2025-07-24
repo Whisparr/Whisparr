@@ -57,7 +57,7 @@ namespace NzbDrone.Core.ImportLists
                 return result;
             }
 
-            _logger.Debug("Available import lists {0}", importLists.Count);
+            _logger.Trace("Available import lists {0}", importLists.Count);
 
             var taskList = new List<Task>();
             var taskFactory = new TaskFactory(TaskCreationOptions.LongRunning, TaskContinuationOptions.None);
@@ -73,19 +73,29 @@ namespace NzbDrone.Core.ImportLists
 
                     if (DateTime.UtcNow < importListNextSync)
                     {
-                        _logger.Trace("Skipping refresh of Import List {0} ({1}) due to minimum refresh interval. Next Sync after {2}", importList.Name, importListLocal.Definition.Name, importListNextSync);
+                        _logger.Trace(
+                            "Skipping refresh of Import List {0} ({1}) due to minimum refresh interval. Next Sync after {2}",
+                            importList.Name,
+                            importListLocal.Definition.Name,
+                            importListNextSync);
 
                         continue;
                     }
                 }
 
-                _logger.ProgressInfo("Syncing Movies for Import List {0} ({1})", importList.Name, importListLocal.Definition.Name);
+                _logger.ProgressInfo("Syncing Movies for Import List {0} ({1})",
+                    importList.Name,
+                    importListLocal.Definition.Name);
 
-                var blockedLists = _importListStatusService.GetBlockedProviders().ToDictionary(v => v.ProviderId, v => v);
+                var blockedLists = _importListStatusService.GetBlockedProviders()
+                    .ToDictionary(v => v.ProviderId, v => v);
 
                 if (blockedLists.TryGetValue(importList.Definition.Id, out var blockedListStatus))
                 {
-                    _logger.Debug("Temporarily ignoring Import List {0} ({1}) till {2} due to recent failures.", importList.Name, importListLocal.Definition.Name, blockedListStatus.DisabledTill.Value.ToLocalTime());
+                    _logger.Debug("Temporarily ignoring Import List {0} ({1}) till {2} due to recent failures.",
+                        importList.Name,
+                        importListLocal.Definition.Name,
+                        blockedListStatus.DisabledTill.Value.ToLocalTime());
                     result.AnyFailure |= true; // Ensure we don't clean if a list is down
                     continue;
                 }
@@ -98,12 +108,21 @@ namespace NzbDrone.Core.ImportLists
 
                         lock (result)
                         {
-                            _logger.Debug("Found {0} from Import List {1} ({2})", importListReports.Movies.Count, importList.Name, importListLocal.Definition.Name);
+                            _logger.Debug("Found {0} from Import List {1} ({2})",
+                                importListReports.Movies.Count,
+                                importList.Name,
+                                importListLocal.Definition.Name);
 
                             if (!importListReports.AnyFailure)
                             {
-                                var alreadyMapped = result.Movies.Where(x => importListReports.Movies.Any(r => r.ForeignId == x.TmdbId.ToString() || r.ForeignId == x.StashId));
-                                var listMovies = MapMovieReports(importListReports.Movies.Where(x => result.Movies.All(r => r.ForeignId != x.TmdbId.ToString() && r.ForeignId != x.StashId))).Where(x => x.ForeignId.IsNotNullOrWhiteSpace()).ToList();
+                                var alreadyMapped = result.Movies.Where(x =>
+                                    importListReports.Movies.Any(r =>
+                                        r.ForeignId == x.TmdbId.ToString() || r.ForeignId == x.StashId));
+                                var listMovies =
+                                    MapMovieReports(importListReports.Movies.Where(x =>
+                                            result.Movies.All(r =>
+                                                r.ForeignId != x.TmdbId.ToString() && r.ForeignId != x.StashId)))
+                                        .Where(x => x.ForeignId.IsNotNullOrWhiteSpace()).ToList();
 
                                 listMovies.AddRange(alreadyMapped);
                                 listMovies = listMovies.DistinctBy(x => x.ForeignId).ToList();
@@ -121,7 +140,10 @@ namespace NzbDrone.Core.ImportLists
                     }
                     catch (Exception e)
                     {
-                        _logger.Error(e, "Error during Import List Sync of {0} ({1})", importList.Name, importListLocal.Definition.Name);
+                        _logger.Error(e,
+                            "Error during Import List Sync of {0} ({1})",
+                            importList.Name,
+                            importListLocal.Definition.Name);
                     }
                 }).LogExceptions();
 
@@ -132,10 +154,14 @@ namespace NzbDrone.Core.ImportLists
 
             result.Movies = result.Movies.DistinctBy(r => new { r.ForeignId, r.ImdbId, r.Title }).ToList();
 
-            _logger.Debug("Found {0} total reports from {1} lists", result.Movies.Count, result.SyncedLists);
+            // Don't log empty results every 5 minutes
+            if (result.Movies.Count > 0)
+            {
+                _logger.Debug("Found {0} total reports from {1} lists", result.Movies.Count, result.SyncedLists);
+            }
 
             return result;
-        }
+            }
 
         public ImportListFetchResult FetchSingleList(ImportListDefinition definition)
         {
@@ -175,6 +201,7 @@ namespace NzbDrone.Core.ImportLists
                     result.AnyFailure |= importListReports.AnyFailure;
 
                     _importListStatusService.UpdateListSyncStatus(importList.Definition.Id);
+                    _logger.Debug("Import list [{importList}] updated at {now}", importList.Name, DateTime.UtcNow);
                 }
             }
             catch (Exception e)

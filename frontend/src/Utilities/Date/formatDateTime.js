@@ -31,7 +31,7 @@ function formatDateTime(date, dateFormat, timeFormat, { includeSeconds = false, 
   }
 
   const relativeDay = getRelativeDay(date, includeRelativeDay);
-  const formattedDate = moment(date).format(dateFormat);
+  const formattedDate = dateFormat ? moment(date).format(dateFormat) : '';
   const formattedTime = formatTime(date, timeFormat, { includeMinuteZero: true, includeSeconds });
 
   if (relativeDay) {

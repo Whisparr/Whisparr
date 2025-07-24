@@ -7,6 +7,7 @@ using NLog;
 using NzbDrone.Common.Cloud;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
+using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Exceptions;
 using NzbDrone.Core.Languages;
 using NzbDrone.Core.MediaCover;
@@ -25,6 +26,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
 
         public SkyHookProxy(IHttpClient httpClient,
                             IWhisparrCloudRequestBuilder requestBuilder,
+                            IConfigFileProvider configFileProvider,
                             ISeriesService seriesService,
                             Logger logger)
         {
@@ -32,6 +34,25 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             _requestBuilder = requestBuilder.WhisparrMetadata;
             _logger = logger;
             _seriesService = seriesService;
+
+            var metadataUrl = configFileProvider.WhisparrMetadata;
+
+            if (string.IsNullOrEmpty(metadataUrl))
+            {
+                metadataUrl = "https://api.whisparr.com/v3/{route}";
+            }
+            else
+            {
+                if (!metadataUrl.Contains("{route}"))
+                {
+                    metadataUrl = metadataUrl.TrimEnd('/') + "/{route}";
+                }
+            }
+
+            Console.WriteLine($"Final metadata URL: {metadataUrl}");
+
+            _requestBuilder = new HttpRequestBuilder(metadataUrl)
+                .CreateFactory();
         }
 
         public Tuple<Series, List<Episode>> GetSeriesInfo(int tvdbSeriesId)

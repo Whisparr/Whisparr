@@ -175,3 +175,6 @@ node_modules.nosync
 
 # API doc generation
 .config/
+
+# Ignore global.json file for allowing builds on non-Widows systems
+src/global.json

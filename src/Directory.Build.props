@@ -4,7 +4,7 @@
     <AnalysisLevel>6.0-all</AnalysisLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-	<ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
+	  <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
 
     <PlatformTarget>AnyCPU</PlatformTarget>
     <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
@@ -36,7 +36,16 @@
     <!--
         CS1591: Missing XML comment for publicly visible type or member 'Type_or_Member'
     -->
-    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <NoWarn>$(NoWarn);CS1591;NETSDK1201</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' != '' and '$(SelfContained)' == ''">
+    <!--
+    Set the SelfContained property to true if the RuntimeIdentifier is set and SelfContained is not already specified.
+    This allows the project to be self-contained without needing to specify it explicitly in every project.
+    Suppresses NETSDK1201 when building .net 6 via .net 8+
+    -->
+    <SelfContained>true</SelfContained>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -164,5 +173,9 @@
     <_UsingDefaultRuntimeIdentifier>true</_UsingDefaultRuntimeIdentifier>
     <RuntimeIdentifier>osx-x64</RuntimeIdentifier>
   </PropertyGroup>
+
+  <ItemGroup Condition="'$(WhisparrProject)' == 'true'">
+  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+</ItemGroup>
 
 </Project>

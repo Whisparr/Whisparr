@@ -31,6 +31,14 @@ Note that only one type of a given movie is supported. If you want both an 4k ve
 * Advanced customization for profiles, such that Whisparr will always download the copy you want
 * A beautiful UI
 
+## Installation
+### Version 2.x (based on Sonarr), focuses on studios
+See https://wiki.servarr.com/whisparr/installation
+
+### Version 3.x (based on Radarr), focuses on scenes, but also supports movies.
+Docker-only, use `image: hotio/whisparr:v3` in Docker Compose
+See https://wiki.servarr.com/whisparr/installation/docker
+
 ## Support
 
 [![Wiki](https://img.shields.io/badge/servarr-wiki-181717.svg?maxAge=60)](https://wiki.servarr.com/whisparr)

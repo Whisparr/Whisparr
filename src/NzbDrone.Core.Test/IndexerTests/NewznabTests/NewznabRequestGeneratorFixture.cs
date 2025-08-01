@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
@@ -13,6 +14,7 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
     public class NewznabRequestGeneratorFixture : CoreTest<NewznabRequestGenerator>
     {
         private SingleEpisodeSearchCriteria _singleEpisodeSearchCriteria;
+        private SeasonSearchCriteria _seasonSearchCriteria;
         private NewznabCapabilities _capabilities;
 
         [SetUp]
@@ -32,8 +34,17 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
 
             _singleEpisodeSearchCriteria = new SingleEpisodeSearchCriteria
             {
-                Series = new Tv.Series { TvdbId = 20 },
+                Series = new Tv.Series { TvdbId = 20, Title = "Monkey Island", Network = "HBO" },
                 SceneTitles = new List<string> { "Monkey Island" },
+                EpisodeTitle = "Pilot Episode",
+                ReleaseDate = new DateOnly(2021, 3, 15)
+            };
+
+            _seasonSearchCriteria = new SeasonSearchCriteria
+            {
+                Series = new Tv.Series { TvdbId = 20, Title = "Monkey Island", Network = "HBO" },
+                SceneTitles = new List<string> { "Monkey Island" },
+                Year = 2021
             };
 
             _capabilities = new NewznabCapabilities();
@@ -146,6 +157,155 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
             pageTier.Url.Query.Should().Contain("and");
             pageTier.Url.Query.Should().NotContain(" & ");
             pageTier.Url.Query.Should().NotContain("%26");
+        }
+
+        [Test]
+        public void should_search_title_only_when_enabled()
+        {
+            _capabilities.SupportedSearchParameters = new[] { "q" };
+            Subject.Settings.SearchTitleOnly = true;
+
+            var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
+            var requests = results.GetAllTiers().SelectMany(x => x).ToList();
+
+            // Should have default search requests plus title-only search
+            requests.Should().HaveCountGreaterThan(0);
+            requests.Should().Contain(x => x.Url.Query.Contains("Pilot") && x.Url.Query.Contains("Episode"));
+        }
+
+        [Test]
+        public void should_search_site_plus_title_when_enabled()
+        {
+            _capabilities.SupportedSearchParameters = new[] { "q" };
+            Subject.Settings.SearchSiteTitleOnly = true;
+
+            var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
+            var requests = results.GetAllTiers().SelectMany(x => x).ToList();
+
+            requests.Should().HaveCountGreaterThan(0);
+
+            // Should have some request containing both series and episode info
+
+            requests.Should().Contain(x => x.Url.Query.Contains("Monkey") && x.Url.Query.Contains("Pilot"));
+        }
+
+        [Test]
+        public void should_use_both_date_formats_when_configured()
+        {
+            _capabilities.SupportedSearchParameters = new[] { "q" };
+            Subject.Settings.DateSearchFormat = DateSearchFormat.Both;
+
+            var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
+            var requests = results.GetAllTiers().SelectMany(x => x).ToList();
+
+            requests.Should().HaveCountGreaterThan(0);
+
+            // Should have requests with both YY.MM.DD (21.03.15) and DD.MM.YY (15.03.21) formats
+            // The dots might be URL encoded as %2E
+            var allQueries = string.Join(" ", requests.Select(x => x.Url.Query));
+            allQueries.Should().Match("*21*03*15*"); // YY.MM.DD format
+            allQueries.Should().Match("*15*03*21*"); // DD.MM.YY format
+        }
+
+        [Test]
+        public void should_use_day_month_year_format_when_configured()
+        {
+            _capabilities.SupportedSearchParameters = new[] { "q" };
+            Subject.Settings.DateSearchFormat = DateSearchFormat.DayMonthYear;
+
+            var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
+            var requests = results.GetAllTiers().SelectMany(x => x).ToList();
+
+            requests.Should().HaveCountGreaterThan(0);
+
+            // When DateSearchFormat.DayMonthYear is set, should have DD.MM.YY format
+            var allQueries = string.Join(" ", requests.Select(x => x.Url.Query));
+            allQueries.Should().Match("*15*03*21*"); // Should have DD.MM.YY format
+        }
+
+        [Test]
+        public void should_use_network_name_when_series_name_source_is_network()
+        {
+            _capabilities.SupportedSearchParameters = new[] { "q" };
+            Subject.Settings.SearchSiteTitleOnly = true;
+            Subject.Settings.SeriesNameSource = SeriesNameSource.Network;
+
+            var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
+            var requests = results.GetAllTiers().SelectMany(x => x).ToList();
+
+            requests.Should().HaveCountGreaterThan(0);
+            requests.Should().Contain(x => x.Url.Query.Contains("HBO"));
+        }
+
+        [Test]
+        public void should_use_both_network_and_site_when_series_name_source_is_both()
+        {
+            _capabilities.SupportedSearchParameters = new[] { "q" };
+            Subject.Settings.SearchSiteTitleOnly = true;
+            Subject.Settings.SeriesNameSource = SeriesNameSource.Both;
+
+            var results = Subject.GetSearchRequests(_singleEpisodeSearchCriteria);
+            var requests = results.GetAllTiers().SelectMany(x => x).ToList();
+
+            requests.Should().HaveCountGreaterThan(0);
+
+            // Should have requests with both site name and network name variations
+            requests.Should().Contain(x => x.Url.Query.Contains("Monkey"));
+            requests.Should().Contain(x => x.Url.Query.Contains("HBO"));
+        }
+
+        [Test]
+        public void should_search_season_with_title_only_when_enabled()
+        {
+            _capabilities.SupportedSearchParameters = new[] { "q" };
+            Subject.Settings.SearchTitleOnly = true;
+
+            var results = Subject.GetSearchRequests(_seasonSearchCriteria);
+            var requests = results.GetAllTiers().SelectMany(x => x).ToList();
+
+            requests.Should().HaveCountGreaterThan(0);
+
+            // For season searches, SearchTitleOnly should include requests with just the series title
+            requests.Should().Contain(x => x.Url.Query.Contains("Monkey") && x.Url.Query.Contains("Island"));
+        }
+
+        [Test]
+        public void should_search_season_with_site_plus_title_when_enabled()
+        {
+            _capabilities.SupportedSearchParameters = new[] { "q" };
+            Subject.Settings.SearchSiteTitleOnly = true;
+
+            var results = Subject.GetSearchRequests(_seasonSearchCriteria);
+            var requests = results.GetAllTiers().SelectMany(x => x).ToList();
+
+            requests.Should().HaveCountGreaterThan(0);
+            requests.Should().Contain(x => x.Url.Query.Contains("Monkey") && x.Url.Query.Contains("Island"));
+        }
+
+        [Test]
+        public void should_search_season_with_network_name_when_series_name_source_is_network()
+        {
+            _capabilities.SupportedSearchParameters = new[] { "q" };
+            Subject.Settings.SearchSiteTitleOnly = true;
+            Subject.Settings.SeriesNameSource = SeriesNameSource.Network;
+
+            var results = Subject.GetSearchRequests(_seasonSearchCriteria);
+            var requests = results.GetAllTiers().SelectMany(x => x).ToList();
+
+            requests.Should().HaveCountGreaterThan(0);
+            requests.Should().Contain(x => x.Url.Query.Contains("HBO"));
+        }
+
+        [Test]
+        public void should_search_season_with_both_years()
+        {
+            _capabilities.SupportedSearchParameters = new[] { "q" };
+
+            var results = Subject.GetSearchRequests(_seasonSearchCriteria);
+            var requests = results.GetAllTiers().SelectMany(x => x).ToList();
+
+            requests.Should().Contain(x => x.Url.Query.Contains("21"));
+            requests.Should().Contain(x => x.Url.Query.Contains("2021"));
         }
     }
 }

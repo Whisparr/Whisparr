@@ -177,4 +177,4 @@ node_modules.nosync
 .config/
 
 # Ignore global.json file for allowing builds on non-Widows systems
-src/global.json
+global.json

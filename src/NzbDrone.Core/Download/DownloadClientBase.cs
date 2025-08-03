@@ -57,38 +57,6 @@ namespace NzbDrone.Core.Download
                 }
             })
             .Build();
-
-        protected ResiliencePipeline<HttpResponse> RetryStrategy => new ResiliencePipelineBuilder<HttpResponse>()
-            .AddRetry(new RetryStrategyOptions<HttpResponse>
-            {
-                ShouldHandle = static args => args.Outcome switch
-                {
-                    { Result.HasHttpServerError: true } => PredicateResult.True(),
-                    { Result.StatusCode: HttpStatusCode.RequestTimeout } => PredicateResult.True(),
-                    _ => PredicateResult.False()
-                },
-                Delay = TimeSpan.FromSeconds(3),
-                MaxRetryAttempts = 2,
-                BackoffType = DelayBackoffType.Exponential,
-                UseJitter = true,
-                OnRetry = args =>
-                {
-                    var exception = args.Outcome.Exception;
-
-                    if (exception is not null)
-                    {
-                        _logger.Info(exception, "Request for {0} failed with exception '{1}'. Retrying in {2}s.", Definition.Name, exception.Message, args.RetryDelay.TotalSeconds);
-                    }
-                    else
-                    {
-                        _logger.Info("Request for {0} failed with status {1}. Retrying in {2}s.", Definition.Name, args.Outcome.Result?.StatusCode, args.RetryDelay.TotalSeconds);
-                    }
-
-                    return default;
-                }
-            })
-            .Build();
-
         public abstract string Name { get; }
 
         public Type ConfigContract => typeof(TSettings);

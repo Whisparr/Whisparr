@@ -208,11 +208,11 @@ namespace NzbDrone.Core.Notifications.Trakt
         {
             var traktSource = source switch
             {
-                QualitySource.BLURAY => "bluray",
-                QualitySource.WEBDL => "digital",
-                QualitySource.WEBRIP => "digital",
+                QualitySource.Bluray => "bluray",
+                QualitySource.Web => "digital",
+                QualitySource.WebRip => "digital",
                 QualitySource.DVD => "dvd",
-                QualitySource.TV => "dvd",
+                QualitySource.Television => "dvd",
                 _ => string.Empty
             };
 

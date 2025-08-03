@@ -29,6 +29,7 @@ namespace NzbDrone.Core.Test.ParserTests
 
         // [TestCase("Series.911.2023.DVDRip.DD2.0.x264-DEEP", "series 911")]
         [TestCase("www.Torrenting.org - Series.23.01.23.720p.HDTV.X264-DIMENSION", "series")]
+        [TestCase("Pure Taboo - Sarah Arabic, Lily LaBeau - A Costly Divorce (June 24, 2025) [1080p HEVC x265]", "puretaboo")]
         public void should_parse_series_name(string postTitle, string title)
         {
             var result = Parser.Parser.ParseSeriesName(postTitle).CleanSeriesTitle();
@@ -53,6 +54,7 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("1234.2022.23.01.23.720p.HDTV.X264-DIMENSION", "1234", 2022)]
         [TestCase("1234-2022-23-01-23-720p-HDTV-X264-DIMENSION", "1234", 2022)]
         [TestCase("1234_2022_23_01_23_720p_HDTV_X264-DIMENSION", "1234", 2022)]
+        [TestCase("Pure Taboo - Sarah Arabic, Lily LaBeau - A Costly Divorce (June 24, 2025) [1080p HEVC x265]", "Pure Taboo")]
         public void should_parse_series_title_info(string postTitle, string titleWithoutYear, int year = 0)
         {
             var seriesTitleInfo = Parser.Parser.ParseTitle(postTitle).SeriesTitleInfo;
@@ -61,10 +63,19 @@ namespace NzbDrone.Core.Test.ParserTests
         }
 
         [TestCase("Digital Playground - 2014-12-20 - Dirty Santa - Episode 4 - Candy Cane Lane - [WEBDL-1080p].mp4", " - Dirty Santa - Episode 4 - Candy Cane Lane - [WEBDL-1080p]")]
+        [TestCase("Pure Taboo - Sarah Arabic, Lily LaBeau - A Costly Divorce (June 24, 2025) [1080p HEVC x265]", " - Sarah Arabic, Lily LaBeau - A Costly Divorce")]
         public void should_parse_episode_string(string title, string expected)
         {
             var seriesTitleInfo = Parser.Parser.ParseTitle(title);
-            seriesTitleInfo.AirDate.Should().Be("2014-12-20");
+            if (title.Contains("2014-12-20"))
+            {
+                seriesTitleInfo.AirDate.Should().Be("2014-12-20");
+            }
+            else if (title.Contains("June 24, 2025"))
+            {
+                seriesTitleInfo.AirDate.Should().Be("2025-06-24");
+            }
+
             seriesTitleInfo.ReleaseTokens.Should().Be(expected);
         }
 

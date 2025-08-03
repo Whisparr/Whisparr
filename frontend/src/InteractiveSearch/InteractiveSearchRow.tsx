@@ -224,23 +224,6 @@ function InteractiveSearchRow(props: InteractiveSearchRowProps) {
         seriesId = searchPayload.seriesId;
       }
 
-      console.log('FORCE_DOWNLOAD_DEBUG:', {
-        mappedSeriesId,
-        searchPayload,
-        episodeIds,
-        seriesId,
-        finalPayload: {
-          guid,
-          indexerId,
-          ...searchPayload,
-          shouldOverride: true,
-          seriesId,
-          episodeIds,
-          quality,
-          languages,
-        },
-      });
-
       onForceDownloadPress({
         guid,
         indexerId,

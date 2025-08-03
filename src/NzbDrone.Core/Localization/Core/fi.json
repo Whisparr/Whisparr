@@ -1830,5 +1830,16 @@
     "WhisparrCacheMovieAPI": "Puskuroi elokuvarajapinta",
     "WhisparrCacheMovieAPIHelpText": "Puskuroi elokuvien/kohtausten rajapintakyselyt.",
     "Aliases": "Aliakset",
-    "Code": "Koodi"
+    "Code": "Koodi",
+    "DeletePerformersModalHeader": "Poista esiintyjät",
+    "DeletePerformerModalWarning": "Tämä poistaa myös kaikki elokuvat ja kohtaukset, joissa {0} esiintyy.",
+    "DeletePerformersModalWarning": "Tämä poistaa myös kaikki elokuvat ja kohtaukset, joissa he esiintyvät.",
+    "DeleteStudiosModalWarning": "Tämä poistaa myös kaikki valittujen studioiden elokuvat ja kohtaukset.",
+    "FilterByExclusionType": "Suodata poikkeustyypillä",
+    "TotalSceneCount": "Kohtausten kokonaismäärä",
+    "DeleteStudioModalWarning": " Tämä poistaa myös kaikki studion {0} elokuvat ja kohtaukset.",
+    "DeleteStudiosModalHeader": "Poista studiot",
+    "SceneCount": "Kohtausmäärä",
+    "HasMovies": "Sisältää elokuvia",
+    "HasScenes": "Sisältää kohtauksia"
 }

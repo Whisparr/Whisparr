@@ -8,6 +8,20 @@ using NzbDrone.Core.Validation;
 
 namespace NzbDrone.Core.Indexers.Newznab
 {
+    public enum DateSearchFormat
+    {
+        YearMonthDay = 0,
+        DayMonthYear = 1,
+        Both = 2
+    }
+
+    public enum SeriesNameSource
+    {
+        Site = 0,
+        Network = 1,
+        Both = 2
+    }
+
     public class NewznabSettingsValidator : AbstractValidator<NewznabSettings>
     {
         private static readonly string[] ApiKeyWhiteList =
@@ -54,6 +68,8 @@ namespace NzbDrone.Core.Indexers.Newznab
         {
             ApiPath = "/api";
             Categories = new[] { 6000, 6010, 6020, 6030, 6040, 6045, 6050, 6070, 6080, 6090 };
+            DateSearchFormat = DateSearchFormat.YearMonthDay;
+            SeriesNameSource = SeriesNameSource.Site;
         }
 
         [FieldDefinition(0, Label = "URL")]
@@ -71,7 +87,19 @@ namespace NzbDrone.Core.Indexers.Newznab
         [FieldDefinition(6, Label = "Additional Parameters", HelpText = "Additional Newznab parameters", Advanced = true)]
         public string AdditionalParameters { get; set; }
 
-        // Field 7 is used by TorznabSettings MinimumSeeders
+        [FieldDefinition(7, Label = "Search Title Only", Type = FieldType.Checkbox, HelpText = "Search using title only (without date/year). Default searches include date/year with title.", Advanced = true)]
+        public bool SearchTitleOnly { get; set; }
+
+        [FieldDefinition(8, Label = "Search Site + Title", Type = FieldType.Checkbox, HelpText = "Search using site name + title (without date/year). Overrides 'Search Title Only' if both are enabled.", Advanced = true)]
+        public bool SearchSiteTitleOnly { get; set; }
+
+        [FieldDefinition(9, Label = "Date Format", Type = FieldType.Select, SelectOptions = typeof(DateSearchFormat), HelpText = "Date format to use in searches: YY.MM.DD, DD.MM.YY, or Both", Advanced = true)]
+        public DateSearchFormat DateSearchFormat { get; set; }
+
+        [FieldDefinition(10, Label = "Network or Site", Type = FieldType.Select, SelectOptions = typeof(SeriesNameSource), HelpText = "Choose between Site Name (from indexer), Network Name (from TPDB), or Both for series searches", Advanced = true)]
+        public SeriesNameSource SeriesNameSource { get; set; }
+
+        // Field 11 is used by TorznabSettings MinimumSeeders
         // If you need to add another field here, update TorznabSettings as well and this comment
 
         public virtual NzbDroneValidationResult Validate()

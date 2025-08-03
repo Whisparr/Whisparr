@@ -78,17 +78,50 @@ namespace NzbDrone.Core.Indexers.Newznab
         {
             var pageableRequests = new IndexerPageableRequestChain();
 
-            var releaseDate = searchCriteria.ReleaseDate?.ToString("yy.MM.dd") ?? string.Empty;
-
             if (SupportsSearch)
             {
                 var queryTitles = TextSearchEngine == "raw" ? searchCriteria.SceneTitles : searchCriteria.CleanSceneTitles;
+
+                // Pre-calculate commonly used values to avoid repeated processing
+                var dateFormats = GetDateFormats(searchCriteria.ReleaseDate, Settings.DateSearchFormat);
+                var episodeTitle = Settings.SearchTitleOnly ? NewsnabifyTitle(searchCriteria.EpisodeTitle) : null;
+                var sitePlusEpisodeTitle = Settings.SearchSiteTitleOnly ? NewsnabifyTitle(searchCriteria.EpisodeTitle) : null;
+
                 foreach (var queryTitle in queryTitles)
                 {
-                    pageableRequests.Add(GetPagedRequests(MaxPages,
-                        Settings.Categories,
-                        "search",
-                        $"&q={NewsnabifyTitle(queryTitle)}+{releaseDate}"));
+                    var normalizedQueryTitle = NewsnabifyTitle(queryTitle);
+
+                    // ALWAYS do default search with site + date
+                    foreach (var dateFormat in dateFormats)
+                    {
+                        var searchQuery = $"&q={normalizedQueryTitle}+{dateFormat}";
+                        pageableRequests.Add(GetPagedRequests(MaxPages,
+                            Settings.Categories,
+                            "search",
+                            searchQuery));
+                    }
+
+                    // Add Site + Title search if selected
+                    if (Settings.SearchSiteTitleOnly)
+                    {
+                        // Use Site name
+                        var siteTitle = NewsnabifyTitle(searchCriteria.Series.Title);
+                        var searchQuery = $"&q={siteTitle}+{sitePlusEpisodeTitle}";
+                        pageableRequests.Add(GetPagedRequests(MaxPages, Settings.Categories, "search", searchQuery));
+
+                        // Add network search if needed
+                        AddNetworkSearchIfNeeded(pageableRequests, searchCriteria.Series, sitePlusEpisodeTitle, "Episode");
+                    }
+
+                    // Add Title Only search if selected
+                    if (Settings.SearchTitleOnly)
+                    {
+                        var searchQuery = $"&q={episodeTitle}";
+                        pageableRequests.Add(GetPagedRequests(MaxPages,
+                            Settings.Categories,
+                            "search",
+                            searchQuery));
+                    }
                 }
             }
 
@@ -98,23 +131,52 @@ namespace NzbDrone.Core.Indexers.Newznab
         public virtual IndexerPageableRequestChain GetSearchRequests(SeasonSearchCriteria searchCriteria)
         {
             var pageableRequests = new IndexerPageableRequestChain();
-
-            var twoDigitYear = new DateTime(searchCriteria.Year, 1, 31).ToString("yy");
-
             if (SupportsSearch)
             {
                 var queryTitles = TextSearchEngine == "raw" ? searchCriteria.SceneTitles : searchCriteria.CleanSceneTitles;
+
+                // Pre-calculate commonly used values to avoid repeated processing
+                var twoDigitYear = new DateTime(searchCriteria.Year, 1, 31).ToString("yy");
+
                 foreach (var queryTitle in queryTitles)
                 {
-                    pageableRequests.Add(GetPagedRequests(MaxPages,
-                        Settings.Categories,
-                        "search",
-                        $"&q={NewsnabifyTitle(queryTitle)}+{twoDigitYear}"));
+                    var normalizedQueryTitle = NewsnabifyTitle(queryTitle);
+
+                    // ALWAYS do default search with site + year
+                    var searchQuery1 = $"&q={normalizedQueryTitle}+{twoDigitYear}";
+                    var searchQuery2 = $"&q={normalizedQueryTitle}+{searchCriteria.Year}";
 
                     pageableRequests.Add(GetPagedRequests(MaxPages,
                         Settings.Categories,
                         "search",
-                        $"&q={NewsnabifyTitle(queryTitle)}+{searchCriteria.Year}"));
+                        searchQuery1));
+
+                    pageableRequests.Add(GetPagedRequests(MaxPages,
+                        Settings.Categories,
+                        "search",
+                        searchQuery2));
+
+                    // Add Site + Title search if selected
+                    if (Settings.SearchSiteTitleOnly)
+                    {
+                        // Use Site name
+                        var siteTitle = NewsnabifyTitle(searchCriteria.Series.Title);
+                        var searchQuery = $"&q={siteTitle}+{normalizedQueryTitle}";
+                        pageableRequests.Add(GetPagedRequests(MaxPages, Settings.Categories, "search", searchQuery));
+
+                        // Add network search if needed
+                        AddNetworkSearchIfNeeded(pageableRequests, searchCriteria.Series, normalizedQueryTitle, "Season");
+                    }
+
+                    // Add Title Only search if selected
+                    if (Settings.SearchTitleOnly)
+                    {
+                        var searchQuery = $"&q={normalizedQueryTitle}";
+                        pageableRequests.Add(GetPagedRequests(MaxPages,
+                            Settings.Categories,
+                            "search",
+                            searchQuery));
+                    }
                 }
             }
 
@@ -155,6 +217,52 @@ namespace NzbDrone.Core.Indexers.Newznab
         {
             title = title.Replace("+", " ");
             return Uri.EscapeDataString(title);
+        }
+
+        private static string FormatDate(DateOnly? releaseDate, DateSearchFormat format)
+        {
+            if (!releaseDate.HasValue)
+            {
+                return string.Empty;
+            }
+
+            return format switch
+            {
+                DateSearchFormat.YearMonthDay => releaseDate.Value.ToString("yy.MM.dd"),
+                DateSearchFormat.DayMonthYear => releaseDate.Value.ToString("dd.MM.yy"),
+                _ => releaseDate.Value.ToString("yy.MM.dd")
+            };
+        }
+
+        private static List<string> GetDateFormats(DateOnly? releaseDate, DateSearchFormat format)
+        {
+            if (!releaseDate.HasValue)
+            {
+                return new List<string>();
+            }
+
+            return format switch
+            {
+                DateSearchFormat.YearMonthDay => new List<string> { releaseDate.Value.ToString("yy.MM.dd") },
+                DateSearchFormat.DayMonthYear => new List<string> { releaseDate.Value.ToString("dd.MM.yy") },
+                DateSearchFormat.Both => new List<string>
+                {
+                    releaseDate.Value.ToString("yy.MM.dd"),
+                    releaseDate.Value.ToString("dd.MM.yy")
+                },
+                _ => new List<string> { releaseDate.Value.ToString("yy.MM.dd") }
+            };
+        }
+
+        private void AddNetworkSearchIfNeeded(IndexerPageableRequestChain pageableRequests, Tv.Series series, string additionalTitle, string logPrefix)
+        {
+            if ((Settings.SeriesNameSource == SeriesNameSource.Network || Settings.SeriesNameSource == SeriesNameSource.Both)
+                && !string.IsNullOrWhiteSpace(series.Network))
+            {
+                var networkTitle = NewsnabifyTitle(series.Network);
+                var networkSearchQuery = $"&q={networkTitle}+{additionalTitle}";
+                pageableRequests.Add(GetPagedRequests(MaxPages, Settings.Categories, "search", networkSearchQuery));
+            }
         }
     }
 }

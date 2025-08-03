@@ -41,6 +41,7 @@ const selectMovieFiles = createSelector(
   }
 );
 
+/*
 const selectMovieCredits = createSelector(
   (state) => state.movieCredits,
   (movieCredits) => {
@@ -57,6 +58,7 @@ const selectMovieCredits = createSelector(
     };
   }
 );
+*/
 
 const selectExtraFiles = createSelector(
   (state) => state.extraFiles,

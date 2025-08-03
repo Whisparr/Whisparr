@@ -336,7 +336,6 @@ AddNewMovieSearchResult.propTypes = {
   overview: PropTypes.string,
   ratings: PropTypes.object.isRequired,
   folder: PropTypes.string.isRequired,
-  genres: PropTypes.arrayOf(PropTypes.string),
   images: PropTypes.arrayOf(PropTypes.object).isRequired,
   existingMovieId: PropTypes.number,
   isExistingMovie: PropTypes.bool.isRequired,

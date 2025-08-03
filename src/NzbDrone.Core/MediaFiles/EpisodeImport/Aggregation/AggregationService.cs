@@ -47,7 +47,14 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Aggregation
             {
                 if (isMediaFile)
                 {
-                    throw new AugmentingFailedException("Unable to parse episode info from path: {0}", localEpisode.Path);
+                    if (downloadClientItem != null)
+                    {
+                        // Skip validation for downloads - will be handled by aggregators
+                    }
+                    else
+                    {
+                        throw new AugmentingFailedException("Unable to parse episode info from path: {0}", localEpisode.Path);
+                    }
                 }
             }
 

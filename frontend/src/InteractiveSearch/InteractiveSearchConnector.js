@@ -43,6 +43,10 @@ function createMapDispatchToProps(dispatch, props) {
 
     onGrabPress(payload) {
       dispatch(releaseActions.grabRelease(payload));
+    },
+
+    onForceDownloadPress(payload) {
+      dispatch(releaseActions.grabRelease(payload));
     }
   };
 }

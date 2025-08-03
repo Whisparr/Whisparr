@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using NzbDrone.Common.Extensions;
 using NzbDrone.Core.CustomFormats;
 using NzbDrone.Core.Download.Clients;
 using NzbDrone.Core.Languages;
+using NzbDrone.Core.Qualities;
 using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Parser.Model
@@ -22,6 +24,7 @@ namespace NzbDrone.Core.Parser.Model
         public SeriesMatchType SeriesMatchType { get; set; }
         public List<Language> Languages { get; set; }
         public ReleaseSourceType ReleaseSource { get; set; }
+        public bool ShouldOverride { get; set; }
 
         public RemoteEpisode()
         {
@@ -38,6 +41,29 @@ namespace NzbDrone.Core.Parser.Model
         public override string ToString()
         {
             return Release.Title;
+        }
+
+        public static RemoteEpisode CreateForceOverride(RemoteEpisode source, Series series, List<Episode> episodes, QualityModel quality, List<Language> languages)
+        {
+            var clone = source.ParsedEpisodeInfo.JsonClone();
+            clone.Quality = quality;
+
+            return new RemoteEpisode
+            {
+                Release = source.Release,
+                ParsedEpisodeInfo = clone,
+                EpisodeRequested = source.EpisodeRequested,
+                DownloadAllowed = source.DownloadAllowed,
+                SeedConfiguration = source.SeedConfiguration,
+                CustomFormats = source.CustomFormats,
+                CustomFormatScore = source.CustomFormatScore,
+                SeriesMatchType = source.SeriesMatchType,
+                ReleaseSource = source.ReleaseSource,
+                Series = series,
+                Episodes = episodes,
+                Languages = languages,
+                ShouldOverride = true
+            };
         }
     }
 

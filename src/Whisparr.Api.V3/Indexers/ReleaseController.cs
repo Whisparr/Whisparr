@@ -83,30 +83,12 @@ namespace Whisparr.Api.V3.Indexers
             {
                 if (release.ShouldOverride == true)
                 {
-                    Ensure.That(release.SeriesId, () => release.SeriesId).IsNotNull();
-                    Ensure.That(release.EpisodeIds, () => release.EpisodeIds).IsNotNull();
-                    Ensure.That(release.EpisodeIds, () => release.EpisodeIds).HasItems();
-                    Ensure.That(release.Quality, () => release.Quality).IsNotNull();
-                    Ensure.That(release.Languages, () => release.Languages).IsNotNull();
+                    ValidateForceDownloadRequest(release);
 
-                    // Clone the remote episode so we don't overwrite anything on the original
-                    remoteEpisode = new RemoteEpisode
-                    {
-                        Release = remoteEpisode.Release,
-                        ParsedEpisodeInfo = remoteEpisode.ParsedEpisodeInfo.JsonClone(),
-                        EpisodeRequested = remoteEpisode.EpisodeRequested,
-                        DownloadAllowed = remoteEpisode.DownloadAllowed,
-                        SeedConfiguration = remoteEpisode.SeedConfiguration,
-                        CustomFormats = remoteEpisode.CustomFormats,
-                        CustomFormatScore = remoteEpisode.CustomFormatScore,
-                        SeriesMatchType = remoteEpisode.SeriesMatchType,
-                        ReleaseSource = remoteEpisode.ReleaseSource
-                    };
+                    var forceSeries = _seriesService.GetSeries(release.SeriesId!.Value);
+                    var forceEpisodes = _episodeService.GetEpisodes(release.EpisodeIds);
 
-                    remoteEpisode.Series = _seriesService.GetSeries(release.SeriesId!.Value);
-                    remoteEpisode.Episodes = _episodeService.GetEpisodes(release.EpisodeIds);
-                    remoteEpisode.ParsedEpisodeInfo.Quality = release.Quality;
-                    remoteEpisode.Languages = release.Languages;
+                    remoteEpisode = RemoteEpisode.CreateForceOverride(remoteEpisode, forceSeries, forceEpisodes, release.Quality, release.Languages);
                 }
 
                 if (remoteEpisode.Series == null)
@@ -243,6 +225,15 @@ namespace Whisparr.Api.V3.Indexers
         private string GetCacheKey(ReleaseResource resource)
         {
             return string.Concat(resource.IndexerId, "_", resource.Guid);
+        }
+
+        private void ValidateForceDownloadRequest(ReleaseResource release)
+        {
+            Ensure.That(release.SeriesId, () => release.SeriesId).IsNotNull();
+            Ensure.That(release.EpisodeIds, () => release.EpisodeIds).IsNotNull();
+            Ensure.That(release.EpisodeIds, () => release.EpisodeIds).HasItems();
+            Ensure.That(release.Quality, () => release.Quality).IsNotNull();
+            Ensure.That(release.Languages, () => release.Languages).IsNotNull();
         }
     }
 }

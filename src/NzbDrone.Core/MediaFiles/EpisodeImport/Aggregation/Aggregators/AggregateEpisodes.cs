@@ -1,8 +1,11 @@
 using System.Collections.Generic;
 using System.IO;
+using NLog;
 using NzbDrone.Core.Download;
+using NzbDrone.Core.Download.TrackedDownloads;
 using NzbDrone.Core.Parser;
 using NzbDrone.Core.Parser.Model;
+using NzbDrone.Core.Qualities;
 using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.MediaFiles.EpisodeImport.Aggregation.Aggregators
@@ -10,10 +13,14 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Aggregation.Aggregators
     public class AggregateEpisodes : IAggregateLocalEpisode
     {
         private readonly IParsingService _parsingService;
+        private readonly ITrackedDownloadService _trackedDownloadService;
+        private readonly Logger _logger;
 
-        public AggregateEpisodes(IParsingService parsingService)
+        public AggregateEpisodes(IParsingService parsingService, ITrackedDownloadService trackedDownloadService, Logger logger)
         {
             _parsingService = parsingService;
+            _trackedDownloadService = trackedDownloadService;
+            _logger = logger;
         }
 
         public LocalEpisode Aggregate(LocalEpisode localEpisode, DownloadClientItem downloadClientItem)
@@ -61,6 +68,25 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Aggregation.Aggregators
 
         private List<Episode> GetEpisodes(LocalEpisode localEpisode)
         {
+            // Check if this is a force download that should bypass normal episode parsing
+            if (IsForceDownload(localEpisode))
+            {
+                var trackedDownload = _trackedDownloadService.Find(localEpisode.DownloadItem.DownloadId);
+
+                // For force downloads, ensure we have proper FileEpisodeInfo to prevent other aggregators from failing
+                if (localEpisode.FileEpisodeInfo == null)
+                {
+                    localEpisode.FileEpisodeInfo = trackedDownload.RemoteEpisode.ParsedEpisodeInfo ?? new ParsedEpisodeInfo
+                    {
+                        Quality = trackedDownload.RemoteEpisode.ParsedEpisodeInfo?.Quality ?? new QualityModel(),
+                        Languages = trackedDownload.RemoteEpisode.Languages
+                    };
+                }
+
+                // Return the explicitly specified episodes, bypassing all parsing logic
+                return trackedDownload.RemoteEpisode.Episodes;
+            }
+
             var bestEpisodeInfoForEpisodes = GetBestEpisodeInfo(localEpisode);
             var isMediaFile = MediaFileExtensions.Extensions.Contains(Path.GetExtension(localEpisode.Path));
 
@@ -82,6 +108,17 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Aggregation.Aggregators
             }
 
             return true;
+        }
+
+        private bool IsForceDownload(LocalEpisode localEpisode)
+        {
+            if (localEpisode.DownloadItem != null)
+            {
+                var trackedDownload = _trackedDownloadService.Find(localEpisode.DownloadItem.DownloadId);
+                return trackedDownload?.RemoteEpisode?.ShouldOverride == true;
+            }
+
+            return false;
         }
     }
 }

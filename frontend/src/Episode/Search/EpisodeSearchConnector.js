@@ -61,13 +61,13 @@ class EpisodeSearchConnector extends Component {
   // Render
 
   render() {
-    const { episodeId } = this.props;
+    const { episodeId, seriesId } = this.props;
 
     if (this.state.isInteractiveSearchOpen) {
       return (
         <InteractiveSearchConnector
           type="episode"
-          searchPayload={{ episodeId }}
+          searchPayload={{ episodeId, seriesId }}
         />
       );
     }
@@ -84,6 +84,7 @@ class EpisodeSearchConnector extends Component {
 
 EpisodeSearchConnector.propTypes = {
   episodeId: PropTypes.number.isRequired,
+  seriesId: PropTypes.number.isRequired,
   isPopulated: PropTypes.bool.isRequired,
   startInteractiveSearch: PropTypes.bool.isRequired,
   onModalClose: PropTypes.func.isRequired,

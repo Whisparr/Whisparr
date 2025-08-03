@@ -351,6 +351,7 @@
   "DoneEditingGroups": "Done Editing Groups",
   "DotNetVersion": ".NET",
   "Download": "Download",
+  "ForceDownload": "Force Download",
   "DownloadClient": "Download Client",
   "DownloadClientCheckNoneAvailableHealthCheckMessage": "No download client is available",
   "DownloadClientCheckUnableToCommunicateWithHealthCheckMessage": "Unable to communicate with {0}.",

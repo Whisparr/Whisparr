@@ -207,21 +207,23 @@ function InteractiveSearchRow(props: InteractiveSearchRowProps) {
       // Get episode IDs and series ID from available data
       let episodeIds: number[] = [];
       let seriesId = mappedSeriesId;
-      
+
       // Try to get episode IDs from mappedEpisodeInfo first
       if (mappedEpisodeInfo && mappedEpisodeInfo.length > 0) {
-        episodeIds = mappedEpisodeInfo.map((episode: any) => episode.id);
+        episodeIds = mappedEpisodeInfo.map(
+          (episode: { id: number }) => episode.id
+        );
       }
       // If no mapped episode info, check if this is an episode search (searchPayload.episodeId)
       else if (searchPayload && searchPayload.episodeId) {
         episodeIds = [searchPayload.episodeId];
       }
-      
+
       // Get series ID from searchPayload if not available in mappedSeriesId
       if (!seriesId && searchPayload && searchPayload.seriesId) {
         seriesId = searchPayload.seriesId;
       }
-      
+
       console.log('FORCE_DOWNLOAD_DEBUG:', {
         mappedSeriesId,
         searchPayload,
@@ -232,25 +234,34 @@ function InteractiveSearchRow(props: InteractiveSearchRowProps) {
           indexerId,
           ...searchPayload,
           shouldOverride: true,
-          seriesId: seriesId,
-          episodeIds: episodeIds,
-          quality: quality,
-          languages: languages,
-        }
+          seriesId,
+          episodeIds,
+          quality,
+          languages,
+        },
       });
-      
+
       onForceDownloadPress({
         guid,
         indexerId,
         ...searchPayload,
         shouldOverride: true,
-        seriesId: seriesId,
-        episodeIds: episodeIds,
-        quality: quality,
-        languages: languages,
+        seriesId,
+        episodeIds,
+        quality,
+        languages,
       });
     }
-  }, [guid, indexerId, searchPayload, onForceDownloadPress, mappedSeriesId, mappedEpisodeInfo, quality, languages]);
+  }, [
+    guid,
+    indexerId,
+    searchPayload,
+    onForceDownloadPress,
+    mappedSeriesId,
+    mappedEpisodeInfo,
+    quality,
+    languages,
+  ]);
 
   return (
     <TableRow>

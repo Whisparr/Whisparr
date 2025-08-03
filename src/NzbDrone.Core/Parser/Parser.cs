@@ -50,6 +50,11 @@ namespace NzbDrone.Core.Parser
                 new Regex("^\\[(?<title>.+?)\\](?<releasetoken>.+?)(?:( - |\\s)(\\[|\\()?(?<airyear>(19|20)\\d{2})[-_.](?<airmonth>[0-1][0-9])[-_.](?<airday>[0-3][0-9])(\\]|\\))?)",
                     RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
+                // Site - Performers - Title (Month DD, YYYY) [Quality]
+                // Pure Taboo - Sarah Arabic, Lily LaBeau - A Costly Divorce (June 24, 2025) [1080p HEVC x265]
+                new Regex(@"^(?<title>[^-]+?)(?<releasetoken>\s*-\s*.+?)\s*\(\s*(?<airmonthname>January|February|March|April|May|June|July|August|September|October|November|December)\s+(?<airday>[0-3]?\d),?\s+(?<airyear>(19|20)\d{2})\s*\)",
+                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
                 // Episodes with non-separated airdate after title (20180428)
                 new Regex(@"^(?<title>.+?)?[-_. ]+(?<airyear>(19|20)\d{2})(?<airmonth>[0-1][0-9])(?<airday>[0-3][0-9])",
                     RegexOptions.IgnoreCase | RegexOptions.Compiled),
@@ -594,7 +599,18 @@ namespace NzbDrone.Core.Parser
                 }
 
                 // Try to Parse as a daily show
-                var airmonth = Convert.ToInt32(matchCollection[0].Groups["airmonth"].Value);
+                int airmonth;
+                if (matchCollection[0].Groups["airmonthname"].Success)
+                {
+                    // Convert month name to number
+                    var monthName = matchCollection[0].Groups["airmonthname"].Value;
+                    airmonth = DateTime.ParseExact(monthName, "MMMM", CultureInfo.InvariantCulture).Month;
+                }
+                else
+                {
+                    airmonth = Convert.ToInt32(matchCollection[0].Groups["airmonth"].Value);
+                }
+
                 var airday = Convert.ToInt32(matchCollection[0].Groups["airday"].Value);
 
                 // Swap day and month if month is bigger than 12 (scene fail)
@@ -629,7 +645,15 @@ namespace NzbDrone.Core.Parser
                 }
 
                 lastSeasonEpisodeStringIndex = Math.Max(lastSeasonEpisodeStringIndex, matchCollection[0].Groups["airyear"].EndIndex());
-                lastSeasonEpisodeStringIndex = Math.Max(lastSeasonEpisodeStringIndex, matchCollection[0].Groups["airmonth"].EndIndex());
+                if (matchCollection[0].Groups["airmonthname"].Success)
+                {
+                    lastSeasonEpisodeStringIndex = Math.Max(lastSeasonEpisodeStringIndex, matchCollection[0].Groups["airmonthname"].EndIndex());
+                }
+                else
+                {
+                    lastSeasonEpisodeStringIndex = Math.Max(lastSeasonEpisodeStringIndex, matchCollection[0].Groups["airmonth"].EndIndex());
+                }
+
                 lastSeasonEpisodeStringIndex = Math.Max(lastSeasonEpisodeStringIndex, matchCollection[0].Groups["airday"].EndIndex());
 
                 result = new ParsedEpisodeInfo

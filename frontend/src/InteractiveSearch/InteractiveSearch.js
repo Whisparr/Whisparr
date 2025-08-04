@@ -109,7 +109,8 @@ function InteractiveSearch(props) {
     timeFormat,
     onSortPress,
     onFilterSelect,
-    onGrabPress
+    onGrabPress,
+    onForceDownloadPress
   } = props;
 
   const errorMessage = getErrorMessage(error);
@@ -182,6 +183,7 @@ function InteractiveSearch(props) {
                       longDateFormat={longDateFormat}
                       timeFormat={timeFormat}
                       onGrabPress={onGrabPress}
+                      onForceDownloadPress={onForceDownloadPress}
                     />
                   );
                 })
@@ -219,7 +221,8 @@ InteractiveSearch.propTypes = {
   timeFormat: PropTypes.string.isRequired,
   onSortPress: PropTypes.func.isRequired,
   onFilterSelect: PropTypes.func.isRequired,
-  onGrabPress: PropTypes.func.isRequired
+  onGrabPress: PropTypes.func.isRequired,
+  onForceDownloadPress: PropTypes.func
 };
 
 export default InteractiveSearch;

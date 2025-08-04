@@ -158,6 +158,7 @@ class EpisodeDetailsModalContent extends Component {
               {/* Don't wrap in tabContent so we not have a top margin */}
               <EpisodeSearchConnector
                 episodeId={episodeId}
+                seriesId={seriesId}
                 startInteractiveSearch={startInteractiveSearch}
                 onModalClose={onModalClose}
               />

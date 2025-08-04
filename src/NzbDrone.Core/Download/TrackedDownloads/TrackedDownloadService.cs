@@ -10,6 +10,7 @@ using NzbDrone.Core.Download.History;
 using NzbDrone.Core.History;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.Parser;
+using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.Tv;
 using NzbDrone.Core.Tv.Events;
 
@@ -35,6 +36,8 @@ namespace NzbDrone.Core.Download.TrackedDownloads
         private readonly IDownloadHistoryService _downloadHistoryService;
         private readonly IRemoteEpisodeAggregationService _aggregationService;
         private readonly ICustomFormatCalculationService _formatCalculator;
+        private readonly ISeriesService _seriesService;
+        private readonly IEpisodeService _episodeService;
         private readonly Logger _logger;
         private readonly ICached<TrackedDownload> _cache;
 
@@ -45,6 +48,8 @@ namespace NzbDrone.Core.Download.TrackedDownloads
                                       IEventAggregator eventAggregator,
                                       IDownloadHistoryService downloadHistoryService,
                                       IRemoteEpisodeAggregationService aggregationService,
+                                      ISeriesService seriesService,
+                                      IEpisodeService episodeService,
                                       Logger logger)
         {
             _parsingService = parsingService;
@@ -53,6 +58,8 @@ namespace NzbDrone.Core.Download.TrackedDownloads
             _eventAggregator = eventAggregator;
             _downloadHistoryService = downloadHistoryService;
             _aggregationService = aggregationService;
+            _seriesService = seriesService;
+            _episodeService = episodeService;
             _cache = cacheManager.GetCache<TrackedDownload>(GetType());
             _logger = logger;
         }
@@ -114,10 +121,12 @@ namespace NzbDrone.Core.Download.TrackedDownloads
                                                   .OrderByDescending(h => h.Date)
                                                   .ToList();
 
-                if (parsedEpisodeInfo != null)
+                var isForceDownload = IsForceDownload(historyItems);
+
+                // Only do normal parsing if this is NOT a force download
+                if (!isForceDownload && parsedEpisodeInfo != null)
                 {
                     trackedDownload.RemoteEpisode = _parsingService.Map(parsedEpisodeInfo, 0);
-
                     _aggregationService.Augment(trackedDownload.RemoteEpisode);
                 }
 
@@ -135,6 +144,29 @@ namespace NzbDrone.Core.Download.TrackedDownloads
                     var grabbedEvent = historyItems.FirstOrDefault(v => v.EventType == EpisodeHistoryEventType.Grabbed);
 
                     trackedDownload.Indexer = grabbedEvent?.Data["indexer"];
+
+                    if (IsForceDownload(historyItems))
+                    {
+                        // For forced downloads, recreate RemoteEpisode from history data
+                        var series = _seriesService.GetSeries(firstHistoryItem.SeriesId);
+                        var episodeIds = historyItems.Where(h => h.EventType == EpisodeHistoryEventType.Grabbed)
+                                                    .Select(h => h.EpisodeId)
+                                                    .Distinct()
+                                                    .ToList();
+                        var episodes = _episodeService.GetEpisodes(episodeIds);
+
+                        if (series != null && episodes.Any())
+                        {
+                            trackedDownload.RemoteEpisode = new RemoteEpisode
+                            {
+                                Series = series,
+                                Episodes = episodes,
+                                Languages = firstHistoryItem.Languages,
+                                ParsedEpisodeInfo = parsedEpisodeInfo ?? new ParsedEpisodeInfo { Quality = firstHistoryItem.Quality },
+                                ShouldOverride = true
+                            };
+                        }
+                    }
 
                     if (parsedEpisodeInfo == null ||
                         trackedDownload.RemoteEpisode == null ||
@@ -222,9 +254,31 @@ namespace NzbDrone.Core.Download.TrackedDownloads
 
         private void UpdateCachedItem(TrackedDownload trackedDownload)
         {
+            // Preserve the ShouldOverride flag from Force Downloads
+            var existingShouldOverride = trackedDownload.RemoteEpisode?.ShouldOverride ?? false;
+            var existingSeries = trackedDownload.RemoteEpisode?.Series;
+            var existingEpisodes = trackedDownload.RemoteEpisode?.Episodes;
+
             var parsedEpisodeInfo = Parser.Parser.ParseTitle(trackedDownload.DownloadItem.Title);
 
             trackedDownload.RemoteEpisode = parsedEpisodeInfo == null ? null : _parsingService.Map(parsedEpisodeInfo, 0);
+
+            // If this was a forced download, restore the override flag and forced data
+            if (existingShouldOverride && trackedDownload.RemoteEpisode != null)
+            {
+                trackedDownload.RemoteEpisode.ShouldOverride = true;
+
+                // Also preserve the forced series and episodes
+                if (existingSeries != null)
+                {
+                    trackedDownload.RemoteEpisode.Series = existingSeries;
+                }
+
+                if (existingEpisodes != null)
+                {
+                    trackedDownload.RemoteEpisode.Episodes = existingEpisodes;
+                }
+            }
 
             _aggregationService.Augment(trackedDownload.RemoteEpisode);
         }
@@ -282,6 +336,17 @@ namespace NzbDrone.Core.Download.TrackedDownloads
 
                 _eventAggregator.PublishEvent(new TrackedDownloadRefreshedEvent(GetTrackedDownloads()));
             }
+        }
+
+        private bool IsForceDownload(List<EpisodeHistory> historyItems)
+        {
+            if (!historyItems.Any())
+            {
+                return false;
+            }
+
+            var grabbedEvent = historyItems.FirstOrDefault(v => v.EventType == EpisodeHistoryEventType.Grabbed);
+            return grabbedEvent?.Data.GetShouldOverride() ?? false;
         }
     }
 }

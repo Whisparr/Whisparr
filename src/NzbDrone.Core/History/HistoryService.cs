@@ -156,6 +156,10 @@ namespace NzbDrone.Core.History
                 history.Data.Add("ReleaseGroup", message.Episode.ParsedEpisodeInfo.ReleaseGroup);
                 history.Data.Add("Age", message.Episode.Release.Age.ToString());
                 history.Data.Add("AgeHours", message.Episode.Release.AgeHours.ToString());
+
+                // Store override flag for force downloads
+                history.Data.SetShouldOverride(message.Episode.ShouldOverride);
+
                 history.Data.Add("AgeMinutes", message.Episode.Release.AgeMinutes.ToString());
                 history.Data.Add("PublishedDate", message.Episode.Release.PublishDate.ToString("s") + "Z");
                 history.Data.Add("DownloadClient", message.DownloadClient);

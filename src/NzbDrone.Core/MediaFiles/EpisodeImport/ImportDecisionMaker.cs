@@ -7,6 +7,7 @@ using NzbDrone.Common.Extensions;
 using NzbDrone.Core.CustomFormats;
 using NzbDrone.Core.DecisionEngine;
 using NzbDrone.Core.Download;
+using NzbDrone.Core.Download.TrackedDownloads;
 using NzbDrone.Core.MediaFiles.EpisodeImport.Aggregation;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.Tv;
@@ -30,6 +31,7 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport
         private readonly IDiskProvider _diskProvider;
         private readonly IDetectSample _detectSample;
         private readonly ICustomFormatCalculationService _formatCalculator;
+        private readonly ITrackedDownloadService _trackedDownloadService;
         private readonly Logger _logger;
 
         public ImportDecisionMaker(IEnumerable<IImportDecisionEngineSpecification> specifications,
@@ -38,6 +40,7 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport
                                    IDiskProvider diskProvider,
                                    IDetectSample detectSample,
                                    ICustomFormatCalculationService formatCalculator,
+                                   ITrackedDownloadService trackedDownloadService,
                                    Logger logger)
         {
             _specifications = specifications;
@@ -46,6 +49,7 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport
             _diskProvider = diskProvider;
             _detectSample = detectSample;
             _formatCalculator = formatCalculator;
+            _trackedDownloadService = trackedDownloadService;
             _logger = logger;
         }
 
@@ -66,8 +70,16 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport
 
         public List<ImportDecision> GetImportDecisions(List<string> videoFiles, Series series, DownloadClientItem downloadClientItem, ParsedEpisodeInfo folderInfo, bool sceneSource, bool filterExistingFiles)
         {
-            var newFiles = filterExistingFiles ? _mediaFileService.FilterExistingFiles(videoFiles.ToList(), series) : videoFiles.ToList();
+            if (series == null && downloadClientItem != null)
+            {
+                var trackedDownload = _trackedDownloadService.Find(downloadClientItem.DownloadId);
+                if (trackedDownload?.RemoteEpisode?.Series != null)
+                {
+                    series = trackedDownload.RemoteEpisode.Series;
+                }
+            }
 
+            var newFiles = filterExistingFiles ? _mediaFileService.FilterExistingFiles(videoFiles.ToList(), series) : videoFiles.ToList();
             _logger.Debug("Analyzing {0}/{1} files.", newFiles.Count, videoFiles.Count);
 
             ParsedEpisodeInfo downloadClientItemInfo = null;
@@ -93,7 +105,7 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport
                     FolderEpisodeInfo = folderInfo,
                     Path = file,
                     SceneSource = sceneSource,
-                    ExistingFile = series.Path.IsParentPath(file),
+                    ExistingFile = series?.Path.IsParentPath(file) ?? false,
                     OtherVideoFiles = nonSampleVideoFileCount > 1
                 };
 

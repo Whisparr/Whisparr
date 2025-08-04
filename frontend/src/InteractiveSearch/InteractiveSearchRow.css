@@ -62,7 +62,7 @@
 .download {
   composes: cell from '~Components/Table/Cells/TableRowCell.css';
 
-  width: 80px;
+  width: 110px;
 }
 
 .manualDownloadContent {
@@ -92,5 +92,26 @@
   top: 7px;
   left: 8px;
   /* width: 100%; */
+  text-align: center;
+}
+
+.forceDownloadContent {
+  position: relative;
+  display: inline-block;
+  margin: 0 2px;
+  width: 22px;
+  height: 20.39px;
+  vertical-align: middle;
+  line-height: 20.39px;
+
+  &:hover {
+    color: var(--iconButtonHoverColor);
+  }
+}
+
+.forceIcon {
+  position: absolute;
+  top: 4px;
+  left: 0;
   text-align: center;
 }

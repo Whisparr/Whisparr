@@ -107,8 +107,13 @@ interface InteractiveSearchRowProps {
   grabError?: string;
   longDateFormat: string;
   timeFormat: string;
-  searchPayload: object;
+  searchPayload: {
+    episodeId?: number;
+    seriesId?: number;
+    seasonNumber?: number;
+  };
   onGrabPress(...args: unknown[]): void;
+  onForceDownloadPress?(...args: unknown[]): void;
 }
 
 function InteractiveSearchRow(props: InteractiveSearchRowProps) {
@@ -150,6 +155,7 @@ function InteractiveSearchRow(props: InteractiveSearchRowProps) {
     grabError,
     searchPayload,
     onGrabPress,
+    onForceDownloadPress,
   } = props;
 
   const [isConfirmGrabModalOpen, setIsConfirmGrabModalOpen] = useState(false);
@@ -195,6 +201,50 @@ function InteractiveSearchRow(props: InteractiveSearchRowProps) {
   const onOverrideModalClose = useCallback(() => {
     setIsOverrideModalOpen(false);
   }, [setIsOverrideModalOpen]);
+
+  const onForceDownloadPressWrapper = useCallback(() => {
+    if (onForceDownloadPress) {
+      // Get episode IDs and series ID from available data
+      let episodeIds: number[] = [];
+      let seriesId = mappedSeriesId;
+
+      // Try to get episode IDs from mappedEpisodeInfo first
+      if (mappedEpisodeInfo && mappedEpisodeInfo.length > 0) {
+        episodeIds = mappedEpisodeInfo.map(
+          (episode: { id: number }) => episode.id
+        );
+      }
+      // If no mapped episode info, check if this is an episode search (searchPayload.episodeId)
+      else if (searchPayload && searchPayload.episodeId) {
+        episodeIds = [searchPayload.episodeId];
+      }
+
+      // Get series ID from searchPayload if not available in mappedSeriesId
+      if (!seriesId && searchPayload && searchPayload.seriesId) {
+        seriesId = searchPayload.seriesId;
+      }
+
+      onForceDownloadPress({
+        guid,
+        indexerId,
+        ...searchPayload,
+        shouldOverride: true,
+        seriesId,
+        episodeIds,
+        quality,
+        languages,
+      });
+    }
+  }, [
+    guid,
+    indexerId,
+    searchPayload,
+    onForceDownloadPress,
+    mappedSeriesId,
+    mappedEpisodeInfo,
+    quality,
+    languages,
+  ]);
 
   return (
     <TableRow>
@@ -283,6 +333,28 @@ function InteractiveSearchRow(props: InteractiveSearchRowProps) {
           isSpinning={isGrabbing}
           onPress={onGrabPressWrapper}
         />
+
+        {onForceDownloadPress && (
+          <Link
+            className={styles.forceDownloadContent}
+            title={translate('ForceDownload')}
+            onPress={onForceDownloadPressWrapper}
+          >
+            <div className={styles.forceDownloadContent}>
+              <Icon
+                className={styles.forceIcon}
+                name={icons.ACTIONS}
+                size={12}
+              />
+
+              <Icon
+                className={styles.downloadIcon}
+                name={icons.CIRCLE_DOWN}
+                size={10}
+              />
+            </div>
+          </Link>
+        )}
 
         <Link
           className={styles.manualDownloadContent}

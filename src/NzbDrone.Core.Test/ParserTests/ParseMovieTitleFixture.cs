@@ -23,6 +23,7 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Studio.21.04.09.Title.XXX.480p.MP4-XXX", true)]
         [TestCase("Studio.22.10.18.Title.XXX.720p.HEVC.x265.PRT[XvX]", true)]
         [TestCase("Studio - 2017-08-04 - Some Title. [WEBDL-480p]", true)]
+        [TestCase("Pure Taboo - Sarah Arabic, Lily LaBeau - A Costly Divorce (June 24, 2025) [1080p HEVC x265]", true)]
         [TestCase("something random 77f1b861-91c1-4e6f-b0b1-3b1c46733fb2 anything", true)] // StashId
         [TestCase("SGKI-011", true)]
         [TestCase("JUNY-018", true)]
@@ -48,6 +49,7 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Studio - 2017-08-04 - Some Title. [WEBDL-480p]", "Studio")]
         [TestCase("Studio - Performer Name - Some Title (10.01.2024)", "Studio")]
         [TestCase("Step Siblings Caught 2024-02-07 Cash For Kisses On Valentines Day - S25E7", "Step Siblings Caught")]
+        [TestCase("Pure Taboo - Sarah Arabic, Lily LaBeau - A Costly Divorce (June 24, 2025) [1080p HEVC x265]", "Pure Taboo")]
         public void should_correctly_parse_studio_names(string title, string result)
         {
             Parser.Parser.ParseMovieTitle(title).StudioTitle.Should().Be(result);
@@ -67,6 +69,7 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Studio - 2017-08-04 - Some Title. [WEBDL-480p]", "2017-08-04")]
         [TestCase("Studio - Performer Name - Some Title (10.01.2024)", "2024-01-10")]
         [TestCase("Step Siblings Caught 2024-02-07 Cash For Kisses On Valentines Day - S25E7", "2024-02-07")]
+        [TestCase("Pure Taboo - Sarah Arabic, Lily LaBeau - A Costly Divorce (June 24, 2025) [1080p HEVC x265]", "2025-06-24")]
         public void should_correctly_parse_release_date(string title, string result)
         {
             Parser.Parser.ParseMovieTitle(title).ReleaseDate.Should().Be(result);
@@ -87,6 +90,7 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Studio.22.10.18.Title.XXX.720p.HEVC.x265.PRT[XvX]", "title")]
         [TestCase("Studio - 2017-08-04 - Some Title. [WEBDL-480p]", "some title")]
         [TestCase("Studio - Performer Name - Some Title (10.01.2024)", "performer name some title")]
+        [TestCase("Pure Taboo - Sarah Arabic, Lily LaBeau - A Costly Divorce (June 24, 2025) [1080p HEVC x265]", "sarah arabic lily labeau a costly divorce")]
         public void should_correctly_parse_normalize_release_token(string title, string result)
         {
             var releaseTokens = Parser.Parser.ParseMovieTitle(title).ReleaseTokens;

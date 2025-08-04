@@ -27,6 +27,11 @@ namespace NzbDrone.Core.Parser
 
         private static readonly Regex[] ReportTitleRegex = new[]
         {
+            // Site - Performers - Title (Month DD, YYYY) [Quality]
+            // Pure Taboo - Sarah Arabic, Lily LaBeau - A Costly Divorce (June 24, 2025) [1080p HEVC x265]
+            new Regex(@"^(?<studiotitle>[^-]+?)(?<releasetoken>\s*-\s*.+?)\s*\(\s*(?<airmonthname>January|February|March|April|May|June|July|August|September|October|November|December)\s+(?<airday>[0-3]?\d),?\s+(?<airyear>(19|20)\d{2})\s*\)",
+                RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
             // (?P<site>.+?)?[\s\.\-](?P<date>\d{2}[\s\.\-]\d{2}[\s\.\-]\d{2})[\s\.\-](?P<performer>\w+.+?)?[\s\.\-](?P<title>.*?(?=(?:[\s\.\-]mp4)|$))
             // SCENE with airdate (18.04.28, 2018.04.28, 18-04-28, 18 04 28, 18_04_28) and performer
             new Regex(@"^(?<studiotitle>.+?)?[-_. ]+(?<airyear>\d{2}|\d{4})[-_. ]+(?<airmonth>[0-1][0-9])[-_. ]+(?<airday>[0-3][0-9])[-_. ]+(?<performer>\w+.+?)?[-_. ](?<title>.*?(?=(?:[-_. ]mp4)|$))",
@@ -888,7 +893,18 @@ namespace NzbDrone.Core.Parser
                     }
 
                     // Try to Parse as a daily show
-                    var airmonth = Convert.ToInt32(matchCollection[0].Groups["airmonth"].Value);
+                    int airmonth;
+                    if (matchCollection[0].Groups["airmonthname"].Success)
+                    {
+                        // Convert month name to number
+                        var monthName = matchCollection[0].Groups["airmonthname"].Value;
+                        airmonth = DateTime.ParseExact(monthName, "MMMM", CultureInfo.InvariantCulture).Month;
+                    }
+                    else
+                    {
+                        airmonth = Convert.ToInt32(matchCollection[0].Groups["airmonth"].Value);
+                    }
+
                     var airday = Convert.ToInt32(matchCollection[0].Groups["airday"].Value);
 
                     // Swap day and month if month is bigger than 12 (scene fail)

@@ -47,9 +47,17 @@ namespace NzbDrone.Core.MediaFiles
             var rootFolder = _diskProvider.GetParentFolder(localEpisode.Series.Path);
 
             // If there are existing episode files and the root folder is missing, throw, so the old file isn't left behind during the import process.
+            // Exception: Allow network-based folder structures to be created automatically
             if (existingFiles.Any() && !_diskProvider.FolderExists(rootFolder))
             {
-                throw new RootFolderNotFoundException($"Root folder '{rootFolder}' was not found.");
+                // Check if this is a network-based folder structure that should be created automatically
+                var isNetworkStructure = !string.IsNullOrEmpty(localEpisode.Series.Network) &&
+                                       localEpisode.Series.Path.Contains(localEpisode.Series.Network);
+
+                if (!isNetworkStructure)
+                {
+                    throw new RootFolderNotFoundException($"Root folder '{rootFolder}' was not found.");
+                }
             }
 
             foreach (var existingFile in existingFiles)

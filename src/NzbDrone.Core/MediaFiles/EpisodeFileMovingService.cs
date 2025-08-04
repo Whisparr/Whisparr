@@ -169,13 +169,28 @@ namespace NzbDrone.Core.MediaFiles
             var seriesFolder = series.Path;
             var rootFolder = new OsPath(seriesFolder).Directory.FullPath;
 
-            if (!_diskProvider.FolderExists(rootFolder))
-            {
-                throw new RootFolderNotFoundException(string.Format("Root folder '{0}' was not found.", rootFolder));
-            }
-
             var changed = false;
             var newEvent = new EpisodeFolderCreatedEvent(series, episodeFile);
+
+            // Check if this is a network-based folder structure and create the network folder if needed
+            if (!_diskProvider.FolderExists(rootFolder))
+            {
+                // If the series path contains the network name, it means the user is using {Site Network}/{Site Title}
+                // In this case, create the missing network folder automatically
+                var isNetworkStructure = !string.IsNullOrEmpty(series.Network) &&
+                                       seriesFolder.Contains(series.Network);
+
+                if (isNetworkStructure)
+                {
+                    CreateFolder(rootFolder);
+                    changed = true;
+                }
+                else
+                {
+                    // Maintain existing behavior for non-network folder structures
+                    throw new RootFolderNotFoundException(string.Format("Root folder '{0}' was not found.", rootFolder));
+                }
+            }
 
             if (!_diskProvider.FolderExists(seriesFolder))
             {

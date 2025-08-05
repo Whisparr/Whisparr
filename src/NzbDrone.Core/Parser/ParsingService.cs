@@ -336,28 +336,37 @@ namespace NzbDrone.Core.Parser
             }
             else
             {
-                // Even if episode found in search criteria, always validate the release matches the correct episode
-                // This ensures conservative matching is applied, especially important for dates with multiple episodes
-                var validatedEpisode = _episodeService.FindEpisode(series.Id, airDate, part);
-                if (validatedEpisode == null)
+                // Check if there are multiple episodes for this date in the database to determine if validation is needed
+                // This avoids unnecessary validation calls for single-episode dates
+                var allEpisodesForDate = _episodeService.GetEpisodeBySeries(series.Id)
+                    .Where(e => e.AirDate == airDate).ToList();
+
+                if (allEpisodesForDate.Count > 1)
                 {
-                    _logger.Debug("Release does not match any specific episode for date {0}. Release: {1}. Rejecting to prevent incorrect download.", airDate, part);
-                    return null;
+                    // Multiple episodes exist for this date - validate the release matches the correct episode
+                    var validatedEpisode = _episodeService.FindEpisode(series.Id, airDate, part);
+                    if (validatedEpisode == null)
+                    {
+                        _logger.Debug("Release does not match any specific episode for multi-episode date {0}. Release: {1}. Rejecting to prevent incorrect download.", airDate, part);
+                        return null;
+                    }
+
+                    // If the validated episode doesn't match the search criteria episode, reject
+                    if (validatedEpisode.Id != episodeInfo.Id)
+                    {
+                        _logger.Debug("Release matches a different episode than expected for date {0}. Expected: {1} ({2}), Found: {3} ({4}). Rejecting to prevent incorrect download.",
+                            airDate,
+                            episodeInfo.Id,
+                            episodeInfo.Title,
+                            validatedEpisode.Id,
+                            validatedEpisode.Title);
+                        return null;
+                    }
+
+                    episodeInfo = validatedEpisode;
                 }
 
-                // If the validated episode doesn't match the search criteria episode, reject
-                if (validatedEpisode.Id != episodeInfo.Id)
-                {
-                    _logger.Debug("Release matches a different episode than expected for date {0}. Expected: {1} ({2}), Found: {3} ({4}). Rejecting to prevent incorrect download.",
-                        airDate,
-                        episodeInfo.Id,
-                        episodeInfo.Title,
-                        validatedEpisode.Id,
-                        validatedEpisode.Title);
-                    return null;
-                }
-
-                episodeInfo = validatedEpisode;
+                // For single-episode dates, trust the search criteria episode without additional validation
             }
 
             return episodeInfo;

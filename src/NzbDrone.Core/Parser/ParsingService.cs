@@ -334,6 +334,31 @@ namespace NzbDrone.Core.Parser
             {
                 episodeInfo = _episodeService.FindEpisode(series.Id, airDate, part);
             }
+            else
+            {
+                // Even if episode found in search criteria, always validate the release matches the correct episode
+                // This ensures conservative matching is applied, especially important for dates with multiple episodes
+                var validatedEpisode = _episodeService.FindEpisode(series.Id, airDate, part);
+                if (validatedEpisode == null)
+                {
+                    _logger.Debug("Release does not match any specific episode for date {0}. Release: {1}. Rejecting to prevent incorrect download.", airDate, part);
+                    return null;
+                }
+
+                // If the validated episode doesn't match the search criteria episode, reject
+                if (validatedEpisode.Id != episodeInfo.Id)
+                {
+                    _logger.Debug("Release matches a different episode than expected for date {0}. Expected: {1} ({2}), Found: {3} ({4}). Rejecting to prevent incorrect download.",
+                        airDate,
+                        episodeInfo.Id,
+                        episodeInfo.Title,
+                        validatedEpisode.Id,
+                        validatedEpisode.Title);
+                    return null;
+                }
+
+                episodeInfo = validatedEpisode;
+            }
 
             return episodeInfo;
         }

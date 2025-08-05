@@ -1809,5 +1809,14 @@
     "NotificationsEmbySettingsSendNotificationsHelpText": "Lasse MediaBrowser Benachrichtigungen an konfigurierte Anbieter senden",
     "DateAdded": "Hinzugefügt Datum",
     "DeleteSelected": "Ausgewählte löschen",
-    "UnmappedFiles": "Nicht zugewiesene Dateien"
+    "UnmappedFiles": "Nicht zugewiesene Dateien",
+    "UnableToAddANewConditionPleaseTryAgain": "Neue Bedingung konnte nicht hinzugefügt werden, bitte erneut versuchen.",
+    "UnableToAddANewCustomFormatPleaseTryAgain": "Neues eigenes Format kann nicht hinzugefügt werden, bitte versuchen Sie es erneut.",
+    "UnableToAddANewIndexerPleaseTryAgain": "Der neue Indexer konnte nicht hinzugefügt werden, bitte erneut probieren.",
+    "UnableToAddANewListPleaseTryAgain": "Die neue Liste konnte nicht hinzugefügt werden, bitte erneut probieren.",
+    "UnableToAddANewNotificationPleaseTryAgain": "Die neue Benachrichtigung konnte nicht hinzugefügt werden, bitte erneut probieren.",
+    "UnableToAddANewDownloadClientPleaseTryAgain": "Der neue Downloader konnte nicht hinzugefügt werden, bitte erneut probieren.",
+    "UnableToAddANewListExclusionPleaseTryAgain": "Es konnte kein neuer Listenausschluss hinzugefügt werden. Bitte versuchen Sie es erneut.",
+    "UnableToAddANewQualityProfilePleaseTryAgain": "Das neue Qualitätsprofil konnte nicht hinzugefügt werden, bitte erneut probieren.",
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Es konnte keine neue Remote-Pfadzuordnung hinzugefügt werden. Bitte versuchen Sie es erneut."
 }

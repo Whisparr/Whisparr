@@ -1107,5 +1107,14 @@
     "WouldYouLikeToRestoreBackup": "Vil du gendanne sikkerhedskopien »{name}«?",
     "ExclusionTitle": "Titel",
     "ExclusionType": "Type",
-    "UnmappedFiles": "Ikke-kortlagte mapper"
+    "UnmappedFiles": "Ikke-kortlagte mapper",
+    "UnableToAddANewConditionPleaseTryAgain": "Kan ikke tilføje en ny betingelse, prøv igen.",
+    "UnableToAddANewCustomFormatPleaseTryAgain": "Kunne ikke tilføje et nyt tilpasset format, prøv igen.",
+    "UnableToAddANewDownloadClientPleaseTryAgain": "Kunne ikke tilføje en ny downloadklient. Prøv igen.",
+    "UnableToAddANewIndexerPleaseTryAgain": "Kunne ikke tilføje en ny indekser. Prøv igen.",
+    "UnableToAddANewListExclusionPleaseTryAgain": "Kunne ikke tilføje den nye liste eksklusion, prøv igen.",
+    "UnableToAddANewNotificationPleaseTryAgain": "Kunne ikke tilføje ny notifikation, prøv igen.",
+    "UnableToAddANewQualityProfilePleaseTryAgain": "Kunne ikke tilføje ny kvalitetsprofil, prøv igen.",
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Kunne ikke tilføje en ny kortlægning af fjernstien. Prøv igen.",
+    "UnableToAddANewListPleaseTryAgain": "Kan ikke tilføje en ny liste, prøv igen."
 }

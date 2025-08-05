@@ -282,5 +282,14 @@
     "AuthenticationMethod": "驗證方式",
     "AuthenticationRequiredWarning": "為防止未經認證的遠程訪問，{appName} 現需要啟用身份認證。您可以選擇禁用本地地址的身份認證。",
     "UnableToLoadAltTitle": "無法加載其他標題。",
-    "ExclusionTitle": "標題"
+    "ExclusionTitle": "標題",
+    "UnableToAddANewConditionPleaseTryAgain": "無法加入新的條件，請重新嘗試。",
+    "UnableToAddANewCustomFormatPleaseTryAgain": "無法加入自訂格式，請重試。",
+    "UnableToAddANewDownloadClientPleaseTryAgain": "無法加入下載用戶端，請重試。",
+    "UnableToAddANewIndexerPleaseTryAgain": "無法加入新的索引器，請重試。",
+    "UnableToAddANewListExclusionPleaseTryAgain": "無法加入新的清單排除，請重試。",
+    "UnableToAddANewListPleaseTryAgain": "無法加入新的自動標籤，請重新嘗試。",
+    "UnableToAddANewNotificationPleaseTryAgain": "無法加入新的條件，請重新嘗試。",
+    "UnableToAddANewQualityProfilePleaseTryAgain": "無法加入新的條件，請重新嘗試。",
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "無法加入新的遠程路徑對應，請重試。"
 }

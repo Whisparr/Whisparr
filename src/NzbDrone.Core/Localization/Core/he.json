@@ -1076,5 +1076,14 @@
     "AddCondition": "הוסף תנאי",
     "ExclusionTitle": "כותרת",
     "ExclusionType": "סוּג",
-    "UnmappedFiles": "תיקיות לא ממופות"
+    "UnmappedFiles": "תיקיות לא ממופות",
+    "UnableToAddANewConditionPleaseTryAgain": "לא ניתן להוסיף תנאי חדש, נסה שנית.",
+    "UnableToAddANewCustomFormatPleaseTryAgain": "לא ניתן להוסיף פורמט מותאם אישית חדש, נסה שוב.",
+    "UnableToAddANewDownloadClientPleaseTryAgain": "לא ניתן להוסיף לקוח הורדות חדש, נסה שוב.",
+    "UnableToAddANewIndexerPleaseTryAgain": "לא ניתן להוסיף אינדקס חדש, נסה שוב.",
+    "UnableToAddANewListExclusionPleaseTryAgain": "לא ניתן להוסיף אי הכללה ברשימה חדשה, נסה שוב.",
+    "UnableToAddANewListPleaseTryAgain": "לא ניתן להוסיף רשימה חדשה, אנא נסה שוב.",
+    "UnableToAddANewNotificationPleaseTryAgain": "לא ניתן להוסיף התראה חדשה, נסה שוב.",
+    "UnableToAddANewQualityProfilePleaseTryAgain": "לא ניתן להוסיף פרופיל איכות חדש, נסה שוב.",
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "לא ניתן להוסיף מיפוי נתיבים מרוחק חדש, נסה שוב."
 }

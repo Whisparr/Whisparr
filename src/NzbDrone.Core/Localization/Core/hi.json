@@ -1047,5 +1047,14 @@
     "Trakt": "Trakt",
     "ExclusionTitle": "शीर्षक",
     "ExclusionType": "प्रकार",
-    "UnmappedFiles": "बिना मोड़े हुए फोल्डर"
+    "UnmappedFiles": "बिना मोड़े हुए फोल्डर",
+    "UnableToAddANewConditionPleaseTryAgain": "नई स्थिति जोड़ने में असमर्थ, कृपया पुनः प्रयास करें।",
+    "UnableToAddANewCustomFormatPleaseTryAgain": "नया कस्टम प्रारूप जोड़ने में असमर्थ, कृपया पुनः प्रयास करें।",
+    "UnableToAddANewListExclusionPleaseTryAgain": "नई सूची बहिष्करण जोड़ने में असमर्थ, कृपया पुनः प्रयास करें।",
+    "UnableToAddANewListPleaseTryAgain": "नई सूची जोड़ने में असमर्थ, कृपया पुनः प्रयास करें।",
+    "UnableToAddANewDownloadClientPleaseTryAgain": "नया डाउनलोड क्लाइंट जोड़ने में असमर्थ, कृपया पुनः प्रयास करें।",
+    "UnableToAddANewIndexerPleaseTryAgain": "नया अनुक्रमणिका जोड़ने में असमर्थ, कृपया पुनः प्रयास करें।",
+    "UnableToAddANewNotificationPleaseTryAgain": "नई अधिसूचना जोड़ने में असमर्थ, कृपया पुनः प्रयास करें।",
+    "UnableToAddANewQualityProfilePleaseTryAgain": "नई गुणवत्ता प्रोफ़ाइल जोड़ने में असमर्थ, कृपया पुनः प्रयास करें।",
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "नया दूरस्थ पथ मैपिंग जोड़ने में असमर्थ, कृपया पुनः प्रयास करें।"
 }

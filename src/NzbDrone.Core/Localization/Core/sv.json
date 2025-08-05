@@ -1084,5 +1084,14 @@
     "Reddit": "Reddit",
     "ExclusionTitle": "Titel",
     "ExclusionType": "Typ",
-    "IMDb": "IMDb"
+    "IMDb": "IMDb",
+    "UnableToAddANewConditionPleaseTryAgain": "Det gick inte att lägga till ett nytt villkor. Försök igen.",
+    "UnableToAddANewCustomFormatPleaseTryAgain": "Kunde inte lägga till ett nytt anpassat format, var god försök igen.",
+    "UnableToAddANewDownloadClientPleaseTryAgain": "Inte möjligt att lägga till en ny nedladdningsklient, var god försök igen.",
+    "UnableToAddANewIndexerPleaseTryAgain": "Inte möjligt att lägga till en ny indexerare, var god försök igen.",
+    "UnableToAddANewListExclusionPleaseTryAgain": "Det går inte att lägga till en ny listaundantag, försök igen.",
+    "UnableToAddANewListPleaseTryAgain": "Det gick inte att lägga till en ny lista. Försök igen.",
+    "UnableToAddANewNotificationPleaseTryAgain": "Det gick inte att lägga till ett nytt meddelande, försök igen.",
+    "UnableToAddANewQualityProfilePleaseTryAgain": "Det gick inte att lägga till en ny kvalitetsprofil. Försök igen.",
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Det gick inte att lägga till en ny mappning av fjärrvägen, försök igen."
 }

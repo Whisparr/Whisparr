@@ -19,5 +19,6 @@
     "AddDelayProfileError": "افزودن نمایه تاخیر جدید ناموفق بود، لطفا مجددا تلاش کنید.",
     "Torrents": "تورنت ها",
     "Docker": "Docker",
-    "Usenet": "Usenet"
+    "Usenet": "Usenet",
+    "UnableToAddANewConditionPleaseTryAgain": "افزودن شرط جدید ناموفق بود، لطفا مجددا تلاش کنید."
 }

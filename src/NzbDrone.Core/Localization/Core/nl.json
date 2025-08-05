@@ -1217,5 +1217,14 @@
     "Socks4": "Socks4",
     "ExclusionTitle": "Titel",
     "ExclusionType": "Type",
-    "UnmappedFiles": "Niet-toegewezen Mappen"
+    "UnmappedFiles": "Niet-toegewezen Mappen",
+    "UnableToAddANewConditionPleaseTryAgain": "Kon geen nieuwe conditie toevoegen, gelieve opnieuw te proberen.",
+    "UnableToAddANewCustomFormatPleaseTryAgain": "Kan geen nieuw aangepast formaat toevoegen. Probeer het opnieuw.",
+    "UnableToAddANewDownloadClientPleaseTryAgain": "Kan geen nieuwe downloadclient toevoegen. Probeer het opnieuw.",
+    "UnableToAddANewIndexerPleaseTryAgain": "Kon geen nieuwe indexeerder toevoegen, gelieve opnieuw te proberen.",
+    "UnableToAddANewListExclusionPleaseTryAgain": "Kan geen nieuwe lijst uitzondering toevoegen, probeer het opnieuw.",
+    "UnableToAddANewListPleaseTryAgain": "Kon geen nieuwe lijst toevoegen, probeer het opnieuw.",
+    "UnableToAddANewNotificationPleaseTryAgain": "Kon geen nieuwe notificatie toevoegen, gelieve opnieuw te proberen.",
+    "UnableToAddANewQualityProfilePleaseTryAgain": "Kon geen nieuw Kwaliteitsprofiel toevoegen, probeer het opnieuw.",
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Kon geen nieuw externe pad verwijzing toevoegen, gelieve opnieuw te proberen."
 }

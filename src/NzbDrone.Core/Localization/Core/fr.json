@@ -1832,5 +1832,14 @@
     "Aliases": "Aliases",
     "Code": "Code",
     "ExclusionTitleHelpText": "Description de l'exclusion",
-    "ExclusionTypeHelpText": "Type d'exclusion"
+    "ExclusionTypeHelpText": "Type d'exclusion",
+    "UnableToAddANewConditionPleaseTryAgain": "Impossible d'ajouter une nouvelle condition, veuillez réessayer.",
+    "UnableToAddANewCustomFormatPleaseTryAgain": "Impossible d'ajouter un nouveau format personnalisé, veuillez réessayer.",
+    "UnableToAddANewDownloadClientPleaseTryAgain": "Impossible d'ajouter un nouveau client de téléchargement, veuillez réessayer.",
+    "UnableToAddANewIndexerPleaseTryAgain": "Impossible d'ajouter un nouvel indexeur, veuillez réessayer.",
+    "UnableToAddANewListExclusionPleaseTryAgain": "Impossible d'ajouter une nouvelle exclusion de liste, veuillez réessayer.",
+    "UnableToAddANewListPleaseTryAgain": "Impossible d'ajouter une nouvelle liste, veuillez réessayer.",
+    "UnableToAddANewNotificationPleaseTryAgain": "Impossible d'ajouter une nouvelle notification, veuillez réessayer.",
+    "UnableToAddANewQualityProfilePleaseTryAgain": "Impossible d'ajouter un nouveau profil de qualité, veuillez réessayer.",
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Impossible d'ajouter un nouveau mappage de chemin d'accès distant, veuillez réessayer."
 }

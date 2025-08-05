@@ -176,5 +176,14 @@
     "Clone": "Tutup",
     "EnableSsl": "Aktifkan RSS",
     "AddDelayProfile": "Tambah Delay Profile",
-    "AddCustomFormatError": "Tidak dapat menambahkan format khusus baru, coba lagi."
+    "AddCustomFormatError": "Tidak dapat menambahkan format khusus baru, coba lagi.",
+    "AddCondition": "tambah persyaratan",
+    "AddAutoTag": "tambah label otomatis",
+    "AddAutoTagError": "tidak dapat menambahkan label otomatis, coba lagi..",
+    "AddConnection": "tambah koneksi",
+    "AddConditionError": "tidak dapat menambahkan persyaratan baru, coba lagi..",
+    "AddConditionImplementation": "tambah persyaratan {implementationName}",
+    "AddConnectionImplementation": "tambah koneksi - {implementationName}",
+    "UnableToAddANewConditionPleaseTryAgain": "tidak dapat menambahkan persyaratan baru, coba lagi..",
+    "UnableToAddANewCustomFormatPleaseTryAgain": "Tidak dapat menambahkan format khusus baru, coba lagi."
 }

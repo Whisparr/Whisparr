@@ -1116,5 +1116,14 @@
     "DownloadClientDelugeValidationLabelPluginInactiveDetail": "За да използвате категориите, трябва да е активирана приставката Етикети в {clientName}.",
     "DownloadClientDownloadStationProviderMessage": "{appName} не може да се свърже със Download Station, ако в DSM акаунта е разрешено двуфакторно удостоверяване",
     "AuthenticationRequiredHelpText": "Променете за кои заявки се изисква удостоверяване. Не променяйте, освен ако не разбирате рисковете.",
-    "UnmappedFiles": "Немапирани папки"
+    "UnmappedFiles": "Немапирани папки",
+    "UnableToAddANewConditionPleaseTryAgain": "Не може да се добави ново условие, моля, опитайте отново.",
+    "UnableToAddANewCustomFormatPleaseTryAgain": "Не може да се добави нов персонализиран формат, моля, опитайте отново.",
+    "UnableToAddANewDownloadClientPleaseTryAgain": "Не може да се добави нов клиент за изтегляне, моля, опитайте отново.",
+    "UnableToAddANewIndexerPleaseTryAgain": "Не може да се добави нов индексатор, моля, опитайте отново.",
+    "UnableToAddANewListExclusionPleaseTryAgain": "Не може да се добави ново изключение от списъка, моля, опитайте отново.",
+    "UnableToAddANewListPleaseTryAgain": "Не може да се добави нов списък, моля, опитайте отново.",
+    "UnableToAddANewNotificationPleaseTryAgain": "Не може да се добави ново известие, моля, опитайте отново.",
+    "UnableToAddANewQualityProfilePleaseTryAgain": "Не може да се добави нов качествен профил, моля, опитайте отново.",
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Не може да се добави ново картографиране на отдалечен път, моля, опитайте отново."
 }

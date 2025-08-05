@@ -1841,5 +1841,14 @@
     "FilterByExclusionType": "Filtro por Tipo de Exclusão",
     "DeleteStudiosModalWarning": "Isso também ira remover todos os filmes e cenas para cada um dos estúdios selecionados",
     "TotalSceneCount": "Total de Cenas",
-    "SceneCount": "Quantidade de Cenas"
+    "SceneCount": "Quantidade de Cenas",
+    "UnableToAddANewConditionPleaseTryAgain": "Não foi possível adicionar uma nova condição, tente novamente.",
+    "UnableToAddANewCustomFormatPleaseTryAgain": "Não foi possível adicionar um novo formato personalizado. Tente novamente.",
+    "UnableToAddANewDownloadClientPleaseTryAgain": "Não foi possível adicionar um novo cliente de download. Tente novamente.",
+    "UnableToAddANewIndexerPleaseTryAgain": "Não foi possível adicionar um novo indexador. Tente novamente.",
+    "UnableToAddANewListExclusionPleaseTryAgain": "Não foi possível adicionar uma nova exclusão à lista. Tente novamente.",
+    "UnableToAddANewListPleaseTryAgain": "Não foi possível adicionar uma nova lista. Tente novamente.",
+    "UnableToAddANewNotificationPleaseTryAgain": "Não foi possível adicionar uma nova notificação. Tente novamente.",
+    "UnableToAddANewQualityProfilePleaseTryAgain": "Não foi possível adicionar um novo perfil de qualidade. Tente novamente.",
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Não foi possível adicionar um novo mapeamento de caminho remoto. Tente novamente."
 }

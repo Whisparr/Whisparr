@@ -1055,5 +1055,14 @@
     "Discord": "ไม่ลงรอยกัน",
     "ExclusionTitle": "หัวข้อ",
     "ExclusionType": "ประเภท",
-    "UnmappedFiles": "โฟลเดอร์ที่ไม่ได้แมป"
+    "UnmappedFiles": "โฟลเดอร์ที่ไม่ได้แมป",
+    "UnableToAddANewConditionPleaseTryAgain": "ไม่สามารถเพิ่มเงื่อนไขใหม่ได้โปรดลองอีกครั้ง",
+    "UnableToAddANewListExclusionPleaseTryAgain": "ไม่สามารถเพิ่มการยกเว้นรายการใหม่ได้โปรดลองอีกครั้ง",
+    "UnableToAddANewListPleaseTryAgain": "ไม่สามารถเพิ่มรายชื่อใหม่ได้โปรดลองอีกครั้ง",
+    "UnableToAddANewCustomFormatPleaseTryAgain": "ไม่สามารถเพิ่มรูปแบบที่กำหนดเองใหม่โปรดลองอีกครั้ง",
+    "UnableToAddANewDownloadClientPleaseTryAgain": "ไม่สามารถเพิ่มไคลเอนต์ดาวน์โหลดใหม่ได้โปรดลองอีกครั้ง",
+    "UnableToAddANewIndexerPleaseTryAgain": "ไม่สามารถเพิ่มตัวสร้างดัชนีใหม่ได้โปรดลองอีกครั้ง",
+    "UnableToAddANewNotificationPleaseTryAgain": "ไม่สามารถเพิ่มการแจ้งเตือนใหม่โปรดลองอีกครั้ง",
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "ไม่สามารถเพิ่มการแมปเส้นทางระยะไกลใหม่โปรดลองอีกครั้ง",
+    "UnableToAddANewQualityProfilePleaseTryAgain": "ไม่สามารถเพิ่มโปรไฟล์คุณภาพใหม่ได้โปรดลองอีกครั้ง"
 }

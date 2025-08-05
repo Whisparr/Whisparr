@@ -1755,5 +1755,14 @@
     "ExclusionType": "类型",
     "DateAdded": "添加日期",
     "DeleteSelected": "删除所选项",
-    "UnmappedFiles": "未映射文件"
+    "UnmappedFiles": "未映射文件",
+    "UnableToAddANewConditionPleaseTryAgain": "无法添加新条件，请再试一次。",
+    "UnableToAddANewCustomFormatPleaseTryAgain": "无法添加自定义格式，请稍后重试。",
+    "UnableToAddANewDownloadClientPleaseTryAgain": "无法添加下载客户端，请稍后重试。",
+    "UnableToAddANewIndexerPleaseTryAgain": "无法添加新索引器，请重试。",
+    "UnableToAddANewListExclusionPleaseTryAgain": "无法添加新排除列表，请再试一次。",
+    "UnableToAddANewListPleaseTryAgain": "无法添加列表，请稍后重试。",
+    "UnableToAddANewNotificationPleaseTryAgain": "无法添加新通知，请稍后重试。",
+    "UnableToAddANewQualityProfilePleaseTryAgain": "无法添加新的质量配置，请稍后重试。",
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "无法添加远程路径映射，请稍后重试。"
 }

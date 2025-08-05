@@ -283,5 +283,13 @@
     "AllTitles": "Všetky súbory",
     "Clone": "Zatvoriť",
     "Reason": "Séria",
-    "ExclusionTitle": "Názov"
+    "ExclusionTitle": "Názov",
+    "UnableToAddANewConditionPleaseTryAgain": "Nie je možné pridať novú podmienku, skúste to znova.",
+    "UnableToAddANewCustomFormatPleaseTryAgain": "Nie je možné pridať novú automatickú značku, skúste to znova.",
+    "UnableToAddANewDownloadClientPleaseTryAgain": "Nie je možné pridať novú podmienku, skúste to znova.",
+    "UnableToAddANewIndexerPleaseTryAgain": "Nie je možné pridať novú podmienku, skúste to znova.",
+    "UnableToAddANewListExclusionPleaseTryAgain": "Nie je možné pridať novú podmienku, skúste to znova.",
+    "UnableToAddANewListPleaseTryAgain": "Nie je možné pridať novú automatickú značku, skúste to znova.",
+    "UnableToAddANewNotificationPleaseTryAgain": "Nie je možné pridať novú podmienku, skúste to znova.",
+    "UnableToAddANewQualityProfilePleaseTryAgain": "Nie je možné pridať novú podmienku, skúste to znova."
 }

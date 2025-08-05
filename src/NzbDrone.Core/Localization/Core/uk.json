@@ -1742,5 +1742,14 @@
     "DeleteSelected": "Видалити вибрані",
     "UnmappedFiles": "Невідповідні папки",
     "NotificationsEmbySettingsUpdateLibraryHelpText": "Оновити бібліотеку при імпорті, перейменуванні або видаленні",
-    "ListWillRefreshEveryInterp": "Список оновлюватиметься кожні {0}"
+    "ListWillRefreshEveryInterp": "Список оновлюватиметься кожні {0}",
+    "UnableToAddANewConditionPleaseTryAgain": "Не вдалося додати нову умову, спробуйте ще раз.",
+    "UnableToAddANewDownloadClientPleaseTryAgain": "Не вдається додати новий клієнт для завантаження, повторіть спробу.",
+    "UnableToAddANewIndexerPleaseTryAgain": "Не вдалося додати новий індексатор, спробуйте ще раз.",
+    "UnableToAddANewListExclusionPleaseTryAgain": "Не вдалось додати виняток нового списку імпорту, спробуйте ще раз.",
+    "UnableToAddANewCustomFormatPleaseTryAgain": "Не вдалося додати новий спеціальний формат, спробуйте ще раз.",
+    "UnableToAddANewListPleaseTryAgain": "Не вдалося додати новий список, спробуйте ще раз.",
+    "UnableToAddANewNotificationPleaseTryAgain": "Не вдалося додати нове сповіщення, спробуйте ще раз.",
+    "UnableToAddANewQualityProfilePleaseTryAgain": "Не вдалося додати новий профіль якості, спробуйте ще раз.",
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Не вдалося додати нове зіставлення віддаленого шляху, спробуйте ще раз."
 }

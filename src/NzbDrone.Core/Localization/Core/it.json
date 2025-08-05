@@ -1450,5 +1450,18 @@
     "AddScenes": "Aggiungi scene",
     "AddStudio": "Aggiungi studio",
     "Aliases": "Alias",
-    "IndexerSettingsRejectBlocklistedTorrentHashesHelpText": "Se un torrent è bloccato tramite hash, potrebbe non essere correttamente rifiutato durante l’uso di RSS/Ricerca con alcuni indexer. Abilitando questa opzione, il torrent verrà rifiutato dopo essere stato acquisito, ma prima di essere inviato al client."
+    "IndexerSettingsRejectBlocklistedTorrentHashesHelpText": "Se un torrent è bloccato tramite hash, potrebbe non essere correttamente rifiutato durante l’uso di RSS/Ricerca con alcuni indexer. Abilitando questa opzione, il torrent verrà rifiutato dopo essere stato acquisito, ma prima di essere inviato al client.",
+    "BlocklistAndSearchHint": "Inizia una ricerca per sostituzioni dopo l'aggiunta alla lista dei blocchi",
+    "AutomaticUpdatesDisabledDocker": "Gli aggiornamenti automatici non sono supportati direttamente quando si utilizza il meccanismo di aggiornamento Docker. Sarà necessario aggiornare l'immagine del contenitore al di fuori di {appName} o utilizzare uno script",
+    "UnableToAddANewDownloadClientPleaseTryAgain": "Non riesco ad aggiungere un nuovo client di download, riprova.",
+    "UnableToAddANewIndexerPleaseTryAgain": "Impossibile aggiungere un nuovo Indicizzatore, riprova.",
+    "BlocklistOnly": "Solo blocklist",
+    "UnableToAddANewConditionPleaseTryAgain": "Non è stato possibile aggiungere una nuova condizione. Riprova.",
+    "UnableToAddANewCustomFormatPleaseTryAgain": "Impossibile aggiungere un nuovo formato personalizzato, riprova.",
+    "UnableToAddANewListExclusionPleaseTryAgain": "Non riesco ad aggiungere una nuova lista di esclusione, riprova.",
+    "UnableToAddANewListPleaseTryAgain": "Non riesco ad aggiungere una nuova lista, riprova.",
+    "UnableToAddANewNotificationPleaseTryAgain": "Non riesco ad aggiungere una nuova notifica, riprova.",
+    "UnableToAddANewQualityProfilePleaseTryAgain": "Non riesco ad aggiungere un nuovo profilo di qualità, riprova.",
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Non riesco ad aggiungere la mappatura di un nuovo percorso remoto, riprova.",
+    "BlocklistMultipleOnlyHint": "Aggiungi alla blocklist senza ricerca di sostituti"
 }

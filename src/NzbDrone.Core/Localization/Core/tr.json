@@ -1751,5 +1751,14 @@
     "ExclusionTitle": "Başlık",
     "ExclusionType": "Tür",
     "DeleteSelected": "Seçileni Sil",
-    "UnmappedFiles": "Eşlenmemiş Klasörler"
+    "UnmappedFiles": "Eşlenmemiş Klasörler",
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Yeni bir uzak yol eşlemesi eklenemiyor, lütfen tekrar deneyin.",
+    "UnableToAddANewConditionPleaseTryAgain": "Yeni bir koşul eklenemiyor, lütfen tekrar deneyin.",
+    "UnableToAddANewCustomFormatPleaseTryAgain": "Yeni bir özel format eklenemiyor, lütfen tekrar deneyin.",
+    "UnableToAddANewDownloadClientPleaseTryAgain": "Yeni bir indirme istemcisi eklenemiyor, lütfen tekrar deneyin.",
+    "UnableToAddANewNotificationPleaseTryAgain": "Yeni bir bildirim eklenemiyor, lütfen tekrar deneyin.",
+    "UnableToAddANewQualityProfilePleaseTryAgain": "Yeni kalite profili eklenemiyor, lütfen tekrar deneyin.",
+    "UnableToAddANewIndexerPleaseTryAgain": "Yeni indeksleyici eklenemiyor, lütfen tekrar deneyin.",
+    "UnableToAddANewListExclusionPleaseTryAgain": "Yeni bir liste dışlaması eklenemiyor, lütfen tekrar deneyin.",
+    "UnableToAddANewListPleaseTryAgain": "Yeni bir liste eklenemiyor, lütfen tekrar deneyin."
 }

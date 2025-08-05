@@ -1841,5 +1841,14 @@
     "DeleteStudiosModalHeader": "Poista studiot",
     "SceneCount": "Kohtausmäärä",
     "HasMovies": "Sisältää elokuvia",
-    "HasScenes": "Sisältää kohtauksia"
+    "HasScenes": "Sisältää kohtauksia",
+    "UnableToAddANewConditionPleaseTryAgain": "Virhe lisättäessä ehtoa. Yritä uudelleen.",
+    "UnableToAddANewCustomFormatPleaseTryAgain": "Virhe lisättäessä mukautettua muotoa. Yritä uudelleen.",
+    "UnableToAddANewDownloadClientPleaseTryAgain": "Latauspalvelun lisääminen epäonnistui. Yritä uudelleen.",
+    "UnableToAddANewIndexerPleaseTryAgain": "Uuden hakupalvelun lisääminen epäonnistui. Yritä uudelleen.",
+    "UnableToAddANewListExclusionPleaseTryAgain": "Virhe lisättäessä listapoikkeusta. Yritä uudelleen.",
+    "UnableToAddANewListPleaseTryAgain": "Virhe lisättäessä listaa. Yritä uudelleen.",
+    "UnableToAddANewNotificationPleaseTryAgain": "Ilmoituspalvelun lisääminen epäonnistui. Yritä uudelleen.",
+    "UnableToAddANewQualityProfilePleaseTryAgain": "Virhe lisättäessä laatuprofiilia. Yritä uudelleen.",
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Etäsijainnin kohdistuksen lisäys epäonnistui. Yritä uudelleen."
 }

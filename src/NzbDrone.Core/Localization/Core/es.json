@@ -1841,5 +1841,14 @@
     "SceneCount": "Recuento de escenas",
     "TotalSceneCount": "Recuento total de escenas",
     "HasScenes": "Tiene escenas",
-    "FilterByExclusionType": "Filtrar por tipo de exclusión"
+    "FilterByExclusionType": "Filtrar por tipo de exclusión",
+    "UnableToAddANewQualityProfilePleaseTryAgain": "No se ha podido añadir un nuevo perfil de calidad, prueba otra vez.",
+    "UnableToAddANewConditionPleaseTryAgain": "No se pudo añadir una nueva condición, inténtelo de nuevo.",
+    "UnableToAddANewCustomFormatPleaseTryAgain": "No se ha podido añadir un nuevo formato personalizado, prueba otra vez.",
+    "UnableToAddANewDownloadClientPleaseTryAgain": "No se ha podido añadir un nuevo gestor de descargas, prueba otra vez.",
+    "UnableToAddANewIndexerPleaseTryAgain": "No se pudo añadir un nuevo indexador, por favor inténtalo de nuevo.",
+    "UnableToAddANewListExclusionPleaseTryAgain": "No se ha podido añadir una nueva lista de exclusión, prueba otra vez.",
+    "UnableToAddANewListPleaseTryAgain": "No se ha podido añadir una nueva lista, prueba otra vez.",
+    "UnableToAddANewNotificationPleaseTryAgain": "No se ha podido añadir una nueva notificación, prueba otra vez.",
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "No se pudo añadir una nueva asignación de ruta remota, inténtelo de nuevo."
 }

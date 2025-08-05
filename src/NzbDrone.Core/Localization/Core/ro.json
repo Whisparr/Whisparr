@@ -1131,5 +1131,15 @@
     "ApiKeyValidationHealthCheckMessage": "Te rugăm să actualizezi cheia API astfel încât să aibă cel puțin {length} caractere. Poți face acest lucru din setări sau din fișierul de configurare",
     "FocusSearchBox": "Caseta de căutare Focus",
     "CloseCurrentModal": "Închideți modul curent",
-    "UnmappedFiles": "Foldere nemapate"
+    "UnmappedFiles": "Foldere nemapate",
+    "AppDataDirectory": "Directorul AppData",
+    "UnableToAddANewConditionPleaseTryAgain": "Imposibil de adăugat o condiție nouă, încercați din nou.",
+    "UnableToAddANewCustomFormatPleaseTryAgain": "Imposibil de adăugat un nou format personalizat, încercați din nou.",
+    "UnableToAddANewDownloadClientPleaseTryAgain": "Imposibil de adăugat un nou client de descărcare, încercați din nou.",
+    "UnableToAddANewIndexerPleaseTryAgain": "Imposibil de adăugat un nou indexer, încercați din nou.",
+    "UnableToAddANewListExclusionPleaseTryAgain": "Imposibil de adăugat o nouă listă de excludere, încercați din nou.",
+    "UnableToAddANewListPleaseTryAgain": "Imposibil de adăugat o nouă listă, încercați din nou.",
+    "UnableToAddANewNotificationPleaseTryAgain": "Imposibil de adăugat o nouă notificare, încercați din nou.",
+    "UnableToAddANewQualityProfilePleaseTryAgain": "Imposibil de adăugat un nou profil de calitate, încercați din nou.",
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Imposibil de adăugat o nouă mapare a căilor la distanță, încercați din nou."
 }

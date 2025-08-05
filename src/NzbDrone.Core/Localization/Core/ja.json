@@ -1035,5 +1035,14 @@
     "IMDb": "IMDb",
     "ExclusionTitle": "題名",
     "ExclusionType": "タイプ",
-    "UnmappedFiles": "マップされていないフォルダ"
+    "UnmappedFiles": "マップされていないフォルダ",
+    "UnableToAddANewConditionPleaseTryAgain": "新しい条件を追加できません。再試行してください。",
+    "UnableToAddANewListPleaseTryAgain": "新しいリストを追加できません。もう一度やり直してください。",
+    "UnableToAddANewQualityProfilePleaseTryAgain": "新しい品質プロファイルを追加できません。再試行してください。",
+    "UnableToAddANewCustomFormatPleaseTryAgain": "新しいカスタムフォーマットを追加できません。もう一度お試しください。",
+    "UnableToAddANewDownloadClientPleaseTryAgain": "新しいダウンロードクライアントを追加できません。もう一度やり直してください。",
+    "UnableToAddANewIndexerPleaseTryAgain": "新しいインデクサーを追加できません。もう一度やり直してください。",
+    "UnableToAddANewListExclusionPleaseTryAgain": "新しいリストの除外を追加できません。再試行してください。",
+    "UnableToAddANewNotificationPleaseTryAgain": "新しい通知を追加できません。もう一度やり直してください。",
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "新しいリモートパスマッピングを追加できません。再試行してください。"
 }

@@ -1841,5 +1841,14 @@
     "TotalSceneCount": "Nombre total d'escenes",
     "HasMovies": "Té pel·lícules",
     "HasScenes": "Té escenes",
-    "DeleteStudioModalWarning": " Això també eliminarà totes les pel·lícules i escenes de {0}"
+    "DeleteStudioModalWarning": " Això també eliminarà totes les pel·lícules i escenes de {0}",
+    "UnableToAddANewConditionPleaseTryAgain": "No es pot afegir una condició nova, torneu-ho a provar.",
+    "UnableToAddANewCustomFormatPleaseTryAgain": "No es pot afegir un format personalitzat nou, torneu-ho a provar.",
+    "UnableToAddANewDownloadClientPleaseTryAgain": "No es pot afegir un nou client de baixada, torna-ho a provar.",
+    "UnableToAddANewIndexerPleaseTryAgain": "No es pot afegir un indexador nou, torneu-ho a provar.",
+    "UnableToAddANewListExclusionPleaseTryAgain": "No es pot afegir una nova llista d'exclusió, torneu-ho a provar.",
+    "UnableToAddANewListPleaseTryAgain": "No es pot afegir una llista nova, torna-ho a provar.",
+    "UnableToAddANewNotificationPleaseTryAgain": "No es pot afegir una notificació nova, torneu-ho a provar.",
+    "UnableToAddANewQualityProfilePleaseTryAgain": "No es pot afegir un perfil de qualitat nou, torneu-ho a provar.",
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "No es pot afegir una nova assignació de ruta remota, torna-ho a provar."
 }

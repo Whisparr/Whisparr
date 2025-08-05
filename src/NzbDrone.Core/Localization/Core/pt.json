@@ -1262,5 +1262,14 @@
     "FormatDateTimeRelative": "{relativeDay}, {formattedDate} {formattedTime}",
     "FormatShortTimeSpanHours": "{hours} hora(s)",
     "FormatShortTimeSpanMinutes": "{minutes} minuto(s)",
-    "False": "Falso"
+    "False": "Falso",
+    "UnableToAddANewConditionPleaseTryAgain": "Não foi possível adicionar uma nova condição, tente novamente.",
+    "UnableToAddANewCustomFormatPleaseTryAgain": "Não foi possível adicionar um novo formato personalizado, tenta novamente.",
+    "UnableToAddANewDownloadClientPleaseTryAgain": "Não foi possível adicionar um novo cliente de transferências, tenta novamente.",
+    "UnableToAddANewIndexerPleaseTryAgain": "Não foi possível adicionar um novo indexador, tenta novamente.",
+    "UnableToAddANewListExclusionPleaseTryAgain": "Não foi possível adicionar uma nova exclusão de lista, tente novamente.",
+    "UnableToAddANewListPleaseTryAgain": "Não foi possível adicionar uma nova lista, tente novamente.",
+    "UnableToAddANewNotificationPleaseTryAgain": "Não foi possível adicionar uma nova notificação, tenta novamente.",
+    "UnableToAddANewQualityProfilePleaseTryAgain": "Não foi possível adicionar um novo perfil de qualidade, tenta novamente.",
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Não foi possível adicionar um novo mapeamento de caminho remoto, tenta novamente."
 }

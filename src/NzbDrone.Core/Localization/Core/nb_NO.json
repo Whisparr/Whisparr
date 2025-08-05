@@ -319,5 +319,14 @@
     "AddImportListImplementation": "Legg til importliste - {implementationName}",
     "AddRemotePathMappingError": "Kunne ikke legge til ny ekstern stimapping, vennligst prøv igjen.",
     "AddRootFolderError": "Kunne ikke legge til rotmappe",
-    "History": "Historikk"
+    "History": "Historikk",
+    "UnableToAddANewConditionPleaseTryAgain": "Ikke mulig å legge til ny betingelse, vennligst prøv igjen",
+    "UnableToAddANewCustomFormatPleaseTryAgain": "Ikke mulig å legge til ny automatisk tagg, vennligst prøv igjen",
+    "UnableToAddANewDownloadClientPleaseTryAgain": "Ikke mulig å legge til ny betingelse, vennligst prøv igjen",
+    "UnableToAddANewIndexerPleaseTryAgain": "Ikke mulig å legge til ny betingelse, vennligst prøv igjen",
+    "UnableToAddANewListExclusionPleaseTryAgain": "Ikke mulig å legge til ny betingelse, vennligst prøv igjen",
+    "UnableToAddANewListPleaseTryAgain": "Ikke mulig å legge til ny automatisk tagg, vennligst prøv igjen",
+    "UnableToAddANewNotificationPleaseTryAgain": "Ikke mulig å legge til ny betingelse, vennligst prøv igjen",
+    "UnableToAddANewQualityProfilePleaseTryAgain": "Ikke mulig å legge til ny betingelse, vennligst prøv igjen",
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Kunne ikke legge til ny ekstern stimapping, vennligst prøv igjen."
 }

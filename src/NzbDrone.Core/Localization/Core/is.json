@@ -1060,5 +1060,14 @@
     "EditReleaseProfile": "Breyta seinkunarprófíl",
     "ExclusionTitle": "Titill",
     "ExclusionType": "Tegund",
-    "UnmappedFiles": "Ókortlagðar möppur"
+    "UnmappedFiles": "Ókortlagðar möppur",
+    "UnableToAddANewIndexerPleaseTryAgain": "Ekki er hægt að bæta við nýjum flokkara, reyndu aftur.",
+    "UnableToAddANewListExclusionPleaseTryAgain": "Ekki er hægt að bæta við nýjum listaútilokun, reyndu aftur.",
+    "UnableToAddANewQualityProfilePleaseTryAgain": "Ekki er hægt að bæta við nýjum gæðaprófíl, reyndu aftur.",
+    "UnableToAddANewConditionPleaseTryAgain": "Ekki er hægt að bæta við nýju skilyrði, reyndu aftur.",
+    "UnableToAddANewCustomFormatPleaseTryAgain": "Ekki er hægt að bæta við nýju sérsniðnu sniði. Reyndu aftur.",
+    "UnableToAddANewDownloadClientPleaseTryAgain": "Ekki er hægt að bæta við nýjum niðurhalsþjóni, reyndu aftur.",
+    "UnableToAddANewListPleaseTryAgain": "Ekki er hægt að bæta við nýjum lista. Reyndu aftur.",
+    "UnableToAddANewNotificationPleaseTryAgain": "Ekki er hægt að bæta við nýrri tilkynningu. Reyndu aftur.",
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Ekki er hægt að bæta við nýrri fjarlægri slóðakortun, reyndu aftur."
 }

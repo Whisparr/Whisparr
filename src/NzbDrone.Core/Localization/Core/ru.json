@@ -1729,5 +1729,14 @@
     "UnmappedFiles": "Несопоставленные папки",
     "DeletePerformersModalHeader": "Удалить исполнителей",
     "DeletePerformerModalWarning": "Так же удалятся все фильмы и сцены с участием {0}",
-    "DeletePerformersModalWarning": "Так же удалятся все фильмы и сцены с их участием"
+    "DeletePerformersModalWarning": "Так же удалятся все фильмы и сцены с их участием",
+    "UnableToAddANewConditionPleaseTryAgain": "Невозможно добавить новое условие, попробуйте еще раз.",
+    "UnableToAddANewIndexerPleaseTryAgain": "Не удалось добавить новый индексатор, повторите попытку.",
+    "UnableToAddANewCustomFormatPleaseTryAgain": "Невозможно добавить новый пользовательский формат, попробуйте ещё раз.",
+    "UnableToAddANewDownloadClientPleaseTryAgain": "Не удалось добавить новый клиент загрузки, попробуйте ещё раз.",
+    "UnableToAddANewListExclusionPleaseTryAgain": "Не удалось добавить новое исключение в список, попробуйте еще раз.",
+    "UnableToAddANewListPleaseTryAgain": "Не удалось добавить новый список, попробуйте еще раз.",
+    "UnableToAddANewNotificationPleaseTryAgain": "Не удалось добавить новое уведомление, попробуйте ещё раз.",
+    "UnableToAddANewQualityProfilePleaseTryAgain": "Не удалось добавить новый профиль качества. Повторите попытку.",
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Не удалось добавить новый удаленный путь, попробуйте еще раз."
 }

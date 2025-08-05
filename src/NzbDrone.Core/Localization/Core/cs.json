@@ -1306,5 +1306,14 @@
     "NotificationsCustomScriptSettingsArgumentsHelpText": "Argumenty, které se mají předat skriptu",
     "NotificationsCustomScriptSettingsName": "Vlastní skript",
     "NotificationsCustomScriptSettingsProviderMessage": "Testování spustí skript s EventType nastaveným na {eventTypeTest}, ujistěte se, že váš skript toto správně zpracovává",
-    "StartupDirectory": "Spouštěcí Adresář"
+    "StartupDirectory": "Spouštěcí Adresář",
+    "UnableToAddANewCustomFormatPleaseTryAgain": "Nebylo možné přidat nový vlastní formát, prosím zkuste to později.",
+    "UnableToAddANewConditionPleaseTryAgain": "Nepodařilo se přidat novou podmínku, prosím, zkuste to znovu.",
+    "UnableToAddANewDownloadClientPleaseTryAgain": "Nebylo možné přidat nového klienta pro stahování, prosím zkuste to později.",
+    "UnableToAddANewIndexerPleaseTryAgain": "Nelze přidat nový indexer, zkuste to znovu.",
+    "UnableToAddANewListExclusionPleaseTryAgain": "Nebylo možné přidat nové vyloučení ze seznamu importovaných položek, prosím zkuste to později.",
+    "UnableToAddANewListPleaseTryAgain": "Nový seznam nelze přidat, zkuste to znovu.",
+    "UnableToAddANewNotificationPleaseTryAgain": "Nelze přidat nové oznámení, zkuste to znovu.",
+    "UnableToAddANewQualityProfilePleaseTryAgain": "Nelze přidat nový kvalitní profil, zkuste to znovu.",
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Nelze přidat nové mapování vzdálené cesty, zkuste to znovu."
 }

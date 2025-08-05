@@ -1063,5 +1063,14 @@
     "EditReleaseProfile": "تحرير ملف تعريف التأخير",
     "ExclusionTitle": "عنوان",
     "ExclusionType": "اكتب",
-    "UnmappedFiles": "المجلدات غير المعينة"
+    "UnmappedFiles": "المجلدات غير المعينة",
+    "UnableToAddANewConditionPleaseTryAgain": "غير قادر على إضافة شرط جديد ، يرجى المحاولة مرة أخرى.",
+    "UnableToAddANewCustomFormatPleaseTryAgain": "تعذر إضافة تنسيق مخصص جديد ، يرجى المحاولة مرة أخرى.",
+    "UnableToAddANewDownloadClientPleaseTryAgain": "غير قادر على إضافة عميل تنزيل جديد ، يرجى المحاولة مرة أخرى.",
+    "UnableToAddANewIndexerPleaseTryAgain": "غير قادر على إضافة مفهرس جديد ، يرجى المحاولة مرة أخرى.",
+    "UnableToAddANewListExclusionPleaseTryAgain": "تعذر إضافة استبعاد قائمة جديدة ، يرجى المحاولة مرة أخرى.",
+    "UnableToAddANewNotificationPleaseTryAgain": "تعذر إضافة إشعار جديد ، يرجى المحاولة مرة أخرى.",
+    "UnableToAddANewListPleaseTryAgain": "غير قادر على إضافة قائمة جديدة ، يرجى المحاولة مرة أخرى.",
+    "UnableToAddANewQualityProfilePleaseTryAgain": "غير قادر على إضافة ملف تعريف جودة جديد ، يرجى المحاولة مرة أخرى.",
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "غير قادر على إضافة تعيين مسار بعيد جديد ، يرجى المحاولة مرة أخرى."
 }

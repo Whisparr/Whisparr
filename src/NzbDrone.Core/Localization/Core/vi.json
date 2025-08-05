@@ -1097,5 +1097,14 @@
     "Discord": "Bất hòa",
     "ExclusionTitle": "Tiêu đề",
     "ExclusionType": "Kiểu",
-    "UnmappedFiles": "Thư mục chưa được ánh xạ"
+    "UnmappedFiles": "Thư mục chưa được ánh xạ",
+    "UnableToAddANewConditionPleaseTryAgain": "Không thể thêm điều kiện mới, vui lòng thử lại.",
+    "UnableToAddANewCustomFormatPleaseTryAgain": "Không thể thêm định dạng tùy chỉnh mới, vui lòng thử lại.",
+    "UnableToAddANewDownloadClientPleaseTryAgain": "Không thể thêm ứng dụng khách tải xuống mới, vui lòng thử lại.",
+    "UnableToAddANewIndexerPleaseTryAgain": "Không thể thêm trình chỉ mục mới, vui lòng thử lại.",
+    "UnableToAddANewListExclusionPleaseTryAgain": "Không thể thêm loại trừ danh sách mới, vui lòng thử lại.",
+    "UnableToAddANewListPleaseTryAgain": "Không thể thêm danh sách mới, vui lòng thử lại.",
+    "UnableToAddANewNotificationPleaseTryAgain": "Không thể thêm thông báo mới, vui lòng thử lại.",
+    "UnableToAddANewQualityProfilePleaseTryAgain": "Không thể thêm hồ sơ chất lượng mới, vui lòng thử lại.",
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Không thể thêm ánh xạ đường dẫn từ xa mới, vui lòng thử lại."
 }

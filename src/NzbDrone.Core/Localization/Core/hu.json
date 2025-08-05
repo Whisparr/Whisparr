@@ -1429,5 +1429,14 @@
     "ExclusionType": "Típus",
     "DateAdded": "Hozzáadás dátuma",
     "UnmappedFiles": "Leképezés nélküli fájlok",
-    "DeleteSelected": "Kijelöltek eltávolítása"
+    "DeleteSelected": "Kijelöltek eltávolítása",
+    "UnableToAddANewConditionPleaseTryAgain": "Nem sikerült új feltételt hozzáadni, próbálkozzon újra.",
+    "UnableToAddANewCustomFormatPleaseTryAgain": "Nem sikerült új egyéni formátum hozzáadása, próbálkozzon újra.",
+    "UnableToAddANewDownloadClientPleaseTryAgain": "Nem lehet új letöltőklienst hozzáadni, próbálkozz újra.",
+    "UnableToAddANewListPleaseTryAgain": "Nem sikerült új listát hozzáadni, próbálkozzon újra.",
+    "UnableToAddANewIndexerPleaseTryAgain": "Nem sikerült új indexelőt hozzáadni, próbálkozzon újra.",
+    "UnableToAddANewListExclusionPleaseTryAgain": "Nem lehet új listakizárást hozzáadni, próbálkozz újra.",
+    "UnableToAddANewNotificationPleaseTryAgain": "Nem lehet új értesítést hozzáadni, próbálkozz újra.",
+    "UnableToAddANewQualityProfilePleaseTryAgain": "Nem lehet új minőségi profilt hozzáadni, próbálkozz újra.",
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Nem lehet új távoli elérési utat hozzáadni, próbálkozz újra."
 }

@@ -364,5 +364,14 @@
     "Clone": "Zatvori",
     "DeleteSelectedMovieFilesHelpText": "Jeste li sigurni da želite obrisati ovaj profil odgode?",
     "ExclusionTitle": "naslov",
-    "ExclusionType": "Tip"
+    "ExclusionType": "Tip",
+    "UnableToAddANewConditionPleaseTryAgain": "Neuspješno dodavanje novog uvjeta, molimo pokušaj ponovno.",
+    "UnableToAddANewNotificationPleaseTryAgain": "Neuspješno dodavanje nove obavijesti, molimo pokušaj ponovno.",
+    "UnableToAddANewCustomFormatPleaseTryAgain": "Neuspješno dodavanje novog prilagođenog formata, molimo pokušaj ponovno.",
+    "UnableToAddANewDownloadClientPleaseTryAgain": "Nesupješno dodavanje klijenta za preuzimanje, molimo pokušaj ponovno.",
+    "UnableToAddANewIndexerPleaseTryAgain": "Neuspješno dodavanje novog indexera, molimo pokušaj ponovno.",
+    "UnableToAddANewListExclusionPleaseTryAgain": "Neuspješno dodavanje na listu za isključenje, molimo pokušaj ponovno.",
+    "UnableToAddANewListPleaseTryAgain": "Neuspješno dodavanje nove liste, molimo pokušaj ponovno.",
+    "UnableToAddANewQualityProfilePleaseTryAgain": "Neuspješno dodavanje novog profila kvalitete, molimo pokušaj ponovno.",
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Neuspješno dodavanje novog mapiranja mrežne putanje, molimo pokušaj ponovno."
 }

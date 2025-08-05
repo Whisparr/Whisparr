@@ -1393,5 +1393,14 @@
     "MovieDetailsNextMovie": "영화 세부 사항: 다음 영화",
     "MovieDetailsPreviousMovie": "영화 정보: 이전 영화",
     "DeleteSelected": "선택된 것을 삭제",
-    "IgnoreDeletedMovies": "삭제된 영화 모니터링 해제"
+    "IgnoreDeletedMovies": "삭제된 영화 모니터링 해제",
+    "UnableToAddANewCustomFormatPleaseTryAgain": "새 사용자 정의 형식을 추가 할 수 없음 재시도해주세요.",
+    "UnableToAddANewDownloadClientPleaseTryAgain": "새 다운로드 클라이언트를 추가 할 수 없습니다. 다시 시도하십시오.",
+    "UnableToAddANewIndexerPleaseTryAgain": "새 인덱서를 추가 할 수 없습니다. 다시 시도하십시오.",
+    "UnableToAddANewListExclusionPleaseTryAgain": "새 목록 제외를 추가 할 수 없음 재시도해주세요.",
+    "UnableToAddANewListPleaseTryAgain": "새 목록을 추가 할 수 없습니다. 다시 시도하십시오.",
+    "UnableToAddANewNotificationPleaseTryAgain": "새 알림을 추가 할 수 없습니다. 다시 시도하십시오.",
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "새 원격 경로 매핑을 추가 할 수 없습니다. 다시 시도하십시오.",
+    "UnableToAddANewConditionPleaseTryAgain": "새 조건을 추가 할 수 없음 재시도해주세요.",
+    "UnableToAddANewQualityProfilePleaseTryAgain": "새 품질 프로필을 추가 할 수 없습니다. 다시 시도하십시오."
 }

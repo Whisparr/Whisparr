@@ -87,16 +87,16 @@ namespace NzbDrone.Core.Indexers.Newznab
         [FieldDefinition(6, Label = "Additional Parameters", HelpText = "Additional Newznab parameters", Advanced = true)]
         public string AdditionalParameters { get; set; }
 
-        [FieldDefinition(7, Label = "Search Title Only", Type = FieldType.Checkbox, HelpText = "Search using title only (without date/year). Default searches include date/year with title.", Advanced = true)]
+        [FieldDefinition(7, Label = "Search Title Only", Type = FieldType.Checkbox, HelpText = "Search using title only (without date/year).", Advanced = true)]
         public bool SearchTitleOnly { get; set; }
 
-        [FieldDefinition(8, Label = "Search Site + Title", Type = FieldType.Checkbox, HelpText = "Search using site name + title (without date/year). Overrides 'Search Title Only' if both are enabled.", Advanced = true)]
+        [FieldDefinition(8, Label = "Search Site + Title", Type = FieldType.Checkbox, HelpText = "Search using site name + title (without date/year).", Advanced = true)]
         public bool SearchSiteTitleOnly { get; set; }
 
         [FieldDefinition(9, Label = "Date Format", Type = FieldType.Select, SelectOptions = typeof(DateSearchFormat), HelpText = "Date format to use in searches: YY.MM.DD, DD.MM.YY, or Both", Advanced = true)]
         public DateSearchFormat DateSearchFormat { get; set; }
 
-        [FieldDefinition(10, Label = "Network or Site", Type = FieldType.Select, SelectOptions = typeof(SeriesNameSource), HelpText = "Choose between Site Name (from indexer), Network Name (from TPDB), or Both for series searches", Advanced = true)]
+        [FieldDefinition(10, Label = "Network or Site", Type = FieldType.Select, SelectOptions = typeof(SeriesNameSource), HelpText = "Choose between Site Name, Network Name, or both for series searches", Advanced = true)]
         public SeriesNameSource SeriesNameSource { get; set; }
 
         // Field 11 is used by TorznabSettings MinimumSeeders

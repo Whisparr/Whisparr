@@ -125,12 +125,12 @@ namespace NzbDrone.Host
         {
             var config = GetConfiguration(context);
 
-            var bindAddress = config.GetValue(nameof(ConfigFileProvider.BindAddress), "*");
-            var port = config.GetValue(nameof(ConfigFileProvider.Port), 6969);
-            var sslPort = config.GetValue(nameof(ConfigFileProvider.SslPort), 8008);
-            var enableSsl = config.GetValue(nameof(ConfigFileProvider.EnableSsl), false);
-            var sslCertPath = config.GetValue<string>(nameof(ConfigFileProvider.SslCertPath));
-            var sslCertPassword = config.GetValue<string>(nameof(ConfigFileProvider.SslCertPassword));
+            var bindAddress = config.GetValue("Whisparr:Server:BindAddress", config.GetValue(nameof(ConfigFileProvider.BindAddress), "*"));
+            var port = config.GetValue("Whisparr:Server:Port", config.GetValue(nameof(ConfigFileProvider.Port), 6969));
+            var sslPort = config.GetValue("Whisparr:Server:SslPort", config.GetValue(nameof(ConfigFileProvider.SslPort), 8008));
+            var enableSsl = config.GetValue("Whisparr:Server:EnableSsl", config.GetValue(nameof(ConfigFileProvider.EnableSsl), false));
+            var sslCertPath = config.GetValue("Whisparr:Server:SslCertPath", config.GetValue<string>(nameof(ConfigFileProvider.SslCertPath)));
+            var sslCertPassword = config.GetValue("Whisparr:Server:SslCertPassword", config.GetValue<string>(nameof(ConfigFileProvider.SslCertPassword)));
 
             var urls = new List<string> { BuildUrl("http", bindAddress, port) };
 

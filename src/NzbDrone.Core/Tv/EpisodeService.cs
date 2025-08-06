@@ -234,6 +234,9 @@ namespace NzbDrone.Core.Tv
                 return episodes.First();
             }
 
+            // Multiple episodes found for the same date - require definitive matching
+            _logger.Debug("Multiple episodes found for date {0}. Episodes: {1}. Attempting scene title matching.", date, episodes.Count);
+
             var parsedEpisodeTitle = Parser.Parser.NormalizeEpisodeTitle(releaseTokens);
 
             if (parsedEpisodeTitle.IsNotNullOrWhiteSpace())
@@ -242,13 +245,30 @@ namespace NzbDrone.Core.Tv
 
                 if (matches.Count == 1)
                 {
+                    _logger.Debug("Successfully matched release to single episode using scene title. Episode: {0}", matches.First());
                     return matches.First();
                 }
 
-                episodes = matches;
+                if (matches.Count > 1)
+                {
+                    _logger.Debug("Scene title matching returned multiple episodes for date {0}. Release: {1}. Matches: {2}. Rejecting to prevent incorrect download.",
+                        date,
+                        releaseTokens,
+                        matches.Count);
+                    return null;
+                }
+
+                _logger.Debug("Scene title matching found no matches for date {0}. Release: {1}. Episodes available: {2}. Rejecting to prevent incorrect download.",
+                    date,
+                    releaseTokens,
+                    string.Join(", ", episodes.Select(e => $"'{e.Title}'")));
+                return null;
             }
 
-            _logger.Debug("Multiple episodes with the same air date found. Date: {0}", date);
+            _logger.Debug("No scene title available for matching multiple episodes on date {0}. Release: {1}. Episodes: {2}. Rejecting to prevent incorrect download.",
+                date,
+                releaseTokens,
+                episodes.Count);
             return null;
         }
 
@@ -267,11 +287,31 @@ namespace NzbDrone.Core.Tv
                     continue;
                 }
 
-                // Check for character substitution
+                // Check for character substitution and punctuation differences
                 if (cleanTitle.IsNotNullOrWhiteSpace() && parsedEpisodeTitle.Replace(" ", "").Equals(cleanTitle.Replace(" ", "")))
                 {
                     matches.Add(episode);
                     continue;
+                }
+
+                // Check if episode title is contained within the parsed release title (handles performer names + title)
+                if (cleanTitle.IsNotNullOrWhiteSpace() && parsedEpisodeTitle.Contains(cleanTitle))
+                {
+                    matches.Add(episode);
+                    continue;
+                }
+
+                // Check with punctuation normalization (. vs - vs space)
+                if (cleanTitle.IsNotNullOrWhiteSpace())
+                {
+                    var normalizedParsed = parsedEpisodeTitle.Replace(".", " ").Replace("-", " ").Replace("  ", " ").Trim();
+                    var normalizedClean = cleanTitle.Replace(".", " ").Replace("-", " ").Replace("  ", " ").Trim();
+
+                    if (normalizedParsed.Contains(normalizedClean) || normalizedClean.Contains(normalizedParsed))
+                    {
+                        matches.Add(episode);
+                        continue;
+                    }
                 }
 
                 if (matchLevel > 2)
@@ -326,6 +366,7 @@ namespace NzbDrone.Core.Tv
                 }
             }
 
+            // Recursively refine matches if too many found
             if (matches.Count > 1 && matchLevel < 2)
             {
                 matches = MatchEpisodes(parsedEpisodeTitle, matches, matchLevel + 1);

@@ -250,7 +250,9 @@ namespace NzbDrone.Core.Tv
                 return regularEpisodes.First();
             }
 
-            throw new InvalidOperationException("Multiple episodes with the same air date found");
+            // Conservative approach: reject ambiguous matches without scene title context
+            _logger.Warn("Multiple episodes with the same air date found, cannot determine correct episode without scene title context. Date: {0}, Episodes: {1}. Returning null to prevent incorrect match.", date, regularEpisodes.Count);
+            return null;
         }
     }
 }

@@ -91,7 +91,7 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeServiceTests
         }
 
         [Test]
-        public void should_get_episode_when_two_regular_episodes_with_perfomer_in_title_share_the_same_air_date_and_performer_and_part_is_provided()
+        public void should_return_null_when_two_regular_episodes_with_perfomer_in_title_share_the_same_air_date_and_performer_causes_ambiguous_match()
         {
             var title1 = "EvilAngel - 2021-02-24 - Whitney Wright POV Anal & A2M";
             var title2 = "EvilAngel - 2021-02-24 - BTS Whitney Wright POV Anal & A2M";
@@ -99,13 +99,14 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeServiceTests
             var seriesTitleInfo1 = Parser.Parser.ParseTitle(title1);
             var seriesTitleInfo2 = Parser.Parser.ParseTitle(title2);
 
-            var episode1 = CreateEpisode(2023, 1, "Whitney Wright", "Whitney Wright: POV Anal & A2M", "2021-02-24");
-            var episode2 = CreateEpisode(2023, 2, "Whitney Wright", "BTS-Whitney Wright: POV Anal & A2M", "2021-02-24");
+            var episode1 = CreateEpisode(2023, 1, "Whitney Wright", "Whitney Wright POV Anal & A2M", "2021-02-24");
+            var episode2 = CreateEpisode(2023, 2, "Whitney Wright", "BTS Whitney Wright POV Anal & A2M", "2021-02-24");
 
             GivenEpisodes(episode1, episode2);
 
-            Subject.FindEpisode(SERIES_ID, seriesTitleInfo1.AirDate, seriesTitleInfo1.ReleaseTokens).Should().Be(episode1);
-            Subject.FindEpisode(SERIES_ID, seriesTitleInfo1.AirDate, seriesTitleInfo2.ReleaseTokens).Should().Be(episode2);
+            // With the new strict matching logic, ambiguous matches return null to prevent incorrect downloads
+            Subject.FindEpisode(SERIES_ID, seriesTitleInfo1.AirDate, seriesTitleInfo1.ReleaseTokens).Should().BeNull();
+            Subject.FindEpisode(SERIES_ID, seriesTitleInfo2.AirDate, seriesTitleInfo2.ReleaseTokens).Should().BeNull();
         }
 
         [Test]

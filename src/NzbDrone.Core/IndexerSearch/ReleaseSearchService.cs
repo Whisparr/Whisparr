@@ -150,10 +150,18 @@ namespace NzbDrone.Core.IndexerSearch
             // Update the last search time for all episodes if at least 1 indexer was searched.
             if (indexers.Any())
             {
-                var lastSearchTime = DateTime.UtcNow;
-                _logger.Debug("Setting last search time to: {0}", lastSearchTime);
+                // Use baseSearchTime as the foundation timestamp - each episode gets baseSearchTime + unique millisecond offset
+                // This prevents search timing conflicts when multiple episodes are processed in the same search operation
+                var baseSearchTime = DateTime.UtcNow;
+                var episodeIndex = 0;
 
-                criteriaBase.Episodes.ForEach(e => e.LastSearchTime = lastSearchTime);
+                _logger.Debug("Setting last search time to: {0}", baseSearchTime);
+
+                // Add unique millisecond offsets to prevent search timing conflicts for multiple episodes
+                criteriaBase.Episodes.ForEach(e =>
+                {
+                    e.LastSearchTime = baseSearchTime.AddMilliseconds(episodeIndex++);
+                });
                 _episodeService.UpdateLastSearchTime(criteriaBase.Episodes);
             }
 

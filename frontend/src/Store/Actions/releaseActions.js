@@ -66,6 +66,19 @@ export const defaultState = {
       }
 
       return releaseWeight;
+    },
+
+    releaseWeight: function(item, direction) {
+      const rejections = item.rejections;
+      const releaseWeight = item.releaseWeight;
+
+      // Prioritize approved releases (no rejections) at the top
+      if (rejections.length === 0) {
+        return releaseWeight;
+      }
+
+      // Push rejected releases to the bottom
+      return releaseWeight + 1000000;
     }
   },
 

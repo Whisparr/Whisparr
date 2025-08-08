@@ -68,12 +68,6 @@ namespace NzbDrone.Core.Blocklisting
                 b.TorrentInfoHash.Equals(hash, StringComparison.InvariantCultureIgnoreCase));
         }
 
-        public bool BlocklistedTorrentHash(int movieId, string hash)
-        {
-            return _blocklistRepository.BlocklistedByTorrentInfoHash(movieId, hash).Any(b =>
-                b.TorrentInfoHash.Equals(hash, StringComparison.InvariantCultureIgnoreCase));
-        }
-
         public PagingSpec<Blocklist> Paged(PagingSpec<Blocklist> pagingSpec)
         {
             return _blocklistRepository.GetPaged(pagingSpec);

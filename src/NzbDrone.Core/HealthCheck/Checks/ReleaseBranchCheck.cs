@@ -33,7 +33,8 @@ namespace NzbDrone.Core.HealthCheck.Checks
         {
             Master,
             Develop,
-            Nightly
+            Nightly,
+            Eros
         }
     }
 }

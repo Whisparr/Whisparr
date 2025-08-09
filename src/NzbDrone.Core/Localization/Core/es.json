@@ -1850,5 +1850,7 @@
     "UnableToAddANewListExclusionPleaseTryAgain": "No se ha podido añadir una nueva lista de exclusión, prueba otra vez.",
     "UnableToAddANewListPleaseTryAgain": "No se ha podido añadir una nueva lista, prueba otra vez.",
     "UnableToAddANewNotificationPleaseTryAgain": "No se ha podido añadir una nueva notificación, prueba otra vez.",
-    "UnableToAddANewRemotePathMappingPleaseTryAgain": "No se pudo añadir una nueva asignación de ruta remota, inténtelo de nuevo."
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "No se pudo añadir una nueva asignación de ruta remota, inténtelo de nuevo.",
+    "NotificationsEmailSettingsRequireEncryption": "Requerir encriptación",
+    "NotificationsEmailSettingsRequireEncryptionHelpText": "Requiere SSL (solo el puerto 465) o StartTLS (cualquier puerto)"
 }

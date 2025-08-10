@@ -124,7 +124,7 @@ namespace NzbDrone.Core.Movies
                 {
                     movie.MovieFile = file;
                     movie.MovieMetadata = metadata;
-                    movie.QualityProfile = profiles[movie.QualityProfileId];
+                    movie.QualityProfile = profiles.ContainsKey(movie.QualityProfileId) ? profiles[movie.QualityProfileId] : profiles.First().Value;
 
                     return movie;
                 });

@@ -47,7 +47,7 @@ namespace NzbDrone.Test.Common.Datastore
             var builder = new NpgsqlConnectionStringBuilder()
             {
                 Host = options.Host,
-                Port = options.Port ?? 0,
+                Port = options.Port,
                 Username = options.User,
                 Password = options.Password,
                 Enlist = false

@@ -5,7 +5,7 @@ namespace NzbDrone.Core.Datastore
     public class PostgresOptions
     {
         public string Host { get; set; }
-        public int? Port { get; set; }
+        public int Port { get; set; }
         public string User { get; set; }
         public string Password { get; set; }
         public string MainDb { get; set; }
@@ -20,7 +20,7 @@ namespace NzbDrone.Core.Datastore
             var postgresOptions = new PostgresOptions
             {
                 Host = config["PostgresHost"],
-                Port = int.TryParse(config["PostgresPort"], out var port) ? port : null,
+                Port = int.TryParse(config["PostgresPort"], out var port) ? port : 5432,
                 User = config["PostgresUser"],
                 Password = config["PostgresPassword"],
                 MainDb = config["PostgresMainDb"],

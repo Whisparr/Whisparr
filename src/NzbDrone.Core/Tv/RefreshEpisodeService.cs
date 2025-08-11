@@ -113,7 +113,7 @@ namespace NzbDrone.Core.Tv
             }
 
             // If the series was set to monitor "Existing" only, don't monitor new episodes without files
-            if (series.AddOptions != null && series.AddOptions.Monitor == MonitorTypes.Existing && !episode.HasFile)
+            if (series.AddOptions?.Monitor == MonitorTypes.Existing && episode?.HasFile != true)
             {
                 return false;
             }

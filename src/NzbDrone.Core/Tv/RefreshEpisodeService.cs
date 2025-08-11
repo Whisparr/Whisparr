@@ -112,6 +112,12 @@ namespace NzbDrone.Core.Tv
                 return false;
             }
 
+            // If the series was set to monitor "Existing" only, don't monitor new episodes without files
+            if (series.AddOptions != null && series.AddOptions.Monitor == MonitorTypes.Existing && !episode.HasFile)
+            {
+                return false;
+            }
+
             var season = seasons.SingleOrDefault(c => c.SeasonNumber == episode.SeasonNumber);
             return season == null || season.Monitored;
         }

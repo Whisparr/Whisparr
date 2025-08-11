@@ -5,7 +5,7 @@ namespace NzbDrone.Core.Datastore
     public class PostgresOptions
     {
         public string Host { get; set; }
-        public int Port { get; set; }
+        public int? Port { get; set; }
         public string User { get; set; }
         public string Password { get; set; }
         public string MainDb { get; set; }
@@ -17,8 +17,15 @@ namespace NzbDrone.Core.Datastore
                 .AddEnvironmentVariables()
                 .Build();
 
-            var postgresOptions = new PostgresOptions();
-            config.GetSection("Whisparr:Postgres").Bind(postgresOptions);
+            var postgresOptions = new PostgresOptions
+            {
+                Host = config["PostgresHost"],
+                Port = int.TryParse(config["PostgresPort"], out var port) ? port : null,
+                User = config["PostgresUser"],
+                Password = config["PostgresPassword"],
+                MainDb = config["PostgresMainDb"],
+                LogDb = config["PostgresLogDb"]
+            };
 
             return postgresOptions;
         }

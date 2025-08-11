@@ -1852,5 +1852,6 @@
     "UnableToAddANewNotificationPleaseTryAgain": "No se ha podido añadir una nueva notificación, prueba otra vez.",
     "UnableToAddANewRemotePathMappingPleaseTryAgain": "No se pudo añadir una nueva asignación de ruta remota, inténtelo de nuevo.",
     "NotificationsEmailSettingsRequireEncryption": "Requerir encriptación",
-    "NotificationsEmailSettingsRequireEncryptionHelpText": "Requiere SSL (solo el puerto 465) o StartTLS (cualquier puerto)"
+    "NotificationsEmailSettingsRequireEncryptionHelpText": "Requiere SSL (solo el puerto 465) o StartTLS (cualquier puerto)",
+    "MetadataIncorrectUrlWarning": "La URL de los metadatos está configurada para la versión 2.x de Whisparr, pero estás ejecutando la versión 3.x.  Esto sucede si realizas una actualización in situ no soportada.  Por favor, retrocede a la versión 2."
 }

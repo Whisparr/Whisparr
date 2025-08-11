@@ -1738,5 +1738,6 @@
     "UnableToAddANewListPleaseTryAgain": "Не удалось добавить новый список, попробуйте еще раз.",
     "UnableToAddANewNotificationPleaseTryAgain": "Не удалось добавить новое уведомление, попробуйте ещё раз.",
     "UnableToAddANewQualityProfilePleaseTryAgain": "Не удалось добавить новый профиль качества. Повторите попытку.",
-    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Не удалось добавить новый удаленный путь, попробуйте еще раз."
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Не удалось добавить новый удаленный путь, попробуйте еще раз.",
+    "NotificationsEmailSettingsRequireEncryption": "Требовать шифрование"
 }

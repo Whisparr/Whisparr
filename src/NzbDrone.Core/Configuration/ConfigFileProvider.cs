@@ -224,7 +224,7 @@ namespace NzbDrone.Core.Configuration
         public string PostgresPassword => _postgresOptions?.Password ?? GetValue("PostgresPassword", string.Empty, persist: false);
         public string PostgresMainDb => _postgresOptions?.MainDb ?? GetValue("PostgresMainDb", "whisparr-main", persist: false);
         public string PostgresLogDb => _postgresOptions?.LogDb ?? GetValue("PostgresLogDb", "whisparr-log", persist: false);
-        public int PostgresPort => (_postgresOptions?.Port ?? 0) != 0 ? _postgresOptions.Port : GetValueInt("PostgresPort", 5432, persist: false);
+        public int PostgresPort => (_postgresOptions?.Port ?? 0) != 0 ? (int)_postgresOptions.Port : GetValueInt("PostgresPort", 5432, persist: false);
         public bool LogSql => GetValueBoolean("LogSql", false, persist: false);
         public int LogRotate => GetValueInt("LogRotate", 50, persist: false);
         public bool FilterSentryEvents => GetValueBoolean("FilterSentryEvents", true, persist: false);

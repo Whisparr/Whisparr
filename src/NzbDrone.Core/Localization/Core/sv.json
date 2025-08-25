@@ -1093,5 +1093,8 @@
     "UnableToAddANewListPleaseTryAgain": "Det gick inte att lägga till en ny lista. Försök igen.",
     "UnableToAddANewNotificationPleaseTryAgain": "Det gick inte att lägga till ett nytt meddelande, försök igen.",
     "UnableToAddANewQualityProfilePleaseTryAgain": "Det gick inte att lägga till en ny kvalitetsprofil. Försök igen.",
-    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Det gick inte att lägga till en ny mappning av fjärrvägen, försök igen."
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Det gick inte att lägga till en ny mappning av fjärrvägen, försök igen.",
+    "CutoffFormatScoreHelpText": "När denna anpassade formatpoäng har uppnåtts kommer {appName} inte längre att ladda ner filmer",
+    "QualityLimitsHelpText": "Gränserna justeras automatiskt för filmens körtid.",
+    "CutoffHelpText": "När denna kvalitet har uppnåtts kommer {appName} inte längre att ladda ner filmer"
 }

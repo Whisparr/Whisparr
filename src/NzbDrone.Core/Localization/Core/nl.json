@@ -1281,5 +1281,8 @@
     "DownloadClientRTorrentSettingsUrlPathHelpText": "Pad naar het XMLRPC-eindpunt, zie {url}. Dit is meestal RPC2 of [pad naar ruTorrent]{url2} bij gebruik van ruTorrent.",
     "DownloadClientSettingsInitialStateHelpText": "Begintoestand voor torrents die aan {clientName} worden toegevoegd",
     "DownloadClientTransmissionSettingsDirectoryHelpText": "Optionele locatie om downloads op te slaan, laat leeg om de standaardlocatie van Transmission te gebruiken",
-    "DownloadClientTransmissionSettingsUrlBaseHelpText": "Voegt een voorvoegsel toe aan de {clientName} RPC-URL, bijvoorbeeld {url}, standaard is '{defaultUrl}'"
+    "DownloadClientTransmissionSettingsUrlBaseHelpText": "Voegt een voorvoegsel toe aan de {clientName} RPC-URL, bijvoorbeeld {url}, standaard is '{defaultUrl}'",
+    "CutoffFormatScoreHelpText": "Wanneer deze eigen formaat score is behaald, zal {appName} niet langer films downloaden",
+    "CutoffHelpText": "Wanneer deze kwaliteit is behaald, zal {appName} niet langer films downloaden",
+    "QualityLimitsHelpText": "Limieten zijn automatisch aangepast voor de tijdsduur van de film."
 }

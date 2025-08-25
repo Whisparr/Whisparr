@@ -1850,5 +1850,11 @@
     "UnableToAddANewListPleaseTryAgain": "Não foi possível adicionar uma nova lista. Tente novamente.",
     "UnableToAddANewNotificationPleaseTryAgain": "Não foi possível adicionar uma nova notificação. Tente novamente.",
     "UnableToAddANewQualityProfilePleaseTryAgain": "Não foi possível adicionar um novo perfil de qualidade. Tente novamente.",
-    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Não foi possível adicionar um novo mapeamento de caminho remoto. Tente novamente."
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Não foi possível adicionar um novo mapeamento de caminho remoto. Tente novamente.",
+    "CutoffHelpText": "Quando essa qualidade for atingida, o {appName} não fará mais o download de filmes depois que a pontuação de corte do formato personalizado for atingida ou excedida",
+    "QualityLimitsHelpText": "Os limites são ajustados automaticamente para o tempo de execução do filme.",
+    "CutoffFormatScoreHelpText": "Uma vez que o corte de qualidade é atingido ou excedido e esta pontuação de formato personalizado é alcançada, o {appName} não irá mais capturar ou importar atualizações para esses filmes",
+    "MetadataIncorrectUrlWarning": "A URL de metadados está definida para Whisparr versão 2. x, mas você está executando a versão 3. x.  Isso acontece se você fizer uma atualização in-loco sem suporte.  Faça o downgrade de volta para a versão 2.",
+    "NotificationsEmailSettingsRequireEncryption": "Exigir Encriptação",
+    "NotificationsEmailSettingsRequireEncryptionHelpText": "Exigir SSL (apenas porta 465) ou StartTLS (qualquer outra porta)"
 }

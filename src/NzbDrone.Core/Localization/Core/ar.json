@@ -1072,5 +1072,8 @@
     "UnableToAddANewNotificationPleaseTryAgain": "تعذر إضافة إشعار جديد ، يرجى المحاولة مرة أخرى.",
     "UnableToAddANewListPleaseTryAgain": "غير قادر على إضافة قائمة جديدة ، يرجى المحاولة مرة أخرى.",
     "UnableToAddANewQualityProfilePleaseTryAgain": "غير قادر على إضافة ملف تعريف جودة جديد ، يرجى المحاولة مرة أخرى.",
-    "UnableToAddANewRemotePathMappingPleaseTryAgain": "غير قادر على إضافة تعيين مسار بعيد جديد ، يرجى المحاولة مرة أخرى."
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "غير قادر على إضافة تعيين مسار بعيد جديد ، يرجى المحاولة مرة أخرى.",
+    "CutoffFormatScoreHelpText": "بمجرد الوصول إلى درجة التنسيق المخصص هذه ، لن يقوم {appName} بتنزيل الأفلام",
+    "CutoffHelpText": "بمجرد الوصول إلى هذه الجودة ، لن يقوم {appName} بتنزيل الأفلام",
+    "QualityLimitsHelpText": "يتم ضبط الحدود تلقائيًا لوقت تشغيل الفيلم."
 }

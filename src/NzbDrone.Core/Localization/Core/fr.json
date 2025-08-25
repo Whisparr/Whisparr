@@ -1841,5 +1841,8 @@
     "UnableToAddANewListPleaseTryAgain": "Impossible d'ajouter une nouvelle liste, veuillez réessayer.",
     "UnableToAddANewNotificationPleaseTryAgain": "Impossible d'ajouter une nouvelle notification, veuillez réessayer.",
     "UnableToAddANewQualityProfilePleaseTryAgain": "Impossible d'ajouter un nouveau profil de qualité, veuillez réessayer.",
-    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Impossible d'ajouter un nouveau mappage de chemin d'accès distant, veuillez réessayer."
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Impossible d'ajouter un nouveau mappage de chemin d'accès distant, veuillez réessayer.",
+    "CutoffFormatScoreHelpText": "Quand ce score de format personnalisé est atteint, {appName} ne téléchargera plus de films",
+    "CutoffHelpText": "Quand cette qualité est atteinte, {appName} ne téléchargera plus de films",
+    "QualityLimitsHelpText": "Les limites sont automatiquement ajustées en fonction de la durée du film."
 }

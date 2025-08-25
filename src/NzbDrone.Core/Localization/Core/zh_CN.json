@@ -1764,5 +1764,8 @@
     "UnableToAddANewListPleaseTryAgain": "无法添加列表，请稍后重试。",
     "UnableToAddANewNotificationPleaseTryAgain": "无法添加新通知，请稍后重试。",
     "UnableToAddANewQualityProfilePleaseTryAgain": "无法添加新的质量配置，请稍后重试。",
-    "UnableToAddANewRemotePathMappingPleaseTryAgain": "无法添加远程路径映射，请稍后重试。"
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "无法添加远程路径映射，请稍后重试。",
+    "CutoffFormatScoreHelpText": "一旦质量截止达到或超过此自定义格式分数，{appName}将不再抓取或导入这些电影的升级",
+    "CutoffHelpText": "一旦达到此质量，在达到或超过自定义格式截止分数后，{appName}将不再下载电影",
+    "QualityLimitsHelpText": "限制会根据电影的播放时长自动调整。"
 }

@@ -1069,5 +1069,8 @@
     "UnableToAddANewDownloadClientPleaseTryAgain": "Ekki er hægt að bæta við nýjum niðurhalsþjóni, reyndu aftur.",
     "UnableToAddANewListPleaseTryAgain": "Ekki er hægt að bæta við nýjum lista. Reyndu aftur.",
     "UnableToAddANewNotificationPleaseTryAgain": "Ekki er hægt að bæta við nýrri tilkynningu. Reyndu aftur.",
-    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Ekki er hægt að bæta við nýrri fjarlægri slóðakortun, reyndu aftur."
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Ekki er hægt að bæta við nýrri fjarlægri slóðakortun, reyndu aftur.",
+    "CutoffFormatScoreHelpText": "Þegar þessu sérsniðna sniði hefur verið náð mun {appName} ekki lengur hlaða niður kvikmyndum",
+    "CutoffHelpText": "Þegar þessum gæðum er náð mun {appName} ekki lengur hlaða niður kvikmyndum",
+    "QualityLimitsHelpText": "Takmörkun er sjálfkrafa leiðrétt fyrir keyrslutíma kvikmyndarinnar."
 }

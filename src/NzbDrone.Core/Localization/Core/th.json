@@ -1064,5 +1064,8 @@
     "UnableToAddANewIndexerPleaseTryAgain": "ไม่สามารถเพิ่มตัวสร้างดัชนีใหม่ได้โปรดลองอีกครั้ง",
     "UnableToAddANewNotificationPleaseTryAgain": "ไม่สามารถเพิ่มการแจ้งเตือนใหม่โปรดลองอีกครั้ง",
     "UnableToAddANewRemotePathMappingPleaseTryAgain": "ไม่สามารถเพิ่มการแมปเส้นทางระยะไกลใหม่โปรดลองอีกครั้ง",
-    "UnableToAddANewQualityProfilePleaseTryAgain": "ไม่สามารถเพิ่มโปรไฟล์คุณภาพใหม่ได้โปรดลองอีกครั้ง"
+    "UnableToAddANewQualityProfilePleaseTryAgain": "ไม่สามารถเพิ่มโปรไฟล์คุณภาพใหม่ได้โปรดลองอีกครั้ง",
+    "CutoffFormatScoreHelpText": "เมื่อถึงคะแนนรูปแบบที่กำหนดเองนี้แล้ว {appName} จะไม่ดาวน์โหลดภาพยนตร์อีกต่อไป",
+    "CutoffHelpText": "เมื่อถึงคุณภาพนี้แล้ว {appName} จะไม่ดาวน์โหลดภาพยนตร์อีกต่อไป",
+    "QualityLimitsHelpText": "ขีด จำกัด จะถูกปรับโดยอัตโนมัติสำหรับรันไทม์ของภาพยนตร์"
 }

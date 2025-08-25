@@ -1850,5 +1850,8 @@
     "UnableToAddANewListPleaseTryAgain": "Virhe lisättäessä listaa. Yritä uudelleen.",
     "UnableToAddANewNotificationPleaseTryAgain": "Ilmoituspalvelun lisääminen epäonnistui. Yritä uudelleen.",
     "UnableToAddANewQualityProfilePleaseTryAgain": "Virhe lisättäessä laatuprofiilia. Yritä uudelleen.",
-    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Etäsijainnin kohdistuksen lisäys epäonnistui. Yritä uudelleen."
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Etäsijainnin kohdistuksen lisäys epäonnistui. Yritä uudelleen.",
+    "CutoffFormatScoreHelpText": "Kun laaturajoitus on saavutettu tai ylitetty, ja tämän mukautetun muodon pisteytys saavutetaan, ei {appName} enää kaappaa uusia julkaisuja tai tuo päivityksiä näihin elokuviin.",
+    "CutoffHelpText": "Kun tämä laatutaso on saavutettu, ei {appName} enää kaappaa elokuvia kun mukautetun muodon katkaisutaso on saavutettu tai ylitetty.",
+    "QualityLimitsHelpText": "Rajoitukset suhteutetaan automaattisesti elokuvan kestoon."
 }

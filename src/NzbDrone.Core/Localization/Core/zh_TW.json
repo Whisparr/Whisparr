@@ -291,5 +291,6 @@
     "UnableToAddANewListPleaseTryAgain": "無法加入新的自動標籤，請重新嘗試。",
     "UnableToAddANewNotificationPleaseTryAgain": "無法加入新的條件，請重新嘗試。",
     "UnableToAddANewQualityProfilePleaseTryAgain": "無法加入新的條件，請重新嘗試。",
-    "UnableToAddANewRemotePathMappingPleaseTryAgain": "無法加入新的遠程路徑對應，請重試。"
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "無法加入新的遠程路徑對應，請重試。",
+    "CutoffHelpText": "一旦達到此品質，{appName}將不再下載該電影"
 }

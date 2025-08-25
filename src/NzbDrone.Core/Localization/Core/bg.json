@@ -1125,5 +1125,8 @@
     "UnableToAddANewListPleaseTryAgain": "Не може да се добави нов списък, моля, опитайте отново.",
     "UnableToAddANewNotificationPleaseTryAgain": "Не може да се добави ново известие, моля, опитайте отново.",
     "UnableToAddANewQualityProfilePleaseTryAgain": "Не може да се добави нов качествен профил, моля, опитайте отново.",
-    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Не може да се добави ново картографиране на отдалечен път, моля, опитайте отново."
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Не може да се добави ново картографиране на отдалечен път, моля, опитайте отново.",
+    "CutoffFormatScoreHelpText": "След като бъде постигнат резултатът от този персонализиран формат, {appName} вече няма да изтегля филми",
+    "CutoffHelpText": "След достигане на това качество {appName} вече няма да изтегля филми",
+    "QualityLimitsHelpText": "Ограниченията се коригират автоматично за времето на изпълнение на филма."
 }

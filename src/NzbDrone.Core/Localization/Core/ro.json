@@ -1141,5 +1141,8 @@
     "UnableToAddANewListPleaseTryAgain": "Imposibil de adăugat o nouă listă, încercați din nou.",
     "UnableToAddANewNotificationPleaseTryAgain": "Imposibil de adăugat o nouă notificare, încercați din nou.",
     "UnableToAddANewQualityProfilePleaseTryAgain": "Imposibil de adăugat un nou profil de calitate, încercați din nou.",
-    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Imposibil de adăugat o nouă mapare a căilor la distanță, încercați din nou."
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Imposibil de adăugat o nouă mapare a căilor la distanță, încercați din nou.",
+    "CutoffFormatScoreHelpText": "Odată ce acest scor personalizat este atins, {appName} nu va mai descărca filme",
+    "QualityLimitsHelpText": "Limitele sunt ajustate automat pentru durata de rulare a filmului.",
+    "CutoffHelpText": "Odată atinsă această calitate, {appName} nu va mai descărca filme"
 }

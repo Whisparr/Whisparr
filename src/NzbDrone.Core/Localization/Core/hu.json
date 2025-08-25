@@ -1438,5 +1438,8 @@
     "UnableToAddANewListExclusionPleaseTryAgain": "Nem lehet új listakizárást hozzáadni, próbálkozz újra.",
     "UnableToAddANewNotificationPleaseTryAgain": "Nem lehet új értesítést hozzáadni, próbálkozz újra.",
     "UnableToAddANewQualityProfilePleaseTryAgain": "Nem lehet új minőségi profilt hozzáadni, próbálkozz újra.",
-    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Nem lehet új távoli elérési utat hozzáadni, próbálkozz újra."
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Nem lehet új távoli elérési utat hozzáadni, próbálkozz újra.",
+    "CutoffFormatScoreHelpText": "Amint eléri ezt az egyéni minőséget, a {appName} többé nem fogja tovább keresni a filmet",
+    "CutoffHelpText": "Amint ezt a minőséget eléri, a {appName} többé nem fog filmeket letölteni",
+    "QualityLimitsHelpText": "A korlátozások automatikusan beállítódnak a film hossza szerint."
 }

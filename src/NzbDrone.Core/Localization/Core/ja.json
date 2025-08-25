@@ -1044,5 +1044,8 @@
     "UnableToAddANewIndexerPleaseTryAgain": "新しいインデクサーを追加できません。もう一度やり直してください。",
     "UnableToAddANewListExclusionPleaseTryAgain": "新しいリストの除外を追加できません。再試行してください。",
     "UnableToAddANewNotificationPleaseTryAgain": "新しい通知を追加できません。もう一度やり直してください。",
-    "UnableToAddANewRemotePathMappingPleaseTryAgain": "新しいリモートパスマッピングを追加できません。再試行してください。"
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "新しいリモートパスマッピングを追加できません。再試行してください。",
+    "CutoffFormatScoreHelpText": "このカスタムフォーマットのスコアに達すると、{appName}は映画をダウンロードしなくなります",
+    "QualityLimitsHelpText": "制限は、ムービーの実行時間に合わせて自動的に調整されます。",
+    "CutoffHelpText": "この品質に達すると、{appName}は映画をダウンロードしなくなります"
 }

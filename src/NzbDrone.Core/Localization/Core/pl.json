@@ -1189,5 +1189,8 @@
     "UnableToAddANewListPleaseTryAgain": "Nie można dodać nowej listy, spróbuj ponownie.",
     "UnableToAddANewNotificationPleaseTryAgain": "Nie udało się dodać nowego powiadomienia, spróbuj później.",
     "UnableToAddANewQualityProfilePleaseTryAgain": "Nie można dodać nowego profilu jakości, spróbuj ponownie.",
-    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Nie można dodać nowego mapowania ścieżki zdalnej, spróbuj ponownie."
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Nie można dodać nowego mapowania ścieżki zdalnej, spróbuj ponownie.",
+    "CutoffFormatScoreHelpText": "Po osiągnięciu tego wyniku w niestandardowym formacie {appName} nie będzie już pobierał filmów",
+    "CutoffHelpText": "Po osiągnięciu tej jakości {appName} nie będzie już pobierał filmów",
+    "QualityLimitsHelpText": "Limity są automatycznie dostosowywane do czasu odtwarzania filmu."
 }

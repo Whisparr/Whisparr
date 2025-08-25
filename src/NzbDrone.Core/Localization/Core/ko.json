@@ -1402,5 +1402,8 @@
     "UnableToAddANewNotificationPleaseTryAgain": "새 알림을 추가 할 수 없습니다. 다시 시도하십시오.",
     "UnableToAddANewRemotePathMappingPleaseTryAgain": "새 원격 경로 매핑을 추가 할 수 없습니다. 다시 시도하십시오.",
     "UnableToAddANewConditionPleaseTryAgain": "새 조건을 추가 할 수 없음 재시도해주세요.",
-    "UnableToAddANewQualityProfilePleaseTryAgain": "새 품질 프로필을 추가 할 수 없습니다. 다시 시도하십시오."
+    "UnableToAddANewQualityProfilePleaseTryAgain": "새 품질 프로필을 추가 할 수 없습니다. 다시 시도하십시오.",
+    "CutoffHelpText": "이 품질에 도달하면 {appName}은(는) 더 이상 영화를 다운로드 하지 않습니다.",
+    "QualityLimitsHelpText": "동영상 런타임에 대한 제한이 자동으로 조정됩니다.",
+    "CutoffFormatScoreHelpText": "이 사용자 정의 형식 점수에 도달하면 {appName}은(는) 더 이상 영화를 다운로드 하지 않습니다."
 }

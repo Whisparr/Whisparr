@@ -1850,5 +1850,11 @@
     "UnableToAddANewListPleaseTryAgain": "No es pot afegir una llista nova, torna-ho a provar.",
     "UnableToAddANewNotificationPleaseTryAgain": "No es pot afegir una notificació nova, torneu-ho a provar.",
     "UnableToAddANewQualityProfilePleaseTryAgain": "No es pot afegir un perfil de qualitat nou, torneu-ho a provar.",
-    "UnableToAddANewRemotePathMappingPleaseTryAgain": "No es pot afegir una nova assignació de ruta remota, torna-ho a provar."
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "No es pot afegir una nova assignació de ruta remota, torna-ho a provar.",
+    "CutoffFormatScoreHelpText": "Un cop s'arribi a aquest límit de format personalitzat, {appName} ja no baixarà pel·lícules",
+    "CutoffHelpText": "Un cop s'aconsigui aquesta qualitat, {appName} ja no baixarà pel·lícules",
+    "QualityLimitsHelpText": "Els límits s'ajusten automàticament per al temps d'execució de la pel·lícula.",
+    "NotificationsEmailSettingsRequireEncryption": "Requeriu encriptació",
+    "NotificationsEmailSettingsRequireEncryptionHelpText": "Requeriu SSL (només Port 465) o StartTLS (qualsevol altre port)",
+    "MetadataIncorrectUrlWarning": "La URL de les metadades està configurada per a la versió 2.x de Whisparr, però estàs executant la versió 3.x.  Això succeeix si realitzes una actualització in situ no suportada.  Si us plau, retrocedeix a la versió 2."
 }

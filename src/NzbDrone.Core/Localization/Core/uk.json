@@ -1751,5 +1751,8 @@
     "UnableToAddANewListPleaseTryAgain": "Не вдалося додати новий список, спробуйте ще раз.",
     "UnableToAddANewNotificationPleaseTryAgain": "Не вдалося додати нове сповіщення, спробуйте ще раз.",
     "UnableToAddANewQualityProfilePleaseTryAgain": "Не вдалося додати новий профіль якості, спробуйте ще раз.",
-    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Не вдалося додати нове зіставлення віддаленого шляху, спробуйте ще раз."
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Не вдалося додати нове зіставлення віддаленого шляху, спробуйте ще раз.",
+    "CutoffFormatScoreHelpText": "{appName} перестане завантажувати фільми після досягнення вказаної кількості очок",
+    "CutoffHelpText": "Після досягнення цієї якості {appName} більше не завантажуватиме фільми",
+    "QualityLimitsHelpText": "Обмеження автоматично регулюються для тривалості фільму."
 }

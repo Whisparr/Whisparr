@@ -1818,5 +1818,8 @@
     "UnableToAddANewDownloadClientPleaseTryAgain": "Der neue Downloader konnte nicht hinzugefügt werden, bitte erneut probieren.",
     "UnableToAddANewListExclusionPleaseTryAgain": "Es konnte kein neuer Listenausschluss hinzugefügt werden. Bitte versuchen Sie es erneut.",
     "UnableToAddANewQualityProfilePleaseTryAgain": "Das neue Qualitätsprofil konnte nicht hinzugefügt werden, bitte erneut probieren.",
-    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Es konnte keine neue Remote-Pfadzuordnung hinzugefügt werden. Bitte versuchen Sie es erneut."
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Es konnte keine neue Remote-Pfadzuordnung hinzugefügt werden. Bitte versuchen Sie es erneut.",
+    "CutoffFormatScoreHelpText": "Sobald diese eigener Format Bewertung erreicht wird, werden keine neuen Releases erfasst",
+    "QualityLimitsHelpText": "Limitierungen werden automatisch an die Filmlänge angepasst.",
+    "CutoffHelpText": "Sobald diese Qualität erreicht wird, werden keine neuen Releases erfasst"
 }

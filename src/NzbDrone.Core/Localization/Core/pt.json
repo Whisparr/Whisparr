@@ -1271,5 +1271,8 @@
     "UnableToAddANewListPleaseTryAgain": "Não foi possível adicionar uma nova lista, tente novamente.",
     "UnableToAddANewNotificationPleaseTryAgain": "Não foi possível adicionar uma nova notificação, tenta novamente.",
     "UnableToAddANewQualityProfilePleaseTryAgain": "Não foi possível adicionar um novo perfil de qualidade, tenta novamente.",
-    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Não foi possível adicionar um novo mapeamento de caminho remoto, tenta novamente."
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Não foi possível adicionar um novo mapeamento de caminho remoto, tenta novamente.",
+    "CutoffFormatScoreHelpText": "Assim que o limite de qualidade for atingido ou ultrapassado e esta pontuação de formato personalizado for atingida, o {appName} deixará de obter ou importar actualizações para esses filmes",
+    "QualityLimitsHelpText": "Os limites são ajustados automaticamente para o tempo de execução do filme.",
+    "CutoffHelpText": "Quando esta qualidade for atingida, o {appName} deixará de transferir filmes depois de a pontuação de corte do formato personalizado ser atingida ou ultrapassada"
 }

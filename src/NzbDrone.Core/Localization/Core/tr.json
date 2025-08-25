@@ -1760,5 +1760,8 @@
     "UnableToAddANewQualityProfilePleaseTryAgain": "Yeni kalite profili eklenemiyor, lütfen tekrar deneyin.",
     "UnableToAddANewIndexerPleaseTryAgain": "Yeni indeksleyici eklenemiyor, lütfen tekrar deneyin.",
     "UnableToAddANewListExclusionPleaseTryAgain": "Yeni bir liste dışlaması eklenemiyor, lütfen tekrar deneyin.",
-    "UnableToAddANewListPleaseTryAgain": "Yeni bir liste eklenemiyor, lütfen tekrar deneyin."
+    "UnableToAddANewListPleaseTryAgain": "Yeni bir liste eklenemiyor, lütfen tekrar deneyin.",
+    "CutoffHelpText": "Bu kaliteye ulaşıldığında {appName} artık film indirmeyecektir",
+    "QualityLimitsHelpText": "Sınırlar, filmin süresine göre otomatik olarak ayarlanır.",
+    "CutoffFormatScoreHelpText": "Bu özel format puanına ulaşıldığında, {appName} artık film indirmeyecektir"
 }

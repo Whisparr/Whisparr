@@ -1106,5 +1106,8 @@
     "UnableToAddANewListPleaseTryAgain": "Không thể thêm danh sách mới, vui lòng thử lại.",
     "UnableToAddANewNotificationPleaseTryAgain": "Không thể thêm thông báo mới, vui lòng thử lại.",
     "UnableToAddANewQualityProfilePleaseTryAgain": "Không thể thêm hồ sơ chất lượng mới, vui lòng thử lại.",
-    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Không thể thêm ánh xạ đường dẫn từ xa mới, vui lòng thử lại."
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Không thể thêm ánh xạ đường dẫn từ xa mới, vui lòng thử lại.",
+    "CutoffFormatScoreHelpText": "Khi đạt đến điểm định dạng tùy chỉnh này, {appName} sẽ không tải phim xuống nữa",
+    "CutoffHelpText": "Khi đạt đến chất lượng này {appName} sẽ không tải phim nữa",
+    "QualityLimitsHelpText": "Các giới hạn được tự động điều chỉnh cho thời gian chạy phim."
 }

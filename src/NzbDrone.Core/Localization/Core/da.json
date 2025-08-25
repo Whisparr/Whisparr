@@ -1116,5 +1116,8 @@
     "UnableToAddANewNotificationPleaseTryAgain": "Kunne ikke tilføje ny notifikation, prøv igen.",
     "UnableToAddANewQualityProfilePleaseTryAgain": "Kunne ikke tilføje ny kvalitetsprofil, prøv igen.",
     "UnableToAddANewRemotePathMappingPleaseTryAgain": "Kunne ikke tilføje en ny kortlægning af fjernstien. Prøv igen.",
-    "UnableToAddANewListPleaseTryAgain": "Kan ikke tilføje en ny liste, prøv igen."
+    "UnableToAddANewListPleaseTryAgain": "Kan ikke tilføje en ny liste, prøv igen.",
+    "QualityLimitsHelpText": "Grænser justeres automatisk for filmens kørselstid.",
+    "CutoffFormatScoreHelpText": "Når denne score til brugerdefineret format er nået, downloader {appName} ikke længere film",
+    "CutoffHelpText": "Når denne kvalitet er nået, downloader {appName} ikke længere film"
 }

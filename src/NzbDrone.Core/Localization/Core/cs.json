@@ -272,9 +272,9 @@
     "CustomFormatsSettings": "Nastavení vlastních formátů",
     "CustomFormatsSettingsSummary": "Vlastní formáty a nastavení",
     "CustomFormatsSpecificationRegularExpressionHelpText": "Vlastní formát RegEx nerozlišuje velká a malá písmena",
-    "Cutoff": "Odříznout",
-    "CutoffNotMet": "Mezní hodnota nesplněna",
-    "CutoffUnmet": "Mezní hodnota nesplněna",
+    "Cutoff": "Hranice kvality",
+    "CutoffNotMet": "Hranice kvality není dosaženo",
+    "CutoffUnmet": "Hranice kvality nesplněna",
     "Dash": "Pomlčka",
     "Database": "Databáze",
     "DatabaseMigration": "Migrace databáze",
@@ -1149,7 +1149,7 @@
     "UpgradesAllowedHelpText": "Pokud budou deaktivovány vlastnosti, nebudou upgradovány",
     "Uppercase": "Velká písmena",
     "Uptime": "Provozuschopnost",
-    "UrlBase": "URL Base",
+    "UrlBase": "Základní URL",
     "UrlBaseHelpText": "Pro podporu reverzního proxy je výchozí hodnota prázdná",
     "UseHardlinksInsteadOfCopy": "Místo kopírování použijte pevné odkazy",
     "UseProxy": "Použij proxy",
@@ -1315,5 +1315,9 @@
     "UnableToAddANewListPleaseTryAgain": "Nový seznam nelze přidat, zkuste to znovu.",
     "UnableToAddANewNotificationPleaseTryAgain": "Nelze přidat nové oznámení, zkuste to znovu.",
     "UnableToAddANewQualityProfilePleaseTryAgain": "Nelze přidat nový kvalitní profil, zkuste to znovu.",
-    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Nelze přidat nové mapování vzdálené cesty, zkuste to znovu."
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Nelze přidat nové mapování vzdálené cesty, zkuste to znovu.",
+    "CutoffFormatScoreHelpText": "Jakmile je dosaženo tohoto skóre vlastního formátu, {appName} již nebude stahovat filmy",
+    "CutoffHelpText": "Jakmile stažený film dosáhne nebo překročí nastavenou kvalitu, {appName} nebude dále stahovat další vydání",
+    "QualityLimitsHelpText": "Limity se automaticky upraví podle doby běhu filmu.",
+    "TheLogLevelDefault": "Výchozí úroveň logování je „Info“ a může být změněna v [Obecném nastavení](/settings/general)"
 }

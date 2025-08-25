@@ -1463,5 +1463,8 @@
     "UnableToAddANewNotificationPleaseTryAgain": "Non riesco ad aggiungere una nuova notifica, riprova.",
     "UnableToAddANewQualityProfilePleaseTryAgain": "Non riesco ad aggiungere un nuovo profilo di qualità, riprova.",
     "UnableToAddANewRemotePathMappingPleaseTryAgain": "Non riesco ad aggiungere la mappatura di un nuovo percorso remoto, riprova.",
-    "BlocklistMultipleOnlyHint": "Aggiungi alla blocklist senza ricerca di sostituti"
+    "BlocklistMultipleOnlyHint": "Aggiungi alla blocklist senza ricerca di sostituti",
+    "CutoffFormatScoreHelpText": "Una volta raggiunto questo formato personalizzato, {appName} non scaricherà più i film",
+    "CutoffHelpText": "Una volta raggiunta questa qualità, {appName} non scaricherà più film",
+    "QualityLimitsHelpText": "I limiti vengono regolati automaticamente per la durata del film."
 }

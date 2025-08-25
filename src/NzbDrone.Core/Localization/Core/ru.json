@@ -1739,5 +1739,8 @@
     "UnableToAddANewNotificationPleaseTryAgain": "Не удалось добавить новое уведомление, попробуйте ещё раз.",
     "UnableToAddANewQualityProfilePleaseTryAgain": "Не удалось добавить новый профиль качества. Повторите попытку.",
     "UnableToAddANewRemotePathMappingPleaseTryAgain": "Не удалось добавить новый удаленный путь, попробуйте еще раз.",
-    "NotificationsEmailSettingsRequireEncryption": "Требовать шифрование"
+    "NotificationsEmailSettingsRequireEncryption": "Требовать шифрование",
+    "CutoffFormatScoreHelpText": "Как только качество будет достигнуто или превышено, а также будет достигнута эта оценка пользовательского формата, {appName} больше не будет захватывать или импортировать обновления для этих фильмов",
+    "CutoffHelpText": "Как только это качество будет достигнуто, {appName} больше не будет загружать фильмы после того, как будет достигнут или превышен пороговый показатель пользовательского формата",
+    "QualityLimitsHelpText": "Пределы автоматически регулируются для времени воспроизведения фильма."
 }

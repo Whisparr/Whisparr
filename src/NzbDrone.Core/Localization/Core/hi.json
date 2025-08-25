@@ -1056,5 +1056,8 @@
     "UnableToAddANewIndexerPleaseTryAgain": "नया अनुक्रमणिका जोड़ने में असमर्थ, कृपया पुनः प्रयास करें।",
     "UnableToAddANewNotificationPleaseTryAgain": "नई अधिसूचना जोड़ने में असमर्थ, कृपया पुनः प्रयास करें।",
     "UnableToAddANewQualityProfilePleaseTryAgain": "नई गुणवत्ता प्रोफ़ाइल जोड़ने में असमर्थ, कृपया पुनः प्रयास करें।",
-    "UnableToAddANewRemotePathMappingPleaseTryAgain": "नया दूरस्थ पथ मैपिंग जोड़ने में असमर्थ, कृपया पुनः प्रयास करें।"
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "नया दूरस्थ पथ मैपिंग जोड़ने में असमर्थ, कृपया पुनः प्रयास करें।",
+    "CutoffFormatScoreHelpText": "एक बार जब यह कस्टम प्रारूप स्कोर रेडर तक पहुँच जाता है तो फिल्में डाउनलोड नहीं करेगा",
+    "QualityLimitsHelpText": "फिल्म रनटाइम के लिए सीमाएं स्वचालित रूप से समायोजित की जाती हैं।",
+    "CutoffHelpText": "एक बार जब यह गुणवत्ता पहुँच जाती है तो Redarr फिल्में डाउनलोड नहीं करेगा"
 }

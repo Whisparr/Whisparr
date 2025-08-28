@@ -1,5 +1,19 @@
 .link {
   composes: link from '~Components/Link/Link.css';
+  
+  max-width: 800px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+  
+   @media (min-width: 1440px) {
+    max-width: 1200x;
+  }
+
+  @media (min-width: 2160px) {
+    max-width: 2000px;
+  }
 
   &:hover {
     color: var(--linkHoverColor);

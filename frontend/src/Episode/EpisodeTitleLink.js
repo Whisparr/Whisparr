@@ -41,6 +41,7 @@ class EpisodeTitleLink extends Component {
       <div>
         <Link
           className={styles.link}
+          title={episodeTitle}
           onPress={this.onLinkPress}
         >
           {episodeTitle}

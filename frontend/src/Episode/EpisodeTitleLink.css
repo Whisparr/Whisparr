@@ -1,22 +1,21 @@
 .link {
   composes: link from '~Components/Link/Link.css';
+
+  display: inline-block;
+  overflow: hidden;
   
   max-width: 800px;
-  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  display: inline-block;
-  
-   @media (min-width: 1440px) {
-    max-width: 1200x;
-  }
-
-  @media (min-width: 2160px) {
-    max-width: 2000px;
-  }
 
   &:hover {
     color: var(--linkHoverColor);
     text-decoration: underline;
+  }
+   @media (min-width: 2560px) {
+    max-width: 1200px;
+  }
+  @media (min-width: 3840px) {
+    max-width: 2000px;
   }
 }

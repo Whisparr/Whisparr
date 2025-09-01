@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import Alert from 'Components/Alert';
 import Button from 'Components/Link/Button';
 import ModalBody from 'Components/Modal/ModalBody';
 import ModalContent from 'Components/Modal/ModalContent';
@@ -56,6 +57,9 @@ function CustomFiltersModalContent(props) {
             {translate('AddCustomFilter')}
           </Button>
         </div>
+        <Alert type="info">
+          {translate('FilterMoviePropertiesOnlyNotFileWarning')}
+        </Alert>
       </ModalBody>
 
       <ModalFooter>

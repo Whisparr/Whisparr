@@ -40,6 +40,17 @@ namespace NzbDrone.Core.Parser
 
         private static readonly Regex[] ReportTitleRegex = new[]
             {
+                // JAV patterns with external ID as primary identifier - MOVED TO TOP with very specific patterns
+                // [SAVR-235] [Vr] Soft Breasts..., [PRED-1234] Beautiful Episode..., SAVR-630 - title...
+                // Must match specific JAV studio code patterns to avoid false matches with normal TV shows
+                // Pattern 1: [STUDIO-123] or [STUDIO.123] format
+                new Regex(@"^(?:\[(?<externalid>[A-Z]{3,5}[-\.]\d{3,4})\])(?<releasetoken>.+)",
+                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
+                // Pattern 2: STUDIO-123 - format (space before dash required)
+                new Regex(@"^(?<externalid>[A-Z]{3,5}[-]\d{3,4})(?:[-_. ]+)(?<releasetoken>.+)",
+                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
                 // Site title in brackets with full year in date then episode info
                 // [Site] 19-07-2023 - Loli - Beautiful Episode 2160p {RlsGroup}
                 new Regex("^\\[(?<title>.+?)\\][-_. ]+(?<airday>[0-3][0-9])(?![-_. ]+[0-3][0-9])?[-_. ]+(?<airmonth>[0-1][0-9])[-_. ]+(?<airyear>(19|20)\\d{2})",
@@ -193,6 +204,19 @@ namespace NzbDrone.Core.Parser
 
         private static readonly string[] Numbers = new[] { "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" };
 
+        // External ID patterns for JAV and other content
+        private static readonly Regex[] ExternalIdRegex = new[]
+            {
+                // JAV codes in brackets: [SAVR-630], [PRED-1234]
+                new Regex(@"\[(?<externalid>[A-Z]{2,10}-\d{2,5})\]", RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
+                // JAV codes with dots: [SAVR.235], SAVR.630
+                new Regex(@"\[?(?<externalid>[A-Z]{2,10}\.\d{2,5})\]?", RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
+                // JAV codes standalone: SAVR-630, PRED-1234
+                new Regex(@"\b(?<externalid>[A-Z]{2,10}[-_]\d{2,5})\b", RegexOptions.IgnoreCase | RegexOptions.Compiled),
+            };
+
         public static ParsedEpisodeInfo ParsePath(string path)
         {
             var fileInfo = new FileInfo(path);
@@ -343,6 +367,12 @@ namespace NzbDrone.Core.Parser
                                 if (!result.ReleaseHash.IsNullOrWhiteSpace())
                                 {
                                     Logger.Debug("Release Hash parsed: {0}", result.ReleaseHash);
+                                }
+
+                                result.ExternalId = ParseExternalId(releaseTitle);
+                                if (!result.ExternalId.IsNullOrWhiteSpace())
+                                {
+                                    Logger.Debug("External ID parsed: {0}", result.ExternalId);
                                 }
 
                                 return result;
@@ -542,12 +572,25 @@ namespace NzbDrone.Core.Parser
 
         private static ParsedEpisodeInfo ParseMatchCollection(MatchCollection matchCollection, string releaseTitle)
         {
-            var seriesName = matchCollection[0].Groups["title"].Value.Replace('.', ' ').Replace('_', ' ');
-            seriesName = RequestInfoRegex.Replace(seriesName, "").Trim(' ');
+            var seriesName = "";
+            var externalId = "";
+            var lastSeasonEpisodeStringIndex = 0;
+
+            // Check if this is a JAV pattern with external ID
+            if (matchCollection[0].Groups["externalid"].Success)
+            {
+                externalId = matchCollection[0].Groups["externalid"].Value;
+                seriesName = ""; // No series name for JAV content
+                lastSeasonEpisodeStringIndex = matchCollection[0].Groups["externalid"].EndIndex();
+            }
+            else
+            {
+                seriesName = matchCollection[0].Groups["title"].Value.Replace('.', ' ').Replace('_', ' ');
+                seriesName = RequestInfoRegex.Replace(seriesName, "").Trim(' ');
+                lastSeasonEpisodeStringIndex = matchCollection[0].Groups["title"].EndIndex();
+            }
 
             int.TryParse(matchCollection[0].Groups["airyear"].Value, out var airYear);
-
-            var lastSeasonEpisodeStringIndex = matchCollection[0].Groups["title"].EndIndex();
 
             ParsedEpisodeInfo result;
 
@@ -683,6 +726,12 @@ namespace NzbDrone.Core.Parser
             result.SeriesTitle = seriesName;
             result.SeriesTitleInfo = GetSeriesTitleInfo(result.SeriesTitle);
 
+            // Set external ID if this was a JAV pattern
+            if (!string.IsNullOrWhiteSpace(externalId))
+            {
+                result.ExternalId = externalId;
+            }
+
             Logger.Debug("Episode Parsed. {0}", result);
 
             return result;
@@ -778,6 +827,30 @@ namespace NzbDrone.Core.Parser
             }
 
             throw new FormatException(string.Format("{0} isn't a number", value));
+        }
+
+        private static string ParseExternalId(string releaseTitle)
+        {
+            if (string.IsNullOrWhiteSpace(releaseTitle))
+            {
+                return null;
+            }
+
+            // Try each external ID regex pattern in order
+            foreach (var regex in ExternalIdRegex)
+            {
+                var match = regex.Match(releaseTitle);
+                if (match.Success && match.Groups["externalid"].Success)
+                {
+                    var externalId = match.Groups["externalid"].Value;
+
+                    // Normalize separators to hyphens and convert to uppercase
+                    externalId = externalId.Replace(".", "-").Replace("_", "-").ToUpper();
+                    return externalId;
+                }
+            }
+
+            return null;
         }
     }
 }

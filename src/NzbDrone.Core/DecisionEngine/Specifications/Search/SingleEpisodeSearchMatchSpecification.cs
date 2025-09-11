@@ -1,3 +1,4 @@
+using System;
 using NLog;
 using NzbDrone.Core.IndexerSearch.Definitions;
 using NzbDrone.Core.Parser.Model;
@@ -35,6 +36,21 @@ namespace NzbDrone.Core.DecisionEngine.Specifications.Search
 
         private Decision IsSatisfiedBy(RemoteEpisode remoteEpisode, SingleEpisodeSearchCriteria singleEpisodeSpec)
         {
+            // If we have an external ID, prioritize matching by external ID
+            if (!string.IsNullOrWhiteSpace(singleEpisodeSpec.ExternalId) && !string.IsNullOrWhiteSpace(remoteEpisode.ParsedEpisodeInfo.ExternalId))
+            {
+                if (singleEpisodeSpec.ExternalId.Equals(remoteEpisode.ParsedEpisodeInfo.ExternalId, StringComparison.OrdinalIgnoreCase))
+                {
+                    _logger.Debug("External ID matches searched episode: {0}", singleEpisodeSpec.ExternalId);
+                    return Decision.Accept();
+                }
+                else
+                {
+                    _logger.Debug("External ID does not match searched episode. Expected: {0}, Got: {1}", singleEpisodeSpec.ExternalId, remoteEpisode.ParsedEpisodeInfo.ExternalId);
+                    return Decision.Reject("Wrong External ID");
+                }
+            }
+
             if (!singleEpisodeSpec.ReleaseDate.HasValue)
             {
                 _logger.Debug("Searched episode has no release date, skipping.");

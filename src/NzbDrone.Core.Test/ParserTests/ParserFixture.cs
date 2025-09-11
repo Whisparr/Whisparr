@@ -115,5 +115,40 @@ namespace NzbDrone.Core.Test.ParserTests
             var result = Parser.Parser.ParseTitle(path);
             result.ReleaseTitle.Should().Be(releaseTitle);
         }
+
+        [TestCase("[SAVR-235] [Vr] Soft Breasts Hidden In Clothes I'm Fascinated By My Cousin's Titty Fuck Even When I Become An Adult Mizuki Yayoi", "SAVR-235")]
+        [TestCase("[PRED-1234] Beautiful Episode - Loli - 2023-07-22 - 1080p", "PRED-1234")]
+        [TestCase("[DVRT.456] Some JAV Title With Dots", "DVRT-456")]
+        [TestCase("SAVR-630 - [Vr] Another JAV Release Title", "SAVR-630")]
+        [TestCase("SSNI-123 No brackets but with hyphen", "SSNI-123")]
+        public void should_parse_jav_external_id(string title, string expectedExternalId)
+        {
+            var result = Parser.Parser.ParseTitle(title);
+            result.Should().NotBeNull();
+            result.ExternalId.Should().Be(expectedExternalId);
+            result.SeriesTitle.Should().BeEmpty(); // JAV content has no series title
+        }
+
+        [TestCase("[SAVR-235] [Vr] Soft Breasts Hidden", " [Vr] Soft Breasts Hidden")]
+        [TestCase("[DVRT.456] Some JAV Title", " Some JAV Title")]
+        public void should_parse_jav_release_tokens(string title, string expectedTokens)
+        {
+            var result = Parser.Parser.ParseTitle(title);
+            result.Should().NotBeNull();
+            result.ReleaseTokens.Should().Be(expectedTokens);
+        }
+
+        [TestCase("[WRONG-123456] Too many digits")]
+        [TestCase("[X-123] Too short studio code")]
+        [TestCase("[TOOLONGSTUDIO-123] Too long studio code")]
+        [TestCase("Random title without external ID")]
+        public void should_not_parse_invalid_jav_external_id(string title)
+        {
+            var result = Parser.Parser.ParseTitle(title);
+            if (result != null)
+            {
+                result.ExternalId.Should().BeNullOrEmpty();
+            }
+        }
     }
 }

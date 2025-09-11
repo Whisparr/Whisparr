@@ -242,6 +242,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
         {
             var episode = new Episode();
             episode.TvdbId = oracleEpisode.ForeignId;
+            episode.ExternalId = oracleEpisode.ExternalId;
             episode.Overview = oracleEpisode.Overview;
             episode.SeasonNumber = oracleEpisode.Year;
             episode.AbsoluteEpisodeNumber = oracleEpisode.AbsoluteEpisodeNumber;

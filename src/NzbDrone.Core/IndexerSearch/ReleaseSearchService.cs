@@ -101,6 +101,7 @@ namespace NzbDrone.Core.IndexerSearch
             searchSpec.ReleaseDate = DateOnly.Parse(episode.AirDate);
             searchSpec.Performer = episode.Actors.Select(p => p.Name).FirstOrDefault();
             searchSpec.EpisodeTitle = episode.Title;
+            searchSpec.ExternalId = episode.ExternalId;
 
             var decisions = await Dispatch(indexer => indexer.Fetch(searchSpec), searchSpec);
             downloadDecisions.AddRange(decisions);

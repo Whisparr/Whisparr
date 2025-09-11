@@ -122,6 +122,17 @@ namespace NzbDrone.Core.Indexers.Newznab
                             "search",
                             searchQuery));
                     }
+
+                    // Add External ID search if selected and available
+                    if (Settings.SearchExternalId && !string.IsNullOrWhiteSpace(searchCriteria.ExternalId))
+                    {
+                        var externalIdQuery = Uri.EscapeDataString(searchCriteria.ExternalId);
+                        var searchQuery = $"&q={externalIdQuery}";
+                        pageableRequests.Add(GetPagedRequests(MaxPages,
+                            Settings.Categories,
+                            "search",
+                            searchQuery));
+                    }
                 }
             }
 

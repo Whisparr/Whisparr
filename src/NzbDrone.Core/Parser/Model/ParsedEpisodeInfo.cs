@@ -11,6 +11,7 @@ namespace NzbDrone.Core.Parser.Model
         public SeriesTitleInfo SeriesTitleInfo { get; set; }
         public QualityModel Quality { get; set; }
         public string AirDate { get; set; } // Release Date
+        public string ExternalId { get; set; }
         public List<Language> Languages { get; set; }
         public string ReleaseGroup { get; set; }
         public string ReleaseHash { get; set; }

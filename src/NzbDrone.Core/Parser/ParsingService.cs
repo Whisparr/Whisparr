@@ -120,6 +120,27 @@ namespace NzbDrone.Core.Parser
                    };
         }
 
+        private Episode FindEpisodeByExternalIdGlobally(string externalId)
+        {
+            if (string.IsNullOrWhiteSpace(externalId))
+            {
+                return null;
+            }
+
+            var allSeries = _seriesService.GetAllSeries();
+            foreach (var series in allSeries)
+            {
+                var episode = _episodeService.FindEpisodeByExternalId(series.Id, externalId);
+                if (episode != null)
+                {
+                    episode.Series = series; // Ensure series is populated
+                    return episode;
+                }
+            }
+
+            return null;
+        }
+
         private RemoteEpisode Map(ParsedEpisodeInfo parsedEpisodeInfo, int tvdbId, Series series, SearchCriteriaBase searchCriteria)
         {
             var remoteEpisode = new RemoteEpisode
@@ -135,6 +156,17 @@ namespace NzbDrone.Core.Parser
                 {
                     series = seriesMatch.Series;
                     remoteEpisode.SeriesMatchType = seriesMatch.MatchType;
+                }
+                else if (!string.IsNullOrWhiteSpace(parsedEpisodeInfo.ExternalId))
+                {
+                    // If no series found by title but we have an external ID, try to find any series with this external ID
+                    var episodeByExternalId = FindEpisodeByExternalIdGlobally(parsedEpisodeInfo.ExternalId);
+                    if (episodeByExternalId != null)
+                    {
+                        series = episodeByExternalId.Series;
+                        remoteEpisode.SeriesMatchType = SeriesMatchType.Id;
+                        _logger.Debug("Found series by external ID: {0} -> {1}", parsedEpisodeInfo.ExternalId, series.Title);
+                    }
                 }
             }
 
@@ -175,6 +207,18 @@ namespace NzbDrone.Core.Parser
 
         private List<Episode> GetEpisodes(ParsedEpisodeInfo parsedEpisodeInfo, Series series, SearchCriteriaBase searchCriteria)
         {
+            // First try to match by external ID if available
+            if (!string.IsNullOrWhiteSpace(parsedEpisodeInfo.ExternalId))
+            {
+                var episodeByExternalId = _episodeService.FindEpisodeByExternalId(series.Id, parsedEpisodeInfo.ExternalId);
+                if (episodeByExternalId != null)
+                {
+                    _logger.Debug("Found episode by external ID: {0} -> {1}", parsedEpisodeInfo.ExternalId, episodeByExternalId);
+                    return new List<Episode> { episodeByExternalId };
+                }
+            }
+
+            // Fall back to existing air date matching
             var episodeInfo = GetDailyEpisode(series, parsedEpisodeInfo.AirDate, parsedEpisodeInfo.ReleaseTokens, searchCriteria);
 
             if (episodeInfo != null)

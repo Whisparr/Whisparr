@@ -264,7 +264,19 @@ namespace NzbDrone.Core.Tv
                 return null;
             }
 
-            return Query(e => e.ExternalId != null && e.ExternalId != "" && e.ExternalId == externalId).FirstOrDefault();
+            // Try exact match first
+            var result = Query(e => e.ExternalId == externalId).FirstOrDefault();
+
+            // If no exact match, try case-insensitive search
+            if (result == null)
+            {
+                var allWithExternalIds = Query(e => e.ExternalId != null).ToList();
+                result = allWithExternalIds.FirstOrDefault(e =>
+                    !string.IsNullOrWhiteSpace(e.ExternalId) &&
+                    e.ExternalId.Equals(externalId, StringComparison.OrdinalIgnoreCase));
+            }
+
+            return result;
         }
 
         public Episode FindByExternalId(int seriesId, string externalId)
@@ -274,7 +286,19 @@ namespace NzbDrone.Core.Tv
                 return null;
             }
 
-            return Query(e => e.SeriesId == seriesId && e.ExternalId != null && e.ExternalId != "" && e.ExternalId == externalId).FirstOrDefault();
+            // Try exact match first
+            var result = Query(e => e.SeriesId == seriesId && e.ExternalId == externalId).FirstOrDefault();
+
+            // If no exact match, try case-insensitive search within the series
+            if (result == null)
+            {
+                var allWithExternalIdsInSeries = Query(e => e.SeriesId == seriesId && e.ExternalId != null).ToList();
+                result = allWithExternalIdsInSeries.FirstOrDefault(e =>
+                    !string.IsNullOrWhiteSpace(e.ExternalId) &&
+                    e.ExternalId.Equals(externalId, StringComparison.OrdinalIgnoreCase));
+            }
+
+            return result;
         }
     }
 }

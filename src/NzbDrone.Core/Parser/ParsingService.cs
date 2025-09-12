@@ -134,6 +134,14 @@ namespace NzbDrone.Core.Parser
             {
                 // Populate the series for the episode
                 episode.Series = _seriesService.GetSeries(episode.SeriesId);
+
+                if (episode.Series == null)
+                {
+                    _logger.Warn("Failed to load series with ID {0} for episode {1} found by external ID {2}", episode.SeriesId, episode.Id, externalId);
+                    return null;
+                }
+
+                _logger.Debug("Found series by external ID: {0} -> {1}", externalId, episode.Series.Title);
             }
 
             return episode;
@@ -211,7 +219,6 @@ namespace NzbDrone.Core.Parser
                 var episodeByExternalId = _episodeService.FindEpisodeByExternalId(series.Id, parsedEpisodeInfo.ExternalId);
                 if (episodeByExternalId != null)
                 {
-                    _logger.Debug("Found episode by external ID: {0} -> {1}", parsedEpisodeInfo.ExternalId, episodeByExternalId);
                     return new List<Episode> { episodeByExternalId };
                 }
             }

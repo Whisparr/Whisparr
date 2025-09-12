@@ -52,7 +52,29 @@ namespace NzbDrone.Core.Test.ParserTests.ParsingServiceTests
                   .Setup(s => s.GetAllSeries())
                   .Returns(_allSeries);
 
-            // Setup episode service for individual series lookups
+            // Setup global external ID lookups (what the ParsingService actually calls)
+            Mocker.GetMock<IEpisodeService>()
+                  .Setup(s => s.FindEpisodeByGlobalExternalId("SAVR-235"))
+                  .Returns(_episode1);
+
+            Mocker.GetMock<IEpisodeService>()
+                  .Setup(s => s.FindEpisodeByGlobalExternalId("PRED-456"))
+                  .Returns(_episode2);
+
+            Mocker.GetMock<IEpisodeService>()
+                  .Setup(s => s.FindEpisodeByGlobalExternalId("NONEXISTENT-999"))
+                  .Returns((Episode)null);
+
+            // Setup series service for series lookups by ID
+            Mocker.GetMock<ISeriesService>()
+                  .Setup(s => s.GetSeries(1))
+                  .Returns(_series1);
+
+            Mocker.GetMock<ISeriesService>()
+                  .Setup(s => s.GetSeries(2))
+                  .Returns(_series2);
+
+            // Setup episode service for individual series lookups (for GetEpisodes method)
             Mocker.GetMock<IEpisodeService>()
                   .Setup(s => s.FindEpisodeByExternalId(1, "SAVR-235"))
                   .Returns(_episode1);

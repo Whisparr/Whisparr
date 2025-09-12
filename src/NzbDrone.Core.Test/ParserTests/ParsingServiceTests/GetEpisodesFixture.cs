@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FizzWare.NBuilder;
+using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using NzbDrone.Core.IndexerSearch.Definitions;
@@ -50,11 +51,39 @@ namespace NzbDrone.Core.Test.ParserTests.ParsingServiceTests
             Mocker.GetMock<ISeriesService>()
                   .Setup(s => s.FindByTitle(It.IsAny<string>()))
                   .Returns(_series);
+
+            // Mock GetAllSeries to prevent hanging during ExternalId lookups
+            Mocker.GetMock<ISeriesService>()
+                  .Setup(s => s.GetAllSeries())
+                  .Returns(new List<Series> { _series });
+
+            // Mock FindEpisodeByExternalId to prevent hanging
+            Mocker.GetMock<IEpisodeService>()
+                  .Setup(s => s.FindEpisodeByExternalId(It.IsAny<int>(), It.IsAny<string>()))
+                  .Returns((Episode)null);
         }
 
         private void GivenSceneNumberingSeries()
         {
             _series.UseSceneNumbering = true;
+        }
+
+        [Test]
+        public void should_get_episodes_when_series_found()
+        {
+            var episodes = Subject.GetEpisodes(_parsedEpisodeInfo, _series, false);
+
+            episodes.Should().NotBeNull();
+        }
+
+        [Test]
+        public void should_use_scene_numbering_when_series_uses_scene_numbering()
+        {
+            GivenSceneNumberingSeries();
+
+            var episodes = Subject.GetEpisodes(_parsedEpisodeInfo, _series, true);
+
+            episodes.Should().NotBeNull();
         }
     }
 }

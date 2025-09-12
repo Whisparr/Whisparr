@@ -127,18 +127,16 @@ namespace NzbDrone.Core.Parser
                 return null;
             }
 
-            var allSeries = _seriesService.GetAllSeries();
-            foreach (var series in allSeries)
+            // Use optimized direct repository method
+            var episode = _episodeService.FindEpisodeByGlobalExternalId(externalId);
+
+            if (episode != null)
             {
-                var episode = _episodeService.FindEpisodeByExternalId(series.Id, externalId);
-                if (episode != null)
-                {
-                    episode.Series = series; // Ensure series is populated
-                    return episode;
-                }
+                // Populate the series for the episode
+                episode.Series = _seriesService.GetSeries(episode.SeriesId);
             }
 
-            return null;
+            return episode;
         }
 
         private RemoteEpisode Map(ParsedEpisodeInfo parsedEpisodeInfo, int tvdbId, Series series, SearchCriteriaBase searchCriteria)

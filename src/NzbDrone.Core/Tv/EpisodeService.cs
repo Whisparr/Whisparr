@@ -20,6 +20,7 @@ namespace NzbDrone.Core.Tv
         Episode FindEpisodeByTitle(int seriesId, int seasonNumber, string releaseTitle);
         Episode FindEpisode(int seriesId, string date, string part);
         Episode FindEpisodeByExternalId(int seriesId, string externalId);
+        Episode FindEpisodeByGlobalExternalId(string externalId);
         List<Episode> GetEpisodeBySeries(int seriesId);
         List<Episode> GetEpisodesBySeason(int seriesId, int seasonNumber);
         List<Episode> EpisodesWithFiles(int seriesId);
@@ -75,13 +76,12 @@ namespace NzbDrone.Core.Tv
 
         public Episode FindEpisodeByExternalId(int seriesId, string externalId)
         {
-            if (string.IsNullOrWhiteSpace(externalId))
-            {
-                return null;
-            }
+            return _episodeRepository.FindByExternalId(seriesId, externalId);
+        }
 
-            var episodes = _episodeRepository.GetEpisodes(seriesId);
-            return episodes.FirstOrDefault(e => !string.IsNullOrWhiteSpace(e.ExternalId) && e.ExternalId.Equals(externalId, StringComparison.OrdinalIgnoreCase));
+        public Episode FindEpisodeByGlobalExternalId(string externalId)
+        {
+            return _episodeRepository.FindByExternalId(externalId);
         }
 
         public List<Episode> GetEpisodeBySeries(int seriesId)

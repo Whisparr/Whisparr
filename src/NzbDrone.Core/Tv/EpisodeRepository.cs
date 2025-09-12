@@ -28,6 +28,8 @@ namespace NzbDrone.Core.Tv
         void SetMonitored(IEnumerable<int> ids, bool monitored);
         void SetFileId(Episode episode, int fileId);
         void ClearFileId(Episode episode, bool unmonitor);
+        Episode FindByExternalId(string externalId);
+        Episode FindByExternalId(int seriesId, string externalId);
     }
 
     public class EpisodeRepository : BasicRepository<Episode>, IEpisodeRepository
@@ -253,6 +255,26 @@ namespace NzbDrone.Core.Tv
             // Conservative approach: reject ambiguous matches without scene title context
             _logger.Warn("Multiple episodes with the same air date found, cannot determine correct episode without scene title context. Date: {0}, Episodes: {1}. Returning null to prevent incorrect match.", date, regularEpisodes.Count);
             return null;
+        }
+
+        public Episode FindByExternalId(string externalId)
+        {
+            if (string.IsNullOrWhiteSpace(externalId))
+            {
+                return null;
+            }
+
+            return Query(e => e.ExternalId != null && e.ExternalId != "" && e.ExternalId == externalId).FirstOrDefault();
+        }
+
+        public Episode FindByExternalId(int seriesId, string externalId)
+        {
+            if (string.IsNullOrWhiteSpace(externalId))
+            {
+                return null;
+            }
+
+            return Query(e => e.SeriesId == seriesId && e.ExternalId != null && e.ExternalId != "" && e.ExternalId == externalId).FirstOrDefault();
         }
     }
 }

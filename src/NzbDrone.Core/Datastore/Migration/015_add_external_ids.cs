@@ -9,6 +9,7 @@ namespace NzbDrone.Core.Datastore.Migration
         protected override void MainDbUpgrade()
         {
             Alter.Table("Episodes").AddColumn("ExternalId").AsString().Nullable();
+            Create.Index("IX_Episodes_ExternalId").OnTable("Episodes").OnColumn("ExternalId");
         }
     }
 }

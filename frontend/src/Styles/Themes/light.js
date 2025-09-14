@@ -1,4 +1,5 @@
 const whisparrPink = '#ff69b4';
+const whisparrPurple = '#7138C8';
 const darkGray = '#888';
 const mediumGray = '#999';
 const gray = '#adadad';
@@ -28,6 +29,7 @@ module.exports = {
   purple,
   pink,
   whisparrPink,
+  whisparrPurple,
   helpTextColor: '#909293',
   darkGray,
   gray,
@@ -37,7 +39,9 @@ module.exports = {
   // Theme Colors
 
   themePink: whisparrPink,
+  themePurple: whisparrPurple,
   themeAlternatePink: whisparrPink,
+  themeAlternatePurple: '#b281fdff',
   themeRed: '#c4273c',
   themeDarkColor: '#595959',
   themeLightColor: '#707070',
@@ -59,13 +63,13 @@ module.exports = {
   linkHoverColor: '#1b72e2',
 
   // Header
-  pageHeaderBackgroundColor: whisparrPink,
+  pageHeaderBackgroundColor: whisparrPurple,
 
   // Sidebar
 
   sidebarColor: '#e1e2e3',
-  sidebarBackgroundColor: '#595959',
-  sidebarActiveBackgroundColor: '#333333',
+  sidebarActiveBackgroundColor: '#707070',
+  sidebarBackgroundColor: '#333333',
 
   // Toolbar
   toolbarColor: '#e1e2e3',
@@ -140,8 +144,8 @@ module.exports = {
   //
   // Toolbar
 
-  toobarButtonHoverColor: whisparrPink,
-  toobarButtonSelectedColor: whisparrPink,
+  toobarButtonHoverColor: whisparrPurple,
+  toobarButtonSelectedColor: whisparrPurple,
 
   //
   // Scroller

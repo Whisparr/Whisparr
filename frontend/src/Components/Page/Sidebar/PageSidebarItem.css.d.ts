@@ -9,6 +9,7 @@ interface CssExports {
   'item': string;
   'link': string;
   'noIcon': string;
+  'sectionHeading': string;
   'status': string;
 }
 export const cssExports: CssExports;

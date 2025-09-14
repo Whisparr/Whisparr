@@ -5,7 +5,7 @@
 }
 
 .isActiveItem {
-  border-left: 3px solid var(--themePink);
+  border-left: 3px solid var(--themePurple);
 }
 
 .link {
@@ -15,9 +15,10 @@
 
   &:hover,
   &:focus {
-    color: var(--themePink);
+    color: var(--themePurple);
     text-decoration: none;
   }
+
 }
 
 .childLink {
@@ -27,11 +28,16 @@
 }
 
 .isActiveLink {
-  color: var(--themePink);
+  color: var(--themePurple);
 }
 
 .isActiveParentLink {
   background-color: var(--sidebarActiveBackgroundColor);
+    color: var(--white);
+    }
+    
+    .sectionHeading {
+      color: var(--white);
 }
 
 .iconContainer {

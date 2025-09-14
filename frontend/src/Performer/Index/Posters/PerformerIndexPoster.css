@@ -72,7 +72,7 @@ $hoverScale: 1.05;
   composes: button from '~Components/Link/IconButton.css';
 
   &:hover {
-    color: var(--whisparrPink);
+    color: var(--whisparrPurple);
   }
 }
 

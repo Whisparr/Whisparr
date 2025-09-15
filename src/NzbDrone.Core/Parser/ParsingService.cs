@@ -183,15 +183,7 @@ namespace NzbDrone.Core.Parser
             {
                 remoteEpisode.Series = series;
 
-                // If we found the episode by external ID lookup, use that episode directly
-                if (foundEpisodeByExternalId != null)
-                {
-                    remoteEpisode.Episodes = new List<Episode> { foundEpisodeByExternalId };
-                }
-                else
-                {
-                    remoteEpisode.Episodes = GetEpisodes(parsedEpisodeInfo, series, searchCriteria);
-                }
+                remoteEpisode.Episodes = GetEpisodes(parsedEpisodeInfo, series, searchCriteria, foundEpisodeByExternalId);
             }
 
             remoteEpisode.Languages = parsedEpisodeInfo.Languages;
@@ -222,8 +214,14 @@ namespace NzbDrone.Core.Parser
             return GetEpisodes(parsedEpisodeInfo, series, searchCriteria);
         }
 
-        private List<Episode> GetEpisodes(ParsedEpisodeInfo parsedEpisodeInfo, Series series, SearchCriteriaBase searchCriteria)
+        private List<Episode> GetEpisodes(ParsedEpisodeInfo parsedEpisodeInfo, Series series, SearchCriteriaBase searchCriteria, Episode foundEpisode = null)
         {
+            // If we already have an episode (from external ID lookup), use it
+            if (foundEpisode != null)
+            {
+                return new List<Episode> { foundEpisode };
+            }
+
             // First try to match by external ID if available
             if (!string.IsNullOrWhiteSpace(parsedEpisodeInfo.ExternalId))
             {

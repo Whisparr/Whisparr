@@ -174,6 +174,7 @@ namespace NzbDrone.Core.Parser
                         series = episodeByExternalId.Series;
                         foundEpisodeByExternalId = episodeByExternalId;
                         remoteEpisode.SeriesMatchType = SeriesMatchType.Id;
+                        remoteEpisode.ShouldOverride = true; // Bypass traditional episode validation for external ID matches
                         _logger.Debug("Found series by external ID: {0} -> {1}", parsedEpisodeInfo.ExternalId, series.Title);
                     }
                 }

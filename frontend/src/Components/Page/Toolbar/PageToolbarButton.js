@@ -26,21 +26,20 @@ function PageToolbarButton(props) {
       {...otherProps}
     >
       <Icon
-        name={isSpinning ? (spinningName || iconName) : iconName}
+        name={isSpinning ? spinningName || iconName : iconName}
         isSpinning={isSpinning}
         size={21}
       />
 
       <div className={styles.labelContainer}>
-        <div className={styles.label}>
-          {label}
-        </div>
+        <div className={styles.label}>{label}</div>
       </div>
     </Link>
   );
 }
 
 PageToolbarButton.propTypes = {
+  ...Link.propTypes,
   label: PropTypes.string.isRequired,
   iconName: PropTypes.object.isRequired,
   spinningName: PropTypes.object,

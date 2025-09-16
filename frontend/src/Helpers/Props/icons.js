@@ -82,6 +82,7 @@ import {
   faMinus as fasMinus,
   faPause as fasPause,
   faPlay as fasPlay,
+  faPlus as faPlus,
   faPowerOff as fasPowerOff,
   faQuestion as fasQuestion,
   faQuestionCircle as fasQuestionCircle,
@@ -91,7 +92,6 @@ import {
   faRss as fasRss,
   faSave as fasSave,
   faSearch as fasSearch,
-  faSearchPlus as fasSearchPlus,
   faSignOutAlt as fasSignOutAlt,
   faSitemap as fasSitemap,
   faSort as fasSort,
@@ -125,7 +125,7 @@ import {
 
 export const ACTIONS = fasBolt;
 export const ACTIVITY = farClock;
-export const ADD = fasSearchPlus;
+export const ADD = faPlus;
 export const ALTERNATE_TITLES = farClone;
 export const ADVANCED_SETTINGS = fasCog;
 export const ANNOUNCED = fasBullhorn;

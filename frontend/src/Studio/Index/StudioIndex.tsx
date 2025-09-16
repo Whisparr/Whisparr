@@ -6,6 +6,7 @@ import React, {
   useState,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { SelectProvider } from 'App/SelectContext';
 import ClientSideCollectionAppState from 'App/State/ClientSideCollectionAppState';
 import StudiosAppState from 'App/State/StudiosAppState';
@@ -87,6 +88,7 @@ const StudioIndex = withScrollPosition((props: StudioIndexProps) => {
     undefined
   );
   const [isSelectMode, setIsSelectMode] = useState(false);
+  const history = useHistory();
 
   useEffect(() => {
     dispatch(fetchQueueDetails({ all: true }));
@@ -216,6 +218,11 @@ const StudioIndex = withScrollPosition((props: StudioIndexProps) => {
               label="SelectAll"
               isSelectMode={isSelectMode}
               overflowComponent={MovieIndexSelectAllMenuItem}
+            />
+            <PageToolbarButton
+              label={translate('AddStudio')}
+              iconName={icons.ADD}
+              onPress={() => history.push('/add/new/scene')}
             />
           </PageToolbarSection>
           <PageToolbarSection

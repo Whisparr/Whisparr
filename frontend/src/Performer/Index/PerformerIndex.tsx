@@ -6,6 +6,7 @@ import React, {
   useState,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { SelectProvider } from 'App/SelectContext';
 import ClientSideCollectionAppState from 'App/State/ClientSideCollectionAppState';
 import PerformersAppState from 'App/State/PerformersAppState';
@@ -83,6 +84,8 @@ const PerformerIndex = withScrollPosition((props: PerformerIndexProps) => {
   const dispatch = useDispatch();
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
+  const history = useHistory();
+
   const [jumpToCharacter, setJumpToCharacter] = useState<string | undefined>(
     undefined
   );
@@ -216,6 +219,11 @@ const PerformerIndex = withScrollPosition((props: PerformerIndexProps) => {
               label="SelectAll"
               isSelectMode={isSelectMode}
               overflowComponent={MovieIndexSelectAllMenuItem}
+            />
+            <PageToolbarButton
+              label={translate('AddPerformer')}
+              iconName={icons.ADD}
+              onPress={() => history.push('/add/new/scene')}
             />
           </PageToolbarSection>
           <PageToolbarSection

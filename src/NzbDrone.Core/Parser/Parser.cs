@@ -394,6 +394,20 @@ namespace NzbDrone.Core.Parser
                 }
             }
 
+            // If no title regex matched, try parsing external ID as a fallback for JAV content
+            var fallbackExternalId = ParseExternalId(title);
+            if (!string.IsNullOrWhiteSpace(fallbackExternalId))
+            {
+                Logger.Debug("No title match, but external ID found: {0}", fallbackExternalId);
+                return new ParsedEpisodeInfo
+                {
+                    ExternalId = fallbackExternalId,
+                    SeriesTitle = "", // No series title for external ID-only matches
+                    Quality = QualityParser.ParseQuality(title),
+                    Languages = LanguageParser.ParseLanguages(title)
+                };
+            }
+
             Logger.Debug("Unable to parse {0}", title);
             return null;
         }

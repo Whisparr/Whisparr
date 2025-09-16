@@ -156,6 +156,21 @@ namespace NzbDrone.Core.Parser
 
             Episode foundEpisodeByExternalId = null;
 
+            // PRIORITY: If we have an external ID, try direct episode matching first
+            if (!string.IsNullOrWhiteSpace(parsedEpisodeInfo.ExternalId))
+            {
+                var episodeByExternalId = FindEpisodeByExternalIdGlobally(parsedEpisodeInfo.ExternalId);
+                if (episodeByExternalId != null)
+                {
+                    series = episodeByExternalId.Series;
+                    foundEpisodeByExternalId = episodeByExternalId;
+                    remoteEpisode.SeriesMatchType = SeriesMatchType.Id;
+                    remoteEpisode.ShouldOverride = true; // Bypass traditional episode validation for external ID matches
+                    _logger.Debug("Direct match by external ID: {0} -> {1} (Episode: {2})", parsedEpisodeInfo.ExternalId, series.Title, episodeByExternalId.Id);
+                }
+            }
+
+            // Only try traditional series matching if no external ID match was found
             if (series == null)
             {
                 var seriesMatch = FindSeries(parsedEpisodeInfo, tvdbId, searchCriteria);
@@ -164,19 +179,6 @@ namespace NzbDrone.Core.Parser
                 {
                     series = seriesMatch.Series;
                     remoteEpisode.SeriesMatchType = seriesMatch.MatchType;
-                }
-                else if (!string.IsNullOrWhiteSpace(parsedEpisodeInfo.ExternalId))
-                {
-                    // If no series found by title but we have an external ID, try to find any series with this external ID
-                    var episodeByExternalId = FindEpisodeByExternalIdGlobally(parsedEpisodeInfo.ExternalId);
-                    if (episodeByExternalId != null)
-                    {
-                        series = episodeByExternalId.Series;
-                        foundEpisodeByExternalId = episodeByExternalId;
-                        remoteEpisode.SeriesMatchType = SeriesMatchType.Id;
-                        remoteEpisode.ShouldOverride = true; // Bypass traditional episode validation for external ID matches
-                        _logger.Debug("Found series by external ID: {0} -> {1}", parsedEpisodeInfo.ExternalId, series.Title);
-                    }
                 }
             }
 

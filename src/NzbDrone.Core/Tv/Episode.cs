@@ -18,6 +18,7 @@ namespace NzbDrone.Core.Tv
 
         public int SeriesId { get; set; }
         public int TvdbId { get; set; }
+        public string ExternalId { get; set; }
         public int EpisodeFileId { get; set; }
         public int SeasonNumber { get; set; }
         public string Title { get; set; }

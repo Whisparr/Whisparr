@@ -93,13 +93,17 @@ namespace NzbDrone.Core.Indexers.Newznab
         [FieldDefinition(8, Label = "Search Site + Title", Type = FieldType.Checkbox, HelpText = "Search using site name + title (without date/year).", Advanced = true)]
         public bool SearchSiteTitleOnly { get; set; }
 
-        [FieldDefinition(9, Label = "Date Format", Type = FieldType.Select, SelectOptions = typeof(DateSearchFormat), HelpText = "Date format to use in searches: YY.MM.DD, DD.MM.YY, or Both", Advanced = true)]
+        [FieldDefinition(9, Label = "Search External ID Only", Type = FieldType.Checkbox, HelpText = "Search using external ID only (without date/year/title).", Advanced = true)]
+        public bool SearchExternalIdOnly { get; set; }
+
+        [FieldDefinition(10, Label = "Date Format", Type = FieldType.Select, SelectOptions = typeof(DateSearchFormat), HelpText = "Date format to use in searches: YY.MM.DD, DD.MM.YY, or Both", Advanced = true)]
         public DateSearchFormat DateSearchFormat { get; set; }
 
-        [FieldDefinition(10, Label = "Network or Site", Type = FieldType.Select, SelectOptions = typeof(SeriesNameSource), HelpText = "Choose between Site Name, Network Name, or both for series searches", Advanced = true)]
+        [FieldDefinition(11, Label = "Network or Site", Type = FieldType.Select, SelectOptions = typeof(SeriesNameSource), HelpText = "Choose between Site Name, Network Name, or both for series searches", Advanced = true)]
         public SeriesNameSource SeriesNameSource { get; set; }
 
-        // Field 11 is used by TorznabSettings MinimumSeeders
+        // Field 12 is used by TorznabSettings MinimumSeeders
+        // Field 13 is used by TorznabSettings SeedCriteria
         // If you need to add another field here, update TorznabSettings as well and this comment
 
         public virtual NzbDroneValidationResult Validate()

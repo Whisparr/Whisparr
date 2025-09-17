@@ -77,6 +77,11 @@ namespace NzbDrone.Core.IndexerSearch
             if (episodes.Count == 1)
             {
                 var searchSpec = Get<SingleEpisodeSearchCriteria>(series, episodes, monitoredOnly, userInvokedSearch, interactiveSearch);
+                var episode = episodes.First();
+                searchSpec.ReleaseDate = DateOnly.Parse(episode.AirDate);
+                searchSpec.Performer = episode.Actors.Select(p => p.Name).FirstOrDefault();
+                searchSpec.EpisodeTitle = episode.Title;
+                searchSpec.ExternalId = episode.ExternalId;
 
                 var decisions = await Dispatch(indexer => indexer.Fetch(searchSpec), searchSpec);
                 downloadDecisions.AddRange(decisions);
@@ -101,6 +106,7 @@ namespace NzbDrone.Core.IndexerSearch
             searchSpec.ReleaseDate = DateOnly.Parse(episode.AirDate);
             searchSpec.Performer = episode.Actors.Select(p => p.Name).FirstOrDefault();
             searchSpec.EpisodeTitle = episode.Title;
+            searchSpec.ExternalId = episode.ExternalId;
 
             var decisions = await Dispatch(indexer => indexer.Fetch(searchSpec), searchSpec);
             downloadDecisions.AddRange(decisions);

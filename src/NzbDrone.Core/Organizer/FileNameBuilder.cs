@@ -119,6 +119,62 @@ namespace NzbDrone.Core.Organizer
             _logger = logger;
         }
 
+        private string TruncateFileNameSmartly(List<string> components, string extension, NamingConfig namingConfig)
+        {
+            // Find which component contains the episode title by looking for episode title tokens
+            var episodeTitleComponentIndex = -1;
+
+            for (var i = 0; i < components.Count; i++)
+            {
+                // This is a simplified approach - in practice we'd need to track which component has the title
+                // For now, we'll assume the longest component is likely the episode title
+                if (episodeTitleComponentIndex == -1 || components[i].Length > components[episodeTitleComponentIndex].Length)
+                {
+                    episodeTitleComponentIndex = i;
+                }
+            }
+
+            if (episodeTitleComponentIndex == -1)
+            {
+                // No episode title found, fallback to simple truncation
+                var maxLength = LongPathSupport.MaxFileNameLength - extension.GetByteCount() - 3;
+                var fileNameWithoutExtension = string.Join(Path.DirectorySeparatorChar.ToString(), components);
+                return fileNameWithoutExtension.Truncate(maxLength).TrimEnd(' ', '.') + "..." + extension;
+            }
+
+            // Calculate space needed for all components except the episode title
+            var nonTitleComponents = new List<string>();
+            for (var i = 0; i < components.Count; i++)
+            {
+                if (i != episodeTitleComponentIndex)
+                {
+                    nonTitleComponents.Add(components[i]);
+                }
+            }
+
+            var nonTitleLength = string.Join(Path.DirectorySeparatorChar.ToString(), nonTitleComponents).GetByteCount();
+            var separatorLength = Path.DirectorySeparatorChar.ToString().GetByteCount(); // Space for one more separator
+            var extensionLength = extension.GetByteCount();
+            var ellipsisLength = 3; // "..." in bytes
+
+            // Calculate maximum length available for episode title
+            var maxTitleLength = LongPathSupport.MaxFileNameLength - nonTitleLength - separatorLength - extensionLength - ellipsisLength;
+
+            if (maxTitleLength <= 0)
+            {
+                // Even without episode title, we're too long - fallback to simple truncation
+                var maxLength = LongPathSupport.MaxFileNameLength - extension.GetByteCount() - 3;
+                var fileNameWithoutExtension = string.Join(Path.DirectorySeparatorChar.ToString(), components);
+                return fileNameWithoutExtension.Truncate(maxLength).TrimEnd(' ', '.') + "..." + extension;
+            }
+
+            // Truncate just the episode title
+            var truncatedTitle = components[episodeTitleComponentIndex].Truncate(maxTitleLength).TrimEnd(' ', '.') + "...";
+            components[episodeTitleComponentIndex] = truncatedTitle;
+
+            return string.Join(Path.DirectorySeparatorChar.ToString(), components) + extension;
+        }
+
         private string BuildFileName(List<Episode> episodes, Series series, EpisodeFile episodeFile, string extension, int maxPath, NamingConfig namingConfig = null, List<CustomFormat> customFormats = null)
         {
             if (namingConfig == null)
@@ -185,7 +241,15 @@ namespace NzbDrone.Core.Organizer
                 }
             }
 
-            return string.Join(Path.DirectorySeparatorChar.ToString(), components) + extension;
+            var fileName = string.Join(Path.DirectorySeparatorChar.ToString(), components) + extension;
+
+            // Smart truncation: if filename exceeds limit, truncate only the episode title
+            if (fileName.GetByteCount() > LongPathSupport.MaxFileNameLength)
+            {
+                fileName = TruncateFileNameSmartly(components, extension, namingConfig);
+            }
+
+            return fileName;
         }
 
         public string BuildFileName(List<Episode> episodes, Series series, EpisodeFile episodeFile, string extension = "", NamingConfig namingConfig = null, List<CustomFormat> customFormats = null)

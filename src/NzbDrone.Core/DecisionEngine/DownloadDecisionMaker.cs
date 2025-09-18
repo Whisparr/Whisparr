@@ -148,6 +148,7 @@ namespace NzbDrone.Core.DecisionEngine
 
                             decision = new DownloadDecision(remoteEpisode, new Rejection(rejectionReason));
                         }
+
                         // For RSS feeds, if both parsing methods fail, return no decision (null)
                     }
                 }

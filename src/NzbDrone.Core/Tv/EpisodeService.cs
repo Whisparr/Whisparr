@@ -34,6 +34,7 @@ namespace NzbDrone.Core.Tv
         void UpdateMany(List<Episode> episodes);
         void DeleteMany(List<Episode> episodes);
         void SetEpisodeMonitoredBySeason(int seriesId, int seasonNumber, bool monitored);
+        Episode FindEpisodeByExternalId(string externalId);
     }
 
     public class EpisodeService : IEpisodeService,
@@ -373,6 +374,11 @@ namespace NzbDrone.Core.Tv
             }
 
             return matches;
+        }
+
+        public Episode FindEpisodeByExternalId(string externalId)
+        {
+            return _episodeRepository.FindByExternalId(externalId);
         }
     }
 }

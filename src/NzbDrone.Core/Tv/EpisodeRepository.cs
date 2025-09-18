@@ -28,6 +28,7 @@ namespace NzbDrone.Core.Tv
         void SetMonitored(IEnumerable<int> ids, bool monitored);
         void SetFileId(Episode episode, int fileId);
         void ClearFileId(Episode episode, bool unmonitor);
+        Episode FindByExternalId(string externalId);
     }
 
     public class EpisodeRepository : BasicRepository<Episode>, IEpisodeRepository
@@ -253,6 +254,24 @@ namespace NzbDrone.Core.Tv
             // Conservative approach: reject ambiguous matches without scene title context
             _logger.Warn("Multiple episodes with the same air date found, cannot determine correct episode without scene title context. Date: {0}, Episodes: {1}. Returning null to prevent incorrect match.", date, regularEpisodes.Count);
             return null;
+        }
+
+        public Episode FindByExternalId(string externalId)
+        {
+            if (string.IsNullOrWhiteSpace(externalId))
+            {
+                return null;
+            }
+
+            // Use raw SQL for case-insensitive comparison since LINQ ToLower() isn't supported
+            var builder = Builder().Where("LOWER(\"Episodes\".\"ExternalId\") = LOWER(@externalId)", new { externalId = externalId });
+
+            if (_database.DatabaseType == DatabaseType.PostgreSQL)
+            {
+                builder = Builder().Where("LOWER(\"Episodes\".\"ExternalId\") = LOWER(@externalId)", new { externalId = externalId });
+            }
+
+            return Query(builder).SingleOrDefault();
         }
     }
 }

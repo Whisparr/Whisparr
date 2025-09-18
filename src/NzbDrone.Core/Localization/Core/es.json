@@ -257,7 +257,7 @@
     "AddNew": "Añadir nuevo",
     "AddNewMovie": "Añadir película nueva",
     "AddNewMovieMessage": "Es fácil añadir una película nueva, tan solo comienza a escribir el título de la que quieres añadir",
-    "AddNewSceneMessage": "Es fácil añadir una película nueva, tan solo comienza a escribir el título de la que quieres añadir",
+    "AddNewSceneMessage": "Es fácil añadir una escena nueva, intérprete o estudio.  Tan solo empieza a escribir el nombre del elemento que quieras añadir",
     "AddNewTmdbIdMessage": "También puedes buscar usando el ID de TMDb de la película. Ej. 'tmdb:71663'",
     "AddNotificationError": "No se pudo añadir una nueva notificación, inténtelo de nuevo.",
     "AddQualityProfile": "Añadir Perfil de Calidad",

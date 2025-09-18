@@ -64,7 +64,7 @@
     "AddNew": "Adicionar novo",
     "AddNewMovie": "Adicionar novo filme",
     "AddNewMovieMessage": "É fácil adicionar um novo filme, basta começar a digitar o nome do filme que deseja acrescentar",
-    "AddNewSceneMessage": "É fácil adicionar uma nova cena, basta começar a digitar o nome da cena que deseja acrescentar",
+    "AddNewSceneMessage": "É fácil adicionar uma nova cena, artista ou estúdio.  Basta começar a digitar o nome do item que deseja adicionar",
     "AddNewTmdbIdMessage": "Você também pode pesquisar usando a ID do TMDb de um filme. P. ex., \"tmdb:71663\"",
     "AddNotificationError": "Não foi possível adicionar uma nova notificação. Tente novamente.",
     "AddQualityProfile": "Adicionar perfil de qualidade",

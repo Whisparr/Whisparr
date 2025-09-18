@@ -118,7 +118,7 @@ namespace NzbDrone.Core.DecisionEngine
                         }
                         else
                         {
-                            // Both standard and External ID parsing failed
+                            // Both standard and External ID parsing failed - determine specific reason
                             var remoteEpisode = new RemoteEpisode
                             {
                                 Release = report,
@@ -126,7 +126,27 @@ namespace NzbDrone.Core.DecisionEngine
                                 Languages = parsedEpisodeInfo.Languages
                             };
 
-                            decision = new DownloadDecision(remoteEpisode, new Rejection("Unable to parse release"));
+                            // Try to provide more specific error message based on what we attempted
+                            string rejectionReason;
+                            if (parsedEpisodeInfo.SeriesTitle.IsNullOrWhiteSpace())
+                            {
+                                rejectionReason = "Unable to parse release";
+                            }
+                            else
+                            {
+                                // We had a series title but mapping failed, check if we tried standard parsing
+                                var standardRemoteEpisode = _parsingService.Map(parsedEpisodeInfo, report.TvdbId, searchCriteria);
+                                if (standardRemoteEpisode.Series == null)
+                                {
+                                    rejectionReason = "Unknown Series";
+                                }
+                                else
+                                {
+                                    rejectionReason = "Unable to identify correct episode(s) using release name and scene mappings";
+                                }
+                            }
+
+                            decision = new DownloadDecision(remoteEpisode, new Rejection(rejectionReason));
                         }
                     }
                 }

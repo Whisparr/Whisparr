@@ -116,9 +116,9 @@ namespace NzbDrone.Core.DecisionEngine
                         {
                             decision = externalIdBasedDecision;
                         }
-                        else
+                        else if (searchCriteria != null)
                         {
-                            // Both standard and External ID parsing failed - determine specific reason
+                            // Both standard and External ID parsing failed during search - provide rejection with reason
                             var remoteEpisode = new RemoteEpisode
                             {
                                 Release = report,
@@ -148,6 +148,7 @@ namespace NzbDrone.Core.DecisionEngine
 
                             decision = new DownloadDecision(remoteEpisode, new Rejection(rejectionReason));
                         }
+                        // For RSS feeds, if both parsing methods fail, return no decision (null)
                     }
                 }
                 catch (Exception e)

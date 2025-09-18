@@ -11,7 +11,6 @@ using NzbDrone.Core.Download.Aggregation;
 using NzbDrone.Core.IndexerSearch.Definitions;
 using NzbDrone.Core.Parser;
 using NzbDrone.Core.Parser.Model;
-using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.DecisionEngine
 {
@@ -27,24 +26,18 @@ namespace NzbDrone.Core.DecisionEngine
         private readonly IParsingService _parsingService;
         private readonly ICustomFormatCalculationService _formatCalculator;
         private readonly IRemoteEpisodeAggregationService _aggregationService;
-        private readonly IEpisodeService _episodeService;
-        private readonly ISeriesService _seriesService;
         private readonly Logger _logger;
 
         public DownloadDecisionMaker(IEnumerable<IDecisionEngineSpecification> specifications,
                                      IParsingService parsingService,
                                      ICustomFormatCalculationService formatService,
                                      IRemoteEpisodeAggregationService aggregationService,
-                                     IEpisodeService episodeService,
-                                     ISeriesService seriesService,
                                      Logger logger)
         {
             _specifications = specifications;
             _parsingService = parsingService;
             _formatCalculator = formatService;
             _aggregationService = aggregationService;
-            _episodeService = episodeService;
-            _seriesService = seriesService;
             _logger = logger;
         }
 
@@ -79,77 +72,67 @@ namespace NzbDrone.Core.DecisionEngine
 
                 try
                 {
-                    var parsedEpisodeInfo = Parser.Parser.ParseTitle(report.Title);
+                    RemoteEpisode remoteEpisode = null;
 
-                    // Try standard parsing first
-                    if (parsedEpisodeInfo != null && !parsedEpisodeInfo.SeriesTitle.IsNullOrWhiteSpace())
+                    // First, check if this release contains an External ID
+                    var externalIdRemoteEpisode = _parsingService.TryMapByExternalId(report.Title, null, searchCriteria);
+                    if (externalIdRemoteEpisode != null)
                     {
-                        var remoteEpisode = _parsingService.Map(parsedEpisodeInfo, report.TvdbId, searchCriteria);
+                        // External ID parsing route
+                        remoteEpisode = externalIdRemoteEpisode;
                         remoteEpisode.Release = report;
+                    }
+                    else
+                    {
+                        // Normal parsing route
+                        var parsedEpisodeInfo = Parser.Parser.ParseTitle(report.Title);
 
-                        if (remoteEpisode.Series != null && !remoteEpisode.Episodes.Empty())
+                        if (parsedEpisodeInfo != null && !parsedEpisodeInfo.SeriesTitle.IsNullOrWhiteSpace())
                         {
-                            // Standard parsing succeeded
+                            remoteEpisode = _parsingService.Map(parsedEpisodeInfo, report.TvdbId, searchCriteria);
+                            remoteEpisode.Release = report;
+                        }
+                    }
+
+                    if (remoteEpisode != null)
+                    {
+                        if (remoteEpisode.Series == null)
+                        {
+                            var reason = "Unknown Series";
+                            decision = new DownloadDecision(remoteEpisode, new Rejection(reason));
+                        }
+                        else if (remoteEpisode.Episodes.Empty())
+                        {
+                            decision = new DownloadDecision(remoteEpisode, new Rejection("Unable to identify correct episode(s) using release name and scene mappings"));
+                        }
+                        else
+                        {
                             _aggregationService.Augment(remoteEpisode);
+
                             remoteEpisode.CustomFormats = _formatCalculator.ParseCustomFormat(remoteEpisode, remoteEpisode.Release.Size);
                             remoteEpisode.CustomFormatScore = remoteEpisode?.Series?.QualityProfile?.Value.CalculateCustomFormatScore(remoteEpisode.CustomFormats) ?? 0;
+
                             remoteEpisode.DownloadAllowed = remoteEpisode.Episodes.Any();
                             decision = GetDecisionForReport(remoteEpisode, searchCriteria);
                         }
                     }
-
-                    // If standard parsing failed at any point, try External ID parsing
-                    if (decision == null)
+                    else if (searchCriteria != null)
                     {
-                        // Ensure we have basic parsed info for External ID parsing
-                        if (parsedEpisodeInfo == null)
+                        // Only create rejection decision for searches, not RSS
+                        var parsedEpisodeInfo = new ParsedEpisodeInfo
                         {
-                            parsedEpisodeInfo = new ParsedEpisodeInfo
-                            {
-                                Languages = LanguageParser.ParseLanguages(report.Title),
-                                Quality = QualityParser.ParseQuality(report.Title)
-                            };
-                        }
+                            Languages = LanguageParser.ParseLanguages(report.Title),
+                            Quality = QualityParser.ParseQuality(report.Title)
+                        };
 
-                        var externalIdBasedDecision = TryParseByExternalId(report, parsedEpisodeInfo, searchCriteria);
-                        if (externalIdBasedDecision != null)
+                        remoteEpisode = new RemoteEpisode
                         {
-                            decision = externalIdBasedDecision;
-                        }
-                        else if (searchCriteria != null)
-                        {
-                            // Both standard and External ID parsing failed during search - provide rejection with reason
-                            var remoteEpisode = new RemoteEpisode
-                            {
-                                Release = report,
-                                ParsedEpisodeInfo = parsedEpisodeInfo,
-                                Languages = parsedEpisodeInfo.Languages
-                            };
+                            Release = report,
+                            ParsedEpisodeInfo = parsedEpisodeInfo,
+                            Languages = parsedEpisodeInfo.Languages
+                        };
 
-                            // Try to provide more specific error message based on what we attempted
-                            string rejectionReason;
-                            if (parsedEpisodeInfo.SeriesTitle.IsNullOrWhiteSpace())
-                            {
-                                rejectionReason = "Unable to parse release";
-                            }
-                            else
-                            {
-                                // We had a series title but mapping failed, check if we tried standard parsing
-                                var standardRemoteEpisode = _parsingService.Map(parsedEpisodeInfo, report.TvdbId, searchCriteria);
-                                if (standardRemoteEpisode.Series == null)
-                                {
-                                    rejectionReason = "Unknown Series";
-                                }
-                                else
-                                {
-                                    rejectionReason = "Unable to identify correct episode(s) using release name and scene mappings";
-                                }
-                            }
-
-                            decision = new DownloadDecision(remoteEpisode, new Rejection(rejectionReason));
-                        }
-
-                        // For RSS feeds, if both parsing methods fail, return no decision (null)
+                        decision = new DownloadDecision(remoteEpisode, new Rejection("Unable to parse release"));
                     }
                 }
                 catch (Exception e)
@@ -237,78 +220,6 @@ namespace NzbDrone.Core.DecisionEngine
             }
 
             return null;
-        }
-
-        private DownloadDecision TryParseByExternalId(ReleaseInfo report, ParsedEpisodeInfo parsedEpisodeInfo, SearchCriteriaBase searchCriteria)
-        {
-            // Extract External ID from the release title
-            var extractedExternalId = ExternalIdParser.ExtractExternalId(report.Title);
-            if (string.IsNullOrWhiteSpace(extractedExternalId))
-            {
-                return null;
-            }
-
-            // If we have search criteria with a specific External ID, verify it matches
-            if (searchCriteria is SingleEpisodeSearchCriteria singleEpisodeSearchCriteria &&
-                !string.IsNullOrWhiteSpace(singleEpisodeSearchCriteria.ExternalId))
-            {
-                if (!string.Equals(extractedExternalId, singleEpisodeSearchCriteria.ExternalId, System.StringComparison.OrdinalIgnoreCase))
-                {
-                    return null;
-                }
-            }
-
-            // Find the episode by External ID
-            var episode = _episodeService.FindEpisodeByExternalId(extractedExternalId);
-            if (episode == null)
-            {
-                return null;
-            }
-
-            // Update ParsedEpisodeInfo with episode information for proper validation
-            if (parsedEpisodeInfo.AirDate.IsNullOrWhiteSpace() && !episode.AirDate.IsNullOrWhiteSpace())
-            {
-                parsedEpisodeInfo.AirDate = episode.AirDate;
-            }
-
-            // Create a RemoteEpisode with the matched episode
-            var remoteEpisode = new RemoteEpisode
-            {
-                Release = report,
-                ParsedEpisodeInfo = parsedEpisodeInfo,
-                Episodes = new List<Episode> { episode },
-                Series = episode.Series ?? searchCriteria.Series,
-                Languages = parsedEpisodeInfo.Languages,
-                SeriesMatchType = SeriesMatchType.ExternalId
-            };
-
-            // If we don't have the series loaded, get it from the service
-            if (remoteEpisode.Series == null && episode.SeriesId > 0)
-            {
-                remoteEpisode.Series = _seriesService.GetSeries(episode.SeriesId);
-            }
-
-            // As a fallback, try to use search criteria series if available
-            if (remoteEpisode.Series == null && searchCriteria?.Series != null)
-            {
-                remoteEpisode.Series = searchCriteria.Series;
-            }
-
-            if (remoteEpisode.Series == null)
-            {
-                return new DownloadDecision(remoteEpisode, new Rejection("Unknown Series"));
-            }
-
-            // Mark as episode requested if this is from search criteria
-            remoteEpisode.EpisodeRequested = searchCriteria != null;
-
-            // Augment and format the remote episode
-            _aggregationService.Augment(remoteEpisode);
-            remoteEpisode.CustomFormats = _formatCalculator.ParseCustomFormat(remoteEpisode, remoteEpisode.Release.Size);
-            remoteEpisode.CustomFormatScore = remoteEpisode?.Series?.QualityProfile?.Value.CalculateCustomFormatScore(remoteEpisode.CustomFormats) ?? 0;
-            remoteEpisode.DownloadAllowed = remoteEpisode.Episodes.Any();
-
-            return GetDecisionForReport(remoteEpisode, searchCriteria);
         }
     }
 }

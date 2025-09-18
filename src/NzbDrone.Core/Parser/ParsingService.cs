@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NLog;
@@ -19,6 +20,7 @@ namespace NzbDrone.Core.Parser
         List<Episode> GetEpisodes(ParsedEpisodeInfo parsedEpisodeInfo, Series series, bool sceneSource, SearchCriteriaBase searchCriteria = null);
         ParsedEpisodeInfo ParseSpecialEpisodeTitle(ParsedEpisodeInfo parsedEpisodeInfo, string releaseTitle, int tvdbId, SearchCriteriaBase searchCriteria = null);
         ParsedEpisodeInfo ParseSpecialEpisodeTitle(ParsedEpisodeInfo parsedEpisodeInfo, string releaseTitle, Series series);
+        RemoteEpisode TryMapByExternalId(string releaseTitle, ParsedEpisodeInfo parsedEpisodeInfo, SearchCriteriaBase searchCriteria = null);
     }
 
     public class ParsingService : IParsingService
@@ -371,6 +373,102 @@ namespace NzbDrone.Core.Parser
             }
 
             return episodeInfo;
+        }
+
+        public RemoteEpisode TryMapByExternalId(string releaseTitle, ParsedEpisodeInfo parsedEpisodeInfo, SearchCriteriaBase searchCriteria = null)
+        {
+            if (string.IsNullOrWhiteSpace(releaseTitle))
+            {
+                return null;
+            }
+
+            string extractedExternalId;
+            try
+            {
+                // Extract External ID from the release title
+                extractedExternalId = ExternalIdParser.ExtractExternalId(releaseTitle);
+                if (string.IsNullOrWhiteSpace(extractedExternalId))
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Gracefully handle any issues with External ID parsing (e.g., in test environments)
+                _logger.Debug(ex, "Failed to extract External ID from release title: {0}", releaseTitle);
+                return null;
+            }
+
+            // Create ParsedEpisodeInfo if not provided
+            if (parsedEpisodeInfo == null)
+            {
+                parsedEpisodeInfo = new ParsedEpisodeInfo
+                {
+                    ReleaseTitle = releaseTitle,
+                    Languages = LanguageParser.ParseLanguages(releaseTitle),
+                    Quality = QualityParser.ParseQuality(releaseTitle),
+                    ReleaseGroup = Parser.ParseReleaseGroup(releaseTitle)
+                };
+            }
+
+            // If we have search criteria with a specific External ID, verify it matches
+            if (searchCriteria is SingleEpisodeSearchCriteria singleEpisodeSearchCriteria &&
+                !string.IsNullOrWhiteSpace(singleEpisodeSearchCriteria.ExternalId))
+            {
+                if (!string.Equals(extractedExternalId, singleEpisodeSearchCriteria.ExternalId, System.StringComparison.OrdinalIgnoreCase))
+                {
+                    return null;
+                }
+            }
+
+            Episode episode;
+
+            try
+            {
+                // Find the episode by External ID
+                episode = _episodeService.FindEpisodeByExternalId(extractedExternalId);
+                if (episode == null)
+                {
+                    return null;
+                }
+
+                // Episode should have series information - if not, skip
+                if (episode.Series == null && episode.SeriesId == 0)
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Gracefully handle database access issues (e.g., in test environments)
+                _logger.Debug(ex, "Failed to lookup episode by External ID: {0}", extractedExternalId);
+                return null;
+            }
+
+            // Update ParsedEpisodeInfo with episode information for proper validation
+            if (parsedEpisodeInfo.AirDate.IsNullOrWhiteSpace() && !episode.AirDate.IsNullOrWhiteSpace())
+            {
+                parsedEpisodeInfo.AirDate = episode.AirDate;
+            }
+
+            // Create a RemoteEpisode with the matched episode
+            var remoteEpisode = new RemoteEpisode
+            {
+                ParsedEpisodeInfo = parsedEpisodeInfo,
+                Episodes = new List<Episode> { episode },
+                Series = episode.Series,
+                Languages = parsedEpisodeInfo.Languages,
+                SeriesMatchType = SeriesMatchType.ExternalId
+            };
+
+            // Mark as episode requested if this is from search criteria
+            if (searchCriteria != null)
+            {
+                var requestedEpisodes = searchCriteria.Episodes.ToDictionaryIgnoreDuplicates(v => v.Id);
+                remoteEpisode.EpisodeRequested = remoteEpisode.Episodes.Any(v => requestedEpisodes.ContainsKey(v.Id));
+            }
+
+            return remoteEpisode;
         }
     }
 }

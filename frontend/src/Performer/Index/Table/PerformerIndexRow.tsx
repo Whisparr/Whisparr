@@ -36,6 +36,9 @@ function PerformerIndexRow(props: PerformerIndexRowProps) {
     fullName,
     monitored,
     gender,
+    age,
+    careerStart,
+    careerEnd,
     hairColor,
     ethnicity,
     rootFolderPath,
@@ -107,6 +110,30 @@ function PerformerIndexRow(props: PerformerIndexRowProps) {
           return (
             <VirtualTableRowCell key={name} className={styles[name]}>
               {firstCharToUpper(gender)}
+            </VirtualTableRowCell>
+          );
+        }
+
+        if (name === 'age') {
+          return (
+            <VirtualTableRowCell key={age} className={styles[name]}>
+              {age}
+            </VirtualTableRowCell>
+          );
+        }
+
+        if (name === 'careerStart') {
+          return (
+            <VirtualTableRowCell key={careerStart} className={styles[name]}>
+              {careerStart}
+            </VirtualTableRowCell>
+          );
+        }
+
+        if (name === 'careerEnd') {
+          return (
+            <VirtualTableRowCell key={careerEnd} className={styles[name]}>
+              {careerEnd}
             </VirtualTableRowCell>
           );
         }

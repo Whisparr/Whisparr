@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import _, { upperFirst } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import Alert from 'Components/Alert';
@@ -46,7 +46,6 @@ function getExpandedState(newState) {
 }
 
 class PerformerDetails extends Component {
-
   //
   // Lifecycle
 
@@ -147,9 +146,15 @@ class PerformerDetails extends Component {
       return;
     }
 
-    if (currentTouch > this._touchStart && currentTouch - this._touchStart > 100) {
+    if (
+      currentTouch > this._touchStart &&
+      currentTouch - this._touchStart > 100
+    ) {
       this.props.onGoToPerformer(this.props.previousPerformer.foreignId);
-    } else if (currentTouch < this._touchStart && this._touchStart - currentTouch > 100) {
+    } else if (
+      currentTouch < this._touchStart &&
+      this._touchStart - currentTouch > 100
+    ) {
       this.props.onGoToPerformer(this.props.nextPerformer.foreignId);
     }
 
@@ -179,7 +184,13 @@ class PerformerDetails extends Component {
         selectedState: state.expandedState
       };
 
-      const newState = toggleSelected(convertedState, [], studioId, isExpanded, false);
+      const newState = toggleSelected(
+        convertedState,
+        [],
+        studioId,
+        isExpanded,
+        false
+      );
 
       return getExpandedState(newState);
     });
@@ -195,6 +206,7 @@ class PerformerDetails extends Component {
       fullName,
       rootFolderPath,
       gender,
+      age,
       ethnicity,
       careerStart,
       careerEnd,
@@ -241,7 +253,10 @@ class PerformerDetails extends Component {
     }
 
     const statusDetails = getPerformerStatusDetails(status);
-    const runningYears = statusDetails.title === translate('Inactive') ? `${careerStart}-${careerEnd}` : `${careerStart}-`;
+    const runningYears =
+      statusDetails.title === translate('Inactive') ?
+        `${careerStart}-${careerEnd}` :
+        `${careerStart}-`;
 
     const fanartUrl = getFanartUrl(images);
     const elementStyle = {
@@ -298,9 +313,7 @@ class PerformerDetails extends Component {
             <div
               className={styles.backdrop}
               style={
-                fanartUrl ?
-                  { backgroundImage: `url(${fanartUrl})` } :
-                  null
+                fanartUrl ? { backgroundImage: `url(${fanartUrl})` } : null
               }
             >
               <div className={styles.backdropOverlay} />
@@ -330,9 +343,7 @@ class PerformerDetails extends Component {
                         />
                       </div>
 
-                      <div className={styles.title}>
-                        {fullName}
-                      </div>
+                      <div className={styles.title}>{fullName}</div>
                     </div>
 
                     <div className={styles.movieNavigationButtons}>
@@ -340,7 +351,9 @@ class PerformerDetails extends Component {
                         className={styles.movieNavigationButton}
                         name={icons.ARROW_LEFT}
                         size={30}
-                        title={translate('GoToInterp', [previousPerformer.fullName])}
+                        title={translate('GoToInterp', [
+                          previousPerformer.fullName
+                        ])}
                         to={`/performer/${previousPerformer.foreignId}`}
                       />
 
@@ -348,7 +361,9 @@ class PerformerDetails extends Component {
                         className={styles.movieNavigationButton}
                         name={icons.ARROW_RIGHT}
                         size={30}
-                        title={translate('GoToInterp', [nextPerformer.fullName])}
+                        title={translate('GoToInterp', [
+                          nextPerformer.fullName
+                        ])}
                         to={`/performer/${nextPerformer.foreignId}`}
                       />
                     </div>
@@ -357,75 +372,55 @@ class PerformerDetails extends Component {
 
                 <div className={styles.details}>
                   <div>
-                    {!!gender &&
+                    {!!gender && (
                       <span className={styles.gender}>
                         {firstCharToUpper(gender)}
                       </span>
-                    }
-
-                    {!!ethnicity &&
+                    )}
+                    {!!ethnicity && (
                       <span className={styles.ethnicity}>
                         {firstCharToUpper(ethnicity)}
                       </span>
-                    }
-
-                    {!!careerStart &&
-                      <span className={styles.years}>
-                        {runningYears}
+                    )}
+                    {!!careerStart && (
+                      <span className={styles.years}>{runningYears}</span>
+                    )}
+                    {!!age && (
+                      <span className={styles.age}>
+                        {age}
+                        {` ${translate('YearsOld')}`}
                       </span>
+                    )}
+                    {!!status && (
+                      <span className={styles.age}>{upperFirst(status)}</span>
+                    )}
+                    <span className={styles.links}>
+                      <Tooltip
+                        anchor={<Icon name={icons.EXTERNAL_LINK} size={20} />}
+                        tooltip={
+                          <PerformerDetailsLinks foreignId={foreignId} />
+                        }
+                        position={tooltipPositions.BOTTOM}
+                      />
+                    </span>
                     }
-
-                    {
-                      <span className={styles.links}>
-                        <Tooltip
-                          anchor={
-                            <Icon
-                              name={icons.EXTERNAL_LINK}
-                              size={20}
-                            />
-                          }
-                          tooltip={
-                            <PerformerDetailsLinks
-                              foreignId={foreignId}
-                            />
-                          }
-                          position={tooltipPositions.BOTTOM}
-                        />
-                      </span>
-                    }
-
-                    {!!tags.length &&
+                    {!!tags.length && (
                       <span>
                         <Tooltip
-                          anchor={
-                            <Icon
-                              name={icons.TAGS}
-                              size={20}
-                            />
-                          }
-                          tooltip={
-                            <PerformerTagsConnector performerId={id} />
-                          }
+                          anchor={<Icon name={icons.TAGS} size={20} />}
+                          tooltip={<PerformerTagsConnector performerId={id} />}
                           position={tooltipPositions.BOTTOM}
                         />
                       </span>
-                    }
+                    )}
                   </div>
                 </div>
 
                 <div className={styles.detailsLabels}>
-                  <Label
-                    className={styles.detailsLabel}
-                    size={sizes.LARGE}
-                  >
-                    <Icon
-                      name={icons.FOLDER}
-                      size={17}
-                    />
+                  <Label className={styles.detailsLabel} size={sizes.LARGE}>
+                    <Icon name={icons.FOLDER} size={17} />
 
-                    <span className={styles.path}>
-                      {rootFolderPath}
-                    </span>
+                    <span className={styles.path}>{rootFolderPath}</span>
                   </Label>
 
                   <Label
@@ -433,10 +428,7 @@ class PerformerDetails extends Component {
                     title={translate('QualityProfile')}
                     size={sizes.LARGE}
                   >
-                    <Icon
-                      name={icons.PROFILE}
-                      size={17}
-                    />
+                    <Icon name={icons.PROFILE} size={17} />
 
                     <span className={styles.qualityProfileName}>
                       {
@@ -447,17 +439,16 @@ class PerformerDetails extends Component {
                     </span>
                   </Label>
 
-                  <Label
-                    className={styles.detailsLabel}
-                    size={sizes.LARGE}
-                  >
+                  <Label className={styles.detailsLabel} size={sizes.LARGE}>
                     <Icon
                       name={monitored ? icons.MONITORED : icons.UNMONITORED}
                       size={17}
                     />
 
                     <span className={styles.qualityProfileName}>
-                      {monitored ? translate('Monitored') : translate('Unmonitored')}
+                      {monitored ?
+                        translate('Monitored') :
+                        translate('Unmonitored')}
                     </span>
                   </Label>
 
@@ -466,10 +457,7 @@ class PerformerDetails extends Component {
                     title={statusDetails.message}
                     size={sizes.LARGE}
                   >
-                    <Icon
-                      name={statusDetails.icon}
-                      size={17}
-                    />
+                    <Icon name={statusDetails.icon} size={17} />
 
                     <span className={styles.qualityProfileName}>
                       {statusDetails.title}
@@ -481,10 +469,7 @@ class PerformerDetails extends Component {
                     title={statusDetails.message}
                     size={sizes.LARGE}
                   >
-                    <Icon
-                      name={icons.SCENE}
-                      size={17}
-                    />
+                    <Icon name={icons.SCENE} size={17} />
 
                     <span className={styles.qualityProfileName}>
                       Scenes: {sceneCount || 0}/{totalSceneCount}
@@ -493,67 +478,47 @@ class PerformerDetails extends Component {
 
                   <Tooltip
                     anchor={
-                      <Label
-                        className={styles.detailsLabel}
-                        size={sizes.LARGE}
-                      >
-                        <Icon
-                          name={icons.DRIVE}
-                          size={17}
-                        />
+                      <Label className={styles.detailsLabel} size={sizes.LARGE}>
+                        <Icon name={icons.DRIVE} size={17} />
 
                         <span className={styles.sizeOnDisk}>
-                          {
-                            formatBytes(sizeOnDisk || 0)
-                          }
+                          {formatBytes(sizeOnDisk || 0)}
                         </span>
                       </Label>
                     }
-                    tooltip={
-                      <span>
-                        {null}
-                      </span>
-                    }
+                    tooltip={<span>{null}</span>}
                     kind={kinds.INVERSE}
                     position={tooltipPositions.BOTTOM}
                   />
 
-                  {!!genres.length && !isSmallScreen &&
+                  {!!genres.length && !isSmallScreen && (
                     <Label
                       className={styles.detailsInfoLabel}
                       title={translate('Genres')}
                       size={sizes.LARGE}
                     >
-                      <span className={styles.genres}>
-                        {genres.join(', ')}
-                      </span>
+                      <span className={styles.genres}>{genres.join(', ')}</span>
                     </Label>
-                  }
+                  )}
                 </div>
               </div>
             </div>
           </div>
 
           <div className={styles.contentContainer}>
-            {
-              !isFetching && moviesError ?
-                <Alert kind={kinds.DANGER}>
-                  {translate('LoadingMoviesFailed')}
-                </Alert> :
-                null
-            }
+            {!isFetching && moviesError ? (
+              <Alert kind={kinds.DANGER}>
+                {translate('LoadingMoviesFailed')}
+              </Alert>
+            ) : null}
 
-            {
-              !isFetching && isPopulated && hasMovies ?
-                <FieldSet legend={translate('Movies')}>
-                  {null}
-                </FieldSet> :
-                null
-            }
+            {!isFetching && isPopulated && hasMovies ? (
+              <FieldSet legend={translate('Movies')}>{null}</FieldSet>
+            ) : null}
 
-            {!isFetching && isPopulated && hasScenes ?
+            {!isFetching && isPopulated && hasScenes ? (
               <FieldSet legend={translate('Scenes')}>
-                {isPopulated && !!studios.length &&
+                {isPopulated && !!studios.length && (
                   <div>
                     {studios.map((studio) => {
                       return (
@@ -567,13 +532,11 @@ class PerformerDetails extends Component {
                           />
                         </Delayed>
                       );
-                    })
-                    }
+                    })}
                   </div>
-                }
-              </FieldSet> :
-              null
-            }
+                )}
+              </FieldSet>
+            ) : null}
           </div>
 
           <DeletePerformerModalConnector
@@ -587,7 +550,6 @@ class PerformerDetails extends Component {
             performerId={id}
             onModalClose={this.onEditMovieModalClose}
           />
-
         </PageContentBody>
       </PageContent>
     );
@@ -599,6 +561,7 @@ PerformerDetails.propTypes = {
   foreignId: PropTypes.string,
   fullName: PropTypes.string.isRequired,
   gender: PropTypes.string,
+  age: PropTypes.number,
   ethnicity: PropTypes.string,
   rootFolderPath: PropTypes.string.isRequired,
   sizeOnDisk: PropTypes.number.isRequired,

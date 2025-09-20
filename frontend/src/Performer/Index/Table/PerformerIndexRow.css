@@ -29,7 +29,12 @@
   flex: 1 0 150px;
 }
 
+.monitored,
 .gender,
+.age,
+.careerStart,
+.careerEnd,
+.status,
 .ethnicity,
 .hairColor,
 .totalSceneCount,

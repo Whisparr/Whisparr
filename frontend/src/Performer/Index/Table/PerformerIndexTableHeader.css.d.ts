@@ -2,6 +2,9 @@
 // Please do not change this file!
 interface CssExports {
   'actions': string;
+  'age': string;
+  'careerEnd': string;
+  'careerStart': string;
   'ethnicity': string;
   'fullName': string;
   'gender': string;

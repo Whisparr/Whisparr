@@ -48,8 +48,7 @@ export const defaultState = {
     showName: true
   },
 
-  tableOptions: {
-  },
+  tableOptions: {},
 
   deleteOptions: {
     addImportExclusion: false
@@ -83,6 +82,30 @@ export const defaultState = {
       label: () => translate('Gender'),
       isSortable: true,
       isVisible: true
+    },
+    {
+      name: 'age',
+      label: () => translate('Age'),
+      isSortable: true,
+      isVisible: false
+    },
+    {
+      name: 'careerStart',
+      label: () => translate('CareerStart'),
+      isSortable: true,
+      isVisible: false
+    },
+    {
+      name: 'careerEnd',
+      label: () => translate('CareerEnd'),
+      isSortable: true,
+      isVisible: false
+    },
+    {
+      name: 'status',
+      label: () => translate('Status'),
+      isSortable: true,
+      isVisible: false
     },
     {
       name: 'hairColor',
@@ -166,6 +189,41 @@ export const defaultState = {
       valueType: filterBuilderValueTypes.DEFAULT
     },
     {
+      name: 'age',
+      label: () => translate('Age'),
+      type: filterBuilderTypes.NUMBER,
+      valueType: filterBuilderValueTypes.DEFAULT
+    },
+    {
+      name: 'careerStart',
+      label: () => translate('CareerStart'),
+      type: filterBuilderTypes.NUMBER,
+      valueType: filterBuilderValueTypes.DEFAULT
+    },
+    {
+      name: 'careerEnd',
+      label: () => translate('CareerEnd'),
+      type: filterBuilderTypes.NUMBER,
+      valueType: filterBuilderValueTypes.DEFAULT
+    },
+    {
+      name: 'status',
+      label: () => translate('Status'),
+      type: filterBuilderTypes.EXACT,
+      optionsSelector: function(items) {
+        const tagList = ['active', 'inactive', 'unknown'];
+
+        const tags = tagList.map((tag) => {
+          return {
+            id: tag,
+            name: camelCaseToString(tag)
+          };
+        });
+
+        return tags.sort(sortByName);
+      }
+    },
+    {
       name: 'fullName',
       label: () => translate('PerformerName'),
       type: filterBuilderTypes.EXACT,
@@ -205,7 +263,14 @@ export const defaultState = {
       label: () => translate('Gender'),
       type: filterBuilderTypes.EXACT,
       optionsSelector: function(items) {
-        const tagList = ['male', 'female', 'transMale', 'transFemale', 'nonBinary', 'intersex'];
+        const tagList = [
+          'male',
+          'female',
+          'transMale',
+          'transFemale',
+          'nonBinary',
+          'intersex'
+        ];
 
         const tags = tagList.map((tag) => {
           return {
@@ -222,7 +287,16 @@ export const defaultState = {
       label: () => translate('HairColor'),
       type: filterBuilderTypes.EXACT,
       optionsSelector: function(items) {
-        const tagList = ['blonde', 'black', 'red', 'auburn', 'grey', 'various', 'bald', 'other'];
+        const tagList = [
+          'blonde',
+          'black',
+          'red',
+          'auburn',
+          'grey',
+          'various',
+          'bald',
+          'other'
+        ];
 
         const tags = tagList.map((tag) => {
           return {
@@ -239,7 +313,15 @@ export const defaultState = {
       label: () => translate('Ethnicity'),
       type: filterBuilderTypes.EXACT,
       optionsSelector: function(items) {
-        const tagList = ['caucasian', 'black', 'asian', 'latin', 'indian', 'middleEastern', 'other'];
+        const tagList = [
+          'caucasian',
+          'black',
+          'asian',
+          'latin',
+          'indian',
+          'middleEastern',
+          'other'
+        ];
 
         const tags = tagList.map((tag) => {
           return {

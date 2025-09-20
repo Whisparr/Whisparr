@@ -2,6 +2,9 @@
 // Please do not change this file!
 interface CssExports {
   'actions': string;
+  'age': string;
+  'careerEnd': string;
+  'careerStart': string;
   'cell': string;
   'checkInput': string;
   'ethnicity': string;
@@ -9,6 +12,7 @@ interface CssExports {
   'fullName': string;
   'gender': string;
   'hairColor': string;
+  'monitored': string;
   'qualityProfileId': string;
   'rootFolderPath': string;
   'status': string;

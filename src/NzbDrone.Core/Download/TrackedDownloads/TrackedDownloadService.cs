@@ -124,10 +124,21 @@ namespace NzbDrone.Core.Download.TrackedDownloads
                 var isForceDownload = IsForceDownload(historyItems);
 
                 // Only do normal parsing if this is NOT a force download
-                if (!isForceDownload && parsedEpisodeInfo != null)
+                if (!isForceDownload)
                 {
-                    trackedDownload.RemoteEpisode = _parsingService.Map(parsedEpisodeInfo, 0);
-                    _aggregationService.Augment(trackedDownload.RemoteEpisode);
+                    // First, try external ID parsing
+                    var externalIdRemoteEpisode = _parsingService.TryMapByExternalId(trackedDownload.DownloadItem.Title, null);
+                    if (externalIdRemoteEpisode != null)
+                    {
+                        trackedDownload.RemoteEpisode = externalIdRemoteEpisode;
+                        _aggregationService.Augment(trackedDownload.RemoteEpisode);
+                    }
+                    else if (parsedEpisodeInfo != null)
+                    {
+                        // Fall back to normal parsing
+                        trackedDownload.RemoteEpisode = _parsingService.Map(parsedEpisodeInfo, 0);
+                        _aggregationService.Augment(trackedDownload.RemoteEpisode);
+                    }
                 }
 
                 var downloadHistory = _downloadHistoryService.GetLatestDownloadHistoryItem(downloadItem.DownloadId);
@@ -261,7 +272,17 @@ namespace NzbDrone.Core.Download.TrackedDownloads
 
             var parsedEpisodeInfo = Parser.Parser.ParseTitle(trackedDownload.DownloadItem.Title);
 
-            trackedDownload.RemoteEpisode = parsedEpisodeInfo == null ? null : _parsingService.Map(parsedEpisodeInfo, 0);
+            // First, try external ID parsing
+            var externalIdRemoteEpisode = _parsingService.TryMapByExternalId(trackedDownload.DownloadItem.Title, null);
+            if (externalIdRemoteEpisode != null)
+            {
+                trackedDownload.RemoteEpisode = externalIdRemoteEpisode;
+            }
+            else
+            {
+                // Fall back to normal parsing
+                trackedDownload.RemoteEpisode = parsedEpisodeInfo == null ? null : _parsingService.Map(parsedEpisodeInfo, 0);
+            }
 
             // If this was a forced download, restore the override flag and forced data
             if (existingShouldOverride && trackedDownload.RemoteEpisode != null)

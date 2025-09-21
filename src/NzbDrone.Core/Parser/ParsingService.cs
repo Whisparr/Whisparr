@@ -459,6 +459,7 @@ namespace NzbDrone.Core.Parser
                         _logger.Debug("TryMapByExternalId: Could not load series {0}", episode.SeriesId);
                         return null;
                     }
+
                     _logger.Debug("TryMapByExternalId: Loaded series '{0}' for episode {1}", episode.Series.Title, episode.Id);
                 }
             }

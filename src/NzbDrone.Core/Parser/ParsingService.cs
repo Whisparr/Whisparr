@@ -433,9 +433,19 @@ namespace NzbDrone.Core.Parser
                 }
 
                 // Episode should have series information - if not, skip
-                if (episode.Series == null && episode.SeriesId == 0)
+                if (episode.SeriesId == 0)
                 {
                     return null;
+                }
+
+                // Load series if not already loaded
+                if (episode.Series == null)
+                {
+                    episode.Series = _seriesService.GetSeries(episode.SeriesId);
+                    if (episode.Series == null)
+                    {
+                        return null;
+                    }
                 }
             }
             catch (Exception ex)

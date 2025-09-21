@@ -126,18 +126,26 @@ namespace NzbDrone.Core.Download.TrackedDownloads
                 // Only do normal parsing if this is NOT a force download
                 if (!isForceDownload)
                 {
+                    _logger.Debug("TrackedDownloadService: Attempting to parse download title: {0}", trackedDownload.DownloadItem.Title);
+
                     // First, try external ID parsing
                     var externalIdRemoteEpisode = _parsingService.TryMapByExternalId(trackedDownload.DownloadItem.Title, null);
                     if (externalIdRemoteEpisode != null)
                     {
+                        _logger.Debug("TrackedDownloadService: External ID parsing succeeded for: {0}", trackedDownload.DownloadItem.Title);
                         trackedDownload.RemoteEpisode = externalIdRemoteEpisode;
                         _aggregationService.Augment(trackedDownload.RemoteEpisode);
                     }
                     else if (parsedEpisodeInfo != null)
                     {
+                        _logger.Debug("TrackedDownloadService: External ID parsing failed, falling back to normal parsing for: {0}", trackedDownload.DownloadItem.Title);
                         // Fall back to normal parsing
                         trackedDownload.RemoteEpisode = _parsingService.Map(parsedEpisodeInfo, 0);
                         _aggregationService.Augment(trackedDownload.RemoteEpisode);
+                    }
+                    else
+                    {
+                        _logger.Debug("TrackedDownloadService: Both external ID and normal parsing failed for: {0}", trackedDownload.DownloadItem.Title);
                     }
                 }
 

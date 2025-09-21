@@ -379,8 +379,11 @@ namespace NzbDrone.Core.Parser
         {
             if (string.IsNullOrWhiteSpace(releaseTitle))
             {
+                _logger.Debug("TryMapByExternalId: Release title is null or empty");
                 return null;
             }
+
+            _logger.Debug("TryMapByExternalId: Attempting to parse external ID from release title: {0}", releaseTitle);
 
             string extractedExternalId;
             try
@@ -389,13 +392,16 @@ namespace NzbDrone.Core.Parser
                 extractedExternalId = ExternalIdParser.ExtractExternalId(releaseTitle);
                 if (string.IsNullOrWhiteSpace(extractedExternalId))
                 {
+                    _logger.Debug("TryMapByExternalId: No external ID found in release title: {0}", releaseTitle);
                     return null;
                 }
+
+                _logger.Debug("TryMapByExternalId: Extracted external ID '{0}' from release title: {1}", extractedExternalId, releaseTitle);
             }
             catch (Exception ex)
             {
                 // Gracefully handle any issues with External ID parsing (e.g., in test environments)
-                _logger.Debug(ex, "Failed to extract External ID from release title: {0}", releaseTitle);
+                _logger.Debug(ex, "TryMapByExternalId: Failed to extract External ID from release title: {0}", releaseTitle);
                 return null;
             }
 
@@ -426,32 +432,40 @@ namespace NzbDrone.Core.Parser
             try
             {
                 // Find the episode by External ID
+                _logger.Debug("TryMapByExternalId: Looking up episode by external ID: {0}", extractedExternalId);
                 episode = _episodeService.FindEpisodeByExternalId(extractedExternalId);
                 if (episode == null)
                 {
+                    _logger.Debug("TryMapByExternalId: No episode found for external ID: {0}", extractedExternalId);
                     return null;
                 }
+
+                _logger.Debug("TryMapByExternalId: Found episode ID {0} for external ID: {1}", episode.Id, extractedExternalId);
 
                 // Episode should have series information - if not, skip
                 if (episode.SeriesId == 0)
                 {
+                    _logger.Debug("TryMapByExternalId: Episode {0} has no SeriesId", episode.Id);
                     return null;
                 }
 
                 // Load series if not already loaded
                 if (episode.Series == null)
                 {
+                    _logger.Debug("TryMapByExternalId: Loading series {0} for episode {1}", episode.SeriesId, episode.Id);
                     episode.Series = _seriesService.GetSeries(episode.SeriesId);
                     if (episode.Series == null)
                     {
+                        _logger.Debug("TryMapByExternalId: Could not load series {0}", episode.SeriesId);
                         return null;
                     }
+                    _logger.Debug("TryMapByExternalId: Loaded series '{0}' for episode {1}", episode.Series.Title, episode.Id);
                 }
             }
             catch (Exception ex)
             {
                 // Gracefully handle database access issues (e.g., in test environments)
-                _logger.Debug(ex, "Failed to lookup episode by External ID: {0}", extractedExternalId);
+                _logger.Debug(ex, "TryMapByExternalId: Failed to lookup episode by External ID: {0}", extractedExternalId);
                 return null;
             }
 

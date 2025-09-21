@@ -1856,5 +1856,8 @@
     "MetadataIncorrectUrlWarning": "La URL de los metadatos está configurada para la versión 2.x de Whisparr, pero estás ejecutando la versión 3.x.  Esto sucede si realizas una actualización in situ no soportada.  Por favor, retrocede a la versión 2.",
     "QualityLimitsHelpText": "Los límites se ajustan automáticamente para el tiempo de ejecución de la película.",
     "CutoffHelpText": "Una vez que la calidad es alcanzada {appName} no descargará películas tras alcanzar o exceder la puntuación del formato personalizado objetivo",
-    "CutoffFormatScoreHelpText": "Una vez que la calidad objetivo es cumplida o excedida y esta puntuación de formato personalizado es alcanzada {appName} dejará de capturar o importar mejoras para estas películas"
+    "CutoffFormatScoreHelpText": "Una vez que la calidad objetivo es cumplida o excedida y esta puntuación de formato personalizado es alcanzada {appName} dejará de capturar o importar mejoras para estas películas",
+    "CareerStart": "Comienzo de la carrera",
+    "CareerEnd": "Fin de la carrera",
+    "YearsOld": "Años"
 }

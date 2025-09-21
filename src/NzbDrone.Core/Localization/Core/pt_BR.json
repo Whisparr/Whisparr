@@ -1856,5 +1856,8 @@
     "CutoffFormatScoreHelpText": "Uma vez que o corte de qualidade é atingido ou excedido e esta pontuação de formato personalizado é alcançada, o {appName} não irá mais capturar ou importar atualizações para esses filmes",
     "MetadataIncorrectUrlWarning": "A URL de metadados está definida para Whisparr versão 2. x, mas você está executando a versão 3. x.  Isso acontece se você fizer uma atualização in-loco sem suporte.  Faça o downgrade de volta para a versão 2.",
     "NotificationsEmailSettingsRequireEncryption": "Exigir Encriptação",
-    "NotificationsEmailSettingsRequireEncryptionHelpText": "Exigir SSL (apenas porta 465) ou StartTLS (qualquer outra porta)"
+    "NotificationsEmailSettingsRequireEncryptionHelpText": "Exigir SSL (apenas porta 465) ou StartTLS (qualquer outra porta)",
+    "CareerStart": "Início da carreira",
+    "YearsOld": "Idade",
+    "CareerEnd": "Fim da Carreira"
 }

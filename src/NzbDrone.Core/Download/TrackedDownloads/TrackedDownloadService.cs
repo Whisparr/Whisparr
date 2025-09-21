@@ -139,6 +139,7 @@ namespace NzbDrone.Core.Download.TrackedDownloads
                     else if (parsedEpisodeInfo != null)
                     {
                         _logger.Debug("TrackedDownloadService: External ID parsing failed, falling back to normal parsing for: {0}", trackedDownload.DownloadItem.Title);
+
                         // Fall back to normal parsing
                         trackedDownload.RemoteEpisode = _parsingService.Map(parsedEpisodeInfo, 0);
                         _aggregationService.Augment(trackedDownload.RemoteEpisode);

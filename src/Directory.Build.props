@@ -93,7 +93,7 @@
 
     <Deterministic Condition="$(AssemblyVersion.EndsWith('*'))">False</Deterministic>
 
-    <PathMap>$(MSBuildProjectDirectory)=./$(MSBuildProjectName)/</PathMap>
+    <PathMap>$(MSBuildThisFileDirectory)=./</PathMap>
   </PropertyGroup>
 
   <!-- Set the AssemblyConfiguration attribute for projects -->

@@ -403,7 +403,7 @@ class PerformerDetails extends Component {
                         position={tooltipPositions.BOTTOM}
                       />
                     </span>
-                    }
+
                     {!!tags.length && (
                       <span>
                         <Tooltip

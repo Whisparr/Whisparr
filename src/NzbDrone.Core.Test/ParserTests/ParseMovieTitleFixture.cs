@@ -29,6 +29,9 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("JUNY-018", true)]
         [TestCase("NHDTB-508", true)]
         [TestCase("Movie.2009.S01E14.English.HDTV.XviD-LOL", false)] // Movie
+        [TestCase("Jesse Loads Monster Facials 2024-04-19 Frecklemonade.mkv", true)]
+        [TestCase("Lustery E1717 James And Six Sharp Cold Fear XXX 1080p MP4 FETiSH", true)]
+        [TestCase("[Dads Love Porn] Ravyn Alexa & Johnny Blaster - Dads Love Maids(2025-10-14) [2160p]", true)]
         public void should_parse_as_scene(string title, bool expected)
         {
             Parser.Parser.ParseMovieTitle(title).IsScene.Should().Be(expected);
@@ -49,6 +52,8 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Studio - 2017-08-04 - Some Title. [WEBDL-480p]", "Studio")]
         [TestCase("Studio - Performer Name - Some Title (10.01.2024)", "Studio")]
         [TestCase("Step Siblings Caught 2024-02-07 Cash For Kisses On Valentines Day - S25E7", "Step Siblings Caught")]
+        [TestCase("Jesse Loads Monster Facials 2024-04-19 Frecklemonade.mkv", "Jesse Loads Monster Facials")]
+        [TestCase("Lustery E1717 James And Six Sharp Cold Fear XXX 1080p MP4 FETiSH", "Lustery")]
         [TestCase("Pure Taboo - Sarah Arabic, Lily LaBeau - A Costly Divorce (June 24, 2025) [1080p HEVC x265]", "Pure Taboo")]
         public void should_correctly_parse_studio_names(string title, string result)
         {
@@ -70,6 +75,7 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Studio - Performer Name - Some Title (10.01.2024)", "2024-01-10")]
         [TestCase("Step Siblings Caught 2024-02-07 Cash For Kisses On Valentines Day - S25E7", "2024-02-07")]
         [TestCase("Pure Taboo - Sarah Arabic, Lily LaBeau - A Costly Divorce (June 24, 2025) [1080p HEVC x265]", "2025-06-24")]
+        [TestCase("Jesse Loads Monster Facials 2024-04-19 Frecklemonade.mkv", "2024-04-19")]
         public void should_correctly_parse_release_date(string title, string result)
         {
             Parser.Parser.ParseMovieTitle(title).ReleaseDate.Should().Be(result);
@@ -90,6 +96,8 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Studio.22.10.18.Title.XXX.720p.HEVC.x265.PRT[XvX]", "title")]
         [TestCase("Studio - 2017-08-04 - Some Title. [WEBDL-480p]", "some title")]
         [TestCase("Studio - Performer Name - Some Title (10.01.2024)", "performer name some title")]
+        [TestCase("Jesse Loads Monster Facials 2024-04-19 Frecklemonade.mkv", "frecklemonade")]
+        [TestCase("Lustery E1717 James And Six Sharp Cold Fear XXX 1080p MP4 FETiSH", "james and six sharp cold fear")]
         [TestCase("Pure Taboo - Sarah Arabic, Lily LaBeau - A Costly Divorce (June 24, 2025) [1080p HEVC x265]", "sarah arabic lily labeau a costly divorce")]
         public void should_correctly_parse_normalize_release_token(string title, string result)
         {

@@ -71,6 +71,10 @@ namespace NzbDrone.Core.Parser
             new Regex(@"\[(?<studiotitle>.+?)\](?<releasetoken>.+?)\[(?<airday>[0-3][0-9])(?![-_\/. ]+[0-3][0-9])?[-_\/. ]+(?<airmonth>[0-1][0-9])[-_\/. ]+(?<airyear>(19|20)\d{2})",
                 RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
+            // SCENE with airdate after title [studio] title yyyy-mm-dd
+            new Regex(@"\[(?<studiotitle>.+?)\](?<releasetoken>.+?)((?<airyear>\d{2}|\d{4})[-_.](?<airmonth>[0-1][0-9])[-_.](?<airday>[0-3][0-9]))",
+                RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
             // Anime [Subgroup] and Year
             new Regex(@"^(?:\[(?<subgroup>.+?)\][-_. ]?)(?<title>(?![(\[]).+?)?(?:(?:[-_\W](?<![)\[!]))*(?<year>(1(8|9)|20)\d{2}(?!p|i|x|\d+|\]|\W\d+)))+.*?(?<hash>\[\w{8}\])?(?:$|\.)", RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
@@ -354,7 +358,7 @@ namespace NzbDrone.Core.Parser
 
                                 if (simpleTitleReplaceString.IsNotNullOrWhiteSpace())
                                 {
-                                    if (match[0].Groups["title"].Success)
+                                    if (match[0].Groups["title"].Success && match[0].Groups["title"].Index < simpleReleaseTitle.Length)
                                     {
                                         simpleReleaseTitle = simpleReleaseTitle.Remove(match[0].Groups["title"].Index, match[0].Groups["title"].Length)
                                                                                .Insert(match[0].Groups["title"].Index, simpleTitleReplaceString.Contains('.') ? "A.Movie" : "A Movie");
@@ -788,7 +792,7 @@ namespace NzbDrone.Core.Parser
 
         private static ParsedMovieInfo ParseMatchCollection(MatchCollection matchCollection, string releaseTitle)
         {
-            if (!matchCollection[0].Groups["airyear"].Success && !matchCollection[0].Groups["code"].Success  && !matchCollection[0].Groups["episode"].Success && !matchCollection[0].Groups["stashid"].Success)
+            if (!matchCollection[0].Groups["airyear"].Success && !matchCollection[0].Groups["code"].Success && !matchCollection[0].Groups["episode"].Success && !matchCollection[0].Groups["stashid"].Success)
             {
                 if (!matchCollection[0].Groups["title"].Success || matchCollection[0].Groups["title"].Value == "(")
                 {

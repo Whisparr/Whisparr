@@ -7,7 +7,8 @@ namespace NzbDrone.Core.ImportLists.StashDB
     public enum SceneSort
     {
         RELEASED,
-        CREATED
+        CREATED,
+        TRENDING
     }
 
     public class SceneSortConverter : JsonConverter
@@ -24,6 +25,7 @@ namespace NzbDrone.Core.ImportLists.StashDB
             {
                 SceneSort.RELEASED => "DATE",
                 SceneSort.CREATED => "CREATED_AT",
+                SceneSort.TRENDING => "TRENDING",
                 _ => throw new ArgumentOutOfRangeException(nameof(sort), sort, null)
             };
 
@@ -37,6 +39,7 @@ namespace NzbDrone.Core.ImportLists.StashDB
             {
                 "DATE" => SceneSort.RELEASED,
                 "CREATED_AT" => SceneSort.CREATED,
+                "TRENDING" => SceneSort.TRENDING,
                 _ => throw new ArgumentOutOfRangeException()
             };
         }

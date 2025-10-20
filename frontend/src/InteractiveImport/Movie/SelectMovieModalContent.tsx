@@ -165,16 +165,25 @@ function SelectMovieModalContent(props: SelectMovieModalContentProps) {
     [allMovies, onMovieSelect]
   );
 
+  function normalize(input: string): string {
+    const stopWords = new Set(['a', 'an', 'the', 'and', 'or', 'of']);
+    return input
+      .toLowerCase()
+      .split(/[^a-z0-9]+/) // split on non-alphanumeric
+      .filter((word) => word && !stopWords.has(word))
+      .join('');
+  }
+
   const items = useMemo(() => {
     const sorted = [...allMovies].sort((a, b) =>
       a.sortTitle.localeCompare(b.sortTitle)
     );
 
+    const normalizedFilter = normalize(filter);
+
     return sorted.filter(
       (item) =>
-        item.cleanTitle.includes(
-          filter.toLowerCase().replace(/[^a-zA-Z0-9]/g, '')
-        ) ||
+        normalize(item.cleanTitle).includes(normalizedFilter) ||
         item.stashId === filter ||
         item.tmdbId.toString() === filter
     );

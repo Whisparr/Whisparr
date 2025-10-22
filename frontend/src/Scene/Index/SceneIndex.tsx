@@ -28,6 +28,7 @@ import MovieIndexSelectAllButton from 'Movie/Index/Select/MovieIndexSelectAllBut
 import MovieIndexSelectAllMenuItem from 'Movie/Index/Select/MovieIndexSelectAllMenuItem';
 import MovieIndexSelectModeButton from 'Movie/Index/Select/MovieIndexSelectModeButton';
 import MovieIndexSelectModeMenuItem from 'Movie/Index/Select/MovieIndexSelectModeMenuItem';
+import ParseToolbarButton from 'Parse/ParseToolbarButton';
 import NoScene from 'Scene/NoScene';
 import { executeCommand } from 'Store/Actions/commandActions';
 import { fetchQueueDetails } from 'Store/Actions/queueActions';
@@ -237,7 +238,7 @@ const SceneIndex = withScrollPosition((props: SceneIndexProps) => {
             />
 
             <PageToolbarButton
-              label={translate('RSSSync')}
+              label={translate('RssSync')}
               iconName={icons.RSS}
               isSpinning={isRssSyncExecuting}
               isDisabled={hasNoScene}
@@ -258,6 +259,8 @@ const SceneIndex = withScrollPosition((props: SceneIndexProps) => {
               onPress={onInteractiveImportPress}
             />
 
+            <PageToolbarSeparator />
+            <ParseToolbarButton />
             <PageToolbarSeparator />
 
             <MovieIndexSelectModeButton

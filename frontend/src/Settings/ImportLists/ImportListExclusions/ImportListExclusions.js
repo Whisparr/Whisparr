@@ -14,7 +14,6 @@ import ImportListExclusion from './ImportListExclusion';
 import styles from './ImportListExclusions.css';
 
 class ImportListExclusions extends Component {
-
   //
   // Lifecycle
 
@@ -24,7 +23,9 @@ class ImportListExclusions extends Component {
     this.state = {
       isAddImportExclusionModalOpen: false,
       selectedExclusionType: 'all',
-      selectedExclusions: new Set()
+      selectedExclusions: new Set(),
+      sortColumn: null, // 'type', 'foreignId', or 'title'
+      sortDirection: 'asc' // or 'desc'
     };
   }
 
@@ -81,21 +82,52 @@ class ImportListExclusions extends Component {
     }
   };
 
+  onSortColumn = (column) => {
+    this.setState((prevState) => {
+      const isSameColumn = prevState.sortColumn === column;
+      const direction =
+        isSameColumn && prevState.sortDirection === 'asc' ? 'desc' : 'asc';
+      return {
+        sortColumn: column,
+        sortDirection: direction
+      };
+    });
+  };
+
+  renderSortIndicator = (column) => {
+    const { sortColumn, sortDirection } = this.state;
+    if (sortColumn !== column) {
+      return null;
+    }
+    return sortDirection === 'asc' ? ' ↑' : ' ↓';
+  };
   //
   // Render
 
   render() {
-    const {
-      items,
-      onConfirmDeleteImportExclusion,
-      ...otherProps
-    } = this.props;
+    const { items, onConfirmDeleteImportExclusion, ...otherProps } = this.props;
     const { selectedExclusionType, selectedExclusions } = this.state;
 
-    const filteredItems = selectedExclusionType === 'all' ?
-      items :
-      items.filter((item) => item.type === selectedExclusionType);
+    let filteredItems =
+      selectedExclusionType === 'all' ?
+        items :
+        items.filter((item) => item.type === selectedExclusionType);
 
+    // Apply sorting
+    const { sortColumn, sortDirection } = this.state;
+    if (sortColumn) {
+      filteredItems = [...filteredItems].sort((a, b) => {
+        const valA = a[sortColumn]?.toLowerCase?.() ?? '';
+        const valB = b[sortColumn]?.toLowerCase?.() ?? '';
+        if (valA < valB) {
+          return sortDirection === 'asc' ? -1 : 1;
+        }
+        if (valA > valB) {
+          return sortDirection === 'asc' ? 1 : -1;
+        }
+        return 0;
+      });
+    }
     this.filteredItems = filteredItems;
 
     const exclusionTypes = [
@@ -108,16 +140,19 @@ class ImportListExclusions extends Component {
     ];
 
     const allIds = filteredItems.map((item) => item.id);
-    const allSelected = allIds.length > 0 && allIds.every((id) => selectedExclusions.has(id));
+    const allSelected =
+      allIds.length > 0 && allIds.every((id) => selectedExclusions.has(id));
     const noneSelected = allIds.every((id) => !selectedExclusions.has(id));
     const someSelected = !allSelected && !noneSelected;
     return (
-      <FieldSet className={styles.importExclusionConatiner} legend={translate('ImportListExclusions')}>
+      <FieldSet
+        className={styles.importExclusionConatiner}
+        legend={translate('ImportListExclusions')}
+      >
         <PageSectionContent
           errorMessage={translate('ImportListExclusionsLoadError')}
           {...otherProps}
         >
-
           <div className={styles.importExclusionFilterForm}>
             <div className={styles.importExclusionLabel}>
               {translate('FilterByExclusionType')}
@@ -142,7 +177,7 @@ class ImportListExclusions extends Component {
             </SpinnerButton>
           </div>
           <div className={styles.importListExclusionsHeader}>
-            <div className={styles.checkboxContainer} >
+            <div className={styles.checkboxContainer}>
               <CheckInput
                 {...otherProps}
                 className={styles.checkbox}
@@ -155,14 +190,29 @@ class ImportListExclusions extends Component {
                 onChange={this.onSelectAllChange}
               />
             </div>
-            <div className={styles.type}>
+            <div
+              className={styles.type}
+              onClick={() => this.onSortColumn('type')}
+              style={{ cursor: 'pointer' }}
+            >
               {translate('ExclusionType')}
+              {this.renderSortIndicator('type')}
             </div>
-            <div className={styles.foreignId}>
+            <div
+              className={styles.foreignId}
+              onClick={() => this.onSortColumn('foreignId')}
+              style={{ cursor: 'pointer' }}
+            >
               {translate('ForeignId')}
+              {this.renderSortIndicator('foreignId')}
             </div>
-            <div className={styles.title}>
+            <div
+              className={styles.title}
+              onClick={() => this.onSortColumn('movieTitle')}
+              style={{ cursor: 'pointer' }}
+            >
               {translate('ExclusionTitle')}
+              {this.renderSortIndicator('movieTitle')}
             </div>
             <div className={styles.actions}>
               <Link
@@ -177,7 +227,6 @@ class ImportListExclusions extends Component {
           <div>
             {filteredItems.map((item, index) => (
               <div key={item.id} className={styles.importExclusionRow}>
-
                 <div className={styles.checkboxContainer}>
                   <CheckInput
                     {...otherProps}
@@ -186,7 +235,9 @@ class ImportListExclusions extends Component {
                     value={this.state.selectedExclusions.has(item.id)}
                     checkedValue={true}
                     uncheckedValue={false}
-                    onChange={({ value }) => this.onCheckboxChange(item.id, value)}
+                    onChange={({ value }) =>
+                      this.onCheckboxChange(item.id, value)
+                    }
                     isDisabled={false}
                   />
                 </div>
@@ -194,7 +245,9 @@ class ImportListExclusions extends Component {
                   {...item}
                   {...otherProps}
                   index={index}
-                  onConfirmDeleteImportExclusion={onConfirmDeleteImportExclusion}
+                  onConfirmDeleteImportExclusion={
+                    onConfirmDeleteImportExclusion
+                  }
                 />
               </div>
             ))}
@@ -204,9 +257,8 @@ class ImportListExclusions extends Component {
             isOpen={this.state.isAddImportExclusionModalOpen}
             onModalClose={this.onModalClose}
           />
-
         </PageSectionContent>
-      </FieldSet >
+      </FieldSet>
     );
   }
 }

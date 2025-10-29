@@ -53,6 +53,7 @@ const bodyPadding = parseInt(dimensions.pageContentBodyPadding);
 
 interface SelectMovieModalContentProps {
   modalTitle: string;
+  relativePath: string;
   onMovieSelect(movie: Movie): void;
   onModalClose(): void;
 }
@@ -103,7 +104,7 @@ const Row: React.FC<ListChildComponentProps<RowItemData>> = ({
 };
 
 function SelectMovieModalContent(props: SelectMovieModalContentProps) {
-  const { modalTitle, onMovieSelect, onModalClose } = props;
+  const { modalTitle, relativePath, onMovieSelect, onModalClose } = props;
 
   const listRef = useRef<List<RowItemData>>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
@@ -234,7 +235,8 @@ function SelectMovieModalContent(props: SelectMovieModalContentProps) {
         </Scroller>
       </ModalBody>
 
-      <ModalFooter>
+      <ModalFooter className={styles.footer}>
+        <div className={styles.path}>{relativePath}</div>
         <Button onPress={onModalClose}>Cancel</Button>
       </ModalFooter>
     </ModalContent>

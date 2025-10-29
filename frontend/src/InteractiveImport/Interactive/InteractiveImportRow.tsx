@@ -332,6 +332,7 @@ function InteractiveImportRow(props: InteractiveImportRowProps) {
       <SelectMovieModal
         isOpen={selectModalOpen === 'movie'}
         modalTitle={modalTitle}
+        relativePath={relativePath}
         onMovieSelect={onMovieSelect}
         onModalClose={onSelectModalClose}
       />

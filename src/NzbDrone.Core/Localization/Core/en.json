@@ -365,7 +365,7 @@
   "DeleteSpecification": "Delete Specification",
   "DeleteSpecificationHelpText": "Are you sure you want to delete specification '{name}'?",
   "DeleteStudiosModalHeader": "Delete Studios",
-  "DeleteStudioModalWarning": " This will also remove all movues and scenes from {0}",
+  "DeleteStudioModalWarning": " This will also remove all movies and scenes from {0}",
   "DeleteStudiosModalWarning": "This will also remove all movies and scenes from each selected studio",
   "DeleteTag": "Delete Tag",
   "DeleteTagMessageText": "Are you sure you want to delete the tag '{label}'?",

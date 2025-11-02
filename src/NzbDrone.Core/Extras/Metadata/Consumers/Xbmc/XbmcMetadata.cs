@@ -204,7 +204,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
                     xmlResult += Environment.NewLine;
                 }
 
-                xmlResult += "https://www.thetvdb.com/?tab=series&id=" + series.TvdbId;
+                xmlResult += "https://theporndb.net/sites/" + series.TvdbId;
             }
 
             return xmlResult.IsNullOrWhiteSpace() ? null : new MetadataFileResult("tvshow.nfo", xmlResult);
@@ -240,6 +240,12 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
                     details.Add(new XElement("aired", episode.AirDate));
                     details.Add(new XElement("plot", episode.Overview));
 
+                    // Add studio for Stash compatibility
+                    if (!string.IsNullOrWhiteSpace(series.Network))
+                    {
+                        details.Add(new XElement("studio", series.Network));
+                    }
+
                     var tvdbId = new XElement("uniqueid", episode.TvdbId);
                     tvdbId.SetAttributeValue("type", "tvdb");
                     tvdbId.SetAttributeValue("default", true);
@@ -248,6 +254,14 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
                     var whisparrId = new XElement("uniqueid", episode.Id);
                     whisparrId.SetAttributeValue("type", "whisparr");
                     details.Add(whisparrId);
+
+                    // Add TPDB ID for Stash compatibility
+                    if (!string.IsNullOrWhiteSpace(episode.ExternalId))
+                    {
+                        var tpdbId = new XElement("uniqueid", episode.ExternalId);
+                        tpdbId.SetAttributeValue("type", "tpdb");
+                        details.Add(tpdbId);
+                    }
 
                     if (image == null)
                     {
@@ -263,6 +277,20 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
                     if (episode.Ratings != null && episode.Ratings.Votes > 0)
                     {
                         details.Add(new XElement("rating", episode.Ratings.Value));
+                    }
+
+                    // Add performers/actors for Stash compatibility
+                    if (episode.Actors != null && episode.Actors.Any())
+                    {
+                        var order = 1;
+                        foreach (var actor in episode.Actors)
+                        {
+                            var actorElement = new XElement("actor");
+                            actorElement.Add(new XElement("name", actor.Name));
+                            actorElement.Add(new XElement("order", order));
+                            details.Add(actorElement);
+                            order++;
+                        }
                     }
 
                     if (episodeFile.MediaInfo != null)

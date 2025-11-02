@@ -26,7 +26,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
         [FieldDefinition(0, Label = "Series Metadata", Type = FieldType.Checkbox, Section = MetadataSectionType.Metadata, HelpText = "tvshow.nfo with full series metadata")]
         public bool SeriesMetadata { get; set; }
 
-        [FieldDefinition(1, Label = "Series Metadata URL", Type = FieldType.Checkbox, Section = MetadataSectionType.Metadata, HelpText = "tvshow.nfo with TheTVDB show URL (can be combined with 'Series Metadata')", Advanced = true)]
+        [FieldDefinition(1, Label = "Series Metadata URL", Type = FieldType.Checkbox, Section = MetadataSectionType.Metadata, HelpText = "tvshow.nfo with ThePornDB URL (can be combined with 'Series Metadata')", Advanced = true)]
         public bool SeriesMetadataUrl { get; set; }
 
         [FieldDefinition(2, Label = "Episode Metadata", Type = FieldType.Checkbox, Section = MetadataSectionType.Metadata, HelpText = "<filename>.nfo")]

@@ -1421,7 +1421,7 @@
     "SSLCertPassword": "SSL-varmenteen salasana",
     "SSLCertPasswordHelpText": "Pfx-tiedoston salasana",
     "SSLCertPath": "SSL-varmenteen sijainti",
-    "SSLCertPathHelpText": "PFX-tiedoston sijainti",
+    "SSLCertPathHelpText": "Pfx- tai pem-tiedoston sijainti.",
     "SSLPort": "SSL-portti",
     "Save": "Tallenna",
     "SaveChanges": "Tallenna muutokset",
@@ -1717,7 +1717,7 @@
     "ReleaseProfileIndexerHelpTextWarning": "Jos julkaisuprofiilille määritetään tietty hakupalvelu, koskee se vain kyseisen palvelun julkaisuja.",
     "DownloadClientValidationSslConnectFailure": "Salattua SSL-yhteyttä ei voida muodostaa.",
     "StartSearchForMissingPerformer": "Aloita puuttuvan näyttelijän haku",
-    "AddNewSceneMessage": "Uuden kohtauksen lisääminen on helppoa. Aloita vain haluamasi kohtauksen nimen kirjoittaminen.",
+    "AddNewSceneMessage": "Uuden kohtauksen, esiintyjän tai studion lisääminen on helppoa. Aloita vain haluamasi kohteen nimen kirjoittaminen.",
     "DownloadClientValidationAuthenticationFailureDetail": "Vahvista käyttäjätunnuksesi ja salasanasi. Varmista myös, ettei latauspalveluun {clientName} ole määritetty sääntöjä, jotka estävät {appName}in suorittavaa laitetta tavoittamasta sitä.",
     "DownloadClientRTorrentProviderMessage": "rTorrent ei pysäytä torrenteja niiden saavuttaessa jakomääritykset. {appName} suorittaa tietolähdeasetusten jakomäärityksiin perustuvan torrentien automaattisen poiston vain \"Poista valmistuneet\" -asetuksen ollessa käytössä. Tuonnin jälkeen se asettaa näkymän {importedView} rTorrent-näkymäksi, jota voidaan käyttää rTorrentin komentosarjojen kanssa.",
     "DownloadClientValidationVerifySslDetail": "Varmista SSL-asetuksesi latauspalvelusta {clientName} ja {appName}ista.",
@@ -1853,5 +1853,11 @@
     "UnableToAddANewRemotePathMappingPleaseTryAgain": "Etäsijainnin kohdistuksen lisäys epäonnistui. Yritä uudelleen.",
     "CutoffFormatScoreHelpText": "Kun laaturajoitus on saavutettu tai ylitetty, ja tämän mukautetun muodon pisteytys saavutetaan, ei {appName} enää kaappaa uusia julkaisuja tai tuo päivityksiä näihin elokuviin.",
     "CutoffHelpText": "Kun tämä laatutaso on saavutettu, ei {appName} enää kaappaa elokuvia kun mukautetun muodon katkaisutaso on saavutettu tai ylitetty.",
-    "QualityLimitsHelpText": "Rajoitukset suhteutetaan automaattisesti elokuvan kestoon."
+    "QualityLimitsHelpText": "Rajoitukset suhteutetaan automaattisesti elokuvan kestoon.",
+    "CareerEnd": "Ura päättyi",
+    "CareerStart": "Ura alkoi",
+    "MetadataIncorrectUrlWarning": "Metatietojen URL-osoite vastaa Whisparr-versiota 2.x, mutta käytät versiota 3.x. Tämä saattaa tapahtua, jos päivität sovelluksen ei-tuetulla tavalla. Palaa versioon 2.",
+    "NotificationsEmailSettingsRequireEncryption": "Vaadi salaus",
+    "NotificationsEmailSettingsRequireEncryptionHelpText": "Vaadi SSL (vain portti 465) tai StartTLS (mikä tahansa muu portti).",
+    "YearsOld": "Vuotta vanha"
 }

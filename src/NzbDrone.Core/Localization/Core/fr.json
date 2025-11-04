@@ -1802,7 +1802,7 @@
     "DeletePerformerModalWarning": "Ceci supprimera aussi tous les films et scènes dans lesquels {0} apparait",
     "DeletePerformersModalWarning": "Ceci supprimera aussi tous les films et scènes dans lesquels ils apparaissent",
     "DeleteStudiosModalHeader": "Supprimer les studios",
-    "DeleteStudioModalWarning": " Ceci supprimera tous les films et scènes de {0}",
+    "DeleteStudioModalWarning": " Ceci supprimera aussi tous les films et scènes de {0}",
     "DeleteStudiosModalWarning": "Ceci supprimera tous les films et scènes pour tous les studios sélectionnés",
     "SearchStudioDate": "Rechercher par studio et date",
     "SearchDateFormatHelpText": "Le format de date a utiliser pour la recherche",

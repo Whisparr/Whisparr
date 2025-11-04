@@ -1830,7 +1830,7 @@
     "DeletePerformersModalHeader": "Remover Artistas",
     "DeletePerformerModalWarning": "Isso também ira remover todos os filmes e cenas em que {0} aparece",
     "DeletePerformersModalWarning": "Isso também irá remover todos os filmes e cenas em que ele aparece",
-    "DeleteStudioModalWarning": " Isso também ira remover todos os filmes e cenas de {0}",
+    "DeleteStudioModalWarning": " Isso também removerá todos os filmes e cenas de {0}",
     "MonitorAfter": "Adicionado Após a Data",
     "MonitorAfterStudioHelpText": "Adiciona Itens após a data, ignora se estiver vazio",
     "WhisparrCacheMovieAPIHelpText": "Cache de chamadas da API para filmes/cenas",

@@ -373,5 +373,6 @@
     "UnableToAddANewListExclusionPleaseTryAgain": "Neuspješno dodavanje na listu za isključenje, molimo pokušaj ponovno.",
     "UnableToAddANewListPleaseTryAgain": "Neuspješno dodavanje nove liste, molimo pokušaj ponovno.",
     "UnableToAddANewQualityProfilePleaseTryAgain": "Neuspješno dodavanje novog profila kvalitete, molimo pokušaj ponovno.",
-    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Neuspješno dodavanje novog mapiranja mrežne putanje, molimo pokušaj ponovno."
+    "UnableToAddANewRemotePathMappingPleaseTryAgain": "Neuspješno dodavanje novog mapiranja mrežne putanje, molimo pokušaj ponovno.",
+    "FormatAgeDay": "dani"
 }

@@ -1338,5 +1338,6 @@
     "DownloadClientDelugeTorrentStateError": "Deluge zgłasza błąd",
     "DownloadClientDelugeValidationLabelPluginFailureDetail": "{appName} nie mógł dodać etykiety do {clientName}.",
     "DownloadClientDelugeValidationLabelPluginInactive": "Plugin etykiet nie jest aktywowany",
-    "DownloadClientDelugeValidationLabelPluginInactiveDetail": "Musisz mieć włączony plugin etykiet w {clientName} by korzystać z kategorii."
+    "DownloadClientDelugeValidationLabelPluginInactiveDetail": "Musisz mieć włączony plugin etykiet w {clientName} by korzystać z kategorii.",
+    "FormatAgeDay": "dni"
 }

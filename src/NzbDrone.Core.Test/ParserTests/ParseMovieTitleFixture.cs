@@ -24,6 +24,7 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Studio.22.10.18.Title.XXX.720p.HEVC.x265.PRT[XvX]", true)]
         [TestCase("Studio - 2017-08-04 - Some Title. [WEBDL-480p]", true)]
         [TestCase("Pure Taboo - Sarah Arabic, Lily LaBeau - A Costly Divorce (June 24, 2025) [1080p HEVC x265]", true)]
+        [TestCase("[BellesaFilms] The Sister - Ashley Lane, Mannie Coco (2025-09-28) [2160p]", true)]
         [TestCase("something random 77f1b861-91c1-4e6f-b0b1-3b1c46733fb2 anything", true)] // StashId
         [TestCase("SGKI-011", true)]
         [TestCase("JUNY-018", true)]
@@ -55,6 +56,8 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Jesse Loads Monster Facials 2024-04-19 Frecklemonade.mkv", "Jesse Loads Monster Facials")]
         [TestCase("Lustery E1717 James And Six Sharp Cold Fear XXX 1080p MP4 FETiSH", "Lustery")]
         [TestCase("Pure Taboo - Sarah Arabic, Lily LaBeau - A Costly Divorce (June 24, 2025) [1080p HEVC x265]", "Pure Taboo")]
+        [TestCase("[BellesaFilms] The Sister - Ashley Lane, Mannie Coco (2025-09-28) [2160p]", "BellesaFilms")]
+
         public void should_correctly_parse_studio_names(string title, string result)
         {
             Parser.Parser.ParseMovieTitle(title).StudioTitle.Should().Be(result);
@@ -75,6 +78,7 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Studio - Performer Name - Some Title (10.01.2024)", "2024-01-10")]
         [TestCase("Step Siblings Caught 2024-02-07 Cash For Kisses On Valentines Day - S25E7", "2024-02-07")]
         [TestCase("Pure Taboo - Sarah Arabic, Lily LaBeau - A Costly Divorce (June 24, 2025) [1080p HEVC x265]", "2025-06-24")]
+        [TestCase("[BellesaFilms] The Sister - Ashley Lane, Mannie Coco (2025-09-28) [2160p]", "2025-09-28")]
         [TestCase("Jesse Loads Monster Facials 2024-04-19 Frecklemonade.mkv", "2024-04-19")]
         public void should_correctly_parse_release_date(string title, string result)
         {
@@ -99,6 +103,7 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Jesse Loads Monster Facials 2024-04-19 Frecklemonade.mkv", "frecklemonade")]
         [TestCase("Lustery E1717 James And Six Sharp Cold Fear XXX 1080p MP4 FETiSH", "james and six sharp cold fear")]
         [TestCase("Pure Taboo - Sarah Arabic, Lily LaBeau - A Costly Divorce (June 24, 2025) [1080p HEVC x265]", "sarah arabic lily labeau a costly divorce")]
+        [TestCase("[BellesaFilms] The Sister - Ashley Lane, Mannie Coco (2025-09-28) [2160p]", "the sister")]
         public void should_correctly_parse_normalize_release_token(string title, string result)
         {
             var releaseTokens = Parser.Parser.ParseMovieTitle(title).ReleaseTokens;

@@ -32,6 +32,11 @@ namespace NzbDrone.Core.Parser
             new Regex(@"^(?<studiotitle>[^-]+?)(?<releasetoken>\s*-\s*.+?)\s*\(\s*(?<airmonthname>January|February|March|April|May|June|July|August|September|October|November|December)\s+(?<airday>[0-3]?\d),?\s+(?<airyear>(19|20)\d{2})\s*\)",
                 RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
+            // [Site] Title - Performers (yyyy-mm-dd) [Quality]
+            // [BellesaFilms] The Sister - Ashley Lane, Mannie Coco (2025-09-28) [2160p]
+            new Regex(@"^\[(?<studiotitle>[^\]]+)]\s+(?<releasetoken>.+?)\s*-\s*.*?\((?<airyear>\d{4})-(?<airmonth>\d{2})-(?<airday>\d{2})\)(?:\s+\[(?<quality>\d+p)])?$",
+                RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
             // (?P<site>.+?)?[\s\.\-](?P<date>\d{2}[\s\.\-]\d{2}[\s\.\-]\d{2})[\s\.\-](?P<performer>\w+.+?)?[\s\.\-](?P<title>.*?(?=(?:[\s\.\-]mp4)|$))
             // SCENE with airdate (18.04.28, 2018.04.28, 18-04-28, 18 04 28, 18_04_28) and performer
             new Regex(@"^(?<studiotitle>.+?)?[-_. ]+(?<airyear>\d{2}|\d{4})[-_. ]+(?<airmonth>[0-1][0-9])[-_. ]+(?<airday>[0-3][0-9])[-_. ]+(?<performer>\w+.+?)?[-_. ](?<title>.*?(?=(?:[-_. ]mp4)|$))",

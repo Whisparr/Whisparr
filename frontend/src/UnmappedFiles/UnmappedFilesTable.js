@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-indent */
+/* eslint-disable react/jsx-indent-props */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import Alert from 'Components/Alert';
@@ -10,7 +12,7 @@ import PageToolbarSection from 'Components/Page/Toolbar/PageToolbarSection';
 import TableOptionsModalWrapper from 'Components/Table/TableOptions/TableOptionsModalWrapper';
 import VirtualTable from 'Components/Table/VirtualTable';
 import VirtualTableRow from 'Components/Table/VirtualTableRow';
-import { align, icons, kinds, sortDirections } from 'Helpers/Props';
+import { align, icons, kinds } from 'Helpers/Props';
 import hasDifferentItemsOrOrder from 'Utilities/Object/hasDifferentItemsOrOrder';
 import translate from 'Utilities/String/translate';
 import getSelectedIds from 'Utilities/Table/getSelectedIds';
@@ -20,10 +22,6 @@ import UnmappedFilesTableHeader from './UnmappedFilesTableHeader';
 import UnmappedFilesTableRow from './UnmappedFilesTableRow';
 
 class UnmappedFilesTable extends Component {
-
-  //
-  // Lifecycle
-
   constructor(props, context) {
     super(props, context);
 
@@ -33,7 +31,9 @@ class UnmappedFilesTable extends Component {
       allSelected: false,
       allUnselected: false,
       lastToggled: null,
-      selectedState: {}
+      selectedState: {},
+      sortKey: null,
+      sortDirection: 'asc'
     };
   }
 
@@ -42,28 +42,76 @@ class UnmappedFilesTable extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const {
-      items,
-      sortKey,
-      sortDirection,
-      isDeleting,
-      deleteError
-    } = this.props;
+    const { items, isDeleting, deleteError } = this.props;
 
-    if (sortKey !== prevProps.sortKey ||
-      sortDirection !== prevProps.sortDirection ||
-      hasDifferentItemsOrOrder(prevProps.items, items)
-    ) {
+    if (hasDifferentItemsOrOrder(prevProps.items, items)) {
       this.setSelectedState();
     }
 
-    const hasFinishedDeleting = prevProps.isDeleting &&
-                                !isDeleting &&
-                                !deleteError;
+    const hasFinishedDeleting =
+      prevProps.isDeleting && !isDeleting && !deleteError;
 
     if (hasFinishedDeleting) {
       this.onSelectAllChange({ value: false });
     }
+  }
+
+  onSortPress = (column) => {
+    this.setState((prevState) => {
+      const isSame = prevState.sortKey === column;
+      const direction =
+        isSame && prevState.sortDirection === 'asc' ? 'desc' : 'asc';
+      console.log('Sort pressed: ', column);
+      return {
+        sortKey: column,
+        sortDirection: direction
+      };
+    });
+  };
+
+  getSortedItems() {
+    const { items } = this.props;
+    const { sortKey, sortDirection } = this.state;
+
+    if (!sortKey) {
+      return items;
+    }
+
+    return [...items].sort((a, b) => {
+      let valA = a[sortKey];
+      let valB = b[sortKey];
+
+      // Handle nested quality.name
+      if (sortKey === 'quality') {
+        valA = valA?.quality?.name?.toLowerCase() ?? '';
+        valB = valB?.quality?.name?.toLowerCase() ?? '';
+      }
+      if (sortKey === 'path') {
+        valA = a.originalFilePath;
+        valB = b.originalFilePath;
+        valA = valA?.toLowerCase() ?? '';
+        valB = valB?.toLowerCase() ?? '';
+        console.log('valA: ', valA);
+        console.log('valB: ', valB);
+      } else if (sortKey.toLowerCase().includes('date')) {
+        valA = new Date(valA).getTime();
+        valB = new Date(valB).getTime();
+      } else if (sortKey === 'size') {
+        valA = typeof valA === 'number' ? valA : parseFloat(valA) || 0;
+        valB = typeof valB === 'number' ? valB : parseFloat(valB) || 0;
+      } else {
+        valA = valA?.toString().toLowerCase() ?? '';
+        valB = valB?.toString().toLowerCase() ?? '';
+      }
+
+      if (valA < valB) {
+        return sortDirection === 'asc' ? -1 : 1;
+      }
+      if (valA > valB) {
+        return sortDirection === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
   }
 
   getSelectedIds = () => {
@@ -74,38 +122,22 @@ class UnmappedFilesTable extends Component {
   };
 
   setSelectedState() {
-    const {
-      items
-    } = this.props;
-
-    const {
-      selectedState
-    } = this.state;
+    const { items } = this.props;
+    const { selectedState } = this.state;
 
     const newSelectedState = {};
-
     items.forEach((file) => {
-      const isItemSelected = selectedState[file.id];
-
-      if (isItemSelected) {
-        newSelectedState[file.id] = isItemSelected;
-      } else {
-        newSelectedState[file.id] = false;
-      }
+      newSelectedState[file.id] = selectedState[file.id] || false;
     });
 
     const selectedCount = getSelectedIds(newSelectedState).length;
-    const newStateCount = Object.keys(newSelectedState).length;
-    let isAllSelected = false;
-    let isAllUnselected = false;
+    const totalCount = items.length;
 
-    if (selectedCount === 0) {
-      isAllUnselected = true;
-    } else if (selectedCount === newStateCount) {
-      isAllSelected = true;
-    }
-
-    this.setState({ selectedState: newSelectedState, allSelected: isAllSelected, allUnselected: isAllUnselected });
+    this.setState({
+      selectedState: newSelectedState,
+      allSelected: selectedCount === totalCount,
+      allUnselected: selectedCount === 0
+    });
   }
 
   onSelectAllChange = ({ value }) => {
@@ -117,35 +149,23 @@ class UnmappedFilesTable extends Component {
   };
 
   onSelectedChange = ({ id, value, shiftKey = false }) => {
-    this.setState((state) => {
-      return toggleSelected(state, this.props.items, id, value, shiftKey);
-    });
+    this.setState((state) =>
+      toggleSelected(state, this.props.items, id, value, shiftKey)
+    );
   };
 
   onDeleteUnmappedFilesPress = () => {
     const selectedIds = this.getSelectedIds();
-
     this.props.deleteUnmappedFiles(selectedIds);
   };
 
   rowRenderer = ({ key, rowIndex, style }) => {
-    const {
-      items,
-      columns,
-      deleteUnmappedFile
-    } = this.props;
-
-    const {
-      selectedState
-    } = this.state;
-
-    const item = items[rowIndex];
+    const { columns, deleteUnmappedFile } = this.props;
+    const { selectedState } = this.state;
+    const item = this.getSortedItems()[rowIndex];
 
     return (
-      <VirtualTableRow
-        key={key}
-        style={style}
-      >
+      <VirtualTableRow key={key} style={style}>
         <UnmappedFilesTableRow
           key={item.id}
           columns={columns}
@@ -159,7 +179,6 @@ class UnmappedFilesTable extends Component {
   };
 
   render() {
-
     const {
       isFetching,
       isPopulated,
@@ -167,10 +186,7 @@ class UnmappedFilesTable extends Component {
       error,
       items,
       columns,
-      sortKey,
-      sortDirection,
       onTableOptionChange,
-      onSortPress,
       isScanningFolders,
       isCleaningUnmappedFiles,
       onAddScenesPress,
@@ -182,10 +198,13 @@ class UnmappedFilesTable extends Component {
     const {
       allSelected,
       allUnselected,
-      selectedState
+      selectedState,
+      sortKey,
+      sortDirection
     } = this.state;
 
     const selectedTrackFileIds = this.getSelectedIds();
+    const sortedItems = this.getSortedItems();
 
     return (
       <PageContent title={translate('UnmappedFiles')}>
@@ -223,53 +242,44 @@ class UnmappedFilesTable extends Component {
                 iconName={icons.TABLE}
               />
             </TableOptionsModalWrapper>
-
           </PageToolbarSection>
         </PageToolbar>
 
-        <PageContentBody ref={this.scrollerRef} >
-          {
-            isFetching && !isPopulated &&
-              <LoadingIndicator />
-          }
+        <PageContentBody ref={this.scrollerRef}>
+          {isFetching && !isPopulated && <LoadingIndicator />}
+          {isPopulated && !error && !items.length && (
+            <Alert kind={kinds.INFO}>
+              Success! My work is done, all files on disk are matched to known
+              scenes.
+            </Alert>
+          )}
 
-          {
-            isPopulated && !error && !items.length &&
-              <Alert kind={kinds.INFO}>
-                Success! My work is done, all files on disk are matched to known scenes.
-              </Alert>
-          }
-
-          {
-            isPopulated &&
-            !error &&
-            !!items.length &&
-            this.scrollerRef.current ?
+          {isPopulated &&
+          !error &&
+          !!items.length &&
+          this.scrollerRef.current ? (
               <VirtualTable
-                items={items}
-                columns={columns}
-                scroller={this.scrollerRef.current}
-                isSmallScreen={false}
-                overscanRowCount={10}
-                rowRenderer={this.rowRenderer}
                 header={
                   <UnmappedFilesTableHeader
                     columns={columns}
                     sortKey={sortKey}
                     sortDirection={sortDirection}
+                    onSortPress={this.onSortPress}
                     onTableOptionChange={onTableOptionChange}
-                    onSortPress={onSortPress}
                     allSelected={allSelected}
                     allUnselected={allUnselected}
                     onSelectAllChange={this.onSelectAllChange}
                   />
                 }
+                items={sortedItems}
+                columns={columns}
+                scroller={this.scrollerRef.current}
+                isSmallScreen={false}
+                overscanRowCount={10}
+                rowRenderer={this.rowRenderer}
                 selectedState={selectedState}
-                sortKey={sortKey}
-                sortDirection={sortDirection}
-              /> :
-              null
-          }
+              />
+            ) : null}
         </PageContentBody>
       </PageContent>
     );
@@ -284,10 +294,7 @@ UnmappedFilesTable.propTypes = {
   error: PropTypes.object,
   items: PropTypes.arrayOf(PropTypes.object).isRequired,
   columns: PropTypes.arrayOf(PropTypes.object).isRequired,
-  sortKey: PropTypes.string,
-  sortDirection: PropTypes.oneOf(sortDirections.all),
   onTableOptionChange: PropTypes.func.isRequired,
-  onSortPress: PropTypes.func.isRequired,
   deleteUnmappedFile: PropTypes.func.isRequired,
   deleteUnmappedFiles: PropTypes.func.isRequired,
   isScanningFolders: PropTypes.bool.isRequired,

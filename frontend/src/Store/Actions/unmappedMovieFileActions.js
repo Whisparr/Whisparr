@@ -45,6 +45,7 @@ export const defaultState = {
     {
       name: 'path',
       label: () => translate('Path'),
+      isSortable: true,
       isVisible: true
     },
     {

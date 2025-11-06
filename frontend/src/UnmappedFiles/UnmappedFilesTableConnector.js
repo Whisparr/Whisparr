@@ -117,7 +117,6 @@ class UnmappedFilesTableConnector extends Component {
 
 UnmappedFilesTableConnector.propTypes = {
   isSmallScreen: PropTypes.bool.isRequired,
-  onSortPress: PropTypes.func.isRequired,
   onTableOptionChange: PropTypes.func.isRequired,
   fetchUnmappedFiles: PropTypes.func.isRequired,
   deleteUnmappedFile: PropTypes.func.isRequired,

@@ -14,7 +14,6 @@ import translate from 'Utilities/String/translate';
 import styles from './UnmappedFilesTableRow.css';
 
 class UnmappedFilesTableRow extends Component {
-
   //
   // Lifecycle
 
@@ -24,7 +23,9 @@ class UnmappedFilesTableRow extends Component {
     this.state = {
       isDetailsModalOpen: false,
       isInteractiveImportModalOpen: false,
-      isConfirmDeleteModalOpen: false
+      isConfirmDeleteModalOpen: false,
+      sortColumn: null,
+      sortDirection: 'asc' // or 'desc'
     };
   }
 
@@ -60,6 +61,26 @@ class UnmappedFilesTableRow extends Component {
     this.setState({ isConfirmDeleteModalOpen: false });
   };
 
+  onSortColumn = (column) => {
+    this.setState((prevState) => {
+      const isSameColumn = prevState.sortColumn === column;
+      const direction =
+        isSameColumn && prevState.sortDirection === 'asc' ? 'desc' : 'asc';
+      return {
+        sortColumn: column,
+        sortDirection: direction
+      };
+    });
+  };
+
+  renderSortIndicator = (column) => {
+    const { sortColumn, sortDirection } = this.state;
+    if (sortColumn !== column) {
+      return null;
+    }
+    return sortDirection === 'asc' ? ' ↑' : ' ↓';
+  };
+
   //
   // Render
 
@@ -76,7 +97,13 @@ class UnmappedFilesTableRow extends Component {
       onSelectedChange
     } = this.props;
 
-    const folder = originalFilePath.substring(0, Math.max(originalFilePath.lastIndexOf('/'), originalFilePath.lastIndexOf('\\')));
+    const folder = originalFilePath.substring(
+      0,
+      Math.max(
+        originalFilePath.lastIndexOf('/'),
+        originalFilePath.lastIndexOf('\\')
+      )
+    );
 
     const {
       isInteractiveImportModalOpen,
@@ -86,104 +113,86 @@ class UnmappedFilesTableRow extends Component {
 
     return (
       <>
-        {
-          columns.map((column) => {
-            const {
-              name,
-              isVisible
-            } = column;
+        {columns.map((column) => {
+          const { name, isVisible } = column;
 
-            if (!isVisible) {
-              return null;
-            }
-
-            if (name === 'select') {
-              return (
-                <VirtualTableSelectCell
-                  inputClassName={styles.checkInput}
-                  id={id}
-                  key={name}
-                  isSelected={isSelected}
-                  isDisabled={false}
-                  onSelectedChange={onSelectedChange}
-                />
-              );
-            }
-
-            if (name === 'path') {
-              return (
-                <VirtualTableRowCell
-                  key={name}
-                  className={styles[name]}
-                >
-                  {originalFilePath}
-                </VirtualTableRowCell>
-              );
-            }
-
-            if (name === 'size') {
-              return (
-                <VirtualTableRowCell
-                  key={name}
-                  className={styles[name]}
-                >
-                  {formatBytes(size)}
-                </VirtualTableRowCell>
-              );
-            }
-
-            if (name === 'dateAdded') {
-              return (
-                <RelativeDateCellConnector
-                  key={name}
-                  className={styles[name]}
-                  date={dateAdded}
-                  component={VirtualTableRowCell}
-                />
-              );
-            }
-
-            if (name === 'quality') {
-              return (
-                <VirtualTableRowCell
-                  key={name}
-                  className={styles[name]}
-                >
-                  <MovieQuality
-                    quality={quality}
-                  />
-                </VirtualTableRowCell>
-              );
-            }
-
-            if (name === 'actions') {
-              return (
-                <VirtualTableRowCell
-                  key={name}
-                  className={styles[name]}
-                >
-                  <IconButton
-                    name={icons.INFO}
-                    onPress={this.onDetailsPress}
-                  />
-
-                  <IconButton
-                    name={icons.INTERACTIVE}
-                    onPress={this.onInteractiveImportPress}
-                  />
-
-                  <IconButton
-                    name={icons.DELETE}
-                    onPress={this.onDeleteFilePress}
-                  />
-
-                </VirtualTableRowCell>
-              );
-            }
-
+          if (!isVisible) {
             return null;
-          })
-        }
+          }
+
+          if (name === 'select') {
+            return (
+              <VirtualTableSelectCell
+                inputClassName={styles.checkInput}
+                id={id}
+                key={name}
+                isSelected={isSelected}
+                isDisabled={false}
+                onSelectedChange={onSelectedChange}
+              />
+            );
+          }
+
+          if (name === 'path') {
+            console.log('originalFilePath:', originalFilePath);
+            return (
+              <VirtualTableRowCell
+                key={name}
+                className={styles[name]}
+                title={originalFilePath?.toString() ?? ''}
+              >
+                {originalFilePath}
+              </VirtualTableRowCell>
+            );
+          }
+
+          if (name === 'size') {
+            return (
+              <VirtualTableRowCell key={name} className={styles[name]}>
+                {formatBytes(size)}
+              </VirtualTableRowCell>
+            );
+          }
+
+          if (name === 'dateAdded') {
+            return (
+              <RelativeDateCellConnector
+                key={name}
+                className={styles[name]}
+                date={dateAdded}
+                component={VirtualTableRowCell}
+              />
+            );
+          }
+
+          if (name === 'quality') {
+            return (
+              <VirtualTableRowCell key={name} className={styles[name]}>
+                <MovieQuality quality={quality} />
+              </VirtualTableRowCell>
+            );
+          }
+
+          if (name === 'actions') {
+            return (
+              <VirtualTableRowCell key={name} className={styles[name]}>
+                <IconButton name={icons.INFO} onPress={this.onDetailsPress} />
+
+                <IconButton
+                  name={icons.INTERACTIVE}
+                  onPress={this.onInteractiveImportPress}
+                />
+
+                <IconButton
+                  name={icons.DELETE}
+                  onPress={this.onDeleteFilePress}
+                />
+              </VirtualTableRowCell>
+            );
+          }
+
+          return null;
+        })}
 
         <InteractiveImportModal
           isOpen={isInteractiveImportModalOpen}
@@ -206,16 +215,16 @@ class UnmappedFilesTableRow extends Component {
           isOpen={isConfirmDeleteModalOpen}
           kind={kinds.DANGER}
           title={translate('DeleteSelectedMovieFiles')}
-          message={translate('DeleteSelectedMovieFilesHelpText', [originalFilePath])}
+          message={translate('DeleteSelectedMovieFilesHelpText', [
+            originalFilePath
+          ])}
           confirmLabel={translate('Delete')}
           onConfirm={this.onConfirmDelete}
           onCancel={this.onConfirmDeleteModalClose}
         />
-
       </>
     );
   }
-
 }
 
 UnmappedFilesTableRow.propTypes = {

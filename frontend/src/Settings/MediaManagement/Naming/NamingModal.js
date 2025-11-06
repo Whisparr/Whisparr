@@ -91,6 +91,8 @@ const sceneTokens = [
   { token: '{Scene PerformersAlias}', example: 'Performers (Alias)' },
   { token: '{Scene PerformersFemaleAlias}', example: 'Female Performers (Alias)' },
   { token: '{Scene PerformersMaleAlias}', example: 'Male Performers (Alias)' },
+  { token: '{Scene PerformersOther}', example: 'Lulu Chu Jenna Gargles Izzy Wilde' },
+  { token: '{Scene PerformersOtherAlias}', example: 'Other Performers (Alias)' },
   { token: '{Release Date}', example: '2009-02-04' },
   { token: '{Release ShortDate}', example: '09 02 04' },
   { token: '{Scene Code}', example: '12345' }

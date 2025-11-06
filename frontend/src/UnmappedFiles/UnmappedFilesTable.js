@@ -1,5 +1,4 @@
-/* eslint-disable react/jsx-indent */
-/* eslint-disable react/jsx-indent-props */
+/* eslint-disable indent */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import Alert from 'Components/Alert';
@@ -258,27 +257,27 @@ class UnmappedFilesTable extends Component {
           !error &&
           !!items.length &&
           this.scrollerRef.current ? (
-              <VirtualTable
-                header={
-                  <UnmappedFilesTableHeader
-                    columns={columns}
-                    sortKey={sortKey}
-                    sortDirection={sortDirection}
-                    onSortPress={this.onSortPress}
-                    onTableOptionChange={onTableOptionChange}
-                    allSelected={allSelected}
-                    allUnselected={allUnselected}
-                    onSelectAllChange={this.onSelectAllChange}
-                  />
+            <VirtualTable
+              header={
+                <UnmappedFilesTableHeader
+                  columns={columns}
+                  sortKey={sortKey}
+                  sortDirection={sortDirection}
+                  onSortPress={this.onSortPress}
+                  onTableOptionChange={onTableOptionChange}
+                  allSelected={allSelected}
+                  allUnselected={allUnselected}
+                  onSelectAllChange={this.onSelectAllChange}
+                />
                 }
-                items={sortedItems}
-                columns={columns}
-                scroller={this.scrollerRef.current}
-                isSmallScreen={false}
-                overscanRowCount={10}
-                rowRenderer={this.rowRenderer}
-                selectedState={selectedState}
-              />
+              items={sortedItems}
+              columns={columns}
+              scroller={this.scrollerRef.current}
+              isSmallScreen={false}
+              overscanRowCount={10}
+              rowRenderer={this.rowRenderer}
+              selectedState={selectedState}
+            />
             ) : null}
         </PageContentBody>
       </PageContent>

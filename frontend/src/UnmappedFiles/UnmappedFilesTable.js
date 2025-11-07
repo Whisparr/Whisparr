@@ -55,7 +55,7 @@ class UnmappedFilesTable extends Component {
     }
   }
 
-  onSortPress = (column) => {
+  onSortColumnPress = (column) => {
     this.setState((prevState) => {
       const isSame = prevState.sortKey === column;
       const direction =
@@ -263,7 +263,7 @@ class UnmappedFilesTable extends Component {
                   columns={columns}
                   sortKey={sortKey}
                   sortDirection={sortDirection}
-                  onSortPress={this.onSortPress}
+                  onSortPress={this.onSortColumnPress}
                   onTableOptionChange={onTableOptionChange}
                   allSelected={allSelected}
                   allUnselected={allUnselected}
@@ -299,7 +299,8 @@ UnmappedFilesTable.propTypes = {
   isScanningFolders: PropTypes.bool.isRequired,
   isCleaningUnmappedFiles: PropTypes.bool.isRequired,
   onAddScenesPress: PropTypes.func.isRequired,
-  onCleanUnmappedFilesPress: PropTypes.func.isRequired
+  onCleanUnmappedFilesPress: PropTypes.func.isRequired,
+  onSortColumnPress: PropTypes.func.isRequired
 };
 
 export default UnmappedFilesTable;

@@ -17,7 +17,7 @@ function UnmappedFilesTableHeader(props) {
     onSelectAllChange,
     sortKey,
     sortDirection,
-    onSortPress,
+    onSortColumnPress,
     ...otherProps
   } = props;
 
@@ -80,7 +80,7 @@ function UnmappedFilesTableHeader(props) {
             className={styles[name]}
             name={name}
             isSortable={true}
-            onClick={isSortable ? () => onSortPress(name) : undefined}
+            onClick={isSortable ? () => onSortColumnPress(name) : undefined}
             {...otherProps}
           >
             {typeof label === 'function' ? label() : label}
@@ -100,7 +100,7 @@ UnmappedFilesTableHeader.propTypes = {
   onTableOptionChange: PropTypes.func.isRequired,
   sortKey: PropTypes.string,
   sortDirection: PropTypes.oneOf(['asc', 'desc']),
-  onSortPress: PropTypes.func.isRequired
+  onSortColumnPress: PropTypes.func.isRequired
 };
 
 export default UnmappedFilesTableHeader;

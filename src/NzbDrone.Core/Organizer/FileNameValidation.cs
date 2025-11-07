@@ -21,7 +21,7 @@ namespace NzbDrone.Core.Organizer
             ruleBuilder.SetValidator(new NotEmptyValidator(null));
             ruleBuilder.SetValidator(new IllegalCharactersValidator());
 
-            return ruleBuilder.SetValidator(new RegularExpressionValidator(FileNameBuilder.MainFolderRegex)).WithMessage("Must contain movies folder");
+            return ruleBuilder.SetValidator(new RegularExpressionValidator(FileNameBuilder.MainFolderRegex)).WithMessage("Must start with a relative path inside root folder, ex. 'movies/'");
         }
 
         public static IRuleBuilderOptions<T, string> ValidMovieFormat<T>(this IRuleBuilder<T, string> ruleBuilder)
@@ -45,7 +45,7 @@ namespace NzbDrone.Core.Organizer
             ruleBuilder.SetValidator(new NotEmptyValidator(null));
             ruleBuilder.SetValidator(new IllegalCharactersValidator());
 
-            return ruleBuilder.SetValidator(new RegularExpressionValidator(FileNameBuilder.MainFolderRegex)).WithMessage("Must contain scenes folder");
+            return ruleBuilder.SetValidator(new RegularExpressionValidator(FileNameBuilder.MainFolderRegex)).WithMessage("Must start with a relative path inside root folder, ex. 'scenes/'");
         }
 
         public static IRuleBuilderOptions<T, string> ValidSceneImportFolderFormat<T>(this IRuleBuilder<T, string> ruleBuilder)

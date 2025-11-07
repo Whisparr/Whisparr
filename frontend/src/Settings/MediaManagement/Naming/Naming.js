@@ -125,20 +125,34 @@ class Naming extends Component {
     const renameScenes = hasSettings && settings.renameScenes.value;
     const replaceIllegalCharacters = hasSettings && settings.replaceIllegalCharacters.value;
 
-    const standardMovieFormatHelpTexts = [];
+    const standardMovieFormatHelpTexts = [
+      `${translate('Default')}: {Movie Title} ({Release Year}) {Quality Full}`
+    ];
     const standardMovieFormatErrors = [];
-    const movieFolderFormatHelpTexts = [];
+    const movieFolderFormatHelpTexts = [
+      `${translate('Default')}: movies/{Movie Title} ({Release Year})')`,
+      translate('MovieFolderFormatHelpText')
+    ];
     const movieFolderFormatErrors = [];
-    const standardSceneFormatHelpTexts = [];
+    const standardSceneFormatHelpTexts = [
+      `${translate('Default')}: {Scene Title} - {Release Date} {Quality Full}}`
+    ];
     const standardSceneFormatErrors = [];
-    const sceneFolderFormatHelpTexts = [];
+    const sceneFolderFormatHelpTexts = [
+      `${translate('Default')}: scenes/{Studio Title}/{Scene Title} - {Release Date}`,
+      translate('SceneFolderFormatHelpText')
+    ];
     const sceneFolderFormatErrors = [];
-    const sceneImportFolderFormatHelpTexts = [];
+    const sceneImportFolderFormatHelpTexts = [
+      `${translate('Default')}: import/'`,
+      translate('sceneImportFolderFormatHelpTextPath'),
+      translate('sceneImportFolderFormatHelpText')
+    ];
     const sceneImportFolderFormatErrors = [];
 
     if (examplesPopulated) {
       if (examples.movieExample) {
-        standardMovieFormatHelpTexts.push(`${translate('Movie')}: ${examples.movieExample}`);
+        standardMovieFormatHelpTexts.push(`${translate('Example')}: ${examples.movieExample}`);
       } else {
         standardMovieFormatErrors.push({
           get message() {
@@ -178,7 +192,7 @@ class Naming extends Component {
       }
 
       if (examples.sceneImportFolderExample) {
-        sceneImportFolderFormatHelpTexts.push(`Example: ${examples.sceneImportFolderExample}`);
+        sceneImportFolderFormatHelpTexts.push('Example: import/');
       } else {
         sceneImportFolderFormatErrors.push({
           get message() {
@@ -277,6 +291,7 @@ class Naming extends Component {
               <FormGroup
                 advancedSettings={advancedSettings}
                 isAdvanced={true}
+                size={sizes.LARGE}
               >
                 <FormLabel>{translate('MovieFolderFormat')}</FormLabel>
 
@@ -287,7 +302,7 @@ class Naming extends Component {
                   buttons={<FormInputButton onPress={this.onMovieFolderNamingModalOpenClick}>?</FormInputButton>}
                   onChange={onInputChange}
                   {...settings.movieFolderFormat}
-                  helpTexts={[translate('MovieFolderFormatHelpText'), ...movieFolderFormatHelpTexts]}
+                  helpTexts={movieFolderFormatHelpTexts}
                   errors={[...movieFolderFormatErrors, ...settings.movieFolderFormat.errors]}
                 />
               </FormGroup>
@@ -313,6 +328,7 @@ class Naming extends Component {
               <FormGroup
                 advancedSettings={advancedSettings}
                 isAdvanced={true}
+                size={sizes.LARGE}
               >
                 <FormLabel>{translate('SceneFolderFormat')}</FormLabel>
 
@@ -323,7 +339,7 @@ class Naming extends Component {
                   buttons={<FormInputButton onPress={this.onSceneFolderNamingModalOpenClick}>?</FormInputButton>}
                   onChange={onInputChange}
                   {...settings.sceneFolderFormat}
-                  helpTexts={['Used when adding a new scene or moving scenes via the editor', ...sceneFolderFormatHelpTexts]}
+                  helpTexts={sceneFolderFormatHelpTexts}
                   errors={[...sceneFolderFormatErrors, ...settings.sceneFolderFormat.errors]}
                 />
               </FormGroup>
@@ -331,6 +347,7 @@ class Naming extends Component {
               <FormGroup
                 advancedSettings={advancedSettings}
                 isAdvanced={true}
+                size={sizes.MEDIUM}
               >
                 <FormLabel>{translate('SceneImportFolderFormat')}</FormLabel>
 
@@ -340,7 +357,7 @@ class Naming extends Component {
                   name="sceneImportFolderFormat"
                   onChange={onInputChange}
                   {...settings.sceneImportFolderFormat}
-                  helpTexts={['Path relative to default root folder', 'Used in Scenes > Unmapped Files > Add Scenes, to import scenes', 'Recommended: import/']}
+                  helpTexts={sceneImportFolderFormatHelpTexts}
                 />
               </FormGroup>
 

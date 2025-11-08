@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.DecisionEngine.Specifications;
-using NzbDrone.Core.Languages;
 using NzbDrone.Core.Messaging.Commands;
 using NzbDrone.Core.Movies;
 using NzbDrone.Core.Movies.Commands;
@@ -16,19 +15,16 @@ namespace Whisparr.Api.V3.Movies
     public class MovieEditorController : Controller
     {
         private readonly IMovieService _movieService;
-        private readonly IMovieTranslationService _movieTranslationService;
         private readonly IConfigService _configService;
         private readonly IManageCommandQueue _commandQueueManager;
         private readonly IUpgradableSpecification _upgradableSpecification;
 
         public MovieEditorController(IMovieService movieService,
-            IMovieTranslationService movieTranslationService,
             IConfigService configService,
             IManageCommandQueue commandQueueManager,
             IUpgradableSpecification upgradableSpecification)
         {
             _movieService = movieService;
-            _movieTranslationService = movieTranslationService;
             _configService = configService;
             _commandQueueManager = commandQueueManager;
             _upgradableSpecification = upgradableSpecification;
@@ -91,11 +87,7 @@ namespace Whisparr.Api.V3.Movies
                 });
             }
 
-            var configLanguage = (Language)_configService.MovieInfoLanguage;
             var availabilityDelay = _configService.AvailabilityDelay;
-
-            var translations = _movieTranslationService.GetAllTranslationsForLanguage(configLanguage);
-            var tdict = translations.ToDictionary(x => x.MovieMetadataId);
 
             var updatedMovies = _movieService.UpdateMovie(moviesToUpdate, !resource.MoveFiles);
 
@@ -103,8 +95,7 @@ namespace Whisparr.Api.V3.Movies
 
             foreach (var movie in updatedMovies)
             {
-                var translation = GetTranslationFromDict(tdict, movie.MovieMetadata, configLanguage);
-                moviesResources.Add(movie.ToResource(availabilityDelay, translation, _upgradableSpecification));
+                moviesResources.Add(movie.ToResource(availabilityDelay, _upgradableSpecification));
             }
 
             return Accepted(moviesResources);
@@ -116,29 +107,6 @@ namespace Whisparr.Api.V3.Movies
             _movieService.DeleteMovies(resource.MovieIds, resource.DeleteFiles, resource.AddImportExclusion);
 
             return new { };
-        }
-
-        private MovieTranslation GetTranslationFromDict(Dictionary<int, MovieTranslation> translations, MovieMetadata movie, Language configLanguage)
-        {
-            if (configLanguage == Language.Original)
-            {
-                return new MovieTranslation
-                {
-                    Title = movie.OriginalTitle,
-                    Overview = movie.Overview
-                };
-            }
-
-            if (!translations.TryGetValue(movie.Id, out var translation))
-            {
-                translation = new MovieTranslation
-                {
-                    Title = movie.Title,
-                    Language = Language.English
-                };
-            }
-
-            return translation;
         }
     }
 }

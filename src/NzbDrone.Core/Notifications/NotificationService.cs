@@ -305,181 +305,175 @@ namespace NzbDrone.Core.Notifications
                 }
                 catch (Exception ex)
                 {
+                    _logger.Error(ex, "Unable to send OnManualInteractionRequired message Remote Movie: {0}, Release Title: {1}, Download Item Title: {2} ", message.RemoteMovie.ToString(), message.Release?.Title, message.TrackedDownload?.DownloadItem?.Title);
+                }
+            }
+        }
+
+        public void Handle(MovieFileDeletedEvent message)
+        {
+            var deleteMessage = new MovieFileDeleteMessage();
+
+            if (message.MovieFile.Movie == null)
+            {
+                deleteMessage.Message = message.MovieFile.OriginalFilePath;
+                deleteMessage.Movie = new Movie();
+            }
+            else
+            {
+                deleteMessage.Message = GetMessage(message.MovieFile.Movie, message.MovieFile.Quality);
+                deleteMessage.Movie = message.MovieFile.Movie;
+            }
+
+            deleteMessage.MovieFile = message.MovieFile;
+            deleteMessage.Reason = message.Reason;
+
+            foreach (var notification in _notificationFactory.OnMovieFileDeleteEnabled())
+            {
+                try
+                {
+                    if (message.Reason == MediaFiles.DeleteMediaFileReason.Manual)
+                    {
+                        _notificationStatusService.RecordSuccess(notification.Definition.Id);
+                    }
+                    else if ((message.Reason != MediaFiles.DeleteMediaFileReason.Upgrade && message.MovieFile.Movie.Title != null)
+                        || ((NotificationDefinition)notification.Definition).OnMovieFileDeleteForUpgrade)
+                    {
+                        if (ShouldHandleMovie(notification.Definition, message.MovieFile.Movie))
+                        {
+                            notification.OnMovieFileDelete(deleteMessage);
+                            _notificationStatusService.RecordSuccess(notification.Definition.Id);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
                     _notificationStatusService.RecordFailure(notification.Definition.Id);
-                    _logger.Error(ex, "Unable to send OnManualInteractionRequired notification to {0}", notification.Definition.Name);
+                    _logger.Warn(ex, "Unable to send OnMovieFileDelete notification to: " + notification.Definition.Name);
                 }
             }
         }
-            catch (Exception ex)
-            {
-                _logger.Error(ex, "Unable to send OnManualInteractionRequired message Remote Movie: {0}, Release Title: {1}, Download Item Title: {2} ", message.RemoteMovie.ToString(), message.Release?.Title, message.TrackedDownload?.DownloadItem?.Title);
-            }
-}
 
-public void Handle(MovieFileDeletedEvent message)
-{
-    var deleteMessage = new MovieFileDeleteMessage();
-
-    if (message.MovieFile.Movie == null)
-    {
-        deleteMessage.Message = message.MovieFile.OriginalFilePath;
-        deleteMessage.Movie = new Movie();
-    }
-    else
-    {
-        deleteMessage.Message = GetMessage(message.MovieFile.Movie, message.MovieFile.Quality);
-        deleteMessage.Movie = message.MovieFile.Movie;
-    }
-
-    deleteMessage.MovieFile = message.MovieFile;
-    deleteMessage.Reason = message.Reason;
-
-    foreach (var notification in _notificationFactory.OnMovieFileDeleteEnabled())
-    {
-        try
+        public void Handle(MoviesDeletedEvent message)
         {
-            if (message.Reason == MediaFiles.DeleteMediaFileReason.Manual)
+            foreach (var movie in message.Movies)
             {
-                _notificationStatusService.RecordSuccess(notification.Definition.Id);
-            }
-            else if ((message.Reason != MediaFiles.DeleteMediaFileReason.Upgrade && message.MovieFile.Movie.Title != null)
-                || ((NotificationDefinition)notification.Definition).OnMovieFileDeleteForUpgrade)
-            {
-                if (ShouldHandleMovie(notification.Definition, message.MovieFile.Movie))
+                var deleteMessage = new MovieDeleteMessage(movie, message.DeleteFiles);
+
+                foreach (var notification in _notificationFactory.OnMovieDeleteEnabled())
                 {
-                    notification.OnMovieFileDelete(deleteMessage);
-                    _notificationStatusService.RecordSuccess(notification.Definition.Id);
+                    try
+                    {
+                        if (ShouldHandleMovie(notification.Definition, deleteMessage.Movie))
+                        {
+                            notification.OnMovieDelete(deleteMessage);
+                            _notificationStatusService.RecordSuccess(notification.Definition.Id);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _notificationStatusService.RecordFailure(notification.Definition.Id);
+                        _logger.Warn(ex, "Unable to send OnMovieDelete notification to: " + notification.Definition.Name);
+                    }
                 }
             }
         }
-        catch (Exception ex)
-        {
-            _notificationStatusService.RecordFailure(notification.Definition.Id);
-            _logger.Warn(ex, "Unable to send OnMovieFileDelete notification to: " + notification.Definition.Name);
-        }
-    }
-}
 
-public void Handle(MoviesDeletedEvent message)
-{
-    foreach (var movie in message.Movies)
-    {
-        var deleteMessage = new MovieDeleteMessage(movie, message.DeleteFiles);
-
-        foreach (var notification in _notificationFactory.OnMovieDeleteEnabled())
+        public void Handle(HealthCheckFailedEvent message)
         {
-            try
+            // Don't send health check notifications during the start up grace period,
+            // once that duration expires they they'll be retested and fired off if necessary.
+            if (message.IsInStartupGracePeriod)
             {
-                if (ShouldHandleMovie(notification.Definition, deleteMessage.Movie))
+                return;
+            }
+
+            foreach (var notification in _notificationFactory.OnHealthIssueEnabled())
+            {
+                try
                 {
-                    notification.OnMovieDelete(deleteMessage);
-                    _notificationStatusService.RecordSuccess(notification.Definition.Id);
+                    if (ShouldHandleHealthFailure(message.HealthCheck, ((NotificationDefinition)notification.Definition).IncludeHealthWarnings))
+                    {
+                        notification.OnHealthIssue(message.HealthCheck);
+                        _notificationStatusService.RecordSuccess(notification.Definition.Id);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _notificationStatusService.RecordFailure(notification.Definition.Id);
+                    _logger.Warn(ex, "Unable to send OnHealthIssue notification to: " + notification.Definition.Name);
                 }
             }
-            catch (Exception ex)
+        }
+
+        public void Handle(HealthCheckRestoredEvent message)
+        {
+            if (message.IsInStartupGracePeriod)
             {
-                _notificationStatusService.RecordFailure(notification.Definition.Id);
-                _logger.Warn(ex, "Unable to send OnMovieDelete notification to: " + notification.Definition.Name);
+                return;
+            }
+
+            foreach (var notification in _notificationFactory.OnHealthRestoredEnabled())
+            {
+                try
+                {
+                    if (ShouldHandleHealthFailure(message.PreviousCheck, ((NotificationDefinition)notification.Definition).IncludeHealthWarnings))
+                    {
+                        notification.OnHealthRestored(message.PreviousCheck);
+                        _notificationStatusService.RecordSuccess(notification.Definition.Id);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _notificationStatusService.RecordFailure(notification.Definition.Id);
+                    _logger.Warn(ex, "Unable to send OnHealthRestored notification to: " + notification.Definition.Name);
+                }
             }
         }
-    }
-}
 
-public void Handle(HealthCheckFailedEvent message)
-{
-    // Don't send health check notifications during the start up grace period,
-    // once that duration expires they they'll be retested and fired off if necessary.
-    if (message.IsInStartupGracePeriod)
-    {
-        return;
-    }
-
-    foreach (var notification in _notificationFactory.OnHealthIssueEnabled())
-    {
-        try
+        public void HandleAsync(CleanCompletedEvent message)
         {
-            if (ShouldHandleHealthFailure(message.HealthCheck, ((NotificationDefinition)notification.Definition).IncludeHealthWarnings))
+            ProcessQueue();
+        }
+
+        public void HandleAsync(DeleteCompletedEvent message)
+        {
+            ProcessQueue();
+        }
+
+        public void HandleAsync(DownloadsProcessedEvent message)
+        {
+            ProcessQueue();
+        }
+
+        public void HandleAsync(RenameCompletedEvent message)
+        {
+            ProcessQueue();
+        }
+
+        public void HandleAsync(RescanCompletedEvent message)
+        {
+            ProcessQueue();
+        }
+
+        public void HandleAsync(HealthCheckCompleteEvent message)
+        {
+            ProcessQueue();
+        }
+
+        private void ProcessQueue()
+        {
+            foreach (var notification in _notificationFactory.GetAvailableProviders())
             {
-                notification.OnHealthIssue(message.HealthCheck);
-                _notificationStatusService.RecordSuccess(notification.Definition.Id);
+                try
+                {
+                    notification.ProcessQueue();
+                }
+                catch (Exception ex)
+                {
+                    _logger.Warn(ex, "Unable to process notification queue for " + notification.Definition.Name);
+                }
             }
         }
-        catch (Exception ex)
-        {
-            _notificationStatusService.RecordFailure(notification.Definition.Id);
-            _logger.Warn(ex, "Unable to send OnHealthIssue notification to: " + notification.Definition.Name);
-        }
-    }
-}
-
-public void Handle(HealthCheckRestoredEvent message)
-{
-    if (message.IsInStartupGracePeriod)
-    {
-        return;
-    }
-
-    foreach (var notification in _notificationFactory.OnHealthRestoredEnabled())
-    {
-        try
-        {
-            if (ShouldHandleHealthFailure(message.PreviousCheck, ((NotificationDefinition)notification.Definition).IncludeHealthWarnings))
-            {
-                notification.OnHealthRestored(message.PreviousCheck);
-                _notificationStatusService.RecordSuccess(notification.Definition.Id);
-            }
-        }
-        catch (Exception ex)
-        {
-            _notificationStatusService.RecordFailure(notification.Definition.Id);
-            _logger.Warn(ex, "Unable to send OnHealthRestored notification to: " + notification.Definition.Name);
-        }
-    }
-}
-
-public void HandleAsync(CleanCompletedEvent message)
-{
-    ProcessQueue();
-}
-
-public void HandleAsync(DeleteCompletedEvent message)
-{
-    ProcessQueue();
-}
-
-public void HandleAsync(DownloadsProcessedEvent message)
-{
-    ProcessQueue();
-}
-
-public void HandleAsync(RenameCompletedEvent message)
-{
-    ProcessQueue();
-}
-
-public void HandleAsync(RescanCompletedEvent message)
-{
-    ProcessQueue();
-}
-
-public void HandleAsync(HealthCheckCompleteEvent message)
-{
-    ProcessQueue();
-}
-
-private void ProcessQueue()
-{
-    foreach (var notification in _notificationFactory.GetAvailableProviders())
-    {
-        try
-        {
-            notification.ProcessQueue();
-        }
-        catch (Exception ex)
-        {
-            _logger.Warn(ex, "Unable to process notification queue for " + notification.Definition.Name);
-        }
-    }
-}
     }
 }

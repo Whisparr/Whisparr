@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.DecisionEngine.Specifications;
-using NzbDrone.Core.Languages;
 using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.Messaging.Commands;
 using NzbDrone.Core.Movies;
@@ -20,16 +19,15 @@ namespace Whisparr.Api.V3.Movies
         private readonly IConfigService _configService;
         private readonly IManageCommandQueue _commandQueueManager;
         private readonly IUpgradableSpecification _upgradableSpecification;
+        private readonly IMapCoversToLocal _coverMapper;
 
         public MovieEditorController(IMovieService movieService,
-            IMovieTranslationService movieTranslationService,
             IMapCoversToLocal coverMapper,
             IConfigService configService,
             IManageCommandQueue commandQueueManager,
             IUpgradableSpecification upgradableSpecification)
         {
             _movieService = movieService;
-            _movieTranslationService = movieTranslationService;
             _coverMapper = coverMapper;
             _configService = configService;
             _commandQueueManager = commandQueueManager;
@@ -101,7 +99,7 @@ namespace Whisparr.Api.V3.Movies
 
             foreach (var movie in updatedMovies)
             {
-                var movieResource = movie.ToResource(availabilityDelay, translation, _upgradableSpecification);
+                var movieResource = movie.ToResource(availabilityDelay, _upgradableSpecification);
 
                 MapCoversToLocal(movieResource);
 

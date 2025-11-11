@@ -24,7 +24,7 @@ namespace NzbDrone.Core.Notifications.Telegram
         private readonly ILocalizationService _localizationService;
         private readonly Logger _logger;
 
-        public TelegramProxy(IHttpClient httpClient, ILocalizationService localizationService,  Logger logger)
+        public TelegramProxy(IHttpClient httpClient, ILocalizationService localizationService, Logger logger)
         {
             _httpClient = httpClient;
             _localizationService = localizationService;
@@ -53,10 +53,11 @@ namespace NzbDrone.Core.Notifications.Telegram
         {
             try
             {
+                const string brandedTitle = "Whisparr - Test Notification";
                 const string title = "Test Notification";
                 const string body = "This is a test message from Whisparr";
 
-                SendNotification(title, body, settings);
+                SendNotification(settings.IncludeAppNameInTitle ? brandedTitle : title, body, settings);
             }
             catch (Exception ex)
             {
@@ -64,7 +65,7 @@ namespace NzbDrone.Core.Notifications.Telegram
 
                 if (ex is WebException webException)
                 {
-                    return new ValidationFailure("Connection",  _localizationService.GetLocalizedString("NotificationsValidationUnableToConnectToApi", new Dictionary<string, object> { { "service", "Telegram" }, { "responseCode", webException.Status.ToString() }, { "exceptionMessage", webException.Message } }));
+                    return new ValidationFailure("Connection", _localizationService.GetLocalizedString("NotificationsValidationUnableToConnectToApi", new Dictionary<string, object> { { "service", "Telegram" }, { "responseCode", webException.Status.ToString() }, { "exceptionMessage", webException.Message } }));
                 }
                 else if (ex is Common.Http.HttpException restException && restException.Response.StatusCode == HttpStatusCode.BadRequest)
                 {

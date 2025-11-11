@@ -261,42 +261,52 @@ namespace NzbDrone.Core.Notifications
 
         public void Handle(ManualInteractionRequiredEvent message)
         {
-            try
+            var movie = message.RemoteMovie.Movie;
+            var mess = "";
+
+            if (movie != null)
             {
-                var manualInteractionMessage = new ManualInteractionRequiredMessage
-                {
-                    Message = GetMessage(message.RemoteMovie?.Movie, message.RemoteMovie?.ParsedMovieInfo?.Quality),
-                    Movie = message.RemoteMovie?.Movie,
-                    Quality = message.RemoteMovie?.ParsedMovieInfo?.Quality,
-                    RemoteMovie = message.RemoteMovie,
-                    TrackedDownload = message.TrackedDownload,
-                    DownloadClientInfo = message.TrackedDownload?.DownloadItem?.DownloadClientInfo,
-                    DownloadId = message.TrackedDownload?.DownloadItem?.DownloadId,
-                    Release = message.Release
-                };
-
-                foreach (var notification in _notificationFactory.OnManualInteractionEnabled())
-                {
-                    try
-                    {
-                        if (!ShouldHandleMovie(notification.Definition, message.RemoteMovie.Movie))
-                        {
-                            continue;
-                        }
-
-                        notification.OnManualInteractionRequired(manualInteractionMessage);
-                        _notificationStatusService.RecordSuccess(notification.Definition.Id);
-                    }
-                    catch (Exception ex)
-                    {
-                        _notificationStatusService.RecordFailure(notification.Definition.Id);
-                        _logger.Error(ex, "Unable to send OnManualInteractionRequired notification to {0}", notification.Definition.Name);
-                    }
-                }
+                mess = GetMessage(movie, message.RemoteMovie.ParsedMovieInfo.Quality);
             }
-            catch (Exception ex)
+
+            if (mess.IsNullOrWhiteSpace() && message.TrackedDownload.DownloadItem != null)
             {
-                _logger.Error(ex, "Unable to send OnManualInteractionRequired message Remote Movie: {0}, Release Title: {1}, Download Item Title: {2} ", message.RemoteMovie.ToString(), message.Release?.Title, message.TrackedDownload?.DownloadItem?.Title);
+                mess = message.TrackedDownload.DownloadItem.Title;
+            }
+
+            if (mess.IsNullOrWhiteSpace())
+            {
+                return;
+            }
+
+            var manualInteractionMessage = new ManualInteractionRequiredMessage
+            {
+                Message = mess,
+                Movie = movie,
+                Quality = message.RemoteMovie.ParsedMovieInfo.Quality,
+                RemoteMovie = message.RemoteMovie,
+                TrackedDownload = message.TrackedDownload,
+                DownloadClientInfo = message.TrackedDownload.DownloadItem?.DownloadClientInfo,
+                DownloadId = message.TrackedDownload.DownloadItem?.DownloadId,
+                Release = message.Release
+            };
+
+            foreach (var notification in _notificationFactory.OnManualInteractionEnabled())
+            {
+                try
+                {
+                    if (!ShouldHandleMovie(notification.Definition, message.RemoteMovie.Movie))
+                    {
+                        continue;
+                    }
+
+                    notification.OnManualInteractionRequired(manualInteractionMessage);
+                    _notificationStatusService.RecordSuccess(notification.Definition.Id);
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error(ex, "Unable to send OnManualInteractionRequired message Remote Movie: {0}, Release Title: {1}, Download Item Title: {2} ", message.RemoteMovie.ToString(), message.Release?.Title, message.TrackedDownload?.DownloadItem?.Title);
+                }
             }
         }
 

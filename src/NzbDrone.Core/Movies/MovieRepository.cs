@@ -347,6 +347,60 @@ namespace NzbDrone.Core.Movies
             }
         }
 
+        public List<int> GetRecommendations()
+        {
+            var recommendations = new List<int>();
+
+            if (_database.Version < new Version("3.9.0"))
+            {
+                return recommendations;
+            }
+
+            using (var conn = _database.OpenConnection())
+            {
+                if (_database.DatabaseType == DatabaseType.PostgreSQL)
+                {
+                    recommendations = conn.Query<int>(@"SELECT DISTINCT ""Rec"" FROM (
+                                                    SELECT DISTINCT ""Rec"" FROM
+                                                    (
+                                                    SELECT DISTINCT CAST(""value"" AS INT) AS ""Rec"" FROM ""MovieMetadata"" JOIN ""Movies"" ON ""Movies"".""MovieMetadataId"" = ""MovieMetadata"".""Id"", json_array_elements_text((""MovieMetadata"".""Recommendations"")::json)
+                                                    WHERE CAST(""value"" AS INT) NOT IN (SELECT ""TmdbId"" FROM ""MovieMetadata"" union SELECT ""TmdbId"" from ""ImportExclusions"" as sub1) LIMIT 10
+                                                    ) as sub2
+                                                    UNION
+                                                    SELECT ""Rec"" FROM
+                                                    (
+                                                    SELECT CAST(""value"" AS INT) AS ""Rec"" FROM ""MovieMetadata"" JOIN ""Movies"" ON ""Movies"".""MovieMetadataId"" = ""MovieMetadata"".""Id"", json_array_elements_text((""MovieMetadata"".""Recommendations"")::json)
+                                                    WHERE CAST(""value"" AS INT) NOT IN (SELECT ""TmdbId"" FROM ""MovieMetadata"" union SELECT ""TmdbId"" from ""ImportExclusions"" as sub2)
+                                                    GROUP BY ""Rec"" ORDER BY count(*) DESC LIMIT 120
+                                                    ) as sub4
+                                                    ) as sub5
+                                                    LIMIT 100;").ToList();
+                }
+                else
+                {
+                    recommendations = conn.Query<int>(@"SELECT DISTINCT ""Rec"" FROM (
+                                                    SELECT DISTINCT ""Rec"" FROM
+                                                    (
+                                                    SELECT DISTINCT CAST(""j"".""value"" AS INT) AS ""Rec"" FROM ""MovieMetadata"" JOIN ""Movies"" ON ""Movies"".""MovieMetadataId"" == ""MovieMetadata"".""Id""
+                                                    CROSS JOIN json_each(""MovieMetadata"".""Recommendations"") AS ""j""
+                                                    WHERE ""Rec"" NOT IN (SELECT ""TmdbId"" FROM ""MovieMetadata"" union SELECT ""TmdbId"" from ""ImportExclusions"") LIMIT 10
+                                                    )
+                                                    UNION
+                                                    SELECT ""Rec"" FROM
+                                                    (
+                                                    SELECT CAST(""j"".""value"" AS INT) AS ""Rec"" FROM ""MovieMetadata"" JOIN ""Movies"" ON ""Movies"".""MovieMetadataId"" == ""MovieMetadata"".""Id""
+                                                    CROSS JOIN json_each(""MovieMetadata"".""Recommendations"") AS ""j""
+                                                    WHERE ""Rec"" NOT IN (SELECT ""TmdbId"" FROM ""MovieMetadata"" union SELECT ""TmdbId"" from ""ImportExclusions"")
+                                                    GROUP BY ""Rec"" ORDER BY count(*) DESC LIMIT 120
+                                                    )
+                                                    )
+                                                    LIMIT 100;").ToList();
+                }
+            }
+
+            return recommendations;
+        }
+
         public bool ExistsByMetadataId(int metadataId)
         {
             var movies = Query(x => x.MovieMetadataId == metadataId);

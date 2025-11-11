@@ -2,7 +2,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Common.Extensions;
+using NzbDrone.Core.Configuration;
 using NzbDrone.Core.DecisionEngine.Specifications;
+using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.Messaging.Commands;
 using NzbDrone.Core.Movies;
 using NzbDrone.Core.Movies.Commands;
@@ -14,12 +16,20 @@ namespace Whisparr.Api.V3.Movies
     public class MovieEditorController : Controller
     {
         private readonly IMovieService _movieService;
+        private readonly IConfigService _configService;
         private readonly IManageCommandQueue _commandQueueManager;
         private readonly IUpgradableSpecification _upgradableSpecification;
+        private readonly IMapCoversToLocal _coverMapper;
 
-        public MovieEditorController(IMovieService movieService, IManageCommandQueue commandQueueManager, IUpgradableSpecification upgradableSpecification)
+        public MovieEditorController(IMovieService movieService,
+            IMapCoversToLocal coverMapper,
+            IConfigService configService,
+            IManageCommandQueue commandQueueManager,
+            IUpgradableSpecification upgradableSpecification)
         {
             _movieService = movieService;
+            _coverMapper = coverMapper;
+            _configService = configService;
             _commandQueueManager = commandQueueManager;
             _upgradableSpecification = upgradableSpecification;
         }
@@ -81,7 +91,22 @@ namespace Whisparr.Api.V3.Movies
                 });
             }
 
-            return Accepted(_movieService.UpdateMovie(moviesToUpdate, !resource.MoveFiles).ToResource(0, _upgradableSpecification));
+            var availabilityDelay = _configService.AvailabilityDelay;
+
+            var updatedMovies = _movieService.UpdateMovie(moviesToUpdate, !resource.MoveFiles);
+
+            var moviesResources = new List<MovieResource>(updatedMovies.Count);
+
+            foreach (var movie in updatedMovies)
+            {
+                var movieResource = movie.ToResource(availabilityDelay, _upgradableSpecification);
+
+                MapCoversToLocal(movieResource);
+
+                moviesResources.Add(movieResource);
+            }
+
+            return Accepted(moviesResources);
         }
 
         [HttpDelete]
@@ -90,6 +115,11 @@ namespace Whisparr.Api.V3.Movies
             _movieService.DeleteMovies(resource.MovieIds, resource.DeleteFiles, resource.AddImportExclusion);
 
             return new { };
+        }
+
+        private void MapCoversToLocal(MovieResource movie)
+        {
+            _coverMapper.ConvertToLocalUrls(movie.Id, movie.Images);
         }
     }
 }

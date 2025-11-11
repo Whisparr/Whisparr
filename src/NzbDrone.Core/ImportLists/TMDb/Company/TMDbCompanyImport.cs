@@ -26,7 +26,7 @@ namespace NzbDrone.Core.ImportLists.TMDb.Company
 
         public override IParseImportListResponse GetParser()
         {
-            return new TMDbCompanyParser();
+            return new TMDbCompanyParser(Settings);
         }
 
         public override IImportListRequestGenerator GetRequestGenerator()

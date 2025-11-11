@@ -42,7 +42,7 @@ class ImportList extends Component {
     });
   };
 
-  onDeleteImportListModalClose= () => {
+  onDeleteImportListModalClose = () => {
     this.setState({ isDeleteImportListModalOpen: false });
   };
 

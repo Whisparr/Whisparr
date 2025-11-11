@@ -7,6 +7,13 @@ namespace NzbDrone.Core.ImportLists.TMDb.Company
 {
     public class TMDbCompanyParser : TMDbParser
     {
+        private readonly TMDbCompanySettings _settings;
+
+        public TMDbCompanyParser(TMDbCompanySettings settings)
+        {
+            _settings = settings;
+        }
+
         public override IList<ImportListMovie> ParseResponse(ImportListResponse importResponse)
         {
             var movies = new List<ImportListMovie>();

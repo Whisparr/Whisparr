@@ -26,6 +26,7 @@ import usePrevious from 'Helpers/Hooks/usePrevious';
 import useSelectState from 'Helpers/Hooks/useSelectState';
 import { align, icons, kinds, scrollDirections } from 'Helpers/Props';
 import ImportMode from 'InteractiveImport/ImportMode';
+import SelectIndexerFlagsModal from 'InteractiveImport/IndexerFlags/SelectIndexerFlagsModal';
 import InteractiveImport, {
   InteractiveImportCommandOptions,
 } from 'InteractiveImport/InteractiveImport';
@@ -59,7 +60,13 @@ import getSelectedIds from 'Utilities/Table/getSelectedIds';
 import InteractiveImportRow from './InteractiveImportRow';
 import styles from './InteractiveImportModalContent.css';
 
-type SelectType = 'select' | 'movie' | 'releaseGroup' | 'quality' | 'language';
+type SelectType =
+  | 'select'
+  | 'movie'
+  | 'releaseGroup'
+  | 'quality'
+  | 'language'
+  | 'indexerFlags';
 
 type FilterExistingFiles = 'all' | 'new';
 
@@ -109,6 +116,15 @@ const COLUMNS = [
     label: React.createElement(Icon, {
       name: icons.INTERACTIVE,
       title: () => translate('CustomFormat'),
+    }),
+    isSortable: true,
+    isVisible: true,
+  },
+  {
+    name: 'indexerFlags',
+    label: React.createElement(Icon, {
+      name: icons.FLAG,
+      title: () => translate('IndexerFlags'),
     }),
     isSortable: true,
     isVisible: true,
@@ -242,25 +258,6 @@ function InteractiveImportModalContent(
   const [interactiveImportErrorMessage, setInteractiveImportErrorMessage] =
     useState<string | null>(null);
   const [selectState, setSelectState] = useSelectState();
-  const [bulkSelectOptions, setBulkSelectOptions] = useState([
-    {
-      key: 'select',
-      value: translate('SelectDropdown'),
-      disabled: true,
-    },
-    {
-      key: 'quality',
-      value: translate('SelectQuality'),
-    },
-    {
-      key: 'releaseGroup',
-      value: translate('SelectReleaseGroup'),
-    },
-    {
-      key: 'language',
-      value: translate('SelectLanguage'),
-    },
-  ]);
   const { allSelected, allUnselected, selectedState } = selectState;
   const previousIsDeleting = usePrevious(isDeleting);
   const dispatch = useDispatch();
@@ -276,26 +273,60 @@ function InteractiveImportModalContent(
       }
     }
 
+    const showIndexerFlags = items.some((item) => item.indexerFlags);
+
+    if (!showIndexerFlags) {
+      const indexerFlagsColumn = result.find((c) => c.name === 'indexerFlags');
+
+      if (indexerFlagsColumn) {
+        indexerFlagsColumn.isVisible = false;
+      }
+    }
+
     return result;
-  }, [showMovie]);
+  }, [showMovie, items]);
 
   const selectedIds: number[] = useMemo(() => {
     return getSelectedIds(selectedState);
   }, [selectedState]);
 
+  const bulkSelectOptions = useMemo(() => {
+    const options = [
+      {
+        key: 'select',
+        value: translate('SelectDropdown'),
+        disabled: true,
+      },
+      {
+        key: 'quality',
+        value: translate('SelectQuality'),
+      },
+      {
+        key: 'releaseGroup',
+        value: translate('SelectReleaseGroup'),
+      },
+      {
+        key: 'language',
+        value: translate('SelectLanguage'),
+      },
+      {
+        key: 'indexerFlags',
+        value: translate('SelectIndexerFlags'),
+      },
+    ];
+
+    if (allowMovieChange) {
+      options.splice(1, 0, {
+        key: 'movie',
+        value: translate('SelectMovie'),
+      });
+    }
+
+    return options;
+  }, [allowMovieChange]);
+
   useEffect(
     () => {
-      if (allowMovieChange) {
-        const newBulkSelectOptions = [...bulkSelectOptions];
-
-        newBulkSelectOptions.splice(1, 0, {
-          key: 'movie',
-          value: translate('SelectMovie'),
-        });
-
-        setBulkSelectOptions(newBulkSelectOptions);
-      }
-
       if (initialSortKey) {
         const sortProps: { sortKey: string; sortDirection?: string } = {
           sortKey: initialSortKey,
@@ -415,7 +446,14 @@ function InteractiveImportModalContent(
       const isSelected = selectedIds.indexOf(item.id) > -1;
 
       if (isSelected) {
-        const { movie, releaseGroup, quality, languages, movieFileId } = item;
+        const {
+          movie,
+          releaseGroup,
+          quality,
+          languages,
+          indexerFlags,
+          movieFileId,
+        } = item;
 
         if (!movie) {
           setInteractiveImportErrorMessage(
@@ -449,6 +487,7 @@ function InteractiveImportModalContent(
               releaseGroup,
               quality,
               languages,
+              indexerFlags,
             });
 
             return;
@@ -462,6 +501,7 @@ function InteractiveImportModalContent(
           releaseGroup,
           quality,
           languages,
+          indexerFlags,
           downloadId,
           movieFileId,
         });
@@ -609,6 +649,22 @@ function InteractiveImportModalContent(
         updateInteractiveImportItems({
           ids: selectedIds,
           quality,
+        })
+      );
+
+      dispatch(reprocessInteractiveImportItems({ ids: selectedIds }));
+
+      setSelectModalOpen(null);
+    },
+    [selectedIds, dispatch]
+  );
+
+  const onIndexerFlagsSelect = useCallback(
+    (indexerFlags: number) => {
+      dispatch(
+        updateInteractiveImportItems({
+          ids: selectedIds,
+          indexerFlags,
         })
       );
 
@@ -790,6 +846,14 @@ function InteractiveImportModalContent(
         real={false}
         modalTitle={modalTitle}
         onQualitySelect={onQualitySelect}
+        onModalClose={onSelectModalClose}
+      />
+
+      <SelectIndexerFlagsModal
+        isOpen={selectModalOpen === 'indexerFlags'}
+        indexerFlags={0}
+        modalTitle={modalTitle}
+        onIndexerFlagsSelect={onIndexerFlagsSelect}
         onModalClose={onSelectModalClose}
       />
 

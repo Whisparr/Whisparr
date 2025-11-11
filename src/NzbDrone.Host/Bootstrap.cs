@@ -23,7 +23,6 @@ using NzbDrone.Common.Instrumentation;
 using NzbDrone.Common.Instrumentation.Extensions;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Datastore.Extensions;
-using Whisparr.Http.ClientSchema;
 using PostgresOptions = NzbDrone.Core.Datastore.PostgresOptions;
 
 namespace NzbDrone.Host
@@ -225,7 +224,10 @@ namespace NzbDrone.Host
             {
                 return new ConfigurationBuilder()
                     .AddXmlFile(configPath, optional: true, reloadOnChange: false)
-                    .AddInMemoryCollection(new List<KeyValuePair<string, string>> { new("dataProtectionFolder", appFolder.GetDataProtectionPath()) })
+                    .AddInMemoryCollection(new List<KeyValuePair<string, string>>
+                    {
+                            new ("dataProtectionFolder", appFolder.GetDataProtectionPath())
+                    })
                     .AddEnvironmentVariables()
                     .Build();
             }

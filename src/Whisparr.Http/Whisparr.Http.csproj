@@ -2,6 +2,10 @@
   <PropertyGroup>
     <TargetFrameworks>net6.0</TargetFrameworks>
   </PropertyGroup>
+  <PropertyGroup>
+    <!-- Suppress CA1825 for this project -->
+    <NoWarn>$(NoWarn);CA1825</NoWarn>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="9.5.4" />
 	<PackageReference Include="ImpromptuInterface" Version="7.0.1" />

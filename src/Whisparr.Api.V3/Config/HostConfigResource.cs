@@ -46,6 +46,8 @@ namespace Whisparr.Api.V3.Config
         public int BackupRetention { get; set; }
         public bool WhisparrAutoMatchOnDate { get; set; }
         public bool WhisparrCacheMovieAPI { get; set; }
+        public bool WhisparrCachePerformerAPI { get; set; }
+        public bool WhisparrValidateRuntime { get; set; }
     }
 
     public static class HostConfigResourceMapper
@@ -91,7 +93,9 @@ namespace Whisparr.Api.V3.Config
                 BackupRetention = configService.BackupRetention,
                 ApplicationUrl = configService.ApplicationUrl,
                 WhisparrAutoMatchOnDate = configService.WhisparrAutoMatchOnDate,
-                WhisparrCacheMovieAPI = configService.WhisparrCacheMovieAPI
+                WhisparrCacheMovieAPI = configService.WhisparrCacheMovieAPI,
+                WhisparrCachePerformerAPI = configService.WhisparrCachePerformerAPI,
+                WhisparrValidateRuntime = configService.WhisparrValidateRuntime
             };
         }
     }

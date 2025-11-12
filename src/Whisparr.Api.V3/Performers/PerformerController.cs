@@ -52,7 +52,7 @@ namespace Whisparr.Api.V3.Performers
             _moviesService = moviesService;
             _movieStatisticsService = movieStatisticsService;
             _exclusionService = exclusionService;
-            _useCache = false; // TODO: Implement via an additional parameter if required.
+            _useCache = _configService.WhisparrCachePerformerAPI;
             _performerResourceCache = cacheManager.GetCache<PerformerResource>(typeof(PerformerResource), "performerResources");
         }
 
@@ -245,6 +245,8 @@ namespace Whisparr.Api.V3.Performers
                         var coverFileInfos = _coverMapper.GetPerformerCoverFileInfos();
 
                         _coverMapper.ConvertToLocalPerformerUrls(performerResources.Select(x => Tuple.Create(x.Id, x.Images.AsEnumerable())), coverFileInfos);
+
+                        LinkMovies(performerResources);
 
                         foreach (var performerResource in performerResources)
                         {

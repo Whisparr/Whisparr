@@ -232,7 +232,18 @@ namespace Whisparr.Api.V3.Movies
         [HttpGet("listByPerformerForeignId")]
         public List<int> ListByPerformerForeignId(string performerForeignId)
         {
-            return _moviesService.GetByPerformerForeignId(performerForeignId).Map(x => x.Id).ToList();
+            var moviesList = new List<int>();
+            if (_useCache)
+            {
+                var moviesResources = GetMovieResources();
+                moviesList = moviesResources.Where(m => m.Credits.Where(c => c.Performer.ForeignId == performerForeignId).Any()).Map(x => x.Id).ToList();
+            }
+            else
+            {
+                moviesList = _moviesService.GetByPerformerForeignId(performerForeignId).Map(x => x.Id).ToList();
+            }
+
+            return moviesList;
         }
 
         [HttpGet("listByStudioForeignId")]
@@ -398,6 +409,7 @@ namespace Whisparr.Api.V3.Movies
 
                 var moviesResources = new List<MovieResource>();
                 var movieStats = _movieStatisticsService.MovieStatistics(ids);
+
                 var coverFileInfos = _coverMapper.GetMovieCoverFileInfos();
                 var sdict = movieStats.ToDictionary(x => x.MovieId);
                 var availDelay = _configService.AvailabilityDelay;
@@ -454,34 +466,40 @@ namespace Whisparr.Api.V3.Movies
 
                     if (getIds.Count > 0)
                     {
-                        var movieStats = _movieStatisticsService.MovieStatistics(getIds);
                         var coverFileInfos = _coverMapper.GetMovieCoverFileInfos();
-                        var sdict = movieStats.ToDictionary(x => x.MovieId);
                         var availDelay = _configService.AvailabilityDelay;
-                        var movies = _moviesService.FindByIds(getIds);
 
-                        foreach (var movie in movies)
+                        var chunkSize = 5000;
+
+                        foreach (var chunkIds in getIds.Chunk(chunkSize))
                         {
-                            try
+                            var movies = _moviesService.FindByIds(chunkIds.ToList());
+                            var movieStats = _movieStatisticsService.MovieStatistics(chunkIds.ToList());
+                            var sdict = movieStats.ToDictionary(x => x.MovieId);
+
+                            foreach (var movie in movies)
                             {
-                                moviesResources.Add(movie.ToResource(availDelay, _qualityUpgradableSpecification));
+                                try
+                                {
+                                    moviesResources.Add(movie.ToResource(availDelay, _qualityUpgradableSpecification));
+                                }
+                                catch (Exception e)
+                                {
+                                    _logger.Error(e, "Error Converting  '{0}' to Resource", movie);
+                                }
                             }
-                            catch (Exception e)
+
+                            LinkMovieStatistics(moviesResources, sdict);
+                            MapCoversToLocal(moviesResources, coverFileInfos);
+
+                            var rootFolders = _rootFolderService.All();
+
+                            moviesResources.ForEach(m => m.RootFolderPath = _rootFolderService.GetBestRootFolderPath(m.Path, rootFolders));
+
+                            foreach (var moviesResource in moviesResources)
                             {
-                                _logger.Error(e, "Error Converting  '{0}' to Resource", movie);
+                                _movieResourcesCache.Set(moviesResource.Id.ToString(), moviesResource);
                             }
-                        }
-
-                        LinkMovieStatistics(moviesResources, sdict);
-                        MapCoversToLocal(moviesResources, coverFileInfos);
-
-                        var rootFolders = _rootFolderService.All();
-
-                        moviesResources.ForEach(m => m.RootFolderPath = _rootFolderService.GetBestRootFolderPath(m.Path, rootFolders));
-
-                        foreach (var moviesResource in moviesResources)
-                        {
-                            _movieResourcesCache.Set(moviesResource.Id.ToString(), moviesResource);
                         }
                     }
                 }

@@ -109,6 +109,7 @@ namespace NzbDrone.Core.Configuration
         // Whisparr
         bool WhisparrAutoMatchOnDate { get; }
         bool WhisparrCacheMovieAPI { get; }
+        bool WhisparrCachePerformerAPI { get; }
         bool WhisparrValidateRuntime { get; }
 
         CertificateValidationType CertificateValidation { get; }

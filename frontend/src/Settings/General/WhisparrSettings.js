@@ -17,6 +17,7 @@ function WhisparrSettings(props) {
   const {
     whisparrAutoMatchOnDate,
     whisparrCacheMovieAPI,
+    whisparrCachePerformerAPI,
     whisparrValidateRuntime
   } = settings;
 
@@ -30,20 +31,7 @@ function WhisparrSettings(props) {
         advancedSettings={advancedSettings}
         isAdvanced={true}
       >
-        <FormLabel>{translate('WhisparrAutoMatchOnDate')}</FormLabel>
 
-        <FormInputGroup
-          type={inputTypes.CHECK}
-          name="whisparrAutoMatchOnDate"
-          helpText={translate('WhisparrAutoMatchOnDateHelpText')}
-          onChange={onInputChange}
-          {...whisparrAutoMatchOnDate}
-        />
-      </FormGroup>
-      <FormGroup
-        advancedSettings={advancedSettings}
-        isAdvanced={true}
-      >
         <FormLabel>{translate('WhisparrCacheMovieAPI')}</FormLabel>
 
         <FormInputGroup
@@ -52,6 +40,37 @@ function WhisparrSettings(props) {
           helpText={translate('WhisparrCacheMovieAPIHelpText')}
           onChange={onInputChange}
           {...whisparrCacheMovieAPI}
+        />
+      </FormGroup>
+
+      <FormGroup
+        advancedSettings={advancedSettings}
+        isAdvanced={true}
+      >
+
+        <FormLabel>{translate('WhisparrCachePerformerAPI')}</FormLabel>
+
+        <FormInputGroup
+          type={inputTypes.CHECK}
+          name="whisparrCachePerformerAPI"
+          helpText={translate('WhisparrCachePerformerAPIHelpText')}
+          onChange={onInputChange}
+          {...whisparrCachePerformerAPI}
+        />
+      </FormGroup>
+
+      <FormGroup
+        advancedSettings={advancedSettings}
+        isAdvanced={true}
+      >
+        <FormLabel>{translate('WhisparrAutoMatchOnDate')}</FormLabel>
+
+        <FormInputGroup
+          type={inputTypes.CHECK}
+          name="whisparrAutoMatchOnDate"
+          helpText={translate('WhisparrAutoMatchOnDateHelpText')}
+          onChange={onInputChange}
+          {...whisparrAutoMatchOnDate}
         />
       </FormGroup>
       <FormGroup

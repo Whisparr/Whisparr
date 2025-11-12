@@ -1869,6 +1869,8 @@
   "WhisparrAutoMatchOnDateHelpText": "If checked Whisparr will accept a scene on just studio and date. Can cause false positives",
   "WhisparrCacheMovieAPI": "Cache Movie API",
   "WhisparrCacheMovieAPIHelpText": "Cache API calls to movie/scene",
+  "WhisparrCachePerformerAPI": "Cache Performer API",
+  "WhisparrCachePerformerAPIHelpText": "Cache API calls to performers",
   "WhisparrValidateRuntime": "Validate the runtime",
   "WhisparrValidateRuntimeHelpText": "Validates the runtime minutes with the expected time of the scene",
   "WhisparrCalendarFeed": "{appName} Calendar Feed",

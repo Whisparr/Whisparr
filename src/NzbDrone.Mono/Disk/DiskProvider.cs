@@ -423,6 +423,11 @@ namespace NzbDrone.Mono.Disk
                     }
                 }
             }
+            catch (Exception)
+            {
+                _logger.Error("Moved '{0}' -> '{1}' Error ", source, destination);
+                throw;
+            }
         }
 
         public override bool TryRenameFile(string source, string destination)

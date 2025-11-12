@@ -29,6 +29,7 @@ namespace NzbDrone.Core.Notifications.Stash
         public StashSettings()
         {
             Port = 9999;
+            StashBoxEndpoint = "https://stashdb.org/graphql";
         }
 
         [FieldDefinition(0, Label = "Host")]
@@ -76,7 +77,7 @@ namespace NzbDrone.Core.Notifications.Stash
         [FieldDefinition(14, Label = "Identify: Skip Multiple Matches", HelpText = "Skip matches that have more than one result", Type = FieldType.Checkbox)]
         public bool SkipMultipleMatches { get; set; }
 
-        [FieldDefinition(15, Label = "Identify: Skip Multiple Match Tag", HelpText = "Tag skipped matches with", Type = FieldType.Number)]
+        [FieldDefinition(15, Label = "Identify: Skip Multiple Match Tag ID", HelpText = "Tag ID skipped matches with", Type = FieldType.Number)]
         public int SkipMultipleMatchTag { get; set; }
 
         [FieldDefinition(16, Label = "Identify: Set Organized", HelpText = "Use Set Organized during Identify task", Type = FieldType.Checkbox)]

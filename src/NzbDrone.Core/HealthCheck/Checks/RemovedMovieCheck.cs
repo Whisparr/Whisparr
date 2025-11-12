@@ -29,7 +29,7 @@ namespace NzbDrone.Core.HealthCheck.Checks
                 return new HealthCheck(GetType());
             }
 
-            var movieText = deletedMovie.Select(s => $"{s.Title} (tmdbid {s.ForeignId})").Join(", ");
+            var movieText = deletedMovie.Select(s => s.MovieMetadata.Value.ItemType == ItemType.Movie ? $"{s.Title} (tmdbid {s.ForeignId})" : $"{s.Title} (stashid {s.ForeignId})").Join(", ");
 
             if (deletedMovie.Count == 1)
             {

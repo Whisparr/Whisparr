@@ -7,7 +7,7 @@ namespace NzbDrone.Core.ImportLists.ImportExclusions
         public string ForeignId { get; set; }
         public string MovieTitle { get; set; }
         public ImportExclusionType Type { get; set; }
-        public int MovieYear { get; set; }
+        public int? MovieYear { get; set; }
 
         public new string ToString()
         {

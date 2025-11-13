@@ -99,7 +99,7 @@ ImportListExclusion.propTypes = {
   movieTitle: PropTypes.string.isRequired,
   foreignId: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
-  movieYear: PropTypes.number.isRequired,
+  movieYear: PropTypes.number,
   onConfirmDeleteImportExclusion: PropTypes.func.isRequired
 };
 

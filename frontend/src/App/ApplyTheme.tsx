@@ -10,7 +10,7 @@ interface ApplyThemeProps {
 
 function createThemeSelector() {
   return createSelector(
-    (state: AppState) => state.settings.ui.item.theme || window.Radarr.theme,
+    (state: AppState) => state.settings.ui.item.theme || window.Whisparr.theme,
     (theme) => {
       return theme;
     }

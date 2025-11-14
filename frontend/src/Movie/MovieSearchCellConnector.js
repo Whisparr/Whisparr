@@ -1,11 +1,11 @@
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import * as commandNames from 'Commands/commandNames';
+import MovieSearchCell from 'Movie/MovieSearchCell';
 import { executeCommand } from 'Store/Actions/commandActions';
 import createCommandsSelector from 'Store/Selectors/createCommandsSelector';
 import createMovieSelector from 'Store/Selectors/createMovieSelector';
 import { isCommandExecuting } from 'Utilities/Command';
-import MovieSearchCell from './MovieSearchCell';
 
 function createMapStateToProps() {
   return createSelector(
@@ -27,7 +27,7 @@ function createMapStateToProps() {
       });
 
       return {
-        seriesMonitored: movie.monitored,
+        movieMonitored: movie.monitored,
         isSearching
       };
     }

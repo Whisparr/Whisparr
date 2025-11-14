@@ -38,6 +38,8 @@ import Tasks from 'System/Tasks/Tasks';
 import UpdatesConnector from 'System/Updates/UpdatesConnector';
 import UnmappedFilesTableConnector from 'UnmappedFiles/UnmappedFilesTableConnector';
 import getPathWithUrlBase from 'Utilities/getPathWithUrlBase';
+import CutoffUnmetConnector from 'Wanted/CutoffUnmet/CutoffUnmetConnector';
+import MissingConnector from 'Wanted/Missing/MissingConnector';
 
 function AppRoutes(props) {
   const {
@@ -154,6 +156,20 @@ function AppRoutes(props) {
       <Route
         path="/activity/blocklist"
         component={BlocklistConnector}
+      />
+
+      {/*
+        Wanted
+      */}
+
+      <Route
+        path="/wanted/missing"
+        component={MissingConnector}
+      />
+
+      <Route
+        path="/wanted/cutoffunmet"
+        component={CutoffUnmetConnector}
       />
 
       {/*

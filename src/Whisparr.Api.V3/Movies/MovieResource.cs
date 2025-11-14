@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.CustomFormats;
 using NzbDrone.Core.DecisionEngine.Specifications;
@@ -52,6 +53,7 @@ namespace Whisparr.Api.V3.Movies
 
         // Compatibility
         public bool? HasFile { get; set; }
+        public int MovieFileId { get; set; }
 
         // Editing Only
         public bool Monitored { get; set; }
@@ -76,6 +78,10 @@ namespace Whisparr.Api.V3.Movies
         public List<Credit> Credits { get; set; }
         public ItemType ItemType { get; set; }
         public MovieStatisticsResource Statistics { get; set; }
+
+        // Hiding this so people don't think its usable (only used to set the initial state)
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public bool Grabbed { get; set; }
     }
 
     public static class MovieResourceMapper
@@ -110,6 +116,8 @@ namespace Whisparr.Api.V3.Movies
                 Images = model.MovieMetadata.Value.Images.JsonClone(),
 
                 Year = model.Year,
+
+                MovieFileId = model.MovieFileId,
 
                 Path = model.Path,
                 QualityProfileId = model.QualityProfileId,

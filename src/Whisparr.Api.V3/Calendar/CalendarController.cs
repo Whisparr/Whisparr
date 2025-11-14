@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Configuration;
+using NzbDrone.Core.CustomFormats;
 using NzbDrone.Core.DecisionEngine.Specifications;
 using NzbDrone.Core.Movies;
 using NzbDrone.Core.MovieStats;
@@ -11,32 +12,30 @@ using NzbDrone.Core.Tags;
 using NzbDrone.SignalR;
 using Whisparr.Api.V3.Movies;
 using Whisparr.Http;
-using Whisparr.Http.REST;
 
 namespace Whisparr.Api.V3.Calendar
 {
     [V3ApiController]
-    public class CalendarController : RestControllerWithSignalR<MovieResource, Movie>
+    public class CalendarController : MovieControllerWithSignalR
     {
         private readonly IMovieService _moviesService;
-        private readonly IMovieStatisticsService _movieStatisticsService;
-        private readonly IUpgradableSpecification _qualityUpgradableSpecification;
+        private new readonly IMovieStatisticsService _movieStatisticsService;
+        private new readonly IUpgradableSpecification _upgradableSpecification;
         private readonly ITagService _tagService;
-        private readonly IConfigService _configService;
 
         public CalendarController(IBroadcastSignalRMessage signalR,
                             IMovieService moviesService,
                             IMovieStatisticsService movieStatisticsService,
-                            IUpgradableSpecification qualityUpgradableSpecification,
+                            IUpgradableSpecification upgradableSpecification,
+                            ICustomFormatCalculationService formatCalculator,
                             ITagService tagService,
                             IConfigService configService)
-            : base(signalR)
+            : base(moviesService, movieStatisticsService, upgradableSpecification, formatCalculator, configService, signalR)
         {
             _moviesService = moviesService;
             _movieStatisticsService = movieStatisticsService;
-            _qualityUpgradableSpecification = qualityUpgradableSpecification;
+            _upgradableSpecification = upgradableSpecification;
             _tagService = tagService;
-            _configService = configService;
         }
 
         [NonAction]
@@ -80,7 +79,7 @@ namespace Whisparr.Api.V3.Calendar
             return resources.OrderBy(e => e.ReleaseDate).ToList();
         }
 
-        protected List<MovieResource> MapToResource(List<Movie> movies)
+        protected new List<MovieResource> MapToResource(List<Movie> movies)
         {
             var resources = new List<MovieResource>();
             var availDelay = _configService.AvailabilityDelay;
@@ -92,7 +91,7 @@ namespace Whisparr.Api.V3.Calendar
                     continue;
                 }
 
-                var resource = movie.ToResource(availDelay, _qualityUpgradableSpecification);
+                var resource = movie.ToResource(availDelay, _upgradableSpecification);
                 FetchAndLinkMovieStatistics(resource);
 
                 resources.Add(resource);

@@ -17,7 +17,7 @@ class MovieSearchCell extends Component {
     super(props, context);
 
     this.state = {
-      isDetailsModalOpen: false
+      isInteractiveSearchModalOpen: false
     };
   }
 
@@ -25,11 +25,11 @@ class MovieSearchCell extends Component {
   // Listeners
 
   onManualSearchPress = () => {
-    this.setState({ isDetailsModalOpen: true });
+    this.setState({ isInteractiveSearchModalOpen: true });
   };
 
-  onDetailsModalClose = () => {
-    this.setState({ isDetailsModalOpen: false });
+  onInteractiveSearchModalClose = () => {
+    this.setState({ isInteractiveSearchModalOpen: false });
   };
 
   //
@@ -60,10 +60,10 @@ class MovieSearchCell extends Component {
         />
 
         <MovieInteractiveSearchModalConnector
-          isOpen={this.state.isDetailsModalOpen}
+          isOpen={this.state.isInteractiveSearchModalOpen}
           movieId={movieId}
           movieTitle={movieTitle}
-          onModalClose={this.onDetailsModalClose}
+          onModalClose={this.onInteractiveSearchModalClose}
           {...otherProps}
         />
       </TableRowCell>

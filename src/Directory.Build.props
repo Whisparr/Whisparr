@@ -36,7 +36,7 @@
     <!--
         CS1591: Missing XML comment for publicly visible type or member 'Type_or_Member'
     -->
-    <NoWarn>$(NoWarn);CS1591;NETSDK1201</NoWarn>
+    <NoWarn>$(NoWarn);CS1591;NETSDK1201;NETSDK1138</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(RuntimeIdentifier)' != '' and '$(SelfContained)' == ''">
@@ -68,7 +68,7 @@
 
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
-  
+
   <!-- Test projects need bindingRedirects -->
   <PropertyGroup Condition="'$(WhisparrOutputType)'=='Test'">
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -81,7 +81,7 @@
     <Product>Whisparr</Product>
     <Company>whisparr.com</Company>
     <Copyright>Copyright 2014-$([System.DateTime]::Now.ToString('yyyy')) whisparr.com (GNU General Public v3)</Copyright>
-    
+
     <!-- Should be replaced by CI -->
     <AssemblyVersion>10.0.0.*</AssemblyVersion>
     <AssemblyConfiguration>$(Configuration)-dev</AssemblyConfiguration>
@@ -90,7 +90,7 @@
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
     <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-    
+
     <Deterministic Condition="$(AssemblyVersion.EndsWith('*'))">False</Deterministic>
 
     <PathMap>$(MSBuildProjectDirectory)=./$(MSBuildProjectName)/</PathMap>
@@ -118,7 +118,7 @@
   <!-- Sentry specific configuration: Only in Release mode -->
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <!-- https://docs.sentry.io/platforms/dotnet/configuration/msbuild/ -->
-    <!-- OrgSlug, ProjectSlug and AuthToken are required. 
+    <!-- OrgSlug, ProjectSlug and AuthToken are required.
     They can be set below, via argument to 'msbuild -p:' or environment variable -->
     <SentryOrg></SentryOrg>
     <SentryProject></SentryProject>

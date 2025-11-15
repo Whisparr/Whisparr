@@ -426,7 +426,7 @@ namespace NzbDrone.Core.Configuration
 
                         if (config.Count != 1)
                         {
-                            throw new InvalidConfigFileException($"{_configFile} is invalid. Please delete the config file and Sonarr will recreate it.");
+                            throw new InvalidConfigFileException($"{_configFile} is invalid. Please delete the config file and Whisparr will recreate it.");
                         }
 
                         return xDoc;

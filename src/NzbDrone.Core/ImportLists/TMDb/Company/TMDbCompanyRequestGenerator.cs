@@ -57,9 +57,9 @@ namespace NzbDrone.Core.ImportLists.TMDb.Company
 
             for (var page = 1; page <= totalPages; page++)
             {
-                requestBuilder.AddQueryParam("page", pageNumber, true);
+                requestBuilder.AddQueryParam("page", page, true);
 
-                Logger.Debug("Importing TMDb movies from: {0}", request.Url);
+                Logger.Debug("Importing TMDb movies from: {0}", requestBuilder.ResourceUrl);
 
                 var pageBuilder = requestBuilder.Clone().AddQueryParam("page", page.ToString());
                 yield return new ImportListRequest(pageBuilder.Accept(HttpAccept.Json).Build());

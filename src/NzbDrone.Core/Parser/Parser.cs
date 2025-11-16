@@ -129,6 +129,9 @@ namespace NzbDrone.Core.Parser
 
             // JAV-FC2
             new Regex(@"(?<code>FC2.*(?:PPV).*[0-9]{4,7})", RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
+            // Pattern for IDs in brackets like [SKMJ-649], (ABC-123), {XYZ-456}, [SKMJ_649], [SKMJ.649]
+            new Regex(@"[\[\(\{](?<code>[A-Z]{2,5}[- ][0-9]{3,5})[\]\)\}]", RegexOptions.IgnoreCase | RegexOptions.Compiled),
         };
 
         private static readonly Regex[] ReportTitleFolderRegex = new[]
@@ -999,6 +1002,7 @@ namespace NzbDrone.Core.Parser
                     result.StashId = m.Groups["stashid"].Value;
                 }
 
+                result.Code = string.Empty;
                 if (matchCollection[0].Groups["code"].Success)
                 {
                     result.Code = matchCollection[0].Groups["code"].Value;

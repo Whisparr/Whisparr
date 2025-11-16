@@ -110,5 +110,24 @@ namespace NzbDrone.Core.Test.ParserTests
             var cleanReleaseToken = Parser.Parser.NormalizeEpisodeTitle(releaseTokens);
             cleanReleaseToken.Should().Be(result);
         }
+
+        [TestCase("[SKMJ-649] Amateur female college students found at hot springs all over Japan. Would you like to try entering the men's bath with just a towel on? 15 ordinary tourists who were traveling normally until just now. All of them have raw creampie sin this luxurious 3-hour special.", "SKMJ-649")]
+        [TestCase("[ABC-123] Test Title", "ABC-123")]
+        [TestCase("(XYZ-456) Another Test", "XYZ-456")]
+        [TestCase("{DEF-789} Curly Brackets", "DEF-789")]
+        [TestCase("GHI-012 Starting Title", "GHI-012")]
+        [TestCase("[JKL_345] Underscore Separator", "JKL_345")]
+        [TestCase("[MNO.678] Dot Separator", "MNO.678")]
+        [TestCase("[ABCD 123] Space Separator", "ABCD 123")]
+        [TestCase("WXYZ-999 Title Without Brackets", "WXYZ-999")]
+        [TestCase("No External ID Here", null)]
+        [TestCase("", null)]
+        [TestCase("Random [Text] Without ID Pattern", null)]
+        [TestCase("[123] Number Only", null)]
+        [TestCase("[ABC] Letters Only", null)]
+        public void should_correctly_parse_code(string title, string result)
+        {
+            Parser.Parser.ParseMovieTitle(title)?.Code.Should().Be(result);
+        }
     }
 }

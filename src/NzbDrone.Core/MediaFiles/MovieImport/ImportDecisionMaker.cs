@@ -12,6 +12,7 @@ using NzbDrone.Core.Download;
 using NzbDrone.Core.Download.TrackedDownloads;
 using NzbDrone.Core.MediaFiles.MediaInfo;
 using NzbDrone.Core.Download.TrackedDownloads;
+using NzbDrone.Core.MediaFiles.MediaInfo;
 using NzbDrone.Core.MediaFiles.MovieImport.Aggregation;
 using NzbDrone.Core.Movies;
 using NzbDrone.Core.Parser.Model;

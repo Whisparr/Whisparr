@@ -31,5 +31,6 @@
     "AddDelayProfileError": "添加",
     "AddQualityProfileError": "添加",
     "AddRemotePathMappingError": "添加",
-    "UnableToAddANewListPleaseTryAgain": "添加"
+    "UnableToAddANewListPleaseTryAgain": "添加",
+    "Actions": "Actions"
 }

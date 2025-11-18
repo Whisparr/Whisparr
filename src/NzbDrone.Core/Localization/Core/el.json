@@ -1219,5 +1219,19 @@
     "Label": "Επιγραφή",
     "ListOptionsLoadError": "Δεν είναι δυνατή η φόρτωση των επιλογών λίστας",
     "SelectIndexerFlags": "Αναζήτηση ευρετηρίων",
-    "SetIndexerFlags": "Σημαίες ευρετηρίου"
+    "SetIndexerFlags": "Σημαίες ευρετηρίου",
+    "AutoTaggingSpecificationTag": "Ετικέτα",
+    "SslCertPassword": "Κωδικός πρόσβασης SSL Cert",
+    "SslCertPasswordHelpText": "Κωδικός πρόσβασης για το αρχείο pfx",
+    "SslCertPath": "Διαδρομή πιστοποίησης SSL",
+    "SslCertPathHelpText": "Διαδρομή στο αρχείο pfx",
+    "SslPort": "Θύρα SSL",
+    "MassSearchCancelWarning": "Αυτό δεν μπορεί να ακυρωθεί μόλις ξεκινήσει η απενεργοποίηση όλων των ευρετηριωτών σας.",
+    "MonitorSelected": "Επιλέχθηκε η οθόνη",
+    "MovieIsNotMonitored": "Η ταινία παρακολουθείται",
+    "SearchForAllMissingMovies": "Αναζήτηση για όλα τα βιβλία Cutoff Unmet",
+    "SearchForAllMissingMoviesConfirmationCount": "Είστε βέβαιοι ότι θέλετε να αναζητήσετε όλα τα άλμπουμ \"{0}\" που λείπουν;",
+    "SearchForCutoffUnmetMovies": "Αναζήτηση για όλα τα βιβλία Cutoff Unmet",
+    "SearchForCutoffUnmetMoviesConfirmationCount": "Είστε βέβαιοι ότι θέλετε να αναζητήσετε όλα τα άλμπουμ \"{0}\" που λείπουν;",
+    "UnmonitorSelected": "Επιλέχθηκε η κατάργηση παρακολούθησης"
 }

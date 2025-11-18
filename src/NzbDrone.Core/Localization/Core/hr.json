@@ -405,5 +405,6 @@
     "NotificationsKodiSettingsCleanLibrary": "Očisti Razinu Biblioteke",
     "NotificationsKodiSettingsGuiNotification": "Obavijest",
     "CustomFilter": "Dodaj proizvoljan filter",
-    "Label": "Oznaka"
+    "Label": "Oznaka",
+    "AutoTaggingSpecificationTag": "Oznaka"
 }

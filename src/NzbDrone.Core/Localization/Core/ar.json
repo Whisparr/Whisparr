@@ -1105,5 +1105,13 @@
     "CustomFilter": "مرشحات مخصصة",
     "ListOptionsLoadError": "تعذر تحميل خيارات القائمة",
     "SelectIndexerFlags": "حذف المفهرس",
-    "SetIndexerFlags": "أعلام المفهرس"
+    "SetIndexerFlags": "أعلام المفهرس",
+    "AutoTaggingSpecificationTag": "العلامات",
+    "SslCertPassword": "كلمة مرور شهادة SSL",
+    "SslCertPasswordHelpText": "كلمة المرور لملف pfx",
+    "SslCertPath": "مسار شهادة SSL",
+    "SslCertPathHelpText": "مسار ملف pfx",
+    "SslPort": "منفذ SSL",
+    "MassSearchCancelWarning": "لا يمكن إلغاء هذا بمجرد البدء دون إعادة تشغيل {appName}.",
+    "MovieIsNotMonitored": "الفيلم مراقب"
 }

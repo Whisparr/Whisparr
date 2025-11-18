@@ -1139,5 +1139,13 @@
     "CustomFilter": "Bộ lọc tùy chỉnh",
     "ListOptionsLoadError": "Không thể tải các tùy chọn danh sách",
     "SelectIndexerFlags": "Xóa trình lập chỉ mục",
-    "SetIndexerFlags": "Cờ chỉ mục"
+    "SetIndexerFlags": "Cờ chỉ mục",
+    "AutoTaggingSpecificationTag": "Thẻ",
+    "SslCertPassword": "Mật khẩu cảnh báo SSL",
+    "SslCertPasswordHelpText": "Mật khẩu cho tệp pfx",
+    "SslCertPath": "Đường dẫn cảnh báo SSL",
+    "SslCertPathHelpText": "Đường dẫn đến tệp pfx",
+    "SslPort": "Cổng SSL",
+    "MassSearchCancelWarning": "Điều này không thể bị hủy sau khi bắt đầu mà không khởi động lại {appName}.",
+    "MovieIsNotMonitored": "Phim không được giám sát"
 }

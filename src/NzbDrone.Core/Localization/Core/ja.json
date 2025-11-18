@@ -1077,5 +1077,13 @@
     "CustomFilter": "カスタムフィルター",
     "ListOptionsLoadError": "リストオプションを読み込めません",
     "SelectIndexerFlags": "インデクサーを削除する",
-    "SetIndexerFlags": "インデクサフラグ"
+    "SetIndexerFlags": "インデクサフラグ",
+    "AutoTaggingSpecificationTag": "タグ",
+    "SslCertPassword": "SSL証明書のパスワード",
+    "SslCertPasswordHelpText": "pfxファイルのパスワード",
+    "SslCertPath": "SSL証明書パス",
+    "SslCertPathHelpText": "pfxファイルへのパス",
+    "SslPort": "SSLポート",
+    "MassSearchCancelWarning": "{appName}を再起動せずに一度開始すると、これをキャンセルすることはできません。",
+    "MovieIsNotMonitored": "映画は監視されていません"
 }

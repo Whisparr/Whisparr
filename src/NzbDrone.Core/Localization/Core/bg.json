@@ -1170,5 +1170,18 @@
     "Label": "Етикет",
     "ListOptionsLoadError": "Опциите за списъка не могат да се заредят",
     "SelectIndexerFlags": "Изтрийте Indexer",
-    "SetIndexerFlags": "Индексиращи знамена"
+    "SetIndexerFlags": "Индексиращи знамена",
+    "DeletedReasonManual": "Файлът беше изтрит с помощта на {appName}, ръчно или чрез друг инструмент чрез API",
+    "AutoTaggingSpecificationTag": "Етикет",
+    "CustomFormatsSettingsTriggerInfo": "Персонализиран формат ще бъде приложен към издание или файл, когато съвпада с поне един от всеки от избраните различни типове условия.",
+    "SslCertPassword": "SSL сертификатна парола",
+    "SslCertPasswordHelpText": "Парола за pfx файл",
+    "SslCertPath": "SSL Cert Path",
+    "SslCertPathHelpText": "Път към pfx файл",
+    "SslPort": "SSL порт",
+    "BlocklistFilterHasNoItems": "Избраният филтър за блокиране не съдържа елементи",
+    "CutoffUnmetLoadError": "Грешка при зареждането на неизпълнени елементи за прекъсване",
+    "CutoffUnmetNoItems": "Няма неизпълнени елементи за прекъсване",
+    "MassSearchCancelWarning": "Това не може да бъде отменено след стартиране без рестартиране на {appName}.",
+    "MovieIsNotMonitored": "Филмът не се следи"
 }

@@ -325,5 +325,6 @@
     "ReleaseDate": "Dátum vydania albumu",
     "UnableToAddANewRemotePathMappingPleaseTryAgain": "Nie je možné pridať novú automatickú značku, skúste to znova.",
     "CustomFilter": "Pridať vlastný filter",
-    "Label": "Štítok"
+    "Label": "Štítok",
+    "AutoTaggingSpecificationTag": "Značka"
 }

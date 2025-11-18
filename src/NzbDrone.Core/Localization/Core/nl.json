@@ -1326,5 +1326,16 @@
     "Label": "Label",
     "ListOptionsLoadError": "Kon lijst opties niet inladen",
     "SelectIndexerFlags": "Zoek indexeerders",
-    "SetIndexerFlags": "Indexeerder Flags"
+    "SetIndexerFlags": "Indexeerder Flags",
+    "AutoTaggingSpecificationTag": "Tag",
+    "CustomFormatsSettingsTriggerInfo": "Een Aangepast Formaat wordt toegepast op een uitgave of bestand als het overeenkomt met ten minste één van de verschillende condities die zijn gekozen.",
+    "SslCertPassword": "SSL Certificaat Wachtwoord",
+    "SslCertPasswordHelpText": "Wachtwoord voor pfx bestand",
+    "SslCertPath": "SSL Certificaat Pad",
+    "SslCertPathHelpText": "Pad naar pfx bestand",
+    "SslPort": "SSL Poort",
+    "BlocklistFilterHasNoItems": "Het geselecteerde bloklijstfilter bevat geen items",
+    "External": "Extern",
+    "MassSearchCancelWarning": "Eenmaal gestart kan dit niet worden geannuleerd zonder al je indexeerders uit te schakelen.",
+    "MovieIsNotMonitored": "Film wordt gemonitord"
 }

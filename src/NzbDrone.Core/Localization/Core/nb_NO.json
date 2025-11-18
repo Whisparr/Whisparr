@@ -360,5 +360,6 @@
     "ImportMechanismHealthCheckMessage": "Fullført nedlastingshåndtering",
     "UnableToLoadRootFolders": "Kunne ikke legge til rotmappe",
     "CustomFilter": "Legg til eget filter",
-    "Label": "Merke"
+    "Label": "Merke",
+    "AutoTaggingSpecificationTag": "Merke"
 }

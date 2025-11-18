@@ -1102,5 +1102,13 @@
     "CustomFilter": "Sérsniðin síur",
     "ListOptionsLoadError": "Ekki er hægt að hlaða listavalkosti",
     "SelectIndexerFlags": "Eyða Indexer",
-    "SetIndexerFlags": "Indexer fánar"
+    "SetIndexerFlags": "Indexer fánar",
+    "AutoTaggingSpecificationTag": "Merkimiðar",
+    "SslCertPassword": "SSL vottorð lykilorð",
+    "SslCertPasswordHelpText": "Lykilorð fyrir PFX skrá",
+    "SslCertPath": "SSL vottunarleið",
+    "SslCertPathHelpText": "Leið að pfx skrá",
+    "SslPort": "SSL höfn",
+    "MassSearchCancelWarning": "Ekki er hægt að hætta við þetta þegar byrjað er án þess að endurræsa {appName}.",
+    "MovieIsNotMonitored": "Fylgst er með kvikmynd"
 }

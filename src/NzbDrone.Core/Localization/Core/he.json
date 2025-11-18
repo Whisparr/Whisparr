@@ -1083,7 +1083,7 @@
     "CutoffHelpText": "לאחר שהאיכות הזו תושג {appName} כבר לא תוריד סרטים",
     "QualityLimitsHelpText": "המגבלות מותאמות אוטומטית לזמן הריצה של הסרט.",
     "CutoffFormatScoreHelpText": "לאחר שהציון בפורמט מותאם אישית זה יגיע, {appName} כבר לא יוריד סרטים",
-    "AddConnection": "חיבור",
+    "AddConnection": "הוסף חיבור",
     "ApplicationURL": "אפליקציה",
     "AuthenticationMethod": "אימות",
     "Destination": "נתיב יעד",
@@ -1117,5 +1117,13 @@
     "CustomFilter": "מסננים מותאמים אישית",
     "ListOptionsLoadError": "לא ניתן לטעון אפשרויות רשימה",
     "SelectIndexerFlags": "מחק את אינדקס",
-    "SetIndexerFlags": "אינדקס דגלים"
+    "SetIndexerFlags": "אינדקס דגלים",
+    "AutoTaggingSpecificationTag": "טאג",
+    "SslCertPassword": "סיסמת אישורי SSL",
+    "SslCertPasswordHelpText": "סיסמה לקובץ pfx",
+    "SslCertPath": "נתיב אישורי SSL",
+    "SslCertPathHelpText": "נתיב לקובץ pfx",
+    "SslPort": "יציאת SSL",
+    "MassSearchCancelWarning": "לא ניתן לבטל פעולה זו לאחר שהתחילה מבלי להפעיל מחדש את {appName}.",
+    "MovieIsNotMonitored": "הסרט אינו מנוטר"
 }

@@ -1148,5 +1148,13 @@
     "Label": "Etiket",
     "ListOptionsLoadError": "Kan ikke indlæse listeindstillinger",
     "SelectIndexerFlags": "Slet Indexer",
-    "SetIndexerFlags": "Indexer Flag"
+    "SetIndexerFlags": "Indexer Flag",
+    "AutoTaggingSpecificationTag": "Etiket",
+    "SslCertPassword": "SSL-certificeret adgangskode",
+    "SslCertPasswordHelpText": "Adgangskode til pfx-fil",
+    "SslCertPath": "SSL-certificeret sti",
+    "SslCertPathHelpText": "Sti til pfx-fil",
+    "SslPort": "SSL-port",
+    "MassSearchCancelWarning": "Dette kan ikke annulleres når først det er startet uden at du deaktiverer alle dine indeksører.",
+    "MovieIsNotMonitored": "Film overvåges"
 }

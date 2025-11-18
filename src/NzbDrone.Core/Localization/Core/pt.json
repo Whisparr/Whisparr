@@ -1293,5 +1293,18 @@
     "Label": "Rótulo",
     "ListOptionsLoadError": "Não foi possível carregar as opções de lista",
     "SelectIndexerFlags": "Eliminar indexador",
-    "SetIndexerFlags": "Sinalizadores do indexador"
+    "SetIndexerFlags": "Sinalizadores do indexador",
+    "AutoTaggingSpecificationTag": "Etiqueta",
+    "CustomFormatsSettingsTriggerInfo": "Um formato personalizado será aplicado a uma versão ou ficheiro quando corresponder a pelo menos um dos diferentes tipos de condição escolhidos.",
+    "SslCertPassword": "Palavra-passe do certificado SSL",
+    "SslCertPasswordHelpText": "Palavra-passe do ficheiro PFX",
+    "SslCertPath": "Caminho do certificado SSL",
+    "SslCertPathHelpText": "Caminho para o ficheiro PFX",
+    "SslPort": "Porta SSL",
+    "BlocklistFilterHasNoItems": "O filtro de lista de bloqueios selecionado não contem entradas",
+    "External": "Externo",
+    "MassSearchCancelWarning": "Isso não pode ser cancelado uma vez iniciado sem desabilitar todos os seus indexadores.",
+    "MovieIsNotMonitored": "Filme não monitorado",
+    "SearchForAllMissingMovies": "Pesquisar todos os livros ausentes",
+    "SearchForCutoffUnmetMovies": "Pesquisar todos os livros com Limite não-correspondido"
 }

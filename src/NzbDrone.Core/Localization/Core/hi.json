@@ -1090,5 +1090,12 @@
     "CustomFilter": "कस्टम फ़िल्टर",
     "ListOptionsLoadError": "सूची विकल्पों को लोड करने में असमर्थ",
     "SelectIndexerFlags": "अनुक्रमणिका हटाएं",
-    "SetIndexerFlags": "इंडेक्स फ्लैग"
+    "SetIndexerFlags": "इंडेक्स फ्लैग",
+    "AutoTaggingSpecificationTag": "टैग",
+    "SslCertPassword": "एसएसएल सर्टिफिकेट पासवर्ड",
+    "SslCertPasswordHelpText": "Pfx फ़ाइल के लिए पासवर्ड",
+    "SslCertPath": "एसएसएल सर्टिफिकेट पाथ",
+    "SslCertPathHelpText": "Pfx फ़ाइल का पथ",
+    "SslPort": "एसएसएल पोर्ट",
+    "MovieIsNotMonitored": "मूवी अनमनी है"
 }

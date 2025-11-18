@@ -1097,5 +1097,13 @@
     "CustomFilter": "ตัวกรองที่กำหนดเอง",
     "ListOptionsLoadError": "ไม่สามารถโหลดตัวเลือกรายการ",
     "SelectIndexerFlags": "ลบ Indexer",
-    "SetIndexerFlags": "ดัชนีดัชนี"
+    "SetIndexerFlags": "ดัชนีดัชนี",
+    "AutoTaggingSpecificationTag": "แท็ก",
+    "SslCertPassword": "รหัสผ่านใบรับรอง SSL",
+    "SslCertPasswordHelpText": "รหัสผ่านสำหรับไฟล์ pfx",
+    "SslCertPath": "เส้นทางใบรับรอง SSL",
+    "SslCertPathHelpText": "พา ธ ไปยังไฟล์ pfx",
+    "SslPort": "พอร์ต SSL",
+    "MassSearchCancelWarning": "ไม่สามารถยกเลิกได้เมื่อเริ่มต้นโดยไม่ต้องรีสตาร์ท {appName}",
+    "MovieIsNotMonitored": "มีการตรวจสอบภาพยนตร์"
 }

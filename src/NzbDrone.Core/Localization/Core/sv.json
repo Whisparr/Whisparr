@@ -1125,5 +1125,17 @@
     "Label": "Märka",
     "ListOptionsLoadError": "Det går inte att ladda listalternativ",
     "SelectIndexerFlags": "Sök Indexers",
-    "SetIndexerFlags": "Indexerflaggor"
+    "SetIndexerFlags": "Indexerflaggor",
+    "AutoTaggingSpecificationTag": "Tagg",
+    "SslCertPassword": "SSL-certifierat lösenord",
+    "SslCertPasswordHelpText": "Lösenord för pfx-fil",
+    "SslCertPath": "SSL-certifierad sökväg",
+    "SslCertPathHelpText": "Sökväg till pfx-fil",
+    "SslPort": "SSL-port",
+    "MassSearchCancelWarning": "Detta kan inte avbrytas en gång startat utan att {appName} startas om.",
+    "MonitorSelected": "Bevakad Markerade",
+    "MovieIsNotMonitored": "FIlmen är bevakad",
+    "SearchForAllMissingMovies": "Sök efter alla saknade böcker",
+    "SearchForCutoffUnmetMovies": "Sök efter alla vars krav inte är uppnådda böcker",
+    "UnmonitorSelected": "Obevakade Markerade"
 }

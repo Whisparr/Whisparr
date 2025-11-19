@@ -51,5 +51,17 @@
     "UnableToAddANewRemotePathMappingPleaseTryAgain": "افزودن برچسب خودکار جدید ناموفق بود، لطفا مجددا تلاش کنید.",
     "Connection": "افزودن پیوند",
     "ConnectionLost": "افزودن پیوند",
-    "DelayProfile": "افزودن نمایه تاخیر"
+    "DelayProfile": "افزودن نمایه تاخیر",
+    "AddCustomFormatError": "افزودن برچسب خودکار جدید ناموفق بود، لطفا مجددا تلاش کنید.",
+    "AddExclusion": "افزودن لیست واردات مستثنی",
+    "AddImportListExclusionError": "افزودن شرط جدید ناموفق بود، لطفا مجددا تلاش کنید.",
+    "EditConnectionImplementation": "افزودن شرط - {implementationName}",
+    "EditReleaseProfile": "افزودن نمایه تاخیر",
+    "MinutesSixty": "۶۰ دقیقه: {0}",
+    "UnableToAddANewCustomFormatPleaseTryAgain": "افزودن برچسب خودکار جدید ناموفق بود، لطفا مجددا تلاش کنید.",
+    "UnableToAddANewListExclusionPleaseTryAgain": "افزودن شرط جدید ناموفق بود، لطفا مجددا تلاش کنید.",
+    "ReleaseProfiles": "افزودن نمایه تاخیر",
+    "Collection": "افزودن پیوند",
+    "Collections": "افزودن پیوند",
+    "Connect": "افزودن پیوند"
 }

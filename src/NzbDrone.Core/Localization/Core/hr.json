@@ -406,5 +406,22 @@
     "NotificationsKodiSettingsGuiNotification": "Obavijest",
     "CustomFilter": "Dodaj proizvoljan filter",
     "Label": "Oznaka",
-    "AutoTaggingSpecificationTag": "Oznaka"
+    "AutoTaggingSpecificationTag": "Oznaka",
+    "ClearBlocklistMessageText": "Jeste li sigurni da želite izbrisati stavku {0} iz reda?",
+    "CustomFormatJson": "Prilagođeni format",
+    "DeleteSelectedDownloadClientsMessageText": "Jeste li sigurni da želite obrisati ovaj profil odgode?",
+    "OneMinute": "minute",
+    "DeleteRestrictionHelpText": "Jeste li sigurni da želite obrisati ovaj profil odgode?",
+    "DeleteDelayProfile": "profil verzije",
+    "DeleteSelectedDownloadClients": "Klijent za preuzimanje",
+    "Discover": "Discord",
+    "DownloadClientValidationAuthenticationFailure": "Potrebna Autentikacija",
+    "EditCollection": "Kolekcija",
+    "ShowCertification": "Certifikacija",
+    "Download": "Ponovno preuzimanje neuspješno",
+    "BypassDelayIfAboveCustomFormatScoreMinimumScore": "Prilagođeni format",
+    "Unreleased": "verzija",
+    "CountImportListsSelected": "{count} Kolekcija odabrano",
+    "MinimumCustomFormatScore": "Prilagođeni format",
+    "NotificationsPushcutSettingsNotificationName": "Obavijest"
 }

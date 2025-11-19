@@ -1465,5 +1465,20 @@
     "SearchForAllMissingMoviesConfirmationCount": "Biztos benne, hogy megkeresi az összes \"{0}\" hiányzó albumot?",
     "SearchForCutoffUnmetMovies": "Keresse meg az összes Megfelelő minőség alá eső könyvet",
     "SearchForCutoffUnmetMoviesConfirmationCount": "Biztosan megkeresi az összes {totalRecords} hiányzó epizódot?",
-    "UnmonitorSelected": "Kijelöltek monitorozásának törlése"
+    "UnmonitorSelected": "Kijelöltek monitorozásának törlése",
+    "MovieDownloadFailedTooltip": "Az epizód letöltése nem sikerült",
+    "MovieDownloadIgnoredTooltip": "Letöltés Figyelmen kívül hagyva",
+    "MovieMatchType": "Filmkeresés típusai",
+    "NotificationsPushcutSettingsNotificationName": "Értesítés",
+    "NotificationsSlackSettingsWebhookUrlHelpText": "Discord csatorna webhook url",
+    "NotificationsValidationUnableToConnectToService": "Nem sikerült csatlakozni a következőhöz: {clientName}",
+    "OnManualInteractionRequired": "A kézi interakciós mezőkön",
+    "OnManualInteractionRequiredHelpText": "A kézi interakciós mezőkön",
+    "OneMinute": "percek",
+    "ReleaseHash": "Megjelenés Dátuma",
+    "ShowImdbRating": "IMDb Értékelés",
+    "ShowRottenTomatoesRating": "Tomato Értékelés",
+    "ShowTmdbRating": "TMDb Értékelés",
+    "Trending": "Függőben levő",
+    "MovieMissingFromDisk": "Az epizód hiányzik a lemezről"
 }

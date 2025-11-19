@@ -1147,5 +1147,21 @@
     "SslCertPathHelpText": "Đường dẫn đến tệp pfx",
     "SslPort": "Cổng SSL",
     "MassSearchCancelWarning": "Điều này không thể bị hủy sau khi bắt đầu mà không khởi động lại {appName}.",
-    "MovieIsNotMonitored": "Phim không được giám sát"
+    "MovieIsNotMonitored": "Phim không được giám sát",
+    "ClearBlocklistMessageText": "Bạn có chắc chắn muốn xóa {0} khỏi hàng đợi không?",
+    "CustomFormatJson": "Định dạng tùy chỉnh",
+    "SearchForAllMissingMovies": "Bắt đầu tìm kiếm phim bị thiếu",
+    "ReleaseHash": "Ngày phát hành",
+    "ResetDefinitions": "Định nghĩa chất lượng",
+    "Trending": "Đang chờ xử lý",
+    "EditCollection": "Bộ sưu tập",
+    "EditSelectedMovies": "Xóa các tệp phim đã chọn",
+    "UnableToLoadCollections": "Không thể tải Hạn chế",
+    "EditConnectionImplementation": "Thêm điều kiện - {implementationName}",
+    "OneMinute": "Phút",
+    "SetReleaseGroup": "Nhóm phát hành",
+    "LanguagesLoadError": "Không thể tải thẻ",
+    "DownloadClientFloodSettingsStartOnAdd": "Tìm kiếm trên Thêm",
+    "ImportListMultipleMissingRoots": "Nhiều thư mục gốc bị thiếu: {0}",
+    "NotificationsPushcutSettingsNotificationName": "Chứng chỉ"
 }

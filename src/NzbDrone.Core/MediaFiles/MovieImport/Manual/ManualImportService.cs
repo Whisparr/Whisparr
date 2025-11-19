@@ -6,6 +6,7 @@ using NLog;
 using NzbDrone.Common.Disk;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Instrumentation.Extensions;
+using NzbDrone.Core.Configuration;
 using NzbDrone.Core.CustomFormats;
 using NzbDrone.Core.DecisionEngine;
 using NzbDrone.Core.Download;
@@ -16,6 +17,7 @@ using NzbDrone.Core.MediaFiles.MovieImport.Aggregation;
 using NzbDrone.Core.Messaging.Commands;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.Movies;
+using NzbDrone.Core.Movies.Studios;
 using NzbDrone.Core.Parser;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.Qualities;
@@ -42,6 +44,8 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Manual
         private readonly IDownloadedMovieImportService _downloadedMovieImportService;
         private readonly ICustomFormatCalculationService _formatCalculator;
         private readonly IEventAggregator _eventAggregator;
+        private readonly IConfigService _configService;
+        private readonly IStudioService _studioService;
         private readonly Logger _logger;
 
         public ManualImportService(IDiskProvider diskProvider,
@@ -56,6 +60,8 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Manual
                                    IDownloadedMovieImportService downloadedMovieImportService,
                                    ICustomFormatCalculationService formatCalculator,
                                    IEventAggregator eventAggregator,
+                                   IConfigService configService,
+                                   IStudioService studioService,
                                    Logger logger)
         {
             _diskProvider = diskProvider;
@@ -70,6 +76,8 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Manual
             _downloadedMovieImportService = downloadedMovieImportService;
             _formatCalculator = formatCalculator;
             _eventAggregator = eventAggregator;
+            _configService = configService;
+            _studioService = studioService;
             _logger = logger;
         }
 
@@ -150,7 +158,23 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Manual
             {
                 try
                 {
-                    movie = _parsingService.GetMovie(directoryInfo.Name);
+                    var hasSubfolders = _diskScanService.FilterPaths(rootFolder, _diskProvider.GetDirectories(baseFolder)).Any();
+
+                    // Check if the subfolder is a better match
+                    // Allow {Studio}/{Movie Title} structure
+                    if (!hasSubfolders)
+                    {
+                        movie = _parsingService.GetMovie(directoryInfo.Name);
+                        if (movie != null && movie.Title.CleanStudioTitle().Equals(directoryInfo.Name.CleanStudioTitle()))
+                        {
+                            // Check if the folder was a studio
+                            var isStudioName = _studioService.FindAllByTitle(movie.Title).Any();
+                            if (isStudioName)
+                            {
+                                movie = null;
+                            }
+                        }
+                    }
                 }
                 catch (MultipleMoviesFoundException e)
                 {
@@ -177,10 +201,11 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Manual
                 // If the movie is unknown for the directory and there are more than 100 files in the folder process the first 100 items before returning.
                 var files = _diskScanService.FilterPaths(rootFolder, _diskScanService.GetVideoFiles(baseFolder, false));
 
-                if (files.Count > 100)
+                var folderLimit =  _configService.WhisparrFolderLimit;
+                if (files.Count > folderLimit)
                 {
                     _logger.Warn("Found more than 100 files to import. Using only the first 100");
-                    files = files.GetRange(0, 99);
+                    files = files.GetRange(0, folderLimit - 1);
                 }
 
                 var subfolders = _diskScanService.FilterPaths(rootFolder, _diskProvider.GetDirectories(baseFolder));

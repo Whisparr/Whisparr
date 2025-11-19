@@ -277,10 +277,11 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
                     if (localMovie.MediaInfo?.RunTime != null && localMovie.MediaInfo.RunTime.TotalMinutes > 0 && localMovie.Movie.MovieMetadata.Value.Runtime > 0)
                     {
                         var runtime = localMovie.MediaInfo.RunTime.TotalMinutes;
+                        var limit = _configService.WhisparrValidateRuntimeLimit;
 
-                        if (runtime < localMovie.Movie.MovieMetadata.Value.Runtime - 1 || runtime > localMovie.Movie.MovieMetadata.Value.Runtime + 1)
+                        if (runtime < localMovie.Movie.MovieMetadata.Value.Runtime - limit || runtime > localMovie.Movie.MovieMetadata.Value.Runtime + limit)
                         {
-                            _logger.Warn($"Runtime of {localMovie.Movie.MovieMetadata.Value.Runtime} expected but {runtime} Found");
+                            _logger.Warn($"Runtime of {localMovie.Movie.MovieMetadata.Value.Runtime} expected but {runtime} Found for {localMovie.Movie.ToString()}");
                             if (_configService.WhisparrValidateRuntime)
                             {
                                 decision = new ImportDecision(localMovie, new Rejection($"Runtime of {localMovie.Movie.MovieMetadata.Value.Runtime} expected but {runtime} Found"));

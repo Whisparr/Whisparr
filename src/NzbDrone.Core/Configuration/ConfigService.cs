@@ -492,6 +492,20 @@ namespace NzbDrone.Core.Configuration
             set { SetValue("WhisparrValidateRuntime", value); }
         }
 
+        public int WhisparrValidateRuntimeLimit
+        {
+            get { return GetValueInt("WhisparrValidateRuntimeLimit", 1); }
+
+            set { SetValue("WhisparrValidateRuntimeLimit", value); }
+        }
+
+        public int WhisparrFolderLimit
+        {
+            get { return GetValueInt("WhisparrFolderLimit", 100); }
+
+            set { SetValue("WhisparrFolderLimit", value); }
+        }
+
         private string GetValue(string key)
         {
             return GetValue(key, string.Empty);

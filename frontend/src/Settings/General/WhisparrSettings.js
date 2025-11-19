@@ -18,7 +18,8 @@ function WhisparrSettings(props) {
     whisparrAutoMatchOnDate,
     whisparrCacheMovieAPI,
     whisparrCachePerformerAPI,
-    whisparrValidateRuntime
+    whisparrValidateRuntime,
+    whisparrValidateRuntimeLimit
   } = settings;
 
   if (!advancedSettings) {
@@ -85,6 +86,20 @@ function WhisparrSettings(props) {
           helpText={translate('WhisparrValidateRuntimeHelpText')}
           onChange={onInputChange}
           {...whisparrValidateRuntime}
+        />
+      </FormGroup>
+      <FormGroup
+        advancedSettings={advancedSettings}
+        isAdvanced={true}
+      >
+        <FormLabel>{translate('WhisparrValidateRuntimeLimit')}</FormLabel>
+
+        <FormInputGroup
+          type={inputTypes.NUMBER}
+          name="whisparrValidateRuntimeLimit"
+          helpText={translate('WhisparrValidateRuntimeLimittHelpText')}
+          onChange={onInputChange}
+          {...whisparrValidateRuntimeLimit}
         />
       </FormGroup>
     </FieldSet>

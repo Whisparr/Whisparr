@@ -268,6 +268,21 @@ class MediaManagement extends Component {
                         />
                       </FormGroup>
 
+                      <FormGroup
+                        advancedSettings={advancedSettings}
+                        isAdvanced={true}
+                      >
+                        <FormLabel>{translate('WhisparrFolderLimit')}</FormLabel>
+
+                        <FormInputGroup
+                          type={inputTypes.NUMBER}
+                          name="whisparrFolderLimit"
+                          helpText={translate('WhisparrFolderLimitHelpText')}
+                          onChange={onInputChange}
+                          {...settings.whisparrFolderLimit}
+                        />
+                      </FormGroup>
+
                       {
                         settings.importExtraFiles.value ?
                           <FormGroup

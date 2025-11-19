@@ -48,6 +48,7 @@ namespace Whisparr.Api.V3.Config
         public bool WhisparrCacheMovieAPI { get; set; }
         public bool WhisparrCachePerformerAPI { get; set; }
         public bool WhisparrValidateRuntime { get; set; }
+        public int WhisparrValidateRuntimeLimit { get; set; }
     }
 
     public static class HostConfigResourceMapper
@@ -95,7 +96,8 @@ namespace Whisparr.Api.V3.Config
                 WhisparrAutoMatchOnDate = configService.WhisparrAutoMatchOnDate,
                 WhisparrCacheMovieAPI = configService.WhisparrCacheMovieAPI,
                 WhisparrCachePerformerAPI = configService.WhisparrCachePerformerAPI,
-                WhisparrValidateRuntime = configService.WhisparrValidateRuntime
+                WhisparrValidateRuntime = configService.WhisparrValidateRuntime,
+                WhisparrValidateRuntimeLimit = configService.WhisparrValidateRuntimeLimit
             };
         }
     }

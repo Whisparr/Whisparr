@@ -232,7 +232,8 @@ export const deleteStudio = createThunk(DELETE_STUDIO, (payload) => {
   return {
     ...payload,
     queryParams: {
-      deleteFiles: payload.deleteFiles
+      deleteFiles: payload.deleteFiles,
+      addImportExclusion: payload.addImportExclusion
     }
   };
 });

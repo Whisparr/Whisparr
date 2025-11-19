@@ -17,7 +17,6 @@ import { bulkDeleteMovie, setDeleteOption } from 'Store/Actions/movieActions';
 import createAllMoviesSelector from 'Store/Selectors/createAllMoviesSelector';
 import { CheckInputChanged } from 'typings/inputs';
 import formatBytes from 'Utilities/Number/formatBytes';
-import formatBytes from 'Utilities/Number/formatBytes';
 import translate from 'Utilities/String/translate';
 import styles from './DeleteMovieModalContent.css';
 
@@ -147,11 +146,6 @@ function DeleteMovieModalContent(props: DeleteMovieModalContentProps) {
               type={inputTypes.CHECK}
               name="deleteFiles"
               value={deleteFiles}
-              helpText={
-                movies.length > 1
-                  ? translate('DeleteMovieFoldersHelpText')
-                  : translate('DeleteMovieFolderHelpText')
-              }
               helpText={
                 movies.length > 1
                   ? translate('DeleteMovieFoldersHelpText')

@@ -423,8 +423,6 @@ namespace NzbDrone.Core.Configuration
 
                         var xDoc = XDocument.Parse(_diskProvider.ReadAllText(_configFile));
                         var config = xDoc.Descendants(CONFIG_ELEMENT_NAME).ToList();
-                        var xDoc = XDocument.Parse(_diskProvider.ReadAllText(_configFile));
-                        var config = xDoc.Descendants(CONFIG_ELEMENT_NAME).ToList();
 
                         if (config.Count != 1)
                         {

@@ -384,7 +384,8 @@ export const deletePerformer = createThunk(DELETE_PERFORMER, (payload) => {
   return {
     ...payload,
     queryParams: {
-      deleteFiles: payload.deleteFiles
+      deleteFiles: payload.deleteFiles,
+      addImportExclusion: payload.addImportExclusion
     }
   };
 });

@@ -241,7 +241,6 @@
 }
 
 @media only screen and (max-width: $breakpointLarge) {
-
   .poster,
   .movieNavigationButtons {
     display: none;

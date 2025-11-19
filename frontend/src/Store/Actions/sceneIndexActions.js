@@ -156,7 +156,7 @@ export const defaultState = {
   sortPredicates: {
     ...sortPredicates,
 
-    studio: function (item) {
+    studio: function(item) {
       const studio = item.studioTitle;
 
       return studio ? studio.toLowerCase() : '';
@@ -196,7 +196,7 @@ export const defaultState = {
       name: 'studioTitle',
       label: () => translate('Studio'),
       type: filterBuilderTypes.EXACT,
-      optionsSelector: function (items) {
+      optionsSelector: function(items) {
         const tagList = items.reduce((acc, scene) => {
           if (scene.studioTitle) {
             acc.push({
@@ -254,7 +254,7 @@ export const defaultState = {
       name: 'genres',
       label: () => translate('Genres'),
       type: filterBuilderTypes.ARRAY,
-      optionsSelector: function (items) {
+      optionsSelector: function(items) {
         const genreList = items.reduce((acc, scene) => {
           scene.genres.forEach((genre) => {
             acc.push({
@@ -320,13 +320,13 @@ export const reducers = createHandleActions({
   [SET_MOVIE_SORT]: createSetClientSideCollectionSortReducer(section),
   [SET_MOVIE_FILTER]: createSetClientSideCollectionFilterReducer(section),
 
-  [SET_MOVIE_VIEW]: function (state, { payload }) {
+  [SET_MOVIE_VIEW]: function(state, { payload }) {
     return Object.assign({}, state, { view: payload.view });
   },
 
   [SET_MOVIE_TABLE_OPTION]: createSetTableOptionReducer(section),
 
-  [SET_MOVIE_POSTER_OPTION]: function (state, { payload }) {
+  [SET_MOVIE_POSTER_OPTION]: function(state, { payload }) {
     const posterOptions = state.posterOptions;
 
     return {
@@ -338,7 +338,7 @@ export const reducers = createHandleActions({
     };
   },
 
-  [SET_MOVIE_OVERVIEW_OPTION]: function (state, { payload }) {
+  [SET_MOVIE_OVERVIEW_OPTION]: function(state, { payload }) {
     const overviewOptions = state.overviewOptions;
 
     return {
@@ -350,7 +350,7 @@ export const reducers = createHandleActions({
     };
   },
 
-  [SET_MOVIE_INDEX_MODE]: function (state, { payload }) {
+  [SET_MOVIE_INDEX_MODE]: function(state, { payload }) {
     return Object.assign({}, state, { indexMode: payload.indexMode });
   }
 

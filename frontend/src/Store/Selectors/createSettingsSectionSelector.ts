@@ -13,10 +13,10 @@ type GetSectionState<Name extends SettingNames> =
     : never;
 type GetSettingsSectionItemType<Name extends SettingNames> =
   GetSectionState<Name> extends AppSectionItemState<infer R>
-  ? R
-  : GetSectionState<Name> extends AppSectionState<infer R>
-  ? R
-  : never;
+    ? R
+    : GetSectionState<Name> extends AppSectionState<infer R>
+    ? R
+    : never;
 
 type AppStateWithPending<Name extends SettingNames> = {
   item?: GetSettingsSectionItemType<Name>;

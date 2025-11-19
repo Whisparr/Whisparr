@@ -217,76 +217,76 @@ class Missing extends Component {
         <PageContentBody>
           {
             isFetching && !isPopulated &&
-            <LoadingIndicator />
+              <LoadingIndicator />
           }
 
           {
             !isFetching && error &&
-            <Alert kind={kinds.DANGER}>
-              {translate('MissingLoadError')}
-            </Alert>
+              <Alert kind={kinds.DANGER}>
+                {translate('MissingLoadError')}
+              </Alert>
           }
 
           {
             isPopulated && !error && !items.length &&
-            <Alert kind={kinds.INFO}>
-              {translate('MissingNoItems')}
-            </Alert>
+              <Alert kind={kinds.INFO}>
+                {translate('MissingNoItems')}
+              </Alert>
           }
 
           {
             isPopulated && !error && !!items.length &&
-            <div>
-              <Table
-                columns={columns}
-                selectAll={true}
-                allSelected={allSelected}
-                allUnselected={allUnselected}
-                {...otherProps}
-                onSelectAllChange={this.onSelectAllChange}
-              >
-                <TableBody>
-                  {
-                    items.map((item) => {
-                      return (
-                        <MissingRow
-                          key={item.id}
-                          isSelected={selectedState[item.id]}
-                          columns={columns}
-                          {...item}
-                          onSelectedChange={this.onSelectedChange}
-                        />
-                      );
-                    })
+              <div>
+                <Table
+                  columns={columns}
+                  selectAll={true}
+                  allSelected={allSelected}
+                  allUnselected={allUnselected}
+                  {...otherProps}
+                  onSelectAllChange={this.onSelectAllChange}
+                >
+                  <TableBody>
+                    {
+                      items.map((item) => {
+                        return (
+                          <MissingRow
+                            key={item.id}
+                            isSelected={selectedState[item.id]}
+                            columns={columns}
+                            {...item}
+                            onSelectedChange={this.onSelectedChange}
+                          />
+                        );
+                      })
+                    }
+                  </TableBody>
+                </Table>
+
+                <TablePager
+                  totalRecords={totalRecords}
+                  isFetching={isFetching}
+                  {...otherProps}
+                />
+
+                <ConfirmModal
+                  isOpen={isConfirmSearchAllMissingModalOpen}
+                  kind={kinds.DANGER}
+                  title={translate('SearchForAllMissingMovies')}
+                  message={
+                    <div>
+                      <div>
+                        {translate('SearchForAllMissingMoviesConfirmationCount', { totalRecords })}
+                      </div>
+                      <div>
+                        {translate('MassSearchCancelWarning')}
+                      </div>
+                    </div>
                   }
-                </TableBody>
-              </Table>
-
-              <TablePager
-                totalRecords={totalRecords}
-                isFetching={isFetching}
-                {...otherProps}
-              />
-
-              <ConfirmModal
-                isOpen={isConfirmSearchAllMissingModalOpen}
-                kind={kinds.DANGER}
-                title={translate('SearchForAllMissingMovies')}
-                message={
-                  <div>
-                    <div>
-                      {translate('SearchForAllMissingMoviesConfirmationCount', { totalRecords })}
-                    </div>
-                    <div>
-                      {translate('MassSearchCancelWarning')}
-                    </div>
-                  </div>
-                }
-                confirmLabel={translate('Search')}
-                onConfirm={this.onSearchAllMissingConfirmed}
-                onCancel={this.onConfirmSearchAllMissingModalClose}
-              />
-            </div>
+                  confirmLabel={translate('Search')}
+                  onConfirm={this.onSearchAllMissingConfirmed}
+                  onCancel={this.onConfirmSearchAllMissingModalClose}
+                />
+              </div>
           }
 
           <InteractiveImportModal

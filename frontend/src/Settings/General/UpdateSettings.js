@@ -105,20 +105,20 @@ function UpdateSettings(props) {
 
         {
           updateMechanism.value === 'script' &&
-          <FormGroup
-            advancedSettings={advancedSettings}
-            isAdvanced={true}
-          >
-            <FormLabel>{translate('ScriptPath')}</FormLabel>
+            <FormGroup
+              advancedSettings={advancedSettings}
+              isAdvanced={true}
+            >
+              <FormLabel>{translate('ScriptPath')}</FormLabel>
 
-            <FormInputGroup
-              type={inputTypes.TEXT}
-              name="updateScriptPath"
-              helpText={translate('UpdateScriptPathHelpText')}
-              onChange={onInputChange}
-              {...updateScriptPath}
-            />
-          </FormGroup>
+              <FormInputGroup
+                type={inputTypes.TEXT}
+                name="updateScriptPath"
+                helpText={translate('UpdateScriptPathHelpText')}
+                onChange={onInputChange}
+                {...updateScriptPath}
+              />
+            </FormGroup>
         }
       </div>
     </FieldSet>

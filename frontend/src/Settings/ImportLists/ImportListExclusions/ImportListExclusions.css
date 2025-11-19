@@ -57,8 +57,8 @@
 }
 
 .title {
-  align-items: center;
   display: flex;
+  align-items: center;
   flex: 1 1 0;
   overflow: hidden;
   min-width: 0;

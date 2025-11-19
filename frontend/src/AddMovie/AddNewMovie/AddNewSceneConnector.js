@@ -110,7 +110,7 @@ AddNewSceneConnector.propTypes = {
   lookupScene: PropTypes.func.isRequired,
   clearAddMovie: PropTypes.func.isRequired,
   fetchRootFolders: PropTypes.func.isRequired,
-  fetchListImportExclusions: PropTypes.func.isRequired,
+  fetchImportListExclusions: PropTypes.func.isRequired,
   fetchQueueDetails: PropTypes.func.isRequired,
   clearQueueDetails: PropTypes.func.isRequired
 };

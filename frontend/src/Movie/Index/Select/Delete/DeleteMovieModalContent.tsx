@@ -160,18 +160,18 @@ function DeleteMovieModalContent(props: DeleteMovieModalContentProps) {
         <div className={styles.message}>
           {deleteFiles
             ? translate('DeleteMovieFolderCountWithFilesConfirmation', {
-              count: movies.length,
-            })
+                count: movies.length,
+              })
             : translate('DeleteMovieFolderCountConfirmation', {
-              count: movies.length,
-            })}
+                count: movies.length,
+              })}
           {deleteFiles
             ? translate('DeleteMovieFolderCountWithFilesConfirmation', {
-              count: movies.length,
-            })
+                count: movies.length,
+              })
             : translate('DeleteMovieFolderCountConfirmation', {
-              count: movies.length,
-            })}
+                count: movies.length,
+              })}
         </div>
 
         <ul>

@@ -1105,5 +1105,22 @@
     "SslCertPathHelpText": "พา ธ ไปยังไฟล์ pfx",
     "SslPort": "พอร์ต SSL",
     "MassSearchCancelWarning": "ไม่สามารถยกเลิกได้เมื่อเริ่มต้นโดยไม่ต้องรีสตาร์ท {appName}",
-    "MovieIsNotMonitored": "มีการตรวจสอบภาพยนตร์"
+    "MovieIsNotMonitored": "มีการตรวจสอบภาพยนตร์",
+    "CustomFormatJson": "รูปแบบที่กำหนดเอง",
+    "ClearBlocklistMessageText": "แน่ใจไหมว่าต้องการนำ {0} ออกจากคิว",
+    "OneMinute": "นาที",
+    "SetReleaseGroup": "กลุ่มเผยแพร่",
+    "NotificationsPushcutSettingsNotificationName": "การรับรอง",
+    "Trending": "รอดำเนินการ",
+    "SearchForAllMissingMovies": "เริ่มค้นหาภาพยนตร์ที่หายไป",
+    "AudioLanguages": "หลายภาษา",
+    "LanguagesLoadError": "ไม่สามารถโหลดแท็ก",
+    "DeleteSelectedDownloadClientsMessageText": "แน่ใจไหมว่าต้องการลบการยกเว้นรายการนำเข้านี้",
+    "DownloadClientFloodSettingsStartOnAdd": "ค้นหาใน Add",
+    "EditCollection": "คอลเลกชัน",
+    "EditSelectedMovies": "ลบไฟล์ภาพยนตร์ที่เลือก",
+    "ReleaseHash": "วันที่วางจำหน่าย",
+    "ImportListMultipleMissingRoots": "ไม่มีโฟลเดอร์รากหลายโฟลเดอร์: {0}",
+    "ResetDefinitions": "คำจำกัดความคุณภาพ",
+    "UnableToLoadCollections": "ไม่สามารถโหลดข้อ จำกัด"
 }

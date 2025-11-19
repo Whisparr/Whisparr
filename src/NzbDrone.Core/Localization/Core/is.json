@@ -1110,5 +1110,20 @@
     "SslCertPathHelpText": "Leið að pfx skrá",
     "SslPort": "SSL höfn",
     "MassSearchCancelWarning": "Ekki er hægt að hætta við þetta þegar byrjað er án þess að endurræsa {appName}.",
-    "MovieIsNotMonitored": "Fylgst er með kvikmynd"
+    "MovieIsNotMonitored": "Fylgst er með kvikmynd",
+    "ImportListMultipleMissingRoots": "Margar rótarmöppur vantar: {0}",
+    "ReleaseHash": "Slepptu dagsetningum",
+    "SearchForAllMissingMovies": "Byrjaðu að leita að kvikmynd sem vantar",
+    "AudioLanguages": "Fjöltyngt",
+    "LanguagesLoadError": "Ekki er hægt að hlaða merkin",
+    "NotificationsPushcutSettingsNotificationName": "Vottun",
+    "OneMinute": "Fundargerð",
+    "EditSelectedMovies": "Eyða völdum kvikmyndaskrám",
+    "DownloadClientFloodSettingsStartOnAdd": "Leitaðu á Add",
+    "ResetDefinitions": "Gæðaskilgreiningar",
+    "Trending": "Í bið",
+    "CustomFormatJson": "Sérsniðið snið",
+    "EditCollection": "Söfnun",
+    "SetReleaseGroup": "Sleppihópur",
+    "UnableToLoadCollections": "Ekki er hægt að hlaða takmarkanir"
 }

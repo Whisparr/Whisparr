@@ -1137,5 +1137,21 @@
     "MovieIsNotMonitored": "FIlmen är bevakad",
     "SearchForAllMissingMovies": "Sök efter alla saknade böcker",
     "SearchForCutoffUnmetMovies": "Sök efter alla vars krav inte är uppnådda böcker",
-    "UnmonitorSelected": "Obevakade Markerade"
+    "UnmonitorSelected": "Obevakade Markerade",
+    "LanguagesLoadError": "Det gick inte att ladda taggar",
+    "Trending": "I väntan på",
+    "SetReleaseGroup": "Releasegrupp",
+    "CustomFormatJson": "Anpassade format",
+    "OneMinute": "Minuter",
+    "EditCollection": "Samling",
+    "NotificationsPushcutSettingsNotificationName": "Notifikation",
+    "AudioLanguages": "Flerspråkig",
+    "ImportListMultipleMissingRoots": "Flera rotmappar saknas: {0}",
+    "EditSelectedMovies": "Radera markerade filmfiler",
+    "ReleaseHash": "Lanseringsdatum",
+    "UnableToLoadCollections": "Det gick inte att ladda begränsningar",
+    "DownloadClientFloodSettingsStartOnAdd": "Sök vid lägg till",
+    "MovieDownloadFailedTooltip": "Fel vid nerladdning av avsnitt",
+    "MovieDownloadIgnoredTooltip": "Nerladdning ignorerad",
+    "ResetDefinitions": "Kvalitetsdefinitioner"
 }

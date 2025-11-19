@@ -1113,5 +1113,20 @@
     "SslCertPathHelpText": "مسار ملف pfx",
     "SslPort": "منفذ SSL",
     "MassSearchCancelWarning": "لا يمكن إلغاء هذا بمجرد البدء دون إعادة تشغيل {appName}.",
-    "MovieIsNotMonitored": "الفيلم مراقب"
+    "MovieIsNotMonitored": "الفيلم مراقب",
+    "AudioLanguages": "متعدد اللغات",
+    "CustomFormatJson": "تنسيق مخصص",
+    "ReleaseHash": "تواريخ الإصدار",
+    "Trending": "قيد الانتظار",
+    "ImportListMultipleMissingRoots": "عدة مجلدات جذر مفقودة: {0}",
+    "UnableToLoadCollections": "تعذر تحميل القيود",
+    "DownloadClientFloodSettingsStartOnAdd": "ابحث في Add",
+    "SearchForAllMissingMovies": "ابدأ البحث عن فيلم مفقود",
+    "SetReleaseGroup": "مجموعة الإصدار",
+    "ResetDefinitions": "تعريفات الجودة",
+    "EditCollection": "مجموعة",
+    "EditSelectedMovies": "حذف ملفات الأفلام المحددة",
+    "NotificationsPushcutSettingsNotificationName": "شهادة",
+    "LanguagesLoadError": "تعذر تحميل العلامات",
+    "OneMinute": "الدقائق"
 }

@@ -1097,5 +1097,20 @@
     "SslCertPath": "एसएसएल सर्टिफिकेट पाथ",
     "SslCertPathHelpText": "Pfx फ़ाइल का पथ",
     "SslPort": "एसएसएल पोर्ट",
-    "MovieIsNotMonitored": "मूवी अनमनी है"
+    "MovieIsNotMonitored": "मूवी अनमनी है",
+    "EditCollection": "संग्रह",
+    "SearchForAllMissingMovies": "लापता फिल्म की खोज शुरू करें",
+    "NotificationsPushcutSettingsNotificationName": "प्रमाणीकरण",
+    "ReleaseHash": "रिलीज़ करने की तिथि",
+    "SetReleaseGroup": "रिलीज समूह",
+    "CustomFormatJson": "कस्टम प्रारूप",
+    "Trending": "विचाराधीन",
+    "DownloadClientFloodSettingsStartOnAdd": "ऐड पर सर्च करें",
+    "EditSelectedMovies": "चयनित मूवी फ़ाइलें हटाएं",
+    "ImportListMultipleMissingRoots": "एकाधिक रूट फ़ोल्डर गायब हैं: {0}",
+    "ResetDefinitions": "गुणवत्ता परिभाषाएँ",
+    "LanguagesLoadError": "टैग लोड करने में असमर्थ",
+    "OneMinute": "मिनट",
+    "UnableToLoadCollections": "प्रतिबंधों को लोड करने में असमर्थ",
+    "AudioLanguages": "बहु-भाषा"
 }

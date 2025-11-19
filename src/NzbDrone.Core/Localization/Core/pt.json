@@ -1306,5 +1306,21 @@
     "MassSearchCancelWarning": "Isso não pode ser cancelado uma vez iniciado sem desabilitar todos os seus indexadores.",
     "MovieIsNotMonitored": "Filme não monitorado",
     "SearchForAllMissingMovies": "Pesquisar todos os livros ausentes",
-    "SearchForCutoffUnmetMovies": "Pesquisar todos os livros com Limite não-correspondido"
+    "SearchForCutoffUnmetMovies": "Pesquisar todos os livros com Limite não-correspondido",
+    "NotificationStatusSingleClientHealthCheckMessage": "Listas indisponíveis devido a erros: {0}",
+    "NotificationsPushcutSettingsNotificationName": "Notificações",
+    "FailedToUpdateSettings": "Falha ao obter as definições",
+    "DownloadClientValidationAuthenticationFailure": "Autenticação Necessária",
+    "MovieMissingFromDisk": "Episódio em falta em disco",
+    "Trending": "Pendente",
+    "LanguagesLoadError": "Não foi possível carregar as etiquetas",
+    "ShowImdbRating": "Avaliação no IMDb",
+    "EditSelectedMovies": "Eliminar ficheiros do filme selecionado",
+    "OneMinute": "Minutos",
+    "MovieDownloadIgnoredTooltip": "Transferência Ignorada",
+    "DownloadClientFloodSettingsStartOnAdd": "Pesquisar ao adicionar",
+    "ReleaseHash": "Datas de lançamento",
+    "ShowRottenTomatoesRating": "Avaliação Tomato",
+    "ShowTmdbRating": "Classificação TMDb",
+    "SkipRedownloadHelpText": "Impede que o {appName} tente transferir versões alternativas para itens removidos"
 }

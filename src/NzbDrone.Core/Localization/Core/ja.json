@@ -1085,5 +1085,20 @@
     "SslCertPathHelpText": "pfxファイルへのパス",
     "SslPort": "SSLポート",
     "MassSearchCancelWarning": "{appName}を再起動せずに一度開始すると、これをキャンセルすることはできません。",
-    "MovieIsNotMonitored": "映画は監視されていません"
+    "MovieIsNotMonitored": "映画は監視されていません",
+    "SearchForAllMissingMovies": "不足している映画の検索を開始します",
+    "Trending": "保留中",
+    "OneMinute": "議事録",
+    "ImportListMultipleMissingRoots": "複数のルートフォルダがありません：{0}",
+    "ResetDefinitions": "品質の定義",
+    "EditCollection": "コレクション",
+    "ReleaseHash": "リリース日",
+    "SetReleaseGroup": "リリースグループ",
+    "EditSelectedMovies": "選択したムービーファイルを削除する",
+    "CustomFormatJson": "カスタムフォーマット",
+    "LanguagesLoadError": "タグを読み込めません",
+    "NotificationsPushcutSettingsNotificationName": "認証",
+    "DownloadClientFloodSettingsStartOnAdd": "追加で検索",
+    "UnableToLoadCollections": "制限を読み込めません",
+    "AudioLanguages": "多言語"
 }

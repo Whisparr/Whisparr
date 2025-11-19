@@ -1511,5 +1511,13 @@
     "SearchForAllMissingMovies": "Cerca tutti i film mancanti",
     "SearchForAllMissingMoviesConfirmationCount": "Sei sicuro di volere cercare tutti i {totalRecords} film mancanti?",
     "SearchForCutoffUnmetMoviesConfirmationCount": "Sei sicuro di volere cercare tutti i {totalRecords} film mancanti?",
-    "UnmonitorSelected": "Monitora Selezionati"
+    "UnmonitorSelected": "Monitora Selezionati",
+    "DownloadClientFloodSettingsStartOnAdd": "Cerca dopo aggiunta",
+    "MovieMatchType": "Tipi di Ricerca Film",
+    "NotificationsJoinSettingsDeviceIds": "Dispositivi",
+    "NotificationsPushBulletSettingsDeviceIds": "Dispositivi",
+    "ReleaseHash": "Date di rilascio",
+    "ResetDefinitions": "Definizioni delle Qualità",
+    "RottenTomatoesRating": "Mostra valutazione Tomato",
+    "SetReleaseGroup": "Seleziona Tipo Release"
 }

@@ -361,5 +361,19 @@
     "UnableToLoadRootFolders": "Kunne ikke legge til rotmappe",
     "CustomFilter": "Legg til eget filter",
     "Label": "Merke",
-    "AutoTaggingSpecificationTag": "Merke"
+    "AutoTaggingSpecificationTag": "Merke",
+    "OrganizeConfirm": "Er du sikker på at du vil slette formattaggen {0}?",
+    "Discover": "Discord",
+    "DeleteSelectedMovieFilesHelpText": "Er du sikker på at du vil slette formattaggen {0}?",
+    "NotificationsPushcutSettingsNotificationName": "Varslinger",
+    "ShowCertification": "Sertifisering",
+    "StartSearchForMissingMovie": "Søk etter manglende episoder",
+    "ClearBlocklistMessageText": "Er du sikker på at du vil fjerne {0} elementet {1} fra køen?",
+    "CountImportListsSelected": "{count} samling(er) valgt",
+    "CustomFormatJson": "Egendefinert format",
+    "DeleteDelayProfile": "utgivelseprofil",
+    "DeleteSelectedDownloadClients": "Nedlastingsklient",
+    "BypassDelayIfAboveCustomFormatScoreMinimumScore": "Egendefinert format",
+    "MinimumCustomFormatScore": "Egendefinert format",
+    "Unreleased": "utgivelse"
 }

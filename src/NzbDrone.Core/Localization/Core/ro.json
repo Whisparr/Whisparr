@@ -1180,5 +1180,18 @@
     "SslCertPathHelpText": "Calea către fișierul pfx",
     "SslPort": "Port SSL",
     "MassSearchCancelWarning": "Acest lucru nu poate fi anulat odată pornit fără a reporni {appName}.",
-    "MovieIsNotMonitored": "Filmul nu este monitorizat"
+    "MovieIsNotMonitored": "Filmul nu este monitorizat",
+    "DownloadClientFloodSettingsStartOnAdd": "Căutați la adăugare",
+    "DownloadClientValidationAuthenticationFailure": "Autentificare necesara",
+    "EditCollection": "Colecție",
+    "EditSelectedMovies": "Ștergeți fișierele film selectate",
+    "ImportListMultipleMissingRoots": "Lipsesc multiple foldere rădăcină: {0}",
+    "NotificationsPushcutSettingsNotificationName": "Certificare",
+    "OneMinute": "Minute",
+    "ReleaseHash": "Date de lansare",
+    "SetReleaseGroup": "Grup de apariție",
+    "UnableToLoadCollections": "Nu se pot încărca restricțiile",
+    "Trending": "In asteptarea",
+    "MovieDownloaded": "Descărcare film ignorată",
+    "SearchForAllMissingMovies": "Începeți căutarea filmului lipsă"
 }

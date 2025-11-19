@@ -45,5 +45,16 @@
     "ManageDownloadClients": "Pievienot Lejupielādes Klientu",
     "NotificationsEmbySettingsSendNotifications": "Paziņojumi",
     "Connection": "Pievienot Savienojumu",
-    "CustomFormat": "Pievienot Pielāgotu Formātu"
+    "CustomFormat": "Pievienot Pielāgotu Formātu",
+    "Collection": "Pievienot Savienojumu",
+    "Collections": "Pievienot Savienojumu",
+    "DeleteSelectedDownloadClients": "Pievienot Lejupielādes Klientu",
+    "NotificationsPushcutSettingsNotificationName": "Paziņojumi",
+    "DeleteDelayProfile": "Pievienot Aizkaves Profilu",
+    "CloneCustomFormat": "Pievienot Pielāgotu Formātu",
+    "EditSelectedDownloadClients": "Pievienot Lejupielādes Klientu",
+    "Certification": "Paziņojumi",
+    "Connect": "Pievienot Savienojumu",
+    "CustomFormatJson": "Pievienot Pielāgotu Formātu",
+    "CustomFormatScore": "Pievienot Pielāgotu Formātu"
 }

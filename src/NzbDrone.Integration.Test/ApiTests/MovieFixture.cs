@@ -64,9 +64,9 @@ namespace NzbDrone.Integration.Test.ApiTests
             var movie = Movies.Lookup("tmdb:42019").Single();
 
             movie.QualityProfileId = 1;
-            var folder = $"movies/{movie.Title} {movie.Year}";
+            var folder = Path.Combine("movies", $"{movie.Title} ({movie.Year})");
 
-            movie.Path = Path.Combine(MovieRootFolder, folder);
+            movie.RootFolderPath = MovieRootFolder;
 
             var result = Movies.Post(movie);
 

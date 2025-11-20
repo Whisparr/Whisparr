@@ -17,7 +17,6 @@ import { bulkDeleteMovie, setDeleteOption } from 'Store/Actions/movieActions';
 import createAllMoviesSelector from 'Store/Selectors/createAllMoviesSelector';
 import { CheckInputChanged } from 'typings/inputs';
 import formatBytes from 'Utilities/Number/formatBytes';
-import formatBytes from 'Utilities/Number/formatBytes';
 import translate from 'Utilities/String/translate';
 import styles from './DeleteMovieModalContent.css';
 
@@ -148,11 +147,6 @@ function DeleteMovieModalContent(props: DeleteMovieModalContentProps) {
                   ? translate('DeleteMovieFoldersHelpText')
                   : translate('DeleteMovieFolderHelpText')
               }
-              helpText={
-                movies.length > 1
-                  ? translate('DeleteMovieFoldersHelpText')
-                  : translate('DeleteMovieFolderHelpText')
-              }
               kind={kinds.DANGER}
               onChange={onDeleteFilesChange}
             />
@@ -162,11 +156,11 @@ function DeleteMovieModalContent(props: DeleteMovieModalContentProps) {
         <div className={styles.message}>
           {deleteFiles
             ? translate('DeleteMovieFolderCountWithFilesConfirmation', {
-              count: movies.length,
-            })
+                count: movies.length,
+              })
             : translate('DeleteMovieFolderCountConfirmation', {
-              count: movies.length,
-            })}
+                count: movies.length,
+              })}
         </div>
 
         <ul>

@@ -20,8 +20,15 @@ interface ImportListExclusionRowProps extends ImportListExclusion {
 }
 
 function ImportListExclusionRow(props: ImportListExclusionRowProps) {
-  const { id, foreignId, type, movieTitle, movieYear, isSelected, onSelectedChange } =
-    props;
+  const {
+    id,
+    foreignId,
+    type,
+    movieTitle,
+    movieYear,
+    isSelected,
+    onSelectedChange,
+  } = props;
 
   const dispatch = useDispatch();
 

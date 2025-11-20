@@ -345,7 +345,10 @@ export const actionHandlers = handleThunks({
 
   [FETCH_MOVIES]: (getState, payload, dispatch) => {
     if (getState().movies.isPopulated) {
-      return;
+      // Limit the repopulation to smaller datasets due to client memmory. (200,000)
+      if (getState().movies.items.length > 200000) {
+        return;
+      }
     }
 
     if (getState().movies.isFetching) {
@@ -392,21 +395,28 @@ export const actionHandlers = handleThunks({
           }));
         })
         .then((results) => {
-          const data = results.flat();
-          dispatch(batchActions([
-            update({ section, data }),
+          try {
+            const data = results.flat();
+            dispatch(batchActions([
+              update({ section, data }),
 
-            set({
+              set({
+                section,
+                isFetching: false,
+                isPopulated: true,
+                error: null
+              })
+            ]));
+          } catch (error) {
+            dispatch(set({
               section,
               isFetching: false,
-              isPopulated: true,
-              error: null
-            })
-          ]));
+              isPopulated: false,
+              error
+            }));
+          }
         });
-    });
-
-    request.fail((xhr) => {
+    }).fail((xhr) => {
       dispatch(set({
         section,
         isFetching: false,

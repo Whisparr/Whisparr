@@ -1,7 +1,7 @@
-using System;
 using System.Collections.Generic;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using NzbDrone.Common.Extensions;
 using NzbDrone.Core.ImportLists.ImportExclusions;
 using Whisparr.Http;
 using Whisparr.Http.Extensions;
@@ -30,10 +30,25 @@ namespace Whisparr.Api.V3.ImportLists
 
         [HttpGet]
         [Produces("application/json")]
-        [Obsolete("Deprecated")]
-        public List<ImportListExclusionResource> GetImportListExclusions()
+        public List<ImportListExclusionResource> GetImportListExclusions(string stashId)
         {
-            return _importListExclusionService.GetAllExclusions().ToResource();
+            var importListExclusionResources = new List<ImportListExclusionResource>();
+
+            if (stashId.IsNotNullOrWhiteSpace())
+            {
+                var importListExclusionResource = _importListExclusionService.GetByForeignId(stashId).ToResource();
+
+                if (importListExclusionResource != null)
+                {
+                    importListExclusionResources.AddIfNotNull(importListExclusionResource);
+                }
+            }
+            else
+            {
+                importListExclusionResources = _importListExclusionService.GetAllExclusions().ToResource();
+            }
+
+            return importListExclusionResources;
         }
 
         protected override ImportListExclusionResource GetResourceById(int id)

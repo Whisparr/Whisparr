@@ -7,8 +7,8 @@ import { PendingSection } from 'typings/pending';
 
 type SectionsWithItemNames = {
   [K in keyof SettingsAppState]: SettingsAppState[K] extends AppSectionItemState<unknown>
-  ? K
-  : never;
+    ? K
+    : never;
 }[keyof SettingsAppState];
 
 type GetSectionState<Name extends SectionsWithItemNames> =

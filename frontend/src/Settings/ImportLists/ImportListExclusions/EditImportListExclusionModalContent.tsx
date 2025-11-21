@@ -30,7 +30,7 @@ const newImportListExclusion = {
   movieTitle: '',
   movieYear: 0,
   type: 'scene',
-  foreignId: ''
+  foreignId: '',
 };
 
 const typeOptions = [
@@ -38,7 +38,7 @@ const typeOptions = [
   { key: 'scene', value: translate('Scene') },
   { key: 'studio', value: translate('Studio') },
   { key: 'performer', value: translate('Performer') },
-  { key: 'tag', value: translate('Tag') }
+  { key: 'tag', value: translate('Tag') },
 ];
 
 interface EditImportListExclusionModalContentProps {
@@ -178,7 +178,6 @@ function EditImportListExclusionModalContent(
                 helpText={translate('ExclusionTypeHelpText')}
                 onChange={onInputChange}
               />
-
             </FormGroup>
 
             <FormGroup>

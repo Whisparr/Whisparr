@@ -73,7 +73,7 @@ namespace NzbDrone.Integration.Test.ApiTests
             result.Should().NotBeNull();
             result.Id.Should().NotBe(0);
             result.QualityProfileId.Should().Be(1);
-            result.Path.Should().EndWith(Path.Combine(MovieRootFolder, folder));
+            result.Path.Should().EndWith(folder);
         }
 
         [Test]

@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import RelativeDateCellConnector from 'Components/Table/Cells/RelativeDateCellConnector';
 import TableRowCell from 'Components/Table/Cells/TableRowCell';
 import TableSelectCell from 'Components/Table/Cells/TableSelectCell';
 import TableRow from 'Components/Table/TableRow';
@@ -18,6 +19,7 @@ function CutoffUnmetRow(props) {
     title,
     titleSlug,
     foreignId,
+    releaseDate,
     isSelected,
     columns,
     onSelectedChange
@@ -59,6 +61,16 @@ function CutoffUnmetRow(props) {
               <TableRowCell key={name}>
                 {year}
               </TableRowCell>
+            );
+          }
+
+          if (name === 'movieMetadata.releaseDate') {
+            return (
+              <RelativeDateCellConnector
+                key={name}
+                className={styles[name]}
+                date={releaseDate}
+              />
             );
           }
 
@@ -115,6 +127,7 @@ CutoffUnmetRow.propTypes = {
   year: PropTypes.number.isRequired,
   titleSlug: PropTypes.string.isRequired,
   foreignId: PropTypes.string.isRequired,
+  releaseDate: PropTypes.string,
   isSelected: PropTypes.bool,
   columns: PropTypes.arrayOf(PropTypes.object).isRequired,
   onSelectedChange: PropTypes.func.isRequired

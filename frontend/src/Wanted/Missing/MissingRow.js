@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import RelativeDateCellConnector from 'Components/Table/Cells/RelativeDateCellConnector';
 import TableRowCell from 'Components/Table/Cells/TableRowCell';
 import TableSelectCell from 'Components/Table/Cells/TableSelectCell';
 import TableRow from 'Components/Table/TableRow';
@@ -17,6 +18,7 @@ function MissingRow(props) {
     title,
     titleSlug,
     foreignId,
+    releaseDate,
     isSelected,
     columns,
     onSelectedChange
@@ -54,6 +56,16 @@ function MissingRow(props) {
                   foreignId={foreignId}
                 />
               </TableRowCell>
+            );
+          }
+
+          if (name === 'movieMetadata.releaseDate') {
+            return (
+              <RelativeDateCellConnector
+                key={name}
+                className={styles[name]}
+                date={releaseDate}
+              />
             );
           }
 
@@ -104,6 +116,7 @@ MissingRow.propTypes = {
   title: PropTypes.string.isRequired,
   year: PropTypes.number.isRequired,
   titleSlug: PropTypes.string.isRequired,
+  releaseDate: PropTypes.string,
   isSelected: PropTypes.bool,
   foreignId: PropTypes.string.isRequired,
   columns: PropTypes.arrayOf(PropTypes.object).isRequired,

@@ -23,7 +23,7 @@ namespace Whisparr.Api.V3.ImportLists
         private readonly IBuildFileNames _fileNameBuilder;
         private readonly IImportListMovieService _listMovieService;
         private readonly IImportListFactory _importListFactory;
-        private readonly IImportExclusionsService _importExclusionService;
+        private readonly IImportListExclusionService _importListExclusionService;
         private readonly INamingConfigService _namingService;
         private readonly IConfigService _configService;
 
@@ -33,7 +33,7 @@ namespace Whisparr.Api.V3.ImportLists
                                     IBuildFileNames fileNameBuilder,
                                     IImportListMovieService listMovieService,
                                     IImportListFactory importListFactory,
-                                    IImportExclusionsService importExclusionsService,
+                                    IImportListExclusionService importListExclusionService,
                                     INamingConfigService namingService,
                                     IConfigService configService)
         {
@@ -43,7 +43,7 @@ namespace Whisparr.Api.V3.ImportLists
             _fileNameBuilder = fileNameBuilder;
             _listMovieService = listMovieService;
             _importListFactory = importListFactory;
-            _importExclusionService = importExclusionsService;
+            _importListExclusionService = importListExclusionService;
             _namingService = namingService;
             _configService = configService;
         }
@@ -52,7 +52,7 @@ namespace Whisparr.Api.V3.ImportLists
         public object GetDiscoverMovies()
         {
             var realResults = new List<ImportListMoviesResource>();
-            var listExclusions = _importExclusionService.GetAllExclusions();
+            var listExclusions = _importListExclusionService.GetAllExclusions();
             var existingTmdbIds = _movieService.AllMovieTmdbIds();
 
             var listMovies = MapToResource(_listMovieService.GetAllForLists(_importListFactory.Enabled().Select(x => x.Definition.Id).ToList())).ToList();
@@ -100,7 +100,7 @@ namespace Whisparr.Api.V3.ImportLists
                     resource.RemotePoster = poster.RemoteUrl;
                 }
 
-                resource.Title =  resource.Title;
+                resource.Title = resource.Title;
                 resource.Overview = resource.Overview;
                 resource.Folder = _fileNameBuilder.GetMovieFolder(currentMovie, namingConfig);
 

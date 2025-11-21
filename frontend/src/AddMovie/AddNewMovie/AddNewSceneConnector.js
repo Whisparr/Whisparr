@@ -5,7 +5,7 @@ import { createSelector } from 'reselect';
 import { clearAddMovie, lookupScene } from 'Store/Actions/addMovieActions';
 import { clearQueueDetails, fetchQueueDetails } from 'Store/Actions/queueActions';
 import { fetchRootFolders } from 'Store/Actions/rootFolderActions';
-import { fetchImportExclusions } from 'Store/Actions/Settings/importExclusions';
+import { fetchImportListExclusions } from 'Store/Actions/Settings/importListExclusions';
 import createUISettingsSelector from 'Store/Selectors/createUISettingsSelector';
 import parseUrl from 'Utilities/String/parseUrl';
 import AddNewScene from './AddNewScene';
@@ -33,7 +33,7 @@ const mapDispatchToProps = {
   lookupScene,
   clearAddMovie,
   fetchRootFolders,
-  fetchImportExclusions,
+  fetchImportListExclusions,
   fetchQueueDetails,
   clearQueueDetails
 };
@@ -51,7 +51,7 @@ class AddNewSceneConnector extends Component {
 
   componentDidMount() {
     this.props.fetchRootFolders();
-    this.props.fetchImportExclusions();
+    this.props.fetchImportListExclusions();
     this.props.fetchQueueDetails();
   }
 
@@ -110,7 +110,7 @@ AddNewSceneConnector.propTypes = {
   lookupScene: PropTypes.func.isRequired,
   clearAddMovie: PropTypes.func.isRequired,
   fetchRootFolders: PropTypes.func.isRequired,
-  fetchImportExclusions: PropTypes.func.isRequired,
+  fetchImportListExclusions: PropTypes.func.isRequired,
   fetchQueueDetails: PropTypes.func.isRequired,
   clearQueueDetails: PropTypes.func.isRequired
 };

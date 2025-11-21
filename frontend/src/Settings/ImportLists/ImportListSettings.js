@@ -10,7 +10,7 @@ import translate from 'Utilities/String/translate';
 import ImportListExclusionsConnector from './ImportListExclusions/ImportListExclusionsConnector';
 import ImportListsConnector from './ImportLists/ImportListsConnector';
 import ManageImportListsModal from './ImportLists/Manage/ManageImportListsModal';
-import ImportListOptionsConnector from './Options/ImportListOptionsConnector';
+import ImportListOptions from './Options/ImportListOptions';
 
 class ImportListSettings extends Component {
 
@@ -32,7 +32,7 @@ class ImportListSettings extends Component {
   //
   // Listeners
 
-  onChildMounted = (saveCallback) => {
+  setChildSave = (saveCallback) => {
     this._saveCallback = saveCallback;
   };
 
@@ -54,13 +54,13 @@ class ImportListSettings extends Component {
     }
   };
 
-  // Render
   //
+  // Render
 
   render() {
     const {
       isTestingAll,
-      dispatchTestAllImportList
+      dispatchTestAllImportLists
     } = this.props;
 
     const {
@@ -82,7 +82,7 @@ class ImportListSettings extends Component {
                 label={translate('TestAllLists')}
                 iconName={icons.TEST}
                 isSpinning={isTestingAll}
-                onPress={dispatchTestAllImportList}
+                onPress={dispatchTestAllImportLists}
               />
 
               <PageToolbarButton
@@ -98,8 +98,8 @@ class ImportListSettings extends Component {
         <PageContentBody>
           <ImportListsConnector />
 
-          <ImportListOptionsConnector
-            onChildMounted={this.onChildMounted}
+          <ImportListOptions
+            setChildSave={this.setChildSave}
             onChildStateChange={this.onChildStateChange}
           />
 
@@ -109,7 +109,6 @@ class ImportListSettings extends Component {
             isOpen={isManageImportListsOpen}
             onModalClose={this.onManageImportListsModalClose}
           />
-
         </PageContentBody>
       </PageContent>
     );
@@ -118,7 +117,7 @@ class ImportListSettings extends Component {
 
 ImportListSettings.propTypes = {
   isTestingAll: PropTypes.bool.isRequired,
-  dispatchTestAllImportList: PropTypes.func.isRequired
+  dispatchTestAllImportLists: PropTypes.func.isRequired
 };
 
 export default ImportListSettings;

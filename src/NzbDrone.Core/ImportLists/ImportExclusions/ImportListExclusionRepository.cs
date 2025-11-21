@@ -6,18 +6,18 @@ using NzbDrone.Core.Messaging.Events;
 
 namespace NzbDrone.Core.ImportLists.ImportExclusions
 {
-    public interface IImportExclusionsRepository : IBasicRepository<ImportExclusion>
+    public interface IImportListExclusionRepository : IBasicRepository<ImportListExclusion>
     {
         bool IsExcluded(string foreignId, ImportExclusionType type);
-        ImportExclusion GetByForeignId(string foreignId);
-        List<ImportExclusion> AllByType(ImportExclusionType type);
+        ImportListExclusion GetByForeignId(string foreignId);
+        List<ImportListExclusion> AllByType(ImportExclusionType type);
         List<string> AllForeignIds();
         List<int> AllIds();
     }
 
-    public class ImportExclusionsRepository : BasicRepository<ImportExclusion>, IImportExclusionsRepository
+    public class ImportListListExclusionRepository : BasicRepository<ImportListExclusion>, IImportListExclusionRepository
     {
-        public ImportExclusionsRepository(IMainDatabase database, IEventAggregator eventAggregator)
+        public ImportListListExclusionRepository(IMainDatabase database, IEventAggregator eventAggregator)
             : base(database, eventAggregator)
         {
         }
@@ -27,12 +27,12 @@ namespace NzbDrone.Core.ImportLists.ImportExclusions
             return Query(x => x.ForeignId == foreignId).Any(x => x.Type == type);
         }
 
-        public ImportExclusion GetByForeignId(string foreignId)
+        public ImportListExclusion GetByForeignId(string foreignId)
         {
             return Query(x => x.ForeignId == foreignId).First();
         }
 
-        public List<ImportExclusion> AllByType(ImportExclusionType type)
+        public List<ImportListExclusion> AllByType(ImportExclusionType type)
         {
             return All().Where(x => x.Type == type).ToList();
         }

@@ -3,7 +3,7 @@ import { createAction } from 'redux-actions';
 import { batchActions } from 'redux-batched-actions';
 import { filterBuilderTypes, filterBuilderValueTypes, sortDirections } from 'Helpers/Props';
 import { createThunk, handleThunks } from 'Store/thunks';
-import sortByName from 'Utilities/Array/sortByName';
+import sortByProp from 'Utilities/Array/sortByProp';
 import createAjaxRequest from 'Utilities/createAjaxRequest';
 import camelCaseToString from 'Utilities/String/camelCaseToString';
 import translate from 'Utilities/String/translate';
@@ -220,7 +220,7 @@ export const defaultState = {
           };
         });
 
-        return tags.sort(sortByName);
+        return tags.sort(sortByProp('status'));
       }
     },
     {
@@ -249,7 +249,7 @@ export const defaultState = {
           };
         });
 
-        return tags.sort(sortByName);
+        return tags.sort(name);
       }
     },
     {
@@ -279,7 +279,7 @@ export const defaultState = {
           };
         });
 
-        return tags.sort(sortByName);
+        return tags.sort(name);
       }
     },
     {
@@ -305,7 +305,7 @@ export const defaultState = {
           };
         });
 
-        return tags.sort(sortByName);
+        return tags.sort(name);
       }
     },
     {
@@ -330,7 +330,7 @@ export const defaultState = {
           };
         });
 
-        return tags.sort(sortByName);
+        return tags.sort(name);
       }
     },
     {
@@ -384,7 +384,8 @@ export const deletePerformer = createThunk(DELETE_PERFORMER, (payload) => {
   return {
     ...payload,
     queryParams: {
-      deleteFiles: payload.deleteFiles
+      deleteFiles: payload.deleteFiles,
+      addImportExclusion: payload.addImportExclusion
     }
   };
 });

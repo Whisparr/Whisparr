@@ -225,7 +225,7 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
 
             foreach (var torrent in torrents)
             {
-                var item = new DownloadClientItem()
+                var item = new DownloadClientItem
                 {
                     DownloadId = torrent.Hash.ToUpper(),
                     Category = torrent.Category.IsNotNullOrWhiteSpace() ? torrent.Category : torrent.Label,
@@ -239,7 +239,10 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
 
                 // Avoid removing torrents that haven't reached the global max ratio.
                 // Removal also requires the torrent to be paused, in case a higher max ratio was set on the torrent itself (which is not exposed by the api).
-                item.CanMoveFiles = item.CanBeRemoved = torrent.State is "pausedUP" or "stoppedUP" && HasReachedSeedLimit(torrent, config);
+                item.CanMoveFiles = item.CanBeRemoved =
+                    item.DownloadClientInfo.RemoveCompletedDownloads &&
+                    torrent.State is "pausedUP" or "stoppedUP" &&
+                    HasReachedSeedLimit(torrent, config);
 
                 switch (torrent.State)
                 {
@@ -281,6 +284,7 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
                         break;
 
                     case "metaDL": // torrent magnet is being downloaded
+                    case "forcedMetaDL": // torrent metadata is being forcibly downloaded
                         if (config.DhtEnabled)
                         {
                             item.Status = DownloadItemStatus.Queued;
@@ -295,7 +299,6 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
                         break;
 
                     case "forcedDL": // torrent is being downloaded, and was forced started
-                    case "forcedMetaDL": // torrent metadata is being forcibly downloaded
                     case "moving": // torrent is being moved from a folder
                     case "downloading": // torrent is being downloaded and data is being transferred
                         item.Status = DownloadItemStatus.Downloading;
@@ -377,7 +380,15 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
             {
                 if (Proxy.GetLabels(Settings).TryGetValue(Settings.MovieCategory, out var label) && label.SavePath.IsNotNullOrWhiteSpace())
                 {
-                    var labelDir = new OsPath(label.SavePath);
+                    var savePath = label.SavePath;
+
+                    if (savePath.StartsWith("//"))
+                    {
+                        _logger.Trace("Replacing double forward slashes in path '{0}'. If this is not meant to be a Windows UNC path fix the 'Save Path' in qBittorrent's {1} category", savePath, Settings.MovieCategory);
+                        savePath = savePath.Replace('/', '\\');
+                    }
+
+                    var labelDir = new OsPath(savePath);
 
                     if (labelDir.IsRooted)
                     {

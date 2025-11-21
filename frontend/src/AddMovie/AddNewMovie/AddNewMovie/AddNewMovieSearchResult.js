@@ -227,7 +227,6 @@ class AddNewMovieSearchResult extends Component {
                       name={icons.STUDIO}
                       size={13}
                     />
-
                     <span className={styles.studio}>
                       {studioTitle}
                     </span>

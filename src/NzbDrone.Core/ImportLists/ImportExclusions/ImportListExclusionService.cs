@@ -7,35 +7,35 @@ using NzbDrone.Core.Movies.Events;
 
 namespace NzbDrone.Core.ImportLists.ImportExclusions
 {
-    public interface IImportExclusionsService
+    public interface IImportListExclusionService
     {
-        List<ImportExclusion> GetAllExclusions();
-        List<ImportExclusion> GetAllByType(ImportExclusionType type);
+        List<ImportListExclusion> GetAllExclusions();
+        List<ImportListExclusion> GetAllByType(ImportExclusionType type);
         List<int> AllIds();
         List<string> AllForeignIds();
         bool IsExcluded(string foreignId, ImportExclusionType type);
-        ImportExclusion AddExclusion(ImportExclusion exclusion);
-        List<ImportExclusion> AddExclusions(List<ImportExclusion> exclusions);
-        void RemoveExclusion(ImportExclusion exclusion);
-        ImportExclusion GetById(int id);
-        ImportExclusion GetByForeignId(string foreignId);
-        List<ImportExclusion> GetByIds(List<int> ids);
-        ImportExclusion Update(ImportExclusion exclusion);
+        ImportListExclusion AddExclusion(ImportListExclusion exclusion);
+        List<ImportListExclusion> AddExclusions(List<ImportListExclusion> exclusions);
+        void RemoveExclusion(ImportListExclusion exclusion);
+        ImportListExclusion GetById(int id);
+        ImportListExclusion GetByForeignId(string foreignId);
+        List<ImportListExclusion> GetByIds(List<int> ids);
+        ImportListExclusion Update(ImportListExclusion exclusion);
     }
 
-    public class ImportExclusionsService : IImportExclusionsService, IHandleAsync<MoviesDeletedEvent>
+    public class ImportListExclusionService : IImportListExclusionService, IHandleAsync<MoviesDeletedEvent>
     {
-        private readonly IImportExclusionsRepository _exclusionRepository;
+        private readonly IImportListExclusionRepository _exclusionRepository;
         private readonly Logger _logger;
 
-        public ImportExclusionsService(IImportExclusionsRepository exclusionRepository,
+        public ImportListExclusionService(IImportListExclusionRepository exclusionRepository,
                              Logger logger)
         {
             _exclusionRepository = exclusionRepository;
             _logger = logger;
         }
 
-        public ImportExclusion AddExclusion(ImportExclusion exclusion)
+        public ImportListExclusion AddExclusion(ImportListExclusion exclusion)
         {
             if (_exclusionRepository.IsExcluded(exclusion.ForeignId, exclusion.Type))
             {
@@ -45,7 +45,7 @@ namespace NzbDrone.Core.ImportLists.ImportExclusions
             return _exclusionRepository.Insert(exclusion);
         }
 
-        public List<ImportExclusion> AddExclusions(List<ImportExclusion> exclusions)
+        public List<ImportListExclusion> AddExclusions(List<ImportListExclusion> exclusions)
         {
             _exclusionRepository.InsertMany(DeDupeExclusions(exclusions));
 
@@ -62,14 +62,14 @@ namespace NzbDrone.Core.ImportLists.ImportExclusions
             return _exclusionRepository.AllForeignIds();
         }
 
-        public List<ImportExclusion> GetAllExclusions()
+        public List<ImportListExclusion> GetAllExclusions()
         {
             return _exclusionRepository.All().ToList();
         }
 
-        public List<ImportExclusion> GetAllByType(ImportExclusionType type)
+        public List<ImportListExclusion> GetAllByType(ImportExclusionType type)
         {
-            return _exclusionRepository.AllByType(type) ?? new List<ImportExclusion>();
+            return _exclusionRepository.AllByType(type) ?? new List<ImportListExclusion>();
         }
 
         public bool IsExcluded(string foreignId, ImportExclusionType type)
@@ -77,27 +77,27 @@ namespace NzbDrone.Core.ImportLists.ImportExclusions
             return _exclusionRepository.IsExcluded(foreignId, type);
         }
 
-        public void RemoveExclusion(ImportExclusion exclusion)
+        public void RemoveExclusion(ImportListExclusion exclusion)
         {
             _exclusionRepository.Delete(exclusion);
         }
 
-        public ImportExclusion GetById(int id)
+        public ImportListExclusion GetById(int id)
         {
             return _exclusionRepository.Get(id);
         }
 
-        public List<ImportExclusion> GetByIds(List<int> ids)
+        public List<ImportListExclusion> GetByIds(List<int> ids)
         {
             return _exclusionRepository.Get(ids).ToList();
         }
 
-        public ImportExclusion GetByForeignId(string foreignId)
+        public ImportListExclusion GetByForeignId(string foreignId)
         {
             return _exclusionRepository.GetByForeignId(foreignId);
         }
 
-        public ImportExclusion Update(ImportExclusion exclusion)
+        public ImportListExclusion Update(ImportListExclusion exclusion)
         {
             int.TryParse(exclusion.ForeignId, out var tmbdId);
             if (exclusion.Type == ImportExclusionType.Scene && tmbdId != 0)
@@ -110,16 +110,16 @@ namespace NzbDrone.Core.ImportLists.ImportExclusions
 
         public void HandleAsync(MoviesDeletedEvent message)
         {
-            if (message.AddExclusion)
+            if (message.AddImportListExclusion)
             {
                 _logger.Debug("Adding {0} Deleted Movies to Import Exclusions", message.Movies.Count);
 
-                var exclusions = message.Movies.Select(m => new ImportExclusion { ForeignId = m.ForeignId, Type = ToImportExclusionType(m.MovieMetadata.Value.ItemType), MovieTitle = m.Title, MovieYear = m.Year }).ToList();
+                var exclusions = message.Movies.Select(m => new ImportListExclusion { ForeignId = m.ForeignId, Type = ToImportExclusionType(m.MovieMetadata.Value.ItemType), MovieTitle = m.Title, MovieYear = m.Year }).ToList();
                 _exclusionRepository.InsertMany(DeDupeExclusions(exclusions));
             }
         }
 
-        private List<ImportExclusion> DeDupeExclusions(List<ImportExclusion> exclusions)
+        private List<ImportListExclusion> DeDupeExclusions(List<ImportListExclusion> exclusions)
         {
             var existingExclusions = _exclusionRepository.AllForeignIds();
 

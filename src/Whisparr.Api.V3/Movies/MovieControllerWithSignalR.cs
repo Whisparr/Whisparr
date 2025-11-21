@@ -5,6 +5,7 @@ using NzbDrone.Core.CustomFormats;
 using NzbDrone.Core.Datastore.Events;
 using NzbDrone.Core.DecisionEngine.Specifications;
 using NzbDrone.Core.Download;
+using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.MediaFiles.Events;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.Movies;
@@ -24,12 +25,14 @@ namespace Whisparr.Api.V3.Movies
         protected readonly IUpgradableSpecification _upgradableSpecification;
         protected readonly ICustomFormatCalculationService _formatCalculator;
         protected readonly IConfigService _configService;
+        protected readonly IMapCoversToLocal _coverMapper;
 
         protected MovieControllerWithSignalR(IMovieService movieService,
                                            IMovieStatisticsService movieStatisticsService,
                                            IUpgradableSpecification upgradableSpecification,
                                            ICustomFormatCalculationService formatCalculator,
                                            IConfigService configService,
+                                           IMapCoversToLocal coverMapper,
                                            IBroadcastSignalRMessage signalRBroadcaster)
             : base(signalRBroadcaster)
         {
@@ -38,9 +41,12 @@ namespace Whisparr.Api.V3.Movies
             _upgradableSpecification = upgradableSpecification;
             _formatCalculator = formatCalculator;
             _configService = configService;
+            _coverMapper = coverMapper;
         }
 
-        protected MovieControllerWithSignalR(IMovieService movieService,
+        protected MovieControllerWithSignalR(IBroadcastSignalRMessage signalR,
+                                           IMovieService movieService,
+                                           IMovieStatisticsService movieStatisticsService,
                                            IUpgradableSpecification upgradableSpecification,
                                            ICustomFormatCalculationService formatCalculator,
                                            IBroadcastSignalRMessage signalRBroadcaster,
@@ -48,6 +54,7 @@ namespace Whisparr.Api.V3.Movies
             : base(signalRBroadcaster)
         {
             _movieService = movieService;
+            _movieStatisticsService = movieStatisticsService;
             _upgradableSpecification = upgradableSpecification;
             _formatCalculator = formatCalculator;
         }
@@ -70,6 +77,8 @@ namespace Whisparr.Api.V3.Movies
 
             var resource = movie.ToResource(availDelay, _upgradableSpecification, _formatCalculator);
             FetchAndLinkMovieStatistics(resource);
+
+            _coverMapper.ConvertToLocalUrls(resource.Id, resource.Images);
 
             return resource;
         }
@@ -110,7 +119,7 @@ namespace Whisparr.Api.V3.Movies
         [NonAction]
         public void Handle(MovieGrabbedEvent message)
         {
-            var resource = message.Movie.Movie.ToResource(0, _upgradableSpecification, _formatCalculator);
+            var resource = MapToResource(message.Movie.Movie);
             resource.Grabbed = true;
 
             BroadcastResourceChange(ModelAction.Updated, resource);

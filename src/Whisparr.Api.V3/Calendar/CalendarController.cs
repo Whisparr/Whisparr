@@ -6,6 +6,7 @@ using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.CustomFormats;
 using NzbDrone.Core.DecisionEngine.Specifications;
+using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.Movies;
 using NzbDrone.Core.MovieStats;
 using NzbDrone.Core.Tags;
@@ -29,8 +30,9 @@ namespace Whisparr.Api.V3.Calendar
                             IUpgradableSpecification upgradableSpecification,
                             ICustomFormatCalculationService formatCalculator,
                             ITagService tagService,
+                            IMapCoversToLocal coverMapper,
                             IConfigService configService)
-            : base(moviesService, movieStatisticsService, upgradableSpecification, formatCalculator, configService, signalR)
+            : base(moviesService, movieStatisticsService, upgradableSpecification, formatCalculator, configService, coverMapper, signalR)
         {
             _moviesService = moviesService;
             _movieStatisticsService = movieStatisticsService;
@@ -39,7 +41,7 @@ namespace Whisparr.Api.V3.Calendar
         }
 
         [NonAction]
-        protected override MovieResource GetResourceById(int id)
+        public override ActionResult<MovieResource> GetResourceByIdWithErrorHandler(int id)
         {
             throw new NotImplementedException();
         }

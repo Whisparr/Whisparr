@@ -309,7 +309,8 @@ export const deleteMovie = createThunk(DELETE_MOVIE, (payload) => {
   return {
     ...payload,
     queryParams: {
-      deleteFiles: payload.deleteFiles
+      deleteFiles: payload.deleteFiles,
+      addImportExclusion: payload.addImportExclusion
     }
   };
 });

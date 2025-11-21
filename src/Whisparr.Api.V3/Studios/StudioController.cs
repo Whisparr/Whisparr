@@ -27,14 +27,14 @@ namespace Whisparr.Api.V3.Studios
         private readonly IMapCoversToLocal _coverMapper;
         private readonly IMovieService _moviesService;
         private readonly IMovieStatisticsService _movieStatisticsService;
-        private readonly IImportExclusionsService _exclusionService;
+        private readonly IImportListExclusionService _exclusionService;
 
         public StudioController(IStudioService studioService,
                                 IAddStudioService addStudioService,
                                 IMapCoversToLocal coverMapper,
                                 IMovieService moviesService,
                                 IMovieStatisticsService movieStatisticsService,
-                                IImportExclusionsService exclusionService,
+                                IImportListExclusionService exclusionService,
                                 IBroadcastSignalRMessage signalRBroadcaster)
         : base(signalRBroadcaster)
         {
@@ -122,7 +122,7 @@ namespace Whisparr.Api.V3.Studios
 
             if (addImportExclusion)
             {
-                var exclusion = new ImportExclusion();
+                var exclusion = new ImportListExclusion();
                 exclusion.ForeignId = studio.ForeignId;
                 exclusion.MovieTitle = studio.Title;
                 exclusion.Type = ImportExclusionType.Studio;

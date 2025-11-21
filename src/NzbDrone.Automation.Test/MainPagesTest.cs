@@ -55,6 +55,17 @@ namespace NzbDrone.Automation.Test
             _page.Find(By.LinkText("Blocklist")).Should().NotBeNull();
         }
 
+        [Test]
+        public void wanted_page()
+        {
+            _page.WantedNavIcon.Click();
+            _page.WaitForNoSpinner();
+
+            _page.Find(By.LinkText("Missing")).Should().NotBeNull();
+            _page.Find(By.LinkText("Cutoff Unmet")).Should().NotBeNull();
+        }
+
+        [Test]
         public void system_page()
         {
             _page.SystemNavIcon.Click();

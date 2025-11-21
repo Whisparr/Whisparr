@@ -3,7 +3,7 @@ import { createAction } from 'redux-actions';
 import { batchActions } from 'redux-batched-actions';
 import { filterBuilderTypes, filterBuilderValueTypes, sortDirections } from 'Helpers/Props';
 import { createThunk, handleThunks } from 'Store/thunks';
-import sortByName from 'Utilities/Array/sortByName';
+import sortByProp from 'Utilities/Array/sortByProp';
 import createAjaxRequest from 'Utilities/createAjaxRequest';
 import translate from 'Utilities/String/translate';
 import { set, updateItem } from './baseActions';
@@ -176,7 +176,7 @@ export const defaultState = {
           return acc;
         }, []);
 
-        return tagList.sort(sortByName);
+        return tagList.sort(sortByProp);
       }
     },
     {
@@ -232,7 +232,8 @@ export const deleteStudio = createThunk(DELETE_STUDIO, (payload) => {
   return {
     ...payload,
     queryParams: {
-      deleteFiles: payload.deleteFiles
+      deleteFiles: payload.deleteFiles,
+      addImportExclusion: payload.addImportExclusion
     }
   };
 });

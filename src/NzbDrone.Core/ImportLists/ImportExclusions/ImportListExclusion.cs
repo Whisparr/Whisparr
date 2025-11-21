@@ -2,7 +2,7 @@ using NzbDrone.Core.Datastore;
 
 namespace NzbDrone.Core.ImportLists.ImportExclusions
 {
-    public class ImportExclusion : ModelBase
+    public class ImportListExclusion : ModelBase
     {
         public string ForeignId { get; set; }
         public string MovieTitle { get; set; }

@@ -238,7 +238,7 @@ namespace NzbDrone.Core.Configuration
 
         public string Branch => GetValue("Branch", "eros").ToLowerInvariant();
 
-        public string LogLevel => _logOptions.Level ?? GetValue("LogLevel", "info").ToLowerInvariant();
+        public string LogLevel => _logOptions.Level ?? GetValue("LogLevel", "debug").ToLowerInvariant();
         public string ConsoleLogLevel => _logOptions.ConsoleLevel ?? GetValue("ConsoleLogLevel", string.Empty, persist: false);
         public string Theme => _appOptions.Theme ?? GetValue("Theme", "auto", persist: false);
         public string PostgresHost => _postgresOptions?.Host ?? GetValue("PostgresHost", string.Empty, persist: false);
@@ -272,7 +272,7 @@ namespace NzbDrone.Core.Configuration
         public string UiFolder => BuildInfo.IsDebug ? Path.Combine("..", "UI") : "UI";
         public string InstanceName => _appOptions.InstanceName ?? GetValue("InstanceName", BuildInfo.AppName);
 
-        public bool UpdateAutomatically => _updateOptions.Automatically ?? GetValueBoolean("UpdateAutomatically", false, false);
+        public bool UpdateAutomatically => _updateOptions.Automatically ?? GetValueBoolean("UpdateAutomatically", OsInfo.IsWindows, false);
 
         public UpdateMechanism UpdateMechanism =>
             Enum.TryParse<UpdateMechanism>(_updateOptions.Mechanism, out var enumValue)

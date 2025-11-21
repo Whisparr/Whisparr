@@ -150,7 +150,7 @@ namespace NzbDrone.Core.Download.Clients.Flood
                     item.Status = DownloadItemStatus.Downloading;
                 }
 
-                if (item.Status == DownloadItemStatus.Completed)
+                if (item.DownloadClientInfo.RemoveCompletedDownloads && item.Status == DownloadItemStatus.Completed)
                 {
                     // Grab cached seedConfig
                     var seedConfig = _downloadSeedConfigProvider.GetSeedConfiguration(item.DownloadId);
@@ -162,7 +162,7 @@ namespace NzbDrone.Core.Download.Clients.Flood
                             // Check if seed ratio reached
                             item.CanMoveFiles = item.CanBeRemoved = true;
                         }
-                        else if (properties.DateFinished != null && properties.DateFinished > 0)
+                        else if (properties.DateFinished is > 0)
                         {
                             // Check if seed time reached
                             if ((DateTimeOffset.Now - DateTimeOffset.FromUnixTimeSeconds((long)properties.DateFinished)) >= seedConfig.SeedTime)

@@ -18,6 +18,11 @@ namespace Whisparr.Api.V3.Movies
         }
 
         [NonAction]
+        public override ActionResult<MovieResource> GetResourceByIdWithErrorHandler(int id)
+        {
+            throw new NotImplementedException();
+        }
+
         protected override MovieResource GetResourceById(int id)
         {
             throw new NotImplementedException();

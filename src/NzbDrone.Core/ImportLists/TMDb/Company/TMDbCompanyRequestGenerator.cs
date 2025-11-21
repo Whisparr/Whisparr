@@ -27,6 +27,7 @@ namespace NzbDrone.Core.ImportLists.TMDb.Company
         private IEnumerable<ImportListRequest> GetMoviesRequest()
         {
             Logger.Info("Importing TMDb movies from company: {0}", Settings.CompanyId);
+            Logger.Info("Importing TMDb movies from company: {0}", Settings.CompanyId);
 
             var requestBuilder = RequestBuilder.Create()
                 .SetSegment("api", "3")

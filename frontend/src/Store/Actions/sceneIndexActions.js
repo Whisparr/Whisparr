@@ -1,6 +1,6 @@
 import { createAction } from 'redux-actions';
 import { filterBuilderTypes, filterBuilderValueTypes, sortDirections } from 'Helpers/Props';
-import sortByName from 'Utilities/Array/sortByName';
+import sortByProp from 'Utilities/Array/sortByProp';
 import translate from 'Utilities/String/translate';
 import createHandleActions from './Creators/createHandleActions';
 import createSetClientSideCollectionFilterReducer from './Creators/Reducers/createSetClientSideCollectionFilterReducer';
@@ -208,7 +208,7 @@ export const defaultState = {
           return acc;
         }, []);
 
-        return tagList.sort(sortByName);
+        return tagList.sort(sortByProp('studioTitle'));
       }
     },
     {
@@ -266,7 +266,7 @@ export const defaultState = {
           return acc;
         }, []);
 
-        return genreList.sort(sortByName);
+        return genreList.sort(sortByProp('genres'));
       }
     },
     {

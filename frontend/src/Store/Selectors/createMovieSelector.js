@@ -4,11 +4,11 @@ import movieEntities from 'Movie/movieEntities';
 
 export function createMovieSelectorForHook(movieId) {
   return createSelector(
-    (state) => state.movies.itemMap,
-    (state) => state.movies.items,
+    (state) => state.movies.itemMap || {},
+    (state) => state.movies.items || {},
     (itemMap, allMovies) => {
 
-      return movieId ? allMovies[itemMap[movieId]]: undefined;
+      return movieId ? allMovies[itemMap[movieId]] : undefined;
     }
   );
 }
@@ -26,8 +26,8 @@ export function createMovieByEntitySelector() {
 function createMovieSelector() {
   return createSelector(
     (state, { movieId }) => movieId,
-    (state) => state.movies.itemMap,
-    (state) => state.movies.items,
+    (state) => state.movies.itemMap || {},
+    (state) => state.movies.items || {},
     (movieId, itemMap, allMovies) => {
       return allMovies[itemMap[movieId]];
     }

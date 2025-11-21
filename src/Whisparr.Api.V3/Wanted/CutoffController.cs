@@ -4,6 +4,7 @@ using NzbDrone.Core.Configuration;
 using NzbDrone.Core.CustomFormats;
 using NzbDrone.Core.Datastore;
 using NzbDrone.Core.DecisionEngine.Specifications;
+using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.Movies;
 using NzbDrone.Core.MovieStats;
 using NzbDrone.SignalR;
@@ -24,14 +25,15 @@ namespace Whisparr.Api.V3.Wanted
                             IUpgradableSpecification upgradableSpecification,
                             ICustomFormatCalculationService formatCalculator,
                             IConfigService configService,
+                            IMapCoversToLocal coverMapper,
                             IBroadcastSignalRMessage signalRBroadcaster)
-            : base(movieService, movieStatisticsService, upgradableSpecification, formatCalculator, configService, signalRBroadcaster)
+            : base(movieService, movieStatisticsService, upgradableSpecification, formatCalculator, configService, coverMapper, signalRBroadcaster)
         {
             _movieCutoffService = movieCutoffService;
         }
 
         [NonAction]
-        protected override MovieResource GetResourceById(int id)
+        public override ActionResult<MovieResource> GetResourceByIdWithErrorHandler(int id)
         {
             throw new NotImplementedException();
         }

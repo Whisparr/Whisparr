@@ -9,10 +9,10 @@ using NzbDrone.Core.Configuration;
 using NzbDrone.Core.CustomFormats;
 using NzbDrone.Core.DecisionEngine;
 using NzbDrone.Core.Download;
+using NzbDrone.Core.Download.TrackedDownloads;
 using NzbDrone.Core.MediaFiles.MediaInfo;
 using NzbDrone.Core.MediaFiles.MovieImport.Aggregation;
 using NzbDrone.Core.Movies;
-using NzbDrone.Core.Parser;
 using NzbDrone.Core.Parser.Model;
 
 namespace NzbDrone.Core.MediaFiles.MovieImport
@@ -36,7 +36,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
         private readonly ISceneIdentificationService _identificationService;
         private readonly IDiskProvider _diskProvider;
         private readonly IDetectSample _detectSample;
-        private readonly IParsingService _parsingService;
+        private readonly ITrackedDownloadService _trackedDownloadService;
         private readonly ICustomFormatCalculationService _formatCalculator;
         private readonly IVideoFileInfoReader _videoFileInfoReader;
         private readonly IConfigService _configService;
@@ -49,7 +49,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
                                    ISceneIdentificationService identificationService,
                                    IDiskProvider diskProvider,
                                    IDetectSample detectSample,
-                                   IParsingService parsingService,
+                                   ITrackedDownloadService trackedDownloadService,
                                    ICustomFormatCalculationService formatCalculator,
                                    IVideoFileInfoReader videoFileInfoReader,
                                    IConfigService configService,
@@ -62,7 +62,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
             _diskProvider = diskProvider;
             _detectSample = detectSample;
             _identificationService = identificationService;
-            _parsingService = parsingService;
+            _trackedDownloadService = trackedDownloadService;
             _formatCalculator = formatCalculator;
             _videoFileInfoReader = videoFileInfoReader;
             _configService = configService;
@@ -251,6 +251,16 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
                 }
                 else
                 {
+                    if (downloadClientItem?.DownloadId.IsNotNullOrWhiteSpace() == true)
+                    {
+                        var trackedDownload = _trackedDownloadService.Find(downloadClientItem.DownloadId);
+
+                        if (trackedDownload?.RemoteMovie?.Release?.IndexerFlags != null)
+                        {
+                            localMovie.IndexerFlags = trackedDownload.RemoteMovie.Release.IndexerFlags;
+                        }
+                    }
+
                     var matchedMovie = new Movie();
 
                     if (localMovie.Movie != null)

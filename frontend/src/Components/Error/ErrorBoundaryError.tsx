@@ -63,11 +63,7 @@ function ErrorBoundaryError(props: ErrorBoundaryErrorProps) {
           <div>{info.componentStack}</div>
         )}
 
-        {
-          <div className={styles.version}>
-            Version: {window.Whisparr.version}
-          </div>
-        }
+        <div className={styles.version}>Version: {window.Whisparr.version}</div>
       </details>
     </div>
   );

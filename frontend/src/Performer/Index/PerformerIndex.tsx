@@ -154,6 +154,10 @@ const PerformerIndex = withScrollPosition((props: PerformerIndexProps) => {
     [setJumpToCharacter]
   );
 
+  const onAddPerformerPress = useCallback(() => {
+    history.push('/add/new/scene');
+  }, [history]);
+
   const jumpBarItems = useMemo(() => {
     // Reset if not sorting by sortTitle
     if (sortKey !== 'fullName') {
@@ -223,7 +227,7 @@ const PerformerIndex = withScrollPosition((props: PerformerIndexProps) => {
             <PageToolbarButton
               label={translate('AddPerformer')}
               iconName={icons.ADD}
-              onPress={() => history.push('/add/new/scene')}
+              onPress={onAddPerformerPress}
             />
           </PageToolbarSection>
           <PageToolbarSection

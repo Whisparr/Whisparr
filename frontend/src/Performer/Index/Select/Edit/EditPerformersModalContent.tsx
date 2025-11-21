@@ -147,9 +147,7 @@ function EditPerformersModalContent(props: EditPerformersModalContentProps) {
             includeNoChange={true}
             includeNoChangeDisabled={false}
             selectedValueOptions={{ includeFreeSpace: false }}
-            helpText={
-              'Moving scenes to the same root folder can be used to rename scene folders to match updated title or naming format'
-            }
+            helpText="Moving scenes to the same root folder can be used to rename scene folders to match updated title or naming format"
             onChange={onInputChange}
           />
         </FormGroup>

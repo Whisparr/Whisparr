@@ -163,8 +163,8 @@ function StudioIndexSelectFooter() {
           <SpinnerButton
             isSpinning={isSaving && isDeleting}
             isDisabled={!anySelected}
-            onPress={onDeletePress}
             kind={kinds.DANGER}
+            onPress={onDeletePress}
           >
             {translate('Delete')}
           </SpinnerButton>

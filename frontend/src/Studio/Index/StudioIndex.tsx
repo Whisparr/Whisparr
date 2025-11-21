@@ -193,6 +193,10 @@ const StudioIndex = withScrollPosition((props: StudioIndexProps) => {
 
   const isLoaded = !!(!error && isPopulated && items.length);
   const hasNoStudio = !totalItems;
+  const onAddStudioPress = useCallback(
+    () => history.push('/add/new/scene'),
+    [history]
+  );
 
   return (
     <SelectProvider items={items}>
@@ -222,7 +226,7 @@ const StudioIndex = withScrollPosition((props: StudioIndexProps) => {
             <PageToolbarButton
               label={translate('AddStudio')}
               iconName={icons.ADD}
-              onPress={() => history.push('/add/new/scene')}
+              onPress={onAddStudioPress}
             />
           </PageToolbarSection>
           <PageToolbarSection

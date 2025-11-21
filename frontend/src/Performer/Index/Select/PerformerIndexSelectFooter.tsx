@@ -43,7 +43,7 @@ function PerformerIndexSelectFooter() {
   const [isSavingPerformers, setIsSavingPerformers] = useState(false);
   const [isSavingTags, setIsSavingTags] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [isDeleteModalOpen, setIsPerformerModalOpen] = useState(false);
+  const [isPerformerModalOpen, setIsPerformerModalOpen] = useState(false);
 
   const [selectState] = useSelect();
   const { selectedState } = selectState;
@@ -163,8 +163,8 @@ function PerformerIndexSelectFooter() {
           <SpinnerButton
             isSpinning={isSaving && isDeleting}
             isDisabled={!anySelected}
-            onPress={onDeletePress}
             kind={kinds.DANGER}
+            onPress={onDeletePress}
           >
             {translate('Delete')}
           </SpinnerButton>
@@ -190,7 +190,7 @@ function PerformerIndexSelectFooter() {
       />
 
       <DeletePerformerModal
-        isOpen={isDeleteModalOpen}
+        isOpen={isPerformerModalOpen}
         performerIds={performerIds}
         onDeletePress={onDeleteConfirm}
         onModalClose={onDeleteModalClose}

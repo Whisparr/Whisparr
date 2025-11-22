@@ -127,6 +127,12 @@ namespace NzbDrone.Core.Configuration
             set { SetValue("ImportExclusions", value); }
         }
 
+        public bool SearchStudioCode
+        {
+            get { return GetValueBoolean("SearchStudioCode"); }
+            set { SetValue("SearchStudioCode", value); }
+        }
+
         public bool SearchTitleOnly
         {
             get { return GetValueBoolean("SearchTitleOnly"); }

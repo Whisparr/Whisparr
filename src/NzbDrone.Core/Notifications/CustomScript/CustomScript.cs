@@ -317,7 +317,7 @@ namespace NzbDrone.Core.Notifications.CustomScript
             environmentVariables.Add("Whisparr_Movie_Genres", string.Join("|", movie?.MovieMetadata.Value.Genres ?? new List<string>()));
             environmentVariables.Add("Whisparr_Movie_Tags", string.Join("|", GetTagLabels(movie)));
             environmentVariables.Add("Whisparr_Movie_Path", movie?.Path);
-            environmentVariables.Add("Whisparr_Movie_TmdbId", movie?.MovieMetadata.Value.TmdbId ?? string.Empty);
+            environmentVariables.Add("Whisparr_Movie_TmdbId", movie?.MovieMetadata.Value.TmdbId.ToString());
             environmentVariables.Add("Whisparr_Movie_ForeignId", movie?.MovieMetadata.Value.ForeignId.ToString());
             environmentVariables.Add("Whisparr_Movie_Overview", movie?.MovieMetadata.Value.Overview);
             environmentVariables.Add("Whisparr_Download_Client", message.DownloadClientInfo?.Name ?? string.Empty);

@@ -598,14 +598,11 @@ namespace NzbDrone.Core.Notifications.Discord
         private static string GetLinksString(Movie movie)
         {
             var links = string.Format("[{0}]({1})", "StashDB", GetUrl(movie.MovieMetadata.Value.ForeignId));
-            if (movie.MovieMetadata.Value.ImdbId.IsNotNullOrWhiteSpace())
-            {
-                links.Add($"[IMDb](https://imdb.com/title/{movie.MovieMetadata.Value.ImdbId}/)");
-            }
 
-            if (movie.MovieMetadata.Value.Website.IsNotNullOrWhiteSpace())
+            if (movie?.MovieMetadata?.Value?.TmdbId > 0)
             {
-                links.Add($"[Website]({movie.MovieMetadata.Value.Website})");
+                var tmdbLink = string.Format("[{0}]({1})", "TMDb", GetUrl(movie.MovieMetadata.Value.TmdbId));
+                links += $" | {tmdbLink}";
             }
 
             return links;
@@ -614,6 +611,11 @@ namespace NzbDrone.Core.Notifications.Discord
         private static string GetUrl(string foreignId)
         {
             return $"https://stashdb.org/scenes/{foreignId}";
+        }
+
+        private static string GetUrl(int tmdbId)
+        {
+            return $"https://www.themoviedb.org/movie/{tmdbId}";
         }
 
         private string GetTitle(Movie movie)

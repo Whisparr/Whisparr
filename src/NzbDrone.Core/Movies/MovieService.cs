@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using NLog;
 using NzbDrone.Common.Cache;
 using NzbDrone.Common.Extensions;
@@ -60,7 +61,7 @@ namespace NzbDrone.Core.Movies
         bool UpdateTags(Movie movie);
         bool ExistsByMetadataId(int metadataId);
         void SetFileIds(List<Movie> movies);
-        Dictionary<Movie, MovieParseMatchType> MatchMovies(string parsedMovieTitle, string releaseDate, List<Movie> movies);
+        Dictionary<Movie, MovieParseMatchType> MatchMovies(string parsedMovieTitle, string releaseDate, string episode, List<Movie> movies);
     }
 
     public class MovieService : IMovieService, IHandle<MovieFileAddedEvent>,
@@ -477,7 +478,7 @@ namespace NzbDrone.Core.Movies
 
                     foreach (var studio in studios)
                     {
-                        var movie = FindByStudioAndReleaseDate(studio.ForeignId, parsedMovieInfo.ReleaseDate, parsedMovieInfo.ReleaseTokens, interactive, searchCriteria);
+                        var movie = FindByStudioAndReleaseDate(studio.ForeignId, parsedMovieInfo.ReleaseDate, parsedMovieInfo.ReleaseTokens, parsedMovieInfo.Episode, interactive, searchCriteria);
 
                         if (movie != null)
                         {
@@ -499,7 +500,7 @@ namespace NzbDrone.Core.Movies
             return result;
         }
 
-        private Movie FindByStudioAndReleaseDate(string studioForeignId, string releaseDate, string releaseTokens, bool interactiveSearch = false, SearchCriteriaBase searchCriteria = null)
+        private Movie FindByStudioAndReleaseDate(string studioForeignId, string releaseDate, string releaseTokens, string episode, bool interactiveSearch = false, SearchCriteriaBase searchCriteria = null)
         {
             if (string.IsNullOrEmpty(studioForeignId))
             {
@@ -538,7 +539,7 @@ namespace NzbDrone.Core.Movies
 
             if (parsedMovieTitle.IsNotNullOrWhiteSpace())
             {
-                var matches = MatchMovies(parsedMovieTitle, releaseDate, movies);
+                var matches = MatchMovies(parsedMovieTitle, releaseDate, episode, movies);
 
                 if (matches.Count == 1)
                 {
@@ -552,7 +553,7 @@ namespace NzbDrone.Core.Movies
             return null;
         }
 
-        public Dictionary<Movie, MovieParseMatchType> MatchMovies(string parsedMovieTitle, string releaseDate, List<Movie> movies)
+        public Dictionary<Movie, MovieParseMatchType> MatchMovies(string parsedMovieTitle, string releaseDate, string episode, List<Movie> movies)
         {
             var matches = new Dictionary<Movie, MovieParseMatchType>();
 
@@ -584,6 +585,39 @@ namespace NzbDrone.Core.Movies
                     _logger.Debug("Match {0} against {1} [Title]", parsedMovieTitle, cleanTitle);
                     matches.Add(movie, MovieParseMatchType.Title);
                     continue;
+                }
+
+                var code = movie.MovieMetadata.Value.Code;
+                if (code.IsNotNullOrWhiteSpace())
+                {
+                    if (episode.IsNotNullOrWhiteSpace())
+                    {
+                        if (episode.Equals(code, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            _logger.Debug("Match {0} against {1} [Code]", episode, code);
+                            matches.Add(movie, MovieParseMatchType.Episode);
+                            continue;
+                        }
+                        else if (int.TryParse(code, out var codeNumber) && int.TryParse(Regex.Match(episode, @"\d+").Value, out var episodeNumber))
+                        {
+                            if (codeNumber == episodeNumber)
+                            {
+                                _logger.Debug("Match {0} against {1} [Code]", episode, code);
+                                matches.Add(movie, MovieParseMatchType.Episode);
+                                continue;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (parsedMovieTitle.Contains(code, StringComparison.InvariantCultureIgnoreCase)
+                            && parsedMovieTitle.Contains(cleanTitle, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            _logger.Debug("Match {0} against {1} [Code]", parsedMovieTitle, code);
+                            matches.Add(movie, MovieParseMatchType.Episode);
+                            continue;
+                        }
+                    }
                 }
 
                 var cleanPerformers = movie.MovieMetadata.Value.Credits.Select(a => Parser.Parser.NormalizeEpisodeTitle(a.Performer.Name))

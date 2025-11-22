@@ -232,6 +232,21 @@ function IndexerOptions(props) {
               advancedSettings={advancedSettings}
               isAdvanced={true}
             >
+              <FormLabel>{translate('SearchStudioCode')}</FormLabel>
+
+              <FormInputGroup
+                type={inputTypes.CHECK}
+                name="searchStudioCode"
+                helpText={translate('SearchStudioCodeHelpText')}
+                onChange={onInputChange}
+                {...settings.searchStudioCode}
+              />
+            </FormGroup>
+
+            <FormGroup
+              advancedSettings={advancedSettings}
+              isAdvanced={true}
+            >
               <FormLabel>{translate('SearchStudioDate')}</FormLabel>
 
               <FormInputGroup

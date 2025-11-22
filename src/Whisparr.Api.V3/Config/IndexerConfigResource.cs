@@ -13,6 +13,7 @@ namespace Whisparr.Api.V3.Config
         public int AvailabilityDelay { get; set; }
         public bool AllowHardcodedSubs { get; set; }
         public string WhitelistedHardcodedSubs { get; set; }
+        public bool SearchStudioCode { get; set; }
         public bool SearchTitleOnly { get; set; }
         public bool SearchTitleDate { get; set; }
         public bool SearchStudioDate { get; set; }
@@ -37,6 +38,7 @@ namespace Whisparr.Api.V3.Config
                 WhitelistedHardcodedSubs = model.WhitelistedHardcodedSubs,
                 SearchTitleOnly = model.SearchTitleOnly,
                 SearchTitleDate = model.SearchTitleDate,
+                SearchStudioCode = model.SearchStudioCode,
                 SearchStudioDate = model.SearchStudioDate,
                 SearchStudioTitle = model.SearchStudioTitle,
                 SearchDateFormat = model.SearchDateFormat,

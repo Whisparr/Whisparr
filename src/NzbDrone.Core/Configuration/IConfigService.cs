@@ -62,6 +62,7 @@ namespace NzbDrone.Core.Configuration
 
                 string ListSyncLevel { get; set; }
                 string ImportExclusions { get; set; }
+                bool SearchStudioCode { get; set; }
                 bool SearchTitleOnly { get; set; }
                 bool SearchTitleDate { get; set; }
                 bool SearchStudioDate { get; set; }

@@ -117,6 +117,8 @@ namespace NzbDrone.Core.IndexerSearch
                     }
                 }
 
+                var code = sceneSearchSpec.Movie.MovieMetadata.Value.Code;
+
                 if (sceneSearchSpec.SiteTitle != null)
                 {
                     var studioTitles = _studioService.FindAllByTitle(sceneSearchSpec.SiteTitle);
@@ -124,20 +126,20 @@ namespace NzbDrone.Core.IndexerSearch
                     {
                         if (studioTitle.SearchTitle.IsNotNullOrWhiteSpace())
                         {
-                            sceneSearchSpec.SceneTitles = generateSceneTitles(sceneSearchSpec.SceneTitles, studioTitle.Aliases, studioTitle.SearchTitle, releaseDateStrings, originalTitles);
+                            sceneSearchSpec.SceneTitles = generateSceneTitles(sceneSearchSpec.SceneTitles, studioTitle.Aliases, studioTitle.SearchTitle, releaseDateStrings, originalTitles, code);
                         }
                         else
                         {
                             if (_configService.SearchStudioFormat == SearchStudioFormatType.ORIGINAL || _configService.SearchStudioFormat == SearchStudioFormatType.BOTH)
                             {
                                 // Full Studio Name (Couch Casting-X)
-                                sceneSearchSpec.SceneTitles = generateSceneTitles(sceneSearchSpec.SceneTitles, studioTitle.Aliases, studioTitle.Title, releaseDateStrings, originalTitles);
+                                sceneSearchSpec.SceneTitles = generateSceneTitles(sceneSearchSpec.SceneTitles, studioTitle.Aliases, studioTitle.Title, releaseDateStrings, originalTitles, code);
                             }
 
                             if (_configService.SearchStudioFormat == SearchStudioFormatType.CLEAN || _configService.SearchStudioFormat == SearchStudioFormatType.BOTH)
                             {
                                 // Studio with spaces and other characters removed (CouchCastingX)
-                                sceneSearchSpec.SceneTitles = generateSceneTitles(sceneSearchSpec.SceneTitles, studioTitle.Aliases, studioTitle.CleanTitle, releaseDateStrings, originalTitles);
+                                sceneSearchSpec.SceneTitles = generateSceneTitles(sceneSearchSpec.SceneTitles, studioTitle.Aliases, studioTitle.CleanTitle, releaseDateStrings, originalTitles, code);
                             }
                         }
                     }
@@ -151,13 +153,21 @@ namespace NzbDrone.Core.IndexerSearch
             return DeDupeDecisions(downloadDecisions);
         }
 
-        private List<string> generateSceneTitles(List<string> sceneTitles, List<string> studioAliases, string studioTitle, List<string> releaseDateStrings, List<string> originalTitles)
+        private List<string> generateSceneTitles(List<string> sceneTitles, List<string> studioAliases, string studioTitle, List<string> releaseDateStrings, List<string> originalTitles, string code)
         {
             var studios = new List<string>(studioAliases ?? new List<string>());
             studios.Add(studioTitle);
 
             foreach (var studio in studios)
             {
+                if (_configService.SearchStudioCode && code.IsNotNullOrWhiteSpace())
+                {
+                    if (!sceneTitles.Contains($"{studio} {code}"))
+                    {
+                        sceneTitles.Add($"{studio} {code}");
+                    }
+                }
+
                 if (_configService.SearchStudioTitle)
                 {
                     // Search for Studio + Scene Name

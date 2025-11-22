@@ -22,7 +22,7 @@ interface SceneIndexPosterInfoProps {
   path: string;
   ratings: Ratings;
   originalLanguage: Language;
-  sizeOnDisk?: number;
+  sizeOnDisk: number;
   sortKey: string;
   showRelativeDates: boolean;
   showReleaseDate: boolean;

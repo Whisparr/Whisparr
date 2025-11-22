@@ -8,6 +8,8 @@ import CustomFormat from 'typings/CustomFormat';
 export interface ParsedMovieInfo {
   releaseTitle: string;
   isScene: boolean;
+  episode: string;
+  releaseTokens: string;
   originalTitle: string;
   movieTitle: string;
   movieTitles: string[];

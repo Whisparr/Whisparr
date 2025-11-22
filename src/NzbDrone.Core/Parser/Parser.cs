@@ -61,7 +61,9 @@ namespace NzbDrone.Core.Parser
                 RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
             // SCENE with airdate after title studio - title (dd.mm.yyyy)
-            new Regex(@"(?<studiotitle>.+?)?[-]+(?<releasetoken>.+?)\((?<airday>[0-3][0-9])\.(?<airmonth>[0-1][0-9])\.(?<airyear>(19|20)\d{2})\)",
+            // StudioName-Performer.Name-ID.429.[19.10.2025].1080p-XXX
+            // StudioName-Performer.Name-ID.429.(19.10.2025).1080p-XXX
+            new Regex(@"(?<studiotitle>.+?)?[-]+(?<releasetoken>.+?)(?:\[|\()(?<airday>[0-3][0-9])\.(?<airmonth>[0-1][0-9])\.(?<airyear>(19|20)\d{2})(?:\)|\])",
                 RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
             // SCENE with airdate (18.04.28, 2018.04.28, 18-04-28, 18 04 28, 18_04_28)

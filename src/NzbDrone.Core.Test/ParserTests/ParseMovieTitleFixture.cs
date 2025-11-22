@@ -17,6 +17,7 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("[Studio.com] Performer & Performer - Studio Title (18.05.2019) [2019 г., Anal, IR, Rim Job, Ass To Mouth, Big Cocks, Black, Blowjobs, Brunettes, Deep Throat, Facial, Gaping, Natural, Teen, 1080p]", true)]
         [TestCase("[random.com][Studio] Performer name - Title(01.04.2020) rq.mp4", true)]
         [TestCase("Studio - Performer Name - Some Title (10.01.2024)", true)]
+        [TestCase("Studio - Performer Name-Some.Title.[19.10.2025].1080p-XXX", true)]
         [TestCase("Reflective Desire - 2022-12-01 - Chuck Faerie Vespa - Pussyfootin' - WEBDL-2160p h264", true)]
         [TestCase("MollyRedWolf - 2022-04-14 - MollyRedWolf - Komi-San.I want you - WEBDL-720p x265", true)]
         [TestCase("Studio.19.07.01.Title..480p.MP4-XXX", true)]
@@ -33,6 +34,7 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Jesse Loads Monster Facials 2024-04-19 Frecklemonade.mkv", true)]
         [TestCase("Lustery E1717 James And Six Sharp Cold Fear XXX 1080p MP4 FETiSH", true)]
         [TestCase("[Dads Love Porn] Ravyn Alexa & Johnny Blaster - Dads Love Maids(2025-10-14) [2160p]", true)]
+
         public void should_parse_as_scene(string title, bool expected)
         {
             Parser.Parser.ParseMovieTitle(title).IsScene.Should().Be(expected);
@@ -76,6 +78,7 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Studio.22.10.18.Title.XXX.720p.HEVC.x265.PRT[XvX]", "2022-10-18")]
         [TestCase("Studio - 2017-08-04 - Some Title. [WEBDL-480p]", "2017-08-04")]
         [TestCase("Studio - Performer Name - Some Title (10.01.2024)", "2024-01-10")]
+        [TestCase("Studio - Performer Name - Some Title [10.01.2024]", "2024-01-10")]
         [TestCase("Step Siblings Caught 2024-02-07 Cash For Kisses On Valentines Day - S25E7", "2024-02-07")]
         [TestCase("Pure Taboo - Sarah Arabic, Lily LaBeau - A Costly Divorce (June 24, 2025) [1080p HEVC x265]", "2025-06-24")]
         [TestCase("[BellesaFilms] The Sister - Ashley Lane, Mannie Coco (2025-09-28) [2160p]", "2025-09-28")]

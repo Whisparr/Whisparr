@@ -15,7 +15,7 @@ function MovieDetailsLinks(props: MovieDetailsLinksProps) {
 
   return (
     <div className={styles.links}>
-      {!!tmdbId &&
+      {!!tmdbId && (
         <Link
           className={styles.link}
           to={`https://www.themoviedb.org/movie/${tmdbId}`}
@@ -28,9 +28,9 @@ function MovieDetailsLinks(props: MovieDetailsLinksProps) {
             {translate('TMDb')}
           </Label>
         </Link>
-      }
+      )}
 
-      {!!stashId &&
+      {!!stashId && (
         <Link
           className={styles.link}
           to={`https://stashdb.org/scenes/${stashId}/`}
@@ -43,7 +43,7 @@ function MovieDetailsLinks(props: MovieDetailsLinksProps) {
             {translate('StashDB')}
           </Label>
         </Link>
-      }
+      )}
     </div>
   );
 }

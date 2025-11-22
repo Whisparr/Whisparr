@@ -24,6 +24,8 @@ function ParseResult(props: ParseResultProps) {
   const {
     releaseTitle,
     isScene,
+    episode,
+    releaseTokens,
     movieTitle,
     movieTitles,
     studioTitle,
@@ -73,9 +75,16 @@ function ParseResult(props: ParseResultProps) {
           />
         )}
 
+        <ParseResultItem title={translate('Episode')} data={episode} />
+
         <ParseResultItem
           title={translate('Edition')}
           data={edition ? edition : '-'}
+        />
+
+        <ParseResultItem
+          title={translate('ReleaseToken')}
+          data={releaseTokens}
         />
 
         <ParseResultItem

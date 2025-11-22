@@ -28,10 +28,14 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
             var bellaCredits = new List<Credit> { new Credit { Character = "", Performer = new CreditPerformer { Name = "Violet Myers", Gender = Gender.Female } }, new Credit { Character = "", Performer = new CreditPerformer { Name = "Victor Ray", Gender = Gender.Male } } };
             var evilCredits = new List<Credit> { new Credit { Character = "", Performer = new CreditPerformer { Name = "Whitney Wright", Gender = Gender.Female } }, new Credit { Character = "", Performer = new CreditPerformer { Name = "Mick Blue", Gender = Gender.Male } } };
             var ariAlectra = new List<Credit> { new Credit { Character = "", Performer = new CreditPerformer { Name = "Ari Alectra", Gender = Gender.Female } } };
+            var amhyraShy = new List<Credit> { new Credit { Character = "", Performer = new CreditPerformer { Name = "Amhyra Shy", Gender = Gender.Female } } };
+            var cocoLovelock = new List<Credit> { new Credit { Character = "Coco Lovecock", Performer = new CreditPerformer { Name = "Coco Lovelock", Gender = Gender.Female } }  };
 
             var studio = new Core.MetadataSource.SkyHook.Resource.StudioResource { Title = "Studio" };
             var evilStudio = new Core.MetadataSource.SkyHook.Resource.StudioResource { Title = "EvilAngel" };
             var jesseLoadsMonsterFacials = new Core.MetadataSource.SkyHook.Resource.StudioResource { Title = "JesseLoadsMonsterFacials" };
+            var wakeUpnFuck = new Core.MetadataSource.SkyHook.Resource.StudioResource { Title = "Wakeupnfuck" };
+            var pornWorld = new Core.MetadataSource.SkyHook.Resource.StudioResource { Title = "PornWorld" };
 
             var scenes = Builder<Movie>.CreateListOfSize(2000)
                                         .TheFirst(1)
@@ -155,6 +159,24 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
                                         .With(x => x.MovieMetadata.Value.Studio = jesseLoadsMonsterFacials)
                                         .With(x => x.MovieMetadata.Value.ReleaseDate = "2022-04-22")
                                         .With(x => x.MovieMetadata.Value.Credits = ariAlectra)
+                                        .TheNext(1)
+                                        .With(x => x.Title = "Amhyra Shy - Wunf 427")
+                                        .With(x => x.MovieMetadata.Value.Code = "427")
+                                        .With(x => x.MovieMetadata.Value.Studio = wakeUpnFuck)
+                                        .With(x => x.MovieMetadata.Value.ReleaseDate = "2025-09-10")
+                                        .With(x => x.MovieMetadata.Value.Credits = amhyraShy)
+                                        .TheNext(1)
+                                        .With(x => x.Title = "Amhyra Shy - Wunf 406")
+                                        .With(x => x.MovieMetadata.Value.Code = "406")
+                                        .With(x => x.MovieMetadata.Value.Studio = wakeUpnFuck)
+                                        .With(x => x.MovieMetadata.Value.ReleaseDate = "2024-08-18")
+                                        .With(x => x.MovieMetadata.Value.Credits = amhyraShy)
+                                        .TheNext(1)
+                                        .With(x => x.Title = "Cock Hungry Teen Coco Lovecock Tempts Her Tutor Into BBC Slamming")
+                                        .With(x => x.MovieMetadata.Value.Code = "GP2807")
+                                        .With(x => x.MovieMetadata.Value.Studio = pornWorld)
+                                        .With(x => x.MovieMetadata.Value.ReleaseDate = "2023-10-22")
+                                        .With(x => x.MovieMetadata.Value.Credits = cocoLovelock)
                                         .TheRest()
                                         .With(x => x.Title = "Title For the Rest")
                                         .With(x => x.MovieMetadata.Value.ReleaseDate = "2024-06-12")
@@ -169,7 +191,9 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
                 new Studio { ForeignId = "EvilAngel" },
                 new Studio { ForeignId = "Bellesa House" },
                 new Studio { ForeignId = "Step Siblings Caught" },
-                new Studio { ForeignId = "JesseLoadsMonsterFacials" }
+                new Studio { ForeignId = "JesseLoadsMonsterFacials" },
+                new Studio { ForeignId = "Wakeupnfuck" },
+                new Studio { ForeignId = "PornWorld" }
             };
 
             Mocker.GetMock<IStudioService>()
@@ -191,6 +215,10 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
             Mocker.GetMock<IMovieRepository>()
                 .Setup(s => s.GetByStudioForeignId(It.Is<string>(s => s.Equals("JesseLoadsMonsterFacials"))))
                 .Returns(scenes.Where(s => s.MovieMetadata.Value.Studio.Title.Equals("JesseLoadsMonsterFacials")).ToList());
+
+            Mocker.GetMock<IMovieRepository>()
+                .Setup(s => s.GetByStudioForeignId(It.Is<string>(s => s.Equals("Wakeupnfuck"))))
+                .Returns(scenes.Where(s => s.MovieMetadata.Value.Studio.Title.Equals("Wakeupnfuck")).ToList());
 
             Mocker.GetMock<IMovieRepository>()
                 .Setup(s => s.FindByStudioAndDate(It.Is<string>(s => s.Equals("Studio")), It.Is<string>(d => d.Equals("2021-01-08"))))
@@ -235,6 +263,10 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
             Mocker.GetMock<IMovieRepository>()
                 .Setup(s => s.FindByStudioAndDate(It.Is<string>(s => s.Equals("JesseLoadsMonsterFacials")), It.Is<string>(d => d.Equals("2022-04-22"))))
                 .Returns(scenes.Where(s => s.MovieMetadata.Value.ReleaseDate.Equals("2022-04-22")).Append(scenes.First()).ToList());
+
+            Mocker.GetMock<IMovieRepository>()
+                .Setup(s => s.FindByStudioAndDate(It.Is<string>(s => s.Equals("PornWorld")), It.Is<string>(d => d.Equals("2023-10-22"))))
+                .Returns(scenes.Where(s => s.MovieMetadata.Value.ReleaseDate.Equals("2023-10-22")).Append(scenes.First()).ToList());
 
             _candidates = Builder<Movie>.CreateListOfSize(3)
                                         .TheFirst(1)
@@ -285,6 +317,12 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
         [TestCase("EvilAngel - 2021-02-24 - Whitney Wright", null)]  // Possible Duplicate so no match
         [TestCase("JesseLoadsMonsterFacials.22.04.22.Ari.Alectra.XXX.1080p", 24)]
         [TestCase("JesseLoadsMonsterFacials.22.04.22.Ari.Alectra BTS.XXX.1080p", 23)]
+        [TestCase("Wakeupnfuck.E427.Amhyra Shy", 25)]
+        [TestCase("Wakeupnfuck.E406.Amhyra Shy", 26)]
+        [TestCase("Wakeupnfuck.E427.Amhyra Shy - Wunf 427", 25)]
+        [TestCase("Wakeupnfuck.E406.Amhyra Shy - Wunf 406", 26)]
+        [TestCase("[PornWorld.com] Coco Lovecock - Cock Hungry Teen Coco Lovecock Tempts Her Tutor Into BBC Slamming GP2807(22.10.2023) [2023 г., Young, Interracial, BBC, Gonzo, Hardcore, All Sex, 1080p]", 27)]
+        [TestCase("PornWorld - Coco Lovecock GP2807 (22.10.2023)", 27)]
         public void should_find_by_studio_and_release_date(string title, int? id)
         {
             var parsedMovieInfo = Parser.Parser.ParseMovieTitle(title);

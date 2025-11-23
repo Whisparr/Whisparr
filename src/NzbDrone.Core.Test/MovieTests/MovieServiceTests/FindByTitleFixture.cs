@@ -306,6 +306,8 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
         [TestCase("Studio.21.01.08.Carrie", 10)]
         [TestCase("Studio.21.01.08.Carrie Sage", 10)]
         [TestCase("Studio - 2024-07-30 - Milk & Chocolate Before Bed", 6)]
+        [TestCase("Studio - 2024-07-30 - Milk & Chocolate Before Bed [f3967398-1475-4e00-a7a0-935d7fd5dee1]", 6)]
+        [TestCase("Studio - 2024-07-30 - Milk & Chocolate Before Bed [f3967398-1475-4e00-a7a0-935d7fd5dee2]", 6)]
         [TestCase("Studio - 2024-07-30 - [f3967398-1475-4e00-a7a0-935d7fd5dee1]", 6)]
         [TestCase("2024-07-30 - [f3967398-1475-4e00-a7a0-935d7fd5dee1]", 6)]
         [TestCase("Bellesa House 2024-08-15 Episode 200 Violet And Victor", 16)]

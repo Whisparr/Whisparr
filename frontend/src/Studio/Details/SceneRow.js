@@ -8,7 +8,7 @@ import Tooltip from 'Components/Tooltip/Tooltip';
 import { tooltipPositions } from 'Helpers/Props';
 import MovieIndexProgressBar from 'Movie/Index/ProgressBar/MovieIndexProgressBar';
 import MovieFormats from 'Movie/MovieFormats';
-import MovieSearchCellConnector from 'Movie/MovieSearchCellConnector';
+import MovieSearchCell from 'Movie/MovieSearchCell';
 import MovieTitleLink from 'Movie/MovieTitleLink';
 import MediaInfoConnector from 'MovieFile/MediaInfoConnector';
 import * as mediaInfoTypes from 'MovieFile/mediaInfoTypes';
@@ -326,7 +326,7 @@ class SceneRow extends Component {
 
             if (name === 'actions') {
               return (
-                <MovieSearchCellConnector
+                <MovieSearchCell
                   key={name}
                   movieId={id}
                   movieTitle={title}

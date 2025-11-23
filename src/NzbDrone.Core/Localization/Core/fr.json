@@ -312,7 +312,7 @@
     "Deleted": "Supprimé",
     "DeleteDelayProfile": "Supprimer le profil de retard",
     "DeleteDelayProfileMessageText": "Êtes-vous sûr de vouloir supprimer ce profil de retard ?",
-    "DeletedMsg": "Le film a été supprimé de TMDb",
+    "DeletedMovieDescription": "Le film a été supprimé de TMDb",
     "DeleteDownloadClient": "Supprimer le client de téléchargement",
     "DeleteDownloadClientMessageText": "Voulez-vous supprimer le client de téléchargement « {name} » ?",
     "DeletedReasonMissingFromDisk": "{appName} n'a pas pu trouver le fichier sur le disque, il a donc été supprimé dans la base de données",

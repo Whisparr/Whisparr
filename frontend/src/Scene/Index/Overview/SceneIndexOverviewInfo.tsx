@@ -37,7 +37,7 @@ interface SceneIndexOverviewInfoProps {
   qualityProfile?: QualityProfile;
   added?: string;
   path: string;
-  sizeOnDisk?: number;
+  sizeOnDisk: number;
   sortKey: string;
 }
 

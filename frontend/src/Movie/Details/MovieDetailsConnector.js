@@ -212,7 +212,7 @@ class MovieDetailsConnector extends Component {
   // Lifecycle
 
   componentDidMount() {
-    registerPagePopulator(this.populate);
+    registerPagePopulator(this.populate, ['movieUpdated']);
     this.populate();
   }
 

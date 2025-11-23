@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Core.Configuration;
+using NzbDrone.Core.ImportLists.ImportExclusions;
 using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.MetadataSource;
 using NzbDrone.Core.Movies;
@@ -24,18 +25,21 @@ namespace Whisparr.Api.V3.Search
         private readonly INamingConfigService _namingService;
         private readonly IMapCoversToLocal _coverMapper;
         private readonly IConfigService _configService;
+        private readonly IImportListExclusionService _exclusionService;
 
         public SearchController(ISearchForNewMovie searchProxy,
                                 IBuildFileNames fileNameBuilder,
                                 INamingConfigService namingService,
                                 IMapCoversToLocal coverMapper,
-                                IConfigService configService)
+                                IConfigService configService,
+                                IImportListExclusionService exclusionService)
         {
             _searchProxy = searchProxy;
             _fileNameBuilder = fileNameBuilder;
             _namingService = namingService;
             _coverMapper = coverMapper;
             _configService = configService;
+            _exclusionService = exclusionService;
         }
 
         [HttpGet("scene")]
@@ -57,6 +61,7 @@ namespace Whisparr.Api.V3.Search
             var id = 1;
             var availDelay = _configService.AvailabilityDelay;
             var namingConfig = _namingService.GetConfig();
+            var exclusions = _exclusionService.GetAllExclusions();
 
             foreach (var result in results)
             {
@@ -78,6 +83,11 @@ namespace Whisparr.Api.V3.Search
 
                     movieResource.Folder = _fileNameBuilder.GetMovieFolder(movie, namingConfig);
                     resource.Movie = movieResource;
+
+                    // Set IsExcluded to show warning badge in search results
+                    resource.Movie.IsExcluded = exclusions.Any(e =>
+                        string.Equals(e.ForeignId, resource.Movie.ForeignId, StringComparison.OrdinalIgnoreCase));
+
                     resource.ForeignId = movie.ForeignId;
                 }
                 else if (result is Performer)

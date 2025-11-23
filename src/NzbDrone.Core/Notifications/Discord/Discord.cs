@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using FluentValidation.Results;
 using NzbDrone.Common.Extensions;
@@ -460,7 +461,7 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 embed.Thumbnail = new DiscordImage
                 {
-                    Url = movie.MovieMetadata.Value.Images.FirstOrDefault(x => x.CoverType == MediaCoverTypes.Poster)?.RemoteUrl
+                    Url = movie?.MovieMetadata?.Value?.Images?.FirstOrDefault(x => x.CoverType == MediaCoverTypes.Poster)?.RemoteUrl
                 };
             }
 
@@ -468,7 +469,7 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 embed.Image = new DiscordImage
                 {
-                    Url = movie.MovieMetadata.Value.Images.FirstOrDefault(x => x.CoverType == MediaCoverTypes.Fanart)?.RemoteUrl
+                    Url = movie?.MovieMetadata?.Value?.Images?.FirstOrDefault(x => x.CoverType == MediaCoverTypes.Fanart)?.RemoteUrl
                 };
             }
 
@@ -479,26 +480,26 @@ namespace NzbDrone.Core.Notifications.Discord
                 switch ((DiscordManualInteractionFieldType)field)
                 {
                     case DiscordManualInteractionFieldType.Overview:
-                        var overview = movie.MovieMetadata.Value.Overview ?? "";
+                        var overview = movie?.MovieMetadata?.Value?.Overview ?? "";
                         discordField.Name = "Overview";
                         discordField.Value = overview.Length <= 300 ? overview : $"{overview.AsSpan(0, 300)}...";
                         break;
                     case DiscordManualInteractionFieldType.Rating:
                         discordField.Name = "Rating";
-                        discordField.Value = movie.MovieMetadata.Value.Ratings.Tmdb?.Value.ToString() ?? string.Empty;
+                        discordField.Value = movie?.MovieMetadata?.Value?.Ratings?.Tmdb?.Value.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
                         break;
                     case DiscordManualInteractionFieldType.Genres:
                         discordField.Name = "Genres";
-                        discordField.Value = movie.MovieMetadata.Value.Genres.Take(5).Join(", ");
+                        discordField.Value = movie?.MovieMetadata?.Value?.Genres.Take(5).Join(", ");
                         break;
                     case DiscordManualInteractionFieldType.Quality:
                         discordField.Name = "Quality";
                         discordField.Inline = true;
-                        discordField.Value = message.Quality.Quality.Name;
+                        discordField.Value = message.Quality?.Quality?.Name;
                         break;
                     case DiscordManualInteractionFieldType.Group:
                         discordField.Name = "Group";
-                        discordField.Value = message.RemoteMovie.ParsedMovieInfo.ReleaseGroup;
+                        discordField.Value = message.RemoteMovie?.ParsedMovieInfo?.ReleaseGroup;
                         break;
                     case DiscordManualInteractionFieldType.Size:
                         discordField.Name = "Size";
@@ -507,7 +508,7 @@ namespace NzbDrone.Core.Notifications.Discord
                         break;
                     case DiscordManualInteractionFieldType.DownloadTitle:
                         discordField.Name = "Download";
-                        discordField.Value = string.Format("```{0}```", message.TrackedDownload.DownloadItem.Title);
+                        discordField.Value = $"```{message.TrackedDownload.DownloadItem.Title}```";
                         break;
                     case DiscordManualInteractionFieldType.Links:
                         discordField.Name = "Links";
@@ -597,14 +598,11 @@ namespace NzbDrone.Core.Notifications.Discord
         private static string GetLinksString(Movie movie)
         {
             var links = string.Format("[{0}]({1})", "StashDB", GetUrl(movie.MovieMetadata.Value.ForeignId));
-            if (movie.MovieMetadata.Value.ImdbId.IsNotNullOrWhiteSpace())
-            {
-                links += string.Format(" / [{0}]({1})", "IMDb", $"https://imdb.com/title/{movie.MovieMetadata.Value.ImdbId}/");
-            }
 
-            if (movie.MovieMetadata.Value.Website.IsNotNullOrWhiteSpace())
+            if (movie?.MovieMetadata?.Value?.TmdbId > 0)
             {
-                links += string.Format(" / [{0}]({1})", "Website", movie.MovieMetadata.Value.Website);
+                var tmdbLink = string.Format("[{0}]({1})", "TMDb", GetUrl(movie.MovieMetadata.Value.TmdbId));
+                links += $" | {tmdbLink}";
             }
 
             return links;
@@ -615,8 +613,18 @@ namespace NzbDrone.Core.Notifications.Discord
             return $"https://stashdb.org/scenes/{foreignId}";
         }
 
+        private static string GetUrl(int tmdbId)
+        {
+            return $"https://www.themoviedb.org/movie/{tmdbId}";
+        }
+
         private string GetTitle(Movie movie)
         {
+            if (movie == null)
+            {
+                return null;
+            }
+
             var title = movie.MovieMetadata.Value.Year > 0 ? $"{movie.MovieMetadata.Value.Title} ({movie.MovieMetadata.Value.Year})" : movie.MovieMetadata.Value.Title;
 
             return title.Length > 256 ? $"{title.AsSpan(0, 253)}..." : title;

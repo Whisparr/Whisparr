@@ -47,7 +47,7 @@ function MovieIndexPosterInfo(props: MovieIndexPosterInfoProps) {
     path,
     ratings,
     originalLanguage,
-    sizeOnDisk,
+    sizeOnDisk = 0,
     tags = [],
     sortKey,
     showRelativeDates,

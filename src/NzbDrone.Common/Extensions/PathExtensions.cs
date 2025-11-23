@@ -29,6 +29,12 @@ namespace NzbDrone.Common.Extensions
 
         public static string CleanFilePath(this string path)
         {
+            if (path.IsNotNullOrWhiteSpace())
+            {
+                // Trim trailing spaces before checking if the path is valid so validation doesn't fail for something we can fix.
+                path = path.TrimEnd(' ');
+            }
+
             Ensure.That(path, () => path).IsNotNullOrWhiteSpace();
             Ensure.That(path, () => path).IsValidPath(PathValidationType.AnyOs);
 
@@ -37,10 +43,10 @@ namespace NzbDrone.Common.Extensions
             // UNC
             if (!info.FullName.Contains('/') && info.FullName.StartsWith(@"\\"))
             {
-                return info.FullName.TrimEnd('/', '\\', ' ');
+                return info.FullName.TrimEnd('/', '\\');
             }
 
-            return info.FullName.TrimEnd('/').Trim('\\', ' ');
+            return info.FullName.TrimEnd('/').Trim('\\');
         }
 
         public static bool PathNotEquals(this string firstPath, string secondPath, StringComparison? comparison = null)
@@ -86,26 +92,23 @@ namespace NzbDrone.Common.Extensions
 
         public static string GetParentPath(this string childPath)
         {
-            var cleanPath = childPath.GetCleanPath();
+            var path = new OsPath(childPath).Directory;
 
-            if (cleanPath.IsNullOrWhiteSpace())
-            {
-                return null;
-            }
-
-            return Directory.GetParent(cleanPath)?.FullName;
+            return path == OsPath.Null ? null : path.PathWithoutTrailingSlash;
         }
 
         public static string GetParentName(this string childPath)
         {
-            var cleanPath = childPath.GetCleanPath();
+            var path = new OsPath(childPath).Directory;
 
-            if (cleanPath.IsNullOrWhiteSpace())
-            {
-                return null;
-            }
+            return path == OsPath.Null ? null : path.Name;
+        }
 
-            return Directory.GetParent(cleanPath)?.Name;
+        public static string GetDirectoryName(this string childPath)
+        {
+            var path = new OsPath(childPath);
+
+            return path == OsPath.Null ? null : path.Name;
         }
 
         public static string GetCleanPath(this string path)
@@ -124,32 +127,17 @@ namespace NzbDrone.Common.Extensions
 
         public static bool IsParentPath(this string parentPath, string childPath)
         {
-            if (parentPath.IsNullOrWhiteSpace() || childPath.IsNullOrWhiteSpace())
-            {
-                return false;
-            }
+            var parent = new OsPath(parentPath);
+            var child = new OsPath(childPath);
 
-            if (parentPath != "/" && !parentPath.EndsWith(":\\"))
+            while (child.Directory != OsPath.Null)
             {
-                parentPath = parentPath.TrimEnd(Path.DirectorySeparatorChar);
-            }
-
-            if (childPath != "/" && !parentPath.EndsWith(":\\"))
-            {
-                childPath = childPath.TrimEnd(Path.DirectorySeparatorChar);
-            }
-
-            var parent = new DirectoryInfo(parentPath);
-            var child = new DirectoryInfo(childPath);
-
-            while (child.Parent != null)
-            {
-                if (child.Parent.FullName.Equals(parent.FullName, DiskProviderBase.PathStringComparison))
+                if (child.Directory.Equals(parent, true))
                 {
                     return true;
                 }
 
-                child = child.Parent;
+                child = child.Directory;
             }
 
             return false;
@@ -162,6 +150,27 @@ namespace NzbDrone.Common.Extensions
             if (string.IsNullOrWhiteSpace(path) || path.ContainsInvalidPathChars())
             {
                 return false;
+            }
+
+            if (path.Trim() != path)
+            {
+                return false;
+            }
+
+            // Only check for leading or trailing spaces for path when running on Windows.
+            if (OsInfo.IsWindows)
+            {
+                var directoryInfo = new DirectoryInfo(path);
+
+                while (directoryInfo != null)
+                {
+                    if (directoryInfo.Name.Trim() != directoryInfo.Name)
+                    {
+                        return false;
+                    }
+
+                    directoryInfo = directoryInfo.Parent;
+                }
             }
 
             if (validationType == PathValidationType.AnyOs)
@@ -299,6 +308,11 @@ namespace NzbDrone.Common.Extensions
             }
 
             return processName;
+        }
+
+        public static string CleanPath(this string path)
+        {
+            return Path.Join(path.Split(Path.DirectorySeparatorChar).Select(s => s.Trim()).ToArray());
         }
 
         public static string GetAppDataPath(this IAppFolderInfo appFolderInfo)

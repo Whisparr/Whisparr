@@ -61,7 +61,7 @@ namespace NzbDrone.Core.Movies
         bool UpdateTags(Movie movie);
         bool ExistsByMetadataId(int metadataId);
         void SetFileIds(List<Movie> movies);
-        Dictionary<Movie, MovieParseMatchType> MatchMovies(string parsedMovieTitle, string releaseDate, string episode, List<Movie> movies);
+        Dictionary<Movie, MovieParseMatchType> MatchMovies(string parsedMovieTitle, string releaseDate, string foreignId, string episode, List<Movie> movies);
     }
 
     public class MovieService : IMovieService, IHandle<MovieFileAddedEvent>,
@@ -478,7 +478,7 @@ namespace NzbDrone.Core.Movies
 
                     foreach (var studio in studios)
                     {
-                        var movie = FindByStudioAndReleaseDate(studio.ForeignId, parsedMovieInfo.ReleaseDate, parsedMovieInfo.ReleaseTokens, parsedMovieInfo.Episode, interactive, searchCriteria);
+                        var movie = FindByStudioAndReleaseDate(studio.ForeignId, parsedMovieInfo.ReleaseDate, parsedMovieInfo.ReleaseTokens, parsedMovieInfo.StashId, parsedMovieInfo.Episode, interactive, searchCriteria);
 
                         if (movie != null)
                         {
@@ -500,7 +500,7 @@ namespace NzbDrone.Core.Movies
             return result;
         }
 
-        private Movie FindByStudioAndReleaseDate(string studioForeignId, string releaseDate, string releaseTokens, string episode, bool interactiveSearch = false, SearchCriteriaBase searchCriteria = null)
+        private Movie FindByStudioAndReleaseDate(string studioForeignId, string releaseDate, string releaseTokens, string foreignId, string episode, bool interactiveSearch = false, SearchCriteriaBase searchCriteria = null)
         {
             if (string.IsNullOrEmpty(studioForeignId))
             {
@@ -537,9 +537,9 @@ namespace NzbDrone.Core.Movies
             movies = movies.DistinctBy(movie => movie.Id).ToList();
             var parsedMovieTitle = Parser.Parser.NormalizeEpisodeTitle(releaseTokens);
 
-            if (parsedMovieTitle.IsNotNullOrWhiteSpace())
+            if (parsedMovieTitle.IsNotNullOrWhiteSpace() || foreignId.IsNotNullOrWhiteSpace())
             {
-                var matches = MatchMovies(parsedMovieTitle, releaseDate, episode, movies);
+                var matches = MatchMovies(parsedMovieTitle, releaseDate, foreignId, episode, movies);
 
                 if (matches.Count == 1)
                 {
@@ -553,7 +553,7 @@ namespace NzbDrone.Core.Movies
             return null;
         }
 
-        public Dictionary<Movie, MovieParseMatchType> MatchMovies(string parsedMovieTitle, string releaseDate, string episode, List<Movie> movies)
+        public Dictionary<Movie, MovieParseMatchType> MatchMovies(string parsedMovieTitle, string releaseDate, string foreignId, string episode, List<Movie> movies)
         {
             var matches = new Dictionary<Movie, MovieParseMatchType>();
 
@@ -562,10 +562,9 @@ namespace NzbDrone.Core.Movies
             foreach (var movie in movies)
             {
                 var cleanTitle = movie.Title.IsNotNullOrWhiteSpace() ? Parser.Parser.NormalizeEpisodeTitle(movie.Title) : string.Empty;
-                var foreignId = movie.ForeignId.IsNotNullOrWhiteSpace() ? Parser.Parser.NormalizeEpisodeTitle(movie.ForeignId) : string.Empty;
 
                 // If parsed title matches title, consider a match
-                if (cleanTitle.IsNotNullOrWhiteSpace() && parsedMovieTitle.Contains(foreignId))
+                if (foreignId == movie.ForeignId)
                 {
                     _logger.Debug("Match {0} against {1} [StashId]", parsedMovieTitle, movie.ForeignId);
                     matches.Add(movie, MovieParseMatchType.StashId);

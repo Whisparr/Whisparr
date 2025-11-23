@@ -1005,6 +1005,7 @@ namespace NzbDrone.Core.Parser
                 if (m != null && m.Groups["stashid"].Success)
                 {
                     result.StashId = m.Groups["stashid"].Value;
+                    result.ReleaseTokens = result.ReleaseTokens.Replace(result.StashId, "");
                 }
 
                 result.Code = string.Empty;

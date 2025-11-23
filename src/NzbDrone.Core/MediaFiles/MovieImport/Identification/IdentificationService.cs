@@ -98,16 +98,20 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
                 searchResults = _searchProxy.SearchForNewScene(parsedMovieInfo.StashId);
                 searchedByStashId = true;
             }
-            else if (match.Success)
+
+            if (!searchedByStashId)
             {
-                var sceneSearch = folder.Replace(" - ", " ");
-                searchResults = _searchProxy.SearchForNewScene(sceneSearch);
-                releaseDate = match.Groups[0].ToString();
-            }
-            else
-            {
-                term = $"{studioTitleSlug} {releaseDate} {firstPerformer}";
-                searchResults = _searchProxy.SearchForNewScene(term);
+                if (match.Success)
+                {
+                    var sceneSearch = folder.Replace(" - ", " ");
+                    searchResults = _searchProxy.SearchForNewScene(sceneSearch);
+                    releaseDate = match.Groups[0].ToString();
+                }
+                else
+                {
+                    term = $"{studioTitleSlug} {releaseDate} {firstPerformer}";
+                    searchResults = _searchProxy.SearchForNewScene(term);
+                }
             }
 
             // Get the best match for the movie
@@ -127,7 +131,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
             }
             else if (parsedMovieTitle.IsNotNullOrWhiteSpace() && !searchedByStashId)
             {
-                var matches = _movieService.MatchMovies(parsedMovieTitle, releaseDate, "", searchResults);
+                var matches = _movieService.MatchMovies(parsedMovieTitle, releaseDate, "", "", searchResults);
 
                 if (matches.Count == 1)
                 {

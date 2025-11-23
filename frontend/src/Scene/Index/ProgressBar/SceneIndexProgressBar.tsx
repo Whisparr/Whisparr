@@ -6,7 +6,7 @@ import { MovieFile } from 'MovieFile/MovieFile';
 import createSceneQueueItemsDetailsSelector, {
   SceneQueueDetails,
 } from 'Scene/Index/createSceneQueueDetailsSelector';
-import getStatusStyle from 'Calendar/getStatusStyle';
+import getStatusStyle from 'Utilities/Movie/getStatusStyle';
 import translate from 'Utilities/String/translate';
 import styles from './SceneIndexProgressBar.css';
 
@@ -74,7 +74,9 @@ function SceneIndexProgressBar(props: SceneIndexProgressBarProps) {
         status,
         monitored,
         hasFile,
-        isAvailable
+        isAvailable,
+        'kinds',
+        queueDetails.count > 0
       )}
       size={detailedProgressBar ? sizes.MEDIUM : sizes.SMALL}
       showText={detailedProgressBar}

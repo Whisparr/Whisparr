@@ -7,7 +7,7 @@ import { icons } from 'Helpers/Props';
 import translate from 'Utilities/String/translate';
 import KeyboardShortcutsModal from './KeyboardShortcutsModal';
 import MovieSearchInputConnector from './MovieSearchInputConnector';
-import PageHeaderActionsMenuConnector from './PageHeaderActionsMenuConnector';
+import PageHeaderActionsMenu from './PageHeaderActionsMenu';
 import SafeForWorkButtonConnector from './SafeForWorkButtonConnector';
 import styles from './PageHeader.css';
 
@@ -86,6 +86,7 @@ class PageHeader extends Component {
             size={14}
             title={translate('Donate')}
           />
+
           <IconButton
             className={styles.translate}
             title={translate('SuggestTranslationChange')}
@@ -93,7 +94,8 @@ class PageHeader extends Component {
             to="https://translate.servarr.com/projects/whisparr/whisparr/"
             size={24}
           />
-          <PageHeaderActionsMenuConnector
+
+          <PageHeaderActionsMenu
             onKeyboardShortcutsPress={this.onOpenKeyboardShortcutsModal}
           />
         </div>

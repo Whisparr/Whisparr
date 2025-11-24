@@ -1,6 +1,5 @@
 import React from 'react';
 import Icon from 'Components/Icon';
-import RottenTomatoRating from 'Components/RottenTomatoRating';
 import TagListConnector from 'Components/TagListConnector';
 import TmdbRating from 'Components/TmdbRating';
 import { icons } from 'Helpers/Props';
@@ -32,7 +31,6 @@ interface MovieIndexPosterInfoProps {
   longDateFormat: string;
   timeFormat: string;
   showTmdbRating: boolean;
-  showRottenTomatoesRating: boolean;
   showTags: boolean;
 }
 
@@ -56,7 +54,6 @@ function MovieIndexPosterInfo(props: MovieIndexPosterInfoProps) {
     longDateFormat,
     timeFormat,
     showTmdbRating,
-    showRottenTomatoesRating,
     showTags,
   } = props;
 
@@ -143,18 +140,6 @@ function MovieIndexPosterInfo(props: MovieIndexPosterInfoProps) {
     return (
       <div className={styles.info}>
         <TmdbRating ratings={ratings} iconSize={12} />
-      </div>
-    );
-  }
-
-  if (
-    !showRottenTomatoesRating &&
-    sortKey === 'rottenTomatoesRating' &&
-    !!ratings.rottenTomatoes
-  ) {
-    return (
-      <div className={styles.info}>
-        <RottenTomatoRating ratings={ratings} iconSize={12} />
       </div>
     );
   }

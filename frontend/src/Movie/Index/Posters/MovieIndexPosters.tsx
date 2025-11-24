@@ -145,7 +145,6 @@ export default function MovieIndexPosters(props: MovieIndexPostersProps) {
       showQualityProfile,
       showReleaseDate,
       showTmdbRating,
-      showRottenTomatoesRating,
       showTags,
     } = posterOptions;
 
@@ -172,10 +171,6 @@ export default function MovieIndexPosters(props: MovieIndexPostersProps) {
     }
 
     if (showTmdbRating) {
-      heights.push(19);
-    }
-
-    if (showRottenTomatoesRating) {
       heights.push(19);
     }
 

@@ -1,6 +1,5 @@
 import React from 'react';
 import Icon from 'Components/Icon';
-import RottenTomatoRating from 'Components/RottenTomatoRating';
 import TmdbRating from 'Components/TmdbRating';
 import { icons } from 'Helpers/Props';
 import Language from 'Language/Language';
@@ -30,7 +29,6 @@ interface SceneIndexPosterInfoProps {
   longDateFormat: string;
   timeFormat: string;
   showTmdbRating: boolean;
-  showRottenTomatoesRating: boolean;
 }
 
 function SceneIndexPosterInfo(props: SceneIndexPosterInfoProps) {
@@ -52,7 +50,6 @@ function SceneIndexPosterInfo(props: SceneIndexPosterInfoProps) {
     longDateFormat,
     timeFormat,
     showTmdbRating,
-    showRottenTomatoesRating,
   } = props;
 
   if (sortKey === 'studio' && studio) {
@@ -126,18 +123,6 @@ function SceneIndexPosterInfo(props: SceneIndexPosterInfoProps) {
     return (
       <div className={styles.info}>
         <TmdbRating ratings={ratings} iconSize={12} />
-      </div>
-    );
-  }
-
-  if (
-    !showRottenTomatoesRating &&
-    sortKey === 'rottenTomatoesRating' &&
-    !!ratings.rottenTomatoes
-  ) {
-    return (
-      <div className={styles.info}>
-        <RottenTomatoRating ratings={ratings} iconSize={12} />
       </div>
     );
   }

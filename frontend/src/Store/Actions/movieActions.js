@@ -163,14 +163,6 @@ export const filterPredicates = {
     return predicate(rating, filterValue);
   },
 
-  rottenTomatoesRating: function(item, filterValue, type) {
-    const predicate = filterTypePredicates[type];
-
-    const rating = item.ratings.rottenTomatoes ? item.ratings.rottenTomatoes.value : 0;
-
-    return predicate(rating, filterValue);
-  },
-
   qualityCutoffNotMet: function(item) {
     const { movieFile = {} } = item;
 

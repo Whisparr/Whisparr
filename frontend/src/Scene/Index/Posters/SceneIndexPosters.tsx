@@ -145,7 +145,6 @@ export default function SceneIndexPosters(props: SceneIndexPostersProps) {
       showQualityProfile,
       showReleaseDate,
       showTmdbRating,
-      showRottenTomatoesRating,
     } = posterOptions;
 
     const nextAiringHeight = 19;
@@ -177,10 +176,6 @@ export default function SceneIndexPosters(props: SceneIndexPostersProps) {
       heights.push(19);
     }
 
-    if (showRottenTomatoesRating) {
-      heights.push(19);
-    }
-
     switch (sortKey) {
       case 'studio':
       case 'added':
@@ -202,11 +197,6 @@ export default function SceneIndexPosters(props: SceneIndexPostersProps) {
         break;
       case 'tmdbRating':
         if (!showTmdbRating) {
-          heights.push(19);
-        }
-        break;
-      case 'rottenTomatoesRating':
-        if (!showRottenTomatoesRating) {
           heights.push(19);
         }
         break;

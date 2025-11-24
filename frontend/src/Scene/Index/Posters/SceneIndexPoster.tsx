@@ -7,7 +7,6 @@ import Label from 'Components/Label';
 import IconButton from 'Components/Link/IconButton';
 import Link from 'Components/Link/Link';
 import SpinnerIconButton from 'Components/Link/SpinnerIconButton';
-import RottenTomatoRating from 'Components/RottenTomatoRating';
 import TmdbRating from 'Components/TmdbRating';
 import Popover from 'Components/Tooltip/Popover';
 import { icons } from 'Helpers/Props';
@@ -52,7 +51,6 @@ function SceneIndexPoster(props: SceneIndexPosterProps) {
     showQualityProfile,
     showReleaseDate,
     showTmdbRating,
-    showRottenTomatoesRating,
     showSearchAction,
   } = useSelector(selectPosterOptions);
 
@@ -238,12 +236,6 @@ function SceneIndexPoster(props: SceneIndexPosterProps) {
         </div>
       ) : null}
 
-      {showRottenTomatoesRating && !!ratings.rottenTomatoes ? (
-        <div className={styles.title}>
-          <RottenTomatoRating ratings={ratings} iconSize={12} />
-        </div>
-      ) : null}
-
       <SceneIndexPosterInfo
         studio={studioTitle}
         qualityProfile={qualityProfile}
@@ -262,7 +254,6 @@ function SceneIndexPoster(props: SceneIndexPosterProps) {
         path={path}
         originalLanguage={originalLanguage}
         showTmdbRating={showTmdbRating}
-        showRottenTomatoesRating={showRottenTomatoesRating}
       />
 
       <EditMovieModalConnector

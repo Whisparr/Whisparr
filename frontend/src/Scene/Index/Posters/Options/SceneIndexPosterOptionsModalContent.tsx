@@ -54,7 +54,6 @@ function SceneIndexPosterOptionsModalContent(
     showQualityProfile,
     showReleaseDate,
     showTmdbRating,
-    showRottenTomatoesRating,
     showSearchAction,
   } = posterOptions;
 
@@ -153,18 +152,6 @@ function SceneIndexPosterOptionsModalContent(
               name="showTmdbRating"
               value={showTmdbRating}
               helpText={translate('ShowTmdbRatingHelpText')}
-              onChange={onPosterOptionChange}
-            />
-          </FormGroup>
-
-          <FormGroup>
-            <FormLabel>{translate('ShowRottenTomatoesRating')}</FormLabel>
-
-            <FormInputGroup
-              type={inputTypes.CHECK}
-              name="showRottenTomatoesRating"
-              value={showRottenTomatoesRating}
-              helpText={translate('ShowRottenTomatoesRatingHelpText')}
               onChange={onPosterOptionChange}
             />
           </FormGroup>

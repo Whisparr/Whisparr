@@ -31,15 +31,11 @@ export interface RatingValues {
 }
 
 export interface Ratings {
-  imdb: RatingValues;
   tmdb: RatingValues;
-  metacritic: RatingValues;
-  rottenTomatoes: RatingValues;
 }
 
 interface Movie extends ModelBase {
   tmdbId: number;
-  imdbId: string;
   stashId: string;
   itemType: string;
   foreignId: string;

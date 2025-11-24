@@ -5,7 +5,6 @@ import { MOVIE_SEARCH, REFRESH_MOVIE } from 'Commands/commandNames';
 import Icon from 'Components/Icon';
 import IconButton from 'Components/Link/IconButton';
 import SpinnerIconButton from 'Components/Link/SpinnerIconButton';
-import RottenTomatoRating from 'Components/RottenTomatoRating';
 import RelativeDateCellConnector from 'Components/Table/Cells/RelativeDateCellConnector';
 import VirtualTableRowCell from 'Components/Table/Cells/VirtualTableRowCell';
 import VirtualTableSelectCell from 'Components/Table/Cells/VirtualTableSelectCell';
@@ -284,15 +283,7 @@ function MovieIndexRow(props: MovieIndexRowProps) {
         if (name === 'tmdbRating') {
           return (
             <VirtualTableRowCell key={name} className={styles[name]}>
-              <TmdbRating ratings={ratings} />
-            </VirtualTableRowCell>
-          );
-        }
-
-        if (name === 'rottenTomatoesRating') {
-          return (
-            <VirtualTableRowCell key={name} className={styles[name]}>
-              <RottenTomatoRating ratings={ratings} />
+              {ratings.tmdb ? <TmdbRating ratings={ratings} /> : null}
             </VirtualTableRowCell>
           );
         }

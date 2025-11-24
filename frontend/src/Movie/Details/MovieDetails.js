@@ -14,7 +14,6 @@ import PageToolbar from 'Components/Page/Toolbar/PageToolbar';
 import PageToolbarButton from 'Components/Page/Toolbar/PageToolbarButton';
 import PageToolbarSection from 'Components/Page/Toolbar/PageToolbarSection';
 import PageToolbarSeparator from 'Components/Page/Toolbar/PageToolbarSeparator';
-import RottenTomatoRating from 'Components/RottenTomatoRating';
 import TmdbRating from 'Components/TmdbRating';
 import Popover from 'Components/Tooltip/Popover';
 import Tooltip from 'Components/Tooltip/Tooltip';
@@ -438,14 +437,6 @@ class MovieDetails extends Component {
                   {!!ratings.tmdb &&
                     <span className={styles.rating}>
                       <TmdbRating
-                        ratings={ratings}
-                        iconSize={20}
-                      />
-                    </span>
-                  }
-                  {!!ratings.rottenTomatoes &&
-                    <span className={styles.rating}>
-                      <RottenTomatoRating
                         ratings={ratings}
                         iconSize={20}
                       />

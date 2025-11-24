@@ -53,6 +53,14 @@ namespace NzbDrone.Core.ImportLists.TMDb
         [FieldOption(Hint = "Bengali")]
         bn,
         [FieldOption(Hint = "Romanian")]
-        ro
+        ro,
+        [FieldOption(Hint = "Macedonian")]
+        mk,
+        [FieldOption(Hint = "Slovenian")]
+        sl,
+        [FieldOption(Hint = "Malayalam")]
+        ml,
+        [FieldOption(Hint = "Kannada")]
+        kn
     }
 }

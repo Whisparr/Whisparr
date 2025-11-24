@@ -94,7 +94,6 @@ function Row({ index, style, data }: ListChildComponentProps<RowItemData>) {
         id={movie.id}
         title={movie.title}
         tmdbId={movie.tmdbId}
-        imdbId={movie.imdbId}
         credits={movie.credits}
         studioTitle={movie.studioTitle}
         releaseDate={movie.releaseDate}

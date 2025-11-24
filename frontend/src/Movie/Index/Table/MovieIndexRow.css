@@ -73,8 +73,7 @@
   flex: 0 0 120px;
 }
 
-.tmdbRating,
-.rottenTomatoesRating {
+.tmdbRating {
   composes: cell;
 
   flex: 0 0 80px;

@@ -25,16 +25,17 @@ export interface Statistics {
   sizeOnDisk: number;
 }
 
+export interface RatingValues {
+  votes: number;
+  value: number;
+}
+
 export interface Ratings {
-  imdb: object;
-  tmdb: object;
-  metacritic: object;
-  rottenTomatoes: object;
+  tmdb: RatingValues;
 }
 
 interface Movie extends ModelBase {
   tmdbId: number;
-  imdbId: string;
   stashId: string;
   itemType: string;
   foreignId: string;

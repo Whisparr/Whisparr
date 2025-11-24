@@ -169,7 +169,7 @@ namespace NzbDrone.Core.Notifications.CustomScript
             environmentVariables.Add("Whisparr_Movie_Release_Date", movie.MovieMetadata.Value.ReleaseDateUtc.ToString() ?? string.Empty);
             environmentVariables.Add("Whisparr_MovieFile_Ids", string.Join(",", renamedFiles.Select(e => e.MovieFile.Id)));
             environmentVariables.Add("Whisparr_MovieFile_RelativePaths", string.Join("|", renamedFiles.Select(e => e.MovieFile.RelativePath)));
-            environmentVariables.Add("Whisparr_MovieFile_Paths", string.Join("|", renamedFiles.Select(e => e.MovieFile.Path)));
+            environmentVariables.Add("Whisparr_MovieFile_Paths", string.Join("|", renamedFiles.Select(e => Path.Combine(movie.Path, e.MovieFile.RelativePath))));
             environmentVariables.Add("Whisparr_MovieFile_PreviousRelativePaths", string.Join("|", renamedFiles.Select(e => e.PreviousRelativePath)));
             environmentVariables.Add("Whisparr_MovieFile_PreviousPaths", string.Join("|", renamedFiles.Select(e => e.PreviousPath)));
 

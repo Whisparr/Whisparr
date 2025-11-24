@@ -36,7 +36,6 @@ export const defaultState = {
     showQualityProfile: true,
     showReleaseDate: false,
     showTmdbRating: false,
-    showRottenTomatoesRating: false,
     showSearchAction: false
   },
 

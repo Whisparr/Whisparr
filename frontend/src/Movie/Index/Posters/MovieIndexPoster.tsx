@@ -7,7 +7,6 @@ import Label from 'Components/Label';
 import IconButton from 'Components/Link/IconButton';
 import Link from 'Components/Link/Link';
 import SpinnerIconButton from 'Components/Link/SpinnerIconButton';
-import RottenTomatoRating from 'Components/RottenTomatoRating';
 import TagListConnector from 'Components/TagListConnector';
 import TmdbRating from 'Components/TmdbRating';
 import Popover from 'Components/Tooltip/Popover';
@@ -53,7 +52,6 @@ function MovieIndexPoster(props: MovieIndexPosterProps) {
     showQualityProfile,
     showReleaseDate,
     showTmdbRating,
-    showRottenTomatoesRating,
     showTags,
     showSearchAction,
   } = useSelector(selectPosterOptions);
@@ -245,12 +243,6 @@ function MovieIndexPoster(props: MovieIndexPosterProps) {
         </div>
       ) : null}
 
-      {showRottenTomatoesRating && !!ratings.rottenTomatoes ? (
-        <div className={styles.title}>
-          <RottenTomatoRating ratings={ratings} iconSize={12} />
-        </div>
-      ) : null}
-
       {showTags && tags.length ? (
         <div className={styles.tags}>
           <div className={styles.tagsList}>
@@ -278,7 +270,6 @@ function MovieIndexPoster(props: MovieIndexPosterProps) {
         originalLanguage={originalLanguage}
         tags={tags}
         showTmdbRating={showTmdbRating}
-        showRottenTomatoesRating={showRottenTomatoesRating}
         showTags={showTags}
       />
 

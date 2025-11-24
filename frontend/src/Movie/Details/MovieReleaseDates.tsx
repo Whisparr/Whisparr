@@ -32,12 +32,13 @@ function MovieReleaseDates(props: MovieReleaseDatesProps) {
   return (
     <div>
       {releaseDate ? (
-        <div title={translate('DigitalRelease')}>
+        <div title={translate('ReleaseDate')}>
           <div className={styles.dateIcon}>
-            <Icon name={icons.DISC} />
+            <Icon name={icons.CALENDAR} />
           </div>
           {getRelativeDate(releaseDate, shortDateFormat, showRelativeDates, {
             timeFormat,
+            includeSeconds: false,
             timeForToday: false,
           })}
         </div>

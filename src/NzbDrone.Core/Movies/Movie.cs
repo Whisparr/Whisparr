@@ -86,6 +86,11 @@ namespace NzbDrone.Core.Movies
             return MovieMetadata.Value.Status == MovieStatusType.Released;
         }
 
+        public DateTime? GetReleaseDate()
+        {
+            return MovieMetadata.Value.ReleaseDateUtc;
+        }
+
         public override string ToString()
         {
             var result = string.Empty;

@@ -6,6 +6,7 @@ import AppSectionState, {
   PagedAppSectionState,
 } from 'App/State/AppSectionState';
 import Language from 'Language/Language';
+import CustomFormat from 'typings/CustomFormat';
 import DownloadClient from 'typings/DownloadClient';
 import ImportList from 'typings/ImportList';
 import ImportListExclusion from 'typings/ImportListExclusion';
@@ -14,11 +15,16 @@ import Indexer from 'typings/Indexer';
 import IndexerFlag from 'typings/IndexerFlag';
 import Notification from 'typings/Notification';
 import QualityProfile from 'typings/QualityProfile';
-import { UiSettings } from 'typings/UiSettings';
+import General from 'typings/Settings/General';
+import UiSettings from 'typings/Settings/UiSettings';
 
 export interface DownloadClientAppState
   extends AppSectionState<DownloadClient>,
     AppSectionDeleteState,
+    AppSectionSaveState {}
+
+export interface GeneralAppState
+  extends AppSectionItemState<General>,
     AppSectionSaveState {}
 
 export interface ImportListAppState
@@ -39,6 +45,11 @@ export interface QualityProfilesAppState
   extends AppSectionState<QualityProfile>,
     AppSectionSchemaState<QualityProfile> {}
 
+export interface CustomFormatAppState
+  extends AppSectionState<CustomFormat>,
+    AppSectionDeleteState,
+    AppSectionSaveState {}
+
 export interface ImportListOptionsSettingsAppState
   extends AppSectionItemState<ImportListOptionsSettings>,
     AppSectionSaveState {}
@@ -57,7 +68,9 @@ export type UiSettingsAppState = AppSectionItemState<UiSettings>;
 
 interface SettingsAppState {
   advancedSettings: boolean;
+  customFormats: CustomFormatAppState;
   downloadClients: DownloadClientAppState;
+  general: GeneralAppState;
   importListExclusions: ImportListExclusionsSettingsAppState;
   importListOptions: ImportListOptionsSettingsAppState;
   importLists: ImportListAppState;

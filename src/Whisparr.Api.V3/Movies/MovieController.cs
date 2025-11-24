@@ -70,6 +70,7 @@ namespace Whisparr.Api.V3.Movies
                            RecycleBinValidator recycleBinValidator,
                            SystemFolderValidator systemFolderValidator,
                            QualityProfileExistsValidator qualityProfileExistsValidator,
+                           RootFolderExistsValidator rootFolderExistsValidator,
                            MovieFolderAsRootFolderValidator movieFolderAsRootFolderValidator,
                            ICacheManager cacheManager,
                            Logger logger)
@@ -106,6 +107,7 @@ namespace Whisparr.Api.V3.Movies
             PostValidator.RuleFor(s => s.Path).IsValidPath().When(s => s.RootFolderPath.IsNullOrWhiteSpace());
             PostValidator.RuleFor(s => s.RootFolderPath)
                          .IsValidPath()
+                         .SetValidator(rootFolderExistsValidator)
                          .SetValidator(movieFolderAsRootFolderValidator)
                          .When(s => s.Path.IsNullOrWhiteSpace());
             PostValidator.RuleFor(s => s.Title).NotEmpty().When(s => s.TmdbId <= 0);
@@ -272,6 +274,7 @@ namespace Whisparr.Api.V3.Movies
 
         [RestPostById]
         [Consumes("application/json")]
+        [Produces("application/json")]
         public ActionResult<MovieResource> AddMovie([FromBody] MovieResource moviesResource)
         {
             var movie = _addMovieService.AddMovie(moviesResource.ToModel());
@@ -281,6 +284,7 @@ namespace Whisparr.Api.V3.Movies
 
         [RestPutById]
         [Consumes("application/json")]
+        [Produces("application/json")]
         public ActionResult<MovieResource> UpdateMovie([FromBody] MovieResource moviesResource, [FromQuery] bool moveFiles = false)
         {
             var movie = _moviesService.GetMovie(moviesResource.Id);

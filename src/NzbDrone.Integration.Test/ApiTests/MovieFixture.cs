@@ -60,13 +60,11 @@ namespace NzbDrone.Integration.Test.ApiTests
         public void add_movie()
         {
             EnsureNoMovie(42019, "Taboo");
-
             var movie = Movies.Lookup("tmdb:42019").Single();
 
             movie.QualityProfileId = 1;
             var folder = Path.Combine("movies", $"{movie.Title} ({movie.Year})");
-
-            movie.RootFolderPath = MovieRootFolder;
+            movie.Path = Path.Combine(MovieRootFolder, folder);
 
             var result = Movies.Post(movie);
 

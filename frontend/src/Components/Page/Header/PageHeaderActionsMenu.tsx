@@ -72,7 +72,10 @@ function PageHeaderActionsMenu(props: PageHeaderActionsMenuProps) {
             <>
               <MenuItemSeparator />
 
-              <MenuItem to={`${window.Whisparr.urlBase}/logout`} noRouter={true}>
+              <MenuItem
+                to={`${window.Whisparr.urlBase}/logout`}
+                noRouter={true}
+              >
                 <Icon className={styles.itemIcon} name={icons.LOGOUT} />
                 {translate('Logout')}
               </MenuItem>

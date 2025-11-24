@@ -214,7 +214,7 @@ export const defaultState = {
           .map((group) => group.toLowerCase())
           .sort((a, b) => a.localeCompare(b)) :
         undefined;
-    },
+    }
   },
 
   selectedFilterKey: 'all',

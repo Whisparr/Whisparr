@@ -69,7 +69,7 @@ function CutoffUnmetRow(props) {
               <RelativeDateCell
                 key={name}
                 className={styles[name]}
-                date={inCinemas}
+                date={releaseDate}
                 timeForToday={false}
               />
             );

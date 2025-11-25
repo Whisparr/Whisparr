@@ -34,7 +34,7 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Jesse Loads Monster Facials 2024-04-19 Frecklemonade.mkv", true)]
         [TestCase("Lustery E1717 James And Six Sharp Cold Fear XXX 1080p MP4 FETiSH", true)]
         [TestCase("[Dads Love Porn] Ravyn Alexa & Johnny Blaster - Dads Love Maids(2025-10-14) [2160p]", true)]
-
+        [TestCase("[Blacked] - 2025-11-24 - BBC-Queen Violet Takes On Three Cocks - Violet Myers - 1080p", true)]
         public void should_parse_as_scene(string title, bool expected)
         {
             Parser.Parser.ParseMovieTitle(title).IsScene.Should().Be(expected);
@@ -59,6 +59,7 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Lustery E1717 James And Six Sharp Cold Fear XXX 1080p MP4 FETiSH", "Lustery")]
         [TestCase("Pure Taboo - Sarah Arabic, Lily LaBeau - A Costly Divorce (June 24, 2025) [1080p HEVC x265]", "Pure Taboo")]
         [TestCase("[BellesaFilms] The Sister - Ashley Lane, Mannie Coco (2025-09-28) [2160p]", "BellesaFilms")]
+        [TestCase("[Blacked] - 2025-11-24 - BBC Queen Violet Takes On Three Cocks - Violet Myers - 1080p", "Blacked")]
 
         public void should_correctly_parse_studio_names(string title, string result)
         {
@@ -83,6 +84,7 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Pure Taboo - Sarah Arabic, Lily LaBeau - A Costly Divorce (June 24, 2025) [1080p HEVC x265]", "2025-06-24")]
         [TestCase("[BellesaFilms] The Sister - Ashley Lane, Mannie Coco (2025-09-28) [2160p]", "2025-09-28")]
         [TestCase("Jesse Loads Monster Facials 2024-04-19 Frecklemonade.mkv", "2024-04-19")]
+        [TestCase("[Blacked] - 2025-11-24 - BBC-Queen Violet Takes On Three Cocks - Violet Myers - 1080p", "2025-11-24")]
         public void should_correctly_parse_release_date(string title, string result)
         {
             Parser.Parser.ParseMovieTitle(title).ReleaseDate.Should().Be(result);
@@ -107,6 +109,7 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Lustery E1717 James And Six Sharp Cold Fear XXX 1080p MP4 FETiSH", "james and six sharp cold fear")]
         [TestCase("Pure Taboo - Sarah Arabic, Lily LaBeau - A Costly Divorce (June 24, 2025) [1080p HEVC x265]", "sarah arabic lily labeau a costly divorce")]
         [TestCase("[BellesaFilms] The Sister - Ashley Lane, Mannie Coco (2025-09-28) [2160p]", "the sister")]
+        [TestCase("[Blacked] - 2025-11-24 - BBC-Queen Violet Takes On Three Cocks - Violet Myers - 1080p", "bbc queen violet takes on three cocks violet myers")]
         public void should_correctly_parse_normalize_release_token(string title, string result)
         {
             var releaseTokens = Parser.Parser.ParseMovieTitle(title).ReleaseTokens;

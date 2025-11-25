@@ -37,6 +37,11 @@ namespace NzbDrone.Core.Parser
             new Regex(@"^\[(?<studiotitle>[^\]]+)]\s+(?<releasetoken>.+?)\s*-\s*.*?\((?<airyear>\d{4})-(?<airmonth>\d{2})-(?<airday>\d{2})\)(?:\s+\[(?<quality>\d+p)])?$",
                 RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
+            // SCENE - Site title in brackets with full year in date then episode info
+            // [Blacked] - 2025-11-24 - BBC-Queen Violet Takes On Three Cocks - Violet Myers - 1080p
+            new Regex(@"^\[(?<studiotitle>.+?)\][-_. ]{1,3}(?<airyear>(?:19|20)\d{2})[-_. ]+(?<airmonth>[0-1][0-9])[-_. ]+(?<airday>[0-3][0-9])(?:[-_. ]+)?(?<releasetoken>.+)",
+                RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
             // (?P<site>.+?)?[\s\.\-](?P<date>\d{2}[\s\.\-]\d{2}[\s\.\-]\d{2})[\s\.\-](?P<performer>\w+.+?)?[\s\.\-](?P<title>.*?(?=(?:[\s\.\-]mp4)|$))
             // SCENE with airdate (18.04.28, 2018.04.28, 18-04-28, 18 04 28, 18_04_28) and performer
             new Regex(@"^(?<studiotitle>.+?)?[-_. ]+(?<airyear>\d{2}|\d{4})[-_. ]+(?<airmonth>[0-1][0-9])[-_. ]+(?<airday>[0-3][0-9])[-_. ]+(?<performer>\w+.+?)?[-_. ](?<title>.*?(?=(?:[-_. ]mp4)|$))",

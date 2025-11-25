@@ -65,13 +65,13 @@ class EditStudioModalContent extends Component {
           <div className={styles.container}>
             {
               !isSmallScreen &&
-                <div className={styles.poster}>
-                  <StudioLogo
-                    className={styles.poster}
-                    images={images}
-                    size={250}
-                  />
-                </div>
+              <div className={styles.poster}>
+                <StudioLogo
+                  className={styles.poster}
+                  images={images}
+                  size={250}
+                />
+              </div>
             }
 
             <div className={styles.info}>
@@ -111,6 +111,7 @@ class EditStudioModalContent extends Component {
 
                   <FormInputGroup
                     type={inputTypes.QUALITY_PROFILE_SELECT}
+                    helpText={translate('StudioQualityProfileHelpText')}
                     name="qualityProfileId"
                     {...qualityProfileId}
                     onChange={onInputChange}

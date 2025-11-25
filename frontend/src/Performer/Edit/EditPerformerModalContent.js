@@ -63,14 +63,14 @@ class EditPerformerModalContent extends Component {
           <div className={styles.container}>
             {
               !isSmallScreen &&
-                <div className={styles.poster}>
-                  <MovieHeadshot
-                    blur={safeForWorkMode}
-                    className={styles.poster}
-                    images={images}
-                    size={250}
-                  />
-                </div>
+              <div className={styles.poster}>
+                <MovieHeadshot
+                  blur={safeForWorkMode}
+                  className={styles.poster}
+                  images={images}
+                  size={250}
+                />
+              </div>
             }
 
             <div className={styles.info}>
@@ -94,6 +94,7 @@ class EditPerformerModalContent extends Component {
 
                   <FormInputGroup
                     type={inputTypes.QUALITY_PROFILE_SELECT}
+                    helpText={translate('PerformerQualityProfileHelpText')}
                     name="qualityProfileId"
                     {...qualityProfileId}
                     onChange={onInputChange}

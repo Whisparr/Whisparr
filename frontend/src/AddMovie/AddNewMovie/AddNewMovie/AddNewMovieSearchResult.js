@@ -123,13 +123,13 @@ class AddNewMovieSearchResult extends Component {
               <div>
                 <div className={styles.posterContainer}>
                   <ImageItem
-                    blur={safeForWorkMode}
+                    safeForWorkMode={safeForWorkMode}
                     className={itemType === 'scene' ? styles.scene : styles.poster}
                     style={elementStyle}
                     images={images}
                     size={250}
                     overflow={true}
-                    lazy={false}
+                    lazy={true}
                   />
                 </div>
 

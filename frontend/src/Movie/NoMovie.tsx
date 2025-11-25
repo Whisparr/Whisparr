@@ -23,24 +23,16 @@ function NoMovie(props: NoMovieProps) {
 
   return (
     <div>
-      <div className={styles.message}>
-        {translate('NoMoviesExist')}
-      </div>
+      <div className={styles.message}>{translate('NoMoviesExist')}</div>
 
       <div className={styles.buttonContainer}>
-        <Button
-          to="/add/import/movies"
-          kind={kinds.PRIMARY}
-        >
+        <Button to="/add/import/movies" kind={kinds.PRIMARY}>
           {translate('ImportExistingMovies')}
         </Button>
       </div>
 
       <div className={styles.buttonContainer}>
-        <Button
-          to="/add/new/movie"
-          kind={kinds.PRIMARY}
-        >
+        <Button to="/add/new/movie" kind={kinds.PRIMARY}>
           {translate('AddNewMovie')}
         </Button>
       </div>

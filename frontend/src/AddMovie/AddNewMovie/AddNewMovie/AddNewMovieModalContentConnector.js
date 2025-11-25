@@ -13,8 +13,7 @@ function createMapStateToProps() {
     (state) => state.addMovie,
     createDimensionsSelector(),
     createSystemStatusSelector(),
-    (state) => state.settings.safeForWorkMode,
-    (addMovieState, dimensions, systemStatus, safeForWorkMode) => {
+    (addMovieState, dimensions, systemStatus) => {
       const {
         isAdding,
         addError,
@@ -34,7 +33,6 @@ function createMapStateToProps() {
         validationErrors,
         validationWarnings,
         isWindows: systemStatus.isWindows,
-        safeForWorkMode,
         ...settings
       };
     }

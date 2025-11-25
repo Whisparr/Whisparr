@@ -81,11 +81,12 @@ class AddNewPerformerSearchResult extends Component {
               <div>
                 <div className={styles.posterContainer}>
                   <MovieHeadshot
-                    blur={safeForWorkMode}
+                    safeForWorkMode={safeForWorkMode}
                     className={styles.poster}
                     images={images}
                     size={250}
                     overflow={true}
+                    lazy={true}
                   />
                 </div>
               </div>

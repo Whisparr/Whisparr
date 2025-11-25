@@ -153,12 +153,12 @@ function MovieIndexOverview(props: MovieIndexOverviewProps) {
 
             <Link className={styles.link} style={elementStyle} to={link}>
               <MoviePoster
-                blur={safeForWorkMode}
+                safeForWorkMode={safeForWorkMode}
                 className={styles.poster}
                 style={elementStyle}
                 images={images}
                 size={250}
-                lazy={false}
+                lazy={true}
                 overflow={true}
               />
             </Link>

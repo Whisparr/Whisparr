@@ -65,7 +65,7 @@ class EditPerformerModalContent extends Component {
               !isSmallScreen &&
                 <div className={styles.poster}>
                   <MovieHeadshot
-                    blur={safeForWorkMode}
+                    safeForWorkMode={safeForWorkMode}
                     className={styles.poster}
                     images={images}
                     size={250}

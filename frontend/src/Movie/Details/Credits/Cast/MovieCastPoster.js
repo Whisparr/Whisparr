@@ -88,12 +88,12 @@ class MovieCastPoster extends Component {
           >
             <Link className={styles.link} to={link}>
               <MovieHeadshot
-                blur={safeForWorkMode}
+                safeForWorkMode={safeForWorkMode}
                 className={styles.poster}
                 style={elementStyle}
                 images={performer.images}
                 size={250}
-                lazy={false}
+                lazy={true}
                 overflow={true}
                 onError={this.onPosterLoadError}
                 onLoad={this.onPosterLoad}

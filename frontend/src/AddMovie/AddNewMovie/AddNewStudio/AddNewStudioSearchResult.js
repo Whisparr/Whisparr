@@ -81,7 +81,7 @@ class AddNewStudioSearchResult extends Component {
               <div>
                 <div className={styles.posterContainer}>
                   <StudioLogo
-                    blur={safeForWorkMode}
+                    safeForWorkMode={safeForWorkMode}
                     className={styles.poster}
                     images={images}
                     size={250}

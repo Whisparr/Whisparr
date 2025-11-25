@@ -174,11 +174,11 @@ function SceneIndexPoster(props: SceneIndexPosterProps) {
 
         <Link className={styles.link} style={elementStyle} to={link}>
           <ScenePoster
-            blur={safeForWorkMode}
+            safeForWorkMode={safeForWorkMode}
             style={elementStyle}
             images={images}
             size={180}
-            lazy={false}
+            lazy={true}
             overflow={true}
             onError={onPosterLoadError}
             onLoad={onPosterLoad}

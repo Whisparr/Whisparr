@@ -181,11 +181,11 @@ function MovieIndexPoster(props: MovieIndexPosterProps) {
 
         <Link className={styles.link} style={elementStyle} to={link}>
           <MoviePoster
-            blur={safeForWorkMode}
+            safeForWorkMode={safeForWorkMode}
             style={elementStyle}
             images={images}
             size={250}
-            lazy={false}
+            lazy={true}
             overflow={true}
             onError={onPosterLoadError}
             onLoad={onPosterLoad}

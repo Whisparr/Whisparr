@@ -23,12 +23,11 @@ import DeleteMovieModal from 'Movie/Delete/DeleteMovieModal';
 import EditMovieModalConnector from 'Movie/Edit/EditMovieModalConnector';
 import getMovieStatusDetails from 'Movie/getMovieStatusDetails';
 import MovieHistoryModal from 'Movie/History/MovieHistoryModal';
-import MoviePoster from 'Movie/MoviePoster';
+import MovieImage from 'Movie/MovieImage';
 import MovieInteractiveSearchModal from 'Movie/Search/MovieInteractiveSearchModal';
 import MovieFileEditorTable from 'MovieFile/Editor/MovieFileEditorTable';
 import ExtraFileTable from 'MovieFile/Extras/ExtraFileTable';
 import OrganizePreviewModalConnector from 'Organize/OrganizePreviewModalConnector';
-import ScenePoster from 'Scene/ScenePoster';
 import QualityProfileNameConnector from 'Settings/Profiles/Quality/QualityProfileNameConnector';
 import fonts from 'Styles/Variables/fonts';
 import formatRuntime from 'Utilities/Date/formatRuntime';
@@ -244,7 +243,6 @@ class MovieDetails extends Component {
 
     const fanartUrl = getFanartUrl(images);
     const marqueeWidth = isSmallScreen ? titleWidth : (titleWidth - 150);
-    const ImageComponent = itemType === 'movie' ? MoviePoster : ScenePoster;
 
     const titleWithYear = `${title}${year > 0 ? ` (${year})` : ''}`;
 
@@ -319,7 +317,7 @@ class MovieDetails extends Component {
             <div
               className={styles.backdrop}
               style={
-                fanartUrl ?
+                fanartUrl && !safeForWorkMode ?
                   { backgroundImage: `url(${fanartUrl})` } :
                   null
               }
@@ -328,12 +326,13 @@ class MovieDetails extends Component {
             </div>
 
             <div className={styles.headerContent}>
-              <ImageComponent style={screenshotStyle}
-                blur={safeForWorkMode}
+              <MovieImage style={screenshotStyle}
+                safeForWorkMode={safeForWorkMode}
                 className={itemType === 'movie' ? styles.poster : styles.screenShot}
+                coverType={itemType === 'movie' ? 'poster' : 'screenshot'}
                 images={images}
                 size={500}
-                lazy={false}
+                lazy={true}
               />
 
               <div className={styles.info}>

@@ -307,12 +307,12 @@ class StudioDetails extends Component {
 
             <div className={styles.headerContent}>
               <StudioLogo
-                blur={safeForWorkMode}
+                safeForWorkMode={safeForWorkMode}
                 className={styles.poster}
                 style={elementStyle}
                 images={images}
                 size={250}
-                lazy={false}
+                lazy={true}
               />
 
               <div className={styles.info}>

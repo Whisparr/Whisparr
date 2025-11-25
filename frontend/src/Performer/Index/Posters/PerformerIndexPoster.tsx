@@ -90,11 +90,11 @@ function PerformerIndexPoster(props: PerformerIndexPosterProps) {
 
         <Link className={styles.link} style={elementStyle} to={link}>
           <MovieHeadshot
-            blur={safeForWorkMode}
+            safeForWorkMode={safeForWorkMode}
             style={elementStyle}
             images={images}
             size={250}
-            lazy={false}
+            lazy={true}
             overflow={true}
             onError={onPosterLoadError}
             onLoad={onPosterLoad}

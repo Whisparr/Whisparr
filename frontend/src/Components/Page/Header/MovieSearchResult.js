@@ -41,7 +41,7 @@ function MovieSearchResult(props) {
         <MoviePoster
           className={styles.poster}
           images={images}
-          blur={safeForWorkMode}
+          safeForWorkMode={safeForWorkMode}
           size={250}
           lazy={false}
           overflow={true}
@@ -105,7 +105,7 @@ function MovieSearchResult(props) {
     return (
       <div className={styles.result}>
         <ScenePoster
-          blur={safeForWorkMode}
+          safeForWorkMode={safeForWorkMode}
           className={styles.poster}
           style={elementStyle}
           images={images}

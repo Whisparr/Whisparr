@@ -25,13 +25,13 @@ interface StudioIndexPosterProps {
 }
 
 function StudioIndexPoster(props: StudioIndexPosterProps) {
-  const { studioId, isSelectMode, posterWidth, posterHeight } = props;
-
-  const { studio } = useSelector(createStudioIndexItemSelector(studioId));
-
   const safeForWorkMode = useSelector(
     (state: AppState) => state.settings.safeForWorkMode
   );
+
+  const { studioId, isSelectMode, posterWidth, posterHeight } = props;
+
+  const { studio } = useSelector(createStudioIndexItemSelector(studioId));
 
   const { showTitle } = useSelector(selectPosterOptions);
   const [isEditStudioModalOpen, setIsEditStudioModalOpen] = useState(false);
@@ -86,14 +86,13 @@ function StudioIndexPoster(props: StudioIndexPosterProps) {
 
         <Link className={styles.link} style={elementStyle} to={link}>
           <StudioLogo
-            blur={safeForWorkMode}
+            safeForWorkMode={safeForWorkMode}
             style={elementStyle}
             images={images}
             size={250}
-            lazy={false}
-            overflow={true}
-            onError={onPosterLoadError}
-            onLoad={onPosterLoad}
+            lazy={true}
+            onPosterLoad={onPosterLoad}
+            onPosterLoadError={onPosterLoadError}
           />
 
           {hasPosterError ? (

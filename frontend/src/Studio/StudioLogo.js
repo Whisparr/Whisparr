@@ -19,7 +19,8 @@ StudioLogo.propTypes = {
   coverType: PropTypes.string,
   placeholder: PropTypes.string,
   overflow: PropTypes.bool,
-  size: PropTypes.number.isRequired
+  size: PropTypes.number.isRequired,
+  lazy: PropTypes.bool
 };
 
 StudioLogo.defaultProps = {

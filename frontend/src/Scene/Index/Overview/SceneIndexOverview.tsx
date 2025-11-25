@@ -57,12 +57,12 @@ function SceneIndexOverview(props: SceneIndexOverviewProps) {
     isSmallScreen,
   } = props;
 
-  const { scene, qualityProfile, isRefreshingScene, isSearchingScene } =
-    useSelector(createSceneIndexItemSelector(props.sceneId));
-
   const safeForWorkMode = useSelector(
     (state: AppState) => state.settings.safeForWorkMode
   );
+
+  const { scene, qualityProfile, isRefreshingScene, isSearchingScene } =
+    useSelector(createSceneIndexItemSelector(props.sceneId));
 
   const overviewOptions = useSelector(selectOverviewOptions);
 
@@ -146,13 +146,13 @@ function SceneIndexOverview(props: SceneIndexOverviewProps) {
             {isSelectMode ? <MovieIndexPosterSelect movieId={sceneId} /> : null}
             <Link className={styles.link} style={elementStyle} to={link}>
               <ScenePoster
-                blur={safeForWorkMode}
                 className={styles.poster}
                 style={elementStyle}
                 images={images}
                 size={180}
                 lazy={false}
                 overflow={true}
+                safeForWorkMode={safeForWorkMode}
               />
             </Link>
           </div>

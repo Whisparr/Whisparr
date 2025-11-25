@@ -321,12 +321,12 @@ class PerformerDetails extends Component {
 
             <div className={styles.headerContent}>
               <MovieHeadshot
-                blur={safeForWorkMode}
+                safeForWorkMode={safeForWorkMode}
                 className={styles.poster}
                 style={elementStyle}
                 images={images}
                 size={250}
-                lazy={false}
+                lazy={true}
               />
 
               <div className={styles.info}>

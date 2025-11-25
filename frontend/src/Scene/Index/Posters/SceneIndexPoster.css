@@ -1,5 +1,9 @@
 $hoverScale: 1.05;
 
+.blur {
+  filter: blur(13px);
+}
+
 .content {
   transition: all 200ms ease-in;
 

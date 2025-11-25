@@ -2,6 +2,7 @@
 // Please do not change this file!
 interface CssExports {
   'action': string;
+  'blur': string;
   'container': string;
   'content': string;
   'controls': string;

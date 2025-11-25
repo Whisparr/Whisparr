@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import LazyLoad from 'react-lazyload';
 import { CoverType, Image } from './Movie';
+import styles from './MovieImage.css';
 
 function findImage(images: Image[], coverType: CoverType) {
   return images.find((image) => image.coverType === coverType);
@@ -19,6 +20,7 @@ export interface MovieImageProps {
   style?: object;
   images: Image[];
   coverType: CoverType;
+  safeForWorkMode?: boolean;
   placeholder: string;
   size?: number;
   lazy?: boolean;
@@ -35,6 +37,7 @@ function MovieImage({
   images,
   coverType,
   placeholder,
+  safeForWorkMode,
   size = 250,
   lazy = true,
   overflow = false,
@@ -93,17 +96,22 @@ function MovieImage({
   }
 
   if (lazy) {
+    const blurClass = safeForWorkMode ? styles.blur : 'blur';
     return (
       <LazyLoad
         height={size}
         offset={100}
         overflow={overflow}
         placeholder={
-          <img className={className} style={style} src={placeholder} />
+          <img
+            className={`${className ?? ''} ${blurClass}`}
+            style={style}
+            src={placeholder}
+          />
         }
       >
         <img
-          className={className}
+          className={`${className ?? ''} ${blurClass}`}
           style={style}
           src={url}
           rel="noreferrer"

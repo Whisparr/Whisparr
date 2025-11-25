@@ -60,11 +60,12 @@ class AddNewStudioModalContent extends Component {
               !isSmallScreen &&
                 <div className={styles.poster}>
                   <StudioLogo
-                    blur={safeForWorkMode}
+                    safeForWorkMode={safeForWorkMode}
                     className={styles.poster}
                     images={images}
                     size={250}
                     overflow={true}
+                    lazy={true}
                   />
                 </div>
             }

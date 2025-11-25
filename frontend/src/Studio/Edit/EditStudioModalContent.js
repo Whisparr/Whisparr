@@ -65,13 +65,13 @@ class EditStudioModalContent extends Component {
           <div className={styles.container}>
             {
               !isSmallScreen &&
-                <div className={styles.poster}>
-                  <StudioLogo
-                    className={styles.poster}
-                    images={images}
-                    size={250}
-                  />
-                </div>
+              <div className={styles.poster}>
+                <StudioLogo
+                  className={styles.poster}
+                  images={images}
+                  size={250}
+                />
+              </div>
             }
 
             <div className={styles.info}>

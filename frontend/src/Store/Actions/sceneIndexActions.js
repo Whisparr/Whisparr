@@ -207,7 +207,7 @@ export const defaultState = {
           return acc;
         }, []);
 
-        return tagList.sort(sortByProp('studioTitle'));
+        return tagList.sort(sortByProp('name'));
       }
     },
     {
@@ -265,7 +265,7 @@ export const defaultState = {
           return acc;
         }, []);
 
-        return genreList.sort(sortByProp('genres'));
+        return genreList.sort(sortByProp('name'));
       }
     },
     {

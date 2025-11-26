@@ -522,6 +522,31 @@ namespace NzbDrone.Core.Movies
             if (releaseDate.IsNotNullOrWhiteSpace())
             {
                 movies = _movieRepository.FindByStudioAndDate(studioForeignId, releaseDate);
+
+                if (movies == null || !movies.Any())
+                {
+                    movies = new List<Movie>();
+                }
+
+                // movies with release date if missing day
+                if (releaseDate.EndsWith("-01"))
+                {
+                    var monthMovies = _movieRepository.FindByStudioAndDate(studioForeignId, releaseDate.Substring(0, releaseDate.Length - 3));
+                    if (monthMovies != null && monthMovies.Any())
+                    {
+                        movies.AddRange(monthMovies);
+                    }
+                }
+
+                // movies with release date if missing day
+                if (releaseDate.EndsWith("-01-01"))
+                {
+                    var yearMovies = _movieRepository.FindByStudioAndDate(studioForeignId, releaseDate.Substring(0, releaseDate.Length - 6));
+                    if (yearMovies != null && yearMovies.Any())
+                    {
+                        movies.AddRange(yearMovies);
+                    }
+                }
             }
             else
             {

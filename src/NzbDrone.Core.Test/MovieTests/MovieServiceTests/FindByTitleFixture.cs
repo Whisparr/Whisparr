@@ -36,6 +36,7 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
             var jesseLoadsMonsterFacials = new Core.MetadataSource.SkyHook.Resource.StudioResource { Title = "JesseLoadsMonsterFacials" };
             var wakeUpnFuck = new Core.MetadataSource.SkyHook.Resource.StudioResource { Title = "Wakeupnfuck" };
             var pornWorld = new Core.MetadataSource.SkyHook.Resource.StudioResource { Title = "PornWorld" };
+            var heavenPOV = new Core.MetadataSource.SkyHook.Resource.StudioResource { Title = "HeavenPOV" };
 
             var scenes = Builder<Movie>.CreateListOfSize(2000)
                                         .TheFirst(1)
@@ -177,6 +178,10 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
                                         .With(x => x.MovieMetadata.Value.Studio = pornWorld)
                                         .With(x => x.MovieMetadata.Value.ReleaseDate = "2023-10-22")
                                         .With(x => x.MovieMetadata.Value.Credits = cocoLovelock)
+                                        .TheNext(1)
+                                        .With(x => x.Title = "Kaitlyn Katsaros gets beaten and anal fucked")
+                                        .With(x => x.MovieMetadata.Value.Studio = heavenPOV)
+                                        .With(x => x.MovieMetadata.Value.ReleaseDate = "2022")
                                         .TheRest()
                                         .With(x => x.Title = "Title For the Rest")
                                         .With(x => x.MovieMetadata.Value.ReleaseDate = "2024-06-12")
@@ -193,7 +198,8 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
                 new Studio { ForeignId = "Step Siblings Caught" },
                 new Studio { ForeignId = "JesseLoadsMonsterFacials" },
                 new Studio { ForeignId = "Wakeupnfuck" },
-                new Studio { ForeignId = "PornWorld" }
+                new Studio { ForeignId = "PornWorld" },
+                new Studio { ForeignId = "HeavenPOV" }
             };
 
             Mocker.GetMock<IStudioService>()
@@ -219,6 +225,10 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
             Mocker.GetMock<IMovieRepository>()
                 .Setup(s => s.GetByStudioForeignId(It.Is<string>(s => s.Equals("Wakeupnfuck"))))
                 .Returns(scenes.Where(s => s.MovieMetadata.Value.Studio.Title.Equals("Wakeupnfuck")).ToList());
+
+            Mocker.GetMock<IMovieRepository>()
+                .Setup(s => s.GetByStudioForeignId(It.Is<string>(s => s.Equals("HeavenPOV"))))
+                .Returns(scenes.Where(s => s.MovieMetadata.Value.Studio.Title.Equals("HeavenPOV")).ToList());
 
             Mocker.GetMock<IMovieRepository>()
                 .Setup(s => s.FindByStudioAndDate(It.Is<string>(s => s.Equals("Studio")), It.Is<string>(d => d.Equals("2021-01-08"))))
@@ -267,6 +277,10 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
             Mocker.GetMock<IMovieRepository>()
                 .Setup(s => s.FindByStudioAndDate(It.Is<string>(s => s.Equals("PornWorld")), It.Is<string>(d => d.Equals("2023-10-22"))))
                 .Returns(scenes.Where(s => s.MovieMetadata.Value.ReleaseDate.Equals("2023-10-22")).Append(scenes.First()).ToList());
+
+            Mocker.GetMock<IMovieRepository>()
+                .Setup(s => s.FindByStudioAndDate(It.Is<string>(s => s.Equals("HeavenPOV")), It.Is<string>(d => d.Equals("2022"))))
+                .Returns(scenes.Where(s => s.MovieMetadata.Value.ReleaseDate.Equals("2022")).Append(scenes.First()).ToList());
 
             _candidates = Builder<Movie>.CreateListOfSize(3)
                                         .TheFirst(1)
@@ -325,6 +339,7 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
         [TestCase("Wakeupnfuck.E406.Amhyra Shy - Wunf 406", 26)]
         [TestCase("[PornWorld.com] Coco Lovecock - Cock Hungry Teen Coco Lovecock Tempts Her Tutor Into BBC Slamming GP2807(22.10.2023) [2023 г., Young, Interracial, BBC, Gonzo, Hardcore, All Sex, 1080p]", 27)]
         [TestCase("PornWorld - Coco Lovecock GP2807 (22.10.2023)", 27)]
+        [TestCase("HeavenPOV 2022-01-01 Kaitlyn Katsaros gets beaten and anal fucked", 28)]
         public void should_find_by_studio_and_release_date(string title, int? id)
         {
             var parsedMovieInfo = Parser.Parser.ParseMovieTitle(title);

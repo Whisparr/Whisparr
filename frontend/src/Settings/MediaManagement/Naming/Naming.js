@@ -13,33 +13,6 @@ import translate from 'Utilities/String/translate';
 import NamingModal from './NamingModal';
 import styles from './Naming.css';
 
-const colonReplacementOptions = [
-  {
-    key: 'delete',
-    get value() {
-      return translate('Delete');
-    }
-  },
-  {
-    key: 'dash',
-    get value() {
-      return translate('ReplaceWithDash');
-    }
-  },
-  {
-    key: 'spaceDash',
-    get value() {
-      return translate('ReplaceWithSpaceDash');
-    }
-  },
-  {
-    key: 'spaceDashSpace',
-    get value() {
-      return translate('ReplaceWithSpaceDashSpace');
-    }
-  }
-];
-
 class Naming extends Component {
 
   //
@@ -124,6 +97,14 @@ class Naming extends Component {
     const renameMovies = hasSettings && settings.renameMovies.value;
     const renameScenes = hasSettings && settings.renameScenes.value;
     const replaceIllegalCharacters = hasSettings && settings.replaceIllegalCharacters.value;
+
+    const colonReplacementOptions = [
+      { key: 'delete', value: translate('Delete') },
+      { key: 'dash', value: translate('ReplaceWithDash') },
+      { key: 'spaceDash', value: translate('ReplaceWithSpaceDash') },
+      { key: 'spaceDashSpace', value: translate('ReplaceWithSpaceDashSpace') },
+      { key: 'smart', value: translate('SmartReplace'), hint: translate('SmartReplaceHint') }
+    ];
 
     const standardMovieFormatHelpTexts = [
       `${translate('Default')}: {Movie Title} ({Release Year}) {Quality Full}`

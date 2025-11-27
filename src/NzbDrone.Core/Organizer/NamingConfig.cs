@@ -9,8 +9,7 @@ namespace NzbDrone.Core.Organizer
             RenameMovies = false,
             RenameScenes = false,
             ReplaceIllegalCharacters = true,
-            ColonReplacementFormat = 0,
-            MultiEpisodeStyle = 0,
+            ColonReplacementFormat = ColonReplacementFormat.Smart,
             MovieFolderFormat = "movies/{Movie Title} ({Release Year})",
             SceneFolderFormat = "scenes/{Studio Title}/{Scene Title} - {Release Date}",
             SceneImportFolderFormat = "import/",
@@ -22,39 +21,10 @@ namespace NzbDrone.Core.Organizer
         public bool RenameScenes { get; set; }
         public bool ReplaceIllegalCharacters { get; set; }
         public ColonReplacementFormat ColonReplacementFormat { get; set; }
-        public int MultiEpisodeStyle { get; set; }
         public string StandardMovieFormat { get; set; }
         public string StandardSceneFormat { get; set; }
         public string MovieFolderFormat { get; set; }
         public string SceneFolderFormat { get; set; }
         public string SceneImportFolderFormat { get; set; }
-    }
-
-    public enum ColonReplacementFormat
-    {
-        Delete = 0,
-        Dash = 1,
-        SpaceDash = 2,
-        SpaceDashSpace = 3
-    }
-
-    public static class ColonReplacementFormatMethods
-    {
-        public static string GetFormatString(this ColonReplacementFormat format)
-        {
-            switch (format)
-            {
-                case ColonReplacementFormat.Delete:
-                    return "";
-                case ColonReplacementFormat.Dash:
-                    return "-";
-                case ColonReplacementFormat.SpaceDash:
-                    return " -";
-                case ColonReplacementFormat.SpaceDashSpace:
-                    return " - ";
-                default:
-                    return "";
-            }
-        }
     }
 }

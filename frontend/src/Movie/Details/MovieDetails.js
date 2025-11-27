@@ -336,7 +336,7 @@ class MovieDetails extends Component {
                 coverType={itemType === 'movie' ? 'poster' : 'screenshot'}
                 images={images}
                 size={500}
-                lazy={true}
+                lazy={false}
                 placeholder={posterPlaceholder}
               />
 

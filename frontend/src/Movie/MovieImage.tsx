@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import LazyLoad from 'react-lazyload';
 import { CoverType, Image } from './Movie';
 import styles from './MovieImage.css';
 
@@ -40,26 +39,22 @@ function MovieImage({
   safeForWorkMode,
   size = 250,
   lazy = true,
-  overflow = false,
   onError,
   onLoad,
 }: MovieImageProps) {
   const [url, setUrl] = useState<string | null>(null);
   const [hasError, setHasError] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
   const image = useRef<Image | null>(null);
 
   const handleLoad = useCallback(() => {
     setHasError(false);
-    setIsLoaded(true);
     onLoad?.();
-  }, [setHasError, setIsLoaded, onLoad]);
+  }, [setHasError, onLoad]);
 
   const handleError = useCallback(() => {
     setHasError(true);
-    setIsLoaded(false);
     onError?.();
-  }, [setHasError, setIsLoaded, onError]);
+  }, [setHasError, onError]);
 
   useEffect(() => {
     const nextImage = findImage(images, coverType);
@@ -95,38 +90,13 @@ function MovieImage({
     return <img className={className} style={style} src={placeholder} />;
   }
 
-  if (lazy) {
-    const blurClass = safeForWorkMode ? styles.blur : 'blur';
-    return (
-      <LazyLoad
-        height={size}
-        offset={100}
-        overflow={overflow}
-        placeholder={
-          <img
-            className={`${className ?? ''} ${blurClass}`}
-            style={style}
-            src={placeholder}
-          />
-        }
-      >
-        <img
-          className={`${className ?? ''} ${blurClass}`}
-          style={style}
-          src={url}
-          rel="noreferrer"
-          onError={handleError}
-          onLoad={handleLoad}
-        />
-      </LazyLoad>
-    );
-  }
-
+  const blurClass = safeForWorkMode ? styles.blur : 'blur';
   return (
     <img
-      className={className}
+      className={`${className ?? ''} ${blurClass}`}
       style={style}
-      src={isLoaded ? url : placeholder}
+      src={url ?? placeholder}
+      loading={lazy ? 'lazy' : undefined} // native lazy loading
       onError={handleError}
       onLoad={handleLoad}
     />

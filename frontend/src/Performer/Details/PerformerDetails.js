@@ -326,7 +326,7 @@ class PerformerDetails extends Component {
                 style={elementStyle}
                 images={images}
                 size={250}
-                lazy={true}
+                lazy={false}
               />
 
               <div className={styles.info}>

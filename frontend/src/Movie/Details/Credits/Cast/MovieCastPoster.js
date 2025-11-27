@@ -93,7 +93,7 @@ class MovieCastPoster extends Component {
                 style={elementStyle}
                 images={performer.images}
                 size={250}
-                lazy={true}
+                lazy={false}
                 overflow={true}
                 onError={this.onPosterLoadError}
                 onLoad={this.onPosterLoad}

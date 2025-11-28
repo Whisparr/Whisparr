@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using NetTools;
 using NzbDrone.Common.Http;
 using NzbDrone.Common.Http.Proxy;
@@ -54,7 +55,19 @@ namespace NzbDrone.Core.Http
             // We are utilizing the WebProxy implementation here to save us having to re-implement it. This way we use Microsofts implementation
             var proxy = new WebProxy(proxySettings.Host + ":" + proxySettings.Port, proxySettings.BypassLocalAddress, proxySettings.BypassListAsArray);
 
-            return proxy.IsBypassed((Uri)url) || IsBypassedByIpAddressRange(proxySettings.BypassListAsArray, url.Host);
+            var webProxyBypass = false;
+            try
+            {
+                webProxyBypass = proxy.IsBypassed((Uri)url);
+            }
+            catch (SocketException)
+            {
+                // IP literal or DNS resolution failed — ignore and fall back
+                webProxyBypass = false;
+            }
+
+            return webProxyBypass
+                || IsBypassedByIpAddressRange(proxySettings.BypassListAsArray, url.Host);
         }
 
         private static bool IsBypassedByIpAddressRange(string[] bypassList, string host)

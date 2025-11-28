@@ -42,12 +42,12 @@ const links = [
     to: '/movies',
     children: [
       {
-        title: () => translate('ImportLibrary'),
-        to: '/add/import/movies'
-      },
-      {
         title: () => translate('AddNew'),
         to: '/add/new/movie'
+      },
+      {
+        title: () => translate('ImportLibrary'),
+        to: '/add/import/movies'
       }
     ]
   },

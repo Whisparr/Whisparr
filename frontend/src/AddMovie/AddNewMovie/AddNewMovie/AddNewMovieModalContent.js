@@ -52,9 +52,9 @@ class AddNewMovieModalContent extends Component {
       onInputChange
     } = this.props;
 
-    const ImageComponent = images?.length && images[0]?.coverType === 'screenshot'
-      ? ScenePoster
-      : MoviePoster;
+    const ImageComponent = images?.length && images[0]?.coverType === 'screenshot' ?
+      ScenePoster :
+      MoviePoster;
 
     return (
       <ModalContent onModalClose={onModalClose}>

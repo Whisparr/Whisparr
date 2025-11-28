@@ -132,10 +132,6 @@ stages:
         artifact: linux-x64-tests
         displayName: Publish linux-x64 Test Package
         condition: and(succeeded(), eq(variables['osName'], 'Windows'))
-      - publish: '$(testsFolder)/net6.0/linux-x86/publish'
-        artifact: linux-x86-tests
-        displayName: Publish linux-x86 Test Package
-        condition: and(succeeded(), eq(variables['osName'], 'Windows'))
       - publish: '$(testsFolder)/net6.0/linux-musl-x64/publish'
         artifact: linux-musl-x64-tests
         displayName: Publish linux-musl-x64 Test Package

@@ -425,7 +425,6 @@ then
         if [ "$ENABLE_EXTRA_PLATFORMS" = "YES" ];
         then
             Package "net6.0" "freebsd-x64"
-            Package "net6.0" "linux-x86"
         fi
     else
         Package "$FRAMEWORK" "$RID"

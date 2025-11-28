@@ -381,9 +381,7 @@ class MovieDetails extends Component {
                             title={translate('ReleaseDates')}
                             body={
                               <MovieReleaseDates
-                                inCinemas={inCinemas}
-                                digitalRelease={digitalRelease}
-                                physicalRelease={physicalRelease}
+                                releaseDate={releaseDate}
                               />
                             }
                             position={tooltipPositions.BOTTOM}
@@ -402,7 +400,7 @@ class MovieDetails extends Component {
                       <span className={styles.runtime}>
                         {formatRuntime(runtime, movieRuntimeFormat)}
                       </span> :
-                        null
+                      null
                     }
 
                     {

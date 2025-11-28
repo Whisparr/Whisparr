@@ -31,34 +31,13 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [SetUp]
         public void Setup()
         {
-            var studio = new Core.MetadataSource.SkyHook.Resource.StudioResource { Title = "Brazzers Exxtra", Network = "Brazzers" };
+            var studio = new Core.MetadataSource.SkyHook.Resource.StudioResource { Title = "Pure Taboo", Network = "Adult Time Originals" };
             var credits = new List<Credit>
             {
-                new Credit { Performer = new CreditPerformer { Name = "Gal Ritchie", Gender = Gender.Female } },
-                new Credit { Performer = new CreditPerformer { Name = "Mick Blue", Gender = Gender.Male } },
-                new Credit { Performer = new CreditPerformer { Name = "Scott Nails", Gender = Gender.Male } },
-                new Credit { Performer = new CreditPerformer { Name = "Manuel Ferrara", Gender = Gender.Male } },
-                new Credit { Performer = new CreditPerformer { Name = "Van Wylde", Gender = Gender.Male } },
-                new Credit { Performer = new CreditPerformer { Name = "Ricky Johnson", Gender = Gender.Male } },
-                new Credit { Performer = new CreditPerformer { Name = "Cherie DeVille", Gender = Gender.Female } },
-                new Credit { Performer = new CreditPerformer { Name = "Lily Lou", Gender = Gender.Female } },
-                new Credit { Performer = new CreditPerformer { Name = "J Mac", Gender = Gender.Male } },
-                new Credit { Performer = new CreditPerformer { Name = "Kira Noir", Gender = Gender.Female } },
-                new Credit { Performer = new CreditPerformer { Name = "Alexis Fawx", Gender = Gender.Female } },
-                new Credit { Performer = new CreditPerformer { Name = "Isiah Maxwell", Gender = Gender.Male } },
-                new Credit { Performer = new CreditPerformer { Name = "Queenie Sateen", Gender = Gender.Female } },
-                new Credit { Performer = new CreditPerformer { Name = "Keiran Lee", Gender = Gender.Male } },
-                new Credit { Performer = new CreditPerformer { Name = "Kayley Gunner", Gender = Gender.Female } },
-                new Credit { Performer = new CreditPerformer { Name = "Ryan Reid", Gender = Gender.Male } },
-                new Credit { Performer = new CreditPerformer { Name = "Alex Jones", Gender = Gender.Male } },
-                new Credit { Performer = new CreditPerformer { Name = "Hollywood Cash", Gender = Gender.Female } },
-                new Credit { Performer = new CreditPerformer { Name = "Monique Alexander", Gender = Gender.Female } },
-                new Credit { Performer = new CreditPerformer { Name = "Abigaiil Morris", Gender = Gender.Female } },
-                new Credit { Performer = new CreditPerformer { Name = "Luna Star", Gender = Gender.Female } },
-                new Credit { Character = "Luna", Performer = new CreditPerformer { Name = "Luna Star", Gender = Gender.Female } },
-                new Credit { Character = "Johnny Hammer", Performer = new CreditPerformer { Name = "Johnny Sins", Gender = Gender.Male } },
-                new Credit { Character = "Angie", Performer = new CreditPerformer { Name = "Angela White", Gender = Gender.Female } },
-                new Credit { Character = "Scott the Hammer", Performer = new CreditPerformer { Name = "Scott Nails", Gender = Gender.Male } },
+                new Credit { Character = "Rissa", Performer = new CreditPerformer { Name = "Rissa May", Gender = Gender.Female } },
+                new Credit { Character = "Chuck", Performer = new CreditPerformer { Name = "Charles Dera", Gender = Gender.Male } },
+                new Credit { Character = "Reagan", Performer = new CreditPerformer { Name = "Reagan Foxx", Gender = Gender.Female } },
+                new Credit { Character = "Axel", Performer = new CreditPerformer { Name = "Axel Haze", Gender = Gender.Male } },
                 new Credit { Character = null, Performer = new CreditPerformer { Name = "Manuel Ferrara", Gender = Gender.Male } }
             };
 
@@ -69,10 +48,10 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
             _scene = Builder<Movie>
                     .CreateNew()
-                    .With(s => s.Title = "Brazzers Presents: 20 For 20")
-                    .With(x => x.ForeignId = "358e54fc-7d56-490c-b64c-5e8cb747cdcd")
-                    .With(x => x.MovieMetadata.Value.ForeignId = "358e54fc-7d56-490c-b64c-5e8cb747cdcd")
-                    .With(x => x.MovieMetadata.Value.ReleaseDate = "2024-06-20")
+                    .With(s => s.Title = "The Last Train Home")
+                    .With(x => x.ForeignId = "019abb52-0557-7c5f-83df-94b828851fd1")
+                    .With(x => x.MovieMetadata.Value.ForeignId = "019abb52-0557-7c5f-83df-94b828851fd1")
+                    .With(x => x.MovieMetadata.Value.ReleaseDate = "2025-11-25")
                     .With(x => x.MovieMetadata.Value.Credits = credits)
                     .With(x => x.MovieMetadata.Value.Studio = studio)
                     .With(x => x.MovieMetadata.Value.StudioTitle = studio.Title)
@@ -114,7 +93,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
             // Aliases should be used if present, otherwise fallback to real name.
             Subject.BuildFileName(_scene, _movieFile)
-                .Should().Be("Brazzers Exxtra - 2024-06-20 - Brazzers Presents 20 For 20 [Abigaiil Morris Alex Jones Alexis Fawx Angie]");
+                .Should().Be("Pure Taboo - 2025-11-25 - The Last Train Home [Axel Chuck Manuel Ferrara Reagan]");
         }
 
         [Test]
@@ -124,7 +103,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
             // Only female aliases, fallback to real name if alias is not present
             Subject.BuildFileName(_scene, _movieFile)
-                .Should().Be("Brazzers Exxtra - 2024-06-20 - Brazzers Presents 20 For 20 [Abigaiil Morris Alexis Fawx Angie Cherie DeVille]");
+                .Should().Be("Pure Taboo - 2025-11-25 - The Last Train Home [Reagan Rissa]");
         }
 
         [Test]
@@ -134,7 +113,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
             // Only male aliases, fallback to real name if alias is not present
             Subject.BuildFileName(_scene, _movieFile)
-                .Should().Be("Brazzers Exxtra - 2024-06-20 - Brazzers Presents 20 For 20 [Alex Jones Isiah Maxwell J Mac Johnny Hammer]");
+                .Should().Be("Pure Taboo - 2025-11-25 - The Last Train Home [Axel Chuck Manuel Ferrara]");
         }
 
         [Test]
@@ -143,7 +122,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
             _namingConfig.StandardSceneFormat = "{Studio Title} - {Release-Date} - {Scene Title}";
 
             Subject.BuildFileName(_scene, _movieFile)
-                   .Should().Be("Brazzers Exxtra - 2024-06-20 - Brazzers Presents 20 For 20");
+                   .Should().Be("Pure Taboo - 2025-11-25 - The Last Train Home");
         }
 
         [Test]
@@ -153,17 +132,17 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
             // First 4 performers
             Subject.BuildFileName(_scene, _movieFile)
-                   .Should().Be("Brazzers Exxtra - 2024-06-20 - Brazzers Presents 20 For 20 [Abigaiil Morris Alex Jones Alexis Fawx Angela White]");
+                   .Should().Be("Pure Taboo - 2025-11-25 - The Last Train Home [Axel Haze Charles Dera Manuel Ferrara Reagan Foxx]");
         }
 
         [Test]
-        public void scene_felame_performers_format()
+        public void scene_female_performers_format()
         {
             _namingConfig.StandardSceneFormat = "{Studio Title} - {Release-Date} - {Scene Title} [{Scene PerformersFemale}]";
 
             // First 4 female performers
             Subject.BuildFileName(_scene, _movieFile)
-                   .Should().Be("Brazzers Exxtra - 2024-06-20 - Brazzers Presents 20 For 20 [Abigaiil Morris Alexis Fawx Angela White Cherie DeVille]");
+                   .Should().Be("Pure Taboo - 2025-11-25 - The Last Train Home [Reagan Foxx Rissa May]");
         }
 
         [Test]

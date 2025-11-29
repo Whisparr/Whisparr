@@ -91,20 +91,17 @@ const sceneFileNameTokens = [
   {
     token:
       '[{studio cleantitleslug}] {release-date}.{scene.cleantitle}.{scene.performers}',
-    example:
-      '[studiotitle] 2010-01-01.the.scene.title',
+    example: '[studiotitle] 2010-01-01.the.scene.title',
   },
   {
     token:
       '{Studio Title}- {Scene Title} - {Release Date} - {Scene PerformersFemale} [{Quality Title}]',
-    example:
-      'Studio Title - The Scene Title - 2010-01-01 - [Bluray-1080p]',
+    example: 'Studio Title - The Scene Title - 2010-01-01 - [Bluray-1080p]',
   },
   {
     token:
       '{Studio CleanTitleSlug}.{Scene.CleanTitle}.{Release Date}{.Quality.Title}{-Release Group}',
-    example:
-      'StudioTitle.The.Scene.Title.2010-01-01.Bluray-1080p-EVOLVE',
+    example: 'StudioTitle.The.Scene.Title.2010-01-01.Bluray-1080p-EVOLVE',
   },
 ];
 
@@ -141,31 +138,43 @@ const movieTokens = [
 ];
 
 const sceneTokens = [
-  { token: '{Scene Title}', example: 'Scene\'s Title' },
+  { token: '{Scene Title}', example: "Scene's Title" },
   { token: '{Scene CleanTitle}', example: 'Scenes Title' },
-  { token: '{Scene TitleThe}', example: 'Scene\'s Title, The' },
+  { token: '{Scene TitleThe}', example: "Scene's Title, The" },
   { token: '{Scene TitleFirstCharacter}', example: 'S' },
-  { token: '{Scene Performers}', example: 'Abigail Mac Tera Patrick John Holmes' },
+  {
+    token: '{Scene Performers}',
+    example: 'Abigail Mac Tera Patrick John Holmes',
+  },
   { token: '{Scene PerformersFemale}', example: 'Abigail Mac Tera Patrick' },
   { token: '{Scene PerformersMale}', example: 'Johnny Sins' },
   { token: '{Scene PerformersAlias}', example: 'Performers (Alias)' },
-  { token: '{Scene PerformersFemaleAlias}', example: 'Female Performers (Alias)' },
+  {
+    token: '{Scene PerformersFemaleAlias}',
+    example: 'Female Performers (Alias)',
+  },
   { token: '{Scene PerformersMaleAlias}', example: 'Male Performers (Alias)' },
-  { token: '{Scene PerformersOther}', example: 'Lulu Chu Jenna Gargles Izzy Wilde' },
-  { token: '{Scene PerformersOtherAlias}', example: 'Other Performers (Alias)' },
+  {
+    token: '{Scene PerformersOther}',
+    example: 'Lulu Chu Jenna Gargles Izzy Wilde',
+  },
+  {
+    token: '{Scene PerformersOtherAlias}',
+    example: 'Other Performers (Alias)',
+  },
   { token: '{Release Date}', example: '2009-02-04' },
   { token: '{Release ShortDate}', example: '09 02 04' },
-  { token: '{Scene Code}', example: '12345' }
+  { token: '{Scene Code}', example: '12345' },
 ];
 
 const studioTokens = [
-  { token: '{Studio Title}', example: 'Studio\'s Title' },
-  { token: '{Studio TitleSlug}', example: 'Studio\'sTitle' },
+  { token: '{Studio Title}', example: "Studio's Title" },
+  { token: '{Studio TitleSlug}', example: "Studio'sTitle" },
   { token: '{Studio CleanTitle}', example: 'Studios Title' },
   { token: '{Studio CleanTitleSlug}', example: 'StudiosTitle' },
-  { token: '{Studio TitleThe}', example: 'Studio\'s Title, The' },
+  { token: '{Studio TitleThe}', example: "Studio's Title, The" },
   { token: '{Studio TitleFirstCharacter}', example: 'S' },
-  { token: '{Studio Network}', example: 'Brazzers' }
+  { token: '{Studio Network}', example: 'Brazzers' },
 ];
 
 const movieIdTokens = [
@@ -174,7 +183,7 @@ const movieIdTokens = [
 ];
 
 const sceneIdTokens = [
-  { token: '{StashId}', example: '155f2559-d1f1-42b1-8cbe-9008542df5ce' }
+  { token: '{StashId}', example: '155f2559-d1f1-42b1-8cbe-9008542df5ce' },
 ];
 
 const qualityTokens = [
@@ -216,7 +225,13 @@ const originalTokens = [
 
 interface NamingModalProps {
   isOpen: boolean;
-  name: keyof Pick<NamingConfig, 'standardMovieFormat' | 'movieFolderFormat' | 'standardSceneFormat' | 'sceneFolderFormat'>;
+  name: keyof Pick<
+    NamingConfig,
+    | 'standardMovieFormat'
+    | 'movieFolderFormat'
+    | 'standardSceneFormat'
+    | 'sceneFolderFormat'
+  >;
   value: string;
   movie?: boolean;
   scene?: boolean;
@@ -293,33 +308,29 @@ function NamingModal(props: NamingModalProps) {
     [name, value, selectionEnd, selectionStart, onInputChange]
   );
 
-  return (<Modal
-    isOpen={isOpen}
-    onModalClose={onModalClose}
-  >
-    <ModalContent onModalClose={onModalClose}>
-      <ModalHeader>
-        {translate('movieFileNameTokens')}
-      </ModalHeader>
+  return (
+    <Modal isOpen={isOpen} onModalClose={onModalClose}>
+      <ModalContent onModalClose={onModalClose}>
+        <ModalHeader>{translate('movieFileNameTokens')}</ModalHeader>
 
-      <ModalBody>
-        <div className={styles.namingSelectContainer}>
-          <SelectInput
-            className={styles.namingSelect}
-            name="separator"
-            value={tokenSeparator}
-            values={separatorOptions}
-            onChange={handleTokenSeparatorChange}
-          />
+        <ModalBody>
+          <div className={styles.namingSelectContainer}>
+            <SelectInput
+              className={styles.namingSelect}
+              name="separator"
+              value={tokenSeparator}
+              values={separatorOptions}
+              onChange={handleTokenSeparatorChange}
+            />
 
-          <SelectInput
-            className={styles.namingSelect}
-            name="case"
-            value={tokenCase}
-            values={caseOptions}
-            onChange={handleTokenCaseChange}
-          />
-        </div>
+            <SelectInput
+              className={styles.namingSelect}
+              name="case"
+              value={tokenCase}
+              values={caseOptions}
+              onChange={handleTokenCaseChange}
+            />
+          </div>
 
           {movie ? (
             <FieldSet legend={translate('FileNames')}>
@@ -340,13 +351,11 @@ function NamingModal(props: NamingModalProps) {
             </FieldSet>
           ) : null}
 
-        {
-          movie &&
-          <div>
-            <FieldSet legend={translate('Movie')}>
-              <div className={styles.groups}>
-                {
-                  movieTokens.map(({ token, example, footNote }) => {
+          {movie && (
+            <div>
+              <FieldSet legend={translate('Movie')}>
+                <div className={styles.groups}>
+                  {movieTokens.map(({ token, example, footNote }) => {
                     return (
                       <NamingOption
                         key={token}
@@ -358,21 +367,18 @@ function NamingModal(props: NamingModalProps) {
                         onPress={handleOptionPress}
                       />
                     );
-                  }
-                  )
-                }
-              </div>
+                  })}
+                </div>
 
-              <div className={styles.footNote}>
-                <Icon className={styles.icon} name={icons.FOOTNOTE} />
-                <InlineMarkdown data={translate('MovieFootNote')} />
-              </div>
-            </FieldSet>
+                <div className={styles.footNote}>
+                  <Icon className={styles.icon} name={icons.FOOTNOTE} />
+                  <InlineMarkdown data={translate('MovieFootNote')} />
+                </div>
+              </FieldSet>
 
-            <FieldSet legend={translate('MovieID')}>
-              <div className={styles.groups}>
-                {
-                  movieIdTokens.map(({ token, example }) => {
+              <FieldSet legend={translate('MovieID')}>
+                <div className={styles.groups}>
+                  {movieIdTokens.map(({ token, example }) => {
                     return (
                       <NamingOption
                         key={token}
@@ -383,40 +389,36 @@ function NamingModal(props: NamingModalProps) {
                         onPress={handleOptionPress}
                       />
                     );
-                  }
-                  )
-                }
-              </div>
-            </FieldSet>
-          </div>
-        }
-
-        {scene ? (
-          <FieldSet legend={translate('FileNames')}>
-            <div className={styles.groups}>
-              {sceneFileNameTokens.map(({ token, example }) => (
-                <NamingOption
-                  key={token}
-                  token={token}
-                  example={example}
-                  isFullFilename={false}
-                  tokenSeparator={tokenSeparator}
-                  tokenCase={tokenCase}
-                  size={sizes.LARGE}
-                  onPress={handleOptionPress}
-                />
-              ))}
+                  })}
+                </div>
+              </FieldSet>
             </div>
-          </FieldSet>
-        ) : null}
+          )}
 
-        {
-          scene &&
-          <div>
-            <FieldSet legend={translate('Scene')}>
+          {scene ? (
+            <FieldSet legend={translate('FileNames')}>
               <div className={styles.groups}>
-                {
-                  sceneTokens.map(({ token, example }) => {
+                {sceneFileNameTokens.map(({ token, example }) => (
+                  <NamingOption
+                    key={token}
+                    token={token}
+                    example={example}
+                    isFullFilename={false}
+                    tokenSeparator={tokenSeparator}
+                    tokenCase={tokenCase}
+                    size={sizes.LARGE}
+                    onPress={handleOptionPress}
+                  />
+                ))}
+              </div>
+            </FieldSet>
+          ) : null}
+
+          {scene && (
+            <div>
+              <FieldSet legend={translate('Scene')}>
+                <div className={styles.groups}>
+                  {sceneTokens.map(({ token, example }) => {
                     return (
                       <NamingOption
                         key={token}
@@ -427,16 +429,13 @@ function NamingModal(props: NamingModalProps) {
                         onPress={handleOptionPress}
                       />
                     );
-                  }
-                  )
-                }
-              </div>
-            </FieldSet>
+                  })}
+                </div>
+              </FieldSet>
 
-            <FieldSet legend={translate('SceneId')}>
-              <div className={styles.groups}>
-                {
-                  sceneIdTokens.map(({ token, example }) => {
+              <FieldSet legend={translate('SceneId')}>
+                <div className={styles.groups}>
+                  {sceneIdTokens.map(({ token, example }) => {
                     return (
                       <NamingOption
                         key={token}
@@ -447,18 +446,15 @@ function NamingModal(props: NamingModalProps) {
                         onPress={handleOptionPress}
                       />
                     );
-                  }
-                  )
-                }
-              </div>
-            </FieldSet>
-          </div>
-        }
+                  })}
+                </div>
+              </FieldSet>
+            </div>
+          )}
 
-        <FieldSet legend={translate('Studio')}>
-          <div className={styles.groups}>
-            {
-              studioTokens.map(({ token, example }) => {
+          <FieldSet legend={translate('Studio')}>
+            <div className={styles.groups}>
+              {studioTokens.map(({ token, example }) => {
                 return (
                   <NamingOption
                     key={token}
@@ -469,19 +465,15 @@ function NamingModal(props: NamingModalProps) {
                     onPress={handleOptionPress}
                   />
                 );
-              }
-              )
-            }
-          </div>
-        </FieldSet>
+              })}
+            </div>
+          </FieldSet>
 
-        {
-          additional &&
-          <div>
-            <FieldSet legend={translate('Quality')}>
-              <div className={styles.groups}>
-                {
-                  qualityTokens.map(({ token, example }) => {
+          {additional && (
+            <div>
+              <FieldSet legend={translate('Quality')}>
+                <div className={styles.groups}>
+                  {qualityTokens.map(({ token, example }) => {
                     return (
                       <NamingOption
                         key={token}
@@ -492,16 +484,13 @@ function NamingModal(props: NamingModalProps) {
                         onPress={handleOptionPress}
                       />
                     );
-                  }
-                  )
-                }
-              </div>
-            </FieldSet>
+                  })}
+                </div>
+              </FieldSet>
 
-            <FieldSet legend={translate('MediaInfo')}>
-              <div className={styles.groups}>
-                {
-                  mediaInfoTokens.map(({ token, example, footNote }) => {
+              <FieldSet legend={translate('MediaInfo')}>
+                <div className={styles.groups}>
+                  {mediaInfoTokens.map(({ token, example, footNote }) => {
                     return (
                       <NamingOption
                         key={token}
@@ -513,21 +502,18 @@ function NamingModal(props: NamingModalProps) {
                         onPress={handleOptionPress}
                       />
                     );
-                  }
-                  )
-                }
-              </div>
+                  })}
+                </div>
 
-              <div className={styles.footNote}>
-                <Icon className={styles.icon} name={icons.FOOTNOTE} />
-                <InlineMarkdown data={translate('MediaInfoFootNote')} />
-              </div>
-            </FieldSet>
+                <div className={styles.footNote}>
+                  <Icon className={styles.icon} name={icons.FOOTNOTE} />
+                  <InlineMarkdown data={translate('MediaInfoFootNote')} />
+                </div>
+              </FieldSet>
 
-            <FieldSet legend={translate('ReleaseGroup')}>
-              <div className={styles.groups}>
-                {
-                  releaseGroupTokens.map(({ token, example, footNote }) => {
+              <FieldSet legend={translate('ReleaseGroup')}>
+                <div className={styles.groups}>
+                  {releaseGroupTokens.map(({ token, example, footNote }) => {
                     return (
                       <NamingOption
                         key={token}
@@ -539,21 +525,18 @@ function NamingModal(props: NamingModalProps) {
                         onPress={handleOptionPress}
                       />
                     );
-                  }
-                  )
-                }
-              </div>
+                  })}
+                </div>
 
-              <div className={styles.footNote}>
-                <Icon className={styles.icon} name={icons.FOOTNOTE} />
-                <InlineMarkdown data={translate('ReleaseGroupFootNote')} />
-              </div>
-            </FieldSet>
+                <div className={styles.footNote}>
+                  <Icon className={styles.icon} name={icons.FOOTNOTE} />
+                  <InlineMarkdown data={translate('ReleaseGroupFootNote')} />
+                </div>
+              </FieldSet>
 
-            <FieldSet legend={translate('Edition')}>
-              <div className={styles.groups}>
-                {
-                  editionTokens.map(({ token, example, footNote }) => {
+              <FieldSet legend={translate('Edition')}>
+                <div className={styles.groups}>
+                  {editionTokens.map(({ token, example, footNote }) => {
                     return (
                       <NamingOption
                         key={token}
@@ -565,21 +548,18 @@ function NamingModal(props: NamingModalProps) {
                         onPress={handleOptionPress}
                       />
                     );
-                  }
-                  )
-                }
-              </div>
+                  })}
+                </div>
 
-              <div className={styles.footNote}>
-                <Icon className={styles.icon} name={icons.FOOTNOTE} />
-                <InlineMarkdown data={translate('EditionFootNote')} />
-              </div>
-            </FieldSet>
+                <div className={styles.footNote}>
+                  <Icon className={styles.icon} name={icons.FOOTNOTE} />
+                  <InlineMarkdown data={translate('EditionFootNote')} />
+                </div>
+              </FieldSet>
 
-            <FieldSet legend={translate('CustomFormats')}>
-              <div className={styles.groups}>
-                {
-                  customFormatTokens.map(({ token, example }) => {
+              <FieldSet legend={translate('CustomFormats')}>
+                <div className={styles.groups}>
+                  {customFormatTokens.map(({ token, example }) => {
                     return (
                       <NamingOption
                         key={token}
@@ -590,16 +570,13 @@ function NamingModal(props: NamingModalProps) {
                         onPress={handleOptionPress}
                       />
                     );
-                  }
-                  )
-                }
-              </div>
-            </FieldSet>
+                  })}
+                </div>
+              </FieldSet>
 
-            <FieldSet legend={translate('Original')}>
-              <div className={styles.groups}>
-                {
-                  originalTokens.map(({ token, example }) => {
+              <FieldSet legend={translate('Original')}>
+                <div className={styles.groups}>
+                  {originalTokens.map(({ token, example }) => {
                     return (
                       <NamingOption
                         key={token}
@@ -611,28 +588,24 @@ function NamingModal(props: NamingModalProps) {
                         onPress={handleOptionPress}
                       />
                     );
-                  }
-                  )
-                }
-              </div>
-            </FieldSet>
-          </div>
-        }
-      </ModalBody>
+                  })}
+                </div>
+              </FieldSet>
+            </div>
+          )}
+        </ModalBody>
 
-      <ModalFooter>
-        <TextInput
-          name={name}
-          value={value}
-          onChange={onInputChange}
-          onSelectionChange={handleInputSelectionChange}
-        />
-        <Button onPress={onModalClose}>
-          {translate('Close')}
-        </Button>
-      </ModalFooter>
-    </ModalContent>
-  </Modal>
+        <ModalFooter>
+          <TextInput
+            name={name}
+            value={value}
+            onChange={onInputChange}
+            onSelectionChange={handleInputSelectionChange}
+          />
+          <Button onPress={onModalClose}>{translate('Close')}</Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   );
 }
 

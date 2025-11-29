@@ -45,13 +45,15 @@ function createNamingSelector() {
 interface NamingModalOptions {
   name: keyof Pick<
     NamingConfig,
-    'standardMovieFormat' | 'movieFolderFormat' | 'standardSceneFormat' | 'sceneFolderFormat'
+    | 'standardMovieFormat'
+    | 'movieFolderFormat'
+    | 'standardSceneFormat'
+    | 'sceneFolderFormat'
   >;
   movie?: boolean;
   scene?: boolean;
   additional?: boolean;
 }
-
 
 function Naming() {
   const {
@@ -169,7 +171,9 @@ function Naming() {
     }
 
     if (examples.sceneFolderExample) {
-      sceneFolderFormatHelpTexts.push(`Example: ${examples.sceneFolderExample}`);
+      sceneFolderFormatHelpTexts.push(
+        `Example: ${examples.sceneFolderExample}`
+      );
     } else {
       sceneFolderFormatErrors.push({ message: translate('InvalidFormat') });
     }
@@ -177,10 +181,11 @@ function Naming() {
     if (examples.sceneImportFolderExample) {
       sceneImportFolderFormatHelpTexts.push('Example: import/');
     } else {
-      sceneImportFolderFormatErrors.push({ message: translate('InvalidFormat') });
+      sceneImportFolderFormatErrors.push({
+        message: translate('InvalidFormat'),
+      });
     }
   }
-
 
   if (examplesPopulated) {
     if (examples.movieExample) {
@@ -326,7 +331,9 @@ function Naming() {
                 type={inputTypes.TEXT}
                 name="standardSceneFormat"
                 buttons={
-                  <FormInputButton onPress={onSceneNamingModalOpenClick}>?</FormInputButton>
+                  <FormInputButton onPress={onSceneNamingModalOpenClick}>
+                    ?
+                  </FormInputButton>
                 }
                 onChange={handleInputChange}
                 {...settings.standardSceneFormat}
@@ -350,7 +357,9 @@ function Naming() {
               type={inputTypes.TEXT}
               name="sceneFolderFormat"
               buttons={
-                <FormInputButton onPress={onSceneFolderNamingModalOpenClick}>?</FormInputButton>
+                <FormInputButton onPress={onSceneFolderNamingModalOpenClick}>
+                  ?
+                </FormInputButton>
               }
               onChange={handleInputChange}
               {...settings.sceneFolderFormat}
@@ -381,7 +390,6 @@ function Naming() {
               ]}
             />
           </FormGroup>
-
 
           {namingModalOptions ? (
             <NamingModal

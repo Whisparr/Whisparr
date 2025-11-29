@@ -52,7 +52,9 @@ class AddNewMovieModalContent extends Component {
       onInputChange
     } = this.props;
 
-    const ImageComponent = images[0].coverType === 'poster' ? MoviePoster : ScenePoster;
+    const ImageComponent = images?.length && images[0]?.coverType === 'screenshot' ?
+      ScenePoster :
+      MoviePoster;
 
     return (
       <ModalContent onModalClose={onModalClose}>
@@ -71,7 +73,7 @@ class AddNewMovieModalContent extends Component {
               !isSmallScreen &&
                 <ImageComponent
                   blur={safeForWorkMode}
-                  className={images[0].coverType === 'poster' ? styles.poster : styles.screenShot}
+                  className={ImageComponent === 'screenshot' ? styles.screenshot : styles.poster}
                   images={images}
                   size={250}
                   lazy={false}

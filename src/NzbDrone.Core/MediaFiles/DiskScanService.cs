@@ -154,17 +154,12 @@ namespace NzbDrone.Core.MediaFiles
                 var path = Path.Combine(movie.Path, file.RelativePath);
                 var fileSize = _diskProvider.GetFileSize(path);
 
-                if (file.Size == fileSize)
-                {
-                    continue;
-                }
-
-                file.Size = fileSize;
-
-                if (!_updateMediaInfoService.Update(file, movie))
+                if (!_updateMediaInfoService.Update(file, movie) && file.Size != fileSize)
                 {
                     filesToUpdate.Add(file);
                 }
+
+                file.Size = fileSize;
             }
 
             // Update any files that had a file size change, but didn't get media info updated.

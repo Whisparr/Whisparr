@@ -33,14 +33,14 @@ EnableExtraPlatformsInSDK()
         echo "Extra platforms already enabled"
     else
         echo "Enabling extra platform support"
-        sed -i.ORI 's/osx-x64/osx-x64;freebsd-x64;linux-x86/' $BUNDLEDVERSIONS
+        sed -i.ORI 's/osx-x64/osx-x64;freebsd-x64/' "$BUNDLEDVERSIONS"
     fi
 }
 
 EnableExtraPlatforms()
 {
     if grep -qv freebsd-x64 src/Directory.Build.props; then
-        sed -i'' -e "s^<RuntimeIdentifiers>\(.*\)</RuntimeIdentifiers>^<RuntimeIdentifiers>\1;freebsd-x64;linux-x86</RuntimeIdentifiers>^g" src/Directory.Build.props
+        sed -i'' -e "s^<RuntimeIdentifiers>\(.*\)</RuntimeIdentifiers>^<RuntimeIdentifiers>\1;freebsd-x64</RuntimeIdentifiers>^g" src/Directory.Build.props
     fi
 }
 
@@ -149,7 +149,7 @@ PackageMacOS()
 {
     local framework="$1"
     local runtime="$2"
-    
+
     ProgressStart "Creating MacOS Package for $framework $runtime"
 
     local folder=$artifactsFolder/$runtime/$framework/Whisparr
@@ -177,7 +177,7 @@ PackageMacOSApp()
 {
     local framework="$1"
     local runtime="$2"
-    
+
     ProgressStart "Creating macOS App Package for $framework $runtime"
 
     local folder="$artifactsFolder/$runtime-app/$framework"
@@ -200,11 +200,11 @@ PackageWindows()
 {
     local framework="$1"
     local runtime="$2"
-    
+
     ProgressStart "Creating Windows Package for $framework"
 
     local folder=$artifactsFolder/$runtime/$framework/Whisparr
-    
+
     PackageFiles "$folder" "$framework" "$runtime"
     cp -r $outputFolder/$framework-windows/$runtime/publish/* $folder
 
@@ -245,20 +245,20 @@ BuildInstaller()
 {
     local framework="$1"
     local runtime="$2"
-    
+
     ./_inno/ISCC.exe distribution/windows/setup/whisparr.iss "//DFramework=$framework" "//DRuntime=$runtime"
 }
 
 InstallInno()
 {
     ProgressStart "Installing portable Inno Setup"
-    
+
     rm -rf _inno
     curl -s --output innosetup.exe "https://files.jrsoftware.org/is/6/innosetup-${INNOVERSION:-6.2.2}.exe"
     mkdir _inno
     ./innosetup.exe //portable=1 //silent //currentuser //dir=.\\_inno
     rm innosetup.exe
-    
+
     ProgressEnd "Installed portable Inno Setup"
 }
 
@@ -385,7 +385,6 @@ then
         if [ "$ENABLE_EXTRA_PLATFORMS" = "YES" ];
         then
             PackageTests "net6.0" "freebsd-x64"
-            PackageTests "net6.0" "linux-x86"
         fi
     else
         PackageTests "$FRAMEWORK" "$RID"
@@ -426,7 +425,6 @@ then
         if [ "$ENABLE_EXTRA_PLATFORMS" = "YES" ];
         then
             Package "net6.0" "freebsd-x64"
-            Package "net6.0" "linux-x86"
         fi
     else
         Package "$FRAMEWORK" "$RID"

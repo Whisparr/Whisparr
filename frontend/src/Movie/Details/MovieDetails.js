@@ -389,9 +389,7 @@ class MovieDetails extends Component {
                             title={translate('ReleaseDates')}
                             body={
                               <MovieReleaseDates
-                                inCinemas={inCinemas}
-                                digitalRelease={digitalRelease}
-                                physicalRelease={physicalRelease}
+                                releaseDate={releaseDate}
                               />
                             }
                             position={tooltipPositions.BOTTOM}

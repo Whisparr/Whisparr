@@ -1,7 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import Icon from 'Components/Icon';
-import InlineMarkdown from 'Components/Markdown/InlineMarkdown';
 import { icons } from 'Helpers/Props';
 import createUISettingsSelector from 'Store/Selectors/createUISettingsSelector';
 import getRelativeDate from 'Utilities/Date/getRelativeDate';
@@ -25,12 +24,7 @@ function MovieReleaseDates(props: MovieReleaseDatesProps) {
         <div className={styles.dateIcon}>
           <Icon name={icons.MISSING} />
         </div>
-
-        <InlineMarkdown
-          data={translate('NoMovieReleaseDatesAvailable', {
-            url: `https://www.themoviedb.org/movie/${tmdbId}`,
-          })}
-        />
+        {translate('NoMovieReleaseDatesAvailable')}
       </div>
     );
   }

@@ -1,4 +1,3 @@
-using System;
 using NLog;
 using NzbDrone.Common.Cloud;
 using NzbDrone.Common.Http;
@@ -24,14 +23,7 @@ namespace NzbDrone.Core.ImportLists.StashDB.Favorite
         }
 
         private readonly IHttpRequestBuilderFactory _requestBuilder;
-
-        public override int PageSize => 100;
         public override string Name => "StashDB Favorites";
-        public override bool Enabled => true;
-        public override bool EnableAuto => false;
-        public override ImportListType ListType => ImportListType.StashDB;
-        public override TimeSpan MinRefreshInterval => TimeSpan.FromHours(12);
-
         public override IImportListRequestGenerator GetRequestGenerator()
         {
             return new StashDBFavoriteRequestGenerator(PageSize, Settings.Limit)

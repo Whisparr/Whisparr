@@ -1,4 +1,3 @@
-using System;
 using NLog;
 using NzbDrone.Common.Cloud;
 using NzbDrone.Common.Http;
@@ -25,13 +24,7 @@ namespace NzbDrone.Core.ImportLists.StashDB.Performer
 
         private readonly IHttpRequestBuilderFactory _requestBuilder;
 
-        public override int PageSize => 100;
         public override string Name => "StashDB Performer";
-        public override bool Enabled => true;
-        public override bool EnableAuto => false;
-        public override ImportListType ListType => ImportListType.StashDB;
-        public override TimeSpan MinRefreshInterval => TimeSpan.FromHours(1);
-
         public override IImportListRequestGenerator GetRequestGenerator()
         {
             return new StashDBPerformerRequestGenerator(PageSize, Settings.Limit)

@@ -283,13 +283,17 @@ function Naming() {
                     ?
                   </FormInputButton>
                 }
-                onChange={handleInputChange}
-                {...settings.standardMovieFormat}
+                value={
+                  settings.standardMovieFormat?.value ??
+                  settings.standardMovieFormat ??
+                  ''
+                }
                 helpTexts={standardMovieFormatHelpTexts}
                 errors={[
                   ...standardMovieFormatErrors,
                   ...settings.standardMovieFormat.errors,
                 ]}
+                onChange={handleInputChange}
               />
             </FormGroup>
           ) : null}
@@ -310,8 +314,11 @@ function Naming() {
                   ?
                 </FormInputButton>
               }
-              onChange={handleInputChange}
-              {...settings.movieFolderFormat}
+              value={
+                settings.movieFolderFormat?.value ??
+                settings.movieFolderFormat ??
+                ''
+              }
               helpTexts={[
                 translate('MovieFolderFormatHelpText'),
                 ...movieFolderFormatHelpTexts,
@@ -320,6 +327,7 @@ function Naming() {
                 ...movieFolderFormatErrors,
                 ...settings.movieFolderFormat.errors,
               ]}
+              onChange={handleInputChange}
             />
           </FormGroup>
 
@@ -335,13 +343,17 @@ function Naming() {
                     ?
                   </FormInputButton>
                 }
-                onChange={handleInputChange}
-                {...settings.standardSceneFormat}
+                value={
+                  settings.standardSceneFormat?.value ??
+                  settings.standardSceneFormat ??
+                  ''
+                }
                 helpTexts={standardSceneFormatHelpTexts}
                 errors={[
                   ...standardSceneFormatErrors,
                   ...settings.standardSceneFormat.errors,
                 ]}
+                onChange={handleInputChange}
               />
             </FormGroup>
           ) : null}
@@ -361,13 +373,17 @@ function Naming() {
                   ?
                 </FormInputButton>
               }
-              onChange={handleInputChange}
-              {...settings.sceneFolderFormat}
+              value={
+                settings.sceneFolderFormat?.value ??
+                settings.sceneFolderFormat ??
+                ''
+              }
               helpTexts={sceneFolderFormatHelpTexts}
               errors={[
                 ...sceneFolderFormatErrors,
                 ...settings.sceneFolderFormat.errors,
               ]}
+              onChange={handleInputChange}
             />
           </FormGroup>
 
@@ -381,13 +397,17 @@ function Naming() {
               inputClassName={styles.namingInput}
               type={inputTypes.TEXT}
               name="sceneImportFolderFormat"
-              onChange={handleInputChange}
-              {...settings.sceneImportFolderFormat}
+              value={
+                settings.sceneImportFolderFormat?.value ??
+                settings.sceneImportFolderFormat ??
+                ''
+              }
               helpTexts={sceneImportFolderFormatHelpTexts}
               errors={[
                 ...sceneImportFolderFormatErrors,
                 ...settings.sceneImportFolderFormat.errors,
               ]}
+              onChange={handleInputChange}
             />
           </FormGroup>
 

@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { createAction } from 'redux-actions';
 import { filterBuilderTypes, filterBuilderValueTypes, sortDirections } from 'Helpers/Props';
 import sortByProp from 'Utilities/Array/sortByProp';
@@ -196,8 +197,8 @@ export const defaultState = {
       label: () => translate('Studio'),
       type: filterBuilderTypes.EXACT,
       optionsSelector: function(items) {
-        const tagList = items.reduce((acc, scene) => {
-          if (scene.studioTitle) {
+        const tagList = (items || []).reduce((acc, scene) => {
+          if (scene && scene.studioTitle) {
             acc.push({
               id: scene.studioTitle,
               name: scene.studioTitle
@@ -207,7 +208,9 @@ export const defaultState = {
           return acc;
         }, []);
 
-        return tagList.sort(sortByProp('name'));
+        const tags = _.uniqBy(tagList, 'id');
+
+        return tags.sort(sortByProp('name'));
       }
     },
     {
@@ -254,18 +257,22 @@ export const defaultState = {
       label: () => translate('Genres'),
       type: filterBuilderTypes.ARRAY,
       optionsSelector: function(items) {
-        const genreList = items.reduce((acc, scene) => {
-          scene.genres.forEach((genre) => {
-            acc.push({
-              id: genre,
-              name: genre
+        const genreList = (items || []).reduce((acc, scene) => {
+          if (scene && Array.isArray(scene.genres)) {
+            scene.genres.forEach((genre) => {
+              acc.push({
+                id: genre,
+                name: genre
+              });
             });
-          });
+          }
 
           return acc;
         }, []);
 
-        return genreList.sort(sortByProp('name'));
+        const genres = _.uniqBy(genreList, 'id');
+
+        return genres.sort(sortByProp('name'));
       }
     },
     {

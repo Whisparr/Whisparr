@@ -165,8 +165,8 @@ export const defaultState = {
       label: () => translate('Network'),
       type: filterBuilderTypes.EXACT,
       optionsSelector: function(items) {
-        const tagList = items.reduce((acc, studio) => {
-          if (studio.network) {
+        const tagList = (items || []).reduce((acc, studio) => {
+          if (studio && studio.network) {
             acc.push({
               id: studio.network,
               name: studio.network
@@ -176,7 +176,9 @@ export const defaultState = {
           return acc;
         }, []);
 
-        return tagList.sort(sortByProp);
+        const tags = _.uniqBy(tagList, 'id');
+
+        return tags.sort(sortByProp('name'));
       }
     },
     {

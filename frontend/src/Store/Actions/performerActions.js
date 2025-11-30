@@ -220,7 +220,7 @@ export const defaultState = {
           };
         });
 
-        return tags.sort(sortByProp('status'));
+        return tags.sort(sortByProp('name'));
       }
     },
     {
@@ -249,7 +249,7 @@ export const defaultState = {
           };
         });
 
-        return tags.sort(name);
+        return tags.sort(sortByProp('name'));
       }
     },
     {
@@ -279,7 +279,7 @@ export const defaultState = {
           };
         });
 
-        return tags.sort(name);
+        return tags.sort(sortByProp('name'));
       }
     },
     {
@@ -305,7 +305,7 @@ export const defaultState = {
           };
         });
 
-        return tags.sort(name);
+        return tags.sort(sortByProp('name'));
       }
     },
     {
@@ -330,7 +330,7 @@ export const defaultState = {
           };
         });
 
-        return tags.sort(name);
+        return tags.sort(sortByProp('name'));
       }
     },
     {

@@ -9,7 +9,12 @@ function createPerformerSelector() {
   return createSelector(
     (state: AppState) => state.performers.items,
     (performers) => {
-      return performers;
+      // Ensure we always return an array: if items is an object map, convert to values,
+      // if it's already an array return it, otherwise return an empty array.
+      if (Array.isArray(performers)) return performers;
+      if (performers && typeof performers === 'object')
+        return Object.values(performers);
+      return [];
     }
   );
 }

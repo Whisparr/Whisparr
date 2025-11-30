@@ -67,7 +67,6 @@ const caseOptions: { key: TokenCase; value: string }[] = [
 ];
 
 const movieFileNameTokens = [
-const movieFileNameTokens = [
   {
     token:
       '{Movie Title} ({Release Year}) - {Edition Tags }{[Custom Formats]}{[Quality Full]}{-Release Group}',
@@ -413,8 +412,7 @@ function NamingModal(props: NamingModalProps) {
                 ))}
               </div>
             </FieldSet>
-          </div>
-        }
+          ) : null}
 
           {scene ? (
             <FieldSet legend={translate('FileNames')}>

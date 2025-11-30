@@ -51,11 +51,7 @@ function AppRoutes() {
         Movies
       */}
 
-      <Route
-        exact={true}
-        path="/"
-        component={SceneIndex}
-      />
+      <Route exact={true} path="/" component={SceneIndex} />
 
       {window.Whisparr.urlBase && (
         <Route
@@ -68,60 +64,30 @@ function AppRoutes() {
         />
       )}
 
-      <Route
-        path="/movies"
-        component={MovieIndex}
-      />
+      <Route path="/movies" component={MovieIndex} />
 
-      <Route
-        path="/scenes"
-        component={SceneIndex}
-      />
+      <Route path="/scenes" component={SceneIndex} />
 
-      <Route
-        path="/performers"
-        component={PerformerIndex}
-      />
+      <Route path="/performers" component={PerformerIndex} />
 
-      <Route
-        path="/studios"
-        component={StudioIndex}
-      />
+      <Route path="/studios" component={StudioIndex} />
 
-      <Route
-        path="/add/new/movie"
-        component={AddNewMovieConnector}
-      />
+      <Route path="/add/new/movie" component={AddNewMovieConnector} />
 
-      <Route
-        path="/add/new/scene"
-        component={AddNewSceneConnector}
-      />
+      <Route path="/add/new/scene" component={AddNewSceneConnector} />
 
-      <Route
-        path="/add/import"
-        component={ImportMovies}
-      />
+      <Route path="/add/import" component={ImportMovies} />
 
-      <Route
-        path="/movie/:titleSlug"
-        component={MovieDetailsPageConnector}
-      />
+      <Route path="/movie/:titleSlug" component={MovieDetailsPageConnector} />
 
       <Route
         path="/performer/:foreignId"
         component={PerformerDetailsPageConnector}
       />
 
-      <Route
-        path="/studio/:foreignId"
-        component={StudioDetailsPageConnector}
-      />
+      <Route path="/studio/:foreignId" component={StudioDetailsPageConnector} />
 
-      <Route
-        path="/unmapped"
-        component={UnmappedFilesTableConnector}
-      />
+      <Route path="/unmapped" component={UnmappedFilesTableConnector} />
 
       {/*
         Calendar

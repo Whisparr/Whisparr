@@ -7,6 +7,7 @@ import React, {
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { ScrollDirection } from 'react-window';
 import { SelectProvider } from 'App/SelectContext';
 import ClientSideCollectionAppState from 'App/State/ClientSideCollectionAppState';
 import StudiosAppState from 'App/State/StudiosAppState';
@@ -49,7 +50,6 @@ import StudioIndexRefreshStudioButton from './StudioIndexRefreshStudioButton';
 import StudioIndexTable from './Table/StudioIndexTable';
 import StudioIndexTableOptions from './Table/StudioIndexTableOptions';
 import styles from './StudioIndex.css';
-import { ScrollDirection } from 'react-window';
 
 function getViewComponent(view: string) {
   if (view === 'posters') {

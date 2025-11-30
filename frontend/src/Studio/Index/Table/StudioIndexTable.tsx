@@ -9,12 +9,9 @@ import Column from 'Components/Table/Column';
 import useMeasure from 'Helpers/Hooks/useMeasure';
 import {
   HORIZONTAL,
-  type ScrollDirection
+  type ScrollDirection,
 } from 'Helpers/Props/scrollDirections';
-
-import {
-  type SortDirection
-} from 'Helpers/Props/sortDirections';
+import { type SortDirection } from 'Helpers/Props/sortDirections';
 import Studio from 'Studio/Studio';
 import dimensions from 'Styles/Variables/dimensions';
 import getIndexOfFirstCharacter from 'Utilities/Array/getIndexOfFirstCharacter';
@@ -181,10 +178,7 @@ function StudioIndexTable(props: StudioIndexTableProps) {
 
   return (
     <div ref={measureRef}>
-      <Scroller
-        className={styles.tableScroller}
-        scrollDirection={HORIZONTAL}
-      >
+      <Scroller className={styles.tableScroller} scrollDirection={HORIZONTAL}>
         <StudioIndexTableHeader
           columns={columns}
           sortKey={sortKey}

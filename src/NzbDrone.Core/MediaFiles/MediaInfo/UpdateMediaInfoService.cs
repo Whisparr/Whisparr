@@ -5,8 +5,10 @@ using NzbDrone.Common.Disk;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.MediaFiles.Events;
+using NzbDrone.Core.MediaFiles.MovieImport.Aggregation.Aggregators;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.Movies;
+using NzbDrone.Core.Parser.Model;
 
 namespace NzbDrone.Core.MediaFiles.MediaInfo
 {
@@ -21,18 +23,21 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
         private readonly IDiskProvider _diskProvider;
         private readonly IMediaFileService _mediaFileService;
         private readonly IVideoFileInfoReader _videoFileInfoReader;
+        private readonly AggregateQuality _augmentQuality;
         private readonly IConfigService _configService;
         private readonly Logger _logger;
 
         public UpdateMediaInfoService(IDiskProvider diskProvider,
                                 IMediaFileService mediaFileService,
                                 IVideoFileInfoReader videoFileInfoReader,
+                                AggregateQuality augmentQuality,
                                 IConfigService configService,
                                 Logger logger)
         {
             _diskProvider = diskProvider;
             _mediaFileService = mediaFileService;
             _videoFileInfoReader = videoFileInfoReader;
+            _augmentQuality = augmentQuality;
             _configService = configService;
             _logger = logger;
         }
@@ -85,6 +90,20 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
             }
 
             movieFile.MediaInfo = updatedMediaInfo;
+
+            var localMovie = new LocalMovie();
+            localMovie.Path = movieFile.Path;
+            localMovie.Movie = movie;
+            localMovie.Quality = movieFile.Quality;
+            localMovie.MediaInfo = updatedMediaInfo;
+
+            localMovie = _augmentQuality.Aggregate(localMovie, null);
+
+            if (localMovie?.Quality?.ResolutionDetectionSource != null && localMovie.Quality.ResolutionDetectionSource == Qualities.QualityDetectionSource.MediaInfo)
+            {
+                movieFile.Quality = localMovie.Quality;
+            }
+
             _mediaFileService.Update(movieFile);
             _logger.Debug("Updated MediaInfo for '{0}'", path);
 

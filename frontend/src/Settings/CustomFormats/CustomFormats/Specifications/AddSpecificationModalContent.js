@@ -57,7 +57,7 @@ class AddSpecificationModalContent extends Component {
                   </div>
                   <div>
                     {translate('VisitTheWikiForMoreDetails')}
-                    <Link to="https://wiki.servarr.com/radarr/settings#custom-formats-2">{translate('Wiki')}</Link>
+                    <Link to="https://wiki.servarr.com/whisparr/settings#custom-formats-2">{translate('Wiki')}</Link>
                   </div>
                 </Alert>
 

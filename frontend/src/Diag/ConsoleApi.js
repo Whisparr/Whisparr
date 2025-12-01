@@ -6,7 +6,7 @@ let hasWarned = false;
 
 function checkActivationWarning() {
   if (!hasWarned) {
-    console.log('Activated RadarrApi console helpers.');
+    console.log('Activated WhisparrApi console helpers.');
     console.warn('Be warned: There will be no further confirmation checks.');
     hasWarned = true;
   }
@@ -115,6 +115,6 @@ class ConsoleApi {
   }
 }
 
-window.RadarrApi = new ConsoleApi();
+window.WhisparrApi = new ConsoleApi();
 
 export default ConsoleApi;

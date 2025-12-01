@@ -8,6 +8,14 @@ function Donations() {
   return (
     <FieldSet legend={translate('Donations')}>
       <div className={styles.logoContainer} title="Radarr">
+        <Link to="https://whisparr.com/donate">
+          <img
+            className={styles.logo}
+            src={`${window.Whisparr.urlBase}/Content/Images/Icons/logo-whisparr.png`}
+          />
+        </Link>
+      </div>
+      <div className={styles.logoContainer} title="Radarr">
         <Link to="https://radarr.video/donate">
           <img
             className={styles.logo}

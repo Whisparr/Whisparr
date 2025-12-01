@@ -24,11 +24,11 @@ namespace Whisparr.Api.V3.Config
                 RenameScenes = model.RenameScenes,
                 ReplaceIllegalCharacters = model.ReplaceIllegalCharacters,
                 ColonReplacementFormat = model.ColonReplacementFormat,
-                StandardMovieFormat = model.StandardMovieFormat,
-                MovieFolderFormat = model.MovieFolderFormat,
-                StandardSceneFormat = model.StandardSceneFormat,
-                SceneFolderFormat = model.SceneFolderFormat,
-                SceneImportFolderFormat = model.SceneImportFolderFormat
+                StandardMovieFormat = string.IsNullOrEmpty(model.StandardMovieFormat) ? "" : model.StandardMovieFormat,
+                MovieFolderFormat = string.IsNullOrEmpty(model.MovieFolderFormat) ? "" : model.MovieFolderFormat,
+                StandardSceneFormat = string.IsNullOrEmpty(model.StandardSceneFormat) ? "" : model.StandardSceneFormat,
+                SceneFolderFormat = string.IsNullOrEmpty(model.SceneFolderFormat) ? "" : model.SceneFolderFormat,
+                SceneImportFolderFormat = string.IsNullOrEmpty(model.SceneImportFolderFormat) ? "" : model.SceneImportFolderFormat,
             };
         }
 

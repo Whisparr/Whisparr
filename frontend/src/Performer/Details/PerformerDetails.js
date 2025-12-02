@@ -253,10 +253,9 @@ class PerformerDetails extends Component {
     }
 
     const statusDetails = getPerformerStatusDetails(status);
-    const runningYears =
-      statusDetails.title === translate('Inactive') ?
-        `${careerStart}-${careerEnd}` :
-        `${careerStart}-`;
+    const startYear = Number.isFinite(careerStart) ? careerStart : '';
+    const endYear = Number.isFinite(careerEnd) && careerEnd > 0 ? careerEnd : '';
+    const runningYears = `${startYear}-${endYear}`;
 
     const fanartUrl = getFanartUrl(images);
     const elementStyle = {
@@ -431,10 +430,11 @@ class PerformerDetails extends Component {
                     <Icon name={icons.PROFILE} size={17} />
 
                     <span className={styles.qualityProfileName}>
-                      {
+                      {qualityProfileId ?
                         <QualityProfileNameConnector
                           qualityProfileId={qualityProfileId}
-                        />
+                        /> :
+                        null
                       }
                     </span>
                   </Label>

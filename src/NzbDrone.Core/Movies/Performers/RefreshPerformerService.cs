@@ -76,17 +76,18 @@ namespace NzbDrone.Core.Movies.Performers
                 performer.ForeignId = performerInfo.ForeignId;
             }
 
-            performer.Name = performerInfo.Name;
-            performer.HairColor = performerInfo.HairColor;
-            performer.Ethnicity = performerInfo.Ethnicity;
-            performer.Status = performerInfo.Status;
-            performer.Images = performerInfo.Images;
-            performer.CareerStart = performerInfo.CareerEnd;
-            performer.CareerStart = performerInfo.CareerStart;
-            performer.LastInfoSync = DateTime.UtcNow;
-            performer.CleanName = performerInfo.CleanName;
-            performer.SortName = performerInfo.SortName;
             performer.Age = performerInfo.Age;
+            performer.CareerEnd = performerInfo.CareerEnd;
+            performer.CareerStart = performerInfo.CareerStart;
+            performer.CleanName = performerInfo.CleanName;
+            performer.Ethnicity = performerInfo.Ethnicity;
+            performer.Gender = performerInfo.Gender;
+            performer.HairColor = performerInfo.HairColor;
+            performer.Images = performerInfo.Images;
+            performer.LastInfoSync = DateTime.UtcNow;
+            performer.Name = performerInfo.Name;
+            performer.SortName = performerInfo.SortName;
+            performer.Status = performerInfo.Status;
 
             _performerService.Update(performer);
 

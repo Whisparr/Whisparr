@@ -6,10 +6,15 @@ using Moq;
 using NUnit.Framework;
 using NzbDrone.Common.Disk;
 using NzbDrone.Core.Configuration;
+using NzbDrone.Core.Download;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.MediaFiles.Events;
 using NzbDrone.Core.MediaFiles.MediaInfo;
+using NzbDrone.Core.MediaFiles.MovieImport.Aggregation.Aggregators.Augmenters.Quality;
 using NzbDrone.Core.Movies;
+using NzbDrone.Core.Parser;
+using NzbDrone.Core.Parser.Model;
+using NzbDrone.Core.Qualities;
 using NzbDrone.Core.Test.Framework;
 using NzbDrone.Test.Common;
 
@@ -313,6 +318,45 @@ namespace NzbDrone.Core.Test.MediaFiles.MediaInfo
 
             Mocker.GetMock<IMediaFileService>()
                 .Verify(v => v.Update(movieFile), Times.Never());
+        }
+
+        [Test]
+        public void should_set_webdl_2160_when_filename_indicates_web_and_mediainfo_indicates_2160()
+        {
+            var path = Path.Combine(_movie.Path, "vixen.2022-01-21.24.hours.christian.clay.rae.lil.black.4k.hevc.mp4");
+
+            var movieFile = Builder<MovieFile>.CreateNew()
+                .With(v => v.Path = path)
+                .With(v => v.RelativePath = Path.GetFileName(path))
+                .Build();
+
+            GivenFileExists();
+
+            // MediaInfo reader returns a 2160p file
+            Mocker.GetMock<IVideoFileInfoReader>()
+                  .Setup(v => v.GetMediaInfo(path))
+                  .Returns(new MediaInfoModel { Width = 3840, Height = 2160 });
+
+            // Create a filename augmenter that indicates a Web source
+            var fileNameAugment = new Mock<IAugmentQuality>();
+            fileNameAugment.SetupGet(s => s.Order).Returns(1);
+            fileNameAugment.Setup(s => s.AugmentQuality(It.IsAny<LocalMovie>(), It.IsAny<DownloadClientItem>()))
+                           .Returns(AugmentQualityResult.SourceOnly(QualitySource.Web, Confidence.Default));
+
+            // Create a mediainfo augmenter that indicates resolution only (2160p)
+            var mediaInfoAugment = new Mock<IAugmentQuality>();
+            mediaInfoAugment.SetupGet(s => s.Order).Returns(4);
+            mediaInfoAugment.Setup(s => s.AugmentQuality(It.IsAny<LocalMovie>(), It.IsAny<DownloadClientItem>()))
+                            .Returns(AugmentQualityResult.ResolutionOnly((int)Resolution.R2160p, Confidence.MediaInfo));
+
+            // Inject augmenters into AggregateQuality
+            Mocker.SetConstant<IEnumerable<IAugmentQuality>>(new[] { fileNameAugment.Object, mediaInfoAugment.Object });
+
+            Subject.Update(movieFile, _movie);
+
+            movieFile.Quality.Should().NotBeNull();
+            movieFile.Quality.Quality.Should().Be(Quality.WEBDL2160p);
+            movieFile.Quality.ResolutionDetectionSource.Should().Be(QualityDetectionSource.MediaInfo);
         }
     }
 }

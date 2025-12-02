@@ -8,6 +8,7 @@ using NzbDrone.Core.MediaFiles.Events;
 using NzbDrone.Core.MediaFiles.MovieImport.Aggregation.Aggregators;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.Movies;
+using NzbDrone.Core.Parser;
 using NzbDrone.Core.Parser.Model;
 
 namespace NzbDrone.Core.MediaFiles.MediaInfo
@@ -82,6 +83,7 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
                 return false;
             }
 
+            _logger.Trace("GetMediaInfo path='{0}', movieFile.Path='{1}', movieFile.RelativePath='{2}'", path, movieFile.Path, movieFile.RelativePath);
             var updatedMediaInfo = _videoFileInfoReader.GetMediaInfo(path);
 
             if (updatedMediaInfo == null)
@@ -94,7 +96,9 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
             var localMovie = new LocalMovie();
             localMovie.Path = movieFile.Path;
             localMovie.Movie = movie;
-            localMovie.Quality = movieFile.Quality;
+
+            // Try re-check for Quality rather than defaulting to null/Unknown
+            localMovie.Quality = QualityParser.ParseQuality(movieFile.RelativePath);
             localMovie.MediaInfo = updatedMediaInfo;
 
             localMovie = _augmentQuality.Aggregate(localMovie, null);

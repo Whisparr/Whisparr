@@ -144,6 +144,20 @@ namespace Whisparr.Api.V3.Movies
             var movieStats = _movieStatisticsService.MovieStatistics();
             var sdict = movieStats.ToDictionary(x => x.MovieId);
 
+            // Try cache first
+            if (_useCache)
+            {
+                var ids = _moviesService.AllMovieIds();
+                moviesResources = GetMovieResources(ids).Where(m =>
+                    (!string.IsNullOrEmpty(m.CleanTitle) && m.CleanTitle.Contains(cleanTitle, StringComparison.OrdinalIgnoreCase)) ||
+                    m.ForeignId == query)
+                .Take(100)
+                .ToList();
+
+                return moviesResources;
+            }
+
+            // If cachpe isn't enabled, query the DB instead
             var movies = _moviesService.GetAllMovies()
                 .Where(m =>
                     (!string.IsNullOrEmpty(m.CleanTitle) && m.CleanTitle.Contains(cleanTitle, StringComparison.OrdinalIgnoreCase)) ||

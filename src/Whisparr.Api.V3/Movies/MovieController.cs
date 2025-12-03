@@ -21,6 +21,7 @@ using NzbDrone.Core.Movies;
 using NzbDrone.Core.Movies.Commands;
 using NzbDrone.Core.Movies.Events;
 using NzbDrone.Core.MovieStats;
+using NzbDrone.Core.Parser;
 using NzbDrone.Core.RootFolders;
 using NzbDrone.Core.Validation;
 using NzbDrone.Core.Validation.Paths;
@@ -123,6 +124,39 @@ namespace Whisparr.Api.V3.Movies
             PostValidator.RuleFor(s => s.ForeignId).NotNull().NotEmpty().SetValidator(moviesExistsValidator);
 
             PutValidator.RuleFor(s => s.Path).IsValidPath();
+        }
+
+        // Basic search: cleanTitle or foreign ID
+        // Added for SelectMovieModalContent performance but will reuse elsewhere
+        [HttpGet("search")]
+        [Produces("application/json")]
+        public List<MovieResource> SearchMovies(string query)
+        {
+            var moviesResources = new List<MovieResource>();
+
+            if (query.IsNullOrWhiteSpace())
+            {
+                return moviesResources;
+            }
+
+            var cleanTitle = query.CleanMovieTitle();
+            var availDelay = _configService.AvailabilityDelay;
+            var movieStats = _movieStatisticsService.MovieStatistics();
+            var sdict = movieStats.ToDictionary(x => x.MovieId);
+
+            var movies = _moviesService.GetAllMovies()
+                .Where(m =>
+                    (!string.IsNullOrEmpty(m.CleanTitle) && m.CleanTitle.Contains(cleanTitle, StringComparison.OrdinalIgnoreCase)) ||
+                    m.ForeignId == query)
+                .Take(100)
+                .ToList();
+
+            foreach (var movie in movies)
+            {
+                moviesResources.AddIfNotNull(movie.ToResource(availDelay, _qualityUpgradableSpecification));
+            }
+
+            return moviesResources;
         }
 
         [HttpGet]

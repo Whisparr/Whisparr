@@ -267,6 +267,7 @@ export const persistState = [
 // Actions Types
 
 export const FETCH_MOVIES = 'movies/fetchMovies';
+export const SEARCH_MOVIES = 'movies/searchMovies';
 export const SET_MOVIE_VALUE = 'movies/setMovieValue';
 export const SAVE_MOVIE = 'movies/saveMovie';
 export const DELETE_MOVIE = 'movies/deleteMovie';
@@ -281,6 +282,8 @@ export const TOGGLE_MOVIE_MONITORED = 'movies/toggleMovieMonitored';
 // Action Creators
 
 export const fetchMovies = createThunk(FETCH_MOVIES);
+export const searchMovies = createThunk(SEARCH_MOVIES);
+
 export const saveMovie = createThunk(SAVE_MOVIE, (payload) => {
   const newPayload = {
     ...payload
@@ -420,6 +423,40 @@ export const actionHandlers = handleThunks({
 
     return abortRequest;
   },
+
+  [SEARCH_MOVIES]: (getState, payload, dispatch) => {
+    if (getState().movies.isFetching) {
+      return;
+    }
+
+    dispatch(set({ section, isFetching: true }));
+
+    const { request, abortRequest } = createAjaxRequest({
+      url: '/movie/search',
+      data: { query: payload },
+      traditional: true
+    });
+
+    request
+      .done((data) => {
+        // data is already a list of MovieResource objects
+        dispatch(batchActions([
+          update({ section, data }),
+          set({ section, isFetching: false, isPopulated: true, error: null })
+        ]));
+      })
+      .fail((xhr) => {
+        dispatch(set({
+          section,
+          isFetching: false,
+          isPopulated: false,
+          error: xhr.aborted ? null : xhr
+        }));
+      });
+
+    return abortRequest;
+  },
+
   [SAVE_MOVIE]: createSaveProviderHandler(section, '/movie', { getAjaxOptions: getSaveAjaxOptions }),
   [DELETE_MOVIE]: (getState, payload, dispatch) => {
     createRemoveItemHandler(section, '/movie')(getState, payload, dispatch);

@@ -44,6 +44,12 @@ namespace NzbDrone.Core.Movies
             set { MovieMetadata.Value.Title = value; }
         }
 
+        // Added for Movuie Search API compatibility
+        public string CleanTitle
+        {
+            get { return MovieMetadata.Value.CleanTitle; }
+        }
+
         public string ForeignId
         {
             get { return MovieMetadata.Value.ForeignId; }

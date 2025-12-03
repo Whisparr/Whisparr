@@ -223,10 +223,11 @@ function HistoryRow(props: HistoryRowProps) {
         data={data}
         downloadId={downloadId}
         isMarkingAsFailed={isMarkingAsFailed}
+        shortDateFormat={shortDateFormat}
+        timeFormat={timeFormat}
         onMarkAsFailedPress={handleMarkAsFailedPress}
         onModalClose={handleDetailsModalClose}
-        shortDateFormat={shortDateFormat}
-        timeFormat={timeFormat}      />
+      />
     </TableRow>
   );
 }

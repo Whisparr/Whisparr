@@ -62,6 +62,7 @@ namespace NzbDrone.Core.Movies
         bool ExistsByMetadataId(int metadataId);
         void SetFileIds(List<Movie> movies);
         Dictionary<Movie, MovieParseMatchType> MatchMovies(string parsedMovieTitle, string releaseDate, string foreignId, string episode, List<Movie> movies);
+        List<Movie> SearchMovies(string query);
     }
 
     public class MovieService : IMovieService, IHandle<MovieFileAddedEvent>,
@@ -193,6 +194,13 @@ namespace NzbDrone.Core.Movies
             }
 
             return _movieRepository.FindByTitles(lookupTitles);
+        }
+
+        public List<Movie> SearchMovies(string query)
+        {
+            var cleanTitle = query.CleanMovieTitle();
+
+            return _movieRepository.SearchMovies(cleanTitle, query);
         }
 
         public List<Movie> FindByIds(List<int> ids)

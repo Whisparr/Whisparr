@@ -38,6 +38,7 @@ namespace NzbDrone.Core.Movies
         bool ExistsByMetadataId(int metadataId);
         HashSet<int> AllMovieWithCollectionsTmdbIds();
         void SetFileId(List<Movie> movies);
+        List<Movie> SearchMovies(string cleanTitle, string foreignId);
     }
 
     public class MovieRepository : BasicRepository<Movie>, IMovieRepository
@@ -431,6 +432,23 @@ namespace NzbDrone.Core.Movies
         public void SetFileId(List<Movie> movies)
         {
             SetFields(movies, m => m.MovieFileId);
+        }
+
+        public List<Movie> SearchMovies(string cleanTitle, string foreignId)
+        {
+            var movieDictionary = new Dictionary<int, Movie>();
+
+            var builder = new SqlBuilder(_database.DatabaseType)
+                .Join<Movie, QualityProfile>((m, p) => m.QualityProfileId == p.Id)
+                .Join<Movie, MovieMetadata>((m, p) => m.MovieMetadataId == p.Id)
+                .LeftJoin<Movie, MovieFile>((m, f) => m.Id == f.MovieId)
+                .Where<MovieMetadata>(x => x.CleanTitle.Contains(cleanTitle) || x.ForeignId == foreignId);
+
+            _ = _database.QueryJoined<Movie, QualityProfile, MovieFile>(
+                builder,
+                (movie, profile, file) => Map(movieDictionary, movie, profile, file));
+
+            return movieDictionary.Values.ToList();
         }
     }
 }

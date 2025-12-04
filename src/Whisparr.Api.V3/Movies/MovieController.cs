@@ -139,14 +139,10 @@ namespace Whisparr.Api.V3.Movies
                 return moviesResources;
             }
 
-            var cleanTitle = query.CleanMovieTitle();
-            var availDelay = _configService.AvailabilityDelay;
-            var movieStats = _movieStatisticsService.MovieStatistics();
-            var sdict = movieStats.ToDictionary(x => x.MovieId);
-
             // Try cache first
             if (_useCache)
             {
+                var cleanTitle = query.CleanMovieTitle();
                 var ids = _moviesService.AllMovieIds();
                 moviesResources = GetMovieResources(ids).Where(m =>
                     (!string.IsNullOrEmpty(m.CleanTitle) && m.CleanTitle.Contains(cleanTitle, StringComparison.OrdinalIgnoreCase)) ||
@@ -157,18 +153,20 @@ namespace Whisparr.Api.V3.Movies
                 return moviesResources;
             }
 
-            // If cachpe isn't enabled, query the DB instead
-            var movies = _moviesService.GetAllMovies()
-                .Where(m =>
-                    (!string.IsNullOrEmpty(m.CleanTitle) && m.CleanTitle.Contains(cleanTitle, StringComparison.OrdinalIgnoreCase)) ||
-                    m.ForeignId == query)
-                .Take(100)
-                .ToList();
+            // cache not used, do normal search
+
+            var availDelay = _configService.AvailabilityDelay;
+            var movieStats = _movieStatisticsService.MovieStatistics();
+            var sdict = movieStats.ToDictionary(x => x.MovieId);
+
+            var movies = _moviesService.SearchMovies(query).Take(100).ToList();
 
             foreach (var movie in movies)
             {
                 moviesResources.AddIfNotNull(movie.ToResource(availDelay, _qualityUpgradableSpecification));
             }
+
+            LinkMovieStatistics(moviesResources, sdict);
 
             return moviesResources;
         }

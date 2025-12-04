@@ -5,6 +5,7 @@ using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.MetadataSource.SkyHook.Resource;
 using NzbDrone.Core.Movies.Performers.Events;
+using NzbDrone.Core.Parser;
 
 namespace NzbDrone.Core.Movies.Performers
 {
@@ -16,6 +17,7 @@ namespace NzbDrone.Core.Movies.Performers
         Performer GetById(int id);
         Performer FindByForeignId(string foreignId);
         List<Performer> FindByForeignIds(List<string> foreignIds);
+        List<Performer> SearchPerformers(string query);
         List<Performer> GetAllPerformers();
         List<string> AllPerformerForeignIds();
         Performer Update(Performer performer);
@@ -74,6 +76,13 @@ namespace NzbDrone.Core.Movies.Performers
         public List<Performer> FindByForeignIds(List<string> foreignIds)
         {
             return _performerRepo.FindByForeignIds(foreignIds);
+        }
+
+        public List<Performer> SearchPerformers(string query)
+        {
+            var cleanName = query.CleanMovieTitle();
+
+            return _performerRepo.SearchPerformers(cleanName, query);
         }
 
         public List<Performer> GetPerformers(IEnumerable<int> performerIds)

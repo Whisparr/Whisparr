@@ -10,6 +10,7 @@ namespace NzbDrone.Core.Movies.Performers
     {
         Performer FindByForeignId(string foreignId);
         List<Performer> FindByForeignIds(List<string> foreignIds);
+        List<Performer> SearchPerformers(string cleanName, string foreignId);
         List<string> AllPerformerForeignIds();
     }
 
@@ -28,6 +29,11 @@ namespace NzbDrone.Core.Movies.Performers
         public List<Performer> FindByForeignIds(List<string> foreignIds)
         {
             return Query(x => foreignIds.Contains(x.ForeignId)).ToList();
+        }
+
+        public List<Performer> SearchPerformers(string cleanName, string foreignId)
+        {
+            return Query(x => x.CleanName.Contains(cleanName) || x.ForeignId == foreignId).ToList();
         }
 
         public List<string> AllPerformerForeignIds()

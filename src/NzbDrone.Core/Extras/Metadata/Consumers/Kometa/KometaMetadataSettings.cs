@@ -18,7 +18,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Kometa
             MovieImages = true;
         }
 
-        [FieldDefinition(0, Label = "MetadataSettingsMovieImages", Type = FieldType.Checkbox, Section = MetadataSectionType.Image, HelpText = "poster.jpg, background.jpg")]
+        [FieldDefinition(0, Label = "MetadataSettingsMovieImages", Type = FieldType.Checkbox, Section = "Image", HelpText = "poster.jpg, background.jpg")]
         public bool MovieImages { get; set; }
 
         public NzbDroneValidationResult Validate()

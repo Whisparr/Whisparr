@@ -68,7 +68,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Kometa
         {
             foreach (var image in movie.MovieMetadata.Value.Images.Where(i => i.CoverType is MediaCoverTypes.Poster or MediaCoverTypes.Fanart))
             {
-                var source = _mediaCoverService.GetCoverPath(movie.Id, image.CoverType);
+                var source = _mediaCoverService.GetMovieCoverPath(movie.Id, image.CoverType);
 
                 var filename = image.CoverType switch
                 {

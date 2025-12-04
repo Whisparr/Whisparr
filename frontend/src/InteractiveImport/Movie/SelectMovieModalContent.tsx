@@ -20,7 +20,7 @@ import Column from 'Components/Table/Column';
 import VirtualTableRowButton from 'Components/Table/VirtualTableRowButton';
 import { scrollDirections } from 'Helpers/Props';
 import Movie from 'Movie/Movie';
-import { searchMovies } from 'Store/Actions/movieActions';
+import { searchMoviesModal } from 'Store/Actions/movieSearchActions';
 import dimensions from 'Styles/Variables/dimensions';
 import translate from 'Utilities/String/translate';
 import SelectMovieModalTableHeader from './SelectMovieModalTableHeader';
@@ -97,7 +97,7 @@ function SelectMovieModalContent(props: SelectMovieModalContentProps) {
 
   const debouncedDispatchSearch = useMemo(
     // only fire API call once every 300ms, for those fast typers
-    () => debounce((val: string) => dispatch(searchMovies(val)), 300),
+    () => debounce((val: string) => dispatch(searchMoviesModal(val)), 300),
     [dispatch]
   );
 
@@ -109,7 +109,9 @@ function SelectMovieModalContent(props: SelectMovieModalContentProps) {
   const windowHeight = window.innerHeight;
 
   // movies come straight from Redux after searchMovies thunk runs
-  const items: Movie[] = useSelector((state: AppState) => state.movies.items);
+  const items: Movie[] = useSelector(
+    (state: AppState) => state.movieSearch.items
+  );
 
   // measure scroller size
   useEffect(() => {

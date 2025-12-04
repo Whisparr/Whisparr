@@ -11,6 +11,7 @@ namespace NzbDrone.Core.Movies.Studios
     {
         Studio FindByForeignId(string foreignId);
         Studio FindByTitle(string title);
+        List<Studio> SearchStudios(string cleanTitle, string foreignId);
         List<Studio> FindAllByTitle(string title);
         List<string> AllStudioForeignIds();
     }
@@ -25,6 +26,11 @@ namespace NzbDrone.Core.Movies.Studios
         public Studio FindByTitle(string title)
         {
             return FindAllByTitle(title).FirstOrDefault();
+        }
+
+        public List<Studio> SearchStudios(string cleanTitle, string foreignId)
+        {
+            return Query(x => x.CleanTitle.Contains(cleanTitle) || x.ForeignId == foreignId).ToList();
         }
 
         public List<Studio> FindAllByTitle(string title)

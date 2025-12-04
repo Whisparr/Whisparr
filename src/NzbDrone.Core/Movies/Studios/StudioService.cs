@@ -13,6 +13,7 @@ namespace NzbDrone.Core.Movies.Studios
         List<Studio> GetStudios(IEnumerable<int> studioIds);
         Studio GetById(int id);
         Studio FindByForeignId(string foreignId);
+        List<Studio> SearchStudios(string query);
         List<Studio> GetAllStudios();
         List<string> AllStudioForeignIds();
         Studio Update(Studio performer);
@@ -100,6 +101,13 @@ namespace NzbDrone.Core.Movies.Studios
         public Studio FindByForeignId(string foreignId)
         {
             return _studioRepo.FindByForeignId(foreignId);
+        }
+
+        public List<Studio> SearchStudios(string query)
+        {
+            var cleanTitle = query.CleanStudioTitle().ToLower();
+
+            return _studioRepo.SearchStudios(cleanTitle, query);
         }
 
         public List<string> AllStudioForeignIds()

@@ -22,7 +22,7 @@ function UpdateChanges(props: UpdateChangesProps) {
       <ul>
         {uniqueChanges.map((change, index) => {
           const checkChange = change.replace(
-            /#\d{4,5}\b/g,
+            /#\d{3,5}\b/g,
             (match) =>
               `[${match}](https://github.com/Whisparr/Whisparr/issues/${match.substring(
                 1

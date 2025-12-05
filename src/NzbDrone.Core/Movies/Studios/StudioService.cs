@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using NzbDrone.Common.Cache;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.Movies.Studios.Events;
 using NzbDrone.Core.Parser;
@@ -13,6 +15,7 @@ namespace NzbDrone.Core.Movies.Studios
         List<Studio> GetStudios(IEnumerable<int> studioIds);
         Studio GetById(int id);
         Studio FindByForeignId(string foreignId);
+        List<Studio> FindByForeignIds(List<string> foreignIds);
         List<Studio> SearchStudios(string query);
         List<Studio> GetAllStudios();
         List<string> AllStudioForeignIds();
@@ -27,11 +30,16 @@ namespace NzbDrone.Core.Movies.Studios
     {
         private readonly IStudioRepository _studioRepo;
         private readonly IEventAggregator _eventAggregator;
-
-        public StudioService(IStudioRepository studioRepo, IEventAggregator eventAggregator)
+        private readonly ICacheManager _cacheManager;
+        private readonly string _cacheName;
+        public StudioService(IStudioRepository studioRepo, IEventAggregator eventAggregator, ICacheManager cacheManager)
         {
             _studioRepo = studioRepo;
             _eventAggregator = eventAggregator;
+            _cacheManager = cacheManager;
+
+            var t = Type.GetType("Whisparr.Api.V3.Studios.StudioResource");
+            _cacheName = $"{t?.FullName}_StudioResources";
         }
 
         public Studio AddStudio(Studio newStudio)
@@ -69,6 +77,8 @@ namespace NzbDrone.Core.Movies.Studios
 
         public Studio Update(Studio studio)
         {
+            RemoveStudioResourcesCache(studio.ForeignId);
+
             return _studioRepo.Update(studio);
         }
 
@@ -76,12 +86,19 @@ namespace NzbDrone.Core.Movies.Studios
         {
             _studioRepo.UpdateMany(studios);
 
+            foreach (var studio in studios)
+            {
+                RemoveStudioResourcesCache(studio.ForeignId);
+            }
+
             return studios;
         }
 
         public void RemoveStudio(Studio studio)
         {
             _studioRepo.Delete(studio);
+
+            RemoveStudioResourcesCache(studio.ForeignId);
         }
 
         public Studio FindByTitle(string title)
@@ -103,6 +120,11 @@ namespace NzbDrone.Core.Movies.Studios
             return _studioRepo.FindByForeignId(foreignId);
         }
 
+        public List<Studio> FindByForeignIds(List<string> foreignIds)
+        {
+            return _studioRepo.FindByForeignIds(foreignIds);
+        }
+
         public List<Studio> SearchStudios(string query)
         {
             var cleanTitle = query.CleanStudioTitle().ToLower();
@@ -113,6 +135,15 @@ namespace NzbDrone.Core.Movies.Studios
         public List<string> AllStudioForeignIds()
         {
             return _studioRepo.AllStudioForeignIds();
+        }
+
+        private void RemoveStudioResourcesCache(string foreignId)
+        {
+            var studioResourcesCache = _cacheManager.FindCache(_cacheName);
+            if (studioResourcesCache != null)
+            {
+                studioResourcesCache.Remove(foreignId);
+            }
         }
     }
 }

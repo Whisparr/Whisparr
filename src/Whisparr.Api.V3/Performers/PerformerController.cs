@@ -233,25 +233,22 @@ namespace Whisparr.Api.V3.Performers
                 {
                     _performerResourceCache.Lock.Wait();
 
-                    if (getIds.Count > 0)
+                    var performers = _performerService.FindByForeignIds(getIds);
+
+                    foreach (var performer in performers)
                     {
-                        var performers = _performerService.FindByForeignIds(getIds);
+                        performerResources.AddIfNotNull(performer.ToResource());
+                    }
 
-                        foreach (var performer in performers)
-                        {
-                            performerResources.AddIfNotNull(performer.ToResource());
-                        }
+                    var coverFileInfos = _coverMapper.GetPerformerCoverFileInfos();
 
-                        var coverFileInfos = _coverMapper.GetPerformerCoverFileInfos();
+                    _coverMapper.ConvertToLocalPerformerUrls(performerResources.Select(x => Tuple.Create(x.Id, x.Images.AsEnumerable())), coverFileInfos);
 
-                        _coverMapper.ConvertToLocalPerformerUrls(performerResources.Select(x => Tuple.Create(x.Id, x.Images.AsEnumerable())), coverFileInfos);
+                    LinkMovies(performerResources);
 
-                        LinkMovies(performerResources);
-
-                        foreach (var performerResource in performerResources)
-                        {
-                            _performerResourceCache.Set(performerResource.ForeignId, performerResource);
-                        }
+                    foreach (var performerResource in performerResources)
+                    {
+                        _performerResourceCache.Set(performerResource.ForeignId, performerResource);
                     }
                 }
                 finally

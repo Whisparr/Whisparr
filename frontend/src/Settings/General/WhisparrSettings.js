@@ -18,6 +18,7 @@ function WhisparrSettings(props) {
     whisparrAutoMatchOnDate,
     whisparrCacheMovieAPI,
     whisparrCachePerformerAPI,
+    whisparrCacheStudioAPI,
     whisparrValidateRuntime,
     whisparrValidateRuntimeLimit
   } = settings;
@@ -57,6 +58,22 @@ function WhisparrSettings(props) {
           helpText={translate('WhisparrCachePerformerAPIHelpText')}
           onChange={onInputChange}
           {...whisparrCachePerformerAPI}
+        />
+      </FormGroup>
+
+      <FormGroup
+        advancedSettings={advancedSettings}
+        isAdvanced={true}
+      >
+
+        <FormLabel>{translate('WhisparrCacheStudioAPI')}</FormLabel>
+
+        <FormInputGroup
+          type={inputTypes.CHECK}
+          name="whisparrCacheStudioAPI"
+          helpText={translate('WhisparrCacheStudioAPIHelpText')}
+          onChange={onInputChange}
+          {...whisparrCacheStudioAPI}
         />
       </FormGroup>
 

@@ -492,6 +492,13 @@ namespace NzbDrone.Core.Configuration
             set { SetValue("WhisparrCachePerformerAPI", value); }
         }
 
+        public bool WhisparrCacheStudioAPI
+        {
+            get { return GetValueBoolean("WhisparrCacheStudioAPI", false); }
+
+            set { SetValue("WhisparrCacheStudioAPI", value); }
+        }
+
         public bool WhisparrValidateRuntime
         {
             get { return GetValueBoolean("WhisparrValidateRuntime", false); }

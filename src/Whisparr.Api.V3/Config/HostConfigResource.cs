@@ -48,6 +48,7 @@ namespace Whisparr.Api.V3.Config
         public bool WhisparrAutoMatchOnDate { get; set; }
         public bool WhisparrCacheMovieAPI { get; set; }
         public bool WhisparrCachePerformerAPI { get; set; }
+        public bool WhisparrCacheStudioAPI { get; set; }
         public bool WhisparrValidateRuntime { get; set; }
         public int WhisparrValidateRuntimeLimit { get; set; }
     }
@@ -98,6 +99,7 @@ namespace Whisparr.Api.V3.Config
                 WhisparrAutoMatchOnDate = configService.WhisparrAutoMatchOnDate,
                 WhisparrCacheMovieAPI = configService.WhisparrCacheMovieAPI,
                 WhisparrCachePerformerAPI = configService.WhisparrCachePerformerAPI,
+                WhisparrCacheStudioAPI = configService.WhisparrCacheStudioAPI,
                 WhisparrValidateRuntime = configService.WhisparrValidateRuntime,
                 WhisparrValidateRuntimeLimit = configService.WhisparrValidateRuntimeLimit
             };

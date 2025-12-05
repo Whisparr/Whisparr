@@ -111,6 +111,7 @@ namespace NzbDrone.Core.Configuration
                 bool WhisparrAutoMatchOnDate { get; }
                 bool WhisparrCacheMovieAPI { get; }
                 bool WhisparrCachePerformerAPI { get; }
+                bool WhisparrCacheStudioAPI { get; }
                 bool WhisparrValidateRuntime { get; }
                 int WhisparrValidateRuntimeLimit { get; }
                 int WhisparrFolderLimit { get; set; }

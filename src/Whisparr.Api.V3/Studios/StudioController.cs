@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using DryIoc.ImTools;
 using Microsoft.AspNetCore.Mvc;
+using NzbDrone.Common.Cache;
 using NzbDrone.Common.Extensions;
+using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Datastore.Events;
 using NzbDrone.Core.ImportLists.ImportExclusions;
 using NzbDrone.Core.MediaCover;
@@ -28,6 +30,8 @@ namespace Whisparr.Api.V3.Studios
         private readonly IMovieService _moviesService;
         private readonly IMovieStatisticsService _movieStatisticsService;
         private readonly IImportListExclusionService _exclusionService;
+        private readonly ICached<StudioResource> _studioResourceCache;
+        private readonly bool _useCache;
 
         public StudioController(IStudioService studioService,
                                 IAddStudioService addStudioService,
@@ -35,6 +39,8 @@ namespace Whisparr.Api.V3.Studios
                                 IMovieService moviesService,
                                 IMovieStatisticsService movieStatisticsService,
                                 IImportListExclusionService exclusionService,
+                                ICacheManager cacheManager,
+                                IConfigService configService,
                                 IBroadcastSignalRMessage signalRBroadcaster)
         : base(signalRBroadcaster)
         {
@@ -44,6 +50,8 @@ namespace Whisparr.Api.V3.Studios
             _moviesService = moviesService;
             _movieStatisticsService = movieStatisticsService;
             _exclusionService = exclusionService;
+            _useCache = configService.WhisparrCacheStudioAPI;
+            _studioResourceCache = cacheManager.GetCache<StudioResource>(typeof(StudioResource), "studioResources");
         }
 
         protected override StudioResource GetResourceById(int id)
@@ -62,25 +70,39 @@ namespace Whisparr.Api.V3.Studios
         {
             var studioResources = new List<StudioResource>();
 
-            if (stashId.IsNotNullOrWhiteSpace())
+            if (_useCache)
             {
-                var studio = _studioService.FindByForeignId(stashId);
-
-                if (studio != null)
+                if (stashId.IsNotNullOrWhiteSpace())
                 {
-                    studioResources.AddIfNotNull(studio.ToResource());
+                    studioResources.AddIfNotNull(GetStudioResource(stashId));
+                }
+                else
+                {
+                    studioResources = GetStudioResources();
                 }
             }
             else
             {
-                studioResources = _studioService.GetAllStudios().ToResource();
+                if (stashId.IsNotNullOrWhiteSpace())
+                {
+                    var studio = _studioService.FindByForeignId(stashId);
+
+                    if (studio != null)
+                    {
+                        studioResources.AddIfNotNull(studio.ToResource());
+                    }
+                }
+                else
+                {
+                    studioResources = _studioService.GetAllStudios().ToResource();
+                }
+
+                var coverFileInfos = _coverMapper.GetStudioCoverFileInfos();
+
+                _coverMapper.ConvertToLocalStudioUrls(studioResources.Select(x => Tuple.Create(x.Id, x.Images.AsEnumerable())), coverFileInfos);
+
+                LinkMovies(studioResources);
             }
-
-            var coverFileInfos = _coverMapper.GetStudioCoverFileInfos();
-
-            _coverMapper.ConvertToLocalStudioUrls(studioResources.Select(x => Tuple.Create(x.Id, x.Images.AsEnumerable())), coverFileInfos);
-
-            LinkMovies(studioResources);
 
             return studioResources;
         }
@@ -169,6 +191,72 @@ namespace Whisparr.Api.V3.Studios
             var ids = movies.Map(x => x.Id).ToList();
             var movieStats = _movieStatisticsService.MovieStatistics(ids);
             resource.SizeOnDisk = movieStats.Sum(x => x.SizeOnDisk);
+        }
+
+        private StudioResource GetStudioResource(string studioForeignId)
+        {
+            var studioIds = new List<string> { studioForeignId };
+            return GetStudioResources(studioIds).FirstOrDefault();
+        }
+
+        private List<StudioResource> GetStudioResources()
+        {
+            var allStudioForeignIds = _studioService.AllStudioForeignIds();
+            return GetStudioResources(allStudioForeignIds);
+        }
+
+        private List<StudioResource> GetStudioResources(List<string> studioForeignIds)
+        {
+            var studioResources = new List<StudioResource>();
+
+            var getIds = new List<string>();
+            foreach (var id in studioForeignIds)
+            {
+                var studioResource = _studioResourceCache.Find(id);
+                if (studioResource == null)
+                {
+                    getIds.Add(id);
+                }
+                else
+                {
+                    studioResources.AddIfNotNull(studioResource);
+                }
+            }
+
+            if (getIds.Count > 0)
+            {
+                try
+                {
+                    _studioResourceCache.Lock.Wait();
+
+                    if (getIds.Count > 0)
+                    {
+                        var studios = _studioService.FindByForeignIds(getIds);
+
+                        foreach (var studio in studios)
+                        {
+                            studioResources.AddIfNotNull(studio.ToResource());
+                        }
+
+                        var coverFileInfos = _coverMapper.GetStudioCoverFileInfos();
+
+                        _coverMapper.ConvertToLocalStudioUrls(studioResources.Select(x => Tuple.Create(x.Id, x.Images.AsEnumerable())), coverFileInfos);
+
+                        LinkMovies(studioResources);
+
+                        foreach (var studioResource in studioResources)
+                        {
+                            _studioResourceCache.Set(studioResource.ForeignId, studioResource);
+                        }
+                    }
+                }
+                finally
+                {
+                    _studioResourceCache.Lock.Release();
+                }
+            }
+
+            return studioResources;
         }
     }
 }

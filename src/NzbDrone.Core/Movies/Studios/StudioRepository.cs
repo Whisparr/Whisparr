@@ -10,6 +10,7 @@ namespace NzbDrone.Core.Movies.Studios
     public interface IStudioRepository : IBasicRepository<Studio>
     {
         Studio FindByForeignId(string foreignId);
+        List<Studio> FindByForeignIds(List<string> foreignIds);
         Studio FindByTitle(string title);
         List<Studio> SearchStudios(string cleanTitle, string foreignId);
         List<Studio> FindAllByTitle(string title);
@@ -41,6 +42,11 @@ namespace NzbDrone.Core.Movies.Studios
         public Studio FindByForeignId(string foreignId)
         {
             return Query(x => x.ForeignId == foreignId).FirstOrDefault();
+        }
+
+        public List<Studio> FindByForeignIds(List<string> foreignIds)
+        {
+            return Query(x => foreignIds.Contains(x.ForeignId)).ToList();
         }
 
         public List<string> AllStudioForeignIds()

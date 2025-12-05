@@ -54,8 +54,7 @@ class MovieCastPoster extends Component {
     const elementStyle = {
       width: `${posterWidth}px`,
       height: `${posterHeight}px`,
-      borderRadius: '5px',
-      'object-fit': 'cover'
+      borderRadius: '5px'
     };
 
     const contentStyle = {

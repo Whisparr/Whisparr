@@ -68,7 +68,15 @@ body:
     description: |
       Trace Logs (https://wiki.servarr.com/whisparr/troubleshooting#logging-and-log-files) 
       ***Generally speaking, all bug reports must have trace logs provided.***
-      *** Info Logs are not trace logs. If the logs do not say trace and are not from a file like `*.trace.*.txt` they are not trace logs.***
+      *** Info/Debug Logs are not trace logs. If the logs do not say `trace` and are not from a file like `*.trace.*.txt` they are not trace logs.***
+    value: |
+      <details><summary>click to expand</summary>
+      
+      ```
+      PASTE LOGS HERE
+      ```
+      
+      </details>
   validations:
     required: true
 - type: textarea

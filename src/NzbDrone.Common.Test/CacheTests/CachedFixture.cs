@@ -80,7 +80,6 @@ namespace NzbDrone.Common.Test.CacheTests
         }
 
         [Test]
-        [Platform(Exclude = "MacOsX")]
         public void should_honor_ttl()
         {
             var hitCount = 0;

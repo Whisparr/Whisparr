@@ -6,6 +6,7 @@ using NUnit.Framework;
 using NzbDrone.Common.Http;
 using NzbDrone.Core.Indexers.Newznab;
 using NzbDrone.Core.Test.Framework;
+using NzbDrone.Test.Common;
 
 namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
 {
@@ -93,6 +94,8 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
             var result = Subject.GetCapabilities(_settings);
 
             result.Should().NotBeNull();
+
+            ExceptionVerification.ExpectedErrors(1);
         }
 
         [Test]

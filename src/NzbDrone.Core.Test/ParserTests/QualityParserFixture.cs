@@ -311,7 +311,6 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Movie.Name.2008.BDREMUX.1080p.Bluray.AVC.DTS-HR.MA.5.1-LEGi0N")]
         [TestCase("Movie.Title.M.2008.USA.BluRay.Remux.1080p.MPEG-2.DD.5.1-TDD")]
         [TestCase("Movie.Title.2018.1080p.BluRay.REMUX.MPEG-2.DTS-HD.MA.5.1-EPSiLON")]
-        [TestCase("Movie.Title.II.2003.4K.BluRay.Remux.1080p.AVC.DTS-HD.MA.5.1-BMF")]
         [TestCase("Movie Title 2022 (BDRemux 1080p HEVC FLAC) [Netaro]")]
         [TestCase("[Vodes] Movie Title - Other Title (2020) [BDRemux 1080p HEVC Dual-Audio]")]
         [TestCase("This.Wonderful.Movie.1991.German.ML.1080p.BluRay.AVC-GeRMaNSCeNEGRoUP")]

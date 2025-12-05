@@ -502,13 +502,13 @@ namespace Whisparr.Api.V3.Movies
         {
             var moviesResources = new List<MovieResource>();
 
-            var getIds = new List<int>();
+            var missingIds = new List<int>();
             foreach (var id in ids)
             {
                 var movieResource = _movieResourcesCache.Find(id.ToString());
                 if (movieResource == null)
                 {
-                    getIds.Add(id);
+                    missingIds.Add(id);
                 }
                 else
                 {
@@ -516,11 +516,25 @@ namespace Whisparr.Api.V3.Movies
                 }
             }
 
-            if (getIds.Count > 0)
+            if (missingIds.Count > 0)
             {
                 try
                 {
                     _movieResourcesCache.Lock.Wait();
+
+                    var getIds = new List<int>();
+                    foreach (var id in missingIds)
+                    {
+                        var movieResource = _movieResourcesCache.Find(id.ToString());
+                        if (movieResource == null)
+                        {
+                            getIds.Add(id);
+                        }
+                        else
+                        {
+                            moviesResources.AddIfNotNull(movieResource);
+                        }
+                    }
 
                     if (getIds.Count > 0)
                     {

@@ -209,13 +209,13 @@ namespace Whisparr.Api.V3.Studios
         {
             var studioResources = new List<StudioResource>();
 
-            var getIds = new List<string>();
+            var missingIds = new List<string>();
             foreach (var id in studioForeignIds)
             {
                 var studioResource = _studioResourceCache.Find(id);
                 if (studioResource == null)
                 {
-                    getIds.Add(id);
+                    missingIds.Add(id);
                 }
                 else
                 {
@@ -223,11 +223,26 @@ namespace Whisparr.Api.V3.Studios
                 }
             }
 
-            if (getIds.Count > 0)
+            if (missingIds.Count > 0)
             {
                 try
                 {
                     _studioResourceCache.Lock.Wait();
+
+                    // Re-check missing IDs after acquiring the lock
+                    var getIds = new List<string>();
+                    foreach (var id in missingIds)
+                    {
+                        var studioResource = _studioResourceCache.Find(id);
+                        if (studioResource == null)
+                        {
+                            getIds.Add(id);
+                        }
+                        else
+                        {
+                            studioResources.AddIfNotNull(studioResource);
+                        }
+                    }
 
                     if (getIds.Count > 0)
                     {

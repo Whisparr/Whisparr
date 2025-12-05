@@ -57,8 +57,22 @@ namespace NzbDrone.Core.Parser
         private static readonly Regex RealRegex = new (@"\b(?<real>REAL)\b",
                                                             RegexOptions.Compiled);
 
-        private static readonly Regex ResolutionRegex = new (@"\b(?:(?<R360p>360p)|(?<R480p>480p|480i|640x480|848x480)|(?<R540p>540p)|(?<R576p>576p)|(?<R720p>720p|1280x720|960p)|(?<R1080p>1080p|1920x1080|1440p|FHD|1080i|4kto1080p)|(?<R2160p>2160p|3840x2160|4k[-_. ](?:UHD|HEVC|BD|H\.?265)|(?:UHD|HEVC|BD|H\.?265)[-_. ]4k))\b",
-                                                            RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex ResolutionRegex = new
+        (
+            @"\b(?:
+                (?<R360p>360p)|
+                (?<R480p>480p|480i|640x480|848x480)|
+                (?<R540p>540p)|
+                (?<R576p>576p)|
+                (?<R720p>720p|1280x720|960p)|
+                (?<R1080p>1080p|1920x1080|1440p|FHD|1080i|4kto1080p)|
+                (?<R2160p>2160p|3840x2160|4096x2160|4k(?:[-_. ](?:UHD|HEVC|BD|H\.?265))?)|
+                (?<R2880p>2880p|5120x2880|5k(?:[-_. ](?:UHD|HEVC|BD|H\.?265))?)|
+                (?<R3160p>3160p|6144x3160|6k(?:[-_. ](?:UHD|HEVC|BD|H\.?265))?)|
+                (?<R3384p>3384p|6016x3384|6k(?:[-_. ](?:UHD|HEVC|BD|H\.?265))?)|
+                (?<R4320p>4320p|7680x4320|8k(?:[-_. ](?:UHD|HEVC|BD|H\.?265))?)
+            )\b",
+            RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
 
         // Handle cases where no resolution is in the release name; assume if UHD then 4k
         private static readonly Regex ImpliedResolutionRegex = new (@"\b(?<R2160p>UHD)\b",
@@ -93,6 +107,7 @@ namespace NzbDrone.Core.Parser
             // Based on extension
             if (result.Quality == Quality.Unknown && !name.ContainsInvalidPathChars())
             {
+                Logger.Debug("Quality unknown.  Attempting to parse quality from file extension for '{0}'", name);
                 try
                 {
                     result.Quality = MediaFileExtensions.GetQualityForExtension(Path.GetExtension(name));
@@ -488,6 +503,50 @@ namespace NzbDrone.Core.Parser
                     }
                 }
 
+                if (resolution == Resolution.R4320p)
+                {
+                    result.ResolutionDetectionSource = QualityDetectionSource.Name;
+
+                    result.Quality = source == QualitySource.Unknown
+                        ? Quality.WEBDL4320p
+                        : QualityFinder.FindBySourceAndResolution(source, 4320);
+
+                    return result;
+                }
+
+                if (resolution == Resolution.R3384p)
+                {
+                    result.ResolutionDetectionSource = QualityDetectionSource.Name;
+
+                    result.Quality = source == QualitySource.Unknown
+                        ? Quality.WEBDL3384p
+                        : QualityFinder.FindBySourceAndResolution(source, 3384);
+
+                    return result;
+                }
+
+                if (resolution == Resolution.R3160p)
+                {
+                    result.ResolutionDetectionSource = QualityDetectionSource.Name;
+
+                    result.Quality = source == QualitySource.Unknown
+                        ? Quality.WEBDL3160p
+                        : QualityFinder.FindBySourceAndResolution(source, 3160);
+
+                    return result;
+                }
+
+                if (resolution == Resolution.R2880p)
+                {
+                    result.ResolutionDetectionSource = QualityDetectionSource.Name;
+
+                    result.Quality = source == QualitySource.Unknown
+                        ? Quality.WEBDL2880p
+                        : QualityFinder.FindBySourceAndResolution(source, 2880);
+
+                    return result;
+                }
+
                 if (resolution == Resolution.R2160p)
                 {
                     result.ResolutionDetectionSource = QualityDetectionSource.Name;
@@ -637,11 +696,13 @@ namespace NzbDrone.Core.Parser
         private static Resolution ParseResolution(string name)
         {
             var match = ResolutionRegex.Match(name);
+            Logger.Debug("Resolution match for '{0}': {1}", name, match.Value);
 
             var matchimplied = ImpliedResolutionRegex.Match(name);
 
             if (!match.Success & !matchimplied.Success)
             {
+                Logger.Debug("No resolution match for 'match' or 'matchImplied', using Unknown: '{0}'", name);
                 return Resolution.Unknown;
             }
 
@@ -678,6 +739,26 @@ namespace NzbDrone.Core.Parser
             if (match.Groups["R2160p"].Success || matchimplied.Groups["R2160p"].Success)
             {
                 return Resolution.R2160p;
+            }
+
+            if (match.Groups["R2880p"].Success || matchimplied.Groups["R2880p"].Success)
+            {
+                return Resolution.R2880p;
+            }
+
+            if (match.Groups["R3160p"].Success || matchimplied.Groups["R3160p"].Success)
+            {
+                return Resolution.R3160p;
+            }
+
+            if (match.Groups["R3384p"].Success || matchimplied.Groups["R3384p"].Success)
+            {
+                return Resolution.R3384p;
+            }
+
+            if (match.Groups["R4320p"].Success || matchimplied.Groups["R4320p"].Success)
+            {
+                return Resolution.R4320p;
             }
 
             return Resolution.Unknown;
@@ -753,6 +834,10 @@ namespace NzbDrone.Core.Parser
         R576p = 576,
         R720p = 720,
         R1080p = 1080,
-        R2160p = 2160
+        R2160p = 2160,
+        R2880p = 2880,
+        R3160p = 3160,
+        R3384p = 3384,
+        R4320p = 4320
     }
 }

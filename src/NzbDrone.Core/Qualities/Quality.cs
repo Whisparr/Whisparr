@@ -94,6 +94,7 @@ namespace NzbDrone.Core.Qualities
         public static Quality WEBDL2160p => new Quality(18, "WEBDL-2160p", QualitySource.Web, 2160);
         public static Quality WEBDL2880p => new Quality(33, "WEBDL-2880p", QualitySource.Web, 2880);
         public static Quality WEBDL3160p => new Quality(34, "WEBDL-3160p", QualitySource.Web, 3160);
+        public static Quality WEBDL3384p => new Quality(36, "WEBDL-3384p", QualitySource.Web, 3384);
         public static Quality WEBDL4320p => new Quality(35, "WEBDL-4320p", QualitySource.Web, 4320);
 
         // Bluray
@@ -135,6 +136,7 @@ namespace NzbDrone.Core.Qualities
                 WEBDL2160p,
                 WEBDL2880p,
                 WEBDL3160p,
+                WEBDL3384p,
                 WEBDL4320p,
                 WEBRip480p,
                 WEBRip720p,
@@ -187,12 +189,13 @@ namespace NzbDrone.Core.Qualities
                 new QualityDefinition(Quality.Bluray2160p) { Weight = 23, MinSize = 0, MaxSize = null, PreferredSize = null },
                 new QualityDefinition(Quality.Remux2160p)  { Weight = 24, MinSize = 0, MaxSize = null, PreferredSize = null },
 
-                new QualityDefinition(Quality.BRDISK)      { Weight = 28, MinSize = 0, MaxSize = null, PreferredSize = null },
-                new QualityDefinition(Quality.RAWHD)       { Weight = 29, MinSize = 0, MaxSize = null, PreferredSize = null },
+                new QualityDefinition(Quality.BRDISK)      { Weight = 29, MinSize = 0, MaxSize = null, PreferredSize = null },
+                new QualityDefinition(Quality.RAWHD)       { Weight = 30, MinSize = 0, MaxSize = null, PreferredSize = null },
                 new QualityDefinition(Quality.WEBDL2880p)  { Weight = 25, MinSize = 0, MaxSize = null, PreferredSize = null },
                 new QualityDefinition(Quality.WEBDL3160p)  { Weight = 26, MinSize = 0, MaxSize = null, PreferredSize = null },
-                new QualityDefinition(Quality.WEBDL4320p)  { Weight = 27, MinSize = 0, MaxSize = null, PreferredSize = null },
-                new QualityDefinition(Quality.VR)          { Weight = 30, MinSize = 4, MaxSize = null, PreferredSize = null },
+                new QualityDefinition(Quality.WEBDL3384p)  { Weight = 27, MinSize = 0, MaxSize = null, PreferredSize = null },
+                new QualityDefinition(Quality.WEBDL4320p)  { Weight = 28, MinSize = 0, MaxSize = null, PreferredSize = null },
+                new QualityDefinition(Quality.VR)          { Weight = 31, MinSize = 4, MaxSize = null, PreferredSize = null },
             };
         }
 

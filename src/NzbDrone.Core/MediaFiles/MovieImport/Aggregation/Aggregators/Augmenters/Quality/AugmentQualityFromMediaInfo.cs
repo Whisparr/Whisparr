@@ -45,12 +45,38 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Aggregation.Aggregators.Augmenter
                 }
             }
 
+            // 8K
+            if (width >= 7500 || height >= 4300)
+            {
+                return AugmentQualityResult.SourceAndResolutionOnly(source, sourceConfidence, (int)Resolution.R4320p, Confidence.MediaInfo);
+            }
+
+            // 6K RED (6144x3160)
+            if (width >= 6100 && height >= 3100)
+            {
+                return AugmentQualityResult.SourceAndResolutionOnly(source, sourceConfidence, (int)Resolution.R3160p, Confidence.MediaInfo);
+            }
+
+            // 6K Blackmagic (6016x3384)
+            if (width >= 6000 && height >= 3300)
+            {
+                return AugmentQualityResult.SourceAndResolutionOnly(source, sourceConfidence, (int)Resolution.R3384p, Confidence.MediaInfo);
+            }
+
+            // 5k (5120x2880)
+            if (width >= 5100 && height >= 2800)
+            {
+                return AugmentQualityResult.SourceAndResolutionOnly(source, sourceConfidence, (int)Resolution.R2880p, Confidence.MediaInfo);
+            }
+
+            // 4K (UHD/2160p)
             if (width >= 3200 || height >= 2100)
             {
-                _logger.Trace("Resolution {0}x{1} considered 2160p", width, height);
+                _logger.Trace("Resolution {0}x{1} considered 2160p (4K)", width, height);
                 return AugmentQualityResult.SourceAndResolutionOnly(source, sourceConfidence, (int)Resolution.R2160p, Confidence.MediaInfo);
             }
 
+            // 1080p
             if (width >= 1800 || height >= 1000)
             {
                 _logger.Trace("Resolution {0}x{1} considered 1080p", width, height);

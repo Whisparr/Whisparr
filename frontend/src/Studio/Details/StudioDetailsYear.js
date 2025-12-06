@@ -149,7 +149,7 @@ class StudioDetailsYear extends Component {
     const newMonitoredState = !allMonitored;
     const ids = items.map((item) => item.id);
 
-    bulkMonitorMovie({ ids, monitored: newMonitoredState });
+    this.props.bulkMonitorMovie({ ids, monitored: newMonitoredState });
   };
 
   onMonitorMoviePress = (movieId, monitored, { shiftKey }) => {

@@ -186,9 +186,8 @@ class PerformerDetailsStudio extends Component {
         <div className={styles.header}>
           <div className={styles.left}>
             <MonitorToggleButton
-              monitored={monitored}
-              isDisabled={true}
-              tooltip={translate('PerformerStudioLinkTooltip')}
+              monitored={monitoredMovieCount === totalMovieCount}
+              tooltip={translate('PerformerStudioMonitorTooltip')}
               isSaving={isSaving}
               size={24}
               onPress={onMonitorStudioPress}

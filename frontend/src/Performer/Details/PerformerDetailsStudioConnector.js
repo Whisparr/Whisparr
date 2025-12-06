@@ -6,7 +6,7 @@ import { createSelector } from 'reselect';
 import * as commandNames from 'Commands/commandNames';
 import { sortDirections } from 'Helpers/Props';
 import { executeCommand } from 'Store/Actions/commandActions';
-import { toggleMovieMonitored } from 'Store/Actions/movieActions';
+import { bulkMonitorMovie, toggleMovieMonitored } from 'Store/Actions/movieActions';
 import { setPerformerScenesSort, setPerformerScenesTableOption } from 'Store/Actions/performerScenesActions';
 import { toggleStudioMonitored } from 'Store/Actions/studioActions';
 import createDimensionsSelector from 'Store/Selectors/createDimensionsSelector';
@@ -99,6 +99,7 @@ const mapDispatchToProps = {
   setPerformerScenesTableOption,
   toggleStudioMonitored,
   toggleMovieMonitored,
+  bulkMonitorMovie,
   executeCommand
 };
 
@@ -109,14 +110,14 @@ class PerformerDetailsStudioConnector extends Component {
   };
 
   onMonitorStudioPress = (monitored) => {
-    const {
-      id
-    } = this.props;
+    // Use the bulk monitor API to toggle monitoring for all items in this studio
+    const { items } = this.props;
 
-    this.props.toggleStudioMonitored({
-      studioId: id,
-      monitored
-    });
+    const allMonitored = items.every((movie) => movie.monitored);
+    const newMonitoredState = !allMonitored;
+    const ids = items.map((item) => item.id);
+
+    this.props.bulkMonitorMovie({ ids, monitored: newMonitoredState });
   };
 
   onMonitorMoviePress = (movieId, monitored) => {
@@ -166,6 +167,7 @@ PerformerDetailsStudioConnector.propTypes = {
   setPerformerScenesSort: PropTypes.func.isRequired,
   toggleStudioMonitored: PropTypes.func.isRequired,
   toggleMovieMonitored: PropTypes.func.isRequired,
+  bulkMonitorMovie: PropTypes.func.isRequired,
   executeCommand: PropTypes.func.isRequired
 };
 

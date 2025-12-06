@@ -1406,7 +1406,7 @@
   "PerformerName": "Name",
   "PerformerQualityProfileHelpText": "Quality for newly added scenes.  Does not update existing scenes.",
   "PerformersSelectedInterp": "{count} Performer(s) Selected",
-  "PerformerStudioLinkTooltip": "Click Studio name to toggle from Details view",
+  "PerformerStudioMonitorTooltip": "Toggle monitoring on these scenes",
   "Period": "Period",
   "Permissions": "Permissions",
   "PhysicalRelease": "Physical Release",

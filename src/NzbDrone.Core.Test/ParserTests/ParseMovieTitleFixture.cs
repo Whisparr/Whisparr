@@ -35,6 +35,8 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Lustery E1717 James And Six Sharp Cold Fear XXX 1080p MP4 FETiSH", true)]
         [TestCase("[Dads Love Porn] Ravyn Alexa & Johnny Blaster - Dads Love Maids(2025-10-14) [2160p]", true)]
         [TestCase("[Blacked] - 2025-11-24 - BBC-Queen Violet Takes On Three Cocks - Violet Myers - 1080p", true)]
+        [TestCase("[Vixen] Matthew Meie, Erica Mori & Era Queen - Bratty College Girls Have Naughty Threesome (2025-12-03) [2160p]", true)]
+        [TestCase("[Vixen] Matthew Meie, Erica Mori & Era Queen - Bratty College Girls Have Naughty Threesome (2025-12-03) [2160p].mp4", true)]
         public void should_parse_as_scene(string title, bool expected)
         {
             Parser.Parser.ParseMovieTitle(title).IsScene.Should().Be(expected);
@@ -60,7 +62,8 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Pure Taboo - Sarah Arabic, Lily LaBeau - A Costly Divorce (June 24, 2025) [1080p HEVC x265]", "Pure Taboo")]
         [TestCase("[BellesaFilms] The Sister - Ashley Lane, Mannie Coco (2025-09-28) [2160p]", "BellesaFilms")]
         [TestCase("[Blacked] - 2025-11-24 - BBC Queen Violet Takes On Three Cocks - Violet Myers - 1080p", "Blacked")]
-
+        [TestCase("[Vixen] Matthew Meie, Erica Mori & Era Queen - Bratty College Girls Have Naughty Threesome (2025-12-03) [2160p]", "Vixen")]
+        [TestCase("[Vixen] Matthew Meie, Erica Mori & Era Queen - Bratty College Girls Have Naughty Threesome (2025-12-03) [2160p].mp4", "Vixen")]
         public void should_correctly_parse_studio_names(string title, string result)
         {
             Parser.Parser.ParseMovieTitle(title).StudioTitle.Should().Be(result);
@@ -85,6 +88,8 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("[BellesaFilms] The Sister - Ashley Lane, Mannie Coco (2025-09-28) [2160p]", "2025-09-28")]
         [TestCase("Jesse Loads Monster Facials 2024-04-19 Frecklemonade.mkv", "2024-04-19")]
         [TestCase("[Blacked] - 2025-11-24 - BBC-Queen Violet Takes On Three Cocks - Violet Myers - 1080p", "2025-11-24")]
+        [TestCase("[Vixen] Matthew Meie, Erica Mori & Era Queen - Bratty College Girls Have Naughty Threesome (2025-12-03) [2160p]", "2025-12-03")]
+        [TestCase("[Vixen] Matthew Meie, Erica Mori & Era Queen - Bratty College Girls Have Naughty Threesome (2025-12-03) [2160p].mp4", "2025-12-03")]
         public void should_correctly_parse_release_date(string title, string result)
         {
             Parser.Parser.ParseMovieTitle(title).ReleaseDate.Should().Be(result);
@@ -108,8 +113,10 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Jesse Loads Monster Facials 2024-04-19 Frecklemonade.mkv", "frecklemonade")]
         [TestCase("Lustery E1717 James And Six Sharp Cold Fear XXX 1080p MP4 FETiSH", "james and six sharp cold fear")]
         [TestCase("Pure Taboo - Sarah Arabic, Lily LaBeau - A Costly Divorce (June 24, 2025) [1080p HEVC x265]", "sarah arabic lily labeau a costly divorce")]
-        [TestCase("[BellesaFilms] The Sister - Ashley Lane, Mannie Coco (2025-09-28) [2160p]", "the sister")]
+        [TestCase("[BellesaFilms] The Sister - Ashley Lane, Mannie Coco (2025-09-28) [2160p]", "the sister ashley lane mannie coco")]
         [TestCase("[Blacked] - 2025-11-24 - BBC-Queen Violet Takes On Three Cocks - Violet Myers - 1080p", "bbc queen violet takes on three cocks violet myers")]
+        [TestCase("[Vixen] Matthew Meie, Erica Mori & Era Queen - Bratty College Girls Have Naughty Threesome (2025-12-03) [2160p]", "matthew meie erica mori and era queen bratty college girls have naughty threesome")]
+        [TestCase("[Vixen] Matthew Meie, Erica Mori & Era Queen - Bratty College Girls Have Naughty Threesome (2025-12-03) [2160p].mp4", "matthew meie erica mori and era queen bratty college girls have naughty threesome")]
         public void should_correctly_parse_normalize_release_token(string title, string result)
         {
             var releaseTokens = Parser.Parser.ParseMovieTitle(title).ReleaseTokens;

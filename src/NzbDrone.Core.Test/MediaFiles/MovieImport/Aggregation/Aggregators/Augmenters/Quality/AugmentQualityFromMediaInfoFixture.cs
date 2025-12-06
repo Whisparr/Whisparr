@@ -54,6 +54,14 @@ namespace NzbDrone.Core.Test.MediaFiles.MovieImport.Aggregation.Aggregators.Augm
         [TestCase(720, 1, Resolution.R480p)] // SDTV
         [TestCase(600, 1, Resolution.R480p)]
         [TestCase(100, 1, Resolution.R480p)]
+
+        // 5K / 6K / 8K cases
+        [TestCase(5120, 2880, Resolution.R2880p)] // 5K true
+        [TestCase(5100, 2800, Resolution.R2880p)] // 5K boundary
+        [TestCase(6144, 3160, Resolution.R3160p)] // 6K RED
+        [TestCase(6016, 3384, Resolution.R3384p)] // 6K Blackmagic
+        [TestCase(7680, 4320, Resolution.R4320p)] // 8K true
+        [TestCase(7500, 1, Resolution.R4320p)] // 8K width boundary
         public void should_return_closest_resolution(int mediaInfoWidth, int mediaInfoHeight, Resolution expectedResolution)
         {
             var mediaInfo = Builder<MediaInfoModel>.CreateNew()

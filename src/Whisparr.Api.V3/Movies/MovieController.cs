@@ -255,6 +255,41 @@ namespace Whisparr.Api.V3.Movies
             return movieTask.GetAwaiter().GetResult();
         }
 
+        // Added to support bulk monitor from Studio and eventually Performer detail page groupings
+        [HttpPatch("bulk/monitor")]
+        public IActionResult SetMoviesMonitored([FromBody] List<int> ids, [FromQuery] bool? monitored)
+        {
+            if (monitored == null)
+            {
+                return BadRequest("You must specify ?monitored=true or ?monitored=false.");
+            }
+
+            if (ids == null || !ids.Any())
+            {
+                return BadRequest("No IDs provided.");
+            }
+
+            var toUpdate = _moviesService.GetMovies(ids);
+
+            if (toUpdate == null || !toUpdate.Any())
+            {
+                return NotFound("No movies found for given IDs.");
+            }
+
+            foreach (var movie in toUpdate)
+            {
+                movie.Monitored = monitored.Value;
+            }
+
+            var updated = _moviesService.UpdateMovieMonitored(toUpdate, (bool)monitored);
+            foreach (var movie in updated)
+            {
+                BroadcastResourceChange(ModelAction.Updated, MapToResource(movie));
+            }
+
+            return Ok();
+        }
+
         [HttpPost("bulk")]
         public List<MovieResource> GetResourceByIds([FromBody] List<int> ids)
         {

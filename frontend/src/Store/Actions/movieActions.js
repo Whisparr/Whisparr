@@ -273,6 +273,7 @@ export const SAVE_MOVIE = 'movies/saveMovie';
 export const DELETE_MOVIE = 'movies/deleteMovie';
 export const SAVE_MOVIE_EDITOR = 'movies/saveMovieEditor';
 export const BULK_DELETE_MOVIE = 'movies/bulkDeleteMovie';
+export const BULK_MONITOR_MOVIE = 'movies/bulkMonitorMovie';
 
 export const SET_DELETE_OPTION = 'movies/setDeleteOption';
 
@@ -318,6 +319,19 @@ export const setMovieValue = createAction(SET_MOVIE_VALUE, (payload) => {
   return {
     section,
     ...payload
+  };
+});
+
+export const bulkMonitorMovie = createThunk(BULK_MONITOR_MOVIE, ({ ids, monitored }) => {
+  return {
+    ids,
+    monitored,
+    url: `/movie/bulk/monitor?monitored=${monitored}`,
+    method: 'PATCH',
+    contentType: 'application/json',
+    dataType: 'json',
+    data: JSON.stringify(ids),
+    queryParams: { monitored }
   };
 });
 
@@ -519,6 +533,28 @@ export const actionHandlers = handleThunks({
         section,
         isSaving: false
       }));
+    });
+  },
+
+  [BULK_MONITOR_MOVIE]: (getState, payload, dispatch) => {
+    const { ids, monitored } = payload;
+
+    ids.forEach((id) => {
+      dispatch(updateItem({ id, section, isSaving: true, monitored }));
+    });
+
+    const promise = createAjaxRequest(payload).request; // reuse the request object
+
+    promise.done(() => {
+      ids.forEach((id) => {
+        dispatch(updateItem({ id, section, isSaving: false, monitored }));
+      });
+    });
+
+    promise.fail(() => {
+      ids.forEach((id) => {
+        dispatch(updateItem({ id, section, isSaving: false }));
+      });
     });
   },
 

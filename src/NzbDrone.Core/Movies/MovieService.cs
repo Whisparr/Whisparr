@@ -55,6 +55,7 @@ namespace NzbDrone.Core.Movies
         Dictionary<int, List<int>> AllMovieTags();
         Movie UpdateMovie(Movie movie);
         List<Movie> UpdateMovie(List<Movie> movies, bool useExistingRelativeFolder);
+        List<Movie> UpdateMovieMonitored(List<Movie> movies, bool monitored);
         void UpdateLastSearchTime(Movie movie);
         bool MoviePathExists(string folder);
         void RemoveAddOptions(Movie movie);
@@ -338,6 +339,22 @@ namespace NzbDrone.Core.Movies
             return movies;
         }
 
+        public List<Movie> UpdateMovieMonitored(List<Movie> movies, bool monitored)
+        {
+            var methodName = "UpdateMovieMonitored";
+            _logger.Debug("{0}: will update {1} movies ", methodName, movies.Count);
+            foreach (var m in movies)
+            {
+                UpdateTags(m);
+                RemoveMovieResourcesCache($"{m.Id}");
+            }
+
+            _movieRepository.UpdateMany(movies);
+            _logger.Debug("{0}: {1} movies set to {2}", methodName, movies.Count, monitored ? "Monitored" : "Unmonitored");
+
+            return movies;
+        }
+
         public void UpdateLastSearchTime(Movie movie)
         {
             _movieRepository.SetFields(movie, e => e.LastSearchTime);
@@ -510,18 +527,22 @@ namespace NzbDrone.Core.Movies
 
         private Movie FindByStudioAndReleaseDate(string studioForeignId, string releaseDate, string releaseTokens, string foreignId, string episode, bool interactiveSearch = false, SearchCriteriaBase searchCriteria = null)
         {
+            var methodName = "FindByStudioAndReleaseDate";
             if (string.IsNullOrEmpty(studioForeignId))
             {
+                _logger.Debug($"{methodName}: Studio ForeignID is null or empty.");
                 studioForeignId = string.Empty;
             }
 
             if (string.IsNullOrEmpty(releaseDate))
             {
+                _logger.Debug($"{methodName}: Release Date is null or empty.");
                 releaseDate = string.Empty;
             }
 
             if (string.IsNullOrEmpty(releaseTokens))
             {
+                _logger.Debug($"{methodName}: Release Tokens is null or empty.");
                 releaseTokens = string.Empty;
             }
 
@@ -529,6 +550,7 @@ namespace NzbDrone.Core.Movies
 
             if (releaseDate.IsNotNullOrWhiteSpace())
             {
+                _logger.Debug("{0}: DB query for for movies for Studio ForeignID: [{1}] and Date: [{2}].", methodName, studioForeignId, releaseDate);
                 movies = _movieRepository.FindByStudioAndDate(studioForeignId, releaseDate);
 
                 if (movies == null || !movies.Any())
@@ -578,6 +600,13 @@ namespace NzbDrone.Core.Movies
             if (parsedMovieTitle.IsNotNullOrWhiteSpace() || foreignId.IsNotNullOrWhiteSpace())
             {
                 var matches = MatchMovies(parsedMovieTitle, releaseDate, foreignId, episode, movies);
+                _logger.Debug("{0}: Found {1} matches for Studio ForeignID: {2}, Date: {3}, Parsed Title: {4}, ForeignID: {5}",
+                    methodName,
+                    matches.Count,
+                    studioForeignId,
+                    releaseDate,
+                    parsedMovieTitle,
+                    foreignId);
 
                 if (matches.Count == 1)
                 {
@@ -587,7 +616,11 @@ namespace NzbDrone.Core.Movies
                 movies = matches.Keys.ToList();
             }
 
-            _logger.Debug("Multiple scenes with the same release date found. Date: {0}", releaseDate);
+            _logger.Debug("{0}: Failed to find a match.  Studio ForeignID: {1}, Date: {2}",
+                methodName,
+                studioForeignId,
+                releaseDate);
+
             return null;
         }
 

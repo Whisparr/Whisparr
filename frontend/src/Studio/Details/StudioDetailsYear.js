@@ -2,6 +2,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import Icon from 'Components/Icon';
 import Label from 'Components/Label';
 import IconButton from 'Components/Link/IconButton';
@@ -17,6 +18,7 @@ import Table from 'Components/Table/Table';
 import TableBody from 'Components/Table/TableBody';
 import Popover from 'Components/Tooltip/Popover';
 import { align, icons, kinds, sizes, sortDirections, tooltipPositions } from 'Helpers/Props';
+import { bulkMonitorMovie } from 'Store/Actions/movieActions';
 import formatBytes from 'Utilities/Number/formatBytes';
 import translate from 'Utilities/String/translate';
 import SceneRowConnector from './SceneRowConnector';
@@ -142,14 +144,12 @@ class StudioDetailsYear extends Component {
   };
 
   onMonitorYearPress = () => {
-    const { items, onMonitorMoviePress } = this.props;
-
-    const allMonitored = items.every((scene) => scene.monitored);
+    const { items } = this.props;
+    const allMonitored = items.every((movie) => movie.monitored);
     const newMonitoredState = !allMonitored;
+    const ids = items.map((item) => item.id);
 
-    items.forEach((scene) => {
-      onMonitorMoviePress(scene.id, newMonitoredState);
-    });
+    bulkMonitorMovie({ ids, monitored: newMonitoredState });
   };
 
   onMonitorMoviePress = (movieId, monitored, { shiftKey }) => {
@@ -363,11 +363,12 @@ StudioDetailsYear.propTypes = {
   onSortPress: PropTypes.func.isRequired,
   onExpandPress: PropTypes.func.isRequired,
   onMonitorMoviePress: PropTypes.func.isRequired,
-  onSearchPress: PropTypes.func.isRequired
+  onSearchPress: PropTypes.func.isRequired,
+  bulkMonitorMovie: PropTypes.func.isRequired
 };
 
 StudioDetailsYear.defaultProps = {
   statistics: {}
 };
 
-export default StudioDetailsYear;
+export default connect(null, { bulkMonitorMovie })(StudioDetailsYear);

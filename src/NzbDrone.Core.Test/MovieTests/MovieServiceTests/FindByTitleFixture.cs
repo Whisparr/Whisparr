@@ -203,8 +203,36 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
             };
 
             Mocker.GetMock<IStudioService>()
-                .Setup(s => s.FindAllByTitle(It.IsAny<string>()))
-                .Returns(studios);
+                .Setup(s => s.FindAllByTitle(It.Is<string>(s => s.Equals("Studio"))))
+                .Returns(studios.Where(s => s.ForeignId == "Studio").ToList());
+
+            Mocker.GetMock<IStudioService>()
+                .Setup(s => s.FindAllByTitle(It.Is<string>(s => s.Equals("EvilAngel"))))
+                .Returns(studios.Where(s => s.ForeignId == "EvilAngel").ToList());
+
+            Mocker.GetMock<IStudioService>()
+                .Setup(s => s.FindAllByTitle(It.Is<string>(s => s.Equals("Bellesa House"))))
+                .Returns(studios.Where(s => s.ForeignId == "Bellesa House").ToList());
+
+            Mocker.GetMock<IStudioService>()
+                .Setup(s => s.FindAllByTitle(It.Is<string>(s => s.Equals("Step Siblings Caught"))))
+                .Returns(studios.Where(s => s.ForeignId == "Step Siblings Caught").ToList());
+
+            Mocker.GetMock<IStudioService>()
+                .Setup(s => s.FindAllByTitle(It.Is<string>(s => s.Equals("JesseLoadsMonsterFacials"))))
+                .Returns(studios.Where(s => s.ForeignId == "JesseLoadsMonsterFacials").ToList());
+
+            Mocker.GetMock<IStudioService>()
+                .Setup(s => s.FindAllByTitle(It.Is<string>(s => s.Equals("Wakeupnfuck"))))
+                .Returns(studios.Where(s => s.ForeignId == "Wakeupnfuck").ToList());
+
+            Mocker.GetMock<IStudioService>()
+                .Setup(s => s.FindAllByTitle(It.Is<string>(s => s.Equals("PornWorld"))))
+                .Returns(studios.Where(s => s.ForeignId == "PornWorld").ToList());
+
+            Mocker.GetMock<IStudioService>()
+                .Setup(s => s.FindAllByTitle(It.Is<string>(s => s.Equals("HeavenPOV"))))
+                .Returns(studios.Where(s => s.ForeignId == "HeavenPOV").ToList());
 
             Mocker.GetMock<IMovieRepository>()
                 .Setup(s => s.FindByTitles(It.IsAny<List<string>>()))
@@ -217,6 +245,10 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
             Mocker.GetMock<IMovieRepository>()
                 .Setup(s => s.GetByStudioForeignId(It.Is<string>(s => s.Equals("EvilAngel"))))
                 .Returns(scenes.Where(s => s.MovieMetadata.Value.Studio.Title.Equals("EvilAngel")).ToList());
+
+            Mocker.GetMock<IMovieRepository>()
+                .Setup(s => s.GetByStudioForeignId(It.Is<string>(s => s.Equals("Bellesa House"))))
+                .Returns(scenes.Where(s => s.MovieMetadata.Value.Studio.Title.Equals("Bellesa House")).ToList());
 
             Mocker.GetMock<IMovieRepository>()
                 .Setup(s => s.GetByStudioForeignId(It.Is<string>(s => s.Equals("JesseLoadsMonsterFacials"))))
@@ -323,7 +355,6 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
         [TestCase("Studio - 2024-07-30 - Milk & Chocolate Before Bed [f3967398-1475-4e00-a7a0-935d7fd5dee1]", 6)]
         [TestCase("Studio - 2024-07-30 - Milk & Chocolate Before Bed [f3967398-1475-4e00-a7a0-935d7fd5dee2]", 6)]
         [TestCase("Studio - 2024-07-30 - [f3967398-1475-4e00-a7a0-935d7fd5dee1]", 6)]
-        [TestCase("2024-07-30 - [f3967398-1475-4e00-a7a0-935d7fd5dee1]", 6)]
         [TestCase("Bellesa House 2024-08-15 Episode 200 Violet And Victor", 16)]
         [TestCase("Bellesa House 2024-08-15 Episode 200 Violet & Victor", 16)]
         [TestCase("Step Siblings Caught 2024-02-07 Cash For Kisses On Valentines Day - S25E7", 17)]

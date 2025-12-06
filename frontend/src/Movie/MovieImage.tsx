@@ -3,12 +3,20 @@ import { CoverType, Image } from './Movie';
 import styles from './MovieImage.css';
 
 function findImage(images: Image[], coverType: CoverType) {
-  return images.find((image) => image.coverType === coverType);
+  const preferred = images.find((image) => image.coverType === coverType);
+  if (preferred) return preferred;
+
+  const fallbacks = ['logo', 'clearlogo', 'poster'];
+  for (const fb of fallbacks) {
+    const found = images.find((image) => image.coverType === fb);
+    if (found) return found;
+  }
+
+  return images.length > 0 ? images[0] : undefined;
 }
 
 function getUrl(image: Image, coverType: CoverType, size: number) {
   const imageUrl = image?.url ?? image?.remoteUrl;
-
   return imageUrl
     ? imageUrl.replace(`${coverType}.jpg`, `${coverType}-${size}.jpg`)
     : null;
@@ -45,27 +53,34 @@ function MovieImage({
   const [url, setUrl] = useState<string | null>(null);
   const [hasError, setHasError] = useState(false);
   const image = useRef<Image | null>(null);
+  const triedRemote = useRef(false);
 
   const handleLoad = useCallback(() => {
     setHasError(false);
     onLoad?.();
-  }, [setHasError, onLoad]);
+  }, [onLoad]);
 
   const handleError = useCallback(() => {
+    const nextImage = image.current;
+    if (!triedRemote.current && nextImage?.remoteUrl) {
+      triedRemote.current = true;
+      setUrl(nextImage.remoteUrl);
+      return;
+    }
+
     setHasError(true);
     onError?.();
-  }, [setHasError, onError]);
+  }, [onError]);
 
   useEffect(() => {
     const nextImage = findImage(images, coverType);
 
     if (nextImage && (!image.current || nextImage.url !== image.current.url)) {
-      // Don't reset isLoaded, as we want to immediately try to
-      // show the new image, whether an image was shown previously
-      // or the placeholder was shown.
       image.current = nextImage;
 
-      setUrl(getUrl(nextImage, coverType, pixelRatio * size));
+      const computedUrl = getUrl(nextImage, coverType, pixelRatio * size);
+      triedRemote.current = false;
+      setUrl(computedUrl);
       setHasError(false);
     } else if (!nextImage) {
       if (image.current) {
@@ -81,8 +96,7 @@ function MovieImage({
     if (!image.current) {
       onError?.();
     }
-    // This should only run once when the component mounts,
-    // so we don't need to include the other dependencies.
+    // run once only
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -96,7 +110,7 @@ function MovieImage({
       className={`${className ?? ''} ${blurClass}`}
       style={style}
       src={url ?? placeholder}
-      loading={lazy ? 'lazy' : undefined} // native lazy loading
+      loading={lazy ? 'lazy' : undefined}
       onError={handleError}
       onLoad={handleLoad}
     />

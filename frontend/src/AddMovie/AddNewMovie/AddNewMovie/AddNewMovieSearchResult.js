@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import Icon from 'Components/Icon';
 import Label from 'Components/Label';
 import Link from 'Components/Link/Link';
@@ -11,7 +12,10 @@ import MovieStatusLabel from 'Movie/Details/MovieStatusLabel';
 import MovieIndexProgressBar from 'Movie/Index/ProgressBar/MovieIndexProgressBar';
 import MoviePoster from 'Movie/MoviePoster';
 import ScenePoster from 'Scene/ScenePoster';
+import createUISettingsSelector from 'Store/Selectors/createUISettingsSelector';
+import StudioLogo from 'Studio/StudioLogo';
 import formatRuntime from 'Utilities/Date/formatRuntime';
+import getRelativeDate from 'Utilities/Date/getRelativeDate';
 import firstCharToUpper from 'Utilities/String/firstCharToUpper';
 import translate from 'Utilities/String/translate';
 import AddNewMovieModal from './AddNewMovieModal';
@@ -64,6 +68,7 @@ class AddNewMovieSearchResult extends Component {
       genres,
       status,
       itemType,
+      releaseDate,
       overview,
       ratings,
       folder,
@@ -84,6 +89,8 @@ class AddNewMovieSearchResult extends Component {
       safeForWorkMode
     } = this.props;
 
+    const { showRelativeDates, shortDateFormat } = this.props;
+
     const {
       isNewAddMovieModalOpen
     } = this.state;
@@ -102,6 +109,17 @@ class AddNewMovieSearchResult extends Component {
       posterWidth = 300;
       posterHeight = 169;
     }
+
+    if (itemType === 'studio') {
+      ImageItem = StudioLogo;
+      // Studio logos are typically square and use a different source size —
+      // prefer a 250x250 area so clearlogos render correctly instead of
+      // being constrained to the poster rectangle.
+      posterWidth = 250;
+      posterHeight = 250;
+    }
+
+    // (debug logging removed)
 
     const elementStyle = {
       width: `${posterWidth}px`,
@@ -129,7 +147,9 @@ class AddNewMovieSearchResult extends Component {
                     images={images}
                     size={250}
                     overflow={true}
-                    lazy={true}
+                    // Disable native lazy loading here to rule out deferred loading
+                    // impacting placeholder behavior in this view.
+                    lazy={false}
                   />
                 </div>
 
@@ -156,9 +176,13 @@ class AddNewMovieSearchResult extends Component {
                   {title}
 
                   {
-                    !title.contains(year) && !!year ?
+                    !!year && !(String(title || '').includes(String(year))) ?
                       <span className={styles.year}>
-                        ({year})
+                        ({releaseDate ? getRelativeDate({
+                          date: releaseDate,
+                          shortDateFormat,
+                          showRelativeDates
+                        }) : year})
                       </span> :
                       null
                   }
@@ -333,6 +357,7 @@ AddNewMovieSearchResult.propTypes = {
   studioTitle: PropTypes.string,
   genres: PropTypes.arrayOf(PropTypes.string),
   status: PropTypes.string.isRequired,
+  releaseDate: PropTypes.string,
   itemType: PropTypes.string.isRequired,
   overview: PropTypes.string,
   ratings: PropTypes.object.isRequired,
@@ -359,4 +384,20 @@ AddNewMovieSearchResult.defaultProps = {
   isExcluded: false
 };
 
-export default AddNewMovieSearchResult;
+// additional UI settings mapped from redux
+AddNewMovieSearchResult.propTypes.showRelativeDates = PropTypes.bool;
+AddNewMovieSearchResult.propTypes.shortDateFormat = PropTypes.string;
+AddNewMovieSearchResult.propTypes.longDateFormat = PropTypes.string;
+AddNewMovieSearchResult.propTypes.timeFormat = PropTypes.string;
+
+AddNewMovieSearchResult.defaultProps = Object.assign({}, AddNewMovieSearchResult.defaultProps, {
+  showRelativeDates: false,
+  shortDateFormat: 'MM/DD/YYYY',
+  longDateFormat: 'MMMM D, YYYY',
+  timeFormat: 'HH:mm'
+});
+
+const uiSettingsSelector = createUISettingsSelector();
+const mapStateToProps = (state) => uiSettingsSelector(state);
+
+export default connect(mapStateToProps)(AddNewMovieSearchResult);

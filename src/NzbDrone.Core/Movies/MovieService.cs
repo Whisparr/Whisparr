@@ -555,6 +555,11 @@ namespace NzbDrone.Core.Movies
                         movies.AddRange(yearMovies);
                     }
                 }
+
+                if (movies == null || !movies.Any())
+                {
+                    movies = _movieRepository.GetByStudioForeignId(studioForeignId);
+                }
             }
             else
             {

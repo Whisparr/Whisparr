@@ -700,12 +700,13 @@ namespace NzbDrone.Core.Parser
 
             var matchimplied = ImpliedResolutionRegex.Match(name);
 
-            if (!match.Success & !matchimplied.Success)
+            if (!match.Success && !matchimplied.Success)
             {
                 Logger.Debug("No resolution match for 'match' or 'matchImplied', using Unknown: '{0}'", name);
                 return Resolution.Unknown;
             }
 
+            // Prefer explicit resolution regex groups first (precision over implied fallback)
             if (match.Groups["R360p"].Success)
             {
                 return Resolution.R360p;
@@ -736,27 +737,53 @@ namespace NzbDrone.Core.Parser
                 return Resolution.R1080p;
             }
 
-            if (match.Groups["R2160p"].Success || matchimplied.Groups["R2160p"].Success)
+            if (match.Groups["R2160p"].Success)
             {
                 return Resolution.R2160p;
             }
 
-            if (match.Groups["R2880p"].Success || matchimplied.Groups["R2880p"].Success)
+            if (match.Groups["R2880p"].Success)
             {
                 return Resolution.R2880p;
             }
 
-            if (match.Groups["R3160p"].Success || matchimplied.Groups["R3160p"].Success)
+            if (match.Groups["R3160p"].Success)
             {
                 return Resolution.R3160p;
             }
 
-            if (match.Groups["R3384p"].Success || matchimplied.Groups["R3384p"].Success)
+            if (match.Groups["R3384p"].Success)
             {
                 return Resolution.R3384p;
             }
 
-            if (match.Groups["R4320p"].Success || matchimplied.Groups["R4320p"].Success)
+            if (match.Groups["R4320p"].Success)
+            {
+                return Resolution.R4320p;
+            }
+
+            // No explicit match found; fall back to implied matches (e.g., 'UHD' => R2160p)
+            if (matchimplied.Groups["R2160p"].Success)
+            {
+                return Resolution.R2160p;
+            }
+
+            if (matchimplied.Groups["R2880p"].Success)
+            {
+                return Resolution.R2880p;
+            }
+
+            if (matchimplied.Groups["R3160p"].Success)
+            {
+                return Resolution.R3160p;
+            }
+
+            if (matchimplied.Groups["R3384p"].Success)
+            {
+                return Resolution.R3384p;
+            }
+
+            if (matchimplied.Groups["R4320p"].Success)
             {
                 return Resolution.R4320p;
             }

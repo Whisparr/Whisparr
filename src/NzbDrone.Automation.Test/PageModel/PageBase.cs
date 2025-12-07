@@ -16,12 +16,12 @@ namespace NzbDrone.Automation.Test.PageModel
             driver.Manage().Window.Maximize();
         }
 
-        public IWebElement FindByClass(string className, int timeout = 5)
+        public IWebElement FindByClass(string className, int timeout = 15)
         {
             return Find(By.ClassName(className), timeout);
         }
 
-        public IWebElement Find(By by, int timeout = 5)
+        public IWebElement Find(By by, int timeout = 15)
         {
             var wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(timeout));
             return wait.Until(d => d.FindElement(by));

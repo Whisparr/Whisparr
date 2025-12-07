@@ -23,6 +23,10 @@ namespace NzbDrone.Core.Test.InstrumentationTests
         [SetUp]
         public void Setup()
         {
+            // Ensure the global test logging (ExceptionVerification target) is registered
+            NzbDrone.Test.Common.LoggingTest.InitLogging();
+            NzbDrone.Test.Common.ExceptionVerification.Reset();
+
             Mocker.Resolve<ILogRepository, LogRepository>();
             Mocker.Resolve<DatabaseTarget>().Register();
 

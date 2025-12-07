@@ -87,7 +87,73 @@ namespace NzbDrone.Automation.Test
         [TearDown]
         public void AutomationTearDown()
         {
-            GetPageErrors().Should().BeEmpty();
+            var pageErrors = GetPageErrors().ToList();
+
+            var status = TestContext.CurrentContext.Result.Outcome.Status;
+            var failed = status == NUnit.Framework.Interfaces.TestStatus.Failed;
+
+            if (failed || pageErrors.Any())
+            {
+                try
+                {
+                    var name = TestContext.CurrentContext.Test.Name ?? "test";
+                    try
+                    {
+                        var src = driver?.PageSource;
+                        if (!string.IsNullOrEmpty(src))
+                        {
+                            TestContext.Progress.WriteLine($"--- PAGE SOURCE START ({name}) ---\n{src}\n--- PAGE SOURCE END ---");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        TestContext.Progress.WriteLine("Failed to capture page source: " + ex.Message);
+                    }
+
+                    try
+                    {
+                        // Capture browser console logs when available (helps diagnose CI-only JS errors)
+                        try
+                        {
+                            var logs = driver?.Manage()?.Logs?.GetLog(OpenQA.Selenium.LogType.Browser);
+                            if (logs != null && logs.Count > 0)
+                            {
+                                TestContext.Progress.WriteLine("--- BROWSER CONSOLE LOGS ---");
+                                foreach (var entry in logs)
+                                {
+                                    TestContext.Progress.WriteLine($"[{entry.Timestamp}] {entry.Level}: {entry.Message}");
+                                }
+                                TestContext.Progress.WriteLine("--- END BROWSER CONSOLE LOGS ---");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            TestContext.Progress.WriteLine("Failed to capture browser console logs: " + ex.Message);
+                        }
+                    }
+                    catch (Exception) { }
+
+                    try
+                    {
+                        TakeScreenshot(name + "_teardown");
+                    }
+                    catch (Exception ex)
+                    {
+                        TestContext.Progress.WriteLine("Failed to take screenshot: " + ex.Message);
+                    }
+
+                    if (pageErrors.Any())
+                    {
+                        TestContext.Progress.WriteLine("Page reported JS errors:\n" + string.Join("\n", pageErrors));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error during teardown diagnostics: " + ex.Message);
+                }
+            }
+
+            pageErrors.Should().BeEmpty();
         }
     }
 }

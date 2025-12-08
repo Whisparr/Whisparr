@@ -69,6 +69,11 @@ namespace NzbDrone.Core.Configuration
         string PostgresMainDbConnectionString { get; }
         string PostgresLogDbConnectionString { get; }
         bool TrustCgnatIpAddresses { get; }
+        string OidcAuthority { get; }
+        string OidcClientId { get; }
+        string OidcClientSecret { get; }
+        string OidcUserIdentifier { get; }
+        string OidcScopes { get; }
     }
 
     public class ConfigFileProvider : IConfigFileProvider
@@ -254,6 +259,12 @@ namespace NzbDrone.Core.Configuration
         public bool AnalyticsEnabled => GetValueBoolean("AnalyticsEnabled", true, persist: false);
 
         public string AllowedHosts => GetValue("AllowedHosts", string.Empty);
+
+        public string OidcAuthority => GetValue("OidcAuthority", string.Empty, persist: false);
+        public string OidcClientId => GetValue("OidcClientId", string.Empty, persist: false);
+        public string OidcClientSecret => GetValue("OidcClientSecret", string.Empty, persist: false);
+        public string OidcUserIdentifier => GetValue("OidcUserIdentifier", string.Empty, persist: false);
+        public string OidcScopes => GetValue("OidcScopes", "openid profile email", persist: false);
 
         private static readonly Regex ValidBranchRegex = new Regex(@"^v\d+(-develop)?$", RegexOptions.Compiled);
 

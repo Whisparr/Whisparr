@@ -23,6 +23,19 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Aggregation.Aggregators
         public LocalMovie Aggregate(LocalMovie localMovie, DownloadClientItem downloadClientItem)
         {
             var source = QualitySource.Unknown;
+
+            // Downloaded from the Web, so should be Web unless the file indicates something different
+            if (downloadClientItem != null && source == QualitySource.Unknown)
+            {
+                source = QualitySource.Web;
+            }
+
+            // Use the quality from the file if found so that the source is not changed.
+            if (localMovie?.Quality?.Quality?.Source != null)
+            {
+                source = localMovie.Quality.Quality.Source;
+            }
+
             var sourceConfidence = Confidence.Default;
             var resolution = 0;
             var resolutionConfidence = Confidence.Default;

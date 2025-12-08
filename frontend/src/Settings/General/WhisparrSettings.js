@@ -114,7 +114,7 @@ function WhisparrSettings(props) {
         <FormInputGroup
           type={inputTypes.NUMBER}
           name="whisparrValidateRuntimeLimit"
-          helpText={translate('WhisparrValidateRuntimeLimittHelpText')}
+          helpText={translate('WhisparrValidateRuntimeLimitHelpText')}
           onChange={onInputChange}
           {...whisparrValidateRuntimeLimit}
         />

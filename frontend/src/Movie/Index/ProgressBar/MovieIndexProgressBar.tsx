@@ -44,7 +44,7 @@ function MovieIndexProgressBar(props: MovieIndexProgressBarProps) {
 
   const progress = 100;
   const queueStatusText =
-    queueDetails.count > 0 ? translate('Downloading') : null;
+    queueDetails.count > 0 && !hasFile ? translate('Downloading') : null;
 
   let movieStatus = translate('NotAvailable');
   if (hasFile) {

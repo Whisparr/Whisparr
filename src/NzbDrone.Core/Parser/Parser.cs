@@ -87,6 +87,10 @@ namespace NzbDrone.Core.Parser
             new Regex(@"\[(?<studiotitle>.+?)\](?<releasetoken>.+?)((?<airyear>\d{2}|\d{4})[-_.](?<airmonth>[0-1][0-9])[-_.](?<airday>[0-3][0-9]))",
                 RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
+            // SCENE with Episode numbers after studio E1234 title
+            new Regex(@"\[(?<studiotitle>.+?)?\].?[(]+(?<episode>[eE]+\d{1,6})?[\)]",
+                RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
             // Anime [Subgroup] and Year
             new Regex(@"^(?:\[(?<subgroup>.+?)\][-_. ]?)(?<title>(?![(\[]).+?)?(?:(?:[-_\W](?<![)\[!]))*(?<year>(1(8|9)|20)\d{2}(?!p|i|x|\d+|\]|\W\d+)))+.*?(?<hash>\[\w{8}\])?(?:$|\.)", RegexOptions.IgnoreCase | RegexOptions.Compiled),
 

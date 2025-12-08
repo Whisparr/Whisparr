@@ -37,6 +37,8 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("[Blacked] - 2025-11-24 - BBC-Queen Violet Takes On Three Cocks - Violet Myers - 1080p", true)]
         [TestCase("[Vixen] Matthew Meie, Erica Mori & Era Queen - Bratty College Girls Have Naughty Threesome (2025-12-03) [2160p]", true)]
         [TestCase("[Vixen] Matthew Meie, Erica Mori & Era Queen - Bratty College Girls Have Naughty Threesome (2025-12-03) [2160p].mp4", true)]
+        [TestCase("[Studio.com] (E09) Perfomer(aka Alias) [2015 г., All Sex, BJ, IR, 720p]", true)]
+
         public void should_parse_as_scene(string title, bool expected)
         {
             Parser.Parser.ParseMovieTitle(title).IsScene.Should().Be(expected);
@@ -64,6 +66,7 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("[Blacked] - 2025-11-24 - BBC Queen Violet Takes On Three Cocks - Violet Myers - 1080p", "Blacked")]
         [TestCase("[Vixen] Matthew Meie, Erica Mori & Era Queen - Bratty College Girls Have Naughty Threesome (2025-12-03) [2160p]", "Vixen")]
         [TestCase("[Vixen] Matthew Meie, Erica Mori & Era Queen - Bratty College Girls Have Naughty Threesome (2025-12-03) [2160p].mp4", "Vixen")]
+        [TestCase("[Studio.com] (E09) Perfomer(aka Alias) [2015 г., All Sex, BJ, IR, 720p]", "Studio")]
         public void should_correctly_parse_studio_names(string title, string result)
         {
             Parser.Parser.ParseMovieTitle(title).StudioTitle.Should().Be(result);
@@ -117,6 +120,7 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("[Blacked] - 2025-11-24 - BBC-Queen Violet Takes On Three Cocks - Violet Myers - 1080p", "bbc queen violet takes on three cocks violet myers")]
         [TestCase("[Vixen] Matthew Meie, Erica Mori & Era Queen - Bratty College Girls Have Naughty Threesome (2025-12-03) [2160p]", "matthew meie erica mori and era queen bratty college girls have naughty threesome")]
         [TestCase("[Vixen] Matthew Meie, Erica Mori & Era Queen - Bratty College Girls Have Naughty Threesome (2025-12-03) [2160p].mp4", "matthew meie erica mori and era queen bratty college girls have naughty threesome")]
+        [TestCase("[Studio.com] (E09) Perfomer(aka Alias) [2015 г., All Sex, BJ, IR, 720p]", "perfomer aka alias")]
         public void should_correctly_parse_normalize_release_token(string title, string result)
         {
             var releaseTokens = Parser.Parser.ParseMovieTitle(title).ReleaseTokens;

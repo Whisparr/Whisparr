@@ -120,6 +120,23 @@ namespace NzbDrone.Common.Processes
                 RedirectStandardInput = true
             };
 
+            // Ensure the started process has its working directory set to the
+            // executable's directory. Some hosting/static-file lookups rely on
+            // the current working directory, so set it explicitly to avoid
+            // serving issues when CI copies a preserved folder layout.
+            try
+            {
+                var exeDir = Path.GetDirectoryName(path);
+                if (!string.IsNullOrEmpty(exeDir))
+                {
+                    startInfo.WorkingDirectory = exeDir;
+                }
+            }
+            catch
+            {
+                // Ignore failures resolving working directory; process can still start.
+            }
+
             if (environmentVariables != null)
             {
                 foreach (DictionaryEntry environmentVariable in environmentVariables)
@@ -203,6 +220,21 @@ namespace NzbDrone.Common.Processes
             var startInfo = new ProcessStartInfo(path, args);
             startInfo.CreateNoWindow = noWindow;
             startInfo.UseShellExecute = !noWindow;
+
+            // Set working directory to the executable's folder so spawned
+            // processes see the expected layout (e.g. ./UI static files).
+            try
+            {
+                var exeDir = Path.GetDirectoryName(path);
+                if (!string.IsNullOrEmpty(exeDir))
+                {
+                    startInfo.WorkingDirectory = exeDir;
+                }
+            }
+            catch
+            {
+                // ignore
+            }
 
             var process = new Process
             {

@@ -77,11 +77,25 @@ Build()
     dotnet clean $slnFile -c Debug
     dotnet clean $slnFile -c Release
 
-    if [[ -z "$RID" || -z "$FRAMEWORK" ]];
-    then
-        dotnet msbuild -restore $slnFile -p:Configuration=Release -p:Platform=$platform -t:PublishAllRids
-    else
+    # If no specific RID was provided, default to a single sensible RID for the current host
+    # to avoid building/publishing every RuntimeIdentifier on a single hosted agent
+    if [[ -z "$RID" ]]; then
+        if [ "$os" = "windows" ]; then
+            RID=win-x64
+        else
+            unameOut=$(uname -s)
+            case "$unameOut" in
+                Darwin*) RID=osx-x64 ;;
+                *) RID=linux-x64 ;;
+            esac
+        fi
+        echo "No RID specified — defaulting to $RID to reduce disk usage on this agent"
+    fi
+
+    if [[ -z "$FRAMEWORK" ]]; then
         dotnet msbuild -restore $slnFile -p:Configuration=Release -p:Platform=$platform -p:RuntimeIdentifiers=$RID -t:PublishAllRids
+    else
+        dotnet msbuild -restore $slnFile -p:Configuration=Release -p:Platform=$platform -p:RuntimeIdentifiers=$RID -p:TargetFramework=$FRAMEWORK -t:PublishAllRids
     fi
 
     ProgressEnd 'Build'
@@ -107,11 +121,21 @@ PackageFiles()
     local framework="$2"
     local runtime="$3"
 
+    # If there is no published output for this framework/runtime, skip packaging this runtime.
+    if [ ! -d "$outputFolder/$framework/$runtime/publish" ]; then
+        echo "Publish folder not found for $framework/$runtime — skipping package creation"
+        return 0
+    fi
+
     rm -rf $folder
     mkdir -p $folder
     cp -r $outputFolder/$framework/$runtime/publish/* $folder
-    cp -r $outputFolder/Whisparr.Update/$framework/$runtime/publish $folder/Whisparr.Update
-    cp -r $outputFolder/UI $folder
+    if [ -d "$outputFolder/Whisparr.Update/$framework/$runtime/publish" ]; then
+        cp -r $outputFolder/Whisparr.Update/$framework/$runtime/publish $folder/Whisparr.Update
+    fi
+    if [ -d "$outputFolder/UI" ]; then
+        cp -r $outputFolder/UI $folder
+    fi
 
     echo "Adding LICENSE"
     cp LICENSE $folder
@@ -127,6 +151,12 @@ PackageLinux()
     local folder=$artifactsFolder/$runtime/$framework/Whisparr
 
     PackageFiles "$folder" "$framework" "$runtime"
+    # If PackageFiles skipped because publish output was missing, the folder won't exist — skip further steps.
+    if [ ! -d "$folder" ]; then
+        echo "No package folder created for $runtime — skipping package"
+        ProgressEnd "Creating $runtime Package for $framework"
+        return 0
+    fi
 
     echo "Removing Service helpers"
     rm -f $folder/ServiceUninstall.*
@@ -155,6 +185,12 @@ PackageMacOS()
     local folder=$artifactsFolder/$runtime/$framework/Whisparr
 
     PackageFiles "$folder" "$framework" "$runtime"
+    # If PackageFiles skipped because publish output was missing, the folder won't exist — skip further steps.
+    if [ ! -d "$folder" ]; then
+        echo "No package folder created for $runtime — skipping package"
+        ProgressEnd "Creating MacOS Package for $framework $runtime"
+        return 0
+    fi
 
     echo "Removing Service helpers"
     rm -f $folder/ServiceUninstall.*
@@ -206,7 +242,24 @@ PackageWindows()
     local folder=$artifactsFolder/$runtime/$framework/Whisparr
 
     PackageFiles "$folder" "$framework" "$runtime"
-    cp -r $outputFolder/$framework-windows/$runtime/publish/* $folder
+    # If PackageFiles skipped because publish output was missing, the folder won't exist — skip further steps.
+    if [ ! -d "$folder" ]; then
+        echo "No package folder created for $runtime — skipping package"
+        ProgressEnd "Creating Windows Package for $framework"
+        return 0
+    fi
+
+    # Copy additional windows-specific publish output if present
+    if [ -d "$outputFolder/$framework-windows/$runtime/publish" ]; then
+        cp -r $outputFolder/$framework-windows/$runtime/publish/* $folder
+        # Re-copy UI folder after Windows-specific files to ensure it's not overwritten
+        if [ -d "$outputFolder/UI" ]; then
+            echo "Re-copying UI folder after Windows-specific files"
+            cp -r $outputFolder/UI $folder
+        fi
+    else
+        echo "Windows-specific publish folder not found for $framework/$runtime — skipping extra copy"
+    fi
 
     echo "Removing Whisparr.Mono"
     rm -f $folder/Whisparr.Mono.*
@@ -375,19 +428,27 @@ then
         EnableExtraPlatforms
     fi
     Build
-    if [[ -z "$RID" || -z "$FRAMEWORK" ]];
+    # If a specific runtime was requested, package tests only for that runtime.
+    # Otherwise, package tests for all supported runtimes (default framework net6.0).
+    if [[ -n "$RID" ]];
     then
-        PackageTests "net6.0" "win-x64"
-        PackageTests "net6.0" "win-x86"
-        PackageTests "net6.0" "linux-x64"
-        PackageTests "net6.0" "linux-musl-x64"
-        PackageTests "net6.0" "osx-x64"
+        if [[ -z "$FRAMEWORK" ]]; then
+            FRAMEWORK="net6.0"
+        fi
+        PackageTests "$FRAMEWORK" "$RID"
+    else
+        if [[ -z "$FRAMEWORK" ]]; then
+            FRAMEWORK="net6.0"
+        fi
+        PackageTests "$FRAMEWORK" "win-x64"
+        PackageTests "$FRAMEWORK" "win-x86"
+        PackageTests "$FRAMEWORK" "linux-x64"
+        PackageTests "$FRAMEWORK" "linux-musl-x64"
+        PackageTests "$FRAMEWORK" "osx-x64"
         if [ "$ENABLE_EXTRA_PLATFORMS" = "YES" ];
         then
-            PackageTests "net6.0" "freebsd-x64"
+            PackageTests "$FRAMEWORK" "freebsd-x64"
         fi
-    else
-        PackageTests "$FRAMEWORK" "$RID"
     fi
 fi
 
@@ -410,24 +471,31 @@ if [ "$PACKAGES" = "YES" ];
 then
     UpdateVersionNumber
 
-    if [[ -z "$RID" || -z "$FRAMEWORK" ]];
+    # Package for the requested runtime only when provided; otherwise package all runtimes.
+    if [[ -n "$RID" ]];
     then
-        Package "net6.0" "win-x64"
-        Package "net6.0" "win-x86"
-        Package "net6.0" "linux-x64"
-        Package "net6.0" "linux-musl-x64"
-        Package "net6.0" "linux-arm64"
-        Package "net6.0" "linux-musl-arm64"
-        Package "net6.0" "linux-arm"
-        Package "net6.0" "linux-musl-arm"
-        Package "net6.0" "osx-x64"
-        Package "net6.0" "osx-arm64"
+        if [[ -z "$FRAMEWORK" ]]; then
+            FRAMEWORK="net6.0"
+        fi
+        Package "$FRAMEWORK" "$RID"
+    else
+        if [[ -z "$FRAMEWORK" ]]; then
+            FRAMEWORK="net6.0"
+        fi
+        Package "$FRAMEWORK" "win-x64"
+        Package "$FRAMEWORK" "win-x86"
+        Package "$FRAMEWORK" "linux-x64"
+        Package "$FRAMEWORK" "linux-musl-x64"
+        Package "$FRAMEWORK" "linux-arm64"
+        Package "$FRAMEWORK" "linux-musl-arm64"
+        Package "$FRAMEWORK" "linux-arm"
+        Package "$FRAMEWORK" "linux-musl-arm"
+        Package "$FRAMEWORK" "osx-x64"
+        Package "$FRAMEWORK" "osx-arm64"
         if [ "$ENABLE_EXTRA_PLATFORMS" = "YES" ];
         then
-            Package "net6.0" "freebsd-x64"
+            Package "$FRAMEWORK" "freebsd-x64"
         fi
-    else
-        Package "$FRAMEWORK" "$RID"
     fi
 fi
 

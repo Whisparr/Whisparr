@@ -46,7 +46,7 @@ pr:
 
 stages:
   - stage: Setup
-    displayName: Setup
+    displayName: '01-Setup'
     jobs:
     - job:
       displayName: Build Variables
@@ -68,9 +68,177 @@ stages:
       - publish: not_backend_update
         artifact: not_backend_update
         displayName: Publish update type
+
+  - stage: Analyze
+    displayName: '02-Analyze'
+    dependsOn:
+    - Setup
+
+    jobs:
+    - job: Prepare
+      pool:
+        vmImage: ${{ variables.linuxImage }}
+      steps:
+      - checkout: none
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          buildType: 'current'
+          artifactName: 'not_backend_update'
+          targetPath: '.'
+      - bash: echo "##vso[task.setvariable variable=backendNotUpdated;isOutput=true]$(cat not_backend_update)"
+        name: setVar
+
+    - job: Lint_Frontend
+      displayName: Lint Frontend
+      pool:
+        vmImage: ${{ variables.linuxImage }}
+      steps:
+      - task: UseNode@1
+        displayName: Set Node.js version
+        inputs:
+          version: $(nodeVersion)
+      - checkout: self
+        submodules: true
+        fetchDepth: 1
+      - task: Cache@2
+        inputs:
+          key: 'yarn | "$(osName)" | yarn.lock'
+          restoreKeys: |
+             yarn | "$(osName)"
+          path: $(yarnCacheFolder)
+        displayName: Cache Yarn packages
+      - bash: ./build.sh --lint
+        displayName: Lint Whisparr Frontend
+        env:
+          FORCE_COLOR: 0
+          YARN_CACHE_FOLDER: $(yarnCacheFolder)
+
+    - job: Api_Docs
+      displayName: API Docs
+      dependsOn: Prepare
+      condition: |
+        and
+        (
+          and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/eros')),
+          and(succeeded(), eq(dependencies.Prepare.outputs['setVar.backendNotUpdated'], '0'))
+        )
+
+      pool:
+        vmImage: ${{ variables.windowsImage }}
+
+      steps:
+      - task: UseDotNet@2
+        displayName: 'Install .net core'
+        inputs:
+          version: $(dotnetVersion)
+      - checkout: self
+        submodules: true
+        persistCredentials: true
+        fetchDepth: 1
+      - bash: ./docs.sh Windows
+        displayName: Create openapi.json
+      - bash: |
+          git config --global user.email "development@lidarr.audio"
+          git config --global user.name "Servarr"
+          git checkout -b eros-api-docs
+          git add .
+          git status
+          if git status | grep modified
+          then
+            git commit -am 'Automated API Docs update'
+            git push -f --set-upstream origin eros-api-docs
+            curl -X POST -H "Authorization: token ${GITHUBTOKEN}" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/whisparr/whisparr/pulls -d '{"head":"eros-api-docs","base":"eros","title":"Update API docs"}'
+          else
+            echo "No changes since last run"
+          fi
+        displayName: Commit API Doc Change
+        continueOnError: true
+        env:
+          GITHUBTOKEN: $(githubToken)
+      - task: CopyFiles@2
+        displayName: 'Copy openapi.json to: $(Build.ArtifactStagingDirectory)'
+        inputs:
+          SourceFolder: '$(Build.SourcesDirectory)'
+          Contents: |
+            **/*openapi.json
+          TargetFolder: '$(Build.ArtifactStagingDirectory)/api_docs'
+      - publish: $(Build.ArtifactStagingDirectory)/api_docs
+        artifact: 'APIDocs'
+        displayName: Publish API Docs Bundle
+        condition: and(succeeded(), eq(variables['System.JobAttempt'], '1'))
+
+    - job: Analyze_Backend
+      displayName: Backend
+      dependsOn: Prepare
+      condition: and(succeeded(), eq(dependencies.Prepare.outputs['setVar.backendNotUpdated'], '0'))
+
+      variables:
+        disable.coverage.autogenerate: 'true'
+        EnableAnalyzers: 'true'
+
+      pool:
+        vmImage: ${{ variables.windowsImage }}
+
+      steps:
+      - task: UseDotNet@2
+        displayName: 'Install .net core'
+        inputs:
+          version: $(dotnetVersion)
+      - checkout: self # Need history for Sonar analysis
+        submodules: true
+      - powershell: Set-Service SCardSvr -StartupType Manual
+        displayName: Enable Windows Test Service
+      - bash: |
+          ./build.sh --backend -f net6.0 -r win-x64
+          TEST_DIR=_tests/net6.0/win-x64/publish/ ./test.sh Windows Unit Coverage
+        displayName: Coverage Unit Tests
+      - bash: |
+          echo "-- Diagnostic: show coverage and test directories --"
+          echo "Build.SourcesDirectory: $(Build.SourcesDirectory)"
+          echo "Listing repository root"
+          ls -la "$(Build.SourcesDirectory)" || true
+          echo "Listing CoverageResults (if present)"
+          if [ -d "$(Build.SourcesDirectory)/CoverageResults" ]; then ls -la "$(Build.SourcesDirectory)/CoverageResults" || true; else echo "CoverageResults directory not found"; fi
+          echo "Listing test publish folder"
+          ls -la "_tests/net6.0/win-x64/publish" || true
+        displayName: "Diagnostic: Dump CoverageResults and Test Publish Folder"
+      - bash: |
+          echo "Copy any coverage XMLs from test publish folders into CoverageResults"
+          mkdir -p "$(Build.SourcesDirectory)/CoverageResults"
+          # Copy common coverage filenames from test publish locations
+          find _tests -type f \( -iname 'coverage.opencover.xml' -o -iname '*opencover*.xml' -o -iname '*coverage*.xml' \) -exec echo "Found: {}" \; -exec cp {} "$(Build.SourcesDirectory)/CoverageResults/" \; || true
+          echo "After copy, CoverageResults contents:"
+          ls -la "$(Build.SourcesDirectory)/CoverageResults" || true
+        displayName: "Copy coverage artifacts to CoverageResults"
+      - bash: |
+          echo "Checking for coverage reports"
+          set -e
+          # Look for any opencover output from coverlet
+          shopt -s nullglob 2>/dev/null || true
+          FILES=("$(Build.SourcesDirectory)/CoverageResults"/**/coverage.opencover.xml)
+          if [ ${#FILES[@]} -gt 0 ]; then
+            echo "Found coverage files: ${FILES[0]}"
+            echo "##vso[task.setvariable variable=coverageFound]true"
+          else
+            echo "##vso[task.logissue type=warning]No coverage files found at $(Build.SourcesDirectory)/CoverageResults/**/coverage.opencover.xml"
+            echo "##vso[task.setvariable variable=coverageFound]false"
+          fi
+        displayName: Check for Coverage Files
+
+      - task: reportgenerator@5.3.11
+        displayName: Generate Coverage Report
+        condition: and(succeeded(), eq(variables['coverageFound'], 'true'))
+        inputs:
+          reports: '$(Build.SourcesDirectory)/CoverageResults/**/coverage.opencover.xml'
+          targetdir: '$(Build.SourcesDirectory)/CoverageResults/combined'
+          reporttypes: 'HtmlInline_AzurePipelines;Cobertura;Badges'
+          publishCodeCoverageResults: true
+
   - stage: Build_Backend
-    displayName: Build Backend
-    dependsOn: Setup
+    displayName: '03-Build Backend'
+    dependsOn:
+    - Setup
+    - Analyze
     jobs:
     - job: Backend
       strategy:
@@ -78,15 +246,34 @@ stages:
           Linux:
             osName: 'Linux'
             imageName: ${{ variables.linuxImage }}
-            enableAnalysis: 'true'
-          Mac:
+            enableAnalysis: 'false'
+            RID: linux-x64
+          Linux_Musl:
+            osName: 'Linux'
+            imageName: ${{ variables.linuxImage }}
+            enableAnalysis: 'false'
+            RID: linux-musl-x64
+          Mac_x64:
             osName: 'Mac'
             imageName: ${{ variables.macImage }}
             enableAnalysis: 'false'
-          Windows:
+            RID: osx-x64
+          Mac_arm64:
+            osName: 'Mac'
+            imageName: ${{ variables.macImage }}
+            enableAnalysis: 'false'
+            RID: osx-arm64
+          # freebsd-x64 removed: build matrix no longer includes FreeBSD
+          Windows_x64:
             osName: 'Windows'
             imageName: ${{ variables.windowsImage }}
             enableAnalysis: 'false'
+            RID: win-x64
+          Windows_x86:
+            osName: 'Windows'
+            imageName: ${{ variables.windowsImage }}
+            enableAnalysis: 'false'
+            RID: win-x86
 
       pool:
         vmImage: $(imageName)
@@ -102,16 +289,10 @@ stages:
         inputs:
           version: $(dotnetVersion)
       - bash: |
-          BUNDLEDVERSIONS=${AGENT_TOOLSDIRECTORY}/dotnet/sdk/${DOTNETVERSION}/Microsoft.NETCoreSdk.BundledVersions.props
-          echo $BUNDLEDVERSIONS
-          if grep -q freebsd-x64 $BUNDLEDVERSIONS; then
-            echo "Extra platforms already enabled"
-          else
-            echo "Enabling extra platform support"
-            sed -i.ORI 's/osx-x64/osx-x64;freebsd-x64/' "$BUNDLEDVERSIONS"
-          fi
-        displayName: Enable Extra Platform Support
-      - bash: ./build.sh --backend --enable-extra-platforms
+          # No FreeBSD platform support required in this pipeline. Keep SDK bundled versions unchanged.
+          echo "Extra platform support: none"
+        displayName: Enable Extra Platform Support (noop)
+      - bash: ./build.sh --backend --enable-extra-platforms -r $(RID)
         displayName: Build Whisparr Backend
       - bash: |
           find ${OUTPUTFOLDER} -type f ! -path "*/publish/*" -exec rm -rf {} \;
@@ -121,48 +302,23 @@ stages:
         displayName: Clean up intermediate output
         condition: and(succeeded(), ne(variables['osName'], 'Windows'))
       - publish: $(outputFolder)
-        artifact: '$(osName)Backend'
-        displayName: Publish Backend
-        condition: and(succeeded(), eq(variables['osName'], 'Windows'))
-      - publish: '$(testsFolder)/net6.0/win-x64/publish'
-        artifact: win-x64-tests
-        displayName: Publish win-x64 Test Package
-        condition: and(succeeded(), eq(variables['osName'], 'Windows'))
-      - publish: '$(testsFolder)/net6.0/linux-x64/publish'
-        artifact: linux-x64-tests
-        displayName: Publish linux-x64 Test Package
-        condition: and(succeeded(), eq(variables['osName'], 'Windows'))
-      - publish: '$(testsFolder)/net6.0/linux-musl-x64/publish'
-        artifact: linux-musl-x64-tests
-        displayName: Publish linux-musl-x64 Test Package
-        condition: and(succeeded(), eq(variables['osName'], 'Windows'))
-      - publish: '$(testsFolder)/net6.0/freebsd-x64/publish'
-        artifact: freebsd-x64-tests
-        displayName: Publish freebsd-x64 Test Package
-        condition: and(succeeded(), eq(variables['osName'], 'Windows'))
-      - publish: '$(testsFolder)/net6.0/osx-x64/publish'
-        artifact: osx-x64-tests
-        displayName: Publish osx-x64 Test Package
-        condition: and(succeeded(), eq(variables['osName'], 'Windows'))
+        artifact: '$(RID)Backend'
+        displayName: Publish Backend (per-RID)
+        condition: succeeded()
+      - publish: '$(testsFolder)/net6.0/$(RID)/publish'
+        artifact: '$(RID)-tests'
+        displayName: Publish Test Package (per-RID)
+        condition: succeeded()
 
   - stage: Build_Frontend
-    displayName: Frontend
-    dependsOn: Setup
+    displayName: '04-Frontend'
+    dependsOn:
+    - Setup
+    - Analyze
     jobs:
     - job: Build
-      strategy:
-        matrix:
-          Linux:
-            osName: 'Linux'
-            imageName: ${{ variables.linuxImage }}
-          Mac:
-            osName: 'Mac'
-            imageName: ${{ variables.macImage }}
-          Windows:
-            osName: 'Windows'
-            imageName: ${{ variables.windowsImage }}
       pool:
-        vmImage: $(imageName)
+        vmImage: ${{ variables.linuxImage }}
       steps:
       - task: UseNode@1
         displayName: Set Node.js version
@@ -184,207 +340,12 @@ stages:
           FORCE_COLOR: 0
           YARN_CACHE_FOLDER: $(yarnCacheFolder)
       - publish: $(outputFolder)
-        artifact: '$(osName)Frontend'
+        artifact: 'Frontend'
         displayName: Publish Frontend
-        condition: and(succeeded(), eq(variables['osName'], 'Windows'))
-
-  - stage: Installer
-    dependsOn:
-    - Build_Backend
-    - Build_Frontend
-    jobs:
-    - job: Windows_Installer
-      displayName: Create Installer
-      pool:
-        vmImage: ${{ variables.windowsImage }}
-      steps:
-      - checkout: self
-        fetchDepth: 1
-      - task: DownloadPipelineArtifact@2
-        inputs:
-          buildType: 'current'
-          artifactName: WindowsBackend
-          targetPath: _output
-        displayName: Fetch Backend
-      - task: DownloadPipelineArtifact@2
-        inputs:
-          buildType: 'current'
-          artifactName: WindowsFrontend
-          targetPath: _output
-        displayName: Fetch Frontend
-      - bash: |
-          ./build.sh --packages --installer
-          cp distribution/windows/setup/output/Whisparr.*win-x64.exe ${BUILD_ARTIFACTSTAGINGDIRECTORY}/Whisparr.${BUILDNAME}.windows-core-x64-installer.exe
-          cp distribution/windows/setup/output/Whisparr.*win-x86.exe ${BUILD_ARTIFACTSTAGINGDIRECTORY}/Whisparr.${BUILDNAME}.windows-core-x86-installer.exe
-        displayName: Create Installers
-      - publish: $(Build.ArtifactStagingDirectory)
-        artifact: 'WindowsInstaller'
-        displayName: Publish Installer
-
-  - stage: Packages
-    dependsOn:
-    - Build_Backend
-    - Build_Frontend
-    jobs:
-    - job: Other_Packages
-      displayName: Create Standard Packages
-      pool:
-        vmImage: ${{ variables.linuxImage }}
-      steps:
-      - checkout: self
-        fetchDepth: 1
-      - task: DownloadPipelineArtifact@2
-        inputs:
-          buildType: 'current'
-          artifactName: WindowsBackend
-          targetPath: _output
-        displayName: Fetch Backend
-      - task: DownloadPipelineArtifact@2
-        inputs:
-          buildType: 'current'
-          artifactName: WindowsFrontend
-          targetPath: _output
-        displayName: Fetch Frontend
-      - bash: ./build.sh --packages --enable-extra-platforms
-        displayName: Create Packages
-      - bash: |
-          find . -name "ffprobe" -exec chmod a+x {} \;
-          find . -name "Whisparr" -exec chmod a+x {} \;
-          find . -name "Whisparr.Update" -exec chmod a+x {} \;
-        displayName: Set executable bits
-      - task: ArchiveFiles@2
-        displayName: Create win-x64 zip
-        inputs:
-          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).windows-core-x64.zip'
-          archiveType: 'zip'
-          includeRootFolder: false
-          rootFolderOrFile: $(artifactsFolder)/win-x64/net6.0
-      - task: ArchiveFiles@2
-        displayName: Create win-x86 zip
-        inputs:
-          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).windows-core-x86.zip'
-          archiveType: 'zip'
-          includeRootFolder: false
-          rootFolderOrFile: $(artifactsFolder)/win-x86/net6.0
-      - task: ArchiveFiles@2
-        displayName: Create osx-x64 app
-        inputs:
-          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).osx-app-core-x64.zip'
-          archiveType: 'zip'
-          includeRootFolder: false
-          rootFolderOrFile: $(artifactsFolder)/osx-x64-app/net6.0
-      - task: ArchiveFiles@2
-        displayName: Create osx-x64 tar
-        inputs:
-          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).osx-core-x64.tar.gz'
-          archiveType: 'tar'
-          tarCompression: 'gz'
-          includeRootFolder: false
-          rootFolderOrFile: $(artifactsFolder)/osx-x64/net6.0
-      - task: ArchiveFiles@2
-        displayName: Create osx-arm64 app
-        inputs:
-          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).osx-app-core-arm64.zip'
-          archiveType: 'zip'
-          includeRootFolder: false
-          rootFolderOrFile: $(artifactsFolder)/osx-arm64-app/net6.0
-      - task: ArchiveFiles@2
-        displayName: Create osx-arm64 tar
-        inputs:
-          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).osx-core-arm64.tar.gz'
-          archiveType: 'tar'
-          tarCompression: 'gz'
-          includeRootFolder: false
-          rootFolderOrFile: $(artifactsFolder)/osx-arm64/net6.0
-      - task: ArchiveFiles@2
-        displayName: Create linux-x64 tar
-        inputs:
-          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).linux-core-x64.tar.gz'
-          archiveType: 'tar'
-          tarCompression: 'gz'
-          includeRootFolder: false
-          rootFolderOrFile: $(artifactsFolder)/linux-x64/net6.0
-      - task: ArchiveFiles@2
-        displayName: Create linux-musl-x64 tar
-        inputs:
-          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).linux-musl-core-x64.tar.gz'
-          archiveType: 'tar'
-          tarCompression: 'gz'
-          includeRootFolder: false
-          rootFolderOrFile: $(artifactsFolder)/linux-musl-x64/net6.0
-      - task: ArchiveFiles@2
-        displayName: Create linux-arm tar
-        inputs:
-          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).linux-core-arm.tar.gz'
-          archiveType: 'tar'
-          tarCompression: 'gz'
-          includeRootFolder: false
-          rootFolderOrFile: $(artifactsFolder)/linux-arm/net6.0
-      - task: ArchiveFiles@2
-        displayName: Create linux-musl-arm tar
-        inputs:
-          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).linux-musl-core-arm.tar.gz'
-          archiveType: 'tar'
-          tarCompression: 'gz'
-          includeRootFolder: false
-          rootFolderOrFile: $(artifactsFolder)/linux-musl-arm/net6.0
-      - task: ArchiveFiles@2
-        displayName: Create linux-arm64 tar
-        inputs:
-          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).linux-core-arm64.tar.gz'
-          archiveType: 'tar'
-          tarCompression: 'gz'
-          includeRootFolder: false
-          rootFolderOrFile: $(artifactsFolder)/linux-arm64/net6.0
-      - task: ArchiveFiles@2
-        displayName: Create linux-musl-arm64 tar
-        inputs:
-          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).linux-musl-core-arm64.tar.gz'
-          archiveType: 'tar'
-          tarCompression: 'gz'
-          includeRootFolder: false
-          rootFolderOrFile: $(artifactsFolder)/linux-musl-arm64/net6.0
-      - task: ArchiveFiles@2
-        displayName: Create freebsd-x64 tar
-        inputs:
-          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).freebsd-core-x64.tar.gz'
-          archiveType: 'tar'
-          tarCompression: 'gz'
-          includeRootFolder: false
-          rootFolderOrFile: $(artifactsFolder)/freebsd-x64/net6.0
-      - publish: $(Build.ArtifactStagingDirectory)
-        artifact: 'Packages'
-        displayName: Publish Packages
-      - bash: |
-          echo "Uploading source maps to sentry"
-          curl -sL https://sentry.io/get-cli/ | bash
-          RELEASENAME="Whisparr@${WHISPARRVERSION}-${BUILD_SOURCEBRANCHNAME}"
-          sentry-cli releases new --finalize -p whisparr -p whisparr-ui -p whisparr-update "${RELEASENAME}"
-          sentry-cli releases -p whisparr-ui files "${RELEASENAME}" upload-sourcemaps _output/UI/ --rewrite
-          sentry-cli releases set-commits --auto "${RELEASENAME}"
-          if [[ ${BUILD_SOURCEBRANCH} == "refs/heads/develop" ]]; then
-          sentry-cli releases deploys "${RELEASENAME}" new -e nightly
-          else
-          sentry-cli releases deploys "${RELEASENAME}" new -e production
-          fi
-          if [ $? -gt 0 ]; then
-            echo "##vso[task.logissue type=warning]Error uploading source maps."
-          fi
-          exit 0
-        displayName: Publish Sentry Source Maps
-        condition: |
-          or
-          (
-            and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop')),
-            and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-          )
-        env:
-          SENTRY_AUTH_TOKEN: $(sentryAuthTokenServarr)
-          SENTRY_ORG: $(sentryOrg)
-          SENTRY_URL: $(sentryUrl)
+        condition: succeeded()
 
   - stage: Unit_Test
-    displayName: Unit Tests
+    displayName: '05-Unit Tests'
     dependsOn: Build_Backend
 
     jobs:
@@ -425,11 +386,7 @@ stages:
             testName: 'linux-x64'
             poolName: 'Azure Pipelines'
             imageName: ${{ variables.linuxImage }}
-          FreebsdCore:
-            osName: 'Linux'
-            testName: 'freebsd-x64'
-            poolName: 'FreeBSD'
-            imageName:
+          # FreeBSD tests removed from matrix
 
       pool:
         name: $(poolName)
@@ -441,13 +398,22 @@ stages:
         displayName: 'Install .net core'
         inputs:
           version: $(dotnetVersion)
-        condition: ne(variables['poolName'], 'FreeBSD')
       - task: DownloadPipelineArtifact@2
         displayName: Download Test Artifact
+        continueOnError: true
         inputs:
           buildType: 'current'
           artifactName: '$(testName)-tests'
           targetPath: $(testsFolder)
+      - bash: |
+          echo "Verifying test artifact for '$(testName)-tests' was downloaded to: ${TESTSFOLDER:-$(testsFolder)}"
+          if [ ! -d "$(testsFolder)" ] || [ -z "$(ls -A $(testsFolder) 2>/dev/null)" ]; then
+            echo "##vso[task.logissue type=error]Required test artifact '$(testName)-tests' not found for build $(Build.BuildId). Ensure the backend produced and published this artifact in Build_Backend."
+            exit 1
+          else
+            echo "Test artifact present: listing contents"
+            ls -la "$(testsFolder)" || true
+          fi
       - powershell: Set-Service SCardSvr -StartupType Manual
         displayName: Enable Windows Test Service
         condition: and(succeeded(), eq(variables['osName'], 'Windows'))
@@ -471,7 +437,7 @@ stages:
           testResultsFiles: '**/TestResult.xml'
           testRunTitle: '$(testName) Unit Tests'
           failTaskOnFailedTests: true
-          failTaskOnMissingResultsFile: ne(variables['testName'], 'freebsd-x64')
+          failTaskOnMissingResultsFile: true
 
     - job: Unit_Docker
       displayName: Unit Docker
@@ -499,10 +465,20 @@ stages:
       - checkout: none
       - task: DownloadPipelineArtifact@2
         displayName: Download Test Artifact
+        continueOnError: true
         inputs:
           buildType: 'current'
           artifactName: $(artifactName)
           targetPath: $(testsFolder)
+      - bash: |
+          echo "Verifying test artifact for '$(artifactName)' was downloaded to: $(testsFolder)"
+          if [ ! -d "$(testsFolder)" ] || [ -z "$(ls -A $(testsFolder) 2>/dev/null)" ]; then
+            echo "##vso[task.logissue type=error]Required test artifact '$(artifactName)' not found for build $(Build.BuildId). Ensure the backend produced and published this artifact in Build_Backend."
+            exit 1
+          else
+            echo "Test artifact present: listing contents"
+            ls -la "$(testsFolder)" || true
+          fi
       - bash: |
           chmod a+x _tests/ffprobe
         displayName: Make ffprobe Executable
@@ -637,8 +613,281 @@ stages:
           failTaskOnFailedTests: true
           failTaskOnMissingResultsFile: true
 
+  - stage: Installer
+    displayName: '06-Installer'
+    dependsOn:
+    - Build_Backend
+    - Build_Frontend
+    - Unit_Test
+    jobs:
+    - job: Windows_Installer
+      displayName: Create Installer
+      pool:
+        vmImage: ${{ variables.windowsImage }}
+      steps:
+      - checkout: self
+        fetchDepth: 1
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          buildType: 'current'
+          artifactName: win-x64Backend
+          targetPath: _output
+        displayName: Fetch win-x64 Backend
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          buildType: 'current'
+          artifactName: win-x86Backend
+          targetPath: _output
+        displayName: Fetch win-x86 Backend
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          buildType: 'current'
+          artifactName: Frontend
+          targetPath: _output
+        displayName: Fetch Frontend
+      - bash: |
+          # Package only Windows runtimes (we already downloaded the per-RID backend artifacts)
+          ./build.sh --packages -r win-x64 -f net6.0
+          ./build.sh --packages -r win-x86 -f net6.0
+          # Now build the installers
+          ./build.sh --installer
+          cp distribution/windows/setup/output/Whisparr.*win-x64.exe ${BUILD_ARTIFACTSTAGINGDIRECTORY}/Whisparr.${BUILDNAME}.windows-core-x64-installer.exe
+          cp distribution/windows/setup/output/Whisparr.*win-x86.exe ${BUILD_ARTIFACTSTAGINGDIRECTORY}/Whisparr.${BUILDNAME}.windows-core-x86-installer.exe
+        displayName: Create Installers
+      - publish: $(Build.ArtifactStagingDirectory)
+        artifact: 'WindowsInstaller'
+        displayName: Publish Installer
+
+  - stage: Packages
+    displayName: '07-Packages'
+    dependsOn:
+    - Build_Backend
+    - Build_Frontend
+    - Unit_Test
+    jobs:
+    - job: Other_Packages
+      displayName: Create Standard Packages
+      pool:
+        vmImage: ${{ variables.linuxImage }}
+      steps:
+      - checkout: self
+        fetchDepth: 1
+      - task: DownloadPipelineArtifact@2
+        continueOnError: true
+        inputs:
+          buildType: 'current'
+          artifactName: linux-x64Backend
+          targetPath: _output
+        displayName: Fetch linux-x64 Backend (optional)
+      - task: DownloadPipelineArtifact@2
+        continueOnError: true
+        inputs:
+          buildType: 'current'
+          artifactName: osx-x64Backend
+          targetPath: _output
+        displayName: Fetch osx-x64 Backend (optional)
+      - task: DownloadPipelineArtifact@2
+        continueOnError: true
+        inputs:
+          buildType: 'current'
+          artifactName: osx-arm64Backend
+          targetPath: _output
+        displayName: Fetch osx-arm64 Backend (optional)
+      - task: DownloadPipelineArtifact@2
+        continueOnError: true
+        inputs:
+          buildType: 'current'
+          artifactName: win-x64Backend
+          targetPath: _output
+        displayName: Fetch win-x64 Backend (optional)
+      - task: DownloadPipelineArtifact@2
+        continueOnError: true
+        inputs:
+          buildType: 'current'
+          artifactName: win-x86Backend
+          targetPath: _output
+        displayName: Fetch win-x86 Backend (optional)
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          buildType: 'current'
+          artifactName: linux-musl-x64Backend
+          targetPath: _output
+        displayName: Fetch linux-musl-x64 Backend
+      # linux-musl-arm64 backend fetch removed (not produced by Build_Backend matrix)
+      # freebsd backend fetch removed (FreeBSD builds disabled)
+      # Frontend is required for packaging - fail the job if it's missing
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          buildType: 'current'
+          artifactName: Frontend
+          targetPath: _output
+        displayName: Fetch Frontend
+      - bash: |
+          echo "=== Verifying Frontend artifact was downloaded ==="
+          echo "Listing _output directory:"
+          ls -la _output || true
+          echo ""
+          echo "Checking for UI folder:"
+          if [ -d "_output/UI" ]; then
+            echo "✓ Found _output/UI folder"
+            echo "UI folder size:"
+            du -sh _output/UI
+            echo "UI folder contents (top level):"
+            ls -la _output/UI | head -20
+            echo "Checking for index.html:"
+            if [ -f "_output/UI/index.html" ]; then
+              echo "✓ Found index.html"
+            else
+              echo "✗ index.html NOT FOUND in _output/UI"
+            fi
+          else
+            echo "✗ _output/UI folder NOT FOUND"
+            echo "This means the Frontend artifact doesn't contain the UI folder!"
+            echo "Full _output directory tree:"
+            find _output -type f -o -type d | head -50
+            exit 1
+          fi
+        displayName: Verify Frontend artifact
+      - bash: |
+          echo "Verifying required backend artifacts are present before packaging"
+          set -o pipefail
+          MISSING=()
+          RIDS=( linux-x64 linux-musl-x64 osx-x64 osx-arm64 win-x64 win-x86 )
+          for RID in "${RIDS[@]}"; do
+            # Common publish paths produced by builds/packages
+            if [ -d "_output/net6.0/${RID}/publish" ] || [ -d "_output/${RID}/net6.0" ] || [ -d "$(artifactsFolder)/${RID}/net6.0" ]; then
+              echo "Found artifact for ${RID}"
+            else
+              MISSING+=("${RID}")
+            fi
+          done
+          if [ ${#MISSING[@]} -ne 0 ]; then
+            echo "ERROR: Missing backend artifacts for: ${MISSING[*]}"
+            echo "_output contents:"
+            ls -la _output || true
+            echo "Artifacts folder contents:"
+            ls -la $(artifactsFolder) || true
+            exit 1
+          fi
+        displayName: Verify backend artifacts
+      - bash: ./build.sh --packages --enable-extra-platforms
+        displayName: Create Packages
+      - bash: |
+          echo "=== Verifying packages were created with UI folder ==="
+          echo "Checking $(artifactsFolder)/linux-x64/net6.0/Whisparr/UI:"
+          if [ -d "$(artifactsFolder)/linux-x64/net6.0/Whisparr/UI" ]; then
+            echo "✓ Found UI folder in linux-x64 package"
+            ls -la "$(artifactsFolder)/linux-x64/net6.0/Whisparr/UI" | head -20
+          else
+            echo "✗ UI folder NOT FOUND in linux-x64 package"
+            echo "Package structure:"
+            ls -la "$(artifactsFolder)/linux-x64/net6.0/Whisparr" || true
+            echo ""
+            echo "This means build.sh didn't copy the UI folder!"
+            echo "Checking if _output/UI still exists:"
+            ls -la _output/UI || echo "_output/UI doesn't exist"
+            exit 1
+          fi
+        displayName: Verify packages contain UI
+      - bash: |
+          find . -name "ffprobe" -exec chmod a+x {} \;
+          find . -name "Whisparr" -exec chmod a+x {} \;
+          find . -name "Whisparr.Update" -exec chmod a+x {} \;
+        displayName: Set executable bits
+      - task: ArchiveFiles@2
+        displayName: Create win-x64 zip
+        inputs:
+          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).windows-core-x64.zip'
+          archiveType: 'zip'
+          includeRootFolder: false
+          rootFolderOrFile: $(artifactsFolder)/win-x64/net6.0
+      - task: ArchiveFiles@2
+        displayName: Create win-x86 zip
+        inputs:
+          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).windows-core-x86.zip'
+          archiveType: 'zip'
+          includeRootFolder: false
+          rootFolderOrFile: $(artifactsFolder)/win-x86/net6.0
+      - task: ArchiveFiles@2
+        displayName: Create osx-x64 app
+        inputs:
+          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).osx-app-core-x64.zip'
+          archiveType: 'zip'
+          includeRootFolder: false
+          rootFolderOrFile: $(artifactsFolder)/osx-x64-app/net6.0
+      - task: ArchiveFiles@2
+        displayName: Create osx-x64 tar
+        inputs:
+          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).osx-core-x64.tar.gz'
+          archiveType: 'tar'
+          tarCompression: 'gz'
+          includeRootFolder: false
+          rootFolderOrFile: $(artifactsFolder)/osx-x64/net6.0
+      - task: ArchiveFiles@2
+        displayName: Create osx-arm64 app
+        inputs:
+          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).osx-app-core-arm64.zip'
+          archiveType: 'zip'
+          includeRootFolder: false
+          rootFolderOrFile: $(artifactsFolder)/osx-arm64-app/net6.0
+      - task: ArchiveFiles@2
+        displayName: Create osx-arm64 tar
+        inputs:
+          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).osx-core-arm64.tar.gz'
+          archiveType: 'tar'
+          tarCompression: 'gz'
+          includeRootFolder: false
+          rootFolderOrFile: $(artifactsFolder)/osx-arm64/net6.0
+      - task: ArchiveFiles@2
+        displayName: Create linux-x64 tar
+        inputs:
+          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).linux-core-x64.tar.gz'
+          archiveType: 'tar'
+          tarCompression: 'gz'
+          includeRootFolder: false
+          rootFolderOrFile: $(artifactsFolder)/linux-x64/net6.0
+      - task: ArchiveFiles@2
+        displayName: Create linux-musl-x64 tar
+        inputs:
+          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).linux-musl-core-x64.tar.gz'
+          archiveType: 'tar'
+          tarCompression: 'gz'
+          includeRootFolder: false
+          rootFolderOrFile: $(artifactsFolder)/linux-musl-x64/net6.0
+      # freebsd package archive removed (FreeBSD builds disabled)
+      - publish: $(Build.ArtifactStagingDirectory)
+        artifact: 'Packages'
+        displayName: Publish Packages
+      - bash: |
+          echo "Uploading source maps to sentry"
+          curl -sL https://sentry.io/get-cli/ | bash
+          RELEASENAME="Whisparr@${WHISPARRVERSION}-${BUILD_SOURCEBRANCHNAME}"
+          sentry-cli releases new --finalize -p whisparr -p whisparr-ui -p whisparr-update "${RELEASENAME}"
+          sentry-cli releases -p whisparr-ui files "${RELEASENAME}" upload-sourcemaps _output/UI/ --rewrite
+          sentry-cli releases set-commits --auto "${RELEASENAME}"
+          if [[ ${BUILD_SOURCEBRANCH} == "refs/heads/develop" ]]; then
+          sentry-cli releases deploys "${RELEASENAME}" new -e nightly
+          else
+          sentry-cli releases deploys "${RELEASENAME}" new -e production
+          fi
+          if [ $? -gt 0 ]; then
+            echo "##vso[task.logissue type=warning]Error uploading source maps."
+          fi
+          exit 0
+        displayName: Publish Sentry Source Maps
+        condition: |
+          or
+          (
+            and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop')),
+            and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+          )
+        env:
+          SENTRY_AUTH_TOKEN: $(sentryAuthTokenServarr)
+          SENTRY_ORG: $(sentryOrg)
+          SENTRY_URL: $(sentryUrl)
+
   - stage: Integration
-    displayName: Integration
+    displayName: '08-Integration'
     dependsOn: Packages
 
     jobs:
@@ -704,10 +953,45 @@ stages:
           archiveFilePatterns: '$(Build.ArtifactStagingDirectory)/**/$(pattern)'
           destinationFolder: '$(Build.ArtifactStagingDirectory)/bin'
         displayName: Extract Package
+      - task: DownloadPipelineArtifact@2
+        displayName: Fetch Frontend
+        inputs:
+          buildType: 'current'
+          artifactName: Frontend
+          targetPath: _output
+        continueOnError: false
       - bash: |
           mkdir -p ./bin/
-          cp -r -v ${BUILD_ARTIFACTSTAGINGDIRECTORY}/bin/Whisparr/. ./bin/
+          cp -r -v ${BUILD_ARTIFACTSTAGINGDIRECTORY}/bin/Whisparr ./bin/
         displayName: Move Package Contents
+      - bash: |
+          echo "Diagnostic: Build.ArtifactStagingDirectory = $(Build.ArtifactStagingDirectory)"
+          echo "Listing extracted bin folder contents:"
+          ls -la "$(Build.ArtifactStagingDirectory)/bin" || true
+          if [ ! -d "$(Build.ArtifactStagingDirectory)/bin/Whisparr" ]; then
+            echo "##vso[task.logissue type=error]ERROR: Extracted package did not contain bin/Whisparr"
+            echo "Contents of artifact staging dir:"; ls -la "$(Build.ArtifactStagingDirectory)" || true
+            echo "Contents of _output (if present):"; ls -la "$(Build.SourcesDirectory)/_output" || true
+            echo "Contents of _output/UI (if present):"; ls -la "$(Build.SourcesDirectory)/_output/UI" || true
+            exit 1
+          fi
+          echo "Listing tests folder: ${TESTSFOLDER:-$(testsFolder)}"; ls -la "${TESTSFOLDER:-$(testsFolder)}" || true
+        displayName: "Diagnostic: Verify extracted package and list UI/tests"
+      - bash: |
+          echo "Diagnostic: check for chromedriver and browser versions (Linux/Mac)"
+          which chromedriver || true
+          chromedriver --version || true
+          which google-chrome || which google-chrome-stable || true
+          google-chrome --version 2>/dev/null || google-chrome-stable --version 2>/dev/null || true
+        displayName: "Diagnostic: Chrome / Chromedriver (nix)"
+        condition: and(succeeded(), ne(variables['osName'], 'Windows'))
+      - pwsh: |
+          Write-Host "Diagnostic: check for chromedriver on Windows"
+          try { Get-Command chromedriver -ErrorAction Stop | Write-Host } catch { Write-Host "chromedriver not found" }
+          try { & chromedriver --version } catch { Write-Host "chromedriver --version failed" }
+          try { & chrome --version } catch { Write-Host "chrome --version failed" }
+        displayName: "Diagnostic: Chrome / Chromedriver (Windows)"
+        condition: and(succeeded(), eq(variables['osName'], 'Windows'))
       - bash: |
           chmod a+x ${TESTSFOLDER}/test.sh
           ${TESTSFOLDER}/test.sh ${OSNAME} Integration Test
@@ -761,7 +1045,7 @@ stages:
           displayName: Extract Package
         - bash: |
             mkdir -p ./bin/
-            cp -r -v ${BUILD_ARTIFACTSTAGINGDIRECTORY}/bin/Whisparr/. ./bin/
+            cp -r -v ${BUILD_ARTIFACTSTAGINGDIRECTORY}/bin/Whisparr ./bin/
           displayName: Move Package Contents
         - bash: |
             docker run -d --name=postgres14 \
@@ -825,7 +1109,7 @@ stages:
           displayName: Extract Package
         - bash: |
             mkdir -p ./bin/
-            cp -r -v ${BUILD_ARTIFACTSTAGINGDIRECTORY}/bin/Whisparr/. ./bin/
+            cp -r -v ${BUILD_ARTIFACTSTAGINGDIRECTORY}/bin/Whisparr ./bin/
           displayName: Move Package Contents
         - bash: |
             docker run -d --name=postgres15 \
@@ -848,52 +1132,7 @@ stages:
             failTaskOnMissingResultsFile: true
           displayName: Publish Test Results
 
-    - job: Integration_FreeBSD
-      displayName: Integration Native FreeBSD
-      dependsOn: Prepare
-      condition: and(succeeded(), eq(dependencies.Prepare.outputs['setVar.backendNotUpdated'], '0'))
-      workspace:
-        clean: all
-      variables:
-        pattern: 'Whisparr.*.freebsd-core-x64.tar.gz'
-      pool:
-        name: 'FreeBSD'
-
-      steps:
-      - checkout: none
-      - task: DownloadPipelineArtifact@2
-        displayName: Download Test Artifact
-        inputs:
-          buildType: 'current'
-          artifactName: 'freebsd-x64-tests'
-          targetPath: $(testsFolder)
-      - task: DownloadPipelineArtifact@2
-        displayName: Download Build Artifact
-        inputs:
-          buildType: 'current'
-          artifactName: Packages
-          itemPattern: '**/$(pattern)'
-          targetPath: $(Build.ArtifactStagingDirectory)
-      - bash: |
-          mkdir -p ${BUILD_ARTIFACTSTAGINGDIRECTORY}/bin
-          tar xf ${BUILD_ARTIFACTSTAGINGDIRECTORY}/$(pattern) -C ${BUILD_ARTIFACTSTAGINGDIRECTORY}/bin
-        displayName: Extract Package
-      - bash: |
-          mkdir -p ./bin/
-          cp -r -v ${BUILD_ARTIFACTSTAGINGDIRECTORY}/bin/Whisparr/. ./bin/
-        displayName: Move Package Contents
-      - bash: |
-          chmod a+x ${TESTSFOLDER}/test.sh
-          ${TESTSFOLDER}/test.sh Linux Integration Test
-        displayName: Run Integration Tests
-      - task: PublishTestResults@2
-        inputs:
-          testResultsFormat: 'NUnit'
-          testResultsFiles: '**/TestResult.xml'
-          testRunTitle: 'FreeBSD Integration Tests'
-          failTaskOnFailedTests: true
-          failTaskOnMissingResultsFile: false
-        displayName: Publish Test Results
+    # FreeBSD integration removed
 
     - job: Integration_Docker
       displayName: Integration Docker
@@ -939,7 +1178,7 @@ stages:
         displayName: Extract Package
       - bash: |
           mkdir -p ./bin/
-          cp -r -v ${BUILD_ARTIFACTSTAGINGDIRECTORY}/bin/Whisparr/. ./bin/
+          cp -r -v ${BUILD_ARTIFACTSTAGINGDIRECTORY}/bin/Whisparr ./bin/
         displayName: Move Package Contents
       - bash: |
           chmod a+x ${TESTSFOLDER}/test.sh
@@ -955,7 +1194,7 @@ stages:
         displayName: Publish Test Results
 
   - stage: Automation
-    displayName: Automation
+    displayName: '09-Automation'
     dependsOn: Packages
 
     jobs:
@@ -1010,8 +1249,50 @@ stages:
         displayName: Extract Package
       - bash: |
           mkdir -p ./bin/
-          cp -r -v ${BUILD_ARTIFACTSTAGINGDIRECTORY}/bin/Whisparr/. ./bin/
+          # Preserve the Whisparr directory layout so UI ends up at ./bin/Whisparr/UI
+          cp -r -v ${BUILD_ARTIFACTSTAGINGDIRECTORY}/bin/Whisparr ./bin/
         displayName: Move Package Contents
+      - bash: |
+          echo "Pre-test diagnostics: listing runtime bin and UI folders"
+          echo "Build.ArtifactStagingDirectory = $(Build.ArtifactStagingDirectory)"
+          echo "Listing ./bin"
+          ls -la ./bin || true
+          echo "Listing ./bin/Whisparr (if present)"
+          ls -la ./bin/Whisparr || true
+          echo "Listing ./bin/Whisparr/UI (if present)"
+          ls -la ./bin/Whisparr/UI || true
+          echo "Listing _output/UI (frontend artifact)"
+          ls -la "$(Build.SourcesDirectory)/_output/UI" || true
+          echo "Check for index.html and main JS bundles"
+          if [ -f "./bin/Whisparr/UI/index.html" ]; then echo "Found index.html in package UI"; else echo "index.html not found in package UI"; fi
+          if [ -f "$(Build.SourcesDirectory)/_output/UI/index.html" ]; then echo "Found index.html in frontend artifact"; else echo "index.html not found in frontend artifact"; fi
+          echo "Show sizes for UI files (if present)"
+          du -sh ./bin/Whisparr/UI 2>/dev/null || true
+          du -sh "$(Build.SourcesDirectory)/_output/UI" 2>/dev/null || true
+          echo "--- index.html head (package UI) ---"
+          if [ -f "./bin/Whisparr/UI/index.html" ]; then
+            head -n 200 ./bin/Whisparr/UI/index.html || true
+          else
+            echo "No index.html to show"
+          fi
+          echo "--- referenced scripts and links from index.html ---"
+          if [ -f "./bin/Whisparr/UI/index.html" ]; then
+            grep -Eo '<script[^>]+src="[^"]+"' ./bin/Whisparr/UI/index.html | sed -E 's/.*src="([^"]+)".*/\1/' | uniq || true
+            grep -Eo '<link[^>]+href="[^"]+"' ./bin/Whisparr/UI/index.html | sed -E 's/.*href="([^"]+)".*/\1/' | uniq || true
+          fi
+          echo "--- check that referenced files exist under ./bin/Whisparr/UI ---"
+          if [ -f "./bin/Whisparr/UI/index.html" ]; then
+            refs=$(grep -Eo '<script[^>]+src="[^"]+"' ./bin/Whisparr/UI/index.html | sed -E 's/.*src="([^"]+)".*/\1/' | uniq || true)
+            for r in $refs; do
+              path=./bin/Whisparr/UI/${r#./}
+              if [ -f "$path" ]; then
+                echo "OK: $r -> $path"
+              else
+                echo "MISSING: $r -> $path"
+              fi
+            done
+          fi
+        displayName: 'Pre-Test: Verify UI files'
       - bash: |
           chmod a+x ${TESTSFOLDER}/test.sh
           ${TESTSFOLDER}/test.sh ${OSNAME} Automation Test
@@ -1036,146 +1317,8 @@ stages:
           failTaskOnMissingResultsFile: $(failBuild)
         displayName: Publish Test Results
 
-  - stage: Analyze
-    dependsOn:
-    - Setup
-    displayName: Analyze
-
-    jobs:
-    - job: Prepare
-      pool:
-        vmImage: ${{ variables.linuxImage }}
-      steps:
-      - checkout: none
-      - task: DownloadPipelineArtifact@2
-        inputs:
-          buildType: 'current'
-          artifactName: 'not_backend_update'
-          targetPath: '.'
-      - bash: echo "##vso[task.setvariable variable=backendNotUpdated;isOutput=true]$(cat not_backend_update)"
-        name: setVar
-
-    - job: Lint_Frontend
-      displayName: Lint Frontend
-      strategy:
-        matrix:
-          Linux:
-            osName: 'Linux'
-            imageName: ${{ variables.linuxImage }}
-          Windows:
-            osName: 'Windows'
-            imageName: ${{ variables.windowsImage }}
-      pool:
-        vmImage: $(imageName)
-      steps:
-      - task: UseNode@1
-        displayName: Set Node.js version
-        inputs:
-          version: $(nodeVersion)
-      - checkout: self
-        submodules: true
-        fetchDepth: 1
-      - task: Cache@2
-        inputs:
-          key: 'yarn | "$(osName)" | yarn.lock'
-          restoreKeys: |
-             yarn | "$(osName)"
-          path: $(yarnCacheFolder)
-        displayName: Cache Yarn packages
-      - bash: ./build.sh --lint
-        displayName: Lint Whisparr Frontend
-        env:
-          FORCE_COLOR: 0
-          YARN_CACHE_FOLDER: $(yarnCacheFolder)
-
-    - job: Api_Docs
-      displayName: API Docs
-      dependsOn: Prepare
-      condition: |
-        and
-        (
-          and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/eros')),
-          and(succeeded(), eq(dependencies.Prepare.outputs['setVar.backendNotUpdated'], '0'))
-        )
-
-      pool:
-        vmImage: ${{ variables.windowsImage }}
-
-      steps:
-      - task: UseDotNet@2
-        displayName: 'Install .net core'
-        inputs:
-          version: $(dotnetVersion)
-      - checkout: self
-        submodules: true
-        persistCredentials: true
-        fetchDepth: 1
-      - bash: ./docs.sh Windows
-        displayName: Create openapi.json
-      - bash: |
-          git config --global user.email "development@lidarr.audio"
-          git config --global user.name "Servarr"
-          git checkout -b eros-api-docs
-          git add .
-          git status
-          if git status | grep modified
-          then
-            git commit -am 'Automated API Docs update'
-            git push -f --set-upstream origin eros-api-docs
-            curl -X POST -H "Authorization: token ${GITHUBTOKEN}" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/whisparr/whisparr/pulls -d '{"head":"eros-api-docs","base":"eros","title":"Update API docs"}'
-          else
-            echo "No changes since last run"
-          fi
-        displayName: Commit API Doc Change
-        continueOnError: true
-        env:
-          GITHUBTOKEN: $(githubToken)
-      - task: CopyFiles@2
-        displayName: 'Copy openapi.json to: $(Build.ArtifactStagingDirectory)'
-        inputs:
-          SourceFolder: '$(Build.SourcesDirectory)'
-          Contents: |
-            **/*openapi.json
-          TargetFolder: '$(Build.ArtifactStagingDirectory)/api_docs'
-      - publish: $(Build.ArtifactStagingDirectory)/api_docs
-        artifact: 'APIDocs'
-        displayName: Publish API Docs Bundle
-        condition: and(succeeded(), eq(variables['System.JobAttempt'], '1'))
-
-    - job: Analyze_Backend
-      displayName: Backend
-      dependsOn: Prepare
-      condition: and(succeeded(), eq(dependencies.Prepare.outputs['setVar.backendNotUpdated'], '0'))
-
-      variables:
-        disable.coverage.autogenerate: 'true'
-        EnableAnalyzers: 'false'
-
-      pool:
-        vmImage: ${{ variables.windowsImage }}
-
-      steps:
-      - task: UseDotNet@2
-        displayName: 'Install .net core'
-        inputs:
-          version: $(dotnetVersion)
-      - checkout: self # Need history for Sonar analysis
-        submodules: true
-      - powershell: Set-Service SCardSvr -StartupType Manual
-        displayName: Enable Windows Test Service
-      - bash: |
-          ./build.sh --backend -f net6.0 -r win-x64
-          TEST_DIR=_tests/net6.0/win-x64/publish/ ./test.sh Windows Unit Coverage
-        displayName: Coverage Unit Tests
-      - task: reportgenerator@5.3.11
-        displayName: Generate Coverage Report
-        inputs:
-          reports: '$(Build.SourcesDirectory)/CoverageResults/**/coverage.opencover.xml'
-          targetdir: '$(Build.SourcesDirectory)/CoverageResults/combined'
-          reporttypes: 'HtmlInline_AzurePipelines;Cobertura;Badges'
-          publishCodeCoverageResults: true
-
   - stage: Report_Out
+    displayName: '10-Build Status Report'
     dependsOn:
     - Analyze
     - Installer
@@ -1183,7 +1326,6 @@ stages:
     - Integration
     - Automation
     condition: eq(variables['system.pullrequest.isfork'], false)
-    displayName: Build Status Report
     jobs:
     - job:
       displayName: Discord Notification
@@ -1205,4 +1347,3 @@ stages:
             DISCORDCHANNELID: $(discordChannelId)
             DISCORDWEBHOOKKEY: $(discordWebhookKey)
             DISCORDTHREADID: 1191571521781649499
-

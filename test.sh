@@ -1,23 +1,35 @@
-#! /bin/bash
-PLATFORM=$1
-TYPE=$2
-COVERAGE=$3
+#!/usr/bin/env bash
+set -euo pipefail
+
+PLATFORM=${1:-}
+TYPE=${2:-}
+COVERAGE=${3:-}
 WHERE="Category!=ManualTest"
-TEST_PATTERN="*Test.dll"
-FILES=( "Whisparr.Api.Test.dll" "Whisparr.Automation.Test.dll" "Whisparr.Common.Test.dll" "Whisparr.Core.Test.dll" "Whisparr.Host.Test.dll" "Whisparr.Integration.Test.dll" "Whisparr.Libraries.Test.dll" "Whisparr.Mono.Test.dll" "Whisparr.Update.Test.dll" "Whisparr.Windows.Test.dll" )
-ASSMEBLIES=""
+FILES=(
+  "Whisparr.Api.Test.dll"
+  "Whisparr.Automation.Test.dll"
+  "Whisparr.Common.Test.dll"
+  "Whisparr.Core.Test.dll"
+  "Whisparr.Host.Test.dll"
+  "Whisparr.Integration.Test.dll"
+  "Whisparr.Libraries.Test.dll"
+  "Whisparr.Mono.Test.dll"
+  "Whisparr.Update.Test.dll"
+  "Whisparr.Windows.Test.dll"
+)
+ASSEMBLIES=""
 TEST_LOG_FILE="TestLog.txt"
 
-echo "test dir: $TEST_DIR"
-if [ -z "$TEST_DIR" ]; then
-    TEST_DIR="."
+echo "test dir: ${TEST_DIR:-}"
+if [ -z "${TEST_DIR:-}" ]; then
+  TEST_DIR="."
 fi
 
 if [ -d "$TEST_DIR/_tests" ]; then
   TEST_DIR="$TEST_DIR/_tests"
 fi
 
-rm -f "$TEST_LOG_FILE"
+rm -f "$TEST_LOG_FILE" || true
 
 # Uncomment to log test output to a file instead of the console
 export WHISPARR_TESTS_LOG_OUTPUT="File"
@@ -25,23 +37,19 @@ export WHISPARR_TESTS_LOG_OUTPUT="File"
 VSTEST_PARAMS="--logger:nunit;LogFilePath=TestResult.xml"
 
 if [ "$PLATFORM" = "Mac" ]; then
-
-  export DYLD_FALLBACK_LIBRARY_PATH="$TEST_DIR:$MONOPREFIX/lib:/usr/local/lib:/lib:/usr/lib"
-  echo $DYLD_FALLBACK_LIBRARY_PATH
-  mono --version
-
-  # To debug which libraries are being loaded:
-  # export DYLD_PRINT_LIBRARIES=YES
+  export DYLD_FALLBACK_LIBRARY_PATH="$TEST_DIR:${MONOPREFIX:-}/lib:/usr/local/lib:/lib:/usr/lib"
+  echo "$DYLD_FALLBACK_LIBRARY_PATH"
+  mono --version || true
 fi
 
 if [ "$PLATFORM" = "Windows" ]; then
-  mkdir -p "$ProgramData/Whisparr"
+  mkdir -p "$ProgramData/Whisparr" || true
   WHERE="$WHERE&Category!=LINUX"
 elif [ "$PLATFORM" = "Linux" ] || [ "$PLATFORM" = "Mac" ] ; then
-  mkdir -p ~/.config/Whisparr
+  mkdir -p ~/.config/Whisparr || true
   WHERE="$WHERE&Category!=WINDOWS"
 else
-  echo "Platform must be provided as first arguement: Windows, Linux or Mac"
+  echo "Platform must be provided as first argument: Windows, Linux or Mac"
   exit 1
 fi
 
@@ -56,12 +64,13 @@ else
   exit 2
 fi
 
-for i in "${FILES[@]}";
-  do ASSEMBLIES="$ASSEMBLIES $TEST_DIR/$i"
+for i in "${FILES[@]}"; do
+  ASSEMBLIES="$ASSEMBLIES $TEST_DIR/$i"
 done
 
 DOTNET_PARAMS="$ASSEMBLIES --filter:$WHERE $VSTEST_PARAMS"
 
+EXIT_CODE=0
 if [ "$COVERAGE" = "Coverage" ]; then
   dotnet test $DOTNET_PARAMS --settings:"src/coverlet.runsettings" --results-directory:./CoverageResults
   EXIT_CODE=$?
@@ -73,9 +82,10 @@ else
   exit 3
 fi
 
-if [ "$EXIT_CODE" -ge 0 ]; then
+if [ "$EXIT_CODE" -ne 0 ]; then
   echo "Failed tests: $EXIT_CODE"
-  exit 0
-else
   exit $EXIT_CODE
+else
+  echo "Tests passed"
+  exit 0
 fi

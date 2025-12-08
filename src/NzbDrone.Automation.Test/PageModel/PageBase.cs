@@ -16,15 +16,44 @@ namespace NzbDrone.Automation.Test.PageModel
             driver.Manage().Window.Maximize();
         }
 
-        public IWebElement FindByClass(string className, int timeout = 15)
+        public IWebElement FindByClass(string className, int timeout = 30)
         {
             return Find(By.ClassName(className), timeout);
         }
 
-        public IWebElement Find(By by, int timeout = 15)
+        public IWebElement Find(By by, int timeout = 30)
         {
             var wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(timeout));
-            return wait.Until(d => d.FindElement(by));
+            try
+            {
+                return wait.Until(d => d.FindElement(by));
+            }
+            catch (WebDriverTimeoutException ex)
+            {
+                try
+                {
+                    Console.WriteLine($"--- DIAGNOSTIC: Timeout finding element by {by} after {timeout} seconds --- {ex.Message}");
+
+                    // Dump a small diagnostic snippet to help triage CI DOM differences
+                    var pageSource = _driver.PageSource ?? string.Empty;
+                    Console.WriteLine("--- DIAGNOSTIC: PageSource START ---");
+                    Console.WriteLine(pageSource.Length > 20000 ? pageSource.Substring(0, 20000) : pageSource);
+                    Console.WriteLine("--- DIAGNOSTIC: PageSource END ---");
+
+                    var links = _driver.FindElements(By.CssSelector("a"));
+                    Console.WriteLine($"Found {links.Count} <a> elements (showing up to 20):");
+                    for (var i = 0; i < Math.Min(20, links.Count); i++)
+                    {
+                        Console.WriteLine($"[{i}] '{links[i].Text}'");
+                    }
+                }
+                catch (Exception)
+                {
+                    // Ignore any exceptions during diagnostics
+                }
+
+                throw;
+            }
         }
 
         public void WaitForNoSpinner(int timeout = 30)

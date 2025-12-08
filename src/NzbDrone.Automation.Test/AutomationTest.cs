@@ -48,6 +48,79 @@ namespace NzbDrone.Automation.Test
             _runner.KillAll();
             _runner.Start(true);
 
+            // Runtime HTTP diagnostics: fetch index.html and referenced assets to ensure the server is serving the frontend
+            try
+            {
+                using var http = new System.Net.Http.HttpClient();
+                http.Timeout = TimeSpan.FromSeconds(5);
+
+                var baseUrl = "http://localhost:6969";
+
+                // Retry a few times to allow the server to come up and serve the site root '/'
+                string index = null;
+                for (var i = 0; i < 10; i++)
+                {
+                    try
+                    {
+                        var resp = http.GetAsync(baseUrl + "/").GetAwaiter().GetResult();
+                        TestContext.Progress.WriteLine($"HTTP GET / -> {(int)resp.StatusCode} {resp.ReasonPhrase}");
+                        if (resp.IsSuccessStatusCode)
+                        {
+                            index = resp.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                            var head = index.Length > 1000 ? index.Substring(0, 1000) : index;
+                            TestContext.Progress.WriteLine("--- / (root) HTML head ---\n" + head + "\n--- end root HTML head ---");
+                            break;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        TestContext.Progress.WriteLine($"HTTP diagnostic attempt {i + 1} failed: {ex.Message}");
+                    }
+
+                    System.Threading.Thread.Sleep(500);
+                }
+
+                if (!string.IsNullOrEmpty(index))
+                {
+                    // extract script src and link href references
+                    try
+                    {
+                        var scriptUrls = new System.Text.RegularExpressions.Regex("<script[^>]+src=\"([^\"]+)\"", System.Text.RegularExpressions.RegexOptions.IgnoreCase)
+                            .Matches(index)
+                            .Cast<System.Text.RegularExpressions.Match>()
+                            .Select(m => m.Groups[1].Value)
+                            .Distinct()
+                            .ToList();
+
+                        foreach (var script in scriptUrls)
+                        {
+                            var url = script.StartsWith("/") ? baseUrl + script : baseUrl + "/" + script.TrimStart('.', '/');
+                            try
+                            {
+                                var r = http.GetAsync(url).GetAwaiter().GetResult();
+                                TestContext.Progress.WriteLine($"HTTP GET {url} -> {(int)r.StatusCode} {r.ReasonPhrase}");
+                            }
+                            catch (Exception ex)
+                            {
+                                TestContext.Progress.WriteLine($"Failed to GET {url}: {ex.Message}");
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        TestContext.Progress.WriteLine("Failed to parse index.html for scripts: " + ex.Message);
+                    }
+                }
+                else
+                {
+                    TestContext.Progress.WriteLine("index.html was not served by the application during diagnostics");
+                }
+            }
+            catch (Exception ex)
+            {
+                TestContext.Progress.WriteLine("HTTP diagnostics failed: " + ex.Message);
+            }
+
             driver.Url = "http://localhost:6969";
 
             var page = new PageBase(driver);
@@ -123,6 +196,7 @@ namespace NzbDrone.Automation.Test
                                 {
                                     TestContext.Progress.WriteLine($"[{entry.Timestamp}] {entry.Level}: {entry.Message}");
                                 }
+
                                 TestContext.Progress.WriteLine("--- END BROWSER CONSOLE LOGS ---");
                             }
                         }
@@ -131,7 +205,10 @@ namespace NzbDrone.Automation.Test
                             TestContext.Progress.WriteLine("Failed to capture browser console logs: " + ex.Message);
                         }
                     }
-                    catch (Exception) { }
+                    catch (Exception)
+                    {
+                        // Intentionally ignore errors capturing browser logs
+                    }
 
                     try
                     {

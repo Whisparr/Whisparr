@@ -2,6 +2,7 @@ using System;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Xml.Linq;
 using NLog;
@@ -149,10 +150,98 @@ namespace NzbDrone.Test.Common
                 TestContext.Progress.WriteLine("Using env vars:\n{0}", envVars.ToJson());
             }
 
-            TestContext.Progress.WriteLine("Starting instance from {0} on port {1}", outputWhisparrConsoleExe, Port);
+            // Resolve executable path: some CI steps copy the entire publish folder into `bin/Whisparr`
+            // which means `outputWhisparrConsoleExe` may be a directory. Process.Start must receive
+            // a file path, not a directory, so handle that case by locating the actual executable
+            // inside the folder.
+            var exePath = outputWhisparrConsoleExe;
+            var originalRequested = outputWhisparrConsoleExe;
+
+            try
+            {
+                exePath = Path.GetFullPath(exePath);
+            }
+            catch
+            {
+                // Ignore failures resolving full path; fallbacks will still run.
+            }
+
+            if (Directory.Exists(exePath))
+            {
+                var expectedName = OsInfo.IsWindows ? "Whisparr.Console.exe" : "Whisparr";
+                var candidate = Path.Combine(exePath, expectedName);
+                if (File.Exists(candidate))
+                {
+                    exePath = candidate;
+                }
+                else
+                {
+                    var files = Directory.GetFiles(exePath);
+                    var found = files.FirstOrDefault(f => Path.GetFileName(f).StartsWith("Whisparr", StringComparison.InvariantCultureIgnoreCase));
+                    if (found != null && File.Exists(found))
+                    {
+                        exePath = found;
+                    }
+                    else
+                    {
+                        TestContext.Progress.WriteLine("Executable not found in directory {0}. Files: {1}", exePath, string.Join(", ", files.Select(Path.GetFileName)));
+                        throw new FileNotFoundException($"No executable found at {outputWhisparrConsoleExe}");
+                    }
+                }
+            }
+
+            // If exePath is a file path but doesn't exist, attempt a few sensible fallbacks
+            if (!File.Exists(exePath))
+            {
+                var baseDir = Path.GetDirectoryName(exePath) ?? TestContext.CurrentContext.TestDirectory;
+
+                var expectedName = OsInfo.IsWindows ? "Whisparr.Console.exe" : "Whisparr";
+
+                // 1) Check for a preserved `Whisparr` folder inside the base dir
+                var preservedCandidate = Path.Combine(baseDir, "Whisparr", expectedName);
+                if (File.Exists(preservedCandidate))
+                {
+                    exePath = preservedCandidate;
+                }
+                else if (Directory.Exists(baseDir))
+                {
+                    // 2) Check for any file starting with Whisparr in the base dir
+                    var files = Directory.GetFiles(baseDir);
+                    var found = files.FirstOrDefault(f => Path.GetFileName(f).StartsWith("Whisparr", StringComparison.InvariantCultureIgnoreCase));
+                    if (found != null && File.Exists(found))
+                    {
+                        exePath = found;
+                    }
+                    else
+                    {
+                        // 3) Check common alternate location: ../_output/net6.0/<exe>
+                        try
+                        {
+                            var alt = Path.GetFullPath(Path.Combine(baseDir, "..", "_output", "net6.0", expectedName));
+                            if (File.Exists(alt))
+                            {
+                                exePath = alt;
+                            }
+                        }
+                        catch
+                        {
+                            // ignore path resolution issues
+                        }
+                    }
+                }
+
+                if (!File.Exists(exePath))
+                {
+                    var baseFiles = Directory.Exists(baseDir) ? string.Join(", ", Directory.GetFiles(baseDir).Select(Path.GetFileName)) : "<base dir missing>";
+                    TestContext.Progress.WriteLine("Unable to find executable. Requested: {0}. Resolved: {1}. BaseDir: {2}. Files: {3}", originalRequested, exePath, baseDir, baseFiles);
+                    throw new FileNotFoundException($"No executable found. Requested: {originalRequested}. Resolved: {exePath}");
+                }
+            }
+
+            TestContext.Progress.WriteLine("Starting instance from {0} on port {1}", exePath, Port);
 
             var args = "-nobrowser -nosingleinstancecheck -data=\"" + AppData + "\"";
-            _nzbDroneProcess = _processProvider.Start(outputWhisparrConsoleExe, args, envVars, OnOutputDataReceived, OnOutputDataReceived);
+            _nzbDroneProcess = _processProvider.Start(exePath, args, envVars, OnOutputDataReceived, OnOutputDataReceived);
         }
 
         private void OnOutputDataReceived(string data)

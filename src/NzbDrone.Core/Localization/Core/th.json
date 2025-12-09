@@ -1122,5 +1122,6 @@
     "ReleaseHash": "วันที่วางจำหน่าย",
     "ImportListMultipleMissingRoots": "ไม่มีโฟลเดอร์รากหลายโฟลเดอร์: {0}",
     "ResetDefinitions": "คำจำกัดความคุณภาพ",
-    "UnableToLoadCollections": "ไม่สามารถโหลดข้อ จำกัด"
+    "UnableToLoadCollections": "ไม่สามารถโหลดข้อ จำกัด",
+    "SelectReleaseGroup": "กลุ่มเผยแพร่"
 }

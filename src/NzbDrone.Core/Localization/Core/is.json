@@ -1125,5 +1125,6 @@
     "CustomFormatJson": "Sérsniðið snið",
     "EditCollection": "Söfnun",
     "SetReleaseGroup": "Sleppihópur",
-    "UnableToLoadCollections": "Ekki er hægt að hlaða takmarkanir"
+    "UnableToLoadCollections": "Ekki er hægt að hlaða takmarkanir",
+    "SelectReleaseGroup": "Sleppihópur"
 }

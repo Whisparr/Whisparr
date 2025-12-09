@@ -1100,5 +1100,6 @@
     "NotificationsPushcutSettingsNotificationName": "認証",
     "DownloadClientFloodSettingsStartOnAdd": "追加で検索",
     "UnableToLoadCollections": "制限を読み込めません",
-    "AudioLanguages": "多言語"
+    "AudioLanguages": "多言語",
+    "SelectReleaseGroup": "リリースグループ"
 }

@@ -1480,5 +1480,6 @@
     "ShowRottenTomatoesRating": "Tomato Értékelés",
     "ShowTmdbRating": "TMDb Értékelés",
     "Trending": "Függőben levő",
-    "MovieMissingFromDisk": "Az epizód hiányzik a lemezről"
+    "MovieMissingFromDisk": "Az epizód hiányzik a lemezről",
+    "MovieDownloaded": "Letöltés Figyelmen kívül hagyva"
 }

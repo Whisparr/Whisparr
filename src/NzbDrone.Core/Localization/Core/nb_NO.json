@@ -375,5 +375,6 @@
     "DeleteSelectedDownloadClients": "Nedlastingsklient",
     "BypassDelayIfAboveCustomFormatScoreMinimumScore": "Egendefinert format",
     "MinimumCustomFormatScore": "Egendefinert format",
-    "Unreleased": "utgivelse"
+    "Unreleased": "utgivelse",
+    "SearchForAllMissingMovies": "Søk etter manglende episoder"
 }

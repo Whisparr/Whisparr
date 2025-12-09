@@ -1202,5 +1202,7 @@
     "EditSelectedMovies": "Изтриване на избрани филмови файлове",
     "LanguagesLoadError": "Не може да се заредят маркери",
     "OneMinute": "Минути",
-    "ReleaseHash": "Дати на издаване"
+    "ReleaseHash": "Дати на издаване",
+    "DownloadClientQbittorrentTorrentStateError": "Deluge съобщава за грешка",
+    "SelectReleaseGroup": "Група за освобождаване"
 }

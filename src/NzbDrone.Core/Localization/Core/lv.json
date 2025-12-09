@@ -56,5 +56,13 @@
     "Certification": "Paziņojumi",
     "Connect": "Pievienot Savienojumu",
     "CustomFormatJson": "Pievienot Pielāgotu Formātu",
-    "CustomFormatScore": "Pievienot Pielāgotu Formātu"
+    "CustomFormatScore": "Pievienot Pielāgotu Formātu",
+    "DeleteCustomFormat": "Pievienot Pielāgotu Formātu",
+    "EditQualityProfile": "Pievienot Aizkaves Profilu",
+    "BypassDelayIfAboveCustomFormatScoreMinimumScore": "Pievienot Pielāgotu Formātu",
+    "QualityProfile": "Pievienot Aizkaves Profilu",
+    "EditCollection": "Pievienot Savienojumu",
+    "DeleteQualityProfile": "Pievienot Aizkaves Profilu",
+    "MinimumCustomFormatScore": "Pievienot Pielāgotu Formātu",
+    "ShowCertification": "Paziņojumi"
 }

@@ -1112,5 +1112,6 @@
     "LanguagesLoadError": "टैग लोड करने में असमर्थ",
     "OneMinute": "मिनट",
     "UnableToLoadCollections": "प्रतिबंधों को लोड करने में असमर्थ",
-    "AudioLanguages": "बहु-भाषा"
+    "AudioLanguages": "बहु-भाषा",
+    "SelectReleaseGroup": "रिलीज समूह"
 }

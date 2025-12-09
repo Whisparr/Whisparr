@@ -1251,5 +1251,6 @@
     "SkipRedownloadHelpText": "Αποτρέπει το {appName} από το να δοκιμάσει τη λήψη εναλλακτικών εκδόσεων για τα αφαιρεμένα στοιχεία",
     "DownloadClientFloodSettingsStartOnAdd": "Αναζήτηση στο Προσθήκη",
     "OneMinute": "Λεπτά",
-    "ReleaseHash": "Ημερομηνίες κυκλοφορίας"
+    "ReleaseHash": "Ημερομηνίες κυκλοφορίας",
+    "MovieDownloaded": "Λήψη Εισήχθη"
 }

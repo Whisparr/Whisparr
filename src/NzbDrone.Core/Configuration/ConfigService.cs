@@ -471,6 +471,48 @@ namespace NzbDrone.Core.Configuration
 
         public string ApplicationUrl => GetValue("ApplicationUrl", string.Empty);
 
+        public bool WhisparrAlwaysExcludePerformers
+        {
+            get { return GetValueBoolean("WhisparrAlwaysExcludePerformers", true); }
+            set { SetValue("WhisparrAlwaysExcludePerformers", value); }
+        }
+
+        public string WhisparrAlwaysExcludePerformersTag
+        {
+            get { return GetValue("WhisparrAlwaysExcludePerformersTag", "Excluded Performer"); }
+            set { SetValue("WhisparrAlwaysExcludePerformersTag", value); }
+        }
+
+        public bool WhisparrAlwaysExcludeStudios
+        {
+            get { return GetValueBoolean("WhisparrAlwaysExcludeStudios", true); }
+            set { SetValue("WhisparrAlwaysExcludeStudios", value); }
+        }
+
+        public string WhisparrAlwaysExcludeStudiosTag
+        {
+            get { return GetValue("WhisparrAlwaysExcludeStudiosTag", "Excluded Studio"); }
+            set { SetValue("WhisparrAlwaysExcludeStudiosTag", value); }
+        }
+
+        public string WhisparrAlwaysExcludeStudiosAfterTag
+        {
+            get { return GetValue("WhisparrAlwaysExcludeStudiosAfterTag", "Excluded Studio After"); }
+            set { SetValue("WhisparrAlwaysExcludeStudiosAfterTag", value); }
+        }
+
+        public bool WhisparrAlwaysExcludeTags
+        {
+            get { return GetValueBoolean("WhisparrAlwaysExcludeTags", true); }
+            set { SetValue("WhisparrAlwaysExcludeTags", value); }
+        }
+
+        public string WhisparrAlwaysExcludeTagsTag
+        {
+            get { return GetValue("WhisparrAlwaysExcludeTagsTag", "Excluded Tag"); }
+            set { SetValue("WhisparrAlwaysExcludeTagsTag", value); }
+        }
+
         public bool WhisparrAutoMatchOnDate
         {
             get { return GetValueBoolean("WhisparrAutoMatchOnDate", true); }

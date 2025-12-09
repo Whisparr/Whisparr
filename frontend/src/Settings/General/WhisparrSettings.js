@@ -15,6 +15,13 @@ function WhisparrSettings(props) {
   } = props;
 
   const {
+    whisparrAlwaysExcludePerformers,
+    whisparrAlwaysExcludePerformersTag,
+    whisparrAlwaysExcludeStudios,
+    whisparrAlwaysExcludeStudiosTag,
+    whisparrAlwaysExcludeStudiosAfterTag,
+    whisparrAlwaysExcludeTags,
+    whisparrAlwaysExcludeTagsTag,
     whisparrAutoMatchOnDate,
     whisparrCacheExclusionAPI,
     whisparrCacheMovieAPI,
@@ -23,10 +30,6 @@ function WhisparrSettings(props) {
     whisparrValidateRuntime,
     whisparrValidateRuntimeLimit
   } = settings;
-
-  if (!advancedSettings) {
-    return null;
-  }
 
   return (
     <FieldSet legend={translate('Whisparr')}>
@@ -134,6 +137,100 @@ function WhisparrSettings(props) {
           helpText={translate('WhisparrValidateRuntimeLimitHelpText')}
           onChange={onInputChange}
           {...whisparrValidateRuntimeLimit}
+        />
+      </FormGroup>
+
+      <FormGroup>
+
+        <FormLabel>{translate('WhisparrAlwaysExcludePerformers')}</FormLabel>
+
+        <FormInputGroup
+          type={inputTypes.CHECK}
+          name="whisparrAlwaysExcludePerformers"
+          helpText={translate('WhisparrAlwaysExcludePerformersHelpText')}
+          onChange={onInputChange}
+          {...whisparrAlwaysExcludePerformers}
+        />
+      </FormGroup>
+
+      <FormGroup>
+
+        <FormLabel>{translate('WhisparrAlwaysExcludePerformersTag')}</FormLabel>
+
+        <FormInputGroup
+          type={inputTypes.TEXT}
+          name="whisparrAlwaysExcludePerformersTag"
+          helpText={translate('WhisparrAlwaysExcludePerformersTagHelpText')}
+          onChange={onInputChange}
+          {...whisparrAlwaysExcludePerformersTag}
+        />
+      </FormGroup>
+
+      <FormGroup
+        advancedSettings={advancedSettings}
+        isAdvanced={true}
+      >
+
+        <FormLabel>{translate('WhisparrAlwaysExcludeStudios')}</FormLabel>
+
+        <FormInputGroup
+          type={inputTypes.CHECK}
+          name="whisparrAlwaysExcludeStudios"
+          helpText={translate('WhisparrAlwaysExcludeStudiosHelpText')}
+          onChange={onInputChange}
+          {...whisparrAlwaysExcludeStudios}
+        />
+      </FormGroup>
+
+      <FormGroup>
+
+        <FormLabel>{translate('WhisparrAlwaysExcludeStudiosTag')}</FormLabel>
+
+        <FormInputGroup
+          type={inputTypes.TEXT}
+          name="whisparrAlwaysExcludeStudiosTag"
+          helpText={translate('WhisparrAlwaysExcludeStudiosTagHelpText')}
+          onChange={onInputChange}
+          {...whisparrAlwaysExcludeStudiosTag}
+        />
+      </FormGroup>
+
+      <FormGroup>
+
+        <FormLabel>{translate('WhisparrAlwaysExcludeStudiosAfterTag')}</FormLabel>
+
+        <FormInputGroup
+          type={inputTypes.TEXT}
+          name="whisparrAlwaysExcludeStudiosAfterTag"
+          helpText={translate('WhisparrAlwaysExcludeStudiosAfterTagHelpText')}
+          onChange={onInputChange}
+          {...whisparrAlwaysExcludeStudiosAfterTag}
+        />
+      </FormGroup>
+
+      <FormGroup>
+
+        <FormLabel>{translate('WhisparrAlwaysExcludeTags')}</FormLabel>
+
+        <FormInputGroup
+          type={inputTypes.CHECK}
+          name="whisparrAlwaysExcludeTags"
+          helpText={translate('WhisparrAlwaysExcludeTagsHelpText')}
+          onChange={onInputChange}
+          {...whisparrAlwaysExcludeTags}
+        />
+      </FormGroup>
+
+      <FormGroup>
+
+        <FormLabel>{translate('WhisparrAlwaysExcludeTagsTag')}</FormLabel>
+
+        <FormInputGroup
+          type={inputTypes.TEXT}
+          name="whisparrAlwaysExcludeTagsTag"
+          helpText={translate('WhisparrAlwaysExcludeTagsTagHelpText')}
+          onChange={onInputChange}
+          {...whisparrAlwaysExcludeTagsTag}
         />
       </FormGroup>
     </FieldSet>

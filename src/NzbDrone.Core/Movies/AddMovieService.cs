@@ -7,6 +7,7 @@ using FluentValidation.Results;
 using NLog;
 using NzbDrone.Common.EnsureThat;
 using NzbDrone.Common.Http;
+using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Exceptions;
 using NzbDrone.Core.ImportLists.ImportExclusions;
 using NzbDrone.Core.Messaging.Commands;
@@ -16,6 +17,7 @@ using NzbDrone.Core.Movies.Studios;
 using NzbDrone.Core.Organizer;
 using NzbDrone.Core.Parser;
 using NzbDrone.Core.RootFolders;
+using NzbDrone.Core.Tags;
 
 namespace NzbDrone.Core.Movies
 {
@@ -37,6 +39,8 @@ namespace NzbDrone.Core.Movies
         private readonly IAddMovieValidator _addMovieValidator;
         private readonly IImportListExclusionService _importListExclusionService;
         private readonly IRootFolderService _rootFolderService;
+        private readonly IConfigService _configService;
+        private readonly ITagRepository _tagRepository;
         private readonly Logger _logger;
 
         public AddMovieService(IMovieService movieService,
@@ -47,6 +51,8 @@ namespace NzbDrone.Core.Movies
                                 IAddMovieValidator addMovieValidator,
                                 ImportListExclusionService importListExclusionService,
                                 IRootFolderService rootFolderService,
+                                IConfigService configService,
+                                ITagRepository tagRepository,
                                 Logger logger)
         {
             _movieService = movieService;
@@ -57,6 +63,8 @@ namespace NzbDrone.Core.Movies
             _addMovieValidator = addMovieValidator;
             _importListExclusionService = importListExclusionService;
             _rootFolderService = rootFolderService;
+            _configService = configService;
+            _tagRepository = tagRepository;
             _logger = logger;
         }
 
@@ -226,8 +234,22 @@ namespace NzbDrone.Core.Movies
                     var excludedStudio = _importListExclusionService.IsExcluded(stashId, ImportExclusionType.Studio);
                     if (excludedStudio)
                     {
-                        _importListExclusionService.AddExclusion(newExclusion);
-                        throw new ValidationException($"Studio: [{newMovie.MovieMetadata.Value.Studio.Title}] has been excluded");
+                        if (_configService.WhisparrAlwaysExcludeStudios)
+                        {
+                            _importListExclusionService.AddExclusion(newExclusion);
+                            throw new ValidationException($"Studio: [{newMovie.MovieMetadata.Value.Studio.Title}] has been excluded");
+                        }
+                        else
+                        {
+                            var tag = AddTag(new Tag { Label = _configService.WhisparrAlwaysExcludeStudiosTag });
+                            if (tag != null)
+                            {
+                                newMovie.Tags.Add(tag.Id);
+                            }
+
+                            newMovie.Monitored = false;
+                            _logger.Info("Studio: [{0}] has been excluded. Marking movie as unmonitored.", newMovie.MovieMetadata.Value.Studio.Title);
+                        }
                     }
                     else
                     {
@@ -237,8 +259,14 @@ namespace NzbDrone.Core.Movies
                             var dateTime = (DateTime)studio.AfterDate;
                             if (newMovie.MovieMetadata?.Value?.ReleaseDateUtc < dateTime)
                             {
-                                _importListExclusionService.AddExclusion(newExclusion);
-                                throw new ValidationException($"Date: [{newMovie.MovieMetadata?.Value.ReleaseDate}] has been excluded before {dateTime.ToString("yyyy-MM-dd")}");
+                                var tag = AddTag(new Tag { Label = _configService.WhisparrAlwaysExcludeStudiosAfterTag });
+                                if (tag != null)
+                                {
+                                    newMovie.Tags.Add(tag.Id);
+                                }
+
+                                newMovie.Monitored = false;
+                                _logger.Info("Studio: [{0}] has an after date of {1}. Marking movie as unmonitored.", newMovie.MovieMetadata.Value.Studio.Title, dateTime.ToString("yyyy-MM-dd"));
                             }
                         }
                     }
@@ -251,8 +279,22 @@ namespace NzbDrone.Core.Movies
                     var excludedPerformers = excludedItems.Where(e => performerForeignIds.Contains(e.ForeignId)).ToList();
                     if (excludedPerformers.Any())
                     {
-                        _importListExclusionService.AddExclusion(newExclusion);
-                        throw new ValidationException($"Performer: [{string.Join(",", excludedPerformers.Select(ep => ep.MovieTitle).ToList())}] has been excluded");
+                        if (_configService.WhisparrAlwaysExcludePerformers)
+                        {
+                            _importListExclusionService.AddExclusion(newExclusion);
+                            throw new ValidationException($"Performer: [{string.Join(",", excludedPerformers.Select(ep => ep.MovieTitle).ToList())}] has been excluded");
+                        }
+                        else
+                        {
+                            var tag = AddTag(new Tag { Label = _configService.WhisparrAlwaysExcludePerformersTag });
+                            if (tag != null)
+                            {
+                                newMovie.Tags.Add(tag.Id);
+                            }
+
+                            newMovie.Monitored = false;
+                            _logger.Info("Performer: [{0}] has been excluded. Marking movie as unmonitored.", string.Join(",", excludedPerformers.Select(ep => ep.MovieTitle).ToList()));
+                        }
                     }
                 }
 
@@ -262,8 +304,22 @@ namespace NzbDrone.Core.Movies
 
                 if (exclusions.Any())
                 {
-                    _importListExclusionService.AddExclusion(newExclusion);
-                    throw new ValidationException($"Tag(s): [{string.Join(",", exclusions.Select(et => et.MovieTitle).ToList())}] excluded");
+                    if (_configService.WhisparrAlwaysExcludeTags)
+                    {
+                        _importListExclusionService.AddExclusion(newExclusion);
+                        throw new ValidationException($"Tag(s): [{string.Join(",", exclusions.Select(et => et.MovieTitle).ToList())}] excluded");
+                    }
+                    else
+                    {
+                        var tag = AddTag(new Tag { Label = _configService.WhisparrAlwaysExcludeTagsTag });
+                        if (tag != null)
+                        {
+                            newMovie.Tags.Add(tag.Id);
+                        }
+
+                        newMovie.Monitored = false;
+                        _logger.Info("Tag(s): [{0}] has been excluded. Marking movie as unmonitored.", string.Join(",", exclusions.Select(et => et.MovieTitle).ToList()));
+                    }
                 }
             }
             else
@@ -282,6 +338,27 @@ namespace NzbDrone.Core.Movies
         public void Execute(AddMoviesCommand message)
         {
             AddMovies(message.Movies);
+        }
+
+        private Tag AddTag(Tag tag)
+        {
+            if (string.IsNullOrEmpty(tag.Label))
+            {
+                return null;
+            }
+
+            tag.Label = tag.Label.ToLowerInvariant();
+
+            var existingTag = _tagRepository.FindByLabel(tag.Label);
+
+            if (existingTag != null)
+            {
+                return existingTag;
+            }
+
+            _tagRepository.Insert(tag);
+
+            return tag;
         }
     }
 }

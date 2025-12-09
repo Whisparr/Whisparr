@@ -8,21 +8,31 @@
 }
 
 .poster {
-  flex: 0 0 170px;
+  align-self: flex-start; /* avoid being stretched by the flex container */
+  flex: 0 1 170px;    /* allow shrinking but don't grow */
   margin-right: 20px;
-  height: 250px;
+  min-width: 120px;   /* don't let it shrink too far */
+  width: 170px;
+  height: auto;
+  aspect-ratio: 170 / 250; /* preserve DVD-cover proportions */
   object-fit: cover;
 }
 
 .screenShot {
-  flex: 0 0 300px;
+  align-self: flex-start; /* keep this element square instead of stretching */
+  flex: 0 0 360px; /* no grow, can shrink, basis 360px */
   margin-right: 20px;
-  height: 169px;
-  object-fit: cover;
+  min-width: 360px; /* don't let it shrink too far */
+  max-width: 360px;
+  width: 360px;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: contain; /* not all screenshots are perfectly square */
 }
 
 .info {
   flex-grow: 1;
+  min-width: 0; /* allow this flex child to shrink and wrap content */
 }
 
 .overview {
@@ -72,5 +82,16 @@
 
   .addButton {
     margin-top: 10px;
+  }
+}
+
+@media only screen and (max-width: $breakpointSmall) {
+  .poster,
+  .screenShot {
+    flex: 0 1 40%;
+    max-width: none;
+    width: 40%;
+    height: auto;
+    aspect-ratio: 1 / 1;
   }
 }

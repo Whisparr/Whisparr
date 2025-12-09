@@ -1,5 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { createSelector } from 'reselect';
 import Icon from 'Components/Icon';
 import Label from 'Components/Label';
 import Link from 'Components/Link/Link';
@@ -11,12 +13,26 @@ import MovieStatusLabel from 'Movie/Details/MovieStatusLabel';
 import MovieIndexProgressBar from 'Movie/Index/ProgressBar/MovieIndexProgressBar';
 import MoviePoster from 'Movie/MoviePoster';
 import ScenePoster from 'Scene/ScenePoster';
+import createUISettingsSelector from 'Store/Selectors/createUISettingsSelector';
+import StudioLogo from 'Studio/StudioLogo';
 import formatRuntime from 'Utilities/Date/formatRuntime';
+import getRelativeDate from 'Utilities/Date/getRelativeDate';
 import firstCharToUpper from 'Utilities/String/firstCharToUpper';
 import translate from 'Utilities/String/translate';
 import AddNewMovieModal from './AddNewMovieModal';
 import styles from './AddNewMovieSearchResult.css';
 
+function createMapStateToProps() {
+  return createSelector(
+    createUISettingsSelector(),
+    (uiSettings) => {
+      return {
+        shortDateFormat: uiSettings.shortDateFormat,
+        timeFormat: uiSettings.timeFormat
+      };
+    }
+  );
+}
 class AddNewMovieSearchResult extends Component {
 
   //
@@ -64,6 +80,7 @@ class AddNewMovieSearchResult extends Component {
       genres,
       status,
       itemType,
+      releaseDate,
       overview,
       ratings,
       folder,
@@ -84,6 +101,8 @@ class AddNewMovieSearchResult extends Component {
       safeForWorkMode
     } = this.props;
 
+    const { showRelativeDates, shortDateFormat } = this.props;
+
     const {
       isNewAddMovieModalOpen
     } = this.state;
@@ -102,6 +121,14 @@ class AddNewMovieSearchResult extends Component {
       posterWidth = 300;
       posterHeight = 169;
     }
+
+    if (itemType === 'studio') {
+      ImageItem = StudioLogo;
+      posterWidth = 250;
+      posterHeight = 250;
+    }
+
+    // (debug logging removed)
 
     const elementStyle = {
       width: `${posterWidth}px`,
@@ -129,7 +156,7 @@ class AddNewMovieSearchResult extends Component {
                     images={images}
                     size={250}
                     overflow={true}
-                    lazy={true}
+                    lazy={false}
                   />
                 </div>
 
@@ -156,9 +183,13 @@ class AddNewMovieSearchResult extends Component {
                   {title}
 
                   {
-                    !title.contains(year) && !!year ?
+                    !!year && !(String(title || '').includes(String(year))) ?
                       <span className={styles.year}>
-                        ({year})
+                        ({releaseDate ? getRelativeDate({
+                          date: releaseDate,
+                          shortDateFormat,
+                          showRelativeDates
+                        }) : year})
                       </span> :
                       null
                   }
@@ -333,6 +364,7 @@ AddNewMovieSearchResult.propTypes = {
   studioTitle: PropTypes.string,
   genres: PropTypes.arrayOf(PropTypes.string),
   status: PropTypes.string.isRequired,
+  releaseDate: PropTypes.string,
   itemType: PropTypes.string.isRequired,
   overview: PropTypes.string,
   ratings: PropTypes.object.isRequired,
@@ -351,7 +383,11 @@ AddNewMovieSearchResult.propTypes = {
   runtime: PropTypes.number.isRequired,
   movieRuntimeFormat: PropTypes.string.isRequired,
   certification: PropTypes.string,
-  safeForWorkMode: PropTypes.bool
+  safeForWorkMode: PropTypes.bool,
+  showRelativeDates: PropTypes.bool,
+  shortDateFormat: PropTypes.string,
+  longDateFormat: PropTypes.string,
+  timeFormat: PropTypes.string
 };
 
 AddNewMovieSearchResult.defaultProps = {
@@ -359,4 +395,4 @@ AddNewMovieSearchResult.defaultProps = {
   isExcluded: false
 };
 
-export default AddNewMovieSearchResult;
+export default connect(createMapStateToProps)(AddNewMovieSearchResult);

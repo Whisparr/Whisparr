@@ -63,5 +63,9 @@
     "ReleaseProfiles": "افزودن نمایه تاخیر",
     "Collection": "افزودن پیوند",
     "Collections": "افزودن پیوند",
-    "Connect": "افزودن پیوند"
+    "Connect": "افزودن پیوند",
+    "DeleteDelayProfile": "افزودن نمایه تاخیر",
+    "DeleteReleaseProfile": "افزودن نمایه تاخیر",
+    "EditCollection": "افزودن پیوند",
+    "MinutesNinety": "۶۰ دقیقه: {0}"
 }

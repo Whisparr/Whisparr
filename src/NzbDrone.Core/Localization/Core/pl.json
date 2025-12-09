@@ -1411,5 +1411,6 @@
     "SelectFolderModalTitle": "{modalTitle} - wybierz klienta pobierania",
     "ShowImdbRating": "Ocena IMDb",
     "ShowRottenTomatoesRating": "Ocena Tomato",
-    "ShowTmdbRating": "Ocena TMDb"
+    "ShowTmdbRating": "Ocena TMDb",
+    "DownloadClientQbittorrentTorrentStateError": "Deluge zgłasza błąd"
 }

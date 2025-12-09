@@ -1163,5 +1163,6 @@
     "LanguagesLoadError": "Không thể tải thẻ",
     "DownloadClientFloodSettingsStartOnAdd": "Tìm kiếm trên Thêm",
     "ImportListMultipleMissingRoots": "Nhiều thư mục gốc bị thiếu: {0}",
-    "NotificationsPushcutSettingsNotificationName": "Chứng chỉ"
+    "NotificationsPushcutSettingsNotificationName": "Chứng chỉ",
+    "SelectReleaseGroup": "Nhóm phát hành"
 }

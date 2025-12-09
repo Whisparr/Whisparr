@@ -22,7 +22,7 @@ namespace NzbDrone.Core.MediaFiles
 {
     public interface IDiskScanService
     {
-        void Scan(Movie movie);
+        void Scan(Movie movie, bool manual = false);
         string[] GetVideoFiles(string path, bool allDirectories = true);
         string[] GetNonVideoFiles(string path, bool allDirectories = true);
         List<string> FilterPaths(string basePath, IEnumerable<string> paths, bool filterExtras = true);
@@ -77,7 +77,7 @@ namespace NzbDrone.Core.MediaFiles
         private static readonly Regex ExcludedExtraFilesRegex = new Regex(@"(-(trailer|other|behindthescenes|deleted|featurette|interview|scene|short)\.[^.]+$)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         private static readonly Regex ExcludedFilesRegex = new Regex(@"^\.(_|unmanic|DS_Store$)|^Thumbs\.db$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-        public void Scan(Movie movie)
+        public void Scan(Movie movie, bool manual = false)
         {
             var rootFolder = _rootFolderService.GetBestRootFolderPath(movie.Path);
 
@@ -154,12 +154,17 @@ namespace NzbDrone.Core.MediaFiles
                 var path = Path.Combine(movie.Path, file.RelativePath);
                 var fileSize = _diskProvider.GetFileSize(path);
 
-                if (!_updateMediaInfoService.Update(file, movie) && file.Size != fileSize)
+                if (!manual && file.Size == fileSize)
                 {
-                    filesToUpdate.Add(file);
+                    continue;
                 }
 
                 file.Size = fileSize;
+
+                if (!_updateMediaInfoService.Update(file, movie))
+                {
+                    filesToUpdate.Add(file);
+                }
             }
 
             // Update any files that had a file size change, but didn't get media info updated.

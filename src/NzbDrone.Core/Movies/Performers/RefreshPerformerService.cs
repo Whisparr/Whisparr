@@ -191,7 +191,7 @@ namespace NzbDrone.Core.Movies.Performers
 
             try
             {
-                _diskScanService.Scan(movie);
+                _diskScanService.Scan(movie, trigger == CommandTrigger.Manual);
             }
             catch (Exception e)
             {

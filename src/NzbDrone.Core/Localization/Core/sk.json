@@ -351,5 +351,22 @@
     "QualityProfilesLoadError": "Nie je možné načítať albumy",
     "ReleaseTitle": "Dátum vydania albumu",
     "ReleaseDates": "Dátum vydania albumu",
-    "Trace": "Trakt"
+    "Trace": "Trakt",
+    "IndexersLoadError": "Nie je možné načítať albumy",
+    "DownloadClientOptionsLoadError": "Nie je možné načítať albumy",
+    "ImportListExclusionsLoadError": "Nie je možné načítať albumy",
+    "MinutesNinety": "60 Minút: {0}",
+    "ShowCinemaRelease": "Dátum vydania albumu",
+    "DelayProfilesLoadError": "Nie je možné načítať albumy",
+    "DownloadClientsLoadError": "Nie je možné načítať albumy",
+    "NotificationsLoadError": "Nie je možné načítať albumy",
+    "ReleaseProfilesLoadError": "Nie je možné načítať albumy",
+    "ReleaseStatus": "Dátum vydania albumu",
+    "ShowRelativeDates": "Dátum vydania albumu",
+    "IndexerOptionsLoadError": "Nie je možné načítať albumy",
+    "UnableToLoadRestrictions": "Nie je možné načítať albumy",
+    "OrganizeConfirm": "Naozaj chcete toto vylúčenie importného zoznamu zmazať?",
+    "QualityDefinitionsLoadError": "Nie je možné načítať albumy",
+    "ReleaseHash": "Dátum vydania albumu",
+    "ResetTitles": "Dátum vydania albumu"
 }

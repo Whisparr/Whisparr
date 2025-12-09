@@ -1509,5 +1509,7 @@
     "NotificationsTagsMovieHelpText": "Posílat notifikace jen pro umělce, co mají alespoň jeden shodný tag",
     "DownloadClientQbittorrentValidationCategoryAddFailureDetail": "{appName} nemohl(a) přidat etiketu k {clientName}.",
     "DownloadClientValidationAuthenticationFailure": "Vyžadováno ověření",
-    "LanguagesLoadError": "Značky nelze načíst"
+    "LanguagesLoadError": "Značky nelze načíst",
+    "DownloadClientQbittorrentTorrentStateError": "Deluge hlásí chybu",
+    "MovieDownloaded": "Stahování ignorováno"
 }

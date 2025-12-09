@@ -3,12 +3,12 @@ namespace NzbDrone.Core.Qualities
     public enum QualitySource
     {
         Unknown,
+        Web,
+        WebRip,
         DVD,
         DVDRaw,
         Television,
         TelevisionRaw,
-        Web,
-        WebRip,
         Bluray,
         BlurayRaw,
         BlurayDisk,

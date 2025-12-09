@@ -1322,5 +1322,6 @@
     "ReleaseHash": "Datas de lançamento",
     "ShowRottenTomatoesRating": "Avaliação Tomato",
     "ShowTmdbRating": "Classificação TMDb",
-    "SkipRedownloadHelpText": "Impede que o {appName} tente transferir versões alternativas para itens removidos"
+    "SkipRedownloadHelpText": "Impede que o {appName} tente transferir versões alternativas para itens removidos",
+    "MovieDownloaded": "Transferência Ignorada"
 }

@@ -1128,5 +1128,6 @@
     "EditSelectedMovies": "حذف ملفات الأفلام المحددة",
     "NotificationsPushcutSettingsNotificationName": "شهادة",
     "LanguagesLoadError": "تعذر تحميل العلامات",
-    "OneMinute": "الدقائق"
+    "OneMinute": "الدقائق",
+    "SelectReleaseGroup": "مجموعة الإصدار"
 }

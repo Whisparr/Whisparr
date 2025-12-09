@@ -1153,5 +1153,7 @@
     "DownloadClientFloodSettingsStartOnAdd": "Sök vid lägg till",
     "MovieDownloadFailedTooltip": "Fel vid nerladdning av avsnitt",
     "MovieDownloadIgnoredTooltip": "Nerladdning ignorerad",
-    "ResetDefinitions": "Kvalitetsdefinitioner"
+    "ResetDefinitions": "Kvalitetsdefinitioner",
+    "SelectReleaseGroup": "Releasegrupp",
+    "MovieDownloaded": "Nerladdning ignorerad"
 }

@@ -153,6 +153,7 @@ class AddNewMovie extends Component {
                         <AddNewMovieSearchResultConnector
                           key={item.foreignId}
                           colorImpairedMode={colorImpairedMode}
+                          internalId={item.movie.id}
                           {...item.movie}
                         />
                       );

@@ -281,21 +281,6 @@ class AddNewMovieSearchResult extends Component {
                   null
               }
 
-              {
-                genres.length > 0 ?
-                  <Label size={sizes.LARGE}>
-                    <Icon
-                      name={icons.GENRE}
-                      size={13}
-                    />
-
-                    <span className={styles.genres}>
-                      {genres.slice(0, 3).join(', ')}
-                    </span>
-                  </Label> :
-                  null
-              }
-
               <Tooltip
                 anchor={
                   <Label

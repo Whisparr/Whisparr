@@ -254,5 +254,9 @@
     "NotMonitored": "Dimonitor",
     "ReleaseProfiles": "Tambah Delay Profile",
     "CountImportListsSelected": "{count} serial dipilih",
-    "UnableToAddANewListExclusionPleaseTryAgain": "tidak dapat menambahkan persyaratan baru, coba lagi.."
+    "UnableToAddANewListExclusionPleaseTryAgain": "tidak dapat menambahkan persyaratan baru, coba lagi..",
+    "DeleteReleaseProfile": "Profil Kualitas",
+    "Downloading": "Pengunduhan Ulang Gagal",
+    "MultiLanguage": "Bahasa Audio",
+    "ShowMonitored": "Dimonitor"
 }

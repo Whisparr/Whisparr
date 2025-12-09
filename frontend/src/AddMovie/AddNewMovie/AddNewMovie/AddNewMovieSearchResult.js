@@ -94,6 +94,7 @@ class AddNewMovieSearchResult extends Component {
       monitored,
       isAvailable,
       movieFile,
+      sizeOnDisk,
       queueItem,
       runtime,
       movieRuntimeFormat,
@@ -107,7 +108,7 @@ class AddNewMovieSearchResult extends Component {
       isNewAddMovieModalOpen
     } = this.state;
 
-    const hasMovieFile = !!movieFile;
+    const hasMovieFile = !!movieFile || sizeOnDisk > 0;
 
     const linkProps = isExistingMovie ? { to: `/movie/${titleSlug}` } : { onPress: this.onPress };
     const providerProps = itemType === 'movie' ? { tmdbId: foreignId } : { stashId: foreignId };
@@ -387,7 +388,8 @@ AddNewMovieSearchResult.propTypes = {
   showRelativeDates: PropTypes.bool,
   shortDateFormat: PropTypes.string,
   longDateFormat: PropTypes.string,
-  timeFormat: PropTypes.string
+  timeFormat: PropTypes.string,
+  sizeOnDisk: PropTypes.number
 };
 
 AddNewMovieSearchResult.defaultProps = {

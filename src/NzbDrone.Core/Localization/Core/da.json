@@ -1174,5 +1174,6 @@
     "AudioLanguages": "Multi-sprog",
     "DeleteSelectedImportListsMessageText": "Er du sikker på, at du vil slette de valgte filmfiler?",
     "EditSelectedMovies": "Slet valgte filmfiler",
-    "LanguagesLoadError": "Kan ikke indlæse tags"
+    "LanguagesLoadError": "Kan ikke indlæse tags",
+    "SelectReleaseGroup": "Slip gruppe"
 }

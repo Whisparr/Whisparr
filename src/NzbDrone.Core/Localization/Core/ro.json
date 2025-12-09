@@ -1193,5 +1193,7 @@
     "UnableToLoadCollections": "Nu se pot încărca restricțiile",
     "Trending": "In asteptarea",
     "MovieDownloaded": "Descărcare film ignorată",
-    "SearchForAllMissingMovies": "Începeți căutarea filmului lipsă"
+    "SearchForAllMissingMovies": "Începeți căutarea filmului lipsă",
+    "IndexerFlags": "Preferă indicatoarele Indexer",
+    "SelectReleaseGroup": "Grup de apariție"
 }

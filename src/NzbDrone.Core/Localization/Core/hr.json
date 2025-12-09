@@ -423,5 +423,8 @@
     "Unreleased": "verzija",
     "CountImportListsSelected": "{count} Kolekcija odabrano",
     "MinimumCustomFormatScore": "Prilagođeni format",
-    "NotificationsPushcutSettingsNotificationName": "Obavijest"
+    "NotificationsPushcutSettingsNotificationName": "Obavijest",
+    "Downloading": "Ponovno preuzimanje neuspješno",
+    "MultiLanguage": "Audio Jezici",
+    "OrganizeConfirm": "Jeste li sigurni da želite obrisati ovaj profil odgode?"
 }

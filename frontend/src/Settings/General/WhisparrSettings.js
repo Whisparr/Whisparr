@@ -16,6 +16,7 @@ function WhisparrSettings(props) {
 
   const {
     whisparrAutoMatchOnDate,
+    whisparrCacheExclusionAPI,
     whisparrCacheMovieAPI,
     whisparrCachePerformerAPI,
     whisparrCacheStudioAPI,
@@ -29,6 +30,22 @@ function WhisparrSettings(props) {
 
   return (
     <FieldSet legend={translate('Whisparr')}>
+      <FormGroup
+        advancedSettings={advancedSettings}
+        isAdvanced={true}
+      >
+
+        <FormLabel>{translate('WhisparrCacheExclusionAPI')}</FormLabel>
+
+        <FormInputGroup
+          type={inputTypes.CHECK}
+          name="whisparrCacheExclusionAPI"
+          helpText={translate('WhisparrCacheExclusionAPIHelpText')}
+          onChange={onInputChange}
+          {...whisparrCacheExclusionAPI}
+        />
+      </FormGroup>
+
       <FormGroup
         advancedSettings={advancedSettings}
         isAdvanced={true}

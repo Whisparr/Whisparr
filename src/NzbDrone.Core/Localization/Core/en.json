@@ -2010,6 +2010,8 @@
   "Whisparr": "{appName}",
   "WhisparrAutoMatchOnDate": "Match scene on Date Only",
   "WhisparrAutoMatchOnDateHelpText": "If checked Whisparr will accept a scene on just studio and date. Can cause false positives",
+  "WhisparrCacheExclusionAPI": "Cache Exclusion API",
+  "WhisparrCacheExclusionAPIHelpText": "Cache API calls to exclusions",
   "WhisparrCacheMovieAPI": "Cache Movie API",
   "WhisparrCacheMovieAPIHelpText": "Cache API calls to movie/scene",
   "WhisparrCachePerformerAPI": "Cache Performer API",

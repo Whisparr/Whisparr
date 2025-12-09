@@ -46,6 +46,7 @@ namespace Whisparr.Api.V3.Config
         public int BackupInterval { get; set; }
         public int BackupRetention { get; set; }
         public bool WhisparrAutoMatchOnDate { get; set; }
+        public bool WhisparrCacheExclusionAPI { get; set; }
         public bool WhisparrCacheMovieAPI { get; set; }
         public bool WhisparrCachePerformerAPI { get; set; }
         public bool WhisparrCacheStudioAPI { get; set; }
@@ -97,6 +98,7 @@ namespace Whisparr.Api.V3.Config
                 BackupRetention = configService.BackupRetention,
                 ApplicationUrl = configService.ApplicationUrl,
                 WhisparrAutoMatchOnDate = configService.WhisparrAutoMatchOnDate,
+                WhisparrCacheExclusionAPI = configService.WhisparrCacheExclusionAPI,
                 WhisparrCacheMovieAPI = configService.WhisparrCacheMovieAPI,
                 WhisparrCachePerformerAPI = configService.WhisparrCachePerformerAPI,
                 WhisparrCacheStudioAPI = configService.WhisparrCacheStudioAPI,

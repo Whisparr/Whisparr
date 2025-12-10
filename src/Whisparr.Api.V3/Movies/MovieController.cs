@@ -553,22 +553,35 @@ namespace Whisparr.Api.V3.Movies
 
             if (missingIds.Count > 0)
             {
+                var releaseLock = false;
                 try
                 {
-                    _movieResourcesCache.Lock.Wait();
-
                     var getIds = new List<int>();
-                    foreach (var id in missingIds)
+
+                    // If there are a large number of missing IDs, acquire the lock to prevent cache stampede
+                    if (missingIds.Count > 100)
                     {
-                        var movieResource = _movieResourcesCache.Find(id.ToString());
-                        if (movieResource == null)
+                        _logger.Info($"Caching {missingIds.Count} movies with {_movieResourcesCache.Lock.CurrentCount} avalible threads");
+                        _movieResourcesCache.Lock.Wait();
+                        releaseLock = true;
+
+                        // recheck after acquiring the lock
+                        foreach (var id in missingIds)
                         {
-                            getIds.Add(id);
+                            var movieResource = _movieResourcesCache.Find(id.ToString());
+                            if (movieResource == null)
+                            {
+                                getIds.Add(id);
+                            }
+                            else
+                            {
+                                moviesResources.AddIfNotNull(movieResource);
+                            }
                         }
-                        else
-                        {
-                            moviesResources.AddIfNotNull(movieResource);
-                        }
+                    }
+                    else
+                    {
+                        getIds = missingIds;
                     }
 
                     if (getIds.Count > 0)
@@ -612,7 +625,10 @@ namespace Whisparr.Api.V3.Movies
                 }
                 finally
                 {
-                    _movieResourcesCache.Lock.Release();
+                    if (releaseLock)
+                    {
+                        _movieResourcesCache.Lock.Release();
+                    }
                 }
             }
 

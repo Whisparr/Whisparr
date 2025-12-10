@@ -39,7 +39,7 @@ namespace NzbDrone.Common.Cache
             _store = new ConcurrentDictionary<string, CacheItem>();
             _defaultLifeTime = defaultLifeTime;
             _rollingExpiry = rollingExpiry;
-            _lock = new SemaphoreSlim(1, 1);
+            _lock = new SemaphoreSlim(2, 2);
         }
 
         public void Set(string key, T value, TimeSpan? lifeTime = null)

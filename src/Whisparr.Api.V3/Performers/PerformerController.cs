@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DryIoc.ImTools;
 using Microsoft.AspNetCore.Mvc;
+using NLog;
 using NzbDrone.Common.Cache;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Configuration;
@@ -33,6 +34,7 @@ namespace Whisparr.Api.V3.Performers
         private readonly IConfigService _configService;
         private readonly bool _useCache;
         private readonly ICached<PerformerResource> _performerResourceCache;
+        private readonly Logger _logger;
 
         public PerformerController(IPerformerService performerService,
                                    IAddPerformerService addPerformerService,
@@ -42,6 +44,7 @@ namespace Whisparr.Api.V3.Performers
                                    IImportListExclusionService exclusionService,
                                    ICacheManager cacheManager,
                                    IConfigService configService,
+                                   Logger logger,
                                    IBroadcastSignalRMessage signalRBroadcaster)
         : base(signalRBroadcaster)
         {
@@ -54,6 +57,7 @@ namespace Whisparr.Api.V3.Performers
             _exclusionService = exclusionService;
             _useCache = _configService.WhisparrCachePerformerAPI;
             _performerResourceCache = cacheManager.GetCache<PerformerResource>(typeof(PerformerResource), "performerResources");
+            _logger = logger;
         }
 
         protected override PerformerResource GetResourceById(int id)
@@ -229,23 +233,35 @@ namespace Whisparr.Api.V3.Performers
 
             if (missingIds.Count > 0)
             {
+                var releaseLock = false;
                 try
                 {
-                    _performerResourceCache.Lock.Wait();
-
-                    // recheck after acquiring the lock
                     var getIds = new List<string>();
-                    foreach (var id in missingIds)
+
+                    // If there are a large number of missing IDs, acquire the lock to prevent cache stampede
+                    if (missingIds.Count > 100)
                     {
-                        var performerResource = _performerResourceCache.Find(id);
-                        if (performerResource == null)
+                        _logger.Info($"Caching {missingIds.Count} performers with {_performerResourceCache.Lock.CurrentCount} avalible threads");
+                        _performerResourceCache.Lock.Wait();
+                        releaseLock = true;
+
+                        // recheck after acquiring the lock
+                        foreach (var id in missingIds)
                         {
-                            getIds.Add(id);
+                            var performerResource = _performerResourceCache.Find(id);
+                            if (performerResource == null)
+                            {
+                                getIds.Add(id);
+                            }
+                            else
+                            {
+                                performerResources.AddIfNotNull(performerResource);
+                            }
                         }
-                        else
-                        {
-                            performerResources.AddIfNotNull(performerResource);
-                        }
+                    }
+                    else
+                    {
+                        getIds = missingIds;
                     }
 
                     if (getIds.Count > 0)
@@ -271,7 +287,10 @@ namespace Whisparr.Api.V3.Performers
                 }
                 finally
                 {
-                    _performerResourceCache.Lock.Release();
+                    if (releaseLock)
+                    {
+                        _performerResourceCache.Lock.Release();
+                    }
                 }
             }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using NLog;
 using NzbDrone.Common.Cache;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Configuration;
@@ -21,15 +22,18 @@ namespace Whisparr.Api.V3.ImportLists
         private readonly IImportListExclusionService _importListExclusionService;
         private readonly ICached<ImportListExclusionResource> _exclusionResourceCache;
         private readonly bool _useCache;
+        private readonly Logger _logger;
 
         public ImportListExclusionController(IImportListExclusionService importListExclusionService,
                                             ICacheManager cacheManager,
                                             IConfigService configService,
+                                            Logger logger,
                                             ImportListExclusionExistsValidator importListExclusionExistsValidator)
         {
             _importListExclusionService = importListExclusionService;
             _exclusionResourceCache = cacheManager.GetCache<ImportListExclusionResource>(typeof(ImportListExclusionResource), "exclusionResources");
             _useCache = configService.WhisparrCacheExclusionAPI;
+            _logger = logger;
 
             SharedValidator.RuleFor(c => c.ForeignId).Cascade(CascadeMode.Stop)
                 .NotEmpty()
@@ -181,23 +185,35 @@ namespace Whisparr.Api.V3.ImportLists
 
             if (missingIds.Count > 0)
             {
+                var releaseLock = false;
                 try
                 {
-                    _exclusionResourceCache.Lock.Wait();
-
-                    // recheck after acquiring the lock
                     var getIds = new List<int>();
-                    foreach (var id in missingIds)
+
+                    // If there are a large number of missing IDs, acquire the lock to prevent cache stampede
+                    if (missingIds.Count > 100)
                     {
-                        var exclusionResource = _exclusionResourceCache.Find($"{id}");
-                        if (exclusionResource == null)
+                        _logger.Info($"Caching {missingIds.Count} exceptions with {_exclusionResourceCache.Lock.CurrentCount} avalible threads");
+                        _exclusionResourceCache.Lock.Wait();
+                        releaseLock = true;
+
+                        // recheck after acquiring the lock
+                        foreach (var id in missingIds)
                         {
-                            getIds.Add(id);
+                            var exclusionResource = _exclusionResourceCache.Find($"{id}");
+                            if (exclusionResource == null)
+                            {
+                                getIds.Add(id);
+                            }
+                            else
+                            {
+                                exclusionResources.AddIfNotNull(exclusionResource);
+                            }
                         }
-                        else
-                        {
-                            exclusionResources.AddIfNotNull(exclusionResource);
-                        }
+                    }
+                    else
+                    {
+                        getIds = missingIds;
                     }
 
                     if (getIds.Count > 0)
@@ -217,7 +233,10 @@ namespace Whisparr.Api.V3.ImportLists
                 }
                 finally
                 {
-                    _exclusionResourceCache.Lock.Release();
+                    if (releaseLock)
+                    {
+                        _exclusionResourceCache.Lock.Release();
+                    }
                 }
             }
 

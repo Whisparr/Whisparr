@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DryIoc.ImTools;
 using Microsoft.AspNetCore.Mvc;
+using NLog;
 using NzbDrone.Common.Cache;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Configuration;
@@ -32,6 +33,7 @@ namespace Whisparr.Api.V3.Studios
         private readonly IImportListExclusionService _exclusionService;
         private readonly ICached<StudioResource> _studioResourceCache;
         private readonly bool _useCache;
+        private readonly Logger _logger;
 
         public StudioController(IStudioService studioService,
                                 IAddStudioService addStudioService,
@@ -41,6 +43,7 @@ namespace Whisparr.Api.V3.Studios
                                 IImportListExclusionService exclusionService,
                                 ICacheManager cacheManager,
                                 IConfigService configService,
+                                Logger logger,
                                 IBroadcastSignalRMessage signalRBroadcaster)
         : base(signalRBroadcaster)
         {
@@ -52,6 +55,7 @@ namespace Whisparr.Api.V3.Studios
             _exclusionService = exclusionService;
             _useCache = configService.WhisparrCacheStudioAPI;
             _studioResourceCache = cacheManager.GetCache<StudioResource>(typeof(StudioResource), "studioResources");
+            _logger = logger;
         }
 
         protected override StudioResource GetResourceById(int id)
@@ -225,23 +229,35 @@ namespace Whisparr.Api.V3.Studios
 
             if (missingIds.Count > 0)
             {
+                var releaseLock = false;
                 try
                 {
-                    _studioResourceCache.Lock.Wait();
-
-                    // Re-check missing IDs after acquiring the lock
                     var getIds = new List<string>();
-                    foreach (var id in missingIds)
+
+                    // If there are a large number of missing IDs, acquire the lock to prevent cache stampede
+                    if (missingIds.Count > 100)
                     {
-                        var studioResource = _studioResourceCache.Find(id);
-                        if (studioResource == null)
+                        _logger.Info($"Caching {missingIds.Count} studios with {_studioResourceCache.Lock.CurrentCount} avalible threads");
+                        _studioResourceCache.Lock.Wait();
+                        releaseLock = false;
+
+                        // Re-check missing IDs after acquiring the lock
+                        foreach (var id in missingIds)
                         {
-                            getIds.Add(id);
+                            var studioResource = _studioResourceCache.Find(id);
+                            if (studioResource == null)
+                            {
+                                getIds.Add(id);
+                            }
+                            else
+                            {
+                                studioResources.AddIfNotNull(studioResource);
+                            }
                         }
-                        else
-                        {
-                            studioResources.AddIfNotNull(studioResource);
-                        }
+                    }
+                    else
+                    {
+                        getIds = missingIds;
                     }
 
                     if (getIds.Count > 0)
@@ -267,7 +283,10 @@ namespace Whisparr.Api.V3.Studios
                 }
                 finally
                 {
-                    _studioResourceCache.Lock.Release();
+                    if (releaseLock)
+                    {
+                        _studioResourceCache.Lock.Release();
+                    }
                 }
             }
 

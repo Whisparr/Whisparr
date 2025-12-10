@@ -79,6 +79,7 @@ import {
   faLaptop as fasLaptop,
   faLevelUpAlt as fasLevelUpAlt,
   faListCheck as fasListCheck,
+  faMars as fasMars,
   faMedkit as fasMedkit,
   faMinus as fasMinus,
   faPause as fasPause,
@@ -112,9 +113,11 @@ import {
   faTicketAlt as fasTicketAlt,
   faTimes as fasTimes,
   faTimesCircle as fasTimesCircle,
+  faTransgender as fasTransgender,
   faTrashAlt as fasTrashAlt,
   faUser as fasUser,
   faUserPlus as fasUserPlus,
+  faVenus as fasVenus,
   faVenusMars as fasVenusMars,
   faVial as fasVial,
   faVideo as fasVideo,
@@ -208,6 +211,9 @@ export const PARSE = fasCalculator;
 export const PAUSED = fasPause;
 export const PENDING = farClock;
 export const PERFORMER = fasVenusMars;
+export const PERFORMERFEMALE = fasVenus;
+export const PERFORMERMALE = fasMars;
+export const PERFORMERTRANS = fasTransgender;
 export const PLAY = fasPlay;
 export const PROFILE = fasUser;
 export const POPULAR = fasFire;

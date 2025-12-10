@@ -4,6 +4,7 @@ interface CssExports {
   'alreadyExistsIcon': string;
   'certification': string;
   'content': string;
+  'credits': string;
   'exclusionIcon': string;
   'genres': string;
   'icons': string;

@@ -4,6 +4,7 @@ using System.IO;
 // using System.IO.Abstractions;
 using System.Linq;
 using NzbDrone.Common;
+using NzbDrone.Core.Datastore;
 using NzbDrone.Core.MediaFiles.Events;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.Movies;
@@ -136,8 +137,16 @@ namespace NzbDrone.Core.MediaFiles
             {
                 if (file.MovieId > 0)
                 {
-                    var movie = _movieRepository.Get(file.MovieId);
-                    movieFiles.Add(Path.Combine(movie.Path, movie.MovieFile.RelativePath));
+                    try
+                    {
+                        var movie = _movieRepository.Get(file.MovieId);
+                        movieFiles.Add(Path.Combine(movie.Path, movie.MovieFile.RelativePath));
+                    }
+                    catch (ModelNotFoundException)
+                    {
+                        // Movie File record exists but not movie record
+                        _movieRepository.Delete(file.MovieId);
+                    }
                 }
                 else
                 {

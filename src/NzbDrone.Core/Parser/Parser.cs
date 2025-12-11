@@ -38,6 +38,16 @@ namespace NzbDrone.Core.Parser
                 new RegexReplace(@"^\[(?<subgroup>[^\]]+)\](?:(?<chinesubgroup>\[(?=[^\]]*?[\u4E00-\u9FCC])[^\]]*\])+)\[(?<title>[^\]]+?)\](?<junk>\[[^\]]+\])*\[(?<episode>[0-9]+(?:-[0-9]+)?)( END| Fin)?\]", "[${subgroup}] ${title} - ${episode} ", RegexOptions.Compiled)
             };
 
+        // Regex to extract external IDs from release titles
+        // Matches patterns like [MIKR-058], [ABC-123], [XYZ_456] at the start of titles
+        private static readonly Regex ExternalIdBracketedRegex = new Regex(@"^\[(?<externalid>[A-Z]{2,10}[-_][A-Z0-9]{2,10})\]",
+            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        // Regex to extract external IDs from bare filenames (e.g., "MIKR-058.mp4" or "ABC-123")
+        // Matches the external ID pattern when it's the entire filename (with optional extension)
+        private static readonly Regex ExternalIdBareRegex = new Regex(@"^(?<externalid>[A-Z]{2,10}[-_][A-Z0-9]{2,10})(?:\.[a-z0-9]{2,4})?$",
+            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
         private static readonly Regex[] ReportTitleRegex = new[]
             {
                 // Site title in brackets with full year in date then episode info
@@ -439,6 +449,46 @@ namespace NzbDrone.Core.Parser
             {
                 imdbId = imdbId.Replace("tt", "").PadLeft(7, '0');
                 return $"tt{imdbId}";
+            }
+
+            return null;
+        }
+
+        public static string ParseExternalId(string title)
+        {
+            if (title.IsNullOrWhiteSpace())
+            {
+                return null;
+            }
+
+            // Parse bracketed format from release titles: [MIKR-058] Title...
+            var match = ExternalIdBracketedRegex.Match(title);
+
+            if (match.Success)
+            {
+                var externalId = match.Groups["externalid"].Value;
+                Logger.Debug("Parsed external ID from release title: {0}", externalId);
+                return externalId;
+            }
+
+            return null;
+        }
+
+        public static string ParseExternalIdFromFilename(string filename)
+        {
+            if (filename.IsNullOrWhiteSpace())
+            {
+                return null;
+            }
+
+            // Parse bare format from filenames: MIKR-058.mp4 or MIKR-058
+            var match = ExternalIdBareRegex.Match(filename);
+
+            if (match.Success)
+            {
+                var externalId = match.Groups["externalid"].Value;
+                Logger.Debug("Parsed external ID from filename: {0}", externalId);
+                return externalId;
             }
 
             return null;

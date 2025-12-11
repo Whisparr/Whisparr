@@ -74,8 +74,14 @@ namespace NzbDrone.Core.DecisionEngine
                 {
                     var parsedEpisodeInfo = Parser.Parser.ParseTitle(report.Title);
 
+                    // Try to extract external ID from the release title
+                    var releaseExternalId = Parser.Parser.ParseExternalId(report.Title);
+
                     if (parsedEpisodeInfo != null && !parsedEpisodeInfo.SeriesTitle.IsNullOrWhiteSpace())
                     {
+                        // Store the parsed external ID in the parsed info
+                        parsedEpisodeInfo.ExternalId = releaseExternalId;
+
                         var remoteEpisode = _parsingService.Map(parsedEpisodeInfo, report.TvdbId, searchCriteria);
                         remoteEpisode.Release = report;
 
@@ -108,20 +114,52 @@ namespace NzbDrone.Core.DecisionEngine
                             parsedEpisodeInfo = new ParsedEpisodeInfo
                             {
                                 Languages = LanguageParser.ParseLanguages(report.Title),
-                                Quality = QualityParser.ParseQuality(report.Title)
+                                Quality = QualityParser.ParseQuality(report.Title),
+                                ExternalId = releaseExternalId
                             };
                         }
 
                         if (parsedEpisodeInfo.SeriesTitle.IsNullOrWhiteSpace())
                         {
-                            var remoteEpisode = new RemoteEpisode
+                            // Check if we can match by external ID when the search criteria has one
+                            var singleEpisodeCriteria = searchCriteria as SingleEpisodeSearchCriteria;
+                            if (singleEpisodeCriteria != null &&
+                                !singleEpisodeCriteria.ExternalId.IsNullOrWhiteSpace() &&
+                                !releaseExternalId.IsNullOrWhiteSpace() &&
+                                string.Equals(singleEpisodeCriteria.ExternalId, releaseExternalId, StringComparison.OrdinalIgnoreCase))
                             {
-                                Release = report,
-                                ParsedEpisodeInfo = parsedEpisodeInfo,
-                                Languages = parsedEpisodeInfo.Languages
-                            };
+                                _logger.Debug("Release '{0}' matched by external ID '{1}'", report.Title, releaseExternalId);
 
-                            decision = new DownloadDecision(remoteEpisode, new Rejection("Unable to parse release"));
+                                // Map using external ID - use the search criteria's series and episodes
+                                var remoteEpisode = _parsingService.MapByExternalId(parsedEpisodeInfo, searchCriteria);
+                                remoteEpisode.Release = report;
+
+                                if (remoteEpisode.Series != null && remoteEpisode.Episodes.Any())
+                                {
+                                    _aggregationService.Augment(remoteEpisode);
+
+                                    remoteEpisode.CustomFormats = _formatCalculator.ParseCustomFormat(remoteEpisode, remoteEpisode.Release.Size);
+                                    remoteEpisode.CustomFormatScore = remoteEpisode?.Series?.QualityProfile?.Value.CalculateCustomFormatScore(remoteEpisode.CustomFormats) ?? 0;
+
+                                    remoteEpisode.DownloadAllowed = remoteEpisode.Episodes.Any();
+                                    decision = GetDecisionForReport(remoteEpisode, searchCriteria);
+                                }
+                                else
+                                {
+                                    decision = new DownloadDecision(remoteEpisode, new Rejection("Unable to map release by external ID"));
+                                }
+                            }
+                            else
+                            {
+                                var remoteEpisode = new RemoteEpisode
+                                {
+                                    Release = report,
+                                    ParsedEpisodeInfo = parsedEpisodeInfo,
+                                    Languages = parsedEpisodeInfo.Languages
+                                };
+
+                                decision = new DownloadDecision(remoteEpisode, new Rejection("Unable to parse release"));
+                            }
                         }
                     }
                 }

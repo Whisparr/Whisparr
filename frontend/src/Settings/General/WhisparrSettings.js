@@ -166,10 +166,7 @@ function WhisparrSettings(props) {
         />
       </FormGroup>
 
-      <FormGroup
-        advancedSettings={advancedSettings}
-        isAdvanced={true}
-      >
+      <FormGroup>
 
         <FormLabel>{translate('WhisparrAlwaysExcludeStudios')}</FormLabel>
 

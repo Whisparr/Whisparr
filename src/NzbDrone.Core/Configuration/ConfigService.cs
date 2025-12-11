@@ -479,7 +479,7 @@ namespace NzbDrone.Core.Configuration
 
         public string WhisparrAlwaysExcludePerformersTag
         {
-            get { return GetValue("WhisparrAlwaysExcludePerformersTag", "Excluded Performer"); }
+            get { return GetValue("WhisparrAlwaysExcludePerformersTag", ""); }
             set { SetValue("WhisparrAlwaysExcludePerformersTag", value); }
         }
 
@@ -491,13 +491,13 @@ namespace NzbDrone.Core.Configuration
 
         public string WhisparrAlwaysExcludeStudiosTag
         {
-            get { return GetValue("WhisparrAlwaysExcludeStudiosTag", "Excluded Studio"); }
+            get { return GetValue("WhisparrAlwaysExcludeStudiosTag", ""); }
             set { SetValue("WhisparrAlwaysExcludeStudiosTag", value); }
         }
 
         public string WhisparrAlwaysExcludeStudiosAfterTag
         {
-            get { return GetValue("WhisparrAlwaysExcludeStudiosAfterTag", "Excluded Studio After"); }
+            get { return GetValue("WhisparrAlwaysExcludeStudiosAfterTag", ""); }
             set { SetValue("WhisparrAlwaysExcludeStudiosAfterTag", value); }
         }
 
@@ -509,7 +509,7 @@ namespace NzbDrone.Core.Configuration
 
         public string WhisparrAlwaysExcludeTagsTag
         {
-            get { return GetValue("WhisparrAlwaysExcludeTagsTag", "Excluded Tag"); }
+            get { return GetValue("WhisparrAlwaysExcludeTagsTag", ""); }
             set { SetValue("WhisparrAlwaysExcludeTagsTag", value); }
         }
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using DryIoc.ImTools;
 using Microsoft.AspNetCore.Mvc;
@@ -230,16 +231,19 @@ namespace Whisparr.Api.V3.Studios
             if (missingIds.Count > 0)
             {
                 var releaseLock = false;
+                var stopwatch = new Stopwatch();
+                stopwatch.Start();
+                var getIds = new List<string>();
+
                 try
                 {
-                    var getIds = new List<string>();
-
                     // If there are a large number of missing IDs, acquire the lock to prevent cache stampede
                     if (missingIds.Count > 100)
                     {
                         _logger.Info($"Caching {missingIds.Count} studios with {_studioResourceCache.Lock.CurrentCount} avalible threads");
                         _studioResourceCache.Lock.Wait();
-                        releaseLock = false;
+                        releaseLock = true;
+                        _logger.Info($"Locked studio cache for {stopwatch.ElapsedMilliseconds}ms");
 
                         // Re-check missing IDs after acquiring the lock
                         foreach (var id in missingIds)
@@ -283,9 +287,11 @@ namespace Whisparr.Api.V3.Studios
                 }
                 finally
                 {
+                    stopwatch.Stop();
                     if (releaseLock)
                     {
                         _studioResourceCache.Lock.Release();
+                        _logger.Info($"Process studio cache for {getIds.Count} after {stopwatch.ElapsedMilliseconds}ms");
                     }
                 }
             }

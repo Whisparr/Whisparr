@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using DryIoc.ImTools;
 using Microsoft.AspNetCore.Mvc;
@@ -234,16 +235,19 @@ namespace Whisparr.Api.V3.Performers
             if (missingIds.Count > 0)
             {
                 var releaseLock = false;
+                var stopwatch = new Stopwatch();
+                stopwatch.Start();
+                var getIds = new List<string>();
+
                 try
                 {
-                    var getIds = new List<string>();
-
                     // If there are a large number of missing IDs, acquire the lock to prevent cache stampede
                     if (missingIds.Count > 100)
                     {
                         _logger.Info($"Caching {missingIds.Count} performers with {_performerResourceCache.Lock.CurrentCount} avalible threads");
                         _performerResourceCache.Lock.Wait();
                         releaseLock = true;
+                        _logger.Info($"Locked performer cache for {stopwatch.ElapsedMilliseconds}ms");
 
                         // recheck after acquiring the lock
                         foreach (var id in missingIds)
@@ -287,9 +291,11 @@ namespace Whisparr.Api.V3.Performers
                 }
                 finally
                 {
+                    stopwatch.Stop();
                     if (releaseLock)
                     {
                         _performerResourceCache.Lock.Release();
+                        _logger.Info($"Process performer cache for {getIds.Count} after {stopwatch.ElapsedMilliseconds}ms");
                     }
                 }
             }

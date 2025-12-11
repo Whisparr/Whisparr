@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
@@ -186,16 +187,19 @@ namespace Whisparr.Api.V3.ImportLists
             if (missingIds.Count > 0)
             {
                 var releaseLock = false;
+                var stopwatch = new Stopwatch();
+                stopwatch.Start();
+                var getIds = new List<int>();
+
                 try
                 {
-                    var getIds = new List<int>();
-
                     // If there are a large number of missing IDs, acquire the lock to prevent cache stampede
                     if (missingIds.Count > 100)
                     {
-                        _logger.Info($"Caching {missingIds.Count} exceptions with {_exclusionResourceCache.Lock.CurrentCount} avalible threads");
+                        _logger.Info($"Caching {missingIds.Count} exclusion with {_exclusionResourceCache.Lock.CurrentCount} avalible threads");
                         _exclusionResourceCache.Lock.Wait();
                         releaseLock = true;
+                        _logger.Info($"Locked exclusion cache for {stopwatch.ElapsedMilliseconds}ms");
 
                         // recheck after acquiring the lock
                         foreach (var id in missingIds)
@@ -233,9 +237,11 @@ namespace Whisparr.Api.V3.ImportLists
                 }
                 finally
                 {
+                    stopwatch.Stop();
                     if (releaseLock)
                     {
                         _exclusionResourceCache.Lock.Release();
+                        _logger.Info($"Process exclusion cache for {getIds.Count} after {stopwatch.ElapsedMilliseconds}ms");
                     }
                 }
             }

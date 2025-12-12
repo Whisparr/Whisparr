@@ -14,6 +14,7 @@ using NzbDrone.Core.MediaFiles.EpisodeImport;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.Parser;
 using NzbDrone.Core.Parser.Model;
+using NzbDrone.Core.Qualities;
 using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Download
@@ -88,11 +89,37 @@ namespace NzbDrone.Core.Download
             }
 
             var series = _parsingService.GetSeries(trackedDownload.DownloadItem.Title);
+            Episode externalIdEpisode = null;
 
             if (series == null)
             {
                 // Try to find series by external ID from download title (e.g., MIKR-058)
-                series = GetSeriesByExternalId(trackedDownload.DownloadItem.Title);
+                externalIdEpisode = GetEpisodeByExternalId(trackedDownload.DownloadItem.Title);
+
+                if (externalIdEpisode != null)
+                {
+                    series = _seriesService.GetSeries(externalIdEpisode.SeriesId);
+
+                    // Create RemoteEpisode since we found the series/episode via external ID
+                    if (series != null && trackedDownload.RemoteEpisode == null)
+                    {
+                        _logger.Debug("Creating RemoteEpisode for external ID match: {0}", externalIdEpisode.ExternalId);
+
+                        trackedDownload.RemoteEpisode = new RemoteEpisode
+                        {
+                            Series = series,
+                            Episodes = new List<Episode> { externalIdEpisode },
+                            ParsedEpisodeInfo = new ParsedEpisodeInfo
+                            {
+                                Quality = new QualityModel(),
+                                Languages = LanguageParser.ParseLanguages(trackedDownload.DownloadItem.Title),
+                                ExternalId = externalIdEpisode.ExternalId
+                            },
+                            Languages = LanguageParser.ParseLanguages(trackedDownload.DownloadItem.Title),
+                            SeriesMatchType = SeriesMatchType.Id
+                        };
+                    }
+                }
             }
 
             if (series == null)
@@ -292,7 +319,7 @@ namespace NzbDrone.Core.Download
             return true;
         }
 
-        private Series GetSeriesByExternalId(string title)
+        private Episode GetEpisodeByExternalId(string title)
         {
             var externalId = Parser.Parser.ParseExternalIdFromFilename(title);
 
@@ -301,7 +328,7 @@ namespace NzbDrone.Core.Download
                 return null;
             }
 
-            _logger.Debug("Attempting to find series by external ID: {0}", externalId);
+            _logger.Debug("Attempting to find episode by external ID: {0}", externalId);
 
             var episode = _episodeService.FindByExternalId(externalId);
 
@@ -311,14 +338,9 @@ namespace NzbDrone.Core.Download
                 return null;
             }
 
-            var series = _seriesService.GetSeries(episode.SeriesId);
+            _logger.Debug("Found episode '{0}' via external ID: {1}", episode.Title, externalId);
 
-            if (series != null)
-            {
-                _logger.Debug("Found series '{0}' via external ID: {1}", series.Title, externalId);
-            }
-
-            return series;
+            return episode;
         }
     }
 }

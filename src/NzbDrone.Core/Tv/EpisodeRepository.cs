@@ -61,6 +61,9 @@ namespace NzbDrone.Core.Tv
 
         public Episode FindByExternalId(string externalId)
         {
+            // Normalize to lowercase before querying since external IDs are stored lowercase
+            externalId = externalId.ToLowerInvariant();
+
             return Query(e => e.ExternalId == externalId).SingleOrDefault();
         }
 

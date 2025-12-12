@@ -35,10 +35,10 @@ function NoStudio(props) {
 
       <div className={styles.buttonContainer}>
         <Button
-          to="/add/new/scene"
+          to="/add/new/studio"
           kind={kinds.PRIMARY}
         >
-          {translate('AddNewScene')}
+          {translate('AddNewStudio')}
         </Button>
       </div>
     </div>

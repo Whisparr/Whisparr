@@ -56,6 +56,20 @@ namespace Whisparr.Api.V3.Search
             return MapToResource(searchResults).ToList();
         }
 
+        [HttpGet("studio")]
+        public object SearchStudio([FromQuery] string term)
+        {
+            var searchResults = _searchProxy.SearchForNewStudio(term);
+            return MapToResource(searchResults).ToList();
+        }
+
+        [HttpGet("performer")]
+        public object SearchPerformer([FromQuery] string term)
+        {
+            var searchResults = _searchProxy.SearchForNewPerformer(term);
+            return MapToResource(searchResults).ToList();
+        }
+
         private IEnumerable<SearchResource> MapToResource(IEnumerable<object> results)
         {
             var id = 1;

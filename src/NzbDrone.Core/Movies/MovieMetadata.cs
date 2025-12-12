@@ -66,7 +66,9 @@ namespace NzbDrone.Core.Movies
     public enum ItemType
     {
         Movie,
-        Scene
+        Scene,
+        Studio,
+        Performer
     }
 
     public enum MetadataSource

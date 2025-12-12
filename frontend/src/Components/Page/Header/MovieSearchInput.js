@@ -13,6 +13,8 @@ import styles from './MovieSearchInput.css';
 
 const ADD_NEW_TYPE_MOVIE = 'addNewMovie';
 const ADD_NEW_TYPE_SCENE = 'addNewScene';
+const ADD_NEW_TYPE_STUDIO = 'addNewstudio';
+const ADD_NEW_TYPE_PERFORMER = 'addNewPerformer';
 
 class MovieSearchInput extends Component {
 
@@ -104,7 +106,20 @@ class MovieSearchInput extends Component {
         </div>
       );
     }
-
+    if (item.type === ADD_NEW_TYPE_STUDIO) {
+      return (
+        <div className={styles.addNewMovieSuggestion}>
+          Studio: "{query}"
+        </div>
+      );
+    }
+    if (item.type === ADD_NEW_TYPE_PERFORMER) {
+      return (
+        <div className={styles.addNewMovieSuggestion}>
+          Perfromer: "{query}"
+        </div>
+      );
+    }
     return (
       <MovieSearchResult
         {...item.item}
@@ -268,6 +283,10 @@ class MovieSearchInput extends Component {
     }
     if (suggestion.type === ADD_NEW_TYPE_SCENE) {
       this.props.onGoToAddNewScene(this.state.value);
+    } else if (suggestion.type === ADD_NEW_TYPE_STUDIO) {
+      this.props.onGoToAddNewStudio(this.state.value);
+    } else if (suggestion.type === ADD_NEW_TYPE_PERFORMER) {
+      this.props.onGoToAddNewPerformer(this.state.value);
     } else {
       this.goToMovie(suggestion);
     }
@@ -302,6 +321,14 @@ class MovieSearchInput extends Component {
         },
         {
           type: ADD_NEW_TYPE_SCENE,
+          title: value
+        },
+        {
+          type: ADD_NEW_TYPE_STUDIO,
+          title: value
+        },
+        {
+          type: ADD_NEW_TYPE_PERFORMER,
           title: value
         }
       ]
@@ -361,6 +388,8 @@ MovieSearchInput.propTypes = {
   onGoToMovie: PropTypes.func.isRequired,
   onGoToAddNewMovie: PropTypes.func.isRequired,
   onGoToAddNewScene: PropTypes.func.isRequired,
+  onGoToAddNewStudio: PropTypes.func.isRequired,
+  onGoToAddNewPerformer: PropTypes.func.isRequired,
   bindShortcut: PropTypes.func.isRequired
 };
 

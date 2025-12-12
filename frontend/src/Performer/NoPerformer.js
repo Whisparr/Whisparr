@@ -35,10 +35,10 @@ function NoPerformer(props) {
 
       <div className={styles.buttonContainer}>
         <Button
-          to="/add/new/scene"
+          to="/add/new/performer"
           kind={kinds.PRIMARY}
         >
-          {translate('AddNewScene')}
+          {translate('AddNewPerformer')}
         </Button>
       </div>
     </div>

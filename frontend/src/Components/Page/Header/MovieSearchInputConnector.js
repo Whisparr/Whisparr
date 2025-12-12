@@ -82,6 +82,14 @@ function createMapDispatchToProps(dispatch, props) {
 
     onGoToAddNewScene(query) {
       dispatch(push(`${window.Whisparr.urlBase}/add/new/scene?term=${encodeURIComponent(query)}`));
+    },
+
+    onGoToAddNewStudio(query) {
+      dispatch(push(`${window.Whisparr.urlBase}/add/new/studio?term=${encodeURIComponent(query)}`));
+    },
+
+    onGoToAddNewPerformer(query) {
+      dispatch(push(`${window.Whisparr.urlBase}/add/new/performer?term=${encodeURIComponent(query)}`));
     }
   };
 }

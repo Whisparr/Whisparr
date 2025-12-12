@@ -539,69 +539,13 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             else
             {
                 var searchTerm = lowerTitle.Replace("_", " ").Replace(".", " ");
+                var movies = itemType == ItemType.Movie ? SearchForNewMovie(searchTerm) : SearchForNewScene(searchTerm);
 
-                var route = itemType == ItemType.Movie ? "movie/search" : "scene/search";
-
-                var request = _whisparrMetadata.Create()
-                    .SetSegment("route", route)
-                    .AddQueryParam("q", searchTerm)
-                    .Build();
-
-                request.AllowAutoRedirect = true;
-
-                HttpResponse<List<MovieResource>> httpResponse;
-                try
+                foreach (var movie in movies)
                 {
-                    httpResponse = _httpClient.Get<List<MovieResource>>(request);
-                }
-                catch (HttpException ex)
-                {
-                    _logger.Warn(ex);
-                    throw new SkyHookException("Search for '{0}' failed. Unable to communicate with StashDb.", ex, title);
-                }
-
-                var performersAdded = new List<string>();
-                var studiosAdded = new List<string>();
-
-                foreach (var movie in httpResponse.Resource)
-                {
-                    foreach (var performer in movie.Credits)
-                    {
-                        if (performer.Performer?.Name != null && performer.Performer.Name.ToLower().Contains(lowerTitle))
-                        {
-                            var mappedPerformer = MapPerformer(performer.Performer);
-
-                            if (mappedPerformer.ForeignId.IsNotNullOrWhiteSpace() && !performersAdded.Contains(mappedPerformer.ForeignId.ToLower()))
-                            {
-                                performersAdded.Add(mappedPerformer.ForeignId.ToLower());
-                                result.Add(MapPerformer(performer.Performer));
-                            }
-                        }
-                    }
-
-                    if (movie.Studio.Title.ToLower().Contains(lowerTitle))
-                    {
-                        var mappedStudio = MapStudio(movie.Studio);
-
-                        if (mappedStudio.ForeignId.IsNotNullOrWhiteSpace() && !studiosAdded.Contains(mappedStudio.ForeignId.ToLower()))
-                        {
-                            studiosAdded.Add(mappedStudio.ForeignId.ToLower());
-                            result.Add(mappedStudio);
-                        }
-                    }
-
-                    result.Add(MapSearchResult(movie));
+                    result.Add(movie);
                 }
             }
-
-            // Sort results so exact matches come first
-            result = result.OrderByDescending(item => item switch
-            {
-                Movie movie => movie.MovieMetadata.Value.Title.ToLower() == lowerTitle,
-                Performer performer => performer.Name.ToLower() == lowerTitle,
-                Studio studio => studio.Title.ToLower() == lowerTitle,
-                _ => false
-            }).ToList();
 
             return result;
         }
@@ -830,6 +774,178 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             }
         }
 
+        public List<Performer> SearchForNewPerformer(string title)
+        {
+            try
+            {
+                var lowerTitle = title.ToLower();
+
+                lowerTitle = lowerTitle.Replace(".", "");
+
+                // Allow search to accept a full StashDB URL
+                var regex = new Regex(@"^https://stashdb\.org/performers/(?<stashid>[A-Za-z0-9\-]+).*$", RegexOptions.Compiled);
+                var match = regex.Match(title);
+
+                if (match.Success)
+                {
+                    lowerTitle = "stash:" + match.Groups["stashid"].Value;
+                    _logger.Debug($"Search based on StashDB URL.  Re-writing as {lowerTitle}");
+                }
+
+                if (lowerTitle.StartsWith("stash:") || lowerTitle.StartsWith("stashid:"))
+                {
+                    var slug = lowerTitle.Split(':')[1].Trim();
+
+                    var stashId = slug;
+
+                    if (slug.IsNullOrWhiteSpace() || slug.Any(char.IsWhiteSpace))
+                    {
+                        return new List<Performer>();
+                    }
+
+                    try
+                    {
+                        var performerLookup = GetPerformerInfo(stashId);
+                        return performerLookup == null ? new List<Performer>() : new List<Performer>() { performerLookup };
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Debug(ex, $"Perfromer not found");
+                        return new List<Performer>();
+                    }
+                }
+
+                var searchTerm = lowerTitle.Replace("_", " ").Replace(".", " ");
+
+                var firstChar = searchTerm.First();
+
+                var request = _whisparrMetadata.Create()
+                    .SetSegment("route", "performer/search")
+                    .AddQueryParam("q", searchTerm)
+                    .Build();
+
+                request.AllowAutoRedirect = true;
+                request.SuppressHttpError = true;
+
+                var httpResponse = _httpClient.Get<List<PerformerResource>>(request);
+
+                return httpResponse.Resource.SelectList(MapPerformer);
+            }
+            catch (UnexpectedHtmlContentException ex)
+            {
+                _logger.Warn(ex);
+                _logger.Warn("Search for '{0}' failed. StashDb returned a HTML Response.", ex, title, ex.Message);
+                return new List<Performer>();
+            }
+            catch (HttpException ex)
+            {
+                _logger.Warn(ex);
+                throw new SkyHookException("Search for '{0}' failed. Unable to communicate with StashDb.", ex, title);
+            }
+            catch (WebException ex)
+            {
+                _logger.Warn(ex);
+                throw new SkyHookException("Search for '{0}' failed. Unable to communicate with StashDb.", ex, title, ex.Message);
+            }
+            catch (JsonException ex)
+            {
+                _logger.Warn(ex);
+                _logger.Warn("Search for '{0}' failed. StashDb returned a JSON response.", ex, title, ex.Message);
+                return new List<Performer>();
+            }
+            catch (Exception ex)
+            {
+                _logger.Warn(ex);
+                throw new SkyHookException("Search for '{0}' failed. Invalid response received from StashDb.", ex, title);
+            }
+        }
+
+        public List<Studio> SearchForNewStudio(string title)
+        {
+            try
+            {
+                var lowerTitle = title.ToLower();
+
+                lowerTitle = lowerTitle.Replace(".", "");
+
+                // Allow search to accept a full StashDB URL
+                var regex = new Regex(@"^https://stashdb\.org/studios/(?<stashid>[A-Za-z0-9\-]+).*$", RegexOptions.Compiled);
+                var match = regex.Match(title);
+
+                if (match.Success)
+                {
+                    lowerTitle = "stash:" + match.Groups["stashid"].Value;
+                    _logger.Debug($"Search based on StashDB URL.  Re-writing as {lowerTitle}");
+                }
+
+                if (lowerTitle.StartsWith("stash:") || lowerTitle.StartsWith("stashid:"))
+                {
+                    var slug = lowerTitle.Split(':')[1].Trim();
+
+                    var stashId = slug;
+
+                    if (slug.IsNullOrWhiteSpace() || slug.Any(char.IsWhiteSpace))
+                    {
+                        return new List<Studio>();
+                    }
+
+                    try
+                    {
+                        var studioLookup = GetStudioInfo(stashId);
+                        return studioLookup == null ? new List<Studio>() : new List<Studio>() { studioLookup };
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Debug(ex, $"Studio not found");
+                        return new List<Studio>();
+                    }
+                }
+
+                var searchTerm = lowerTitle.Replace("_", " ").Replace(".", " ");
+
+                var firstChar = searchTerm.First();
+
+                var request = _whisparrMetadata.Create()
+                    .SetSegment("route", "site/search")
+                    .AddQueryParam("q", searchTerm)
+                    .Build();
+
+                request.AllowAutoRedirect = true;
+                request.SuppressHttpError = true;
+
+                var httpResponse = _httpClient.Get<List<StudioResource>>(request);
+
+                return httpResponse.Resource.SelectList(MapStudio);
+            }
+            catch (UnexpectedHtmlContentException ex)
+            {
+                _logger.Warn(ex);
+                _logger.Warn("Search for '{0}' failed. StashDb returned a HTML Response.", ex, title, ex.Message);
+                return new List<Studio>();
+            }
+            catch (HttpException ex)
+            {
+                _logger.Warn(ex);
+                throw new SkyHookException("Search for '{0}' failed. Unable to communicate with StashDb.", ex, title);
+            }
+            catch (WebException ex)
+            {
+                _logger.Warn(ex);
+                throw new SkyHookException("Search for '{0}' failed. Unable to communicate with StashDb.", ex, title, ex.Message);
+            }
+            catch (JsonException ex)
+            {
+                _logger.Warn(ex);
+                _logger.Warn("Search for '{0}' failed. StashDb returned a JSON response.", ex, title, ex.Message);
+                return new List<Studio>();
+            }
+            catch (Exception ex)
+            {
+                _logger.Warn(ex);
+                throw new SkyHookException("Search for '{0}' failed. Invalid response received from StashDb.", ex, title);
+            }
+        }
+
         private Movie MapSearchResult(MovieResource result)
         {
             var movie = _movieService.FindByForeignId(result.ItemType == ItemType.Movie ? result.ForeignIds.TmdbId.ToString() : result.ForeignIds.StashId);
@@ -973,7 +1089,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
 
         private Studio MapStudio(StudioResource studio)
         {
-            var newPerformer = new Studio
+            var newStudio = new Studio
             {
                 Title = studio.Title,
                 CleanTitle = studio.Title.CleanStudioTitle(),
@@ -985,7 +1101,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 Images = studio.Images?.Select(MapImage).ToList() ?? new List<MediaCover.MediaCover>()
             };
 
-            return newPerformer;
+            return newStudio;
         }
 
         private static Credit MapSceneCast(CastResource arg, string sceneForeignId)

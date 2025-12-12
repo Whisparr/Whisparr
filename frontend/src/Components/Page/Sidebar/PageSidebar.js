@@ -55,13 +55,25 @@ const links = [
   {
     iconName: icons.STUDIO,
     title: () => translate('Studios'),
-    to: '/studios'
+    to: '/studios',
+    children: [
+      {
+        title: () => translate('AddNew'),
+        to: '/add/new/studio'
+      }
+    ]
   },
 
   {
     iconName: icons.PERFORMER,
     title: () => translate('Performers'),
-    to: '/performers'
+    to: '/performers',
+    children: [
+      {
+        title: () => translate('AddNew'),
+        to: '/add/new/performer'
+      }
+    ]
   },
 
   {

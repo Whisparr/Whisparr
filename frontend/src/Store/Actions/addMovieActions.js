@@ -65,6 +65,8 @@ export const persistState = [
 
 export const LOOKUP_MOVIE = 'addMovie/lookupMovie';
 export const LOOKUP_SCENE = 'addMovie/lookupScene';
+export const LOOKUP_STUDIO = 'addMovie/lookupStudio';
+export const LOOKUP_PERFORMER = 'addMovie/lookupPerformer';
 export const ADD_MOVIE = 'addMovie/addMovie';
 export const ADD_PERFORMER = 'addMovie/addPerformer';
 export const ADD_STUDIO = 'addMovie/addStudio';
@@ -81,6 +83,8 @@ export const SET_ADD_STUDIO_DEFAULT = 'addMovie/setAddStudioDefault';
 
 export const lookupMovie = createThunk(LOOKUP_MOVIE);
 export const lookupScene = createThunk(LOOKUP_SCENE);
+export const lookupStudio = createThunk(LOOKUP_STUDIO);
+export const lookupPerformer = createThunk(LOOKUP_PERFORMER);
 export const addMovie = createThunk(ADD_MOVIE);
 export const addPerformer = createThunk(ADD_PERFORMER);
 export const addStudio = createThunk(ADD_STUDIO);
@@ -162,6 +166,88 @@ export const actionHandlers = handleThunks({
 
     const { request, abortRequest } = createAjaxRequest({
       url: '/lookup/scene',
+      data: {
+        term: payload.term
+      }
+    });
+
+    abortCurrentRequest = abortRequest;
+
+    request.done((data) => {
+      data = data.map((movie) => ({ ...movie, internalId: movie.id, id: movie.foreignId }));
+
+      dispatch(batchActions([
+        update({ section, data }),
+
+        set({
+          section,
+          isFetching: false,
+          isPopulated: true,
+          error: null
+        })
+      ]));
+    });
+
+    request.fail((xhr) => {
+      dispatch(set({
+        section,
+        isFetching: false,
+        isPopulated: false,
+        error: xhr.aborted ? null : xhr
+      }));
+    });
+  },
+
+  [LOOKUP_STUDIO]: function(getState, payload, dispatch) {
+    dispatch(set({ section, isFetching: true }));
+
+    if (abortCurrentRequest) {
+      abortCurrentRequest();
+    }
+
+    const { request, abortRequest } = createAjaxRequest({
+      url: '/lookup/studio',
+      data: {
+        term: payload.term
+      }
+    });
+
+    abortCurrentRequest = abortRequest;
+
+    request.done((data) => {
+      data = data.map((movie) => ({ ...movie, internalId: movie.id, id: movie.foreignId }));
+
+      dispatch(batchActions([
+        update({ section, data }),
+
+        set({
+          section,
+          isFetching: false,
+          isPopulated: true,
+          error: null
+        })
+      ]));
+    });
+
+    request.fail((xhr) => {
+      dispatch(set({
+        section,
+        isFetching: false,
+        isPopulated: false,
+        error: xhr.aborted ? null : xhr
+      }));
+    });
+  },
+
+  [LOOKUP_PERFORMER]: function(getState, payload, dispatch) {
+    dispatch(set({ section, isFetching: true }));
+
+    if (abortCurrentRequest) {
+      abortCurrentRequest();
+    }
+
+    const { request, abortRequest } = createAjaxRequest({
+      url: '/lookup/performer',
       data: {
         term: payload.term
       }

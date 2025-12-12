@@ -310,7 +310,7 @@ function EditImportListModalContent(props) {
           isTPDbPerformer &&
             <Button
               isDisabled={!hasPerformerId}
-              title={!hasPerformerId ? 'Enter a Performer ID first' : undefined}
+              title={hasPerformerId ? undefined : 'Enter a Performer ID first'}
               onPress={onPreviewSitesPress}
             >
               {translate('PreviewSites')}

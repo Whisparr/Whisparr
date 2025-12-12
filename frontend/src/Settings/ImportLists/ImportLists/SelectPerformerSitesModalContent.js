@@ -13,8 +13,8 @@ import Scroller from 'Components/Scroller/Scroller';
 import Table from 'Components/Table/Table';
 import TableBody from 'Components/Table/TableBody';
 import { icons, kinds, scrollDirections } from 'Helpers/Props';
-import translate from 'Utilities/String/translate';
 import requestAction from 'Utilities/requestAction';
+import translate from 'Utilities/String/translate';
 import SelectPerformerSitesRow from './SelectPerformerSitesRow';
 import styles from './SelectPerformerSitesModalContent.css';
 

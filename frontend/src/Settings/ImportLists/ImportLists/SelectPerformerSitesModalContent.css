@@ -14,8 +14,8 @@
   composes: modalFooter from '~Components/Modal/ModalFooter.css';
 
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   overflow: hidden;
 }
 
@@ -52,12 +52,12 @@
   }
 
   .pageInfo {
-    width: 100%;
     justify-content: space-between;
+    width: 100%;
   }
 
   .buttons {
-    width: 100%;
     justify-content: flex-end;
+    width: 100%;
   }
 }

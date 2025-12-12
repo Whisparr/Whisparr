@@ -60,8 +60,9 @@ namespace NzbDrone.Core.Parser
                 match => match.Groups["externalid"].Value),
 
             // Dot-separated format: MIDA.422.blah.blah -> MIDA-422
+            // Requires 3+ digits to avoid matching date patterns like Series.23.01.23
             new ExternalIdPattern(
-                @"^(?<prefix>[A-Z]{2,10})\.(?<number>\d{2,10})(?:\.|$)",
+                @"^(?<prefix>[A-Z]{2,10})\.(?<number>\d{3,10})(?:\.|$)",
                 match => $"{match.Groups["prefix"].Value}-{match.Groups["number"].Value}"),
         };
 

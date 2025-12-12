@@ -60,14 +60,14 @@ namespace NzbDrone.Core.Datastore
                 {
                     string version;
 
-                    try
+                    if (DatabaseType == DatabaseType.PostgreSQL)
                     {
                         version = db.QueryFirstOrDefault<string>("SHOW server_version");
 
                         // Postgres can return extra info about operating system on version call, ignore this
                         version = Regex.Replace(version, @"\(.*?\)", "");
                     }
-                    catch
+                    else
                     {
                         version = db.QueryFirstOrDefault<string>("SELECT sqlite_version()");
                     }

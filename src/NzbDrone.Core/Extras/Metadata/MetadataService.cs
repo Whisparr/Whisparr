@@ -64,7 +64,7 @@ namespace NzbDrone.Core.Extras.Metadata
 
             if (!_diskProvider.FolderExists(movie.Path))
             {
-                _logger.Info("Movie folder does not exist, skipping metadata image creation");
+                _logger.Trace("Movie folder does not exist, skipping metadata image creation");
                 return Enumerable.Empty<MetadataFile>();
             }
 
@@ -89,7 +89,7 @@ namespace NzbDrone.Core.Extras.Metadata
 
             if (!_diskProvider.FolderExists(movie.Path))
             {
-                _logger.Info("Movie folder does not exist, skipping metadata creation");
+                _logger.Trace("Movie folder does not exist, skipping metadata creation");
                 return Enumerable.Empty<MetadataFile>();
             }
 

@@ -29,17 +29,33 @@ namespace NzbDrone.Common.Cache
             }
         }
 
+        private const int THREAD_LIMIT = 2;
+        private const int THREAD_LOWER_BOUND = 2;
+        private const int THREAD_UPPER_BOUND = 10;
+
         private readonly ConcurrentDictionary<string, CacheItem> _store;
         private readonly TimeSpan? _defaultLifeTime;
         private readonly bool _rollingExpiry;
         private readonly SemaphoreSlim _lock;
+        private readonly int _threadLimit;
 
         public Cached(TimeSpan? defaultLifeTime = null, bool rollingExpiry = false)
         {
             _store = new ConcurrentDictionary<string, CacheItem>();
             _defaultLifeTime = defaultLifeTime;
             _rollingExpiry = rollingExpiry;
-            _lock = new SemaphoreSlim(2, 2);
+
+            var envLimit = Environment.GetEnvironmentVariable("CACHE_THREAD_LIMIT") ?? $"{THREAD_LIMIT}";
+            _threadLimit = THREAD_LIMIT;
+            if (int.TryParse(envLimit, out var parsedLimit))
+            {
+                _threadLimit = parsedLimit;
+            }
+
+            _threadLimit = Math.Max(THREAD_LOWER_BOUND, _threadLimit);
+            _threadLimit = Math.Min(THREAD_UPPER_BOUND, _threadLimit);
+
+            _lock = new SemaphoreSlim(_threadLimit, _threadLimit);
         }
 
         public void Set(string key, T value, TimeSpan? lifeTime = null)
@@ -82,6 +98,8 @@ namespace NzbDrone.Common.Cache
         }
 
         public int Count => _store.Count;
+
+        public int ThreadLimit => _threadLimit;
 
         public T Get(string key, Func<T> function, TimeSpan? lifeTime = null)
         {

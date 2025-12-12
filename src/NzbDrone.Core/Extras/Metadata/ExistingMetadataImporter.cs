@@ -76,7 +76,7 @@ namespace NzbDrone.Core.Extras.Metadata
                 }
             }
 
-            _logger.Info("Found {0} existing metadata files", metadataFiles.Count);
+            _logger.Trace("Found {0} existing metadata files", metadataFiles.Count);
             _metadataFileService.Upsert(metadataFiles);
 
             // Return files that were just imported along with files that were

@@ -212,6 +212,10 @@ namespace Whisparr.Api.V3.Studios
 
         private List<StudioResource> GetStudioResources(List<string> studioForeignIds)
         {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+            _logger.Trace($"GetStudioResources: {studioForeignIds.Count} studios");
+
             var studioResources = new List<StudioResource>();
 
             var missingIds = new List<string>();
@@ -231,8 +235,6 @@ namespace Whisparr.Api.V3.Studios
             if (missingIds.Count > 0)
             {
                 var releaseLock = false;
-                var stopwatch = new Stopwatch();
-                stopwatch.Start();
                 var getIds = new List<string>();
 
                 try
@@ -243,7 +245,10 @@ namespace Whisparr.Api.V3.Studios
                         _logger.Info($"Caching {missingIds.Count} studios with {_studioResourceCache.Lock.CurrentCount} avalible threads");
                         _studioResourceCache.Lock.Wait();
                         releaseLock = true;
-                        _logger.Info($"Locked studio cache for {stopwatch.ElapsedMilliseconds}ms");
+                        if (stopwatch.Elapsed.TotalSeconds > 2)
+                        {
+                            _logger.Warn($"Locked studio cache for {stopwatch.Elapsed.TotalSeconds} seconds");
+                        }
 
                         // Re-check missing IDs after acquiring the lock
                         foreach (var id in missingIds)
@@ -291,9 +296,13 @@ namespace Whisparr.Api.V3.Studios
                     if (releaseLock)
                     {
                         _studioResourceCache.Lock.Release();
-                        _logger.Info($"Process studio cache for {getIds.Count} after {stopwatch.ElapsedMilliseconds}ms");
                     }
                 }
+            }
+
+            if (stopwatch.Elapsed.TotalSeconds > 60)
+            {
+                _logger.Warn($"Processed studio cache for {studioForeignIds.Count} after {stopwatch.Elapsed.TotalSeconds} seconds");
             }
 
             return studioResources;

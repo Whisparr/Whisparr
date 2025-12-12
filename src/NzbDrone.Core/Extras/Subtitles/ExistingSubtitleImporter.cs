@@ -62,7 +62,7 @@ namespace NzbDrone.Core.Extras.Subtitles
                 }
             }
 
-            _logger.Info("Found {0} existing subtitle files", subtitleFiles.Count);
+            _logger.Trace("Found {0} existing subtitle files", subtitleFiles.Count);
             _subtitleFileService.Upsert(subtitleFiles);
 
             // Return files that were just imported along with files that were

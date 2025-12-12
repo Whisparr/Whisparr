@@ -31,7 +31,7 @@ export default function QueuedTaskRowNameCell(
       <span className={styles.commandName}>
         {commandName}
         {sortedMovies.length ? (
-          <span> - {sortedMovies.map((m) => m.title).join(', ')}</span>
+          <span> - {sortedMovies.map((m) => m?.title)?.join(', ')}</span>
         ) : null}
       </span>
 

@@ -47,7 +47,7 @@ namespace NzbDrone.Core.Extras
             var possibleExtraFiles = message.PossibleExtraFiles;
             var importedFiles = ImportExtraFiles(movie, possibleExtraFiles, null);
 
-            _logger.Info("Found {0} possible extra files, imported {1} files.", possibleExtraFiles.Count, importedFiles.Count);
+            _logger.Trace("Found {0} possible extra files, imported {1} files.", possibleExtraFiles.Count, importedFiles.Count);
         }
     }
 }

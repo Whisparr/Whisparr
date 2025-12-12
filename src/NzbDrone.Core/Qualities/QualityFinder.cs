@@ -32,7 +32,11 @@ namespace NzbDrone.Core.Qualities
                 {
                     if (quality.Source >= source)
                     {
-                        Logger.Warn($"Unable to find exact quality for {source}, and {resolution}. Using {quality} as fallback");
+                        if (source != QualitySource.Unknown)
+                        {
+                            Logger.Warn($"Unable to find exact quality for {source}, and {resolution}. Using {quality} as fallback");
+                        }
+
                         return quality;
                     }
                 }
@@ -53,7 +57,10 @@ namespace NzbDrone.Core.Qualities
                 }
             }
 
-            Logger.Warn($"Unable to find exact quality for {source}, and {resolution}. Using {nearestQuality} as fallback");
+            if (source != QualitySource.Unknown)
+            {
+                Logger.Warn($"Unable to find exact quality for {source}, and {resolution}. Using {nearestQuality} as fallback");
+            }
 
             return nearestQuality;
         }

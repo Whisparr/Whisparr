@@ -9,6 +9,12 @@ import translate from 'Utilities/String/translate';
 
 const logLevelOptions = [
   {
+    key: 'warn',
+    get value() {
+      return translate('Warn');
+    }
+  },
+  {
     key: 'info',
     get value() {
       return translate('Info');

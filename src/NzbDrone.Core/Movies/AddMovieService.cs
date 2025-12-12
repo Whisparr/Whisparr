@@ -94,8 +94,6 @@ namespace NzbDrone.Core.Movies
 
             foreach (var m in newMovies)
             {
-                _logger.Info("Adding Movie {0} Path: [{1}]", m, m.Path);
-
                 try
                 {
                     var movie = AddSkyhookData(m);
@@ -114,6 +112,8 @@ namespace NzbDrone.Core.Movies
                         _logger.Debug("Foreign ID {0} was not added due to validation failure: Movie already exists on list", m.ForeignId);
                         continue;
                     }
+
+                    _logger.Info("Adding Movie {0} Path: [{1}]", m, m.Path);
 
                     if (m.RootFolderPath == null)
                     {

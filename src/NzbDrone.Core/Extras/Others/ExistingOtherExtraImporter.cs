@@ -63,7 +63,7 @@ namespace NzbDrone.Core.Extras.Others
                 extraFiles.Add(extraFile);
             }
 
-            _logger.Info("Found {0} existing other extra files", extraFiles.Count);
+            _logger.Trace("Found {0} existing other extra files", extraFiles.Count);
             _otherExtraFileService.Upsert(extraFiles);
 
             // Return files that were just imported along with files that were

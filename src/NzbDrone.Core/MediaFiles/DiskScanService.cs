@@ -7,7 +7,6 @@ using System.Text.RegularExpressions;
 using NLog;
 using NzbDrone.Common.Disk;
 using NzbDrone.Common.Extensions;
-using NzbDrone.Common.Instrumentation.Extensions;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.MediaFiles.Commands;
 using NzbDrone.Core.MediaFiles.Events;
@@ -100,7 +99,7 @@ namespace NzbDrone.Core.MediaFiles
                 }
             }
 
-            _logger.ProgressInfo("Scanning disk for {0}", movie.Title);
+            _logger.Trace("Scanning disk for {0}", movie.Title);
 
             if (!movieFolderExists)
             {
@@ -211,7 +210,7 @@ namespace NzbDrone.Core.MediaFiles
 
         private void CompletedScanning(Movie movie, List<string> possibleExtraFiles)
         {
-            _logger.Info("Completed scanning disk for {0}", movie.Title);
+            _logger.Trace("Completed scanning disk for {0}", movie.Title);
             _eventAggregator.PublishEvent(new MovieScannedEvent(movie, possibleExtraFiles));
         }
 

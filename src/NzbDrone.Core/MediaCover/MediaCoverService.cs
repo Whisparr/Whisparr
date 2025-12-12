@@ -484,7 +484,7 @@ namespace NzbDrone.Core.MediaCover
         {
             var fileName = GetMovieCoverPath(movie.Id, cover.CoverType);
 
-            _logger.Info("Downloading {0} for {1} {2}", cover.CoverType, movie.ToString(), cover.RemoteUrl);
+            _logger.Trace("Downloading {0} for {1} {2}", cover.CoverType, movie.ToString(), cover.RemoteUrl);
             _httpClient.DownloadFile(cover.RemoteUrl, fileName);
         }
 
@@ -492,14 +492,14 @@ namespace NzbDrone.Core.MediaCover
         {
             var fileName = GetPerformerCoverPath(performer.Id, cover.CoverType);
 
-            _logger.Info("Downloading {0} for {1} {2}", cover.CoverType, performer.ToString(), cover.RemoteUrl);
+            _logger.Trace("Downloading {0} for {1} {2}", cover.CoverType, performer.ToString(), cover.RemoteUrl);
             _httpClient.DownloadFile(cover.RemoteUrl, fileName);
         }
 
         private void DownloadCover(Studio studio, MediaCover cover)
         {
             var req = new HttpRequest(cover.RemoteUrl);
-            _logger.Info("Downloading {0} for {1} {2}", cover.CoverType, studio.ToString(), cover.RemoteUrl);
+            _logger.Trace("Downloading {0} for {1} {2}", cover.CoverType, studio.ToString(), cover.RemoteUrl);
             var imageResponse = _httpClient.Execute(req);
             var extension = imageResponse.Headers.ContentType switch
             {

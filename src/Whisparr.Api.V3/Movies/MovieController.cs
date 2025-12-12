@@ -538,6 +538,10 @@ namespace Whisparr.Api.V3.Movies
         {
             var moviesResources = new List<MovieResource>();
 
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+            _logger.Trace($"GetMovieResources {ids.Count} movies");
+
             var missingIds = new List<int>();
             foreach (var id in ids)
             {
@@ -555,8 +559,6 @@ namespace Whisparr.Api.V3.Movies
             if (missingIds.Count > 0)
             {
                 var releaseLock = false;
-                var stopwatch = new Stopwatch();
-                stopwatch.Start();
                 var getIds = new List<int>();
 
                 try
@@ -567,7 +569,10 @@ namespace Whisparr.Api.V3.Movies
                         _logger.Info($"Caching {missingIds.Count} movies with {_movieResourcesCache.Lock.CurrentCount} avalible threads");
                         _movieResourcesCache.Lock.Wait();
                         releaseLock = true;
-                        _logger.Info($"Locked movie cache for {stopwatch.ElapsedMilliseconds}ms");
+                        if (stopwatch.Elapsed.TotalSeconds > 2)
+                        {
+                            _logger.Warn($"Locked movie cache for {stopwatch.Elapsed.TotalSeconds} seconds");
+                        }
 
                         // recheck after acquiring the lock
                         foreach (var id in missingIds)
@@ -593,37 +598,32 @@ namespace Whisparr.Api.V3.Movies
                         var coverFileInfos = _coverMapper.GetMovieCoverFileInfos();
                         var availDelay = _configService.AvailabilityDelay;
 
-                        var chunkSize = 5000;
+                        var movies = _moviesService.FindByIds(getIds);
+                        var movieStats = _movieStatisticsService.MovieStatistics(getIds);
+                        var sdict = movieStats.ToDictionary(x => x.MovieId);
 
-                        foreach (var chunkIds in getIds.Chunk(chunkSize))
+                        foreach (var movie in movies)
                         {
-                            var movies = _moviesService.FindByIds(chunkIds.ToList());
-                            var movieStats = _movieStatisticsService.MovieStatistics(chunkIds.ToList());
-                            var sdict = movieStats.ToDictionary(x => x.MovieId);
-
-                            foreach (var movie in movies)
+                            try
                             {
-                                try
-                                {
-                                    moviesResources.Add(movie.ToResource(availDelay, _qualityUpgradableSpecification));
-                                }
-                                catch (Exception e)
-                                {
-                                    _logger.Error(e, "Error Converting  '{0}' to Resource", movie);
-                                }
+                                moviesResources.Add(movie.ToResource(availDelay, _qualityUpgradableSpecification));
                             }
-
-                            LinkMovieStatistics(moviesResources, sdict);
-                            MapCoversToLocal(moviesResources, coverFileInfos);
-
-                            var rootFolders = _rootFolderService.All();
-
-                            moviesResources.ForEach(m => m.RootFolderPath = _rootFolderService.GetBestRootFolderPath(m.Path, rootFolders));
-
-                            foreach (var moviesResource in moviesResources)
+                            catch (Exception e)
                             {
-                                _movieResourcesCache.Set(moviesResource.Id.ToString(), moviesResource);
+                                _logger.Error(e, "Error Converting  '{0}' to Resource", movie);
                             }
+                        }
+
+                        LinkMovieStatistics(moviesResources, sdict);
+                        MapCoversToLocal(moviesResources, coverFileInfos);
+
+                        var rootFolders = _rootFolderService.All();
+
+                        moviesResources.ForEach(m => m.RootFolderPath = _rootFolderService.GetBestRootFolderPath(m.Path, rootFolders));
+
+                        foreach (var moviesResource in moviesResources)
+                        {
+                            _movieResourcesCache.Set(moviesResource.Id.ToString(), moviesResource);
                         }
                     }
                 }
@@ -633,9 +633,13 @@ namespace Whisparr.Api.V3.Movies
                     if (releaseLock)
                     {
                         _movieResourcesCache.Lock.Release();
-                        _logger.Info($"Process movie cache for {getIds.Count} after {stopwatch.ElapsedMilliseconds}ms");
                     }
                 }
+            }
+
+            if (stopwatch.Elapsed.TotalSeconds > 60)
+            {
+                _logger.Warn($"Processed movie cache for {ids.Count} after {stopwatch.Elapsed.TotalSeconds} seconds");
             }
 
             return moviesResources;

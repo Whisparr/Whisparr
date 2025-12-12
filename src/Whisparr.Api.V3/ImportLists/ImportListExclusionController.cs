@@ -168,6 +168,10 @@ namespace Whisparr.Api.V3.ImportLists
 
         private List<ImportListExclusionResource> GetExclusionResources(List<int> ids)
         {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+            _logger.Trace($"ImportListExclusionResource: {ids.Count} exclusions");
+
             var exclusionResources = new List<ImportListExclusionResource>();
 
             var missingIds = new List<int>();
@@ -187,8 +191,6 @@ namespace Whisparr.Api.V3.ImportLists
             if (missingIds.Count > 0)
             {
                 var releaseLock = false;
-                var stopwatch = new Stopwatch();
-                stopwatch.Start();
                 var getIds = new List<int>();
 
                 try
@@ -196,10 +198,13 @@ namespace Whisparr.Api.V3.ImportLists
                     // If there are a large number of missing IDs, acquire the lock to prevent cache stampede
                     if (missingIds.Count > 100)
                     {
-                        _logger.Info($"Caching {missingIds.Count} exclusion with {_exclusionResourceCache.Lock.CurrentCount} avalible threads");
+                        _logger.Info($"Caching {missingIds.Count} exclusions with {_exclusionResourceCache.Lock.CurrentCount} avalible threads");
                         _exclusionResourceCache.Lock.Wait();
                         releaseLock = true;
-                        _logger.Info($"Locked exclusion cache for {stopwatch.ElapsedMilliseconds}ms");
+                        if (stopwatch.Elapsed.TotalSeconds > 2)
+                        {
+                            _logger.Warn($"Locked exclusion cache for {stopwatch.Elapsed.TotalSeconds} seconds");
+                        }
 
                         // recheck after acquiring the lock
                         foreach (var id in missingIds)
@@ -241,9 +246,13 @@ namespace Whisparr.Api.V3.ImportLists
                     if (releaseLock)
                     {
                         _exclusionResourceCache.Lock.Release();
-                        _logger.Info($"Process exclusion cache for {getIds.Count} after {stopwatch.ElapsedMilliseconds}ms");
                     }
                 }
+            }
+
+            if (stopwatch.Elapsed.TotalSeconds > 60)
+            {
+                _logger.Warn($"Processed exclusion cache for {ids.Count} after {stopwatch.Elapsed.TotalSeconds} seconds");
             }
 
             return exclusionResources;

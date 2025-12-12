@@ -66,8 +66,6 @@ namespace NzbDrone.Core.Movies.Performers
 
             foreach (var m in newPerformers)
             {
-                _logger.Info("Adding Performer {0}", m.Name);
-
                 try
                 {
                     var performer = AddSkyhookData(m);
@@ -86,6 +84,8 @@ namespace NzbDrone.Core.Movies.Performers
                         _logger.Debug("Foreign ID {0} was not added due to validation failure: Performer already exists on list", m.ForeignId);
                         continue;
                     }
+
+                    _logger.Info("Adding Performer {0}", performer.Name);
 
                     performersToAdd.Add(performer);
                 }

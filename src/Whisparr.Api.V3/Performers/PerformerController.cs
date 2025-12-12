@@ -216,6 +216,10 @@ namespace Whisparr.Api.V3.Performers
 
         private List<PerformerResource> GetPerformerResources(List<string> performerForeignIds)
         {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+            _logger.Trace($"GetPerformerResources: {performerForeignIds.Count} performers");
+
             var performerResources = new List<PerformerResource>();
 
             var missingIds = new List<string>();
@@ -235,8 +239,6 @@ namespace Whisparr.Api.V3.Performers
             if (missingIds.Count > 0)
             {
                 var releaseLock = false;
-                var stopwatch = new Stopwatch();
-                stopwatch.Start();
                 var getIds = new List<string>();
 
                 try
@@ -247,7 +249,10 @@ namespace Whisparr.Api.V3.Performers
                         _logger.Info($"Caching {missingIds.Count} performers with {_performerResourceCache.Lock.CurrentCount} avalible threads");
                         _performerResourceCache.Lock.Wait();
                         releaseLock = true;
-                        _logger.Info($"Locked performer cache for {stopwatch.ElapsedMilliseconds}ms");
+                        if (stopwatch.Elapsed.TotalSeconds > 2)
+                        {
+                            _logger.Warn($"Locked performer cache for {stopwatch.Elapsed.TotalSeconds} seconds");
+                        }
 
                         // recheck after acquiring the lock
                         foreach (var id in missingIds)
@@ -295,9 +300,13 @@ namespace Whisparr.Api.V3.Performers
                     if (releaseLock)
                     {
                         _performerResourceCache.Lock.Release();
-                        _logger.Info($"Process performer cache for {getIds.Count} after {stopwatch.ElapsedMilliseconds}ms");
                     }
                 }
+            }
+
+            if (stopwatch.Elapsed.TotalSeconds > 60)
+            {
+                _logger.Warn($"Processed performer cache for {performerForeignIds.Count} after {stopwatch.Elapsed.TotalSeconds} seconds");
             }
 
             return performerResources;

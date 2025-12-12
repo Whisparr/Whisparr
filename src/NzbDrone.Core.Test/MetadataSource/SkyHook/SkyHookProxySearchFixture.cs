@@ -45,6 +45,34 @@ namespace NzbDrone.Core.Test.MetadataSource.SkyHook
             ExceptionVerification.IgnoreWarns();
         }
 
+        [TestCase("whitney wright", "Whitney Wright")]
+        [TestCase("stash:155f2559-d1f1-42b1-8cbe-9008542df5ce", "Angela White")]
+        [TestCase("stashid:155f2559-d1f1-42b1-8cbe-9008542df5ce", "Angela White")]
+        [TestCase("https://stashdb.org/performers/155f2559-d1f1-42b1-8cbe-9008542df5ce", "Angela White")]
+        public void successful_performer_search(string title, string expected)
+        {
+            var result = Subject.SearchForNewPerformer(title);
+
+            result.Should().NotBeEmpty();
+
+            result[0].Name.Should().Be(expected);
+
+            ExceptionVerification.IgnoreWarns();
+        }
+
+        [TestCase("blacked", "Blacked")]
+        [TestCase("https://stashdb.org/studios/39cee498-a9ac-4403-910a-1a0157ad22d8", "Brazzers Exxtra")]
+        public void successful_studio_search(string title, string expected)
+        {
+            var result = Subject.SearchForNewStudio(title);
+
+            result.Should().NotBeEmpty();
+
+            result[0].Title.Should().Be(expected);
+
+            ExceptionVerification.IgnoreWarns();
+        }
+
         [TestCase("tmdbid:")]
         [TestCase("tmdbid: 99999999999999999999")]
         [TestCase("tmdbid: 0")]

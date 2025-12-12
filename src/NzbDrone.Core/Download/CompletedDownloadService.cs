@@ -33,6 +33,7 @@ namespace NzbDrone.Core.Download
         private readonly IDownloadedEpisodesImportService _downloadedEpisodesImportService;
         private readonly IParsingService _parsingService;
         private readonly ISeriesService _seriesService;
+        private readonly IEpisodeService _episodeService;
         private readonly ITrackedDownloadAlreadyImported _trackedDownloadAlreadyImported;
         private readonly Logger _logger;
 
@@ -42,6 +43,7 @@ namespace NzbDrone.Core.Download
                                         IDownloadedEpisodesImportService downloadedEpisodesImportService,
                                         IParsingService parsingService,
                                         ISeriesService seriesService,
+                                        IEpisodeService episodeService,
                                         ITrackedDownloadAlreadyImported trackedDownloadAlreadyImported,
                                         Logger logger)
         {
@@ -51,6 +53,7 @@ namespace NzbDrone.Core.Download
             _downloadedEpisodesImportService = downloadedEpisodesImportService;
             _parsingService = parsingService;
             _seriesService = seriesService;
+            _episodeService = episodeService;
             _trackedDownloadAlreadyImported = trackedDownloadAlreadyImported;
             _logger = logger;
         }
@@ -85,6 +88,12 @@ namespace NzbDrone.Core.Download
             }
 
             var series = _parsingService.GetSeries(trackedDownload.DownloadItem.Title);
+
+            if (series == null)
+            {
+                // Try to find series by external ID from download title (e.g., MIKR-058)
+                series = GetSeriesByExternalId(trackedDownload.DownloadItem.Title);
+            }
 
             if (series == null)
             {
@@ -281,6 +290,35 @@ namespace NzbDrone.Core.Download
             }
 
             return true;
+        }
+
+        private Series GetSeriesByExternalId(string title)
+        {
+            var externalId = Parser.Parser.ParseExternalIdFromFilename(title);
+
+            if (externalId.IsNullOrWhiteSpace())
+            {
+                return null;
+            }
+
+            _logger.Debug("Attempting to find series by external ID: {0}", externalId);
+
+            var episode = _episodeService.FindByExternalId(externalId);
+
+            if (episode == null)
+            {
+                _logger.Debug("No episode found with external ID: {0}", externalId);
+                return null;
+            }
+
+            var series = _seriesService.GetSeries(episode.SeriesId);
+
+            if (series != null)
+            {
+                _logger.Debug("Found series '{0}' via external ID: {1}", series.Title, externalId);
+            }
+
+            return series;
         }
     }
 }

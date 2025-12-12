@@ -115,5 +115,46 @@ namespace NzbDrone.Core.Test.ParserTests
             var result = Parser.Parser.ParseTitle(path);
             result.ReleaseTitle.Should().Be(releaseTitle);
         }
+
+        [TestCase("MIKR-058.mp4", "MIKR-058")]
+        [TestCase("ABC-123.mkv", "ABC-123")]
+        [TestCase("XYZ_456.avi", "XYZ_456")]
+        [TestCase("ABCD-1234", "ABCD-1234")]
+        [TestCase("AB-12.mp4", "AB-12")]
+        [TestCase("ABCDEFGHIJ-1234567890", "ABCDEFGHIJ-1234567890")]
+        public void should_parse_external_id_from_filename(string filename, string expectedExternalId)
+        {
+            var result = Parser.Parser.ParseExternalIdFromFilename(filename);
+            result.Should().Be(expectedExternalId);
+        }
+
+        [TestCase("Some Random Title.mp4")]
+        [TestCase("Series.23.01.23.Title.mkv")]
+        [TestCase("A-1.mp4")] // Too short - needs 2+ chars on each side
+        [TestCase("ABCDEFGHIJK-12345678901")] // Too long - max 10 chars on each side
+        [TestCase("123-ABC.mp4")] // First part must be letters only
+        public void should_not_parse_external_id_from_non_matching_filename(string filename)
+        {
+            var result = Parser.Parser.ParseExternalIdFromFilename(filename);
+            result.Should().BeNull();
+        }
+
+        [TestCase("[MIKR-058] Some Title", "MIKR-058")]
+        [TestCase("[ABC-123]", "ABC-123")]
+        [TestCase("[XYZ_456] Title Here", "XYZ_456")]
+        public void should_parse_external_id_from_bracketed_title(string title, string expectedExternalId)
+        {
+            var result = Parser.Parser.ParseExternalId(title);
+            result.Should().Be(expectedExternalId);
+        }
+
+        [TestCase("Some Title Without Bracket")]
+        [TestCase("MIKR-058 Without Bracket")]
+        [TestCase("[SubGroup] Some Title")]
+        public void should_not_parse_external_id_from_non_matching_title(string title)
+        {
+            var result = Parser.Parser.ParseExternalId(title);
+            result.Should().BeNull();
+        }
     }
 }

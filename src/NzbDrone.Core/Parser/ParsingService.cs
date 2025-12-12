@@ -16,6 +16,7 @@ namespace NzbDrone.Core.Parser
         RemoteEpisode Map(ParsedEpisodeInfo parsedEpisodeInfo, int tvdbId, SearchCriteriaBase searchCriteria = null);
         RemoteEpisode Map(ParsedEpisodeInfo parsedEpisodeInfo, Series series);
         RemoteEpisode Map(ParsedEpisodeInfo parsedEpisodeInfo, int seriesId, IEnumerable<int> episodeIds);
+        RemoteEpisode MapByExternalId(ParsedEpisodeInfo parsedEpisodeInfo, SearchCriteriaBase searchCriteria);
         List<Episode> GetEpisodes(ParsedEpisodeInfo parsedEpisodeInfo, Series series, bool sceneSource, SearchCriteriaBase searchCriteria = null);
         ParsedEpisodeInfo ParseSpecialEpisodeTitle(ParsedEpisodeInfo parsedEpisodeInfo, string releaseTitle, int tvdbId, SearchCriteriaBase searchCriteria = null);
         ParsedEpisodeInfo ParseSpecialEpisodeTitle(ParsedEpisodeInfo parsedEpisodeInfo, string releaseTitle, Series series);
@@ -118,6 +119,30 @@ namespace NzbDrone.Core.Parser
                        Series = _seriesService.GetSeries(seriesId),
                        Episodes = _episodeService.GetEpisodes(episodeIds)
                    };
+        }
+
+        public RemoteEpisode MapByExternalId(ParsedEpisodeInfo parsedEpisodeInfo, SearchCriteriaBase searchCriteria)
+        {
+            // When mapping by external ID, we trust the search criteria's series and episodes
+            // since the external ID has already been matched in DownloadDecisionMaker
+            var remoteEpisode = new RemoteEpisode
+            {
+                ParsedEpisodeInfo = parsedEpisodeInfo,
+                Series = searchCriteria.Series,
+                Episodes = searchCriteria.Episodes,
+                SeriesMatchType = SeriesMatchType.Id,
+                Languages = parsedEpisodeInfo.Languages
+            };
+
+            if (searchCriteria.Episodes.Any())
+            {
+                var requestedEpisodes = searchCriteria.Episodes.ToDictionaryIgnoreDuplicates(v => v.Id);
+                remoteEpisode.EpisodeRequested = remoteEpisode.Episodes.Any(v => requestedEpisodes.ContainsKey(v.Id));
+            }
+
+            _logger.Debug("Mapped release by external ID to series '{0}' with {1} episode(s)", searchCriteria.Series.Title, searchCriteria.Episodes.Count);
+
+            return remoteEpisode;
         }
 
         private RemoteEpisode Map(ParsedEpisodeInfo parsedEpisodeInfo, int tvdbId, Series series, SearchCriteriaBase searchCriteria)

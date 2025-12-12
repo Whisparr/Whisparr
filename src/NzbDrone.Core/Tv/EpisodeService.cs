@@ -19,6 +19,7 @@ namespace NzbDrone.Core.Tv
         Episode FindEpisode(int seriesId, int absoluteEpisodeNumber);
         Episode FindEpisodeByTitle(int seriesId, int seasonNumber, string releaseTitle);
         Episode FindEpisode(int seriesId, string date, string part);
+        Episode FindByExternalId(string externalId);
         List<Episode> GetEpisodeBySeries(int seriesId);
         List<Episode> GetEpisodesBySeason(int seriesId, int seasonNumber);
         List<Episode> EpisodesWithFiles(int seriesId);
@@ -70,6 +71,11 @@ namespace NzbDrone.Core.Tv
         public Episode FindEpisode(int seriesId, string date, string part)
         {
             return FindOneByAirDate(seriesId, date, part);
+        }
+
+        public Episode FindByExternalId(string externalId)
+        {
+            return _episodeRepository.FindByExternalId(externalId);
         }
 
         public List<Episode> GetEpisodeBySeries(int seriesId)

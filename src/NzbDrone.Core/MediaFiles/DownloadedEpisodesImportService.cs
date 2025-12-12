@@ -27,6 +27,7 @@ namespace NzbDrone.Core.MediaFiles
         private readonly IDiskProvider _diskProvider;
         private readonly IDiskScanService _diskScanService;
         private readonly ISeriesService _seriesService;
+        private readonly IEpisodeService _episodeService;
         private readonly IParsingService _parsingService;
         private readonly IMakeImportDecision _importDecisionMaker;
         private readonly IImportApprovedEpisodes _importApprovedEpisodes;
@@ -37,6 +38,7 @@ namespace NzbDrone.Core.MediaFiles
         public DownloadedEpisodesImportService(IDiskProvider diskProvider,
                                                IDiskScanService diskScanService,
                                                ISeriesService seriesService,
+                                               IEpisodeService episodeService,
                                                IParsingService parsingService,
                                                IMakeImportDecision importDecisionMaker,
                                                IImportApprovedEpisodes importApprovedEpisodes,
@@ -47,6 +49,7 @@ namespace NzbDrone.Core.MediaFiles
             _diskProvider = diskProvider;
             _diskScanService = diskScanService;
             _seriesService = seriesService;
+            _episodeService = episodeService;
             _parsingService = parsingService;
             _importDecisionMaker = importDecisionMaker;
             _importApprovedEpisodes = importApprovedEpisodes;
@@ -236,6 +239,12 @@ namespace NzbDrone.Core.MediaFiles
 
             if (series == null)
             {
+                // Try to find series by external ID from filename (e.g., MIKR-058.mp4)
+                series = GetSeriesByExternalId(fileInfo.Name);
+            }
+
+            if (series == null)
+            {
                 _logger.Debug("Unknown Series for file: {0}", fileInfo.Name);
 
                 return new List<ImportResult>
@@ -245,6 +254,35 @@ namespace NzbDrone.Core.MediaFiles
             }
 
             return ProcessFile(fileInfo, importMode, series, downloadClientItem);
+        }
+
+        private Series GetSeriesByExternalId(string filename)
+        {
+            var externalId = Parser.Parser.ParseExternalIdFromFilename(filename);
+
+            if (externalId.IsNullOrWhiteSpace())
+            {
+                return null;
+            }
+
+            _logger.Debug("Attempting to find series by external ID: {0}", externalId);
+
+            var episode = _episodeService.FindByExternalId(externalId);
+
+            if (episode == null)
+            {
+                _logger.Debug("No episode found with external ID: {0}", externalId);
+                return null;
+            }
+
+            var series = _seriesService.GetSeries(episode.SeriesId);
+
+            if (series != null)
+            {
+                _logger.Debug("Found series '{0}' via external ID: {1}", series.Title, externalId);
+            }
+
+            return series;
         }
 
         private List<ImportResult> ProcessFile(FileInfo fileInfo, ImportMode importMode, Series series, DownloadClientItem downloadClientItem)

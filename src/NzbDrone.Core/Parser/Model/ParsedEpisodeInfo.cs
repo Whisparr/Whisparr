@@ -16,6 +16,7 @@ namespace NzbDrone.Core.Parser.Model
         public string ReleaseHash { get; set; }
         public int SeasonPart { get; set; }
         public string ReleaseTokens { get; set; }
+        public string ExternalId { get; set; }
 
         public ParsedEpisodeInfo()
         {

@@ -15,6 +15,9 @@ namespace NzbDrone.Core.Parser
 {
     public static class Parser
     {
+        // Common external ID pattern: 2-10 letters, dash/underscore, 2-10 alphanumeric (e.g., MIKR-058, ABC_123)
+        private const string ExternalIdBasePattern = @"[A-Z]{2,10}[-_][A-Z0-9]{2,10}";
+
         private static readonly Logger Logger = NzbDroneLogger.GetLogger(typeof(Parser));
 
         private static readonly RegexReplace[] PreSubstitutionRegex = new[]
@@ -38,15 +41,29 @@ namespace NzbDrone.Core.Parser
                 new RegexReplace(@"^\[(?<subgroup>[^\]]+)\](?:(?<chinesubgroup>\[(?=[^\]]*?[\u4E00-\u9FCC])[^\]]*\])+)\[(?<title>[^\]]+?)\](?<junk>\[[^\]]+\])*\[(?<episode>[0-9]+(?:-[0-9]+)?)( END| Fin)?\]", "[${subgroup}] ${title} - ${episode} ", RegexOptions.Compiled)
             };
 
-        // Regex to extract external IDs from release titles
-        // Matches patterns like [MIKR-058], [ABC-123], [XYZ_456] at the start of titles
-        private static readonly Regex ExternalIdBracketedRegex = new Regex(@"^\[(?<externalid>[A-Z]{2,10}[-_][A-Z0-9]{2,10})\]",
-            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        // External ID pattern definitions for JAV and similar releases
+        private static readonly ExternalIdPattern[] ExternalIdPatterns = new[]
+        {
+            // Bracketed format: [MIKR-058], [ABC-123], [XYZ_456]
+            new ExternalIdPattern(
+                $@"^\[(?<externalid>{ExternalIdBasePattern})\]",
+                match => match.Groups["externalid"].Value),
 
-        // Regex to extract external IDs from bare filenames (e.g., "MIKR-058.mp4" or "ABC-123")
-        // Matches the external ID pattern when it's the entire filename (with optional extension)
-        private static readonly Regex ExternalIdBareRegex = new Regex(@"^(?<externalid>[A-Z]{2,10}[-_][A-Z0-9]{2,10})(?:\.[a-z0-9]{2,4})?$",
-            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            // Numbered parts with quoted filename: [01/10] - "MIDA-422.mp4"
+            new ExternalIdPattern(
+                $@"^\[\d+/\d+\]\s*-\s*""(?<externalid>{ExternalIdBasePattern})",
+                match => match.Groups["externalid"].Value),
+
+            // Dash/underscore separated: MIKR-058, ABC_123 (bare or with extension)
+            new ExternalIdPattern(
+                $@"^(?<externalid>{ExternalIdBasePattern})(?:\.[a-z0-9]{{2,4}})?$",
+                match => match.Groups["externalid"].Value),
+
+            // Dot-separated format: MIDA.422.blah.blah -> MIDA-422
+            new ExternalIdPattern(
+                @"^(?<prefix>[A-Z]{2,10})\.(?<number>\d{2,10})(?:\.|$)",
+                match => $"{match.Groups["prefix"].Value}-{match.Groups["number"].Value}"),
+        };
 
         private static readonly Regex[] ReportTitleRegex = new[]
             {
@@ -461,14 +478,15 @@ namespace NzbDrone.Core.Parser
                 return null;
             }
 
-            // Parse bracketed format from release titles: [MIKR-058] Title...
-            var match = ExternalIdBracketedRegex.Match(title);
-
-            if (match.Success)
+            foreach (var pattern in ExternalIdPatterns)
             {
-                var externalId = match.Groups["externalid"].Value;
-                Logger.Debug("Parsed external ID from release title: {0}", externalId);
-                return externalId;
+                var externalId = pattern.TryExtract(title);
+
+                if (externalId != null)
+                {
+                    Logger.Debug("Parsed external ID '{0}' from title using pattern: {1}", externalId, pattern);
+                    return externalId;
+                }
             }
 
             return null;
@@ -481,14 +499,15 @@ namespace NzbDrone.Core.Parser
                 return null;
             }
 
-            // Parse bare format from filenames: MIKR-058.mp4 or MIKR-058
-            var match = ExternalIdBareRegex.Match(filename);
-
-            if (match.Success)
+            foreach (var pattern in ExternalIdPatterns)
             {
-                var externalId = match.Groups["externalid"].Value;
-                Logger.Debug("Parsed external ID from filename: {0}", externalId);
-                return externalId;
+                var externalId = pattern.TryExtract(filename);
+
+                if (externalId != null)
+                {
+                    Logger.Debug("Parsed external ID '{0}' from filename using pattern: {1}", externalId, pattern);
+                    return externalId;
+                }
             }
 
             return null;

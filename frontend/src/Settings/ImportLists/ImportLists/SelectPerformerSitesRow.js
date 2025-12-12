@@ -10,7 +10,6 @@ function SelectPerformerSitesRow(props) {
   const {
     id,
     title,
-    year,
     sceneCount,
     exists,
     isSelected,
@@ -34,10 +33,6 @@ function SelectPerformerSitesRow(props) {
       </TableRowCell>
 
       <TableRowCell>
-        {year > 0 ? year : '-'}
-      </TableRowCell>
-
-      <TableRowCell>
         {sceneCount}
       </TableRowCell>
 
@@ -57,7 +52,6 @@ function SelectPerformerSitesRow(props) {
 SelectPerformerSitesRow.propTypes = {
   id: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
-  year: PropTypes.number.isRequired,
   sceneCount: PropTypes.number.isRequired,
   exists: PropTypes.bool.isRequired,
   isSelected: PropTypes.bool,

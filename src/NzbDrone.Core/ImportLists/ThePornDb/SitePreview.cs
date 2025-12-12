@@ -4,7 +4,6 @@ namespace NzbDrone.Core.ImportLists.TPDb
     {
         public int TvdbId { get; set; }
         public string Title { get; set; }
-        public int Year { get; set; }
         public bool Exists { get; set; }
         public int SceneCount { get; set; }
     }

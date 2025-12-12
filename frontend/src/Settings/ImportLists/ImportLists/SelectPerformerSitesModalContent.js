@@ -27,11 +27,6 @@ const columns = [
     isVisible: true
   },
   {
-    name: 'year',
-    label: () => translate('Year'),
-    isVisible: true
-  },
-  {
     name: 'sceneCount',
     label: () => translate('Scenes'),
     isVisible: true
@@ -223,7 +218,6 @@ function SelectPerformerSitesModalContent(props) {
                     key={site.tvdbId}
                     id={site.tvdbId}
                     title={site.title}
-                    year={site.year}
                     sceneCount={site.sceneCount}
                     exists={site.exists}
                     isSelected={selectedState[site.tvdbId]}

@@ -5,7 +5,6 @@ using FluentValidation.Results;
 using NLog;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Configuration;
-using NzbDrone.Core.MetadataSource;
 using NzbDrone.Core.Parser;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.Tv;
@@ -16,7 +15,6 @@ namespace NzbDrone.Core.ImportLists.TPDb
     {
         private readonly ITPDbImportProxy _customProxy;
         private readonly ISeriesService _seriesService;
-        private readonly IProvideSeriesInfo _seriesInfo;
 
         public override string Name => "TPDb Performer";
 
@@ -29,13 +27,11 @@ namespace NzbDrone.Core.ImportLists.TPDb
                              IConfigService configService,
                              IParsingService parsingService,
                              ISeriesService seriesService,
-                             IProvideSeriesInfo seriesInfo,
                              Logger logger)
             : base(importListStatusService, configService, parsingService, logger)
         {
             _customProxy = customProxy;
             _seriesService = seriesService;
-            _seriesInfo = seriesInfo;
         }
 
         public override IList<ImportListItemInfo> Fetch()
@@ -117,14 +113,12 @@ namespace NzbDrone.Core.ImportLists.TPDb
                     if (localSeries != null)
                     {
                         preview.Title = localSeries.Title;
-                        preview.Year = localSeries.Year;
                         preview.Exists = true;
                     }
                     else
                     {
                         // Use the site name from TPDb API
                         preview.Title = siteInfo.Name ?? $"Site {siteId}";
-                        preview.Year = 0;
                         preview.Exists = false;
                     }
 

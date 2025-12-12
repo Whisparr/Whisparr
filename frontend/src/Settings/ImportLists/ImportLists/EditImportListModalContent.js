@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import SeriesMonitoringOptionsPopoverContent from 'AddSeries/SeriesMonitoringOptionsPopoverContent';
 import SeriesMonitorNewItemsOptionsPopoverContent from 'AddSeries/SeriesMonitorNewItemsOptionsPopoverContent';
 import Alert from 'Components/Alert';
@@ -21,9 +21,11 @@ import { icons, inputTypes, kinds, tooltipPositions } from 'Helpers/Props';
 import formatShortTimeSpan from 'Utilities/Date/formatShortTimeSpan';
 import translate from 'Utilities/String/translate';
 import ImportListMonitoringOptionsPopoverContent from './ImportListMonitoringOptionsPopoverContent';
+import SelectPerformerSitesModal from './SelectPerformerSitesModal';
 import styles from './EditImportListModalContent.css';
 
 function EditImportListModalContent(props) {
+  const [isSelectSitesModalOpen, setIsSelectSitesModalOpen] = useState(false);
 
   const monitorOptions = [
     { key: 'none', value: 'None' },
@@ -50,6 +52,7 @@ function EditImportListModalContent(props) {
 
   const {
     id,
+    implementation,
     implementationName,
     name,
     enableAutomaticAdd,
@@ -63,6 +66,22 @@ function EditImportListModalContent(props) {
     tags,
     fields
   } = item;
+
+  const performerIdField = fields?.find((f) => f.name === 'performerId');
+  const hasPerformerId = performerIdField?.value;
+  const isTPDbPerformer = implementation === 'TPDbPerformer' || implementationName === 'TPDb Performer';
+
+  const onPreviewSitesPress = useCallback(() => {
+    setIsSelectSitesModalOpen(true);
+  }, []);
+
+  const onSelectSitesModalClose = useCallback(() => {
+    setIsSelectSitesModalOpen(false);
+  }, []);
+
+  const onSitesSelected = useCallback((excludedSiteIds) => {
+    onFieldChange({ name: 'excludedSiteIds', value: excludedSiteIds });
+  }, [onFieldChange]);
 
   return (
     <ModalContent onModalClose={onModalClose}>
@@ -287,6 +306,17 @@ function EditImportListModalContent(props) {
             </Button>
         }
 
+        {
+          isTPDbPerformer &&
+            <Button
+              isDisabled={!hasPerformerId}
+              title={!hasPerformerId ? 'Enter a Performer ID first' : undefined}
+              onPress={onPreviewSitesPress}
+            >
+              {translate('PreviewSites')}
+            </Button>
+        }
+
         <SpinnerErrorButton
           isSpinning={isTesting}
           error={saveError}
@@ -309,6 +339,13 @@ function EditImportListModalContent(props) {
           {translate('Save')}
         </SpinnerErrorButton>
       </ModalFooter>
+
+      <SelectPerformerSitesModal
+        isOpen={isSelectSitesModalOpen}
+        providerData={item}
+        onSitesSelected={onSitesSelected}
+        onModalClose={onSelectSitesModalClose}
+      />
     </ModalContent>
   );
 }

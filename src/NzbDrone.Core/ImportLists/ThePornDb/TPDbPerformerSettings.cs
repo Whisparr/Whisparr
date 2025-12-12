@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using FluentValidation;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Annotations;
@@ -27,12 +28,16 @@ namespace NzbDrone.Core.ImportLists.TPDb
         public TPDbPerformerSettings()
         {
             BaseUrl = "https://api.whisparr.com/v3";
+            ExcludedSiteIds = new List<int>();
         }
 
         public string BaseUrl { get; set; }
 
         [FieldDefinition(0, Label = "Performer Id", HelpText = "The TPDb Performer Guid")]
         public string PerformerId { get; set; }
+
+        [FieldDefinition(1, Label = "Excluded Sites", Hidden = HiddenType.Hidden)]
+        public IEnumerable<int> ExcludedSiteIds { get; set; }
 
         public NzbDroneValidationResult Validate()
         {

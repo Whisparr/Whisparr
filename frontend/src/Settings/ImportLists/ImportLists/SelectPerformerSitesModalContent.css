@@ -1,0 +1,63 @@
+.modalBody {
+  composes: modalBody from '~Components/Modal/ModalBody.css';
+
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+}
+
+.scroller {
+  flex: 1 1 auto;
+}
+
+.footer {
+  composes: modalFooter from '~Components/Modal/ModalFooter.css';
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  overflow: hidden;
+}
+
+.pageInfo {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pageText {
+  white-space: nowrap;
+}
+
+.selectionInfo {
+  color: var(--dimColor);
+  white-space: nowrap;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+}
+
+@media only screen and (max-width: $breakpointSmall) {
+  .footer {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .pageInfo {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .buttons {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}

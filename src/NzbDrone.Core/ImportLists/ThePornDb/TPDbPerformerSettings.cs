@@ -27,10 +27,10 @@ namespace NzbDrone.Core.ImportLists.TPDb
 
         public TPDbPerformerSettings()
         {
-            BaseUrl = "https://api.whisparr.com/v3";
             ExcludedSiteIds = new List<int>();
         }
 
+        // Required by IImportListSettings interface but not used - URL comes from config
         public string BaseUrl { get; set; }
 
         [FieldDefinition(0, Label = "Performer Id", HelpText = "The TPDb Performer Guid")]

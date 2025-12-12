@@ -12,10 +12,8 @@ import ModalHeader from 'Components/Modal/ModalHeader';
 import Scroller from 'Components/Scroller/Scroller';
 import Table from 'Components/Table/Table';
 import TableBody from 'Components/Table/TableBody';
-import useSelectState from 'Helpers/Hooks/useSelectState';
 import { icons, kinds, scrollDirections } from 'Helpers/Props';
 import translate from 'Utilities/String/translate';
-import getSelectedIds from 'Utilities/Table/getSelectedIds';
 import requestAction from 'Utilities/requestAction';
 import SelectPerformerSitesRow from './SelectPerformerSitesRow';
 import styles from './SelectPerformerSitesModalContent.css';
@@ -56,18 +54,11 @@ function SelectPerformerSitesModalContent(props) {
   const [error, setError] = useState(null);
   const [sites, setSites] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectState, setSelectState] = useSelectState();
-
-  const { allSelected, allUnselected, selectedState } = selectState;
+  const [selectedState, setSelectedState] = useState({});
 
   const performerId = useMemo(() => {
     const field = providerData.fields?.find((f) => f.name === 'performerId');
     return field?.value || '';
-  }, [providerData.fields]);
-
-  const currentExcludedSiteIds = useMemo(() => {
-    const field = providerData.fields?.find((f) => f.name === 'excludedSiteIds');
-    return new Set(field?.value || []);
   }, [providerData.fields]);
 
   // Check if this is a new import list (no ID) vs editing existing
@@ -79,94 +70,105 @@ function SelectPerformerSitesModalContent(props) {
   const endIndex = Math.min(startIndex + PAGE_SIZE, totalSites);
   const currentPageSites = sites.slice(startIndex, endIndex);
 
-  const selectedSiteIds = getSelectedIds(selectedState);
-  const excludedSiteIds = sites
-    .filter((s) => !selectedState[s.tvdbId])
-    .map((s) => s.tvdbId);
+  const selectedSiteIds = useMemo(() => {
+    return Object.entries(selectedState)
+      .filter(([, isSelected]) => isSelected)
+      .map(([id]) => parseInt(id));
+  }, [selectedState]);
 
-  const fetchSites = useCallback(async () => {
+  const excludedSiteIds = useMemo(() => {
+    return sites
+      .filter((s) => !selectedState[s.tvdbId])
+      .map((s) => s.tvdbId);
+  }, [sites, selectedState]);
+
+  // Compute allSelected/allUnselected for current page only
+  const allSelected = useMemo(() => {
+    return currentPageSites.length > 0 && currentPageSites.every((s) => selectedState[s.tvdbId]);
+  }, [currentPageSites, selectedState]);
+
+  const allUnselected = useMemo(() => {
+    return currentPageSites.length === 0 || currentPageSites.every((s) => !selectedState[s.tvdbId]);
+  }, [currentPageSites, selectedState]);
+
+  // Only fetch once when performerId is available
+  useEffect(() => {
+    if (!performerId) {
+      return;
+    }
+
     setIsFetching(true);
     setError(null);
 
-    try {
-      const promise = requestAction({
-        provider: 'importlist',
-        action: 'previewPerformer',
-        providerData,
-        queryParams: { performerId }
-      });
+    const promise = requestAction({
+      provider: 'importlist',
+      action: 'previewPerformer',
+      providerData,
+      queryParams: { performerId }
+    });
 
-      promise.done((data) => {
-        const sitesWithId = (data.sites || []).map((site) => ({
-          ...site,
-          id: site.tvdbId
-        }));
+    promise.done((data) => {
+      const sitesWithId = (data.sites || []).map((site) => ({
+        ...site,
+        id: site.tvdbId
+      }));
 
-        setSites(sitesWithId);
+      setSites(sitesWithId);
 
-        const initialSelectedState = sitesWithId.reduce((acc, site) => {
-          if (isNewList) {
-            // New list: all sites start unselected
-            acc[site.tvdbId] = false;
-          } else {
-            // Existing list: excluded sites are unselected, others are selected
-            acc[site.tvdbId] = !currentExcludedSiteIds.has(site.tvdbId);
-          }
-          return acc;
-        }, {});
+      // Set initial selection state directly
+      const excludedIds = new Set(
+        providerData.fields?.find((f) => f.name === 'excludedSiteIds')?.value || []
+      );
 
-        setSelectState({
-          type: 'updateItems',
-          items: sitesWithId
-        });
+      const initialState = sitesWithId.reduce((acc, site) => {
+        if (isNewList) {
+          // New list: all sites start unselected
+          acc[site.tvdbId] = false;
+        } else {
+          // Existing list: excluded sites are unselected, others are selected
+          acc[site.tvdbId] = !excludedIds.has(site.tvdbId);
+        }
+        return acc;
+      }, {});
 
-        Object.entries(initialSelectedState).forEach(([id, value]) => {
-          setSelectState({
-            type: 'toggleSelected',
-            items: sitesWithId,
-            id: parseInt(id),
-            isSelected: value,
-            shiftKey: false
-          });
-        });
-
-        setIsFetching(false);
-      });
-
-      promise.fail((xhr) => {
-        setError(xhr);
-        setIsFetching(false);
-      });
-    } catch (err) {
-      setError(err);
+      setSelectedState(initialState);
       setIsFetching(false);
-    }
-  }, [providerData, performerId, isNewList, currentExcludedSiteIds, setSelectState]);
+    });
 
-  useEffect(() => {
-    if (performerId) {
-      fetchSites();
-    }
-  }, [performerId, fetchSites]);
+    promise.fail((xhr) => {
+      setError(xhr);
+      setIsFetching(false);
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [performerId]);
 
+  // Select all only affects current page
   const onSelectAllChange = useCallback(
     ({ value }) => {
-      setSelectState({ type: value ? 'selectAll' : 'unselectAll', items: sites });
+      setSelectedState((prev) => {
+        const next = { ...prev };
+        currentPageSites.forEach((site) => {
+          next[site.tvdbId] = value;
+        });
+        return next;
+      });
     },
-    [sites, setSelectState]
+    [currentPageSites]
   );
 
   const onSelectedChange = useCallback(
-    ({ id, value, shiftKey = false }) => {
-      setSelectState({
-        type: 'toggleSelected',
-        items: sites,
-        id,
-        isSelected: value,
-        shiftKey
-      });
+    ({ id, value }) => {
+      // Ignore null/undefined values - these come from TableSelectCell unmounting
+      if (value === null || value === undefined) {
+        return;
+      }
+
+      setSelectedState((prev) => ({
+        ...prev,
+        [id]: value
+      }));
     },
-    [sites, setSelectState]
+    []
   );
 
   const onPreviousPagePress = useCallback(() => {

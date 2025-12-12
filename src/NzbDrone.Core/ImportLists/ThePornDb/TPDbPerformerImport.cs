@@ -79,11 +79,17 @@ namespace NzbDrone.Core.ImportLists.TPDb
                 var performerId = query["performerId"];
                 var tempSettings = new TPDbPerformerSettings
                 {
-                    BaseUrl = Settings.BaseUrl,
                     PerformerId = performerId
                 };
 
-                var scenes = _customProxy.GetPerformer(tempSettings);
+                var scenes = _customProxy.GetPerformer(tempSettings) ?? new List<PerformerScene>();
+
+                // Debug: log first scene to see what we're getting
+                if (scenes.Any())
+                {
+                    var first = scenes.First();
+                    _logger.Debug($"First scene - SiteId: {first.SiteId}, SiteName: '{first.SiteName}', EpisodeId: {first.EpisodeId}");
+                }
 
                 // Group by SiteId and get site name + count
                 var siteGroups = scenes

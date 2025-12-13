@@ -90,8 +90,6 @@ namespace Whisparr.Api.V3.Movies
             _logger = logger;
             _movieResourcesCache = cacheManager.GetCache<MovieResource>(typeof(MovieResource), "movieResources");
 
-            _movieResourcesCache = cacheManager.GetCache<MovieResource>(typeof(MovieResource), "movieResources");
-
             SharedValidator.RuleFor(s => s.Path).Cascade(CascadeMode.Stop)
                 .IsValidPath()
                 .SetValidator(rootFolderValidator)

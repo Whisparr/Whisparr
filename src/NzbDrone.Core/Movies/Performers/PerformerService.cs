@@ -3,7 +3,6 @@ using System.Linq;
 using NzbDrone.Common.Cache;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Messaging.Events;
-using NzbDrone.Core.MetadataSource.SkyHook.Resource;
 using NzbDrone.Core.Movies.Performers.Events;
 using NzbDrone.Core.Parser;
 
@@ -28,14 +27,16 @@ namespace NzbDrone.Core.Movies.Performers
     public class PerformerService : IPerformerService
     {
         private readonly IPerformerRepository _performerRepo;
-        private readonly ICached<PerformerResource> _performerResourceCache;
         private readonly IEventAggregator _eventAggregator;
+        private readonly ICacheManager _cacheManager;
+        private readonly string _cacheName;
 
         public PerformerService(IPerformerRepository performerRepo, ICacheManager cacheManager, IEventAggregator eventAggregator)
         {
             _performerRepo = performerRepo;
             _eventAggregator = eventAggregator;
-            _performerResourceCache = cacheManager.GetCache<PerformerResource>(typeof(PerformerResource), "performerResources");
+            _cacheManager = cacheManager;
+            _cacheName = "Whisparr.Api.V3.Performers.PerformerResource_performerResources";
         }
 
         public Performer AddPerformer(Performer newPerformer)
@@ -98,7 +99,7 @@ namespace NzbDrone.Core.Movies.Performers
         public Performer Update(Performer performer)
         {
             var newPerformer = _performerRepo.Update(performer);
-            _performerResourceCache.Remove(newPerformer.ForeignId);
+            RemovePerformerResourcesCache(newPerformer.ForeignId);
             return newPerformer;
         }
 
@@ -108,7 +109,7 @@ namespace NzbDrone.Core.Movies.Performers
 
             foreach (var performer in performers)
             {
-                _performerResourceCache.Remove(performer.ForeignId);
+                RemovePerformerResourcesCache(performer.ForeignId);
             }
 
             return performers;
@@ -117,12 +118,21 @@ namespace NzbDrone.Core.Movies.Performers
         public void RemovePerformer(Performer performer)
         {
             _performerRepo.Delete(performer);
-            _performerResourceCache.Remove(performer.ForeignId);
+            RemovePerformerResourcesCache(performer.ForeignId);
         }
 
         public List<string> AllPerformerForeignIds()
         {
             return _performerRepo.AllPerformerForeignIds();
+        }
+
+        private void RemovePerformerResourcesCache(string cacheKey)
+        {
+            var movieResourcesCache = _cacheManager.FindCache(_cacheName);
+            if (movieResourcesCache != null)
+            {
+                movieResourcesCache.Remove(cacheKey);
+            }
         }
     }
 }

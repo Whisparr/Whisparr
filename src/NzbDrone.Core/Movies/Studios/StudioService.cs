@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using NzbDrone.Common.Cache;
@@ -32,14 +31,13 @@ namespace NzbDrone.Core.Movies.Studios
         private readonly IEventAggregator _eventAggregator;
         private readonly ICacheManager _cacheManager;
         private readonly string _cacheName;
+
         public StudioService(IStudioRepository studioRepo, IEventAggregator eventAggregator, ICacheManager cacheManager)
         {
             _studioRepo = studioRepo;
             _eventAggregator = eventAggregator;
             _cacheManager = cacheManager;
-
-            var t = Type.GetType("Whisparr.Api.V3.Studios.StudioResource");
-            _cacheName = $"{t?.FullName}_StudioResources";
+            _cacheName = "Whisparr.Api.V3.Studios.StudioResource_studioResources";
         }
 
         public Studio AddStudio(Studio newStudio)

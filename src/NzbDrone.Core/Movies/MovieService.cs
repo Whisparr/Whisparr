@@ -95,9 +95,7 @@ namespace NzbDrone.Core.Movies
             _moviePathBuilder = moviePathBuilder;
             _autoTaggingService = autoTaggingService;
             _cacheManager = cacheManager;
-
-            var t = Type.GetType("Whisparr.Api.V3.Movies.MovieResource");
-            _cacheName = $"{t?.FullName}_movieResources";
+            _cacheName = "Whisparr.Api.V3.Movies.MovieResource_movieResources";
 
             _logger = logger;
         }

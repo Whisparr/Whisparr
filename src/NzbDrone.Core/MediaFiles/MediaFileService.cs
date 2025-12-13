@@ -4,6 +4,7 @@ using System.IO;
 // using System.IO.Abstractions;
 using System.Linq;
 using NzbDrone.Common;
+using NzbDrone.Common.Cache;
 using NzbDrone.Core.Datastore;
 using NzbDrone.Core.MediaFiles.Events;
 using NzbDrone.Core.Messaging.Events;
@@ -37,14 +38,19 @@ namespace NzbDrone.Core.MediaFiles
         private readonly IMediaFileRepository _mediaFileRepository;
         private readonly IMovieRepository _movieRepository;
         private readonly IEventAggregator _eventAggregator;
+        private readonly ICacheManager _cacheManager;
+        private readonly string _cacheName;
 
         public MediaFileService(IMediaFileRepository mediaFileRepository,
                                 IMovieRepository movieRepository,
+                                ICacheManager cacheManager,
                                 IEventAggregator eventAggregator)
         {
             _mediaFileRepository = mediaFileRepository;
             _movieRepository = movieRepository;
             _eventAggregator = eventAggregator;
+            _cacheManager = cacheManager;
+            _cacheName = "Whisparr.Api.V3.Movies.MovieResource_movieResources";
         }
 
         public MovieFile Add(MovieFile movieFile)
@@ -57,6 +63,8 @@ namespace NzbDrone.Core.MediaFiles
 
             _eventAggregator.PublishEvent(new MovieFileAddedEvent(addedFile));
 
+            RemoveMovieResourcesCache(movieFile.MovieId.ToString());
+
             return addedFile;
         }
 
@@ -65,17 +73,24 @@ namespace NzbDrone.Core.MediaFiles
             _mediaFileRepository.InsertMany(movieFiles);
             foreach (var addedFile in movieFiles)
             {
+                RemoveMovieResourcesCache(addedFile.MovieId.ToString());
                 _eventAggregator.PublishEvent(new MovieFileAddedEvent(addedFile));
             }
         }
 
         public void Update(MovieFile movieFile)
         {
+            RemoveMovieResourcesCache(movieFile.MovieId.ToString());
             _mediaFileRepository.Update(movieFile);
         }
 
         public void Update(List<MovieFile> movieFiles)
         {
+            foreach (var movieFile in movieFiles)
+            {
+                RemoveMovieResourcesCache(movieFile.MovieId.ToString());
+            }
+
             _mediaFileRepository.UpdateMany(movieFiles);
         }
 
@@ -89,6 +104,7 @@ namespace NzbDrone.Core.MediaFiles
             }
 
             _mediaFileRepository.Delete(movieFile);
+            RemoveMovieResourcesCache(movieFile.MovieId.ToString());
             _eventAggregator.PublishEvent(new MovieFileDeletedEvent(movieFile, reason));
         }
 
@@ -204,6 +220,15 @@ namespace NzbDrone.Core.MediaFiles
             }
 
             return files.Except(seriesFilePaths, PathEqualityComparer.Instance).ToList();
+        }
+
+        private void RemoveMovieResourcesCache(string cacheKey)
+        {
+            var movieResourcesCache = _cacheManager.FindCache(_cacheName);
+            if (movieResourcesCache != null)
+            {
+                movieResourcesCache.Remove(cacheKey);
+            }
         }
     }
 }

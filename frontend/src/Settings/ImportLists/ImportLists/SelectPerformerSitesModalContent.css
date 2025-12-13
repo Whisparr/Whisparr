@@ -1,0 +1,70 @@
+.modalBody {
+  composes: modalBody from '~Components/Modal/ModalBody.css';
+
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+}
+
+.filterInput {
+  composes: input from '~Components/Form/TextInput.css';
+
+  flex: 0 0 auto;
+  margin-bottom: 10px;
+}
+
+.scroller {
+  flex: 1 1 auto;
+}
+
+.footer {
+  composes: modalFooter from '~Components/Modal/ModalFooter.css';
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.pageInfo {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pageText {
+  white-space: nowrap;
+}
+
+.selectionInfo {
+  color: var(--dimColor);
+  white-space: nowrap;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+}
+
+@media only screen and (max-width: $breakpointSmall) {
+  .footer {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .pageInfo {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .buttons {
+    justify-content: flex-end;
+    width: 100%;
+  }
+}

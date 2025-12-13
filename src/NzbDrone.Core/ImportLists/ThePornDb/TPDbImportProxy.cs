@@ -4,8 +4,8 @@ using System.Net;
 using FluentValidation.Results;
 using Newtonsoft.Json;
 using NLog;
-using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
+using NzbDrone.Core.Configuration;
 
 namespace NzbDrone.Core.ImportLists.TPDb
 {
@@ -18,11 +18,13 @@ namespace NzbDrone.Core.ImportLists.TPDb
     public class TPDbImportProxy : ITPDbImportProxy
     {
         private readonly IHttpClient _httpClient;
+        private readonly IConfigFileProvider _configFileProvider;
         private readonly Logger _logger;
 
-        public TPDbImportProxy(IHttpClient httpClient, Logger logger)
+        public TPDbImportProxy(IHttpClient httpClient, IConfigFileProvider configFileProvider, Logger logger)
         {
             _httpClient = httpClient;
+            _configFileProvider = configFileProvider;
             _logger = logger;
         }
 
@@ -42,11 +44,11 @@ namespace NzbDrone.Core.ImportLists.TPDb
                 if (ex.Response.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     _logger.Error(ex, "There was an authorization issue. We cannot get the list from the provider.");
-                    return new ValidationFailure("BaseUrl", "It seems we are unauthorized to make this request.");
+                    return new ValidationFailure("", "It seems we are unauthorized to make this request.");
                 }
 
                 _logger.Error(ex, "Unable to send test message");
-                return new ValidationFailure("BaseUrl", $"We are unable to make the request to that URL. StatusCode: {ex.Response.StatusCode}");
+                return new ValidationFailure("", $"We are unable to make the request to that URL. StatusCode: {ex.Response.StatusCode}");
             }
             catch (Exception ex)
             {
@@ -59,13 +61,16 @@ namespace NzbDrone.Core.ImportLists.TPDb
 
         private List<TResource> Execute<TResource>(TPDbPerformerSettings settings)
         {
-            if (settings.BaseUrl.IsNullOrWhiteSpace())
+            var metadataUrl = _configFileProvider.WhisparrMetadata;
+
+            if (string.IsNullOrEmpty(metadataUrl))
             {
-                return new List<TResource>();
+                metadataUrl = "https://api.whisparr.com/v3/{route}";
             }
 
-            var baseUrl = settings.BaseUrl.TrimEnd('/');
-            var request = new HttpRequestBuilder(baseUrl).Resource($"performer/{settings.PerformerId}/scenes").Accept(HttpAccept.Json).Build();
+            var url = metadataUrl.Replace("{route}", $"performer/{settings.PerformerId}/scenes");
+            var request = new HttpRequestBuilder(url).Accept(HttpAccept.Json).Build();
+            request.AllowAutoRedirect = true;
             var response = _httpClient.Get(request);
             var results = JsonConvert.DeserializeObject<List<TResource>>(response.Content);
 

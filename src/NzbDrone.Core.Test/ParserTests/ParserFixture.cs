@@ -149,12 +149,19 @@ namespace NzbDrone.Core.Test.ParserTests
         }
 
         [TestCase("Some Title Without Bracket")]
-        [TestCase("MIKR-058 Without Bracket")]
         [TestCase("[SubGroup] Some Title")]
         public void should_not_parse_external_id_from_non_matching_title(string title)
         {
             var result = Parser.Parser.ParseExternalId(title);
             result.Should().BeNull();
+        }
+
+        [TestCase("MIKR-058 Without Bracket", "MIKR-058")]
+        [TestCase("MIAA-521 The Absolute Domain Some Title Here.mp4", "MIAA-521")]
+        public void should_parse_external_id_from_title_with_space(string title, string expectedExternalId)
+        {
+            var result = Parser.Parser.ParseExternalId(title);
+            result.Should().Be(expectedExternalId);
         }
     }
 }

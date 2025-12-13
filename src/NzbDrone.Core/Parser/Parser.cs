@@ -49,9 +49,9 @@ namespace NzbDrone.Core.Parser
                 $@"^\[(?<externalid>{ExternalIdBasePattern})\]",
                 match => match.Groups["externalid"].Value),
 
-            // Numbered parts with quoted filename: [01/10] - "MIDA-422.mp4"
+            // Numbered parts with optional quoted filename: [01/10] - "MIDA-422.mp4" or [01+10] - MIDA-433.mp4
             new ExternalIdPattern(
-                $@"^\[\d+/\d+\]\s*-\s*""(?<externalid>{ExternalIdBasePattern})",
+                $@"^\[\d+[/+]\d+\]\s*-\s*""?(?<externalid>{ExternalIdBasePattern})",
                 match => match.Groups["externalid"].Value),
 
             // Dash/underscore separated: MIKR-058, ABC_123 (bare or with extension)

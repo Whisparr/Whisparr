@@ -156,6 +156,8 @@ function Naming() {
   const standardMovieFormatErrors = [];
   const movieFolderFormatHelpTexts = [];
   const movieFolderFormatErrors = [];
+  const maxFolderPathLengthHelpTexts = [];
+  const maxFilePathLengthHelpTexts = [];
   const standardSceneFormatHelpTexts: string[] = [];
   const standardSceneFormatErrors: { message: string }[] = [];
   const sceneFolderFormatHelpTexts: string[] = [];
@@ -204,6 +206,18 @@ function Naming() {
       );
     } else {
       movieFolderFormatErrors.push({ message: translate('InvalidFormat') });
+    }
+
+    if (examples.maxFolderPathLengthExample) {
+      maxFolderPathLengthHelpTexts.push(
+        `${translate('Example')}: ${examples.maxFolderPathLengthExample}`
+      );
+    }
+
+    if (examples.maxFilePathLengthExample) {
+      maxFilePathLengthHelpTexts.push(
+        `${translate('Example')}: ${examples.maxFilePathLengthExample}`
+      );
     }
   }
 
@@ -406,6 +420,52 @@ function Naming() {
               errors={[
                 ...sceneImportFolderFormatErrors,
                 ...settings.sceneImportFolderFormat.errors,
+              ]}
+              onChange={handleInputChange}
+            />
+          </FormGroup>
+
+          <FormGroup
+            advancedSettings={advancedSettings}
+            isAdvanced={true}
+            size={sizes.MEDIUM}
+          >
+            <FormLabel>{translate('MaxFolderPathLength')}</FormLabel>
+            <FormInputGroup
+              inputClassName={styles.namingInput}
+              type={inputTypes.NUMBER}
+              name="maxFolderPathLength"
+              value={
+                settings.maxFolderPathLength?.value ??
+                settings.maxFolderPathLength ??
+                ''
+              }
+              helpTexts={[
+                translate('MaxFolderPathLengthHelpText'),
+                ...maxFolderPathLengthHelpTexts,
+              ]}
+              onChange={handleInputChange}
+            />
+          </FormGroup>
+
+          <FormGroup
+            advancedSettings={advancedSettings}
+            isAdvanced={true}
+            size={sizes.MEDIUM}
+          >
+            <FormLabel>{translate('MaxFilePathLength')}</FormLabel>
+            <FormInputGroup
+              inputClassName={styles.namingInput}
+              type={inputTypes.NUMBER}
+              name="maxFilePathLength"
+              value={
+                settings.maxFilePathLength?.value ??
+                settings.maxFilePathLength ??
+                ''
+              }
+              helpTexts={[
+                translate('MaxFilePathLengthHelpText'),
+                ...maxFilePathLengthHelpTexts,
               ]}
               onChange={handleInputChange}
             />

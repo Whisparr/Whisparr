@@ -10,6 +10,8 @@ namespace Whisparr.Api.V3.Config
         public string SceneFolderExample { get; set; }
         public string SceneImportFolderExample { get; set; }
         public string MainSceneFolderExample { get; internal set; }
+        public int MaxFolderPathLengthExample { get; set; }
+        public int MaxFilePathLengthExample { get; set; }
     }
 
     public static class NamingConfigResourceMapper
@@ -29,6 +31,8 @@ namespace Whisparr.Api.V3.Config
                 StandardSceneFormat = string.IsNullOrEmpty(model.StandardSceneFormat) ? "" : model.StandardSceneFormat,
                 SceneFolderFormat = string.IsNullOrEmpty(model.SceneFolderFormat) ? "" : model.SceneFolderFormat,
                 SceneImportFolderFormat = string.IsNullOrEmpty(model.SceneImportFolderFormat) ? "" : model.SceneImportFolderFormat,
+                MaxFolderPathLength = model.MaxFolderPathLength,
+                MaxFilePathLength = model.MaxFilePathLength,
             };
         }
 
@@ -47,6 +51,8 @@ namespace Whisparr.Api.V3.Config
                 StandardSceneFormat = resource.StandardSceneFormat,
                 SceneFolderFormat = resource.SceneFolderFormat,
                 SceneImportFolderFormat = resource.SceneImportFolderFormat,
+                MaxFilePathLength = resource.MaxFilePathLength,
+                MaxFolderPathLength = resource.MaxFolderPathLength
             };
         }
     }

@@ -14,5 +14,7 @@ namespace Whisparr.Api.V3.Config
         public string StandardSceneFormat { get; set; }
         public string SceneFolderFormat { get; set; }
         public string SceneImportFolderFormat { get; set; }
+        public int MaxFolderPathLength { get; set; }
+        public int MaxFilePathLength { get; set; }
     }
 }

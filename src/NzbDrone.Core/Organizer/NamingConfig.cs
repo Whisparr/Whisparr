@@ -1,3 +1,4 @@
+using NzbDrone.Common.EnvironmentInfo;
 using NzbDrone.Core.Datastore;
 
 namespace NzbDrone.Core.Organizer
@@ -10,11 +11,13 @@ namespace NzbDrone.Core.Organizer
             RenameScenes = false,
             ReplaceIllegalCharacters = true,
             ColonReplacementFormat = ColonReplacementFormat.Smart,
-            MovieFolderFormat = "movies/{Movie Title} ({Release Year})",
-            SceneFolderFormat = "scenes/{Studio Title}/{Scene Title} - {Release Date}",
-            SceneImportFolderFormat = "import/",
+            MovieFolderFormat = OsInfo.IsWindows ? "movies\\{Movie Title} ({Release Year})" :  "movies/{Movie Title} ({Release Year})",
+            SceneFolderFormat = OsInfo.IsWindows ? "scenes\\{Studio Title}\\{Scene Title} - {Release Date}" : "scenes/{Studio Title}/{Scene Title} - {Release Date}",
+            SceneImportFolderFormat = OsInfo.IsWindows ? "import\\" : "import/",
             StandardMovieFormat = "{Movie Title} ({Release Year}) {Quality Full}",
-            StandardSceneFormat = "{Scene Title} - {Release Date} {Quality Full}"
+            StandardSceneFormat = "{Scene Title} - {Release Date} {Quality Full}",
+            MaxFolderPathLength = OsInfo.IsWindows ? 240 : 255,
+            MaxFilePathLength = OsInfo.IsWindows ? 248 : 255,
         };
 
         public bool RenameMovies { get; set; }
@@ -26,5 +29,7 @@ namespace NzbDrone.Core.Organizer
         public string MovieFolderFormat { get; set; }
         public string SceneFolderFormat { get; set; }
         public string SceneImportFolderFormat { get; set; }
+        public int MaxFolderPathLength { get; set; }
+        public int MaxFilePathLength { get; set; }
     }
 }

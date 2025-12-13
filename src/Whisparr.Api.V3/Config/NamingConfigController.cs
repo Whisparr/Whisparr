@@ -98,6 +98,9 @@ namespace Whisparr.Api.V3.Config
                 ? "Invalid format"
                 : _filenameSampleService.GetMovieFolderSample(nameSpec);
 
+            sampleResource.MaxFilePathLengthExample = NamingConfig.Default.MaxFilePathLength;
+            sampleResource.MaxFolderPathLengthExample = NamingConfig.Default.MaxFolderPathLength;
+
             return sampleResource;
         }
 

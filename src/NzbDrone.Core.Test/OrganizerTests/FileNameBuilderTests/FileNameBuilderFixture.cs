@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -25,6 +26,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
     {
         private Movie _movie;
         private Movie _scene;
+        private Movie _sceneLongTitle;
         private MovieFile _movieFile;
         private NamingConfig _namingConfig;
 
@@ -51,6 +53,20 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
                     .With(s => s.Title = "The Last Train Home")
                     .With(x => x.ForeignId = "019abb52-0557-7c5f-83df-94b828851fd1")
                     .With(x => x.MovieMetadata.Value.ForeignId = "019abb52-0557-7c5f-83df-94b828851fd1")
+                    .With(x => x.MovieMetadata.Value.StashId = "019abb52-0557-7c5f-83df-94b828851fd1")
+                    .With(x => x.MovieMetadata.Value.ReleaseDate = "2025-11-25")
+                    .With(x => x.MovieMetadata.Value.Credits = credits)
+                    .With(x => x.MovieMetadata.Value.Studio = studio)
+                    .With(x => x.MovieMetadata.Value.StudioTitle = studio.Title)
+                    .With(x => x.MovieMetadata.Value.ItemType = ItemType.Scene)
+                    .Build();
+
+            _sceneLongTitle = Builder<Movie>
+                    .CreateNew()
+                    .With(s => s.Title = "This is a very long scene title that is intended to test the filename length limitations imposed by various file systems and ensure that our naming conventions handle such scenarios")
+                     .With(x => x.ForeignId = "019abb52-0557-7c5f-83df-94b828851fd1")
+                    .With(x => x.MovieMetadata.Value.ForeignId = "019abb52-0557-7c5f-83df-94b828851fd1")
+                    .With(x => x.MovieMetadata.Value.StashId = "019abb52-0557-7c5f-83df-94b828851fd1")
                     .With(x => x.MovieMetadata.Value.ReleaseDate = "2025-11-25")
                     .With(x => x.MovieMetadata.Value.Credits = credits)
                     .With(x => x.MovieMetadata.Value.Studio = studio)
@@ -143,6 +159,39 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
             // First 4 female performers
             Subject.BuildFileName(_scene, _movieFile)
                    .Should().Be("Pure Taboo - 2025-11-25 - The Last Train Home [Reagan Foxx Rissa May]");
+        }
+
+        [Test]
+        public void scene_folder_format_length()
+        {
+            _namingConfig.SceneFolderFormat = "scenes/{Studio Network}/{Studio Title}/{Release-Date} - {Scene Title} [{StashId}]";
+            _namingConfig.MaxFolderPathLength = 8;
+
+            var folders = Subject.GetMovieFolder(_scene, _namingConfig);
+            var splitPatterns = folders.Split(new char[] { '\\', '/' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var folder in splitPatterns)
+            {
+                folder.Length.Should().BeLessThanOrEqualTo(_namingConfig.MaxFolderPathLength);
+            }
+
+            folders = Subject.GetMovieFolder(_sceneLongTitle, _namingConfig);
+            splitPatterns = folders.Split(new char[] { '\\', '/' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var folder in splitPatterns)
+            {
+                folder.Length.Should().BeLessThanOrEqualTo(_namingConfig.MaxFolderPathLength);
+            }
+        }
+
+        [Test]
+        public void scene_file_format_length()
+        {
+            _namingConfig.StandardSceneFormat = "{Studio CleanTitle}.{Release Date}.{Scene PerformersFemale}.{Scene CleanTitle}.{(Studio Network)}.{(Scene Code)}.{stashid-{StashId}}.{[Quality Full]}";
+
+            var filename = Subject.BuildFileName(_scene, _movieFile);
+            filename.Length.Should().BeLessThanOrEqualTo(_namingConfig.MaxFilePathLength);
+
+            filename = Subject.BuildFileName(_sceneLongTitle, _movieFile);
+            filename.Length.Should().BeLessThanOrEqualTo(_namingConfig.MaxFilePathLength);
         }
 
         [Test]

@@ -40,6 +40,8 @@ namespace NzbDrone.Core.Organizer
         private readonly ICustomFormatCalculationService _formatCalculator;
         private readonly Logger _logger;
 
+        private int _trimEnd;
+
         private static readonly Regex TitleRegex = new Regex(@"(?<tag>\{(?:imdb-|edition-))?\{(?<prefix>[- ._\[(]*)(?<token>(?:[a-z0-9]+)(?:(?<separator>[- ._]+)(?:[a-z0-9]+))?)(?::(?<customFormat>[ ,a-z0-9|+-]+(?<![- ])))?(?<suffix>[-} ._)\]]*)\}",
                                                              RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
@@ -109,6 +111,7 @@ namespace NzbDrone.Core.Organizer
             _mediaInfoUpdater = mediaInfoUpdater;
             _formatCalculator = formatCalculator;
             _logger = logger;
+            _trimEnd = 0;
         }
 
         public string BuildFileName(Movie movie, MovieFile movieFile, NamingConfig namingConfig = null, List<CustomFormat> customFormats = null, bool sample = false)
@@ -166,6 +169,15 @@ namespace NzbDrone.Core.Organizer
                 var splitPattern = s;
 
                 var component = ReplaceTokens(splitPattern, tokenHandlers, namingConfig).Trim();
+                var fileLengthLimit = splitPatterns.Last() == s ? namingConfig.MaxFilePathLength : namingConfig.MaxFolderPathLength;
+                if (fileLengthLimit > 0)
+                {
+                    while (component.Length > fileLengthLimit && _trimEnd < fileLengthLimit)
+                    {
+                        _trimEnd++;
+                        component = ReplaceTokens(splitPattern, tokenHandlers, namingConfig).Trim();
+                    }
+                }
 
                 component = FileNameCleanupRegex.Replace(component, match => match.Captures[0].Value[0].ToString());
                 component = TrimSeparatorsRegex.Replace(component, string.Empty);
@@ -249,6 +261,12 @@ namespace NzbDrone.Core.Organizer
                 component = CleanFolderName(component);
                 component = component.Replace("{ellipsis}", "...");
                 component = ReplaceReservedDeviceNames(component);
+
+                var folderLengthLimit = namingConfig.MaxFolderPathLength;
+                if (folderLengthLimit > 0 && component.Length > folderLengthLimit)
+                {
+                    component = component.Substring(0, folderLengthLimit);
+                }
 
                 if (component.IsNotNullOrWhiteSpace())
                 {
@@ -422,10 +440,10 @@ namespace NzbDrone.Core.Organizer
 
         private void AddSceneTitlePlaceholderTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Movie movie)
         {
-            tokenHandlers["{Scene Title}"] = m => GetLanguageTitle(movie, m.CustomFormat);
-            tokenHandlers["{Scene CleanTitle}"] = m => CleanTitle(GetLanguageTitle(movie, m.CustomFormat));
-            tokenHandlers["{Scene TitleThe}"] = m => TitleThe(movie.Title);
-            tokenHandlers["{Scene TitleFirstCharacter}"] = m => TitleFirstCharacter(TitleThe(GetLanguageTitle(movie, m.CustomFormat)));
+            tokenHandlers["{Scene Title}"] = m => GetLanguageTitle(movie, m.CustomFormat).Remove(GetLanguageTitle(movie, m.CustomFormat).Length - _trimEnd, _trimEnd);
+            tokenHandlers["{Scene CleanTitle}"] = m => CleanTitle(GetLanguageTitle(movie, m.CustomFormat)).Remove(CleanTitle(GetLanguageTitle(movie, m.CustomFormat)).Length - _trimEnd, _trimEnd);
+            tokenHandlers["{Scene TitleThe}"] = m => TitleThe(movie.Title).Remove(TitleThe(movie.Title).Length - _trimEnd, _trimEnd);
+            tokenHandlers["{Scene TitleFirstCharacter}"] = m => TitleFirstCharacter(TitleThe(GetLanguageTitle(movie, m.CustomFormat))).Remove(TitleFirstCharacter(TitleThe(GetLanguageTitle(movie, m.CustomFormat))).Length - _trimEnd, _trimEnd);
         }
 
         private void AddSceneTitleTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Movie movie, int maxLength)

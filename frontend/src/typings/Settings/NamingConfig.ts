@@ -15,4 +15,6 @@ export default interface NamingConfig {
   standardSceneFormat: string;
   sceneFolderFormat: string;
   sceneImportFolderFormat: string;
+  maxFolderPathLength: number;
+  maxFilePathLength: number;
 }

@@ -59,6 +59,11 @@ namespace NzbDrone.Core.Parser
                 $@"^(?<externalid>{ExternalIdBasePattern})(?:\.[a-z0-9]{{2,4}})?$",
                 match => match.Groups["externalid"].Value),
 
+            // External ID followed by resolution/quality: MIAA-248.720P, ABC-123.1080p.mp4
+            new ExternalIdPattern(
+                $@"^(?<externalid>{ExternalIdBasePattern})\.(?:480|720|1080|2160)[pPiI]",
+                match => match.Groups["externalid"].Value),
+
             // Dot-separated format: MIDA.422.blah.blah -> MIDA-422
             // Requires 3+ digits to avoid matching date patterns like Series.23.01.23
             new ExternalIdPattern(

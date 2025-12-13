@@ -131,7 +131,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
             }
             else if (parsedMovieTitle.IsNotNullOrWhiteSpace() && !searchedByStashId)
             {
-                var matches = _movieService.MatchMovies(parsedMovieTitle, releaseDate, "", "", searchResults);
+                var matches = _movieService.MatchMovies(parsedMovieTitle, releaseDate, "", "", searchResults, false, false);
 
                 if (matches.Count == 1)
                 {

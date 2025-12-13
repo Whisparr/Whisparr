@@ -128,6 +128,7 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
                                         .TheNext(1)
                                         .With(x => x.Title = "Whitney Wright POV Anal & A2M")
                                         .With(x => x.MovieMetadata.Value.ReleaseDate = "2021-02-24")
+                                        .With(x => x.MovieMetadata.Value.Code = "E1224")
                                         .With(x => x.MovieMetadata.Value.Studio = evilStudio)
                                         .With(x => x.MovieMetadata.Value.Credits = evilCredits)
                                         .TheNext(1)
@@ -360,7 +361,9 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
         [TestCase("Step Siblings Caught 2024-02-07 Cash For Kisses On Valentines Day - S25E7", 17)]
         [TestCase("EvilAngel - 2021-02-24 - BTS Whitney Wright POV Anal & A2M", 19)]
         [TestCase("EvilAngel - 2021-02-24 - Whitney Wright POV Anal & A2M", 18)]
+        [TestCase("EvilAngel - 2021-02-25 - Whitney Wright POV Anal & A2M", null)] // No match (date off by one)
         [TestCase("EvilAngel.E1224.Whitney Wright POV Anal & A2M", 18)] // Episode (Search all for the studio)
+        [TestCase("EvilAngel.E9999.Whitney Wright POV Anal & A2M", null)] // Episode (Search all for the studio but no match)
         [TestCase("EvilAngel - 2021-02-24 - Whitney Wright", null)]  // Possible Duplicate so no match
         [TestCase("JesseLoadsMonsterFacials.22.04.22.Ari.Alectra.XXX.1080p", 24)]
         [TestCase("JesseLoadsMonsterFacials.22.04.22.Ari.Alectra BTS.XXX.1080p", 23)]

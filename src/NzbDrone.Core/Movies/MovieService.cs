@@ -62,7 +62,7 @@ namespace NzbDrone.Core.Movies
         bool UpdateTags(Movie movie);
         bool ExistsByMetadataId(int metadataId);
         void SetFileIds(List<Movie> movies);
-        Dictionary<Movie, MovieParseMatchType> MatchMovies(string parsedMovieTitle, string releaseDate, string foreignId, string episode, List<Movie> movies);
+        Dictionary<Movie, MovieParseMatchType> MatchMovies(string parsedMovieTitle, string releaseDate, string foreignId, string episode, List<Movie> movies, bool verifyDate, bool verifyEpisode);
         List<Movie> SearchMovies(string query);
     }
 
@@ -545,6 +545,8 @@ namespace NzbDrone.Core.Movies
             }
 
             var movies = new List<Movie>();
+            var verifyDate = false;
+            var verifyEpisode = false;
 
             if (releaseDate.IsNotNullOrWhiteSpace())
             {
@@ -576,14 +578,18 @@ namespace NzbDrone.Core.Movies
                     }
                 }
 
+                // Requires a higher level of matching if we had to fallback to studio only
                 if (movies == null || !movies.Any())
                 {
                     movies = _movieRepository.GetByStudioForeignId(studioForeignId);
+                    verifyDate = true;
                 }
             }
             else
             {
+                // Requires a higher level of matching if we had to fallback to studio only
                 movies = _movieRepository.GetByStudioForeignId(studioForeignId);
+                verifyEpisode = true;
             }
 
             if (movies == null || !movies.Any())
@@ -597,7 +603,8 @@ namespace NzbDrone.Core.Movies
 
             if (parsedMovieTitle.IsNotNullOrWhiteSpace() || foreignId.IsNotNullOrWhiteSpace())
             {
-                var matches = MatchMovies(parsedMovieTitle, releaseDate, foreignId, episode, movies);
+                var matches = MatchMovies(parsedMovieTitle, releaseDate, foreignId, episode, movies, verifyDate, verifyEpisode);
+
                 _logger.Debug("{0}: Found {1} matches for Studio ForeignID: {2}, Date: {3}, Parsed Title: {4}, ForeignID: {5}",
                     methodName,
                     matches.Count,
@@ -622,7 +629,7 @@ namespace NzbDrone.Core.Movies
             return null;
         }
 
-        public Dictionary<Movie, MovieParseMatchType> MatchMovies(string parsedMovieTitle, string releaseDate, string foreignId, string episode, List<Movie> movies)
+        public Dictionary<Movie, MovieParseMatchType> MatchMovies(string parsedMovieTitle, string releaseDate, string foreignId, string episode, List<Movie> movies, bool verifyDate, bool verifyEpisode)
         {
             var matches = new Dictionary<Movie, MovieParseMatchType>();
 
@@ -794,6 +801,60 @@ namespace NzbDrone.Core.Movies
                     {
                         matches = filteredMatches;
                         break;
+                    }
+                }
+            }
+
+            if (matches.Count == 1 && (verifyDate || verifyEpisode))
+            {
+                var match = matches.First();
+
+                if (verifyDate)
+                {
+                    if (match.Key.GetReleaseDate().HasValue && releaseDate.IsNotNullOrWhiteSpace())
+                    {
+                        var movieReleaseDate = match.Key.GetReleaseDate().Value.ToString(Movie.RELEASE_DATE_FORMAT);
+                        if (!movieReleaseDate.Equals(releaseDate))
+                        {
+                            _logger.Debug("Removing match for {0} due to release date mismatch. Parsed: {1}, Movie Release Date: {2}",
+                                match.Key,
+                                releaseDate,
+                                movieReleaseDate);
+                            matches.Remove(match.Key);
+                        }
+                    }
+                    else
+                    {
+                        // add a non-match if we can't verify the date
+                        matches = new Dictionary<Movie, MovieParseMatchType>();
+                    }
+                }
+
+                if (verifyEpisode)
+                {
+                    if (match.Key?.MovieMetadata?.Value?.Code != null && episode.IsNotNullOrWhiteSpace())
+                    {
+                        var code = match.Key.MovieMetadata.Value.Code;
+                        if (!episode.Equals(code, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            if (int.TryParse(code, out var codeNumber) && int.TryParse(Regex.Match(episode, @"\d+").Value, out var episodeNumber))
+                            {
+                                if (codeNumber != episodeNumber)
+                                {
+                                    matches = new Dictionary<Movie, MovieParseMatchType>();
+                                }
+                            }
+                            else
+                            {
+                                // add a non-match if we can't verify the date
+                                matches = new Dictionary<Movie, MovieParseMatchType>();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // add a non-match if we can't verify the date
+                        matches = new Dictionary<Movie, MovieParseMatchType>();
                     }
                 }
             }

@@ -235,25 +235,25 @@ function SelectPerformerSitesModalContent(props) {
             />
             <Scroller className={styles.scroller} autoFocus={false}>
               <Table
-              columns={columns}
-              selectAll={true}
-              allSelected={allSelected}
-              allUnselected={allUnselected}
-              onSelectAllChange={onSelectAllChange}
-            >
-              <TableBody>
-                {currentPageSites.map((site) => (
-                  <SelectPerformerSitesRow
-                    key={site.tvdbId}
-                    id={site.tvdbId}
-                    title={site.title}
-                    sceneCount={site.sceneCount}
-                    exists={site.exists}
-                    isSelected={selectedState[site.tvdbId]}
-                    onSelectedChange={onSelectedChange}
-                  />
-                ))}
-              </TableBody>
+                columns={columns}
+                selectAll={true}
+                allSelected={allSelected}
+                allUnselected={allUnselected}
+                onSelectAllChange={onSelectAllChange}
+              >
+                <TableBody>
+                  {currentPageSites.map((site) => (
+                    <SelectPerformerSitesRow
+                      key={site.tvdbId}
+                      id={site.tvdbId}
+                      title={site.title}
+                      sceneCount={site.sceneCount}
+                      exists={site.exists}
+                      isSelected={selectedState[site.tvdbId]}
+                      onSelectedChange={onSelectedChange}
+                    />
+                  ))}
+                </TableBody>
               </Table>
             </Scroller>
           </>

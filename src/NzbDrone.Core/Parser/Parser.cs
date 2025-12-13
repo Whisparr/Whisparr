@@ -64,6 +64,16 @@ namespace NzbDrone.Core.Parser
                 $@"^(?<externalid>{ExternalIdBasePattern})\.(?:480|720|1080|2160)[pPiI]",
                 match => match.Groups["externalid"].Value),
 
+            // External ID at start followed by space and title: MIAA-521 Some Title Here.mp4
+            new ExternalIdPattern(
+                $@"^(?<externalid>{ExternalIdBasePattern})\s",
+                match => match.Groups["externalid"].Value),
+
+            // External ID followed by part/segment numbering: MIAA-262.1.1.mp4, ABC-123.2.mp4
+            new ExternalIdPattern(
+                $@"^(?<externalid>{ExternalIdBasePattern})(?:\.\d+)+\.[a-z0-9]{{2,4}}$",
+                match => match.Groups["externalid"].Value),
+
             // Dot-separated format: MIDA.422.blah.blah -> MIDA-422
             // Requires 3+ digits to avoid matching date patterns like Series.23.01.23
             new ExternalIdPattern(

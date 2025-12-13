@@ -15,12 +15,9 @@ function WhisparrSettings(props) {
   } = props;
 
   const {
-    whisparrAlwaysExcludePerformers,
     whisparrAlwaysExcludePerformersTag,
-    whisparrAlwaysExcludeStudios,
     whisparrAlwaysExcludeStudiosTag,
     whisparrAlwaysExcludeStudiosAfterTag,
-    whisparrAlwaysExcludeTags,
     whisparrAlwaysExcludeTagsTag,
     whisparrAutoMatchOnDate,
     whisparrCacheExclusionAPI,
@@ -111,6 +108,7 @@ function WhisparrSettings(props) {
           {...whisparrAutoMatchOnDate}
         />
       </FormGroup>
+
       <FormGroup
         advancedSettings={advancedSettings}
         isAdvanced={true}
@@ -125,6 +123,7 @@ function WhisparrSettings(props) {
           {...whisparrValidateRuntime}
         />
       </FormGroup>
+
       <FormGroup
         advancedSettings={advancedSettings}
         isAdvanced={true}
@@ -142,19 +141,6 @@ function WhisparrSettings(props) {
 
       <FormGroup>
 
-        <FormLabel>{translate('WhisparrAlwaysExcludePerformers')}</FormLabel>
-
-        <FormInputGroup
-          type={inputTypes.CHECK}
-          name="whisparrAlwaysExcludePerformers"
-          helpText={translate('WhisparrAlwaysExcludePerformersHelpText')}
-          onChange={onInputChange}
-          {...whisparrAlwaysExcludePerformers}
-        />
-      </FormGroup>
-
-      <FormGroup>
-
         <FormLabel>{translate('WhisparrAlwaysExcludePerformersTag')}</FormLabel>
 
         <FormInputGroup
@@ -163,19 +149,6 @@ function WhisparrSettings(props) {
           helpText={translate('WhisparrAlwaysExcludePerformersTagHelpText')}
           onChange={onInputChange}
           {...whisparrAlwaysExcludePerformersTag}
-        />
-      </FormGroup>
-
-      <FormGroup>
-
-        <FormLabel>{translate('WhisparrAlwaysExcludeStudios')}</FormLabel>
-
-        <FormInputGroup
-          type={inputTypes.CHECK}
-          name="whisparrAlwaysExcludeStudios"
-          helpText={translate('WhisparrAlwaysExcludeStudiosHelpText')}
-          onChange={onInputChange}
-          {...whisparrAlwaysExcludeStudios}
         />
       </FormGroup>
 
@@ -202,19 +175,6 @@ function WhisparrSettings(props) {
           helpText={translate('WhisparrAlwaysExcludeStudiosAfterTagHelpText')}
           onChange={onInputChange}
           {...whisparrAlwaysExcludeStudiosAfterTag}
-        />
-      </FormGroup>
-
-      <FormGroup>
-
-        <FormLabel>{translate('WhisparrAlwaysExcludeTags')}</FormLabel>
-
-        <FormInputGroup
-          type={inputTypes.CHECK}
-          name="whisparrAlwaysExcludeTags"
-          helpText={translate('WhisparrAlwaysExcludeTagsHelpText')}
-          onChange={onInputChange}
-          {...whisparrAlwaysExcludeTags}
         />
       </FormGroup>
 

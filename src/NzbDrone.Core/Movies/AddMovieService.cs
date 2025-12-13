@@ -6,6 +6,7 @@ using FluentValidation;
 using FluentValidation.Results;
 using NLog;
 using NzbDrone.Common.EnsureThat;
+using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Exceptions;
@@ -234,7 +235,7 @@ namespace NzbDrone.Core.Movies
                     var excludedStudio = _importListExclusionService.IsExcluded(stashId, ImportExclusionType.Studio);
                     if (excludedStudio)
                     {
-                        if (_configService.WhisparrAlwaysExcludeStudios)
+                        if (_configService.WhisparrAlwaysExcludeStudiosTag.IsNullOrWhiteSpace())
                         {
                             _importListExclusionService.AddExclusion(newExclusion);
                             throw new ValidationException($"Studio: [{newMovie.MovieMetadata.Value.Studio.Title}] has been excluded");
@@ -259,14 +260,22 @@ namespace NzbDrone.Core.Movies
                             var dateTime = (DateTime)studio.AfterDate;
                             if (newMovie.MovieMetadata?.Value?.ReleaseDateUtc < dateTime)
                             {
-                                var tag = AddTag(new Tag { Label = _configService.WhisparrAlwaysExcludeStudiosAfterTag });
-                                if (tag != null)
+                                if (_configService.WhisparrAlwaysExcludeStudiosAfterTag.IsNullOrWhiteSpace())
                                 {
-                                    newMovie.Tags.Add(tag.Id);
+                                    _importListExclusionService.AddExclusion(newExclusion);
+                                    throw new ValidationException($"Studio After Date: [{newMovie.MovieMetadata.Value.Studio.Title}] has an after date of {dateTime.ToString("yyyy-MM-dd")}. Marking movie as unmonitored.");
                                 }
+                                else
+                                {
+                                    var tag = AddTag(new Tag { Label = _configService.WhisparrAlwaysExcludeStudiosAfterTag });
+                                    if (tag != null)
+                                    {
+                                        newMovie.Tags.Add(tag.Id);
+                                    }
 
-                                newMovie.Monitored = false;
-                                _logger.Info("Studio: [{0}] has an after date of {1}. Marking movie as unmonitored.", newMovie.MovieMetadata.Value.Studio.Title, dateTime.ToString("yyyy-MM-dd"));
+                                    newMovie.Monitored = false;
+                                    _logger.Info("Studio: [{0}] has an after date of {1}. Marking movie as unmonitored.", newMovie.MovieMetadata.Value.Studio.Title, dateTime.ToString("yyyy-MM-dd"));
+                                }
                             }
                         }
                     }
@@ -279,7 +288,7 @@ namespace NzbDrone.Core.Movies
                     var excludedPerformers = excludedItems.Where(e => performerForeignIds.Contains(e.ForeignId)).ToList();
                     if (excludedPerformers.Any())
                     {
-                        if (_configService.WhisparrAlwaysExcludePerformers)
+                        if (_configService.WhisparrAlwaysExcludePerformersTag.IsNullOrWhiteSpace())
                         {
                             _importListExclusionService.AddExclusion(newExclusion);
                             throw new ValidationException($"Performer: [{string.Join(",", excludedPerformers.Select(ep => ep.MovieTitle).ToList())}] has been excluded");
@@ -304,7 +313,7 @@ namespace NzbDrone.Core.Movies
 
                 if (exclusions.Any())
                 {
-                    if (_configService.WhisparrAlwaysExcludeTags)
+                    if (_configService.WhisparrAlwaysExcludeTagsTag.IsNullOrWhiteSpace())
                     {
                         _importListExclusionService.AddExclusion(newExclusion);
                         throw new ValidationException($"Tag(s): [{string.Join(",", exclusions.Select(et => et.MovieTitle).ToList())}] excluded");

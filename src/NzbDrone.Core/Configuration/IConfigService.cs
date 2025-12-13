@@ -108,12 +108,9 @@ namespace NzbDrone.Core.Configuration
         int BackupRetention { get; }
 
         // Whisparr
-        bool WhisparrAlwaysExcludePerformers { get; }
         string WhisparrAlwaysExcludePerformersTag { get; }
-        bool WhisparrAlwaysExcludeStudios { get; }
         string WhisparrAlwaysExcludeStudiosTag { get; }
         string WhisparrAlwaysExcludeStudiosAfterTag { get; }
-        bool WhisparrAlwaysExcludeTags { get; }
         string WhisparrAlwaysExcludeTagsTag { get; }
         bool WhisparrAutoMatchOnDate { get; }
         bool WhisparrCacheExclusionAPI { get; }

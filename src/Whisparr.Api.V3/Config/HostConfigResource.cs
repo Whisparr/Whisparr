@@ -45,12 +45,9 @@ namespace Whisparr.Api.V3.Config
         public string BackupFolder { get; set; }
         public int BackupInterval { get; set; }
         public int BackupRetention { get; set; }
-        public bool WhisparrAlwaysExcludePerformers { get; set; }
         public string WhisparrAlwaysExcludePerformersTag { get; set; }
-        public bool WhisparrAlwaysExcludeStudios { get; set; }
         public string WhisparrAlwaysExcludeStudiosTag { get; set; }
         public string WhisparrAlwaysExcludeStudiosAfterTag { get; set; }
-        public bool WhisparrAlwaysExcludeTags { get; set; }
         public string WhisparrAlwaysExcludeTagsTag { get; set; }
         public bool WhisparrAutoMatchOnDate { get; set; }
         public bool WhisparrCacheExclusionAPI { get; set; }
@@ -104,12 +101,9 @@ namespace Whisparr.Api.V3.Config
                 BackupInterval = configService.BackupInterval,
                 BackupRetention = configService.BackupRetention,
                 ApplicationUrl = configService.ApplicationUrl,
-                WhisparrAlwaysExcludePerformers = configService.WhisparrAlwaysExcludePerformers,
                 WhisparrAlwaysExcludePerformersTag = configService.WhisparrAlwaysExcludePerformersTag,
-                WhisparrAlwaysExcludeStudios = configService.WhisparrAlwaysExcludeStudios,
                 WhisparrAlwaysExcludeStudiosTag = configService.WhisparrAlwaysExcludeStudiosTag,
                 WhisparrAlwaysExcludeStudiosAfterTag = configService.WhisparrAlwaysExcludeStudiosAfterTag,
-                WhisparrAlwaysExcludeTags = configService.WhisparrAlwaysExcludeTags,
                 WhisparrAlwaysExcludeTagsTag = configService.WhisparrAlwaysExcludeTagsTag,
                 WhisparrAutoMatchOnDate = configService.WhisparrAutoMatchOnDate,
                 WhisparrCacheExclusionAPI = configService.WhisparrCacheExclusionAPI,

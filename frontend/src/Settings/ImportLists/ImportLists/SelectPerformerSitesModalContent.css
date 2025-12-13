@@ -6,6 +6,13 @@
   flex-direction: column;
 }
 
+.filterInput {
+  composes: input from '~Components/Form/TextInput.css';
+
+  flex: 0 0 auto;
+  margin-bottom: 10px;
+}
+
 .scroller {
   flex: 1 1 auto;
 }

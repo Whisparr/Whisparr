@@ -2,6 +2,7 @@
 // Please do not change this file!
 interface CssExports {
   'buttons': string;
+  'filterInput': string;
   'footer': string;
   'modalBody': string;
   'pageInfo': string;

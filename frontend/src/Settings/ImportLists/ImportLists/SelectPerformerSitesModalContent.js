@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Alert from 'Components/Alert';
+import TextInput from 'Components/Form/TextInput';
 import Icon from 'Components/Icon';
 import Button from 'Components/Link/Button';
 import SpinnerButton from 'Components/Link/SpinnerButton';
@@ -48,6 +49,7 @@ function SelectPerformerSitesModalContent(props) {
   const [isFetching, setIsFetching] = useState(true);
   const [error, setError] = useState(null);
   const [sites, setSites] = useState([]);
+  const [filter, setFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedState, setSelectedState] = useState({});
 
@@ -59,11 +61,24 @@ function SelectPerformerSitesModalContent(props) {
   // Check if this is a new import list (no ID) vs editing existing
   const isNewList = !providerData.id;
 
+  const filteredSites = useMemo(() => {
+    if (!filter) {
+      return sites;
+    }
+
+    const lowerFilter = filter.toLowerCase();
+
+    return sites.filter((site) =>
+      site.title.toLowerCase().includes(lowerFilter)
+    );
+  }, [sites, filter]);
+
   const totalSites = sites.length;
-  const totalPages = Math.ceil(totalSites / PAGE_SIZE);
+  const filteredCount = filteredSites.length;
+  const totalPages = Math.ceil(filteredCount / PAGE_SIZE);
   const startIndex = (currentPage - 1) * PAGE_SIZE;
-  const endIndex = Math.min(startIndex + PAGE_SIZE, totalSites);
-  const currentPageSites = sites.slice(startIndex, endIndex);
+  const endIndex = Math.min(startIndex + PAGE_SIZE, filteredCount);
+  const currentPageSites = filteredSites.slice(startIndex, endIndex);
 
   const selectedSiteIds = useMemo(() => {
     return Object.entries(selectedState)
@@ -166,6 +181,11 @@ function SelectPerformerSitesModalContent(props) {
     []
   );
 
+  const onFilterChange = useCallback(({ value }) => {
+    setFilter(value);
+    setCurrentPage(1);
+  }, []);
+
   const onPreviousPagePress = useCallback(() => {
     setCurrentPage((prev) => Math.max(1, prev - 1));
   }, []);
@@ -204,8 +224,17 @@ function SelectPerformerSitesModalContent(props) {
         ) : null}
 
         {!isFetching && !error && sites.length > 0 ? (
-          <Scroller className={styles.scroller} autoFocus={false}>
-            <Table
+          <>
+            <TextInput
+              className={styles.filterInput}
+              name="filter"
+              value={filter}
+              placeholder={translate('SearchSite')}
+              autoFocus={true}
+              onChange={onFilterChange}
+            />
+            <Scroller className={styles.scroller} autoFocus={false}>
+              <Table
               columns={columns}
               selectAll={true}
               allSelected={allSelected}
@@ -225,8 +254,9 @@ function SelectPerformerSitesModalContent(props) {
                   />
                 ))}
               </TableBody>
-            </Table>
-          </Scroller>
+              </Table>
+            </Scroller>
+          </>
         ) : null}
       </ModalBody>
 

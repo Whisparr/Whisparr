@@ -15,6 +15,7 @@ using NzbDrone.Core.MediaFiles.MediaInfo;
 using NzbDrone.Core.Movies;
 using NzbDrone.Core.Movies.Performers;
 using NzbDrone.Core.Movies.Studios;
+using NzbDrone.Core.Parser;
 using NzbDrone.Core.Qualities;
 
 namespace NzbDrone.Core.Organizer
@@ -405,6 +406,46 @@ namespace NzbDrone.Core.Organizer
                     .Join(" ");
                 tokenHandlers["{Scene PerformersAlias}"] = m => credits.OrderBy(p => p.Performer.Name)
                     .Select(p => !string.IsNullOrWhiteSpace(p.Character) ? p.Character : p.Performer.Name)
+                    .Take(4)
+                    .Join(" ");
+
+                // Clean versions
+                tokenHandlers["{Scene CleanPerformers}"] = m => credits.OrderBy(p => p.Performer.Name)
+                    .Select(p => p.Performer.Name.CleanPerformer())
+                    .Take(4)
+                    .Join(" ");
+                tokenHandlers["{Scene CleanPerformersFemale}"] = m => credits.Where(p => p.Performer.Gender == Gender.Female)
+                    .OrderBy(p => p.Performer.Name)
+                    .Select(p => p.Performer.Name.CleanPerformer())
+                    .Take(4)
+                    .Join(" ");
+                tokenHandlers["{Scene CleanPerformersMale}"] = m => credits.Where(p => p.Performer.Gender == Gender.Male)
+                    .OrderBy(p => p.Performer.Name)
+                    .Select(p => p.Performer.Name.CleanPerformer())
+                    .Take(4)
+                    .Join(" ");
+                tokenHandlers["{Scene CleanPerformersOther}"] = m => credits.Where(p => performersOther.Contains(p.Performer.Gender))
+                    .OrderBy(p => p.Performer.Name)
+                    .Select(p => p.Performer.Name.CleanPerformer())
+                    .Take(4)
+                    .Join(" ");
+                tokenHandlers["{Scene CleanPerformersFemaleAlias}"] = m => credits.Where(p => p.Performer.Gender == Gender.Female)
+                    .OrderBy(p => p.Performer.Name)
+                    .Select(p => !string.IsNullOrWhiteSpace(p.Character) ? p.Character.CleanPerformer() : p.Performer.Name.CleanPerformer())
+                    .Take(4)
+                    .Join(" ");
+                tokenHandlers["{Scene CleanPerformersMaleAlias}"] = m => credits.Where(p => p.Performer.Gender == Gender.Male)
+                    .OrderBy(p => p.Performer.Name)
+                    .Select(p => !string.IsNullOrWhiteSpace(p.Character) ? p.Character.CleanPerformer() : p.Performer.Name.CleanPerformer())
+                    .Take(4)
+                    .Join(" ");
+                tokenHandlers["{Scene CleanPerformersOtherAlias}"] = m => credits.Where(p => performersOther.Contains(p.Performer.Gender))
+                    .OrderBy(p => p.Performer.Name)
+                    .Select(p => !string.IsNullOrWhiteSpace(p.Character) ? p.Character.CleanPerformer() : p.Performer.Name.CleanPerformer())
+                    .Take(4)
+                    .Join(" ");
+                tokenHandlers["{Scene CleanPerformersAlias}"] = m => credits.OrderBy(p => p.Performer.Name)
+                    .Select(p => !string.IsNullOrWhiteSpace(p.Character) ? p.Character.CleanPerformer() : p.Performer.Name.CleanPerformer())
                     .Take(4)
                     .Join(" ");
             }

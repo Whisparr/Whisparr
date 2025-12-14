@@ -637,6 +637,28 @@ namespace NzbDrone.Core.Parser
             return title;
         }
 
+        public static string CleanPerformer(this string title)
+        {
+            if (title.IsNullOrWhiteSpace())
+            {
+                return string.Empty;
+            }
+
+            // If Title only contains numbers return it as is.
+            if (long.TryParse(title, out _))
+            {
+                return title;
+            }
+
+            title = WordDelimiterRegex.Replace(title, " ");
+            title = PunctuationRegex.Replace(title, string.Empty);
+            title = CommonWordRegex.Replace(title, string.Empty);
+            title = DuplicateSpacesRegex.Replace(title, " ");
+            title = SpecialCharRegex.Replace(title, string.Empty);
+
+            return title.Trim();
+        }
+
         public static string NormalizeEpisodeTitle(this string title)
         {
             if (title.IsNullOrWhiteSpace())

@@ -162,6 +162,33 @@ const sceneTokens = [
     token: '{Scene PerformersOtherAlias}',
     example: 'Other Performers (Alias)',
   },
+  {
+    token: '{Scene CleanPerformers}',
+    example: 'Abigail Mac Tera Patrick John Holmes',
+  },
+  {
+    token: '{Scene CleanPerformersFemale}',
+    example: 'Abigail Mac Tera Patrick',
+  },
+  { token: '{Scene CleanPerformersMale}', example: 'Johnny Sins' },
+  { token: '{Scene CleanPerformersAlias}', example: 'Performers (Alias)' },
+  {
+    token: '{Scene CleanPerformersFemaleAlias}',
+    example: 'Female Performers (Alias)',
+  },
+  {
+    token: '{Scene CleanPerformersMaleAlias}',
+    example: 'Male Performers (Alias)',
+  },
+  {
+    token: '{Scene CleanPerformersOther}',
+    example: 'Lulu Chu Jenna Gargles Izzy Wilde',
+  },
+  {
+    token: '{Scene PerformersOtherAlias}',
+    example: 'Other Performers (Alias)',
+  },
+
   { token: '{Release Date}', example: '2009-02-04' },
   { token: '{Release ShortDate}', example: '09 02 04' },
   { token: '{Scene Code}', example: '12345' },

@@ -441,6 +441,11 @@ namespace NzbDrone.Core.Parser
 
         public static string NormalizeEpisodeTitle(string title)
         {
+            if (title.IsNullOrWhiteSpace())
+            {
+                return string.Empty;
+            }
+
             var match = SpecialEpisodeTitleRegex
                         .Select(v => v.Match(title))
                         .FirstOrDefault(v => v.Success);

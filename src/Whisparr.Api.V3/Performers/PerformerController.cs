@@ -131,6 +131,7 @@ namespace Whisparr.Api.V3.Performers
 
             var updatedPerformer = _performerService.Update(resource.ToModel(performer));
 
+            _performerResourceCache.Remove(updatedPerformer.ForeignId);
             BroadcastResourceChange(ModelAction.Updated, updatedPerformer.ToResource());
 
             return Accepted(updatedPerformer);
@@ -171,6 +172,7 @@ namespace Whisparr.Api.V3.Performers
             var resource = message.Performer.ToResource();
 
             FetchAndLinkMovies(resource);
+            _performerResourceCache.Remove(resource.ForeignId);
             BroadcastResourceChange(ModelAction.Updated, resource);
         }
 

@@ -127,6 +127,7 @@ namespace Whisparr.Api.V3.Studios
 
             var updatedStudio = _studioService.Update(resource.ToModel(studio));
 
+            _studioResourceCache.Remove(updatedStudio.ForeignId);
             BroadcastResourceChange(ModelAction.Updated, updatedStudio.ToResource());
 
             return Accepted(updatedStudio);
@@ -158,6 +159,7 @@ namespace Whisparr.Api.V3.Studios
             }
 
             // Remove the studio now that the associated scenes have been removed
+            _studioResourceCache.Remove(studio.ForeignId);
             _studioService.RemoveStudio(studio);
         }
 
@@ -166,6 +168,7 @@ namespace Whisparr.Api.V3.Studios
         {
             var resource = message.Studio.ToResource();
 
+            _studioResourceCache.Remove(resource.ForeignId);
             FetchAndLinkMovies(resource);
             BroadcastResourceChange(ModelAction.Updated, message.Studio.ToResource());
         }

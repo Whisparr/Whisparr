@@ -283,6 +283,7 @@ namespace Whisparr.Api.V3.Movies
             var updated = _moviesService.UpdateMovieMonitored(toUpdate, (bool)monitored);
             foreach (var movie in updated)
             {
+                _movieResourcesCache.Remove(movie.Id.ToString());
                 BroadcastResourceChange(ModelAction.Updated, MapToResource(movie));
             }
 
@@ -358,6 +359,11 @@ namespace Whisparr.Api.V3.Movies
 
             resource.RootFolderPath = _rootFolderService.GetBestRootFolderPath(resource.Path);
 
+            if (_useCache)
+            {
+                _movieResourcesCache.Set(resource.Id.ToString(), resource);
+            }
+
             return resource;
         }
 
@@ -395,6 +401,7 @@ namespace Whisparr.Api.V3.Movies
 
             var updatedMovie = _moviesService.UpdateMovie(model);
 
+            _movieResourcesCache.Remove(updatedMovie.Id.ToString());
             BroadcastResourceChange(ModelAction.Updated, MapToResource(updatedMovie));
 
             return Accepted(moviesResource.Id);
@@ -442,7 +449,10 @@ namespace Whisparr.Api.V3.Movies
         [NonAction]
         public void Handle(MovieFileImportedEvent message)
         {
-            BroadcastResourceChange(ModelAction.Updated, message.MovieInfo.Movie.Id);
+            _movieResourcesCache.Remove(message.MovieInfo.Movie.Id.ToString());
+
+            var updatedMovie = _moviesService.GetMovie(message.MovieInfo.Movie.Id);
+            BroadcastResourceChange(ModelAction.Updated, MapToResource(updatedMovie));
         }
 
         [NonAction]
@@ -454,18 +464,22 @@ namespace Whisparr.Api.V3.Movies
                 return;
             }
 
-            BroadcastResourceChange(ModelAction.Updated, message.MovieFile.MovieId);
+            _movieResourcesCache.Remove(message.MovieFile.MovieId.ToString());
+            var updatedMovie = _moviesService.GetMovie(message.MovieFile.MovieId);
+            BroadcastResourceChange(ModelAction.Updated, MapToResource(updatedMovie));
         }
 
         [NonAction]
         public void Handle(MovieUpdatedEvent message)
         {
+            _movieResourcesCache.Remove(message.Movie.Id.ToString());
             BroadcastResourceChange(ModelAction.Updated, MapToResource(message.Movie));
         }
 
         [NonAction]
         public void Handle(MovieEditedEvent message)
         {
+            _movieResourcesCache.Remove(message.Movie.Id.ToString());
             BroadcastResourceChange(ModelAction.Updated, MapToResource(message.Movie));
         }
 
@@ -474,6 +488,7 @@ namespace Whisparr.Api.V3.Movies
         {
             foreach (var movie in message.Movies)
             {
+                _movieResourcesCache.Remove(movie.Id.ToString());
                 BroadcastResourceChange(ModelAction.Deleted, movie.Id);
             }
         }
@@ -481,6 +496,7 @@ namespace Whisparr.Api.V3.Movies
         [NonAction]
         public void Handle(MovieRenamedEvent message)
         {
+            _movieResourcesCache.Remove(message.Movie.Id.ToString());
             BroadcastResourceChange(ModelAction.Updated, MapToResource(message.Movie));
         }
 
@@ -489,7 +505,9 @@ namespace Whisparr.Api.V3.Movies
         {
             if (message.Updated)
             {
-                BroadcastResourceChange(ModelAction.Updated, message.Movie.Id);
+                _movieResourcesCache.Remove(message.Movie.Id.ToString());
+                var updatedMovie = _moviesService.GetMovie(message.Movie.Id);
+                BroadcastResourceChange(ModelAction.Updated, MapToResource(updatedMovie));
             }
         }
 
@@ -619,9 +637,12 @@ namespace Whisparr.Api.V3.Movies
 
                         moviesResources.ForEach(m => m.RootFolderPath = _rootFolderService.GetBestRootFolderPath(m.Path, rootFolders));
 
-                        foreach (var moviesResource in moviesResources)
+                        if (_useCache)
                         {
-                            _movieResourcesCache.Set(moviesResource.Id.ToString(), moviesResource);
+                            foreach (var moviesResource in moviesResources)
+                            {
+                                _movieResourcesCache.Set(moviesResource.Id.ToString(), moviesResource);
+                            }
                         }
                     }
                 }

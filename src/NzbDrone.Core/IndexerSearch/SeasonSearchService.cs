@@ -39,13 +39,9 @@ namespace NzbDrone.Core.IndexerSearch
             }
 
             var totalGrabbed = 0;
-            var searchedCount = 0;
 
             foreach (var episode in episodes)
             {
-                searchedCount++;
-                _logger.ProgressInfo("Searching for {0} [{1}/{2}]", episode.Title, searchedCount, episodes.Count);
-
                 var decisions = _releaseSearchService.EpisodeSearch(episode, message.Trigger == CommandTrigger.Manual, false).GetAwaiter().GetResult();
                 var processed = _processDownloadDecisions.ProcessDecisions(decisions).GetAwaiter().GetResult();
 

@@ -110,8 +110,8 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
             _namingConfig.StandardEpisodeFormat = "{Site Title} - {Release Date} - {Episode Title} {Quality Full}";
 
             var result = Subject.BuildFileName(_episodes, _series, _episodeFile, ".mkv");
-            result.Length.Should().BeLessOrEqualTo(255);
-            result.Should().Be("The Fantastic Life of Mr. Sisko - 2016 05 06 - This title has to be 197 characters in length, combined with the series title, quality and episode number it becomes 254ish and the extension puts it above the 255 limit and triggers the t... Bluray-1080p.mkv");
+            result.Length.Should().BeLessOrEqualTo(235);
+            result.Should().Be("The Fantastic Life of Mr. Sisko - 2016 05 06 - This title has to be 197 characters in length, combined with the series title, quality and episode number it becomes 254ish and the extension puts it above the... Bluray-1080p.mkv");
         }
 
         [Test]
@@ -120,70 +120,70 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
             _namingConfig.StandardEpisodeFormat = "{Site Title} - {Release Date} - {Episode Title} {Quality Full}";
 
             var result = Subject.BuildFileName(_episodes, _series, _episodeFile);
-            result.Length.Should().BeLessOrEqualTo(255);
+            result.Length.Should().BeLessOrEqualTo(235);
             result.Should().Be("Series Title - 2016 05 06 - Episode Title 1...A Really Really Really Really Long Episode Title HDTV-720p");
         }
 
         [Test]
         public void should_truncate_with_ellipsis_if_only_first_episode_title_fits()
         {
-            _series.Title = "Lorem ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque penatibus et magnis dis parturient montes";
+            _series.Title = "Lorem ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque";
             _namingConfig.StandardEpisodeFormat = "{Site Title} - {Release Date} - {Episode Title} {Quality Full}";
 
             var result = Subject.BuildFileName(_episodes, _series, _episodeFile);
-            result.Length.Should().BeLessOrEqualTo(255);
-            result.Should().Be("Lorem ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque penatibus et magnis dis parturient montes - 2016 05 06 - Episode Title 1... HDTV-720p");
+            result.Length.Should().BeLessOrEqualTo(235);
+            result.Should().Be("Lorem ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque - 2016 05 06 - Episode Title 1... HDTV-720p");
         }
 
         [Test]
         public void should_truncate_first_episode_title_with_ellipsis_if_only_partially_fits()
         {
-            _series.Title = "Lorem ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque penatibus et magnis dis parturient montes nascetur ridiculus musu Cras vestibulum";
+            _series.Title = "Lorem ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque penatibus et magnis dis parturient montes";
             _namingConfig.StandardEpisodeFormat = "{Site Title} - {Release Date} - {Episode Title} {Quality Full}";
 
             var result = Subject.BuildFileName(new List<Episode> { _episodes.First() }, _series, _episodeFile);
-            result.Length.Should().BeLessOrEqualTo(255);
-            result.Should().Be("Lorem ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque penatibus et magnis dis parturient montes nascetur ridiculus musu Cras vestibulum - 2016 05 06 - Episod... HDTV-720p");
+            result.Length.Should().BeLessOrEqualTo(235);
+            result.Should().Be("Lorem ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque penatibus et magnis dis parturient montes - 2016 05 06 - Episod... HDTV-720p");
         }
 
         [Test]
         public void should_truncate_titles_measuring_series_title_bytes()
         {
-            _series.Title = "Lor\u00E9m ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque penatibus et magnis dis parturient montes nascetur ridiculus musu Cras vestibulum";
+            _series.Title = "Lor\u00E9m ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque penatibus et magnis dis parturient montes";
             _namingConfig.StandardEpisodeFormat = "{Site Title} - {Release Date} - {Episode Title} {Quality Full}";
 
             var result = Subject.BuildFileName(new List<Episode> { _episodes.First() }, _series, _episodeFile);
-            result.GetByteCount().Should().BeLessOrEqualTo(255);
+            result.GetByteCount().Should().BeLessOrEqualTo(235);
 
-            result.Should().Be("Lor\u00E9m ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque penatibus et magnis dis parturient montes nascetur ridiculus musu Cras vestibulum - 2016 05 06 - Episo... HDTV-720p");
+            result.Should().Be("Lor\u00E9m ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque penatibus et magnis dis parturient montes - 2016 05 06 - Episo... HDTV-720p");
         }
 
         [Test]
         public void should_truncate_titles_measuring_episode_title_bytes()
         {
-            _series.Title = "Lorem ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque penatibus et magnis dis parturient montes nascetur ridiculus musu Cras vestibulum";
+            _series.Title = "Lorem ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque penatibus et magnis dis parturient montes";
             _namingConfig.StandardEpisodeFormat = "{Site Title} - {Release Date} - {Episode Title} {Quality Full}";
 
             _episodes.First().Title = "Episod\u00E9 Title";
 
             var result = Subject.BuildFileName(new List<Episode> { _episodes.First() }, _series, _episodeFile);
-            result.GetByteCount().Should().BeLessOrEqualTo(255);
+            result.GetByteCount().Should().BeLessOrEqualTo(235);
 
-            result.Should().Be("Lorem ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque penatibus et magnis dis parturient montes nascetur ridiculus musu Cras vestibulum - 2016 05 06 - Episod... HDTV-720p");
+            result.Should().Be("Lorem ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque penatibus et magnis dis parturient montes - 2016 05 06 - Episod... HDTV-720p");
         }
 
         [Test]
         public void should_truncate_titles_measuring_episode_title_bytes_middle()
         {
-            _series.Title = "Lorem ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque penatibus et magnis dis parturient montes nascetur ridiculus musu Cras vestibulum";
+            _series.Title = "Lorem ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque penatibus et magnis dis parturient montes";
             _namingConfig.StandardEpisodeFormat = "{Site Title} - {Release Date} - {Episode Title} {Quality Full}";
 
             _episodes.First().Title = "Episode T\u00E9tle";
 
             var result = Subject.BuildFileName(new List<Episode> { _episodes.First() }, _series, _episodeFile);
-            result.GetByteCount().Should().BeLessOrEqualTo(255);
+            result.GetByteCount().Should().BeLessOrEqualTo(235);
 
-            result.Should().Be("Lorem ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque penatibus et magnis dis parturient montes nascetur ridiculus musu Cras vestibulum - 2016 05 06 - Episod... HDTV-720p");
+            result.Should().Be("Lorem ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque penatibus et magnis dis parturient montes - 2016 05 06 - Episod... HDTV-720p");
         }
 
         [Test]
@@ -195,7 +195,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
             _episodes.First().Title = "This is an extremely long episode title that definitely needs to be truncated because it makes the filename exceed the 255 character limit when combined with all other components including series title release date and quality information which should all be preserved completely while only the episode title gets truncated smartly";
 
             var result = Subject.BuildFileName(new List<Episode> { _episodes.First() }, _series, _episodeFile);
-            result.GetByteCount().Should().BeLessOrEqualTo(255);
+            result.GetByteCount().Should().BeLessOrEqualTo(235);
 
             // Should contain ellipsis indicating truncation occurred
             result.Should().Contain("...");
@@ -221,7 +221,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
             _episodes.First().Title = "A Really Really Really Really Really Really Really Really Really Really Really Really Really Really Really Really Really Really Really Really Really Really Really Really Really Really Really Really Really Really Really Really Really Really Really Really Really Really Really Really Really Really Really Really Really Long Episode Title That Should Be Truncated";
 
             var result = Subject.BuildFileName(new List<Episode> { _episodes.First() }, _series, _episodeFile);
-            result.GetByteCount().Should().BeLessOrEqualTo(255);
+            result.GetByteCount().Should().BeLessOrEqualTo(235);
 
             // Should contain truncated episode title with ellipsis
             result.Should().Contain("...");
@@ -239,13 +239,13 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
             // No episode title in format, so should fallback to simple truncation
             var result = Subject.BuildFileName(new List<Episode> { _episodes.First() }, _series, _episodeFile);
-            result.GetByteCount().Should().BeLessOrEqualTo(255);
+            result.GetByteCount().Should().BeLessOrEqualTo(235);
 
             // Should contain ellipsis indicating truncation occurred
             result.Should().Contain("...");
 
             // With simple truncation, the entire string is truncated and may not end with the expected format
-            result.Should().StartWith("A Very Long Series Title That Takes Up Most Of The Filename Space And Definitely Exceeds The Character Limit For Filenames When Combi");
+            result.Should().StartWith("A Very Long Series Title That Takes Up Most Of The Filename Space And Definitely Exceeds The Character Limit For Filenames");
         }
 
         [Test]
@@ -258,13 +258,13 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
             _episodes.First().Title = "Short";
 
             var result = Subject.BuildFileName(new List<Episode> { _episodes.First() }, _series, _episodeFile);
-            result.GetByteCount().Should().BeLessOrEqualTo(255);
+            result.GetByteCount().Should().BeLessOrEqualTo(235);
 
             // Should contain ellipsis indicating truncation occurred
             result.Should().Contain("...");
 
             // With fallback to simple truncation, the entire string gets truncated
-            result.Should().StartWith("An Extremely Long Series Title That Takes Up So Much Space That Even Without Episode Title The Filename Would Be Too Long For The Filesy");
+            result.Should().StartWith("An Extremely Long Series Title That Takes Up So Much Space That Even Without Episode Title The Filename Would Be Too Long For The");
         }
 
         [Test]
@@ -276,7 +276,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
             _episodes.First().Title = "A Very Long Episode Title That Should Be Truncated While Preserving The File Extension And Other Components That Make The Filename Way Too Long For The Filesystem To Handle Properly When Combined With The Extension And All The Other Components Which Need To Be Much Longer To Actually Trigger The Smart Truncation Logic Because Currently The Generated Filename Is Still Under The 255 Character Limit And We Need More Text To Push It Over";
 
             var result = Subject.BuildFileName(new List<Episode> { _episodes.First() }, _series, _episodeFile, ".mkv");
-            result.GetByteCount().Should().BeLessOrEqualTo(255);
+            result.GetByteCount().Should().BeLessOrEqualTo(235);
 
             result.Should().EndWith(".mkv");
             result.Should().Contain("...");
@@ -293,7 +293,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
             _episodes.First().Title = "This is a very long episode title with multiple words that should be truncated smartly at word boundaries when the filename becomes too long for filesystem limits and needs to have much more text to actually trigger the truncation logic in the smart filename builder because the current length is still under the required limit to activate the truncation functionality and we need even more words here to make it really really really really really really really really really really really really really really really really really really really really really really really long so that it definitely exceeds the character limit";
 
             var result = Subject.BuildFileName(new List<Episode> { _episodes.First() }, _series, _episodeFile);
-            result.GetByteCount().Should().BeLessOrEqualTo(255);
+            result.GetByteCount().Should().BeLessOrEqualTo(235);
 
             result.Should().Contain("...");
             result.Should().EndWith("- HDTV-720p");

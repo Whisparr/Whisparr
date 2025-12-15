@@ -45,9 +45,17 @@ namespace Whisparr.Api.V3.SeasonPass
                     }
                 }
 
-                if (resource.MonitoringOptions != null && resource.MonitoringOptions.Monitor == MonitorTypes.None)
+                if (resource.MonitoringOptions != null)
                 {
-                    series.Monitored = false;
+                    if (resource.MonitoringOptions.Monitor == MonitorTypes.None)
+                    {
+                        series.Monitored = false;
+                    }
+                    else
+                    {
+                        // Re-enable series monitoring when changing from None to another monitor type
+                        series.Monitored = true;
+                    }
                 }
 
                 _episodeMonitoredService.SetEpisodeMonitoredStatus(series, resource.MonitoringOptions);

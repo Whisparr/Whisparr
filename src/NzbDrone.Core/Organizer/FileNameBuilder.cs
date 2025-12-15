@@ -121,6 +121,10 @@ namespace NzbDrone.Core.Organizer
 
         private string TruncateFileNameSmartly(List<string> components, string extension, NamingConfig namingConfig)
         {
+            // Reserve 20 bytes for temporary suffixes like ".partial" used during downloads/transfers
+            const int TempSuffixBuffer = 20;
+            var effectiveMaxLength = LongPathSupport.MaxFileNameLength - TempSuffixBuffer;
+
             // Find which component contains the episode title by looking for episode title tokens
             var episodeTitleComponentIndex = -1;
 
@@ -137,7 +141,7 @@ namespace NzbDrone.Core.Organizer
             if (episodeTitleComponentIndex == -1)
             {
                 // No episode title found, fallback to simple truncation
-                var maxLength = LongPathSupport.MaxFileNameLength - extension.GetByteCount() - 3;
+                var maxLength = effectiveMaxLength - extension.GetByteCount() - 3;
                 var fileNameWithoutExtension = string.Join(Path.DirectorySeparatorChar.ToString(), components);
                 return fileNameWithoutExtension.Truncate(maxLength).TrimEnd(' ', '.') + "..." + extension;
             }
@@ -158,12 +162,12 @@ namespace NzbDrone.Core.Organizer
             var ellipsisLength = 3; // "..." in bytes
 
             // Calculate maximum length available for episode title
-            var maxTitleLength = LongPathSupport.MaxFileNameLength - nonTitleLength - separatorLength - extensionLength - ellipsisLength;
+            var maxTitleLength = effectiveMaxLength - nonTitleLength - separatorLength - extensionLength - ellipsisLength;
 
             if (maxTitleLength <= 0)
             {
                 // Even without episode title, we're too long - fallback to simple truncation
-                var maxLength = LongPathSupport.MaxFileNameLength - extension.GetByteCount() - 3;
+                var maxLength = effectiveMaxLength - extension.GetByteCount() - 3;
                 var fileNameWithoutExtension = string.Join(Path.DirectorySeparatorChar.ToString(), components);
                 return fileNameWithoutExtension.Truncate(maxLength).TrimEnd(' ', '.') + "..." + extension;
             }
@@ -219,7 +223,10 @@ namespace NzbDrone.Core.Organizer
                 AddCustomFormats(tokenHandlers, series, episodeFile, customFormats);
 
                 var component = ReplaceTokens(splitPattern, tokenHandlers, namingConfig, true).Trim();
-                var maxPathSegmentLength = Math.Min(LongPathSupport.MaxFileNameLength, maxPath);
+
+                // Reserve 20 bytes for temporary suffixes like ".partial" used during downloads/transfers
+                const int TempSuffixBuffer = 20;
+                var maxPathSegmentLength = Math.Min(LongPathSupport.MaxFileNameLength - TempSuffixBuffer, maxPath);
                 if (i == splitPatterns.Length - 1)
                 {
                     maxPathSegmentLength -= extension.GetByteCount();

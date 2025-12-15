@@ -111,7 +111,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
             var result = Subject.BuildFileName(_episodes, _series, _episodeFile, ".mkv");
             result.Length.Should().BeLessOrEqualTo(235);
-            result.Should().Be("The Fantastic Life of Mr. Sisko - 2016 05 06 - This title has to be 197 characters in length, combined with the series title, quality and episode number it becomes 254ish and the extension puts it above the... Bluray-1080p.mkv");
+            result.Should().Be("The Fantastic Life of Mr. Sisko - 2016 05 06 - This title has to be 197 characters in length, combined with the series title, quality and episode number it becomes 254ish and the extension puts it above the 255 limi... Bluray-1080p.mkv");
         }
 
         [Test]
@@ -138,30 +138,30 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [Test]
         public void should_truncate_first_episode_title_with_ellipsis_if_only_partially_fits()
         {
-            _series.Title = "Lorem ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque penatibus et magnis dis parturient montes";
+            _series.Title = "Lorem ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque penatibus et magnis dis parturient montes nascetur ridiculus";
             _namingConfig.StandardEpisodeFormat = "{Site Title} - {Release Date} - {Episode Title} {Quality Full}";
 
             var result = Subject.BuildFileName(new List<Episode> { _episodes.First() }, _series, _episodeFile);
             result.Length.Should().BeLessOrEqualTo(235);
-            result.Should().Be("Lorem ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque penatibus et magnis dis parturient montes - 2016 05 06 - Episod... HDTV-720p");
+            result.Should().Be("Lorem ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque penatibus et magnis dis parturient montes nascetur ridiculus - 2016 05 06 - Episode... HDTV-720p");
         }
 
         [Test]
         public void should_truncate_titles_measuring_series_title_bytes()
         {
-            _series.Title = "Lor\u00E9m ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque penatibus et magnis dis parturient montes";
+            _series.Title = "Lor\u00E9m ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque penatibus et magnis dis parturient montes nascetur ridiculus";
             _namingConfig.StandardEpisodeFormat = "{Site Title} - {Release Date} - {Episode Title} {Quality Full}";
 
             var result = Subject.BuildFileName(new List<Episode> { _episodes.First() }, _series, _episodeFile);
             result.GetByteCount().Should().BeLessOrEqualTo(235);
 
-            result.Should().Be("Lor\u00E9m ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque penatibus et magnis dis parturient montes - 2016 05 06 - Episo... HDTV-720p");
+            result.Should().Be("Lor\u00E9m ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque penatibus et magnis dis parturient montes nascetur ridiculus - 2016 05 06 - Episod... HDTV-720p");
         }
 
         [Test]
         public void should_truncate_titles_measuring_episode_title_bytes()
         {
-            _series.Title = "Lorem ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque penatibus et magnis dis parturient montes";
+            _series.Title = "Lorem ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque penatibus et magnis dis parturient montes nascetur ridiculus";
             _namingConfig.StandardEpisodeFormat = "{Site Title} - {Release Date} - {Episode Title} {Quality Full}";
 
             _episodes.First().Title = "Episod\u00E9 Title";
@@ -169,13 +169,13 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
             var result = Subject.BuildFileName(new List<Episode> { _episodes.First() }, _series, _episodeFile);
             result.GetByteCount().Should().BeLessOrEqualTo(235);
 
-            result.Should().Be("Lorem ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque penatibus et magnis dis parturient montes - 2016 05 06 - Episod... HDTV-720p");
+            result.Should().Be("Lorem ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque penatibus et magnis dis parturient montes nascetur ridiculus - 2016 05 06 - Episod... HDTV-720p");
         }
 
         [Test]
         public void should_truncate_titles_measuring_episode_title_bytes_middle()
         {
-            _series.Title = "Lorem ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque penatibus et magnis dis parturient montes";
+            _series.Title = "Lorem ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque penatibus et magnis dis parturient montes nascetur ridiculus";
             _namingConfig.StandardEpisodeFormat = "{Site Title} - {Release Date} - {Episode Title} {Quality Full}";
 
             _episodes.First().Title = "Episode T\u00E9tle";
@@ -183,7 +183,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
             var result = Subject.BuildFileName(new List<Episode> { _episodes.First() }, _series, _episodeFile);
             result.GetByteCount().Should().BeLessOrEqualTo(235);
 
-            result.Should().Be("Lorem ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque penatibus et magnis dis parturient montes - 2016 05 06 - Episod... HDTV-720p");
+            result.Should().Be("Lorem ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque penatibus et magnis dis parturient montes nascetur ridiculus - 2016 05 06 - Episode... HDTV-720p");
         }
 
         [Test]

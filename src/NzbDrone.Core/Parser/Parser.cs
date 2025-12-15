@@ -74,6 +74,11 @@ namespace NzbDrone.Core.Parser
                 $@"^(?<externalid>{ExternalIdBasePattern})(?:\.\d+)+\.[a-z0-9]{{2,4}}$",
                 match => match.Groups["externalid"].Value),
 
+            // Website prefix with @ separator: hhd800.com@NFD-039.mp4
+            new ExternalIdPattern(
+                $@"^[a-z0-9.-]+@(?<externalid>{ExternalIdBasePattern})",
+                match => match.Groups["externalid"].Value),
+
             // Dot-separated format: MIDA.422.blah.blah -> MIDA-422
             // Requires 3+ digits to avoid matching date patterns like Series.23.01.23
             new ExternalIdPattern(

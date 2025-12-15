@@ -122,6 +122,8 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("ABCD-1234", "ABCD-1234")]
         [TestCase("AB-12.mp4", "AB-12")]
         [TestCase("ABCDEFGHIJ-1234567890", "ABCDEFGHIJ-1234567890")]
+        [TestCase("hhd800.com@NFD-039.mp4", "NFD-039")]
+        [TestCase("site.org@ABC-123.mkv", "ABC-123")]
         public void should_parse_external_id_from_filename(string filename, string expectedExternalId)
         {
             var result = Parser.Parser.ParseExternalIdFromFilename(filename);

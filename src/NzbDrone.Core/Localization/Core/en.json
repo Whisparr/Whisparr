@@ -2031,6 +2031,8 @@
   "WhisparrCacheStudioAPI": "Cache Studio API",
   "WhisparrCacheStudioAPIHelpText": "Cache API calls to studios",
   "WhisparrCalendarFeed": "{appName} Calendar Feed",
+  "WhisparrCorruptFileDetection": "Corrupt File Detection",
+  "WhisparrCorruptFileDetectionHelpText": "The file will be checked and if it is not found to be valid it will fail to automatically import.",
   "WhisparrFolderLimit": "Import File Limit",
   "WhisparrFolderLimitHelpText": "Limit the manual import tp a number of files within a folder",
   "WhisparrSupportsAnyDownloadClient": "{appName} supports many popular torrent and usenet download clients.",

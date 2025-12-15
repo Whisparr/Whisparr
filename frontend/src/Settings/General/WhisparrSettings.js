@@ -24,6 +24,7 @@ function WhisparrSettings(props) {
     whisparrCacheMovieAPI,
     whisparrCachePerformerAPI,
     whisparrCacheStudioAPI,
+    whisparrCorruptFileDetection,
     whisparrValidateRuntime,
     whisparrValidateRuntimeLimit
   } = settings;
@@ -106,6 +107,21 @@ function WhisparrSettings(props) {
           helpText={translate('WhisparrAutoMatchOnDateHelpText')}
           onChange={onInputChange}
           {...whisparrAutoMatchOnDate}
+        />
+      </FormGroup>
+
+      <FormGroup
+        advancedSettings={advancedSettings}
+        isAdvanced={true}
+      >
+        <FormLabel>{translate('WhisparrCorruptFileDetection')}</FormLabel>
+
+        <FormInputGroup
+          type={inputTypes.CHECK}
+          name="whisparrCorruptFileDetection"
+          helpText={translate('WhisparrCorruptFileDetectionHelpText')}
+          onChange={onInputChange}
+          {...whisparrCorruptFileDetection}
         />
       </FormGroup>
 

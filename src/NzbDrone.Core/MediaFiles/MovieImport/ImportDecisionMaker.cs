@@ -284,14 +284,20 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
 
                     decision = GetDecision(localMovie, downloadClientItem);
 
-                    if (localMovie.MediaInfo?.RunTime != null && localMovie.MediaInfo.RunTime.TotalMinutes > 0 && localMovie.Movie.MovieMetadata.Value.Runtime > 0)
+                    if (localMovie.MediaInfo?.RunTime != null && localMovie.MediaInfo.RunTime.TotalMinutes != 0 && localMovie.Movie.MovieMetadata.Value.Runtime > 0)
                     {
                         var runtime = localMovie.MediaInfo.RunTime.TotalMinutes;
                         var limit = _configService.WhisparrValidateRuntimeLimit;
 
                         if (runtime < localMovie.Movie.MovieMetadata.Value.Runtime - limit || runtime > localMovie.Movie.MovieMetadata.Value.Runtime + limit)
                         {
-                            _logger.Warn($"Runtime of {localMovie.Movie.MovieMetadata.Value.Runtime} expected but {runtime} Found for {localMovie.Movie.ToString()}");
+                            var rejection = $"Runtime of {localMovie.Movie.MovieMetadata.Value.Runtime} expected but {runtime} Found";
+                            if (runtime == -1)
+                            {
+                                rejection = "Corrupt file detected as Media Information was not able to be extracted.";
+                            }
+
+                            _logger.Warn($"{rejection} for {localMovie.Movie.ToString()}");
                             if (_configService.WhisparrValidateRuntime)
                             {
                                 decision = new ImportDecision(localMovie, new Rejection($"Runtime of {localMovie.Movie.MovieMetadata.Value.Runtime} expected but {runtime} Found"));

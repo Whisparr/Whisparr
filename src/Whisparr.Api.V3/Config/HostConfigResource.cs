@@ -54,6 +54,7 @@ namespace Whisparr.Api.V3.Config
         public bool WhisparrCacheMovieAPI { get; set; }
         public bool WhisparrCachePerformerAPI { get; set; }
         public bool WhisparrCacheStudioAPI { get; set; }
+        public bool WhisparrCorruptFileDetection { get; set; }
         public bool WhisparrValidateRuntime { get; set; }
         public int WhisparrValidateRuntimeLimit { get; set; }
     }
@@ -110,6 +111,7 @@ namespace Whisparr.Api.V3.Config
                 WhisparrCacheMovieAPI = configService.WhisparrCacheMovieAPI,
                 WhisparrCachePerformerAPI = configService.WhisparrCachePerformerAPI,
                 WhisparrCacheStudioAPI = configService.WhisparrCacheStudioAPI,
+                WhisparrCorruptFileDetection = configService.WhisparrCorruptFileDetection,
                 WhisparrValidateRuntime = configService.WhisparrValidateRuntime,
                 WhisparrValidateRuntimeLimit = configService.WhisparrValidateRuntimeLimit
             };

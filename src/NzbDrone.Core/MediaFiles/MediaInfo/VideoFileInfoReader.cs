@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using FFMpegCore;
+using FFMpegCore.Exceptions;
 using NLog;
 using NzbDrone.Common.Disk;
 using NzbDrone.Common.Extensions;
+using NzbDrone.Core.Configuration;
 
 namespace NzbDrone.Core.MediaFiles.MediaInfo
 {
@@ -18,6 +20,7 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
     public class VideoFileInfoReader : IVideoFileInfoReader
     {
         private readonly IDiskProvider _diskProvider;
+        private readonly IConfigService _configService;
         private readonly Logger _logger;
         private readonly List<FFProbePixelFormat> _pixelFormats;
 
@@ -29,9 +32,10 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
         private static readonly string[] PqTransferFunctions = { "smpte2084" };
         private static readonly string[] ValidHdrTransferFunctions = HlgTransferFunctions.Concat(PqTransferFunctions).ToArray();
 
-        public VideoFileInfoReader(IDiskProvider diskProvider, Logger logger)
+        public VideoFileInfoReader(IDiskProvider diskProvider, IConfigService configService, Logger logger)
         {
             _diskProvider = diskProvider;
+            _configService = configService;
             _logger = logger;
 
             // We bundle ffprobe for all platforms
@@ -130,6 +134,15 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
                 mediaInfoModel.VideoHdrFormat = GetHdrFormat(mediaInfoModel.VideoBitDepth, mediaInfoModel.VideoColourPrimaries, mediaInfoModel.VideoTransferCharacteristics, sideData);
 
                 return mediaInfoModel;
+            }
+            catch (FFMpegException ex)
+            {
+                _logger.Error(ex, "Unable to parse media info from file: {0}", filename);
+                if (_configService.WhisparrCorruptFileDetection)
+                {
+                    // return as a bad duration of -1 minute
+                    return new MediaInfoModel() { RunTime = new TimeSpan(0, -1, 0) };
+                }
             }
             catch (Exception ex)
             {

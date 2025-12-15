@@ -73,9 +73,16 @@ namespace NzbDrone.Core.IndexerSearch
             var series = _seriesService.GetSeries(seriesId);
             var downloadDecisions = new List<DownloadDecision>();
 
+            _logger.ProgressInfo("Searching for {0} episodes in {1}", episodes.Count, series.Title);
+
             // Search each episode individually - XXX content doesn't have traditional seasons
+            var searchedCount = 0;
+
             foreach (var episode in episodes)
             {
+                searchedCount++;
+                _logger.ProgressInfo("Searching for {0} - {1} [{2}/{3}]", series.Title, episode.Title, searchedCount, episodes.Count);
+
                 var decisions = await SearchSingle(series, episode, monitoredOnly, userInvokedSearch, interactiveSearch);
                 downloadDecisions.AddRange(decisions);
             }

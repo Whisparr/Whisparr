@@ -132,7 +132,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
             var result = Subject.BuildFileName(_episodes, _series, _episodeFile);
             result.Length.Should().BeLessOrEqualTo(235);
-            result.Should().Be("Lorem ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque - 2016 05 06 - Episode Title 1... HDTV-720p");
+            result.Should().Be("Lorem ipsum dolor sit amet, consectetur adipiscing elit Maecenas et magna sem Morbi vitae volutpat quam, id porta arcu Orci varius natoque - 2016 05 06 - Episode Title 1...A Really Really Really Really Long Episode Title HDTV-720p");
         }
 
         [Test]

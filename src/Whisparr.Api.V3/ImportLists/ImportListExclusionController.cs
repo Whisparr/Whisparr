@@ -195,10 +195,11 @@ namespace Whisparr.Api.V3.ImportLists
 
                 try
                 {
+                    _logger.Info($"Caching {missingIds.Count} exclusions with {_exclusionResourceCache.Lock.CurrentCount} available threads.");
+
                     // If there are a large number of missing IDs, acquire the lock to prevent cache stampede
                     if (missingIds.Count > 100)
                     {
-                        _logger.Info($"Caching {missingIds.Count} exclusions with {_exclusionResourceCache.Lock.CurrentCount} avalible threads");
                         _exclusionResourceCache.Lock.Wait();
                         releaseLock = true;
                         if (stopwatch.Elapsed.TotalSeconds > 2)

@@ -245,10 +245,11 @@ namespace Whisparr.Api.V3.Performers
 
                 try
                 {
+                    _logger.Info($"Caching {missingIds.Count} performers with {_performerResourceCache.Lock.CurrentCount} available threads.");
+
                     // If there are a large number of missing IDs, acquire the lock to prevent cache stampede
                     if (missingIds.Count > 100)
                     {
-                        _logger.Info($"Caching {missingIds.Count} performers with {_performerResourceCache.Lock.CurrentCount} avalible threads");
                         _performerResourceCache.Lock.Wait();
                         releaseLock = true;
                         if (stopwatch.Elapsed.TotalSeconds > 2)

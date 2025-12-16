@@ -452,7 +452,14 @@ namespace Whisparr.Api.V3.Movies
             _movieResourcesCache.Remove(message.MovieInfo.Movie.Id.ToString());
 
             var updatedMovie = _moviesService.GetMovie(message.MovieInfo.Movie.Id);
-            BroadcastResourceChange(ModelAction.Updated, MapToResource(updatedMovie));
+            if (updatedMovie != null)
+            {
+                BroadcastResourceChange(ModelAction.Updated, MapToResource(updatedMovie));
+            }
+            else
+            {
+                BroadcastResourceChange(ModelAction.Updated, message.MovieInfo.Movie.Id);
+            }
         }
 
         [NonAction]
@@ -466,7 +473,14 @@ namespace Whisparr.Api.V3.Movies
 
             _movieResourcesCache.Remove(message.MovieFile.MovieId.ToString());
             var updatedMovie = _moviesService.GetMovie(message.MovieFile.MovieId);
-            BroadcastResourceChange(ModelAction.Updated, MapToResource(updatedMovie));
+            if (updatedMovie != null)
+            {
+                BroadcastResourceChange(ModelAction.Updated, MapToResource(updatedMovie));
+            }
+            else
+            {
+                BroadcastResourceChange(ModelAction.Updated, message.MovieFile.MovieId);
+            }
         }
 
         [NonAction]
@@ -579,10 +593,11 @@ namespace Whisparr.Api.V3.Movies
 
                 try
                 {
+                    _logger.Info($"Caching {missingIds.Count} movies with {_movieResourcesCache.Lock.CurrentCount} available threads.");
+
                     // If there are a large number of missing IDs, acquire the lock to prevent cache stampede
                     if (missingIds.Count > 100)
                     {
-                        _logger.Info($"Caching {missingIds.Count} movies with {_movieResourcesCache.Lock.CurrentCount} avalible threads");
                         _movieResourcesCache.Lock.Wait();
                         releaseLock = true;
                         if (stopwatch.Elapsed.TotalSeconds > 2)

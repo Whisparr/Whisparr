@@ -242,10 +242,11 @@ namespace Whisparr.Api.V3.Studios
 
                 try
                 {
+                    _logger.Info($"Caching {missingIds.Count} studios with {_studioResourceCache.Lock.CurrentCount} available threads.");
+
                     // If there are a large number of missing IDs, acquire the lock to prevent cache stampede
                     if (missingIds.Count > 100)
                     {
-                        _logger.Info($"Caching {missingIds.Count} studios with {_studioResourceCache.Lock.CurrentCount} avalible threads");
                         _studioResourceCache.Lock.Wait();
                         releaseLock = true;
                         if (stopwatch.Elapsed.TotalSeconds > 2)

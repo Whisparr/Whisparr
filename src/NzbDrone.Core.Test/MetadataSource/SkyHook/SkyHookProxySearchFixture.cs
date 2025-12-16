@@ -60,7 +60,7 @@ namespace NzbDrone.Core.Test.MetadataSource.SkyHook
             ExceptionVerification.IgnoreWarns();
         }
 
-        [TestCase("blacked", "Blacked")]
+        [TestCase("brazzers exxtra", "Brazzers Exxtra")]
         [TestCase("https://stashdb.org/studios/39cee498-a9ac-4403-910a-1a0157ad22d8", "Brazzers Exxtra")]
         public void successful_studio_search(string title, string expected)
         {

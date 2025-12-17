@@ -10,9 +10,9 @@ import MovieIndexProgressBar from 'Movie/Index/ProgressBar/MovieIndexProgressBar
 import MovieFormats from 'Movie/MovieFormats';
 import MovieSearchCell from 'Movie/MovieSearchCell';
 import MovieTitleLink from 'Movie/MovieTitleLink';
-import MediaInfoConnector from 'MovieFile/MediaInfoConnector';
+import MediaInfo from 'MovieFile/Editor/MediaInfo';
 import * as mediaInfoTypes from 'MovieFile/mediaInfoTypes';
-import MovieFileLanguageConnector from 'MovieFile/MovieFileLanguageConnector';
+import MovieFileLanguages from 'MovieFile/MovieFileLanguages';
 import formatRuntime from 'Utilities/Date/formatRuntime';
 import formatBytes from 'Utilities/Number/formatBytes';
 import formatCustomFormatScore from 'Utilities/Number/formatCustomFormatScore';
@@ -205,7 +205,7 @@ class SceneRow extends Component {
                   key={name}
                   className={styles.languages}
                 >
-                  <MovieFileLanguageConnector
+                  <MovieFileLanguages
                     movieFileId={movieFileId}
                   />
                 </TableRowCell>
@@ -218,7 +218,7 @@ class SceneRow extends Component {
                   key={name}
                   className={styles.audio}
                 >
-                  <MediaInfoConnector
+                  <MediaInfo
                     type={mediaInfoTypes.AUDIO}
                     movieFileId={movieFileId}
                   />
@@ -232,7 +232,7 @@ class SceneRow extends Component {
                   key={name}
                   className={styles.audioLanguages}
                 >
-                  <MediaInfoConnector
+                  <MediaInfo
                     type={mediaInfoTypes.AUDIO_LANGUAGES}
                     movieFileId={movieFileId}
                   />
@@ -246,7 +246,7 @@ class SceneRow extends Component {
                   key={name}
                   className={styles.subtitles}
                 >
-                  <MediaInfoConnector
+                  <MediaInfo
                     type={mediaInfoTypes.SUBTITLES}
                     movieFileId={movieFileId}
                   />
@@ -260,7 +260,7 @@ class SceneRow extends Component {
                   key={name}
                   className={styles.video}
                 >
-                  <MediaInfoConnector
+                  <MediaInfo
                     type={mediaInfoTypes.VIDEO}
                     movieFileId={movieFileId}
                   />
@@ -274,7 +274,7 @@ class SceneRow extends Component {
                   key={name}
                   className={styles.videoDynamicRangeType}
                 >
-                  <MediaInfoConnector
+                  <MediaInfo
                     type={mediaInfoTypes.VIDEO_DYNAMIC_RANGE_TYPE}
                     movieFileId={movieFileId}
                   />

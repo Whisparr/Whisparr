@@ -231,7 +231,7 @@ namespace NzbDrone.Core.Movies.Performers
             }
             else
             {
-                var allPerformers = _performerService.GetAllPerformers().OrderBy(c => c.SortName).ToList();
+                var allPerformers = _performerService.GetAllPerformers().OrderBy(c => c.LastInfoSync).ToList();
 
                 var updatePerformers = new HashSet<string>();
 

@@ -164,8 +164,11 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Aggregation.Aggregators
                 // Verify the episode belongs to the series we're importing to
                 if (localEpisode.Series != null && episode.SeriesId != localEpisode.Series.Id)
                 {
-                    _logger.Debug("External ID {0} matched episode in different series (expected: {1}, found: {2}). Skipping.",
-                        filenameExternalId, localEpisode.Series.Id, episode.SeriesId);
+                    _logger.Debug(
+                        "External ID {0} matched episode in different series (expected: {1}, found: {2}). Skipping.",
+                        filenameExternalId,
+                        localEpisode.Series.Id,
+                        episode.SeriesId);
                     return null;
                 }
 

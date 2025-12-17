@@ -41,22 +41,8 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Aggregation
         {
             var isMediaFile = MediaFileExtensions.Extensions.Contains(Path.GetExtension(localEpisode.Path));
 
-            if (localEpisode.DownloadClientEpisodeInfo == null &&
-                localEpisode.FolderEpisodeInfo == null &&
-                localEpisode.FileEpisodeInfo == null)
-            {
-                if (isMediaFile)
-                {
-                    if (downloadClientItem != null)
-                    {
-                        // Skip validation for downloads - will be handled by aggregators
-                    }
-                    else
-                    {
-                        throw new AugmentingFailedException("Unable to parse episode info from path: {0}", localEpisode.Path);
-                    }
-                }
-            }
+            // Don't throw early if parsing fails - let aggregators try external ID matching
+            // This allows library files to be matched by external ID from the database
 
             localEpisode.Size = _diskProvider.GetFileSize(localEpisode.Path);
             localEpisode.SceneName = localEpisode.SceneSource ? SceneNameCalculator.GetSceneName(localEpisode) : null;

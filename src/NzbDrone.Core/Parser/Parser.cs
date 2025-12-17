@@ -84,6 +84,16 @@ namespace NzbDrone.Core.Parser
             new ExternalIdPattern(
                 @"^(?<prefix>[A-Z]{2,10})\.(?<number>\d{3,10})(?:\.|$)",
                 match => $"{match.Groups["prefix"].Value}-{match.Groups["number"].Value}"),
+
+            // External ID with single letter suffix (subtitle/version marker): DVAJ-702-C.mp4, ABC-123_A.mkv
+            new ExternalIdPattern(
+                $@"^(?<externalid>{ExternalIdBasePattern})[-_][A-Z](?:\.[a-z0-9]{{2,4}})?$",
+                match => match.Groups["externalid"].Value),
+
+            // External ID with bracketed quality/tag suffix: SNOS-002_[4K].mkv, ABC-123[UC].mp4
+            new ExternalIdPattern(
+                $@"^(?<externalid>{ExternalIdBasePattern})[-_]?\[[^\]]+\](?:\.[a-z0-9]{{2,4}})?$",
+                match => match.Groups["externalid"].Value),
         };
 
         private static readonly Regex[] ReportTitleRegex = new[]

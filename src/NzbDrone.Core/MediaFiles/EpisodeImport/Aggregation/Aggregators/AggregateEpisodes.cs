@@ -15,12 +15,14 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Aggregation.Aggregators
     public class AggregateEpisodes : IAggregateLocalEpisode
     {
         private readonly IParsingService _parsingService;
+        private readonly IEpisodeService _episodeService;
         private readonly ITrackedDownloadService _trackedDownloadService;
         private readonly Logger _logger;
 
-        public AggregateEpisodes(IParsingService parsingService, ITrackedDownloadService trackedDownloadService, Logger logger)
+        public AggregateEpisodes(IParsingService parsingService, IEpisodeService episodeService, ITrackedDownloadService trackedDownloadService, Logger logger)
         {
             _parsingService = parsingService;
+            _episodeService = episodeService;
             _trackedDownloadService = trackedDownloadService;
             _logger = logger;
         }
@@ -151,6 +153,39 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Aggregation.Aggregators
                         return trackedDownload.RemoteEpisode.Episodes;
                     }
                 }
+            }
+
+            // Fallback: Query database for episode with matching external ID
+            // This handles cases like manual imports or files from another instance
+            var episode = _episodeService.FindByExternalId(filenameExternalId);
+
+            if (episode != null)
+            {
+                // Verify the episode belongs to the series we're importing to
+                if (localEpisode.Series != null && episode.SeriesId != localEpisode.Series.Id)
+                {
+                    _logger.Debug(
+                        "External ID {0} matched episode in different series (expected: {1}, found: {2}). Skipping.",
+                        filenameExternalId,
+                        localEpisode.Series.Id,
+                        episode.SeriesId);
+                    return null;
+                }
+
+                _logger.Debug("Matched file to episode via external ID from database: {0}", filenameExternalId);
+
+                // Update FileEpisodeInfo for other aggregators
+                if (localEpisode.FileEpisodeInfo == null)
+                {
+                    localEpisode.FileEpisodeInfo = new ParsedEpisodeInfo
+                    {
+                        Quality = QualityParser.ParseQuality(filename),
+                        Languages = LanguageParser.ParseLanguages(filename),
+                        ExternalId = filenameExternalId
+                    };
+                }
+
+                return new List<Episode> { episode };
             }
 
             return null;

@@ -359,6 +359,8 @@ namespace NzbDrone.Core.Organizer
             if (movie.MovieMetadata.Value.Studio != null && movie.MovieMetadata.Value.Studio.Network.IsNotNullOrWhiteSpace())
             {
                 tokenHandlers["{Studio Network}"] = m => movie.MovieMetadata.Value.Studio.Network;
+                tokenHandlers["{Studio CleanNetwork}"] = m => CleanTitle(movie.MovieMetadata.Value.Studio.Network);
+                tokenHandlers["{Studio CleanNetworkSlug}"] = m => SlugTitle(CleanTitle(movie.MovieMetadata.Value.Studio.Network));
             }
             else if (movie.MovieMetadata.Value.StudioForeignId.IsNotNullOrWhiteSpace())
             {

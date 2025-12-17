@@ -90,13 +90,13 @@ const movieFileNameTokens = [
 const sceneFileNameTokens = [
   {
     token:
-      '[{studio cleantitleslug}] {release-date}.{scene.cleantitle}.{scene.performers}',
-    example: '[studiotitle] 2010-01-01.the.scene.title',
+      '{Studio CleanTitle} - {Release Date} - {Scene CleanTitle}  [{Quality Title}]',
+    example: 'Studio Title - 2010-01-01 - The Scene Title [Bluray-1080p]',
   },
   {
     token:
-      '{Studio Title}- {Scene Title} - {Release Date} - {Scene PerformersFemale} [{Quality Title}]',
-    example: 'Studio Title - The Scene Title - 2010-01-01 - [Bluray-1080p]',
+      '[{studio cleantitleslug}] {release-date}.{scene.cleantitle}.{scene.performers}',
+    example: '[studiotitle] 2010-01-01.the.scene.title',
   },
   {
     token:
@@ -201,7 +201,9 @@ const studioTokens = [
   { token: '{Studio CleanTitleSlug}', example: 'StudiosTitle' },
   { token: '{Studio TitleThe}', example: "Studio's Title, The" },
   { token: '{Studio TitleFirstCharacter}', example: 'S' },
-  { token: '{Studio Network}', example: 'Brazzers' },
+  { token: '{Studio Network}', example: "Network's Title" },
+  { token: '{Studio CleanNetwork}', example: 'Networks Title' },
+  { token: '{Studio CleanNetworkSlug}', example: 'NetworksTitle' },
 ];
 
 const movieIdTokens = [

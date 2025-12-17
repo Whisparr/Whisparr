@@ -256,7 +256,9 @@ namespace NzbDrone.Core.Tv
             }
             else
             {
-                var allSeries = _seriesService.GetAllSeries().OrderBy(c => c.SortTitle).ToList();
+                // Order by LastInfoSync (oldest first) so that if the task times out,
+                // the most stale series get refreshed first rather than always alphabetically
+                var allSeries = _seriesService.GetAllSeries().OrderBy(c => c.LastInfoSync).ToList();
 
                 foreach (var series in allSeries)
                 {

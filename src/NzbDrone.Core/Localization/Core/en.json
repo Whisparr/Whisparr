@@ -371,6 +371,8 @@
   "DeleteEmptyFolders": "Delete empty folders",
   "DeleteEmptyFoldersHelpText": "Delete empty movie folders during disk scan and when movie files are deleted",
   "DeleteFile": "Delete file",
+  "DeleteFiles": "Delete Files",
+  "DeleteFilesHelpText": "Also delete the movie files from disk",
   "DeleteFormatMessageText": "Are you sure you want to delete format tag {0} ?",
   "DeleteHeader": "Delete - {0}",
   "DeleteImportList": "Delete Import List",

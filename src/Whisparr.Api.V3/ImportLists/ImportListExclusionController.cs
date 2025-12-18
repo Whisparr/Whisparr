@@ -44,9 +44,10 @@ namespace Whisparr.Api.V3.ImportLists
             SharedValidator.RuleFor(c => c.MovieYear).GreaterThan(0);
         }
 
+        // Endpoint only used by stasharr to show excluded scenes
         [HttpGet]
         [Produces("application/json")]
-        public List<ImportListExclusionResource> GetImportListExclusions(string stashId)
+        public List<ImportListExclusionResource> GetImportListExclusions(string stashId, ImportExclusionType type = ImportExclusionType.Scene)
         {
             var importListExclusionResources = new List<ImportListExclusionResource>();
 
@@ -64,10 +65,11 @@ namespace Whisparr.Api.V3.ImportLists
                 if (_useCache)
                 {
                     importListExclusionResources = GetExclusionResources();
+                    importListExclusionResources = importListExclusionResources.Where(x => x.Type == type).ToList();
                 }
                 else
                 {
-                    importListExclusionResources = _importListExclusionService.GetAllExclusions().ToResource();
+                    importListExclusionResources = _importListExclusionService.GetAllByType(type).ToResource();
                 }
             }
 

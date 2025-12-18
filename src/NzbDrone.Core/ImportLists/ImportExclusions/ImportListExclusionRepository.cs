@@ -29,7 +29,13 @@ namespace NzbDrone.Core.ImportLists.ImportExclusions
 
         public ImportListExclusion GetByForeignId(string foreignId)
         {
-            return Query(x => x.ForeignId == foreignId).First();
+            var exclusions = Query(x => x.ForeignId == foreignId).ToList();
+            if (exclusions.Count == 0)
+            {
+                return null;
+            }
+
+            return exclusions.First();
         }
 
         public List<ImportListExclusion> AllByType(ImportExclusionType type)

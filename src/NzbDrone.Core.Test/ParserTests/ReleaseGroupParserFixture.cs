@@ -94,17 +94,6 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Movie Name (2015) [BDRemux 1080p AVC ES-CAT-EN DTS-HD MA 5.1 Subs]", null)]
         [TestCase("Movie Name (2015) [BDRemux 1080p AVC EN-CAT-ES DTS-HD MA 5.1 Subs]", null)]
         [TestCase("Movie Name (2015) [BDRemux 1080p AVC EN-ES-CAT DTS-HD MA 5.1 Subs]", null)]
-        [TestCase("Another Crappy Anime Movie Name 1999 [DusIctv] [Blu-ray][MKV][h264][1080p][DTS-HD MA 5.1][Dual Audio][Softsubs (DusIctv)", "DusIctv")]
-        [TestCase("Another Crappy Anime Movie Name 1999 [DHD] [Blu-ray][MKV][h264][1080p][AAC 5.1][Dual Audio][Softsubs (DHD)]", "DHD")]
-        [TestCase("Another Crappy Anime Movie Name 1999 [SEV] [Blu-ray][MKV][h265 10-bit][1080p][FLAC 5.1][Dual Audio][Softsubs (SEV)]", "SEV")]
-        [TestCase("Another Crappy Anime Movie Name 1999 [CtrlHD] [Blu-ray][MKV][h264][720p][AC3 2.0][Dual Audio][Softsubs (CtrlHD)]", "CtrlHD")]
-        [TestCase("Crappy Anime Movie Name 2017 [-ZR-] [Blu-ray][MKV][h264][1080p][TrueHD 5.1][Dual Audio][Softsubs (-ZR-)]", "-ZR-")]
-        [TestCase("Crappy Anime Movie Name 2017 [XZVN] [Blu-ray][MKV][h264][1080p][TrueHD 5.1][Dual Audio][Softsubs (XZVN)]", "XZVN")]
-        [TestCase("Crappy Anime Movie Name 2017 [ADC] [Blu-ray][M2TS (A)][16:9][h264][1080p][TrueHD 5.1][Dual Audio][Softsubs (ADC)]", "ADC")]
-        [TestCase("Crappy Anime Movie Name 2017 [Koten_Gars] [Blu-ray][MKV][h264][1080p][TrueHD 5.1][Dual Audio][Softsubs (Koten_Gars)]", "Koten_Gars")]
-        [TestCase("Crappy Anime Movie Name 2017 [RH] [Blu-ray][MKV][h264 10-bit][1080p][FLAC 5.1][Dual Audio][Softsubs (RH)]", "RH")]
-        [TestCase("Yet Another Anime Movie 2012 [Kametsu] [Blu-ray][MKV][h264 10-bit][1080p][FLAC 5.1][Dual Audio][Softsubs (Kametsu)]", "Kametsu")]
-        [TestCase("Another.Anime.Film.Name.2016.JPN.Blu-Ray.Remux.AVC.DTS-MA.BluDragon", "BluDragon")]
         [TestCase("A Movie in the Name (1964) (1080p BluRay x265 r00t)", "r00t")]
         [TestCase("Movie Title (2022) (2160p ATV WEB-DL Hybrid H265 DV HDR DDP Atmos 5.1 English - HONE)", "HONE")]
         [TestCase("Movie Title (2009) (2160p PMTP WEB-DL Hybrid H265 DV HDR10+ DDP Atmos 5.1 English - HONE)", "HONE")]
@@ -176,21 +165,29 @@ namespace NzbDrone.Core.Test.ParserTests
             Parser.Parser.ParseReleaseGroup(title).Should().Be(expected);
         }
 
-        [TestCase("[FFF] Invaders of the Movies!! - S01E11 - Someday, With Movies", "FFF")]
-        [TestCase("[HorribleSubs] Invaders of the Movies!! - S01E12 - Movies Going Well!!", "HorribleSubs")]
-        [TestCase("[Anime-Koi] Movies - S01E06 - Guys From Movies", "Anime-Koi")]
-        [TestCase("[Anime-Koi] Movies - S01E07 - A High-Grade Movies", "Anime-Koi")]
-        [TestCase("[Anime-Koi] Kami-sama Movies 2 - 01 [h264-720p][28D54E2C]", "Anime-Koi")]
-
-        public void should_parse_anime_release_groups(string title, string expected)
-        {
-            Parser.Parser.ParseReleaseGroup(title).Should().Be(expected);
-        }
-
         [TestCase("Terrible.Anime.Title.2020.DBOX.480p.x264-iKaos [v3] [6AFFEF6B]")]
         public void should_not_parse_anime_hash_as_release_group(string title)
         {
             Parser.Parser.ParseReleaseGroup(title).Should().BeNull();
+        }
+
+        [TestCase("[Deeper] Key Mistress - Jessi Rae - 2025-12-18 - 1080p")]
+        [TestCase("[BellesaFilms] The Sister - Ashley Lane, Mannie Coco (2025-09-28) [2160p]")]
+        [TestCase("[Blacked] - 2025-11-24 - BBC-Queen Violet Takes On Three Cocks - Violet Myers - 1080p")]
+        [TestCase("[Vixen] Matthew Meie, Erica Mori & Era Queen - Bratty College Girls Have Naughty Threesome (2025-12-03) [2160p]")]
+        public void should_not_parse_adult_content_studio_as_release_group(string title)
+        {
+            // Studios in brackets at the beginning should not be treated as release groups
+            // Release groups typically appear at the end of the title
+            var result = Parser.Parser.ParseMovieTitle(title);
+            result.Should().NotBeNull();
+            result.StudioTitle.Should().NotBeNullOrWhiteSpace();
+
+            // The studio should not be in the release group
+            if (result.ReleaseGroup != null)
+            {
+                result.ReleaseGroup.Should().NotBe(result.StudioTitle);
+            }
         }
     }
 }

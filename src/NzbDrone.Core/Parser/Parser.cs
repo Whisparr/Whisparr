@@ -42,6 +42,13 @@ namespace NzbDrone.Core.Parser
             new Regex(@"^\[(?<studiotitle>.+?)\][-_. ]{1,3}(?<airyear>(?:19|20)\d{2})[-_. ]+(?<airmonth>[0-1][0-9])[-_. ]+(?<airday>[0-3][0-9])(?:[-_. ]+)?(?<releasetoken>.+)",
                 RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
+            // SCENE - Site title in brackets or parentheses, date after title and performer
+            // [Site] Beautiful Episode - Loli - 2023-07-22 - 1080p
+            // [Deeper] Key Mistress - Jessi Rae - 2025-12-18 - 1080p
+            // (Studio) Title - Performer - 2025-12-18 - 1080p
+            new Regex("^(\\[|\\()(?<studiotitle>.+?)(\\]|\\))(?<releasetoken>.+?)(?:( - |\\s)(\\[|\\()?(?<airyear>(19|20)\\d{2})[-_.](?<airmonth>[0-1][0-9])[-_.](?<airday>[0-3][0-9])(\\]|\\))?)",
+                RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
             // (?P<site>.+?)?[\s\.\-](?P<date>\d{2}[\s\.\-]\d{2}[\s\.\-]\d{2})[\s\.\-](?P<performer>\w+.+?)?[\s\.\-](?P<title>.*?(?=(?:[\s\.\-]mp4)|$))
             // SCENE with airdate (18.04.28, 2018.04.28, 18-04-28, 18 04 28, 18_04_28) and performer
             new Regex(@"^(?<studiotitle>.+?)?[-_. ]+(?<airyear>\d{2}|\d{4})[-_. ]+(?<airmonth>[0-1][0-9])[-_. ]+(?<airday>[0-3][0-9])[-_. ]+(?<performer>\w+.+?)?[-_. ](?<title>.*?(?=(?:[-_. ]mp4)|$))",
@@ -90,18 +97,6 @@ namespace NzbDrone.Core.Parser
             // SCENE with Episode numbers after studio E1234 title
             new Regex(@"\[(?<studiotitle>.+?)?\].?[(]+(?<episode>[eE]+\d{1,6})?[\)]",
                 RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-            // Anime [Subgroup] and Year
-            new Regex(@"^(?:\[(?<subgroup>.+?)\][-_. ]?)(?<title>(?![(\[]).+?)?(?:(?:[-_\W](?<![)\[!]))*(?<year>(1(8|9)|20)\d{2}(?!p|i|x|\d+|\]|\W\d+)))+.*?(?<hash>\[\w{8}\])?(?:$|\.)", RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-            // Anime [Subgroup] no year, versioned title, hash
-            new Regex(@"^(?:\[(?<subgroup>.+?)\][-_. ]?)(?<title>(?![(\[]).+?)((v)(?:\d{1,2})(?:([-_. ])))(\[.*)?(?:[\[(][^])])?.*?(?<hash>\[\w{8}\])(?:$|\.)", RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-            // Anime [Subgroup] no year, info in double sets of brackets, hash
-            new Regex(@"^(?:\[(?<subgroup>.+?)\][-_. ]?)(?<title>(?![(\[]).+?)(\[.*).*?(?<hash>\[\w{8}\])(?:$|\.)", RegexOptions.IgnoreCase | RegexOptions.Compiled),
-
-            // Anime [Subgroup] no year, info in parentheses or brackets, hash
-            new Regex(@"^(?:\[(?<subgroup>.+?)\][-_. ]?)(?<title>(?![(\[]).+)(?:[\[(][^])]).*?(?<hash>\[\w{8}\])(?:$|\.)", RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
             // Some german or french tracker formats (missing year, ...) (Only applies to german and TrueFrench releases) - see ParserFixture for examples and tests - french removed as it broke all movies w/ french titles
             new Regex(@"^(?<title>(?![(\[]).+?)((\W|_))(" + EditionRegex + @".{1,3})?(?:(?<!(19|20)\d{2}.*?)(?<!(?:Good|The)[_ .-])(German|TrueFrench))(.+?)(?=((19|20)\d{2}|$))(?<year>(19|20)\d{2}(?!p|i|\d+|\]|\W\d+))?(\W+|_|$)(?!\\)", RegexOptions.IgnoreCase | RegexOptions.Compiled),
@@ -767,12 +762,8 @@ namespace NzbDrone.Core.Parser
             title = WebsitePrefixRegex.Replace(title);
             title = CleanTorrentSuffixRegex.Replace(title);
 
-            var animeMatch = AnimeReleaseGroupRegex.Match(title);
-
-            if (animeMatch.Success)
-            {
-                return animeMatch.Groups["subgroup"].Value;
-            }
+            // Removed AnimeReleaseGroupRegex check as it incorrectly matches studio names in brackets
+            // Studios appear at the beginning in brackets, release groups appear at the end
 
             title = CleanReleaseGroupRegex.Replace(title);
 

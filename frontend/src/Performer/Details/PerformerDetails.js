@@ -258,9 +258,6 @@ class PerformerDetails extends Component {
     const runningYears = `${startYear}-${endYear}`;
 
     const fanartUrl = getFanartUrl(images);
-    const elementStyle = {
-      'object-fit': 'cover'
-    };
 
     return (
       <PageContent title={fullName}>
@@ -322,7 +319,6 @@ class PerformerDetails extends Component {
               <MovieHeadshot
                 safeForWorkMode={safeForWorkMode}
                 className={styles.poster}
-                style={elementStyle}
                 images={images}
                 size={250}
                 lazy={false}

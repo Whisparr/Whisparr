@@ -68,20 +68,26 @@ function createStudioByForeignIdSelector() {
 function createMapStateToProps() {
   return createSelector(
     (state, { studioForeignId }) => studioForeignId,
+    (state, { isScenes }) => isScenes,
     createStudioByForeignIdSelector(),
     (state) => state.movies,
     createPerformerSelector(),
     createDimensionsSelector(),
     (state) => _.get(state, 'performerScenes'),
-    (studioForeignId, studio, scenes, performer, dimensions, performerScenes) => {
+    (studioForeignId, isScenes, studio, scenes, performer, dimensions, performerScenes) => {
 
-      let scenesInStudio = scenes.items.filter((scene) => scene.studioForeignId === studioForeignId && scene.credits.some((credit) => credit.performer.foreignId === performer.foreignId));
+      let items = scenes.items.filter((scene) => scene.studioForeignId === studioForeignId && scene.credits.some((credit) => credit.performer.foreignId === performer.foreignId));
+      if (isScenes) {
+        items = items.filter((scene) => scene.itemType === 'scene');
+      } else {
+        items = items.filter((scene) => scene.itemType === 'movie');
+      }
       // Sort once filtered
-      scenesInStudio = sort(scenesInStudio, performerScenes);
+      items = sort(items, performerScenes);
 
       return {
         ...studio,
-        items: scenesInStudio,
+        items,
         columns: performerScenes.columns,
         sortKey: performerScenes.sortKey,
         sortDirection: performerScenes.sortDirection,
@@ -168,7 +174,8 @@ PerformerDetailsStudioConnector.propTypes = {
   toggleStudioMonitored: PropTypes.func.isRequired,
   toggleMovieMonitored: PropTypes.func.isRequired,
   bulkMonitorMovie: PropTypes.func.isRequired,
-  executeCommand: PropTypes.func.isRequired
+  executeCommand: PropTypes.func.isRequired,
+  isScenes: PropTypes.bool.isRequired
 };
 
 export default connect(createMapStateToProps, mapDispatchToProps)(PerformerDetailsStudioConnector);

@@ -15,6 +15,7 @@ namespace NzbDrone.Core.Movies.Studios
         }
 
         public string ForeignId { get; set; }
+        public string TpdbId { get; set; }
         public string Title { get; set; }
         public string SortTitle { get; set; }
         public string CleanTitle { get; set; }
@@ -27,6 +28,7 @@ namespace NzbDrone.Core.Movies.Studios
         public string Network { get; set; }
         public DateTime Added { get; set; }
         public bool Monitored { get; set; }
+        public bool MoviesMonitored { get; set; }
         public DateTime? AfterDate { get; set; }
         public int QualityProfileId { get; set; }
         public bool SearchOnAdd { get; set; }
@@ -40,6 +42,7 @@ namespace NzbDrone.Core.Movies.Studios
             QualityProfileId = otherStudio.QualityProfileId;
             SearchOnAdd = otherStudio.SearchOnAdd;
             Monitored = otherStudio.Monitored;
+            MoviesMonitored = otherStudio.MoviesMonitored;
             AfterDate = otherStudio.AfterDate;
 
             RootFolderPath = otherStudio.RootFolderPath;

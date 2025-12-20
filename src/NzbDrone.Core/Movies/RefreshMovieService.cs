@@ -92,7 +92,7 @@ namespace NzbDrone.Core.Movies
 
             try
             {
-                var tupleInfo = movieMetadata.ItemType == ItemType.Movie ? _movieInfo.GetMovieInfo(movie.TmdbId) : _movieInfo.GetSceneInfo(movie.ForeignId);
+                var tupleInfo = GetMetadata(movie);
                 movieInfo = tupleInfo.Item1;
                 studioInfo = tupleInfo.Item2;
                 performerInfo = tupleInfo.Item3;
@@ -118,7 +118,10 @@ namespace NzbDrone.Core.Movies
 
             movieMetadata.Title = movieInfo.Title;
             movieMetadata.Code = movieInfo.Code;
+            movieMetadata.StashId = movieInfo.StashId;
             movieMetadata.ImdbId = movieInfo.ImdbId;
+            movieMetadata.TmdbId = movieInfo.TmdbId;
+            movieMetadata.TpdbId = movieInfo.TpdbId;
             movieMetadata.Overview = movieInfo.Overview;
             movieMetadata.Status = movieInfo.Status;
             movieMetadata.Images = movieInfo.Images;
@@ -137,6 +140,7 @@ namespace NzbDrone.Core.Movies
             movieMetadata.ReleaseDateUtc = movieInfo.ReleaseDateUtc;
             movieMetadata.ReleaseDate = movieInfo.ReleaseDate;
             movieMetadata.StudioTitle = movieInfo.StudioTitle;
+            movieMetadata.Studio = movieInfo.Studio;
             movieMetadata.OriginalLanguage = movieInfo.OriginalLanguage;
 
             if (studioInfo != null && studioInfo.ForeignId.IsNotNullOrWhiteSpace())
@@ -160,17 +164,16 @@ namespace NzbDrone.Core.Movies
             else
             {
                 movieMetadata.StudioForeignId = null;
-                movieMetadata.StudioTitle = null;
             }
 
             performerInfo.ForEach(p =>
-            {
-                p.Monitored = false;
-                p.RootFolderPath = _folderService.GetBestRootFolderPath(movie.Path);
-                p.SearchOnAdd = movie.AddOptions?.SearchForMovie ?? false;
-                p.QualityProfileId = movie.QualityProfileId;
-                p.Tags = movie.Tags;
-            });
+                    {
+                        p.Monitored = false;
+                        p.RootFolderPath = _folderService.GetBestRootFolderPath(movie.Path);
+                        p.SearchOnAdd = movie.AddOptions?.SearchForMovie ?? false;
+                        p.QualityProfileId = movie.QualityProfileId;
+                        p.Tags = movie.Tags;
+                    });
 
             _performerService.AddPerformers(performerInfo, true);
 
@@ -195,6 +198,46 @@ namespace NzbDrone.Core.Movies
             _eventAggregator.PublishEvent(new MovieUpdatedEvent(movie));
 
             return movie;
+        }
+
+        private Tuple<MovieMetadata, Studio, List<Performer>> GetMetadata(Movie movie)
+        {
+            if (movie.MovieMetadata.Value != null)
+            {
+                if (movie.MovieMetadata.Value.MetadataSource == MetadataSource.Tmdb)
+                {
+                    return _movieInfo.GetMovieInfo(movie.TmdbId);
+                }
+                else if (movie.MovieMetadata.Value.MetadataSource == MetadataSource.TpdbMovie)
+                {
+                    return _movieInfo.GetTpdbMovieInfo(movie.TpdbId);
+                }
+                else if (movie.MovieMetadata.Value.MetadataSource == MetadataSource.Stash)
+                {
+                    return _movieInfo.GetSceneInfo(movie.ForeignId);
+                }
+            }
+
+            if (int.TryParse(movie.ForeignId, out var tmdbId))
+            {
+                return _movieInfo.GetMovieInfo(tmdbId);
+            }
+            else if (movie.TmdbId > 0)
+            {
+                return _movieInfo.GetMovieInfo(movie.TmdbId);
+            }
+            else if (movie.TpdbId.IsNotNullOrWhiteSpace())
+            {
+                return _movieInfo.GetTpdbMovieInfo(movie.TpdbId);
+            }
+            else if (movie.ForeignId.StartsWith("tpdbid:"))
+            {
+                return _movieInfo.GetTpdbMovieInfo(movie.ForeignId.Replace("tpdbid:", ""));
+            }
+            else
+            {
+                return _movieInfo.GetSceneInfo(movie.ForeignId);
+            }
         }
 
         private void RescanMovie(Movie movie, bool isNew, CommandTrigger trigger)

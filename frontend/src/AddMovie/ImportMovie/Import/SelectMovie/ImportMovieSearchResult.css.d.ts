@@ -5,6 +5,8 @@ interface CssExports {
   'movie': string;
   'tmdbLink': string;
   'tmdbLinkIcon': string;
+  'tpdbLink': string;
+  'tpdbLinkIcon': string;
 }
 export const cssExports: CssExports;
 export default cssExports;

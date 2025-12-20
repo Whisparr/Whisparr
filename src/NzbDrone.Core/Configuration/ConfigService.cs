@@ -563,6 +563,13 @@ namespace NzbDrone.Core.Configuration
             set { SetValue("WhisparrFolderLimit", value); }
         }
 
+        public MovieMetadataType WhisparrMovieMetadataSource
+        {
+            get { return GetValueEnum("WhisparrMovieMetadataSource", MovieMetadataType.TMDB); }
+
+            set { SetValue("WhisparrMovieMetadataSource", value); }
+        }
+
         private string GetValue(string key)
         {
             return GetValue(key, string.Empty);

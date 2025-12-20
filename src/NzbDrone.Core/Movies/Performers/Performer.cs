@@ -14,6 +14,7 @@ namespace NzbDrone.Core.Movies.Performers
         }
 
         public string ForeignId { get; set; }
+        public string TpdbId { get; set; }
         public string Name { get; set; }
         public string SortName { get; set; }
         public string CleanName { get; set; }
@@ -28,6 +29,7 @@ namespace NzbDrone.Core.Movies.Performers
         public string RootFolderPath { get; set; }
         public DateTime Added { get; set; }
         public bool Monitored { get; set; }
+        public bool MoviesMonitored { get; set; }
         public int QualityProfileId { get; set; }
         public bool SearchOnAdd { get; set; }
         public DateTime? LastInfoSync { get; set; }
@@ -38,7 +40,7 @@ namespace NzbDrone.Core.Movies.Performers
             QualityProfileId = otherPerformer.QualityProfileId;
             SearchOnAdd = otherPerformer.SearchOnAdd;
             Monitored = otherPerformer.Monitored;
-
+            MoviesMonitored = otherPerformer.MoviesMonitored;
             RootFolderPath = otherPerformer.RootFolderPath;
             Tags = otherPerformer.Tags;
         }

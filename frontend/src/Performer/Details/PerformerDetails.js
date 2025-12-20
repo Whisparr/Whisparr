@@ -203,6 +203,7 @@ class PerformerDetails extends Component {
     const {
       id,
       foreignId,
+      tpdbId,
       fullName,
       rootFolderPath,
       gender,
@@ -393,7 +394,7 @@ class PerformerDetails extends Component {
                       <Tooltip
                         anchor={<Icon name={icons.EXTERNAL_LINK} size={20} />}
                         tooltip={
-                          <PerformerDetailsLinks foreignId={foreignId} />
+                          <PerformerDetailsLinks foreignId={foreignId} tpdbId={tpdbId} />
                         }
                         position={tooltipPositions.BOTTOM}
                       />
@@ -509,7 +510,26 @@ class PerformerDetails extends Component {
             ) : null}
 
             {!isFetching && isPopulated && hasMovies ? (
-              <FieldSet legend={translate('Movies')}>{null}</FieldSet>
+              <FieldSet legend={translate('Movies')}>
+                {isPopulated && !!studios.length && (
+                  <div>
+                    {studios.map((studio) => {
+                      return (
+                        <Delayed key={studio.foreignId} waitBeforeShow={50}>
+                          <PerformerDetailsStudioConnector
+                            key={studio.foreignId}
+                            performerId={id}
+                            studioForeignId={studio.foreignId}
+                            isScenes={false}
+                            isExpanded={expandedState[studio.foreignId]}
+                            onExpandPress={this.onExpandPress}
+                          />
+                        </Delayed>
+                      );
+                    })}
+                  </div>
+                )}
+              </FieldSet>
             ) : null}
 
             {!isFetching && isPopulated && hasScenes ? (
@@ -523,6 +543,7 @@ class PerformerDetails extends Component {
                             key={studio.foreignId}
                             performerId={id}
                             studioForeignId={studio.foreignId}
+                            isScenes={true}
                             isExpanded={expandedState[studio.foreignId]}
                             onExpandPress={this.onExpandPress}
                           />
@@ -555,6 +576,7 @@ class PerformerDetails extends Component {
 PerformerDetails.propTypes = {
   id: PropTypes.number.isRequired,
   foreignId: PropTypes.string,
+  tpdbId: PropTypes.string,
   fullName: PropTypes.string.isRequired,
   gender: PropTypes.string,
   age: PropTypes.number,

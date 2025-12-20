@@ -18,8 +18,10 @@ namespace Whisparr.Api.V3.Performers
         public int? CareerEnd { get; set; }
         public int? Age { get; set; }
         public string ForeignId { get; set; }
+        public string TpdbId { get; set; }
         public List<MediaCover> Images { get; set; }
         public bool Monitored { get; set; }
+        public bool MoviesMonitored { get; set; }
         public string RootFolderPath { get; set; }
         public int QualityProfileId { get; set; }
         public bool SearchOnAdd { get; set; }
@@ -53,6 +55,7 @@ namespace Whisparr.Api.V3.Performers
             {
                 Id = model.Id,
                 ForeignId = model.ForeignId,
+                TpdbId = model.TpdbId,
                 Gender = model.Gender,
                 Age = model.Age,
                 Ethnicity = model.Ethnicity,
@@ -62,6 +65,7 @@ namespace Whisparr.Api.V3.Performers
                 CareerEnd = model.CareerEnd,
                 FullName = model.Name,
                 Monitored = model.Monitored,
+                MoviesMonitored = model.MoviesMonitored,
                 Images = model.Images,
                 QualityProfileId = model.QualityProfileId,
                 RootFolderPath = model.RootFolderPath,
@@ -88,6 +92,7 @@ namespace Whisparr.Api.V3.Performers
                 ForeignId = resource.ForeignId,
                 Name = resource.FullName,
                 Monitored = resource.Monitored,
+                MoviesMonitored = resource.MoviesMonitored,
                 QualityProfileId = resource.QualityProfileId,
                 RootFolderPath = resource.RootFolderPath,
                 SearchOnAdd = resource.SearchOnAdd,

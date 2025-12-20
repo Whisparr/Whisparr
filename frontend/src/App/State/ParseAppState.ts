@@ -23,6 +23,7 @@ export interface ParsedMovieInfo {
   edition?: string;
   tmdbId?: number;
   imdbId?: string;
+  tpdbId?: string;
 }
 
 export interface ParseModel extends ModelBase {

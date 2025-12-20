@@ -168,6 +168,10 @@ class PerformerDetailsStudio extends Component {
       onTableOptionChange
     } = this.props;
 
+    if (items.length === 0) {
+      return;
+    }
+
     const {
       movieCount,
       movieFileCount,
@@ -354,6 +358,7 @@ PerformerDetailsStudio.propTypes = {
   isSaving: PropTypes.bool,
   isExpanded: PropTypes.bool,
   isSearching: PropTypes.bool.isRequired,
+  isScenes: PropTypes.bool,
   performerMonitored: PropTypes.bool.isRequired,
   isSmallScreen: PropTypes.bool.isRequired,
   onTableOptionChange: PropTypes.func.isRequired,

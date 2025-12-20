@@ -194,6 +194,8 @@ class StudioDetails extends Component {
     const {
       id,
       foreignId,
+      tpdbId,
+      website,
       title,
       aliases,
       rootFolderPath,
@@ -372,6 +374,8 @@ class StudioDetails extends Component {
                           tooltip={
                             <StudioDetailsLinks
                               foreignId={foreignId}
+                              website={website}
+                              tpdbId={tpdbId}
                             />
                           }
                           position={tooltipPositions.BOTTOM}
@@ -535,7 +539,28 @@ class StudioDetails extends Component {
             {
               !isFetching && isPopulated && hasMovies ?
                 <FieldSet legend={translate('Movies')}>
-                  {null}
+                  {
+                    isPopulated && !!years.length &&
+                      <div>
+                        {
+                          years.slice(0).reverse().map((year) => {
+                            return (
+                              <Delayed key={year} waitBeforeShow={50}>
+                                <StudioDetailsYearConnector
+                                  key={year}
+                                  studioId={id}
+                                  studioForeignId={foreignId}
+                                  year={year}
+                                  isScenes={false}
+                                  isExpanded={expandedState[year]}
+                                  onExpandPress={this.onExpandPress}
+                                />
+                              </Delayed>
+                            );
+                          })
+                        }
+                      </div>
+                  }
                 </FieldSet> :
                 null
             }
@@ -555,6 +580,7 @@ class StudioDetails extends Component {
                                   studioId={id}
                                   studioForeignId={foreignId}
                                   year={year}
+                                  isScenes={true}
                                   isExpanded={expandedState[year]}
                                   onExpandPress={this.onExpandPress}
                                 />
@@ -592,6 +618,8 @@ class StudioDetails extends Component {
 StudioDetails.propTypes = {
   id: PropTypes.number.isRequired,
   foreignId: PropTypes.string,
+  tpdbId: PropTypes.string,
+  website: PropTypes.string,
   title: PropTypes.string.isRequired,
   aliases: PropTypes.arrayOf(PropTypes.string),
   network: PropTypes.string.isRequired,

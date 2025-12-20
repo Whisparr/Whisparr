@@ -54,19 +54,25 @@ function createMapStateToProps() {
   return createSelector(
     (state, { year }) => year,
     (state, { studioForeignId }) => studioForeignId,
+    (state, { isScenes }) => isScenes,
     (state) => state.movies,
     createStudioSelector(),
     createDimensionsSelector(),
     (state) => _.get(state, 'studioScenes'),
-    (year, studioForeignId, scenes, studio, dimensions, studioScenes) => {
+    (year, studioForeignId, isScenes, scenes, studio, dimensions, studioScenes) => {
 
-      let scenesInYear = scenes.items.filter((scene) => scene.studioForeignId === studioForeignId && scene.year === year);
+      let items = scenes.items.filter((scene) => scene.studioForeignId === studioForeignId && scene.year === year);
+      if (isScenes) {
+        items = items.filter((scene) => scene.itemType === 'scene');
+      } else {
+        items = items.filter((scene) => scene.itemType === 'movie');
+      }
       // Sort once filtered
-      scenesInYear = sort(scenesInYear, studioScenes);
+      items = sort(items, studioScenes);
 
       return {
         year,
-        items: scenesInYear,
+        items,
         columns: studioScenes.columns,
         sortKey: studioScenes.sortKey,
         sortDirection: studioScenes.sortDirection,

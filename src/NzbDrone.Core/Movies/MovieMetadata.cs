@@ -33,6 +33,7 @@ namespace NzbDrone.Core.Movies
         public DateTime? LastInfoSync { get; set; }
         public int Runtime { get; set; }
         public string Website { get; set; }
+        public string TpdbId { get; set; }
         public string ImdbId { get; set; }
         public int TmdbId { get; set; }
         public string StashId { get; set; }
@@ -74,6 +75,7 @@ namespace NzbDrone.Core.Movies
     public enum MetadataSource
     {
         Tmdb,
-        Stash
+        Stash,
+        TpdbMovie
     }
 }

@@ -14,10 +14,12 @@ namespace Whisparr.Api.V3.Studios
         public string SortTitle { get; set; }
         public string SearchTitle { get; set; }
         public string ForeignId { get; set; }
+        public string TpdbId { get; set; }
         public string Website { get; set; }
         public string Network { get; set; }
         public List<MediaCover> Images { get; set; }
         public bool Monitored { get; set; }
+        public bool MoviesMonitored { get; set; }
         public string AfterDate { get; set; }
         public string RootFolderPath { get; set; }
         public int QualityProfileId { get; set; }
@@ -46,12 +48,14 @@ namespace Whisparr.Api.V3.Studios
             {
                 Id = model.Id,
                 ForeignId = model.ForeignId,
+                TpdbId = model.TpdbId,
                 Title = model.Title,
                 SortTitle = model.SortTitle,
                 SearchTitle = model.SearchTitle,
                 Website = model.Website,
                 Network = model.Network,
                 Monitored = model.Monitored,
+                MoviesMonitored = model.MoviesMonitored,
                 AfterDate = model.AfterDate?.ToLocalTime().ToString("yyyy-MM-dd"),
                 Images = model.Images,
                 QualityProfileId = model.QualityProfileId,
@@ -85,6 +89,7 @@ namespace Whisparr.Api.V3.Studios
                 Website = resource.Website,
                 Network = resource.Network,
                 Monitored = resource.Monitored,
+                MoviesMonitored = resource.MoviesMonitored,
                 AfterDate = string.IsNullOrWhiteSpace(resource.AfterDate) ? null : DateTime.Parse(resource.AfterDate),
                 QualityProfileId = resource.QualityProfileId,
                 RootFolderPath = resource.RootFolderPath,

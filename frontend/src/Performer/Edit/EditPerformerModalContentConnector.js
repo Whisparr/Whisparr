@@ -40,6 +40,7 @@ function createMapStateToProps() {
 
       const movieSettings = {
         monitored: performer.monitored,
+        moviesMonitored: performer.moviesMonitored,
         qualityProfileId: performer.qualityProfileId,
         minimumAvailability: performer.minimumAvailability,
         rootFolderPath: performer.rootFolderPath,

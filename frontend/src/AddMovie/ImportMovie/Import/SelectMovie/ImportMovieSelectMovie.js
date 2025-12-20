@@ -257,6 +257,7 @@ class ImportMovieSelectMovie extends Component {
                                 <ImportMovieSearchResultConnector
                                   key={item.tmdbId}
                                   tmdbId={item.tmdbId}
+                                  tpdbId={item.tpdbId}
                                   title={item.title}
                                   year={item.year}
                                   studio={item.studio}

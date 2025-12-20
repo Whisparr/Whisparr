@@ -46,6 +46,7 @@ class EditStudioModalContent extends Component {
 
     const {
       monitored,
+      moviesMonitored,
       afterDate,
       qualityProfileId,
       // Id,
@@ -90,6 +91,18 @@ class EditStudioModalContent extends Component {
                     name="monitored"
                     helpText={translate('MonitoredStudioHelpText')}
                     {...monitored}
+                    onChange={onInputChange}
+                  />
+                </FormGroup>
+
+                <FormGroup>
+                  <FormLabel>{translate('MonitoredMovie')}</FormLabel>
+
+                  <FormInputGroup
+                    type={inputTypes.CHECK}
+                    name="moviesMonitored"
+                    helpText={translate('MonitoredStudioHelpText')}
+                    {...moviesMonitored}
                     onChange={onInputChange}
                   />
                 </FormGroup>

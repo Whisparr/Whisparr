@@ -151,7 +151,7 @@ class MovieSearchInput extends Component {
 
     if (newValue) {
       this.setState({
-        value: newValue.replace(/[^a-zA-Z0-9\s]/g, '')
+        value: newValue
       });
     }
   };

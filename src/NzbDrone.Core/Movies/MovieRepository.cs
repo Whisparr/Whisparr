@@ -17,9 +17,11 @@ namespace NzbDrone.Core.Movies
         bool MoviePathExists(string path);
         List<Movie> FindByTitles(List<string> titles);
         IEnumerable<Movie> FindByIds(List<int> ids);
+        Movie FindByTpdbId(string tpdbid);
         Movie FindByImdbId(string imdbid);
         Movie FindByTmdbId(int tmdbid);
         Movie FindByForeignId(string foreignId);
+        List<Movie> FindByTpdbId(List<string> tpdbids);
         List<Movie> FindByTmdbId(List<int> tmdbids);
         List<Movie> FindByStudioAndDate(string studioForeignId, string date);
         List<Movie> GetByStudioForeignId(string studioForeignId);
@@ -33,6 +35,8 @@ namespace NzbDrone.Core.Movies
         Dictionary<int, string> AllMoviePaths();
         List<int> AllMovieIds();
         List<int> AllMovieTmdbIds();
+        List<string> AllMovieTpdbIds();
+        List<string> AllMovieStashIds();
         List<string> AllMovieForeignIds();
         Dictionary<int, List<int>> AllMovieTags();
         bool ExistsByMetadataId(int metadataId);
@@ -226,6 +230,11 @@ namespace NzbDrone.Core.Movies
                 }).AsList();
         }
 
+        public Movie FindByTpdbId(string tpdbid)
+        {
+            return Query(x => x.MovieMetadata.Value.TpdbId == tpdbid).FirstOrDefault();
+        }
+
         public Movie FindByImdbId(string imdbid)
         {
             var imdbIdWithPrefix = Parser.Parser.NormalizeImdbId(imdbid);
@@ -242,9 +251,14 @@ namespace NzbDrone.Core.Movies
             return Query(x => x.MovieMetadata.Value.ForeignId == foreignId).FirstOrDefault();
         }
 
+        public List<Movie> FindByTpdbId(List<string> tpdbids)
+        {
+            return Query(x => tpdbids.Contains(x.MovieMetadata.Value.TpdbId));
+        }
+
         public List<Movie> FindByTmdbId(List<int> tmdbids)
         {
-            return Query(x => tmdbids.Contains(x.TmdbId));
+            return Query(x => tmdbids.Contains(x.MovieMetadata.Value.TmdbId));
         }
 
         public List<Movie> GetMoviesByFileId(int fileId)
@@ -339,7 +353,23 @@ namespace NzbDrone.Core.Movies
         {
             using (var conn = _database.OpenConnection())
             {
-                return conn.Query<int>("SELECT \"TmdbId\" FROM \"MovieMetadata\" JOIN \"Movies\" ON (\"Movies\".\"MovieMetadataId\" = \"MovieMetadata\".\"Id\")").ToList();
+                return conn.Query<int>("SELECT \"TmdbId\" FROM \"MovieMetadata\" JOIN \"Movies\" ON (\"Movies\".\"MovieMetadataId\" = \"MovieMetadata\".\"Id\") WHERE \"TmdbId\" IS NOT NULL").ToList();
+            }
+        }
+
+        public List<string> AllMovieTpdbIds()
+        {
+            using (var conn = _database.OpenConnection())
+            {
+                return conn.Query<string>("SELECT \"TpdbId\" FROM \"MovieMetadata\" JOIN \"Movies\" ON (\"Movies\".\"MovieMetadataId\" = \"MovieMetadata\".\"Id\") WHERE \"TpdbId\" IS NOT NULL").ToList();
+            }
+        }
+
+        public List<string> AllMovieStashIds()
+        {
+            using (var conn = _database.OpenConnection())
+            {
+                return conn.Query<string>("SELECT \"StashId\" FROM \"MovieMetadata\" JOIN \"Movies\" ON (\"Movies\".\"MovieMetadataId\" = \"MovieMetadata\".\"Id\") WHERE \"StashId\" IS NOT NULL").ToList();
             }
         }
 

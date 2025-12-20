@@ -46,6 +46,7 @@ class EditPerformerModalContent extends Component {
 
     const {
       monitored,
+      moviesMonitored,
       qualityProfileId,
       // Id,
       rootFolderPath,
@@ -85,6 +86,18 @@ class EditPerformerModalContent extends Component {
                     name="monitored"
                     helpText={translate('MonitoredPerformerHelpText')}
                     {...monitored}
+                    onChange={onInputChange}
+                  />
+                </FormGroup>
+
+                <FormGroup>
+                  <FormLabel>{translate('MoviesMonitored')}</FormLabel>
+
+                  <FormInputGroup
+                    type={inputTypes.CHECK}
+                    name="moviesMonitored"
+                    helpText={translate('MoviesMonitoredPerformerHelpText')}
+                    {...moviesMonitored}
                     onChange={onInputChange}
                   />
                 </FormGroup>

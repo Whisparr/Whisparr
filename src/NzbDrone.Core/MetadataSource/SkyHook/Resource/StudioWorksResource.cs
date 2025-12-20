@@ -2,10 +2,9 @@ using System.Collections.Generic;
 
 namespace NzbDrone.Core.MetadataSource.SkyHook.Resource
 {
-    public class PerformerWorksResource
+    public class StudioWorksResource
     {
         public List<string> Scenes { get; set; }
         public List<string> TpdbMovies { get; set; }
-        public List<string> Movies { get; set; }
     }
 }

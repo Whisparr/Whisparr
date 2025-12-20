@@ -25,9 +25,25 @@ function WhisparrSettings(props) {
     whisparrCachePerformerAPI,
     whisparrCacheStudioAPI,
     whisparrCorruptFileDetection,
+    whisparrMovieMetadataSource,
     whisparrValidateRuntime,
     whisparrValidateRuntimeLimit
   } = settings;
+
+  const movieMetadataTypes = [
+    {
+      key: 'none',
+      value: translate('None')
+    },
+    {
+      key: 'tmdb',
+      value: translate('TMDB')
+    },
+    {
+      key: 'tpdb',
+      value: translate('TPDB')
+    }
+  ];
 
   return (
     <FieldSet legend={translate('Whisparr')}>
@@ -152,6 +168,20 @@ function WhisparrSettings(props) {
           helpText={translate('WhisparrValidateRuntimeLimitHelpText')}
           onChange={onInputChange}
           {...whisparrValidateRuntimeLimit}
+        />
+      </FormGroup>
+
+      <FormGroup>
+
+        <FormLabel>{translate('WhisparrMovieMetadataSource')}</FormLabel>
+
+        <FormInputGroup
+          type={inputTypes.SELECT}
+          name="whisparrMovieMetadataSource"
+          values={movieMetadataTypes}
+          helpText={translate('WhisparrMovieMetadataSourceHelpText')}
+          onChange={onInputChange}
+          {...whisparrMovieMetadataSource}
         />
       </FormGroup>
 

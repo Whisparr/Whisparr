@@ -67,6 +67,7 @@ function MovieIndexPoster(props: MovieIndexPosterProps) {
     images,
     foreignId,
     tmdbId,
+    tpdbId,
     hasFile,
     isAvailable,
     studioTitle,
@@ -171,7 +172,7 @@ function MovieIndexPoster(props: MovieIndexPosterProps) {
             <Popover
               anchor={<Icon name={icons.EXTERNAL_LINK} size={12} />}
               title={translate('Links')}
-              body={<MovieDetailsLinks tmdbId={tmdbId} />}
+              body={<MovieDetailsLinks tmdbId={tmdbId} tpdbId={tpdbId} />}
             />
           </span>
         </Label>

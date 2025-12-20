@@ -9,6 +9,7 @@ import styles from './StudioDetailsLinks.css';
 function StudioDetailsLinks(props) {
   const {
     foreignId,
+    tpdbId,
     website
   } = props;
 
@@ -38,12 +39,28 @@ function StudioDetailsLinks(props) {
           {translate('StashDB')}
         </Label>
       </Link>
+
+      {!!tpdbId && (
+        <Link
+          className={styles.link}
+          to={`https://theporndb.net/sites/${tpdbId}`}
+        >
+          <Label
+            className={styles.linkLabel}
+            kind={kinds.INFO}
+            size={sizes.LARGE}
+          >
+            {translate('TPDb')}
+          </Label>
+        </Link>
+      )}
     </div>
   );
 }
 
 StudioDetailsLinks.propTypes = {
   foreignId: PropTypes.string.isRequired,
+  tpdbId: PropTypes.string,
   website: PropTypes.string
 };
 

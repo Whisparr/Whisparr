@@ -29,6 +29,7 @@ namespace NzbDrone.Core.Movies
         Movie AddMovie(Movie newMovie);
         List<Movie> AddMovies(List<Movie> newMovies);
         List<Movie> FindByIds(List<int> ids);
+        Movie FindByTpdbId(string tpdbid);
         Movie FindByImdbId(string imdbid);
         Movie FindByTmdbId(int tmdbid);
         Movie FindByForeignId(string foreignId);
@@ -205,6 +206,11 @@ namespace NzbDrone.Core.Movies
         public List<Movie> FindByIds(List<int> ids)
         {
             return _movieRepository.FindByIds(ids).ToList();
+        }
+
+        public Movie FindByTpdbId(string tpdbid)
+        {
+            return _movieRepository.FindByTpdbId(tpdbid);
         }
 
         public Movie FindByImdbId(string imdbid)
@@ -435,18 +441,9 @@ namespace NzbDrone.Core.Movies
         {
             Movie result = null;
 
-            if (movie.TmdbId != 0)
+            if (movie.TpdbId.IsNotNullOrWhiteSpace())
             {
-                result = _movieRepository.FindByTmdbId(movie.TmdbId);
-                if (result != null)
-                {
-                    return true;
-                }
-            }
-
-            if (movie.ImdbId.IsNotNullOrWhiteSpace())
-            {
-                result = _movieRepository.FindByImdbId(movie.ImdbId);
+                result = _movieRepository.FindByTpdbId(movie.TpdbId);
                 if (result != null)
                 {
                     return true;

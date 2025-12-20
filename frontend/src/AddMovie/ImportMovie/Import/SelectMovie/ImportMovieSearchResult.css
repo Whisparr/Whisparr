@@ -13,13 +13,15 @@
   overflow: hidden;
 }
 
-.tmdbLink {
+.tmdbLink,
+.tpdbLink {
   composes: link from '~Components/Link/Link.css';
 
   margin-left: auto;
   color: var(--textColor);
 }
 
-.tmdbLinkIcon {
+.tmdbLinkIcon,
+.tpdbLinkIcon {
   margin-left: 10px;
 }

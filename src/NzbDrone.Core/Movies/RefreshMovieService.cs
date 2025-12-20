@@ -92,7 +92,7 @@ namespace NzbDrone.Core.Movies
 
             try
             {
-                var tupleInfo = movieMetadata.ItemType == ItemType.Movie ? _movieInfo.GetMovieInfo(movie.TmdbId) : _movieInfo.GetSceneInfo(movie.ForeignId);
+                var tupleInfo = movieMetadata.ItemType == ItemType.Movie ? movie.TpdbId.IsNotNullOrWhiteSpace() ? _movieInfo.GetTpdbMovieInfo(movie.TpdbId) : _movieInfo.GetMovieInfo(movie.TmdbId) : _movieInfo.GetSceneInfo(movie.ForeignId);
                 movieInfo = tupleInfo.Item1;
                 studioInfo = tupleInfo.Item2;
                 performerInfo = tupleInfo.Item3;
@@ -118,7 +118,7 @@ namespace NzbDrone.Core.Movies
 
             movieMetadata.Title = movieInfo.Title;
             movieMetadata.Code = movieInfo.Code;
-            movieMetadata.ImdbId = movieInfo.ImdbId;
+            movieMetadata.TpdbId = movieInfo.TpdbId;
             movieMetadata.Overview = movieInfo.Overview;
             movieMetadata.Status = movieInfo.Status;
             movieMetadata.Images = movieInfo.Images;
@@ -137,6 +137,7 @@ namespace NzbDrone.Core.Movies
             movieMetadata.ReleaseDateUtc = movieInfo.ReleaseDateUtc;
             movieMetadata.ReleaseDate = movieInfo.ReleaseDate;
             movieMetadata.StudioTitle = movieInfo.StudioTitle;
+            movieMetadata.Studio = movieInfo.Studio;
             movieMetadata.OriginalLanguage = movieInfo.OriginalLanguage;
 
             if (studioInfo != null && studioInfo.ForeignId.IsNotNullOrWhiteSpace())
@@ -160,17 +161,16 @@ namespace NzbDrone.Core.Movies
             else
             {
                 movieMetadata.StudioForeignId = null;
-                movieMetadata.StudioTitle = null;
             }
 
             performerInfo.ForEach(p =>
-            {
-                p.Monitored = false;
-                p.RootFolderPath = _folderService.GetBestRootFolderPath(movie.Path);
-                p.SearchOnAdd = movie.AddOptions?.SearchForMovie ?? false;
-                p.QualityProfileId = movie.QualityProfileId;
-                p.Tags = movie.Tags;
-            });
+                    {
+                        p.Monitored = false;
+                        p.RootFolderPath = _folderService.GetBestRootFolderPath(movie.Path);
+                        p.SearchOnAdd = movie.AddOptions?.SearchForMovie ?? false;
+                        p.QualityProfileId = movie.QualityProfileId;
+                        p.Tags = movie.Tags;
+                    });
 
             _performerService.AddPerformers(performerInfo, true);
 

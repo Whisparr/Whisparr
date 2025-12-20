@@ -9,6 +9,7 @@ namespace NzbDrone.Core.Movies
     public interface IMovieMetadataRepository : IBasicRepository<MovieMetadata>
     {
         MovieMetadata FindByTmdbId(int tmdbId);
+        MovieMetadata FindByTpdbId(string tpdbId);
         MovieMetadata FindByForeignId(string foreignId);
         MovieMetadata FindByImdbId(string imdbId);
         List<MovieMetadata> FindById(List<string> tmdbIds);
@@ -28,6 +29,11 @@ namespace NzbDrone.Core.Movies
         public MovieMetadata FindByTmdbId(int tmdbId)
         {
             return Query(x => x.TmdbId == tmdbId).FirstOrDefault();
+        }
+
+        public MovieMetadata FindByTpdbId(string tpdbId)
+        {
+            return Query(x => x.TpdbId == tpdbId).FirstOrDefault();
         }
 
         public MovieMetadata FindByForeignId(string foreignId)

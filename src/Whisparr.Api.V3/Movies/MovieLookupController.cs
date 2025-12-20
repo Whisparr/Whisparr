@@ -61,6 +61,15 @@ namespace Whisparr.Api.V3.Movies
             return result.ToResource(availDelay);
         }
 
+        [HttpGet("tpdb")]
+        [Produces("application/json")]
+        public MovieResource SearchByTpdbId(string tpdbId)
+        {
+            var availDelay = _configService.AvailabilityDelay;
+            var result = new Movie { MovieMetadata = _movieInfo.GetTpdbMovieInfo(tpdbId).Item1 };
+            return result.ToResource(availDelay);
+        }
+
         [HttpGet("imdb")]
         [Produces("application/json")]
         public MovieResource SearchByImdbId(string imdbId)

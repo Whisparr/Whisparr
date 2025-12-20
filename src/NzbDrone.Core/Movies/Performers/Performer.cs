@@ -14,6 +14,7 @@ namespace NzbDrone.Core.Movies.Performers
         }
 
         public string ForeignId { get; set; }
+        public string TpdbId { get; set; }
         public string Name { get; set; }
         public string SortName { get; set; }
         public string CleanName { get; set; }

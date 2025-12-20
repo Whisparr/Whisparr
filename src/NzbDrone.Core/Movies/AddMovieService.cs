@@ -187,7 +187,22 @@ namespace NzbDrone.Core.Movies
 
             try
             {
-                movie.MovieMetadata = int.TryParse(newMovie.ForeignId, out var tmdbId) ? _movieInfo.GetMovieInfo(tmdbId).Item1 : _movieInfo.GetSceneInfo(newMovie.ForeignId).Item1;
+                var movieMetadata = new MovieMetadata();
+
+                if (int.TryParse(newMovie.ForeignId, out var tmdbId))
+                {
+                    movieMetadata = _movieInfo.GetMovieInfo(tmdbId).Item1;
+                }
+                else if (newMovie.TpdbId.IsNotNullOrWhiteSpace())
+                {
+                    movieMetadata = _movieInfo.GetTpdbMovieInfo(newMovie.TpdbId).Item1;
+                }
+                else
+                {
+                    movieMetadata = _movieInfo.GetSceneInfo(newMovie.ForeignId).Item1;
+                }
+
+                movie.MovieMetadata = movieMetadata;
             }
             catch (MovieNotFoundException)
             {

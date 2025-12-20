@@ -76,6 +76,7 @@ namespace NzbDrone.Core.Movies.Performers
                 performer.ForeignId = performerInfo.ForeignId;
             }
 
+            performer.TpdbId = performerInfo.TpdbId;
             performer.Age = performerInfo.Age;
             performer.CareerEnd = performerInfo.CareerEnd;
             performer.CareerStart = performerInfo.CareerStart;

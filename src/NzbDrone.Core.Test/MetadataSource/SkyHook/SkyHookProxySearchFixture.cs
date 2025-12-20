@@ -22,7 +22,7 @@ namespace NzbDrone.Core.Test.MetadataSource.SkyHook
         [TestCase("https://www.themoviedb.org/movie/699665-consumed-by-desire", "Consumed by Desire")]
         public void successful_movie_search(string title, string expected)
         {
-            var result = Subject.SearchForNewMovie(title);
+            var result = Subject.SearchForNewTmdbMovie(title);
 
             result.Should().NotBeEmpty();
 
@@ -84,7 +84,7 @@ namespace NzbDrone.Core.Test.MetadataSource.SkyHook
         [TestCase("https://www.themoviedb.org/MALFORMED/775-le-voyage-dans-la-lune")]
         public void no_movie_search_result(string term)
         {
-            var result = Subject.SearchForNewMovie(term);
+            var result = Subject.SearchForNewTmdbMovie(term);
             result.Should().BeEmpty();
 
             ExceptionVerification.IgnoreWarns();

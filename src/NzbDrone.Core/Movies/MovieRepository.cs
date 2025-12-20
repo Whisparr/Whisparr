@@ -17,9 +17,11 @@ namespace NzbDrone.Core.Movies
         bool MoviePathExists(string path);
         List<Movie> FindByTitles(List<string> titles);
         IEnumerable<Movie> FindByIds(List<int> ids);
+        Movie FindByTpdbId(string tpdbid);
         Movie FindByImdbId(string imdbid);
         Movie FindByTmdbId(int tmdbid);
         Movie FindByForeignId(string foreignId);
+        List<Movie> FindByTpdbId(List<string> tpdbids);
         List<Movie> FindByTmdbId(List<int> tmdbids);
         List<Movie> FindByStudioAndDate(string studioForeignId, string date);
         List<Movie> GetByStudioForeignId(string studioForeignId);
@@ -226,6 +228,11 @@ namespace NzbDrone.Core.Movies
                 }).AsList();
         }
 
+        public Movie FindByTpdbId(string tpdbid)
+        {
+            return Query(x => x.MovieMetadata.Value.TpdbId == tpdbid).FirstOrDefault();
+        }
+
         public Movie FindByImdbId(string imdbid)
         {
             var imdbIdWithPrefix = Parser.Parser.NormalizeImdbId(imdbid);
@@ -240,6 +247,11 @@ namespace NzbDrone.Core.Movies
         public Movie FindByForeignId(string foreignId)
         {
             return Query(x => x.MovieMetadata.Value.ForeignId == foreignId).FirstOrDefault();
+        }
+
+        public List<Movie> FindByTpdbId(List<string> tpdbids)
+        {
+            return Query(x => tpdbids.Contains(x.TpdbId));
         }
 
         public List<Movie> FindByTmdbId(List<int> tmdbids)

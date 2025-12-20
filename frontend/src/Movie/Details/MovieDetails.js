@@ -191,6 +191,7 @@ class MovieDetails extends Component {
     const {
       id,
       tmdbId,
+      tpdbId,
       foreignId,
       stashId,
       title,
@@ -424,6 +425,7 @@ class MovieDetails extends Component {
                           tooltip={
                             <MovieDetailsLinks
                               tmdbId={tmdbId}
+                              tpdbId={tpdbId}
                               stashId={stashId}
                             />
                           }
@@ -655,6 +657,7 @@ class MovieDetails extends Component {
 MovieDetails.propTypes = {
   id: PropTypes.number.isRequired,
   tmdbId: PropTypes.number.isRequired,
+  tpdbId: Promise.string,
   foreignId: PropTypes.string,
   stashId: PropTypes.string,
   title: PropTypes.string.isRequired,

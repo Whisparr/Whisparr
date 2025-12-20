@@ -65,6 +65,7 @@ namespace Whisparr.Api.V3.Movies
         public string CleanTitle { get; set; }
         public string ImdbId { get; set; }
         public int TmdbId { get; set; }
+        public string TpdbId { get; set; }
         public string ForeignId { get; set; }
         public string StashId { get; set; }
         public string TitleSlug { get; set; }
@@ -110,6 +111,7 @@ namespace Whisparr.Api.V3.Movies
                 Id = model.Id,
                 ForeignId = model.ForeignId,
                 TmdbId = model.TmdbId,
+                TpdbId = model.TpdbId,
                 StashId = model.MovieMetadata.Value.StashId,
                 Title = model.Title,
                 Code = model.MovieMetadata.Value.Code,
@@ -183,6 +185,7 @@ namespace Whisparr.Api.V3.Movies
                     Runtime = resource.Runtime,
                     CleanTitle = resource.CleanTitle,
                     ImdbId = resource.ImdbId,
+                    TpdbId = resource.TpdbId
                 },
 
                 Path = resource.Path,

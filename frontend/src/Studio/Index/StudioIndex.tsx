@@ -194,7 +194,7 @@ const StudioIndex = withScrollPosition((props: StudioIndexProps) => {
   const isLoaded = !!(!error && isPopulated && items.length);
   const hasNoStudio = !totalItems;
   const onAddStudioPress = useCallback(
-    () => history.push('/add/new/scene'),
+    () => history.push('/add/new/studio'),
     [history]
   );
 

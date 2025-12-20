@@ -155,7 +155,7 @@ const PerformerIndex = withScrollPosition((props: PerformerIndexProps) => {
   );
 
   const onAddPerformerPress = useCallback(() => {
-    history.push('/add/new/scene');
+    history.push('/add/new/performer');
   }, [history]);
 
   const jumpBarItems = useMemo(() => {

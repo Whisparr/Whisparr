@@ -56,6 +56,12 @@ namespace NzbDrone.Core.Movies
             set { MovieMetadata.Value.ForeignId = value; }
         }
 
+        public string TpdbId
+        {
+            get { return MovieMetadata.Value.TpdbId; }
+            set { MovieMetadata.Value.TpdbId = value; }
+        }
+
         public int TmdbId
         {
             get { return MovieMetadata.Value.TmdbId; }

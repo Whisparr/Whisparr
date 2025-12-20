@@ -187,7 +187,7 @@ namespace NzbDrone.Core.Movies
 
             try
             {
-                movie.MovieMetadata = int.TryParse(newMovie.ForeignId, out var tmdbId) ? _movieInfo.GetMovieInfo(tmdbId).Item1 : _movieInfo.GetSceneInfo(newMovie.ForeignId).Item1;
+                movie.MovieMetadata = GetMetadata(newMovie);
             }
             catch (MovieNotFoundException)
             {
@@ -203,6 +203,30 @@ namespace NzbDrone.Core.Movies
             movie.ApplyChanges(newMovie);
 
             return movie;
+        }
+
+        private MovieMetadata GetMetadata(Movie movie)
+        {
+            if (int.TryParse(movie.ForeignId, out var tmdbId))
+            {
+                return _movieInfo.GetMovieInfo(tmdbId).Item1;
+            }
+            else if (movie.TmdbId > 0)
+            {
+                return _movieInfo.GetMovieInfo(movie.TmdbId).Item1;
+            }
+            else if (movie.TpdbId.IsNotNullOrWhiteSpace())
+            {
+                return _movieInfo.GetTpdbMovieInfo(movie.TpdbId).Item1;
+            }
+            else if (movie.ForeignId.StartsWith("tpdbid:"))
+            {
+                return _movieInfo.GetTpdbMovieInfo(movie.ForeignId.Replace("tpdbid:", "")).Item1;
+            }
+            else
+            {
+                return _movieInfo.GetSceneInfo(movie.ForeignId).Item1;
+            }
         }
 
         private Movie SetPropertiesAndValidate(Movie newMovie)

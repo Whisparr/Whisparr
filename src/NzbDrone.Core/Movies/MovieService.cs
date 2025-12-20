@@ -29,6 +29,7 @@ namespace NzbDrone.Core.Movies
         Movie AddMovie(Movie newMovie);
         List<Movie> AddMovies(List<Movie> newMovies);
         List<Movie> FindByIds(List<int> ids);
+        Movie FindByTpdbId(string tpdbid);
         Movie FindByImdbId(string imdbid);
         Movie FindByTmdbId(int tmdbid);
         Movie FindByForeignId(string foreignId);
@@ -43,6 +44,8 @@ namespace NzbDrone.Core.Movies
         Dictionary<int, string> AllMoviePaths();
         List<int> AllMovieIds();
         List<int> AllMovieTmdbIds();
+        List<string> AllMovieTpdbIds();
+        List<string> AllMovieStashIds();
         List<string> AllMovieForeignIds();
         bool MovieExists(Movie movie);
         List<Movie> GetMoviesByFileId(int fileId);
@@ -207,6 +210,11 @@ namespace NzbDrone.Core.Movies
             return _movieRepository.FindByIds(ids).ToList();
         }
 
+        public Movie FindByTpdbId(string tpdbid)
+        {
+            return _movieRepository.FindByTpdbId(tpdbid);
+        }
+
         public Movie FindByImdbId(string imdbid)
         {
             return _movieRepository.FindByImdbId(imdbid);
@@ -240,6 +248,16 @@ namespace NzbDrone.Core.Movies
         public List<int> AllMovieTmdbIds()
         {
             return _movieRepository.AllMovieTmdbIds();
+        }
+
+        public List<string> AllMovieTpdbIds()
+        {
+            return _movieRepository.AllMovieTpdbIds();
+        }
+
+        public List<string> AllMovieStashIds()
+        {
+            return _movieRepository.AllMovieStashIds();
         }
 
         public List<string> AllMovieForeignIds()
@@ -447,6 +465,15 @@ namespace NzbDrone.Core.Movies
             if (movie.ImdbId.IsNotNullOrWhiteSpace())
             {
                 result = _movieRepository.FindByImdbId(movie.ImdbId);
+                if (result != null)
+                {
+                    return true;
+                }
+            }
+
+            if (movie.TpdbId.IsNotNullOrWhiteSpace())
+            {
+                result = _movieRepository.FindByTpdbId(movie.TpdbId);
                 if (result != null)
                 {
                     return true;

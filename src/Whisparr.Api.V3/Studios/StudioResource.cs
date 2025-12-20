@@ -14,6 +14,7 @@ namespace Whisparr.Api.V3.Studios
         public string SortTitle { get; set; }
         public string SearchTitle { get; set; }
         public string ForeignId { get; set; }
+        public string TpdbId { get; set; }
         public string Website { get; set; }
         public string Network { get; set; }
         public List<MediaCover> Images { get; set; }
@@ -46,6 +47,7 @@ namespace Whisparr.Api.V3.Studios
             {
                 Id = model.Id,
                 ForeignId = model.ForeignId,
+                TpdbId = model.TpdbId,
                 Title = model.Title,
                 SortTitle = model.SortTitle,
                 SearchTitle = model.SearchTitle,

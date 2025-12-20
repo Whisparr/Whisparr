@@ -68,6 +68,7 @@ function getFanartUrl(images: MovieImageType[]) {
 interface Props {
   id: number;
   tmdbId: number;
+  tpdbId: string;
   foreignId?: string;
   stashId?: string;
   title: string;
@@ -228,6 +229,7 @@ class MovieDetails extends Component<Props, State> {
     const {
       id,
       tmdbId,
+      tpdbId,
       stashId,
       title,
       code,
@@ -450,6 +452,7 @@ class MovieDetails extends Component<Props, State> {
                         tooltip={
                           <MovieDetailsLinks
                             tmdbId={tmdbId}
+                            tpdbId={tpdbId}
                             stashId={stashId ?? undefined}
                           />
                         }
@@ -461,7 +464,7 @@ class MovieDetails extends Component<Props, State> {
                       <span>
                         <Tooltip
                           anchor={<Icon name={icons.TAGS} size={20} />}
-                          tooltip={<MovieTagsConnector movieId={id} />}
+                          tooltip={<MovieTagsConnector key={id} />}
                           position={tooltipPositions.BOTTOM}
                         />
                       </span>

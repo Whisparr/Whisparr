@@ -10,7 +10,10 @@ class MovieStudioLink extends PureComponent {
       studioTitle
     } = this.props;
 
-    const link = `/studio/${foreignId}`;
+    let link = '';
+    if (foreignId) {
+      link = `/studio/${foreignId}`;
+    }
 
     return (
       <Link

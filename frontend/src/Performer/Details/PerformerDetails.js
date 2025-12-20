@@ -203,6 +203,7 @@ class PerformerDetails extends Component {
     const {
       id,
       foreignId,
+      tpdbId,
       fullName,
       rootFolderPath,
       gender,
@@ -393,7 +394,7 @@ class PerformerDetails extends Component {
                       <Tooltip
                         anchor={<Icon name={icons.EXTERNAL_LINK} size={20} />}
                         tooltip={
-                          <PerformerDetailsLinks foreignId={foreignId} />
+                          <PerformerDetailsLinks foreignId={foreignId} tpdbId={tpdbId} />
                         }
                         position={tooltipPositions.BOTTOM}
                       />
@@ -555,6 +556,7 @@ class PerformerDetails extends Component {
 PerformerDetails.propTypes = {
   id: PropTypes.number.isRequired,
   foreignId: PropTypes.string,
+  tpdbId: PropTypes.string,
   fullName: PropTypes.string.isRequired,
   gender: PropTypes.string,
   age: PropTypes.number,

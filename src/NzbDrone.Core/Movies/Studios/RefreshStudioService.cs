@@ -75,6 +75,7 @@ namespace NzbDrone.Core.Movies.Studios
                 studio.ForeignId = studioInfo.ForeignId;
             }
 
+            studio.TpdbId = studioInfo.TpdbId;
             studio.Title = studioInfo.Title;
             studio.Network = studioInfo.Network;
             studio.Website = studioInfo.Website;
@@ -101,10 +102,12 @@ namespace NzbDrone.Core.Movies.Studios
                 // Chunk the into smaller lists
                 var chunkSize = 10;
 
-                var existingMovies = _movieService.AllMovieForeignIds();
+                // var studioWork = _movieInfo.GetStudioWorks(studio.ForeignId);
+
+                var existingScenes = _movieService.AllMovieStashIds();
                 var studioScenes = _movieInfo.GetStudioScenes(studio.ForeignId);
                 var excludedScenes = _importListExclusionService.GetAllExclusions().Select(e => e.ForeignId);
-                var scenesToAdd = studioScenes.Where(m => !existingMovies.Contains(m)).Where(m => !excludedScenes.Contains(m));
+                var scenesToAdd = studioScenes.Where(m => !existingScenes.Contains(m)).Where(m => !excludedScenes.Contains(m));
                 var scenesAdded = 0;
 
                 if (scenesToAdd.Any())
@@ -129,6 +132,42 @@ namespace NzbDrone.Core.Movies.Studios
                     }
 
                     _logger.Info("Synced studio {0} has {1} movies adding {2} and added {3}", studio.Title, studioScenes.Count, scenesToAdd.Count(), scenesAdded);
+                }
+
+                if (_configService.WhisparrMovieMetadataSource == MovieMetadataType.TPDB)
+                {
+                    // Remove once Skyhook is deployed
+                    var studioWork = _movieInfo.GetStudioWorks(studio.ForeignId);
+
+                    var moviesAdded = 0;
+                    var existingMovies = _movieService.AllMovieTpdbIds();
+                    var excludedMovies = _importListExclusionService.GetAllExclusions().Where(e => e.Type == ImportExclusionType.Movie).Select(e => e.ForeignId).ToList();
+                    var moviesToAdd = studioWork.TpdbMovies.Where(m => !existingMovies.Contains(m)).Where(m => !excludedMovies.Contains(m));
+
+                    if (moviesToAdd.Any())
+                    {
+                        var movieLists = moviesToAdd.Select(m => new Movie
+                        {
+                            ForeignId = $"tpdbid:{m}",
+                            TpdbId = m,
+                            QualityProfileId = studio.QualityProfileId,
+                            RootFolderPath = studio.RootFolderPath,
+                            AddOptions = new AddMovieOptions
+                            {
+                                SearchForMovie = studio.SearchOnAdd,
+                                AddMethod = AddMovieMethod.Performer
+                            },
+                            Monitored = true,
+                            Tags = studio.Tags
+                        }).Chunk(chunkSize);
+
+                        foreach (var movieList in movieLists)
+                        {
+                            moviesAdded += _addMovieService.AddMovies(movieList.ToList(), true).Count;
+                        }
+                    }
+
+                    _logger.Info("Synced studio {0} has {1} movies adding {2} and added {3}", studio.Title, studioWork.TpdbMovies.Count, moviesToAdd.Count(), moviesAdded);
                 }
             }
         }

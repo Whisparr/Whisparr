@@ -167,6 +167,39 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             return new Tuple<MovieMetadata, Studio, List<Performer>>(movie, null, performers);
         }
 
+        public Tuple<MovieMetadata, Studio, List<Performer>> GetTpdbMovieInfo(string tpdbId)
+        {
+            var httpRequest = _whisparrMetadata.Create()
+                                             .SetSegment("route", "tpdb/movie")
+                                             .Resource(tpdbId)
+                                             .Build();
+
+            httpRequest.AllowAutoRedirect = true;
+            httpRequest.SuppressHttpError = true;
+
+            var httpResponse = _httpClient.Get<MovieResource>(httpRequest);
+
+            if (httpResponse.HasHttpError)
+            {
+                if (httpResponse.StatusCode == HttpStatusCode.NotFound)
+                {
+                    throw new MovieNotFoundException(tpdbId);
+                }
+                else
+                {
+                    throw new HttpException(httpRequest, httpResponse);
+                }
+            }
+
+            var movie = MapMovie(httpResponse.Resource);
+
+            movie.Credits.AddRange(httpResponse.Resource.Credits.Select(MapCast));
+
+            var performers = httpResponse.Resource.Credits.Select(c => MapPerformer(c.Performer)).DistinctBy(p => p.ForeignId).ToList();
+
+            return new Tuple<MovieMetadata, Studio, List<Performer>>(movie, MapStudio(httpResponse.Resource.Studio), performers);
+        }
+
         public Tuple<MovieMetadata, Studio, List<Performer>> GetSceneInfo(string stashId)
         {
             var httpRequest = _whisparrMetadata.Create()
@@ -210,6 +243,32 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
 
             httpRequest.SetContent(tmdbIds.ToJson());
             httpRequest.ContentSummary = tmdbIds.ToJson(Formatting.None);
+
+            httpRequest.AllowAutoRedirect = true;
+            httpRequest.SuppressHttpError = true;
+
+            var httpResponse = _httpClient.Post<List<MovieResource>>(httpRequest);
+
+            if (httpResponse.HasHttpError || httpResponse.Resource.Count == 0)
+            {
+                throw new HttpException(httpRequest, httpResponse);
+            }
+
+            var movies = httpResponse.Resource.Select(MapMovie).ToList();
+
+            return movies;
+        }
+
+        public List<MovieMetadata> GetBulkTpdbMovieInfo(List<string> tpdbIds)
+        {
+            var httpRequest = _whisparrMetadata.Create()
+                                             .SetSegment("route", "tpdb/movie/bulk")
+                                             .Build();
+
+            httpRequest.Headers.ContentType = "application/json";
+
+            httpRequest.SetContent(tpdbIds.ToJson());
+            httpRequest.ContentSummary = tpdbIds.ToJson(Formatting.None);
 
             httpRequest.AllowAutoRedirect = true;
             httpRequest.SuppressHttpError = true;
@@ -316,7 +375,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             return MapStudio(httpResponse.Resource);
         }
 
-        public (List<string> Scenes, List<int> Movies) GetPerformerWorks(string stashId)
+        public (List<string> Scenes, List<string> TpdbMovies, List<int> Movies) GetPerformerWorks(string stashId)
         {
             var httpRequest = _whisparrMetadata.Create()
                                              .SetSegment("route", "performer")
@@ -328,6 +387,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
 
             var httpResponse = _httpClient.Get<PerformerWorksResource>(httpRequest);
             var scenes = httpResponse.Resource.Scenes;
+            var tpdbMovies = httpResponse.Resource.TpdbMovies;
             var movies = httpResponse.Resource.Movies.ConvertAll(int.Parse);
 
             if (httpResponse.HasHttpError)
@@ -342,7 +402,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 }
             }
 
-            return (scenes, movies);
+            return (scenes, tpdbMovies, movies);
         }
 
         public List<string> GetStudioScenes(string stashId)
@@ -373,16 +433,48 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             return scenes;
         }
 
+        public (List<string> Scenes, List<string> TpdbMovies) GetStudioWorks(string stashId)
+        {
+            var httpRequest = _whisparrMetadata.Create()
+                                             .SetSegment("route", "site")
+                                             .Resource($"{stashId}/works")
+                                             .Build();
+
+            httpRequest.AllowAutoRedirect = true;
+            httpRequest.SuppressHttpError = true;
+
+            var httpResponse = _httpClient.Get<StudioWorksResource>(httpRequest);
+            var scenes = httpResponse.Resource.Scenes;
+            var tpdbMovies = httpResponse.Resource.TpdbMovies;
+
+            if (httpResponse.HasHttpError)
+            {
+                if (httpResponse.StatusCode == HttpStatusCode.NotFound)
+                {
+                    throw new MovieNotFoundException(stashId);
+                }
+                else
+                {
+                    throw new HttpException(httpRequest, httpResponse);
+                }
+            }
+
+            return (scenes, tpdbMovies);
+        }
+
         public MovieMetadata MapMovie(MovieResource resource)
         {
             var movie = new MovieMetadata();
             var altTitles = new List<AlternativeTitle>();
+            var metadataSource = MapMetadataSource(resource.ItemType, resource.ForeignIds);
+            var foriegnId = MapForeignId(metadataSource, resource.ForeignIds);
 
             movie.ItemType = resource.ItemType;
-            movie.MetadataSource = resource.ItemType == ItemType.Movie ? Movies.MetadataSource.Tmdb : Movies.MetadataSource.Stash;
+            movie.MetadataSource = metadataSource;
 
-            movie.ForeignId = resource.ItemType == ItemType.Movie ? resource.ForeignIds.TmdbId.ToString() : resource.ForeignIds.StashId;
+            movie.ForeignId = foriegnId;
             movie.TmdbId = resource.ForeignIds.TmdbId;
+            movie.TpdbId = resource.ForeignIds.TpdbId;
             movie.StashId = resource.ForeignIds.StashId;
             movie.Title = resource.Title;
             movie.CleanTitle = resource.Title.CleanMovieTitle();
@@ -426,6 +518,12 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             else if (resource.Studio.ForeignIds != null && resource.Studio.ForeignIds.TmdbId > 0)
             {
                 movie.StudioForeignId = resource.Studio.ForeignIds.TmdbId.ToString();
+                movie.StudioTitle = resource.Studio.Title;
+                movie.Studio = resource.Studio;
+            }
+            else if (resource.Studio.ForeignIds != null && resource.Studio.ForeignIds.TpdbId.IsNotNullOrWhiteSpace())
+            {
+                movie.StudioForeignId = resource.Studio.ForeignIds.TpdbId;
                 movie.StudioTitle = resource.Studio.Title;
                 movie.Studio = resource.Studio;
             }
@@ -552,6 +650,28 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
 
         public List<Movie> SearchForNewMovie(string title)
         {
+            var results = new List<Movie>();
+
+            if (_configService.WhisparrMovieMetadataSource == MovieMetadataType.None)
+            {
+                return results;
+            }
+
+            if (_configService.WhisparrMovieMetadataSource == MovieMetadataType.TMDB)
+            {
+                results.AddRange(SearchForNewTmdbMovie(title));
+            }
+
+            if (_configService.WhisparrMovieMetadataSource == MovieMetadataType.TPDB)
+            {
+                results.AddRange(SearchForNewTpdbMovie(title));
+            }
+
+            return results;
+        }
+
+        public List<Movie> SearchForNewTmdbMovie(string title)
+        {
             try
             {
                 var regex = new Regex("^https://www.themoviedb.org/movie/(?<tmdbid>[0-9]+).*$");
@@ -575,7 +695,11 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 if (parserResult != null && parserResult.PrimaryMovieTitle != title)
                 {
                     // Parser found something interesting!
-                    parserTitle = parserResult.PrimaryMovieTitle.ToLower().Replace(".", " "); // TODO Update so not every period gets replaced (e.g. R.I.P.D.)
+                    if (parserResult.PrimaryMovieTitle.IsNotNullOrWhiteSpace())
+                    {
+                        parserTitle = parserResult.PrimaryMovieTitle.ToLower().Replace(".", " "); // TODO Update so not every period gets replaced (e.g. R.I.P.D.)
+                    }
+
                     if (parserResult.Year > 1800)
                     {
                         yearTerm = parserResult.Year.ToString();
@@ -656,10 +780,99 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
 
                 var searchTerm = parserTitle.Replace("_", " ").Replace(".", " ");
 
-                var firstChar = searchTerm.First();
-
                 var request = _whisparrMetadata.Create()
                     .SetSegment("route", "movie/search")
+                    .AddQueryParam("q", searchTerm)
+                    .AddQueryParam("year", yearTerm)
+                    .Build();
+
+                request.AllowAutoRedirect = true;
+                request.SuppressHttpError = true;
+
+                var httpResponse = _httpClient.Get<List<MovieResource>>(request);
+
+                return httpResponse.Resource.SelectList(MapSearchResult);
+            }
+            catch (HttpException ex)
+            {
+                _logger.Warn(ex);
+                throw new SkyHookException("Search for '{0}' failed. Unable to communicate with WhisparrAPI. {1}", ex, title, ex.Message);
+            }
+            catch (WebException ex)
+            {
+                _logger.Warn(ex);
+                throw new SkyHookException("Search for '{0}' failed. Unable to communicate with WhisparrAPI. {1}", ex, title, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.Warn(ex);
+                throw new SkyHookException("Search for '{0}' failed. Invalid response received from WhisparrAPI. {1}", ex, title, ex.Message);
+            }
+        }
+
+        public List<Movie> SearchForNewTpdbMovie(string title)
+        {
+            try
+            {
+                var lowerTitle = title.ToLower();
+
+                lowerTitle = lowerTitle.Replace(".", "");
+
+                // Allow search to accept a full StashDB URL
+                var regex = new Regex(@"^https://theporndb\.net/movies/(?<tpdbid>[A-Za-z0-9\-]+).*$", RegexOptions.Compiled);
+                var match = regex.Match(title);
+
+                if (match.Success)
+                {
+                    lowerTitle = "tpdbid:" + match.Groups["tpdbid"].Value;
+                    _logger.Debug($"Search based on TPDB URL.  Re-writing as {lowerTitle}");
+                }
+
+                if (lowerTitle.StartsWith("tpdb:") || lowerTitle.StartsWith("tpdbid:"))
+                {
+                    var slug = lowerTitle.Split(':')[1].Trim();
+
+                    var tpdbid = slug;
+
+                    if (slug.IsNullOrWhiteSpace() || slug.Any(char.IsWhiteSpace))
+                    {
+                        return new List<Movie>();
+                    }
+
+                    try
+                    {
+                        var movieLookup = GetTpdbMovieInfo(tpdbid).Item1;
+                        return movieLookup == null ? new List<Movie>() : new List<Movie> { _movieService.FindByTpdbId(movieLookup.TpdbId) ?? new Movie { MovieMetadata = movieLookup } };
+                    }
+                    catch (MovieNotFoundException ex)
+                    {
+                        _logger.Debug(ex, $"Movie not found");
+                        return new List<Movie>();
+                    }
+                }
+
+                var parserTitle = lowerTitle;
+
+                var parserResult = Parser.Parser.ParseMovieTitle(title, true);
+
+                var yearTerm = "";
+
+                if (parserResult != null && parserResult.PrimaryMovieTitle.IsNotNullOrWhiteSpace() && parserResult.PrimaryMovieTitle != title)
+                {
+                    // Parser found something interesting!
+                    parserTitle = parserResult.PrimaryMovieTitle.ToLower().Replace(".", " "); // TODO Update so not every period gets replaced (e.g. R.I.P.D.)
+                    if (parserResult.Year > 1800)
+                    {
+                        yearTerm = parserResult.Year.ToString();
+                    }
+                }
+
+                parserTitle = StripTrailingTheFromTitle(parserTitle);
+
+                var searchTerm = parserTitle.Replace("_", " ").Replace(".", " ");
+
+                var request = _whisparrMetadata.Create()
+                    .SetSegment("route", "tpdb/movie/search")
                     .AddQueryParam("q", searchTerm)
                     .AddQueryParam("year", yearTerm)
                     .Build();
@@ -730,8 +943,6 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 }
 
                 var searchTerm = lowerTitle.Replace("_", " ").Replace(".", " ");
-
-                var firstChar = searchTerm.First();
 
                 var request = _whisparrMetadata.Create()
                     .SetSegment("route", "scene/search")
@@ -817,8 +1028,6 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
 
                 var searchTerm = lowerTitle.Replace("_", " ").Replace(".", " ");
 
-                var firstChar = searchTerm.First();
-
                 var request = _whisparrMetadata.Create()
                     .SetSegment("route", "performer/search")
                     .AddQueryParam("q", searchTerm)
@@ -903,8 +1112,6 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
 
                 var searchTerm = lowerTitle.Replace("_", " ").Replace(".", " ");
 
-                var firstChar = searchTerm.First();
-
                 var request = _whisparrMetadata.Create()
                     .SetSegment("route", "site/search")
                     .AddQueryParam("q", searchTerm)
@@ -946,20 +1153,53 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             }
         }
 
+        public Movies.MetadataSource MapMetadataSource(ItemType itemType, ExternalIdResource externalIdResource)
+        {
+            if (itemType == ItemType.Movie)
+            {
+                if (externalIdResource.TpdbId.IsNotNullOrWhiteSpace())
+                {
+                    return Movies.MetadataSource.TpdbMovie;
+                }
+                else
+                {
+                    return Movies.MetadataSource.Tmdb;
+                }
+            }
+            else
+            {
+                return Movies.MetadataSource.Stash;
+            }
+        }
+
+        public static string MapForeignId(Movies.MetadataSource metadataSource, ExternalIdResource externalIdResource)
+        {
+            if (metadataSource == Movies.MetadataSource.Tmdb)
+            {
+                return externalIdResource.TmdbId.ToString();
+            }
+            else if (metadataSource == Movies.MetadataSource.TpdbMovie)
+            {
+                return $"tpdbId:{externalIdResource.TpdbId}";
+            }
+            else
+            {
+                return externalIdResource.StashId;
+            }
+        }
+
         private Movie MapSearchResult(MovieResource result)
         {
-            var movie = _movieService.FindByForeignId(result.ItemType == ItemType.Movie ? result.ForeignIds.TmdbId.ToString() : result.ForeignIds.StashId);
+            var foreignId = MapForeignId(MapMetadataSource(result.ItemType, result.ForeignIds), result.ForeignIds);
+            var movie = _movieService.FindByForeignId(foreignId);
 
             if (movie == null)
             {
                 movie = new Movie { MovieMetadata = MapMovie(result) };
 
-                if (result.ItemType == ItemType.Scene)
+                foreach (var performer in result.Credits)
                 {
-                    foreach (var performer in result.Credits)
-                    {
-                        movie.MovieMetadata.Value.Credits.Add(MapCast(performer));
-                    }
+                    movie.MovieMetadata.Value.Credits.Add(MapCast(performer));
                 }
             }
 
@@ -1001,6 +1241,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 Ethnicity = MapEthnicity(performer.Ethnicity),
                 HairColor = MapHairColor(performer.HairColor),
                 ForeignId = performer.ForeignIds.StashId,
+                TpdbId = performer.ForeignIds.TpdbId,
                 Images = performer.Images.Select(MapImage).ToList()
             };
 
@@ -1097,6 +1338,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 Aliases = studio.Aliases,
                 Website = studio.Homepage,
                 ForeignId = studio.ForeignIds.StashId,
+                TpdbId = studio.ForeignIds.TpdbId,
                 Network = studio.Network,
                 Images = studio.Images?.Select(MapImage).ToList() ?? new List<MediaCover.MediaCover>()
             };

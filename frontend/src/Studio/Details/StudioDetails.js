@@ -193,6 +193,8 @@ class StudioDetails extends Component {
     const {
       id,
       foreignId,
+      tpdbId,
+      website,
       title,
       aliases,
       rootFolderPath,
@@ -376,6 +378,8 @@ class StudioDetails extends Component {
                           tooltip={
                             <StudioDetailsLinks
                               foreignId={foreignId}
+                              website={website}
+                              tpdbId={tpdbId}
                             />
                           }
                           position={tooltipPositions.BOTTOM}
@@ -596,6 +600,8 @@ class StudioDetails extends Component {
 StudioDetails.propTypes = {
   id: PropTypes.number.isRequired,
   foreignId: PropTypes.string,
+  tpdbId: PropTypes.string,
+  website: PropTypes.string,
   title: PropTypes.string.isRequired,
   aliases: PropTypes.arrayOf(PropTypes.string),
   network: PropTypes.string.isRequired,

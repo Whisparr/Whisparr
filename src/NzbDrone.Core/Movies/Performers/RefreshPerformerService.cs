@@ -76,6 +76,7 @@ namespace NzbDrone.Core.Movies.Performers
                 performer.ForeignId = performerInfo.ForeignId;
             }
 
+            performer.TpdbId = performerInfo.TpdbId;
             performer.Age = performerInfo.Age;
             performer.CareerEnd = performerInfo.CareerEnd;
             performer.CareerStart = performerInfo.CareerStart;
@@ -104,7 +105,7 @@ namespace NzbDrone.Core.Movies.Performers
                 // Chunk the into smaller lists
                 var chunkSize = 10;
 
-                var existingScenes = _movieService.AllMovieForeignIds().Where(s => s.Contains('-')).ToList();
+                var existingScenes = _movieService.AllMovieStashIds();
                 var performerWork = _movieInfo.GetPerformerWorks(performer.ForeignId);
                 var excludedScenes = _importListExclusionService.GetAllExclusions().Select(e => e.ForeignId);
                 var scenesToAdd = performerWork.Scenes.Where(m => !existingScenes.Contains(m)).Where(m => !excludedScenes.Contains(m));
@@ -134,35 +135,72 @@ namespace NzbDrone.Core.Movies.Performers
 
                 _logger.Info("Synced performer {0} has {1} scenes adding {2} and added {3}", performer.Name, performerWork.Scenes.Count, scenesToAdd.Count(), scenesAdded);
 
-                var tmbdId = 0;
-                var existingMovies = _movieService.AllMovieTmdbIds();
-                var excludedMovies = _importListExclusionService.GetAllExclusions().Select(e => int.TryParse(e.ForeignId, out tmbdId)).Select(e => tmbdId).Where(e => e != 0).ToList();
-                var moviesToAdd = performerWork.Movies.Where(m => !existingMovies.Contains(m)).Where(m => !excludedMovies.Contains(m));
                 var moviesAdded = 0;
 
-                if (moviesToAdd.Any())
+                if (_configService.WhisparrMovieMetadataSource == MovieMetadataType.TMDB)
                 {
-                    var movieLists = moviesToAdd.Select(m => new Movie
-                    {
-                        ForeignId = m.ToString(),
-                        QualityProfileId = performer.QualityProfileId,
-                        RootFolderPath = performer.RootFolderPath,
-                        AddOptions = new AddMovieOptions
-                        {
-                            SearchForMovie = performer.SearchOnAdd,
-                            AddMethod = AddMovieMethod.Performer
-                        },
-                        Monitored = true,
-                        Tags = performer.Tags
-                    }).Chunk(chunkSize);
+                    var tmbdId = 0;
+                    var existingMovies = _movieService.AllMovieTmdbIds();
+                    var excludedMovies = _importListExclusionService.GetAllExclusions().Select(e => int.TryParse(e.ForeignId, out tmbdId)).Select(e => tmbdId).Where(e => e != 0).ToList();
+                    var moviesToAdd = performerWork.Movies.Where(m => !existingMovies.Contains(m)).Where(m => !excludedMovies.Contains(m));
 
-                    foreach (var movieList in movieLists)
+                    if (moviesToAdd.Any())
                     {
-                        moviesAdded += _addMovieService.AddMovies(movieList.ToList(), true).Count;
+                        var movieLists = moviesToAdd.Select(m => new Movie
+                        {
+                            ForeignId = m.ToString(),
+                            TmdbId = m,
+                            QualityProfileId = performer.QualityProfileId,
+                            RootFolderPath = performer.RootFolderPath,
+                            AddOptions = new AddMovieOptions
+                            {
+                                SearchForMovie = performer.SearchOnAdd,
+                                AddMethod = AddMovieMethod.Performer
+                            },
+                            Monitored = true,
+                            Tags = performer.Tags
+                        }).Chunk(chunkSize);
+
+                        foreach (var movieList in movieLists)
+                        {
+                            moviesAdded += _addMovieService.AddMovies(movieList.ToList(), true).Count;
+                        }
                     }
+
+                    _logger.Info("Synced performer {0} has {1} movies adding {2} and added {3}", performer.Name, performerWork.Movies.Count, moviesToAdd.Count(), moviesAdded);
                 }
 
-                _logger.Info("Synced performer {0} has {1} movies adding {2} and added {3}", performer.Name, performerWork.Movies.Count, moviesToAdd.Count(), moviesAdded);
+                if (_configService.WhisparrMovieMetadataSource == MovieMetadataType.TPDB)
+                {
+                    var existingMovies = _movieService.AllMovieTpdbIds();
+                    var excludedMovies = _importListExclusionService.GetAllExclusions().Where(e => e.Type == ImportExclusionType.Movie).Select(e => e.ForeignId).ToList();
+                    var moviesToAdd = performerWork.TpdbMovies.Where(m => !existingMovies.Contains(m)).Where(m => !excludedMovies.Contains(m));
+
+                    if (moviesToAdd.Any())
+                    {
+                        var movieLists = moviesToAdd.Select(m => new Movie
+                        {
+                            ForeignId = $"tpdbid:{m}",
+                            TpdbId = m,
+                            QualityProfileId = performer.QualityProfileId,
+                            RootFolderPath = performer.RootFolderPath,
+                            AddOptions = new AddMovieOptions
+                            {
+                                SearchForMovie = performer.SearchOnAdd,
+                                AddMethod = AddMovieMethod.Performer
+                            },
+                            Monitored = true,
+                            Tags = performer.Tags
+                        }).Chunk(chunkSize);
+
+                        foreach (var movieList in movieLists)
+                        {
+                            moviesAdded += _addMovieService.AddMovies(movieList.ToList(), true).Count;
+                        }
+                    }
+
+                    _logger.Info("Synced performer {0} has {1} movies adding {2} and added {3}", performer.Name, performerWork.TpdbMovies.Count, moviesToAdd.Count(), moviesAdded);
+                }
             }
         }
 

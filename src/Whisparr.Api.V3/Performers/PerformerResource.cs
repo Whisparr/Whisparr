@@ -18,6 +18,7 @@ namespace Whisparr.Api.V3.Performers
         public int? CareerEnd { get; set; }
         public int? Age { get; set; }
         public string ForeignId { get; set; }
+        public string TpdbId { get; set; }
         public List<MediaCover> Images { get; set; }
         public bool Monitored { get; set; }
         public string RootFolderPath { get; set; }
@@ -53,6 +54,7 @@ namespace Whisparr.Api.V3.Performers
             {
                 Id = model.Id,
                 ForeignId = model.ForeignId,
+                TpdbId = model.TpdbId,
                 Gender = model.Gender,
                 Age = model.Age,
                 Ethnicity = model.Ethnicity,

@@ -21,6 +21,7 @@ class ImportMovieSearchResult extends Component {
   render() {
     const {
       tmdbId,
+      tpdbId,
       title,
       year,
       studio,
@@ -41,16 +42,32 @@ class ImportMovieSearchResult extends Component {
           />
         </Link>
 
-        <Link
-          className={styles.tmdbLink}
-          to={`https://www.themoviedb.org/movie/${tmdbId}`}
-        >
-          <Icon
-            className={styles.tmdbLinkIcon}
-            name={icons.EXTERNAL_LINK}
-            size={16}
-          />
-        </Link>
+        {!!tmdbId && (
+          <Link
+            className={styles.tmdbLink}
+            to={`https://www.themoviedb.org/movie/${tmdbId}`}
+          >
+            <Icon
+              className={styles.tmdbLinkIcon}
+              name={icons.EXTERNAL_LINK}
+              size={16}
+            />
+          </Link>
+        )}
+
+        {!!tpdbId && (
+          <Link
+            className={styles.tpdbLink}
+            to={`https://theporndb.net/movies/${tpdbId}`}
+          >
+            <Icon
+              className={styles.tpdbLinkIcon}
+              name={icons.EXTERNAL_LINK}
+              size={16}
+            />
+          </Link>
+        )}
+
       </div>
     );
   }
@@ -58,6 +75,7 @@ class ImportMovieSearchResult extends Component {
 
 ImportMovieSearchResult.propTypes = {
   tmdbId: PropTypes.number.isRequired,
+  tpdbId: PropTypes.string,
   title: PropTypes.string.isRequired,
   year: PropTypes.number.isRequired,
   studio: PropTypes.string,

@@ -38,7 +38,7 @@ const selectMovies = createSelector(
       hasMovies,
       hasScenes,
       totalSceneCount,
-      sceneCount: _.sumBy(filteredMovies, 'hasFile'),
+      sceneCount: filteredMovies.filter((movie) => movie.hasFile).length,
       studios,
       sizeOnDisk: _.sumBy(filteredMovies, 'sizeOnDisk')
     };

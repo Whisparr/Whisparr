@@ -21,6 +21,7 @@ namespace NzbDrone.Core.MediaFiles
         void Update(List<MovieFile> movieFile);
         void Delete(MovieFile movieFile, DeleteMediaFileReason reason);
         void DeleteMany(List<MovieFile> movieFiles, DeleteMediaFileReason reason);
+        List<MovieFile> GetAllMovieFiles();
         List<MovieFile> GetFilesByMovie(int movieId);
         List<MovieFile> GetFilesByMovies(IEnumerable<int> movieIds);
         List<MovieFile> GetFilesWithoutMediaInfo();
@@ -115,6 +116,11 @@ namespace NzbDrone.Core.MediaFiles
             {
                 _eventAggregator.PublishEvent(new MovieFileDeletedEvent(movieFile, reason));
             }
+        }
+
+        public List<MovieFile> GetAllMovieFiles()
+        {
+            return _mediaFileRepository.All().ToList();
         }
 
         public List<MovieFile> GetFilesByMovie(int movieId)

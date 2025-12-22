@@ -18,7 +18,6 @@ using NzbDrone.SignalR;
 using Whisparr.Http;
 using Whisparr.Http.REST;
 using Whisparr.Http.REST.Attributes;
-using BadRequestException = Whisparr.Http.REST.BadRequestException;
 
 namespace Whisparr.Api.V3.MovieFiles
 {
@@ -82,14 +81,18 @@ namespace Whisparr.Api.V3.MovieFiles
                 return files.ConvertAll(f => MapToResource(f));
             }
 
+            var movieFiles  = new List<MovieFile>();
+
             if (!movieIds.Any() && !movieFileIds.Any())
             {
-                throw new BadRequestException("movieId or movieFileIds must be provided");
+                movieFiles = _mediaFileService.GetAllMovieFiles();
             }
-
-            var movieFiles = movieIds.Any()
-                ? _mediaFileService.GetFilesByMovies(movieIds)
-                : _mediaFileService.GetMovies(movieFileIds);
+            else
+            {
+                movieFiles = movieIds.Any()
+                    ? _mediaFileService.GetFilesByMovies(movieIds)
+                    : _mediaFileService.GetMovies(movieFileIds);
+            }
 
             if (movieFiles == null)
             {

@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import TextTruncate from 'react-text-truncate';
 import Alert from 'Components/Alert';
@@ -14,15 +13,27 @@ import PageToolbar from 'Components/Page/Toolbar/PageToolbar';
 import PageToolbarButton from 'Components/Page/Toolbar/PageToolbarButton';
 import PageToolbarSection from 'Components/Page/Toolbar/PageToolbarSection';
 import PageToolbarSeparator from 'Components/Page/Toolbar/PageToolbarSeparator';
+import RelativeDateCell from 'Components/Table/Cells/RelativeDateCell';
 import TmdbRating from 'Components/TmdbRating';
-import Popover from 'Components/Tooltip/Popover';
 import Tooltip from 'Components/Tooltip/Tooltip';
-import { icons, kinds, sizes, sortDirections, tooltipPositions } from 'Helpers/Props';
+import {
+  icons,
+  kinds,
+  sizes,
+  sortDirections,
+  tooltipPositions,
+} from 'Helpers/Props';
 import InteractiveImportModal from 'InteractiveImport/InteractiveImportModal';
 import DeleteMovieModal from 'Movie/Delete/DeleteMovieModal';
 import EditMovieModal from 'Movie/Edit/EditMovieModal';
 import getMovieStatusDetails from 'Movie/getMovieStatusDetails';
 import MovieHistoryModal from 'Movie/History/MovieHistoryModal';
+import {
+  Image as MovieImageType,
+  MovieStatus,
+  Ratings,
+  Statistics as MovieStatistics,
+} from 'Movie/Movie';
 import MovieGenres from 'Movie/MovieGenres';
 import MovieImage from 'Movie/MovieImage';
 import MovieInteractiveSearchModal from 'Movie/Search/MovieInteractiveSearchModal';
@@ -36,30 +47,92 @@ import formatBytes from 'Utilities/Number/formatBytes';
 import translate from 'Utilities/String/translate';
 import MovieCastPostersConnector from './Credits/Cast/MovieCastPostersConnector';
 import MovieDetailsLinks from './MovieDetailsLinks';
-import MovieReleaseDates from './MovieReleaseDates';
 import MovieStatusLabel from './MovieStatusLabel';
 import MovieStudioLink from './MovieStudioLink';
 import MovieTagsConnector from './MovieTagsConnector';
 import styles from './MovieDetails.css';
 
-const defaultFontSize = parseInt(fonts.defaultFontSize);
-const lineHeight = parseFloat(fonts.lineHeight);
+// InfoLabel is a JS component; types provided via declaration file
+
+const defaultFontSize = Number(fonts.defaultFontSize as string);
+const lineHeight = parseFloat(fonts.lineHeight as string);
 
 const posterPlaceholder =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKgAAAD3CAMAAAC+Te+kAAAAZlBMVEUvLi8vLy8vLzAvMDAwLy8wLzAwMDAwMDEwMTExMDAxMDExMTExMTIxMjIyMjIyMjMyMzMzMjMzMzMzMzQzNDQ0NDQ0NDU0NTU1NTU1NTY1NjY2NTY2NjY2Njc2Nzc3Njc3Nzc3NziHChLWAAAAAWJLR0QAiAUdSAAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB+MKCgEdHeShUbsAAALZSURBVHja7dxNcuwgDEZR1qAVmP1vMrNUJe91GfTzCSpXo575lAymjYWGXRIDKFCgQIECBQoUKFCgQIECBQoUKFCgQIECBQoUKFCgQIECBQoUKNA/AZ3fcTR0/owjofNDnAadnwPoPnS+xTXQeQZ0rkQ/dC4H0Gzo7ITO3bgGOnug/2PcAF3Mczt0fUj0QncG7znQBupw3PkWqh8qpkagpnyqjuArkkxaC02kRqGypCZANVYFdJZCdy9WTRVB5znQ6qTmjFFBWnOhdg20Lqnp0CpqAbRmAJRAK5JaA32zngTNvv910OSkVkJTs1oLtWugeTkNQZ/nkT2rotBHldUwNE6VQTVWGTQ6AHKggqGaBS23JkKf0hUgE1qa01Ro5fzPhoapR0HtCGg4q0poSCqFRgaAFhqxqqEr1EOgmdJaqHdaHQq1I6CunPZAHdY2aIJUBN2V9kE3H1Wd0BXrNVA7BLpgdUCtALo8pZqhdgd0Z6OyE7q1pdoH3dv7tS7o7iZ1E3R/N70Huuz795cQao65vvkqooT+vEgDdPcbj2s3zxTv9Qt/7cuhdgfUo2yAOplyqNuphfqZSqhFmEJo0HkcdPZCo0rRymRxpwSawHR+YtyBZihfvi+nQO0OqCmcYahGqYPGS4qCUJkzBpUpJdCkordyaFZxXi1UUpaZAJ2XQFOLh8ug2XXjVdD0+vYiqLIO3w1VH8EogtoxUPnpGxe04zyTA1p57i4T2nTmbnnnUuLMg1afYE2C1h+1zYEKjlknQLtPg9tb3YzU+dL054qOBb8cvcz3DlqBZhUmhdrnKo9j+pR0rkN5UHkznZHPtJIYN2TTCe1poTUyk9nWPO0bt8Ys7Ug34mlUMONtPUXMaEdXnXN1MnUzN2Z9q3Lr8XQN1DaLQJpXpiamZwltYdIUHShQoECBAgUKFChQoECBAgUKFChQoECBAgUKFChQoECBAgUKFCjQ+vgCff/mEp/vtiIAAAAASUVORK5CYII=';
 
-function getFanartUrl(images) {
+function getFanartUrl(images: MovieImageType[]) {
   const image = images.find((img) => img.coverType === 'fanart');
   return image?.url ?? image?.remoteUrl;
 }
 
-class MovieDetails extends Component {
+interface Props {
+  id: number;
+  tmdbId: number;
+  foreignId?: string;
+  stashId?: string;
+  title: string;
+  code?: string;
+  year: number;
+  runtime: number;
+  certification?: string;
+  ratings: Ratings;
+  path: string;
+  statistics: MovieStatistics;
+  qualityProfileId: number;
+  monitored: boolean;
+  status: MovieStatus;
+  studio?: string;
+  studioTitle?: string;
+  studioForeignId?: string;
+  genres: string[];
+  collection?: Record<string, unknown>;
+  isAvailable: boolean;
+  releaseDate?: string;
+  overview: string;
+  images: MovieImageType[];
+  alternateTitles: string[];
+  tags: number[];
+  itemType: string;
+  isSaving: boolean;
+  isRefreshing: boolean;
+  isSearching: boolean;
+  isFetching: boolean;
+  isPopulated: boolean;
+  isSmallScreen: boolean;
+  isSidebarVisible: boolean;
+  movieFilesError?: unknown;
+  extraFilesError?: unknown;
+  hasMovieFiles: boolean;
+  onMonitorTogglePress: () => void;
+  onRefreshPress: () => void;
+  onSearchPress: () => void;
+  onGoToMovie: () => void;
+  queueItem?: object | null | undefined;
+  movieRuntimeFormat: string;
+  safeForWorkMode?: boolean;
+}
 
-  //
-  // Lifecycle
+interface State {
+  isOrganizeModalOpen: boolean;
+  isEditMovieModalOpen: boolean;
+  isDeleteMovieModalOpen: boolean;
+  isInteractiveImportModalOpen: boolean;
+  isInteractiveSearchModalOpen: boolean;
+  isMovieHistoryModalOpen: boolean;
+  overviewHeight: number;
+  titleWidth: number;
+}
 
-  constructor(props, context) {
-    super(props, context);
+class MovieDetails extends Component<Props, State> {
+  static defaultProps = {
+    genres: [] as string[],
+    statistics: {} as MovieStatistics,
+    tags: [] as number[],
+    isSaving: false,
+  };
+
+  constructor(props: Props) {
+    super(props);
 
     this.state = {
       isOrganizeModalOpen: false,
@@ -69,28 +142,21 @@ class MovieDetails extends Component {
       isInteractiveSearchModalOpen: false,
       isMovieHistoryModalOpen: false,
       overviewHeight: 0,
-      titleWidth: 0
+      titleWidth: 0,
     };
   }
 
   componentDidMount() {
-    window.addEventListener('touchstart', this.onTouchStart);
-    window.addEventListener('touchend', this.onTouchEnd);
-    window.addEventListener('touchcancel', this.onTouchCancel);
-    window.addEventListener('touchmove', this.onTouchMove);
-    window.addEventListener('keyup', this.onKeyUp);
+    // touch gesture listeners removed — gestures disabled
+    window.addEventListener('keyup', this.onKeyUp as EventListener);
   }
 
   componentWillUnmount() {
-    window.removeEventListener('touchstart', this.onTouchStart);
-    window.removeEventListener('touchend', this.onTouchEnd);
-    window.removeEventListener('touchcancel', this.onTouchCancel);
-    window.removeEventListener('touchmove', this.onTouchMove);
-    window.removeEventListener('keyup', this.onKeyUp);
+    // touch gesture listeners removed — gestures disabled
+    window.removeEventListener('keyup', this.onKeyUp as EventListener);
   }
 
-  //
-  // Listeners
+  // gesture handling removed
 
   onOrganizePress = () => {
     this.setState({ isOrganizeModalOpen: true });
@@ -127,7 +193,7 @@ class MovieDetails extends Component {
   onDeleteMoviePress = () => {
     this.setState({
       isEditMovieModalOpen: false,
-      isDeleteMovieModalOpen: true
+      isDeleteMovieModalOpen: true,
     });
   };
 
@@ -143,52 +209,25 @@ class MovieDetails extends Component {
     this.setState({ isMovieHistoryModalOpen: false });
   };
 
-  onMeasure = ({ height }) => {
+  onMeasure = ({ height }: { height: number }) => {
     this.setState({ overviewHeight: height });
   };
 
-  onTitleMeasure = ({ width }) => {
+  onTitleMeasure = ({ width }: { width: number }) => {
     this.setState({ titleWidth: width });
   };
 
-  onTouchStart = (event) => {
-    const touches = event.touches;
-    const touchStart = touches[0].pageX;
-    const touchY = touches[0].pageY;
+  // touch gesture handlers removed — gestures disabled
 
-    // Only change when swipe is on header, we need horizontal scroll on tables
-    if (touchY > 470) {
-      return;
-    }
-
-    if (touches.length !== 1) {
-      return;
-    }
-
-    if (
-      touchStart < 50 ||
-      this.props.isSidebarVisible ||
-      this.state.isOrganizeModalOpen ||
-      this.state.isEditMovieModalOpen ||
-      this.state.isDeleteMovieModalOpen ||
-      this.state.isInteractiveImportModalOpen ||
-      this.state.isInteractiveSearchModalOpen ||
-      this.state.isMovieHistoryModalOpen
-    ) {
-      return;
-    }
-
-    this._touchStart = touchStart;
+  onKeyUp = (_event: KeyboardEvent) => {
+    // noop in JS version; retained for parity
+    return;
   };
-
-  //
-  // Render
 
   render() {
     const {
       id,
       tmdbId,
-      foreignId,
       stashId,
       title,
       code,
@@ -198,7 +237,7 @@ class MovieDetails extends Component {
       certification,
       ratings,
       path,
-      statistics,
+      statistics = {},
       qualityProfileId,
       monitored,
       studioTitle,
@@ -224,12 +263,10 @@ class MovieDetails extends Component {
       onSearchPress,
       queueItem,
       movieRuntimeFormat,
-      safeForWorkMode
-    } = this.props;
+      safeForWorkMode,
+    } = this.props as Props;
 
-    const {
-      sizeOnDisk = 0
-    } = statistics;
+    const { sizeOnDisk = 0 } = statistics as MovieStatistics;
 
     const {
       isOrganizeModalOpen,
@@ -239,13 +276,13 @@ class MovieDetails extends Component {
       isInteractiveSearchModalOpen,
       isMovieHistoryModalOpen,
       overviewHeight,
-      titleWidth
+      titleWidth,
     } = this.state;
 
     const statusDetails = getMovieStatusDetails(status);
 
     const fanartUrl = getFanartUrl(images);
-    const marqueeWidth = isSmallScreen ? titleWidth : (titleWidth - 150);
+    const marqueeWidth = isSmallScreen ? titleWidth : titleWidth - 150;
 
     const titleWithYear = `${title}${year > 0 ? ` (${year})` : ''}`;
 
@@ -316,13 +353,17 @@ class MovieDetails extends Component {
         </PageToolbar>
 
         <PageContentBody innerClassName={styles.innerContentBody}>
-          <div className={itemType === 'movie' ? styles.header : styles.sceneHeader}>
+          <div
+            className={
+              itemType === 'movie' ? styles.header : styles.sceneHeader
+            }
+          >
             <div
               className={styles.backdrop}
               style={
-                fanartUrl && !safeForWorkMode ?
-                  { backgroundImage: `url(${fanartUrl})` } :
-                  null
+                fanartUrl && !safeForWorkMode
+                  ? { backgroundImage: `url(${fanartUrl})` }
+                  : undefined
               }
             >
               <div className={styles.backdropOverlay} />
@@ -331,7 +372,9 @@ class MovieDetails extends Component {
             <div className={styles.headerContent}>
               <MovieImage
                 safeForWorkMode={safeForWorkMode}
-                className={itemType === 'movie' ? styles.poster : styles.screenShot}
+                className={
+                  itemType === 'movie' ? styles.poster : styles.screenShot
+                }
                 coverType={itemType === 'movie' ? 'poster' : 'screenshot'}
                 images={images}
                 size={500}
@@ -353,7 +396,10 @@ class MovieDetails extends Component {
                         />
                       </div>
 
-                      <div className={styles.title} style={{ width: marqueeWidth }}>
+                      <div
+                        className={styles.title}
+                        style={{ width: marqueeWidth }}
+                      >
                         <Marquee text={title} />
                       </div>
                     </div>
@@ -362,112 +408,82 @@ class MovieDetails extends Component {
 
                 <div className={styles.details}>
                   <div>
-                    {
-                      certification ?
-                        <span className={styles.certification} title={translate('Certification')}>
-                          {certification}
-                        </span> :
-                        null
-                    }
+                    {certification ? (
+                      <span
+                        className={styles.certification}
+                        title={translate('Certification')}
+                      >
+                        {certification}
+                      </span>
+                    ) : null}
 
-                    <span className={styles.year}>
-                      <Popover
-                        anchor={
-                          year > 0 ? (
-                            year
-                          ) : (
-                            <Icon
-                              name={icons.WARNING}
-                              kind={kinds.WARNING}
-                              size={20}
-                            />
-                          )
-                        }
-                        title={translate('ReleaseDates')}
-                        body={
-                          <MovieReleaseDates
-                            foreignId={foreignId}
-                            itemType={itemType}
-                            releaseDate={releaseDate}
+                    {releaseDate ? (
+                      <span className={styles.year}>
+                        <RelativeDateCell
+                          className={styles.releaseDate}
+                          date={releaseDate}
+                        />
+                      </span>
+                    ) : null}
+
+                    {studioTitle ? (
+                      <span className={styles.studio}>
+                        <MovieStudioLink
+                          foreignId={studioForeignId}
+                          studioTitle={studioTitle}
+                        />
+                      </span>
+                    ) : null}
+
+                    {runtime ? (
+                      <span
+                        className={styles.runtime}
+                        title={translate('Runtime')}
+                      >
+                        {formatRuntime(runtime, movieRuntimeFormat)}
+                      </span>
+                    ) : null}
+
+                    <span className={styles.links}>
+                      <Tooltip
+                        anchor={<Icon name={icons.EXTERNAL_LINK} size={20} />}
+                        tooltip={
+                          <MovieDetailsLinks
+                            tmdbId={tmdbId}
+                            stashId={stashId ?? undefined}
                           />
                         }
                         position={tooltipPositions.BOTTOM}
                       />
                     </span>
 
-                    {studioTitle ?
-                      <span className={styles.studio}>
-                        <MovieStudioLink foreignId={studioForeignId} studioTitle={studioTitle} />
-                      </span> :
-                      null
-                    }
-
-                    {runtime ?
-                      <span className={styles.runtime} title={translate('Runtime')}>
-                        {formatRuntime(runtime, movieRuntimeFormat)}
-                      </span> :
-                      null
-                    }
-
-                    {
-                      <span className={styles.links}>
-                        <Tooltip
-                          anchor={
-                            <Icon
-                              name={icons.EXTERNAL_LINK}
-                              size={20}
-                            />
-                          }
-                          tooltip={
-                            <MovieDetailsLinks
-                              tmdbId={tmdbId}
-                              stashId={stashId}
-                            />
-                          }
-                          position={tooltipPositions.BOTTOM}
-                        />
-                      </span>
-                    }
-
-                    {!!tags.length &&
+                    {!!tags.length && (
                       <span>
                         <Tooltip
-                          anchor={
-                            <Icon
-                              name={icons.TAGS}
-                              size={20}
-                            />
-                          }
-                          tooltip={
-                            <MovieTagsConnector movieId={id} />
-                          }
+                          anchor={<Icon name={icons.TAGS} size={20} />}
+                          tooltip={<MovieTagsConnector movieId={id} />}
                           position={tooltipPositions.BOTTOM}
                         />
                       </span>
-                    }
+                    )}
                   </div>
                 </div>
 
                 <div className={styles.details}>
-                  {!!ratings.tmdb &&
+                  {!!ratings.tmdb && (
                     <span className={styles.rating}>
-                      <TmdbRating
-                        ratings={ratings}
-                        iconSize={20}
-                      />
+                      <TmdbRating ratings={ratings} iconSize={20} />
                     </span>
-                  }
+                  )}
                 </div>
 
-                <div className={styles.detailsLabels}>
+                <div className={styles.detailsInfoLabelContainer}>
                   <InfoLabel
                     className={styles.detailsInfoLabel}
                     name={translate('Path')}
                     size={sizes.LARGE}
                   >
-                    <span className={styles.path}>
-                      {path}
-                    </span>
+                    <span className={styles.path}>{path}</span>
                   </InfoLabel>
 
                   <InfoLabel
@@ -494,11 +510,9 @@ class MovieDetails extends Component {
                     size={sizes.LARGE}
                   >
                     <span className={styles.qualityProfileName}>
-                      {
-                        <QualityProfileNameConnector
-                          qualityProfileId={qualityProfileId}
-                        />
-                      }
+                      <QualityProfileNameConnector
+                        qualityProfileId={qualityProfileId}
+                      />
                     </span>
                   </InfoLabel>
 
@@ -512,50 +526,44 @@ class MovieDetails extends Component {
                     </span>
                   </InfoLabel>
 
-                  {!!code && !!code.length &&
+                  {!!code && !!code.length && (
                     <InfoLabel
                       className={styles.detailsInfoLabel}
                       name={translate('Code')}
                       title={translate('Code')}
                       size={sizes.LARGE}
                     >
-                      <span className={styles.code}>
-                        {code}
-                      </span>
+                      <span className={styles.code}>{code}</span>
                     </InfoLabel>
-                  }
+                  )}
 
-                  {
-                    studio && !isSmallScreen ?
-                      <InfoLabel
-                        className={styles.detailsInfoLabel}
-                        name={translate('Studio')}
-                        size={sizes.LARGE}
-                      >
-                        <span className={styles.studio}>
-                          {studio}
-                        </span>
-                      </InfoLabel> :
-                      null
-                  }
+                  {studio && !isSmallScreen ? (
+                    <InfoLabel
+                      className={styles.detailsInfoLabel}
+                      name={translate('Studio')}
+                      size={sizes.LARGE}
+                    >
+                      <span className={styles.studio}>{studio}</span>
+                    </InfoLabel>
+                  ) : null}
 
-                  {
-                    genres.length && !isSmallScreen ?
-                      <InfoLabel
-                        className={styles.detailsInfoLabel}
-                        name={translate('Genres')}
-                        size={sizes.LARGE}
-                      >
-                        <MovieGenres className={styles.genres} genres={genres} />
-                      </InfoLabel> :
-                      null
-                  }
+                  {genres.length && !isSmallScreen ? (
+                    <InfoLabel
+                      className={styles.detailsInfoLabel}
+                      name={translate('Genres')}
+                      size={sizes.LARGE}
+                    >
+                      <MovieGenres className={styles.genres} genres={genres} />
+                    </InfoLabel>
+                  ) : null}
                 </div>
 
                 <Measure onMeasure={this.onMeasure}>
                   <div className={styles.overview}>
-                    <TextTruncate className={styles.overview}
-                      line={Math.floor(overviewHeight / (defaultFontSize * lineHeight))}
+                    <TextTruncate
+                      line={Math.floor(
+                        overviewHeight / (defaultFontSize * lineHeight)
+                      )}
                       text={overview}
                     />
                   </div>
@@ -565,41 +573,32 @@ class MovieDetails extends Component {
           </div>
 
           <div className={styles.contentContainer}>
-            {
-              !isFetching && movieFilesError ?
-                <Alert kind={kinds.DANGER}>
-                  {translate('LoadingMovieFilesFailed')}
-                </Alert> :
-                null
-            }
+            {!isFetching && movieFilesError ? (
+              <Alert kind={kinds.DANGER}>
+                {translate('LoadingMovieFilesFailed')}
+              </Alert>
+            ) : null}
 
-            {
-              !isFetching && extraFilesError ?
-                <Alert kind={kinds.DANGER}>
-                  {translate('LoadingMovieExtraFilesFailed')}
-                </Alert> :
-                null
-            }
+            {!isFetching && extraFilesError ? (
+              <Alert kind={kinds.DANGER}>
+                {translate('LoadingMovieExtraFilesFailed')}
+              </Alert>
+            ) : null}
 
             <FieldSet legend={translate('Files')}>
-              <MovieFileEditorTable
-                movieId={id}
-              />
+              <MovieFileEditorTable movieId={id} />
 
-              <ExtraFileTable
-                movieId={id}
-              />
+              <ExtraFileTable movieId={id} />
             </FieldSet>
 
-            {itemType === 'scene' ?
+            {itemType === 'scene' ? (
               <FieldSet legend={translate('Cast')}>
                 <MovieCastPostersConnector
                   movieId={id}
                   isSmallScreen={isSmallScreen}
                 />
-              </FieldSet> :
-              null
-            }
+              </FieldSet>
+            ) : null}
           </div>
 
           <OrganizePreviewModal
@@ -653,59 +652,5 @@ class MovieDetails extends Component {
     );
   }
 }
-
-MovieDetails.propTypes = {
-  id: PropTypes.number.isRequired,
-  tmdbId: PropTypes.number.isRequired,
-  foreignId: PropTypes.string,
-  stashId: PropTypes.string,
-  title: PropTypes.string.isRequired,
-  code: PropTypes.string,
-  year: PropTypes.number.isRequired,
-  runtime: PropTypes.number.isRequired,
-  certification: PropTypes.string,
-  ratings: PropTypes.object.isRequired,
-  path: PropTypes.string.isRequired,
-  statistics: PropTypes.object.isRequired,
-  qualityProfileId: PropTypes.number.isRequired,
-  monitored: PropTypes.bool.isRequired,
-  status: PropTypes.string.isRequired,
-  studio: PropTypes.string,
-  studioTitle: PropTypes.string,
-  studioForeignId: PropTypes.string,
-  genres: PropTypes.arrayOf(PropTypes.string).isRequired,
-  collection: PropTypes.object,
-  isAvailable: PropTypes.bool.isRequired,
-  releaseDate: PropTypes.string,
-  overview: PropTypes.string.isRequired,
-  images: PropTypes.arrayOf(PropTypes.object).isRequired,
-  alternateTitles: PropTypes.arrayOf(PropTypes.string).isRequired,
-  tags: PropTypes.arrayOf(PropTypes.number).isRequired,
-  itemType: PropTypes.string.isRequired,
-  isSaving: PropTypes.bool.isRequired,
-  isRefreshing: PropTypes.bool.isRequired,
-  isSearching: PropTypes.bool.isRequired,
-  isFetching: PropTypes.bool.isRequired,
-  isPopulated: PropTypes.bool.isRequired,
-  isSmallScreen: PropTypes.bool.isRequired,
-  isSidebarVisible: PropTypes.bool.isRequired,
-  movieFilesError: PropTypes.object,
-  extraFilesError: PropTypes.object,
-  hasMovieFiles: PropTypes.bool.isRequired,
-  onMonitorTogglePress: PropTypes.func.isRequired,
-  onRefreshPress: PropTypes.func.isRequired,
-  onSearchPress: PropTypes.func.isRequired,
-  onGoToMovie: PropTypes.func.isRequired,
-  queueItem: PropTypes.object,
-  movieRuntimeFormat: PropTypes.string.isRequired,
-  safeForWorkMode: PropTypes.bool
-};
-
-MovieDetails.defaultProps = {
-  genres: [],
-  statistics: {},
-  tags: [],
-  isSaving: false
-};
 
 export default MovieDetails;

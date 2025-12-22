@@ -10,6 +10,7 @@ interface CssExports {
   'contentContainer': string;
   'details': string;
   'detailsInfoLabel': string;
+  'detailsInfoLabelContainer': string;
   'detailsLabel': string;
   'errorMessage': string;
   'filterIcon': string;
@@ -27,6 +28,7 @@ interface CssExports {
   'poster': string;
   'qualityProfileName': string;
   'rating': string;
+  'releaseDate': string;
   'runtime': string;
   'sceneHeader': string;
   'screenShot': string;

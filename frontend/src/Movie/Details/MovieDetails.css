@@ -171,6 +171,30 @@
   margin: 5px 10px 5px 0;
 }
 
+/* container that holds the InfoLabel blocks and allows wrapping */
+.detailsInfoLabelContainer {
+  display: flex;
+
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.detailsInfoLabelContainer > .detailsInfoLabel {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+/* truncate long path text instead of expanding horizontally */
+.detailsInfoLabelContainer .path {
+  display: block;
+  overflow: visible;
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+  white-space: normal;
+}
+
 .path,
 .code,
 .sizeOnDisk,
@@ -184,6 +208,11 @@
 
 .path {
   text-wrap: auto;
+}
+
+.releaseDate {
+  padding: 0;
+  border-top: 0;
 }
 
 .overview {
@@ -211,7 +240,6 @@
   bottom: -1px;
   display: inline-block;
   padding: 6px 12px;
-  border: 1px solid transparent;
   border-top: none;
   list-style: none;
   cursor: pointer;

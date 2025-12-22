@@ -254,7 +254,11 @@ function Updates() {
                       />
                     </div>
                   ) : (
-                    <div>{translate('MaintenanceRelease')}</div>
+                    <InlineMarkdown
+                      data={translate('MaintenanceReleaseWithLink', {
+                        url: 'https://github.com/Whisparr/Whisparr/commits/eros/',
+                      })}
+                    />
                   )}
                 </div>
               );

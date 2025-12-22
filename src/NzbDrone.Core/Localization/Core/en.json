@@ -1049,6 +1049,7 @@
   "LookingForReleaseProfiles2": "instead.",
   "Lowercase": "Lowercase",
   "MaintenanceRelease": "Maintenance Release: bug fixes and other improvements. See Github Commit History for more details",
+  "MaintenanceReleaseWithLink": "Maintenance Release: Bug fixes and other improvements. See the commits on [GitHub]({url})",
   "ManageClients": "Manage Clients",
   "ManageCustomFormats": "Manage Custom Formats",
   "ManageDownloadClients": "Manage Download Clients",

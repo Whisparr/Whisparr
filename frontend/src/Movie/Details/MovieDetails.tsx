@@ -459,40 +459,37 @@ class MovieDetails extends Component<Props, State> {
                       />
                     </span>
 
-                    {studioTitle ?
+                    {studioTitle ? (
                       <span className={styles.studio}>
-                        <MovieStudioLink foreignId={studioForeignId} studioTitle={studioTitle} />
-                      </span> :
-                      null
-                    }
-
-                    {runtime ?
-                      <span className={styles.runtime} title={translate('Runtime')}>
-                        {formatRuntime(runtime, movieRuntimeFormat)}
-                      </span> :
-                      null
-                    }
-
-                    {
-                      <span className={styles.links}>
-                        <Tooltip
-                          anchor={
-                            <Icon
-                              name={icons.EXTERNAL_LINK}
-                              size={20}
-                            />
-                          }
-                          tooltip={
-                            <MovieDetailsLinks
-                              tmdbId={tmdbId}
-                              tpdbId={tpdbId}
-                              stashId={stashId}
-                            />
-                          }
-                          position={tooltipPositions.BOTTOM}
+                        <MovieStudioLink
+                          foreignId={studioForeignId}
+                          studioTitle={studioTitle}
                         />
                       </span>
-                    }
+                    ) : null}
+
+                    {runtime ? (
+                      <span
+                        className={styles.runtime}
+                        title={translate('Runtime')}
+                      >
+                        {formatRuntime(runtime, movieRuntimeFormat)}
+                      </span>
+                    ) : null}
+
+                    <span className={styles.links}>
+                      <Tooltip
+                        anchor={<Icon name={icons.EXTERNAL_LINK} size={20} />}
+                        tooltip={
+                          <MovieDetailsLinks
+                            tmdbId={tmdbId}
+                            tpdbId={tpdbId}
+                            stashId={stashId}
+                          />
+                        }
+                        position={tooltipPositions.BOTTOM}
+                      />
+                    </span>
 
                     {!!tags.length && (
                       <span>
@@ -640,7 +637,7 @@ class MovieDetails extends Component<Props, State> {
 
           <OrganizePreviewModal
             isOpen={isOrganizeModalOpen}
-            key={id}
+            movieId={id}
             onModalClose={this.onOrganizeModalClose}
           />
 
@@ -653,7 +650,7 @@ class MovieDetails extends Component<Props, State> {
 
           <MovieHistoryModal
             isOpen={isMovieHistoryModalOpen}
-            key={id}
+            movieId={id}
             onModalClose={this.onMovieHistoryModalClose}
           />
 

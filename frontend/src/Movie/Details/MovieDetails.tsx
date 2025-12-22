@@ -13,7 +13,6 @@ import PageToolbar from 'Components/Page/Toolbar/PageToolbar';
 import PageToolbarButton from 'Components/Page/Toolbar/PageToolbarButton';
 import PageToolbarSection from 'Components/Page/Toolbar/PageToolbarSection';
 import PageToolbarSeparator from 'Components/Page/Toolbar/PageToolbarSeparator';
-import RelativeDateCell from 'Components/Table/Cells/RelativeDateCell';
 import TmdbRating from 'Components/TmdbRating';
 import Tooltip from 'Components/Tooltip/Tooltip';
 import {
@@ -50,6 +49,7 @@ import MovieDetailsLinks from './MovieDetailsLinks';
 import MovieStatusLabel from './MovieStatusLabel';
 import MovieStudioLink from './MovieStudioLink';
 import MovieTagsConnector from './MovieTagsConnector';
+import ReleaseDateDisplay from './ReleaseDateDisplay';
 import styles from './MovieDetails.css';
 
 // InfoLabel is a JS component; types provided via declaration file
@@ -418,12 +418,7 @@ class MovieDetails extends Component<Props, State> {
                     ) : null}
 
                     {releaseDate ? (
-                      <span className={styles.year}>
-                        <RelativeDateCell
-                          className={styles.releaseDate}
-                          date={releaseDate}
-                        />
-                      </span>
+                      <ReleaseDateDisplay releaseDate={releaseDate} />
                     ) : null}
 
                     {studioTitle ? (

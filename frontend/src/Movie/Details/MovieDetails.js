@@ -518,6 +518,7 @@ class MovieDetails extends Component {
                   {!!code && !!code.length &&
                     <InfoLabel
                       className={styles.detailsInfoLabel}
+                      name={translate('Code')}
                       title={translate('Code')}
                       size={sizes.LARGE}
                     >

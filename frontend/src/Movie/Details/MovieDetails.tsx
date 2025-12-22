@@ -25,7 +25,7 @@ import {
 } from 'Helpers/Props';
 import InteractiveImportModal from 'InteractiveImport/InteractiveImportModal';
 import DeleteMovieModal from 'Movie/Delete/DeleteMovieModal';
-import EditMovieModalConnector from 'Movie/Edit/EditMovieModalConnector';
+import EditMovieModal from 'Movie/Edit/EditMovieModal';
 import getMovieStatusDetails from 'Movie/getMovieStatusDetails';
 import MovieHistoryModal from 'Movie/History/MovieHistoryModal';
 import {
@@ -39,7 +39,7 @@ import MovieImage from 'Movie/MovieImage';
 import MovieInteractiveSearchModal from 'Movie/Search/MovieInteractiveSearchModal';
 import MovieFileEditorTable from 'MovieFile/Editor/MovieFileEditorTable';
 import ExtraFileTable from 'MovieFile/Extras/ExtraFileTable';
-import OrganizePreviewModalConnector from 'Organize/OrganizePreviewModalConnector';
+import OrganizePreviewModal from 'Organize/OrganizePreviewModal';
 import QualityProfileNameConnector from 'Settings/Profiles/Quality/QualityProfileNameConnector';
 import fonts from 'Styles/Variables/fonts';
 import formatRuntime from 'Utilities/Date/formatRuntime';
@@ -52,11 +52,6 @@ import MovieStudioLink from './MovieStudioLink';
 import MovieTagsConnector from './MovieTagsConnector';
 import styles from './MovieDetails.css';
 
-const defaultFontSize = parseInt(fonts.defaultFontSize);
-const lineHeight = parseFloat(fonts.lineHeight);
-const screenshotStyle = {
-  'object-fit': 'cover'
-};
 // InfoLabel is a JS component; types provided via declaration file
 
 const defaultFontSize = Number(fonts.defaultFontSize as string);
@@ -73,6 +68,7 @@ function getFanartUrl(images: MovieImageType[]) {
 interface Props {
   id: number;
   tmdbId: number;
+  tpdbId: string;
   foreignId?: string;
   stashId?: string;
   title: string;
@@ -234,7 +230,6 @@ class MovieDetails extends Component<Props, State> {
       id,
       tmdbId,
       tpdbId,
-      foreignId,
       stashId,
       title,
       code,
@@ -377,7 +372,7 @@ class MovieDetails extends Component<Props, State> {
             </div>
 
             <div className={styles.headerContent}>
-              <MovieImage style={screenshotStyle}
+              <MovieImage
                 safeForWorkMode={safeForWorkMode}
                 className={
                   itemType === 'movie' ? styles.poster : styles.screenShot
@@ -499,11 +494,11 @@ class MovieDetails extends Component<Props, State> {
                       </span>
                     }
 
-                    {!!tags.length
- 					  <span>
+                    {!!tags.length && (
+                      <span>
                         <Tooltip
                           anchor={<Icon name={icons.TAGS} size={20} />}
-                          tooltip={<MovieTagsConnector movieId={id} />}
+                          tooltip={<MovieTagsConnector key={id} />}
                           position={tooltipPositions.BOTTOM}
                         />
                       </span>
@@ -571,6 +566,7 @@ class MovieDetails extends Component<Props, State> {
                   {!!code && !!code.length && (
                     <InfoLabel
                       className={styles.detailsInfoLabel}
+                      name={translate('Code')}
                       title={translate('Code')}
                       size={sizes.LARGE}
                     >
@@ -642,13 +638,13 @@ class MovieDetails extends Component<Props, State> {
             ) : null}
           </div>
 
-          <OrganizePreviewModalConnector
+          <OrganizePreviewModal
             isOpen={isOrganizeModalOpen}
-            movieId={id}
+            key={id}
             onModalClose={this.onOrganizeModalClose}
           />
 
-          <EditMovieModalConnector
+          <EditMovieModal
             isOpen={isEditMovieModalOpen}
             movieId={id}
             onModalClose={this.onEditMovieModalClose}
@@ -657,7 +653,7 @@ class MovieDetails extends Component<Props, State> {
 
           <MovieHistoryModal
             isOpen={isMovieHistoryModalOpen}
-            movieId={id}
+            key={id}
             onModalClose={this.onMovieHistoryModalClose}
           />
 
@@ -670,11 +666,15 @@ class MovieDetails extends Component<Props, State> {
           <InteractiveImportModal
             isOpen={isInteractiveImportModalOpen}
             movieId={id}
-            modalTitle={translate('ManageFiles')}
+            title={title}
             folder={path}
+            initialSortKey="relativePath"
+            initialSortDirection={sortDirections.ASCENDING}
+            showMovie={false}
             allowMovieChange={false}
-            showFilterExistingFiles={true}
+            showDelete={true}
             showImportMode={false}
+            modalTitle={translate('ManageFiles')}
             onModalClose={this.onInteractiveImportModalClose}
           />
 
@@ -689,60 +689,5 @@ class MovieDetails extends Component<Props, State> {
     );
   }
 }
-
-MovieDetails.propTypes = {
-  id: PropTypes.number.isRequired,
-  tmdbId: PropTypes.number.isRequired,
-  tpdbId: Promise.string,
-  foreignId: PropTypes.string,
-  stashId: PropTypes.string,
-  title: PropTypes.string.isRequired,
-  code: PropTypes.string,
-  year: PropTypes.number.isRequired,
-  runtime: PropTypes.number.isRequired,
-  certification: PropTypes.string,
-  ratings: PropTypes.object.isRequired,
-  path: PropTypes.string.isRequired,
-  statistics: PropTypes.object.isRequired,
-  qualityProfileId: PropTypes.number.isRequired,
-  monitored: PropTypes.bool.isRequired,
-  status: PropTypes.string.isRequired,
-  studio: PropTypes.string,
-  studioTitle: PropTypes.string,
-  studioForeignId: PropTypes.string,
-  genres: PropTypes.arrayOf(PropTypes.string).isRequired,
-  collection: PropTypes.object,
-  isAvailable: PropTypes.bool.isRequired,
-  releaseDate: PropTypes.string,
-  overview: PropTypes.string.isRequired,
-  images: PropTypes.arrayOf(PropTypes.object).isRequired,
-  alternateTitles: PropTypes.arrayOf(PropTypes.string).isRequired,
-  tags: PropTypes.arrayOf(PropTypes.number).isRequired,
-  itemType: PropTypes.string.isRequired,
-  isSaving: PropTypes.bool.isRequired,
-  isRefreshing: PropTypes.bool.isRequired,
-  isSearching: PropTypes.bool.isRequired,
-  isFetching: PropTypes.bool.isRequired,
-  isPopulated: PropTypes.bool.isRequired,
-  isSmallScreen: PropTypes.bool.isRequired,
-  isSidebarVisible: PropTypes.bool.isRequired,
-  movieFilesError: PropTypes.object,
-  extraFilesError: PropTypes.object,
-  hasMovieFiles: PropTypes.bool.isRequired,
-  onMonitorTogglePress: PropTypes.func.isRequired,
-  onRefreshPress: PropTypes.func.isRequired,
-  onSearchPress: PropTypes.func.isRequired,
-  onGoToMovie: PropTypes.func.isRequired,
-  queueItem: PropTypes.object,
-  movieRuntimeFormat: PropTypes.string.isRequired,
-  safeForWorkMode: PropTypes.bool
-};
-
-MovieDetails.defaultProps = {
-  genres: [],
-  statistics: {},
-  tags: [],
-  isSaving: false
-};
 
 export default MovieDetails;

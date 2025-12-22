@@ -10,8 +10,10 @@ interface InteractiveImportModalProps {
   isOpen: boolean;
   folder?: string;
   downloadId?: string;
+  movieId?: number;
   modalTitle?: string;
   onModalClose(): void;
+  [key: string]: unknown;
 }
 
 function InteractiveImportModal(props: InteractiveImportModalProps) {

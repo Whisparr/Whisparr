@@ -50,6 +50,7 @@
   margin-right: 35px;
   width: 250px;
   height: 368px;
+  object-fit: cover;
 }
 
 .screenShot {

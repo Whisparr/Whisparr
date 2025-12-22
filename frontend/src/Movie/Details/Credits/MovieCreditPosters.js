@@ -79,19 +79,22 @@ class MovieCreditPosters extends Component {
             swiper.navigation.update();
           }}
         >
-          {items.map((credit) => (
-            <SwiperSlide key={credit.creditForeignId} style={{ width: posterWidth, height: rowHeight }}>
-              <MovieCreditPosterConnector
-                key={credit.creditForeignId}
-                component={itemComponent}
-                posterWidth={posterWidth}
-                posterHeight={posterHeight}
-                performerForeignId={credit.performer.foreignId}
-                job={credit.job}
-                character={credit.character}
-              />
-            </SwiperSlide>
-          ))}
+          {items.map((credit, index) => {
+            const slideKey = credit.creditForeignId || `${credit.performer?.foreignId}-${credit.job || 'job'}-${index}`;
+
+            return (
+              <SwiperSlide key={slideKey} style={{ width: posterWidth, height: rowHeight }}>
+                <MovieCreditPosterConnector
+                  component={itemComponent}
+                  posterWidth={posterWidth}
+                  posterHeight={posterHeight}
+                  performerForeignId={credit.performer.foreignId}
+                  job={credit.job}
+                  character={credit.character}
+                />
+              </SwiperSlide>
+            );
+          })}
         </Swiper>
       </div>
     );

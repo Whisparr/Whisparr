@@ -54,7 +54,7 @@ interface RowItemData {
 }
 
 function Row({ index, style, data }: ListChildComponentProps<RowItemData>) {
-  const { items, columns, onMovieSelect } = data;
+  const { items, onMovieSelect } = data;
   const movie = index >= items.length ? null : items[index];
 
   const handlePress = useCallback(() => {
@@ -62,6 +62,23 @@ function Row({ index, style, data }: ListChildComponentProps<RowItemData>) {
       onMovieSelect(movie.id);
     }
   }, [movie?.id, onMovieSelect]);
+
+  const joinedPerformers = useMemo(() => {
+    const credits = Array.isArray(movie?.credits) ? movie!.credits : [];
+
+    // Map/guard for expected shape { performer: { name: string } }
+    const names = credits
+      .slice(0, 5)
+      .map((c) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const name = (c as any)?.performer?.name;
+        return typeof name === 'string' ? name : '';
+      })
+      .filter((n) => n && n.length > 0)
+      .sort((a, b) => a.localeCompare(b));
+
+    return names.join(', ');
+  }, [movie]);
 
   if (!movie) return null;
 
@@ -77,14 +94,11 @@ function Row({ index, style, data }: ListChildComponentProps<RowItemData>) {
       onPress={handlePress}
     >
       <SelectMovieRow
-        id={movie.id}
+        key={movie.id}
         title={movie.title}
-        tmdbId={movie.tmdbId}
-        credits={movie.credits}
+        performers={joinedPerformers}
         studioTitle={movie.studioTitle}
         releaseDate={movie.releaseDate}
-        columns={columns}
-        onMovieSelect={onMovieSelect}
       />
     </VirtualTableRowButton>
   );

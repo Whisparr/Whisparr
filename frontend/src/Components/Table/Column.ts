@@ -1,4 +1,5 @@
 import React from 'react';
+import { all as SortDirection } from 'Helpers/Props/sortDirections';
 
 type PropertyFunction<T> = () => T;
 
@@ -9,6 +10,9 @@ interface Column {
   className?: string;
   columnLabel?: string;
   isSortable?: boolean;
+  // Accept either a single sort direction string or the full set
+  // (some places pass `sortDirections.ASCENDING` which is a string)
+  fixedSortDirection?: string | typeof SortDirection;
   isVisible: boolean;
   isModifiable?: boolean;
 }

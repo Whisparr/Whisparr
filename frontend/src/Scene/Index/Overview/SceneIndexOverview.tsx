@@ -9,7 +9,7 @@ import Link from 'Components/Link/Link';
 import SpinnerIconButton from 'Components/Link/SpinnerIconButton';
 import Popover from 'Components/Tooltip/Popover';
 import { icons } from 'Helpers/Props';
-import EditMovieModalConnector from 'Movie/Edit/EditMovieModalConnector';
+import EditMovieModal from 'Movie/Edit/EditMovieModal';
 import MovieIndexPosterSelect from 'Movie/Index/Select/MovieIndexPosterSelect';
 import { Statistics } from 'Movie/Movie';
 import DeleteSceneModal from 'Scene/Delete/DeleteSceneModal';
@@ -235,7 +235,7 @@ function SceneIndexOverview(props: SceneIndexOverviewProps) {
         </div>
       </div>
 
-      <EditMovieModalConnector
+      <EditMovieModal
         isOpen={isEditSceneModalOpen}
         movieId={sceneId}
         onModalClose={onEditSceneModalClose}

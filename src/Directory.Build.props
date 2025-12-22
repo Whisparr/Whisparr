@@ -127,7 +127,9 @@
 
     <!-- Upload PDBs to Sentry, enabling stack traces with line numbers and file paths
       without the need to deploy the application with PDBs -->
-    <SentryUploadSymbols>true</SentryUploadSymbols>
+    <!-- Disabled by default to avoid automatic Sentry connection attempts; can be
+         enabled per-build with: msbuild -p:SentryUploadSymbols=true -->
+    <SentryUploadSymbols>false</SentryUploadSymbols>
 
     <!-- Source Link settings -->
     <!-- https://github.com/dotnet/sourcelink/blob/main/docs/README.md#publishrepositoryurl -->

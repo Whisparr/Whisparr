@@ -355,7 +355,7 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
                     {
                         if (credit.Performer.Name != null)
                         {
-                            var actorElement = new XElement("performer");
+                            var actorElement = new XElement("actor");
 
                             actorElement.Add(new XElement("name", credit.Performer.Name));
                             actorElement.Add(new XElement("role", credit.Character));

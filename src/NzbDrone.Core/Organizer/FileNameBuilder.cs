@@ -366,10 +366,14 @@ namespace NzbDrone.Core.Organizer
             {
                 var studio = _studioService.FindByForeignId(movie.MovieMetadata.Value.StudioForeignId);
                 tokenHandlers["{Studio Network}"] = m => studio?.Network ?? string.Empty;
+                tokenHandlers["{Studio CleanNetwork}"] = m => CleanTitle(studio?.Network ?? string.Empty);
+                tokenHandlers["{Studio CleanNetworkSlug}"] = m => SlugTitle(CleanTitle(studio?.Network ?? string.Empty));
             }
             else
             {
                 tokenHandlers["{Studio Network}"] = m => string.Empty;
+                tokenHandlers["{Studio CleanNetwork}"] = m => string.Empty;
+                tokenHandlers["{Studio CleanNetworkSlug}"] = m => string.Empty;
             }
         }
 

@@ -329,7 +329,7 @@ namespace NzbDrone.Common.Disk
 
                 if (GetFiles(path, recursive).Any())
                 {
-                    // Wait for IO operations to complete  after emptying the folder since they aren't always
+                    // Wait for IO operations to complete after emptying the folder since they aren't always
                     // instantly removed and it can lead to false positives that files are still present.
                     Thread.Sleep(3000);
                 }

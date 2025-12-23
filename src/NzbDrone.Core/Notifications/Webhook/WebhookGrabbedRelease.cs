@@ -36,7 +36,7 @@ namespace NzbDrone.Core.Notifications.Webhook
             ReleaseTitle = release.Title;
             Indexer = release.Indexer;
             Size = release.Size;
-            IndexerFlags = GetListOfIndexerFlags(release.IndexerFlags);
+            IndexerFlags = GetListOfIndexerFlags(indexerFlags);
         }
 
         public string ReleaseTitle { get; set; }

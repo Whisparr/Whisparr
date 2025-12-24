@@ -37,7 +37,7 @@ namespace Whisparr.Api.V3.MovieFiles
             {
                 AudioBitrate = model.AudioBitrate,
                 AudioChannels = MediaInfoFormatter.FormatAudioChannels(model),
-                AudioLanguages = model.AudioLanguages.ConcatToString("/"),
+                AudioLanguages = model.AudioLanguages?.ConcatToString("/") ?? string.Empty,
                 AudioStreamCount = model.AudioStreamCount,
                 AudioCodec = MediaInfoFormatter.FormatAudioCodec(model, sceneName),
                 VideoBitDepth = model.VideoBitDepth,
@@ -49,7 +49,7 @@ namespace Whisparr.Api.V3.MovieFiles
                 Resolution = $"{model.Width}x{model.Height}",
                 RunTime = FormatRuntime(model.RunTime),
                 ScanType = model.ScanType,
-                Subtitles = model.Subtitles.ConcatToString("/")
+                Subtitles = model.Subtitles?.ConcatToString("/") ?? string.Empty
             };
         }
 

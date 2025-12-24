@@ -53,6 +53,7 @@ class StudioDetails extends Component {
 
     this.state = {
       isEditMovieModalOpen: false,
+      isDeleteMovieModalOpen: false,
       allExpanded: false,
       allCollapsed: false,
       expandedState: {},

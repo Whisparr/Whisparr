@@ -66,13 +66,17 @@ class DeleteStudioModalContent extends Component {
 
         <ModalBody>
           <FormGroup>
-            <InfoLabel size={sizes.LARGE} className={styles.warningText}>
+            <InfoLabel
+              name={''}
+              size={sizes.LARGE}
+              className={styles.warningText}
+            >
               {translate('DeleteStudioModalWarning', [title])}
             </InfoLabel>
           </FormGroup>
           <FormGroup>
             <FormLabel>
-              {translate('AddListExclusion')}
+              {translate('AddImportListExclusion')}
             </FormLabel>
 
             <FormInputGroup
@@ -86,7 +90,7 @@ class DeleteStudioModalContent extends Component {
           </FormGroup>
 
           <FormGroup>
-            <FormLabel>{translate('DeleteFilesLabel', [translate('All')])}</FormLabel>
+            <FormLabel>{translate('DeleteFiles', [translate('All')])}</FormLabel>
 
             <FormInputGroup
               type={inputTypes.CHECK}

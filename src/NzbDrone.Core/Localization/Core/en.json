@@ -1218,6 +1218,7 @@
   "Negated": "Negated",
   "NegateHelpText": "If checked, the custom format will not apply if this {implementationName} condition matches.",
   "NetCore": ".NET",
+  "Network": "Network",
   "Never": "Never",
   "New": "New",
   "NewNonExcluded": "New Non-Excluded",

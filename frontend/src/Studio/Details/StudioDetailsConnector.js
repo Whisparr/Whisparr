@@ -95,8 +95,8 @@ function createMapStateToProps() {
         sizeOnDisk,
         hasMovies,
         hasScenes,
-        totalSceneCount,
-        sceneCount,
+        totalSceneCount: Number(totalSceneCount) || 0, /* TODO: fix when moving to Typescript */
+        sceneCount: Number(sceneCount) || 0, /* TODO: fix when moving to Typescript */
         moviesError,
         isStudioRefreshing,
         allMoviesRefreshing,

@@ -456,7 +456,7 @@ class MovieDetails extends Component<Props, State> {
                       <span>
                         <Tooltip
                           anchor={<Icon name={icons.TAGS} size={20} />}
-                          tooltip={<MovieTagsConnector key={id} />}
+                          tooltip={<MovieTagsConnector key={id} movieId={id} />}
                           position={tooltipPositions.BOTTOM}
                         />
                       </span>

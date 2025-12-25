@@ -31,35 +31,40 @@ const NO_CHANGE = 'noChange';
 const autoAddOptions = [
   { key: NO_CHANGE, value: translate('NoChange'), disabled: true },
   { key: 'enabled', value: translate('Enabled') },
-  { key: 'disabled', value: translate('Disabled') }
+  { key: 'disabled', value: translate('Disabled') },
 ];
 
 const searchForMissingEpisodesOptions = [
   { key: NO_CHANGE, value: translate('NoChange'), disabled: true },
   { key: 'enabled', value: translate('Enabled') },
-  { key: 'disabled', value: translate('Disabled') }
+  { key: 'disabled', value: translate('Disabled') },
 ];
 
 const shouldMonitorOptions = [
   { key: NO_CHANGE, value: translate('NoChange'), disabled: true },
   { key: 'none', value: translate('None') },
   { key: 'specificEpisode', value: translate('SpecificEpisode') },
-  { key: 'entireSite', value: translate('EntireSite') }
+  { key: 'entireSite', value: translate('EntireSite') },
 ];
 
 const monitorNewItemsOptions = [
   { key: NO_CHANGE, value: translate('NoChange'), disabled: true },
   { key: 'none', value: translate('None') },
-  { key: 'all', value: translate('All') }
+  { key: 'all', value: translate('All') },
 ];
 
-function ManageImportListsEditModalContent(props: ManageImportListsEditModalContentProps) {
+function ManageImportListsEditModalContent(
+  props: ManageImportListsEditModalContentProps
+) {
   const { importListIds, onSavePress, onModalClose } = props;
 
   const [enableAutomaticAdd, setEnableAutomaticAdd] = useState(NO_CHANGE);
-  const [qualityProfileId, setQualityProfileId] = useState<string | number>(NO_CHANGE);
+  const [qualityProfileId, setQualityProfileId] = useState<string | number>(
+    NO_CHANGE
+  );
   const [rootFolderPath, setRootFolderPath] = useState(NO_CHANGE);
-  const [searchForMissingEpisodes, setSearchForMissingEpisodes] = useState(NO_CHANGE);
+  const [searchForMissingEpisodes, setSearchForMissingEpisodes] =
+    useState(NO_CHANGE);
   const [shouldMonitor, setShouldMonitor] = useState(NO_CHANGE);
   const [monitorNewItems, setMonitorNewItems] = useState(NO_CHANGE);
 
@@ -110,31 +115,36 @@ function ManageImportListsEditModalContent(props: ManageImportListsEditModalCont
     shouldMonitor,
     monitorNewItems,
     onSavePress,
-    onModalClose
+    onModalClose,
   ]);
 
-  const onInputChange = useCallback(({ name, value }: { name: string; value: string }) => {
-    switch (name) {
-      case 'enableAutomaticAdd':
-        setEnableAutomaticAdd(value);
-        break;
-      case 'qualityProfileId':
-        setQualityProfileId(value);
-        break;
-      case 'rootFolderPath':
-        setRootFolderPath(value);
-        break;
-      case 'searchForMissingEpisodes':
-        setSearchForMissingEpisodes(value);
-        break;
-      case 'shouldMonitor':
-        setShouldMonitor(value);
-        break;
-      case 'monitorNewItems':
-        setMonitorNewItems(value);
-        break;
-    }
-  }, []);
+  const onInputChange = useCallback(
+    ({ name, value }: { name: string; value: string }) => {
+      switch (name) {
+        case 'enableAutomaticAdd':
+          setEnableAutomaticAdd(value);
+          break;
+        case 'qualityProfileId':
+          setQualityProfileId(value);
+          break;
+        case 'rootFolderPath':
+          setRootFolderPath(value);
+          break;
+        case 'searchForMissingEpisodes':
+          setSearchForMissingEpisodes(value);
+          break;
+        case 'shouldMonitor':
+          setShouldMonitor(value);
+          break;
+        case 'monitorNewItems':
+          setMonitorNewItems(value);
+          break;
+        default:
+          break;
+      }
+    },
+    []
+  );
 
   const selectedCount = importListIds.length;
 

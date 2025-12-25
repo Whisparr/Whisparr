@@ -8,7 +8,6 @@ interface CssExports {
   'isActiveParentLink': string;
   'item': string;
   'link': string;
-  'noIcon': string;
   'sectionHeading': string;
   'status': string;
 }

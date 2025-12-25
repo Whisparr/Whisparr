@@ -5,12 +5,14 @@ interface MovieTitleLinkProps extends LinkProps {
   foreignId: string;
   title: string;
   year?: number;
+  titleSlug?: string;
 }
 
 function MovieTitleLink({
   foreignId,
   title,
   year = 0,
+  titleSlug,
   ...otherProps
 }: MovieTitleLinkProps) {
   const link = `/movie/${foreignId}`;

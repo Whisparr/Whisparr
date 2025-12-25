@@ -95,28 +95,28 @@ class MovieSearchInput extends Component {
     if (item.type === ADD_NEW_TYPE_MOVIE) {
       return (
         <div className={styles.addNewMovieSuggestion}>
-          Movie: "{query}"
+          {translate('Movie')}: "{query}"
         </div>
       );
     }
     if (item.type === ADD_NEW_TYPE_SCENE) {
       return (
         <div className={styles.addNewMovieSuggestion}>
-          Scene: "{query}"
+          {translate('Scene')}: "{query}"
         </div>
       );
     }
     if (item.type === ADD_NEW_TYPE_STUDIO) {
       return (
         <div className={styles.addNewMovieSuggestion}>
-          Studio: "{query}"
+          {translate('Studio')}: "{query}"
         </div>
       );
     }
     if (item.type === ADD_NEW_TYPE_PERFORMER) {
       return (
         <div className={styles.addNewMovieSuggestion}>
-          Perfromer: "{query}"
+          {translate('Perfromer')}: "{query}"
         </div>
       );
     }

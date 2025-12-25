@@ -41,6 +41,7 @@ namespace Whisparr.Api.V3.Movies
                                 IHandle<MovieEditedEvent>,
                                 IHandle<MoviesDeletedEvent>,
                                 IHandle<MovieRenamedEvent>,
+                                IHandle<MoviesBulkEditedEvent>,
                                 IHandle<MediaCoversUpdatedEvent>
     {
         private readonly IMovieService _moviesService;
@@ -369,7 +370,7 @@ namespace Whisparr.Api.V3.Movies
             resource.RootFolderPath = _rootFolderService.GetBestRootFolderPath(resource.Path);
 
             if (_useCache)
-            {
+        {
                 _movieResourcesCache.Set(resource.Id.ToString(), resource);
             }
 
@@ -517,6 +518,21 @@ namespace Whisparr.Api.V3.Movies
         }
 
         [NonAction]
+        public void Handle(MoviesBulkEditedEvent message)
+        {
+            if (message?.Movies == null)
+            {
+                return;
+            }
+
+            foreach (var movie in message.Movies)
+            {
+                _movieResourcesCache.Remove(movie.Id.ToString());
+                BroadcastResourceChange(ModelAction.Updated, MapToResource(movie));
+            }
+        }
+
+        [NonAction]
         public void Handle(MovieRenamedEvent message)
         {
             _movieResourcesCache.Remove(message.Movie.Id.ToString());
@@ -586,7 +602,7 @@ namespace Whisparr.Api.V3.Movies
             {
                 var movieResource = _movieResourcesCache.Find(id.ToString());
                 if (movieResource == null)
-                {
+        {
                     missingIds.Add(id);
                 }
                 else
@@ -610,7 +626,7 @@ namespace Whisparr.Api.V3.Movies
                         _movieResourcesCache.Lock.Wait();
                         releaseLock = true;
                         if (stopwatch.Elapsed.TotalSeconds > 2)
-                        {
+            {
                             _logger.Warn($"Locked movie cache for {stopwatch.Elapsed.TotalSeconds} seconds");
                         }
 
@@ -666,7 +682,7 @@ namespace Whisparr.Api.V3.Movies
                             foreach (var moviesResource in moviesResources)
                             {
                                 _movieResourcesCache.Set(moviesResource.Id.ToString(), moviesResource);
-                            }
+            }
                         }
                     }
                 }

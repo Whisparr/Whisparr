@@ -60,7 +60,7 @@
   margin-right: 35px;
   width: 368px;
   height: 207px;
-  object-fit: 'contain';
+  object-fit: contain;
 }
 
 .info {
@@ -222,6 +222,7 @@
   margin-top: 8px;
   padding-left: 7px;
   min-height: 0;
+  text-wrap: balance;
   font-size: $intermediateFontSize;
 }
 

@@ -22,7 +22,7 @@ namespace NzbDrone.Core.Notifications.Webhook
             Size = remoteMovie.Release.Size;
             CustomFormats = remoteMovie.CustomFormats?.Select(x => x.Name).ToList();
             CustomFormatScore = remoteMovie.CustomFormatScore;
-            IndexerFlags = Enum.GetValues(typeof(IndexerFlags)).Cast<IndexerFlags>().Where(r => (remoteMovie.Release.IndexerFlags & r) == r).Select(r => r.ToString()).ToList();
+            IndexerFlags = Enum.GetValues(typeof(IndexerFlags)).Cast<IndexerFlags>().Where(f => (remoteMovie.Release.IndexerFlags & f) == f).Select(f => f.ToString()).ToList();
         }
 
         public string Quality { get; set; }

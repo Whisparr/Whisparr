@@ -6,7 +6,7 @@ export function getSceneStatusDetails(status) {
   let statusDetails = {
     icon: icons.ANNOUNCED,
     title: translate('Announced'),
-    message: translate('AnnouncedMsg')
+    message: translate('Announced')
   };
 
   if (status === 'deleted') {

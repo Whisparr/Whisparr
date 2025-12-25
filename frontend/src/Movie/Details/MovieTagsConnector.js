@@ -10,15 +10,17 @@ function createMapStateToProps() {
     createMovieSelector(),
     createTagsSelector(),
     (movie, tagList) => {
+      if (!movie || !movie.tags) {
+        return { tags: [] };
+      }
+
       const tags = movie.tags
         .map((tagId) => tagList.find((tag) => tag.id === tagId))
         .filter((tag) => !!tag)
         .sort(sortByProp('label'))
         .map((tag) => tag.label);
 
-      return {
-        tags
-      };
+      return { tags };
     }
   );
 }

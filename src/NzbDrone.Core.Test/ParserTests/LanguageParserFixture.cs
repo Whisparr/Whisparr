@@ -11,6 +11,8 @@ namespace NzbDrone.Core.Test.ParserTests
     public class LanguageParserFixture : CoreTest
     {
         [TestCase("Movie.Title.1994.English.1080p.XviD-LOL")]
+        [TestCase("Movie Title 1994 Eng 1080p XviD-GROUP")]
+        [TestCase("Movie Title 1994 EN 1080p XviD-GROUP")]
         public void should_parse_language_english(string postTitle)
         {
             var result = Parser.Parser.ParseMovieTitle(postTitle, true);
@@ -132,8 +134,8 @@ namespace NzbDrone.Core.Test.ParserTests
         }
 
         [TestCase("Movie.Title.1994.Japanese.1080p.XviD-LOL")]
-        [TestCase("Movie.Title (1988) 2160p HDR 5.1 Eng - Jpn x265 10bit")]
-        [TestCase("Movie Title (1985) (1080p.AC3 ITA-ENG-JPN)")]
+        [TestCase("Movie.Title (1988) 2160p HDR 5.1 Eng - Jap x265 10bit")]
+        [TestCase("Movie Title (1985) (1080p.AC3 ITA-ENG-JAP)")]
         public void should_parse_language_japanese(string postTitle)
         {
             var result = Parser.Parser.ParseMovieTitle(postTitle, true);
@@ -492,6 +494,14 @@ namespace NzbDrone.Core.Test.ParserTests
             result.Should().Contain(Language.Tagalog);
         }
 
+        [TestCase("Movie Title 2024 1080p Urdu WEB-DL HEVC x265 BONE")]
+        [TestCase("Movie.Title.2022.720p.Urdu.WEB-DL.AAC.x264-Mkvking")]
+        public void should_parse_language_urdu(string postTitle)
+        {
+            var result = LanguageParser.ParseLanguages(postTitle);
+            result.Should().Contain(Language.Urdu);
+        }
+
         [TestCase("Movie.Title.en.sub")]
         [TestCase("Movie Title.eng.sub")]
         [TestCase("Movie.Title.eng.forced.sub")]
@@ -527,6 +537,16 @@ namespace NzbDrone.Core.Test.ParserTests
             var result = Parser.Parser.ParseMovieTitle(postTitle);
             result.Languages.Count.Should().Be(1);
             result.Languages.Should().Contain(Language.German);
+        }
+
+        [TestCase("Movie.Title.2025.Original.1080P.WEB.H264-RlsGrp")]
+        [TestCase("Movie.Title.2025.Orig.1080P.WEB.H264-RlsGrp")]
+        [TestCase("Movie Title 2025 [HEVC, HDR10, Dolby Vision, WEB-DL 2160p] [Hybrid] 3 XX + Original")]
+        public void should_parse_original_title_from_release_name(string postTitle)
+        {
+            var result = Parser.Parser.ParseMovieTitle(postTitle);
+            result.Languages.Count.Should().Be(1);
+            result.Languages.Should().Contain(Language.Original);
         }
 
         [TestCase("The.Movie.Name.2023.German.ML.EAC3.720p.NF.WEB.H264-RlsGrp")]

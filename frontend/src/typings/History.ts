@@ -35,6 +35,7 @@ export interface GrabbedHistoryData {
 
 export interface DownloadFailedHistory {
   message: string;
+  indexer?: string;
 }
 
 export interface DownloadFolderImportedHistory {
@@ -43,11 +44,13 @@ export interface DownloadFolderImportedHistory {
   downloadClientName: string;
   droppedPath: string;
   importedPath: string;
+  size: string;
 }
 
 export interface MovieFileDeletedHistory {
   customFormatScore?: string;
   reason: 'Manual' | 'MissingFromDisk' | 'Upgrade';
+  size: string;
 }
 
 export interface MovieFileRenamedHistory {

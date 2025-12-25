@@ -65,15 +65,17 @@ class DeleteStudioModalContent extends Component {
 
         <ModalBody>
           <FormGroup>
-            <InfoLabel size={sizes.LARGE} className={styles.warningText}>
+            <InfoLabel
+              name={''}
+              size={sizes.LARGE}
+              className={styles.warningText}
+            >
               {translate('DeleteStudiosModalWarning')}
             </InfoLabel>
           </FormGroup>
-          <FormGroup>
-            <FormLabel>
-              {translate('AddListExclusion')}
-            </FormLabel>
 
+          <FormGroup>
+            <FormLabel>{translate('AddImportListExclusion')}</FormLabel>
             <FormInputGroup
               type={inputTypes.CHECK}
               name="addImportExclusion"
@@ -85,8 +87,7 @@ class DeleteStudioModalContent extends Component {
           </FormGroup>
 
           <FormGroup>
-            <FormLabel>{translate('DeleteFilesLabel', [translate('All')])}</FormLabel>
-
+            <FormLabel>{translate('DeleteFiles', [translate('All')])}</FormLabel>
             <FormInputGroup
               type={inputTypes.CHECK}
               name="deleteFiles"
@@ -120,7 +121,6 @@ DeleteStudioModalContent.propTypes = {
   studioIds: PropTypes.arrayOf(PropTypes.number),
   deleteOptions: PropTypes.object.isRequired,
   onDeleteOptionChange: PropTypes.func.isRequired,
-  onDeleteFilesChange: PropTypes.func.isRequired,
   onDeletePress: PropTypes.func.isRequired,
   onModalClose: PropTypes.func.isRequired
 };

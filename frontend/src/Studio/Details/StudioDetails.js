@@ -17,7 +17,7 @@ import PageToolbarSection from 'Components/Page/Toolbar/PageToolbarSection';
 import PageToolbarSeparator from 'Components/Page/Toolbar/PageToolbarSeparator';
 import Tooltip from 'Components/Tooltip/Tooltip';
 import { icons, kinds, sizes, tooltipPositions } from 'Helpers/Props';
-import QualityProfileNameConnector from 'Settings/Profiles/Quality/QualityProfileNameConnector';
+import QualityProfileName from 'Settings/Profiles/Quality/QualityProfileName';
 import DeleteStudioModalConnector from 'Studio/Delete/DeleteStudioModalConnector';
 import EditStudioModalConnector from 'Studio/Edit/EditStudioModalConnector';
 import StudioLogo from 'Studio/StudioLogo';
@@ -53,6 +53,7 @@ class StudioDetails extends Component {
 
     this.state = {
       isEditMovieModalOpen: false,
+      isDeleteMovieModalOpen: false,
       allExpanded: false,
       allCollapsed: false,
       expandedState: {},
@@ -244,10 +245,6 @@ class StudioDetails extends Component {
 
     const fanartUrl = getFanartUrl(images);
 
-    const elementStyle = {
-      objectFit: 'contain'
-    };
-
     return (
       <PageContent title={title}>
         <PageToolbar>
@@ -311,7 +308,6 @@ class StudioDetails extends Component {
               <StudioLogo
                 safeForWorkMode={safeForWorkMode}
                 className={styles.poster}
-                style={elementStyle}
                 images={images}
                 size={250}
                 lazy={false}
@@ -434,7 +430,7 @@ class StudioDetails extends Component {
 
                     <span className={styles.qualityProfileName}>
                       {
-                        <QualityProfileNameConnector
+                        <QualityProfileName
                           qualityProfileId={qualityProfileId}
                         />
                       }

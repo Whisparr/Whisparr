@@ -52,11 +52,7 @@ function SceneStatusCell(props: SceneStatusCellProps) {
         <Icon
           className={styles.statusIcon}
           name={monitored ? icons.MONITORED : icons.UNMONITORED}
-          title={
-            monitored
-              ? translate('SceneIsMonitored')
-              : translate('SceneIsUnmonitored')
-          }
+          title={monitored ? translate('Monitored') : translate('Unmonitored')}
         />
       )}
 

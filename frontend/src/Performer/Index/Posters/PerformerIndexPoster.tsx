@@ -64,7 +64,6 @@ function PerformerIndexPoster(props: PerformerIndexPosterProps) {
   const elementStyle = {
     width: `${posterWidth}px`,
     height: `${posterHeight}px`,
-    'object-fit': 'cover',
   };
 
   return (
@@ -92,6 +91,7 @@ function PerformerIndexPoster(props: PerformerIndexPosterProps) {
           <MovieHeadshot
             safeForWorkMode={safeForWorkMode}
             style={elementStyle}
+            className={styles.poster}
             images={images}
             size={250}
             lazy={true}

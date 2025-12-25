@@ -55,17 +55,17 @@ namespace NzbDrone.Core.Indexers.Torznab
             RequiredFlags = Array.Empty<int>();
         }
 
-        [FieldDefinition(8, Type = FieldType.Number, Label = "Minimum Seeders", HelpText = "Minimum number of seeders required.", Advanced = true)]
+        [FieldDefinition(9, Type = FieldType.Number, Label = "IndexerSettingsMinimumSeeders", HelpText = "IndexerSettingsMinimumSeedersHelpText", Advanced = true)]
         public int MinimumSeeders { get; set; }
 
-        [FieldDefinition(9)]
+        [FieldDefinition(10)]
         public SeedCriteriaSettings SeedCriteria { get; set; } = new ();
-
-        [FieldDefinition(10, Type = FieldType.Select, SelectOptions = typeof(IndexerFlags), Label = "Required Flags", HelpText = "What indexer flags are required?", HelpLink = "https://wiki.servarr.com/whisparr/settings#indexer-flags", Advanced = true)]
-        public IEnumerable<int> RequiredFlags { get; set; }
 
         [FieldDefinition(11, Type = FieldType.Checkbox, Label = "IndexerSettingsRejectBlocklistedTorrentHashes", HelpText = "IndexerSettingsRejectBlocklistedTorrentHashesHelpText", Advanced = true)]
         public bool RejectBlocklistedTorrentHashesWhileGrabbing { get; set; }
+
+        [FieldDefinition(12, Type = FieldType.Select, SelectOptions = typeof(IndexerFlags), Label = "IndexerSettingsRequiredFlags", HelpText = "IndexerSettingsRequiredFlagsHelpText", HelpLink = "https://wiki.servarr.com/radarr/settings#indexer-flags", Advanced = true)]
+        public IEnumerable<int> RequiredFlags { get; set; }
 
         public override NzbDroneValidationResult Validate()
         {

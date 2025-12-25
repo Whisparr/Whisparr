@@ -162,7 +162,18 @@ namespace NzbDrone.Core.Download.TrackedDownloads
                         Enum.TryParse(grabbedEvent?.Data?.GetValueOrDefault("indexerFlags"), true, out IndexerFlags flags))
                     {
                         trackedDownload.RemoteMovie.Release ??= new ReleaseInfo();
-                        trackedDownload.RemoteMovie.Release.IndexerFlags = flags;
+                        trackedDownload.RemoteMovie.Release.Indexer = trackedDownload.Indexer;
+                        trackedDownload.RemoteMovie.Release.Title = trackedDownload.RemoteMovie.ParsedMovieInfo?.ReleaseTitle;
+
+                        if (Enum.TryParse(grabbedEvent?.Data?.GetValueOrDefault("indexerFlags"), true, out IndexerFlags indexerFlags))
+                        {
+                            trackedDownload.RemoteMovie.Release.IndexerFlags = indexerFlags;
+                        }
+
+                        if (downloadHistory != null)
+                        {
+                            trackedDownload.RemoteMovie.Release.IndexerId = downloadHistory.IndexerId;
+                        }
                     }
                 }
 

@@ -13,7 +13,6 @@ import PageToolbar from 'Components/Page/Toolbar/PageToolbar';
 import PageToolbarButton from 'Components/Page/Toolbar/PageToolbarButton';
 import PageToolbarSection from 'Components/Page/Toolbar/PageToolbarSection';
 import PageToolbarSeparator from 'Components/Page/Toolbar/PageToolbarSeparator';
-import RelativeDateCell from 'Components/Table/Cells/RelativeDateCell';
 import TmdbRating from 'Components/TmdbRating';
 import Tooltip from 'Components/Tooltip/Tooltip';
 import {
@@ -40,7 +39,7 @@ import MovieInteractiveSearchModal from 'Movie/Search/MovieInteractiveSearchModa
 import MovieFileEditorTable from 'MovieFile/Editor/MovieFileEditorTable';
 import ExtraFileTable from 'MovieFile/Extras/ExtraFileTable';
 import OrganizePreviewModal from 'Organize/OrganizePreviewModal';
-import QualityProfileNameConnector from 'Settings/Profiles/Quality/QualityProfileNameConnector';
+import QualityProfileName from 'Settings/Profiles/Quality/QualityProfileName';
 import fonts from 'Styles/Variables/fonts';
 import formatRuntime from 'Utilities/Date/formatRuntime';
 import formatBytes from 'Utilities/Number/formatBytes';
@@ -50,6 +49,7 @@ import MovieDetailsLinks from './MovieDetailsLinks';
 import MovieStatusLabel from './MovieStatusLabel';
 import MovieStudioLink from './MovieStudioLink';
 import MovieTagsConnector from './MovieTagsConnector';
+import ReleaseDateDisplay from './ReleaseDateDisplay';
 import styles from './MovieDetails.css';
 
 // InfoLabel is a JS component; types provided via declaration file
@@ -420,12 +420,7 @@ class MovieDetails extends Component<Props, State> {
                     ) : null}
 
                     {releaseDate ? (
-                      <span className={styles.year}>
-                        <RelativeDateCell
-                          className={styles.releaseDate}
-                          date={releaseDate}
-                        />
-                      </span>
+                      <ReleaseDateDisplay releaseDate={releaseDate} />
                     ) : null}
 
                     {studioTitle ? (
@@ -464,7 +459,7 @@ class MovieDetails extends Component<Props, State> {
                       <span>
                         <Tooltip
                           anchor={<Icon name={icons.TAGS} size={20} />}
-                          tooltip={<MovieTagsConnector key={id} />}
+                          tooltip={<MovieTagsConnector key={id} movieId={id} />}
                           position={tooltipPositions.BOTTOM}
                         />
                       </span>
@@ -513,9 +508,7 @@ class MovieDetails extends Component<Props, State> {
                     size={sizes.LARGE}
                   >
                     <span className={styles.qualityProfileName}>
-                      <QualityProfileNameConnector
-                        qualityProfileId={qualityProfileId}
-                      />
+                      <QualityProfileName qualityProfileId={qualityProfileId} />
                     </span>
                   </InfoLabel>
 

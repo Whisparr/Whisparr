@@ -362,6 +362,22 @@ class MediaManagement extends Component {
                   <FormGroup
                     advancedSettings={advancedSettings}
                     isAdvanced={true}
+                    size={sizes.MEDIUM}
+                  >
+                    <FormLabel>{translate('AutoRenameFolders')}</FormLabel>
+
+                    <FormInputGroup
+                      type={inputTypes.CHECK}
+                      name="autoRenameFolders"
+                      helpText={translate('AutoRenameFoldersHelpText')}
+                      onChange={onInputChange}
+                      {...settings.autoRenameFolders}
+                    />
+                  </FormGroup>
+
+                  <FormGroup
+                    advancedSettings={advancedSettings}
+                    isAdvanced={true}
                   >
                     <FormLabel>{translate('RescanMovieFolderAfterRefresh')}</FormLabel>
 

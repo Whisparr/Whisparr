@@ -9,6 +9,7 @@ using NzbDrone.Core.AutoTagging;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Exceptions;
 using NzbDrone.Core.MediaFiles;
+using NzbDrone.Core.MediaFiles.Commands;
 using NzbDrone.Core.MediaFiles.Events;
 using NzbDrone.Core.Messaging.Commands;
 using NzbDrone.Core.Messaging.Events;
@@ -40,6 +41,8 @@ namespace NzbDrone.Core.Movies
         private readonly ICheckIfMovieShouldBeRefreshed _checkIfMovieShouldBeRefreshed;
         private readonly IConfigService _configService;
         private readonly IAutoTaggingService _autoTaggingService;
+        private readonly IRenameMovieFileService _renameMovieFileService;
+        private readonly IManageCommandQueue _commandQueueManager;
         private readonly Logger _logger;
 
         public RefreshMovieService(IProvideMovieInfo movieInfo,
@@ -57,6 +60,8 @@ namespace NzbDrone.Core.Movies
                                     ICheckIfMovieShouldBeRefreshed checkIfMovieShouldBeRefreshed,
                                     IConfigService configService,
                                     IAutoTaggingService autoTaggingService,
+                                    IRenameMovieFileService renameMovieFileService,
+                                    IManageCommandQueue commandQueueManager,
                                     Logger logger)
         {
             _movieInfo = movieInfo;
@@ -74,6 +79,8 @@ namespace NzbDrone.Core.Movies
             _checkIfMovieShouldBeRefreshed = checkIfMovieShouldBeRefreshed;
             _configService = configService;
             _autoTaggingService = autoTaggingService;
+            _renameMovieFileService = renameMovieFileService;
+            _commandQueueManager = commandQueueManager;
             _logger = logger;
         }
 
@@ -188,6 +195,21 @@ namespace NzbDrone.Core.Movies
                 {
                     _logger.ProgressInfo("Updating path for {0} to {1}", movie.Title, movie.Path);
                     _movieService.UpdateMovie(movie);
+                }
+            }
+            else if (_configService.AutoRenameFolders)
+            {
+                var renameMovieFilePreviews = _renameMovieFileService.GetRenamePreviews(movie.Id);
+                if (renameMovieFilePreviews.Any())
+                {
+                    var files = new List<int>();
+
+                    foreach (var renameMovieFilePreview in renameMovieFilePreviews)
+                    {
+                        files.Add(renameMovieFilePreview.MovieFileId);
+                    }
+
+                    _commandQueueManager.Push(new RenameFilesCommand(movie.Id, files));
                 }
             }
 

@@ -810,7 +810,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                     }
                     catch (Exception ex)
                     {
-                        _logger.Debug(ex, $"Perfromer not found");
+                        _logger.Debug(ex, $"Performer not found");
                         return new List<Performer>();
                     }
                 }

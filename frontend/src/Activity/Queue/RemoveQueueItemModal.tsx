@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import FormGroup from 'Components/Form/FormGroup';
 import FormInputGroup from 'Components/Form/FormInputGroup';
 import FormLabel from 'Components/Form/FormLabel';
+import { EnhancedSelectInputValue } from 'Components/Form/Select/EnhancedSelectInput';
 import Button from 'Components/Link/Button';
 import Modal from 'Components/Modal/Modal';
 import ModalBody from 'Components/Modal/ModalBody';
@@ -10,7 +11,6 @@ import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { inputTypes, kinds, sizes } from 'Helpers/Props';
 import translate from 'Utilities/String/translate';
-import { EnhancedSelectInputValue } from 'Components/Form/Select/EnhancedSelectInput';
 import styles from './RemoveQueueItemModal.css';
 
 export interface RemovePressProps {
@@ -79,60 +79,62 @@ function RemoveQueueItemModal(props: RemoveQueueItemModalProps) {
     };
   }, [sourceTitle, selectedCount]);
 
-  const removalMethodOptions: EnhancedSelectInputValue<RemovalMethod>[] = useMemo(() => {
-    return [
-      {
-        key: 'removeFromClient' as RemovalMethod,
-        value: translate('RemoveFromDownloadClient'),
-        hint: multipleSelected
-          ? translate('RemoveMultipleFromDownloadClientHint')
-          : translate('RemoveFromDownloadClientHint'),
-      },
-      {
-        key: 'changeCategory' as RemovalMethod,
-        value: translate('ChangeCategory'),
-        isDisabled: !canChangeCategory,
-        hint: multipleSelected
-          ? translate('ChangeCategoryMultipleHint')
-          : translate('ChangeCategoryHint'),
-      },
-      {
-        key: 'ignore' as RemovalMethod,
-        value: multipleSelected
-          ? translate('IgnoreDownloads')
-          : translate('IgnoreDownload'),
-        isDisabled: !canIgnore,
-        hint: multipleSelected
-          ? translate('IgnoreDownloadsHint')
-          : translate('IgnoreDownloadHint'),
-      },
-    ];
-  }, [canChangeCategory, canIgnore, multipleSelected]);
+  const removalMethodOptions: EnhancedSelectInputValue<RemovalMethod>[] =
+    useMemo(() => {
+      return [
+        {
+          key: 'removeFromClient' as RemovalMethod,
+          value: translate('RemoveFromDownloadClient'),
+          hint: multipleSelected
+            ? translate('RemoveMultipleFromDownloadClientHint')
+            : translate('RemoveFromDownloadClientHint'),
+        },
+        {
+          key: 'changeCategory' as RemovalMethod,
+          value: translate('ChangeCategory'),
+          isDisabled: !canChangeCategory,
+          hint: multipleSelected
+            ? translate('ChangeCategoryMultipleHint')
+            : translate('ChangeCategoryHint'),
+        },
+        {
+          key: 'ignore' as RemovalMethod,
+          value: multipleSelected
+            ? translate('IgnoreDownloads')
+            : translate('IgnoreDownload'),
+          isDisabled: !canIgnore,
+          hint: multipleSelected
+            ? translate('IgnoreDownloadsHint')
+            : translate('IgnoreDownloadHint'),
+        },
+      ];
+    }, [canChangeCategory, canIgnore, multipleSelected]);
 
-  const blocklistMethodOptions: EnhancedSelectInputValue<BlocklistMethod>[] = useMemo(() => {
-    return [
-      {
-        key: 'doNotBlocklist' as BlocklistMethod,
-        value: translate('DoNotBlocklist'),
-        hint: translate('DoNotBlocklistHint'),
-      },
-      {
-        key: 'blocklistAndSearch' as BlocklistMethod,
-        value: translate('BlocklistAndSearch'),
-        isDisabled: isPending,
-        hint: multipleSelected
-          ? translate('BlocklistAndSearchMultipleHint')
-          : translate('BlocklistAndSearchHint'),
-      },
-      {
-        key: 'blocklistOnly' as BlocklistMethod,
-        value: translate('BlocklistOnly'),
-        hint: multipleSelected
-          ? translate('BlocklistMultipleOnlyHint')
-          : translate('BlocklistOnlyHint'),
-      },
-    ];
-  }, [isPending, multipleSelected]);
+  const blocklistMethodOptions: EnhancedSelectInputValue<BlocklistMethod>[] =
+    useMemo(() => {
+      return [
+        {
+          key: 'doNotBlocklist' as BlocklistMethod,
+          value: translate('DoNotBlocklist'),
+          hint: translate('DoNotBlocklistHint'),
+        },
+        {
+          key: 'blocklistAndSearch' as BlocklistMethod,
+          value: translate('BlocklistAndSearch'),
+          isDisabled: isPending,
+          hint: multipleSelected
+            ? translate('BlocklistAndSearchMultipleHint')
+            : translate('BlocklistAndSearchHint'),
+        },
+        {
+          key: 'blocklistOnly' as BlocklistMethod,
+          value: translate('BlocklistOnly'),
+          hint: multipleSelected
+            ? translate('BlocklistMultipleOnlyHint')
+            : translate('BlocklistOnlyHint'),
+        },
+      ];
+    }, [isPending, multipleSelected]);
 
   const handleRemovalMethodChange = useCallback(
     ({ value }: { value: RemovalMethod }) => {

@@ -55,7 +55,9 @@ function EditStudiosModalContent(props: EditStudiosModalContentProps) {
   const [qualityProfileId, setQualityProfileId] = useState<string | number>(
     NO_CHANGE
   );
-  const [rootFolderPath, setRootFolderPath] = useState<string | number>(NO_CHANGE);
+  const [rootFolderPath, setRootFolderPath] = useState<string | number>(
+    NO_CHANGE
+  );
 
   const save = useCallback(() => {
     let hasChanges = false;

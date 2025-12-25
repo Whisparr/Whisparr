@@ -57,7 +57,9 @@ function EditScenesModalContent(props: EditScenesModalContentProps) {
   const [qualityProfileId, setQualityProfileId] = useState<string | number>(
     NO_CHANGE
   );
-  const [rootFolderPath, setRootFolderPath] = useState<string | number>(NO_CHANGE);
+  const [rootFolderPath, setRootFolderPath] = useState<string | number>(
+    NO_CHANGE
+  );
   const [isConfirmMoveModalOpen, setIsConfirmMoveModalOpen] = useState(false);
 
   const save = useCallback(

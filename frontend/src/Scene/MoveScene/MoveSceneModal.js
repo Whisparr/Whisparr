@@ -48,13 +48,13 @@ function MoveSceneModal(props) {
         <ModalBody>
           {
             destinationRootFolder ?
-              translate('MoveFolders1', [destinationRootFolder]) :
-              translate('MoveFolders2', [originalPath, destinationPath])
+              translate('MoveSceneFoldersToRootFolder', { destinationRootFolder }) :
+              translate('MoveSceneFoldersToNewPath', { originalPath, destinationPath })
           }
           {
             destinationRootFolder ?
               <div>
-                {translate('FolderMoveRenameWarning')}
+                {translate('MoveSceneFoldersRenameFolderWarning')}
               </div> :
               null
           }
@@ -65,14 +65,14 @@ function MoveSceneModal(props) {
             className={styles.doNotMoveButton}
             onPress={onSavePress}
           >
-            {translate('NoMoveFilesSelf')}
+            {translate('MoveSceneFoldersDontMoveFiles')}
           </Button>
 
           <Button
             kind={kinds.DANGER}
             onPress={onMoveScenePress}
           >
-            {translate('YesMoveFiles')}
+            {translate('MoveSceneFoldersMoveFiles')}
           </Button>
         </ModalFooter>
       </ModalContent>

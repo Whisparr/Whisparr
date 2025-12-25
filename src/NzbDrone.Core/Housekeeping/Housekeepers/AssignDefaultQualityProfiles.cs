@@ -48,11 +48,18 @@ namespace NzbDrone.Core.Housekeeping.Housekeepers
             var totalAffected = 0;
             var totalRevoked = 0;
 
+            var impactedIdsWhere = "WHERE \"QualityProfileId\" IS NULL OR \"QualityProfileId\" NOT IN @ValidIds";
+            var updateWhere = "WHERE \"QualityProfileId\" IS NULL OR \"QualityProfileId\" NOT IN @ValidIds";
+
+            if (_database.DatabaseType == DatabaseType.PostgreSQL)
+            {
+                impactedIdsWhere = "WHERE \"QualityProfileId\" IS NULL OR \"QualityProfileId\" <> ALL(@ValidIds::int[])";
+                updateWhere = "WHERE \"QualityProfileId\" IS NULL OR \"QualityProfileId\" <> ALL(@ValidIds::int[])";
+            }
+
             foreach (var t in targets)
             {
-                var impactedIds = mapper.Query<int>($@"SELECT ""Id"" FROM ""{t.Table}""
-                      WHERE ""QualityProfileId"" IS NULL
-                         OR ""QualityProfileId"" NOT IN @ValidIds",
+                var impactedIds = mapper.Query<int>($@"SELECT ""Id"" FROM ""{t.Table}"" {impactedIdsWhere}",
                     new { ValidIds = validIds }).ToList();
 
                 if (!impactedIds.Any())
@@ -62,9 +69,8 @@ namespace NzbDrone.Core.Housekeeping.Housekeepers
 
                 // Update quality profiles
                 var sql = $@"UPDATE ""{t.Table}""
-                          SET ""QualityProfileId"" = @DefaultProfileId
-                          WHERE ""QualityProfileId"" IS NULL
-                               OR ""QualityProfileId"" NOT IN @ValidIds";
+                      SET ""QualityProfileId"" = @DefaultProfileId
+                      {updateWhere}";
 
                 var affected = mapper.Execute(sql, new { DefaultProfileId = defaultProfileId, ValidIds = validIds });
                 totalAffected += affected;
@@ -73,20 +79,20 @@ namespace NzbDrone.Core.Housekeeping.Housekeepers
                 var resourcesCache = _cacheManager.FindCache(t.CacheName);
 
                 if (resourcesCache != null)
+                {
+                    foreach (var id in impactedIds)
                     {
-                        foreach (var id in impactedIds)
-                        {
-                            // Invalidate API cache entries for impacted items
-                            resourcesCache.Remove(id.ToString());
-                        }
-
-                        revokedForThis = impactedIds.Count;
-                        totalRevoked += revokedForThis;
+                        // Invalidate API cache entries for impacted items
+                        resourcesCache.Remove(id.ToString());
                     }
+
+                    revokedForThis = impactedIds.Count;
+                    totalRevoked += revokedForThis;
+                }
 
                 // Log the per-table results
                 _logger.Info("Assigned default quality profile [{0}] to [{1}] {2}(s) and revoked cache for [{3}] {2}(s)", defaultProfileId, affected, t.Label, revokedForThis);
-                }
+            }
 
             _logger.Info("AssignDefaultQualityProfiles completed: totalAffected={0}, totalCacheRevoked={1}", totalAffected, totalRevoked);
         }

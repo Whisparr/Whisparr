@@ -11,6 +11,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook.Resource
         public string Gender { get; set; }
         public string Ethnicity { get; set; }
         public PerformerStatus Status { get; set; }
+        public string MergedIntoId { get; set; }
         public int? Age { get; set; }
         public int? CareerStart { get; set; }
         public int? CareerEnd { get; set; }

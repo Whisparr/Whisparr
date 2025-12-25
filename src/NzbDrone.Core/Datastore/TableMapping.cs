@@ -174,7 +174,9 @@ namespace NzbDrone.Core.Datastore
 
                   Mapper.Entity<MovieMetadata>("MovieMetadata").RegisterModel();
 
-                  Mapper.Entity<Performer>("Performers").RegisterModel();
+                  Mapper.Entity<Performer>("Performers").RegisterModel()
+                        .Ignore(e => e.MergedIntoId);
+
                   Mapper.Entity<Studio>("Studios").RegisterModel();
 
                   Mapper.Entity<AutoTagging.AutoTag>("AutoTagging").RegisterModel();

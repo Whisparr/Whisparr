@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DryIoc.ImTools;
 using NLog;
+using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Instrumentation.Extensions;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Exceptions;
@@ -21,6 +22,7 @@ namespace NzbDrone.Core.Movies.Performers
     {
         private readonly IProvideMovieInfo _movieInfo;
         private readonly IPerformerService _performerService;
+        private readonly IAddPerformerService _addPerformerService;
         private readonly IMovieService _movieService;
         private readonly IAddMovieService _addMovieService;
         private readonly IConfigService _configService;
@@ -31,6 +33,7 @@ namespace NzbDrone.Core.Movies.Performers
         private readonly Logger _logger;
 
         public RefreshPerformerService(IProvideMovieInfo movieInfo,
+                                        IAddPerformerService addPerformerService,
                                         IPerformerService performerService,
                                         IMovieService movieService,
                                         IAddMovieService addMovieService,
@@ -42,6 +45,7 @@ namespace NzbDrone.Core.Movies.Performers
         {
             _movieInfo = movieInfo;
             _performerService = performerService;
+            _addPerformerService = addPerformerService;
             _movieService = movieService;
             _addMovieService = addMovieService;
             _configService = configService;
@@ -67,6 +71,14 @@ namespace NzbDrone.Core.Movies.Performers
             }
             catch (MovieNotFoundException)
             {
+                if (performer.Status != PerformerStatus.Deleted)
+                {
+                    performer.Status = PerformerStatus.Deleted;
+                    _performerService.Update(performer);
+                    _logger.Debug("Performer not found on StashDB for {0}", performer);
+                    _eventAggregator.PublishEvent(new PerformerUpdatedEvent(performer));
+                }
+
                 throw;
             }
 
@@ -88,6 +100,28 @@ namespace NzbDrone.Core.Movies.Performers
             performer.Name = performerInfo.Name;
             performer.SortName = performerInfo.SortName;
             performer.Status = performerInfo.Status;
+
+            if (performerInfo.MergedIntoId.IsNotNullOrWhiteSpace())
+            {
+                var mergedPerformer = _performerService.FindByForeignId(performerInfo.MergedIntoId);
+
+                if (mergedPerformer == null)
+                {
+                    _logger.Info("Performer '{0}' (StashId {1}) was merged into performer (StashId {2}) which is not in the system. Adding performer.", performer.Name, performer.ForeignId, performerInfo.MergedIntoId);
+
+                    var newPerformer = new Performer
+                    {
+                        ForeignId = performerInfo.MergedIntoId,
+                        Monitored = performer.Monitored,
+                        QualityProfileId = performer.QualityProfileId,
+                        RootFolderPath = performer.RootFolderPath,
+                        SearchOnAdd = performer.SearchOnAdd,
+                        Tags = performer.Tags
+                    };
+
+                    _addPerformerService.AddPerformer(newPerformer, true);
+                }
+            }
 
             _performerService.Update(performer);
 

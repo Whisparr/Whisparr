@@ -27,6 +27,7 @@ namespace NzbDrone.Core.Movies.Studios
         public string Network { get; set; }
         public DateTime Added { get; set; }
         public bool Monitored { get; set; }
+        public StudioStatus Status { get; set; }
         public DateTime? AfterDate { get; set; }
         public int QualityProfileId { get; set; }
         public bool SearchOnAdd { get; set; }
@@ -40,8 +41,8 @@ namespace NzbDrone.Core.Movies.Studios
             QualityProfileId = otherStudio.QualityProfileId;
             SearchOnAdd = otherStudio.SearchOnAdd;
             Monitored = otherStudio.Monitored;
+            Status = otherStudio.Status;
             AfterDate = otherStudio.AfterDate;
-
             RootFolderPath = otherStudio.RootFolderPath;
             Tags = otherStudio.Tags;
         }
@@ -50,5 +51,13 @@ namespace NzbDrone.Core.Movies.Studios
         {
             return string.Format("[{0}]", Title.NullSafe());
         }
+    }
+
+    public enum StudioStatus
+    {
+        Active,
+        Inactive,
+        Unknown,
+        Deleted
     }
 }

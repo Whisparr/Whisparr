@@ -103,7 +103,7 @@ namespace NzbDrone.Core.Movies
                 {
                     movieMetadata.Status = MovieStatusType.Deleted;
                     _movieMetadataService.Upsert(movieMetadata);
-                    _logger.Debug("Movie marked as deleted on TMDb for {0}", movie.Title);
+                    _logger.Debug("Movie metadata source has marked it as deleted: {0}", movie);
                     _eventAggregator.PublishEvent(new MovieUpdatedEvent(movie));
                 }
 

@@ -83,6 +83,7 @@ namespace NzbDrone.Core.Movies.Studios
             studio.CleanTitle = studioInfo.CleanTitle;
             studio.SortTitle = studioInfo.SortTitle;
             studio.Aliases = studioInfo.Aliases;
+            studio.Status = studioInfo.Status;
 
             _studioService.Update(studio);
 

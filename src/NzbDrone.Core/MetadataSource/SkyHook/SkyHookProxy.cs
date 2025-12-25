@@ -995,6 +995,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 SortName = Parser.Parser.NormalizeTitle(performer.Name),
                 Gender = MapGender(performer.Gender),
                 Status = performer.Status,
+                MergedIntoId = performer.MergedIntoId,
                 Age = performer.Age,
                 CareerStart = performer.CareerStart,
                 CareerEnd = performer.CareerEnd,
@@ -1098,7 +1099,8 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 Website = studio.Homepage,
                 ForeignId = studio.ForeignIds.StashId,
                 Network = studio.Network,
-                Images = studio.Images?.Select(MapImage).ToList() ?? new List<MediaCover.MediaCover>()
+                Images = studio.Images?.Select(MapImage).ToList() ?? new List<MediaCover.MediaCover>(),
+                Status = studio.Status
             };
 
             return newStudio;

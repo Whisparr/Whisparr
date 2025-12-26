@@ -99,6 +99,8 @@ function createRootFolderOptionsSelector(
         values,
         isSaving: rootFolders.isSaving,
         saveError: rootFolders.saveError,
+        isPopulated: rootFolders.isPopulated,
+        isFetching: rootFolders.isFetching,
       };
     }
   );
@@ -114,7 +116,7 @@ function RootFolderSelectInput({
   ...otherProps
 }: RootFolderSelectInputProps) {
   const dispatch = useDispatch();
-  const { values, isSaving, saveError } = useSelector(
+  const { values, isSaving, saveError, isPopulated, isFetching } = useSelector(
     createRootFolderOptionsSelector(
       value,
       includeMissingValue,
@@ -200,8 +202,10 @@ function RootFolderSelectInput({
   }, []);
 
   useEffect(() => {
-    dispatch(fetchRootFolders());
-  }, [dispatch]);
+    if (!isPopulated && !isFetching) {
+      dispatch(fetchRootFolders());
+    }
+  }, [dispatch, isPopulated, isFetching]);
 
   return (
     <>

@@ -60,7 +60,7 @@ function EditMovieModalContent({
 
   const [rootFolderPath, setRootFolderPath] = useState(initialRootFolderPath);
 
-  const isPathChanging = pendingChanges.path && path !== pendingChanges.path;
+  const isPathChanging = pendingChanges?.path && path !== pendingChanges.path;
 
   const [isConfirmMoveModalOpen, setIsConfirmMoveModalOpen] = useState(false);
 

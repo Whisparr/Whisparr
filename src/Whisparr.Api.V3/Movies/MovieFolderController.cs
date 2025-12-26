@@ -21,8 +21,8 @@ public class MovieFolderController : Controller
     [Produces("application/json")]
     public object GetFolder([FromRoute] int id)
     {
-        var series = _movieService.GetMovie(id);
-        var folder = _fileNameBuilder.GetMovieFolder(series);
+        var movie = _movieService.GetMovie(id);
+        var folder = _fileNameBuilder.GetMovieFolder(movie);
 
         return new
         {

@@ -17,6 +17,7 @@ interface SavePayload {
   rootFolderPath?: string;
   searchForMissingEpisodes?: boolean;
   shouldMonitor?: string;
+  siteMonitorType?: string;
   monitorNewItems?: string;
 }
 
@@ -29,28 +30,53 @@ interface ManageImportListsEditModalContentProps {
 const NO_CHANGE = 'noChange';
 
 const autoAddOptions = [
-  { key: NO_CHANGE, value: translate('NoChange'), disabled: true },
-  { key: 'enabled', value: translate('Enabled') },
-  { key: 'disabled', value: translate('Disabled') },
-];
-
-const searchForMissingEpisodesOptions = [
-  { key: NO_CHANGE, value: translate('NoChange'), disabled: true },
-  { key: 'enabled', value: translate('Enabled') },
-  { key: 'disabled', value: translate('Disabled') },
+  {
+    key: NO_CHANGE,
+    get value() {
+      return translate('NoChange');
+    },
+    disabled: true,
+  },
+  {
+    key: 'enabled',
+    get value() {
+      return translate('Enabled');
+    },
+  },
+  {
+    key: 'disabled',
+    get value() {
+      return translate('Disabled');
+    },
+  },
 ];
 
 const shouldMonitorOptions = [
-  { key: NO_CHANGE, value: translate('NoChange'), disabled: true },
-  { key: 'none', value: translate('None') },
-  { key: 'specificEpisode', value: translate('SpecificEpisode') },
-  { key: 'entireSite', value: translate('EntireSite') },
-];
-
-const monitorNewItemsOptions = [
-  { key: NO_CHANGE, value: translate('NoChange'), disabled: true },
-  { key: 'none', value: translate('None') },
-  { key: 'all', value: translate('All') },
+  {
+    key: NO_CHANGE,
+    get value() {
+      return translate('NoChange');
+    },
+    disabled: true,
+  },
+  {
+    key: 'none',
+    get value() {
+      return translate('None');
+    },
+  },
+  {
+    key: 'specificEpisode',
+    get value() {
+      return translate('SpecificEpisode');
+    },
+  },
+  {
+    key: 'entireSite',
+    get value() {
+      return translate('AllSiteEpisodes');
+    },
+  },
 ];
 
 function ManageImportListsEditModalContent(
@@ -66,6 +92,7 @@ function ManageImportListsEditModalContent(
   const [searchForMissingEpisodes, setSearchForMissingEpisodes] =
     useState(NO_CHANGE);
   const [shouldMonitor, setShouldMonitor] = useState(NO_CHANGE);
+  const [siteMonitorType, setSiteMonitorType] = useState(NO_CHANGE);
   const [monitorNewItems, setMonitorNewItems] = useState(NO_CHANGE);
 
   const save = useCallback(() => {
@@ -97,6 +124,11 @@ function ManageImportListsEditModalContent(
       payload.shouldMonitor = shouldMonitor;
     }
 
+    if (siteMonitorType !== NO_CHANGE) {
+      hasChanges = true;
+      payload.siteMonitorType = siteMonitorType;
+    }
+
     if (monitorNewItems !== NO_CHANGE) {
       hasChanges = true;
       payload.monitorNewItems = monitorNewItems;
@@ -113,6 +145,7 @@ function ManageImportListsEditModalContent(
     rootFolderPath,
     searchForMissingEpisodes,
     shouldMonitor,
+    siteMonitorType,
     monitorNewItems,
     onSavePress,
     onModalClose,
@@ -136,11 +169,16 @@ function ManageImportListsEditModalContent(
         case 'shouldMonitor':
           setShouldMonitor(value);
           break;
+        case 'siteMonitorType':
+          setSiteMonitorType(value);
+          break;
         case 'monitorNewItems':
           setMonitorNewItems(value);
           break;
         default:
-          console.warn(`EditImportListModalContent Unknown Input: '${name}'`);
+          console.warn(
+            `EditImportListsEditModalContent Unknown Input: '${name}'`
+          );
       }
     },
     []
@@ -190,18 +228,7 @@ function ManageImportListsEditModalContent(
         </FormGroup>
 
         <FormGroup>
-          <FormLabel>{translate('SearchForMissingEpisodes')}</FormLabel>
-          <FormInputGroup
-            type={inputTypes.SELECT}
-            name="searchForMissingEpisodes"
-            value={searchForMissingEpisodes}
-            values={searchForMissingEpisodesOptions}
-            onChange={onInputChange}
-          />
-        </FormGroup>
-
-        <FormGroup>
-          <FormLabel>{translate('ShouldMonitor')}</FormLabel>
+          <FormLabel>{translate('Monitor')}</FormLabel>
           <FormInputGroup
             type={inputTypes.SELECT}
             name="shouldMonitor"
@@ -211,13 +238,28 @@ function ManageImportListsEditModalContent(
           />
         </FormGroup>
 
+        {shouldMonitor === 'entireSite' && (
+          <FormGroup>
+            <FormLabel>{translate('SiteMonitoringOptions')}</FormLabel>
+            <FormInputGroup
+              type={inputTypes.MONITOR_EPISODES_SELECT}
+              name="siteMonitorType"
+              value={siteMonitorType}
+              includeNoChange={true}
+              includeNoChangeDisabled={false}
+              onChange={onInputChange}
+            />
+          </FormGroup>
+        )}
+
         <FormGroup>
-          <FormLabel>{translate('MonitorNewItems')}</FormLabel>
+          <FormLabel>{translate('MonitorNewScenes')}</FormLabel>
           <FormInputGroup
-            type={inputTypes.SELECT}
+            type={inputTypes.MONITOR_NEW_ITEMS_SELECT}
             name="monitorNewItems"
             value={monitorNewItems}
-            values={monitorNewItemsOptions}
+            includeNoChange={true}
+            includeNoChangeDisabled={false}
             onChange={onInputChange}
           />
         </FormGroup>

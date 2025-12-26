@@ -140,7 +140,7 @@ function ManageImportListsEditModalContent(
           setMonitorNewItems(value);
           break;
         default:
-          break;
+          console.warn(`EditImportListModalContent Unknown Input: '${name}'`);
       }
     },
     []

@@ -89,15 +89,14 @@ function createRootFolderOptionsSelector(
       value: translate('AddANewPath'),
     });
 
-      return {
-        values,
-        isSaving: rootFolders.isSaving,
-        saveError: rootFolders.saveError,
-        isPopulated: rootFolders.isPopulated,
-        isFetching: rootFolders.isFetching,
-      };
-    }
-  );
+    return {
+      values,
+      isSaving: rootFolders.isSaving,
+      saveError: rootFolders.saveError,
+      isPopulated: rootFolders.isPopulated,
+      isFetching: rootFolders.isFetching,
+    };
+  });
 }
 
 function RootFolderSelectInput({

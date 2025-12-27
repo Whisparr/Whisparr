@@ -12,6 +12,7 @@ namespace Whisparr.Api.V3.ImportLists
         public bool? SearchForMissingEpisodes { get; set; }
         public ImportListMonitorTypes? ShouldMonitor { get; set; }
         public NewItemMonitorTypes? MonitorNewItems { get; set; }
+        public MonitorTypes? SiteMonitorType { get; set; }
     }
 
     public class ImportListBulkResourceMapper : ProviderBulkResourceMapper<ImportListBulkResource, ImportListDefinition>
@@ -31,6 +32,7 @@ namespace Whisparr.Api.V3.ImportLists
                 existing.SearchForMissingEpisodes = resource.SearchForMissingEpisodes ?? existing.SearchForMissingEpisodes;
                 existing.ShouldMonitor = resource.ShouldMonitor ?? existing.ShouldMonitor;
                 existing.MonitorNewItems = resource.MonitorNewItems ?? existing.MonitorNewItems;
+                existing.SiteMonitorType = resource.SiteMonitorType ?? existing.SiteMonitorType;
             });
 
             return existingDefinitions;

@@ -1283,6 +1283,7 @@
   "SitesLoadError": "Unable to load Sites",
   "SiteMatchType": "Site Match Type",
   "SiteMonitoring": "Site Monitoring",
+  "SiteMonitoringOptions": "Site Monitoring Options",
   "SiteProgressBarText": "{episodeFileCount} / {episodeCount} (Total: {totalEpisodeCount}, Downloading: {downloadingCount})",
   "SiteTitle": "Site Title",
   "SiteTitleToExcludeHelpText": "The name of the site to exclude",

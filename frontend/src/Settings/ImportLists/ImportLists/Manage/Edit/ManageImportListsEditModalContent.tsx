@@ -51,6 +51,28 @@ const autoAddOptions = [
   },
 ];
 
+const searchForMissingEpisodesOptions = [
+  {
+    key: NO_CHANGE,
+    get value() {
+      return translate('NoChange');
+    },
+    disabled: true,
+  },
+  {
+    key: 'enabled',
+    get value() {
+      return translate('Enabled');
+    },
+  },
+  {
+    key: 'disabled',
+    get value() {
+      return translate('Disabled');
+    },
+  },
+];
+
 const shouldMonitorOptions = [
   {
     key: NO_CHANGE,
@@ -223,6 +245,17 @@ function ManageImportListsEditModalContent(
             includeNoChange={true}
             includeNoChangeDisabled={false}
             selectedValueOptions={{ includeFreeSpace: false }}
+            onChange={onInputChange}
+          />
+        </FormGroup>
+
+        <FormGroup>
+          <FormLabel>{translate('SearchForMissingEpisodes')}</FormLabel>
+          <FormInputGroup
+            type={inputTypes.SELECT}
+            name="searchForMissingEpisodes"
+            value={searchForMissingEpisodes}
+            values={searchForMissingEpisodesOptions}
             onChange={onInputChange}
           />
         </FormGroup>

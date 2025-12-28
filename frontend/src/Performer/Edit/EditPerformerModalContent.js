@@ -91,12 +91,12 @@ class EditPerformerModalContent extends Component {
                 </FormGroup>
 
                 <FormGroup>
-                  <FormLabel>{translate('MoviesMonitored')}</FormLabel>
+                  <FormLabel>{translate('MonitoredMovie')}</FormLabel>
 
                   <FormInputGroup
                     type={inputTypes.CHECK}
                     name="moviesMonitored"
-                    helpText={translate('MoviesMonitoredPerformerHelpText')}
+                    helpText={translate('MonitoredPerformerHelpText')}
                     {...moviesMonitored}
                     onChange={onInputChange}
                   />

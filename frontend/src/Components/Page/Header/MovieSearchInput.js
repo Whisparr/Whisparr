@@ -116,7 +116,7 @@ class MovieSearchInput extends Component {
     if (item.type === ADD_NEW_TYPE_PERFORMER) {
       return (
         <div className={styles.addNewMovieSuggestion}>
-          {translate('Perfromer')}: "{query}"
+          {translate('Performer')}: "{query}"
         </div>
       );
     }

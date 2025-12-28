@@ -7,9 +7,9 @@ import * as icons from './icons';
 import * as inputTypes from './inputTypes';
 import * as kinds from './kinds';
 import * as messageTypes from './messageTypes';
-import * as scrollDirections from './scrollDirections';
+import ScrollDirection from './ScrollDirection';
 import * as sizes from './sizes';
-import * as sortDirections from './sortDirections';
+import SortDirection from './SortDirection';
 import * as tooltipPositions from './tooltipPositions';
 
 export {
@@ -23,7 +23,7 @@ export {
   kinds,
   messageTypes,
   sizes,
-  scrollDirections,
-  sortDirections,
+  ScrollDirection as scrollDirections,
+  SortDirection as sortDirections,
   tooltipPositions
 };

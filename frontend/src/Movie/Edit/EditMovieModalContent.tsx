@@ -272,7 +272,7 @@ function EditMovieModalContent({
               type={inputTypes.TAG}
               name="tags"
               {...(settings.tags as unknown as Omit<
-                MovieTagInputProps,
+                MovieTagInputProps<string | number>,
                 'className' | 'name'
               >)}
               onChange={handleInputChange}

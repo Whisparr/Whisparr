@@ -9,7 +9,7 @@ import React, {
   useEffect,
   useRef,
 } from 'react';
-import ScrollDirection from 'Helpers/Props/ScrollDirection';
+import { scrollDirections } from 'Helpers/Props';
 import styles from './Scroller.css';
 
 export interface OnScroll {
@@ -19,7 +19,7 @@ export interface OnScroll {
 
 interface ScrollerProps {
   className?: string;
-  scrollDirection?: ScrollDirection;
+  scrollDirection?: scrollDirections;
   autoFocus?: boolean;
   autoScroll?: boolean;
   scrollTop?: number;
@@ -35,7 +35,7 @@ const Scroller = forwardRef(
       className,
       autoFocus = false,
       autoScroll = true,
-      scrollDirection = ScrollDirection.Vertical,
+      scrollDirection = scrollDirections.VERTICAL,
       children,
       scrollTop,
       initialScrollTop,
@@ -61,7 +61,7 @@ const Scroller = forwardRef(
         currentRef.current.scrollTop = scrollTop;
       }
 
-      if (autoFocus && scrollDirection !== ScrollDirection.None) {
+      if (autoFocus && scrollDirection !== scrollDirections.NONE) {
         currentRef.current.focus({ preventScroll: true });
       }
     }, [autoFocus, currentRef, scrollDirection, scrollTop]);

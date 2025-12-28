@@ -354,7 +354,7 @@ PerformerDetailsStudio.propTypes = {
   items: PropTypes.arrayOf(PropTypes.object).isRequired,
   columns: PropTypes.arrayOf(PropTypes.object).isRequired,
   sortKey: PropTypes.string.isRequired,
-  sortDirection: PropTypes.oneOf(sortDirections.all),
+  sortDirection: PropTypes.oneOf(Object.values(sortDirections)),
   isSaving: PropTypes.bool,
   isExpanded: PropTypes.bool,
   isSearching: PropTypes.bool.isRequired,

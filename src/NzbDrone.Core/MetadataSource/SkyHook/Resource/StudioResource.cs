@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using NzbDrone.Core.Movies.Studios;
 
 namespace NzbDrone.Core.MetadataSource.SkyHook.Resource
 {
@@ -8,6 +9,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook.Resource
         public List<string> Aliases { get; set; }
         public string Homepage { get; set; }
         public string Network { get; set; }
+        public StudioStatus Status { get; set; }
         public List<ImageResource> Images { get; set; }
         public ExternalIdResource ForeignIds { get; set; }
     }

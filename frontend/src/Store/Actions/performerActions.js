@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { createAction } from 'redux-actions';
 import { batchActions } from 'redux-batched-actions';
-import { filterBuilderTypes, filterBuilderValueTypes, sortDirections } from 'Helpers/Props';
+import { filterBuilderTypes, filterBuilderValueTypes, filterTypes, sortDirections } from 'Helpers/Props';
 import { createThunk, handleThunks } from 'Store/thunks';
 import sortByProp from 'Utilities/Array/sortByProp';
 import createAjaxRequest from 'Utilities/createAjaxRequest';
@@ -166,6 +166,39 @@ export const defaultState = {
       key: 'all',
       label: () => translate('All'),
       filters: []
+    },
+    {
+      key: 'monitored',
+      label: () => translate('MonitoredOnly'),
+      filters: [
+        {
+          key: 'monitored',
+          value: true,
+          type: filterTypes.EQUAL
+        }
+      ]
+    },
+    {
+      key: 'unmonitored',
+      label: () => translate('Unmonitored'),
+      filters: [
+        {
+          key: 'monitored',
+          value: false,
+          type: filterTypes.EQUAL
+        }
+      ]
+    },
+    {
+      key: 'deleted',
+      label: () => translate('Deleted'),
+      filters: [
+        {
+          key: 'status',
+          value: 'deleted',
+          type: filterTypes.EQUAL
+        }
+      ]
     }
   ],
 
@@ -211,7 +244,7 @@ export const defaultState = {
       label: () => translate('Status'),
       type: filterBuilderTypes.EXACT,
       optionsSelector: function(items) {
-        const tagList = ['active', 'inactive', 'unknown'];
+        const tagList = ['active', 'inactive', 'unknown', 'deleted'];
 
         const tags = tagList.map((tag) => {
           return {

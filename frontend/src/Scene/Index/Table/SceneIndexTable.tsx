@@ -7,7 +7,7 @@ import AppState from 'App/State/AppState';
 import Scroller from 'Components/Scroller/Scroller';
 import Column from 'Components/Table/Column';
 import useMeasure from 'Helpers/Hooks/useMeasure';
-import ScrollDirection from 'Helpers/Props/ScrollDirection';
+import { scrollDirections } from 'Helpers/Props';
 import SortDirection from 'Helpers/Props/SortDirection';
 import Movie from 'Movie/Movie';
 import dimensions from 'Styles/Variables/dimensions';
@@ -176,7 +176,7 @@ function SceneIndexTable(props: SceneIndexTableProps) {
     <div ref={measureRef}>
       <Scroller
         className={styles.tableScroller}
-        scrollDirection={ScrollDirection.Horizontal}
+        scrollDirection={scrollDirections.HORIZONTAL}
       >
         <SceneIndexTableHeader
           columns={columns}

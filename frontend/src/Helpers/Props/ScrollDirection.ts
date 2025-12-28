@@ -1,8 +1,8 @@
 enum ScrollDirection {
-  Horizontal = 'horizontal',
-  Vertical = 'vertical',
-  None = 'none',
-  Both = 'both',
+  NONE = 'none',
+  BOTH = 'both',
+  HORIZONTAL = 'horizontal',
+  VERTICAL = 'vertical',
 }
 
 export default ScrollDirection;

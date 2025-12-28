@@ -105,6 +105,17 @@ export const filters = [
         type: filterTypes.EQUAL
       }
     ]
+  },
+  {
+    key: 'deleted',
+    label: () => translate('Deleted'),
+    filters: [
+      {
+        key: 'status',
+        value: 'deleted',
+        type: filterTypes.EQUAL
+      }
+    ]
   }
 ];
 

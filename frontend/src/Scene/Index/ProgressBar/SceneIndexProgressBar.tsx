@@ -13,7 +13,7 @@ import styles from './SceneIndexProgressBar.css';
 
 interface SceneIndexProgressBarProps {
   sceneId: number;
-  sceneFile: MovieFile;
+  sceneFile?: MovieFile;
   monitored: boolean;
   status: MovieStatus;
   hasFile: boolean;

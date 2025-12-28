@@ -1,10 +1,11 @@
 import _ from 'lodash';
 import { createAction } from 'redux-actions';
 import { batchActions } from 'redux-batched-actions';
-import { filterBuilderTypes, filterBuilderValueTypes, sortDirections } from 'Helpers/Props';
+import { filterBuilderTypes, filterBuilderValueTypes, filterTypes, sortDirections } from 'Helpers/Props';
 import { createThunk, handleThunks } from 'Store/thunks';
 import sortByProp from 'Utilities/Array/sortByProp';
 import createAjaxRequest from 'Utilities/createAjaxRequest';
+import camelCaseToString from 'Utilities/String/camelCaseToString';
 import translate from 'Utilities/String/translate';
 import { set, updateItem } from './baseActions';
 import createFetchHandler from './Creators/createFetchHandler';
@@ -126,6 +127,39 @@ export const defaultState = {
       key: 'all',
       label: () => translate('All'),
       filters: []
+    },
+    {
+      key: 'monitored',
+      label: () => translate('MonitoredOnly'),
+      filters: [
+        {
+          key: 'monitored',
+          value: true,
+          type: filterTypes.EQUAL
+        }
+      ]
+    },
+    {
+      key: 'unmonitored',
+      label: () => translate('Unmonitored'),
+      filters: [
+        {
+          key: 'monitored',
+          value: false,
+          type: filterTypes.EQUAL
+        }
+      ]
+    },
+    {
+      key: 'deleted',
+      label: () => translate('Deleted'),
+      filters: [
+        {
+          key: 'status',
+          value: 'deleted',
+          type: filterTypes.EQUAL
+        }
+      ]
     }
   ],
 
@@ -147,6 +181,23 @@ export const defaultState = {
       label: () => translate('Title'),
       type: filterBuilderTypes.EXACT,
       valueType: filterBuilderValueTypes.DEFAULT
+    },
+    {
+      name: 'status',
+      label: () => translate('Status'),
+      type: filterBuilderTypes.EXACT,
+      optionsSelector: function(items) {
+        const tagList = ['active', 'deleted'];
+
+        const tags = tagList.map((tag) => {
+          return {
+            id: tag,
+            name: camelCaseToString(tag)
+          };
+        });
+
+        return tags.sort(sortByProp('name'));
+      }
     },
     {
       name: 'sceneCount',

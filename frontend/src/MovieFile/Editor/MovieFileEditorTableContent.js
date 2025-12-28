@@ -68,7 +68,7 @@ MovieFileEditorTableContent.propTypes = {
   items: PropTypes.arrayOf(PropTypes.object).isRequired,
   columns: PropTypes.arrayOf(PropTypes.object).isRequired,
   sortKey: PropTypes.string.isRequired,
-  sortDirection: PropTypes.oneOf(sortDirections.all),
+  sortDirection: PropTypes.oneOf(Object.values(sortDirections)),
   onTableOptionChange: PropTypes.func.isRequired,
   onSortPress: PropTypes.func.isRequired,
   onDeletePress: PropTypes.func.isRequired

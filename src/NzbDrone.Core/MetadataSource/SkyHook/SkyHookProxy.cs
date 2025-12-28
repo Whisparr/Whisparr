@@ -652,7 +652,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
         {
             var results = new List<Movie>();
 
-            if (_configService.WhisparrMovieMetadataSource == MovieMetadataType.None)
+            if (_configService.WhisparrMovieMetadataSource == MovieMetadataType.NONE)
             {
                 return results;
             }

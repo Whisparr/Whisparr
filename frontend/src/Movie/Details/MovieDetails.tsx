@@ -587,14 +587,12 @@ class MovieDetails extends Component<Props, State> {
               <ExtraFileTable movieId={id} />
             </FieldSet>
 
-            {itemType === 'scene' ? (
-              <FieldSet legend={translate('Cast')}>
-                <MovieCastPostersConnector
-                  movieId={id}
-                  isSmallScreen={isSmallScreen}
-                />
-              </FieldSet>
-            ) : null}
+            <FieldSet legend={translate('Cast')}>
+              <MovieCastPostersConnector
+                movieId={id}
+                isSmallScreen={isSmallScreen}
+              />
+            </FieldSet>
           </div>
 
           <OrganizePreviewModal

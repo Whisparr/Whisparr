@@ -6,11 +6,9 @@ import { togglePerformerMonitored } from 'Store/Actions/performerActions';
 
 function createMapStateToProps() {
   return createSelector(
-    (state, { performerForeignId }) => performerForeignId,
-    (state) => state.performers,
+    (state, { performer }) => performer,
     (state) => state.settings.safeForWorkMode,
-    (performerForeignId, performers, safeForWorkMode) => {
-      const performer = performers.items.find((perf) => perf.foreignId === performerForeignId);
+    (performer, safeForWorkMode) => {
       return {
         performer,
         safeForWorkMode

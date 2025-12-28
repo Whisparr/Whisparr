@@ -82,6 +82,7 @@ interface Props {
   qualityProfileId: number;
   monitored: boolean;
   status: MovieStatus;
+  credits?: [];
   studio?: string;
   studioTitle?: string;
   studioForeignId?: string;
@@ -244,6 +245,7 @@ class MovieDetails extends Component<Props, State> {
       monitored,
       studioTitle,
       studioForeignId,
+      credits,
       genres,
       overview,
       status,
@@ -587,12 +589,14 @@ class MovieDetails extends Component<Props, State> {
               <ExtraFileTable movieId={id} />
             </FieldSet>
 
-            <FieldSet legend={translate('Cast')}>
-              <MovieCastPostersConnector
-                movieId={id}
-                isSmallScreen={isSmallScreen}
-              />
-            </FieldSet>
+            {credits != null && credits.length > 0 ? (
+              <FieldSet legend={translate('Cast')}>
+                <MovieCastPostersConnector
+                  movieId={id}
+                  isSmallScreen={isSmallScreen}
+                />
+              </FieldSet>
+            ) : null}
           </div>
 
           <OrganizePreviewModal

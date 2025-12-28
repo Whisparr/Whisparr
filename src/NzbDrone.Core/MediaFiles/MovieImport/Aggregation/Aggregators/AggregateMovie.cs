@@ -17,7 +17,10 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Aggregation.Aggregators
 
         public LocalMovie Aggregate(LocalMovie localMovie, DownloadClientItem downloadClientItem)
         {
-            localMovie.Movie = _movieService.GetMovie(localMovie.Movie.Id);
+            if (localMovie.Movie?.Id != null)
+            {
+                localMovie.Movie = _movieService.GetMovie(localMovie.Movie.Id);
+            }
 
             return localMovie;
         }

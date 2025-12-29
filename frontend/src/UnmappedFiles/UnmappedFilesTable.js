@@ -331,8 +331,8 @@ UnmappedFilesTable.propTypes = {
   isScanningFolders: PropTypes.bool.isRequired,
   isCleaningUnmappedFiles: PropTypes.bool.isRequired,
   onAddScenesPress: PropTypes.func.isRequired,
-  onCleanUnmappedFilesPress: PropTypes.func.isRequired,
-  onSortColumnPress: PropTypes.func.isRequired
+  onCleanUnmappedFilesPress: PropTypes.func.isRequired
+  // onSortColumnPress is handled internally by the component
 };
 
 export default UnmappedFilesTable;

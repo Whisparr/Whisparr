@@ -6,7 +6,6 @@ import Delayed from 'Components/Delayed';
 import FieldSet from 'Components/FieldSet';
 import Icon from 'Components/Icon';
 import Label from 'Components/Label';
-import IconButton from 'Components/Link/IconButton';
 import Measure from 'Components/Measure';
 import MonitorToggleButton from 'Components/MonitorToggleButton';
 import PageContent from 'Components/Page/PageContent';
@@ -22,7 +21,6 @@ import DeletePerformerModalConnector from 'Performer/Delete/DeletePerformerModal
 import EditPerformerModalConnector from 'Performer/Edit/EditPerformerModalConnector';
 import { getPerformerStatusDetails } from 'Performer/PerformerStatus';
 import QualityProfileName from 'Settings/Profiles/Quality/QualityProfileName';
-import * as keyCodes from 'Utilities/Constants/keyCodes';
 import formatBytes from 'Utilities/Number/formatBytes';
 import firstCharToUpper from 'Utilities/String/firstCharToUpper';
 import translate from 'Utilities/String/translate';
@@ -101,76 +99,6 @@ class PerformerDetails extends Component {
     this.setState({ titleWidth: width });
   };
 
-  onKeyUp = (event) => {
-    if (event.composedPath && event.composedPath().length === 4) {
-      if (event.keyCode === keyCodes.LEFT_ARROW) {
-        this.props.onGoToPerformer(this.props.previousPerformer.foreignId);
-      }
-      if (event.keyCode === keyCodes.RIGHT_ARROW) {
-        this.props.onGoToPerformer(this.props.nextPerformer.foreignId);
-      }
-    }
-  };
-
-  onTouchStart = (event) => {
-    const touches = event.touches;
-    const touchStart = touches[0].pageX;
-    const touchY = touches[0].pageY;
-
-    // Only change when swipe is on header, we need horizontal scroll on tables
-    if (touchY > 470) {
-      return;
-    }
-
-    if (touches.length !== 1) {
-      return;
-    }
-
-    if (
-      touchStart < 50 ||
-      this.props.isSidebarVisible ||
-      this.state.isDeleteMovieModalOpen ||
-      this.state.isEditMovieModalOpen
-    ) {
-      return;
-    }
-
-    this._touchStart = touchStart;
-  };
-
-  onTouchEnd = (event) => {
-    const touches = event.changedTouches;
-    const currentTouch = touches[0].pageX;
-
-    if (!this._touchStart) {
-      return;
-    }
-
-    if (
-      currentTouch > this._touchStart &&
-      currentTouch - this._touchStart > 100
-    ) {
-      this.props.onGoToPerformer(this.props.previousPerformer.foreignId);
-    } else if (
-      currentTouch < this._touchStart &&
-      this._touchStart - currentTouch > 100
-    ) {
-      this.props.onGoToPerformer(this.props.nextPerformer.foreignId);
-    }
-
-    this._touchStart = null;
-  };
-
-  onTouchCancel = (event) => {
-    this._touchStart = null;
-  };
-
-  onTouchMove = (event) => {
-    if (!this._touchStart) {
-      return;
-    }
-  };
-
   onExpandAllPress = () => {
     const { allExpanded, expandedState } = this.state;
     this.setState(getExpandedState(selectAll(expandedState, !allExpanded)));
@@ -229,8 +157,6 @@ class PerformerDetails extends Component {
       hasScenes,
       totalSceneCount,
       sceneCount,
-      previousPerformer,
-      nextPerformer,
       onMonitorTogglePress,
       onRefreshPress,
       onSearchPress,
@@ -340,28 +266,6 @@ class PerformerDetails extends Component {
                       </div>
 
                       <div className={styles.title}>{fullName}</div>
-                    </div>
-
-                    <div className={styles.movieNavigationButtons}>
-                      <IconButton
-                        className={styles.movieNavigationButton}
-                        name={icons.ARROW_LEFT}
-                        size={30}
-                        title={translate('GoToInterp', [
-                          previousPerformer.fullName
-                        ])}
-                        to={`/performer/${previousPerformer.foreignId}`}
-                      />
-
-                      <IconButton
-                        className={styles.movieNavigationButton}
-                        name={icons.ARROW_RIGHT}
-                        size={30}
-                        title={translate('GoToInterp', [
-                          nextPerformer.fullName
-                        ])}
-                        to={`/performer/${nextPerformer.foreignId}`}
-                      />
                     </div>
                   </div>
                 </Measure>

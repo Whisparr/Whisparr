@@ -1,18 +1,20 @@
-import { IconDefinition } from '@fortawesome/fontawesome-common-types';
 import React, { useCallback } from 'react';
 import { useSelect } from 'App/SelectContext';
 import PageToolbarButton from 'Components/Page/Toolbar/PageToolbarButton';
 
-interface MovieIndexSelectModeButtonProps {
-  label: string;
-  iconName: IconDefinition;
+type MovieIndexSelectModeButtonProps = React.ComponentProps<
+  typeof PageToolbarButton
+> & {
   isSelectMode: boolean;
-  overflowComponent: React.FunctionComponent<never>;
   onPress: () => void;
-}
+  // Keep `any` here to match `PageToolbarButton`'s `overflowComponent` type
+  // and avoid creating an intersection type that breaks assignment.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  overflowComponent?: React.ComponentType<any>;
+};
 
 function MovieIndexSelectModeButton(props: MovieIndexSelectModeButtonProps) {
-  const { label, iconName, isSelectMode, onPress } = props;
+  const { label, iconName, isSelectMode, overflowComponent, onPress } = props;
   const [, selectDispatch] = useSelect();
 
   const onPressWrapper = useCallback(() => {
@@ -29,6 +31,7 @@ function MovieIndexSelectModeButton(props: MovieIndexSelectModeButtonProps) {
     <PageToolbarButton
       label={label}
       iconName={iconName}
+      overflowComponent={overflowComponent}
       onPress={onPressWrapper}
     />
   );

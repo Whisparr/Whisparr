@@ -161,6 +161,7 @@ const PerformerIndex = withScrollPosition((props: PerformerIndexProps) => {
     // Reset if not sorting by sortTitle
     if (sortKey !== 'fullName') {
       return {
+        characters: {},
         order: [],
       };
     }

@@ -67,7 +67,7 @@ class MonitorToggleButton extends Component {
 
 MonitorToggleButton.propTypes = {
   className: PropTypes.string.isRequired,
-  monitored: PropTypes.bool.isRequired,
+  monitored: PropTypes.bool,
   size: PropTypes.number,
   isDisabled: PropTypes.bool.isRequired,
   tooltip: PropTypes.string,
@@ -78,7 +78,8 @@ MonitorToggleButton.propTypes = {
 MonitorToggleButton.defaultProps = {
   className: styles.toggleButton,
   isDisabled: false,
-  isSaving: false
+  isSaving: false,
+  monitored: false
 };
 
 export default MonitorToggleButton;

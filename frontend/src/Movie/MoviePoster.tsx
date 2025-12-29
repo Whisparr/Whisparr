@@ -9,7 +9,7 @@ const posterPlaceholder =
 interface MoviePosterProps
   extends Omit<MovieImageProps, 'coverType' | 'placeholder'> {
   size?: 250 | 500;
-  safeForWorkMode: boolean;
+  safeForWorkMode?: boolean;
 }
 
 function MoviePoster({ size = 250, ...otherProps }: MoviePosterProps) {

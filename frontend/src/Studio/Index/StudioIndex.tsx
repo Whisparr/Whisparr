@@ -156,6 +156,7 @@ const StudioIndex = withScrollPosition((props: StudioIndexProps) => {
     // Reset if not sorting by sortTitle
     if (sortKey !== 'sortTitle') {
       return {
+        characters: {},
         order: [],
       };
     }

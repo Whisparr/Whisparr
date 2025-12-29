@@ -6,7 +6,6 @@ import Delayed from 'Components/Delayed';
 import FieldSet from 'Components/FieldSet';
 import Icon from 'Components/Icon';
 import Label from 'Components/Label';
-import IconButton from 'Components/Link/IconButton';
 import Measure from 'Components/Measure';
 import MonitorToggleButton from 'Components/MonitorToggleButton';
 import PageContent from 'Components/Page/PageContent';
@@ -21,7 +20,6 @@ import QualityProfileName from 'Settings/Profiles/Quality/QualityProfileName';
 import DeleteStudioModalConnector from 'Studio/Delete/DeleteStudioModalConnector';
 import EditStudioModalConnector from 'Studio/Edit/EditStudioModalConnector';
 import StudioLogo from 'Studio/StudioLogo';
-import * as keyCodes from 'Utilities/Constants/keyCodes';
 import formatBytes from 'Utilities/Number/formatBytes';
 import translate from 'Utilities/String/translate';
 import selectAll from 'Utilities/Table/selectAll';
@@ -100,70 +98,6 @@ class StudioDetails extends Component {
     this.setState({ titleWidth: width });
   };
 
-  onKeyUp = (event) => {
-    if (event.composedPath && event.composedPath().length === 4) {
-      if (event.keyCode === keyCodes.LEFT_ARROW) {
-        this.props.onGoToStudio(this.props.previousStudio.foreignId);
-      }
-      if (event.keyCode === keyCodes.RIGHT_ARROW) {
-        this.props.onGoToStudio(this.props.nextStudio.foreignId);
-      }
-    }
-  };
-
-  onTouchStart = (event) => {
-    const touches = event.touches;
-    const touchStart = touches[0].pageX;
-    const touchY = touches[0].pageY;
-
-    // Only change when swipe is on header, we need horizontal scroll on tables
-    if (touchY > 470) {
-      return;
-    }
-
-    if (touches.length !== 1) {
-      return;
-    }
-
-    if (
-      touchStart < 50 ||
-      this.props.isSidebarVisible ||
-      this.state.isDeleteMovieModalOpen ||
-      this.state.isEditMovieModalOpen
-    ) {
-      return;
-    }
-
-    this._touchStart = touchStart;
-  };
-
-  onTouchEnd = (event) => {
-    const touches = event.changedTouches;
-    const currentTouch = touches[0].pageX;
-
-    if (!this._touchStart) {
-      return;
-    }
-
-    if (currentTouch > this._touchStart && currentTouch - this._touchStart > 100) {
-      this.props.onGoToStudio(this.props.previousStudio.foreignId);
-    } else if (currentTouch < this._touchStart && this._touchStart - currentTouch > 100) {
-      this.props.onGoToStudio(this.props.nextStudio.foreignId);
-    }
-
-    this._touchStart = null;
-  };
-
-  onTouchCancel = (event) => {
-    this._touchStart = null;
-  };
-
-  onTouchMove = (event) => {
-    if (!this._touchStart) {
-      return;
-    }
-  };
-
   onExpandAllPress = () => {
     const {
       allExpanded,
@@ -217,8 +151,6 @@ class StudioDetails extends Component {
       hasScenes,
       totalSceneCount,
       sceneCount,
-      previousStudio,
-      nextStudio,
       onMonitorTogglePress,
       onRefreshPress,
       onSearchPress,
@@ -330,24 +262,6 @@ class StudioDetails extends Component {
                       <div className={styles.title}>
                         {title}
                       </div>
-                    </div>
-
-                    <div className={styles.movieNavigationButtons}>
-                      <IconButton
-                        className={styles.movieNavigationButton}
-                        name={icons.ARROW_LEFT}
-                        size={30}
-                        title={translate('GoToInterp', [previousStudio.fullName])}
-                        to={`/studio/${previousStudio.foreignId}`}
-                      />
-
-                      <IconButton
-                        className={styles.movieNavigationButton}
-                        name={icons.ARROW_RIGHT}
-                        size={30}
-                        title={translate('GoToInterp', [nextStudio.fullName])}
-                        to={`/studio/${nextStudio.foreignId}`}
-                      />
                     </div>
                   </div>
                 </Measure>

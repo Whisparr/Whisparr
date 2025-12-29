@@ -189,6 +189,7 @@ const SceneIndex = withScrollPosition((props: SceneIndexProps) => {
     // Reset if not sorting by sortTitle
     if (sortKey !== 'sortTitle') {
       return {
+        characters: {},
         order: [],
       };
     }

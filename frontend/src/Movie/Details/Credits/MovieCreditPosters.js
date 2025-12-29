@@ -91,7 +91,7 @@ class MovieCreditPosters extends Component {
                   performerForeignId={credit.performer.foreignId}
                   performer={credit.performer}
                   job={credit.job}
-                  character={credit.character}
+                  character={credit.performer.name}
                 />
               </SwiperSlide>
             );

@@ -1,21 +1,29 @@
 import classNames from 'classnames';
-import PropTypes from 'prop-types';
 import React from 'react';
-import Icon from 'Components/Icon';
-import Link from 'Components/Link/Link';
+import Icon, { IconName } from 'Components/Icon';
+import Link, { LinkProps } from 'Components/Link/Link';
 import { icons } from 'Helpers/Props';
 import styles from './PageToolbarButton.css';
 
-function PageToolbarButton(props) {
-  const {
-    label,
-    iconName,
-    spinningName,
-    isDisabled,
-    isSpinning,
-    ...otherProps
-  } = props;
+export interface PageToolbarButtonProps extends LinkProps {
+  label: string;
+  iconName: IconName;
+  spinningName?: IconName;
+  isSpinning?: boolean;
+  isDisabled?: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  overflowComponent?: React.ComponentType<any>;
+}
 
+function PageToolbarButton({
+  label,
+  iconName,
+  spinningName = icons.SPINNER,
+  isDisabled = false,
+  isSpinning = false,
+  overflowComponent,
+  ...otherProps
+}: PageToolbarButtonProps) {
   return (
     <Link
       className={classNames(
@@ -38,21 +46,5 @@ function PageToolbarButton(props) {
     </Link>
   );
 }
-
-PageToolbarButton.propTypes = {
-  ...Link.propTypes,
-  label: PropTypes.string.isRequired,
-  iconName: PropTypes.object.isRequired,
-  spinningName: PropTypes.object,
-  isSpinning: PropTypes.bool,
-  isDisabled: PropTypes.bool,
-  onPress: PropTypes.func
-};
-
-PageToolbarButton.defaultProps = {
-  spinningName: icons.SPINNER,
-  isDisabled: false,
-  isSpinning: false
-};
 
 export default PageToolbarButton;

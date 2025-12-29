@@ -1,17 +1,21 @@
 import React, { useCallback } from 'react';
 import { useSelect } from 'App/SelectContext';
-import PageToolbarButton from 'Components/Page/Toolbar/PageToolbarButton';
+import PageToolbarButton, {
+  type PageToolbarButtonProps,
+} from 'Components/Page/Toolbar/PageToolbarButton';
 import { icons } from 'Helpers/Props';
 import translate from 'Utilities/String/translate';
 
-interface MovieIndexSelectAllButtonProps {
-  label: string;
+interface MovieIndexSelectAllButtonProps
+  extends Omit<PageToolbarButtonProps, 'iconName' | 'label'> {
+  label?: string;
   isSelectMode: boolean;
-  overflowComponent: React.FunctionComponent<never>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  overflowComponent?: React.ComponentType<any>;
 }
 
 function MovieIndexSelectAllButton(props: MovieIndexSelectAllButtonProps) {
-  const { isSelectMode } = props;
+  const { isSelectMode, overflowComponent } = props;
   const [selectState, selectDispatch] = useSelect();
   const { allSelected, allUnselected } = selectState;
 
@@ -33,6 +37,7 @@ function MovieIndexSelectAllButton(props: MovieIndexSelectAllButtonProps) {
     <PageToolbarButton
       label={allSelected ? translate('UnselectAll') : translate('SelectAll')}
       iconName={icon}
+      overflowComponent={overflowComponent}
       onPress={onPress}
     />
   ) : null;

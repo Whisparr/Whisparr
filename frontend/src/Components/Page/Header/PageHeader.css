@@ -21,8 +21,20 @@
 }
 
 .logo {
-  width: 32px;
+  display: block;
+  width: auto;
   height: 32px;
+}
+
+.logoFull,
+.logo {
+  vertical-align: middle;
+}
+
+.logoFull {
+  margin-left: 15px;
+  width: auto;
+  height: 40px;
 }
 
 .sidebarToggleContainer {

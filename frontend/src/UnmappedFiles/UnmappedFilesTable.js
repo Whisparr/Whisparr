@@ -11,7 +11,7 @@ import PageToolbarSection from 'Components/Page/Toolbar/PageToolbarSection';
 import TableOptionsModalWrapper from 'Components/Table/TableOptions/TableOptionsModalWrapper';
 import VirtualTable from 'Components/Table/VirtualTable';
 import VirtualTableRow from 'Components/Table/VirtualTableRow';
-import { align, icons, kinds } from 'Helpers/Props';
+import { align, icons } from 'Helpers/Props';
 import hasDifferentItemsOrOrder from 'Utilities/Object/hasDifferentItemsOrOrder';
 import translate from 'Utilities/String/translate';
 import getSelectedIds from 'Utilities/Table/getSelectedIds';
@@ -19,6 +19,7 @@ import selectAll from 'Utilities/Table/selectAll';
 import toggleSelected from 'Utilities/Table/toggleSelected';
 import UnmappedFilesTableHeader from './UnmappedFilesTableHeader';
 import UnmappedFilesTableRow from './UnmappedFilesTableRow';
+import styles from './UnmappedFilesTable.css';
 
 class UnmappedFilesTable extends Component {
   constructor(props, context) {
@@ -41,17 +42,22 @@ class UnmappedFilesTable extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { items, isDeleting, deleteError } = this.props;
+    const { items, isDeleting, deleteError, isScanningFolders } = this.props;
 
     if (hasDifferentItemsOrOrder(prevProps.items, items)) {
       this.setSelectedState();
     }
 
-    const hasFinishedDeleting =
-      prevProps.isDeleting && !isDeleting && !deleteError;
+    const hasFinishedDeleting = prevProps.isDeleting && !isDeleting && !deleteError;
 
     if (hasFinishedDeleting) {
       this.onSelectAllChange({ value: false });
+    }
+
+    // If a scan was running and just finished, refresh the unmapped files list
+    const hasFinishedScanning = prevProps.isScanningFolders && !isScanningFolders;
+    if (hasFinishedScanning && typeof this.props.fetchUnmappedFiles === 'function') {
+      this.props.fetchUnmappedFiles();
     }
   }
 
@@ -210,16 +216,19 @@ class UnmappedFilesTable extends Component {
         <PageToolbar>
           <PageToolbarSection>
             <PageToolbarButton
-              label={translate('AddScenes')}
+              label={translate('ImportScenes')}
+              title={translate('ImportScenesTooltip')}
               iconName={icons.ADD}
               isSpinning={isScanningFolders}
               onPress={onAddScenesPress}
             />
             <PageToolbarButton
               label={translate('CleanUnmappedFiles')}
+              title={translate('CleanUnmappedFilesTooltip')}
               iconName={icons.CLEAN}
               isSpinning={isCleaningUnmappedFiles}
               onPress={onCleanUnmappedFilesPress}
+              isDisabled={!isPopulated || items.length === 0}
             />
             <PageToolbarButton
               label={translate('DeleteSelected')}
@@ -247,10 +256,32 @@ class UnmappedFilesTable extends Component {
         <PageContentBody ref={this.scrollerRef}>
           {isFetching && !isPopulated && <LoadingIndicator />}
           {isPopulated && !error && !items.length && (
-            <Alert kind={kinds.INFO}>
-              Success! My work is done, all files on disk are matched to known
-              scenes.
-            </Alert>
+            <div>
+              <Alert kind="success">
+                <div id="AllScannedItemsMapped">{translate('AllScannedItemsMapped')}</div>
+              </Alert>
+              <Alert kind="info">
+                <div className={styles.sceneImportHaveMore}>{translate('SceneImportHaveMore')}</div>
+                <div className={styles.sceneImportStep}>{translate('SceneImportStep1')}</div>
+                <div className={styles.sceneImportStep}>{translate('SceneImportStep2')}</div>
+                <div className={styles.sceneImportStep}>{translate('SceneImportStep3')}</div>
+                <div className={styles.sceneImportStep}>{translate('SceneImportStep4')}</div>
+                <div className={styles.sceneImportNote} >{translate('SceneImportNote')}</div>
+              </Alert>
+              <div>
+                <Alert kind="info">
+                  <div className={styles.folderStructureHeading} >
+                    {translate('YourFolderStructureShouldLookLikeThis')}:
+                  </div>
+                  <code className={styles.folderStructure}>
+                    {`${translate('RootFolder')}\n`}
+                    {`├─ ${translate('SceneImportImportDropYourScenesFilesHere')}\n`}
+                    {`├─ ${translate('SceneImportMovieFilesWillBeHere')}\n`}
+                    {`└─ ${translate('SceneImportSceneFilesWillBeHere')}`}
+                  </code>
+                </Alert>
+              </div>
+            </div>
           )}
 
           {isPopulated &&
@@ -294,6 +325,7 @@ UnmappedFilesTable.propTypes = {
   items: PropTypes.arrayOf(PropTypes.object).isRequired,
   columns: PropTypes.arrayOf(PropTypes.object).isRequired,
   onTableOptionChange: PropTypes.func.isRequired,
+  fetchUnmappedFiles: PropTypes.func.isRequired,
   deleteUnmappedFile: PropTypes.func.isRequired,
   deleteUnmappedFiles: PropTypes.func.isRequired,
   isScanningFolders: PropTypes.bool.isRequired,

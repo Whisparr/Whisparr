@@ -1,0 +1,24 @@
+.sceneImportNote {
+  margin-top: 6px;
+  font-weight: 600;
+}
+
+.folderStructureHeading {
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.folderStructure{
+ display: block;
+ color: inherit;
+ white-space: pre;
+}
+
+.sceneImportHaveMore {
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.sceneImportStep {
+  margin-left: 12px;
+}

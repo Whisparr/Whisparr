@@ -30,7 +30,7 @@ const links = [
         to: '/add/new/scene'
       },
       {
-        title: () => translate('UnmappedFiles'),
+        title: () => translate('Import Scenes'),
         to: '/unmapped'
       }
     ]

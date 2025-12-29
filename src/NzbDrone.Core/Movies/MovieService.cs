@@ -812,6 +812,15 @@ namespace NzbDrone.Core.Movies
                     matches.Add(movie, MovieParseMatchType.CharactersNotTitle);
                     continue;
                 }
+
+                // Fallback: if the parsed title contains the movie's clean title, consider it a match.
+                // This helps when performer aliases/order differ but the release is for the same movie.
+                if (cleanTitle.IsNotNullOrWhiteSpace() && parsedMovieTitle.Contains(cleanTitle, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    _logger.Debug("Match {0} against {1} [FallbackContainsTitle]", parsedMovieTitle, cleanTitle);
+                    matches.Add(movie, MovieParseMatchType.Title);
+                    continue;
+                }
             }
 
             // Find the best match

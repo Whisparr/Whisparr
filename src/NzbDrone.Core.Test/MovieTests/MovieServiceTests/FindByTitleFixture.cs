@@ -30,6 +30,7 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
             var ariAlectra = new List<Credit> { new Credit { Character = "", Performer = new CreditPerformer { Name = "Ari Alectra", Gender = Gender.Female } } };
             var amhyraShy = new List<Credit> { new Credit { Character = "", Performer = new CreditPerformer { Name = "Amhyra Shy", Gender = Gender.Female } } };
             var cocoLovelock = new List<Credit> { new Credit { Character = "Coco Lovecock", Performer = new CreditPerformer { Name = "Coco Lovelock", Gender = Gender.Female } }  };
+            var vixenCredits = new List<Credit> { new Credit { Character = "", Performer = new CreditPerformer { Name = "Emma White", Gender = Gender.Female } } };
 
             var studio = new Core.MetadataSource.SkyHook.Resource.StudioResource { Title = "Studio" };
             var evilStudio = new Core.MetadataSource.SkyHook.Resource.StudioResource { Title = "EvilAngel" };
@@ -37,6 +38,7 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
             var wakeUpnFuck = new Core.MetadataSource.SkyHook.Resource.StudioResource { Title = "Wakeupnfuck" };
             var pornWorld = new Core.MetadataSource.SkyHook.Resource.StudioResource { Title = "PornWorld" };
             var heavenPOV = new Core.MetadataSource.SkyHook.Resource.StudioResource { Title = "HeavenPOV" };
+            var vixenStudio = new Core.MetadataSource.SkyHook.Resource.StudioResource { Title = "Vixen" };
 
             var scenes = Builder<Movie>.CreateListOfSize(2000)
                                         .TheFirst(1)
@@ -183,6 +185,11 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
                                         .With(x => x.Title = "Kaitlyn Katsaros gets beaten and anal fucked")
                                         .With(x => x.MovieMetadata.Value.Studio = heavenPOV)
                                         .With(x => x.MovieMetadata.Value.ReleaseDate = "2022")
+                                        .TheNext(1)
+                                        .With(x => x.Title = "Perfect Girlfriend Has Secret Life As Stripper")
+                                        .With(x => x.MovieMetadata.Value.ReleaseDate = "2025-12-28")
+                                        .With(x => x.MovieMetadata.Value.Credits = vixenCredits)
+                                        .With(x => x.MovieMetadata.Value.Studio = vixenStudio)
                                         .TheRest()
                                         .With(x => x.Title = "Title For the Rest")
                                         .With(x => x.MovieMetadata.Value.ReleaseDate = "2024-06-12")
@@ -200,7 +207,8 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
                 new Studio { ForeignId = "JesseLoadsMonsterFacials" },
                 new Studio { ForeignId = "Wakeupnfuck" },
                 new Studio { ForeignId = "PornWorld" },
-                new Studio { ForeignId = "HeavenPOV" }
+                new Studio { ForeignId = "HeavenPOV" },
+                new Studio { ForeignId = "Vixen" }
             };
 
             Mocker.GetMock<IStudioService>()
@@ -234,6 +242,10 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
             Mocker.GetMock<IStudioService>()
                 .Setup(s => s.FindAllByTitle(It.Is<string>(s => s.Equals("HeavenPOV"))))
                 .Returns(studios.Where(s => s.ForeignId == "HeavenPOV").ToList());
+
+            Mocker.GetMock<IStudioService>()
+                .Setup(s => s.FindAllByTitle(It.Is<string>(s => s.Equals("Vixen"))))
+                .Returns(studios.Where(s => s.ForeignId == "Vixen").ToList());
 
             Mocker.GetMock<IMovieRepository>()
                 .Setup(s => s.FindByTitles(It.IsAny<List<string>>()))
@@ -315,6 +327,10 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
                 .Setup(s => s.FindByStudioAndDate(It.Is<string>(s => s.Equals("HeavenPOV")), It.Is<string>(d => d.Equals("2022"))))
                 .Returns(scenes.Where(s => s.MovieMetadata.Value.ReleaseDate.Equals("2022")).Append(scenes.First()).ToList());
 
+            Mocker.GetMock<IMovieRepository>()
+                .Setup(s => s.FindByStudioAndDate(It.Is<string>(s => s.Equals("Vixen")), It.Is<string>(d => d.Equals("2025-12-28"))))
+                .Returns(scenes.Where(s => s.MovieMetadata.Value.ReleaseDate.Equals("2025-12-28")).Append(scenes.First()).ToList());
+
             _candidates = Builder<Movie>.CreateListOfSize(3)
                                         .TheFirst(1)
                                         .With(x => x.MovieMetadata.Value.CleanTitle = "batman")
@@ -393,6 +409,19 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
                     movie.Should().BeNull();
                 }
             }
+        }
+
+        [Test]
+        public void should_match_with_fallback_when_parsed_contains_clean_title()
+        {
+            var title = "Vixen - 2025-12-28 - Perfect Girlfriend Has Secret Life As Stripper - Bella Spark";
+            var parsedMovieInfo = Parser.Parser.ParseMovieTitle(title);
+
+            parsedMovieInfo.IsScene.Should().BeTrue();
+
+            var movie = Subject.FindScene(parsedMovieInfo, false, null);
+
+            movie.Should().NotBeNull();
         }
     }
 }

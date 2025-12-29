@@ -244,6 +244,35 @@ function HistoryDetails(props: HistoryDetailsProps) {
     );
   }
 
+  if (eventType === 'diskScanImported') {
+    const { importedPath, size } = data as DownloadFolderImportedHistory;
+
+    return (
+      <DescriptionList>
+        <DescriptionListItem
+          descriptionClassName={styles.description}
+          title={translate('Name')}
+          data={sourceTitle}
+        />
+
+        {importedPath ? (
+          <DescriptionListItem
+            descriptionClassName={styles.description}
+            title={translate('ImportedTo')}
+            data={importedPath}
+          />
+        ) : null}
+
+        {size ? (
+          <DescriptionListItem
+            title={translate('FileSize')}
+            data={formatBytes(size)}
+          />
+        ) : null}
+      </DescriptionList>
+    );
+  }
+
   if (eventType === 'movieFileDeleted') {
     const { reason, customFormatScore, size } = data as MovieFileDeletedHistory;
 

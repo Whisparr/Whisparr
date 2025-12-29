@@ -24,6 +24,8 @@ function getHeaderTitle(eventType: HistoryEventType) {
       return translate('MovieFileDeleted');
     case 'movieFileRenamed':
       return translate('MovieFileRenamed');
+    case 'diskScanImported':
+      return translate('DiskScanImported');
     case 'downloadIgnored':
       return translate('DownloadIgnored');
     default:

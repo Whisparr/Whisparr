@@ -9,6 +9,7 @@ export type HistoryEventType =
   | 'movieFileDeleted'
   | 'movieFolderImported'
   | 'movieFileRenamed'
+  | 'diskScanImported'
   | 'downloadIgnored';
 
 export interface GrabbedHistoryData {
@@ -64,10 +65,18 @@ export interface DownloadIgnoredHistory {
   message: string;
 }
 
+export interface DiskScanImportedHistory {
+  customFormatScore?: string;
+  droppedPath?: string;
+  importedPath?: string;
+  size?: string;
+}
+
 export type HistoryData =
   | GrabbedHistoryData
   | DownloadFailedHistory
   | DownloadFolderImportedHistory
+  | DiskScanImportedHistory
   | MovieFileDeletedHistory
   | MovieFileRenamedHistory
   | DownloadIgnoredHistory;

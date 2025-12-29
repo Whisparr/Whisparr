@@ -46,6 +46,7 @@ namespace NzbDrone.Core.History
         MovieFileDeleted = 6,
         MovieFolderImported = 7, // not used yet
         MovieFileRenamed = 8,
-        DownloadIgnored = 9
+        DownloadIgnored = 9,
+        DiskScanImported = 10
     }
 }

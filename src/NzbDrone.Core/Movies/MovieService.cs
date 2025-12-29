@@ -817,7 +817,7 @@ namespace NzbDrone.Core.Movies
                 // This helps when performer aliases/order differ but the release is for the same movie.
                 if (cleanTitle.IsNotNullOrWhiteSpace() && parsedMovieTitle.Contains(cleanTitle, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    _logger.Debug("Match {0} against {1} [FallbackContainsTitle]", parsedMovieTitle, cleanTitle);
+                    _logger.Debug("Matched [{0}] against [{1}] [ParsedTitleContainsCleanTitle]", parsedMovieTitle, cleanTitle);
                     matches.Add(movie, MovieParseMatchType.ParsedTitleContainsCleanTitle);
                     continue;
                 }

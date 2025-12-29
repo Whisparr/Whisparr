@@ -818,7 +818,7 @@ namespace NzbDrone.Core.Movies
                 if (cleanTitle.IsNotNullOrWhiteSpace() && parsedMovieTitle.Contains(cleanTitle, StringComparison.InvariantCultureIgnoreCase))
                 {
                     _logger.Debug("Match {0} against {1} [FallbackContainsTitle]", parsedMovieTitle, cleanTitle);
-                    matches.Add(movie, MovieParseMatchType.Title);
+                    matches.Add(movie, MovieParseMatchType.ParsedTitleContainsCleanTitle);
                     continue;
                 }
             }

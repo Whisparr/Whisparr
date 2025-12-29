@@ -13,5 +13,6 @@ namespace NzbDrone.Core.Movies
         CharacterTitle = 9,
         PerformersNotTitle = 10,
         CharactersNotTitle = 11,
+        ParsedTitleContainsCleanTitle = 12
     }
 }

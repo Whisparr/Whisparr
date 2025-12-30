@@ -4,12 +4,17 @@ interface CssExports {
   'alternateTitle': string;
   'itemType': string;
   'itemTypeContainer': string;
+  'metaRow': string;
   'poster': string;
+  'posterContainer': string;
   'releaseDate': string;
   'result': string;
+  'runtime': string;
+  'scene': string;
+  'sceneContainer': string;
   'screenshot': string;
+  'studioIcon': string;
   'studioTitle': string;
-  'tagContainer': string;
   'title': string;
   'titleContainer': string;
   'titles': string;

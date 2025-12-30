@@ -5,7 +5,9 @@ function createAllMoviesSelector() {
   return createSelector(
     (state: AppState) => state.movies,
     (movies) => {
-      return movies.items.filter((movie) => movie.itemType === 'movie');
+      return movies.items.filter(
+        (movie) => movie.itemType === 'movie' || movie.itemType === 'scene'
+      );
     }
   );
 }

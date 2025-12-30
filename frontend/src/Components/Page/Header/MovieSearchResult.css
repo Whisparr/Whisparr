@@ -2,29 +2,61 @@
   display: flex;
   align-items: center;
   flex-direction: row;
-  padding: 3px;
+  padding: 3px 4px;
   border-top: 1px solid var(--borderColor);
   cursor: pointer;
 }
 
-.poster {
+.posterContainer {
   display: flex;
-  align-content: center;
   align-items: center;
-  width: 80px;
+  justify-content: center;
+  flex: 0 0 140px;
+  overflow: hidden;
+  margin-right: 12px;
+  width: 140px;
+  height: 120px;
+}
 
+.poster {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.runtime {
+  color: var(--mutedColor);
+  font-size: 12px;
 }
 
 .screenshot {
-  margin-top: 5px;
   width: 80px;
+}
+
+.sceneContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 140px;
+  overflow: hidden;
+  margin-right: 12px;
+  width: 140px;
+}
+
+.scene {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .titles {
   display: flex;
+  flex: 1 1 auto;
   flex-direction: column;
   overflow: hidden;
-  white-space: nowrap;
+  min-width: 0;
 }
 
 .titleContainer {
@@ -36,37 +68,46 @@
 
 .title {
   overflow: hidden;
-  margin-left: 5px;
-  max-width: 500px;
+  margin-bottom: 6px;
+  margin-left: 0;
+  max-width: 100%;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-weight: 600;
+}
+
+.studioIcon{
+  margin-right: 6px;
 }
 
 .studioTitle {
-  display: flex;
-  align-content: center;
-  float: left;
-  margin-left: 5px;
-  font-size: 12px;
+  margin-left: 8px;
+  color: var(--mutedColor);
+  font-size: 14px;
 }
 
 .releaseDate {
-  display: flex;
-  align-content: center;
-  float: left;
-  overflow: hidden;
-  margin-left: 5px;
+  margin-left: 8px;
+  color: var(--mutedColor);
   font-size: 12px;
 }
 
 .itemTypeContainer {
   display: flex;
+  align-items: center;
 }
 
 .itemType {
   display: inline-flex;
-  float: left;
-  margin-left: 5px;
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+
+  margin-bottom: 4px;
 }
 
 .alternateTitle {
@@ -74,10 +115,6 @@
 
   color: var(--disabledColor);
   font-size: $smallFontSize;
-}
-
-.tagContainer {
-  composes: title;
 }
 
 @media only screen and (max-width: $breakpointSmall) {

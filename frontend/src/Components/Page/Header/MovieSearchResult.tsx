@@ -1,8 +1,14 @@
 import React from 'react';
-import { Tag } from 'App/State/TagsAppState';
+import { useSelector } from 'react-redux';
+import Icon from 'Components/Icon';
 import Label from 'Components/Label';
-import { kinds } from 'Helpers/Props';
+import { icons, kinds, sizes } from 'Helpers/Props';
 import MoviePoster from 'Movie/MoviePoster';
+import ScenePoster from 'Scene/ScenePoster';
+import createUISettingsSelector from 'Store/Selectors/createUISettingsSelector';
+import formatRuntime from 'Utilities/Date/formatRuntime';
+import getRelativeDate from 'Utilities/Date/getRelativeDate';
+import firstCharToUpper from 'Utilities/String/firstCharToUpper';
 import { SuggestedMovie } from './MovieSearchInput';
 import styles from './MovieSearchResult.css';
 
@@ -16,40 +22,74 @@ interface MovieSearchResultProps extends SuggestedMovie {
 }
 
 function MovieSearchResult(props: MovieSearchResultProps) {
-  const { match, title, year, images, tmdbId, tags } = props;
+  const { title, year, images, itemType, studioTitle, runtime, releaseDate } =
+    props;
 
-  let tag: Tag | null = null;
+  const { showRelativeDates, shortDateFormat, timeFormat } = useSelector(
+    createUISettingsSelector()
+  );
 
-  if (match.key === 'tags.label') {
-    tag = tags[match.refIndex];
+  let releaseText = '';
+
+  if (releaseDate) {
+    releaseText = getRelativeDate({
+      date: releaseDate,
+      shortDateFormat,
+      showRelativeDates,
+      timeFormat,
+      timeForToday: false,
+    });
+  } else if (year > 0) {
+    releaseText = `${year}`;
   }
 
   return (
     <div className={styles.result}>
-      <MoviePoster
-        className={styles.poster}
-        images={images}
-        size={250}
-        lazy={false}
-        overflow={true}
-      />
-
-      <div className={styles.titles}>
-        <div className={styles.title}>
-          {title} {year > 0 ? `(${year})` : ''}
+      {itemType === 'scene' ? (
+        <div className={styles.sceneContainer}>
+          <ScenePoster
+            className={styles.scene}
+            images={images}
+            size={180}
+            lazy={false}
+            overflow={true}
+            safeForWorkMode={false}
+          />
         </div>
+      ) : (
+        <div className={styles.posterContainer}>
+          <MoviePoster
+            className={styles.poster}
+            images={images}
+            size={250}
+            lazy={false}
+            overflow={true}
+          />
+        </div>
+      )}
+      <div className={styles.titles}>
+        <div className={styles.title}>{title}</div>
 
-        {match.key === 'tmdbId' && tmdbId ? (
-          <div className={styles.alternateTitle}>TmdbId: {tmdbId}</div>
-        ) : null}
+        <div>{releaseText ? `${releaseText}` : ''}</div>
 
-        {tag ? (
-          <div className={styles.tagContainer}>
-            <Label key={tag.id} kind={kinds.INFO}>
-              {tag.label}
+        <div className={styles.metaRow}>
+          <div className={styles.itemType}>
+            <Label size={sizes.LARGE} kind={kinds.INVERSE} outline={true}>
+              {firstCharToUpper(itemType)}
             </Label>
           </div>
-        ) : null}
+
+          {studioTitle ? (
+            <Label size={sizes.LARGE} kind={kinds.INVERSE} outline={true}>
+              <Icon name={icons.STUDIO} className={styles.studioIcon} />
+              {studioTitle}
+            </Label>
+          ) : null}
+
+          {runtime ? (
+            <div className={styles.runtime}>{formatRuntime(runtime)}</div>
+          ) : null}
+        </div>
       </div>
     </div>
   );

@@ -27,7 +27,8 @@ import translate from 'Utilities/String/translate';
 import MovieSearchResult from './MovieSearchResult';
 import styles from './MovieSearchInput.css';
 
-const ADD_NEW_TYPE = 'addNew';
+const ADD_NEW_MOVIE = 'addNewMovie';
+const ADD_NEW_SCENE = 'addNewScene';
 
 interface Match {
   key: string;
@@ -35,14 +36,25 @@ interface Match {
 }
 
 interface AddNewMovieSuggestion {
-  type: 'addNew';
+  type: 'addNewMovie' | 'addNewScene';
   title: string;
 }
 
 export interface SuggestedMovie
   extends Pick<
     Movie,
-    'title' | 'year' | 'titleSlug' | 'sortTitle' | 'images' | 'tmdbId'
+    | 'title'
+    | 'year'
+    | 'titleSlug'
+    | 'sortTitle'
+    | 'images'
+    | 'tmdbId'
+    | 'itemType'
+    | 'studioTitle'
+    | 'genres'
+    | 'credits'
+    | 'runtime'
+    | 'releaseDate'
   > {
   firstCharacter: string;
   tags: Tag[];
@@ -75,6 +87,12 @@ function createUnoptimizedSelector() {
           sortTitle,
           images,
           tmdbId,
+          itemType,
+          studioTitle,
+          genres = [],
+          credits = [],
+          runtime,
+          releaseDate,
           tags = [],
         } = movie;
 
@@ -85,6 +103,12 @@ function createUnoptimizedSelector() {
           sortTitle,
           images,
           tmdbId,
+          itemType,
+          studioTitle,
+          genres,
+          credits,
+          runtime,
+          releaseDate,
           firstCharacter: title.charAt(0).toLowerCase(),
           tags: tags.reduce<Tag[]>((acc, id) => {
             const matchingTag = allTags.find((tag) => tag.id === id);
@@ -128,17 +152,21 @@ function MovieSearchInput() {
 
     if (suggestions.length || isLoading.current) {
       result.push({
-        title: translate('ExistingMovies'),
+        title: translate('Existing'),
         loading: isLoading.current,
         suggestions,
       });
     }
 
     result.push({
-      title: translate('AddNewMovie'),
+      title: translate('Add'),
       suggestions: [
         {
-          type: ADD_NEW_TYPE,
+          type: ADD_NEW_MOVIE,
+          title: value,
+        },
+        {
+          type: ADD_NEW_SCENE,
           title: value,
         },
       ],
@@ -235,14 +263,27 @@ function MovieSearchInput() {
       { query }: { query: string }
     ) => {
       if ('type' in item) {
-        return (
-          <div className={styles.addNewMovieSuggestion}>
-            {translate('SearchForQuery', { query })}
-          </div>
-        );
+        if (item.type === ADD_NEW_MOVIE) {
+          return (
+            <div className={styles.addNewMovieSuggestion}>
+              {`Add new movie: "${query}"`}
+            </div>
+          );
+        }
+
+        if (item.type === ADD_NEW_SCENE) {
+          return (
+            <div className={styles.addNewMovieSuggestion}>
+              {`Add new scene: "${query}"`}
+            </div>
+          );
+        }
       }
 
-      return <MovieSearchResult {...item.item} match={item.matches[0]} />;
+      const movieItem = item as MovieSuggestion;
+      return (
+        <MovieSearchResult {...movieItem.item} match={movieItem.matches[0]} />
+      );
     },
     []
   );
@@ -292,7 +333,7 @@ function MovieSearchInput() {
       if (!suggestions.length || highlightedSectionIndex) {
         dispatch(
           push(
-            `${window.Whisparr.urlBase}/add/new?term=${encodeURIComponent(
+            `${window.Whisparr.urlBase}/add/new/movie?term=${encodeURIComponent(
               value
             )}`
           )
@@ -348,13 +389,23 @@ function MovieSearchInput() {
       { suggestion }: { suggestion: MovieSuggestion | AddNewMovieSuggestion }
     ) => {
       if ('type' in suggestion) {
-        dispatch(
-          push(
-            `${window.Whisparr.urlBase}/add/new?term=${encodeURIComponent(
-              value
-            )}`
-          )
-        );
+        if (suggestion.type === ADD_NEW_MOVIE) {
+          dispatch(
+            push(
+              `${
+                window.Whisparr.urlBase
+              }/add/new/movie?term=${encodeURIComponent(value)}`
+            )
+          );
+        } else if (suggestion.type === ADD_NEW_SCENE) {
+          dispatch(
+            push(
+              `${
+                window.Whisparr.urlBase
+              }/add/new/scene?term=${encodeURIComponent(value)}`
+            )
+          );
+        }
       } else {
         setValue('');
         dispatch(

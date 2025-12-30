@@ -423,5 +423,18 @@ namespace NzbDrone.Core.Test.MovieTests.MovieServiceTests
 
             movie.Should().NotBeNull();
         }
+
+        [Test]
+        public void should_not_match_with_fallback()
+        {
+            var title = "Vixen - 2025-12-28 - Perfect Girlfriend Have Secret Lives As Strippers - BellSa Spark & J";
+            var parsedMovieInfo = Parser.Parser.ParseMovieTitle(title);
+
+            parsedMovieInfo.IsScene.Should().BeTrue();
+
+            var movie = Subject.FindScene(parsedMovieInfo, false, null);
+
+            movie.Should().BeNull();
+        }
     }
 }

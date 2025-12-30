@@ -2,6 +2,15 @@ name: Feature Request
 description: 'Suggest an idea for Whisparr'
 labels: ['Type: Feature Request', 'Status: Needs Triage']
 body:
+- type: dropdown
+  attributes:
+    label: What branch are you running?
+    options:
+      - Develop (V2 "pink")
+      - Eros (V3 "purple")
+      - Other (This will be closed)
+  validations:
+    required: true
 - type: checkboxes
   attributes:
     label: Is there an existing issue for this?

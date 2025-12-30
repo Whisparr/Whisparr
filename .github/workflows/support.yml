@@ -1,4 +1,6 @@
 name: 'Support requests'
+permissions:
+  issues: write
 
 on:
   issues:

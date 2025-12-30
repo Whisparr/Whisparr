@@ -1,4 +1,6 @@
 name: 'Lock threads'
+permissions:
+  issues: write
 
 on:
   workflow_dispatch:

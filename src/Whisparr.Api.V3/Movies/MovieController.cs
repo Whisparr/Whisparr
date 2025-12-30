@@ -411,9 +411,6 @@ namespace Whisparr.Api.V3.Movies
 
             var updatedMovie = _moviesService.UpdateMovie(model);
 
-            _movieResourcesCache.Remove(updatedMovie.Id.ToString());
-            BroadcastResourceChange(ModelAction.Updated, MapToResource(updatedMovie));
-
             return Accepted(moviesResource.Id);
         }
 

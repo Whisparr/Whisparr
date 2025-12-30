@@ -17,7 +17,7 @@ jobs:
       security-events: write
     steps:
       - name: Checkout repository (base)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           ref: ${{ matrix.branch }}

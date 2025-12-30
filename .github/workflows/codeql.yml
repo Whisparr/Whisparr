@@ -23,7 +23,7 @@ jobs:
           ref: ${{ matrix.branch }}
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
+        uses: github/codeql-action/init@v4
         with:
           languages: "csharp, javascript-typescript, actions"
 
@@ -40,4 +40,4 @@ jobs:
           fi
 
       - name: Perform CodeQL analysis
-        uses: github/codeql-action/analyze@v2
+        uses: github/codeql-action/analyze@v4

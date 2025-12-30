@@ -101,7 +101,7 @@ namespace NzbDrone.Windows.Disk
             }
             catch (Exception e)
             {
-                Logger.Warn(e, "Couldn't set permission for {0}. account:{1} rights:{2} accessControlType:{3}", filename, accountSid, rights, controlType);
+                Logger.Warn(e, "Couldn't set permission for {0}. rights:{1}, accessControlType:{2}", filename, rights, controlType);
                 throw;
             }
         }

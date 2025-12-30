@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DryIoc.ImTools;
 using NLog;
 using NzbDrone.Common.Disk;
 using NzbDrone.Common.Extensions;
@@ -343,7 +344,16 @@ namespace NzbDrone.Core.Movies
 
                 if (message.LastStartTime.HasValue && message.LastStartTime.Value.AddDays(14) > DateTime.UtcNow)
                 {
-                    updatedMovies = _movieInfo.GetChangedMovies(message.LastStartTime.Value).Select(x => x.ToString()).ToHashSet();
+                    if (_configService.WhisparrMovieMetadataSource == MovieMetadataType.TMDB)
+                    {
+                        updatedMovies = _movieInfo.GetChangedMovies(message.LastStartTime.Value).Select(x => x.ToString()).ToHashSet();
+                    }
+                    else if (_configService.WhisparrMovieMetadataSource == MovieMetadataType.TPDB)
+                    {
+                        updatedMovies = _movieInfo.GetChangedTpdbMovies(message.LastStartTime.Value).Select(x => x.ToString()).ToHashSet();
+                        updatedMovies = updatedMovies.Map(up => up.Insert(0, "tpdbid:")).ToHashSet();
+                    }
+
                     updatedScenes = _movieInfo.GetChangedScenes(message.LastStartTime.Value);
                 }
 

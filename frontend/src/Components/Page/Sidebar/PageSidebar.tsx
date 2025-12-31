@@ -55,7 +55,7 @@ const LINKS: SidebarItem[] = [
         to: '/add/new/scene',
       },
       {
-        title: () => translate('Import Scenes'),
+        title: () => translate('ImportScenes'),
         to: '/unmapped',
       },
     ],

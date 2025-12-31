@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
-using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
 using NzbDrone.Common.Extensions;
@@ -9,8 +8,10 @@ using NzbDrone.Core.Datastore;
 using NzbDrone.Core.DecisionEngine;
 using NzbDrone.Core.Download;
 using NzbDrone.Core.Indexers;
+using NzbDrone.Core.Parser;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.Profiles.Qualities;
+using NzbDrone.Core.Qualities;
 using Whisparr.Http;
 
 namespace Whisparr.Api.V3.Indexers
@@ -49,6 +50,7 @@ namespace Whisparr.Api.V3.Indexers
 
         [HttpPost]
         [Consumes("application/json")]
+        [Produces("application/json")]
         public ActionResult<List<ReleaseResource>> Create([FromBody] ReleaseResource release)
         {
             _logger.Info("Release pushed: {0} - {1}", release.Title, release.DownloadUrl ?? release.MagnetUrl);
@@ -71,14 +73,28 @@ namespace Whisparr.Api.V3.Indexers
 
                 decision = decisions.FirstOrDefault();
 
+                // If parsing failed (no decision or missing parsed info), create a rejection decision
+                if (decision == null || decision.RemoteMovie?.ParsedMovieInfo == null)
+                {
+                    var remoteMovie = new RemoteMovie
+                    {
+                        Release = info,
+                        ParsedMovieInfo = new ParsedMovieInfo
+                        {
+                            Quality = new QualityModel(),
+                            Languages = LanguageParser.ParseLanguages(info.Title)
+                        },
+                        Languages = LanguageParser.ParseLanguages(info.Title)
+                    };
+
+                    decision = new DownloadDecision(remoteMovie, new DownloadRejection(DownloadRejectionReason.UnableToParse, "Unable to parse movie from release information"));
+                }
+
                 _downloadDecisionProcessor.ProcessDecision(decision, downloadClientId).GetAwaiter().GetResult();
             }
 
-            if (decision?.RemoteMovie.ParsedMovieInfo == null)
-            {
-                throw new ValidationException(new List<ValidationFailure> { new ("Title", "Unable to parse", release.Title) });
-            }
-
+            // Return the decision(s) (will include rejection info, if any)
+            _logger.Info("Release push processing completed: {0} - {1}", release.Title, decision.Approved ? "Approved" : "Rejected");
             return MapDecisions(new[] { decision });
         }
 

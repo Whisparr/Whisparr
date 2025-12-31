@@ -181,7 +181,8 @@ class PerformerDetailsStudio extends Component {
     } = getStudioStatistics(items);
 
     const sizeOnDisk = _.sumBy(items, 'sizeOnDisk');
-    const studioLink = `/studio/${foreignId}`;
+    const isStudio = foreignId != null;
+    const studioLink = isStudio ? `/studio/${foreignId}` : '';
 
     return (
       <div
@@ -349,7 +350,7 @@ class PerformerDetailsStudio extends Component {
 PerformerDetailsStudio.propTypes = {
   performerId: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
-  foreignId: PropTypes.string.isRequired,
+  foreignId: PropTypes.string,
   monitored: PropTypes.bool.isRequired,
   items: PropTypes.arrayOf(PropTypes.object).isRequired,
   columns: PropTypes.arrayOf(PropTypes.object).isRequired,

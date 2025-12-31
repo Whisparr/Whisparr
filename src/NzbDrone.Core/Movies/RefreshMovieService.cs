@@ -183,7 +183,7 @@ namespace NzbDrone.Core.Movies
                         p.Tags = movie.Tags;
                     });
 
-            _performerService.AddPerformers(performerInfo, true);
+            _performerService.AddPerformers(performerInfo.Where(p => !string.IsNullOrWhiteSpace(p.ForeignId)).ToList(), true);
 
             _movieMetadataService.Upsert(movieMetadata);
             _creditService.UpdateCredits(movieInfo.Credits, movieMetadata);

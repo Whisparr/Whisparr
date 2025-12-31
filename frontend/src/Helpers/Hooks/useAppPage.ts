@@ -88,10 +88,7 @@ const useAppPage = () => {
 
   const isPopulated = useSelector(
     (state: AppState) =>
-      state.movies.isPopulated &&
       state.customFilters.isPopulated &&
-      state.performers.isPopulated &&
-      state.studios.isPopulated &&
       state.tags.isPopulated &&
       state.settings.ui.isPopulated &&
       state.settings.qualityProfiles.isPopulated &&

@@ -1280,6 +1280,8 @@
   "None": "None",
   "NoPerformersExist": "No Performers Exist",
   "NoResultsFound": "No results found",
+  "NoStashDBStudioLink": "Studio not linked in StashDB",
+  "NoStashDBStudioLinkHelpText": "Studio with no link to the movie metadata provider in StashDB",
   "NoScenesExist": "No scenes found, to get started you'll want to add a new scene or import some existing ones.",
   "NoStudiosExist": "No studios found, to get started you'll want to add a new studio.",
   "NoTagsHaveBeenAddedYet": "No tags have been added yet",

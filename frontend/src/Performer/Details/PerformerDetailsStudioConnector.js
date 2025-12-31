@@ -11,6 +11,7 @@ import { setPerformerScenesSort, setPerformerScenesTableOption } from 'Store/Act
 import { toggleStudioMonitored } from 'Store/Actions/studioActions';
 import createDimensionsSelector from 'Store/Selectors/createDimensionsSelector';
 import createPerformerSelector from 'Store/Selectors/createPerformerSelector';
+import translate from 'Utilities/String/translate';
 import PerformerDetailsStudio from './PerformerDetailsStudio';
 
 function getSortClause(sortKey, sortDirection, sortPredicates) {
@@ -84,6 +85,12 @@ function createMapStateToProps() {
       }
       // Sort once filtered
       items = sort(items, performerScenes);
+
+      if (!studio || !('title' in studio)) {
+        studio.id = 0;
+        studio.title = translate('NoStashDBStudioLink');
+        studio.monitored = false;
+      }
 
       return {
         ...studio,

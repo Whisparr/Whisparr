@@ -424,6 +424,7 @@ class PerformerDetails extends Component {
                             key={studio.foreignId}
                             performerId={id}
                             studioForeignId={studio.foreignId}
+                            title={studio.title}
                             isScenes={false}
                             isExpanded={expandedState[studio.foreignId]}
                             onExpandPress={this.onExpandPress}

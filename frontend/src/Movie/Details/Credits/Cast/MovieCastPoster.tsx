@@ -40,22 +40,24 @@ function MovieCastPoster({
   } as React.CSSProperties;
 
   const contentStyle = { width: `${posterWidth}px` } as React.CSSProperties;
-
-  if (!performer?.foreignId) return null;
-
-  const link = `/performer/${performer.foreignId}`;
+  const name = performer.fullName ?? performer.name;
+  const isPerformer = !!performer?.foreignId;
+  const isPerfotmerLoaded = !!performer?.fullName;
+  const link = isPerformer ? `/performer/${performer.foreignId}` : '';
 
   return (
     <div className={styles.content} style={contentStyle}>
       <div className={styles.posterContainer}>
-        <div className={styles.controls}>
-          <MonitorToggleButton
-            className={styles.action}
-            monitored={performer.monitored}
-            size={20}
-            onPress={onTogglePerformerMonitored}
-          />
-        </div>
+        {isPerfotmerLoaded && (
+          <div className={styles.controls}>
+            <MonitorToggleButton
+              className={styles.action}
+              monitored={performer.monitored}
+              size={20}
+              onPress={onTogglePerformerMonitored}
+            />
+          </div>
+        )}
 
         <div style={elementStyle}>
           <Link className={styles.link} to={link}>
@@ -72,14 +74,14 @@ function MovieCastPoster({
             />
 
             {hasPosterError && (
-              <div className={styles.overlayTitle}>{performer.fullName}</div>
+              <div className={styles.overlayTitle}>{name}</div>
             )}
           </Link>
         </div>
       </div>
 
       <div className={classNames(styles.title, 'swiper-no-swiping')}>
-        {performer.fullName}
+        {name}
       </div>
       <div className={classNames(styles.title, 'swiper-no-swiping')}>
         {character}

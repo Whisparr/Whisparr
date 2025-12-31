@@ -131,7 +131,6 @@ function SceneIndexPoster(props: SceneIndexPosterProps) {
   const elementStyle = {
     width: `${posterWidth}px`,
     height: `${posterHeight}px`,
-    'object-fit': 'cover',
   };
 
   return (
@@ -174,6 +173,7 @@ function SceneIndexPoster(props: SceneIndexPosterProps) {
 
         <Link className={styles.link} style={elementStyle} to={link}>
           <ScenePoster
+            className={styles.poster}
             safeForWorkMode={safeForWorkMode}
             style={elementStyle}
             images={images}

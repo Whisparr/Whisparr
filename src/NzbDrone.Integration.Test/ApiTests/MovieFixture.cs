@@ -36,8 +36,8 @@ namespace NzbDrone.Integration.Test.ApiTests
         public void add_movie_should_trigger_autotag()
         {
             var tag = EnsureTag("autotag-test");
-            var movie = Movies.Lookup("imdb:tt0110912").Single();
-            movie.Genres = new List<string> { "Thriller" };
+            var movie = Movies.Lookup("tmdb:699665").Single(); // Movie: Consumed by Desire (2020)
+            movie.Genres = new List<string> { "Romance" };
 
             var item = AutoTagging.Post(new AutoTaggingResource
             {
@@ -60,14 +60,14 @@ namespace NzbDrone.Integration.Test.ApiTests
                                 Name = "value",
                                 Label = "Genre(s)",
                                 Type = "tag",
-                                Value = new List<string> { "Thriller" }
+                                Value = new List<string> { "Romance" }
                             }
                         }
                     }
                 }
             });
 
-            EnsureNoMovie(680, "Pulp Fiction");
+            EnsureNoMovie(699665, "Consumed by Desire");
 
             movie.QualityProfileId = 1;
             movie.Path = Path.Combine(MovieRootFolder, movie.Title);

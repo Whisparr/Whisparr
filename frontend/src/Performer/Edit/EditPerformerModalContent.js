@@ -48,9 +48,9 @@ class EditPerformerModalContent extends Component {
       monitored,
       moviesMonitored,
       qualityProfileId,
-      // Id,
       rootFolderPath,
       tags,
+      afterDate,
       searchOnAdd
     } = item;
 
@@ -122,6 +122,18 @@ class EditPerformerModalContent extends Component {
                     name="rootFolderPath"
                     {...rootFolderPath}
                     includeMissingValue={false}
+                    onChange={onInputChange}
+                  />
+                </FormGroup>
+
+                <FormGroup>
+                  <FormLabel>{translate('MonitorAfter')}</FormLabel>
+
+                  <FormInputGroup
+                    type={inputTypes.DATE}
+                    name="afterDate"
+                    helpText={translate('MonitorAfterStudioHelpText')}
+                    {...afterDate}
                     onChange={onInputChange}
                   />
                 </FormGroup>

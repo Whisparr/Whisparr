@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using FluentValidation;
 using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.Movies.Performers;
 using Whisparr.Http.REST;
@@ -45,6 +47,9 @@ namespace Whisparr.Api.V3.Performers
 
         /// <summary>Collection of performer images (posters, headshots, etc.)</summary>
         public List<MediaCover> Images { get; set; }
+
+        /// <summary>Only add movies/scenes for this performer if they were released after this date.</summary>
+        public string AfterDate { get; set; }
 
         /// <summary>Whether this performer is being monitored for new content</summary>
         public bool Monitored { get; set; }
@@ -141,6 +146,7 @@ namespace Whisparr.Api.V3.Performers
                 MoviesMonitored = model.MoviesMonitored,
                 Images = model.Images,
                 QualityProfileId = model.QualityProfileId,
+                AfterDate = model.AfterDate?.ToLocalTime().ToString("yyyy-MM-dd"),
                 RootFolderPath = model.RootFolderPath,
                 SearchOnAdd = model.SearchOnAdd,
                 Tags = model.Tags
@@ -171,6 +177,16 @@ namespace Whisparr.Api.V3.Performers
                 ForeignId = resource.ForeignId,
                 Name = resource.FullName,
                 Monitored = resource.Monitored,
+                AfterDate = string.IsNullOrWhiteSpace(resource.AfterDate)
+                    ? null
+                    : (DateTime.TryParseExact(
+                            resource.AfterDate,
+                            "yyyy-MM-dd",
+                            CultureInfo.InvariantCulture,
+                            DateTimeStyles.None,
+                            out var parsed)
+                        ? parsed
+                        : throw new ValidationException($"Invalid AfterDate format: {resource.AfterDate}. Expected yyyy-MM-dd.")),
                 MoviesMonitored = resource.MoviesMonitored,
                 QualityProfileId = resource.QualityProfileId,
                 RootFolderPath = resource.RootFolderPath,

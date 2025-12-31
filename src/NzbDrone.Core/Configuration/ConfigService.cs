@@ -483,6 +483,12 @@ namespace NzbDrone.Core.Configuration
             set { SetValue("WhisparrAlwaysExcludePerformersTag", value); }
         }
 
+        public string WhisparrAlwaysExcludePerformersAfterTag
+        {
+            get { return GetValue("WhisparrAlwaysExcludePerformersAfterTag", ""); }
+            set { SetValue("WhisparrAlwaysExcludePerformersAfterTag", value); }
+        }
+
         public string WhisparrAlwaysExcludeStudiosTag
         {
             get { return GetValue("WhisparrAlwaysExcludeStudiosTag", ""); }

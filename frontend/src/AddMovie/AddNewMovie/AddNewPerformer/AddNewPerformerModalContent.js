@@ -41,6 +41,7 @@ class AddNewPerformerModalContent extends Component {
       moviesMonitored,
       qualityProfileId,
       searchForMovie,
+      afterDate,
       tags,
       isSmallScreen,
       safeForWorkMode,
@@ -131,6 +132,18 @@ class AddNewPerformerModalContent extends Component {
                 </FormGroup>
 
                 <FormGroup>
+                  <FormLabel>{translate('MonitorAfter')}</FormLabel>
+
+                  <FormInputGroup
+                    type={inputTypes.DATE}
+                    name="afterDate"
+                    helpText={translate('MonitorAfterHelpText')}
+                    onChange={onInputChange}
+                    {...afterDate}
+                  />
+                </FormGroup>
+
+                <FormGroup>
                   <FormLabel>{translate('Tags')}</FormLabel>
 
                   <FormInputGroup
@@ -185,6 +198,7 @@ AddNewPerformerModalContent.propTypes = {
   moviesMonitored: PropTypes.bool,
   qualityProfileId: PropTypes.object,
   searchForMovie: PropTypes.object.isRequired,
+  afterDate: PropTypes.object.isRequired,
   tags: PropTypes.object.isRequired,
   isSmallScreen: PropTypes.bool.isRequired,
   isWindows: PropTypes.bool.isRequired,

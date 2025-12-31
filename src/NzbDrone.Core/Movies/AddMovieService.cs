@@ -14,6 +14,7 @@ using NzbDrone.Core.ImportLists.ImportExclusions;
 using NzbDrone.Core.Messaging.Commands;
 using NzbDrone.Core.MetadataSource;
 using NzbDrone.Core.Movies.Commands;
+using NzbDrone.Core.Movies.Performers;
 using NzbDrone.Core.Movies.Studios;
 using NzbDrone.Core.Organizer;
 using NzbDrone.Core.Parser;
@@ -42,6 +43,7 @@ namespace NzbDrone.Core.Movies
         private readonly IRootFolderService _rootFolderService;
         private readonly IConfigService _configService;
         private readonly ITagRepository _tagRepository;
+        private readonly IPerformerService _performerService;
         private readonly Logger _logger;
 
         public AddMovieService(IMovieService movieService,
@@ -54,6 +56,7 @@ namespace NzbDrone.Core.Movies
                                 IRootFolderService rootFolderService,
                                 IConfigService configService,
                                 ITagRepository tagRepository,
+                                IPerformerService performerService,
                                 Logger logger)
         {
             _movieService = movieService;
@@ -66,6 +69,7 @@ namespace NzbDrone.Core.Movies
             _rootFolderService = rootFolderService;
             _configService = configService;
             _tagRepository = tagRepository;
+            _performerService = performerService;
             _logger = logger;
         }
 
@@ -330,6 +334,52 @@ namespace NzbDrone.Core.Movies
                             newMovie.Monitored = false;
                             _logger.Info("Performer: [{0}] has been excluded. Marking movie as unmonitored.", string.Join(",", excludedPerformers.Select(ep => ep.MovieTitle).ToList()));
                         }
+                    }
+                }
+
+                if (newMovie.MovieMetadata.Value.ItemType == ItemType.Scene &&
+                    newMovie.MovieMetadata?.Value?.Credits != null)
+                {
+                    var performerIds = newMovie.MovieMetadata.Value.Credits
+                        .Select(c => c.PerformerForeignId)
+                        .Where(id => !string.IsNullOrWhiteSpace(id))
+                        .Distinct()
+                        .ToList();
+
+                    var performerDates = _performerService.GetAfterDatesByForeignIds(performerIds);
+                    var movieReleaseDate = newMovie.MovieMetadata.Value.ReleaseDateUtc;
+                    if (!movieReleaseDate.HasValue && performerDates.Any(p => p.AfterDate != null))
+                    {
+                        throw new ValidationException(
+                            $"Scene '{newMovie.Title}' has NO release date set, but one or more performers have an AfterDate set. Scene skipped.");
+                    }
+
+                    var invalidPerformer = performerDates
+                        .FirstOrDefault(p => p.AfterDate != null &&
+                                            movieReleaseDate.HasValue &&
+                                            movieReleaseDate.Value < p.AfterDate.Value);
+
+                    if (invalidPerformer.AfterDate != null)
+                    {
+                        var afterTagLabel = _configService.WhisparrAlwaysExcludePerformersAfterTag;
+
+                        if (afterTagLabel.IsNullOrWhiteSpace())
+                        {
+                            throw new ValidationException(
+                                $"Performer After Date: [{invalidPerformer.ForeignId}] has an after date of {invalidPerformer.AfterDate:yyyy-MM-dd}. Scene skipped.");
+                        }
+
+                        var tag = AddTag(new Tag { Label = afterTagLabel });
+                        if (tag != null)
+                        {
+                            newMovie.Tags.Add(tag.Id);
+                        }
+
+                        newMovie.Monitored = false;
+
+                        _logger.Info("Performer After Date: [{0}] has an after date of {1:yyyy-MM-dd}. Marking scene as unmonitored.",
+                            invalidPerformer.ForeignId,
+                            invalidPerformer.AfterDate);
                     }
                 }
 

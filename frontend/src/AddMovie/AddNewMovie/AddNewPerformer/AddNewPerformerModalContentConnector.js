@@ -62,6 +62,7 @@ class AddNewPerformerModalContentConnector extends Component {
       moviesMonitored,
       qualityProfileId,
       searchForMovie,
+      afterDate,
       tags
     } = this.props;
 
@@ -72,6 +73,7 @@ class AddNewPerformerModalContentConnector extends Component {
       moviesMonitored: moviesMonitored.value,
       qualityProfileId: qualityProfileId.value,
       searchForMovie: searchForMovie.value,
+      afterDate: afterDate.value,
       tags: tags.value
     });
   };
@@ -97,6 +99,7 @@ AddNewPerformerModalContentConnector.propTypes = {
   moviesMonitored: PropTypes.bool.isRequired,
   qualityProfileId: PropTypes.object,
   searchForMovie: PropTypes.object.isRequired,
+  afterDate: PropTypes.object.isRequired,
   tags: PropTypes.object.isRequired,
   onModalClose: PropTypes.func.isRequired,
   setAddPerformerDefault: PropTypes.func.isRequired,

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NzbDrone.Common.Cache;
@@ -22,6 +23,7 @@ namespace NzbDrone.Core.Movies.Performers
         Performer Update(Performer performer);
         List<Performer> Update(List<Performer> performers);
         void RemovePerformer(Performer performer);
+        List<(string ForeignId, DateTime? AfterDate)> GetAfterDatesByForeignIds(List<string> foreignIds);
     }
 
     public class PerformerService : IPerformerService
@@ -133,6 +135,11 @@ namespace NzbDrone.Core.Movies.Performers
             {
                 movieResourcesCache.Remove(cacheKey);
             }
+        }
+
+        public List<(string ForeignId, DateTime? AfterDate)> GetAfterDatesByForeignIds(List<string> foreignIds)
+        {
+            return _performerRepo.GetAfterDatesByForeignIds(foreignIds);
         }
     }
 }

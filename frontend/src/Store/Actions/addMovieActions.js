@@ -44,6 +44,7 @@ export const defaultState = {
     qualityProfileId: 0,
     minimumAvailability: 'released',
     searchForMovie: false,
+    afterDate: '',
     tags: []
   },
   studioDefaults: {

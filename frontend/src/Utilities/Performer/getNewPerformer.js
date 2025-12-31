@@ -6,6 +6,7 @@ function getNewPerformer(performer, payload) {
     moviesMonitored,
     qualityProfileId,
     tags,
+    afterDate,
     searchForMovie = false
   } = payload;
 
@@ -20,6 +21,7 @@ function getNewPerformer(performer, payload) {
   performer.moviesMonitored = moviesMonitored;
   performer.qualityProfileId = qualityProfileId;
   performer.rootFolderPath = rootFolderPath;
+  performer.afterDate = afterDate;
   performer.tags = tags;
   performer.searchOnAdd = searchForMovie;
 

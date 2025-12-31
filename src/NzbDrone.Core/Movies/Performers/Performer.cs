@@ -28,6 +28,7 @@ namespace NzbDrone.Core.Movies.Performers
         public int? CareerStart { get; set; }
         public int? CareerEnd { get; set; }
         public PerformerStatus Status { get; set; }
+        public DateTime? AfterDate { get; set; }
         public string RootFolderPath { get; set; }
         public DateTime Added { get; set; }
         public bool Monitored { get; set; }
@@ -45,6 +46,7 @@ namespace NzbDrone.Core.Movies.Performers
             MoviesMonitored = otherPerformer.MoviesMonitored;
             RootFolderPath = otherPerformer.RootFolderPath;
             Tags = otherPerformer.Tags;
+            AfterDate = otherPerformer.AfterDate;
         }
 
         public override string ToString()

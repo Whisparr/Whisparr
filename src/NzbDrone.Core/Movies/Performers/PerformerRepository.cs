@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Dapper;
@@ -12,6 +13,7 @@ namespace NzbDrone.Core.Movies.Performers
         List<Performer> FindByForeignIds(List<string> foreignIds);
         List<Performer> SearchPerformers(string cleanName, string foreignId);
         List<string> AllPerformerForeignIds();
+        List<(string ForeignId, DateTime? AfterDate)> GetAfterDatesByForeignIds(List<string> foreignIds);
     }
 
     public class PerformerRepository : BasicRepository<Performer>, IPerformerRepository
@@ -42,6 +44,13 @@ namespace NzbDrone.Core.Movies.Performers
             {
                 return conn.Query<string>("SELECT \"ForeignId\" FROM \"Performers\"").ToList();
             }
+        }
+
+        public List<(string ForeignId, DateTime? AfterDate)> GetAfterDatesByForeignIds(List<string> foreignIds)
+        {
+            return Query(x => foreignIds.Contains(x.ForeignId))
+                .Select(x => (x.ForeignId, x.AfterDate))
+                .ToList();
         }
     }
 }

@@ -44,6 +44,7 @@ function createMapStateToProps() {
         qualityProfileId: performer.qualityProfileId,
         minimumAvailability: performer.minimumAvailability,
         rootFolderPath: performer.rootFolderPath,
+        afterDate: performer.afterDate,
         tags: performer.tags,
         searchOnAdd: performer.searchOnAdd
       };

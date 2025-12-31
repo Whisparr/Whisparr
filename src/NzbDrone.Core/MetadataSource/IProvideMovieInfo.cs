@@ -20,7 +20,7 @@ namespace NzbDrone.Core.MetadataSource
         List<string> GetStudioScenes(string stashId);
         (List<string> Scenes, List<string> TpdbMovies) GetStudioWorks(string stashId);
         HashSet<int> GetChangedMovies(DateTime startTime);
-        HashSet<int> GetChangedTpdbMovies(DateTime startTime);
+        HashSet<string> GetChangedTpdbMovies(DateTime startTime);
         HashSet<string> GetChangedScenes(DateTime startTime);
         HashSet<string> GetChangedStudios(DateTime startTime);
         HashSet<string> GetChangedPerformers(DateTime startTime);

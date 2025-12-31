@@ -77,7 +77,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             return new HashSet<int>(response.Resource);
         }
 
-        public HashSet<int> GetChangedTpdbMovies(DateTime startTime)
+        public HashSet<string> GetChangedTpdbMovies(DateTime startTime)
         {
             // Round down to the hour to ensure we cover gap and don't kill cache every call
             var cacheAdjustedStart = startTime.AddMinutes(-15);
@@ -91,9 +91,9 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             request.AllowAutoRedirect = true;
             request.SuppressHttpError = true;
 
-            var response = _httpClient.Get<List<int>>(request);
+            var response = _httpClient.Get<List<string>>(request);
 
-            return new HashSet<int>(response.Resource);
+            return new HashSet<string>(response.Resource);
         }
 
         public HashSet<string> GetChangedScenes(DateTime startTime)

@@ -1,0 +1,43 @@
+name: "CodeQL Analysis (scheduled weekly)"
+
+on:
+  schedule:
+    # Runs weekly at 04:00 UTC on Sunday
+    - cron: '0 4 * * 0'
+
+jobs:
+  analyze:
+    name: CodeQL analysis
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        branch: [develop, eros]
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout repository (base)
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ matrix.branch }}
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: "csharp, javascript-typescript, actions"
+
+      - name: Prepare build (safe defaults)
+        run: |
+          set -e
+          # JavaScript: install dependencies without running lifecycle scripts
+          if [ -f package.json ]; then
+            npm ci --ignore-scripts || true
+          fi
+          # .NET: build; avoid passing secrets or running external scripts
+          if [ -f src/Whisparr.sln ]; then
+            dotnet build src/Whisparr.sln -c Release || true
+          fi
+
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v4

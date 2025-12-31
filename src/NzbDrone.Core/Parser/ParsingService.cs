@@ -192,7 +192,8 @@ namespace NzbDrone.Core.Parser
 
         private FindMovieResult TryGetMovieByTitleAndOrYear(ParsedMovieInfo parsedMovieInfo)
         {
-            var candidates = _movieService.FindByTitleCandidates(parsedMovieInfo.MovieTitles, out var otherTitles);
+            var candidates = _movieService.FindByTitleCandidates(parsedMovieInfo.MovieTitles, out var otherTitles)?
+                                    .Where(c => c.MovieMetadata.Value?.ItemType == ItemType.Movie).ToList();
 
             Movie movieByTitleAndOrYear;
             if (parsedMovieInfo.Year > 1800)

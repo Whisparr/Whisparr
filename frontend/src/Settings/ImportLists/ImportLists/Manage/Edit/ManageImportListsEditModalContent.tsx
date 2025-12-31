@@ -15,6 +15,10 @@ interface SavePayload {
   enableAutomaticAdd?: boolean;
   qualityProfileId?: number;
   rootFolderPath?: string;
+  searchForMissingEpisodes?: boolean;
+  shouldMonitor?: string;
+  siteMonitorType?: string;
+  monitorNewItems?: string;
 }
 
 interface ManageImportListsEditModalContentProps {
@@ -47,6 +51,56 @@ const autoAddOptions = [
   },
 ];
 
+const searchForMissingEpisodesOptions = [
+  {
+    key: NO_CHANGE,
+    get value() {
+      return translate('NoChange');
+    },
+    disabled: true,
+  },
+  {
+    key: 'enabled',
+    get value() {
+      return translate('Enabled');
+    },
+  },
+  {
+    key: 'disabled',
+    get value() {
+      return translate('Disabled');
+    },
+  },
+];
+
+const shouldMonitorOptions = [
+  {
+    key: NO_CHANGE,
+    get value() {
+      return translate('NoChange');
+    },
+    disabled: true,
+  },
+  {
+    key: 'none',
+    get value() {
+      return translate('None');
+    },
+  },
+  {
+    key: 'specificEpisode',
+    get value() {
+      return translate('SpecificEpisode');
+    },
+  },
+  {
+    key: 'entireSite',
+    get value() {
+      return translate('AllSiteEpisodes');
+    },
+  },
+];
+
 function ManageImportListsEditModalContent(
   props: ManageImportListsEditModalContentProps
 ) {
@@ -57,6 +111,11 @@ function ManageImportListsEditModalContent(
     NO_CHANGE
   );
   const [rootFolderPath, setRootFolderPath] = useState(NO_CHANGE);
+  const [searchForMissingEpisodes, setSearchForMissingEpisodes] =
+    useState(NO_CHANGE);
+  const [shouldMonitor, setShouldMonitor] = useState(NO_CHANGE);
+  const [siteMonitorType, setSiteMonitorType] = useState(NO_CHANGE);
+  const [monitorNewItems, setMonitorNewItems] = useState(NO_CHANGE);
 
   const save = useCallback(() => {
     let hasChanges = false;
@@ -77,6 +136,26 @@ function ManageImportListsEditModalContent(
       payload.rootFolderPath = rootFolderPath;
     }
 
+    if (searchForMissingEpisodes !== NO_CHANGE) {
+      hasChanges = true;
+      payload.searchForMissingEpisodes = searchForMissingEpisodes === 'enabled';
+    }
+
+    if (shouldMonitor !== NO_CHANGE) {
+      hasChanges = true;
+      payload.shouldMonitor = shouldMonitor;
+    }
+
+    if (siteMonitorType !== NO_CHANGE) {
+      hasChanges = true;
+      payload.siteMonitorType = siteMonitorType;
+    }
+
+    if (monitorNewItems !== NO_CHANGE) {
+      hasChanges = true;
+      payload.monitorNewItems = monitorNewItems;
+    }
+
     if (hasChanges) {
       onSavePress(payload);
     }
@@ -86,6 +165,10 @@ function ManageImportListsEditModalContent(
     enableAutomaticAdd,
     qualityProfileId,
     rootFolderPath,
+    searchForMissingEpisodes,
+    shouldMonitor,
+    siteMonitorType,
+    monitorNewItems,
     onSavePress,
     onModalClose,
   ]);
@@ -102,8 +185,22 @@ function ManageImportListsEditModalContent(
         case 'rootFolderPath':
           setRootFolderPath(value);
           break;
+        case 'searchForMissingEpisodes':
+          setSearchForMissingEpisodes(value);
+          break;
+        case 'shouldMonitor':
+          setShouldMonitor(value);
+          break;
+        case 'siteMonitorType':
+          setSiteMonitorType(value);
+          break;
+        case 'monitorNewItems':
+          setMonitorNewItems(value);
+          break;
         default:
-          console.warn(`EditImportListModalContent Unknown Input: '${name}'`);
+          console.warn(
+            `EditImportListsEditModalContent Unknown Input: '${name}'`
+          );
       }
     },
     []
@@ -118,7 +215,6 @@ function ManageImportListsEditModalContent(
       <ModalBody>
         <FormGroup>
           <FormLabel>{translate('AutomaticAdd')}</FormLabel>
-
           <FormInputGroup
             type={inputTypes.SELECT}
             name="enableAutomaticAdd"
@@ -130,7 +226,6 @@ function ManageImportListsEditModalContent(
 
         <FormGroup>
           <FormLabel>{translate('QualityProfile')}</FormLabel>
-
           <FormInputGroup
             type={inputTypes.QUALITY_PROFILE_SELECT}
             name="qualityProfileId"
@@ -143,7 +238,6 @@ function ManageImportListsEditModalContent(
 
         <FormGroup>
           <FormLabel>{translate('RootFolder')}</FormLabel>
-
           <FormInputGroup
             type={inputTypes.ROOT_FOLDER_SELECT}
             name="rootFolderPath"
@@ -154,18 +248,63 @@ function ManageImportListsEditModalContent(
             onChange={onInputChange}
           />
         </FormGroup>
+
+        <FormGroup>
+          <FormLabel>{translate('SearchForMissingEpisodes')}</FormLabel>
+          <FormInputGroup
+            type={inputTypes.SELECT}
+            name="searchForMissingEpisodes"
+            value={searchForMissingEpisodes}
+            values={searchForMissingEpisodesOptions}
+            onChange={onInputChange}
+          />
+        </FormGroup>
+
+        <FormGroup>
+          <FormLabel>{translate('Monitor')}</FormLabel>
+          <FormInputGroup
+            type={inputTypes.SELECT}
+            name="shouldMonitor"
+            value={shouldMonitor}
+            values={shouldMonitorOptions}
+            onChange={onInputChange}
+          />
+        </FormGroup>
+
+        {shouldMonitor === 'entireSite' && (
+          <FormGroup>
+            <FormLabel>{translate('SiteMonitoringOptions')}</FormLabel>
+            <FormInputGroup
+              type={inputTypes.MONITOR_EPISODES_SELECT}
+              name="siteMonitorType"
+              value={siteMonitorType}
+              includeNoChange={true}
+              includeNoChangeDisabled={false}
+              onChange={onInputChange}
+            />
+          </FormGroup>
+        )}
+
+        <FormGroup>
+          <FormLabel>{translate('MonitorNewScenes')}</FormLabel>
+          <FormInputGroup
+            type={inputTypes.MONITOR_NEW_ITEMS_SELECT}
+            name="monitorNewItems"
+            value={monitorNewItems}
+            includeNoChange={true}
+            includeNoChangeDisabled={false}
+            onChange={onInputChange}
+          />
+        </FormGroup>
       </ModalBody>
 
       <ModalFooter className={styles.modalFooter}>
         <div className={styles.selected}>
-          {translate('CountImportListsSelected', {
-            count: selectedCount,
-          })}
+          {translate('CountImportListsSelected', { count: selectedCount })}
         </div>
 
         <div>
           <Button onPress={onModalClose}>{translate('Cancel')}</Button>
-
           <Button onPress={save}>{translate('ApplyChanges')}</Button>
         </div>
       </ModalFooter>

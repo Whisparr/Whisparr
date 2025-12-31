@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using NzbDrone.Core.ImportLists;
+using NzbDrone.Core.Tv;
 
 namespace Whisparr.Api.V3.ImportLists
 {
@@ -8,6 +9,10 @@ namespace Whisparr.Api.V3.ImportLists
         public bool? EnableAutomaticAdd { get; set; }
         public string RootFolderPath { get; set; }
         public int? QualityProfileId { get; set; }
+        public bool? SearchForMissingEpisodes { get; set; }
+        public ImportListMonitorTypes? ShouldMonitor { get; set; }
+        public NewItemMonitorTypes? MonitorNewItems { get; set; }
+        public MonitorTypes? SiteMonitorType { get; set; }
     }
 
     public class ImportListBulkResourceMapper : ProviderBulkResourceMapper<ImportListBulkResource, ImportListDefinition>
@@ -24,6 +29,10 @@ namespace Whisparr.Api.V3.ImportLists
                 existing.EnableAutomaticAdd = resource.EnableAutomaticAdd ?? existing.EnableAutomaticAdd;
                 existing.RootFolderPath = resource.RootFolderPath ?? existing.RootFolderPath;
                 existing.QualityProfileId = resource.QualityProfileId ?? existing.QualityProfileId;
+                existing.SearchForMissingEpisodes = resource.SearchForMissingEpisodes ?? existing.SearchForMissingEpisodes;
+                existing.ShouldMonitor = resource.ShouldMonitor ?? existing.ShouldMonitor;
+                existing.MonitorNewItems = resource.MonitorNewItems ?? existing.MonitorNewItems;
+                existing.SiteMonitorType = resource.SiteMonitorType ?? existing.SiteMonitorType;
             });
 
             return existingDefinitions;

@@ -1,41 +1,29 @@
 import classNames from 'classnames';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { createSelector } from 'reselect';
 import { ColorImpairedConsumer } from 'App/ColorImpairedContext';
-import MoviesAppState from 'App/State/MoviesAppState';
+import AppState from 'App/State/AppState';
 import DescriptionList from 'Components/DescriptionList/DescriptionList';
 import DescriptionListItem from 'Components/DescriptionList/DescriptionListItem';
-import createClientSideCollectionSelector from 'Store/Selectors/createClientSideCollectionSelector';
 import createDeepEqualSelector from 'Store/Selectors/createDeepEqualSelector';
 import formatBytes from 'Utilities/Number/formatBytes';
 import translate from 'Utilities/String/translate';
 import styles from './SceneIndexFooter.css';
 
-function createUnoptimizedSelector() {
-  return createSelector(
-    createClientSideCollectionSelector('movies', 'sceneIndex'),
-    (movies: MoviesAppState) => {
-      return movies.items
-        .filter((movie) => movie.itemType === 'scene')
-        .map((m) => {
-          const { monitored, status, hasFile, statistics } = m;
-
-          return {
-            monitored,
-            status,
-            hasFile,
-            statistics,
-          };
-        });
-    }
-  );
-}
-
 function createSceneSelector() {
   return createDeepEqualSelector(
-    createUnoptimizedSelector(),
-    (scenes) => scenes
+    (state: AppState) => state.scenePages.items ?? [],
+    (scenes) =>
+      scenes.map((scene) => {
+        const { monitored, status, hasFile, statistics } = scene;
+
+        return {
+          monitored,
+          status,
+          hasFile,
+          statistics,
+        };
+      })
   );
 }
 

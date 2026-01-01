@@ -4,7 +4,7 @@ import { createSelector } from 'reselect';
 import AppState from 'App/State/AppState';
 import { fetchTranslations } from 'Store/Actions/appActions';
 import { fetchCustomFilters } from 'Store/Actions/customFilterActions';
-import { fetchMovies } from 'Store/Actions/movieActions';
+import { fetchMoviePages } from 'Store/Actions/moviePagedActions';
 import { fetchPerformers } from 'Store/Actions/performerActions';
 import {
   fetchImportLists,
@@ -19,7 +19,7 @@ import { fetchTags } from 'Store/Actions/tagActions';
 
 const createErrorsSelector = () =>
   createSelector(
-    (state: AppState) => state.movies.error,
+    (state: AppState) => state.moviePages.error,
     // movie collections are not part of Whisparr
     (state: AppState) => state.customFilters.error,
     (state: AppState) => state.performers.error,
@@ -88,7 +88,7 @@ const useAppPage = () => {
 
   const isPopulated = useSelector(
     (state: AppState) =>
-      state.movies.isPopulated &&
+      state.moviePages.isPopulated &&
       state.customFilters.isPopulated &&
       state.performers.isPopulated &&
       state.studios.isPopulated &&
@@ -118,7 +118,7 @@ const useAppPage = () => {
   }, []);
 
   useEffect(() => {
-    dispatch(fetchMovies());
+    dispatch(fetchMoviePages());
     dispatch(fetchCustomFilters());
     dispatch(fetchPerformers());
     dispatch(fetchStudios());

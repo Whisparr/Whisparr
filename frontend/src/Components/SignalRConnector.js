@@ -6,7 +6,7 @@ import { createSelector } from 'reselect';
 import { setAppValue, setVersion } from 'Store/Actions/appActions';
 import { removeItem, update, updateItem } from 'Store/Actions/baseActions';
 import { fetchCommands, finishCommand, updateCommand } from 'Store/Actions/commandActions';
-import { fetchMovies } from 'Store/Actions/movieActions';
+import { fetchMoviePages } from 'Store/Actions/moviePagedActions';
 import { fetchQueue, fetchQueueDetails } from 'Store/Actions/queueActions';
 import { fetchRootFolders } from 'Store/Actions/rootFolderActions';
 import { fetchQualityDefinitions } from 'Store/Actions/settingsActions';
@@ -51,7 +51,7 @@ const mapDispatchToProps = {
   dispatchFetchQueue: fetchQueue,
   dispatchFetchQueueDetails: fetchQueueDetails,
   dispatchFetchRootFolders: fetchRootFolders,
-  dispatchFetchMovies: fetchMovies,
+  dispatchFetchMovies: fetchMoviePages,
   dispatchFetchTags: fetchTags,
   dispatchFetchTagDetails: fetchTagDetails
 };

@@ -120,20 +120,55 @@ export function createCustomFiltersSelector(type, alternateType) {
 }
 
 function createClientSideCollectionSelector(section, uiSection) {
+  function getAlternateFilterType(value) {
+    if (typeof value !== 'string') {
+      return null;
+    }
+
+    if (value.endsWith('Pages')) {
+      return `${value.replace(/Pages$/, '')}Index`;
+    }
+
+    if (value.endsWith('Index')) {
+      return `${value.replace(/Index$/, '')}Pages`;
+    }
+
+    return null;
+  }
+
   return createSelector(
     (state) => _.get(state, section),
     (state) => _.get(state, uiSection),
-    createCustomFiltersSelector(section, uiSection),
+    (state) => state.customFilters.items,
     (sectionState, uiSectionState = {}, customFilters) => {
+      const filterTypes = new Set([section, uiSection]);
+      const alternateSection = getAlternateFilterType(section);
+      const alternateUiSection = getAlternateFilterType(uiSection);
+
+      if (alternateSection) {
+        filterTypes.add(alternateSection);
+      }
+
+      if (alternateUiSection) {
+        filterTypes.add(alternateUiSection);
+      }
+
+      const matchingFilters = customFilters.filter((customFilter) =>
+        filterTypes.has(customFilter.type)
+      );
+
       const state = Object.assign({}, sectionState, uiSectionState, { customFilters });
 
-      const filtered = filter(state.items, state);
+      const filtered = filter(state.items, {
+        ...state,
+        customFilters: matchingFilters
+      });
       const sorted = sort(filtered, state);
 
       return {
         ...sectionState,
         ...uiSectionState,
-        customFilters,
+        customFilters: matchingFilters,
         items: sorted,
         totalItems: state.items.length
       };

@@ -7,7 +7,7 @@ import { setSceneFilter } from 'Store/Actions/sceneIndexActions';
 
 function createSceneSelector() {
   return createSelector(
-    (state: AppState) => state.movies.items,
+    (state: AppState) => state.scenePages.items ?? [],
     (scenes) => {
       return scenes;
     }

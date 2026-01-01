@@ -6,9 +6,34 @@ export function createMovieSelectorForHook(movieId) {
   return createSelector(
     (state) => state.movies.itemMap || {},
     (state) => state.movies.items || {},
-    (itemMap, allMovies) => {
+    (state) => (state.moviePages ? state.moviePages.itemMap : {}) || {},
+    (state) => (state.moviePages ? state.moviePages.items : []) || [],
+    (state) => (state.scenePages ? state.scenePages.itemMap : {}) || {},
+    (state) => (state.scenePages ? state.scenePages.items : []) || [],
+    (itemMap, allMovies, pageItemMap, pageItems, scenePageItemMap, scenePageItems) => {
+      if (!movieId) {
+        return undefined;
+      }
 
-      return movieId ? allMovies[itemMap[movieId]] : undefined;
+      const movieIndex = itemMap[movieId];
+
+      if (movieIndex != null) {
+        return allMovies[movieIndex];
+      }
+
+      const pageIndex = pageItemMap[movieId];
+
+      if (pageIndex != null) {
+        return pageItems[pageIndex];
+      }
+
+      const scenePageIndex = scenePageItemMap[movieId];
+
+      if (scenePageIndex != null) {
+        return scenePageItems[scenePageIndex];
+      }
+
+      return undefined;
     }
   );
 }
@@ -28,8 +53,30 @@ function createMovieSelector() {
     (state, { movieId }) => movieId,
     (state) => state.movies.itemMap || {},
     (state) => state.movies.items || {},
-    (movieId, itemMap, allMovies) => {
-      return allMovies[itemMap[movieId]];
+    (state) => (state.moviePages ? state.moviePages.itemMap : {}) || {},
+    (state) => (state.moviePages ? state.moviePages.items : []) || [],
+    (state) => (state.scenePages ? state.scenePages.itemMap : {}) || {},
+    (state) => (state.scenePages ? state.scenePages.items : []) || [],
+    (movieId, itemMap, allMovies, pageItemMap, pageItems, scenePageItemMap, scenePageItems) => {
+      const movieIndex = itemMap[movieId];
+
+      if (movieIndex != null) {
+        return allMovies[movieIndex];
+      }
+
+      const pageIndex = pageItemMap[movieId];
+
+      if (pageIndex != null) {
+        return pageItems[pageIndex];
+      }
+
+      const scenePageIndex = scenePageItemMap[movieId];
+
+      if (scenePageIndex != null) {
+        return scenePageItems[scenePageIndex];
+      }
+
+      return undefined;
     }
   );
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using DryIoc.ImTools;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ using NLog;
 using NzbDrone.Common.Cache;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Configuration;
+using NzbDrone.Core.Datastore;
 using NzbDrone.Core.Datastore.Events;
 using NzbDrone.Core.ImportLists.ImportExclusions;
 using NzbDrone.Core.MediaCover;
@@ -116,6 +118,54 @@ namespace Whisparr.Api.V3.Performers
             return performerResources;
         }
 
+        [HttpGet("paged")]
+        [Produces("application/json")]
+        public PagingResource<PerformerResource> GetPagedPerformers([FromQuery] PerformerPagingRequestResource request)
+        {
+            request ??= new PerformerPagingRequestResource();
+
+            var page = request.ResolvePage();
+            var pageSize = request.ResolvePageSize();
+            var sortKey = string.IsNullOrWhiteSpace(request.SortKey) ? "fullName" : request.SortKey;
+            var resolvedDirection = request.SortDirection.HasValue && request.SortDirection != SortDirection.Default
+                ? request.SortDirection.Value
+                : SortDirection.Ascending;
+
+            var sortDirection = resolvedDirection == SortDirection.Descending ? "descending" : "ascending";
+
+            var filters = PerformerFilterDefinition.Parse(request.FilterPayload);
+
+            if (filters.Count == 0)
+            {
+                filters = BuildLegacyFilters();
+            }
+
+            var performers = GetPerformerResources();
+            var filtered = PerformerFilterEvaluator.ApplyFilters(performers, filters).ToList();
+            var ordered = PerformerFilterEvaluator.ApplyOrdering(filtered, sortKey, sortDirection).ToList();
+
+            var totalRecords = filtered.Count;
+            var totalPages = Math.Max((int)Math.Ceiling(totalRecords / (double)pageSize), 1);
+
+            if (page > totalPages)
+            {
+                page = totalPages;
+            }
+
+            var skip = (page - 1) * pageSize;
+            var records = ordered.Skip(skip).Take(pageSize).ToList();
+
+            return new PagingResource<PerformerResource>
+            {
+                Page = page,
+                PageSize = pageSize,
+                SortKey = sortKey,
+                SortDirection = resolvedDirection,
+                TotalRecords = totalRecords,
+                Records = records
+            };
+        }
+
         [RestPostById]
         public ActionResult<PerformerResource> AddPerformer(PerformerResource performerResource)
         {
@@ -202,6 +252,115 @@ namespace Whisparr.Api.V3.Performers
             var ids = movies.Map(x => x.Id).ToList();
             var movieStats = _movieStatisticsService.MovieStatistics(ids);
             resource.SizeOnDisk = movieStats.Sum(x => x.SizeOnDisk);
+        }
+
+        private IReadOnlyList<PerformerFilterDefinition> BuildLegacyFilters()
+        {
+            var query = Request?.Query;
+
+            if (query == null || query.Count == 0)
+            {
+                return Array.Empty<PerformerFilterDefinition>();
+            }
+
+            var filters = new List<PerformerFilterDefinition>();
+
+            void AddBoolean(string key)
+            {
+                if (query.TryGetValue(key, out var values) && bool.TryParse(values.LastOrDefault(), out var parsed))
+                {
+                    filters.Add(new PerformerFilterDefinition
+                    {
+                        Key = key,
+                        Comparison = "equal",
+                        ValueType = "bool",
+                        Values = new List<object> { parsed }
+                    });
+                }
+            }
+
+            void AddNumeric(string key)
+            {
+                if (query.TryGetValue(key, out var values) && double.TryParse(values.LastOrDefault(), NumberStyles.Any, CultureInfo.InvariantCulture, out var parsed))
+                {
+                    filters.Add(new PerformerFilterDefinition
+                    {
+                        Key = key,
+                        Comparison = "equal",
+                        ValueType = "number",
+                        Values = new List<object> { parsed }
+                    });
+                }
+            }
+
+            void AddString(string key)
+            {
+                if (query.TryGetValue(key, out var values))
+                {
+                    var entries = values
+                        .SelectMany(value => value.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                        .Select(value => value.Trim())
+                        .Where(value => value.Length > 0)
+                        .ToList();
+
+                    if (entries.Count > 0)
+                    {
+                        filters.Add(new PerformerFilterDefinition
+                        {
+                            Key = key,
+                            Comparison = "equal",
+                            ValueType = "string",
+                            Values = entries.Cast<object>().ToList()
+                        });
+                    }
+                }
+            }
+
+            void AddTags()
+            {
+                if (query.TryGetValue("tags", out var tagValues))
+                {
+                    var tags = tagValues
+                        .SelectMany(value => value.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                        .Select(value => value.Trim())
+                        .Where(value => value.Length > 0)
+                        .Cast<object>()
+                        .ToList();
+
+                    if (tags.Count > 0)
+                    {
+                        filters.Add(new PerformerFilterDefinition
+                        {
+                            Key = "tags",
+                            Comparison = "contains",
+                            ValueType = "tag",
+                            Values = tags
+                        });
+                    }
+                }
+            }
+
+            AddBoolean("monitored");
+            AddBoolean("moviesMonitored");
+
+            AddNumeric("sceneCount");
+            AddNumeric("totalSceneCount");
+            AddNumeric("age");
+            AddNumeric("careerStart");
+            AddNumeric("careerEnd");
+            AddNumeric("qualityProfileId");
+
+            AddString("status");
+            AddString("fullName");
+            AddString("rootFolderPath");
+            AddString("monitor");
+            AddString("gender");
+            AddString("hairColor");
+            AddString("ethnicity");
+
+            AddTags();
+
+            return filters;
         }
 
         private PerformerResource GetPerformerResource(string performerForeignId)

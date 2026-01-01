@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using NLog;
 using NzbDrone.Common.Cache;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Configuration;
+using NzbDrone.Core.Datastore;
 using NzbDrone.Core.Datastore.Events;
 using NzbDrone.Core.DecisionEngine.Specifications;
 using NzbDrone.Core.MediaCover;
@@ -242,6 +244,120 @@ namespace Whisparr.Api.V3.Movies
             return moviesResources;
         }
 
+        [HttpGet("paged")]
+        [Produces("application/json")]
+        public PagingResource<MovieResource> GetPagedMovies([FromQuery] MoviePagingRequestResource request)
+        {
+            request ??= new MoviePagingRequestResource();
+
+            var page = request.ResolvePage();
+            var pageSize = request.ResolvePageSize();
+            var sortKey = string.IsNullOrWhiteSpace(request.SortKey) ? "sortTitle" : request.SortKey;
+            var resolvedDirection = request.SortDirection.HasValue && request.SortDirection != SortDirection.Default
+                ? request.SortDirection.Value
+                : SortDirection.Ascending;
+
+            var sortDirection = resolvedDirection == SortDirection.Descending ? "descending" : "ascending";
+
+            var filters = MovieFilterDefinition.Parse(request.FilterPayload).ToList();
+
+            if (filters.Count == 0)
+            {
+                filters = BuildLegacyFilters().ToList();
+            }
+
+            filters.RemoveAll(filter => string.Equals(filter.Key, "itemType", StringComparison.OrdinalIgnoreCase));
+
+            filters.Add(new MovieFilterDefinition
+            {
+                Key = "itemType",
+                Comparison = "equal",
+                ValueType = "string",
+                Values = new List<object> { ItemType.Movie.ToString() }
+            });
+
+            var movies = GetMovieResources();
+            var filtered = MovieFilterEvaluator.ApplyFilters(movies, filters).ToList();
+            var ordered = MovieFilterEvaluator.ApplyOrdering(filtered, sortKey, sortDirection).ToList();
+
+            var totalRecords = filtered.Count;
+            var totalPages = Math.Max((int)Math.Ceiling(totalRecords / (double)pageSize), 1);
+
+            if (page > totalPages)
+            {
+                page = totalPages;
+            }
+
+            var skip = (page - 1) * pageSize;
+            var records = ordered.Skip(skip).Take(pageSize).ToList();
+
+            return new PagingResource<MovieResource>
+            {
+                Page = page,
+                PageSize = pageSize,
+                SortKey = sortKey,
+                SortDirection = resolvedDirection,
+                TotalRecords = totalRecords,
+                Records = records
+            };
+        }
+
+        [HttpGet("scenes/paged")]
+        [Produces("application/json")]
+        public PagingResource<MovieResource> GetPagedScenes([FromQuery] MoviePagingRequestResource request)
+        {
+            request ??= new MoviePagingRequestResource();
+
+            var page = request.ResolvePage();
+            var pageSize = request.ResolvePageSize();
+            var sortKey = string.IsNullOrWhiteSpace(request.SortKey) ? "sortTitle" : request.SortKey;
+            var resolvedDirection = request.SortDirection.HasValue && request.SortDirection != SortDirection.Default
+                ? request.SortDirection.Value
+                : SortDirection.Ascending;
+
+            var sortDirection = resolvedDirection == SortDirection.Descending ? "descending" : "ascending";
+
+            var filters = MovieFilterDefinition.Parse(request.FilterPayload).ToList();
+
+            if (filters.Count == 0)
+            {
+                filters = BuildLegacyFilters().ToList();
+            }
+
+            filters.Add(new MovieFilterDefinition
+            {
+                Key = "itemType",
+                Comparison = "equal",
+                ValueType = "string",
+                Values = new List<object> { ItemType.Scene.ToString() }
+            });
+
+            var scenes = GetMovieResources().Where(movie => movie.ItemType == ItemType.Scene).ToList();
+            var filtered = MovieFilterEvaluator.ApplyFilters(scenes, filters).ToList();
+            var ordered = MovieFilterEvaluator.ApplyOrdering(filtered, sortKey, sortDirection).ToList();
+
+            var totalRecords = filtered.Count;
+            var totalPages = Math.Max((int)Math.Ceiling(totalRecords / (double)pageSize), 1);
+
+            if (page > totalPages)
+            {
+                page = totalPages;
+            }
+
+            var skip = (page - 1) * pageSize;
+            var records = ordered.Skip(skip).Take(pageSize).ToList();
+
+            return new PagingResource<MovieResource>
+            {
+                Page = page,
+                PageSize = pageSize,
+                SortKey = sortKey,
+                SortDirection = resolvedDirection,
+                TotalRecords = totalRecords,
+                Records = records
+            };
+        }
+
         protected override MovieResource GetResourceById(int id)
         {
             if (_useCache)
@@ -451,6 +567,113 @@ namespace Whisparr.Api.V3.Movies
             resource.Statistics = movieStatistics.ToResource();
             resource.HasFile = movieStatistics.MovieFileCount > 0;
             resource.SizeOnDisk = movieStatistics.SizeOnDisk;
+        }
+
+        private IReadOnlyList<MovieFilterDefinition> BuildLegacyFilters()
+        {
+            var query = Request?.Query;
+
+            if (query == null || query.Count == 0)
+            {
+                return Array.Empty<MovieFilterDefinition>();
+            }
+
+            var filters = new List<MovieFilterDefinition>();
+
+            void AddBoolean(string key)
+            {
+                if (query.TryGetValue(key, out var values) && bool.TryParse(values.LastOrDefault(), out var parsed))
+                {
+                    filters.Add(new MovieFilterDefinition
+                    {
+                        Key = key,
+                        Comparison = "equal",
+                        ValueType = "bool",
+                        Values = new List<object> { parsed }
+                    });
+                }
+            }
+
+            void AddNumeric(string key)
+            {
+                if (query.TryGetValue(key, out var values) && double.TryParse(values.LastOrDefault(), NumberStyles.Any, CultureInfo.InvariantCulture, out var parsed))
+                {
+                    filters.Add(new MovieFilterDefinition
+                    {
+                        Key = key,
+                        Comparison = "equal",
+                        ValueType = "number",
+                        Values = new List<object> { parsed }
+                    });
+                }
+            }
+
+            void AddString(string key)
+            {
+                if (query.TryGetValue(key, out var values))
+                {
+                    var entries = values
+                        .SelectMany(value => value.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                        .Select(value => value.Trim())
+                        .Where(value => value.Length > 0)
+                        .ToList();
+
+                    if (entries.Count > 0)
+                    {
+                        filters.Add(new MovieFilterDefinition
+                        {
+                            Key = key,
+                            Comparison = "equal",
+                            ValueType = "string",
+                            Values = entries.Cast<object>().ToList()
+                        });
+                    }
+                }
+            }
+
+            void AddTags()
+            {
+                if (query.TryGetValue("tags", out var tagValues))
+                {
+                    var tags = tagValues
+                        .SelectMany(value => value.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                        .Select(value => value.Trim())
+                        .Where(value => value.Length > 0)
+                        .Cast<object>()
+                        .ToList();
+
+                    if (tags.Count > 0)
+                    {
+                        filters.Add(new MovieFilterDefinition
+                        {
+                            Key = "tags",
+                            Comparison = "contains",
+                            ValueType = "tag",
+                            Values = tags
+                        });
+                    }
+                }
+            }
+
+            AddBoolean("monitored");
+            AddBoolean("isAvailable");
+            AddBoolean("hasFile");
+            AddBoolean("qualityCutoffNotMet");
+
+            AddNumeric("qualityProfileId");
+            AddNumeric("runtime");
+            AddNumeric("year");
+            AddNumeric("tmdbRating");
+            AddNumeric("tmdbVotes");
+            AddNumeric("sizeOnDisk");
+
+            AddString("status");
+            AddString("studio");
+            AddString("itemType");
+
+            AddTags();
+
+            return filters;
         }
 
         [NonAction]

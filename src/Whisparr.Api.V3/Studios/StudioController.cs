@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using DryIoc.ImTools;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ using NLog;
 using NzbDrone.Common.Cache;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Configuration;
+using NzbDrone.Core.Datastore;
 using NzbDrone.Core.Datastore.Events;
 using NzbDrone.Core.ImportLists.ImportExclusions;
 using NzbDrone.Core.MediaCover;
@@ -112,6 +114,54 @@ namespace Whisparr.Api.V3.Studios
             return studioResources;
         }
 
+        [HttpGet("paged")]
+        [Produces("application/json")]
+        public PagingResource<StudioResource> GetPagedStudios([FromQuery] StudioPagingRequestResource request)
+        {
+            request ??= new StudioPagingRequestResource();
+
+            var page = request.ResolvePage();
+            var pageSize = request.ResolvePageSize();
+            var sortKey = string.IsNullOrWhiteSpace(request.SortKey) ? "sortTitle" : request.SortKey;
+            var resolvedDirection = request.SortDirection.HasValue && request.SortDirection != SortDirection.Default
+                ? request.SortDirection.Value
+                : SortDirection.Ascending;
+
+            var sortDirection = resolvedDirection == SortDirection.Descending ? "descending" : "ascending";
+
+            var filters = StudioFilterDefinition.Parse(request.FilterPayload);
+
+            if (filters.Count == 0)
+            {
+                filters = BuildLegacyFilters();
+            }
+
+            var studios = GetStudioResources();
+            var filtered = StudioFilterEvaluator.ApplyFilters(studios, filters).ToList();
+            var ordered = StudioFilterEvaluator.ApplyOrdering(filtered, sortKey, sortDirection).ToList();
+
+            var totalRecords = filtered.Count;
+            var totalPages = Math.Max((int)Math.Ceiling(totalRecords / (double)pageSize), 1);
+
+            if (page > totalPages)
+            {
+                page = totalPages;
+            }
+
+            var skip = (page - 1) * pageSize;
+            var records = ordered.Skip(skip).Take(pageSize).ToList();
+
+            return new PagingResource<StudioResource>
+            {
+                Page = page,
+                PageSize = pageSize,
+                SortKey = sortKey,
+                SortDirection = resolvedDirection,
+                TotalRecords = totalRecords,
+                Records = records
+            };
+        }
+
         [RestPostById]
         public ActionResult<StudioResource> AddStudio(StudioResource studioResource)
         {
@@ -199,6 +249,111 @@ namespace Whisparr.Api.V3.Studios
             var ids = movies.Map(x => x.Id).ToList();
             var movieStats = _movieStatisticsService.MovieStatistics(ids);
             resource.SizeOnDisk = movieStats.Sum(x => x.SizeOnDisk);
+        }
+
+        private IReadOnlyList<StudioFilterDefinition> BuildLegacyFilters()
+        {
+            var query = Request?.Query;
+
+            if (query == null || query.Count == 0)
+            {
+                return Array.Empty<StudioFilterDefinition>();
+            }
+
+            var filters = new List<StudioFilterDefinition>();
+
+            void AddBoolean(string key)
+            {
+                if (query.TryGetValue(key, out var values) && bool.TryParse(values.LastOrDefault(), out var parsed))
+                {
+                    filters.Add(new StudioFilterDefinition
+                    {
+                        Key = key,
+                        Comparison = "equal",
+                        ValueType = "bool",
+                        Values = new List<object> { parsed }
+                    });
+                }
+            }
+
+            void AddNumeric(string key)
+            {
+                if (query.TryGetValue(key, out var values) && double.TryParse(values.LastOrDefault(), NumberStyles.Any, CultureInfo.InvariantCulture, out var parsed))
+                {
+                    filters.Add(new StudioFilterDefinition
+                    {
+                        Key = key,
+                        Comparison = "equal",
+                        ValueType = "number",
+                        Values = new List<object> { parsed }
+                    });
+                }
+            }
+
+            void AddString(string key)
+            {
+                if (query.TryGetValue(key, out var values))
+                {
+                    var entries = values
+                        .SelectMany(value => value.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                        .Select(value => value.Trim())
+                        .Where(value => value.Length > 0)
+                        .ToList();
+
+                    if (entries.Count > 0)
+                    {
+                        filters.Add(new StudioFilterDefinition
+                        {
+                            Key = key,
+                            Comparison = "equal",
+                            ValueType = "string",
+                            Values = entries.Cast<object>().ToList()
+                        });
+                    }
+                }
+            }
+
+            void AddTags()
+            {
+                if (query.TryGetValue("tags", out var tagValues))
+                {
+                    var tags = tagValues
+                        .SelectMany(value => value.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                        .Select(value => value.Trim())
+                        .Where(value => value.Length > 0)
+                        .Cast<object>()
+                        .ToList();
+
+                    if (tags.Count > 0)
+                    {
+                        filters.Add(new StudioFilterDefinition
+                        {
+                            Key = "tags",
+                            Comparison = "contains",
+                            ValueType = "tag",
+                            Values = tags
+                        });
+                    }
+                }
+            }
+
+            AddBoolean("monitored");
+            AddBoolean("moviesMonitored");
+
+            AddNumeric("qualityProfileId");
+            AddNumeric("sceneCount");
+            AddNumeric("totalSceneCount");
+
+            AddString("title");
+            AddString("sortTitle");
+            AddString("status");
+            AddString("network");
+            AddString("rootFolderPath");
+            AddString("monitor");
+
+            AddTags();
+
+            return filters;
         }
 
         private StudioResource GetStudioResource(string studioForeignId)

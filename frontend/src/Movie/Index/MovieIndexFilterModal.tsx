@@ -7,7 +7,7 @@ import { setMovieFilter } from 'Store/Actions/movieIndexActions';
 
 function createMovieSelector() {
   return createSelector(
-    (state: AppState) => state.movies.items,
+    (state: AppState) => state.moviePages.items ?? [],
     (movies) => {
       return movies;
     }

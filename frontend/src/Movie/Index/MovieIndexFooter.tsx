@@ -1,41 +1,29 @@
 import classNames from 'classnames';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { createSelector } from 'reselect';
 import { ColorImpairedConsumer } from 'App/ColorImpairedContext';
-import MoviesAppState from 'App/State/MoviesAppState';
+import AppState from 'App/State/AppState';
 import DescriptionList from 'Components/DescriptionList/DescriptionList';
 import DescriptionListItem from 'Components/DescriptionList/DescriptionListItem';
-import createClientSideCollectionSelector from 'Store/Selectors/createClientSideCollectionSelector';
 import createDeepEqualSelector from 'Store/Selectors/createDeepEqualSelector';
 import formatBytes from 'Utilities/Number/formatBytes';
 import translate from 'Utilities/String/translate';
 import styles from './MovieIndexFooter.css';
 
-function createUnoptimizedSelector() {
-  return createSelector(
-    createClientSideCollectionSelector('movies', 'movieIndex'),
-    (movies: MoviesAppState) => {
-      return movies.items
-        .filter((movie) => movie.itemType === 'movie')
-        .map((m) => {
-          const { monitored, status, hasFile, statistics } = m;
-
-          return {
-            monitored,
-            status,
-            hasFile,
-            statistics,
-          };
-        });
-    }
-  );
-}
-
 function createMovieSelector() {
   return createDeepEqualSelector(
-    createUnoptimizedSelector(),
-    (movies) => movies
+    (state: AppState) => state.moviePages.items ?? [],
+    (movies) =>
+      movies.map((m) => {
+        const { monitored, status, hasFile, statistics } = m;
+
+        return {
+          monitored,
+          status,
+          hasFile,
+          statistics,
+        };
+      })
   );
 }
 

@@ -7,8 +7,8 @@ import React, {
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { SelectProvider } from 'App/SelectContext';
-import ClientSideCollectionAppState from 'App/State/ClientSideCollectionAppState';
-import MoviesAppState, { MovieIndexAppState } from 'App/State/MoviesAppState';
+import MoviePagesAppState from 'App/State/MoviePagesAppState';
+import { MovieIndexAppState } from 'App/State/MoviesAppState';
 import { RSS_SYNC } from 'Commands/commandNames';
 import Alert from 'Components/Alert';
 import LoadingIndicator from 'Components/Loading/LoadingIndicator';
@@ -20,6 +20,8 @@ import PageToolbarButton from 'Components/Page/Toolbar/PageToolbarButton';
 import PageToolbarSection from 'Components/Page/Toolbar/PageToolbarSection';
 import PageToolbarSeparator from 'Components/Page/Toolbar/PageToolbarSeparator';
 import TableOptionsModalWrapper from 'Components/Table/TableOptions/TableOptionsModalWrapper';
+import TablePager from 'Components/Table/TablePager';
+import usePaging from 'Components/Table/usePaging';
 import withScrollPosition from 'Components/withScrollPosition';
 import { align, icons, kinds, sortDirections } from 'Helpers/Props';
 import InteractiveImportModal from 'InteractiveImport/InteractiveImportModal';
@@ -31,11 +33,18 @@ import {
   setMovieTableOption,
   setMovieView,
 } from 'Store/Actions/movieIndexActions';
+import {
+  fetchMoviePages,
+  gotoMoviePagesPage,
+  setMoviePagesFilter,
+  setMoviePagesSort,
+} from 'Store/Actions/moviePagedActions';
 import { fetchQueueDetails } from 'Store/Actions/queueActions';
 import scrollPositions from 'Store/scrollPositions';
+import { createCustomFiltersSelector } from 'Store/Selectors/createClientSideCollectionSelector';
 import createCommandExecutingSelector from 'Store/Selectors/createCommandExecutingSelector';
 import createDimensionsSelector from 'Store/Selectors/createDimensionsSelector';
-import createMovieClientSideCollectionItemsSelector from 'Store/Selectors/createMovieClientSideCollectionItemsSelector';
+import createMoviePagedCollectionItemsSelector from 'Store/Selectors/createMoviePagedCollectionItemsSelector';
 import translate from 'Utilities/String/translate';
 import MovieIndexFilterMenu from './Menus/MovieIndexFilterMenu';
 import MovieIndexSortMenu from './Menus/MovieIndexSortMenu';
@@ -83,14 +92,17 @@ const MovieIndex = withScrollPosition((props: MovieIndexProps) => {
     columns,
     selectedFilterKey,
     filters,
-    customFilters,
     sortKey,
     sortDirection,
     view,
-  }: MoviesAppState & MovieIndexAppState & ClientSideCollectionAppState =
-    useSelector(
-      createMovieClientSideCollectionItemsSelector('movieIndex', 'movie')
-    );
+    page,
+    totalPages,
+  }: MoviePagesAppState & MovieIndexAppState & { totalItems: number } =
+    useSelector(createMoviePagedCollectionItemsSelector);
+
+  const customFilters = useSelector(
+    createCustomFiltersSelector('moviePages', 'movieIndex')
+  );
 
   const isRssSyncExecuting = useSelector(
     createCommandExecutingSelector(RSS_SYNC)
@@ -105,6 +117,12 @@ const MovieIndex = withScrollPosition((props: MovieIndexProps) => {
     undefined
   );
   const [isSelectMode, setIsSelectMode] = useState(false);
+
+  useEffect(() => {
+    if (!isPopulated) {
+      dispatch(fetchMoviePages());
+    }
+  }, [dispatch, isPopulated]);
 
   useEffect(() => {
     dispatch(fetchQueueDetails({ all: true }));
@@ -142,14 +160,27 @@ const MovieIndex = withScrollPosition((props: MovieIndexProps) => {
 
   const onSortSelect = useCallback(
     (value: string) => {
-      dispatch(setMovieSort({ sortKey: value }));
+      let nextDirection = sortDirections.ASCENDING;
+
+      if (value === sortKey) {
+        nextDirection =
+          sortDirection === sortDirections.ASCENDING
+            ? sortDirections.DESCENDING
+            : sortDirections.ASCENDING;
+      }
+
+      dispatch(setMovieSort({ sortKey: value, sortDirection: nextDirection }));
+      dispatch(
+        setMoviePagesSort({ sortKey: value, sortDirection: nextDirection })
+      );
     },
-    [dispatch]
+    [dispatch, sortKey, sortDirection]
   );
 
   const onFilterSelect = useCallback(
     (value: string | number) => {
       dispatch(setMovieFilter({ selectedFilterKey: value }));
+      dispatch(setMoviePagesFilter({ selectedFilterKey: value }));
     },
     [dispatch]
   );
@@ -184,6 +215,18 @@ const MovieIndex = withScrollPosition((props: MovieIndexProps) => {
     },
     [setJumpToCharacter]
   );
+
+  const {
+    handleFirstPagePress,
+    handlePreviousPagePress,
+    handleNextPagePress,
+    handleLastPagePress,
+    handlePageSelect,
+  } = usePaging({
+    page,
+    totalPages,
+    gotoPage: gotoMoviePagesPage,
+  });
 
   const jumpBarItems: PageJumpBarItems = useMemo(() => {
     // Reset if not sorting by sortTitle
@@ -357,6 +400,18 @@ const MovieIndex = withScrollPosition((props: MovieIndexProps) => {
                   jumpToCharacter={jumpToCharacter}
                   isSelectMode={isSelectMode}
                   isSmallScreen={isSmallScreen}
+                />
+
+                <TablePager
+                  page={page}
+                  totalPages={totalPages}
+                  totalRecords={totalItems}
+                  isFetching={isFetching}
+                  onFirstPagePress={handleFirstPagePress}
+                  onPreviousPagePress={handlePreviousPagePress}
+                  onNextPagePress={handleNextPagePress}
+                  onLastPagePress={handleLastPagePress}
+                  onPageSelect={handlePageSelect}
                 />
 
                 <MovieIndexFooter />

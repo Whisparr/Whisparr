@@ -1,20 +1,19 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSelect } from 'App/SelectContext';
-import ClientSideCollectionAppState from 'App/State/ClientSideCollectionAppState';
-import MoviesAppState, { MovieIndexAppState } from 'App/State/MoviesAppState';
+import { MovieIndexAppState } from 'App/State/MoviesAppState';
+import ScenePagesAppState from 'App/State/ScenePagesAppState';
 import { REFRESH_MOVIE } from 'Commands/commandNames';
 import PageToolbarButton from 'Components/Page/Toolbar/PageToolbarButton';
 import { icons } from 'Helpers/Props';
 import { executeCommand } from 'Store/Actions/commandActions';
 import createCommandExecutingSelector from 'Store/Selectors/createCommandExecutingSelector';
-import createMovieClientSideCollectionItemsSelector from 'Store/Selectors/createMovieClientSideCollectionItemsSelector';
+import createScenePagedCollectionItemsSelector from 'Store/Selectors/createScenePagedCollectionItemsSelector';
 import translate from 'Utilities/String/translate';
 import getSelectedIds from 'Utilities/Table/getSelectedIds';
 
 interface SceneIndexRefreshSceneButtonProps {
   isSelectMode: boolean;
-  selectedFilterKey: string;
 }
 
 function SceneIndexRefreshSceneButton(
@@ -26,13 +25,12 @@ function SceneIndexRefreshSceneButton(
   const {
     items,
     totalItems,
-  }: MoviesAppState & MovieIndexAppState & ClientSideCollectionAppState =
-    useSelector(
-      createMovieClientSideCollectionItemsSelector('sceneIndex', 'scene')
-    );
+    selectedFilterKey,
+  }: ScenePagesAppState & MovieIndexAppState & { totalItems: number } =
+    useSelector(createScenePagedCollectionItemsSelector);
 
   const dispatch = useDispatch();
-  const { isSelectMode, selectedFilterKey } = props;
+  const { isSelectMode } = props;
   const [selectState] = useSelect();
   const { selectedState } = selectState;
 

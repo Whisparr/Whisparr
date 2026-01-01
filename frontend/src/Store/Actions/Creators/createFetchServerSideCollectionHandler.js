@@ -8,6 +8,22 @@ import { set, updateServerSideCollection } from '../baseActions';
 function createFetchServerSideCollectionHandler(section, url, fetchDataAugmenter) {
   const [baseSection] = section.split('.');
 
+  function getAlternateFilterType(value) {
+    if (typeof value !== 'string') {
+      return null;
+    }
+
+    if (value.endsWith('Pages')) {
+      return `${value.replace(/Pages$/, '')}Index`;
+    }
+
+    if (value.endsWith('Index')) {
+      return `${value.replace(/Index$/, '')}Pages`;
+    }
+
+    return null;
+  }
+
   return function(getState, payload, dispatch) {
     dispatch(set({ section, isFetching: true }));
 
@@ -30,15 +46,31 @@ function createFetchServerSideCollectionHandler(section, url, fetchDataAugmenter
       filters
     } = sectionState;
 
-    const customFilters = getState().customFilters.items.filter((customFilter) => {
-      return customFilter.type === section || customFilter.type === baseSection;
-    });
+    const filterTypes = new Set([section, baseSection]);
+    const alternateSection = getAlternateFilterType(section);
+    const alternateBaseSection = getAlternateFilterType(baseSection);
+
+    if (alternateSection) {
+      filterTypes.add(alternateSection);
+    }
+
+    if (alternateBaseSection) {
+      filterTypes.add(alternateBaseSection);
+    }
+
+    const customFilters = getState().customFilters.items.filter((customFilter) =>
+      filterTypes.has(customFilter.type)
+    );
 
     const selectedFilters = findSelectedFilters(selectedFilterKey, filters, customFilters);
 
     selectedFilters.forEach((filter) => {
       data[filter.key] = filter.value;
     });
+
+    if (selectedFilters.length) {
+      data.filters = JSON.stringify(selectedFilters);
+    }
 
     const promise = createAjaxRequest({
       url,

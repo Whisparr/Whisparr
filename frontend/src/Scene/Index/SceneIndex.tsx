@@ -7,19 +7,21 @@ import React, {
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { SelectProvider } from 'App/SelectContext';
-import ClientSideCollectionAppState from 'App/State/ClientSideCollectionAppState';
-import MoviesAppState, { MovieIndexAppState } from 'App/State/MoviesAppState';
+import { MovieIndexAppState } from 'App/State/MoviesAppState';
+import ScenePagesAppState from 'App/State/ScenePagesAppState';
 import { RSS_SYNC } from 'Commands/commandNames';
 import Alert from 'Components/Alert';
 import LoadingIndicator from 'Components/Loading/LoadingIndicator';
 import PageContent from 'Components/Page/PageContent';
 import PageContentBody from 'Components/Page/PageContentBody';
-import PageJumpBar from 'Components/Page/PageJumpBar';
+import PageJumpBar, { PageJumpBarItems } from 'Components/Page/PageJumpBar';
 import PageToolbar from 'Components/Page/Toolbar/PageToolbar';
 import PageToolbarButton from 'Components/Page/Toolbar/PageToolbarButton';
 import PageToolbarSection from 'Components/Page/Toolbar/PageToolbarSection';
 import PageToolbarSeparator from 'Components/Page/Toolbar/PageToolbarSeparator';
 import TableOptionsModalWrapper from 'Components/Table/TableOptions/TableOptionsModalWrapper';
+import TablePager from 'Components/Table/TablePager';
+import usePaging from 'Components/Table/usePaging';
 import withScrollPosition from 'Components/withScrollPosition';
 import { align, icons, kinds, sortDirections } from 'Helpers/Props';
 import InteractiveImportModal from 'InteractiveImport/InteractiveImportModal';
@@ -37,10 +39,17 @@ import {
   setSceneTableOption,
   setSceneView,
 } from 'Store/Actions/sceneIndexActions';
+import {
+  fetchScenePages,
+  gotoScenePagesPage,
+  setScenePagesFilter,
+  setScenePagesSort,
+} from 'Store/Actions/scenePagedActions';
 import scrollPositions from 'Store/scrollPositions';
+import { createCustomFiltersSelector } from 'Store/Selectors/createClientSideCollectionSelector';
 import createCommandExecutingSelector from 'Store/Selectors/createCommandExecutingSelector';
 import createDimensionsSelector from 'Store/Selectors/createDimensionsSelector';
-import createMovieClientSideCollectionItemsSelector from 'Store/Selectors/createMovieClientSideCollectionItemsSelector';
+import createScenePagedCollectionItemsSelector from 'Store/Selectors/createScenePagedCollectionItemsSelector';
 import translate from 'Utilities/String/translate';
 import SceneIndexFilterMenu from './Menus/SceneIndexFilterMenu';
 import SceneIndexSortMenu from './Menus/SceneIndexSortMenu';
@@ -83,14 +92,17 @@ const SceneIndex = withScrollPosition((props: SceneIndexProps) => {
     columns,
     selectedFilterKey,
     filters,
-    customFilters,
     sortKey,
     sortDirection,
     view,
-  }: MoviesAppState & MovieIndexAppState & ClientSideCollectionAppState =
-    useSelector(
-      createMovieClientSideCollectionItemsSelector('sceneIndex', 'scene')
-    );
+    page,
+    totalPages,
+  }: ScenePagesAppState & MovieIndexAppState & { totalItems: number } =
+    useSelector(createScenePagedCollectionItemsSelector);
+
+  const customFilters = useSelector(
+    createCustomFiltersSelector('scenePages', 'sceneIndex')
+  );
 
   const isRssSyncExecuting = useSelector(
     createCommandExecutingSelector(RSS_SYNC)
@@ -105,6 +117,12 @@ const SceneIndex = withScrollPosition((props: SceneIndexProps) => {
     undefined
   );
   const [isSelectMode, setIsSelectMode] = useState(false);
+
+  useEffect(() => {
+    if (!isPopulated) {
+      dispatch(fetchScenePages());
+    }
+  }, [dispatch, isPopulated]);
 
   useEffect(() => {
     dispatch(fetchQueueDetails({ all: true }));
@@ -142,14 +160,27 @@ const SceneIndex = withScrollPosition((props: SceneIndexProps) => {
 
   const onSortSelect = useCallback(
     (value: string) => {
-      dispatch(setSceneSort({ sortKey: value }));
+      let nextDirection = sortDirections.ASCENDING;
+
+      if (value === sortKey) {
+        nextDirection =
+          sortDirection === sortDirections.ASCENDING
+            ? sortDirections.DESCENDING
+            : sortDirections.ASCENDING;
+      }
+
+      dispatch(setSceneSort({ sortKey: value, sortDirection: nextDirection }));
+      dispatch(
+        setScenePagesSort({ sortKey: value, sortDirection: nextDirection })
+      );
     },
-    [dispatch]
+    [dispatch, sortKey, sortDirection]
   );
 
   const onFilterSelect = useCallback(
     (value: string | number) => {
       dispatch(setSceneFilter({ selectedFilterKey: value }));
+      dispatch(setScenePagesFilter({ selectedFilterKey: value }));
     },
     [dispatch]
   );
@@ -185,7 +216,19 @@ const SceneIndex = withScrollPosition((props: SceneIndexProps) => {
     [setJumpToCharacter]
   );
 
-  const jumpBarItems = useMemo(() => {
+  const {
+    handleFirstPagePress,
+    handlePreviousPagePress,
+    handleNextPagePress,
+    handleLastPagePress,
+    handlePageSelect,
+  } = usePaging({
+    page,
+    totalPages,
+    gotoPage: gotoScenePagesPage,
+  });
+
+  const jumpBarItems: PageJumpBarItems = useMemo(() => {
     // Reset if not sorting by sortTitle
     if (sortKey !== 'sortTitle') {
       return {
@@ -232,10 +275,7 @@ const SceneIndex = withScrollPosition((props: SceneIndexProps) => {
       <PageContent>
         <PageToolbar>
           <PageToolbarSection>
-            <SceneIndexRefreshSceneButton
-              isSelectMode={isSelectMode}
-              selectedFilterKey={selectedFilterKey}
-            />
+            <SceneIndexRefreshSceneButton isSelectMode={isSelectMode} />
 
             <PageToolbarButton
               label={translate('RssSync')}
@@ -358,6 +398,18 @@ const SceneIndex = withScrollPosition((props: SceneIndexProps) => {
                   jumpToCharacter={jumpToCharacter}
                   isSelectMode={isSelectMode}
                   isSmallScreen={isSmallScreen}
+                />
+
+                <TablePager
+                  page={page}
+                  totalPages={totalPages}
+                  totalRecords={totalItems}
+                  isFetching={isFetching}
+                  onFirstPagePress={handleFirstPagePress}
+                  onPreviousPagePress={handlePreviousPagePress}
+                  onNextPagePress={handleNextPagePress}
+                  onLastPagePress={handleLastPagePress}
+                  onPageSelect={handlePageSelect}
                 />
 
                 <SceneIndexFooter />

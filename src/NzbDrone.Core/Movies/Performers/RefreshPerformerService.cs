@@ -175,7 +175,7 @@ namespace NzbDrone.Core.Movies.Performers
                 _logger.Info("Synced performer {0} has {1} scenes adding {2} and added {3}", performer.Name, performerWork.Scenes.Count, scenesToAdd.Count(), scenesAdded);
             }
 
-            if (performer.Monitored)
+            if (performer.MoviesMonitored)
             {
                 var moviesAdded = 0;
 

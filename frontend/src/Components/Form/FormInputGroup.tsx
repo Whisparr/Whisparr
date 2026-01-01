@@ -7,6 +7,7 @@ import translate from 'Utilities/String/translate';
 import AutoCompleteInput, { AutoCompleteInputProps } from './AutoCompleteInput';
 import CaptchaInput, { CaptchaInputProps } from './CaptchaInput';
 import CheckInput, { CheckInputProps } from './CheckInput';
+import DateInput from './DateInput';
 import { FormInputButtonProps } from './FormInputButton';
 import FormInputHelpText from './FormInputHelpText';
 import KeyValueListInput, { KeyValueListInputProps } from './KeyValueListInput';
@@ -59,7 +60,7 @@ const componentMap: Record<InputType, ElementType> = {
   availabilitySelect: AvailabilitySelectInput,
   captcha: CaptchaInput,
   check: CheckInput,
-  date: TextInput,
+  date: DateInput,
   device: DeviceInput,
   downloadClientSelect: DownloadClientSelectInput,
   dynamicSelect: ProviderDataSelectInput,

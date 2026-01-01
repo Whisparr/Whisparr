@@ -1,22 +1,38 @@
 import classNames from 'classnames';
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React from 'react';
 import styles from './DateInput.css';
 
-class DateInput extends Component {
+interface ChangePayload {
+  name: string;
+  value: React.InputHTMLAttributes<HTMLInputElement>['value'];
+}
 
-  //
-  // Lifecycle
+interface Props {
+  className?: string;
+  type?: string;
+  readOnly?: boolean;
+  autoFocus?: boolean;
+  placeholder?: string;
+  name: string;
+  value: React.InputHTMLAttributes<HTMLInputElement>['value'];
+  hasError?: boolean;
+  hasWarning?: boolean;
+  hasButton?: boolean;
+  onChange: (payload: ChangePayload) => void;
+  onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  onCopy?: (e: React.ClipboardEvent<HTMLInputElement>) => void;
+  onSelectionChange?: (start: number | null, end: number | null) => void;
+}
 
-  constructor(props, context) {
-    super(props, context);
-
-    this._input = null;
-    this._selectionStart = null;
-    this._selectionEnd = null;
-    this._selectionTimeout = null;
-    this._isMouseTarget = false;
-  }
+class DateInput extends React.Component<Props> {
+  static defaultProps: Partial<Props> = {
+    className: styles.input,
+    type: 'date',
+    readOnly: false,
+    autoFocus: false,
+    value: '',
+  };
 
   componentDidMount() {
     window.addEventListener('mouseup', this.onDocumentMouseUp);
@@ -26,30 +42,33 @@ class DateInput extends Component {
     window.removeEventListener('mouseup', this.onDocumentMouseUp);
 
     if (this._selectionTimeout) {
-      this._selectionTimeout = clearTimeout(this._selectionTimeout);
+      window.clearTimeout(this._selectionTimeout);
+      this._selectionTimeout = null;
     }
   }
 
-  //
-  // Control
+  private _input: HTMLInputElement | null = null;
+  private _selectionStart: number | null = null;
+  private _selectionEnd: number | null = null;
+  private _selectionTimeout: number | null = null;
+  private _isMouseTarget = false;
 
-  setInputRef = (ref) => {
+  setInputRef = (ref: HTMLInputElement | null) => {
     this._input = ref;
   };
 
   selectionChange() {
     if (this._selectionTimeout) {
-      this._selectionTimeout = clearTimeout(this._selectionTimeout);
+      window.clearTimeout(this._selectionTimeout);
     }
 
-    this._selectionTimeout = setTimeout(() => {
-      const selectionStart = this._input.selectionStart;
-      const selectionEnd = this._input.selectionEnd;
+    this._selectionTimeout = window.setTimeout(() => {
+      const selectionStart = this._input ? this._input.selectionStart : null;
+      const selectionEnd = this._input ? this._input.selectionEnd : null;
 
-      const selectionChanged = (
+      const selectionChanged =
         this._selectionStart !== selectionStart ||
-        this._selectionEnd !== selectionEnd
-      );
+        this._selectionEnd !== selectionEnd;
 
       this._selectionStart = selectionStart;
       this._selectionEnd = selectionEnd;
@@ -60,24 +79,18 @@ class DateInput extends Component {
     }, 10);
   }
 
-  //
-  // Listeners
+  onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, onChange } = this.props;
 
-  onChange = (event) => {
-    const {
+    const payload: ChangePayload = {
       name,
-      onChange
-    } = this.props;
-
-    const payload = {
-      name,
-      value: event.target.value
+      value: event.target.value,
     };
 
     onChange(payload);
   };
 
-  onFocus = (event) => {
+  onFocus = (event: React.FocusEvent<HTMLInputElement>) => {
     if (this.props.onFocus) {
       this.props.onFocus(event);
     }
@@ -105,8 +118,10 @@ class DateInput extends Component {
     this._isMouseTarget = false;
   };
 
-  //
-  // Render
+  // noop wheel handler to match original behaviour (JS referenced onWheel but didn't define it)
+  onWheel = (_e: React.WheelEvent<HTMLInputElement>) => {
+    // Intentionally empty to preserve original behavior
+  };
 
   render() {
     const {
@@ -121,7 +136,7 @@ class DateInput extends Component {
       hasWarning,
       hasButton,
       onBlur,
-      onCopy
+      onCopy,
     } = this.props;
 
     return (
@@ -153,31 +168,5 @@ class DateInput extends Component {
     );
   }
 }
-
-DateInput.propTypes = {
-  className: PropTypes.string.isRequired,
-  type: PropTypes.string.isRequired,
-  readOnly: PropTypes.bool,
-  autoFocus: PropTypes.bool,
-  placeholder: PropTypes.string,
-  name: PropTypes.string.isRequired,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.array]).isRequired,
-  hasError: PropTypes.bool,
-  hasWarning: PropTypes.bool,
-  hasButton: PropTypes.bool,
-  onChange: PropTypes.func.isRequired,
-  onFocus: PropTypes.func,
-  onBlur: PropTypes.func,
-  onCopy: PropTypes.func,
-  onSelectionChange: PropTypes.func
-};
-
-DateInput.defaultProps = {
-  className: styles.input,
-  type: 'date',
-  readOnly: false,
-  autoFocus: false,
-  value: ''
-};
 
 export default DateInput;

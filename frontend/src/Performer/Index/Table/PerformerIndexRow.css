@@ -8,7 +8,11 @@
 .status {
   composes: cell;
 
-  flex: 0 0 30px;
+  flex: 0 0 50px;
+}
+
+.statusIcon {
+  padding-left: 4px;
 }
 
 .fullName {

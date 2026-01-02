@@ -11,6 +11,7 @@ interface CssExports {
   'rootFolderPath': string;
   'sortTitle': string;
   'status': string;
+  'statusIcon': string;
   'tags': string;
   'totalSceneCount': string;
 }

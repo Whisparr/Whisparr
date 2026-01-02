@@ -5,19 +5,30 @@ import SpinnerIconButton from 'Components/Link/SpinnerIconButton';
 import { icons } from 'Helpers/Props';
 import styles from './MonitorToggleButton.css';
 
-function getTooltip(monitored, isDisabled, tooltip) {
+function getTooltip(monitored, type, isDisabled, tooltip) {
   if (tooltip) {
     return tooltip;
   }
+
   if (isDisabled) {
     return 'Cannot toggle monitored state when movie is unmonitored';
   }
 
   if (monitored) {
-    return 'Monitored, click to unmonitor';
+    const monitoredLabels = {
+      movieMonitor: 'Monitored Movies, click to unmonitor',
+      sceneMonitor: 'Monitored Scenes, click to unmonitor'
+    };
+
+    return monitoredLabels[type] ?? 'Monitored, click to unmonitor';
   }
 
-  return 'Unmonitored, click to monitor';
+  const unMonitoredLabels = {
+    movieMonitor: 'Unmonitored Movies, click to monitor',
+    sceneMonitor: 'Unmonitored Scenes, click to monitor'
+  };
+
+  return unMonitoredLabels[type] ?? 'Unmonitored, click to monitor';
 }
 
 class MonitorToggleButton extends Component {
@@ -27,8 +38,13 @@ class MonitorToggleButton extends Component {
 
   onPress = (event) => {
     const shiftKey = event.nativeEvent.shiftKey;
-
-    this.props.onPress(!this.props.monitored, { shiftKey });
+    if (this.props.type === 'movieMonitor') {
+      this.props.onPress({ monitored: this.props.monitored, moviesMonitored: !this.props.moviesMonitored }, { shiftKey });
+    } else if (this.props.type === 'sceneMonitor') {
+      this.props.onPress({ monitored: !this.props.monitored, moviesMonitored: this.props.moviesMonitored }, { shiftKey });
+    } else {
+      this.props.onPress(!this.props.monitored, { shiftKey });
+    }
   };
 
   //
@@ -38,6 +54,8 @@ class MonitorToggleButton extends Component {
     const {
       className,
       monitored,
+      moviesMonitored,
+      type,
       isDisabled,
       tooltip,
       isSaving,
@@ -45,7 +63,13 @@ class MonitorToggleButton extends Component {
       ...otherProps
     } = this.props;
 
-    const iconName = monitored ? icons.MONITORED : icons.UNMONITORED;
+    const monitoredValue = type === 'movieMonitor' ? moviesMonitored : monitored;
+    let iconName = icons.UNMONITORED;
+    if (monitoredValue && (type === 'movieMonitor' || type === 'sceneMonitor')) {
+      iconName = type === 'movieMonitor' ? icons.FILM : icons.SCENE;
+    } else if (type === 'movieMonitor' || type === 'sceneMonitor') {
+      iconName = type === 'movieMonitor' ? icons.FILMUNMONITOR : icons.SCENEUNMONITOR;
+    }
 
     return (
       <SpinnerIconButton
@@ -55,7 +79,7 @@ class MonitorToggleButton extends Component {
         )}
         name={iconName}
         size={size}
-        title={getTooltip(monitored, isDisabled, tooltip)}
+        title={getTooltip(monitoredValue, type, isDisabled, tooltip)}
         isDisabled={isDisabled}
         isSpinning={isSaving}
         {...otherProps}
@@ -68,6 +92,8 @@ class MonitorToggleButton extends Component {
 MonitorToggleButton.propTypes = {
   className: PropTypes.string.isRequired,
   monitored: PropTypes.bool,
+  moviesMonitored: PropTypes.bool,
+  type: PropTypes.string,
   size: PropTypes.number,
   isDisabled: PropTypes.bool.isRequired,
   tooltip: PropTypes.string,

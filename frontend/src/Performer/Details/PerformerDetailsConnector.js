@@ -167,10 +167,14 @@ class PerformerDetailsConnector extends Component {
   //
   // Listeners
 
-  onMonitorTogglePress = (monitored) => {
+  onMonitorTogglePress = (args) => {
+    const monitored = args.monitored;
+    const moviesMonitored = args.moviesMonitored;
+
     this.props.dispatchTogglePerformerMonitored({
       performerId: this.props.id,
-      monitored
+      monitored,
+      moviesMonitored
     });
   };
 

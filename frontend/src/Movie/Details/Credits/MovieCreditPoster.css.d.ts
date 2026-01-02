@@ -6,6 +6,7 @@ interface CssExports {
   'content': string;
   'controls': string;
   'link': string;
+  'movieAction': string;
   'overlayTitle': string;
   'poster': string;
   'posterContainer': string;

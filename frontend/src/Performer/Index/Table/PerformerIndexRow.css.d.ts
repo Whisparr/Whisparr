@@ -16,6 +16,7 @@ interface CssExports {
   'qualityProfileId': string;
   'rootFolderPath': string;
   'status': string;
+  'statusIcon': string;
   'tags': string;
   'totalSceneCount': string;
 }

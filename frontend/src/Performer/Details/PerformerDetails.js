@@ -142,6 +142,7 @@ class PerformerDetails extends Component {
       sizeOnDisk,
       qualityProfileId,
       monitored,
+      moviesMonitored,
       status,
       studios,
       genres,
@@ -259,12 +260,24 @@ class PerformerDetails extends Component {
                         <MonitorToggleButton
                           className={styles.monitorToggleButton}
                           monitored={monitored}
+                          moviesMonitored={moviesMonitored}
+                          type="sceneMonitor"
                           isSaving={isSaving}
                           size={40}
                           onPress={onMonitorTogglePress}
                         />
                       </div>
-
+                      <div className={styles.toggleMonitoredContainer}>
+                        <MonitorToggleButton
+                          className={styles.monitorToggleButton}
+                          monitored={monitored}
+                          moviesMonitored={moviesMonitored}
+                          type="movieMonitor"
+                          isSaving={isSaving}
+                          size={40}
+                          onPress={onMonitorTogglePress}
+                        />
+                      </div>
                       <div className={styles.title}>{fullName}</div>
                     </div>
                   </div>
@@ -490,6 +503,7 @@ PerformerDetails.propTypes = {
   sizeOnDisk: PropTypes.number.isRequired,
   qualityProfileId: PropTypes.number.isRequired,
   monitored: PropTypes.bool.isRequired,
+  moviesMonitored: PropTypes.bool.isRequired,
   status: PropTypes.string.isRequired,
   careerStart: PropTypes.number,
   careerEnd: PropTypes.number,

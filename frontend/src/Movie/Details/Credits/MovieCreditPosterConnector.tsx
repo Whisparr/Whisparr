@@ -29,12 +29,15 @@ function MovieCreditPosterConnector(props: Props) {
     performerProp;
 
   const onTogglePerformerMonitored = useCallback(
-    (monitored: boolean) => {
+    (args: { monitored: boolean; moviesMonitored: boolean }) => {
       if (!performer) return;
+      const monitored = args.monitored;
+      const moviesMonitored = args.moviesMonitored;
       dispatch(
         togglePerformerMonitored({
           performerId: performer.id,
           monitored,
+          moviesMonitored,
         })
       );
     },

@@ -168,11 +168,22 @@ export const defaultState = {
       filters: []
     },
     {
-      key: 'monitored',
-      label: () => translate('MonitoredOnly'),
+      key: 'monitoredscenesonly',
+      label: () => translate('MonitoredScenesOnly'),
       filters: [
         {
           key: 'monitored',
+          value: true,
+          type: filterTypes.EQUAL
+        }
+      ]
+    },
+    {
+      key: 'monitoredmoviessonly',
+      label: () => translate('MonitoredMoviesOnly'),
+      filters: [
+        {
+          key: 'moviesMonitored',
           value: true,
           type: filterTypes.EQUAL
         }
@@ -451,7 +462,8 @@ export const actionHandlers = handleThunks({
   [TOGGLE_PERFORMER_MONITORED]: (getState, payload, dispatch) => {
     const {
       performerId: id,
-      monitored
+      monitored,
+      moviesMonitored
     } = payload;
 
     const performer = _.find(getState().performers.items, { id });
@@ -467,7 +479,8 @@ export const actionHandlers = handleThunks({
       method: 'PUT',
       data: JSON.stringify({
         ...performer,
-        monitored
+        monitored,
+        moviesMonitored
       }),
       dataType: 'json'
     }).request;

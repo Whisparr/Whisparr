@@ -6,6 +6,7 @@ interface Studio extends ModelBase {
   title: string;
   network: string;
   monitored: boolean;
+  moviesMonitored: boolean;
   images: Image[];
   sortTitle: string;
   sceneCount: number;

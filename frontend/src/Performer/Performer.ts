@@ -6,6 +6,7 @@ interface Performer extends ModelBase {
   name: string;
   fullName: string;
   monitored: boolean;
+  moviesMonitored: boolean;
   rootFolderPath: string;
   images: Image[];
   gender: string;

@@ -79,7 +79,7 @@ class EditPerformerModalContent extends Component {
                 {...otherProps}
               >
                 <FormGroup>
-                  <FormLabel>{translate('Monitored')}</FormLabel>
+                  <FormLabel>{translate('MonitoredScene')}</FormLabel>
 
                   <FormInputGroup
                     type={inputTypes.CHECK}

@@ -12,7 +12,10 @@ interface Props {
   posterWidth: number;
   posterHeight: number;
   safeForWorkMode: boolean;
-  onTogglePerformerMonitored: (monitored: boolean) => void;
+  onTogglePerformerMonitored: (
+    monitored: boolean,
+    moviesMonitored: boolean
+  ) => void;
 }
 
 function MovieCastPoster({
@@ -44,6 +47,9 @@ function MovieCastPoster({
   const isPerformer = !!performer?.foreignId;
   const isPerfotmerLoaded = !!performer?.fullName;
   const link = isPerformer ? `/performer/${performer.foreignId}` : '';
+  const title = isPerformer
+    ? `${performer.fullName}`
+    : 'Create a Link on StashDB to Link this Performer';
 
   return (
     <div className={styles.content} style={contentStyle}>
@@ -53,6 +59,16 @@ function MovieCastPoster({
             <MonitorToggleButton
               className={styles.action}
               monitored={performer.monitored}
+              moviesMonitored={performer.moviesMonitored}
+              type="sceneMonitor"
+              size={20}
+              onPress={onTogglePerformerMonitored}
+            />
+            <MonitorToggleButton
+              className={styles.movieAction}
+              monitored={performer.monitored}
+              moviesMonitored={performer.moviesMonitored}
+              type="movieMonitor"
               size={20}
               onPress={onTogglePerformerMonitored}
             />
@@ -60,7 +76,7 @@ function MovieCastPoster({
         )}
 
         <div style={elementStyle}>
-          <Link className={styles.link} to={link}>
+          <Link title={title} className={styles.link} to={link}>
             <MovieHeadshot
               safeForWorkMode={safeForWorkMode}
               className={styles.poster}

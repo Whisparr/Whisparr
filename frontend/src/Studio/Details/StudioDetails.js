@@ -136,6 +136,7 @@ class StudioDetails extends Component {
       sizeOnDisk,
       qualityProfileId,
       monitored,
+      moviesMonitored,
       years,
       genres,
       images,
@@ -253,6 +254,20 @@ class StudioDetails extends Component {
                         <MonitorToggleButton
                           className={styles.monitorToggleButton}
                           monitored={monitored}
+                          moviesMonitored={moviesMonitored}
+                          type="sceneMonitor"
+                          isSaving={isSaving}
+                          size={40}
+                          onPress={onMonitorTogglePress}
+                        />
+                      </div>
+
+                      <div className={styles.toggleMonitoredContainer}>
+                        <MonitorToggleButton
+                          className={styles.monitorToggleButton}
+                          monitored={monitored}
+                          moviesMonitored={moviesMonitored}
+                          type="movieMonitor"
                           isSaving={isSaving}
                           size={40}
                           onPress={onMonitorTogglePress}
@@ -541,6 +556,7 @@ StudioDetails.propTypes = {
   sizeOnDisk: PropTypes.number.isRequired,
   qualityProfileId: PropTypes.number.isRequired,
   monitored: PropTypes.bool.isRequired,
+  moviesMonitored: PropTypes.bool.isRequired,
   years: PropTypes.arrayOf(PropTypes.number).isRequired,
   genres: PropTypes.arrayOf(PropTypes.string).isRequired,
   images: PropTypes.arrayOf(PropTypes.object).isRequired,

@@ -5,6 +5,7 @@ import {
   faBookmark as farBookmark,
   faCalendar as farCalendar,
   faCircle as farCircle,
+  faCirclePlay as farCirclePlay,
   faClock as farClock,
   faClone as farClone,
   faDotCircle as farDotCircle,
@@ -46,6 +47,7 @@ import {
   faChevronCircleUp as fasChevronCircleUp,
   faCircle as fasCircle,
   faCircleDown as fasCircleDown,
+  faCirclePlay as fasCirclePlay,
   faCloud as fasCloud,
   faCloudDownloadAlt as fasCloudDownloadAlt,
   faCog as fasCog,
@@ -65,7 +67,6 @@ import {
   faFileCircleQuestion as fasFileCircleQuestion,
   faFileExport as fasFileExport,
   faFileInvoice as farFileInvoice,
-  faFilm as fasFilm,
   faFilter as fasFilter,
   faFire as fasFire,
   faFlag as fasFlag,
@@ -122,6 +123,7 @@ import {
   faVenusMars as fasVenusMars,
   faVial as fasVial,
   faVideo as fasVideo,
+  faVideoSlash as fasVideoSlash,
   faWrench as fasWrench,
 } from '@fortawesome/free-solid-svg-icons';
 
@@ -172,7 +174,8 @@ export const EXTERNAL_LINK = fasExternalLinkAlt;
 export const FATAL = fasTimesCircle;
 export const FILE = farFile;
 export const FILE_MISSING = fasFileCircleQuestion;
-export const FILM = fasFilm;
+export const FILM = fasVideo;
+export const FILMUNMONITOR = fasVideoSlash;
 export const FILTER = fasFilter;
 export const FLAG = fasFlag;
 export const FOOTNOTE = fasAsterisk;
@@ -230,7 +233,8 @@ export const REORDER = fasBars;
 export const ROOT_FOLDER = farFolderTree;
 export const RSS = fasRss;
 export const SAVE = fasSave;
-export const SCENE = fasVideo;
+export const SCENE = fasCirclePlay;
+export const SCENEUNMONITOR = farCirclePlay;
 export const SCHEDULED = farClock;
 export const SCORE = fasUserPlus;
 export const SEARCH = fasSearch;

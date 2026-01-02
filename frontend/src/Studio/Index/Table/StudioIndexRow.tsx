@@ -35,6 +35,7 @@ function StudioIndexRow(props: StudioIndexRowProps) {
     title,
     network,
     monitored,
+    moviesMonitored,
     rootFolderPath,
     aliases = [],
     tags = [],
@@ -88,7 +89,16 @@ function StudioIndexRow(props: StudioIndexRowProps) {
         if (name === 'status') {
           return (
             <VirtualTableRowCell key={name} className={styles[name]}>
-              <Icon name={monitored ? icons.MONITORED : icons.UNMONITORED} />
+              <Icon
+                containerClassName={styles.statusIcon}
+                title="scene"
+                name={monitored ? icons.SCENE : icons.SCENEUNMONITOR}
+              />
+              <Icon
+                containerClassName={styles.statusIcon}
+                title="movie"
+                name={moviesMonitored ? icons.FILM : icons.FILMUNMONITOR}
+              />
             </VirtualTableRowCell>
           );
         }

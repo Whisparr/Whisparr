@@ -129,8 +129,8 @@ export const defaultState = {
       filters: []
     },
     {
-      key: 'monitored',
-      label: () => translate('MonitoredOnly'),
+      key: 'monitoredscenes',
+      label: () => translate('MonitoredScenesOnly'),
       filters: [
         {
           key: 'monitored',
@@ -140,6 +140,16 @@ export const defaultState = {
       ]
     },
     {
+      key: 'monitoredMovies',
+      label: () => translate('MonitoredMoviesOnly'),
+      filters: [
+        {
+          key: 'moviesMonitored',
+          value: true,
+          type: filterTypes.EQUAL
+        }
+      ]
+    }, {
       key: 'unmonitored',
       label: () => translate('Unmonitored'),
       filters: [
@@ -317,7 +327,8 @@ export const actionHandlers = handleThunks({
   [TOGGLE_STUDIO_MONITORED]: (getState, payload, dispatch) => {
     const {
       studioId: id,
-      monitored
+      monitored,
+      moviesMonitored
     } = payload;
 
     const studio = _.find(getState().studios.items, { id });
@@ -333,7 +344,8 @@ export const actionHandlers = handleThunks({
       method: 'PUT',
       data: JSON.stringify({
         ...studio,
-        monitored
+        monitored,
+        moviesMonitored
       }),
       dataType: 'json'
     }).request;
@@ -343,7 +355,8 @@ export const actionHandlers = handleThunks({
         id,
         section,
         isSaving: false,
-        monitored
+        monitored,
+        moviesMonitored
       }));
     });
 

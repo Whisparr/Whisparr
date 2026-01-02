@@ -167,10 +167,14 @@ class StudioDetailsConnector extends Component {
   //
   // Listeners
 
-  onMonitorTogglePress = (monitored) => {
+  onMonitorTogglePress = (args) => {
+    const monitored = args.monitored;
+    const moviesMonitored = args.moviesMonitored;
+
     this.props.dispatchToggleStudioMonitored({
       studioId: this.props.id,
-      monitored
+      monitored,
+      moviesMonitored
     });
   };
 

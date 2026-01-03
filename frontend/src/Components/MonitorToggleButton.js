@@ -63,12 +63,29 @@ class MonitorToggleButton extends Component {
       ...otherProps
     } = this.props;
 
-    const monitoredValue = type === 'movieMonitor' ? moviesMonitored : monitored;
+    let monitorType = undefined;
+    switch (type) {
+      case 'movieMonitor':
+        monitorType = 'movie';
+        break;
+      case 'sceneMonitor':
+        monitorType = 'scene';
+        break;
+      default:
+        monitorType = undefined;
+    }
+    const monitoredValue = monitorType ? moviesMonitored : monitored;
+
     let iconName = icons.UNMONITORED;
-    if (monitoredValue && (type === 'movieMonitor' || type === 'sceneMonitor')) {
-      iconName = type === 'movieMonitor' ? icons.FILM : icons.SCENE;
-    } else if (type === 'movieMonitor' || type === 'sceneMonitor') {
-      iconName = type === 'movieMonitor' ? icons.FILMUNMONITOR : icons.SCENEUNMONITOR;
+
+    if (monitorType) {
+      const iconSet = monitorType === 'movie' ?
+        { monitored: icons.FILM, unmonitored: icons.FILMUNMONITOR } :
+        { monitored: icons.SCENE, unmonitored: icons.SCENEUNMONITOR };
+
+      iconName = monitoredValue ? iconSet.monitored : iconSet.unmonitored;
+    } else if (monitoredValue) {
+      iconName = icons.MONITORED;
     }
 
     return (

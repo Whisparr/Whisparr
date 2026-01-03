@@ -32,22 +32,24 @@ export const defaultState = {
 
   movieDefaults: {
     rootFolderPath: '',
-    monitor: 'movieOnly',
+    monitored: 'sceneOnly',
     qualityProfileId: 0,
-    searchForMovie: true,
+    searchForMovie: false,
     tags: []
   },
   performerDefaults: {
     rootFolderPath: '',
-    monitor: 'movieOnly',
+    monitored: true,
+    moviesMonitored: false,
     qualityProfileId: 0,
     minimumAvailability: 'released',
-    searchForMovie: true,
+    searchForMovie: false,
     tags: []
   },
   studioDefaults: {
     rootFolderPath: '',
-    monitor: 'movieOnly',
+    monitored: true,
+    moviesMonitored: false,
     qualityProfileId: 0,
     searchForMovie: false,
     tags: []

@@ -27,11 +27,11 @@ namespace NzbDrone.Core.Movies
                     return false;
                 }
 
-            if (movie.LastInfoSync < DateTime.UtcNow.AddDays(-60))
-            {
-                _logger.Trace("Movie {0} last updated more than 60 days ago, should refresh.", movie.Title);
-                return true;
-            }
+                if (movie.LastInfoSync < DateTime.UtcNow.AddDays(-60))
+                {
+                    _logger.Trace("Movie {0} last updated more than 60 days ago, should refresh.", movie.Title);
+                    return true;
+                }
 
                 if (movie.LastInfoSync >= DateTime.UtcNow.AddHours(-12))
                 {
@@ -46,11 +46,11 @@ namespace NzbDrone.Core.Movies
                     return true;
                 }
 
-            if (movie.Status == MovieStatusType.Released && movie.ReleaseDateUtc >= DateTime.UtcNow.AddDays(-30))
-            {
-                _logger.Trace("Movie {0} is released since less than 30 days, should refresh", movie.Title);
-                return true;
-            }
+                if (movie.Status == MovieStatusType.Released && movie.ReleaseDateUtc >= DateTime.UtcNow.AddDays(-30))
+                {
+                    _logger.Trace("Movie {0} is released since less than 30 days, should refresh", movie.Title);
+                    return true;
+                }
 
                 _logger.Trace("Movie {0} came out long ago, should not be refreshed.", movie.Title);
                 return false;

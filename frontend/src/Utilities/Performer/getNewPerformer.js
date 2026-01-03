@@ -2,20 +2,22 @@
 function getNewPerformer(performer, payload) {
   const {
     rootFolderPath,
-    monitor,
+    monitored,
+    moviesMonitored,
     qualityProfileId,
     tags,
     searchForMovie = false
   } = payload;
 
   const addOptions = {
-    monitor,
+    monitored,
+    moviesMonitored,
     searchForMovie
   };
 
   performer.addOptions = addOptions;
-  performer.monitored = monitor === 'movieAndScene' || monitor === 'sceneOnly';
-  performer.movieMonitored = monitor === 'movieAndScene' || monitor === 'movieOnly';
+  performer.monitored = monitored;
+  performer.moviesMonitored = moviesMonitored;
   performer.qualityProfileId = qualityProfileId;
   performer.rootFolderPath = rootFolderPath;
   performer.tags = tags;

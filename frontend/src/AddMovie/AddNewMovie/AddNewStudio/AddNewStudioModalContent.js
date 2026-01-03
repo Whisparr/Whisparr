@@ -37,7 +37,8 @@ class AddNewStudioModalContent extends Component {
       images,
       isAdding,
       rootFolderPath,
-      monitor,
+      monitored,
+      moviesMonitored,
       qualityProfileId,
       searchForMovie,
       tags,
@@ -91,15 +92,26 @@ class AddNewStudioModalContent extends Component {
                 </FormGroup>
 
                 <FormGroup>
-                  <FormLabel>
-                    {translate('Monitor')}
-                  </FormLabel>
+                  <FormLabel>{translate('MonitoredScene')}</FormLabel>
 
                   <FormInputGroup
-                    type={inputTypes.MONITOR_MOVIES_SELECT}
-                    name="monitor"
+                    type={inputTypes.CHECK}
+                    name="monitored"
+                    helpText={translate('MonitoredPerformerHelpText')}
+                    {...monitored}
                     onChange={onInputChange}
-                    {...monitor}
+                  />
+                </FormGroup>
+
+                <FormGroup>
+                  <FormLabel>{translate('MonitoredMovie')}</FormLabel>
+
+                  <FormInputGroup
+                    type={inputTypes.CHECK}
+                    name="moviesMonitored"
+                    helpText={translate('MonitoredPerformerHelpText')}
+                    {...moviesMonitored}
+                    onChange={onInputChange}
                   />
                 </FormGroup>
 
@@ -164,7 +176,8 @@ AddNewStudioModalContent.propTypes = {
   isAdding: PropTypes.bool.isRequired,
   addError: PropTypes.object,
   rootFolderPath: PropTypes.object,
-  monitor: PropTypes.object.isRequired,
+  monitored: PropTypes.bool.isRequired,
+  moviesMonitored: PropTypes.bool.isRequired,
   qualityProfileId: PropTypes.object,
   searchForMovie: PropTypes.object.isRequired,
   tags: PropTypes.object.isRequired,

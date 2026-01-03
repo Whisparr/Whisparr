@@ -74,7 +74,8 @@ class MonitorToggleButton extends Component {
       default:
         monitorType = undefined;
     }
-    const monitoredValue = monitorType ? moviesMonitored : monitored;
+
+    const monitoredValue = monitorType === 'movie' ? moviesMonitored : monitored;
 
     let iconName = icons.UNMONITORED;
 

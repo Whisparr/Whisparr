@@ -40,6 +40,9 @@ if [ "$PLATFORM" = "Windows" ]; then
 elif [ "$PLATFORM" = "Linux" ] || [ "$PLATFORM" = "Mac" ] ; then
   mkdir -p ~/.config/Whisparr
   WHERE="$WHERE&Category!=WINDOWS"
+  if [ -d "$TEST_DIR/selenium-manager" ]; then
+    find "$TEST_DIR/selenium-manager" -type f -name selenium-manager -exec chmod a+x {} \;
+  fi
 else
   echo "Platform must be provided as first arguement: Windows, Linux or Mac"
   exit 1

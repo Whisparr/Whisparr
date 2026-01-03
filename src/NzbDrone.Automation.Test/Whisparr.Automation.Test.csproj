@@ -2,10 +2,13 @@
   <PropertyGroup>
     <TargetFrameworks>net6.0</TargetFrameworks>
   </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="Selenium.Support" Version="3.141.0" />
-    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="137.0.7151.6800" />
-  </ItemGroup>
+<ItemGroup>
+  <PackageReference Include="Selenium.WebDriver" Version="4.27.0" />
+  <PackageReference Include="Selenium.Support" Version="4.27.0" />
+  <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="137.0.7151.6800" />
+  <!-- Suppress warning about missing async interfaces in .NET 6, can remove after moving to .NET 8 -->
+  <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
+</ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NzbDrone.Test.Common\Whisparr.Test.Common.csproj" />
   </ItemGroup>

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PageContent from 'Components/Page/PageContent';
 import PageContentBody from 'Components/Page/PageContentBody';
-import SettingsToolbarConnector from 'Settings/SettingsToolbarConnector';
+import SettingsToolbar from 'Settings/SettingsToolbar';
 import translate from 'Utilities/String/translate';
 import MetadatasConnector from './Metadata/MetadatasConnector';
 
@@ -49,7 +49,7 @@ class MetadataSettings extends Component {
 
     return (
       <PageContent title={translate('MetadataSettings')}>
-        <SettingsToolbarConnector
+        <SettingsToolbar
           isSaving={isSaving}
           hasPendingChanges={hasPendingChanges}
           onSavePress={this.onSavePress}

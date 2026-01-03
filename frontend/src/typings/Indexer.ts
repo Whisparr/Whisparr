@@ -1,4 +1,5 @@
 import ModelBase from 'App/ModelBase';
+import DownloadProtocol from 'DownloadClient/DownloadProtocol';
 
 export interface Field {
   order: number;
@@ -14,7 +15,9 @@ interface Indexer extends ModelBase {
   enableRss: boolean;
   enableAutomaticSearch: boolean;
   enableInteractiveSearch: boolean;
-  protocol: string;
+  supportsRss: boolean;
+  supportsSearch: boolean;
+  protocol: DownloadProtocol;
   priority: number;
   name: string;
   fields: Field[];
@@ -22,6 +25,7 @@ interface Indexer extends ModelBase {
   implementation: string;
   configContract: string;
   infoLink: string;
+  downloadClientId: number;
   tags: number[];
 }
 

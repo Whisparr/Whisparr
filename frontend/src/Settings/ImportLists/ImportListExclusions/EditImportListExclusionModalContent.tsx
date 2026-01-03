@@ -56,12 +56,11 @@ function createImportListExclusionSelector(id?: number) {
         importListExclusions;
 
       const mapping = id
-        ? items.find((i) => i.id === id)
+        ? items.find((i) => i.id === id) ?? newImportListExclusion
         : newImportListExclusion;
       const settings = selectSettings(mapping, pendingChanges, saveError);
 
       return {
-        id,
         isFetching,
         error,
         isSaving,

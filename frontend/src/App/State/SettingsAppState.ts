@@ -1,5 +1,6 @@
 import AppSectionState, {
   AppSectionDeleteState,
+  AppSectionItemSchemaState,
   AppSectionItemState,
   AppSectionSaveState,
   AppSectionSchemaState,
@@ -16,10 +17,17 @@ import IndexerFlag from 'typings/IndexerFlag';
 import Notification from 'typings/Notification';
 import QualityProfile from 'typings/QualityProfile';
 import General from 'typings/Settings/General';
+import IndexerOptions from 'typings/Settings/IndexerOptions';
+import MediaManagement from 'typings/Settings/MediaManagement';
 import NamingConfig from 'typings/Settings/NamingConfig';
 import NamingExample from 'typings/Settings/NamingExample';
 import ReleaseProfile from 'typings/Settings/ReleaseProfile';
 import UiSettings from 'typings/Settings/UiSettings';
+import MetadataAppState from './MetadataAppState';
+
+type Presets<T> = T & {
+  presets: T[];
+};
 
 export interface DownloadClientAppState
   extends AppSectionState<DownloadClient>,
@@ -30,6 +38,10 @@ export interface DownloadClientAppState
 
 export interface GeneralAppState
   extends AppSectionItemState<General>,
+    AppSectionSaveState {}
+
+export interface MediaManagementAppState
+  extends AppSectionItemState<MediaManagement>,
     AppSectionSaveState {}
 
 export interface NamingAppState
@@ -43,10 +55,15 @@ export interface ImportListAppState
     AppSectionDeleteState,
     AppSectionSaveState {}
 
+export interface IndexerOptionsAppState
+  extends AppSectionItemState<IndexerOptions>,
+    AppSectionSaveState {}
+
 export interface IndexerAppState
   extends AppSectionState<Indexer>,
     AppSectionDeleteState,
-    AppSectionSaveState {
+    AppSectionSaveState,
+    AppSectionSchemaState<Presets<Indexer>> {
   isTestingAll: boolean;
 }
 
@@ -56,7 +73,7 @@ export interface NotificationAppState
 
 export interface QualityProfilesAppState
   extends AppSectionState<QualityProfile>,
-    AppSectionSchemaState<QualityProfile> {}
+    AppSectionItemSchemaState<QualityProfile> {}
 
 export interface ReleaseProfilesAppState
   extends AppSectionState<ReleaseProfile>,
@@ -94,8 +111,11 @@ interface SettingsAppState {
   importListOptions: ImportListOptionsSettingsAppState;
   importLists: ImportListAppState;
   indexerFlags: IndexerFlagSettingsAppState;
+  indexerOptions: IndexerOptionsAppState;
   indexers: IndexerAppState;
   languages: LanguageSettingsAppState;
+  mediaManagement: MediaManagementAppState;
+  metadata: MetadataAppState;
   naming: NamingAppState;
   namingExamples: NamingExamplesAppState;
   notifications: NotificationAppState;

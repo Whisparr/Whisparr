@@ -14,7 +14,8 @@ function getNewPerformer(performer, payload) {
   };
 
   performer.addOptions = addOptions;
-  performer.monitored = monitor !== 'none';
+  performer.monitored = monitor === 'movieAndScene' || monitor === 'sceneOnly';
+  performer.movieMonitored = monitor === 'movieAndScene' || monitor === 'movieOnly';
   performer.qualityProfileId = qualityProfileId;
   performer.rootFolderPath = rootFolderPath;
   performer.tags = tags;

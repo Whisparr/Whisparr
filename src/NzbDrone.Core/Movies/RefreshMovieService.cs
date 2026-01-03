@@ -203,7 +203,7 @@ namespace NzbDrone.Core.Movies
             }
             else if (_configService.AutoRenameFolders)
             {
-                var renameMovieFilePreviews = _renameMovieFileService.GetRenamePreviews(movie.Id);
+                var renameMovieFilePreviews = _renameMovieFileService.GetRenamePreviews(new List<int> { movie.Id });
                 if (renameMovieFilePreviews.Any())
                 {
                     var files = new List<int>();

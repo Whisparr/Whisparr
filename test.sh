@@ -8,6 +8,12 @@ FILES=( "Whisparr.Api.Test.dll" "Whisparr.Automation.Test.dll" "Whisparr.Common.
 ASSMEBLIES=""
 TEST_LOG_FILE="TestLog.txt"
 
+ensure_selenium_manager_permissions() {
+  if [ -d "$TEST_DIR/selenium-manager" ]; then
+    find "$TEST_DIR/selenium-manager" -type f -name selenium-manager -exec chmod a+x {} \;
+  fi
+}
+
 echo "test dir: $TEST_DIR"
 if [ -z "$TEST_DIR" ]; then
     TEST_DIR="."
@@ -40,12 +46,11 @@ if [ "$PLATFORM" = "Windows" ]; then
 elif [ "$PLATFORM" = "Linux" ]; then
   mkdir -p ~/.config/Whisparr
   WHERE="$WHERE&Category!=WINDOWS"
+  ensure_selenium_manager_permissions
 elif  [ "$PLATFORM" = "Mac" ]; then
   mkdir -p ~/Library/Application\ Support/Whisparr
   WHERE="$WHERE&Category!=WINDOWS"
-  if [ -d "$TEST_DIR/selenium-manager" ]; then
-    find "$TEST_DIR/selenium-manager" -type f -name selenium-manager -exec chmod a+x {} \;
-  fi
+  ensure_selenium_manager_permissions
 else
   echo "Platform must be provided as first argument: Windows, Linux or Mac"
   exit 1

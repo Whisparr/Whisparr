@@ -5,12 +5,12 @@
       // Use IntelliSense to find out which attributes exist for C# debugging
       // Use hover for the description of the existing attributes
       // For further information visit https://github.com/dotnet/vscode-csharp/blob/main/debugger-launchjson.md
-      "name": "Run Radarr",
+      "name": "Run Whisparr",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build dotnet",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/_output/net8.0/Radarr",
+      "program": "${workspaceFolder}/_output/net8.0/Whisparr",
       "args": [],
       "cwd": "${workspaceFolder}",
       // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console

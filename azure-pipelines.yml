@@ -319,7 +319,7 @@ stages:
       - task: ArchiveFiles@2
         displayName: Create linux-x86 tar
         inputs:
-          archiveFile: '$(Build.ArtifactStagingDirectory)/Radarr.$(buildName).linux-core-x86.tar.gz'
+          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).linux-core-x86.tar.gz'
           archiveType: 'tar'
           tarCompression: 'gz'
           includeRootFolder: false

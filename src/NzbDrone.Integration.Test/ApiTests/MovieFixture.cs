@@ -108,11 +108,11 @@ namespace NzbDrone.Integration.Test.ApiTests
         [Order(1)]
         public void add_movie()
         {
-            EnsureNoMovie(42019, "Taboo");
-            var movie = Movies.Lookup("tmdb:42019").Single();
+            EnsureNoMovie(699665, "Consumed by Desire");
+            var movie = Movies.Lookup("tmdb:699665").Single();
 
             movie.QualityProfileId = 1;
-            var folder = Path.Combine("movies", $"{movie.Title} ({movie.Year})");
+            var folder = Path.Combine("movies", $"{movie.StudioTitle}", $"{movie.Title} ({movie.Year})");
             movie.Path = Path.Combine(MovieRootFolder, folder);
 
             var result = Movies.Post(movie);
@@ -127,14 +127,14 @@ namespace NzbDrone.Integration.Test.ApiTests
         [Order(2)]
         public void get_all_movies()
         {
-            EnsureMovie(42019, "Taboo");
-            EnsureMovie(37795, "Taboo II");
+            EnsureMovie(699665, "Consumed by Desire");
+            EnsureMovie(1214324, "Consumed by Desire 2");
 
             var movies = Movies.All();
 
             movies.Should().NotBeNullOrEmpty();
-            movies.Should().Contain(v => v.TmdbId == 42019);
-            movies.Should().Contain(v => v.TmdbId == 37795);
+            movies.Should().Contain(v => v.TmdbId == 699665);
+            movies.Should().Contain(v => v.TmdbId == 1214324);
             movies.Should().Contain(v => v.Images.All(i => i.RemoteUrl.Contains("https://image.tmdb.org")));
         }
 

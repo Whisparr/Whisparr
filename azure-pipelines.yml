@@ -97,6 +97,16 @@ stages:
       - checkout: self
         submodules: true
         fetchDepth: 1
+      - bash: |
+          echo "Disk usage before cleanup"
+          df -h
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc || true
+          sudo rm -rf /usr/lib/jvm || true
+          sudo apt-get clean || true
+          echo "Disk usage after cleanup"
+          df -h
+        displayName: Reclaim Linux Agent Disk
+        condition: and(succeeded(), eq(variables['osName'], 'Linux'))
       - task: UseDotNet@2
         displayName: 'Install .net core'
         inputs:

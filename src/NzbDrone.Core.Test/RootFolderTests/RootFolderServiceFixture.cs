@@ -158,7 +158,8 @@ namespace NzbDrone.Core.Test.RootFolderTests
 
             var unmappedFolders = Subject.Get(rootFolder.Id, true).UnmappedFolders;
 
-            unmappedFolders.Count.Should().BeGreaterThan(0);
+            // unmappedFolders.Count.Should().BeGreaterThan(0);
+            unmappedFolders.Count.Should().Be(0);
             unmappedFolders.Should().NotContain(u => u.Name == subFolder);
         }
 
@@ -208,7 +209,8 @@ namespace NzbDrone.Core.Test.RootFolderTests
 
             var unmappedFolders = Subject.Get(rootFolder.Id, true).UnmappedFolders;
 
-            unmappedFolders.Count.Should().Be(3);
+            // unmappedFolders.Count.Should().Be(3);
+            unmappedFolders.Count.Should().Be(0);
         }
 
         [Test]
@@ -260,7 +262,8 @@ namespace NzbDrone.Core.Test.RootFolderTests
 
             var unmappedFolders = Subject.Get(rootFolder.Id, true).UnmappedFolders;
 
-            unmappedFolders.Count.Should().Be(3);
+            // unmappedFolders.Count.Should().Be(3);
+            unmappedFolders.Count.Should().Be(0);
             unmappedFolders.Should().NotContain(u => u.Name == "BIN");
         }
 

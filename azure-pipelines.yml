@@ -410,7 +410,7 @@ stages:
       - Analyze
     jobs:
     - job: Build_Frontend
-      displayName: Build Frontend
+      displayName: Build
       pool:
         vmImage: ${{ variables.windowsImage }}
       steps:
@@ -626,7 +626,6 @@ stages:
         matrix:
           osx-x64:
             runtime: 'osx-x64'
-            appArchiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).osx-app-core-x64.zip'
             appRoot: '$(artifactsFolder)/osx-x64-app/net6.0'
             appArtifact: 'package-osx-app-core-x64'
             tarArchiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).osx-core-x64.tar.gz'
@@ -634,7 +633,6 @@ stages:
             tarArtifact: 'package-osx-core-x64'
           osx-arm64:
             runtime: 'osx-arm64'
-            appArchiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).osx-app-core-arm64.zip'
             appRoot: '$(artifactsFolder)/osx-arm64-app/net6.0'
             appArtifact: 'package-osx-app-core-arm64'
             tarArchiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).osx-core-arm64.tar.gz'
@@ -681,14 +679,7 @@ stages:
           find $(artifactsFolder) -name "Whisparr" -exec chmod a+x {} \;
           find $(artifactsFolder) -name "Whisparr.Update" -exec chmod a+x {} \;
         displayName: Set executable bits
-      - task: ArchiveFiles@2
-        displayName: Create $(runtime) app
-        inputs:
-          archiveFile: $(appArchiveFile)
-          archiveType: 'zip'
-          includeRootFolder: false
-          rootFolderOrFile: $(appRoot)
-      - publish: $(appArchiveFile)
+      - publish: $(appRoot)
         artifact: $(appArtifact)
         displayName: Publish $(runtime) app package
       - task: ArchiveFiles@2

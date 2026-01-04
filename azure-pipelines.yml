@@ -132,10 +132,6 @@ stages:
         artifact: linux-x64-tests
         displayName: Publish linux-x64 Test Package
         condition: and(succeeded(), eq(variables['osName'], 'Windows'))
-      - publish: '$(testsFolder)/net8.0/linux-x86/publish'
-        artifact: linux-x86-tests
-        displayName: Publish linux-x86 Test Package
-        condition: and(succeeded(), eq(variables['osName'], 'Windows'))
       - publish: '$(testsFolder)/net8.0/linux-musl-x64/publish'
         artifact: linux-musl-x64-tests
         displayName: Publish linux-musl-x64 Test Package
@@ -316,14 +312,6 @@ stages:
           tarCompression: 'gz'
           includeRootFolder: false
           rootFolderOrFile: $(artifactsFolder)/linux-musl-x64/net8.0
-      - task: ArchiveFiles@2
-        displayName: Create linux-x86 tar
-        inputs:
-          archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).linux-core-x86.tar.gz'
-          archiveType: 'tar'
-          tarCompression: 'gz'
-          includeRootFolder: false
-          rootFolderOrFile: $(artifactsFolder)/linux-x86/net8.0
       - task: ArchiveFiles@2
         displayName: Create linux-arm tar
         inputs:

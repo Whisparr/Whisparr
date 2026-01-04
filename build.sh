@@ -385,7 +385,6 @@ then
         if [ "$ENABLE_EXTRA_PLATFORMS" = "YES" ];
         then
             PackageTests "net8.0" "freebsd-x64"
-            PackageTests "net8.0" "linux-x86"
         fi
     else
         PackageTests "$FRAMEWORK" "$RID"
@@ -426,7 +425,6 @@ then
         if [ "$ENABLE_EXTRA_PLATFORMS" = "YES" ];
         then
             Package "net8.0" "freebsd-x64"
-            Package "net8.0" "linux-x86"
         fi
     else
         Package "$FRAMEWORK" "$RID"

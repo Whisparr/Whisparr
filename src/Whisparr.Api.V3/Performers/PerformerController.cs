@@ -117,7 +117,9 @@ namespace Whisparr.Api.V3.Performers
         }
 
         [RestPostById]
-        public ActionResult<PerformerResource> AddPerformer(PerformerResource performerResource)
+        [Consumes("application/json")]
+        [Produces("application/json")]
+        public ActionResult<PerformerResource> AddPerformer([FromBody] PerformerResource performerResource)
         {
             var performer = _addPerformerService.AddPerformer(performerResource.ToModel());
 

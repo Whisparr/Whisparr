@@ -113,7 +113,9 @@ namespace Whisparr.Api.V3.Studios
         }
 
         [RestPostById]
-        public ActionResult<StudioResource> AddStudio(StudioResource studioResource)
+        [Consumes("application/json")]
+        [Produces("application/json")]
+        public ActionResult<StudioResource> AddStudio([FromBody] StudioResource studioResource)
         {
             var studio = _addStudioService.AddStudio(studioResource.ToModel());
 

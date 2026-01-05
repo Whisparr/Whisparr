@@ -65,6 +65,13 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("40.Years.Old.Temptations.Of.A.Married.Women.XXX.2017.DVDRIP.x264-group", "40 Years Old Temptations Of A Married Women")]
         [TestCase("40.Years.Old.Temptations.Of.A.Married.Women.XXX.DVDRIP.x264-group", "40 Years Old Temptations Of A Married Women")]
         [TestCase("The.Good.German.2006.720p.BluRay.x264-RlsGrp", "The Good German", Description = "Hardcoded to exclude from German regex")]
+        [TestCase("40.Years.Old.Temptations.Of.A.Married.Women.XXX.2017.DVDRIP.x264-group", "40 Years Old Temptations Of A Married Women")]
+        [TestCase("40.Years.Old.Temptations.Of.A.Married.Women.XXX.DVDRIP.x264-group", "40 Years Old Temptations Of A Married Women")]
+        [TestCase("Roccos.Abbondanza.7.XXX.DVDRip.x264-HORNDOGS", "Roccos Abbondanza 7")]
+        [TestCase("Oil Explosion 3 (Elegant Angel) XXX DVDRip NEW 2018", "Oil Explosion 3")]
+        [TestCase("Elegant Angel.2024.Oil Explosion 8.1080p-VERIFIED", "Oil Explosion 8")]
+        [TestCase("[EvilAngel] Strap Attack #16 [2012] [1080p]", "Strap Attack #16")]
+        [TestCase("Blacked.2024.Level Up Vol. 3.1080p-VERIFIED", "Level Up Vol  3")]
         public void should_parse_movie_title(string postTitle, string title)
         {
             Parser.Parser.ParseMovieTitle(postTitle).PrimaryMovieTitle.Should().Be(title);

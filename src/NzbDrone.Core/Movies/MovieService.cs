@@ -177,6 +177,7 @@ namespace NzbDrone.Core.Movies
             foreach (var title in titles)
             {
                 var cleanTitle = title.CleanMovieTitle().ToLowerInvariant();
+                var alternateTitle = title.AlternateTitle().ToLowerInvariant();
                 var romanTitle = cleanTitle;
                 var arabicTitle = cleanTitle;
 
@@ -192,7 +193,7 @@ namespace NzbDrone.Core.Movies
                 romanTitle = romanTitle.ToLowerInvariant();
 
                 otherTitles.AddRange(new List<string> { arabicTitle, romanTitle });
-                lookupTitles.AddRange(new List<string> { cleanTitle, arabicTitle, romanTitle });
+                lookupTitles.AddRange(new List<string> { cleanTitle, arabicTitle, romanTitle, alternateTitle });
             }
 
             return _movieRepository.FindByTitles(lookupTitles);

@@ -65,6 +65,17 @@ namespace NzbDrone.Core.IndexerSearch
             if (movie.MovieMetadata.Value.ItemType == ItemType.Movie)
             {
                 var movieSearchSpec = Get<MovieSearchCriteria>(movie, userInvokedSearch, interactiveSearch);
+                var additionalTitles = new List<string>();
+
+                movieSearchSpec.SceneTitles.ForEach(title =>
+                {
+                    var alternateTitle = Parser.Parser.AlternateTitle(title);
+                    if (!alternateTitle.Equals(title) && !movieSearchSpec.SceneTitles.Contains(alternateTitle) && !additionalTitles.Contains(alternateTitle))
+                    {
+                        additionalTitles.Add(alternateTitle);
+                    }
+                });
+                movieSearchSpec.SceneTitles.AddRange(additionalTitles);
 
                 // For movies, add search with year
                 if (movie.Year > 1900)

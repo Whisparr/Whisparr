@@ -105,9 +105,14 @@ namespace NzbDrone.Core.Parser
             new Regex(@"^(?<title>(?![(\[]).+?)?(?:(?:[-_\W](?<![)\[!]))*" + EditionRegex + @".{1,3}(?<year>(1(8|9)|20)\d{2}(?!p|i|\d+|\]|\W\d+)))+(\W+|_|$)(?!\\)",
                           RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
-            // Special, Despecialized, etc. Edition Movies, e.g: Mission.Impossible.3.2011.Special.Edition //TODO: Seems to slow down parsing heavily!
-            /*new Regex(@"^(?<title>(?![(\[]).+?)?(?:(?:[-_\W](?<![)\[!]))*(?<year>(19|20)\d{2}(?!p|i|(19|20)\d{2}|\]|\W(19|20)\d{2})))+(\W+|_|$)(?!\\)\(?(?<edition>(((Extended.|Ultimate.)?(Director.?s|Collector.?s|Theatrical|Ultimate|Final(?=(.(Cut|Edition|Version)))|Extended|Rogue|Special|Despecialized|\d{2,3}(th)?.Anniversary)(.(Cut|Edition|Version))?(.(Extended|Uncensored|Remastered|Unrated|Uncut|IMAX|Fan.?Edit))?|((Uncensored|Remastered|Unrated|Uncut|IMAX|Fan.?Edit|Edition|Restored|((2|3|4)in1))))))\)?",
-                          RegexOptions.IgnoreCase | RegexOptions.Compiled),*/
+            // MOVIE format, e.g: Studio.2024.Title.1080p-VERIFIED
+            new Regex(@"^(?<studio>(?![(\[]).+?)?(?:(?:[-_\W](?<![)\[!]))*(?<year>(1(8|9)|20)\d{2}(?!p|i|(1(8|9)|20)\d{2}|\]|\W(1(8|9)|20)\d{2})))+(\W+|_|$)(?!\\)(?<title>.*)\-VERIFIED", RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
+            // MOVIE format, e.g: [Studio] Title [2024]
+            new Regex(@"^(?:\[(?<studio>.+?)\][-_. ]?)(?<title>.*)(\[(?<year>(1(8|9)|20)\d{2})\])", RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
+            // MOVIE Oil Explosion 3 (Elegant Angel) XXX DVDRip NEW 2018
+            new Regex(@"^(?<title>(?![(\[]).+?)(\W+|_|$)\(.+\).+?(XXX)*(?<year>(1(8|9)|20)\d{2}(?!p|i|(1(8|9)|20)\d{2}|\]|\W(1(8|9)|20)\d{2}))", RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
             // Normal movie format, e.g: Mission.Impossible.3.2011
             new Regex(@"^(?<title>(?![(\[]).+?)?(?:(?:[-_\W](?<![)\[!]))*(?<year>(1(8|9)|20)\d{2}(?!p|i|(1(8|9)|20)\d{2}|\]|\W(1(8|9)|20)\d{2})))+(\W+|_|$)(?!\\)", RegexOptions.IgnoreCase | RegexOptions.Compiled),
@@ -138,6 +143,9 @@ namespace NzbDrone.Core.Parser
 
             // Pattern for IDs in brackets like [SKMJ-649], (ABC-123), {XYZ-456}, [SKMJ_649], [SKMJ.649]
             new Regex(@"[\[\(\{](?<code>[A-Z]{2,5}[- ][0-9]{3,5})[\]\)\}]", RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
+            // Final check that it is a video
+            new Regex(@"^(?<title>.+?)?(480|540|576|720|1080|2160)p", RegexOptions.IgnoreCase | RegexOptions.Compiled),
         };
 
         private static readonly Regex[] ReportTitleFolderRegex = new[]
@@ -673,6 +681,27 @@ namespace NzbDrone.Core.Parser
 
             return title.Trim()
                         .ToLower();
+        }
+
+        public static string AlternateTitle(this string title)
+        {
+            if (title.IsNullOrWhiteSpace())
+            {
+                return string.Empty;
+            }
+
+            // The Regex Pattern
+            // \s+           : One or more spaces
+            // (?:Volume|Vol\.?) : Non-capturing group for 'Volume' or 'Vol' (with optional dot)
+            // \s+           : One or more spaces
+            // #?            : Optional hash symbol
+            // 0*            : Optional leading zeros
+            // (\d+)         : Capturing group for the actual number
+            var pattern = @"\s+(?:Volume|Vol\.?)\s+#?0*(\d+)";
+            var replacement = " $1";
+            title = Regex.Replace(title, pattern, replacement);
+
+            return NormalizeTitle(title);
         }
 
         public static string NormalizeTitle(this string title)

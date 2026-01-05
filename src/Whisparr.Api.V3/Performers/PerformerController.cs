@@ -127,7 +127,8 @@ namespace Whisparr.Api.V3.Performers
         }
 
         [RestPutById]
-        public ActionResult<PerformerResource> Update(PerformerResource resource)
+        [Consumes("application/json")]
+        public ActionResult<PerformerResource> Update([FromBody] PerformerResource resource)
         {
             var performer = _performerService.GetById(resource.Id);
 

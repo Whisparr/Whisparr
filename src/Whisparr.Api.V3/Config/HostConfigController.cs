@@ -107,6 +107,7 @@ namespace Whisparr.Api.V3.Config
         }
 
         [RestPutById]
+        [Consumes("application/json")]
         public ActionResult<HostConfigResource> SaveHostConfig([FromBody] HostConfigResource resource)
         {
             var dictionary = resource.GetType()

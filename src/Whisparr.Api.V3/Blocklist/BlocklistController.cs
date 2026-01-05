@@ -69,6 +69,7 @@ namespace Whisparr.Api.V3.Blocklist
         }
 
         [HttpDelete("bulk")]
+        [Consumes("application/json")]
         [Produces("application/json")]
         public object Remove([FromBody] BlocklistBulkResource resource)
         {

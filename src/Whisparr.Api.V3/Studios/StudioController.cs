@@ -123,7 +123,9 @@ namespace Whisparr.Api.V3.Studios
         }
 
         [RestPutById]
-        public ActionResult<StudioResource> Update(StudioResource resource)
+        [Consumes("application/json")]
+        [Produces("application/json")]
+        public ActionResult<StudioResource> Update([FromBody] StudioResource resource)
         {
             var studio = _studioService.GetById(resource.Id);
 

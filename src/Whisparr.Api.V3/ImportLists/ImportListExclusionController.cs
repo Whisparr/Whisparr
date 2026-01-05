@@ -143,6 +143,7 @@ namespace Whisparr.Api.V3.ImportLists
         }
 
         [HttpDelete("bulk")]
+        [Consumes("application/json")]
         [Produces("application/json")]
         public object DeleteImportListExclusions([FromBody] ImportListExclusionBulkResource resource)
         {

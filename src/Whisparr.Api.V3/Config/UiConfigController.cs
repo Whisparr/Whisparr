@@ -33,6 +33,7 @@ namespace Whisparr.Api.V3.Config
         }
 
         [RestPutById]
+        [Consumes("application/json")]
         public override ActionResult<UiConfigResource> SaveConfig([FromBody] UiConfigResource resource)
         {
             var dictionary = resource.GetType()

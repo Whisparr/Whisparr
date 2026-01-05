@@ -50,6 +50,7 @@ namespace Whisparr.Api.V3.Config
         }
 
         [RestPutById]
+        [Consumes("application/json")]
         public ActionResult<NamingConfigResource> UpdateNamingConfig([FromBody] NamingConfigResource resource)
         {
             var nameSpec = resource.ToModel();

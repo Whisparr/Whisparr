@@ -53,6 +53,7 @@ interface Movie extends ModelBase {
   sortTitle: string;
   cleanTitle: string;
   overview: string;
+  website: string;
   monitored: boolean;
   status: MovieStatus;
   title: string;

@@ -89,6 +89,7 @@ interface Props {
   isAvailable: boolean;
   releaseDate?: string;
   overview: string;
+  website: string;
   images: MovieImageType[];
   alternateTitles: string[];
   tags: number[];
@@ -246,6 +247,7 @@ class MovieDetails extends Component<Props, State> {
       credits,
       genres,
       overview,
+      website,
       status,
       studio,
       isAvailable,
@@ -449,6 +451,7 @@ class MovieDetails extends Component<Props, State> {
                             tmdbId={tmdbId}
                             tpdbId={tpdbId}
                             stashId={stashId ?? undefined}
+                            website={website}
                           />
                         }
                         position={tooltipPositions.BOTTOM}

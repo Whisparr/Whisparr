@@ -51,6 +51,7 @@ function MovieIndexRow(props: MovieIndexRowProps) {
     monitored,
     foreignId,
     title,
+    website,
     studioTitle,
     status,
     originalLanguage,
@@ -315,7 +316,12 @@ function MovieIndexRow(props: MovieIndexRowProps) {
                 <Tooltip
                   anchor={<Icon name={icons.EXTERNAL_LINK} size={12} />}
                   tooltip={
-                    <MovieDetailsLinks tmdbId={tmdbId} tpdbId={tpdbId} />
+                    <MovieDetailsLinks
+                      stashId={foreignId}
+                      tmdbId={tmdbId}
+                      tpdbId={tpdbId}
+                      website={website}
+                    />
                   }
                   canFlip={true}
                   kind={kinds.INVERSE}

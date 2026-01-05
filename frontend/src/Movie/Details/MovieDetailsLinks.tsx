@@ -9,13 +9,26 @@ interface MovieDetailsLinksProps {
   tmdbId?: number;
   tpdbId?: string;
   stashId?: string;
+  website?: string;
 }
 
 function MovieDetailsLinks(props: MovieDetailsLinksProps) {
-  const { tmdbId, tpdbId, stashId } = props;
+  const { tmdbId, tpdbId, stashId, website } = props;
 
   return (
     <div className={styles.links}>
+      {!!website && (
+        <Link className={styles.link} to={website}>
+          <Label
+            className={styles.linkLabel}
+            kind={kinds.INFO}
+            size={sizes.LARGE}
+          >
+            {translate('Homepage')}
+          </Label>
+        </Link>
+      )}
+
       {!!tmdbId && (
         <Link
           className={styles.link}

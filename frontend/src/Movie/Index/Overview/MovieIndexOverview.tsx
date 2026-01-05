@@ -73,6 +73,7 @@ function MovieIndexOverview(props: MovieIndexOverviewProps) {
     status,
     path,
     overview,
+    website,
     statistics = {} as Statistics,
     images,
     tags,
@@ -189,7 +190,13 @@ function MovieIndexOverview(props: MovieIndexOverviewProps) {
                 <Popover
                   anchor={<Icon name={icons.EXTERNAL_LINK} size={12} />}
                   title={translate('Links')}
-                  body={<MovieDetailsLinks tmdbId={tmdbId} tpdbId={tpdbId} />}
+                  body={
+                    <MovieDetailsLinks
+                      website={website}
+                      tmdbId={tmdbId}
+                      tpdbId={tpdbId}
+                    />
+                  }
                 />
               </span>
 

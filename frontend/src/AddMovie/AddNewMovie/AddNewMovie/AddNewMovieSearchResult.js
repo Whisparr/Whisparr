@@ -105,6 +105,7 @@ class AddNewMovieSearchResult extends Component {
       itemType,
       releaseDate,
       overview,
+      website,
       ratings,
       folder,
       images,
@@ -134,7 +135,7 @@ class AddNewMovieSearchResult extends Component {
     const hasMovieFile = !!movieFile || sizeOnDisk > 0;
 
     const linkProps = isExistingMovie ? { to: `/movie/${titleSlug}` } : { onPress: this.onPress };
-    const providerProps = itemType === 'movie' ? { tmdbId, tpdbId } : { stashId: foreignId };
+    const providerProps = itemType === 'movie' ? { tmdbId, tpdbId, website } : { stashId: foreignId, website };
 
     let ImageItem = MoviePoster;
     let posterWidth = 167;
@@ -398,6 +399,7 @@ AddNewMovieSearchResult.propTypes = {
   releaseDate: PropTypes.string,
   itemType: PropTypes.string.isRequired,
   overview: PropTypes.string,
+  website: PropTypes.string,
   ratings: PropTypes.object.isRequired,
   folder: PropTypes.string.isRequired,
   images: PropTypes.arrayOf(PropTypes.object).isRequired,

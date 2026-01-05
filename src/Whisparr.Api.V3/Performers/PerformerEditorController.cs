@@ -23,6 +23,7 @@ namespace Whisparr.Api.V3.Performers
         }
 
         [HttpPut]
+        [Consumes("application/json")]
         public IActionResult SaveAll([FromBody] PerformerEditorResource resource)
         {
             var performersToUpdate = _performerService.GetPerformers(resource.PerformerIds);

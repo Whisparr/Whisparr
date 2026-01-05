@@ -39,6 +39,7 @@ namespace Whisparr.Api.V3.Movies
         }
 
         [HttpPut]
+        [Consumes("application/json")]
         public IActionResult SaveAll([FromBody] MovieEditorResource resource)
         {
             var moviesToUpdate = _movieService.GetMovies(resource.MovieIds);

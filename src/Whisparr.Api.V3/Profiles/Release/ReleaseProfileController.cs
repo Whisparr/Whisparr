@@ -47,6 +47,7 @@ namespace Whisparr.Api.V3.Profiles.Release
         }
 
         [RestPostById]
+        [Consumes("application/json")]
         public ActionResult<ReleaseProfileResource> Create([FromBody] ReleaseProfileResource resource)
         {
             var model = resource.ToModel();
@@ -61,6 +62,7 @@ namespace Whisparr.Api.V3.Profiles.Release
         }
 
         [RestPutById]
+        [Consumes("application/json")]
         public ActionResult<ReleaseProfileResource> Update([FromBody] ReleaseProfileResource resource)
         {
             var model = resource.ToModel();

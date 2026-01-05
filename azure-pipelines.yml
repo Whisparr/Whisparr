@@ -964,6 +964,30 @@ stages:
           failTaskOnMissingResultsFile: true
         displayName: Publish Test Results
 
+  - stage: Tag_Commit
+    displayName: Tag
+    dependsOn: Integration
+    condition: and(
+      succeeded(),
+      ne(variables['Build.Reason'],'PullRequest'),
+      eq(variables['Build.SourceBranch'], 'refs/heads/eros')
+      )
+    jobs:
+    - job: Tag_Commit
+      pool:
+        vmImage: ${{ variables.linuxImage }}
+
+      steps:
+      - checkout: self
+        persistCredentials: true
+        fetchDepth: 0
+      - bash: |
+          git config user.name "Whisparr Pipelines"
+          git config user.email "ci@whisparr.com"
+          git tag v$(whisparrVersion)
+          git push origin v$(whisparrVersion)
+        displayName: Commit
+
   - stage: Automation
     displayName: Automation
     dependsOn: Packages

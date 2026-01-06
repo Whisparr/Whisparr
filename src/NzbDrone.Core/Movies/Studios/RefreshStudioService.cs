@@ -112,9 +112,8 @@ namespace NzbDrone.Core.Movies.Studios
                 // var studioWork = _movieInfo.GetStudioWorks(studio.ForeignId);
 
                 var existingScenes = _movieService.AllMovieStashIds();
-                var studioScenes = studioWork.Scenes;
                 var excludedScenes = _importListExclusionService.GetAllExclusions().Select(e => e.ForeignId);
-                var scenesToAdd = studioScenes.Where(m => !existingScenes.Contains(m)).Where(m => !excludedScenes.Contains(m));
+                var scenesToAdd = studioWork.Scenes.Where(m => !existingScenes.Contains(m)).Where(m => !excludedScenes.Contains(m));
                 var scenesAdded = 0;
 
                 if (scenesToAdd.Any())
@@ -138,12 +137,46 @@ namespace NzbDrone.Core.Movies.Studios
                         scenesAdded += _addMovieService.AddMovies(sceneList.ToList(), true).Count;
                     }
 
-                    _logger.Info("Synced studio {0} has {1} movies adding {2} and added {3}", studio.Title, studioScenes.Count, scenesToAdd.Count(), scenesAdded);
+                    _logger.Info("Synced studio {0} has {1} movies adding {2} and added {3}", studio.Title, studioWork.Scenes.Count, scenesToAdd.Count(), scenesAdded);
                 }
             }
 
             if (studio.MoviesMonitored)
             {
+                if (_configService.WhisparrMovieMetadataSource == MovieMetadataType.TMDB)
+                {
+                    var moviesAdded = 0;
+                    var tmbdId = 0;
+                    var existingMovies = _movieService.AllMovieTmdbIds();
+                    var excludedMovies = _importListExclusionService.GetAllExclusions().Select(e => int.TryParse(e.ForeignId, out tmbdId)).Select(e => tmbdId).Where(e => e != 0).ToList();
+                    var moviesToAdd = studioWork.Movies.Where(m => !existingMovies.Contains(m)).Where(m => !excludedMovies.Contains(m));
+
+                    if (moviesToAdd.Any())
+                    {
+                        var movieLists = moviesToAdd.Select(m => new Movie
+                        {
+                            ForeignId = m.ToString(),
+                            TmdbId = m,
+                            QualityProfileId = studio.QualityProfileId,
+                            RootFolderPath = studio.RootFolderPath,
+                            AddOptions = new AddMovieOptions
+                            {
+                                SearchForMovie = studio.SearchOnAdd,
+                                AddMethod = AddMovieMethod.Studio
+                            },
+                            Monitored = true,
+                            Tags = studio.Tags
+                        }).Chunk(chunkSize);
+
+                        foreach (var movieList in movieLists)
+                        {
+                            moviesAdded += _addMovieService.AddMovies(movieList.ToList(), true).Count;
+                        }
+                    }
+
+                    _logger.Info("Synced studio {0} has {1} movies adding {2} and added {3}", studio.Title, studioWork.Movies.Count, moviesToAdd.Count(), moviesAdded);
+                }
+
                 if (_configService.WhisparrMovieMetadataSource == MovieMetadataType.TPDB)
                 {
                     var moviesAdded = 0;
@@ -162,7 +195,7 @@ namespace NzbDrone.Core.Movies.Studios
                             AddOptions = new AddMovieOptions
                             {
                                 SearchForMovie = studio.SearchOnAdd,
-                                AddMethod = AddMovieMethod.Performer
+                                AddMethod = AddMovieMethod.Studio
                             },
                             Monitored = true,
                             Tags = studio.Tags

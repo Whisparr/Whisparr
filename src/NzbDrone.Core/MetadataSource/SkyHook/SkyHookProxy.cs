@@ -452,7 +452,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             return scenes;
         }
 
-        public (List<string> Scenes, List<string> TpdbMovies) GetStudioWorks(string stashId)
+        public (List<string> Scenes, List<string> TpdbMovies, List<int> Movies) GetStudioWorks(string stashId)
         {
             var httpRequest = _whisparrMetadata.Create()
                                              .SetSegment("route", "site")
@@ -465,6 +465,13 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             var httpResponse = _httpClient.Get<StudioWorksResource>(httpRequest);
             var scenes = httpResponse.Resource.Scenes;
             var tpdbMovies = httpResponse.Resource.TpdbMovies;
+            var movies = new List<int>();
+
+         // Check while Skyhook is transitioning to return TMDB company movies.
+            if (httpResponse.Resource.Movies != null)
+            {
+                movies = httpResponse.Resource.Movies.ConvertAll(int.Parse);
+            }
 
             if (httpResponse.HasHttpError)
             {
@@ -478,7 +485,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 }
             }
 
-            return (scenes, tpdbMovies);
+            return (scenes, tpdbMovies, movies);
         }
 
         public MovieMetadata MapMovie(MovieResource resource)

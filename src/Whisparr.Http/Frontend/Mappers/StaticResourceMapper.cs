@@ -31,7 +31,8 @@ namespace Whisparr.Http.Frontend.Mappers
             resourceUrl = resourceUrl.ToLowerInvariant();
 
             if (resourceUrl.StartsWith("/content/images/icons/manifest") ||
-                resourceUrl.StartsWith("/content/images/icons/browserconfig"))
+                resourceUrl.StartsWith("/content/images/icons/browserconfig") ||
+                resourceUrl.StartsWith("/docs"))
             {
                 return false;
             }

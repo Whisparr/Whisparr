@@ -23,6 +23,7 @@ using Whisparr.Http.REST.Attributes;
 
 namespace Whisparr.Api.V3.Performers
 {
+    /// <summary>Controller for managing performers in Whisparr</summary>
     [V3ApiController]
     public class PerformerController : RestControllerWithSignalR<PerformerResource, Performer>, IHandle<PerformerUpdatedEvent>
     {
@@ -61,6 +62,13 @@ namespace Whisparr.Api.V3.Performers
             _logger = logger;
         }
 
+        /// <summary>Retrieves a performer by their Whisparr (local)internal ID</summary>
+        /// <param name="id">The internal ID of the performer</param>
+        /// <returns>Performer details with associated movies and local cover URLs</returns>
+        /// <response code="200">Performer found and returned</response>
+        /// <response code="404">Performer with the specified ID not found</response>
+        [HttpGet("{id:int}")]
+        [Produces("application/json")]
         protected override PerformerResource GetResourceById(int id)
         {
             var resource = _performerService.GetById(id).ToResource();
@@ -72,7 +80,13 @@ namespace Whisparr.Api.V3.Performers
             return resource;
         }
 
+        /// <summary>Retrieves full list of performers, or a single performer by their external foreign ID (e.g., from StashDb)</summary>
+        /// <param name="stashId">The external foreign ID (StashDb ID) of the performer</param>
+        /// <returns>Performer details with associated movies and local cover URLs</returns>
+        /// <response code="200">Performer found and returned</response>
+        /// <response code="404">Performer with the specified foreign ID not found</response>
         [HttpGet]
+        [Produces("application/json")]
         public List<PerformerResource> GetPerformers(string stashId)
         {
             var performerResources = new List<PerformerResource>();
@@ -116,6 +130,11 @@ namespace Whisparr.Api.V3.Performers
             return performerResources;
         }
 
+        /// <summary>Adds a new performer to Whisparr</summary>
+        /// <param name="performerResource">The performer details to add</param>
+        /// <returns>The newly added performer details</returns>
+        /// <response code="201">Performer successfully added</response>
+        /// <response code="400">Invalid performer details provided</response>
         [RestPostById]
         [Consumes("application/json")]
         [Produces("application/json")]
@@ -126,8 +145,15 @@ namespace Whisparr.Api.V3.Performers
             return Created(performer.Id);
         }
 
+        /// <summary>Updates an existing performer in Whisparr</summary>
+        /// <param name="resource">The performer details to update</param>
+        /// <returns>The updated performer details</returns>
+        /// <response code="202">Performer successfully updated</response>
+        /// <response code="400">Invalid performer details provided</response>
+        /// <response code="404">Performer with the specified ID not found</response>
         [RestPutById]
         [Consumes("application/json")]
+        [Produces("application/json")]
         public ActionResult<PerformerResource> Update([FromBody] PerformerResource resource)
         {
             var performer = _performerService.GetById(resource.Id);
@@ -140,6 +166,10 @@ namespace Whisparr.Api.V3.Performers
             return Accepted(updatedPerformer);
         }
 
+        /// <summary>Deletes a performer and their associated movies/scenes from Whisparr</summary>
+        /// <param name="id">The internal ID of the performer to delete</param>
+        /// <param name="deleteFiles">If true, associated movie/scene files will also be deleted from disk</param>
+        /// <param name="addImportExclusion">If true, an import exclusion will be added to prevent re-adding the performer in future imports</param>
         [RestDeleteById]
         public void DeletePerformer(int id, bool deleteFiles = false, bool addImportExclusion = false)
         {
@@ -169,6 +199,7 @@ namespace Whisparr.Api.V3.Performers
             _performerService.RemovePerformer(performer);
         }
 
+        /// <summary>Handles performer updated events to update the performer cache and broadcast changes via SignalR</summary>
         [NonAction]
         public void Handle(PerformerUpdatedEvent message)
         {

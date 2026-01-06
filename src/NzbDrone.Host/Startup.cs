@@ -115,6 +115,13 @@ namespace NzbDrone.Host
                     }
                 });
 
+                // Include XML comments for better documentation
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, "Whisparr.Api.V3.xml");
+                if (File.Exists(xmlPath))
+                {
+                    c.IncludeXmlComments(xmlPath);
+                }
+
                 var apiKeyHeader = new OpenApiSecurityScheme
                 {
                     Name = "X-Api-Key",
@@ -276,6 +283,27 @@ namespace NzbDrone.Host
 
             app.UseRouting();
             app.UseCors();
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            // Place before authentication to allow anonymous access
+            app.UseSwagger(c =>
+            {
+                c.RouteTemplate = "docs/{documentName}/openapi.json";
+            });
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.)
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/docs/v3/openapi.json", "Whisparr API v3");
+                c.RoutePrefix = "docs";
+                c.DocumentTitle = "Whisparr API";
+                c.DefaultModelsExpandDepth(-1);
+
+                // Disable the top bar and configure for standalone operation
+                c.ConfigObject.AdditionalItems["displayOperationId"] = false;
+                c.ConfigObject.AdditionalItems["displayRequestDuration"] = true;
+            });
+
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseResponseCompression();
@@ -289,15 +317,6 @@ namespace NzbDrone.Host
             app.UseMiddleware<BufferingMiddleware>(new List<string> { "/api/v3/command" });
 
             app.UseWebSockets();
-
-            // Enable middleware to serve generated Swagger as a JSON endpoint.
-            if (BuildInfo.IsDebug)
-            {
-                app.UseSwagger(c =>
-                {
-                    c.RouteTemplate = "docs/{documentName}/openapi.json";
-                });
-            }
 
             app.UseEndpoints(x =>
             {

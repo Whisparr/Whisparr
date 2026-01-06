@@ -40,7 +40,7 @@ namespace Whisparr.Http.Frontend
         }
 
         [HttpGet("")]
-        [HttpGet("/{**path:regex(^(?!(api|feed)/).*)}")]
+        [HttpGet("/{**path:regex(^(?!(api|feed|docs)/).*)}")]
         public async Task<IActionResult> Index([FromRoute] string path)
         {
             return await MapResource(path);

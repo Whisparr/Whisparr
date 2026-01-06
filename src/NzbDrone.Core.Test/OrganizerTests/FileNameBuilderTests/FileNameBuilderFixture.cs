@@ -120,7 +120,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
             // Aliases should be used if present, otherwise fallback to real name.
             Subject.BuildFileName(_scene, _movieFile)
-                .Should().Be("Pure Taboo - 2025-11-25 - The Last Train Home [Axel Chuck Maddy O Reilly Manuel Ferrara]");
+                .Should().Be("Pure Taboo - 2025-11-25 - The Last Train Home [Axel Chuck Maddy OReilly Manuel Ferrara]");
         }
 
         [Test]
@@ -140,7 +140,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
             // Only female aliases, fallback to real name if alias is not present
             Subject.BuildFileName(_scene, _movieFile)
-                .Should().Be("Pure Taboo - 2025-11-25 - The Last Train Home [Maddy O Reilly Reagan Rissa]");
+                .Should().Be("Pure Taboo - 2025-11-25 - The Last Train Home [Maddy OReilly Reagan Rissa]");
         }
 
         [Test]
@@ -179,7 +179,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
             // First 4 performers
             Subject.BuildFileName(_scene, _movieFile)
-                   .Should().Be("Pure Taboo - 2025-11-25 - The Last Train Home [Axel Haze Charles Dera Maddy O Reilly Manuel Ferrara]");
+                   .Should().Be("Pure Taboo - 2025-11-25 - The Last Train Home [Axel Haze Charles Dera Maddy OReilly Manuel Ferrara]");
         }
 
         [Test]
@@ -199,7 +199,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
             // First 4 female performers
             Subject.BuildFileName(_scene, _movieFile)
-                   .Should().Be("Pure Taboo - 2025-11-25 - The Last Train Home [Maddy O Reilly Reagan Foxx Rissa May]");
+                   .Should().Be("Pure Taboo - 2025-11-25 - The Last Train Home [Maddy OReilly Reagan Foxx Rissa May]");
         }
 
         [Test]

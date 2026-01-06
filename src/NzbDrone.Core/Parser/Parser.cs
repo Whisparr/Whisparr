@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using NLog;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Instrumentation;
+using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.Movies;
 using NzbDrone.Core.Parser.Model;
 
@@ -197,9 +198,6 @@ namespace NzbDrone.Core.Parser
         private static readonly Regex NormalizeRegex = new Regex(@"((?:\b|_)(?<!^|[^a-zA-Z0-9_']\w[^a-zA-Z0-9_'])([aà](?!$|[^a-zA-Z0-9_']\w[^a-zA-Z0-9_'])|an|the|and|or|of)(?!$)(?:\b|_))|\W|_",
                                                                 RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        private static readonly Regex FileExtensionRegex = new Regex(@"\.[a-z0-9]{2,4}$",
-                                                                RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
         private static readonly Regex ReportImdbId = new Regex(@"(?<imdbid>tt\d{7,8})", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private static readonly Regex ReportTmdbId = new Regex(@"tmdb(id)?-(?<tmdbid>\d+)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
@@ -215,48 +213,16 @@ namespace NzbDrone.Core.Parser
         private static readonly Regex SimpleReleaseTitleRegex = new Regex(@"\s*(?:[<>?*|])", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         // Valid TLDs http://data.iana.org/TLD/tlds-alpha-by-domain.txt
-        private static readonly RegexReplace WebsitePrefixRegex = new RegexReplace(@"^(?:(?:\[|\()\s*)?(?:www\.)?[-a-z0-9-]{1,256}\.(?<!Naruto-Kun\.)(?:[a-z]{2,6}\.[a-z]{2,6}|xn--[a-z0-9-]{4,}|[a-z]{2,})\b(?:\s*(?:\]|\))|[ -]{2,})[ -]*",
-                                                                string.Empty,
-                                                                RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
-        private static readonly RegexReplace WebsitePostfixRegex = new RegexReplace(@"(?:\[\s*)?(?:www\.)?[-a-z0-9-]{1,256}\.(?:xn--[a-z0-9-]{4,}|[a-z]{2,6})\b(?:\s*\])$",
-                                                        string.Empty,
-                                                        RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
-        private static readonly RegexReplace CleanReleaseGroupRegex = new RegexReplace(@"(-(RP|1|NZBGeek|Obfuscated|Obfuscation|Scrambled|sample|Pre|postbot|xpost|Rakuv[a-z0-9]*|WhiteRev|BUYMORE|AsRequested|AlternativeToRequested|GEROV|Z0iDS3N|Chamele0n|4P|4Planet|AlteZachen|RePACKPOST))+$",
-                                                                string.Empty,
-                                                                RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
-        private static readonly RegexReplace CleanTorrentSuffixRegex = new RegexReplace(@"\[(?:ettv|rartv|rarbg|cttv|publichd)\]$",
-                                                                string.Empty,
-                                                                RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex CleanQualityBracketsRegex = new Regex(@"\[[a-z0-9 ._-]+\]$",
                                                                    RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        private static readonly Regex ReleaseGroupRegex = new Regex(@"-(?<releasegroup>[a-z0-9]+(?<part2>-[a-z0-9]+)?(?!.+?(?:480p|576p|720p|1080p|2160p)))(?<!(?:WEB-(DL|Rip)|Blu-Ray|480p|576p|720p|1080p|2160p|DTS-HD|DTS-X|DTS-MA|DTS-ES|-ES|-EN|-CAT|-ENG|-JAP|-GER|-FRA|-FRE|-ITA|-HDRip|\d{1,2}-bit|[ ._]\d{4}-\d{2}|-\d{2}|tmdb(id)?-(?<tmdbid>\d+)|(?<imdbid>tt\d{7,8}))(?:\k<part2>)?)(?:\b|[-._ ]|$)|[-._ ]\[(?<releasegroup>[a-z0-9]+)\]$",
-                                                                RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
-        private static readonly Regex InvalidReleaseGroupRegex = new Regex(@"^([se]\d+|[0-9a-f]{8})$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
-        private static readonly Regex AnimeReleaseGroupRegex = new Regex(@"^(?:\[(?<subgroup>(?!\s).+?(?<!\s))\](?:_|-|\s|\.)?)",
-                                                                RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
         private static readonly Regex YearInTitleRegex = new Regex(@"^(?<title>.+?)(?:\W|_.)?[\(\[]?(?<year>\d{4})[\]\)]?",
                                                                 RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        // Handle Exception Release Groups that don't follow -RlsGrp; Manual List
-        // groups whose releases end with RlsGroup) or RlsGroup]
-        private static readonly Regex ExceptionReleaseGroupRegex = new Regex(@"(?<=[._ \[])(?<releasegroup>(Silence|afm72|Panda|Ghost|MONOLITH|Tigole|Joy|ImE|UTR|t3nzin|Anime Time|Project Angel|Hakata Ramen|HONE|Vyndros|SEV|Garshasp|Kappa|Natty|RCVR|SAMPA|YOGI|r00t|EDGE2020|RZeroX|FreetheFish|Anna|Bandi|Qman|theincognito|HDO|DusIctv|DHD|CtrlHD|-ZR-|ADC|XZVN|RH|Kametsu|Garshasp)(?=\]|\)))", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
-        // Handle Exception Release Groups that don't follow -RlsGrp; Manual List
-        // name only...BE VERY CAREFUL WITH THIS, HIGH CHANCE OF FALSE POSITIVES
-        private static readonly Regex ExceptionReleaseGroupRegexExact = new Regex(@"\b(?<releasegroup>KRaLiMaRKo|E\.N\.D|D\-Z0N3|Koten_Gars|BluDragon|ZØNEHD|Tigole|HQMUX|VARYG|YIFY|YTS(.(MX|LT|AG))?|TMd|Eml HDTeam|LMain|DarQ|BEN THE MEN)\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
-        private static readonly Regex WordDelimiterRegex = new Regex(@"(\s|\.|,|_|-|=|’|'|\|)+", RegexOptions.Compiled);
         private static readonly Regex SpecialCharRegex = new Regex(@"(\&|\:|\\|\/)+", RegexOptions.Compiled);
         private static readonly Regex PunctuationRegex = new Regex(@"[^\w\s]", RegexOptions.Compiled);
-        private static readonly Regex CommonWordRegex = new Regex(@"\b(a|an|the|and|or|of)\b\s?", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex ArticleWordRegex = new Regex(@"^(a|an|the)\s", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private static readonly Regex SpecialEpisodeWordRegex = new Regex(@"\b(part|special|edition|christmas)\b\s?", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private static readonly Regex DuplicateSpacesRegex = new Regex(@"\s{2,}", RegexOptions.Compiled);
         private static readonly Regex NamerDuplicateRegex = new Regex(@"_\d$", RegexOptions.Compiled);
@@ -309,7 +275,7 @@ namespace NzbDrone.Core.Parser
 
                 if (ReversedTitleRegex.IsMatch(title))
                 {
-                    var titleWithoutExtension = RemoveFileExtension(title).ToCharArray();
+                    var titleWithoutExtension = FileExtensions.RemoveFileExtension(title).ToCharArray();
                     Array.Reverse(titleWithoutExtension);
 
                     title = $"{titleWithoutExtension}{title.Substring(titleWithoutExtension.Length)}";
@@ -317,14 +283,14 @@ namespace NzbDrone.Core.Parser
                     Logger.Debug("Reversed name detected. Converted to '{0}'", title);
                 }
 
-                var releaseTitle = RemoveFileExtension(title);
+                var releaseTitle = FileExtensions.RemoveFileExtension(title);
 
                 // Trim dashes from end
                 releaseTitle = releaseTitle.Trim('-', '_');
 
                 releaseTitle = releaseTitle.Replace("【", "[").Replace("】", "]");
 
-                foreach (var replace in PreSubstitutionRegex)
+                foreach (var replace in ParserCommon.PreSubstitutionRegex)
                 {
                     if (replace.TryReplace(ref releaseTitle))
                     {
@@ -336,10 +302,10 @@ namespace NzbDrone.Core.Parser
                 var simpleTitle = SimpleTitleRegex.Replace(releaseTitle);
 
                 // TODO: Quick fix stripping [url] - prefixes.
-                simpleTitle = WebsitePrefixRegex.Replace(simpleTitle);
-                simpleTitle = WebsitePostfixRegex.Replace(simpleTitle);
+                simpleTitle = ParserCommon.WebsitePrefixRegex.Replace(simpleTitle);
+                simpleTitle = ParserCommon.WebsitePostfixRegex.Replace(simpleTitle);
 
-                simpleTitle = CleanTorrentSuffixRegex.Replace(simpleTitle);
+                simpleTitle = ParserCommon.CleanTorrentSuffixRegex.Replace(simpleTitle);
 
                 simpleTitle = CleanQualityBracketsRegex.Replace(simpleTitle, m =>
                 {
@@ -393,7 +359,7 @@ namespace NzbDrone.Core.Parser
                                     }
                                 }
 
-                                result.ReleaseGroup = ParseReleaseGroup(simpleReleaseTitle);
+                                result.ReleaseGroup = ReleaseGroupParser.ParseReleaseGroup(simpleReleaseTitle);
 
                                 var subGroup = GetSubGroup(match);
                                 if (!subGroup.IsNullOrWhiteSpace())
@@ -653,9 +619,8 @@ namespace NzbDrone.Core.Parser
                 return title;
             }
 
-            title = WordDelimiterRegex.Replace(title, " ");
             title = PunctuationRegex.Replace(title, string.Empty);
-            title = CommonWordRegex.Replace(title, string.Empty);
+            title = ArticleWordRegex.Replace(title, string.Empty);
             title = DuplicateSpacesRegex.Replace(title, " ");
             title = SpecialCharRegex.Replace(title, string.Empty);
 
@@ -711,9 +676,8 @@ namespace NzbDrone.Core.Parser
                 return string.Empty;
             }
 
-            title = WordDelimiterRegex.Replace(title, " ");
             title = PunctuationRegex.Replace(title, string.Empty);
-            title = CommonWordRegex.Replace(title, string.Empty);
+            title = ArticleWordRegex.Replace(title, string.Empty);
             title = DuplicateSpacesRegex.Replace(title, " ");
             title = SpecialCharRegex.Replace(title, string.Empty);
 
@@ -777,80 +741,6 @@ namespace NzbDrone.Core.Parser
             }
 
             return null;
-        }
-
-        public static string ParseReleaseGroup(string title)
-        {
-            if (title.IsNullOrWhiteSpace())
-            {
-                return string.Empty;
-            }
-
-            title = title.Trim();
-            title = RemoveFileExtension(title);
-            title = WebsitePrefixRegex.Replace(title);
-            title = CleanTorrentSuffixRegex.Replace(title);
-
-            // Removed AnimeReleaseGroupRegex check as it incorrectly matches studio names in brackets
-            // Studios appear at the beginning in brackets, release groups appear at the end
-
-            title = CleanReleaseGroupRegex.Replace(title);
-
-            var exceptionReleaseGroupRegex = ExceptionReleaseGroupRegex.Matches(title);
-
-            if (exceptionReleaseGroupRegex.Count != 0)
-            {
-                return exceptionReleaseGroupRegex.OfType<Match>().Last().Groups["releasegroup"].Value;
-            }
-
-            var exceptionExactMatch = ExceptionReleaseGroupRegexExact.Matches(title);
-
-            if (exceptionExactMatch.Count != 0)
-            {
-                return exceptionExactMatch.OfType<Match>().Last().Groups["releasegroup"].Value;
-            }
-
-            var matches = ReleaseGroupRegex.Matches(title);
-
-            if (matches.Count != 0)
-            {
-                var group = matches.OfType<Match>().Last().Groups["releasegroup"].Value;
-
-                if (int.TryParse(group, out _))
-                {
-                    return null;
-                }
-
-                if (InvalidReleaseGroupRegex.IsMatch(group))
-                {
-                    return null;
-                }
-
-                return group;
-            }
-
-            return null;
-        }
-
-        public static string RemoveFileExtension(string title)
-        {
-            if (title.IsNullOrWhiteSpace())
-            {
-                return string.Empty;
-            }
-
-            title = FileExtensionRegex.Replace(title, m =>
-            {
-                var extension = m.Value.ToLower();
-                if (MediaFiles.MediaFileExtensions.Extensions.Contains(extension) || new[] { ".par2", ".nzb" }.Contains(extension))
-                {
-                    return string.Empty;
-                }
-
-                return m.Value;
-            });
-
-            return title;
         }
 
         private static ParsedMovieInfo ParseMatchCollection(MatchCollection matchCollection, string releaseTitle)
@@ -1088,7 +978,7 @@ namespace NzbDrone.Core.Parser
                 return false;
             }
 
-            var titleWithoutExtension = RemoveFileExtension(title);
+            var titleWithoutExtension = FileExtensions.RemoveFileExtension(title);
 
             if (RejectHashedReleasesRegex.Any(v => v.IsMatch(titleWithoutExtension)))
             {

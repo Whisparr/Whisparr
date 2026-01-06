@@ -156,7 +156,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Manual
 
             var downloadClientItem = GetTrackedDownload(downloadId)?.DownloadItem;
             var finalReleaseGroup = releaseGroup.IsNullOrWhiteSpace()
-                ? Parser.Parser.ParseReleaseGroup(path)
+                ? ReleaseGroupParser.ParseReleaseGroup(path)
                 : releaseGroup;
             var finalQuality = (quality?.Quality ?? Quality.Unknown) == Quality.Unknown ? QualityParser.ParseQuality(path) : quality;
             var finalLanguages =
@@ -316,7 +316,8 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Manual
                     var fileMovieInfo = Parser.Parser.ParseMoviePath(file) ?? new ParsedMovieInfo();
                     var localMovie = new LocalMovie();
                     localMovie.Path = file;
-                    localMovie.ReleaseGroup = Parser.Parser.ParseReleaseGroup(file);
+                    localMovie.ReleaseGroup = ReleaseGroupParser.ParseReleaseGroup(file);
+                    localMovie.Quality = QualityParser.ParseQuality(file);
                     localMovie.Languages = LanguageParser.ParseLanguages(file);
                     localMovie.Size = _diskProvider.GetFileSize(file);
                     localMovie.FileMovieInfo = fileMovieInfo;
@@ -364,7 +365,7 @@ namespace NzbDrone.Core.MediaFiles.MovieImport.Manual
                 localMovie.Path = file;
                 localMovie.Quality = new QualityModel(Quality.Unknown);
                 localMovie.Languages = new List<Language> { Language.Unknown };
-                localMovie.ReleaseGroup = Parser.Parser.ParseReleaseGroup(file);
+                localMovie.ReleaseGroup = ReleaseGroupParser.ParseReleaseGroup(file);
                 localMovie.Size = _diskProvider.GetFileSize(file);
 
                 items.Add(MapItem(new ImportDecision(localMovie), rootFolder, null, null));

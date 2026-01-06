@@ -964,16 +964,19 @@ stages:
           failTaskOnMissingResultsFile: true
         displayName: Publish Test Results
 
-  - stage: Tag_Commit
-    displayName: Tag
-    dependsOn: Integration
+  - stage: Release
+    displayName: Create Release
+    dependsOn:
+    - Integration
+    - Packages
+    - Installer
     condition: and(
       succeeded(),
       ne(variables['Build.Reason'],'PullRequest'),
       eq(variables['Build.SourceBranch'], 'refs/heads/eros')
       )
     jobs:
-    - job: Tag_Commit
+    - job: GitHub_Release
       pool:
         vmImage: ${{ variables.linuxImage }}
 
@@ -981,12 +984,36 @@ stages:
       - checkout: self
         persistCredentials: true
         fetchDepth: 0
+      - task: DownloadPipelineArtifact@2
+        displayName: Download All Packages
+        inputs:
+          artifactName: 'Packages'
+          targetPath: $(Build.ArtifactStagingDirectory)/packages
+      - task: DownloadPipelineArtifact@2
+        displayName: Download Windows Installer
+        inputs:
+          artifactName: 'WindowsInstaller'
+          targetPath: $(Build.ArtifactStagingDirectory)/installer
       - bash: |
-          git config user.name "Whisparr Pipelines"
-          git config user.email "ci@whisparr.com"
-          git tag v$(whisparrVersion)
-          git push origin v$(whisparrVersion)
-        displayName: Commit
+          # Generate release notes from commits since last tag
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -n "$LAST_TAG" ]; then
+            RELEASE_NOTES=$(git log --pretty=format:"- %s" $LAST_TAG..HEAD)
+          else
+            RELEASE_NOTES=$(git log --pretty=format:"- %s" -10)
+          fi
+
+          # Create pre-release with all artifacts
+          gh release create v$(whisparrVersion) \
+            --title "Whisparr v$(whisparrVersion) (Pre-release)" \
+            --notes "$RELEASE_NOTES" \
+            --target $(Build.SourceVersion) \
+            --prerelease \
+            $(Build.ArtifactStagingDirectory)/packages/* \
+            $(Build.ArtifactStagingDirectory)/installer/*
+        displayName: Create GitHub Pre-Release
+        env:
+          GH_TOKEN: $(System.AccessToken)
 
   - stage: Automation
     displayName: Automation

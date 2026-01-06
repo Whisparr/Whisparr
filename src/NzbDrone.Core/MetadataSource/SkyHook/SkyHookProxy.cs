@@ -183,7 +183,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
 
             var performers = httpResponse.Resource.Credits.Select(c => MapPerformer(c.Performer)).DistinctBy(p => p.ForeignId).ToList();
 
-            return new Tuple<MovieMetadata, Studio, List<Performer>>(movie, null, performers);
+            return new Tuple<MovieMetadata, Studio, List<Performer>>(movie, MapStudio(httpResponse.Resource.Studio), performers);
         }
 
         public Tuple<MovieMetadata, Studio, List<Performer>> GetTpdbMovieInfo(string tpdbId)
@@ -1350,6 +1350,12 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
 
         private Studio MapStudio(StudioResource studio)
         {
+            // Do not Map the Studio if it has not mapped to a StashDB studio. For Movies as the name is stored in the movie Metadata.
+            if (string.IsNullOrEmpty(studio?.ForeignIds?.StashId))
+            {
+                return null;
+            }
+
             var newStudio = new Studio
             {
                 Title = studio.Title,

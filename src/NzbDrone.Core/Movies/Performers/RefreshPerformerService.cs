@@ -147,7 +147,7 @@ namespace NzbDrone.Core.Movies.Performers
             {
                 var existingScenes = _movieService.AllMovieStashIds();
                 var excludedScenes = _importListExclusionService.GetAllExclusions().Select(e => e.ForeignId);
-                var scenesToAdd = performerWork.Scenes.Where(m => !existingScenes.Contains(m)).Where(m => !excludedScenes.Contains(m));
+                var scenesToAdd = performerWork.StashdbIds.Where(m => !existingScenes.Contains(m)).Where(m => !excludedScenes.Contains(m));
                 var scenesAdded = 0;
 
                 if (scenesToAdd.Any())
@@ -172,7 +172,11 @@ namespace NzbDrone.Core.Movies.Performers
                     }
                 }
 
-                _logger.Info("Synced performer {0} has {1} scenes adding {2} and added {3}", performer.Name, performerWork.Scenes.Count, scenesToAdd.Count(), scenesAdded);
+                _logger.Info("Synced performer {0} has {1} scenes adding {2} and added {3}",
+                    performer.Name,
+                    performerWork.StashdbIds.Count,
+                    scenesToAdd.Count(),
+                    scenesAdded);
             }
 
             if (performer.MoviesMonitored)
@@ -184,7 +188,7 @@ namespace NzbDrone.Core.Movies.Performers
                     var tmbdId = 0;
                     var existingMovies = _movieService.AllMovieTmdbIds();
                     var excludedMovies = _importListExclusionService.GetAllExclusions().Select(e => int.TryParse(e.ForeignId, out tmbdId)).Select(e => tmbdId).Where(e => e != 0).ToList();
-                    var moviesToAdd = performerWork.Movies.Where(m => !existingMovies.Contains(m)).Where(m => !excludedMovies.Contains(m));
+                    var moviesToAdd = performerWork.TmdbIds.Where(m => !existingMovies.Contains(m)).Where(m => !excludedMovies.Contains(m));
 
                     if (moviesToAdd.Any())
                     {
@@ -209,14 +213,18 @@ namespace NzbDrone.Core.Movies.Performers
                         }
                     }
 
-                    _logger.Info("Synced performer {0} has {1} movies adding {2} and added {3}", performer.Name, performerWork.Movies.Count, moviesToAdd.Count(), moviesAdded);
+                    _logger.Info("Synced performer {0} has {1} movies adding {2} and added {3}",
+                        performer.Name,
+                        performerWork.TmdbIds.Count,
+                        moviesToAdd.Count(),
+                        moviesAdded);
                 }
 
                 if (_configService.WhisparrMovieMetadataSource == MovieMetadataType.TPDB)
                 {
                     var existingMovies = _movieService.AllMovieTpdbIds();
                     var excludedMovies = _importListExclusionService.GetAllExclusions().Where(e => e.Type == ImportExclusionType.Movie).Select(e => e.ForeignId).ToList();
-                    var moviesToAdd = performerWork.TpdbMovies.Where(m => !existingMovies.Contains(m)).Where(m => !excludedMovies.Contains(m));
+                    var moviesToAdd = performerWork.TpdbIds.Where(m => !existingMovies.Contains(m)).Where(m => !excludedMovies.Contains(m));
 
                     if (moviesToAdd.Any())
                     {
@@ -241,7 +249,11 @@ namespace NzbDrone.Core.Movies.Performers
                         }
                     }
 
-                    _logger.Info("Synced performer {0} has {1} movies adding {2} and added {3}", performer.Name, performerWork.TpdbMovies.Count, moviesToAdd.Count(), moviesAdded);
+                    _logger.Info("Synced performer {0} has {1} movies adding {2} and added {3}",
+                        performer.Name,
+                        performerWork.TpdbIds.Count,
+                        moviesToAdd.Count(),
+                        moviesAdded);
                 }
             }
         }

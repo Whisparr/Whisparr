@@ -394,7 +394,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             return MapStudio(httpResponse.Resource);
         }
 
-        public (List<string> Scenes, List<string> TpdbMovies, List<int> Movies) GetPerformerWorks(string stashId)
+        public (List<string> StashdbIds, List<string> TpdbIds, List<int> TmdbIds) GetPerformerWorks(string stashId)
         {
             var httpRequest = _whisparrMetadata.Create()
                                              .SetSegment("route", "performer")
@@ -405,9 +405,9 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             httpRequest.SuppressHttpError = true;
 
             var httpResponse = _httpClient.Get<PerformerWorksResource>(httpRequest);
-            var scenes = httpResponse.Resource.Scenes;
-            var tpdbMovies = httpResponse.Resource.TpdbMovies;
-            var movies = httpResponse.Resource.Movies.ConvertAll(int.Parse);
+            var stashIds = httpResponse.Resource.Scenes;
+            var tpdbIds = httpResponse.Resource.TpdbMovies;
+            var tmdbIds = httpResponse.Resource.Movies.ConvertAll(int.Parse);
 
             if (httpResponse.HasHttpError)
             {
@@ -421,7 +421,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 }
             }
 
-            return (scenes, tpdbMovies, movies);
+            return (stashIds, tpdbIds, tmdbIds);
         }
 
         public List<string> GetStudioScenes(string stashId)
@@ -452,7 +452,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             return scenes;
         }
 
-        public (List<string> Scenes, List<string> TpdbMovies) GetStudioWorks(string stashId)
+        public (List<string> StashdbIds, List<string> TpdbIds, List<int> TmdbIds) GetStudioWorks(string stashId)
         {
             var httpRequest = _whisparrMetadata.Create()
                                              .SetSegment("route", "site")
@@ -463,8 +463,15 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             httpRequest.SuppressHttpError = true;
 
             var httpResponse = _httpClient.Get<StudioWorksResource>(httpRequest);
-            var scenes = httpResponse.Resource.Scenes;
-            var tpdbMovies = httpResponse.Resource.TpdbMovies;
+            var stashdbIds = httpResponse.Resource.Scenes;
+            var tpdbIds = httpResponse.Resource.TpdbMovies;
+            var tmpdIds = new List<int>();
+
+         // Check while Skyhook is transitioning to return TMDB company movies.
+            if (httpResponse.Resource.Movies != null)
+            {
+                tmpdIds = httpResponse.Resource.Movies.ConvertAll(int.Parse);
+            }
 
             if (httpResponse.HasHttpError)
             {
@@ -478,7 +485,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 }
             }
 
-            return (scenes, tpdbMovies);
+            return (stashdbIds, tpdbIds, tmpdIds);
         }
 
         public MovieMetadata MapMovie(MovieResource resource)
@@ -528,21 +535,20 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 movie.Status = MovieStatusType.Released;
             }
 
-            if (resource.Studio.ForeignIds != null && resource.Studio.ForeignIds.StashId.IsNotNullOrWhiteSpace())
+            var foreignIds = resource.Studio?.ForeignIds;
+            if (foreignIds != null)
             {
-                movie.StudioForeignId = resource.Studio.ForeignIds.StashId;
-                movie.StudioTitle = resource.Studio.Title;
-                movie.Studio = resource.Studio;
-            }
-            else if (resource.Studio.ForeignIds != null && resource.Studio.ForeignIds.TmdbId > 0)
-            {
-                movie.StudioTitle = resource.Studio.Title;
-                movie.Studio = resource.Studio;
-            }
-            else if (resource.Studio.ForeignIds != null && resource.Studio.ForeignIds.TpdbId.IsNotNullOrWhiteSpace())
-            {
-                movie.StudioTitle = resource.Studio.Title;
-                movie.Studio = resource.Studio;
+                if (!string.IsNullOrWhiteSpace(foreignIds.StashId))
+                {
+                    movie.StudioForeignId = foreignIds.StashId;
+                    movie.StudioTitle = resource.Studio.Title;
+                    movie.Studio = resource.Studio;
+                }
+                else if (foreignIds.TmdbId > 0 || !string.IsNullOrWhiteSpace(foreignIds.TpdbId))
+                {
+                    movie.StudioTitle = resource.Studio.Title;
+                    movie.Studio = resource.Studio;
+                }
             }
 
             return movie;

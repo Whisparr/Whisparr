@@ -37,6 +37,7 @@ pr:
     exclude:
     - src/NzbDrone.Core/Localization/Core
     - src/Whisparr.Api.*/openapi.json
+    - .github
 
 stages:
   - stage: Setup
@@ -185,7 +186,7 @@ stages:
         artifact: '$(osName)Frontend'
         displayName: Publish Frontend
         condition: and(succeeded(), eq(variables['osName'], 'Windows'))
-        
+
   - stage: Installer
     dependsOn:
     - Build_Backend
@@ -388,7 +389,7 @@ stages:
           SENTRY_AUTH_TOKEN: $(sentryAuthTokenServarr)
           SENTRY_ORG: $(sentryOrg)
           SENTRY_URL: $(sentryUrl)
-    
+
   - stage: Unit_Test
     displayName: Unit Tests
     dependsOn: Build_Backend
@@ -496,11 +497,11 @@ stages:
 
       pool:
         vmImage: ${{ variables.linuxImage }}
-      
+
       container: $[ variables['containerImage'] ]
 
       timeoutInMinutes: 10
-        
+
       steps:
       - task: UseDotNet@2
         displayName: 'Install .NET'
@@ -555,7 +556,7 @@ stages:
         vmImage: ${{ variables.linuxImage }}
 
       timeoutInMinutes: 10
-        
+
       steps:
       - task: UseDotNet@2
         displayName: 'Install .net core'
@@ -607,12 +608,12 @@ stages:
         Whisparr__Postgres__Port: '5432'
         Whisparr__Postgres__User: 'whisparr'
         Whisparr__Postgres__Password: 'whisparr'
-  
+
       pool:
         vmImage: ${{ variables.linuxImage }}
 
       timeoutInMinutes: 10
-        
+
       steps:
       - task: UseDotNet@2
         displayName: 'Install .net core'
@@ -695,7 +696,7 @@ stages:
 
       pool:
         vmImage: $(imageName)
-        
+
       steps:
       - task: UseDotNet@2
         displayName: 'Install .net core'
@@ -717,7 +718,7 @@ stages:
           targetPath: $(Build.ArtifactStagingDirectory)
       - task: ExtractFiles@1
         inputs:
-          archiveFilePatterns: '$(Build.ArtifactStagingDirectory)/**/$(pattern)' 
+          archiveFilePatterns: '$(Build.ArtifactStagingDirectory)/**/$(pattern)'
           destinationFolder: '$(Build.ArtifactStagingDirectory)/bin'
         displayName: Extract Package
       - bash: |
@@ -772,7 +773,7 @@ stages:
             targetPath: $(Build.ArtifactStagingDirectory)
         - task: ExtractFiles@1
           inputs:
-            archiveFilePatterns: '$(Build.ArtifactStagingDirectory)/**/$(pattern)' 
+            archiveFilePatterns: '$(Build.ArtifactStagingDirectory)/**/$(pattern)'
             destinationFolder: '$(Build.ArtifactStagingDirectory)/bin'
           displayName: Extract Package
         - bash: |
@@ -836,7 +837,7 @@ stages:
             targetPath: $(Build.ArtifactStagingDirectory)
         - task: ExtractFiles@1
           inputs:
-            archiveFilePatterns: '$(Build.ArtifactStagingDirectory)/**/$(pattern)' 
+            archiveFilePatterns: '$(Build.ArtifactStagingDirectory)/**/$(pattern)'
             destinationFolder: '$(Build.ArtifactStagingDirectory)/bin'
           displayName: Extract Package
         - bash: |
@@ -933,7 +934,7 @@ stages:
       container: $[ variables['containerImage'] ]
 
       timeoutInMinutes: 15
-        
+
       steps:
       - task: UseDotNet@2
         displayName: 'Install .NET'
@@ -961,7 +962,7 @@ stages:
           targetPath: $(Build.ArtifactStagingDirectory)
       - task: ExtractFiles@1
         inputs:
-          archiveFilePatterns: '$(Build.ArtifactStagingDirectory)/**/$(pattern)' 
+          archiveFilePatterns: '$(Build.ArtifactStagingDirectory)/**/$(pattern)'
           destinationFolder: '$(Build.ArtifactStagingDirectory)/bin'
         displayName: Extract Package
       - bash: |
@@ -984,7 +985,7 @@ stages:
   - stage: Automation
     displayName: Automation
     dependsOn: Packages
-    
+
     jobs:
     - job: Automation
       strategy:
@@ -1010,7 +1011,7 @@ stages:
 
       pool:
         vmImage: $(imageName)
-        
+
       steps:
       - task: UseDotNet@2
         displayName: 'Install .net core'
@@ -1032,7 +1033,7 @@ stages:
           targetPath: $(Build.ArtifactStagingDirectory)
       - task: ExtractFiles@1
         inputs:
-          archiveFilePatterns: '$(Build.ArtifactStagingDirectory)/**/$(pattern)' 
+          archiveFilePatterns: '$(Build.ArtifactStagingDirectory)/**/$(pattern)'
           destinationFolder: '$(Build.ArtifactStagingDirectory)/bin'
         displayName: Extract Package
       - bash: |
@@ -1136,7 +1137,7 @@ stages:
       - checkout: self
         submodules: true
         persistCredentials: true
-        fetchDepth: 1    
+        fetchDepth: 1
       - bash: ./docs.sh Windows
         displayName: Create openapi.json
       - bash: |

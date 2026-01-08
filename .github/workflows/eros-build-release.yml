@@ -63,13 +63,13 @@ jobs:
           Write-Host "Resolved: TAG=$TAG, WHISPARR=$WHISPARR, MAJOR=$MAJOR, MINOR=$MINOR"
 
   token:
-    name: Mint GitHub App installation token
+    name: GitHub Token
+    # placeholder, will be used for cross-repo access if needed
     needs: resolve-ref
-    uses: ./.github/workflows/mint-app-token.yml
-    # pass org secrets (ensure CI_APP_ID and CI_APP_KEY are set at org or repo level)
-    secrets:
-      CI_APP_ID: ${{ secrets.CI_APP_ID }}
-      CI_APP_KEY: ${{ secrets.CI_APP_KEY }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Provide GITHUB_TOKEN (no-op)
+        run: echo "Using built-in GITHUB_TOKEN for repo-scoped actions"
       #base64 from app private key
 
   backend:
@@ -564,4 +564,4 @@ jobs:
           generateReleaseNotes: true
           prerelease: true
           artifacts: release_assets/**
-          token: ${{ needs.token.outputs.release_token }}
+          token: ${{ secrets.GITHUB_TOKEN }}

@@ -166,6 +166,10 @@ jobs:
             $enableWindows = '-p:EnableWindowsTargeting=true'
             $tf = 'net8.0-windows'
           }
+          # Ensure restore produces assets for the chosen TargetFramework/RID
+          Write-Host "Running restore for TargetFramework=$tf RuntimeIdentifier=$RID"
+          & dotnet restore src/Whisparr.sln "-p:TargetFramework=$tf" "-p:RuntimeIdentifier=$RID"
+
           & dotnet msbuild -restore src/Whisparr.sln -p:SelfContained=True -p:Configuration=Release -p:Platform=$PLATFORM -p:RuntimeIdentifier=$RID "-p:TargetFramework=$tf" $enableWindows -p:PublishDir="_output/net8.0/$RID/publish/" -t:Publish
         env:
           FORCE_COLOR: 0

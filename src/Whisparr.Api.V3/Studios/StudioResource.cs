@@ -14,6 +14,7 @@ namespace Whisparr.Api.V3.Studios
         public string SortTitle { get; set; }
         public string SearchTitle { get; set; }
         public string ForeignId { get; set; }
+        public int TmdbId { get; set; }
         public string TpdbId { get; set; }
         public string Website { get; set; }
         public string Network { get; set; }
@@ -29,7 +30,9 @@ namespace Whisparr.Api.V3.Studios
         public HashSet<int> Tags { get; set; }
         public bool HasMovies { get; set; }
         public bool HasScenes { get; set; }
+        public int TotalMovieCount { get; internal set; }
         public int TotalSceneCount { get; internal set; }
+        public int MovieCount { get; set; }
         public int SceneCount { get; set; }
         public List<int> Years { get; set; }
         public long SizeOnDisk { get; set; }
@@ -50,6 +53,7 @@ namespace Whisparr.Api.V3.Studios
                 Id = model.Id,
                 ForeignId = model.ForeignId,
                 TpdbId = model.TpdbId,
+                TmdbId = model.TmdbId,
                 Title = model.Title,
                 SortTitle = model.SortTitle,
                 SearchTitle = model.SearchTitle,

@@ -101,7 +101,7 @@ class EditStudioModalContent extends Component {
                   <FormInputGroup
                     type={inputTypes.CHECK}
                     name="moviesMonitored"
-                    helpText={translate('MonitoredStudioHelpText')}
+                    helpText={translate('MonitoredStudioMovieHelpText')}
                     {...moviesMonitored}
                     onChange={onInputChange}
                   />

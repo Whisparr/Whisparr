@@ -7,7 +7,7 @@ import translate from 'Utilities/String/translate';
 import styles from './PerformerDetailsLinks.css';
 
 function PerformerDetailsLinks(props) {
-  const { tpdbId, foreignId } = props;
+  const { tmdbId, tpdbId, foreignId } = props;
 
   return (
     <div className={styles.links}>
@@ -23,6 +23,21 @@ function PerformerDetailsLinks(props) {
           {translate('StashDB')}
         </Label>
       </Link>
+
+      {!!tmdbId && (
+        <Link
+          className={styles.link}
+          to={`https://www.themoviedb.org/person/${tmdbId}`}
+        >
+          <Label
+            className={styles.linkLabel}
+            kind={kinds.INFO}
+            size={sizes.LARGE}
+          >
+            {translate('TMDb')}
+          </Label>
+        </Link>
+      )}
 
       {!!tpdbId && (
         <Link
@@ -44,7 +59,8 @@ function PerformerDetailsLinks(props) {
 
 PerformerDetailsLinks.propTypes = {
   foreignId: PropTypes.string.isRequired,
-  tpdbId: PropTypes.string
+  tpdbId: PropTypes.string,
+  tmdbId: PropTypes.number
 };
 
 export default PerformerDetailsLinks;

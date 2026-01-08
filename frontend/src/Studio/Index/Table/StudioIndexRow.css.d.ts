@@ -13,6 +13,7 @@ interface CssExports {
   'status': string;
   'statusIcon': string;
   'tags': string;
+  'totalMovieCount': string;
   'totalSceneCount': string;
 }
 export const cssExports: CssExports;

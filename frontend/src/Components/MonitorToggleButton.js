@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import SpinnerIconButton from 'Components/Link/SpinnerIconButton';
 import { icons } from 'Helpers/Props';
+import translate from 'Utilities/String/translate';
 import styles from './MonitorToggleButton.css';
 
 function getTooltip(monitored, type, isDisabled, tooltip) {
@@ -16,19 +17,19 @@ function getTooltip(monitored, type, isDisabled, tooltip) {
 
   if (monitored) {
     const monitoredLabels = {
-      movieMonitor: 'Monitored Movies, click to unmonitor',
-      sceneMonitor: 'Monitored Scenes, click to unmonitor'
+      movieMonitor: translate('ToggleMonitoredToUnmonitoredMovies'),
+      sceneMonitor: translate('ToggleMonitoredToUnmonitoredScenes')
     };
 
     return monitoredLabels[type] ?? 'Monitored, click to unmonitor';
   }
 
   const unMonitoredLabels = {
-    movieMonitor: 'Unmonitored Movies, click to monitor',
-    sceneMonitor: 'Unmonitored Scenes, click to monitor'
+    movieMonitor: translate('ToggleUnmonitoredToMonitoredMovies'),
+    sceneMonitor: translate('ToggleUnmonitoredToMonitoredScenes')
   };
 
-  return unMonitoredLabels[type] ?? 'Unmonitored, click to monitor';
+  return unMonitoredLabels[type] ?? translate('ToggleUnmonitoredToMonitored');
 }
 
 class MonitorToggleButton extends Component {

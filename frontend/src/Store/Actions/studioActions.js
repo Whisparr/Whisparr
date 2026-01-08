@@ -107,6 +107,12 @@ export const defaultState = {
       isVisible: false
     },
     {
+      name: 'totalMovieCount',
+      label: () => translate('Movies'),
+      isSortable: true,
+      isVisible: true
+    },
+    {
       name: 'totalSceneCount',
       label: () => translate('Scenes'),
       isSortable: true,

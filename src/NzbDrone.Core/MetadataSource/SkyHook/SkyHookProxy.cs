@@ -1265,6 +1265,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 Ethnicity = MapEthnicity(performer.Ethnicity),
                 HairColor = MapHairColor(performer.HairColor),
                 ForeignId = performer.ForeignIds.StashId,
+                TmdbId = performer.ForeignIds.TmdbId,
                 TpdbId = performer.ForeignIds.TpdbId,
                 Images = performer.Images.Select(MapImage).ToList()
             };
@@ -1369,6 +1370,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 Website = studio.Homepage,
                 ForeignId = studio.ForeignIds.StashId,
                 TpdbId = studio.ForeignIds.TpdbId,
+                TmdbId = studio.ForeignIds.TmdbId,
                 Network = studio.Network,
                 Images = studio.Images?.Select(MapImage).ToList() ?? new List<MediaCover.MediaCover>(),
                 Status = studio.Status

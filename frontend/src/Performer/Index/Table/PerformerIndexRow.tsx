@@ -43,10 +43,14 @@ function PerformerIndexRow(props: PerformerIndexRowProps) {
     hairColor,
     ethnicity,
     rootFolderPath,
+    movieCount,
+    totalMovieCount,
     sceneCount,
     totalSceneCount,
     tags = [],
     foreignId,
+    tmdbId,
+    tpdbId,
   } = performer;
 
   const [isEditPerformerModalOpen, setIsEditPerformerModalOpen] =
@@ -192,6 +196,14 @@ function PerformerIndexRow(props: PerformerIndexRowProps) {
           );
         }
 
+        if (name === 'totalMovieCount') {
+          return (
+            <VirtualTableRowCell key={name} className={styles[name]}>
+              {movieCount} / {totalMovieCount}
+            </VirtualTableRowCell>
+          );
+        }
+
         if (name === 'totalSceneCount') {
           return (
             <VirtualTableRowCell key={name} className={styles[name]}>
@@ -206,7 +218,13 @@ function PerformerIndexRow(props: PerformerIndexRowProps) {
               <span className={styles.externalLinks}>
                 <Tooltip
                   anchor={<Icon name={icons.EXTERNAL_LINK} size={12} />}
-                  tooltip={<PerformerDetailsLinks foreignId={foreignId} />}
+                  tooltip={
+                    <PerformerDetailsLinks
+                      foreignId={foreignId}
+                      tmdbId={tmdbId}
+                      tpdbId={tpdbId}
+                    />
+                  }
                   canFlip={true}
                   kind={kinds.INVERSE}
                 />

@@ -13,6 +13,7 @@ interface CssExports {
   'rootFolderPath': string;
   'status': string;
   'tags': string;
+  'totalMovieCount': string;
   'totalSceneCount': string;
   'year': string;
 }

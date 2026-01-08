@@ -52,6 +52,9 @@ class AddNewStudioSearchResult extends Component {
   render() {
     const {
       foreignId,
+      tmdbId,
+      tpdbId,
+      website,
       title,
       network,
       status,
@@ -142,7 +145,10 @@ class AddNewStudioSearchResult extends Component {
                 }
                 tooltip={
                   <StudioDetailsLinks
+                    website={website}
                     foreignId={foreignId}
+                    tmdbId={tmdbId}
+                    tpdbId={tpdbId}
                   />
                 }
                 canFlip={true}
@@ -174,6 +180,9 @@ class AddNewStudioSearchResult extends Component {
 
 AddNewStudioSearchResult.propTypes = {
   foreignId: PropTypes.string.isRequired,
+  tmdbId: PropTypes.number,
+  tpdbId: PropTypes.string,
+  website: PropTypes.string,
   title: PropTypes.string.isRequired,
   network: PropTypes.string,
   status: PropTypes.string,

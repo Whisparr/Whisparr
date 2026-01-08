@@ -159,12 +159,14 @@ jobs:
 
           Write-Host "Running dotnet msbuild publish for runtime: $RID (Platform=$PLATFORM)"
           dotnet --info
+          $tf = 'net8.0'
           $enableWindows = ''
           if ($RID -like 'win-*') {
             Write-Host 'Enabling Windows targeting for build'
             $enableWindows = '-p:EnableWindowsTargeting=true'
+            $tf = 'net8.0-windows'
           }
-          & dotnet msbuild -restore src/Whisparr.sln -p:SelfContained=True -p:Configuration=Release -p:Platform=$PLATFORM -p:RuntimeIdentifier=$RID -p:TargetFramework=net8.0 $enableWindows -p:PublishDir="_output/net8.0/$RID/publish/" -t:Publish
+          & dotnet msbuild -restore src/Whisparr.sln -p:SelfContained=True -p:Configuration=Release -p:Platform=$PLATFORM -p:RuntimeIdentifier=$RID "-p:TargetFramework=$tf" $enableWindows -p:PublishDir="_output/net8.0/$RID/publish/" -t:Publish
         env:
           FORCE_COLOR: 0
 

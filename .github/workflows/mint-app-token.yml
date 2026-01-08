@@ -34,23 +34,23 @@ jobs:
 
           # Create JWT, exchange for installation token, and emit outputs
           python - <<'PY' > /tmp/mint_out.env
-            import os, time, jwt, requests
-            app_id = os.environ['CI_APP_ID']
-            private_key = open('/tmp/app_private_key.pem','r').read()
-            now = int(time.time())
-            payload = {'iat': now - 60, 'exp': now + (9*60), 'iss': int(app_id)}
-            jwt_token = jwt.encode(payload, private_key, algorithm='RS256')
-            owner, repo = os.environ['GITHUB_REPOSITORY'].split('/')
-            headers = {'Authorization': f'Bearer {jwt_token}', 'Accept': 'application/vnd.github+json'}
-            # Get installation ID for this repo (works for org or repo installations)
-            resp = requests.get(f'https://api.github.com/repos/{owner}/{repo}/installation', headers=headers)
-            resp.raise_for_status()
-            installation_id = resp.json()['id']
-            resp2 = requests.post(f'https://api.github.com/app/installations/{installation_id}/access_tokens', headers=headers)
-            resp2.raise_for_status()
-            token_value = resp2.json()['token']
-            print(f"release_token={token_value}")
-            print(f"installation_id={installation_id}")
+          import os, time, jwt, requests
+          app_id = os.environ['CI_APP_ID']
+          private_key = open('/tmp/app_private_key.pem','r').read()
+          now = int(time.time())
+          payload = {'iat': now - 60, 'exp': now + (9*60), 'iss': int(app_id)}
+          jwt_token = jwt.encode(payload, private_key, algorithm='RS256')
+          owner, repo = os.environ['GITHUB_REPOSITORY'].split('/')
+          headers = {'Authorization': f'Bearer {jwt_token}', 'Accept': 'application/vnd.github+json'}
+          # Get installation ID for this repo (works for org or repo installations)
+          resp = requests.get(f'https://api.github.com/repos/{owner}/{repo}/installation', headers=headers)
+          resp.raise_for_status()
+          installation_id = resp.json()['id']
+          resp2 = requests.post(f'https://api.github.com/app/installations/{installation_id}/access_tokens', headers=headers)
+          resp2.raise_for_status()
+          token_value = resp2.json()['token']
+          print(f"release_token={token_value}")
+          print(f"installation_id={installation_id}")
           PY
 
           # Append the values to GITHUB_OUTPUT so they become step outputs

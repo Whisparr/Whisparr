@@ -157,20 +157,16 @@ jobs:
             }
           }
 
-          Write-Host "Running dotnet msbuild publish for runtime: $RID (Platform=$PLATFORM)"
+          Write-Host "Building using Sonarr-style PublishAllRids for runtime: $RID (Platform=$PLATFORM)"
           dotnet --info
-          $tf = 'net8.0'
           $enableWindows = ''
           if ($RID -like 'win-*') {
             Write-Host 'Enabling Windows targeting for build'
             $enableWindows = '-p:EnableWindowsTargeting=true'
-            $tf = 'net8.0-windows'
           }
-          # Ensure restore produces assets for the chosen TargetFramework/RID
-          Write-Host "Running restore for TargetFramework=$tf RuntimeIdentifier=$RID"
-          & dotnet restore src/Whisparr.sln "-p:TargetFramework=$tf" "-p:RuntimeIdentifier=$RID"
 
-          & dotnet msbuild -restore src/Whisparr.sln -p:SelfContained=True -p:Configuration=Release -p:Platform=$PLATFORM -p:RuntimeIdentifier=$RID "-p:TargetFramework=$tf" $enableWindows -p:PublishDir="_output/net8.0/$RID/publish/" -t:Publish
+          # Use RuntimeIdentifiers + PublishAllRids
+          & dotnet msbuild -restore src/Whisparr.sln -p:SelfContained=True -p:Configuration=Release -p:Platform=$PLATFORM -p:RuntimeIdentifiers=$RID $enableWindows -p:PublishDir="_output/net8.0/$RID/publish/" -t:PublishAllRids
         env:
           FORCE_COLOR: 0
 

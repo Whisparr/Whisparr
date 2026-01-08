@@ -159,7 +159,12 @@ jobs:
 
           Write-Host "Running dotnet msbuild publish for runtime: $RID (Platform=$PLATFORM)"
           dotnet --info
-          dotnet msbuild -restore src/Whisparr.sln -p:SelfContained=True -p:Configuration=Release -p:Platform=$PLATFORM -p:RuntimeIdentifier=$RID -p:TargetFramework=net8.0 -p:PublishDir="_output/net8.0/$RID/publish/" -t:Publish
+          $enableWindows = ''
+          if ($RID -like 'win-*') {
+            Write-Host 'Enabling Windows targeting for build'
+            $enableWindows = '-p:EnableWindowsTargeting=true'
+          }
+          & dotnet msbuild -restore src/Whisparr.sln -p:SelfContained=True -p:Configuration=Release -p:Platform=$PLATFORM -p:RuntimeIdentifier=$RID -p:TargetFramework=net8.0 $enableWindows -p:PublishDir="_output/net8.0/$RID/publish/" -t:Publish
         env:
           FORCE_COLOR: 0
 
@@ -217,11 +222,24 @@ jobs:
           }
           Get-ChildItem -Path $dest -Force -ErrorAction SilentlyContinue | ForEach-Object { Write-Host $_.FullName }
 
+      - name: Debug Frontend artifacts
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $path = 'frontend_artifacts'
+          if (-not (Test-Path $path)) { Write-Host "No $path folder present"; exit 1 }
+          Write-Host "Files and directories under $path (first 200 lines):"
+          Get-ChildItem -Path $path -Recurse -Force -ErrorAction SilentlyContinue | ForEach-Object { Write-Host $_.FullName }
+          $count = (Get-ChildItem -Path $path -Recurse -File -Force -ErrorAction SilentlyContinue | Measure-Object).Count
+          Write-Host "Total files (recursive): $count"
+          # Dump listing for review in artifact
+          Get-ChildItem -Path $path -Recurse -Force -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName } | Out-File -FilePath (Join-Path $path 'artifact_listing.txt') -Encoding utf8 -Force
+
       - name: Upload Frontend artifact
         uses: actions/upload-artifact@v4
         with:
           name: Frontend
-          path: frontend_artifacts
+          path: frontend_artifacts/**
 
   packages:
     name: Create Packages

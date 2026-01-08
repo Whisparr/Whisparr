@@ -501,10 +501,15 @@ jobs:
         run: |
           $ErrorActionPreference = 'Stop'
           $innoExe = 'innosetup.exe'
-          Invoke-WebRequest -Uri "https://files.jrsoftware.org/is/6/innosetup-${{ env.INNO_VERSION }}.exe" -OutFile $innoExe -UseBasicParsing
+          $url = "https://files.jrsoftware.org/is/6/innosetup-${{ env.INNO_VERSION }}.exe"
+          Write-Host "Downloading Inno Setup from: $url"
+          Invoke-WebRequest -Uri $url -OutFile $innoExe -UseBasicParsing
           Remove-Item -Recurse -Force _inno -ErrorAction SilentlyContinue
-          & .\$innoExe //portable=1 //silent //currentuser //dir=.\\_inno
+          Write-Host "Running installer to extract portable Inno into ./_inno"
+          Start-Process -FilePath (Join-Path (Get-Location) $innoExe) -ArgumentList '//portable=1','//silent','//currentuser','//dir=_inno' -NoNewWindow -Wait
           Remove-Item $innoExe -Force -ErrorAction SilentlyContinue
+          Write-Host "Listing extracted _inno contents (first 200 lines):"
+          Get-ChildItem -Path .\_inno -Recurse -Force -ErrorAction SilentlyContinue | ForEach-Object { Write-Host $_.FullName }
 
       - name: Run Inno Setup to build installers
         shell: pwsh
@@ -512,9 +517,16 @@ jobs:
           $ErrorActionPreference = 'Stop'
           $framework = 'net8.0'
           $runtimes = @('win-x64','win-x86')
+          $iscc = Get-ChildItem -Path .\_inno -Recurse -Filter 'ISCC.exe' -File -ErrorAction SilentlyContinue | Select-Object -First 1
+          if ($null -eq $iscc) {
+            Write-Host "ISCC.exe not found under ./_inno. Listing ./_inno for diagnosis:"
+            Get-ChildItem -Path .\_inno -Recurse -Force -ErrorAction SilentlyContinue | ForEach-Object { Write-Host $_.FullName }
+            Exit 1
+          }
+          $isccPath = $iscc.FullName
           foreach ($r in $runtimes) {
             Write-Host "Building installer for $r (MAJOR=$env:MAJORVERSION MINOR=$env:MINORVERSION WHISPARR=$env:WHISPARRVERSION)"
-            & .\_inno\ISCC.exe distribution/windows/setup/whisparr.iss "//DFramework=$framework" "//DRuntime=$r" || Write-Host "ISCC failed for $r"
+            & $isccPath distribution/windows/setup/whisparr.iss "//DFramework=$framework" "//DRuntime=$r" || Write-Host "ISCC failed for $r"
           }
 
       - name: Collect installers

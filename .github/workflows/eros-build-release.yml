@@ -159,7 +159,7 @@ jobs:
 
           Write-Host "Running dotnet msbuild publish for runtime: $RID (Platform=$PLATFORM)"
           dotnet --info
-          dotnet msbuild -restore src/Whisparr.sln -p:SelfContained=True -p:Configuration=Release -p:Platform=$PLATFORM -p:RuntimeIdentifier=$RID -p:PublishDir="_output/net8.0/$RID/publish/" -t:Publish
+          dotnet msbuild -restore src/Whisparr.sln -p:SelfContained=True -p:Configuration=Release -p:Platform=$PLATFORM -p:RuntimeIdentifier=$RID -p:TargetFramework=net8.0 -p:PublishDir="_output/net8.0/$RID/publish/" -t:Publish
         env:
           FORCE_COLOR: 0
 
@@ -188,7 +188,7 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          $dest = 'frontend'
+          $$dest = 'frontend'
           New-Item -ItemType Directory -Path $$dest -Force | Out-Null
           Push-Location $$dest
           yarn install --frozen-lockfile --network-timeout 120000
@@ -204,14 +204,14 @@ jobs:
           $dest = 'frontend_artifacts'
           New-Item -ItemType Directory -Path $dest -Force | Out-Null
           if (Test-Path $src) {
-            Copy-Item -Path "$($src/*)" -Destination $dest -Recurse -Force -ErrorAction SilentlyContinue
-          }else {
+            Copy-Item -Path (Join-Path $src '*') -Destination $dest -Recurse -Force -ErrorAction SilentlyContinue
+          } else {
             Write-Host 'No frontend/build directory found!'
             Exit 1
           }
           if (Test-Path $ui) {
-            Copy-Item -Path "$($ui/*)" -Destination $dest -Recurse -Force -ErrorAction SilentlyContinue
-          }else {
+            Copy-Item -Path (Join-Path $ui '*') -Destination $dest -Recurse -Force -ErrorAction SilentlyContinue
+          } else {
             Write-Host 'No _output/UI directory found!'
             Exit 1
           }

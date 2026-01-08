@@ -15,8 +15,8 @@ jobs:
   mint:
     runs-on: ubuntu-latest
     outputs:
-      release_token: ${{ steps.create.outputs.release_token }}
-      installation_id: ${{ steps.create.outputs.installation_id }}
+      release_token: ${{ steps.export.outputs.release_token }}
+      installation_id: ${{ steps.export.outputs.installation_id }}
     steps:
       - name: Generate installation token
         id: create
@@ -33,25 +33,25 @@ jobs:
           python -m pip install PyJWT requests
 
           # Create JWT, exchange for installation token, and emit outputs
-          python - <<'PY' > /tmp/mint_out.env
-          import os, time, jwt, requests
-          app_id = os.environ['CI_APP_ID']
-          private_key = open('/tmp/app_private_key.pem','r').read()
-          now = int(time.time())
-          payload = {'iat': now - 60, 'exp': now + (9*60), 'iss': int(app_id)}
-          jwt_token = jwt.encode(payload, private_key, algorithm='RS256')
-          owner, repo = os.environ['GITHUB_REPOSITORY'].split('/')
-          headers = {'Authorization': f'Bearer {jwt_token}', 'Accept': 'application/vnd.github+json'}
-          # Get installation ID for this repo (works for org or repo installations)
-          resp = requests.get(f'https://api.github.com/repos/{owner}/{repo}/installation', headers=headers)
-          resp.raise_for_status()
-          installation_id = resp.json()['id']
-          resp2 = requests.post(f'https://api.github.com/app/installations/{installation_id}/access_tokens', headers=headers)
-          resp2.raise_for_status()
-          token_value = resp2.json()['token']
-          print(f"release_token={token_value}")
-          print(f"installation_id={installation_id}")
-          PY
+          python3 .github/scripts/mint_app_token.py
 
-          # Append the values to GITHUB_OUTPUT so they become step outputs
-          cat /tmp/mint_out.env >> $GITHUB_OUTPUT
+      - name: Mask and export token (no printing)
+        id: export
+        run: |
+          set -euo pipefail
+          # RELEASE_TOKEN and INSTALLATION_ID should be set in the job environment
+          # by writing to $GITHUB_ENV inside the script. Do NOT print the token.
+          if [ -z "${RELEASE_TOKEN-}" ]; then
+            echo "RELEASE_TOKEN is not set; aborting" >&2
+            exit 1
+          fi
+
+          # Mask the token so it doesn't appear in logs even if accidentally echoed
+          echo "::add-mask::${RELEASE_TOKEN}"
+
+          # Expose as step outputs for consumers that need them (still masked)
+          echo "release_token=${RELEASE_TOKEN}" >> $GITHUB_OUTPUT
+          echo "installation_id=${INSTALLATION_ID-}" >> $GITHUB_OUTPUT
+
+          # Cleanup sensitive artifacts
+          rm -f /tmp/app_private_key.pem || true

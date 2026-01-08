@@ -188,7 +188,7 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          $$dest = 'frontend'
+          $dest = 'frontend'
           New-Item -ItemType Directory -Path $$dest -Force | Out-Null
           Push-Location $$dest
           yarn install --frozen-lockfile --network-timeout 120000

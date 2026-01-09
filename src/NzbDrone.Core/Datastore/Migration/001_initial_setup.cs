@@ -216,7 +216,7 @@ namespace NzbDrone.Core.Datastore.Migration
                     .WithColumn("Monitor").AsInt32().NotNullable();
 
             Create.TableForModel("ImportExclusions")
-                    .WithColumn("ForeignId").AsString().NotNullable().Unique().PrimaryKey()
+                    .WithColumn("ForeignId").AsString().NotNullable().Unique()
                     .WithColumn("MovieTitle").AsString().Nullable()
                     .WithColumn("MovieYear").AsInt64().Nullable().WithDefaultValue(0);
 

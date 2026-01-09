@@ -1,0 +1,65 @@
+name: "API Docs"
+
+on:
+  workflow_dispatch:
+  #schedule:
+  #  - cron: "0 0 * * 1"
+  # push:
+  #   branches:
+  #     - eros
+  #   paths:
+  #     - ".github/workflows/api_docs.yml"
+  #     - "docs.sh"
+  #     - "src/Whisparr.Api.*/**"
+  #     - "src/Whisparr.Http/**"
+  #     - "src/**/*.csproj"
+  #     - "src/*"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  api_docs:
+    runs-on: ubuntu-latest
+    if: github.repository == 'Whisparr/Whisparr'
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v4
+        id: setup-dotnet
+
+      - name: Create openapi.json
+        run: ./scripts/docs.sh Linux x64
+
+      - name: Commit API Docs Change
+        continue-on-error: true
+        run: |
+          git config --global user.email "development@whisparr.com"
+          git config --global user.name "Whisparr"
+          git checkout -b api-docs
+          git add src
+          if git status | grep -q modified
+          then
+            git commit -am 'Automated API Docs update' -m "ignore-downstream"
+            git push -f --set-upstream origin api-docs
+            curl -X POST -H "Authorization: Bearer ${{ secrets.OPENAPI_PAT }}" -H "Accept: application/vnd.github+json" https://api.github.com/repos/whisparr/whisparr/pulls -d '{"head":"api-docs","base":"eros","title":"Update API docs"}'
+          else
+            echo "No changes since last run"
+          fi
+
+      - name: Notify
+        if: failure()
+        uses: tsickert/discord-webhook@v6.0.0
+        with:
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          username: "GitHub Actions"
+          avatar-url: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+          embed-title: "${{ github.workflow }}: Failure"
+          embed-url: "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          embed-description: |
+            Failed to update API docs
+          embed-color: "15158332"

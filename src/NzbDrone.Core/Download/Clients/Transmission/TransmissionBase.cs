@@ -90,13 +90,28 @@ namespace NzbDrone.Core.Download.Clients.Transmission
 
                 if (torrent.Eta >= 0)
                 {
+                    // TimeSpan.FromSeconds overflows for very large values, so handle large ETAs safely
                     try
                     {
-                        item.RemainingTime = TimeSpan.FromSeconds(torrent.Eta);
+                        // TimeSpan.FromSeconds accepts double, but TimeSpan itself has a max value
+                        // Use FromSeconds if within range, otherwise try FromMilliseconds, else cap
+                        // 29,219 years is well beyond any reasonable ETA for a download
+                        if (torrent.Eta <= (long)TimeSpan.MaxValue.TotalSeconds)
+                        {
+                            item.RemainingTime = TimeSpan.FromSeconds(torrent.Eta);
+                        }
+                        else if (torrent.Eta <= (long)TimeSpan.MaxValue.TotalMilliseconds)
+                        {
+                            item.RemainingTime = TimeSpan.FromMilliseconds(torrent.Eta);
+                        }
+                        else
+                        {
+                            item.RemainingTime = TimeSpan.MaxValue;
+                        }
                     }
                     catch (OverflowException)
                     {
-                        item.RemainingTime = TimeSpan.FromMilliseconds(torrent.Eta);
+                        item.RemainingTime = TimeSpan.MaxValue;
                     }
                 }
 

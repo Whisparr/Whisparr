@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-FRAMEWORK="net8.0"
+FRAMEWORK="net10.0"
 PLATFORM=$1
 ARCHITECTURE="${2:-x64}"
 

@@ -40,6 +40,8 @@ namespace NzbDrone.Test.Common
         {
             AppData = Path.Combine(TestContext.CurrentContext.TestDirectory, "_intg_" + TestBase.GetUID());
             Directory.CreateDirectory(AppData);
+            var logData = Path.Combine(AppData, "logs");
+            Directory.CreateDirectory(logData);
 
             GenerateConfigFile(enableAuth);
 
@@ -55,11 +57,11 @@ namespace NzbDrone.Test.Common
 
             if (BuildInfo.IsDebug)
             {
-                Start(Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "_output", "net8.0", consoleExe));
+                Start(Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "_output", "net10.0", consoleExe));
             }
             else
             {
-                Start(Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "bin", consoleExe));
+                Start(Path.Combine(TestContext.CurrentContext.TestDirectory, "bin", consoleExe));
             }
 
             while (true)

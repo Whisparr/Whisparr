@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using FluentAssertions;
 using NUnit.Framework;
@@ -196,15 +195,6 @@ namespace NzbDrone.Core.Test.Datastore
         public void enum_in_list()
         {
             var allowed = new List<MovieStatusType> { MovieStatusType.Announced, MovieStatusType.InCinemas };
-            _subject = WhereMeta(x => allowed.Contains(x.Status));
-
-            _subject.ToString().Should().Be($"(\"MovieMetadata\".\"Status\" IN @Clause1_P1)");
-        }
-
-        [Test]
-        public void enum_in_array()
-        {
-            var allowed = new MovieStatusType[] { MovieStatusType.Announced, MovieStatusType.InCinemas };
             _subject = WhereMeta(x => allowed.Contains(x.Status));
 
             _subject.ToString().Should().Be($"(\"MovieMetadata\".\"Status\" IN @Clause1_P1)");

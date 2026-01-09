@@ -59,7 +59,7 @@ namespace NzbDrone.Common.Http
             _httpDispatcher = httpDispatcher;
             _logger = logger;
 
-            ServicePointManager.DefaultConnectionLimit = 12;
+            // ServicePointManager.DefaultConnectionLimit is obsolete and ignored in .NET 10+; safe to remove.
             _cookieContainerCache = cacheManager.GetCache<CookieContainer>(typeof(HttpClient));
         }
 

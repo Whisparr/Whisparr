@@ -54,6 +54,7 @@ namespace NzbDrone.SysTray
             return Task.CompletedTask;
         }
 
+        [Obsolete]
         protected override void OnClosing(CancelEventArgs e)
         {
             DisposeTrayIcon();

@@ -1,0 +1,131 @@
+name: Deploy
+
+on:
+  workflow_call:
+    inputs:
+      framework:
+        description: ".net framework"
+        type: string
+        required: true
+      branch:
+        description: "Git branch used for this build"
+        type: string
+        required: true
+      major_version:
+        description: "Whisparr major version"
+        type: string
+        required: true
+      version:
+        description: "Whisparr version"
+        type: string
+        required: true
+
+jobs:
+  package:
+    strategy:
+      matrix:
+        include:
+          - runtime: freebsd-x64
+            os: ubuntu-latest
+          - runtime: linux-arm
+            os: ubuntu-latest
+          - runtime: linux-arm64
+            os: ubuntu-latest
+          - runtime: linux-musl-arm64
+            os: ubuntu-latest
+          - runtime: linux-musl-x64
+            os: ubuntu-latest
+          - runtime: linux-x64
+            os: ubuntu-latest
+          - runtime: osx-arm64
+            os: ubuntu-latest
+          - runtime: osx-x64
+            os: ubuntu-latest
+          - runtime: win-x64
+            os: windows-latest
+          - runtime: win-x86
+            os: windows-latest
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Package
+        uses: ./.github/actions/package
+        with:
+          framework: ${{ inputs.framework }}
+          runtime: ${{ matrix.runtime }}
+          artifact: build-${{ matrix.runtime }}
+          branch: ${{ inputs.branch }}
+          major_version: ${{ inputs.major_version }}
+          version: ${{ inputs.version }}
+
+  release:
+    needs: package
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Download release artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: _artifacts
+          pattern: release-*
+          merge-multiple: true
+
+      - name: Get Previous Release
+        id: previous-release
+        uses: cardinalby/git-get-release-action@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          latest: true
+          prerelease: ${{ inputs.branch != 'main' }}
+
+      - name: Generate Release Notes
+        id: generate-release-notes
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ github.token }}
+          result-encoding: string
+          script: |
+            const { data } = await github.rest.repos.generateReleaseNotes({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: 'v${{ inputs.version }}',
+              target_commitish: '${{ github.sha }}',
+              previous_tag_name: '${{ steps.previous-release.outputs.tag_name }}',
+            })
+            return data.body
+
+      - name: Enable GPG signing
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
+          git_commit_gpgsign: true
+          git_user_signingkey: true
+          git_tag_gpgsign: true
+
+      - name: Create signed tag
+        run: |
+          git tag -s v${{ inputs.version }} -m "Release v${{ inputs.version }}"
+          git push origin v${{ inputs.version }}
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: _artifacts/Whisparr.*
+          commit: ${{ github.sha }}
+          generateReleaseNotes: false
+          body: ${{ steps.generate-release-notes.outputs.result }}
+          name: ${{ inputs.version }}
+          prerelease: ${{ inputs.branch != 'eros' }}
+          skipIfReleaseExists: true
+          tag: v${{ inputs.version }}

@@ -175,6 +175,3 @@ node_modules.nosync
 
 # Ignore Jetbrains IntelliJ Workspace Directories
 .idea/
-
-# Ignore global.json file for allowing builds on non-Widows systems
-global.json

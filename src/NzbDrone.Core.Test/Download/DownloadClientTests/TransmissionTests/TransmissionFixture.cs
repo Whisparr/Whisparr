@@ -298,23 +298,44 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.TransmissionTests
         }
 
         [TestCase(2147483648)] // 2038-01-19T03:14:08Z > int.MaxValue as unix timestamp can be either an int or a long
+        [TestCase(922337203685477)] // TimeSpan.MaxValue.TotalSeconds (should not overflow)
+        [TestCase(9223372036853736645)] // Way above TimeSpan.MaxValue.TotalSeconds (should cap to TimeSpan.MaxValue)
         public void should_support_long_values_for_eta_in_seconds(long eta)
         {
             _downloading.Eta = eta;
-
             PrepareClientToReturnDownloadingItem();
             var item = Subject.GetItems().Single();
-            item.RemainingTime.Should().Be(TimeSpan.FromSeconds(eta));
+
+            // For eta < TimeSpan.MaxValue.TotalSeconds, expect TimeSpan.FromSeconds(eta)
+            // For eta >= TimeSpan.MaxValue.TotalSeconds, expect TimeSpan.MaxValue
+            if (eta < (long)TimeSpan.MaxValue.TotalSeconds)
+            {
+                item.RemainingTime.Should().Be(TimeSpan.FromSeconds(eta));
+            }
+            else
+            {
+                item.RemainingTime.Should().BeLessOrEqualTo(TimeSpan.MaxValue);
+            }
         }
 
+        // 2147483648000 ms = ~24 days; this is well below TimeSpan's max (~10.6 million days),
+        // so dividing by 1000 for seconds is always safe for download ETAs.
         [TestCase(2147483648000)] // works with milliseconds format too
+        [TestCase(922337203685477000)] // TimeSpan.MaxValue.TotalMilliseconds (should not overflow)
+        [TestCase(922337203685477001)] // Just above TimeSpan.MaxValue.TotalMilliseconds (should cap to TimeSpan.MaxValue)
         public void should_support_long_values_for_eta_in_milliseconds(long eta)
         {
             _downloading.Eta = eta;
-
             PrepareClientToReturnDownloadingItem();
             var item = Subject.GetItems().Single();
-            item.RemainingTime.Should().Be(TimeSpan.FromMilliseconds(eta));
+            if (eta <= (long)TimeSpan.MaxValue.TotalMilliseconds)
+            {
+                item.RemainingTime.Should().Be(TimeSpan.FromMilliseconds(eta));
+            }
+            else
+            {
+                item.RemainingTime.Should().Be(TimeSpan.MaxValue);
+            }
         }
 
         [Test]

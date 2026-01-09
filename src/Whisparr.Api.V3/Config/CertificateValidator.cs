@@ -1,3 +1,5 @@
+using System.IO;
+using System.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using FluentValidation;
@@ -35,16 +37,33 @@ namespace Whisparr.Api.V3.Config
 
             try
             {
-                new X509Certificate2(resource.SslCertPath, resource.SslCertPassword, X509KeyStorageFlags.DefaultKeySet);
+                var certBytes = File.ReadAllBytes(resource.SslCertPath);
 
+                // Use SecureString for password
+                SecureString securePassword = null;
+                if (!string.IsNullOrEmpty(resource.SslCertPassword))
+                {
+                    securePassword = new SecureString();
+                    foreach (var c in resource.SslCertPassword)
+                    {
+                        securePassword.AppendChar(c);
+                    }
+
+                    securePassword.MakeReadOnly();
+                }
+
+                #pragma warning disable SYSLIB0057 // Suppress obsolete warning for X509Certificate2 constructor
+                var certificate = new X509Certificate2(
+                    certBytes,
+                    securePassword,
+                    X509KeyStorageFlags.DefaultKeySet);
+                #pragma warning restore SYSLIB0057
                 return true;
             }
             catch (CryptographicException ex)
             {
                 Logger.Debug(ex, "Invalid SSL certificate file or password. {0}", ex.Message);
-
                 context.MessageFormatter.AppendArgument("message", ex.Message);
-
                 return false;
             }
         }

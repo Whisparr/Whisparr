@@ -1806,5 +1806,9 @@
     "SearchForAllMissingMoviesConfirmationCount": "Ви впевнені, що хочете шукати всі {totalRecords} відсутні фільми?",
     "SearchForCutoffUnmetMovies": "Шукати всі фільми, що не досягли порогових значень",
     "SearchForCutoffUnmetMoviesConfirmationCount": "Ви впевнені, що хочете шукати всі {totalRecords} фільми, що не досягли порогових значень?",
-    "UnmonitorSelected": "Не відстежувати вибрані"
+    "UnmonitorSelected": "Не відстежувати вибрані",
+    "IndexerDownloadClientHealthCheckMessage": "Індексатори з недійсними клієнтами завантаження: {0}.",
+    "NoHistoryBlocklist": "Немає історії заблокованих елементів",
+    "NotificationsEmbySettingsSendNotificationsHelpText": "Відправляти сповіщення MediaBrowser на налаштовані провайдери",
+    "DateAdded": "Дата додавання"
 }

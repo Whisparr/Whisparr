@@ -80,6 +80,14 @@ function PageHeader({ isSmallScreen }: PageHeaderProps) {
         <SafeForWorkButtonConnector />
 
         <IconButton
+          className={styles.translate}
+          title={translate('ApiDocumentation')}
+          name={icons.TRANSLATE}
+          to="/docs"
+          size={24}
+        />
+
+        <IconButton
           className={styles.donate}
           name={icons.HEART}
           aria-label={translate('Donate')}

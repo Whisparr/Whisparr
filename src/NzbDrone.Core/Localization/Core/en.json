@@ -93,6 +93,7 @@
   "AnnouncedMovieAvailabilityDescription": "Movies are considered available as soon as they are added to {appName}.",
   "AnnouncedMovieDescription": "Movie is announced",
   "Any": "Any",
+  "ApiDocumentation": "Open API Documentation",
   "ApiKey": "API Key",
   "ApiKeyValidationHealthCheckMessage": "Please update your API key to be at least {length} characters long. You can do this via settings or the config file",
   "AppDataDirectory": "AppData Directory",

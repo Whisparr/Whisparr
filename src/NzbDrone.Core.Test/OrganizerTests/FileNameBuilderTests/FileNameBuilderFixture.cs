@@ -202,6 +202,46 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
                    .Should().Be("Pure Taboo - 2025-11-25 - The Last Train Home [Maddy OReilly Reagan Foxx Rissa May]");
         }
 
+        [TestCase("My Scene Title S01:E02", "My Scene Title")]
+        [TestCase("My Scene Title s01:e02", "My Scene Title")]
+        [TestCase("My Scene Title S01:e02", "My Scene Title")]
+        [TestCase("My Scene Title s01:E02", "My Scene Title")]
+        [TestCase("My Scene Title S1:E2", "My Scene Title")]
+        [TestCase("My Scene Title S1:E02", "My Scene Title")]
+        [TestCase("My Scene Title S01:E2", "My Scene Title")]
+        [Test]
+        public void scene_clean_title_no_se_Title(string title, string expected)
+        {
+            _scene.Title = title;
+            _namingConfig.StandardSceneFormat = "{Scene CleanTitleNoSeasonEpisode}";
+
+            Subject.BuildFileName(_scene, _movieFile)
+                .Should().Be(expected);
+        }
+
+        [Test]
+        public void scene_clean_title_no_se_format()
+        {
+            _scene.Title = "My Scene Title S01:E02";
+            _scene.MovieMetadata.Value.ReleaseDate = "2025-11-25";
+
+            _namingConfig.StandardSceneFormat = "{Studio Title} - {Release-Date} - {Scene CleanTitleNoSeasonEpisode}";
+
+            Subject.BuildFileName(_scene, _movieFile)
+                .Should().Be("Pure Taboo - 2025-11-25 - My Scene Title");
+        }
+
+        [Test]
+        public void scene_clean_title_no_se_should_trim_when_too_long()
+        {
+            _sceneLongTitle.Title = "This is a very long scene title S01:E02";
+            _namingConfig.StandardSceneFormat = "{Scene CleanTitleNoSeasonEpisode}";
+
+            var result = Subject.BuildFileName(_sceneLongTitle, _movieFile);
+
+            result.Length.Should().BeLessThanOrEqualTo(_namingConfig.MaxFilePathLength);
+        }
+
         [Test]
         public void scene_folder_format_length()
         {

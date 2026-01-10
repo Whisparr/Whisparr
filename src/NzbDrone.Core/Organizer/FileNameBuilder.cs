@@ -55,7 +55,7 @@ namespace NzbDrone.Core.Organizer
         public static readonly Regex MainFolderRegex = new Regex(@"^(?<main>(?:[a-zA-Z0-9]+(?:\\|\/)))",
                                                                             RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-        public static readonly Regex SceneTitleRegex = new Regex(@"(?<token>\{((?:(Scene|Original))(?<separator>[- ._])(Clean)?(Original)?(Title|Filename)(The)?)(?::(?<customFormat>[a-z0-9|]+))?\})",
+        public static readonly Regex SceneTitleRegex = new Regex(@"(?<token>\{((?:(Scene|Original))(?<separator>[- ._])(Clean)?(Original)?(Title|Filename)(The)?(NoSeasonEpisode)?)(?::(?<customFormat>[a-z0-9|]+))?\})",
                                                                             RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         private static readonly Regex FileNameCleanupRegex = new Regex(@"([- ._])(\1)+", RegexOptions.Compiled);
@@ -324,6 +324,22 @@ namespace NzbDrone.Core.Organizer
             return title;
         }
 
+        public string CleanTitleNoSeasonEpisode(string title)
+        {
+            if (title.IsNullOrWhiteSpace())
+            {
+                return string.Empty;
+            }
+
+            title = CleanTitle(title);
+
+            title = Regex.Replace(title, @"\s*-?\s*S\d+:E\d+\s*", "", RegexOptions.IgnoreCase);
+
+            title = Regex.Replace(title, @"\s+", " ").Trim();
+
+            return title;
+        }
+
         private void AddMovieTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Movie movie)
         {
             tokenHandlers["{Movie Title}"] = m => Truncate(GetLanguageTitle(movie, m.CustomFormat), m.CustomFormat);
@@ -479,6 +495,7 @@ namespace NzbDrone.Core.Organizer
             tokenHandlers["{Scene CleanTitle}"] = m => CleanTitle(GetLanguageTitle(movie, m.CustomFormat)).Remove(CleanTitle(GetLanguageTitle(movie, m.CustomFormat)).Length - _trimEnd, _trimEnd);
             tokenHandlers["{Scene TitleThe}"] = m => TitleThe(movie.Title).Remove(TitleThe(movie.Title).Length - _trimEnd, _trimEnd);
             tokenHandlers["{Scene TitleFirstCharacter}"] = m => TitleFirstCharacter(TitleThe(GetLanguageTitle(movie, m.CustomFormat))).Remove(TitleFirstCharacter(TitleThe(GetLanguageTitle(movie, m.CustomFormat))).Length - _trimEnd, _trimEnd);
+            tokenHandlers["{Scene CleanTitleNoSeasonEpisode}"] = m => CleanTitleNoSeasonEpisode(GetLanguageTitle(movie, m.CustomFormat)).Remove(CleanTitleNoSeasonEpisode(GetLanguageTitle(movie, m.CustomFormat)).Length - _trimEnd, _trimEnd);
         }
 
         private void AddSceneTitleTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Movie movie, int maxLength)

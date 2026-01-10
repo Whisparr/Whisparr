@@ -140,6 +140,7 @@ const movieTokens = [
 const sceneTokens = [
   { token: '{Scene Title}', example: "Scene's Title" },
   { token: '{Scene CleanTitle}', example: 'Scenes Title' },
+  { token: '{Scene CleanTitleNoSeasonEpisode}', example: 'Scenes Title' },
   { token: '{Scene TitleThe}', example: "Scene's Title, The" },
   { token: '{Scene TitleFirstCharacter}', example: 'S' },
   {

@@ -235,6 +235,14 @@ class SecuritySettings extends Component {
                   name={icons.REFRESH}
                   isSpinning={isResettingApiKey}
                 />
+              </FormInputButton>,
+
+              <FormInputButton
+                key="documentation"
+                to="/docs"
+                noRouter={true}
+              >
+                ?
               </FormInputButton>
             ]}
             onChange={onInputChange}

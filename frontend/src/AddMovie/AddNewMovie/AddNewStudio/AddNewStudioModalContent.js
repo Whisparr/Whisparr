@@ -97,7 +97,7 @@ class AddNewStudioModalContent extends Component {
                   <FormInputGroup
                     type={inputTypes.CHECK}
                     name="monitored"
-                    helpText={translate('MonitoredPerformerHelpText')}
+                    helpText={translate('MonitoredStudioHelpText')}
                     {...monitored}
                     onChange={onInputChange}
                   />
@@ -109,7 +109,7 @@ class AddNewStudioModalContent extends Component {
                   <FormInputGroup
                     type={inputTypes.CHECK}
                     name="moviesMonitored"
-                    helpText={translate('MonitoredPerformerHelpText')}
+                    helpText={translate('MonitoredStudioMovieHelpText')}
                     {...moviesMonitored}
                     onChange={onInputChange}
                   />

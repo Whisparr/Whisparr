@@ -141,6 +141,8 @@
 .path,
 .sizeOnDisk,
 .qualityProfileName,
+.movieCount,
+.sceneCount,
 .statusName,
 .studio,
 .genres {

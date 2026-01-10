@@ -128,6 +128,7 @@ class StudioDetails extends Component {
     const {
       id,
       foreignId,
+      tmdbId,
       tpdbId,
       website,
       title,
@@ -150,6 +151,8 @@ class StudioDetails extends Component {
       isSmallScreen,
       hasMovies,
       hasScenes,
+      movieCount,
+      totalMovieCount,
       totalSceneCount,
       sceneCount,
       onMonitorTogglePress,
@@ -304,6 +307,7 @@ class StudioDetails extends Component {
                             <StudioDetailsLinks
                               foreignId={foreignId}
                               website={website}
+                              tmdbId={tmdbId}
                               tpdbId={tpdbId}
                             />
                           }
@@ -385,11 +389,25 @@ class StudioDetails extends Component {
                     size={sizes.LARGE}
                   >
                     <Icon
+                      name={icons.FILM}
+                      size={17}
+                    />
+
+                    <span className={styles.movieCount}>
+                      Movies: {movieCount || 0}/{totalMovieCount}
+                    </span>
+                  </Label>
+
+                  <Label
+                    className={styles.detailsLabel}
+                    size={sizes.LARGE}
+                  >
+                    <Icon
                       name={icons.SCENE}
                       size={17}
                     />
 
-                    <span className={styles.qualityProfileName}>
+                    <span className={styles.sceneCount}>
                       Scenes: {sceneCount || 0}/{totalSceneCount}
                     </span>
                   </Label>
@@ -547,6 +565,7 @@ class StudioDetails extends Component {
 StudioDetails.propTypes = {
   id: PropTypes.number.isRequired,
   foreignId: PropTypes.string,
+  tmdbId: PropTypes.number,
   tpdbId: PropTypes.string,
   website: PropTypes.string,
   title: PropTypes.string.isRequired,
@@ -577,6 +596,8 @@ StudioDetails.propTypes = {
   moviesError: PropTypes.object,
   hasMovies: PropTypes.bool.isRequired,
   hasScenes: PropTypes.bool.isRequired,
+  movieCount: PropTypes.number.isRequired,
+  totalMovieCount: PropTypes.number.isRequired,
   totalSceneCount: PropTypes.number.isRequired,
   sceneCount: PropTypes.number.isRequired,
   safeForWorkMode: PropTypes.bool

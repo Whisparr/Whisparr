@@ -16,6 +16,7 @@ namespace NzbDrone.Core.Movies.Studios
 
         public string ForeignId { get; set; }
         public string TpdbId { get; set; }
+        public int TmdbId { get; set; }
         public string Title { get; set; }
         public string SortTitle { get; set; }
         public string CleanTitle { get; set; }

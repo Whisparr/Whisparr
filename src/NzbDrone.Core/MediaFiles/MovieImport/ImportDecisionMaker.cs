@@ -281,25 +281,25 @@ namespace NzbDrone.Core.MediaFiles.MovieImport
                     localMovie.CustomFormatScore = localMovie.Movie.QualityProfile?.CalculateCustomFormatScore(localMovie.CustomFormats) ?? 0;
 
                     decision = GetDecision(localMovie, downloadClientItem);
+                }
 
-                    if (localMovie.MediaInfo?.RunTime != null && localMovie.MediaInfo.RunTime.TotalMinutes != 0 && localMovie.Movie.MovieMetadata.Value.Runtime > 0)
+                if (localMovie.MediaInfo?.RunTime != null && localMovie.MediaInfo.RunTime.TotalMinutes != 0 && localMovie.Movie.MovieMetadata.Value.Runtime > 0)
+                {
+                    var runtime = localMovie.MediaInfo.RunTime.TotalMinutes;
+                    var limit = _configService.WhisparrValidateRuntimeLimit;
+
+                    if (runtime < localMovie.Movie.MovieMetadata.Value.Runtime - limit || runtime > localMovie.Movie.MovieMetadata.Value.Runtime + limit)
                     {
-                        var runtime = localMovie.MediaInfo.RunTime.TotalMinutes;
-                        var limit = _configService.WhisparrValidateRuntimeLimit;
-
-                        if (runtime < localMovie.Movie.MovieMetadata.Value.Runtime - limit || runtime > localMovie.Movie.MovieMetadata.Value.Runtime + limit)
+                        var rejection = $"Runtime of {localMovie.Movie.MovieMetadata.Value.Runtime} expected but {runtime} Found";
+                        if (runtime == -1)
                         {
-                            var rejection = $"Runtime of {localMovie.Movie.MovieMetadata.Value.Runtime} expected but {runtime} Found";
-                            if (runtime == -1)
-                            {
-                                rejection = "Corrupt file detected as Media Information was not able to be extracted.";
-                            }
+                            rejection = "Corrupt file detected as Media Information was not able to be extracted.";
+                        }
 
-                            _logger.Warn($"{rejection} for {localMovie.Movie.ToString()}");
-                            if (_configService.WhisparrValidateRuntime)
-                            {
-                                decision = new ImportDecision(localMovie, new ImportRejection(ImportRejectionReason.Error, $"Runtime of {localMovie.Movie.MovieMetadata.Value.Runtime} expected but {runtime} Found"));
-                            }
+                        _logger.Warn($"{rejection} for {localMovie.Movie.ToString()}");
+                        if (_configService.WhisparrValidateRuntime)
+                        {
+                            decision = new ImportDecision(localMovie, new ImportRejection(ImportRejectionReason.Error, $"Runtime of {localMovie.Movie.MovieMetadata.Value.Runtime} expected but {runtime} Found"));
                         }
                     }
                 }

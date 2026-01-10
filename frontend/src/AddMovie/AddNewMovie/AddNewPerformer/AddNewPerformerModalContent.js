@@ -109,7 +109,7 @@ class AddNewPerformerModalContent extends Component {
                   <FormInputGroup
                     type={inputTypes.CHECK}
                     name="moviesMonitored"
-                    helpText={translate('MonitoredPerformerHelpText')}
+                    helpText={translate('MonitoredPerformerMovieHelpText')}
                     {...moviesMonitored}
                     onChange={onInputChange}
                   />

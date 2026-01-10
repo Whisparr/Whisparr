@@ -3,6 +3,8 @@ import { Image } from 'Movie/Movie';
 
 interface Performer extends ModelBase {
   foreignId: string;
+  tmdbId?: number;
+  tpdbId?: string;
   name: string;
   fullName: string;
   monitored: boolean;
@@ -15,6 +17,8 @@ interface Performer extends ModelBase {
   careerEnd?: number;
   ethnicity?: string;
   hairColor?: string;
+  movieCount: number;
+  totalMovieCount: number;
   sceneCount: number;
   totalSceneCount: number;
   hasScenes: boolean;

@@ -138,6 +138,12 @@ export const defaultState = {
       isVisible: false
     },
     {
+      name: 'totalMovieCount',
+      label: () => translate('Movies'),
+      isSortable: true,
+      isVisible: true
+    },
+    {
       name: 'totalSceneCount',
       label: () => translate('Scenes'),
       isSortable: true,
@@ -490,7 +496,9 @@ export const actionHandlers = handleThunks({
         id,
         section,
         isSaving: false,
-        monitored
+        monitored,
+        moviesMonitored,
+        saveError: null
       }));
     });
 
@@ -498,7 +506,8 @@ export const actionHandlers = handleThunks({
       dispatch(updateItem({
         id,
         section,
-        isSaving: false
+        isSaving: false,
+        saveError: xhr
       }));
     });
   },

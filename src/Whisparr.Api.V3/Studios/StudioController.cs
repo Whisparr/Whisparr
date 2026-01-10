@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using DryIoc.ImTools;
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
 using NzbDrone.Common.Cache;
@@ -58,22 +57,6 @@ namespace Whisparr.Api.V3.Studios
             _useCache = configService.WhisparrCacheStudioAPI;
             _studioResourceCache = cacheManager.GetCache<StudioResource>(typeof(StudioResource), "studioResources");
             _logger = logger;
-
-            if (configService.WhisparrMovieMetadataSource == MovieMetadataType.TMDB)
-            {
-                SharedValidator.RuleFor(s => s.TmdbId).Cascade(CascadeMode.Stop)
-                    .GreaterThan(0)
-                    .When(s => s.MoviesMonitored)
-                    .WithMessage("Requires a TMDB link to be added to the Studio within StashDB");
-            }
-
-            if (configService.WhisparrMovieMetadataSource == MovieMetadataType.TPDB)
-            {
-                SharedValidator.RuleFor(s => s.TpdbId).Cascade(CascadeMode.Stop)
-                    .NotEmpty()
-                    .When(s => s.MoviesMonitored)
-                    .WithMessage("Requires a TPDB link to be added to the Studio within StashDB");
-            }
         }
 
         protected override StudioResource GetResourceById(int id)
@@ -213,13 +196,10 @@ namespace Whisparr.Api.V3.Studios
             resource.HasScenes = scenes.Any();
             resource.HasMovies = movies.Where(x => x.MovieMetadata.Value.ItemType == ItemType.Movie).Any();
 
-            resource.Years = movies.OrderBy(x => x.Year).Map(x => x.Year).Distinct().ToList();
+            resource.Years = scenes.OrderBy(x => x.Year).Map(x => x.Year).Distinct().ToList();
 
-            resource.MovieCount = movies.Where(x => x.HasFile && x.MovieMetadata.Value.ItemType == ItemType.Movie).Count();
-            resource.TotalMovieCount = movies.Where(x => x.MovieMetadata.Value.ItemType == ItemType.Movie).Count();
-            resource.SceneCount = movies.Where(x => x.HasFile && x.MovieMetadata.Value.ItemType == ItemType.Scene).Count();
-            resource.TotalSceneCount = movies.Where(x => x.MovieMetadata.Value.ItemType == ItemType.Scene).Count();
-
+            resource.SceneCount = movies.Where(x => x.HasFile).Count();
+            resource.TotalSceneCount = movies.Count;
             var ids = movies.Map(x => x.Id).ToList();
             var movieStats = _movieStatisticsService.MovieStatistics(ids);
             resource.SizeOnDisk = movieStats.Sum(x => x.SizeOnDisk);

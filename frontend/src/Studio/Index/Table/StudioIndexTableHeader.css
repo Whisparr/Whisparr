@@ -12,7 +12,6 @@
 
 .network,
 .totalSceneCount,
-.totalMovieCount,
 .qualityProfileId {
   composes: headerCell from '~Components/Table/VirtualTableHeaderCell.css';
 

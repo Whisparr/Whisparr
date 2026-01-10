@@ -12,7 +12,6 @@ import createAllPerformersSelector from 'Store/Selectors/createAllPerformersSele
 import createCommandsSelector from 'Store/Selectors/createCommandsSelector';
 import createDimensionsSelector from 'Store/Selectors/createDimensionsSelector';
 import { findCommand, isCommandExecuting } from 'Utilities/Command';
-import translate from 'Utilities/String/translate';
 import PerformerDetails from './PerformerDetails';
 
 const selectMovies = createSelector(
@@ -27,14 +26,10 @@ const selectMovies = createSelector(
     } = movies;
 
     const filteredMovies = items.filter((movie) => movie.credits.some((credit) => credit.performer.foreignId === foreignId));
-    const studios = _.orderBy(_.uniqBy(filteredMovies.map((movie) => ({ title: movie.studioTitle, foreignId: movie.studioForeignId })), 'foreignId'), 'title').filter((s) => s.foreignId !== undefined);
-    const totalMovieCount = filteredMovies.filter((movie) => movie.itemType === 'movie').length;
-    const hasMovies = !!totalMovieCount;
+    const studios = _.orderBy(_.uniqBy(filteredMovies.map((movie) => ({ title: movie.studioTitle, foreignId: movie.studioForeignId })), 'foreignId'), 'title');
+    const hasMovies = !!filteredMovies.filter((movie) => movie.itemType === 'movie').length;
     const totalSceneCount = filteredMovies.filter((movie) => movie.itemType === 'scene').length;
     const hasScenes = !!totalSceneCount;
-
-    // Add a single studio for unlinked item, at the bottom
-    studios.push({ title: translate('NoStashDBStudioLink'), foreignId: undefined });
 
     return {
       isMoviesFetching: isFetching,
@@ -42,7 +37,6 @@ const selectMovies = createSelector(
       moviesError: error,
       hasMovies,
       hasScenes,
-      totalMovieCount,
       totalSceneCount,
       sceneCount: filteredMovies.filter((movie) => movie.hasFile).length,
       studios,
@@ -75,7 +69,6 @@ function createMapStateToProps() {
         moviesError,
         hasMovies,
         hasScenes,
-        totalMovieCount,
         totalSceneCount,
         sceneCount,
         studios,
@@ -102,7 +95,6 @@ function createMapStateToProps() {
         sizeOnDisk,
         hasMovies,
         hasScenes,
-        totalMovieCount,
         totalSceneCount,
         sceneCount,
         moviesError,

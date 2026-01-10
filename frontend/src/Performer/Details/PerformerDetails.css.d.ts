@@ -20,7 +20,6 @@ interface CssExports {
   'innerContentBody': string;
   'links': string;
   'monitorToggleButton': string;
-  'movieCount': string;
   'movieNavigationButton': string;
   'movieNavigationButtons': string;
   'overview': string;
@@ -29,7 +28,6 @@ interface CssExports {
   'qualityProfileName': string;
   'rating': string;
   'runtime': string;
-  'sceneCount': string;
   'selectedTab': string;
   'sizeOnDisk': string;
   'statusName': string;

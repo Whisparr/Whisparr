@@ -37,9 +37,6 @@ namespace Whisparr.Api.V3.Performers
         /// <summary>External foreign ID from metadata source (e.g., StashDB ID)</summary>
         public string ForeignId { get; set; }
 
-        /// <summary>The Movie Database (TMDB) identifier</summary>
-        public int TmdbId { get; set; }
-
         /// <summary>The Porn Database (TPDB) identifier</summary>
         public string TpdbId { get; set; }
 
@@ -75,9 +72,6 @@ namespace Whisparr.Api.V3.Performers
 
         /// <summary>Indicates if the performer has any associated scenes</summary>
         public bool HasScenes { get; set; }
-
-        /// <summary>Number of movies from this performer</summary>
-        public int MovieCount { get; set; }
 
         /// <summary>Total number of movies associated with this performer</summary>
         public int TotalMovieCount
@@ -127,7 +121,6 @@ namespace Whisparr.Api.V3.Performers
             {
                 Id = model.Id,
                 ForeignId = model.ForeignId,
-                TmdbId = model.TmdbId,
                 TpdbId = model.TpdbId,
                 Gender = model.Gender,
                 Age = model.Age,

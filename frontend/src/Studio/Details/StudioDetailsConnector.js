@@ -27,8 +27,7 @@ const selectMovies = createSelector(
 
     const filteredMovies = items.filter((movie) => movie.studioForeignId === foreignId);
     const years = _.uniq(filteredMovies.map((movie) => movie.year)).sort();
-    const totalMovieCount = filteredMovies.filter((movie) => movie.itemType === 'movie').length;
-    const hasMovies = !!totalMovieCount;
+    const hasMovies = !!filteredMovies.filter((movie) => movie.itemType === 'movie').length;
     const totalSceneCount = filteredMovies.filter((movie) => movie.itemType === 'scene').length;
     const hasScenes = !!totalSceneCount;
 
@@ -38,7 +37,6 @@ const selectMovies = createSelector(
       moviesError: error,
       hasMovies,
       hasScenes,
-      totalMovieCount,
       totalSceneCount,
       sceneCount: _.sumBy(filteredMovies, 'hasFile'),
       years,
@@ -71,9 +69,7 @@ function createMapStateToProps() {
         moviesError,
         hasMovies,
         hasScenes,
-        totalMovieCount,
         totalSceneCount,
-        movieCount,
         sceneCount,
         years,
         sizeOnDisk
@@ -99,8 +95,6 @@ function createMapStateToProps() {
         sizeOnDisk,
         hasMovies,
         hasScenes,
-        movieCount: Number(movieCount) || 0, /* TODO: fix when moving to Typescript */
-        totalMovieCount: Number(totalMovieCount) || 0, /* TODO: fix when moving to Typescript */
         totalSceneCount: Number(totalSceneCount) || 0, /* TODO: fix when moving to Typescript */
         sceneCount: Number(sceneCount) || 0, /* TODO: fix when moving to Typescript */
         moviesError,

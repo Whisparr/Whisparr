@@ -39,14 +39,10 @@ function StudioIndexRow(props: StudioIndexRowProps) {
     rootFolderPath,
     aliases = [],
     tags = [],
-    movieCount,
-    totalMovieCount,
     sceneCount,
     totalSceneCount,
     foreignId,
     website,
-    tmdbId,
-    tpdbId,
   } = studio;
 
   const [isEditStudioModalOpen, setIsEditStudioModalOpen] = useState(false);
@@ -159,14 +155,6 @@ function StudioIndexRow(props: StudioIndexRowProps) {
           );
         }
 
-        if (name === 'totalMovieCount') {
-          return (
-            <VirtualTableRowCell key={name} className={styles[name]}>
-              {movieCount} / {totalMovieCount}
-            </VirtualTableRowCell>
-          );
-        }
-
         if (name === 'totalSceneCount') {
           return (
             <VirtualTableRowCell key={name} className={styles[name]}>
@@ -185,8 +173,6 @@ function StudioIndexRow(props: StudioIndexRowProps) {
                     <StudioDetailsLinks
                       foreignId={foreignId}
                       website={website}
-                      tmdbId={tmdbId}
-                      tpdbId={tpdbId}
                     />
                   }
                   canFlip={true}

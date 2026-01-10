@@ -59,7 +59,7 @@ function MovieDetailsLinks(props: MovieDetailsLinksProps) {
         </Link>
       )}
 
-      {!!stashId && stashId !== tmdbId?.toString() && (
+      {!!stashId && (
         <Link
           className={styles.link}
           to={`https://stashdb.org/scenes/${stashId}/`}

@@ -36,7 +36,7 @@ function StudioIndexPoster(props: StudioIndexPosterProps) {
   const { showTitle } = useSelector(selectPosterOptions);
   const [isEditStudioModalOpen, setIsEditStudioModalOpen] = useState(false);
 
-  const { title, images, foreignId, website, tmdbId, tpdbId } = studio;
+  const { title, images, foreignId } = studio;
 
   const [hasPosterError, setHasPosterError] = useState(false);
 
@@ -79,14 +79,7 @@ function StudioIndexPoster(props: StudioIndexPosterProps) {
             <Popover
               anchor={<Icon name={icons.EXTERNAL_LINK} size={12} />}
               title={translate('Links')}
-              body={
-                <StudioDetailsLinks
-                  website={website}
-                  foreignId={foreignId}
-                  tmdbId={tmdbId}
-                  tpdbId={tpdbId}
-                />
-              }
+              body={<StudioDetailsLinks foreignId={foreignId} />}
             />
           </span>
         </Label>

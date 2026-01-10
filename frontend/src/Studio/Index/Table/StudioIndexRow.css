@@ -23,7 +23,6 @@
 
 .network,
 .totalSceneCount,
-.totalMovieCount,
 .qualityProfileId {
   composes: cell;
 

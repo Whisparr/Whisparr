@@ -52,8 +52,6 @@ class AddNewPerformerSearchResult extends Component {
   render() {
     const {
       foreignId,
-      tmdbId,
-      tpdbId,
       fullName,
       gender,
       status,
@@ -146,8 +144,6 @@ class AddNewPerformerSearchResult extends Component {
                 tooltip={
                   <PerformerDetailsLinks
                     foreignId={foreignId}
-                    tmdbId={tmdbId}
-                    tpdbId={tpdbId}
                   />
                 }
                 canFlip={true}
@@ -179,8 +175,6 @@ class AddNewPerformerSearchResult extends Component {
 
 AddNewPerformerSearchResult.propTypes = {
   foreignId: PropTypes.string.isRequired,
-  tmdbId: PropTypes.number,
-  tpdbId: PropTypes.string,
   fullName: PropTypes.string.isRequired,
   gender: PropTypes.string.isRequired,
   status: PropTypes.string.isRequired,

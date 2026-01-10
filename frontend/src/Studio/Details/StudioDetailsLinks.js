@@ -9,7 +9,6 @@ import styles from './StudioDetailsLinks.css';
 function StudioDetailsLinks(props) {
   const {
     foreignId,
-    tmdbId,
     tpdbId,
     website
   } = props;
@@ -41,21 +40,6 @@ function StudioDetailsLinks(props) {
         </Label>
       </Link>
 
-      {!!tmdbId && (
-        <Link
-          className={styles.link}
-          to={`https://www.themoviedb.org/company/${tmdbId}`}
-        >
-          <Label
-            className={styles.linkLabel}
-            kind={kinds.INFO}
-            size={sizes.LARGE}
-          >
-            {translate('TMDb')}
-          </Label>
-        </Link>
-      )}
-
       {!!tpdbId && (
         <Link
           className={styles.link}
@@ -77,7 +61,6 @@ function StudioDetailsLinks(props) {
 StudioDetailsLinks.propTypes = {
   foreignId: PropTypes.string.isRequired,
   tpdbId: PropTypes.string,
-  tmdbId: PropTypes.number,
   website: PropTypes.string
 };
 

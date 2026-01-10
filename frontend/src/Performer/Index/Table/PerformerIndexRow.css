@@ -41,7 +41,6 @@
 .status,
 .ethnicity,
 .hairColor,
-.totalMovieCount,
 .totalSceneCount,
 .tags {
   composes: cell;

@@ -131,7 +131,6 @@ class PerformerDetails extends Component {
     const {
       id,
       foreignId,
-      tmdbId,
       tpdbId,
       fullName,
       rootFolderPath,
@@ -157,8 +156,6 @@ class PerformerDetails extends Component {
       isSmallScreen,
       hasMovies,
       hasScenes,
-      movieCount,
-      totalMovieCount,
       totalSceneCount,
       sceneCount,
       onMonitorTogglePress,
@@ -314,9 +311,7 @@ class PerformerDetails extends Component {
                       <Tooltip
                         anchor={<Icon name={icons.EXTERNAL_LINK} size={20} />}
                         tooltip={
-                          <PerformerDetailsLinks foreignId={foreignId} tmdbId={tmdbId}
-                            tpdbId={tpdbId}
-                          />
+                          <PerformerDetailsLinks foreignId={foreignId} tpdbId={tpdbId} />
                         }
                         position={tooltipPositions.BOTTOM}
                       />
@@ -388,21 +383,9 @@ class PerformerDetails extends Component {
                     title={statusDetails.message}
                     size={sizes.LARGE}
                   >
-                    <Icon name={icons.FILM} size={17} />
-
-                    <span className={styles.movieCount}>
-                      Movies: {movieCount || 0}/{totalMovieCount}
-                    </span>
-                  </Label>
-
-                  <Label
-                    className={styles.detailsLabel}
-                    title={statusDetails.message}
-                    size={sizes.LARGE}
-                  >
                     <Icon name={icons.SCENE} size={17} />
 
-                    <span className={styles.sceneCount}>
+                    <span className={styles.qualityProfileName}>
                       Scenes: {sceneCount || 0}/{totalSceneCount}
                     </span>
                   </Label>
@@ -512,7 +495,6 @@ PerformerDetails.propTypes = {
   id: PropTypes.number.isRequired,
   foreignId: PropTypes.string,
   tpdbId: PropTypes.string,
-  tmdbId: PropTypes.number,
   fullName: PropTypes.string.isRequired,
   gender: PropTypes.string,
   age: PropTypes.number,
@@ -545,8 +527,6 @@ PerformerDetails.propTypes = {
   moviesError: PropTypes.object,
   hasMovies: PropTypes.bool.isRequired,
   hasScenes: PropTypes.bool.isRequired,
-  movieCount: PropTypes.number.isRequired,
-  totalMovieCount: PropTypes.number.isRequired,
   totalSceneCount: PropTypes.number.isRequired,
   sceneCount: PropTypes.number.isRequired,
   safeForWorkMode: PropTypes.bool

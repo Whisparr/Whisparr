@@ -35,7 +35,6 @@
 .status,
 .ethnicity,
 .hairColor,
-.totalMovieCount,
 .totalSceneCount,
 .tags {
   composes: headerCell from '~Components/Table/VirtualTableHeaderCell.css';

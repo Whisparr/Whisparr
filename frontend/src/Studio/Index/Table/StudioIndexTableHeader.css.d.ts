@@ -9,7 +9,6 @@ interface CssExports {
   'sortTitle': string;
   'status': string;
   'tags': string;
-  'totalMovieCount': string;
   'totalSceneCount': string;
 }
 export const cssExports: CssExports;

@@ -238,11 +238,14 @@ class SecuritySettings extends Component {
               </FormInputButton>,
 
               <FormInputButton
-                key="documentation"
+                key="apidocumentation"
+                kind={kinds.PRIMARY}
                 to="/docs"
                 noRouter={true}
               >
-                ?
+                <Icon
+                  name={icons.UNKNOWN}
+                />
               </FormInputButton>
             ]}
             onChange={onInputChange}

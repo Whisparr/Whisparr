@@ -21,6 +21,8 @@ namespace NzbDrone.Core.MetadataSource.SkyHook.Resource
         public string ReleaseDate { get; set; }
         public DateTime? ReleaseDateUtc { get; set; }
 
+        public List<AlternativeTitleResource> AlternativeTitles { get; set; }
+
         public List<CastResource> Credits { get; set; }
         public StudioResource Studio { get; set; }
 

@@ -51,6 +51,7 @@ import MovieStatusLabel from './MovieStatusLabel';
 import MovieStudioLink from './MovieStudioLink';
 import MovieTagsConnector from './MovieTagsConnector';
 import ReleaseDateDisplay from './ReleaseDateDisplay';
+import MovieTitlesTable from './Titles/MovieTitlesTable';
 import styles from './MovieDetails.css';
 
 // InfoLabel is a JS component; types provided via declaration file
@@ -598,6 +599,10 @@ class MovieDetails extends Component<Props, State> {
                 />
               </FieldSet>
             ) : null}
+
+            <FieldSet legend={translate('Titles')}>
+              <MovieTitlesTable movieId={id} />
+            </FieldSet>
           </div>
 
           <OrganizePreviewModal

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Equ;
 using NzbDrone.Core.Languages;
 using NzbDrone.Core.MetadataSource.SkyHook.Resource;
+using NzbDrone.Core.Movies.AlternativeTitles;
 using NzbDrone.Core.Movies.Credits;
 
 namespace NzbDrone.Core.Movies
@@ -11,6 +12,7 @@ namespace NzbDrone.Core.Movies
     {
         public MovieMetadata()
         {
+            AlternativeTitles = new List<AlternativeTitle>();
             Credits = new List<Credit>();
             Images = new List<MediaCover.MediaCover>();
             Genres = new List<string>();
@@ -43,6 +45,7 @@ namespace NzbDrone.Core.Movies
         public string SortTitle { get; set; }
         public MovieStatusType Status { get; set; }
         public string Overview { get; set; }
+        public List<AlternativeTitle> AlternativeTitles { get; set; }
         public Language OriginalLanguage { get; set; }
         public List<int> Recommendations { get; set; }
         public ItemType ItemType { get; set; }

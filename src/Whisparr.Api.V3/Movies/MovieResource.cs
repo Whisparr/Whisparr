@@ -34,6 +34,7 @@ namespace Whisparr.Api.V3.Movies
         public string Code { get; set; }
         public Language OriginalLanguage { get; set; }
         public string SortTitle { get; set; }
+        public List<AlternativeTitleResource> AlternateTitles { get; set; }
         public long? SizeOnDisk { get; set; }
         public MovieStatusType Status { get; set; }
         public string Overview { get; set; }
@@ -117,6 +118,7 @@ namespace Whisparr.Api.V3.Movies
                 Code = model.MovieMetadata.Value.Code,
                 OriginalLanguage = model.MovieMetadata.Value.OriginalLanguage,
                 SortTitle = model.Title.NormalizeTitle(),
+                AlternateTitles = model.MovieMetadata.Value.AlternativeTitles.ToResource(),
                 ReleaseDate = model.GetReleaseDate(),
 
                 SizeOnDisk = size,

@@ -33,7 +33,7 @@ namespace NzbDrone.Core.Movies
         private readonly IRootFolderService _folderService;
         private readonly IDiskProvider _diskProvider;
         private readonly IBuildMoviePaths _buildMoviePaths;
-        private readonly IAlternativeTitleService _titleService;
+        private readonly IAlternativeTitleService _alternativeTitleService;
         private readonly IAddPerformerService _performerService;
         private readonly ICreditService _creditService;
         private readonly IAddStudioService _studioService;
@@ -52,7 +52,7 @@ namespace NzbDrone.Core.Movies
                                     IRootFolderService folderService,
                                     IDiskProvider diskProvider,
                                     IBuildMoviePaths buildMoviePaths,
-                                    IAlternativeTitleService titleService,
+                                    IAlternativeTitleService alternativeTitleService,
                                     IAddStudioService studioService,
                                     IAddPerformerService performerService,
                                     ICreditService creditService,
@@ -71,7 +71,7 @@ namespace NzbDrone.Core.Movies
             _folderService = folderService;
             _diskProvider = diskProvider;
             _buildMoviePaths = buildMoviePaths;
-            _titleService = titleService;
+            _alternativeTitleService = alternativeTitleService;
             _studioService = studioService;
             _performerService = performerService;
             _creditService = creditService;
@@ -173,6 +173,8 @@ namespace NzbDrone.Core.Movies
             {
                 movieMetadata.StudioForeignId = null;
             }
+
+            movieMetadata.AlternativeTitles = _alternativeTitleService.UpdateTitles(movieInfo.AlternativeTitles, movieMetadata);
 
             performerInfo.ForEach(p =>
                     {

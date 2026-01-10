@@ -65,17 +65,6 @@ namespace NzbDrone.Core.IndexerSearch
             if (movie.MovieMetadata.Value.ItemType == ItemType.Movie)
             {
                 var movieSearchSpec = Get<MovieSearchCriteria>(movie, userInvokedSearch, interactiveSearch);
-                var additionalTitles = new List<string>();
-
-                movieSearchSpec.SceneTitles.ForEach(title =>
-                {
-                    var alternateTitle = Parser.Parser.AlternateTitle(title);
-                    if (!alternateTitle.Equals(title) && !movieSearchSpec.SceneTitles.Contains(alternateTitle) && !additionalTitles.Contains(alternateTitle))
-                    {
-                        additionalTitles.Add(alternateTitle);
-                    }
-                });
-                movieSearchSpec.SceneTitles.AddRange(additionalTitles);
 
                 // For movies, add search with year
                 if (movie.Year > 1900)
@@ -222,8 +211,10 @@ namespace NzbDrone.Core.IndexerSearch
 
             var queryTranslations = new List<string>
             {
-                movie.MovieMetadata.Value.Title
+                movie.MovieMetadata.Value.Title,
             };
+
+            queryTranslations.AddRange(movie.MovieMetadata.Value.AlternativeTitles.Select(at => at.Title));
 
             spec.SceneTitles = queryTranslations.Where(t => t.IsNotNullOrWhiteSpace()).Distinct(StringComparer.InvariantCultureIgnoreCase).ToList();
 

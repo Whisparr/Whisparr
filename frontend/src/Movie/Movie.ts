@@ -39,6 +39,11 @@ export interface Ratings {
   tmdb: RatingValues;
 }
 
+export interface AlternativeTitle extends ModelBase {
+  sourceType: string;
+  title: string;
+}
+
 export interface MovieAddOptions {
   monitor: MovieMonitor;
   searchForMovie: boolean;
@@ -52,6 +57,7 @@ interface Movie extends ModelBase {
   foreignId: string;
   sortTitle: string;
   cleanTitle: string;
+  alternateTitles: AlternativeTitle[];
   overview: string;
   website: string;
   monitored: boolean;

@@ -508,6 +508,11 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             movie.Code = resource.Code;
             movie.Overview = resource.Overview;
 
+            if (resource.AlternativeTitles != null)
+            {
+                movie.AlternativeTitles.AddRange(resource.AlternativeTitles.Select(MapAlternativeTitle));
+            }
+
             movie.Website = resource.Homepage;
             movie.ReleaseDate = resource.ReleaseDate;
             movie.ReleaseDateUtc = resource.ReleaseDateUtc;
@@ -1351,6 +1356,18 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
                 default:
                     return Ethnicity.Other;
             }
+        }
+
+        private static AlternativeTitle MapAlternativeTitle(AlternativeTitleResource arg)
+        {
+            var newAlternativeTitle = new AlternativeTitle
+            {
+                Title = arg.Title,
+                SourceType = arg.Type,
+                CleanTitle = arg.Title.CleanMovieTitle()
+            };
+
+            return newAlternativeTitle;
         }
 
         private Studio MapStudio(StudioResource studio)

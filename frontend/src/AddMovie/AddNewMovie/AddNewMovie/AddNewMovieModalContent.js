@@ -40,7 +40,7 @@ class AddNewMovieModalContent extends Component {
       images,
       isAdding,
       rootFolderPath,
-      monitor,
+      monitored,
       qualityProfileId,
       searchForMovie,
       folder,
@@ -108,15 +108,14 @@ class AddNewMovieModalContent extends Component {
                 </FormGroup>
 
                 <FormGroup>
-                  <FormLabel>
-                    {translate('Monitor')}
-                  </FormLabel>
+                  <FormLabel>{translate('Monitor')}</FormLabel>
 
                   <FormInputGroup
-                    type={inputTypes.MONITOR_MOVIES_SELECT}
-                    name="monitor"
+                    type={inputTypes.CHECK}
+                    name="monitored"
+                    helpText={translate('MonitoredMovieHelpText')}
+                    {...monitored}
                     onChange={onInputChange}
-                    {...monitor}
                   />
                 </FormGroup>
 
@@ -183,7 +182,7 @@ AddNewMovieModalContent.propTypes = {
   isAdding: PropTypes.bool.isRequired,
   addError: PropTypes.object,
   rootFolderPath: PropTypes.object,
-  monitor: PropTypes.object.isRequired,
+  monitored: PropTypes.bool.isRequired,
   qualityProfileId: PropTypes.object,
   searchForMovie: PropTypes.object.isRequired,
   folder: PropTypes.string.isRequired,

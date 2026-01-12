@@ -32,7 +32,7 @@ export const defaultState = {
 
   movieDefaults: {
     rootFolderPath: '',
-    monitored: 'sceneOnly',
+    monitored: true,
     qualityProfileId: 0,
     searchForMovie: false,
     tags: []

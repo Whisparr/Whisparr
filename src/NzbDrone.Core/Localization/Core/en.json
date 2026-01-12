@@ -1213,7 +1213,7 @@
   "Monitored": "Monitored",
   "MonitoredCollectionHelpText": "Monitor to automatically have movies from this collection added to the library",
   "MonitoredMovie": "Monitor Movies",
-  "MonitoredMovieHelpText": "Download movies, if available",
+  "MonitoredMovieHelpText": "Download, if available",
   "MonitoredMoviesOnly": "Monitoring Movies",
   "MonitoredOnly": "Monitored Only",
   "MonitoredPerformerHelpText": "Monitor to automatically have items from this performer added to the library",

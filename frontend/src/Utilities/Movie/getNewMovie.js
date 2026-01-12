@@ -2,19 +2,19 @@
 function getNewMovie(movie, payload) {
   const {
     rootFolderPath,
-    monitor,
+    monitored,
     qualityProfileId,
     tags,
     searchForMovie = false
   } = payload;
 
   const addOptions = {
-    monitor,
+    monitored,
     searchForMovie
   };
 
   movie.addOptions = addOptions;
-  movie.monitored = monitor !== 'none';
+  movie.monitored = monitored;
   movie.qualityProfileId = qualityProfileId;
   movie.rootFolderPath = rootFolderPath;
   movie.tags = tags;

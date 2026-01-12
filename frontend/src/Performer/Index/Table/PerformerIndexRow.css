@@ -15,6 +15,11 @@
   padding-left: 4px;
 }
 
+.unmonitored {
+  color: var(--disabledColor);
+  opacity: 0.5;
+}
+
 .fullName {
   composes: cell;
 

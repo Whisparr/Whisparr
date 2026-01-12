@@ -94,12 +94,20 @@ function StudioIndexRow(props: StudioIndexRowProps) {
           return (
             <VirtualTableRowCell key={name} className={styles[name]}>
               <Icon
-                containerClassName={styles.statusIcon}
+                containerClassName={
+                  monitored
+                    ? styles.statusIcon
+                    : `${styles.statusIcon} ${styles.unmonitored}`
+                }
                 title="scene"
                 name={monitored ? icons.SCENE : icons.SCENEUNMONITOR}
               />
               <Icon
-                containerClassName={styles.statusIcon}
+                containerClassName={
+                  moviesMonitored
+                    ? styles.statusIcon
+                    : `${styles.statusIcon} ${styles.unmonitored}`
+                }
                 title="movie"
                 name={moviesMonitored ? icons.FILM : icons.FILMUNMONITOR}
               />

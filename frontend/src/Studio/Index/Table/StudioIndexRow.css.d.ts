@@ -15,6 +15,7 @@ interface CssExports {
   'tags': string;
   'totalMovieCount': string;
   'totalSceneCount': string;
+  'unmonitored': string;
 }
 export const cssExports: CssExports;
 export default cssExports;

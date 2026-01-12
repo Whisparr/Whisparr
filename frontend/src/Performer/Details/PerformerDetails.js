@@ -187,8 +187,11 @@ class PerformerDetails extends Component {
     const startYear = Number.isFinite(careerStart) ? careerStart : '';
     const endYear = Number.isFinite(careerEnd) && careerEnd > 0 ? careerEnd : '';
     const runningYears = `${startYear}-${endYear}`;
-
     const fanartUrl = getFanartUrl(images);
+
+    /* TODO: Adding the Movies stub table caused a uniqueness console warning in React when rendering
+    Scenes table.  Working around it until the connector can be fixed */
+    const stashStudios = studios.filter((s) => s.foreignId !== undefined);
 
     return (
       <PageContent title={fullName}>
@@ -259,27 +262,38 @@ class PerformerDetails extends Component {
                 <Measure onMeasure={this.onTitleMeasure}>
                   <div className={styles.titleRow}>
                     <div className={styles.titleContainer}>
-                      <div className={styles.toggleMonitoredContainer}>
-                        <MonitorToggleButton
-                          className={styles.monitorToggleButton}
-                          monitored={monitored}
-                          moviesMonitored={moviesMonitored}
-                          type="sceneMonitor"
-                          isSaving={isSaving}
-                          size={40}
-                          onPress={onMonitorTogglePress}
-                        />
-                      </div>
-                      <div className={styles.toggleMonitoredContainer}>
-                        <MonitorToggleButton
-                          className={styles.monitorToggleButton}
-                          monitored={monitored}
-                          moviesMonitored={moviesMonitored}
-                          type="movieMonitor"
-                          isSaving={isSaving}
-                          size={40}
-                          onPress={onMonitorTogglePress}
-                        />
+                      <div className={styles.monitorToggleButtonsContainer}>
+                        <div className={styles.toggleMonitoredContainer}>
+                          <MonitorToggleButton
+                            className={
+                              monitored ?
+                                styles.monitorToggleButton :
+                                `${styles.monitorToggleButton} ${styles.unmonitored}`
+
+                            }
+                            monitored={monitored}
+                            moviesMonitored={moviesMonitored}
+                            type="sceneMonitor"
+                            isSaving={isSaving}
+                            size={30}
+                            onPress={onMonitorTogglePress}
+                          />
+                        </div>
+                        <div className={styles.toggleMoviesMonitoredContainer}>
+                          <MonitorToggleButton
+                            className={
+                              moviesMonitored ?
+                                styles.monitorToggleButton :
+                                `${styles.monitorToggleButton} ${styles.unmonitored}`
+                            }
+                            monitored={monitored}
+                            moviesMonitored={moviesMonitored}
+                            type="movieMonitor"
+                            isSaving={isSaving}
+                            size={30}
+                            onPress={onMonitorTogglePress}
+                          />
+                        </div>
                       </div>
                       <div className={styles.title}>{fullName}</div>
                     </div>
@@ -447,6 +461,7 @@ class PerformerDetails extends Component {
               <FieldSet legend={translate('Movies')}>
                 {isPopulated && !!studios.length && (
                   <div>
+                    console.log('Movies studios:', studios);
                     {studios.map((studio) => {
                       return (
                         <Delayed key={studio.foreignId} waitBeforeShow={50}>
@@ -471,20 +486,21 @@ class PerformerDetails extends Component {
               <FieldSet legend={translate('Scenes')}>
                 {isPopulated && !!studios.length && (
                   <div>
-                    {studios.map((studio) => {
-                      return (
-                        <Delayed key={studio.foreignId} waitBeforeShow={50}>
-                          <PerformerDetailsStudioConnector
-                            key={studio.foreignId}
-                            performerId={id}
-                            studioForeignId={studio.foreignId}
-                            isScenes={true}
-                            isExpanded={expandedState[studio.foreignId]}
-                            onExpandPress={this.onExpandPress}
-                          />
-                        </Delayed>
-                      );
-                    })}
+                    {
+                      stashStudios.map((studio) => {
+                        return (
+                          <Delayed key={studio.foreignId} waitBeforeShow={50}>
+                            <PerformerDetailsStudioConnector
+                              key={studio.foreignId}
+                              performerId={id}
+                              studioForeignId={studio.foreignId}
+                              isScenes={true}
+                              isExpanded={expandedState[studio.foreignId]}
+                              onExpandPress={this.onExpandPress}
+                            />
+                          </Delayed>
+                        );
+                      })}
                   </div>
                 )}
               </FieldSet>

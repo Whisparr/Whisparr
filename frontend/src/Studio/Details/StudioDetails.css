@@ -73,19 +73,32 @@
   line-height: 60px;
 }
 
-.toggleMonitoredContainer {
+.monitorToggleButtonsContainer {
+  display: flex;
+
+  align-items: flex-start;
+
+  margin-right: 20px;
+}
+
+.toggleMonitoredContainer,
+.toggleMoviesMonitoredContainer {
   align-self: center;
-  margin-right: 10px;
 }
 
 .monitorToggleButton {
   composes: toggleButton from '~Components/MonitorToggleButton.css';
 
-  width: 40px;
+  width: 30px;
 
   &:hover {
     color: var(--iconButtonHoverLightColor);
   }
+}
+
+.unmonitored {
+  color: var(--disabledColor);
+  opacity: 0.5;
 }
 
 .alternateTitlesIconContainer {

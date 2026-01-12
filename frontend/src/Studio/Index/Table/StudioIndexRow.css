@@ -11,6 +11,11 @@
   flex: 0 0 50px;
 }
 
+.unmonitored {
+  color: var(--disabledColor);
+    opacity: 0.5;
+}
+
 .statusIcon {
   padding-left: 4px;
 }

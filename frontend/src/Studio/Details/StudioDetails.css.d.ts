@@ -18,6 +18,7 @@ interface CssExports {
   'innerContentBody': string;
   'links': string;
   'monitorToggleButton': string;
+  'monitorToggleButtonsContainer': string;
   'movieCount': string;
   'movieNavigationButton': string;
   'movieNavigationButtons': string;
@@ -40,6 +41,8 @@ interface CssExports {
   'titleContainer': string;
   'titleRow': string;
   'toggleMonitoredContainer': string;
+  'toggleMoviesMonitoredContainer': string;
+  'unmonitored': string;
   'year': string;
   'years': string;
 }

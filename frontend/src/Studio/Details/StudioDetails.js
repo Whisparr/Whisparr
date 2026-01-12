@@ -248,35 +248,45 @@ class StudioDetails extends Component {
                 size={250}
                 lazy={false}
               />
-
               <div className={styles.info}>
                 <Measure onMeasure={this.onTitleMeasure}>
                   <div className={styles.titleRow}>
                     <div className={styles.titleContainer}>
-                      <div className={styles.toggleMonitoredContainer}>
-                        <MonitorToggleButton
-                          className={styles.monitorToggleButton}
-                          monitored={monitored}
-                          moviesMonitored={moviesMonitored}
-                          type="sceneMonitor"
-                          isSaving={isSaving}
-                          size={40}
-                          onPress={onMonitorTogglePress}
-                        />
-                      </div>
+                      <div className={styles.monitorToggleButtonsContainer}>
 
-                      <div className={styles.toggleMonitoredContainer}>
-                        <MonitorToggleButton
-                          className={styles.monitorToggleButton}
-                          monitored={monitored}
-                          moviesMonitored={moviesMonitored}
-                          type="movieMonitor"
-                          isSaving={isSaving}
-                          size={40}
-                          onPress={onMonitorTogglePress}
-                        />
-                      </div>
+                        <div className={styles.toggleMonitoredContainer}>
+                          <MonitorToggleButton
+                            className={
+                              monitored ?
+                                styles.monitorToggleButton :
+                                `${styles.monitorToggleButton} ${styles.unmonitored}`
+                            }
+                            monitored={monitored}
+                            moviesMonitored={moviesMonitored}
+                            type="sceneMonitor"
+                            isSaving={isSaving}
+                            size={30}
+                            onPress={onMonitorTogglePress}
+                          />
+                        </div>
 
+                        <div className={styles.toggleMoviesMonitoredContainer}>
+                          <MonitorToggleButton
+                            className={
+                              moviesMonitored ?
+                                styles.monitorToggleButton :
+                                `${styles.monitorToggleButton} ${styles.unmonitored}`
+                            }
+                            monitored={monitored}
+                            moviesMonitored={moviesMonitored}
+                            type="movieMonitor"
+                            isSaving={isSaving}
+                            size={30}
+                            onPress={onMonitorTogglePress}
+                          />
+                        </div>
+
+                      </div>
                       <div className={styles.title}>
                         {title}
                       </div>
@@ -557,7 +567,7 @@ class StudioDetails extends Component {
           />
 
         </PageContentBody>
-      </PageContent>
+      </PageContent >
     );
   }
 }

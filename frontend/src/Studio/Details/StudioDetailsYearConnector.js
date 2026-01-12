@@ -40,9 +40,9 @@ function sort(items, state) {
   orders.push(sortDirection === sortDirections.ASCENDING ? 'asc' : 'desc');
 
   if (secondarySortKey &&
-      secondarySortDirection &&
-      (sortKey !== secondarySortKey ||
-       sortDirection !== secondarySortDirection)) {
+    secondarySortDirection &&
+    (sortKey !== secondarySortKey ||
+      sortDirection !== secondarySortDirection)) {
     clauses.push(getSortClause(secondarySortKey, secondarySortDirection, sortPredicates));
     orders.push(secondarySortDirection === sortDirections.ASCENDING ? 'asc' : 'desc');
   }

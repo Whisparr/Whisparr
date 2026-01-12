@@ -461,7 +461,6 @@ class PerformerDetails extends Component {
               <FieldSet legend={translate('Movies')}>
                 {isPopulated && !!studios.length && (
                   <div>
-                    console.log('Movies studios:', studios);
                     {studios.map((studio) => {
                       return (
                         <Delayed key={studio.foreignId} waitBeforeShow={50}>

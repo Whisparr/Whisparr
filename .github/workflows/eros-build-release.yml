@@ -187,7 +187,7 @@ jobs:
           ref: ${{ env.CHECKOUT_REF }}
 
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ env.NODE_VERSION }}
 

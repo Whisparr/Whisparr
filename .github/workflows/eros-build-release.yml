@@ -255,7 +255,7 @@ jobs:
           ref: ${{ env.CHECKOUT_REF }}
 
       - name: Download all build artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           path: .
 
@@ -461,7 +461,7 @@ jobs:
           ref: ${{ env.CHECKOUT_REF }}
 
       - name: Download packages artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: packages-windows
           path: .
@@ -563,19 +563,19 @@ jobs:
           ref: ${{ env.CHECKOUT_REF }}
 
       - name: Download packages artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: packages
           path: release_assets
 
       - name: Download packages artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: packages-windows
           path: release_assets
 
       - name: Download Windows installers artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: WindowsInstallers
           path: release_assets

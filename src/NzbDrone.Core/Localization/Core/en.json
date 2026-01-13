@@ -1302,7 +1302,7 @@
   "MovieSearchResultsLoadError": "Unable to load results for this movie search. Try again later",
   "MoviesSelectedInterp": "{count} Movie(s) Selected",
   "MovieTitle": "Movie Title",
-  "MovieTitleToExcludeHelpText": "The title of the movie to exclude (can be anything meaningful)",
+  "MovieTitleToExcludeHelpText": "The title of the item to exclude (can be random, except for Tags, which must be the StashDB Tag's Name.)",
   "MovieYear": "Movie Year",
   "MovieYearToExcludeHelpText": "The year of the movie to exclude",
   "MultiLanguage": "Multi-Language",

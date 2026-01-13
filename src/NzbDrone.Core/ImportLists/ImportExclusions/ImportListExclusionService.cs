@@ -39,6 +39,15 @@ namespace NzbDrone.Core.ImportLists.ImportExclusions
 
         public ImportListExclusion AddExclusion(ImportListExclusion exclusion)
         {
+            if (exclusion.Type != ImportExclusionType.Movie &&
+                exclusion.Type != ImportExclusionType.Scene)
+            {
+                if (exclusion.MovieYear == 0)
+                {
+                    exclusion.MovieYear = null;
+                }
+            }
+
             if (_exclusionRepository.IsExcluded(exclusion.ForeignId, exclusion.Type))
             {
                 return _exclusionRepository.GetByForeignId(exclusion.ForeignId);
@@ -101,6 +110,15 @@ namespace NzbDrone.Core.ImportLists.ImportExclusions
 
         public ImportListExclusion Update(ImportListExclusion exclusion)
         {
+            if (exclusion.Type != ImportExclusionType.Movie &&
+                exclusion.Type != ImportExclusionType.Scene)
+            {
+                if (exclusion.MovieYear == 0)
+                {
+                    exclusion.MovieYear = null;
+                }
+            }
+
             int.TryParse(exclusion.ForeignId, out var tmbdId);
             if (exclusion.Type == ImportExclusionType.Scene && tmbdId != 0)
             {

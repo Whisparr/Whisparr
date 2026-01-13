@@ -45,7 +45,7 @@ namespace Whisparr.Api.V3.ImportLists
                 .When(c => c.Type == ImportExclusionType.Movie || c.Type == ImportExclusionType.Scene);
 
             SharedValidator.RuleFor(c => c.MovieYear)
-                .Null()
+                .Must(y => y == null || y == 0)
                 .When(c => c.Type == ImportExclusionType.Studio
                         || c.Type == ImportExclusionType.Performer
                         || c.Type == ImportExclusionType.Tag);

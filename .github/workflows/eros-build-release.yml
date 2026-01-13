@@ -171,7 +171,7 @@ jobs:
           FORCE_COLOR: 0
 
       - name: Upload Backend artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.runtime }}-backend
           path: _output/net8.0/${{ matrix.runtime }}
@@ -238,7 +238,7 @@ jobs:
           Get-ChildItem -Path $path -Recurse -Force -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName } | Out-File -FilePath (Join-Path $path 'artifact_listing.txt') -Encoding utf8 -Force
 
       - name: Upload Frontend artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: Frontend
           path: frontend_artifacts/**
@@ -432,13 +432,13 @@ jobs:
           }
 
       - name: Upload windows packages bundle
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: packages-windows
           path: release_assets_windows
 
       - name: Upload packages bundle
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: packages
           path: release_assets
@@ -542,7 +542,7 @@ jobs:
           }
 
       - name: Upload Windows installers
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: WindowsInstallers
           path: installers

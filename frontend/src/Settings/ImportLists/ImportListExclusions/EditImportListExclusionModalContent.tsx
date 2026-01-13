@@ -28,10 +28,36 @@ import translate from 'Utilities/String/translate';
 import styles from './EditImportListExclusionModalContent.css';
 
 const newImportListExclusion = {
-  movieTitle: '',
-  movieYear: 0,
-  type: 'scene',
-  foreignId: '',
+  movie: {
+    movieTitle: '',
+    movieYear: 0,
+    type: 'movie',
+    foreignId: '',
+  },
+  scene: {
+    movieTitle: '',
+    movieYear: 0,
+    type: 'scene',
+    foreignId: '',
+  },
+  studio: {
+    movieTitle: '',
+    movieYear: null,
+    type: 'studio',
+    foreignId: '',
+  },
+  performer: {
+    movieTitle: '',
+    movieYear: null,
+    type: 'performer',
+    foreignId: '',
+  },
+  tag: {
+    movieTitle: '',
+    movieYear: null,
+    type: 'tag',
+    foreignId: '',
+  },
 };
 
 const typeOptions = [
@@ -56,9 +82,18 @@ function createImportListExclusionSelector(id?: number) {
         importListExclusions;
 
       const mapping = id
-        ? items.find((i) => i.id === id) ?? newImportListExclusion
-        : newImportListExclusion;
-      const settings = selectSettings(mapping, pendingChanges, saveError);
+        ? items.find((i) => i.id === id) || newImportListExclusion.scene
+        : newImportListExclusion.scene;
+
+      const normalized = {
+        ...mapping,
+        movieYear:
+          mapping.type === 'movie' || mapping.type === 'scene'
+            ? mapping.movieYear
+            : null,
+      };
+
+      const settings = selectSettings(normalized, pendingChanges, saveError);
 
       return {
         isFetching,
@@ -87,7 +122,7 @@ function EditImportListExclusionModalContent({
 
   const dispatchSetImportListExclusionValue = (payload: {
     name: string;
-    value: string | number;
+    value: string | number | null;
   }) => {
     // @ts-expect-error 'setImportListExclusionValue' isn't typed yet
     dispatch(setImportListExclusionValue(payload));
@@ -95,7 +130,10 @@ function EditImportListExclusionModalContent({
 
   useEffect(() => {
     if (!id) {
-      Object.entries(newImportListExclusion).forEach(([name, value]) => {
+      const defaults =
+        newImportListExclusion[type.value] ?? newImportListExclusion.scene;
+
+      Object.entries(defaults).forEach(([name, value]) => {
         dispatchSetImportListExclusionValue({ name, value });
       });
     }
@@ -109,8 +147,31 @@ function EditImportListExclusionModalContent({
   }, [previousIsSaving, isSaving, saveError, onModalClose]);
 
   const onSavePress = useCallback(() => {
-    dispatch(saveImportListExclusion({ id }));
-  }, [dispatch, id]);
+    const payload: ImportListExclusion = {
+      id: item.id?.value,
+      foreignId: item.foreignId.value,
+      movieTitle: item.movieTitle.value,
+      movieYear: item.movieYear.value,
+      type: item.type.value,
+    };
+
+    if (
+      (payload.type === 'movie' || payload.type === 'scene') &&
+      (payload.movieYear == null ||
+        Number.isNaN(payload.movieYear) ||
+        payload.movieYear <= 0)
+    ) {
+      payload.movieYear = 0;
+    }
+
+    if (payload.type !== 'movie' && payload.type !== 'scene') {
+      payload.movieYear = null;
+    } else if (payload.movieYear == null || Number.isNaN(payload.movieYear)) {
+      payload.movieYear = null;
+    }
+
+    dispatch(saveImportListExclusion(payload));
+  }, [dispatch, item]);
 
   const onInputChange = useCallback(
     (change: InputChanged) => {
@@ -201,7 +262,6 @@ function EditImportListExclusionModalContent({
             {translate('Delete')}
           </Button>
         )}
-        : null
         <Button onPress={onModalClose}>{translate('Cancel')}</Button>
         <SpinnerErrorButton
           isSpinning={isSaving}

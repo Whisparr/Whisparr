@@ -61,17 +61,15 @@ namespace Whisparr.Api.V3.Studios
 
             if (configService.WhisparrMovieMetadataSource == MovieMetadataType.TMDB)
             {
-                SharedValidator.RuleFor(s => s.TmdbId).Cascade(CascadeMode.Stop)
-                    .GreaterThan(0)
-                    .When(s => s.MoviesMonitored)
+                SharedValidator.RuleFor(s => s.MoviesMonitored)
+                    .Must((s, monitored) => !monitored || s.TmdbId > 0)
                     .WithMessage("Requires a TMDB link to be added to the Studio within StashDB");
             }
 
             if (configService.WhisparrMovieMetadataSource == MovieMetadataType.TPDB)
             {
-                SharedValidator.RuleFor(s => s.TpdbId).Cascade(CascadeMode.Stop)
-                    .NotEmpty()
-                    .When(s => s.MoviesMonitored)
+                SharedValidator.RuleFor(s => s.MoviesMonitored)
+                    .Must((s, monitored) => !monitored || !string.IsNullOrWhiteSpace(s.TpdbId))
                     .WithMessage("Requires a TPDB link to be added to the Studio within StashDB");
             }
         }

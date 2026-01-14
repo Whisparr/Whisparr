@@ -76,7 +76,6 @@ class AddNewStudioModalContent extends Component {
               <Form>
                 <FormGroup>
                   <FormLabel>{translate('RootFolder')}</FormLabel>
-
                   <FormInputGroup
                     type={inputTypes.ROOT_FOLDER_SELECT}
                     name="rootFolderPath"
@@ -88,39 +87,40 @@ class AddNewStudioModalContent extends Component {
                     }}
                     onChange={onInputChange}
                     {...rootFolderPath}
+                    errors={rootFolderPath.errors}
                   />
                 </FormGroup>
 
                 <FormGroup>
                   <FormLabel>{translate('MonitoredScene')}</FormLabel>
-
                   <FormInputGroup
                     type={inputTypes.CHECK}
                     name="monitored"
                     helpText={translate('MonitoredStudioHelpText')}
                     {...monitored}
                     onChange={onInputChange}
+                    errors={monitored.errors}
                   />
                 </FormGroup>
 
                 <FormGroup>
                   <FormLabel>{translate('MonitoredMovie')}</FormLabel>
-
                   <FormInputGroup
                     type={inputTypes.CHECK}
                     name="moviesMonitored"
                     helpText={translate('MonitoredStudioMovieHelpText')}
                     {...moviesMonitored}
+                    errors={moviesMonitored.errors}
                     onChange={onInputChange}
                   />
                 </FormGroup>
 
                 <FormGroup>
                   <FormLabel>{translate('QualityProfile')}</FormLabel>
-
                   <FormInputGroup
                     type={inputTypes.QUALITY_PROFILE_SELECT}
                     name="qualityProfileId"
+                    errors={qualityProfileId.errors}
                     onChange={this.onQualityProfileIdChange}
                     {...qualityProfileId}
                   />
@@ -128,10 +128,10 @@ class AddNewStudioModalContent extends Component {
 
                 <FormGroup>
                   <FormLabel>{translate('Tags')}</FormLabel>
-
                   <FormInputGroup
                     type={inputTypes.TAG}
                     name="tags"
+                    errors={tags.errors}
                     onChange={onInputChange}
                     {...tags}
                   />
@@ -153,6 +153,7 @@ class AddNewStudioModalContent extends Component {
               name="searchForMovie"
               onChange={onInputChange}
               {...searchForMovie}
+              errors={searchForMovie && searchForMovie.errors}
             />
           </label>
 

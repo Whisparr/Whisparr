@@ -86,6 +86,7 @@ class AddNewPerformerModalContent extends Component {
                     selectedValueOptions={{
                       isWindows
                     }}
+                    errors={rootFolderPath.errors}
                     onChange={onInputChange}
                     {...rootFolderPath}
                   />
@@ -99,6 +100,7 @@ class AddNewPerformerModalContent extends Component {
                     name="monitored"
                     helpText={translate('MonitoredPerformerHelpText')}
                     {...monitored}
+                    errors={monitored.errors}
                     onChange={onInputChange}
                   />
                 </FormGroup>
@@ -111,6 +113,7 @@ class AddNewPerformerModalContent extends Component {
                     name="moviesMonitored"
                     helpText={translate('MonitoredPerformerMovieHelpText')}
                     {...moviesMonitored}
+                    error={moviesMonitored.errors}
                     onChange={onInputChange}
                   />
                 </FormGroup>
@@ -122,6 +125,7 @@ class AddNewPerformerModalContent extends Component {
                     type={inputTypes.QUALITY_PROFILE_SELECT}
                     name="qualityProfileId"
                     onChange={this.onQualityProfileIdChange}
+                    errors={qualityProfileId.errors}
                     {...qualityProfileId}
                   />
                 </FormGroup>
@@ -133,6 +137,7 @@ class AddNewPerformerModalContent extends Component {
                     type={inputTypes.TAG}
                     name="tags"
                     onChange={onInputChange}
+                    errors={tags.errors}
                     {...tags}
                   />
                 </FormGroup>
@@ -177,7 +182,7 @@ AddNewPerformerModalContent.propTypes = {
   addError: PropTypes.object,
   rootFolderPath: PropTypes.object,
   monitored: PropTypes.bool.isRequired,
-  moviesMonitored: PropTypes.bool.isRequired,
+  moviesMonitored: PropTypes.bool,
   qualityProfileId: PropTypes.object,
   searchForMovie: PropTypes.object.isRequired,
   tags: PropTypes.object.isRequired,

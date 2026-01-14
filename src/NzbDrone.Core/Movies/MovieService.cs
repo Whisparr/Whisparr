@@ -166,6 +166,14 @@ namespace NzbDrone.Core.Movies
                     candidates.Where(movie => otherTitles.Contains(movie.MovieMetadata.Value.CleanTitle)).AllWithYear(year).ToList();
             }
 
+            if (result == null || result.Count == 0)
+            {
+                result = candidates
+                    .Where(m => m.MovieMetadata.Value.AlternativeTitles.Any(t => cleanTitles.Contains(t.CleanTitle) ||
+                                                        otherTitles.Contains(t.CleanTitle)))
+                    .AllWithYear(year).ToList();
+            }
+
             return ReturnSingleMovieOrThrow(result.ToList());
         }
 

@@ -161,7 +161,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
         }
 
         [Test]
-        public void should_not_attempt_to_map_episode_if_series_title_is_blank()
+        public void should_not_attempt_to_map_episode_if_series_title_is_blank_and_no_external_id()
         {
             GivenSpecifications(_pass1, _pass2, _pass3);
             _reports[0].Title = "1937 - Snow White and the Seven Dwarves";
@@ -174,7 +174,9 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             _pass2.Verify(c => c.IsSatisfiedBy(It.IsAny<RemoteEpisode>(), null), Times.Never());
             _pass3.Verify(c => c.IsSatisfiedBy(It.IsAny<RemoteEpisode>(), null), Times.Never());
 
-            results.Should().BeEmpty();
+            results.Should().HaveCount(1);
+            results.First().Approved.Should().BeFalse();
+            results.First().Rejections.Should().Contain(r => r.Reason == "Unable to parse release");
         }
 
         [Test]

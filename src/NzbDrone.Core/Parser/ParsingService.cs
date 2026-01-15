@@ -16,7 +16,6 @@ namespace NzbDrone.Core.Parser
         RemoteEpisode Map(ParsedEpisodeInfo parsedEpisodeInfo, int tvdbId, SearchCriteriaBase searchCriteria = null);
         RemoteEpisode Map(ParsedEpisodeInfo parsedEpisodeInfo, Series series);
         RemoteEpisode Map(ParsedEpisodeInfo parsedEpisodeInfo, int seriesId, IEnumerable<int> episodeIds);
-        RemoteEpisode MapByExternalId(ParsedEpisodeInfo parsedEpisodeInfo, SearchCriteriaBase searchCriteria);
         List<Episode> GetEpisodes(ParsedEpisodeInfo parsedEpisodeInfo, Series series, bool sceneSource, SearchCriteriaBase searchCriteria = null);
         ParsedEpisodeInfo ParseSpecialEpisodeTitle(ParsedEpisodeInfo parsedEpisodeInfo, string releaseTitle, int tvdbId, SearchCriteriaBase searchCriteria = null);
         ParsedEpisodeInfo ParseSpecialEpisodeTitle(ParsedEpisodeInfo parsedEpisodeInfo, string releaseTitle, Series series);
@@ -121,30 +120,6 @@ namespace NzbDrone.Core.Parser
                    };
         }
 
-        public RemoteEpisode MapByExternalId(ParsedEpisodeInfo parsedEpisodeInfo, SearchCriteriaBase searchCriteria)
-        {
-            // When mapping by external ID, we trust the search criteria's series and episodes
-            // since the external ID has already been matched in DownloadDecisionMaker
-            var remoteEpisode = new RemoteEpisode
-            {
-                ParsedEpisodeInfo = parsedEpisodeInfo,
-                Series = searchCriteria.Series,
-                Episodes = searchCriteria.Episodes,
-                SeriesMatchType = SeriesMatchType.Id,
-                Languages = parsedEpisodeInfo.Languages
-            };
-
-            if (searchCriteria.Episodes.Any())
-            {
-                var requestedEpisodes = searchCriteria.Episodes.ToDictionaryIgnoreDuplicates(v => v.Id);
-                remoteEpisode.EpisodeRequested = remoteEpisode.Episodes.Any(v => requestedEpisodes.ContainsKey(v.Id));
-            }
-
-            _logger.Debug("Mapped release by external ID to series '{0}' with {1} episode(s)", searchCriteria.Series.Title, searchCriteria.Episodes.Count);
-
-            return remoteEpisode;
-        }
-
         private RemoteEpisode Map(ParsedEpisodeInfo parsedEpisodeInfo, int tvdbId, Series series, SearchCriteriaBase searchCriteria)
         {
             var remoteEpisode = new RemoteEpisode
@@ -205,6 +180,18 @@ namespace NzbDrone.Core.Parser
             if (episodeInfo != null)
             {
                 return new List<Episode> { episodeInfo };
+            }
+
+            // Fallback to external ID lookup if air date matching failed
+            if (!parsedEpisodeInfo.ExternalId.IsNullOrWhiteSpace())
+            {
+                var episode = _episodeService.FindByExternalId(parsedEpisodeInfo.ExternalId);
+
+                if (episode != null && episode.SeriesId == series.Id)
+                {
+                    _logger.Debug("Found episode by external ID {0}", parsedEpisodeInfo.ExternalId);
+                    return new List<Episode> { episode };
+                }
             }
 
             return new List<Episode>();
@@ -272,10 +259,11 @@ namespace NzbDrone.Core.Parser
         private FindSeriesResult FindSeries(ParsedEpisodeInfo parsedEpisodeInfo, int tvdbId, SearchCriteriaBase searchCriteria)
         {
             Series series = null;
+            var hasSeriesTitle = !parsedEpisodeInfo.SeriesTitle.IsNullOrWhiteSpace();
 
             if (searchCriteria != null)
             {
-                if (searchCriteria.Series.CleanTitle == parsedEpisodeInfo.SeriesTitle.CleanSeriesTitle())
+                if (hasSeriesTitle && searchCriteria.Series.CleanTitle == parsedEpisodeInfo.SeriesTitle.CleanSeriesTitle())
                 {
                     return new FindSeriesResult(searchCriteria.Series, SeriesMatchType.Title);
                 }
@@ -294,26 +282,30 @@ namespace NzbDrone.Core.Parser
             }
 
             var matchType = SeriesMatchType.Unknown;
-            series = _seriesService.FindByTitle(parsedEpisodeInfo.SeriesTitle);
 
-            if (series != null)
+            if (hasSeriesTitle)
             {
-                matchType = SeriesMatchType.Title;
+                series = _seriesService.FindByTitle(parsedEpisodeInfo.SeriesTitle);
+
+                if (series != null)
+                {
+                    matchType = SeriesMatchType.Title;
+                }
             }
 
-            if (series == null && parsedEpisodeInfo.SeriesTitleInfo.AllTitles != null)
+            if (series == null && parsedEpisodeInfo.SeriesTitleInfo?.AllTitles != null)
             {
                 series = GetSeriesByAllTitles(parsedEpisodeInfo);
                 matchType = SeriesMatchType.Title;
             }
 
-            if (series == null && parsedEpisodeInfo.SeriesTitleInfo.Year > 0)
+            if (series == null && parsedEpisodeInfo.SeriesTitleInfo?.Year > 0)
             {
                 series = _seriesService.FindByTitle(parsedEpisodeInfo.SeriesTitleInfo.TitleWithoutYear, parsedEpisodeInfo.SeriesTitleInfo.Year);
                 matchType = SeriesMatchType.Title;
             }
 
-            if (series == null)
+            if (series == null && hasSeriesTitle)
             {
                 series = _seriesService.FindByTitleSlug(parsedEpisodeInfo.SeriesTitle);
                 matchType = SeriesMatchType.Title;
@@ -333,6 +325,22 @@ namespace NzbDrone.Core.Parser
                            .Write();
 
                     matchType = SeriesMatchType.Id;
+                }
+            }
+
+            if (series == null && !parsedEpisodeInfo.ExternalId.IsNullOrWhiteSpace())
+            {
+                var episode = _episodeService.FindByExternalId(parsedEpisodeInfo.ExternalId);
+
+                if (episode != null)
+                {
+                    series = _seriesService.GetSeries(episode.SeriesId);
+
+                    if (series != null)
+                    {
+                        _logger.Debug("Found matching series by external ID {0}", parsedEpisodeInfo.ExternalId);
+                        matchType = SeriesMatchType.Id;
+                    }
                 }
             }
 

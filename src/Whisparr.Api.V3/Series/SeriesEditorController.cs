@@ -14,11 +14,13 @@ namespace Whisparr.Api.V3.Series
     {
         private readonly ISeriesService _seriesService;
         private readonly IManageCommandQueue _commandQueueManager;
+        private readonly IEpisodeMonitoredService _episodeMonitoredService;
 
-        public SeriesEditorController(ISeriesService seriesService, IManageCommandQueue commandQueueManager)
+        public SeriesEditorController(ISeriesService seriesService, IManageCommandQueue commandQueueManager, IEpisodeMonitoredService episodeMonitoredService)
         {
             _seriesService = seriesService;
             _commandQueueManager = commandQueueManager;
+            _episodeMonitoredService = episodeMonitoredService;
         }
 
         [HttpPut]
@@ -29,7 +31,19 @@ namespace Whisparr.Api.V3.Series
 
             foreach (var series in seriesToUpdate)
             {
-                if (resource.Monitored.HasValue)
+                if (resource.MonitoringOptions != null)
+                {
+                    // When MonitoringOptions is provided, set series.Monitored based on the monitor type
+                    if (resource.MonitoringOptions.Monitor == MonitorTypes.None)
+                    {
+                        series.Monitored = false;
+                    }
+                    else
+                    {
+                        series.Monitored = true;
+                    }
+                }
+                else if (resource.Monitored.HasValue)
                 {
                     series.Monitored = resource.Monitored.Value;
                 }
@@ -72,6 +86,12 @@ namespace Whisparr.Api.V3.Series
                             break;
                     }
                 }
+
+                // Apply monitoring options to episodes if provided
+                if (resource.MonitoringOptions != null)
+                {
+                    _episodeMonitoredService.SetEpisodeMonitoredStatus(series, resource.MonitoringOptions);
+                }
             }
 
             if (resource.MoveFiles && seriesToMove.Any())
@@ -81,6 +101,12 @@ namespace Whisparr.Api.V3.Series
                                               DestinationRootFolder = resource.RootFolderPath,
                                               Series = seriesToMove
                                           });
+            }
+
+            // When MonitoringOptions is used, EpisodeMonitoredService already calls UpdateSeries
+            if (resource.MonitoringOptions != null)
+            {
+                return Accepted(seriesToUpdate.ToResource());
             }
 
             return Accepted(_seriesService.UpdateSeries(seriesToUpdate, !resource.MoveFiles).ToResource());

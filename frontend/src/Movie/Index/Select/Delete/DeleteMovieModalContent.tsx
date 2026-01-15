@@ -110,11 +110,6 @@ function DeleteMovieModalContent(props: DeleteMovieModalContentProps) {
           ? translate('DeleteSelectedMovies')
           : translate('DeleteSelectedMovie')}
       </ModalHeader>
-      <ModalHeader>
-        {movies.length > 1
-          ? translate('DeleteSelectedMovies')
-          : translate('DeleteSelectedMovie')}
-      </ModalHeader>
 
       <ModalBody>
         <div>
@@ -131,11 +126,6 @@ function DeleteMovieModalContent(props: DeleteMovieModalContentProps) {
           </FormGroup>
 
           <FormGroup>
-            <FormLabel>
-              {movies.length > 1
-                ? translate('DeleteMovieFolders')
-                : translate('DeleteMovieFolder')}
-            </FormLabel>
             <FormLabel>
               {movies.length > 1
                 ? translate('DeleteMovieFolders')
@@ -158,13 +148,6 @@ function DeleteMovieModalContent(props: DeleteMovieModalContentProps) {
         </div>
 
         <div className={styles.message}>
-          {deleteFiles
-            ? translate('DeleteMovieFolderCountWithFilesConfirmation', {
-                count: movies.length,
-              })
-            : translate('DeleteMovieFolderCountConfirmation', {
-                count: movies.length,
-              })}
           {deleteFiles
             ? translate('DeleteMovieFolderCountWithFilesConfirmation', {
                 count: movies.length,
@@ -204,15 +187,6 @@ function DeleteMovieModalContent(props: DeleteMovieModalContentProps) {
             );
           })}
         </ul>
-
-        {deleteFiles && !!totalMovieFileCount ? (
-          <div className={styles.deleteFilesMessage}>
-            {translate('DeleteMovieFolderMovieCount', {
-              movieFileCount: totalMovieFileCount,
-              size: formatBytes(totalSizeOnDisk),
-            })}
-          </div>
-        ) : null}
 
         {deleteFiles && !!totalMovieFileCount ? (
           <div className={styles.deleteFilesMessage}>

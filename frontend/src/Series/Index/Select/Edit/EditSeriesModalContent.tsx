@@ -1,13 +1,16 @@
 import React, { useCallback, useState } from 'react';
+import SeriesMonitoringOptionsPopoverContent from 'AddSeries/SeriesMonitoringOptionsPopoverContent';
 import FormGroup from 'Components/Form/FormGroup';
 import FormInputGroup from 'Components/Form/FormInputGroup';
 import FormLabel from 'Components/Form/FormLabel';
+import Icon from 'Components/Icon';
 import Button from 'Components/Link/Button';
 import ModalBody from 'Components/Modal/ModalBody';
 import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
-import { inputTypes } from 'Helpers/Props';
+import Popover from 'Components/Tooltip/Popover';
+import { icons, inputTypes, tooltipPositions } from 'Helpers/Props';
 import MoveSeriesModal from 'Series/MoveSeries/MoveSeriesModal';
 import translate from 'Utilities/String/translate';
 import styles from './EditSeriesModalContent.css';
@@ -15,6 +18,7 @@ import styles from './EditSeriesModalContent.css';
 interface SavePayload {
   monitored?: boolean;
   monitorNewItems?: string;
+  monitoringOptions?: { monitor: string };
   qualityProfileId?: number;
   seasonFolder?: boolean;
   rootFolderPath?: string;
@@ -78,6 +82,7 @@ function EditSeriesModalContent(props: EditSeriesModalContentProps) {
 
   const [monitored, setMonitored] = useState(NO_CHANGE);
   const [monitorNewItems, setMonitorNewItems] = useState(NO_CHANGE);
+  const [monitor, setMonitor] = useState(NO_CHANGE);
   const [qualityProfileId, setQualityProfileId] = useState<string | number>(
     NO_CHANGE
   );
@@ -98,6 +103,11 @@ function EditSeriesModalContent(props: EditSeriesModalContentProps) {
       if (monitorNewItems !== NO_CHANGE) {
         hasChanges = true;
         payload.monitorNewItems = monitorNewItems;
+      }
+
+      if (monitor !== NO_CHANGE) {
+        hasChanges = true;
+        payload.monitoringOptions = { monitor };
       }
 
       if (qualityProfileId !== NO_CHANGE) {
@@ -125,6 +135,7 @@ function EditSeriesModalContent(props: EditSeriesModalContentProps) {
     [
       monitored,
       monitorNewItems,
+      monitor,
       qualityProfileId,
       seasonFolder,
       rootFolderPath,
@@ -141,6 +152,9 @@ function EditSeriesModalContent(props: EditSeriesModalContentProps) {
           break;
         case 'monitorNewItems':
           setMonitorNewItems(value);
+          break;
+        case 'monitor':
+          setMonitor(value);
           break;
         case 'qualityProfileId':
           setQualityProfileId(value);
@@ -200,12 +214,34 @@ function EditSeriesModalContent(props: EditSeriesModalContentProps) {
         </FormGroup>
 
         <FormGroup>
-          <FormLabel>{translate('MonitorNewItems')}</FormLabel>
+          <FormLabel>{translate('MonitorNewScenes')}</FormLabel>
 
           <FormInputGroup
             type={inputTypes.MONITOR_NEW_ITEMS_SELECT}
             name="monitorNewItems"
             value={monitorNewItems}
+            includeNoChange={true}
+            includeNoChangeDisabled={false}
+            onChange={onInputChange}
+          />
+        </FormGroup>
+
+        <FormGroup>
+          <FormLabel>
+            {translate('Monitoring')}
+
+            <Popover
+              anchor={<Icon className={styles.labelIcon} name={icons.INFO} />}
+              title={translate('MonitoringOptions')}
+              body={<SeriesMonitoringOptionsPopoverContent />}
+              position={tooltipPositions.RIGHT}
+            />
+          </FormLabel>
+
+          <FormInputGroup
+            type={inputTypes.MONITOR_EPISODES_SELECT}
+            name="monitor"
+            value={monitor}
             includeNoChange={true}
             includeNoChangeDisabled={false}
             onChange={onInputChange}

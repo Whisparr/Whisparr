@@ -138,5 +138,23 @@ namespace NzbDrone.Core.Test.ParserTests
         {
             Parser.Parser.ParseReleaseGroup(title).Should().BeNull();
         }
+
+        [TestCase("Lubed.25.06.24.Tess.Thompson.XXX.1080p.HEVC.x265.PRT", "PRT")]
+        [TestCase("Series.Title.S01E01.720p.WEB.H264.WRB", "WRB")]
+        [TestCase("Series.Title.S01E01.720p.WEB.H264.KTR", "KTR")]
+        [TestCase("Some.Series.23.05.15.Title.1080p.WEB.x265.ABC", "ABC")]
+        public void should_parse_period_prefixed_release_group(string title, string expected)
+        {
+            Parser.Parser.ParseReleaseGroup(title).Should().Be(expected);
+        }
+
+        [TestCase("Series.Title.S01E01.720p.WEB.x264")]
+        [TestCase("Series.Title.S01E01.720p.WEB.hevc")]
+        [TestCase("Series.Title.S01E01.720p.WEB.English")]
+        [TestCase("Series.Title.S01E01.720p.WEB.dvdrip")]
+        public void should_not_parse_codec_or_language_as_period_release_group(string title)
+        {
+            Parser.Parser.ParseReleaseGroup(title).Should().BeNull();
+        }
     }
 }

@@ -221,7 +221,7 @@ namespace NzbDrone.Core.Parser
         private static readonly Regex CleanQualityBracketsRegex = new Regex(@"\[[a-z0-9 ._-]+\]$",
                                                                    RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        private static readonly Regex ReleaseGroupRegex = new Regex(@"[.-](?<releasegroup>[a-z0-9]+(?<part2>-[a-z0-9]+)?(?!.+?(?:480p|576p|720p|1080p|2160p)))(?<!(?:WEB-DL|Blu-Ray|480p|576p|720p|1080p|2160p|DTS-HD|DTS-X|DTS-MA|DTS-ES|-ES|-EN|-CAT|[ ._]\d{4}-\d{2}|-\d{2})(?:\k<part2>)?)(?:\b|[-._ ]|$)|[-._ ]\[(?<releasegroup>[a-z0-9]+)\]$",
+        private static readonly Regex ReleaseGroupRegex = new Regex(@"-(?<releasegroup>[a-z0-9]+(?<part2>-[a-z0-9]+)?(?!.+?(?:480p|576p|720p|1080p|2160p)))(?<!(?:WEB-DL|Blu-Ray|480p|576p|720p|1080p|2160p|DTS-HD|DTS-X|DTS-MA|DTS-ES|-ES|-EN|-CAT|[ ._]\d{4}-\d{2}|-\d{2})(?:\k<part2>)?)(?:\b|[-._ ]|$)|[-._ ]\[(?<releasegroup>[a-z0-9]+)\]$",
                                                                 RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex InvalidReleaseGroupRegex = new Regex(@"^([se]\d+|[0-9a-f]{8})$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
@@ -599,7 +599,71 @@ namespace NzbDrone.Core.Parser
                 return group;
             }
 
+            // Fallback: check for period-prefixed release group at end (e.g., ".PRT")
+            var lastDotIndex = title.LastIndexOf('.');
+            if (lastDotIndex > 0 && lastDotIndex < title.Length - 1)
+            {
+                var candidate = title.Substring(lastDotIndex + 1);
+                if (IsValidPeriodReleaseGroup(candidate))
+                {
+                    return candidate;
+                }
+            }
+
             return null;
+        }
+
+        private static readonly HashSet<string> InvalidPeriodReleaseGroupTerms = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            // Video codecs
+            "x264", "x265", "h264", "h265", "hevc", "avc", "xvid", "divx", "vp9", "av1",
+
+            // Audio codecs
+            "aac", "ac3", "dts", "flac", "mp3", "eac3", "truehd", "atmos", "opus",
+
+            // Rip types / sources
+            "dvdrip", "bdrip", "brrip", "webrip", "hdrip", "hdtv", "pdtv", "dsr", "dvdscr",
+
+            // Common languages
+            "english", "spanish", "french", "german", "italian", "portuguese",
+            "russian", "japanese", "chinese", "korean", "dutch", "swedish",
+            "norwegian", "danish", "finnish", "polish", "czech", "hindi", "arabic", "turkish"
+        };
+
+        private static bool IsValidPeriodReleaseGroup(string candidate)
+        {
+            // Must be 2-8 characters
+            if (candidate.Length < 2 || candidate.Length > 8)
+            {
+                return false;
+            }
+
+            // Must be alphanumeric only
+            if (!candidate.All(c => char.IsLetterOrDigit(c)))
+            {
+                return false;
+            }
+
+            // Exclude known non-release-group terms
+            if (InvalidPeriodReleaseGroupTerms.Contains(candidate))
+            {
+                return false;
+            }
+
+            // Exclude hex-like strings (potential hashes) - 8+ hex chars
+            if (candidate.Length >= 8 && candidate.All(c => (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')))
+            {
+                return false;
+            }
+
+            // Exclude pure numbers
+            if (candidate.All(char.IsDigit))
+            {
+                return false;
+            }
+
+            // Passed all checks
+            return true;
         }
 
         public static string RemoveFileExtension(string title)

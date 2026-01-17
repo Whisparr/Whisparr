@@ -4,6 +4,7 @@ function getNewSeries(series, payload) {
     rootFolderPath,
     monitor,
     monitorNewItems,
+    seriesType,
     qualityProfileId,
     tags,
     searchForMissingEpisodes = false,
@@ -19,6 +20,7 @@ function getNewSeries(series, payload) {
   series.addOptions = addOptions;
   series.monitored = true;
   series.monitorNewItems = monitorNewItems;
+  series.seriesType = seriesType;
   series.qualityProfileId = qualityProfileId;
   series.rootFolderPath = rootFolderPath;
   series.tags = tags;

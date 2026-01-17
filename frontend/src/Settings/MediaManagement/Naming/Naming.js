@@ -42,6 +42,18 @@ class Naming extends Component {
     });
   };
 
+  onJavNamingModalOpenClick = () => {
+    this.setState({
+      isNamingModalOpen: true,
+      namingModalOptions: {
+        name: 'javEpisodeFormat',
+        season: true,
+        episode: true,
+        additional: true
+      }
+    });
+  };
+
   onSeriesFolderNamingModalOpenClick = () => {
     this.setState({
       isNamingModalOpen: true,
@@ -97,6 +109,8 @@ class Naming extends Component {
 
     const standardEpisodeFormatHelpTexts = [];
     const standardEpisodeFormatErrors = [];
+    const javEpisodeFormatHelpTexts = [];
+    const javEpisodeFormatErrors = [];
     const seriesFolderFormatHelpTexts = [];
     const seriesFolderFormatErrors = [];
 
@@ -105,6 +119,12 @@ class Naming extends Component {
         standardEpisodeFormatHelpTexts.push(`${translate('SingleEpisode')}: ${examples.singleEpisodeExample}`);
       } else {
         standardEpisodeFormatErrors.push({ message: translate('SingleEpisodeInvalidFormat') });
+      }
+
+      if (examples.javEpisodeExample) {
+        javEpisodeFormatHelpTexts.push(`${translate('Example')}: ${examples.javEpisodeExample}`);
+      } else if (settings.javEpisodeFormat && settings.javEpisodeFormat.value) {
+        javEpisodeFormatErrors.push({ message: translate('InvalidFormat') });
       }
 
       if (examples.seriesFolderExample) {
@@ -187,6 +207,21 @@ class Naming extends Component {
                         {...settings.standardEpisodeFormat}
                         helpTexts={standardEpisodeFormatHelpTexts}
                         errors={[...standardEpisodeFormatErrors, ...settings.standardEpisodeFormat.errors]}
+                      />
+                    </FormGroup>
+
+                    <FormGroup size={sizes.LARGE}>
+                      <FormLabel>{translate('JavEpisodeFormat')}</FormLabel>
+
+                      <FormInputGroup
+                        inputClassName={styles.namingInput}
+                        type={inputTypes.TEXT}
+                        name="javEpisodeFormat"
+                        buttons={<FormInputButton onPress={this.onJavNamingModalOpenClick}>?</FormInputButton>}
+                        onChange={onInputChange}
+                        {...settings.javEpisodeFormat}
+                        helpTexts={javEpisodeFormatHelpTexts}
+                        errors={[...javEpisodeFormatErrors, ...(settings.javEpisodeFormat?.errors || [])]}
                       />
                     </FormGroup>
                   </div>

@@ -15,6 +15,7 @@ import ModalHeader from 'Components/Modal/ModalHeader';
 import Popover from 'Components/Tooltip/Popover';
 import { icons, inputTypes, kinds, tooltipPositions } from 'Helpers/Props';
 import SeriesPoster from 'Series/SeriesPoster';
+import seriesTypeOptions from 'Utilities/Series/seriesTypeOptions';
 import translate from 'Utilities/String/translate';
 import styles from './AddNewSeriesModalContent.css';
 
@@ -43,6 +44,7 @@ class AddNewSeriesModalContent extends Component {
       isAdding,
       rootFolderPath,
       monitor,
+      seriesType,
       qualityProfileId,
       searchForMissingEpisodes,
       searchForCutoffUnmetEpisodes,
@@ -138,6 +140,19 @@ class AddNewSeriesModalContent extends Component {
                 </FormGroup>
 
                 <FormGroup>
+                  <FormLabel>{translate('SeriesType')}</FormLabel>
+
+                  <FormInputGroup
+                    type={inputTypes.SELECT}
+                    name="seriesType"
+                    values={seriesTypeOptions}
+                    helpText={translate('SeriesTypeHelpText')}
+                    onChange={onInputChange}
+                    {...seriesType}
+                  />
+                </FormGroup>
+
+                <FormGroup>
                   <FormLabel>{translate('QualityProfile')}</FormLabel>
 
                   <FormInputGroup
@@ -217,6 +232,7 @@ AddNewSeriesModalContent.propTypes = {
   addError: PropTypes.object,
   rootFolderPath: PropTypes.object,
   monitor: PropTypes.object.isRequired,
+  seriesType: PropTypes.object.isRequired,
   qualityProfileId: PropTypes.object,
   searchForMissingEpisodes: PropTypes.object.isRequired,
   searchForCutoffUnmetEpisodes: PropTypes.object.isRequired,

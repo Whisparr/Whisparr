@@ -191,12 +191,14 @@ namespace NzbDrone.Core.Organizer
                 return GetOriginalTitle(episodeFile, true) + extension;
             }
 
-            if (namingConfig.StandardEpisodeFormat.IsNullOrWhiteSpace())
-            {
-                throw new NamingFormatException("Standard episode format cannot be empty");
-            }
+            var pattern = series.SeriesType == SeriesTypes.Jav && !namingConfig.JavEpisodeFormat.IsNullOrWhiteSpace()
+                ? namingConfig.JavEpisodeFormat
+                : namingConfig.StandardEpisodeFormat;
 
-            var pattern = namingConfig.StandardEpisodeFormat;
+            if (pattern.IsNullOrWhiteSpace())
+            {
+                throw new NamingFormatException("Episode format cannot be empty");
+            }
 
             episodes = episodes.OrderBy(e => e.SeasonNumber).ThenBy(e => e.AirDate).ToList();
 
@@ -588,6 +590,11 @@ namespace NzbDrone.Core.Organizer
             {
                 var scene = episodes.FirstOrDefault();
                 return scene?.TvdbId.ToString() ?? "Unknown";
+            };
+            tokenHandlers["{External Id}"] = m =>
+            {
+                var scene = episodes.FirstOrDefault();
+                return scene?.ExternalId ?? string.Empty;
             };
         }
 

@@ -16,6 +16,8 @@ namespace NzbDrone.Core.Organizer
                                                                             RegexOptions.Compiled | RegexOptions.IgnoreCase);
         internal static readonly Regex ShortDateTokenRegex = new Regex(@"\{release[- _\.]?shortdate\}",
             RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        internal static readonly Regex ExternalIdTokenRegex = new Regex(@"\{external[- _\.]?id\}",
+            RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         public static IRuleBuilderOptions<T, string> ValidEpisodeFormat<T>(this IRuleBuilder<T, string> ruleBuilder)
         {
@@ -23,6 +25,13 @@ namespace NzbDrone.Core.Organizer
             ruleBuilder.SetValidator(new IllegalCharactersValidator());
 
             return ruleBuilder.SetValidator(new ValidStandardEpisodeFormatValidator());
+        }
+
+        public static IRuleBuilderOptions<T, string> ValidJavEpisodeFormat<T>(this IRuleBuilder<T, string> ruleBuilder)
+        {
+            ruleBuilder.SetValidator(new IllegalCharactersValidator());
+
+            return ruleBuilder.SetValidator(new ValidJavEpisodeFormatValidator());
         }
 
         public static IRuleBuilderOptions<T, string> ValidSeriesFolderFormat<T>(this IRuleBuilder<T, string> ruleBuilder)
@@ -56,6 +65,27 @@ namespace NzbDrone.Core.Organizer
             return FileNameBuilder.AirDateRegex.IsMatch(value) ||
                    FileNameValidation.OriginalTokenRegex.IsMatch(value) ||
                    FileNameValidation.ShortDateTokenRegex.IsMatch(value);
+        }
+    }
+
+    public class ValidJavEpisodeFormatValidator : PropertyValidator
+    {
+        protected override string GetDefaultMessageTemplate() => "Must contain External Id OR Original Title";
+
+        protected override bool IsValid(PropertyValidatorContext context)
+        {
+            if (context.PropertyValue is not string value)
+            {
+                return true;
+            }
+
+            if (value.IsNullOrWhiteSpace())
+            {
+                return true;
+            }
+
+            return FileNameValidation.ExternalIdTokenRegex.IsMatch(value) ||
+                   FileNameValidation.OriginalTokenRegex.IsMatch(value);
         }
     }
 

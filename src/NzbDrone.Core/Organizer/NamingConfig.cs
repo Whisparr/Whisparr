@@ -11,6 +11,7 @@ namespace NzbDrone.Core.Organizer
             ColonReplacementFormat = ColonReplacementFormat.Smart,
             MultiEpisodeStyle = MultiEpisodeStyle.PrefixedRange,
             StandardEpisodeFormat = "{Site Title} - {Release-Date} - {Episode Title} [{Quality Full}]",
+            JavEpisodeFormat = "{External Id}",
             SeriesFolderFormat = "{Site Title}"
         };
 
@@ -19,6 +20,7 @@ namespace NzbDrone.Core.Organizer
         public ColonReplacementFormat ColonReplacementFormat { get; set; }
         public MultiEpisodeStyle MultiEpisodeStyle { get; set; }
         public string StandardEpisodeFormat { get; set; }
+        public string JavEpisodeFormat { get; set; }
         public string SeriesFolderFormat { get; set; }
     }
 }

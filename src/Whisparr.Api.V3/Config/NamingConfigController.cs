@@ -31,6 +31,7 @@ namespace Whisparr.Api.V3.Config
 
             SharedValidator.RuleFor(c => c.MultiEpisodeStyle).InclusiveBetween(0, 5);
             SharedValidator.RuleFor(c => c.StandardEpisodeFormat).ValidEpisodeFormat();
+            SharedValidator.RuleFor(c => c.JavEpisodeFormat).ValidJavEpisodeFormat();
             SharedValidator.RuleFor(c => c.SeriesFolderFormat).ValidSeriesFolderFormat();
         }
 
@@ -81,6 +82,12 @@ namespace Whisparr.Api.V3.Config
             sampleResource.SingleEpisodeExample = _filenameValidationService.ValidateStandardFilename(singleEpisodeSampleResult) != null
                     ? null
                     : singleEpisodeSampleResult.FileName;
+
+            var javEpisodeSampleResult = _filenameSampleService.GetJavSample(nameSpec);
+
+            sampleResource.JavEpisodeExample = nameSpec.JavEpisodeFormat.IsNullOrWhiteSpace()
+                ? null
+                : javEpisodeSampleResult.FileName;
 
             sampleResource.SeriesFolderExample = nameSpec.SeriesFolderFormat.IsNullOrWhiteSpace()
                 ? null

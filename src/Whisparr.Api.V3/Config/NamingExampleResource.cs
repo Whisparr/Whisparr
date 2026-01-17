@@ -5,6 +5,7 @@ namespace Whisparr.Api.V3.Config
     public class NamingExampleResource
     {
         public string SingleEpisodeExample { get; set; }
+        public string JavEpisodeExample { get; set; }
         public string SeriesFolderExample { get; set; }
     }
 
@@ -21,6 +22,7 @@ namespace Whisparr.Api.V3.Config
                 ColonReplacementFormat = (int)model.ColonReplacementFormat,
                 MultiEpisodeStyle = (int)model.MultiEpisodeStyle,
                 StandardEpisodeFormat = model.StandardEpisodeFormat,
+                JavEpisodeFormat = model.JavEpisodeFormat,
                 SeriesFolderFormat = model.SeriesFolderFormat,
 
                 // IncludeSeriesTitle
@@ -53,6 +55,7 @@ namespace Whisparr.Api.V3.Config
                 MultiEpisodeStyle = (MultiEpisodeStyle)resource.MultiEpisodeStyle,
                 ColonReplacementFormat = (ColonReplacementFormat)resource.ColonReplacementFormat,
                 StandardEpisodeFormat = resource.StandardEpisodeFormat,
+                JavEpisodeFormat = resource.JavEpisodeFormat,
                 SeriesFolderFormat = resource.SeriesFolderFormat
             };
         }

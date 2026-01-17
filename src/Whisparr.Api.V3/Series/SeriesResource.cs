@@ -41,6 +41,7 @@ namespace Whisparr.Api.V3.Series
 
         // Editing Only
         public bool Monitored { get; set; }
+        public SeriesTypes SeriesType { get; set; }
         public NewItemMonitorTypes MonitorNewItems { get; set; }
 
         public bool UseSceneNumbering { get; set; }
@@ -101,6 +102,7 @@ namespace Whisparr.Api.V3.Series
                        QualityProfileId = model.QualityProfileId,
 
                        Monitored = model.Monitored,
+                       SeriesType = model.SeriesType,
                        MonitorNewItems = model.MonitorNewItems,
 
                        UseSceneNumbering = model.UseSceneNumbering,
@@ -158,6 +160,7 @@ namespace Whisparr.Api.V3.Series
                        QualityProfileId = resource.QualityProfileId,
 
                        Monitored = resource.Monitored,
+                       SeriesType = resource.SeriesType,
                        MonitorNewItems = resource.MonitorNewItems,
 
                        UseSceneNumbering = resource.UseSceneNumbering,

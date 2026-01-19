@@ -49,7 +49,6 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Plex
             content.AppendLine($"Title: {series.Title}");
             content.AppendLine($"Year: {series.Year}");
             content.AppendLine($"TvdbId: {series.TvdbId}");
-            content.AppendLine($"ImdbId: {series.ImdbId}");
 
             return new MetadataFileResult(".plexmatch", content.ToString());
         }

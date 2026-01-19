@@ -24,14 +24,9 @@ const seriesTypeOptions: ISeriesTypeOption[] = [
     format: 'Season and episode numbers (S01E05)',
   },
   {
-    key: seriesTypes.DAILY,
-    value: 'Daily / Date',
-    format: 'Date (2020-05-25)',
-  },
-  {
-    key: seriesTypes.ANIME,
-    value: 'Anime / Absolute',
-    format: 'Absolute episode Number (005)',
+    key: seriesTypes.JAV,
+    value: 'JAV',
+    format: 'JAV ID format (ABC-123)',
   },
 ];
 

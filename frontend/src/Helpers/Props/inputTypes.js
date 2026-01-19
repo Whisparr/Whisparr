@@ -15,6 +15,7 @@ export const INDEXER_SELECT = 'indexerSelect';
 export const LANGUAGE_SELECT = 'languageSelect';
 export const DOWNLOAD_CLIENT_SELECT = 'downloadClientSelect';
 export const ROOT_FOLDER_SELECT = 'rootFolderSelect';
+export const SERIES_TYPE_SELECT = 'seriesTypeSelect';
 export const SELECT = 'select';
 export const DYNAMIC_SELECT = 'dynamicSelect';
 export const TAG = 'tag';
@@ -41,6 +42,7 @@ export const all = [
   INDEXER_SELECT,
   DOWNLOAD_CLIENT_SELECT,
   ROOT_FOLDER_SELECT,
+  SERIES_TYPE_SELECT,
   LANGUAGE_SELECT,
   SELECT,
   DYNAMIC_SELECT,

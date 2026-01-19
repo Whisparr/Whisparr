@@ -24,8 +24,6 @@ namespace NzbDrone.Core.Validation.Paths
                 return false;
             }
 
-            context.MessageFormatter.AppendArgument("path", context.PropertyValue.ToString());
-
             return context.PropertyValue.ToString().IsPathValid(PathValidationType.CurrentOs);
         }
     }

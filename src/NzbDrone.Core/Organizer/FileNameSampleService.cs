@@ -10,6 +10,7 @@ namespace NzbDrone.Core.Organizer
     public interface IFilenameSampleService
     {
         SampleResult GetStandardSample(NamingConfig nameSpec);
+        SampleResult GetJavSample(NamingConfig nameSpec);
         string GetSeriesFolderSample(NamingConfig nameSpec);
     }
 
@@ -17,11 +18,15 @@ namespace NzbDrone.Core.Organizer
     {
         private readonly IBuildFileNames _buildFileNames;
         private static Series _standardSeries;
+        private static Series _javSeries;
         private static Episode _episode1;
         private static Episode _episode2;
         private static Episode _episode3;
+        private static Episode _javEpisode;
         private static List<Episode> _singleEpisode;
+        private static List<Episode> _javEpisodes;
         private static EpisodeFile _singleEpisodeFile;
+        private static EpisodeFile _javEpisodeFile;
         private static List<CustomFormat> _customFormats;
 
         public FileNameSampleService(IBuildFileNames buildFileNames)
@@ -121,6 +126,43 @@ namespace NzbDrone.Core.Organizer
                 ReleaseGroup = "RlsGrp",
                 MediaInfo = mediaInfo
             };
+
+            _javSeries = new Series
+            {
+                Title = "S1 No. 1 Style",
+                Year = 2020,
+                TvdbId = 98765,
+                Network = "S1",
+                SeriesType = SeriesTypes.Jav
+            };
+
+            _javEpisode = new Episode
+            {
+                SeasonNumber = 2023,
+                Title = "Scene Title",
+                AirDate = "2023-08-15",
+                AbsoluteEpisodeNumber = 1,
+                ExternalId = "SSIS-123",
+                Actors = new List<Actor>
+                {
+                    new Actor
+                    {
+                        Name = "Yua Mikami",
+                        Gender = Gender.Female
+                    }
+                }
+            };
+
+            _javEpisodes = new List<Episode> { _javEpisode };
+
+            _javEpisodeFile = new EpisodeFile
+            {
+                Quality = new QualityModel(Quality.HDTV1080p, new Revision(1)),
+                RelativePath = "SSIS-123.1080p.mkv",
+                SceneName = "SSIS-123",
+                ReleaseGroup = "JAV",
+                MediaInfo = mediaInfoAnime
+            };
         }
 
         public SampleResult GetStandardSample(NamingConfig nameSpec)
@@ -131,6 +173,19 @@ namespace NzbDrone.Core.Organizer
                 Series = _standardSeries,
                 Episodes = _singleEpisode,
                 EpisodeFile = _singleEpisodeFile
+            };
+
+            return result;
+        }
+
+        public SampleResult GetJavSample(NamingConfig nameSpec)
+        {
+            var result = new SampleResult
+            {
+                FileName = BuildSample(_javEpisodes, _javSeries, _javEpisodeFile, nameSpec, _customFormats),
+                Series = _javSeries,
+                Episodes = _javEpisodes,
+                EpisodeFile = _javEpisodeFile
             };
 
             return result;

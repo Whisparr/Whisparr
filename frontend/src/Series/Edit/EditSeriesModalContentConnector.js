@@ -39,6 +39,7 @@ function createMapStateToProps() {
       const seriesSettings = _.pick(series, [
         'monitored',
         'monitorNewItems',
+        'seriesType',
         'qualityProfileId',
         'path',
         'tags'

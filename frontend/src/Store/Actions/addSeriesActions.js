@@ -32,6 +32,7 @@ export const defaultState = {
   defaults: {
     rootFolderPath: '',
     monitor: monitorOptions[0].key,
+    seriesType: 'standard',
     qualityProfileId: 0,
     searchForMissingEpisodes: false,
     searchForCutoffUnmetEpisodes: false,

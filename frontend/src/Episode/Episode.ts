@@ -13,7 +13,10 @@ interface Episode extends ModelBase {
   tvdbId: number;
   episodeFileId: number;
   seasonNumber: number;
+  episodeNumber: number;
   releaseDate?: string;
+  airDate: string;
+  airDateUtc?: string;
   actors: Actor[];
   runtime: number;
   absoluteEpisodeNumber?: number;

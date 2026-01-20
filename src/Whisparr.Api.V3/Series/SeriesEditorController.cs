@@ -58,6 +58,11 @@ namespace Whisparr.Api.V3.Series
                     series.QualityProfileId = resource.QualityProfileId.Value;
                 }
 
+                if (resource.SeriesType.HasValue)
+                {
+                    series.SeriesType = resource.SeriesType.Value;
+                }
+
                 if (resource.RootFolderPath.IsNotNullOrWhiteSpace())
                 {
                     series.RootFolderPath = resource.RootFolderPath;

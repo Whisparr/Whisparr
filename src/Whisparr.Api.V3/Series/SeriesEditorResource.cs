@@ -10,6 +10,7 @@ namespace Whisparr.Api.V3.Series
         public NewItemMonitorTypes? MonitorNewItems { get; set; }
         public MonitoringOptions MonitoringOptions { get; set; }
         public int? QualityProfileId { get; set; }
+        public SeriesTypes? SeriesType { get; set; }
         public string RootFolderPath { get; set; }
         public List<int> Tags { get; set; }
         public ApplyTags ApplyTags { get; set; }

@@ -15,7 +15,6 @@ import ModalHeader from 'Components/Modal/ModalHeader';
 import Popover from 'Components/Tooltip/Popover';
 import { icons, inputTypes, kinds, tooltipPositions } from 'Helpers/Props';
 import MoveSeriesModal from 'Series/MoveSeries/MoveSeriesModal';
-import seriesTypeOptions from 'Utilities/Series/seriesTypeOptions';
 import translate from 'Utilities/String/translate';
 import styles from './EditSeriesModalContent.css';
 
@@ -133,9 +132,8 @@ class EditSeriesModalContent extends Component {
               <FormLabel>{translate('SeriesType')}</FormLabel>
 
               <FormInputGroup
-                type={inputTypes.SELECT}
+                type={inputTypes.SERIES_TYPE_SELECT}
                 name="seriesType"
-                values={seriesTypeOptions}
                 helpText={translate('SeriesTypeHelpText')}
                 {...seriesType}
                 onChange={onInputChange}

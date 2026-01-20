@@ -21,6 +21,7 @@ import PasswordInput from './PasswordInput';
 import PathInputConnector from './PathInputConnector';
 import QualityProfileSelectInputConnector from './QualityProfileSelectInputConnector';
 import RootFolderSelectInputConnector from './RootFolderSelectInputConnector';
+import SeriesTypeSelectInput from './SeriesTypeSelectInput';
 import TagInputConnector from './TagInputConnector';
 import TagSelectInputConnector from './TagSelectInputConnector';
 import TextArea from './TextArea';
@@ -75,6 +76,9 @@ function getComponent(type) {
 
     case inputTypes.ROOT_FOLDER_SELECT:
       return RootFolderSelectInputConnector;
+
+    case inputTypes.SERIES_TYPE_SELECT:
+      return SeriesTypeSelectInput;
 
     case inputTypes.SELECT:
       return EnhancedSelectInput;

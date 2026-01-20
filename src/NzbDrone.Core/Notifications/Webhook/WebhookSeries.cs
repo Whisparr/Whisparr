@@ -9,6 +9,8 @@ namespace NzbDrone.Core.Notifications.Webhook
         public string TitleSlug { get; set; }
         public string Path { get; set; }
         public int TvdbId { get; set; }
+        public SeriesTypes Type { get; set; }
+        public int Year { get; set; }
 
         public WebhookSeries()
         {
@@ -21,6 +23,8 @@ namespace NzbDrone.Core.Notifications.Webhook
             TitleSlug = series.TitleSlug;
             Path = series.Path;
             TvdbId = series.TvdbId;
+            Type = series.SeriesType;
+            Year = series.Year;
         }
     }
 }

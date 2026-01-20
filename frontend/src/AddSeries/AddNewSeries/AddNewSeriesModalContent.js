@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import SeriesMonitoringOptionsPopoverContent from 'AddSeries/SeriesMonitoringOptionsPopoverContent';
+import SeriesTypePopoverContent from 'AddSeries/SeriesTypePopoverContent';
 import CheckInput from 'Components/Form/CheckInput';
 import Form from 'Components/Form/Form';
 import FormGroup from 'Components/Form/FormGroup';
@@ -15,7 +16,6 @@ import ModalHeader from 'Components/Modal/ModalHeader';
 import Popover from 'Components/Tooltip/Popover';
 import { icons, inputTypes, kinds, tooltipPositions } from 'Helpers/Props';
 import SeriesPoster from 'Series/SeriesPoster';
-import seriesTypeOptions from 'Utilities/Series/seriesTypeOptions';
 import translate from 'Utilities/String/translate';
 import styles from './AddNewSeriesModalContent.css';
 
@@ -140,13 +140,25 @@ class AddNewSeriesModalContent extends Component {
                 </FormGroup>
 
                 <FormGroup>
-                  <FormLabel>{translate('SeriesType')}</FormLabel>
+                  <FormLabel>
+                    {translate('SeriesType')}
+
+                    <Popover
+                      anchor={
+                        <Icon
+                          className={styles.labelIcon}
+                          name={icons.INFO}
+                        />
+                      }
+                      title={translate('SeriesTypes')}
+                      body={<SeriesTypePopoverContent />}
+                      position={tooltipPositions.RIGHT}
+                    />
+                  </FormLabel>
 
                   <FormInputGroup
-                    type={inputTypes.SELECT}
+                    type={inputTypes.SERIES_TYPE_SELECT}
                     name="seriesType"
-                    values={seriesTypeOptions}
-                    helpText={translate('SeriesTypeHelpText')}
                     onChange={onInputChange}
                     {...seriesType}
                   />

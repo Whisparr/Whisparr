@@ -257,6 +257,9 @@ function EditSeriesModalContent(props: EditSeriesModalContentProps) {
             value={qualityProfileId}
             includeNoChange={true}
             includeNoChangeDisabled={false}
+            helpText={translate(
+              'Series type is used for renaming, parsing and searching'
+            )}
             onChange={onInputChange}
           />
         </FormGroup>

@@ -12,6 +12,7 @@ namespace NzbDrone.Core.Notifications.Webhook
         public WebhookEpisode(Episode episode)
         {
             Id = episode.Id;
+            EpisodeNumber = episode.AbsoluteEpisodeNumber ?? 0;
             SeasonNumber = episode.SeasonNumber;
             Title = episode.Title;
             Overview = episode.Overview;
@@ -21,6 +22,7 @@ namespace NzbDrone.Core.Notifications.Webhook
         }
 
         public int Id { get; set; }
+        public int EpisodeNumber { get; set; }
         public int SeasonNumber { get; set; }
         public string Title { get; set; }
         public string Overview { get; set; }

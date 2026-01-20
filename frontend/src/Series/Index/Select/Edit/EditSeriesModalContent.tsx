@@ -20,6 +20,7 @@ interface SavePayload {
   monitorNewItems?: string;
   monitoringOptions?: { monitor: string };
   qualityProfileId?: number;
+  seriesType?: string;
   seasonFolder?: boolean;
   rootFolderPath?: string;
   moveFiles?: boolean;
@@ -86,6 +87,7 @@ function EditSeriesModalContent(props: EditSeriesModalContentProps) {
   const [qualityProfileId, setQualityProfileId] = useState<string | number>(
     NO_CHANGE
   );
+  const [seriesType, setSeriesType] = useState(NO_CHANGE);
   const [seasonFolder, setSeasonFolder] = useState(NO_CHANGE);
   const [rootFolderPath, setRootFolderPath] = useState(NO_CHANGE);
   const [isConfirmMoveModalOpen, setIsConfirmMoveModalOpen] = useState(false);
@@ -115,6 +117,11 @@ function EditSeriesModalContent(props: EditSeriesModalContentProps) {
         payload.qualityProfileId = qualityProfileId as number;
       }
 
+      if (seriesType !== NO_CHANGE) {
+        hasChanges = true;
+        payload.seriesType = seriesType;
+      }
+
       if (seasonFolder !== NO_CHANGE) {
         hasChanges = true;
         payload.seasonFolder = seasonFolder === 'yes';
@@ -137,6 +144,7 @@ function EditSeriesModalContent(props: EditSeriesModalContentProps) {
       monitorNewItems,
       monitor,
       qualityProfileId,
+      seriesType,
       seasonFolder,
       rootFolderPath,
       onSavePress,
@@ -158,6 +166,9 @@ function EditSeriesModalContent(props: EditSeriesModalContentProps) {
           break;
         case 'qualityProfileId':
           setQualityProfileId(value);
+          break;
+        case 'seriesType':
+          setSeriesType(value);
           break;
         case 'seasonFolder':
           setSeasonFolder(value);
@@ -257,9 +268,20 @@ function EditSeriesModalContent(props: EditSeriesModalContentProps) {
             value={qualityProfileId}
             includeNoChange={true}
             includeNoChangeDisabled={false}
-            helpText={translate(
-              'Series type is used for renaming, parsing and searching'
-            )}
+            onChange={onInputChange}
+          />
+        </FormGroup>
+
+        <FormGroup>
+          <FormLabel>{translate('SeriesType')}</FormLabel>
+
+          <FormInputGroup
+            type={inputTypes.SERIES_TYPE_SELECT}
+            name="seriesType"
+            value={seriesType}
+            includeNoChange={true}
+            includeNoChangeDisabled={false}
+            helpText={translate('SeriesTypeHelpText')}
             onChange={onInputChange}
           />
         </FormGroup>

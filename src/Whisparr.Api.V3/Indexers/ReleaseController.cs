@@ -85,10 +85,26 @@ namespace Whisparr.Api.V3.Indexers
                 {
                     ValidateForceDownloadRequest(release);
 
-                    var forceSeries = _seriesService.GetSeries(release.SeriesId!.Value);
-                    var forceEpisodes = _episodeService.GetEpisodes(release.EpisodeIds);
+                    // Clone the remote episode so we don't overwrite anything on the original
+                    remoteEpisode = new RemoteEpisode
+                    {
+                        Release = remoteEpisode.Release,
+                        ParsedEpisodeInfo = remoteEpisode.ParsedEpisodeInfo.JsonClone(),
+                        SceneMapping = remoteEpisode.SceneMapping,
+                        MappedSeasonNumber = remoteEpisode.MappedSeasonNumber,
+                        EpisodeRequested = remoteEpisode.EpisodeRequested,
+                        DownloadAllowed = remoteEpisode.DownloadAllowed,
+                        SeedConfiguration = remoteEpisode.SeedConfiguration,
+                        CustomFormats = remoteEpisode.CustomFormats,
+                        CustomFormatScore = remoteEpisode.CustomFormatScore,
+                        SeriesMatchType = remoteEpisode.SeriesMatchType,
+                        ReleaseSource = remoteEpisode.ReleaseSource
+                    };
 
-                    remoteEpisode = RemoteEpisode.CreateForceOverride(remoteEpisode, forceSeries, forceEpisodes, release.Quality, release.Languages);
+                    remoteEpisode.Series = _seriesService.GetSeries(release.SeriesId!.Value);
+                    remoteEpisode.Episodes = _episodeService.GetEpisodes(release.EpisodeIds);
+                    remoteEpisode.ParsedEpisodeInfo.Quality = release.Quality;
+                    remoteEpisode.Languages = release.Languages;
                 }
 
                 if (remoteEpisode.Series == null)

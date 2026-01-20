@@ -85,10 +85,10 @@ namespace Whisparr.Api.V3.Indexers
                 {
                     ValidateForceDownloadRequest(release);
 
-                    var forceSeries = _seriesService.GetSeries(release.SeriesId!.Value);
-                    var forceEpisodes = _episodeService.GetEpisodes(release.EpisodeIds);
+                    var series = _seriesService.GetSeries(release.SeriesId!.Value);
+                    var episodes = _episodeService.GetEpisodes(release.EpisodeIds);
 
-                    remoteEpisode = RemoteEpisode.CreateForceOverride(remoteEpisode, forceSeries, forceEpisodes, release.Quality, release.Languages);
+                    remoteEpisode = RemoteEpisode.CreateForceOverride(remoteEpisode, series, episodes, release.Quality, release.Languages);
                 }
 
                 if (remoteEpisode.Series == null)

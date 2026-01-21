@@ -84,11 +84,13 @@ jobs:
       - name: Get Previous Release
         id: previous-release
         uses: cardinalby/git-get-release-action@v1
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           latest: true
           prerelease: ${{ inputs.branch != 'v2' }}
+          doNotFailIfNotFound: true
 
       - name: Enable GPG signing
         uses: crazy-max/ghaction-import-gpg@v6
@@ -112,7 +114,11 @@ jobs:
           PREV_TAG="${{ steps.previous-release.outputs.tag_name }}"
           CUR_TAG="v${{ inputs.version }}"
           echo "## What's Changed" > changelog.md
-          git log "$PREV_TAG..$CUR_TAG" --pretty=format:"- %s (%h) - @%an" >> changelog.md
+          if [ -n "$PREV_TAG" ]; then
+            git log "$PREV_TAG..$CUR_TAG" --pretty=format:"- %s (%h) - @%an" >> changelog.md
+          else
+            echo "Initial release" >> changelog.md
+          fi
           cat changelog.md
 
       - name: Create release

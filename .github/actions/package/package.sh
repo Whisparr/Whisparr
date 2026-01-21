@@ -17,7 +17,7 @@ do
   name="${runtime##*/}"
   folderName="$runtime/$framework"
   whisparrFolder="$folderName/Whisparr"
-  archiveName="Whisparr.$safeBranch.$WHISPARR_VERSION.$name"
+  archiveName="Whisparr.$WHISPARR_VERSION.$name"
 
   if [[ "$name" == 'UI' ]]; then
     continue

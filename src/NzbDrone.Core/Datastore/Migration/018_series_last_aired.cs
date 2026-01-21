@@ -1,0 +1,14 @@
+using FluentMigrator;
+using NzbDrone.Core.Datastore.Migration.Framework;
+
+namespace NzbDrone.Core.Datastore.Migration
+{
+    [Migration(18)]
+    public class series_last_aired : NzbDroneMigrationBase
+    {
+        protected override void MainDbUpgrade()
+        {
+            Alter.Table("Series").AddColumn("LastAired").AsDateTime().Nullable();
+        }
+    }
+}

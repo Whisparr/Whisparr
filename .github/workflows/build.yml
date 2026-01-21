@@ -23,8 +23,8 @@ env:
   FRAMEWORK: net6.0
   RAW_BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
   WHISPARR_MAJOR_VERSION: 2
-  VERSION: 2.0.1
-  WHISPARR_ASSEMBLY_VERSION: 2.0.1.${{ github.run_number }}
+  VERSION: 2.1.0
+  WHISPARR_ASSEMBLY_VERSION: 2.1.0.${{ github.run_number }}
 
 jobs:
   prepare:

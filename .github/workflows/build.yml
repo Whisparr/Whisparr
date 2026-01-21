@@ -1,0 +1,245 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - v2-develop
+      - v2
+    paths-ignore:
+      - "src/Whisparr.Api.*/openapi.json"
+  pull_request:
+    branches:
+      - v2-develop
+      - v2
+    paths-ignore:
+      - "src/NzbDrone.Core/Localization/Core/**"
+      - "src/Whisparr.Api.*/openapi.json"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  FRAMEWORK: net6.0
+  RAW_BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+  WHISPARR_MAJOR_VERSION: 2
+  VERSION: 2.0.1
+  WHISPARR_ASSEMBLY_VERSION: 2.0.1.${{ github.run_number }}
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      framework: ${{ steps.variables.outputs.framework }}
+      major_version: ${{ steps.variables.outputs.major_version }}
+      version: ${{ steps.variables.outputs.version }}
+      branch: ${{ steps.variables.outputs.branch }}
+    steps:
+      - name: Setup Environment Variables
+        id: variables
+        shell: bash
+        run: |
+          if [[ "${{ github.ref_name }}" == "v2-develop" ]]; then
+            SEMVER_LABEL="develop"
+          else
+            SEMVER_LABEL="release"
+          fi
+          echo "framework=${{ env.FRAMEWORK }}" >> "$GITHUB_OUTPUT"
+          echo "major_version=${{ env.WHISPARR_MAJOR_VERSION }}" >> "$GITHUB_OUTPUT"
+          echo "version=${{ env.VERSION }}-${SEMVER_LABEL}.${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+          echo "branch=${RAW_BRANCH_NAME//\//-}" >> "$GITHUB_OUTPUT"
+
+  backend:
+    needs: prepare
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runtime: freebsd-x64
+            package_tests: false
+            os: ubuntu-latest
+          - runtime: linux-arm
+            package_tests: false
+            os: ubuntu-latest
+          - runtime: linux-arm64
+            package_tests: false
+            os: ubuntu-latest
+          - runtime: linux-musl-arm64
+            package_tests: false
+            os: ubuntu-latest
+          - runtime: linux-musl-x64
+            package_tests: false
+            os: ubuntu-latest
+          - runtime: linux-x64
+            package_tests: true
+            os: ubuntu-latest
+          - runtime: osx-arm64
+            package_tests: true
+            os: ubuntu-latest
+          - runtime: osx-x64
+            package_tests: false
+            os: ubuntu-latest
+          - runtime: win-x64
+            package_tests: true
+            os: ubuntu-latest
+          - runtime: win-x86
+            package_tests: false
+            os: ubuntu-latest
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build
+        uses: ./.github/actions/build
+        with:
+          branch: ${{ needs.prepare.outputs.branch }}
+          version: ${{ needs.prepare.outputs.version }}
+          framework: ${{ needs.prepare.outputs.framework }}
+          runtime: ${{ matrix.runtime }}
+          package_tests: ${{ matrix.package_tests }}
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Yarn Install
+        run: yarn install --frozen-lockfile
+
+      - name: Lint
+        run: yarn lint
+
+      - name: Build
+        run: yarn build --env production
+
+      - name: Publish UI Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build_ui
+          path: _output/UI/**/*
+
+  unit_test:
+    needs: backend
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            artifact: tests-linux-x64
+            binary_artifact: build-linux-x64
+            filter: TestCategory!=ManualTest&TestCategory!=WINDOWS&TestCategory!=IntegrationTest&TestCategory!=AutomationTest
+          - os: macos-latest
+            artifact: tests-osx-arm64
+            binary_artifact: build-osx-arm64
+            filter: TestCategory!=ManualTest&TestCategory!=WINDOWS&TestCategory!=IntegrationTest&TestCategory!=AutomationTest
+          - os: windows-latest
+            artifact: tests-win-x64
+            binary_artifact: build-win-x64
+            filter: TestCategory!=ManualTest&TestCategory!=LINUX&TestCategory!=IntegrationTest&TestCategory!=AutomationTest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Test
+        uses: ./.github/actions/test
+        with:
+          os: ${{ matrix.os }}
+          artifact: ${{ matrix.artifact }}
+          pattern: Whisparr.*.Test.dll
+          filter: ${{ matrix.filter }}
+
+  unit_test_postgres:
+    needs: backend
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        postgres-version: [14, 15, 16]
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Test
+        uses: ./.github/actions/test
+        with:
+          os: ubuntu-latest
+          artifact: tests-linux-x64
+          pattern: Whisparr.*.Test.dll
+          filter: TestCategory!=ManualTest&TestCategory!=WINDOWS&TestCategory!=IntegrationTest&TestCategory!=AutomationTest
+          use_postgres: true
+          postgres-version: ${{ matrix.postgres-version }}
+
+  integration_test:
+    needs: [prepare, backend]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            artifact: tests-linux-x64
+            filter: TestCategory!=ManualTest&TestCategory!=WINDOWS&TestCategory=IntegrationTest
+            binary_artifact: build-linux-x64
+            binary_path: linux-x64/${{ needs.prepare.outputs.framework }}/Whisparr
+          - os: macos-latest
+            artifact: tests-osx-arm64
+            filter: TestCategory!=ManualTest&TestCategory!=WINDOWS&TestCategory=IntegrationTest
+            binary_artifact: build-osx-arm64
+            binary_path: osx-arm64/${{ needs.prepare.outputs.framework }}/Whisparr
+          - os: windows-latest
+            artifact: tests-win-x64
+            filter: TestCategory!=ManualTest&TestCategory!=LINUX&TestCategory=IntegrationTest
+            binary_artifact: build-win-x64
+            binary_path: win-x64/${{ needs.prepare.outputs.framework }}/Whisparr
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Test
+        uses: ./.github/actions/test
+        with:
+          os: ${{ matrix.os }}
+          artifact: ${{ matrix.artifact }}
+          pattern: Whisparr.*.Test.dll
+          filter: ${{ matrix.filter }}
+          integration_tests: true
+          binary_artifact: ${{ matrix.binary_artifact }}
+          binary_path: ${{ matrix.binary_path }}
+
+  deploy:
+    needs:
+      [
+        prepare,
+        backend,
+        frontend,
+        unit_test,
+        unit_test_postgres,
+        integration_test,
+      ]
+    secrets: inherit
+    uses: ./.github/workflows/deploy.yml
+    with:
+      framework: ${{ needs.prepare.outputs.framework }}
+      branch: ${{ needs.prepare.outputs.branch }}
+      major_version: ${{ needs.prepare.outputs.major_version }}
+      version: ${{ needs.prepare.outputs.version }}

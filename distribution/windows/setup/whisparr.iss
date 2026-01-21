@@ -2,13 +2,16 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define AppName "Whisparr"
-#define AppPublisher "Team Servarr"
+#define AppPublisher "Team Whisparr"
 #define AppURL "https://whisparr.com/"
 #define ForumsURL "https://whisparr.com/discord"
 #define AppExeName "Whisparr.exe"
-#define BaseVersion GetEnv('MAJORVERSION')
-#define BuildNumber GetEnv('MINORVERSION')
-#define BuildVersion GetEnv('WHISPARRVERSION')
+#define BuildNumber "2.0"
+#define BuildNumber GetEnv('WHISPARR_VERSION')
+#define MajorVersion GetEnv('WHISPARR_MAJOR_VERSION')
+#define BranchName GetEnv('SAFE_BRANCH')
+#define Framework GetEnv('FRAMEWORK')
+#define Runtime GetEnv('RUNTIME')
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -16,7 +19,7 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{56C1065D-3523-4025-B76D-6F73F67F7F69}
 AppName={#AppName}
-AppVersion={#BaseVersion}
+AppVersion={#MajorVersion}
 AppPublisher={#AppPublisher}
 AppPublisherURL={#AppURL}
 AppSupportURL={#ForumsURL}
@@ -25,7 +28,7 @@ DefaultDirName={commonappdata}\Whisparr
 DisableDirPage=yes
 DefaultGroupName={#AppName}
 DisableProgramGroupPage=yes
-OutputBaseFilename=Whisparr.{#BuildVersion}.{#Runtime}
+OutputBaseFilename=Whisparr.{#BranchName}.{#BuildNumber}.{#Runtime}-installer
 SolidCompression=yes
 AppCopyright=Creative Commons 3.0 License
 AllowUNCPath=False
@@ -34,7 +37,7 @@ DisableReadyPage=True
 CompressionThreads=2
 Compression=lzma2/normal
 AppContact={#ForumsURL}
-VersionInfoVersion={#BaseVersion}.{#BuildNumber}
+VersionInfoVersion={#MajorVersion}
 SetupLogging=yes
 OutputDir=output
 WizardStyle=modern
@@ -52,8 +55,8 @@ Name: "none"; Description: "Do not start automatically"; GroupDescription: "Star
 Name: "{app}"; Permissions: users-modify
 
 [Files]
-Source: "..\..\..\_artifacts\{#Runtime}\{#Framework}\Whisparr\Whisparr.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "..\..\..\_artifacts\{#Runtime}\{#Framework}\Whisparr\*"; Excludes: "Whisparr.Update"; DestDir: "{app}\bin"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\..\_output\{#Runtime}\{#Framework}\Whisparr\Whisparr.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "..\..\..\_output\{#Runtime}\{#Framework}\Whisparr\*"; Excludes: "Whisparr.Update"; DestDir: "{app}\bin"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

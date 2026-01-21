@@ -2362,6 +2362,39 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "seriesIds",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          },
+          {
+            "name": "languages",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          },
+          {
+            "name": "quality",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
           }
         ],
         "responses": {
@@ -2916,101 +2949,6 @@
         "responses": {
           "200": {
             "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/v3/config/importlist": {
-      "get": {
-        "tags": [
-          "ImportListConfig"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ImportListConfigResource"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v3/config/importlist/{id}": {
-      "put": {
-        "tags": [
-          "ImportListConfig"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ImportListConfigResource"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ImportListConfigResource"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ImportListConfigResource"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ImportListConfigResource"
-                }
-              }
-            }
-          }
-        }
-      },
-      "get": {
-        "tags": [
-          "ImportListConfig"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ImportListConfigResource"
-                }
-              }
-            }
           }
         }
       }
@@ -4667,6 +4605,13 @@
             }
           },
           {
+            "name": "javEpisodeFormat",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "name": "seriesFolderFormat",
             "in": "query",
             "schema": {
@@ -5417,14 +5362,6 @@
               "type": "boolean",
               "default": false
             }
-          },
-          {
-            "name": "changeCategory",
-            "in": "query",
-            "schema": {
-              "type": "boolean",
-              "default": false
-            }
           }
         ],
         "responses": {
@@ -5458,14 +5395,6 @@
           },
           {
             "name": "skipRedownload",
-            "in": "query",
-            "schema": {
-              "type": "boolean",
-              "default": false
-            }
-          },
-          {
-            "name": "changeCategory",
             "in": "query",
             "schema": {
               "type": "boolean",
@@ -5559,6 +5488,43 @@
             "schema": {
               "type": "boolean",
               "default": false
+            }
+          },
+          {
+            "name": "seriesIds",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          },
+          {
+            "name": "protocol",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/DownloadProtocol"
+            }
+          },
+          {
+            "name": "languages",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          },
+          {
+            "name": "quality",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
             }
           }
         ],
@@ -7990,6 +7956,9 @@
           },
           "autoRedownloadFailed": {
             "type": "boolean"
+          },
+          "autoRedownloadFailedFromInteractiveSearch": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -8601,6 +8570,10 @@
             "type": "string",
             "nullable": true
           },
+          "passwordConfirmation": {
+            "type": "string",
+            "nullable": true
+          },
           "logLevel": {
             "type": "string",
             "nullable": true
@@ -8770,23 +8743,19 @@
             "type": "integer",
             "format": "int32",
             "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "ImportListConfigResource": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int32"
           },
-          "listSyncLevel": {
-            "$ref": "#/components/schemas/ListSyncLevelType"
+          "searchForMissingEpisodes": {
+            "type": "boolean",
+            "nullable": true
           },
-          "listSyncTag": {
-            "type": "integer",
-            "format": "int32"
+          "shouldMonitor": {
+            "$ref": "#/components/schemas/ImportListMonitorTypes"
+          },
+          "monitorNewItems": {
+            "$ref": "#/components/schemas/NewItemMonitorTypes"
+          },
+          "siteMonitorType": {
+            "$ref": "#/components/schemas/MonitorTypes"
           }
         },
         "additionalProperties": false
@@ -8873,11 +8842,17 @@
           "enableAutomaticAdd": {
             "type": "boolean"
           },
+          "searchForMissingEpisodes": {
+            "type": "boolean"
+          },
           "shouldMonitor": {
             "$ref": "#/components/schemas/ImportListMonitorTypes"
           },
           "siteMonitorType": {
             "$ref": "#/components/schemas/MonitorTypes"
+          },
+          "monitorNewItems": {
+            "$ref": "#/components/schemas/NewItemMonitorTypes"
           },
           "rootFolderPath": {
             "type": "string",
@@ -9140,15 +9115,6 @@
           }
         },
         "additionalProperties": false
-      },
-      "ListSyncLevelType": {
-        "enum": [
-          "disabled",
-          "logOnly",
-          "keepAndUnmonitor",
-          "keepAndTag"
-        ],
-        "type": "string"
       },
       "LocalizationLanguageResource": {
         "type": "object",
@@ -9735,6 +9701,10 @@
             "type": "string",
             "nullable": true
           },
+          "javEpisodeFormat": {
+            "type": "string",
+            "nullable": true
+          },
           "seriesFolderFormat": {
             "type": "string",
             "nullable": true
@@ -9761,6 +9731,13 @@
           }
         },
         "additionalProperties": false
+      },
+      "NewItemMonitorTypes": {
+        "enum": [
+          "all",
+          "none"
+        ],
+        "type": "string"
       },
       "NotificationResource": {
         "type": "object",
@@ -9987,6 +9964,10 @@
             "format": "int32"
           },
           "releaseTokens": {
+            "type": "string",
+            "nullable": true
+          },
+          "externalId": {
             "type": "string",
             "nullable": true
           },
@@ -10342,9 +10323,6 @@
           "downloadClient": {
             "type": "string",
             "nullable": true
-          },
-          "downloadClientHasPostImportCategory": {
-            "type": "boolean"
           },
           "indexer": {
             "type": "string",
@@ -10719,6 +10697,10 @@
             "format": "int32",
             "nullable": true
           },
+          "downloadClient": {
+            "type": "string",
+            "nullable": true
+          },
           "shouldOverride": {
             "type": "boolean",
             "nullable": true
@@ -10988,10 +10970,19 @@
             "type": "boolean",
             "nullable": true
           },
+          "monitorNewItems": {
+            "$ref": "#/components/schemas/NewItemMonitorTypes"
+          },
+          "monitoringOptions": {
+            "$ref": "#/components/schemas/MonitoringOptions"
+          },
           "qualityProfileId": {
             "type": "integer",
             "format": "int32",
             "nullable": true
+          },
+          "seriesType": {
+            "$ref": "#/components/schemas/SeriesTypes"
           },
           "rootFolderPath": {
             "type": "string",
@@ -11099,6 +11090,12 @@
           },
           "monitored": {
             "type": "boolean"
+          },
+          "seriesType": {
+            "$ref": "#/components/schemas/SeriesTypes"
+          },
+          "monitorNewItems": {
+            "$ref": "#/components/schemas/NewItemMonitorTypes"
           },
           "useSceneNumbering": {
             "type": "boolean"
@@ -11243,6 +11240,13 @@
           }
         },
         "additionalProperties": false
+      },
+      "SeriesTypes": {
+        "enum": [
+          "standard",
+          "jav"
+        ],
+        "type": "string"
       },
       "SortDirection": {
         "enum": [

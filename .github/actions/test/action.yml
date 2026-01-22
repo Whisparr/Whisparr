@@ -1,0 +1,112 @@
+name: Test
+description: Runs unit/integration tests
+
+inputs:
+  use_postgres:
+    description: 'Whether postgres should be used for the database'
+  postgres-version:
+    description: 'Which postgres version should be used for the database'
+  os:
+    description: 'OS that the tests are running on'
+    required: true
+  artifact:
+    description: 'Test binary artifact'
+    required: true
+  pattern:
+    description: 'Pattern for DLLs'
+    required: true
+  filter:
+    description: 'Filter for tests'
+    required: true
+  integration_tests:
+    description: 'True if running integration tests'
+  binary_artifact:
+    description: 'Binary artifact for integration tests'
+  binary_path:
+    description: 'Path within binary artifact for integration tests'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '6.0.x'
+
+    - name: Setup Postgres
+      if: ${{ inputs.use_postgres }}
+      uses: ikalnytskyi/action-setup-postgres@v6
+      with:
+        postgres-version: ${{ inputs.postgres-version }}
+
+    - name: Setup Test Variables
+      shell: bash
+      run: |
+        echo "RESULTS_NAME=${{ inputs.integration_tests && 'integration-' || 'unit-' }}${{ inputs.artifact }}${{ inputs.use_postgres && '-postgres' || '' }}${{ inputs.use_postgres && inputs.postgres-version || '' }}" >> "$GITHUB_ENV"
+
+    - name: Setup Postgres Environment Variables
+      if: ${{ inputs.use_postgres }}
+      shell: bash
+      run: |
+        echo "Whisparr__Postgres__Host=localhost" >> "$GITHUB_ENV"
+        echo "Whisparr__Postgres__Port=5432" >> "$GITHUB_ENV"
+        echo "Whisparr__Postgres__User=postgres" >> "$GITHUB_ENV"
+        echo "Whisparr__Postgres__Password=postgres" >> "$GITHUB_ENV"
+
+    - name: Download Tests Artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ inputs.artifact }}
+        path: _tests
+
+    - name: Download Binary Artifact
+      if: ${{ inputs.integration_tests }}
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ inputs.binary_artifact }}
+        path: _output
+
+    - name: Set up binary artifact
+      if: ${{ inputs.binary_path != '' }}
+      shell: bash
+      run: |
+        mv ./_output/${{inputs.binary_path}} ./bin
+        echo "Moved Whisparr binary folder to ./bin."
+        ls -la ./bin/
+        if [ -f "./bin/Whisparr" ]; then
+          echo "./bin/Whisparr executable exists."
+        else
+          echo "ERROR: ./bin/Whisparr does not exist!" >&2
+          exit 1
+        fi
+
+    - name: Make executable
+      if: startsWith(inputs.os, 'windows') != true
+      shell: bash
+      run: chmod +x ./_tests/Whisparr.Test.Dummy && chmod +x ./_tests/ffprobe
+
+    - name: Make Whisparr binary executable and verify
+      if: ${{ inputs.integration_tests && !startsWith(inputs.os, 'windows') }}
+      shell: bash
+      run: |
+        chmod +x ./bin/Whisparr
+        chmod +x ./bin/ffprobe
+        if [ -x "./bin/Whisparr" ]; then
+          echo "./bin/Whisparr is executable."
+        else
+          echo "ERROR: ./bin/Whisparr is NOT executable!" >&2
+          exit 1
+        fi
+        ls -l ./bin/Whisparr ./bin/ffprobe
+
+    - name: Run tests
+      shell: bash
+      run: |
+        dotnet test ./_tests/Whisparr.*.Test.dll --filter "${{ inputs.filter }}" --logger "trx;LogFileName=${{ env.RESULTS_NAME }}.trx" --logger "GitHubActions;summary.includePassedTests=true;summary.includeSkippedTests=true"
+
+    - name: Upload Test Results
+      if: ${{ !cancelled() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: results-${{ env.RESULTS_NAME }}
+        path: TestResults/*.trx

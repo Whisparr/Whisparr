@@ -141,6 +141,16 @@
                 "name": "Whisparr.2.0.0-release.25.win-x64.zip",
                 "digest": "sha256:old3333333333333333333333333333333333333333333333333333333333333",
                 "browser_download_url": "https://github.com/Whisparr/Whisparr/releases/download/v2.0.0-release.25/Whisparr.2.0.0-release.25.win-x64.zip"
+            },
+            {
+                "name": "Whisparr.2.0.0-release.25.osx-arm64.tar.gz",
+                "digest": "sha256:old4444444444444444444444444444444444444444444444444444444444444",
+                "browser_download_url": "https://github.com/Whisparr/Whisparr/releases/download/v2.0.0-release.25/Whisparr.2.0.0-release.25.osx-arm64.tar.gz"
+            },
+            {
+                "name": "Whisparr.2.0.0-release.25.osx-x64.tar.gz",
+                "digest": "sha256:old5555555555555555555555555555555555555555555555555555555555555",
+                "browser_download_url": "https://github.com/Whisparr/Whisparr/releases/download/v2.0.0-release.25/Whisparr.2.0.0-release.25.osx-x64.tar.gz"
             }
         ]
     },
@@ -166,6 +176,16 @@
                 "name": "Whisparr.2.0.0-develop.50.win-x64.zip",
                 "digest": "sha256:dev3333333333333333333333333333333333333333333333333333333333333",
                 "browser_download_url": "https://github.com/Whisparr/Whisparr/releases/download/v2.0.0-develop.50/Whisparr.2.0.0-develop.50.win-x64.zip"
+            },
+            {
+                "name": "Whisparr.2.0.0-develop.50.osx-arm64.tar.gz",
+                "digest": "sha256:dev4444444444444444444444444444444444444444444444444444444444444",
+                "browser_download_url": "https://github.com/Whisparr/Whisparr/releases/download/v2.0.0-develop.50/Whisparr.2.0.0-develop.50.osx-arm64.tar.gz"
+            },
+            {
+                "name": "Whisparr.2.0.0-develop.50.osx-x64.tar.gz",
+                "digest": "sha256:dev5555555555555555555555555555555555555555555555555555555555555",
+                "browser_download_url": "https://github.com/Whisparr/Whisparr/releases/download/v2.0.0-develop.50/Whisparr.2.0.0-develop.50.osx-x64.tar.gz"
             }
         ]
     }

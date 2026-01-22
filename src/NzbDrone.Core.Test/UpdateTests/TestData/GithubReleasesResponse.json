@@ -1,0 +1,172 @@
+[
+    {
+        "tag_name": "v2.1.0-release.50",
+        "name": "2.1.0-release.50",
+        "draft": false,
+        "prerelease": false,
+        "published_at": "2026-01-15T02:25:55Z",
+        "body": "## What's Changed\n- Fixed: Issue with scene mapping\n- New: Added support for new indexers",
+        "assets": [
+            {
+                "name": "Whisparr.2.1.0-release.50.freebsd-x64.tar.gz",
+                "digest": "sha256:0b2f398d6efab42ee90e17bb04b907e27b63d4b0a37b04aa10f930b6ae83bf33",
+                "browser_download_url": "https://github.com/Whisparr/Whisparr/releases/download/v2.1.0-release.50/Whisparr.2.1.0-release.50.freebsd-x64.tar.gz"
+            },
+            {
+                "name": "Whisparr.2.1.0-release.50.linux-arm.tar.gz",
+                "digest": "sha256:c3d27e7e83c15e2f97433663c4a94b0040033905132195e660e3154f87d99c9e",
+                "browser_download_url": "https://github.com/Whisparr/Whisparr/releases/download/v2.1.0-release.50/Whisparr.2.1.0-release.50.linux-arm.tar.gz"
+            },
+            {
+                "name": "Whisparr.2.1.0-release.50.linux-arm64.tar.gz",
+                "digest": "sha256:27efabe0f733ae8c9d107a801710a5ebf17ed872e0ac314ac617bc9f6c680072",
+                "browser_download_url": "https://github.com/Whisparr/Whisparr/releases/download/v2.1.0-release.50/Whisparr.2.1.0-release.50.linux-arm64.tar.gz"
+            },
+            {
+                "name": "Whisparr.2.1.0-release.50.linux-musl-arm64.tar.gz",
+                "digest": "sha256:1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+                "browser_download_url": "https://github.com/Whisparr/Whisparr/releases/download/v2.1.0-release.50/Whisparr.2.1.0-release.50.linux-musl-arm64.tar.gz"
+            },
+            {
+                "name": "Whisparr.2.1.0-release.50.linux-musl-x64.tar.gz",
+                "digest": "sha256:abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+                "browser_download_url": "https://github.com/Whisparr/Whisparr/releases/download/v2.1.0-release.50/Whisparr.2.1.0-release.50.linux-musl-x64.tar.gz"
+            },
+            {
+                "name": "Whisparr.2.1.0-release.50.linux-x64.tar.gz",
+                "digest": "sha256:fedcba0987654321fedcba0987654321fedcba0987654321fedcba0987654321",
+                "browser_download_url": "https://github.com/Whisparr/Whisparr/releases/download/v2.1.0-release.50/Whisparr.2.1.0-release.50.linux-x64.tar.gz"
+            },
+            {
+                "name": "Whisparr.2.1.0-release.50.osx-arm64.tar.gz",
+                "digest": "sha256:11111111111111111111111111111111111111111111111111111111111111aa",
+                "browser_download_url": "https://github.com/Whisparr/Whisparr/releases/download/v2.1.0-release.50/Whisparr.2.1.0-release.50.osx-arm64.tar.gz"
+            },
+            {
+                "name": "Whisparr.2.1.0-release.50.osx-x64.tar.gz",
+                "digest": "sha256:22222222222222222222222222222222222222222222222222222222222222bb",
+                "browser_download_url": "https://github.com/Whisparr/Whisparr/releases/download/v2.1.0-release.50/Whisparr.2.1.0-release.50.osx-x64.tar.gz"
+            },
+            {
+                "name": "Whisparr.2.1.0-release.50.win-x64.zip",
+                "digest": "sha256:33333333333333333333333333333333333333333333333333333333333333cc",
+                "browser_download_url": "https://github.com/Whisparr/Whisparr/releases/download/v2.1.0-release.50/Whisparr.2.1.0-release.50.win-x64.zip"
+            },
+            {
+                "name": "Whisparr.2.1.0-release.50.win-x86.zip",
+                "digest": "sha256:44444444444444444444444444444444444444444444444444444444444444dd",
+                "browser_download_url": "https://github.com/Whisparr/Whisparr/releases/download/v2.1.0-release.50/Whisparr.2.1.0-release.50.win-x86.zip"
+            }
+        ]
+    },
+    {
+        "tag_name": "v2.1.0-develop.100",
+        "name": "2.1.0-develop.100",
+        "draft": false,
+        "prerelease": true,
+        "published_at": "2026-01-14T10:00:00Z",
+        "body": "## What's Changed\n- New: Experimental feature for testing\n- Fixed: Minor UI improvements",
+        "assets": [
+            {
+                "name": "Whisparr.2.1.0-develop.100.freebsd-x64.tar.gz",
+                "digest": "sha256:aaa1111111111111111111111111111111111111111111111111111111111111",
+                "browser_download_url": "https://github.com/Whisparr/Whisparr/releases/download/v2.1.0-develop.100/Whisparr.2.1.0-develop.100.freebsd-x64.tar.gz"
+            },
+            {
+                "name": "Whisparr.2.1.0-develop.100.linux-arm.tar.gz",
+                "digest": "sha256:bbb2222222222222222222222222222222222222222222222222222222222222",
+                "browser_download_url": "https://github.com/Whisparr/Whisparr/releases/download/v2.1.0-develop.100/Whisparr.2.1.0-develop.100.linux-arm.tar.gz"
+            },
+            {
+                "name": "Whisparr.2.1.0-develop.100.linux-arm64.tar.gz",
+                "digest": "sha256:ccc3333333333333333333333333333333333333333333333333333333333333",
+                "browser_download_url": "https://github.com/Whisparr/Whisparr/releases/download/v2.1.0-develop.100/Whisparr.2.1.0-develop.100.linux-arm64.tar.gz"
+            },
+            {
+                "name": "Whisparr.2.1.0-develop.100.linux-musl-arm64.tar.gz",
+                "digest": "sha256:ddd4444444444444444444444444444444444444444444444444444444444444",
+                "browser_download_url": "https://github.com/Whisparr/Whisparr/releases/download/v2.1.0-develop.100/Whisparr.2.1.0-develop.100.linux-musl-arm64.tar.gz"
+            },
+            {
+                "name": "Whisparr.2.1.0-develop.100.linux-musl-x64.tar.gz",
+                "digest": "sha256:eee5555555555555555555555555555555555555555555555555555555555555",
+                "browser_download_url": "https://github.com/Whisparr/Whisparr/releases/download/v2.1.0-develop.100/Whisparr.2.1.0-develop.100.linux-musl-x64.tar.gz"
+            },
+            {
+                "name": "Whisparr.2.1.0-develop.100.linux-x64.tar.gz",
+                "digest": "sha256:fff6666666666666666666666666666666666666666666666666666666666666",
+                "browser_download_url": "https://github.com/Whisparr/Whisparr/releases/download/v2.1.0-develop.100/Whisparr.2.1.0-develop.100.linux-x64.tar.gz"
+            },
+            {
+                "name": "Whisparr.2.1.0-develop.100.osx-arm64.tar.gz",
+                "digest": "sha256:1117777777777777777777777777777777777777777777777777777777777777",
+                "browser_download_url": "https://github.com/Whisparr/Whisparr/releases/download/v2.1.0-develop.100/Whisparr.2.1.0-develop.100.osx-arm64.tar.gz"
+            },
+            {
+                "name": "Whisparr.2.1.0-develop.100.osx-x64.tar.gz",
+                "digest": "sha256:2228888888888888888888888888888888888888888888888888888888888888",
+                "browser_download_url": "https://github.com/Whisparr/Whisparr/releases/download/v2.1.0-develop.100/Whisparr.2.1.0-develop.100.osx-x64.tar.gz"
+            },
+            {
+                "name": "Whisparr.2.1.0-develop.100.win-x64.zip",
+                "digest": "sha256:3339999999999999999999999999999999999999999999999999999999999999",
+                "browser_download_url": "https://github.com/Whisparr/Whisparr/releases/download/v2.1.0-develop.100/Whisparr.2.1.0-develop.100.win-x64.zip"
+            },
+            {
+                "name": "Whisparr.2.1.0-develop.100.win-x86.zip",
+                "digest": "sha256:444aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "browser_download_url": "https://github.com/Whisparr/Whisparr/releases/download/v2.1.0-develop.100/Whisparr.2.1.0-develop.100.win-x86.zip"
+            }
+        ]
+    },
+    {
+        "tag_name": "v2.0.0-release.25",
+        "name": "2.0.0-release.25",
+        "draft": false,
+        "prerelease": false,
+        "published_at": "2025-12-01T12:00:00Z",
+        "body": "## What's Changed\n- Initial stable release",
+        "assets": [
+            {
+                "name": "Whisparr.2.0.0-release.25.freebsd-x64.tar.gz",
+                "digest": "sha256:old1111111111111111111111111111111111111111111111111111111111111",
+                "browser_download_url": "https://github.com/Whisparr/Whisparr/releases/download/v2.0.0-release.25/Whisparr.2.0.0-release.25.freebsd-x64.tar.gz"
+            },
+            {
+                "name": "Whisparr.2.0.0-release.25.linux-x64.tar.gz",
+                "digest": "sha256:old2222222222222222222222222222222222222222222222222222222222222",
+                "browser_download_url": "https://github.com/Whisparr/Whisparr/releases/download/v2.0.0-release.25/Whisparr.2.0.0-release.25.linux-x64.tar.gz"
+            },
+            {
+                "name": "Whisparr.2.0.0-release.25.win-x64.zip",
+                "digest": "sha256:old3333333333333333333333333333333333333333333333333333333333333",
+                "browser_download_url": "https://github.com/Whisparr/Whisparr/releases/download/v2.0.0-release.25/Whisparr.2.0.0-release.25.win-x64.zip"
+            }
+        ]
+    },
+    {
+        "tag_name": "v2.0.0-develop.50",
+        "name": "2.0.0-develop.50",
+        "draft": false,
+        "prerelease": true,
+        "published_at": "2025-11-15T08:00:00Z",
+        "body": "## What's Changed\n- Pre-release testing build",
+        "assets": [
+            {
+                "name": "Whisparr.2.0.0-develop.50.freebsd-x64.tar.gz",
+                "digest": "sha256:dev1111111111111111111111111111111111111111111111111111111111111",
+                "browser_download_url": "https://github.com/Whisparr/Whisparr/releases/download/v2.0.0-develop.50/Whisparr.2.0.0-develop.50.freebsd-x64.tar.gz"
+            },
+            {
+                "name": "Whisparr.2.0.0-develop.50.linux-x64.tar.gz",
+                "digest": "sha256:dev2222222222222222222222222222222222222222222222222222222222222",
+                "browser_download_url": "https://github.com/Whisparr/Whisparr/releases/download/v2.0.0-develop.50/Whisparr.2.0.0-develop.50.linux-x64.tar.gz"
+            },
+            {
+                "name": "Whisparr.2.0.0-develop.50.win-x64.zip",
+                "digest": "sha256:dev3333333333333333333333333333333333333333333333333333333333333",
+                "browser_download_url": "https://github.com/Whisparr/Whisparr/releases/download/v2.0.0-develop.50/Whisparr.2.0.0-develop.50.win-x64.zip"
+            }
+        ]
+    }
+]

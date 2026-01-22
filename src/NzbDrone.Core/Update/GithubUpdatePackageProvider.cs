@@ -15,6 +15,12 @@ using Semver;
 
 namespace NzbDrone.Core.Update
 {
+    public interface IUpdatePackageProvider
+    {
+        UpdatePackage GetLatestUpdate(string branch, Version currentVersion);
+        List<UpdatePackage> GetRecentUpdates(string branch, Version currentVersion, Version previousVersion = null);
+    }
+
     public class GithubUpdatePackageProvider : IUpdatePackageProvider
     {
         private readonly IPlatformInfo _platformInfo;

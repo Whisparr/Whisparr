@@ -24,6 +24,7 @@
     <PackageReference Include="System.Data.SQLite.Core.Servarr" Version="1.0.115.5-18" />
     <PackageReference Include="System.Text.Json" Version="6.0.10" />
     <PackageReference Include="Npgsql" Version="7.0.7" />
+    <PackageReference Include="Semver" Version="3.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NzbDrone.Common\Whisparr.Common.csproj" />

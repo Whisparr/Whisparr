@@ -33,7 +33,7 @@ namespace Whisparr.Api.V3.Update
 
             return new UpdateResource
             {
-                Version = model.Version,
+                Version = model.DotNetVersion,
 
                 Branch = model.Branch,
                 ReleaseDate = model.ReleaseDate,

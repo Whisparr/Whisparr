@@ -6,6 +6,7 @@ namespace NzbDrone.Common.Cloud
     {
         IHttpRequestBuilderFactory Services { get; }
         IHttpRequestBuilderFactory WhisparrMetadata { get; }
+        IHttpRequestBuilderFactory GithubReleases { get; }
     }
 
     public class WhisparrCloudRequestBuilder : IWhisparrCloudRequestBuilder
@@ -17,10 +18,15 @@ namespace NzbDrone.Common.Cloud
 
             WhisparrMetadata = new HttpRequestBuilder("https://api.whisparr.com/v3/{route}")
                 .CreateFactory();
+
+            GithubReleases = new HttpRequestBuilder("https://api.github.com/repos/{githubownerrepo}/releases")
+                .CreateFactory();
         }
 
         public IHttpRequestBuilderFactory Services { get; }
 
         public IHttpRequestBuilderFactory WhisparrMetadata { get; }
+
+        public IHttpRequestBuilderFactory GithubReleases { get; }
     }
 }

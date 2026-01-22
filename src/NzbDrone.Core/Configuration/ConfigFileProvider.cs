@@ -61,6 +61,7 @@ namespace NzbDrone.Core.Configuration
         string PostgresMainDb { get; }
         string PostgresLogDb { get; }
         string WhisparrMetadata { get; }
+        string GithubOwnerRepo { get; }
     }
 
     public class ConfigFileProvider : IConfigFileProvider
@@ -103,6 +104,22 @@ namespace NzbDrone.Core.Configuration
                 }
 
                 return whisparrMetadata;
+            }
+        }
+
+        public string GithubOwnerRepo
+        {
+            get
+            {
+                const string defaultValue = "whisparr/whisparr";
+
+                var githubOwnerRepo = GetValue("GithubOwnerRepo", defaultValue);
+                if (string.IsNullOrWhiteSpace(githubOwnerRepo))
+                {
+                    return defaultValue;
+                }
+
+                return githubOwnerRepo;
             }
         }
 

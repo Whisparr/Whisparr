@@ -18,6 +18,7 @@ using NzbDrone.Core.Update;
 using NzbDrone.Core.Update.Commands;
 using NzbDrone.Test.Common;
 using NzbDrone.Test.Common.Categories;
+using Semver;
 
 namespace NzbDrone.Core.Test.UpdateTests
 {
@@ -37,7 +38,7 @@ namespace NzbDrone.Core.Test.UpdateTests
                 {
                     FileName = "NzbDrone.develop.2.0.0.0.tar.gz",
                     Url = "http://download.whisparr.tv/v2/develop/mono/NzbDrone.develop.tar.gz",
-                    Version = new Version("2.0.0.0")
+                    Version = SemVersion.Parse("2.0.0", SemVersionStyles.Any)
                 };
             }
             else
@@ -46,7 +47,7 @@ namespace NzbDrone.Core.Test.UpdateTests
                 {
                     FileName = "NzbDrone.develop.2.0.0.0.zip",
                     Url = "http://download.whisparr.tv/v2/develop/windows/NzbDrone.develop.zip",
-                    Version = new Version("2.0.0.0")
+                    Version = SemVersion.Parse("2.0.0", SemVersionStyles.Any)
                 };
             }
 

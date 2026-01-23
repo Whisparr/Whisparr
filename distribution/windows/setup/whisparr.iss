@@ -39,7 +39,7 @@ Compression=lzma2/normal
 AppContact={#ForumsURL}
 VersionInfoVersion={#MajorVersion}
 SetupLogging=yes
-OutputDir=output
+OutputDir=..\..\..\_artifacts
 WizardStyle=modern
 
 [Languages]

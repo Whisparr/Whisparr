@@ -116,6 +116,13 @@ namespace NzbDrone.Core.Tv
 
             series.Seasons = UpdateSeasons(series, seriesInfo);
 
+            // Calculate LastAired from episodes
+            var lastAiredEpisode = episodes
+                .Where(e => e.AirDateUtc.HasValue && e.AirDateUtc.Value < DateTime.UtcNow)
+                .OrderByDescending(e => e.AirDateUtc)
+                .FirstOrDefault();
+            series.LastAired = lastAiredEpisode?.AirDateUtc;
+
             _seriesService.UpdateSeries(series, publishUpdatedEvent: false);
             _refreshEpisodeService.RefreshEpisodeInfo(series, episodes);
 

@@ -294,7 +294,7 @@ function InteractiveSearchRow(props: InteractiveSearchRowProps) {
       </TableRowCell>
 
       <TableRowCell className={styles.quality}>
-        <EpisodeQuality quality={quality} />
+        <EpisodeQuality quality={quality} showRevision={true} />
       </TableRowCell>
 
       <TableRowCell className={styles.customFormatScore}>

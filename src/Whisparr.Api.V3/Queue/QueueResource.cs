@@ -29,6 +29,7 @@ namespace Whisparr.Api.V3.Queue
         public decimal Sizeleft { get; set; }
         public TimeSpan? Timeleft { get; set; }
         public DateTime? EstimatedCompletionTime { get; set; }
+        public DateTime? Added { get; set; }
         public string Status { get; set; }
         public TrackedDownloadStatus? TrackedDownloadStatus { get; set; }
         public TrackedDownloadState? TrackedDownloadState { get; set; }
@@ -37,6 +38,7 @@ namespace Whisparr.Api.V3.Queue
         public string DownloadId { get; set; }
         public DownloadProtocol Protocol { get; set; }
         public string DownloadClient { get; set; }
+        public bool DownloadClientHasPostImportCategory { get; set; }
         public string Indexer { get; set; }
         public string OutputPath { get; set; }
         public bool EpisodeHasFile { get; set; }
@@ -71,6 +73,7 @@ namespace Whisparr.Api.V3.Queue
                 Sizeleft = model.Sizeleft,
                 Timeleft = model.Timeleft,
                 EstimatedCompletionTime = model.EstimatedCompletionTime,
+                Added = model.Added,
                 Status = model.Status.FirstCharToLower(),
                 TrackedDownloadStatus = model.TrackedDownloadStatus,
                 TrackedDownloadState = model.TrackedDownloadState,
@@ -79,6 +82,7 @@ namespace Whisparr.Api.V3.Queue
                 DownloadId = model.DownloadId,
                 Protocol = model.Protocol,
                 DownloadClient = model.DownloadClient,
+                DownloadClientHasPostImportCategory = model.DownloadClientHasPostImportCategory,
                 Indexer = model.Indexer,
                 OutputPath = model.OutputPath,
                 EpisodeHasFile = model.Episode?.HasFile ?? false

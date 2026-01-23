@@ -205,7 +205,7 @@ export const filterBuilderProps = [
   {
     name: 'network',
     label: () => translate('Network'),
-    type: filterBuilderTypes.STRING,
+    type: filterBuilderTypes.ARRAY,
     optionsSelector: function(items) {
       const tagList = items.reduce((acc, series) => {
         if (series.network) {

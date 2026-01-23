@@ -18,6 +18,7 @@ namespace NzbDrone.Core.Extras
 {
     public interface IExtraService
     {
+        void MoveFilesAfterRename(Series series, EpisodeFile episodeFile);
         void ImportEpisode(LocalEpisode localEpisode, EpisodeFile episodeFile, bool isReadOnly);
     }
 
@@ -137,6 +138,16 @@ namespace NzbDrone.Core.Extras
             foreach (var extraFileManager in _extraFileManagers)
             {
                 extraFileManager.CreateAfterEpisodeFolder(series, message.SeriesFolder, message.SeasonFolder);
+            }
+        }
+
+        public void MoveFilesAfterRename(Series series, EpisodeFile episodeFile)
+        {
+            var episodeFiles = new List<EpisodeFile> { episodeFile };
+
+            foreach (var extraFileManager in _extraFileManagers)
+            {
+                extraFileManager.MoveFilesAfterRename(series, episodeFiles);
             }
         }
 

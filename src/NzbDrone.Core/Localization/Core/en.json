@@ -233,6 +233,7 @@
   "CountSelectedFile": "{selectedCount} selected file",
   "CountSelectedFiles": "{selectedCount} selected files",
   "CountSitesSelected": "{count} sites selected",
+  "CountVotes": "{votes} votes",
   "CreateEmptySiteFolders": "Create Empty Site Folders",
   "CreateEmptySiteFoldersHelpText": "Create missing site folders during disk scan",
   "CreateGroup": "Create Group",

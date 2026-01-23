@@ -3,6 +3,7 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import TextTruncate from 'react-text-truncate';
+import HeartRating from 'Components/HeartRating';
 import Icon from 'Components/Icon';
 import Label from 'Components/Label';
 import IconButton from 'Components/Link/IconButton';
@@ -184,6 +185,7 @@ class SeriesDetails extends Component {
       seasons,
       alternateTitles,
       genres,
+      ratings,
       tags,
       year,
       previousAiring,
@@ -409,6 +411,15 @@ class SeriesDetails extends Component {
                         <span className={styles.runtime}>
                           {translate('SiteDetailsRuntime', { runtime })}
                         </span>
+                    }
+
+                    {
+                      ratings.value ?
+                        <HeartRating
+                          rating={ratings.value}
+                          iconSize={20}
+                        /> :
+                        null
                     }
 
                     <SeriesGenres genres={genres} />
@@ -723,6 +734,7 @@ SeriesDetails.propTypes = {
   seasons: PropTypes.arrayOf(PropTypes.object).isRequired,
   alternateTitles: PropTypes.arrayOf(PropTypes.object).isRequired,
   genres: PropTypes.arrayOf(PropTypes.string).isRequired,
+  ratings: PropTypes.object.isRequired,
   tags: PropTypes.arrayOf(PropTypes.number).isRequired,
   year: PropTypes.number.isRequired,
   previousAiring: PropTypes.string,

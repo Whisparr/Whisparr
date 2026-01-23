@@ -212,7 +212,7 @@ export default function SeriesIndexPosters(props: SeriesIndexPostersProps) {
         height: window.innerHeight,
       });
     }
-  }, [isSmallScreen, scrollerRef, bounds]);
+  }, [isSmallScreen, scrollerRef, bounds, size.width, size.height]);
 
   useEffect(() => {
     const currentScrollerRef = scrollerRef.current as HTMLElement;

@@ -8,7 +8,7 @@ namespace NzbDrone.Core.Datastore.Migration
     {
         protected override void MainDbUpgrade()
         {
-            Alter.Table("Series").AddColumn("LastAired").AsDateTime().Nullable();
+            Alter.Table("Series").AddColumn("LastAired").AsDateTimeOffset().Nullable();
         }
     }
 }

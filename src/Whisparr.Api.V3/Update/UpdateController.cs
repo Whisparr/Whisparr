@@ -25,7 +25,7 @@ namespace Whisparr.Api.V3.Update
         public List<UpdateResource> GetRecentUpdates()
         {
             var resources = _recentUpdateProvider.GetRecentUpdatePackages()
-                                                 .OrderByDescending(u => u.Version)
+                                                 .OrderByDescending(u => u.DotNetVersion)
                                                  .ToResource();
 
             if (resources.Any())

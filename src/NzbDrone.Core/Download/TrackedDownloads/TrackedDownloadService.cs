@@ -116,10 +116,11 @@ namespace NzbDrone.Core.Download.TrackedDownloads
 
             try
             {
-                var parsedEpisodeInfo = Parser.Parser.ParseTitle(trackedDownload.DownloadItem.Title);
                 var historyItems = _historyService.FindByDownloadId(downloadItem.DownloadId)
-                                                  .OrderByDescending(h => h.Date)
-                                                  .ToList();
+                    .OrderByDescending(h => h.Date)
+                    .ToList();
+
+                var parsedEpisodeInfo = Parser.Parser.ParseTitle(trackedDownload.DownloadItem.Title);
 
                 var isForceDownload = IsForceDownload(historyItems);
 
@@ -143,7 +144,7 @@ namespace NzbDrone.Core.Download.TrackedDownloads
                     var firstHistoryItem = historyItems.First();
                     var grabbedEvent = historyItems.FirstOrDefault(v => v.EventType == EpisodeHistoryEventType.Grabbed);
 
-                    trackedDownload.Indexer = grabbedEvent?.Data["indexer"];
+                    trackedDownload.Indexer = grabbedEvent?.Data?.GetValueOrDefault("indexer");
                     trackedDownload.Added = grabbedEvent?.Date;
 
                     if (IsForceDownload(historyItems))
@@ -170,8 +171,7 @@ namespace NzbDrone.Core.Download.TrackedDownloads
                     }
 
                     if (parsedEpisodeInfo == null ||
-                        trackedDownload.RemoteEpisode == null ||
-                        trackedDownload.RemoteEpisode.Series == null ||
+                        trackedDownload.RemoteEpisode?.Series == null ||
                         trackedDownload.RemoteEpisode.Episodes.Empty())
                     {
                         // Try parsing the original source title and if that fails, try parsing it as a special
@@ -186,6 +186,13 @@ namespace NzbDrone.Core.Download.TrackedDownloads
                                 historyItems.Where(v => v.EventType == EpisodeHistoryEventType.Grabbed)
                                     .Select(h => h.EpisodeId).Distinct());
                         }
+                    }
+
+                    if (trackedDownload.RemoteEpisode != null &&
+                        Enum.TryParse(grabbedEvent?.Data?.GetValueOrDefault("indexerFlags"), true, out IndexerFlags flags))
+                    {
+                        trackedDownload.RemoteEpisode.Release ??= new ReleaseInfo();
+                        trackedDownload.RemoteEpisode.Release.IndexerFlags = flags;
                     }
                 }
 

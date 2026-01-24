@@ -345,7 +345,7 @@
   "DeleteTag": "DeleteTag",
   "DeleteTagMessageText": "Are you sure you want to delete the tag '{label}'?",
   "Deleted": "Deleted",
-  "DeletedReasonManual": "File was deleted by via UI",
+  "DeletedReasonManual": "File was deleted using {appName}, either manually or by another tool through the API",
   "DeletedReasonMissingFromDisk": "Whisparr was unable to find the file on disk so the file was unlinked from the episode in the database",
   "DeletedReasonUpgrade": "File was deleted to import an upgrade",
   "DeletedSiteDescription": "Site was deleted from TheTPDB",

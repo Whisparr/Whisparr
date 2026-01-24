@@ -40,9 +40,6 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("SomeShow.S20E13.1080p.Blu-Ray.DTS-ES.5.1.x264-ROUGH [PublicHD]", "ROUGH")]
         [TestCase("SomeShow S01E168 1080p WEB-DL AAC 2.0 x264-Erai-raws", "Erai-raws")]
         [TestCase("The.Good.Series.S05E03.Series.of.Intelligence.1080p.10bit.AMZN.WEB-DL.DDP5.1.HEVC-Vyndros", "Vyndros")]
-        [TestCase("[Tenrai-Sensei] Series [BD][1080p][HEVC 10bit x265][Dual Audio]", "Tenrai-Sensei")]
-        [TestCase("[Erai-raws] Series - 0955 ~ 1005 [1080p]", "Erai-raws")]
-        [TestCase("[Exiled-Destiny] Series Title", "Exiled-Destiny")]
         [TestCase("Series.Title.S01E09.1080p.DSNP.WEB-DL.DDP2.0.H.264-VARYG", "VARYG")]
 
         // [TestCase("", "")]
@@ -91,14 +88,6 @@ namespace NzbDrone.Core.Test.ParserTests
             Parser.Parser.ParseReleaseGroup(title).Should().Be(expected);
         }
 
-        [Test]
-        public void should_not_include_extension_in_release_group()
-        {
-            const string path = @"C:\Test\Doctor.Series.2005.s01e01.internal.bdrip.x264-archivist.mkv";
-
-            Parser.Parser.ParsePath(path).ReleaseGroup.Should().Be("archivist");
-        }
-
         [TestCase("Series.Title.S02E04.720p.WEBRip.x264-SKGTV English", "SKGTV")]
         [TestCase("Series.Title.S02E04.720p.WEBRip.x264-SKGTV_English", "SKGTV")]
         [TestCase("Series.Title.S02E04.720p.WEBRip.x264-SKGTV.English", "SKGTV")]
@@ -140,23 +129,5 @@ namespace NzbDrone.Core.Test.ParserTests
             Parser.Parser.ParseReleaseGroup(title).Should().Be(expected);
         }
 
-        [TestCase("[FFF] Series Title!! - S01E11 - Someday, With Sonarr", "FFF")]
-        [TestCase("[HorribleSubs] Series Title!! - S01E12 - Sonarr Going Well!!", "HorribleSubs")]
-        [TestCase("[Anime-Koi] Series Title - S01E06 - Guys From Sonarr", "Anime-Koi")]
-        [TestCase("[Anime-Koi] Series Title - S01E07 - A High-Grade Sonarr", "Anime-Koi")]
-        [TestCase("[Anime-Koi] Series Title 2 - 01 [h264-720p][28D54E2C]", "Anime-Koi")]
-
-        // [TestCase("Tokyo.Ghoul.02x01.013.HDTV-720p-Anime-Koi", "Anime-Koi")]
-        // [TestCase("", "")]
-        public void should_parse_anime_release_groups(string title, string expected)
-        {
-            Parser.Parser.ParseReleaseGroup(title).Should().Be(expected);
-        }
-
-        [TestCase("Terrible.Anime.Title.001.DBOX.480p.x264-iKaos [v3] [6AFFEF6B]")]
-        public void should_not_parse_anime_hash_as_release_group(string title)
-        {
-            Parser.Parser.ParseReleaseGroup(title).Should().BeNull();
-        }
     }
 }

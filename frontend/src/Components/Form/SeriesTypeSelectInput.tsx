@@ -1,6 +1,6 @@
 import React from 'react';
-import translate from 'Utilities/String/translate';
 import * as seriesTypes from 'Utilities/Series/seriesTypes';
+import translate from 'Utilities/String/translate';
 import EnhancedSelectInput from './EnhancedSelectInput';
 import SeriesTypeSelectInputOption from './SeriesTypeSelectInputOption';
 import SeriesTypeSelectInputSelectedValue from './SeriesTypeSelectInputSelectedValue';

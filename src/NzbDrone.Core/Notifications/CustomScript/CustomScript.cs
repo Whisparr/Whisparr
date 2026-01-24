@@ -320,8 +320,8 @@ namespace NzbDrone.Core.Notifications.CustomScript
             environmentVariables.Add("Whisparr_Series_Year", series.Year.ToString());
             environmentVariables.Add("Whisparr_Series_Genres", string.Join("|", series.Genres));
             environmentVariables.Add("Whisparr_Series_Tags", string.Join("|", series.Tags.Select(t => _tagRepository.Get(t).Label)));
-            environmentVariables.Add("Whisparr_Download_Client", message.DownloadClientName ?? string.Empty);
-            environmentVariables.Add("Whisparr_Download_Client_Type", message.DownloadClientType ?? string.Empty);
+            environmentVariables.Add("Whisparr_Download_Client", message.DownloadClientInfo?.Name ?? string.Empty);
+            environmentVariables.Add("Whisparr_Download_Client_Type", message.DownloadClientInfo?.Type ?? string.Empty);
             environmentVariables.Add("Whisparr_Download_Id", message.DownloadId ?? string.Empty);
             environmentVariables.Add("Whisparr_Download_Size", message.TrackedDownload.DownloadItem.TotalSize.ToString());
             environmentVariables.Add("Whisparr_Download_Title", message.TrackedDownload.DownloadItem.Title);

@@ -38,9 +38,7 @@ namespace NzbDrone.Core.Notifications.Xbmc
         [FieldDefinition(2, Label = "Use SSL", Type = FieldType.Checkbox, HelpText = "Connect to Kodi over HTTPS instead of HTTP")]
         public bool UseSsl { get; set; }
 
-        [FieldDefinition(3, Label = "UrlBase", Type = FieldType.Textbox, Advanced = true, HelpText = "ConnectionSettingsUrlBaseHelpText")]
-        [FieldToken(TokenField.HelpText, "UrlBase", "connectionName", "Kodi")]
-        [FieldToken(TokenField.HelpText, "UrlBase", "url", "http://[host]:[port]/[urlBase]/kodi")]
+        [FieldDefinition(3, Label = "URL Base", Type = FieldType.Textbox, Advanced = true, HelpText = "Adds a prefix to the Kodi URL, e.g. http://[host]:[port]/[urlBase]/jsonrpc")]
         public string UrlBase { get; set; }
 
         [FieldDefinition(4, Label = "Username", Privacy = PrivacyLevel.UserName)]

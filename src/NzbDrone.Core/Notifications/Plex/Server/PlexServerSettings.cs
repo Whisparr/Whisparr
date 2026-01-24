@@ -37,9 +37,7 @@ namespace NzbDrone.Core.Notifications.Plex.Server
         [FieldDefinition(2, Label = "Use SSL", Type = FieldType.Checkbox, HelpText = "Connect to Plex over HTTPS instead of HTTP")]
         public bool UseSsl { get; set; }
 
-        [FieldDefinition(3, Label = "UrlBase", Type = FieldType.Textbox, Advanced = true, HelpText = "ConnectionSettingsUrlBaseHelpText")]
-        [FieldToken(TokenField.HelpText, "UrlBase", "connectionName", "Plex")]
-        [FieldToken(TokenField.HelpText, "UrlBase", "url", "http://[host]:[port]/[urlBase]/plex")]
+        [FieldDefinition(3, Label = "URL Base", Type = FieldType.Textbox, Advanced = true, HelpText = "Adds a prefix to the Plex URL, e.g. http://[host]:[port]/[urlBase]/plex")]
         public string UrlBase { get; set; }
 
         [FieldDefinition(4, Label = "Auth Token", Type = FieldType.Textbox, Privacy = PrivacyLevel.ApiKey, Advanced = true)]

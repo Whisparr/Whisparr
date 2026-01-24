@@ -37,9 +37,7 @@ namespace NzbDrone.Core.Notifications.Emby
         [FieldDefinition(2, Label = "Use SSL", Type = FieldType.Checkbox, HelpText = "Connect to Emby/Jellyfin over HTTPS instead of HTTP")]
         public bool UseSsl { get; set; }
 
-        [FieldDefinition(3, Label = "UrlBase", Type = FieldType.Textbox, Advanced = true, HelpText = "ConnectionSettingsUrlBaseHelpText")]
-        [FieldToken(TokenField.HelpText, "UrlBase", "connectionName", "Emby/Jellyfin")]
-        [FieldToken(TokenField.HelpText, "UrlBase", "url", "http://[host]:[port]/[urlBase]/mediabrowser")]
+        [FieldDefinition(3, Label = "URL Base", Type = FieldType.Textbox, Advanced = true, HelpText = "Adds a prefix to the Emby/Jellyfin URL, e.g. http://[host]:[port]/[urlBase]/mediabrowser")]
         public string UrlBase { get; set; }
 
         [FieldDefinition(4, Label = "API Key", Privacy = PrivacyLevel.ApiKey)]

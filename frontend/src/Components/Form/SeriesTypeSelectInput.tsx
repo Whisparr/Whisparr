@@ -1,4 +1,5 @@
 import React from 'react';
+import translate from 'Utilities/String/translate';
 import * as seriesTypes from 'Utilities/Series/seriesTypes';
 import EnhancedSelectInput from './EnhancedSelectInput';
 import SeriesTypeSelectInputOption from './SeriesTypeSelectInputOption';
@@ -14,7 +15,7 @@ interface ISeriesTypeOption {
   key: string;
   value: string;
   format?: string;
-  disabled?: boolean;
+  isDisabled?: boolean;
 }
 
 const seriesTypeOptions: ISeriesTypeOption[] = [
@@ -42,16 +43,16 @@ function SeriesTypeSelectInput(props: SeriesTypeSelectInputProps) {
   if (includeNoChange) {
     values.unshift({
       key: 'noChange',
-      value: 'No Change',
-      disabled: includeNoChangeDisabled,
+      value: translate('NoChange'),
+      isDisabled: includeNoChangeDisabled,
     });
   }
 
   if (includeMixed) {
     values.unshift({
       key: 'mixed',
-      value: '(Mixed)',
-      disabled: true,
+      value: `(${translate('Mixed')})`,
+      isDisabled: true,
     });
   }
 

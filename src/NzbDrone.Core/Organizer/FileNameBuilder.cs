@@ -1088,7 +1088,7 @@ namespace NzbDrone.Core.Organizer
 
             if (maxLength < 0)
             {
-                return $"{{ellipsis}}{input.Reverse().Truncate(Math.Abs(maxLength) - 3).TrimEnd(' ', '.').Reverse()}";
+                return $"{{ellipsis}}{new string(new string(input.Reverse().ToArray()).Truncate(Math.Abs(maxLength) - 3).TrimEnd(' ', '.').Reverse().ToArray())}";
             }
 
             return $"{input.Truncate(maxLength - 3).TrimEnd(' ', '.')}{{ellipsis}}";

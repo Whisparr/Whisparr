@@ -70,7 +70,7 @@ namespace Whisparr.Api.V3.System.Backup
         }
 
         [HttpPost("restore/{id:int}")]
-        public object Restore(int id)
+        public object Restore([FromRoute] int id)
         {
             var backup = GetBackup(id);
 

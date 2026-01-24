@@ -153,7 +153,7 @@ namespace Whisparr.Api.V3.Series
 
         [RestPostById]
         [Consumes("application/json")]
-        public ActionResult<SeriesResource> AddSeries(SeriesResource seriesResource)
+        public ActionResult<SeriesResource> AddSeries([FromBody] SeriesResource seriesResource)
         {
             var series = _addSeriesService.AddSeries(seriesResource.ToModel());
 
@@ -162,7 +162,7 @@ namespace Whisparr.Api.V3.Series
 
         [RestPutById]
         [Consumes("application/json")]
-        public ActionResult<SeriesResource> UpdateSeries(SeriesResource seriesResource, bool moveFiles = false)
+        public ActionResult<SeriesResource> UpdateSeries([FromBody] SeriesResource seriesResource, [FromQuery] bool moveFiles = false)
         {
             var series = _seriesService.GetSeries(seriesResource.Id);
 

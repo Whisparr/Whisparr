@@ -128,6 +128,5 @@ namespace NzbDrone.Core.Test.ParserTests
         {
             Parser.Parser.ParseReleaseGroup(title).Should().Be(expected);
         }
-
     }
 }

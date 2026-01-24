@@ -1,5 +1,6 @@
 using FluentAssertions;
 using NUnit.Framework;
+using NzbDrone.Core.Parser;
 using NzbDrone.Core.Test.Framework;
 
 namespace NzbDrone.Core.Test.ParserTests
@@ -23,13 +24,11 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("test123.ca - Series Time S02 720p HDTV x264 CRON", "Series Time")]
         [TestCase("[www.test-hyphen123.co.za] - Series Title S01E01", "Series Title")]
         [TestCase("(seriesawake.com) Series Super - 57 [720p] [English Subbed]", "Series Super")]
-
         public void should_not_parse_url_in_name(string postTitle, string title)
         {
             var result = Parser.Parser.ParseSeriesName(postTitle).CleanSeriesTitle();
             result.Should().Be(title.CleanSeriesTitle());
         }
-
 
         [TestCase("Series.2009.S01E14.English.HDTV.XviD-LOL[www.abb.com]", "LOL")]
         [TestCase("Series 2009 S01E14 English HDTV XviD LOL[www.academy.org]", null)]

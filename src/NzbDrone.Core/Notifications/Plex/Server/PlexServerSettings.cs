@@ -37,19 +37,24 @@ namespace NzbDrone.Core.Notifications.Plex.Server
         [FieldDefinition(2, Label = "Use SSL", Type = FieldType.Checkbox, HelpText = "Connect to Plex over HTTPS instead of HTTP")]
         public bool UseSsl { get; set; }
 
-        [FieldDefinition(3, Label = "Auth Token", Type = FieldType.Textbox, Privacy = PrivacyLevel.ApiKey, Advanced = true)]
+        [FieldDefinition(3, Label = "UrlBase", Type = FieldType.Textbox, Advanced = true, HelpText = "ConnectionSettingsUrlBaseHelpText")]
+        [FieldToken(TokenField.HelpText, "UrlBase", "connectionName", "Plex")]
+        [FieldToken(TokenField.HelpText, "UrlBase", "url", "http://[host]:[port]/[urlBase]/plex")]
+        public string UrlBase { get; set; }
+
+        [FieldDefinition(4, Label = "Auth Token", Type = FieldType.Textbox, Privacy = PrivacyLevel.ApiKey, Advanced = true)]
         public string AuthToken { get; set; }
 
-        [FieldDefinition(4, Label = "Authenticate with Plex.tv", Type = FieldType.OAuth)]
+        [FieldDefinition(5, Label = "Authenticate with Plex.tv", Type = FieldType.OAuth)]
         public string SignIn { get; set; }
 
-        [FieldDefinition(5, Label = "Update Library", Type = FieldType.Checkbox)]
+        [FieldDefinition(6, Label = "Update Library", Type = FieldType.Checkbox)]
         public bool UpdateLibrary { get; set; }
 
-        [FieldDefinition(6, Label = "Map Paths From", Type = FieldType.Textbox, Advanced = true, HelpText = "Whisparr path, used to modify series paths when Plex sees library path location differently from Whisparr")]
+        [FieldDefinition(7, Label = "Map Paths From", Type = FieldType.Textbox, Advanced = true, HelpText = "Whisparr path, used to modify series paths when Plex sees library path location differently from Whisparr")]
         public string MapFrom { get; set; }
 
-        [FieldDefinition(7, Label = "Map Paths To", Type = FieldType.Textbox, Advanced = true, HelpText = "Plex path, used to modify series paths when Plex sees library path location differently from Whisparr")]
+        [FieldDefinition(8, Label = "Map Paths To", Type = FieldType.Textbox, Advanced = true, HelpText = "Plex path, used to modify series paths when Plex sees library path location differently from Whisparr")]
         public string MapTo { get; set; }
 
         public bool IsValid => !string.IsNullOrWhiteSpace(Host);

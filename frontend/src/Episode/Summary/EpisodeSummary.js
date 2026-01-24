@@ -1,10 +1,11 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import Icon from 'Components/Icon';
 import Label from 'Components/Label';
 import ConfirmModal from 'Components/Modal/ConfirmModal';
 import Table from 'Components/Table/Table';
 import TableBody from 'Components/Table/TableBody';
-import { kinds, sizes } from 'Helpers/Props';
+import { icons, kinds, sizes } from 'Helpers/Props';
 import SeriesPerformerConnector from 'Series/SeriesPerformerConnector';
 import QualityProfileNameConnector from 'Settings/Profiles/Quality/QualityProfileNameConnector';
 import translate from 'Utilities/String/translate';
@@ -41,6 +42,15 @@ const columns = [
     name: 'customFormats',
     label: () => translate('Formats'),
     isSortable: false,
+    isVisible: true
+  },
+  {
+    name: 'customFormatScore',
+    label: React.createElement(Icon, {
+      name: icons.SCORE,
+      title: () => translate('CustomFormatScore')
+    }),
+    isSortable: true,
     isVisible: true
   },
   {
@@ -97,6 +107,7 @@ class EpisodeSummary extends Component {
       languages,
       quality,
       customFormats,
+      customFormatScore,
       qualityCutoffNotMet,
       onDeleteEpisodeFile
     } = this.props;
@@ -172,6 +183,7 @@ class EpisodeSummary extends Component {
                   quality={quality}
                   qualityCutoffNotMet={qualityCutoffNotMet}
                   customFormats={customFormats}
+                  customFormatScore={customFormatScore}
                   mediaInfo={mediaInfo}
                   columns={columns}
                   onDeleteEpisodeFile={onDeleteEpisodeFile}
@@ -211,6 +223,7 @@ EpisodeSummary.propTypes = {
   quality: PropTypes.object,
   qualityCutoffNotMet: PropTypes.bool,
   customFormats: PropTypes.arrayOf(PropTypes.object),
+  customFormatScore: PropTypes.number.isRequired,
   onDeleteEpisodeFile: PropTypes.func.isRequired
 };
 

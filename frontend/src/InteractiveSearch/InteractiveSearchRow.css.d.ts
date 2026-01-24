@@ -8,6 +8,7 @@ interface CssExports {
   'forceDownloadContent': string;
   'forceIcon': string;
   'indexer': string;
+  'indexerFlags': string;
   'interactiveIcon': string;
   'languages': string;
   'manualDownloadContent': string;

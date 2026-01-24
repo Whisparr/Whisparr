@@ -80,6 +80,7 @@ namespace NzbDrone.Core.Notifications.CustomScript
             environmentVariables.Add("Whisparr_Release_Quality", remoteEpisode.ParsedEpisodeInfo.Quality.Quality.Name);
             environmentVariables.Add("Whisparr_Release_QualityVersion", remoteEpisode.ParsedEpisodeInfo.Quality.Revision.Version.ToString());
             environmentVariables.Add("Whisparr_Release_ReleaseGroup", releaseGroup ?? string.Empty);
+            environmentVariables.Add("Whisparr_Release_IndexerFlags", remoteEpisode.Release.IndexerFlags.ToString());
             environmentVariables.Add("Whisparr_Download_Client", message.DownloadClientName ?? string.Empty);
             environmentVariables.Add("Whisparr_Download_Client_Type", message.DownloadClientType ?? string.Empty);
             environmentVariables.Add("Whisparr_Download_Id", message.DownloadId ?? string.Empty);

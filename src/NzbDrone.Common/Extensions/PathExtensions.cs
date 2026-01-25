@@ -29,12 +29,6 @@ namespace NzbDrone.Common.Extensions
 
         public static string CleanFilePath(this string path)
         {
-            if (path.IsNotNullOrWhiteSpace())
-            {
-                // Trim trailing spaces before checking if the path is valid so validation doesn't fail for something we can fix.
-                path = path.TrimEnd(' ');
-            }
-
             Ensure.That(path, () => path).IsNotNullOrWhiteSpace();
             Ensure.That(path, () => path).IsValidPath(PathValidationType.AnyOs);
 
@@ -155,27 +149,6 @@ namespace NzbDrone.Common.Extensions
             if (string.IsNullOrWhiteSpace(path) || path.ContainsInvalidPathChars())
             {
                 return false;
-            }
-
-            // Only check for leading or trailing spaces for path when running on Windows.
-            if (OsInfo.IsWindows)
-            {
-                if (path.Trim() != path)
-                {
-                    return false;
-                }
-
-                var directoryInfo = new DirectoryInfo(path);
-
-                while (directoryInfo != null)
-                {
-                    if (directoryInfo.Name.Trim() != directoryInfo.Name)
-                    {
-                        return false;
-                    }
-
-                    directoryInfo = directoryInfo.Parent;
-                }
             }
 
             if (validationType == PathValidationType.AnyOs)

@@ -358,5 +358,39 @@ namespace NzbDrone.Common.Test
             result[2].Should().Be(@"TV");
             result[3].Should().Be(@"Series Title");
         }
+
+        [TestCase(@"C:\Test\")]
+        [TestCase(@"C:\Test")]
+        [TestCase(@"C:\Test\TV\")]
+        [TestCase(@"C:\Test\TV")]
+        public void IsPathValid_should_be_true(string path)
+        {
+            path.AsOsAgnostic().IsPathValid(PathValidationType.CurrentOs).Should().BeTrue();
+        }
+
+        [TestCase(@"C:\Test \")]
+        [TestCase(@"C:\Test ")]
+        [TestCase(@"C:\ Test\")]
+        [TestCase(@"C:\ Test")]
+        [TestCase(@"C:\Test \TV")]
+        [TestCase(@"C:\ Test\TV")]
+        [TestCase(@"C:\Test \TV\")]
+        [TestCase(@"C:\ Test\TV\")]
+        [TestCase(@" C:\Test\TV\")]
+        [TestCase(@" C:\Test\TV")]
+
+        public void IsPathValid_should_be_false_on_windows(string path)
+        {
+            WindowsOnly();
+            path.IsPathValid(PathValidationType.CurrentOs).Should().BeFalse();
+        }
+
+        [TestCase(@"")]
+        [TestCase(@"relative/path")]
+        public void IsPathValid_should_be_false_on_unix(string path)
+        {
+            PosixOnly();
+            path.AsOsAgnostic().IsPathValid(PathValidationType.CurrentOs).Should().BeFalse();
+        }
     }
 }

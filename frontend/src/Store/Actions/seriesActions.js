@@ -3,7 +3,7 @@ import { createAction } from 'redux-actions';
 import { batchActions } from 'redux-batched-actions';
 import { filterBuilderTypes, filterBuilderValueTypes, filterTypePredicates, filterTypes, sortDirections } from 'Helpers/Props';
 import { createThunk, handleThunks } from 'Store/thunks';
-import sortByName from 'Utilities/Array/sortByName';
+import sortByProp from 'Utilities/Array/sortByProp';
 import createAjaxRequest from 'Utilities/createAjaxRequest';
 import dateFilterPredicate from 'Utilities/Date/dateFilterPredicate';
 import translate from 'Utilities/String/translate';
@@ -247,7 +247,7 @@ export const filterBuilderProps = [
         return acc;
       }, []);
 
-      return tagList.sort(sortByName);
+      return tagList.sort(sortByProp('name'));
     }
   },
   {
@@ -316,7 +316,7 @@ export const filterBuilderProps = [
         return acc;
       }, []);
 
-      return tagList.sort(sortByName);
+      return tagList.sort(sortByProp('name'));
     }
   },
   {
@@ -335,7 +335,7 @@ export const filterBuilderProps = [
         return acc;
       }, []);
 
-      return languageList.sort(sortByName);
+      return languageList.sort(sortByProp('name'));
     }
   },
   {

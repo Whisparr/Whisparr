@@ -16,6 +16,7 @@ import QualityProfileFilterBuilderRowValueConnector from './QualityProfileFilter
 import SeasonsMonitoredStatusFilterBuilderRowValue from './SeasonsMonitoredStatusFilterBuilderRowValue';
 import SeriesFilterBuilderRowValue from './SeriesFilterBuilderRowValue';
 import SeriesStatusFilterBuilderRowValue from './SeriesStatusFilterBuilderRowValue';
+import SeriesTypesFilterBuilderRowValue from './SeriesTypesFilterBuilderRowValue';
 import TagFilterBuilderRowValueConnector from './TagFilterBuilderRowValueConnector';
 import styles from './FilterBuilderRow.css';
 
@@ -87,6 +88,9 @@ function getRowValueConnector(selectedFilterBuilderProp) {
 
     case filterBuilderValueTypes.SERIES_STATUS:
       return SeriesStatusFilterBuilderRowValue;
+
+    case filterBuilderValueTypes.SERIES_TYPES:
+      return SeriesTypesFilterBuilderRowValue;
 
     case filterBuilderValueTypes.TAG:
       return TagFilterBuilderRowValueConnector;

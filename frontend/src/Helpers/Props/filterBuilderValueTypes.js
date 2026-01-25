@@ -11,4 +11,5 @@ export const QUALITY_PROFILE = 'qualityProfile';
 export const SEASONS_MONITORED_STATUS = 'seasonsMonitoredStatus';
 export const SERIES = 'series';
 export const SERIES_STATUS = 'seriesStatus';
+export const SERIES_TYPES = 'seriesTypes';
 export const TAG = 'tag';

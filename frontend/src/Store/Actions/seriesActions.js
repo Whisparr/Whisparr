@@ -232,6 +232,17 @@ export const filterBuilderProps = [
     valueType: filterBuilderValueTypes.SERIES_STATUS
   },
   {
+    name: 'seriesType',
+    label: () => translate('Type'),
+    type: filterBuilderTypes.EXACT,
+    valueType: filterBuilderValueTypes.SERIES_TYPES
+  },
+  {
+    name: 'title',
+    label: () => translate('Title'),
+    type: filterBuilderTypes.STRING
+  },
+  {
     name: 'network',
     label: () => translate('Network'),
     type: filterBuilderTypes.ARRAY,

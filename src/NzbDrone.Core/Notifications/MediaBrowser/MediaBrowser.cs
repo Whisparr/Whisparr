@@ -57,7 +57,6 @@ namespace NzbDrone.Core.Notifications.Emby
             UpdateIfEnabled(message.Series, Created);
         }
 
-
         public override void OnRename(Series series, List<RenamedEpisodeFile> renamedFiles)
         {
             UpdateIfEnabled(series, Modified);

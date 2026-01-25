@@ -41,13 +41,6 @@ namespace NzbDrone.Core.Notifications.Telegram
             _proxy.SendNotification(title, message.Message, links, Settings);
         }
 
-        public override void OnImportComplete(ImportCompleteMessage message)
-        {
-            var title = Settings.IncludeAppNameInTitle ? EPISODE_DOWNLOADED_TITLE_BRANDED : EPISODE_DOWNLOADED_TITLE;
-
-            _proxy.SendNotification(title, message.Message, Settings);
-        }
-
         public override void OnEpisodeFileDelete(EpisodeDeleteMessage deleteMessage)
         {
             var title = Settings.IncludeAppNameInTitle ? EPISODE_DELETED_TITLE_BRANDED : EPISODE_DELETED_TITLE;
@@ -117,11 +110,6 @@ namespace NzbDrone.Core.Notifications.Telegram
             {
                 var linkType = (MetadataLinkType)link;
 
-                if (linkType == MetadataLinkType.Imdb && series.ImdbId.IsNotNullOrWhiteSpace())
-                {
-                    links.Add(new TelegramLink("IMDb", $"https://www.imdb.com/title/{series.ImdbId}"));
-                }
-
                 if (linkType == MetadataLinkType.Tvdb && series.TvdbId > 0)
                 {
                     links.Add(new TelegramLink("TVDb", $"http://www.thetvdb.com/?tab=series&id={series.TvdbId}"));
@@ -129,12 +117,7 @@ namespace NzbDrone.Core.Notifications.Telegram
 
                 if (linkType == MetadataLinkType.Trakt && series.TvdbId > 0)
                 {
-                    links.Add(new TelegramLink("TVMaze", $"http://trakt.tv/search/tvdb/{series.TvdbId}?id_type=show"));
-                }
-
-                if (linkType == MetadataLinkType.Tvmaze && series.TvMazeId > 0)
-                {
-                    links.Add(new TelegramLink("Trakt", $"http://www.tvmaze.com/shows/{series.TvMazeId}/_"));
+                    links.Add(new TelegramLink("Trakt", $"http://trakt.tv/search/tvdb/{series.TvdbId}?id_type=show"));
                 }
             }
 

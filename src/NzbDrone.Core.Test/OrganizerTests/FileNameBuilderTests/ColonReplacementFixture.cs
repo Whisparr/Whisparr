@@ -95,7 +95,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         public void should_replace_colon_with_custom_format(string seriesName, ColonReplacementFormat replacementFormat, string customFormat, string expected)
         {
             _series.Title = seriesName;
-            _namingConfig.StandardEpisodeFormat = "{Series Title}";
+            _namingConfig.StandardEpisodeFormat = "{Site Title}";
             _namingConfig.ColonReplacementFormat = replacementFormat;
             _namingConfig.CustomColonReplacementFormat = customFormat;
 

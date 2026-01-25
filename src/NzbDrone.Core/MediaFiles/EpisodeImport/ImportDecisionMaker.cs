@@ -32,7 +32,6 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport
         private readonly IDetectSample _detectSample;
         private readonly ITrackedDownloadService _trackedDownloadService;
         private readonly ICustomFormatCalculationService _formatCalculator;
-        private readonly ITrackedDownloadService _trackedDownloadService;
         private readonly Logger _logger;
 
         public ImportDecisionMaker(IEnumerable<IImportDecisionEngineSpecification> specifications,
@@ -42,7 +41,6 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport
                                    IDetectSample detectSample,
                                    ITrackedDownloadService trackedDownloadService,
                                    ICustomFormatCalculationService formatCalculator,
-                                   ITrackedDownloadService trackedDownloadService,
                                    Logger logger)
         {
             _specifications = specifications;
@@ -52,7 +50,6 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport
             _detectSample = detectSample;
             _trackedDownloadService = trackedDownloadService;
             _formatCalculator = formatCalculator;
-            _trackedDownloadService = trackedDownloadService;
             _logger = logger;
         }
 

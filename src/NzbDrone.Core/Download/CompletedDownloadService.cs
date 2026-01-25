@@ -36,7 +36,6 @@ namespace NzbDrone.Core.Download
         private readonly ISeriesService _seriesService;
         private readonly IEpisodeService _episodeService;
         private readonly ITrackedDownloadAlreadyImported _trackedDownloadAlreadyImported;
-        private readonly IEpisodeService _episodeService;
         private readonly IMediaFileService _mediaFileService;
         private readonly Logger _logger;
 
@@ -48,7 +47,6 @@ namespace NzbDrone.Core.Download
                                         ISeriesService seriesService,
                                         IEpisodeService episodeService,
                                         ITrackedDownloadAlreadyImported trackedDownloadAlreadyImported,
-                                        IEpisodeService episodeService,
                                         IMediaFileService mediaFileService,
                                         Logger logger)
         {
@@ -60,7 +58,6 @@ namespace NzbDrone.Core.Download
             _seriesService = seriesService;
             _episodeService = episodeService;
             _trackedDownloadAlreadyImported = trackedDownloadAlreadyImported;
-            _episodeService = episodeService;
             _mediaFileService = mediaFileService;
             _logger = logger;
         }
@@ -294,9 +291,6 @@ namespace NzbDrone.Core.Download
                            .WriteSentryWarn("DownloadHistoryIncomplete")
                            .Write();
                 }
-
-                var episodes = _episodeService.GetEpisodes(trackedDownload.RemoteEpisode.Episodes.Select(e => e.Id));
-                var files = _mediaFileService.GetFiles(episodes.Select(e => e.EpisodeFileId).Where(i => i > 0).Distinct());
 
                 trackedDownload.State = TrackedDownloadState.Imported;
                 _eventAggregator.PublishEvent(new DownloadCompletedEvent(trackedDownload, trackedDownload.RemoteEpisode.Series.Id, files, releaseInfo));

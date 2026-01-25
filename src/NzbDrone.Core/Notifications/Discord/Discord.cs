@@ -304,7 +304,7 @@ namespace NzbDrone.Core.Notifications.Discord
                         break;
                     case DiscordImportFieldType.Release:
                         discordField.Name = "Release";
-                        discordField.Value = $"```{message.Release?.Title ?? message.SourceTitle}```";
+                        discordField.Value = $"```{message.Release?.Title}```";
                         break;
                     case DiscordImportFieldType.Links:
                         discordField.Name = "Links";

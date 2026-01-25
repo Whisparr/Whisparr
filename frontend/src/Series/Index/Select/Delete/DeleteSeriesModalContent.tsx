@@ -86,23 +86,6 @@ function DeleteSeriesModalContent(props: DeleteSeriesModalContentProps) {
     onModalClose,
   ]);
 
-  const { totalEpisodeFileCount, totalSizeOnDisk } = useMemo(() => {
-    return series.reduce(
-      (acc, { statistics = {} }) => {
-        const { episodeFileCount = 0, sizeOnDisk = 0 } = statistics;
-
-        acc.totalEpisodeFileCount += episodeFileCount;
-        acc.totalSizeOnDisk += sizeOnDisk;
-
-        return acc;
-      },
-      {
-        totalEpisodeFileCount: 0,
-        totalSizeOnDisk: 0,
-      }
-    );
-  }, [series]);
-
   return (
     <ModalContent onModalClose={onModalClose}>
       <ModalHeader>{translate('DeleteSelectedSites')}</ModalHeader>

@@ -162,7 +162,6 @@ namespace NzbDrone.Common.Extensions
                 }
             }
 
-
             if (validationType == PathValidationType.AnyOs)
             {
                 return IsPathValidForWindows(path) || IsPathValidForNonWindows(path);

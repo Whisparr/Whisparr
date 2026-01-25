@@ -118,7 +118,7 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport
                     {
                         default:
                         case ImportMode.Auto:
-                            copyOnly = downloadClientItem is { CanMoveFiles: false } or { DownloadClientInfo.RemoveCompletedDownloads: false };
+                            copyOnly = downloadClientItem is { CanMoveFiles: false };
                             break;
                         case ImportMode.Move:
                             copyOnly = false;

@@ -4,6 +4,7 @@ interface CssExports {
   'message': string;
   'path': string;
   'pathContainer': string;
+  'statistics': string;
 }
 export const cssExports: CssExports;
 export default cssExports;

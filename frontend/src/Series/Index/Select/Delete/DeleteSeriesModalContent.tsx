@@ -16,6 +16,7 @@ import Series from 'Series/Series';
 import { bulkDeleteSeries, setDeleteOption } from 'Store/Actions/seriesActions';
 import createAllSeriesSelector from 'Store/Selectors/createAllSeriesSelector';
 import { CheckInputChanged } from 'typings/inputs';
+import formatBytes from 'Utilities/Number/formatBytes';
 import translate from 'Utilities/String/translate';
 import styles from './DeleteSeriesModalContent.css';
 
@@ -85,6 +86,23 @@ function DeleteSeriesModalContent(props: DeleteSeriesModalContentProps) {
     onModalClose,
   ]);
 
+  const { totalEpisodeFileCount, totalSizeOnDisk } = useMemo(() => {
+    return series.reduce(
+      (acc, { statistics = {} }) => {
+        const { episodeFileCount = 0, sizeOnDisk = 0 } = statistics;
+
+        acc.totalEpisodeFileCount += episodeFileCount;
+        acc.totalSizeOnDisk += sizeOnDisk;
+
+        return acc;
+      },
+      {
+        totalEpisodeFileCount: 0,
+        totalSizeOnDisk: 0,
+      }
+    );
+  }, [series]);
+
   return (
     <ModalContent onModalClose={onModalClose}>
       <ModalHeader>{translate('DeleteSelectedSites')}</ModalHeader>
@@ -136,14 +154,29 @@ function DeleteSeriesModalContent(props: DeleteSeriesModalContentProps) {
         </div>
 
         <ul>
-          {series.map((s) => {
+          {series.map(({ title, path, statistics = {} }) => {
+            const { episodeFileCount = 0, sizeOnDisk = 0 } = statistics;
+
             return (
-              <li key={s.title}>
-                <span>{s.title}</span>
+              <li key={title}>
+                <span>{title}</span>
 
                 {deleteFiles && (
-                  <span className={styles.pathContainer}>
-                    -<span className={styles.path}>{s.path}</span>
+                  <span>
+                    <span className={styles.pathContainer}>
+                      -<span className={styles.path}>{path}</span>
+                    </span>
+
+                    {!!episodeFileCount && (
+                      <span className={styles.statistics}>
+                        (
+                        {translate('DeleteSiteFolderEpisodeCount', {
+                          episodeFileCount,
+                          size: formatBytes(sizeOnDisk),
+                        })}
+                        )
+                      </span>
+                    )}
                   </span>
                 )}
               </li>

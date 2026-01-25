@@ -392,14 +392,6 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Manual
             item.Name = Path.GetFileNameWithoutExtension(decision.LocalEpisode.Path);
             item.DownloadId = downloadId;
 
-            if (decision.LocalEpisode.Series != null)
-            {
-                item.Series = decision.LocalEpisode.Series;
-
-                item.CustomFormats = _formatCalculator.ParseCustomFormat(decision.LocalEpisode);
-                item.CustomFormatScore = item.Series.QualityProfile?.Value.CalculateCustomFormatScore(item.CustomFormats) ?? 0;
-            }
-
             if (decision.LocalEpisode.Episodes.Any() && decision.LocalEpisode.Episodes.Select(c => c.SeasonNumber).Distinct().Count() == 1)
             {
                 var seasons = decision.LocalEpisode.Episodes.Select(c => c.SeasonNumber).Distinct().ToList();
@@ -425,6 +417,14 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Manual
             item.Size = _diskProvider.GetFileSize(decision.LocalEpisode.Path);
             item.Rejections = decision.Rejections;
             item.IndexerFlags = (int)decision.LocalEpisode.IndexerFlags;
+
+            if (decision.LocalEpisode.Series != null)
+            {
+                item.Series = decision.LocalEpisode.Series;
+
+                item.CustomFormats = _formatCalculator.ParseCustomFormat(decision.LocalEpisode);
+                item.CustomFormatScore = item.Series.QualityProfile?.Value.CalculateCustomFormatScore(item.CustomFormats) ?? 0;
+            }
 
             return item;
         }
@@ -500,8 +500,6 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Manual
 
                 // Augment episode file so imported files have all additional information an automatic import would
                 localEpisode = _aggregationService.Augment(localEpisode, trackedDownload?.DownloadItem);
-                localEpisode.CustomFormats = _formatCalculator.ParseCustomFormat(localEpisode);
-                localEpisode.CustomFormatScore = localEpisode.Series.QualityProfile?.Value.CalculateCustomFormatScore(localEpisode.CustomFormats) ?? 0;
 
                 // Apply the user-chosen values.
                 localEpisode.Series = series;
@@ -510,6 +508,9 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Manual
                 localEpisode.Quality = file.Quality;
                 localEpisode.Languages = file.Languages;
                 localEpisode.IndexerFlags = (IndexerFlags)file.IndexerFlags;
+
+                localEpisode.CustomFormats = _formatCalculator.ParseCustomFormat(localEpisode);
+                localEpisode.CustomFormatScore = localEpisode.Series.QualityProfile?.Value.CalculateCustomFormatScore(localEpisode.CustomFormats) ?? 0;
 
                 // TODO: Cleanup non-tracked downloads
 

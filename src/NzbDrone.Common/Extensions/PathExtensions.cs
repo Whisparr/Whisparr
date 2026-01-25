@@ -31,8 +31,8 @@ namespace NzbDrone.Common.Extensions
         {
             if (path.IsNotNullOrWhiteSpace())
             {
-                // Trim trailing spaces and slashes before checking if the path is valid so validation doesn't fail for something we can fix.
-                path = path.TrimEnd(' ', '/', '\\');
+                // Trim trailing spaces before checking if the path is valid so validation doesn't fail for something we can fix.
+                path = path.TrimEnd(' ');
             }
 
             Ensure.That(path, () => path).IsNotNullOrWhiteSpace();
@@ -56,6 +56,11 @@ namespace NzbDrone.Common.Extensions
 
         public static bool PathEquals(this string firstPath, string secondPath, StringComparison? comparison = null)
         {
+            if (string.IsNullOrWhiteSpace(firstPath) || string.IsNullOrWhiteSpace(secondPath))
+            {
+                return false;
+            }
+
             if (!comparison.HasValue)
             {
                 comparison = DiskProviderBase.PathStringComparison;
@@ -122,6 +127,11 @@ namespace NzbDrone.Common.Extensions
 
         public static bool IsParentPath(this string parentPath, string childPath)
         {
+            if (string.IsNullOrWhiteSpace(parentPath) || string.IsNullOrWhiteSpace(childPath))
+            {
+                return false;
+            }
+
             var parent = new OsPath(parentPath);
             var child = new OsPath(childPath);
 

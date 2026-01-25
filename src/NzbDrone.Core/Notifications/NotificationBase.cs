@@ -12,6 +12,7 @@ namespace NzbDrone.Core.Notifications
     {
         protected const string EPISODE_GRABBED_TITLE = "Episode Grabbed";
         protected const string EPISODE_DOWNLOADED_TITLE = "Episode Downloaded";
+        protected const string IMPORT_COMPLETE_TITLE = "Import Complete";
         protected const string EPISODE_DELETED_TITLE = "Episode Deleted";
         protected const string SERIES_ADDED_TITLE = "Series Added";
         protected const string SERIES_DELETED_TITLE = "Series Deleted";
@@ -22,6 +23,7 @@ namespace NzbDrone.Core.Notifications
 
         protected const string EPISODE_GRABBED_TITLE_BRANDED = "Whisparr - " + EPISODE_GRABBED_TITLE;
         protected const string EPISODE_DOWNLOADED_TITLE_BRANDED = "Whisparr - " + EPISODE_DOWNLOADED_TITLE;
+        protected const string IMPORT_COMPLETE_TITLE_BRANDED = "Whisparr - " + IMPORT_COMPLETE_TITLE;
         protected const string EPISODE_DELETED_TITLE_BRANDED = "Whisparr - " + EPISODE_DELETED_TITLE;
         protected const string SERIES_ADDED_TITLE_BRANDED = "Whisparr - " + SERIES_ADDED_TITLE;
         protected const string SERIES_DELETED_TITLE_BRANDED = "Whisparr - " + SERIES_DELETED_TITLE;
@@ -48,6 +50,10 @@ namespace NzbDrone.Core.Notifications
         }
 
         public virtual void OnDownload(DownloadMessage message)
+        {
+        }
+
+        public virtual void OnImportComplete(ImportCompleteMessage message)
         {
         }
 
@@ -91,6 +97,7 @@ namespace NzbDrone.Core.Notifications
         public bool SupportsOnRename => HasConcreteImplementation("OnRename");
         public bool SupportsOnDownload => HasConcreteImplementation("OnDownload");
         public bool SupportsOnUpgrade => SupportsOnDownload;
+        public bool SupportsOnImportComplete => HasConcreteImplementation("OnImportComplete");
         public bool SupportsOnSeriesAdd => HasConcreteImplementation("OnSeriesAdd");
         public bool SupportsOnSeriesDelete => HasConcreteImplementation("OnSeriesDelete");
         public bool SupportsOnEpisodeFileDelete => HasConcreteImplementation("OnEpisodeFileDelete");

@@ -246,6 +246,9 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("[mhastream.com]_Episode_05_FHD.mp4", false)]
         [TestCase("[Kousei]_One_Series_ - _609_[FHD][648A87C7].mp4", false)]
         [TestCase("[Onii-ChanSub] The.Series - 02 vostfr (FHD 1080p 10bits).mkv", false)]
+        [TestCase("Series.Title.S01E01.Erste.Begegnungen.German.DD51.Synced.DL.1080p.HBOMaxHD.AVC-TVS", false)]
+        [TestCase("Series.Title.S01E05.Tavora.greift.an.German.DL.1080p.DisneyHD.h264-4SF", false)]
+        [TestCase("Series.Title.S02E04.German.Dubbed.DL.AAC.1080p.WEB.AVC-GROUP", false)]
         public void should_parse_webdl1080p_quality(string title, bool proper)
         {
             ParseAndVerifyQuality(title, Quality.WEBDL1080p, proper);
@@ -275,6 +278,7 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("My Title - 23.01.12 - EpTitle [HEVC-4k DTSHD-MA-6ch]", false)]
         [TestCase("My Title - 23.01.12 - EpTitle [4k HEVC DTSHD-MA-6ch]", false)]
         [TestCase("[GM-Team][国漫][诛仙][Series Title][2022][19][HEVC][GB][4K]", false)]
+        [TestCase("Series.Title.S02E04.German.Dubbed.DL.AAC.2160p.DV.HDR.WEB.HEVC-GROUP", false)]
         public void should_parse_webdl2160p_quality(string title, bool proper)
         {
             ParseAndVerifyQuality(title, Quality.WEBDL2160p, proper);

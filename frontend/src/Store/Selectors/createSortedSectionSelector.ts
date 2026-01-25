@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+import AppState from 'App/State/AppState';
 import getSectionState from 'Utilities/State/getSectionState';
 
 function createSortedSectionSelector<T>(
@@ -6,8 +7,8 @@ function createSortedSectionSelector<T>(
   comparer: (a: T, b: T) => number
 ) {
   return createSelector(
-    (state) => state,
-    (state) => {
+    (state: AppState) => state,
+    (state: AppState) => {
       const sectionState = getSectionState(state, section, true);
 
       return {

@@ -276,7 +276,7 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
                         item.Message = "The download is missing files";
                         break;
 
-                    case "metaDL": // torrent metadata is being downloaded
+                    case "metaDL": // torrent magnet is being downloaded
                     case "forcedMetaDL": // torrent metadata is being forcibly downloaded
                         if (config.DhtEnabled)
                         {

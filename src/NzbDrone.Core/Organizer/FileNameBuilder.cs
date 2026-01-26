@@ -614,7 +614,7 @@ namespace NzbDrone.Core.Organizer
         {
             tokenHandlers["{Original Title}"] = m => GetOriginalTitle(episodeFile, useCurrentFilenameAsFallback);
             tokenHandlers["{Original Filename}"] = m => GetOriginalFileName(episodeFile, useCurrentFilenameAsFallback);
-            tokenHandlers["{Release Group}"] = m => episodeFile.ReleaseGroup ?? m.DefaultValue("Whisparr");
+            tokenHandlers["{Release Group}"] = m => episodeFile.ReleaseGroup.IsNullOrWhiteSpace() ? m.DefaultValue("Whisparr") : Truncate(episodeFile.ReleaseGroup, m.CustomFormat);
         }
 
         private void AddQualityTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Series series, EpisodeFile episodeFile)
@@ -1070,6 +1070,35 @@ namespace NzbDrone.Core.Organizer
             }
 
             return result.TrimStart(' ', '.').TrimEnd(' ');
+        }
+
+        private string Truncate(string input, string formatter)
+        {
+            if (input.IsNullOrWhiteSpace())
+            {
+                return string.Empty;
+            }
+
+            var maxLength = GetMaxLengthFromFormatter(formatter);
+
+            if (maxLength == 0 || input.Length <= Math.Abs(maxLength))
+            {
+                return input;
+            }
+
+            if (maxLength < 0)
+            {
+                return $"{{ellipsis}}{new string(new string(input.Reverse().ToArray()).Truncate(Math.Abs(maxLength) - 3).TrimEnd(' ', '.').Reverse().ToArray())}";
+            }
+
+            return $"{input.Truncate(maxLength - 3).TrimEnd(' ', '.')}{{ellipsis}}";
+        }
+
+        private int GetMaxLengthFromFormatter(string formatter)
+        {
+            int.TryParse(formatter, out var maxCustomLength);
+
+            return maxCustomLength;
         }
     }
 

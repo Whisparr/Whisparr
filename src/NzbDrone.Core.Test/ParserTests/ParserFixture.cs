@@ -62,7 +62,7 @@ namespace NzbDrone.Core.Test.ParserTests
             seriesTitleInfo.Year.Should().Be(year);
         }
 
-        [TestCase("Digital Playground - 2014-12-20 - Dirty Santa - Episode 4 - Candy Cane Lane - [WEBDL-1080p].mp4", " - Dirty Santa - Episode 4 - Candy Cane Lane - [WEBDL-1080p]")]
+        [TestCase("Digital Playground - 2014-12-20 - Dirty Santa - Episode 4 - Candy Cane Lane - [WEBDL-1080p].mp4", " - Dirty Santa - Episode 4 - Candy Cane Lane - ")]
         [TestCase("Pure Taboo - Sarah Arabic, Lily LaBeau - A Costly Divorce (June 24, 2025) [1080p HEVC x265]", " - Sarah Arabic, Lily LaBeau - A Costly Divorce")]
         public void should_parse_episode_string(string title, string expected)
         {

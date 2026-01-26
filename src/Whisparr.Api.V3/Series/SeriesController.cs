@@ -88,8 +88,6 @@ namespace Whisparr.Api.V3.Series
                          .When(s => s.Path.IsNullOrWhiteSpace());
             PostValidator.RuleFor(s => s.Title).NotEmpty();
             PostValidator.RuleFor(s => s.TvdbId).GreaterThan(0).SetValidator(seriesExistsValidator);
-
-            PutValidator.RuleFor(s => s.Path).IsValidPath();
         }
 
         [HttpGet]

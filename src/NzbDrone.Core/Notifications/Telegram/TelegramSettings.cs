@@ -32,6 +32,9 @@ namespace NzbDrone.Core.Notifications.Telegram
         [FieldDefinition(3, Label = "Send Silently", Type = FieldType.Checkbox, HelpText = "Sends the message silently. Users will receive a notification with no sound")]
         public bool SendSilently { get; set; }
 
+        [FieldDefinition(4, Label = "Include {appName} in Title", Type = FieldType.Checkbox, HelpText = "Optionally prefix message title with {appName} to differentiate notifications from different applications")]
+        public bool IncludeAppNameInTitle { get; set; }
+
         public NzbDroneValidationResult Validate()
         {
             return new NzbDroneValidationResult(Validator.Validate(this));

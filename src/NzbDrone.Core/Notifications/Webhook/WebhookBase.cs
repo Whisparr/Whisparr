@@ -90,7 +90,7 @@ namespace NzbDrone.Core.Notifications.Webhook
                 EventType = WebhookEventType.Download,
                 InstanceName = _configFileProvider.InstanceName,
                 ApplicationUrl = _configService.ApplicationUrl,
-                Series = new WebhookSeries(message.Series),
+                Series = GetSeries(message.Series),
                 Episodes = message.Episodes.ConvertAll(x => new WebhookEpisode(x)),
                 EpisodeFiles = episodeFiles.ConvertAll(e => new WebhookEpisodeFile(e)),
                 Release = new WebhookGrabbedRelease(message.Release),

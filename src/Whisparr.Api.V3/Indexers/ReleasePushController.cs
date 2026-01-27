@@ -41,7 +41,8 @@ namespace Whisparr.Api.V3.Indexers
             _logger = logger;
 
             PostValidator.RuleFor(s => s.Title).NotEmpty();
-            PostValidator.RuleFor(s => s.DownloadUrl).NotEmpty();
+            PostValidator.RuleFor(s => s.DownloadUrl).NotEmpty().When(s => s.MagnetUrl.IsNullOrWhiteSpace());
+            PostValidator.RuleFor(s => s.MagnetUrl).NotEmpty().When(s => s.DownloadUrl.IsNullOrWhiteSpace());
             PostValidator.RuleFor(s => s.Protocol).NotEmpty();
             PostValidator.RuleFor(s => s.PublishDate).NotEmpty();
         }
@@ -50,7 +51,7 @@ namespace Whisparr.Api.V3.Indexers
         [Consumes("application/json")]
         public ActionResult<List<ReleaseResource>> Create([FromBody] ReleaseResource release)
         {
-            _logger.Info("Release pushed: {0} - {1}", release.Title, release.DownloadUrl);
+            _logger.Info("Release pushed: {0} - {1}", release.Title, release.DownloadUrl ?? release.MagnetUrl);
 
             ValidateResource(release);
 
@@ -85,7 +86,8 @@ namespace Whisparr.Api.V3.Indexers
         {
             if (release.IndexerId == 0 && release.Indexer.IsNotNullOrWhiteSpace())
             {
-                var indexer = _indexerFactory.All().FirstOrDefault(v => v.Name == release.Indexer);
+                var indexer = _indexerFactory.All().FirstOrDefault(v => v.Name.EqualsIgnoreCase(release.Indexer));
+
                 if (indexer != null)
                 {
                     release.IndexerId = indexer.Id;

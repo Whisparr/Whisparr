@@ -64,14 +64,8 @@ namespace NzbDrone.Core.Notifications.Telegram
 
     public enum MetadataLinkType
     {
-        [FieldOption(Label = "IMDb")]
-        Imdb,
-
         [FieldOption(Label = "TVDb")]
         Tvdb,
-
-        [FieldOption(Label = "TVMaze")]
-        Tvmaze,
 
         [FieldOption(Label = "Trakt")]
         Trakt,

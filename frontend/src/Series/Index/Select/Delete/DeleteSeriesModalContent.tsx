@@ -86,6 +86,24 @@ function DeleteSeriesModalContent(props: DeleteSeriesModalContentProps) {
     onModalClose,
   ]);
 
+  const { totalEpisodeFileCount, totalSizeOnDisk } = useMemo(() => {
+    return series.reduce(
+      (acc, s) => {
+        const { statistics = { episodeFileCount: 0, sizeOnDisk: 0 } } = s;
+        const { episodeFileCount = 0, sizeOnDisk = 0 } = statistics;
+
+        acc.totalEpisodeFileCount += episodeFileCount;
+        acc.totalSizeOnDisk += sizeOnDisk;
+
+        return acc;
+      },
+      {
+        totalEpisodeFileCount: 0,
+        totalSizeOnDisk: 0,
+      }
+    );
+  }, [series]);
+
   return (
     <ModalContent onModalClose={onModalClose}>
       <ModalHeader>{translate('DeleteSelectedSites')}</ModalHeader>
@@ -137,17 +155,17 @@ function DeleteSeriesModalContent(props: DeleteSeriesModalContentProps) {
         </div>
 
         <ul>
-          {series.map(({ title, path, statistics = {} }) => {
-            const { episodeFileCount = 0, sizeOnDisk = 0 } = statistics;
+          {series.map((s) => {
+            const { episodeFileCount = 0, sizeOnDisk = 0 } = s.statistics;
 
             return (
-              <li key={title}>
-                <span>{title}</span>
+              <li key={s.title}>
+                <span>{s.title}</span>
 
                 {deleteFiles && (
                   <span>
                     <span className={styles.pathContainer}>
-                      -<span className={styles.path}>{path}</span>
+                      -<span className={styles.path}>{s.path}</span>
                     </span>
 
                     {!!episodeFileCount && (
@@ -166,6 +184,15 @@ function DeleteSeriesModalContent(props: DeleteSeriesModalContentProps) {
             );
           })}
         </ul>
+
+        {deleteFiles && !!totalEpisodeFileCount ? (
+          <div className={styles.deleteFilesMessage}>
+            {translate('DeleteSiteFolderEpisodeCount', {
+              episodeFileCount: totalEpisodeFileCount,
+              size: formatBytes(totalSizeOnDisk),
+            })}
+          </div>
+        ) : null}
       </ModalBody>
 
       <ModalFooter>

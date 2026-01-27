@@ -10,6 +10,17 @@
 .path {
   margin-left: 5px;
   color: var(--dangerColor);
+  font-weight: bold;
+}
+
+.statistics {
+  margin-left: 5px;
+  color: var(--warningColor);
+}
+
+.deleteFilesMessage {
+  margin-top: 20px;
+  color: var(--warningColor);
 }
 
 .statistics {

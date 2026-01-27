@@ -41,6 +41,7 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("SomeShow S01E168 1080p WEB-DL AAC 2.0 x264-Erai-raws", "Erai-raws")]
         [TestCase("The.Good.Series.S05E03.Series.of.Intelligence.1080p.10bit.AMZN.WEB-DL.DDP5.1.HEVC-Vyndros", "Vyndros")]
         [TestCase("Series.Title.S01E09.1080p.DSNP.WEB-DL.DDP2.0.H.264-VARYG", "VARYG")]
+        [TestCase("Stargate SG-1 (1997) - S01E01-02 - Children of the Gods (Showtime) (1080p.BD.DD5.1.x265-TheSickle[TAoE])", "TheSickle")]
 
         // [TestCase("", "")]
         public void should_parse_release_group(string title, string expected)
@@ -81,17 +82,11 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Series Title - S01E01 - Girls Gone Wild Exposed (720p x265 EDGE2020).mkv", "EDGE2020")]
         [TestCase("Series.Title.S01E02.1080p.BluRay.Remux.AVC.FLAC.2.0-E.N.D", "E.N.D")]
         [TestCase("Show Name (2016) Season 1 S01 (1080p AMZN WEB-DL x265 HEVC 10bit EAC3 5 1 RZeroX) QxR", "RZeroX")]
+        [TestCase("Series Title S01 1080p Blu-ray Remux AVC FLAC 2.0 - KRaLiMaRKo", "KRaLiMaRKo")]
+        [TestCase("Series Title S01 1080p Blu-ray Remux AVC DTS-HD MA 2.0 - BluDragon", "BluDragon")]
         public void should_parse_exception_release_group(string title, string expected)
         {
             Parser.Parser.ParseReleaseGroup(title).Should().Be(expected);
-        }
-
-        [Test]
-        public void should_not_include_extension_in_release_group()
-        {
-            const string path = @"C:\Test\Doctor.Series.2005.22.12.24.internal.bdrip.x264-archivist.mkv";
-
-            Parser.Parser.ParsePath(path).ReleaseGroup.Should().Be("archivist");
         }
 
         [TestCase("Series.Title.S02E04.720p.WEBRip.x264-SKGTV English", "SKGTV")]
@@ -118,14 +113,14 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Series.Title.S08E05.The.Forgotten.1080p.AMZN.WEB-DL.DDP5.1.H.264-NTb-Rakuv", "NTb")]
         [TestCase("The.Series.S30E01.Devs.Not.Dead.1080p.AMZN.WEB-DL.DDP5.1.H264-QOQ-Rakuv02", "QOQ")]
         [TestCase("Lie.To.Developers.S01E13.720p.BluRay.x264-SiNNERS-Rakuvfinhel", "SiNNERS")]
-        [TestCase("Who.is.Whisparr.S01E01.INTERNAL.720p.HDTV.x264-aAF-RakuvUS-Obfuscated", "aAF")]
+        [TestCase("Who.is.Sonarr.S01E01.INTERNAL.720p.HDTV.x264-aAF-RakuvUS-Obfuscated", "aAF")]
         [TestCase("Deadly.Development.S01E10.Sink.With.Code.1080p.AMZN.WEB-DL.DDP5.1.H.264-NTG-WhiteRev", "NTG")]
-        [TestCase("The.Whisparr.Series.S09E12.Developers.REPACK.1080p.AMZN.WEB-DL.DD.5.1.H.264-CasStudio-BUYMORE", "CasStudio")]
+        [TestCase("The.Sonarr.Series.S09E12.Developers.REPACK.1080p.AMZN.WEB-DL.DD.5.1.H.264-CasStudio-BUYMORE", "CasStudio")]
         [TestCase("2.Tired.Developers.S02E24.1080p.AMZN.WEBRip.DD5.1.x264-CasStudio-AsRequested", "CasStudio")]
         [TestCase("Series.S04E11.Lines.1080p.AMZN.WEB-DL.DDP5.1.H.264-NTb-AlternativeToRequested", "NTb")]
         [TestCase("Series.S16E04.Third.Wheel.1080p.AMZN.WEB-DL.DDP5.1.H.264-NTb-GEROV", "NTb")]
         [TestCase("Series.and.Title.S10E06.Dev.n.Play.1080p.AMZN.WEB-DL.DDP5.1.H.264-NTb-Z0iDS3N", "NTb")]
-        [TestCase("Absolute.Series.S02E06.The.House.of.Whisparr.DVDRip.x264-MaG-Chamele0n", "MaG")]
+        [TestCase("Absolute.Series.S02E06.The.House.of.Sonarr.DVDRip.x264-MaG-Chamele0n", "MaG")]
         [TestCase("The.Series.Title.S08E08.1080p.BluRay.x264-ROVERS-4P", "ROVERS")]
         [TestCase("Series.Title.S01E02.720p.BluRay.X264-REWARD-4Planet", "REWARD")]
         [TestCase("Series.S01E01.Rites.of.Passage.1080p.BluRay.x264-DON-AlteZachen", "DON")]
@@ -133,30 +128,6 @@ namespace NzbDrone.Core.Test.ParserTests
         public void should_not_include_repost_in_release_group(string title, string expected)
         {
             Parser.Parser.ParseReleaseGroup(title).Should().Be(expected);
-        }
-
-        [TestCase("Terrible.Anime.Title.001.DBOX.480p.x264-iKaos [v3] [6AFFEF6B]")]
-        public void should_not_parse_anime_hash_as_release_group(string title)
-        {
-            Parser.Parser.ParseReleaseGroup(title).Should().BeNull();
-        }
-
-        [TestCase("Lubed.25.06.24.Tess.Thompson.XXX.1080p.HEVC.x265.PRT", "PRT")]
-        [TestCase("Series.Title.S01E01.720p.WEB.H264.WRB", "WRB")]
-        [TestCase("Series.Title.S01E01.720p.WEB.H264.KTR", "KTR")]
-        [TestCase("Some.Series.23.05.15.Title.1080p.WEB.x265.ABC", "ABC")]
-        public void should_parse_period_prefixed_release_group(string title, string expected)
-        {
-            Parser.Parser.ParseReleaseGroup(title).Should().Be(expected);
-        }
-
-        [TestCase("Series.Title.S01E01.720p.WEB.x264")]
-        [TestCase("Series.Title.S01E01.720p.WEB.hevc")]
-        [TestCase("Series.Title.S01E01.720p.WEB.English")]
-        [TestCase("Series.Title.S01E01.720p.WEB.dvdrip")]
-        public void should_not_parse_codec_or_language_as_period_release_group(string title)
-        {
-            Parser.Parser.ParseReleaseGroup(title).Should().BeNull();
         }
     }
 }

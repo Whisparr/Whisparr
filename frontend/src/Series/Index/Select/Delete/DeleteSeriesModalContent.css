@@ -22,3 +22,7 @@
   margin-top: 20px;
   color: var(--warningColor);
 }
+
+.statistics {
+  margin-left: 10px;
+}

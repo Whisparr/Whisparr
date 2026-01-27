@@ -56,6 +56,11 @@ namespace NzbDrone.Common.Extensions
 
         public static bool PathEquals(this string firstPath, string secondPath, StringComparison? comparison = null)
         {
+            if (string.IsNullOrWhiteSpace(firstPath) || string.IsNullOrWhiteSpace(secondPath))
+            {
+                return false;
+            }
+
             if (!comparison.HasValue)
             {
                 comparison = DiskProviderBase.PathStringComparison;
@@ -92,26 +97,23 @@ namespace NzbDrone.Common.Extensions
 
         public static string GetParentPath(this string childPath)
         {
-            var cleanPath = childPath.GetCleanPath();
+            var path = new OsPath(childPath).Directory;
 
-            if (cleanPath.IsNullOrWhiteSpace())
-            {
-                return null;
-            }
-
-            return Directory.GetParent(cleanPath)?.FullName;
+            return path == OsPath.Null ? null : path.PathWithoutTrailingSlash;
         }
 
         public static string GetParentName(this string childPath)
         {
-            var cleanPath = childPath.GetCleanPath();
+            var path = new OsPath(childPath).Directory;
 
-            if (cleanPath.IsNullOrWhiteSpace())
-            {
-                return null;
-            }
+            return path == OsPath.Null ? null : path.Name;
+        }
 
-            return Directory.GetParent(cleanPath)?.Name;
+        public static string GetDirectoryName(this string childPath)
+        {
+            var path = new OsPath(childPath);
+
+            return path == OsPath.Null ? null : path.Name;
         }
 
         public static string GetCleanPath(this string path)
@@ -125,27 +127,22 @@ namespace NzbDrone.Common.Extensions
 
         public static bool IsParentPath(this string parentPath, string childPath)
         {
-            if (parentPath != "/" && !parentPath.EndsWith(":\\"))
+            if (string.IsNullOrWhiteSpace(parentPath) || string.IsNullOrWhiteSpace(childPath))
             {
-                parentPath = parentPath.TrimEnd(Path.DirectorySeparatorChar);
+                return false;
             }
 
-            if (childPath != "/" && !parentPath.EndsWith(":\\"))
-            {
-                childPath = childPath.TrimEnd(Path.DirectorySeparatorChar);
-            }
+            var parent = new OsPath(parentPath);
+            var child = new OsPath(childPath);
 
-            var parent = new DirectoryInfo(parentPath);
-            var child = new DirectoryInfo(childPath);
-
-            while (child.Parent != null)
+            while (child.Directory != OsPath.Null)
             {
-                if (child.Parent.FullName.Equals(parent.FullName, DiskProviderBase.PathStringComparison))
+                if (child.Directory.Equals(parent, true))
                 {
                     return true;
                 }
 
-                child = child.Parent;
+                child = child.Directory;
             }
 
             return false;

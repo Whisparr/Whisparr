@@ -20,6 +20,7 @@ namespace Whisparr.Api.V3.Config
                 RenameEpisodes = model.RenameEpisodes,
                 ReplaceIllegalCharacters = model.ReplaceIllegalCharacters,
                 ColonReplacementFormat = (int)model.ColonReplacementFormat,
+                CustomColonReplacementFormat = model.CustomColonReplacementFormat,
                 MultiEpisodeStyle = (int)model.MultiEpisodeStyle,
                 StandardEpisodeFormat = model.StandardEpisodeFormat,
                 JavEpisodeFormat = model.JavEpisodeFormat,
@@ -54,6 +55,7 @@ namespace Whisparr.Api.V3.Config
                 ReplaceIllegalCharacters = resource.ReplaceIllegalCharacters,
                 MultiEpisodeStyle = (MultiEpisodeStyle)resource.MultiEpisodeStyle,
                 ColonReplacementFormat = (ColonReplacementFormat)resource.ColonReplacementFormat,
+                CustomColonReplacementFormat = resource.CustomColonReplacementFormat ?? "",
                 StandardEpisodeFormat = resource.StandardEpisodeFormat,
                 JavEpisodeFormat = resource.JavEpisodeFormat,
                 SeriesFolderFormat = resource.SeriesFolderFormat

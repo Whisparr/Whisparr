@@ -3,7 +3,7 @@ import { createAction } from 'redux-actions';
 import { batchActions } from 'redux-batched-actions';
 import { filterBuilderTypes, filterBuilderValueTypes, filterTypePredicates, filterTypes, sortDirections } from 'Helpers/Props';
 import { createThunk, handleThunks } from 'Store/thunks';
-import sortByName from 'Utilities/Array/sortByName';
+import sortByProp from 'Utilities/Array/sortByProp';
 import createAjaxRequest from 'Utilities/createAjaxRequest';
 import dateFilterPredicate from 'Utilities/Date/dateFilterPredicate';
 import translate from 'Utilities/String/translate';
@@ -188,20 +188,33 @@ export const filterPredicates = {
     return predicate(hasMissingSeason, filterValue);
   },
 
-  hasUnmonitoredSeason: function(item, filterValue, type) {
+  seasonsMonitoredStatus: function(item, filterValue, type) {
     const predicate = filterTypePredicates[type];
     const { seasons = [] } = item;
 
-    const hasUnmonitoredSeason = seasons.some((season) => {
-      const {
-        seasonNumber,
-        monitored
-      } = season;
+    const { monitoredCount, unmonitoredCount } = seasons.reduce((acc, { seasonNumber, monitored }) => {
+      if (seasonNumber <= 0) {
+        return acc;
+      }
 
-      return seasonNumber > 0 && !monitored;
-    });
+      if (monitored) {
+        acc.monitoredCount++;
+      } else {
+        acc.unmonitoredCount++;
+      }
 
-    return predicate(hasUnmonitoredSeason, filterValue);
+      return acc;
+    }, { monitoredCount: 0, unmonitoredCount: 0 });
+
+    let seasonsMonitoredStatus = 'partial';
+
+    if (monitoredCount === 0) {
+      seasonsMonitoredStatus = 'none';
+    } else if (unmonitoredCount === 0) {
+      seasonsMonitoredStatus = 'all';
+    }
+
+    return predicate(seasonsMonitoredStatus, filterValue);
   }
 };
 
@@ -219,6 +232,17 @@ export const filterBuilderProps = [
     valueType: filterBuilderValueTypes.SERIES_STATUS
   },
   {
+    name: 'seriesType',
+    label: () => translate('Type'),
+    type: filterBuilderTypes.EXACT,
+    valueType: filterBuilderValueTypes.SERIES_TYPES
+  },
+  {
+    name: 'title',
+    label: () => translate('Title'),
+    type: filterBuilderTypes.STRING
+  },
+  {
     name: 'network',
     label: () => translate('Network'),
     type: filterBuilderTypes.ARRAY,
@@ -234,7 +258,7 @@ export const filterBuilderProps = [
         return acc;
       }, []);
 
-      return tagList.sort(sortByName);
+      return tagList.sort(sortByProp('name'));
     }
   },
   {
@@ -303,7 +327,7 @@ export const filterBuilderProps = [
         return acc;
       }, []);
 
-      return tagList.sort(sortByName);
+      return tagList.sort(sortByProp('name'));
     }
   },
   {
@@ -322,7 +346,7 @@ export const filterBuilderProps = [
         return acc;
       }, []);
 
-      return languageList.sort(sortByName);
+      return languageList.sort(sortByProp('name'));
     }
   },
   {
@@ -353,10 +377,10 @@ export const filterBuilderProps = [
     valueType: filterBuilderValueTypes.BOOL
   },
   {
-    name: 'hasUnmonitoredSeason',
-    label: () => translate('HasUnmonitoredSeason'),
+    name: 'seasonsMonitoredStatus',
+    label: () => translate('SeasonsMonitoredStatus'),
     type: filterBuilderTypes.EXACT,
-    valueType: filterBuilderValueTypes.BOOL
+    valueType: filterBuilderValueTypes.SEASONS_MONITORED_STATUS
   },
   {
     name: 'year',

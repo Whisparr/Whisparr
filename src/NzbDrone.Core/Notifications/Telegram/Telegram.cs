@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using FluentValidation.Results;
 using NzbDrone.Common.Extensions;
+using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Notifications.Telegram
 {
@@ -18,47 +19,78 @@ namespace NzbDrone.Core.Notifications.Telegram
 
         public override void OnGrab(GrabMessage grabMessage)
         {
-            _proxy.SendNotification(EPISODE_GRABBED_TITLE, grabMessage.Message, Settings);
+            var title = Settings.IncludeAppNameInTitle ? EPISODE_GRABBED_TITLE_BRANDED : EPISODE_GRABBED_TITLE;
+            var links = GetLinks(grabMessage.Series);
+
+            _proxy.SendNotification(title, grabMessage.Message, links, Settings);
         }
 
         public override void OnDownload(DownloadMessage message)
         {
-            _proxy.SendNotification(EPISODE_DOWNLOADED_TITLE, message.Message, Settings);
+            var title = Settings.IncludeAppNameInTitle ? EPISODE_DOWNLOADED_TITLE_BRANDED : EPISODE_DOWNLOADED_TITLE;
+            var links = GetLinks(message.Series);
+
+            _proxy.SendNotification(title, message.Message, links, Settings);
+        }
+
+        public override void OnImportComplete(ImportCompleteMessage message)
+        {
+            var title = Settings.IncludeAppNameInTitle ? EPISODE_DOWNLOADED_TITLE_BRANDED : EPISODE_DOWNLOADED_TITLE;
+            var links = GetLinks(message.Series);
+
+            _proxy.SendNotification(title, message.Message, links, Settings);
         }
 
         public override void OnEpisodeFileDelete(EpisodeDeleteMessage deleteMessage)
         {
-            _proxy.SendNotification(EPISODE_DELETED_TITLE, deleteMessage.Message, Settings);
+            var title = Settings.IncludeAppNameInTitle ? EPISODE_DELETED_TITLE_BRANDED : EPISODE_DELETED_TITLE;
+            var links = GetLinks(deleteMessage.Series);
+
+            _proxy.SendNotification(title, deleteMessage.Message, links, Settings);
         }
 
         public override void OnSeriesAdd(SeriesAddMessage message)
         {
-            _proxy.SendNotification(SERIES_ADDED_TITLE, message.Message, Settings);
+            var title = Settings.IncludeAppNameInTitle ? SERIES_ADDED_TITLE_BRANDED : SERIES_ADDED_TITLE;
+            var links = GetLinks(message.Series);
+
+            _proxy.SendNotification(title, message.Message, links, Settings);
         }
 
         public override void OnSeriesDelete(SeriesDeleteMessage deleteMessage)
         {
-            _proxy.SendNotification(SERIES_DELETED_TITLE, deleteMessage.Message, Settings);
+            var title = Settings.IncludeAppNameInTitle ? SERIES_DELETED_TITLE_BRANDED : SERIES_DELETED_TITLE;
+            var links = GetLinks(deleteMessage.Series);
+
+            _proxy.SendNotification(title, deleteMessage.Message, links, Settings);
         }
 
         public override void OnHealthIssue(HealthCheck.HealthCheck healthCheck)
         {
-            _proxy.SendNotification(HEALTH_ISSUE_TITLE, healthCheck.Message, Settings);
+            var title = Settings.IncludeAppNameInTitle ? HEALTH_ISSUE_TITLE_BRANDED : HEALTH_ISSUE_TITLE;
+
+            _proxy.SendNotification(title, healthCheck.Message, null, Settings);
         }
 
         public override void OnHealthRestored(HealthCheck.HealthCheck previousCheck)
         {
-            _proxy.SendNotification(HEALTH_RESTORED_TITLE, $"The following issue is now resolved: {previousCheck.Message}", Settings);
+            var title = Settings.IncludeAppNameInTitle ? HEALTH_RESTORED_TITLE_BRANDED : HEALTH_RESTORED_TITLE;
+
+            _proxy.SendNotification(title, $"The following issue is now resolved: {previousCheck.Message}", null, Settings);
         }
 
         public override void OnApplicationUpdate(ApplicationUpdateMessage updateMessage)
         {
-            _proxy.SendNotification(APPLICATION_UPDATE_TITLE, updateMessage.Message, Settings);
+            var title = Settings.IncludeAppNameInTitle ? APPLICATION_UPDATE_TITLE_BRANDED : APPLICATION_UPDATE_TITLE;
+
+            _proxy.SendNotification(title, updateMessage.Message, null, Settings);
         }
 
         public override void OnManualInteractionRequired(ManualInteractionRequiredMessage message)
         {
-            _proxy.SendNotification(MANUAL_INTERACTION_REQUIRED_TITLE, message.Message, Settings);
+            var title = Settings.IncludeAppNameInTitle ? MANUAL_INTERACTION_REQUIRED_TITLE_BRANDED : MANUAL_INTERACTION_REQUIRED_TITLE;
+
+            _proxy.SendNotification(title, message.Message, null, Settings);
         }
 
         public override ValidationResult Test()
@@ -68,6 +100,28 @@ namespace NzbDrone.Core.Notifications.Telegram
             failures.AddIfNotNull(_proxy.Test(Settings));
 
             return new ValidationResult(failures);
+        }
+
+        private List<TelegramLink> GetLinks(Series series)
+        {
+            var links = new List<TelegramLink>();
+
+            foreach (var link in Settings.MetadataLinks)
+            {
+                var linkType = (MetadataLinkType)link;
+
+                if (linkType == MetadataLinkType.Tvdb && series.TvdbId > 0)
+                {
+                    links.Add(new TelegramLink("TVDb", $"http://www.thetvdb.com/?tab=series&id={series.TvdbId}"));
+                }
+
+                if (linkType == MetadataLinkType.Trakt && series.TvdbId > 0)
+                {
+                    links.Add(new TelegramLink("Trakt", $"http://trakt.tv/search/tvdb/{series.TvdbId}?id_type=show"));
+                }
+            }
+
+            return links;
         }
     }
 }

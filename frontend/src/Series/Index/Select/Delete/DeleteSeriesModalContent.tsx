@@ -171,7 +171,7 @@ function DeleteSeriesModalContent(props: DeleteSeriesModalContentProps) {
                     {!!episodeFileCount && (
                       <span className={styles.statistics}>
                         (
-                        {translate('DeleteSeriesFolderEpisodeCount', {
+                        {translate('DeleteSiteFolderEpisodeCount', {
                           episodeFileCount,
                           size: formatBytes(sizeOnDisk),
                         })}
@@ -187,7 +187,7 @@ function DeleteSeriesModalContent(props: DeleteSeriesModalContentProps) {
 
         {deleteFiles && !!totalEpisodeFileCount ? (
           <div className={styles.deleteFilesMessage}>
-            {translate('DeleteSeriesFolderEpisodeCount', {
+            {translate('DeleteSiteFolderEpisodeCount', {
               episodeFileCount: totalEpisodeFileCount,
               size: formatBytes(totalSizeOnDisk),
             })}

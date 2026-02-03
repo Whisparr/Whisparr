@@ -214,6 +214,12 @@ namespace NzbDrone.Core.Notifications
 
         public void Handle(ManualInteractionRequiredEvent message)
         {
+            if (message.Episode == null)
+            {
+                _logger.Trace("Skipping manual interaction notification, episode data is not available");
+                return;
+            }
+
             var manualInteractionMessage = new ManualInteractionRequiredMessage
             {
                 Message = GetMessage(message.Episode.Series, message.Episode.Episodes, message.Episode.ParsedEpisodeInfo.Quality),

@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using FluentAssertions;
+using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
 using NzbDrone.Common.Disk;
 using NzbDrone.Common.EnvironmentInfo;
 using NzbDrone.Common.Extensions;
+using NzbDrone.Common.Options;
 using NzbDrone.Core.Authentication;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Test.Common;
@@ -196,6 +198,42 @@ namespace NzbDrone.Common.Test
             _configFileContents = "{ \"key\": \"value\" }";
 
             Assert.Throws<InvalidConfigFileException>(() => Subject.GetValue("key", "value"));
+        }
+
+        [Test]
+        public void ApiKey_should_use_auth_options_when_provided()
+        {
+            var authOptions = new AuthOptions { ApiKey = "test-api-key-from-env" };
+            Mocker.SetConstant<IOptions<AuthOptions>>(Options.Create(authOptions));
+
+            var result = Subject.ApiKey;
+
+            result.Should().Be("test-api-key-from-env");
+        }
+
+        [Test]
+        public void ApiKey_should_fallback_to_generated_when_auth_options_null()
+        {
+            var authOptions = new AuthOptions { ApiKey = null };
+            Mocker.SetConstant<IOptions<AuthOptions>>(Options.Create(authOptions));
+
+            var result = Subject.ApiKey;
+
+            result.Should().NotBeNullOrWhiteSpace();
+            result.Should().HaveLength(32); // Generated API keys are 32 chars (GUID without dashes)
+        }
+
+        [Test]
+        public void ApiKey_should_fallback_to_config_file_when_auth_options_null()
+        {
+            var authOptions = new AuthOptions { ApiKey = null };
+            Mocker.SetConstant<IOptions<AuthOptions>>(Options.Create(authOptions));
+
+            _configFileContents = "<?xml version=\"1.0\" encoding=\"utf-8\"?><Config><ApiKey>config-file-api-key</ApiKey></Config>";
+
+            var result = Subject.ApiKey;
+
+            result.Should().Be("config-file-api-key");
         }
     }
 }

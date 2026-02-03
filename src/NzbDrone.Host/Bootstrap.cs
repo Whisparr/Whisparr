@@ -24,6 +24,7 @@ using NzbDrone.Common.Instrumentation;
 using NzbDrone.Common.Instrumentation.Extensions;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Datastore.Extensions;
+using AuthOptions = NzbDrone.Common.Options.AuthOptions;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 using PostgresOptions = NzbDrone.Core.Datastore.PostgresOptions;
 
@@ -98,6 +99,7 @@ namespace NzbDrone.Host
                             .ConfigureServices(services =>
                             {
                                 services.Configure<PostgresOptions>(config.GetSection("Whisparr:Postgres"));
+                                services.Configure<AuthOptions>(config.GetSection("Whisparr:Auth"));
                             }).Build();
 
                         break;
@@ -156,6 +158,7 @@ namespace NzbDrone.Host
                 .ConfigureServices(services =>
                 {
                     services.Configure<PostgresOptions>(config.GetSection("Whisparr:Postgres"));
+                    services.Configure<AuthOptions>(config.GetSection("Whisparr:Auth"));
                 })
                 .ConfigureWebHost(builder =>
                 {

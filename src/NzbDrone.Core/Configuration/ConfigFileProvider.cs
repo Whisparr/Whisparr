@@ -16,6 +16,7 @@ using NzbDrone.Core.Datastore;
 using NzbDrone.Core.Lifecycle;
 using NzbDrone.Core.Messaging.Commands;
 using NzbDrone.Core.Messaging.Events;
+using NzbDrone.Common.Options;
 using NzbDrone.Core.Update;
 
 namespace NzbDrone.Core.Configuration
@@ -72,6 +73,7 @@ namespace NzbDrone.Core.Configuration
         private readonly IDiskProvider _diskProvider;
         private readonly ICached<string> _cache;
         private readonly PostgresOptions _postgresOptions;
+        private readonly AuthOptions _authOptions;
 
         private readonly string _configFile;
         private static readonly Regex HiddenCharacterRegex = new Regex("[^a-z0-9]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -82,13 +84,15 @@ namespace NzbDrone.Core.Configuration
                                   ICacheManager cacheManager,
                                   IEventAggregator eventAggregator,
                                   IDiskProvider diskProvider,
-                                  IOptions<PostgresOptions> postgresOptions)
+                                  IOptions<PostgresOptions> postgresOptions,
+                                  IOptions<AuthOptions> authOptions)
         {
             _cache = cacheManager.GetCache<string>(GetType());
             _eventAggregator = eventAggregator;
             _diskProvider = diskProvider;
             _configFile = appFolderInfo.GetConfigPath();
             _postgresOptions = postgresOptions.Value;
+            _authOptions = authOptions.Value;
         }
 
         public string WhisparrMetadata
@@ -198,7 +202,7 @@ namespace NzbDrone.Core.Configuration
         {
             get
             {
-                var apiKey = GetValue("ApiKey", GenerateApiKey());
+                var apiKey = _authOptions?.ApiKey ?? GetValue("ApiKey", GenerateApiKey());
 
                 if (apiKey.IsNullOrWhiteSpace())
                 {

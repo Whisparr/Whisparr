@@ -214,18 +214,17 @@ namespace NzbDrone.Core.Notifications
 
         public void Handle(ManualInteractionRequiredEvent message)
         {
-            if (message.Episode == null)
-            {
-                _logger.Trace("Skipping manual interaction notification, episode data is not available");
-                return;
-            }
+            var remoteEpisode = message.Episode;
+            var series = remoteEpisode?.Series;
 
             var manualInteractionMessage = new ManualInteractionRequiredMessage
             {
-                Message = GetMessage(message.Episode.Series, message.Episode.Episodes, message.Episode.ParsedEpisodeInfo.Quality),
-                Series = message.Episode.Series,
-                Quality = message.Episode.ParsedEpisodeInfo.Quality,
-                Episode = message.Episode,
+                Message = remoteEpisode != null
+                    ? GetMessage(series, remoteEpisode.Episodes, remoteEpisode.ParsedEpisodeInfo.Quality)
+                    : message.TrackedDownload.DownloadItem.Title,
+                Series = series,
+                Quality = remoteEpisode?.ParsedEpisodeInfo?.Quality,
+                Episode = remoteEpisode,
                 TrackedDownload = message.TrackedDownload,
                 DownloadClientInfo = message.TrackedDownload.DownloadItem.DownloadClientInfo,
                 DownloadId = message.TrackedDownload.DownloadItem.DownloadId,
@@ -236,7 +235,7 @@ namespace NzbDrone.Core.Notifications
             {
                 try
                 {
-                    if (!ShouldHandleSeries(notification.Definition, message.Episode.Series))
+                    if (series != null && !ShouldHandleSeries(notification.Definition, series))
                     {
                         continue;
                     }

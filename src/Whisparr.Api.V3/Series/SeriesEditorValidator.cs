@@ -7,7 +7,7 @@ namespace Whisparr.Api.V3.Series
 {
     public class SeriesEditorValidator : AbstractValidator<NzbDrone.Core.Tv.Series>
     {
-        public SeriesEditorValidator(RootFolderExistsValidator rootFolderExistsValidator, QualityProfileExistsValidator qualityProfileExistsValidator)
+        public SeriesEditorValidator(RootFolderExistsValidator rootFolderExistsValidator, ProfileExistsValidator qualityProfileExistsValidator)
         {
             RuleFor(s => s.RootFolderPath).Cascade(CascadeMode.Stop)
                 .IsValidPath()

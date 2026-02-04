@@ -76,10 +76,7 @@ namespace NzbDrone.Core.HealthCheck.Checks
                 {
                     return new HealthCheck(GetType(),
                         HealthCheckResult.Warning,
-                        _localizationService.GetLocalizedString("UpdateAvailableHealthCheckMessage", new Dictionary<string, object>
-                        {
-                            { "version", $"v{latestAvailable.Version}" }
-                        }),
+                        _localizationService.GetLocalizedString("UpdateAvailableHealthCheckMessage").Replace("{version}", $"v{latestAvailable.Version}"),
                         "#new-update-is-available");
                 }
             }

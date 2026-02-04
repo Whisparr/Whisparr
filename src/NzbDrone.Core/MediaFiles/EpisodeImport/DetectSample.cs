@@ -46,7 +46,9 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport
 
         public DetectSampleResult IsSample(LocalEpisode localEpisode)
         {
-            var extensionResult = IsSample(localEpisode.Path, localEpisode.IsSpecial);
+            // Whisparr: check if any episode is season 0 (special)
+            var isSpecial = localEpisode.Episodes.Count > 0 && localEpisode.Episodes.TrueForAll(e => e.SeasonNumber == 0);
+            var extensionResult = IsSample(localEpisode.Path, isSpecial);
 
             if (extensionResult != DetectSampleResult.Indeterminate)
             {

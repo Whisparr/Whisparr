@@ -155,9 +155,10 @@ namespace NzbDrone.Core.Extras.Subtitles
                 }
 
                 // Filter out samples
+                var isSpecial = localEpisode.Episodes.Count > 0 && localEpisode.Episodes.TrueForAll(e => e.SeasonNumber == 0);
                 videoFiles = videoFiles.Where(file =>
                 {
-                    var sample = _detectSample.IsSample(localEpisode.Series, file);
+                    var sample = _detectSample.IsSample(localEpisode.Series, file, isSpecial);
 
                     if (sample == DetectSampleResult.Sample)
                     {

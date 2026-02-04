@@ -806,6 +806,12 @@
   "LogFilesLocation": "Log files are located in: {location}",
   "LogLevel": "Log Level",
   "LogLevelTraceHelpTextWarning": "Trace logging should only be enabled temporarily",
+
+
+  "LogOnly": "Log Only",
+  "LogSizeLimit": "Log Size Limit",
+  "LogSizeLimitHelpText": "Maximum log file size in MB before archiving. Default is 1MB.",
+
   "Logging": "Logging",
   "Logout": "Logout",
   "Logs": "Logs",

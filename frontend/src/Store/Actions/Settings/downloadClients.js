@@ -94,7 +94,12 @@ export default {
     items: [],
     pendingChanges: {},
     sortKey: 'name',
-    sortDirection: sortDirections.DESCENDING
+    sortDirection: sortDirections.ASCENDING,
+    sortPredicates: {
+      name: ({ name }) => {
+        return name.toLocaleLowerCase();
+      }
+    }
   },
 
   //

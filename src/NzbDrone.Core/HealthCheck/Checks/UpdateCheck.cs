@@ -70,7 +70,18 @@ namespace NzbDrone.Core.HealthCheck.Checks
 
             if (BuildInfo.BuildDateTime < DateTime.UtcNow.AddDays(-14) && _checkUpdateService.AvailableUpdate() != null)
             {
-                return new HealthCheck(GetType(), HealthCheckResult.Warning, _localizationService.GetLocalizedString("UpdateAvailableHealthCheckMessage"));
+                var latestAvailable = _checkUpdateService.AvailableUpdate();
+
+                if (latestAvailable != null)
+                {
+                    return new HealthCheck(GetType(),
+                        HealthCheckResult.Warning,
+                        _localizationService.GetLocalizedString("UpdateAvailableHealthCheckMessage", new Dictionary<string, object>
+                        {
+                            { "version", $"v{latestAvailable.Version}" }
+                        }),
+                        "#new-update-is-available");
+                }
             }
 
             return new HealthCheck(GetType());

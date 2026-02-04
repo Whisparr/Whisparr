@@ -324,7 +324,7 @@ namespace Whisparr.Api.V3.Queue
 
             if (blocklist)
             {
-                _failedDownloadService.MarkAsFailed(trackedDownload.DownloadItem.DownloadId, skipRedownload);
+                _failedDownloadService.MarkAsFailed(trackedDownload, skipRedownload);
             }
 
             if (!removeFromClient && !blocklist && !changeCategory)

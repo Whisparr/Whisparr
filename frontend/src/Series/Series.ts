@@ -1,6 +1,8 @@
 import ModelBase from 'App/ModelBase';
 import Language from 'Language/Language';
 
+export type SeriesStatus = 'continuing' | 'ended' | 'upcoming' | 'deleted';
+
 export interface Image {
   coverType: string;
   url: string;
@@ -60,7 +62,7 @@ interface Series extends ModelBase {
   seasons: Season[];
   sortTitle: string;
   statistics: Statistics;
-  status: string;
+  status: SeriesStatus;
   tags: number[];
   title: string;
   titleSlug: string;

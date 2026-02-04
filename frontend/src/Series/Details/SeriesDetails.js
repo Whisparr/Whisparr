@@ -517,6 +517,7 @@ class SeriesDetails extends Component {
                     className={styles.detailsLabel}
                     title={statusDetails.message}
                     size={sizes.LARGE}
+                    kind={status === 'deleted' ? kinds.INVERSE : undefined}
                   >
 
                     <div>
@@ -524,7 +525,7 @@ class SeriesDetails extends Component {
                         name={statusDetails.icon}
                         size={17}
                       />
-                      <span className={styles.qualityProfileName}>
+                      <span className={styles.statusName}>
                         {statusDetails.title}
                       </span>
                     </div>

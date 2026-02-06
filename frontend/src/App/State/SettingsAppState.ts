@@ -1,8 +1,10 @@
 import AppSectionState, {
   AppSectionDeleteState,
+  AppSectionItemSchemaState,
   AppSectionItemState,
   AppSectionSaveState,
   AppSectionSchemaState,
+  PagedAppSectionState,
 } from 'App/State/AppSectionState';
 import Language from 'Language/Language';
 import CustomFormat from 'typings/CustomFormat';
@@ -35,7 +37,7 @@ export interface NotificationAppState
 
 export interface QualityProfilesAppState
   extends AppSectionState<QualityProfile>,
-    AppSectionSchemaState<QualityProfile> {}
+    AppSectionItemSchemaState<QualityProfile> {}
 
 export interface CustomFormatAppState
   extends AppSectionState<CustomFormat>,

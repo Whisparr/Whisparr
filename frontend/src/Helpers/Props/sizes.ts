@@ -13,11 +13,3 @@ export const all = [
   EXTRA_LARGE,
   EXTRA_EXTRA_LARGE,
 ] as const;
-
-export type Size =
-  | 'extraSmall'
-  | 'small'
-  | 'medium'
-  | 'large'
-  | 'extraLarge'
-  | 'extraExtraLarge';

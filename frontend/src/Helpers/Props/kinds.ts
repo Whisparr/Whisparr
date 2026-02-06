@@ -21,15 +21,3 @@ export const all = [
   SUCCESS,
   WARNING,
 ] as const;
-
-export type Kind =
-  | 'danger'
-  | 'default'
-  | 'disabled'
-  | 'info'
-  | 'inverse'
-  | 'pink'
-  | 'primary'
-  | 'purple'
-  | 'success'
-  | 'warning';

@@ -5,6 +5,7 @@ import EpisodeFilesAppState from './EpisodeFilesAppState';
 import EpisodesAppState from './EpisodesAppState';
 import HistoryAppState from './HistoryAppState';
 import ParseAppState from './ParseAppState';
+import PathsAppState from './PathsAppState';
 import QueueAppState from './QueueAppState';
 import RootFolderAppState from './RootFolderAppState';
 import SeriesAppState, { SeriesIndexAppState } from './SeriesAppState';
@@ -65,6 +66,7 @@ interface AppState {
   history: HistoryAppState;
   interactiveImport: InteractiveImportAppState;
   parse: ParseAppState;
+  paths: PathsAppState;
   queue: QueueAppState;
   rootFolders: RootFolderAppState;
   javSeriesIndex: SeriesIndexAppState;

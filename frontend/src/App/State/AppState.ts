@@ -47,6 +47,7 @@ export interface CustomFilter {
 interface AppState {
   calendar: CalendarAppState;
   commands: CommandAppState;
+  episodes: EpisodesAppState;
   episodeFiles: EpisodeFilesAppState;
   episodesSelection: EpisodesAppState;
   history: HistoryAppState;

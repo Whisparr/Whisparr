@@ -7,7 +7,7 @@ import CheckInput from 'Components/Form/CheckInput';
 import IconButton from 'Components/Link/IconButton';
 import Link from 'Components/Link/Link';
 import SpinnerIconButton from 'Components/Link/SpinnerIconButton';
-import RelativeDateCellConnector from 'Components/Table/Cells/RelativeDateCellConnector';
+import RelativeDateCell from 'Components/Table/Cells/RelativeDateCell';
 import VirtualTableRowCell from 'Components/Table/Cells/VirtualTableRowCell';
 import VirtualTableSelectCell from 'Components/Table/Cells/VirtualTableSelectCell';
 import Column from 'Components/Table/Column';
@@ -244,7 +244,7 @@ function SeriesIndexRow(props: SeriesIndexRowProps) {
           return (
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore ts(2739)
-            <RelativeDateCellConnector
+            <RelativeDateCell
               key={name}
               className={styles[name]}
               date={nextAiring}
@@ -257,7 +257,7 @@ function SeriesIndexRow(props: SeriesIndexRowProps) {
           return (
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore ts(2739)
-            <RelativeDateCellConnector
+            <RelativeDateCell
               key={name}
               className={styles[name]}
               date={previousAiring}
@@ -270,7 +270,7 @@ function SeriesIndexRow(props: SeriesIndexRowProps) {
           return (
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore ts(2739)
-            <RelativeDateCellConnector
+            <RelativeDateCell
               key={name}
               className={styles[name]}
               date={added}

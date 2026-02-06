@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import Icon from 'Components/Icon';
 import MonitorToggleButton from 'Components/MonitorToggleButton';
-import RelativeDateCellConnector from 'Components/Table/Cells/RelativeDateCellConnector';
+import RelativeDateCell from 'Components/Table/Cells/RelativeDateCell';
 import TableRowCell from 'Components/Table/Cells/TableRowCell';
 import TableRow from 'Components/Table/TableRow';
 import Popover from 'Components/Tooltip/Popover';
@@ -61,6 +61,7 @@ class EpisodeRow extends Component {
       monitored,
       actors,
       releaseDate,
+      airDateUtc,
       runtime,
       title,
       isSaving,
@@ -106,7 +107,7 @@ class EpisodeRow extends Component {
 
             if (name === 'releaseDate') {
               return (
-                <RelativeDateCellConnector
+                <RelativeDateCell
                   key={name}
                   date={releaseDate}
                 />
@@ -161,6 +162,15 @@ class EpisodeRow extends Component {
                     episodeFileRelativePath
                   }
                 </TableRowCell>
+              );
+            }
+
+            if (name === 'airDateUtc') {
+              return (
+                <RelativeDateCell
+                  key={name}
+                  date={airDateUtc}
+                />
               );
             }
 
@@ -371,6 +381,7 @@ EpisodeRow.propTypes = {
   actors: PropTypes.arrayOf(PropTypes.object),
   joinedPerformers: PropTypes.string,
   releaseDate: PropTypes.string,
+  airDateUtc: PropTypes.string,
   runtime: PropTypes.number,
   title: PropTypes.string.isRequired,
   isSaving: PropTypes.bool,

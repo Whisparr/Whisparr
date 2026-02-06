@@ -19,7 +19,9 @@ import { UiSettings } from 'typings/UiSettings';
 export interface DownloadClientAppState
   extends AppSectionState<DownloadClient>,
     AppSectionDeleteState,
-    AppSectionSaveState {}
+    AppSectionSaveState {
+  isTestingAll: boolean;
+}
 
 export interface ImportListAppState
   extends AppSectionState<ImportList>,
@@ -29,7 +31,9 @@ export interface ImportListAppState
 export interface IndexerAppState
   extends AppSectionState<Indexer>,
     AppSectionDeleteState,
-    AppSectionSaveState {}
+    AppSectionSaveState {
+  isTestingAll: boolean;
+}
 
 export interface NotificationAppState
   extends AppSectionState<Notification>,

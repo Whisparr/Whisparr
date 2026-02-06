@@ -1,5 +1,4 @@
-import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useCallback } from 'react';
 import Button from 'Components/Link/Button';
 import Modal from 'Components/Modal/Modal';
 import ModalBody from 'Components/Modal/ModalBody';
@@ -10,21 +9,21 @@ import { kinds } from 'Helpers/Props';
 import translate from 'Utilities/String/translate';
 import styles from './ConnectionLostModal.css';
 
-function ConnectionLostModal(props) {
-  const {
-    isOpen,
-    onModalClose
-  } = props;
+interface ConnectionLostModalProps {
+  isOpen: boolean;
+}
+
+function ConnectionLostModal(props: ConnectionLostModalProps) {
+  const { isOpen } = props;
+
+  const handleModalClose = useCallback(() => {
+    location.reload();
+  }, []);
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onModalClose={onModalClose}
-    >
-      <ModalContent onModalClose={onModalClose}>
-        <ModalHeader>
-          {translate('ConnectionLost')}
-        </ModalHeader>
+    <Modal isOpen={isOpen} onModalClose={handleModalClose}>
+      <ModalContent onModalClose={handleModalClose}>
+        <ModalHeader>{translate('ConnectionLost')}</ModalHeader>
 
         <ModalBody>
           <div>
@@ -36,10 +35,7 @@ function ConnectionLostModal(props) {
           </div>
         </ModalBody>
         <ModalFooter>
-          <Button
-            kind={kinds.PRIMARY}
-            onPress={onModalClose}
-          >
+          <Button kind={kinds.PRIMARY} onPress={handleModalClose}>
             {translate('Reload')}
           </Button>
         </ModalFooter>
@@ -47,10 +43,5 @@ function ConnectionLostModal(props) {
     </Modal>
   );
 }
-
-ConnectionLostModal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  onModalClose: PropTypes.func.isRequired
-};
 
 export default ConnectionLostModal;

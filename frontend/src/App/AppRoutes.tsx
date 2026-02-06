@@ -30,16 +30,12 @@ import LogsTableConnector from 'System/Events/LogsTableConnector';
 import Logs from 'System/Logs/Logs';
 import Status from 'System/Status/Status';
 import Tasks from 'System/Tasks/Tasks';
-import UpdatesConnector from 'System/Updates/UpdatesConnector';
+import Updates from 'System/Updates/Updates';
 import getPathWithUrlBase from 'Utilities/getPathWithUrlBase';
 import CutoffUnmetConnector from 'Wanted/CutoffUnmet/CutoffUnmetConnector';
 import MissingConnector from 'Wanted/Missing/MissingConnector';
 
-function AppRoutes(props) {
-  const {
-    app
-  } = props;
-
+function AppRoutes() {
   return (
     <Switch>
       {/*
@@ -57,32 +53,22 @@ function AppRoutes(props) {
         )}
       />
 
-      {
-        window.Whisparr.urlBase &&
-          <Route
-            exact={true}
-            path="/"
-            addUrlBase={false}
-            render={() => {
-              return (
-                <Redirect
-                  to={getPathWithUrlBase('/')}
-                  component={app}
-                />
-              );
-            }}
-          />
-      }
+      {window.Whisparr.urlBase && (
+        <Route
+          exact={true}
+          path="/"
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          addUrlBase={false}
+          render={() => {
+            return <Redirect to={getPathWithUrlBase('/')} />;
+          }}
+        />
+      )}
 
-      <Route
-        path="/add/new"
-        component={AddNewSeriesConnector}
-      />
+      <Route path="/add/new" component={AddNewSeriesConnector} />
 
-      <Route
-        path="/add/import"
-        component={ImportSeries}
-      />
+      <Route path="/add/import" component={ImportSeries} />
 
       <Route
         exact={true}
@@ -109,12 +95,7 @@ function AppRoutes(props) {
         path="/serieseditor"
         exact={true}
         render={() => {
-          return (
-            <Redirect
-              to={getPathWithUrlBase('/')}
-              component={app}
-            />
-          );
+          return <Redirect to={getPathWithUrlBase('/')} />;
         }}
       />
 
@@ -122,12 +103,7 @@ function AppRoutes(props) {
         path="/seasonpass"
         exact={true}
         render={() => {
-          return (
-            <Redirect
-              to={getPathWithUrlBase('/')}
-              component={app}
-            />
-          );
+          return <Redirect to={getPathWithUrlBase('/')} />;
         }}
       />
 
@@ -140,78 +116,47 @@ function AppRoutes(props) {
         Calendar
       */}
 
-      <Route
-        path="/calendar"
-        component={CalendarPageConnector}
-      />
+      <Route path="/calendar" component={CalendarPageConnector} />
 
       {/*
         Activity
       */}
 
-      <Route
-        path="/activity/history"
-        component={History}
-      />
+      <Route path="/activity/history" component={History} />
 
-      <Route
-        path="/activity/queue"
-        component={Queue}
-      />
+      <Route path="/activity/queue" component={Queue} />
 
-      <Route
-        path="/activity/blocklist"
-        component={Blocklist}
-      />
+      <Route path="/activity/blocklist" component={Blocklist} />
 
       {/*
         Wanted
       */}
 
-      <Route
-        path="/wanted/missing"
-        component={MissingConnector}
-      />
+      <Route path="/wanted/missing" component={MissingConnector} />
 
-      <Route
-        path="/wanted/cutoffunmet"
-        component={CutoffUnmetConnector}
-      />
+      <Route path="/wanted/cutoffunmet" component={CutoffUnmetConnector} />
 
       {/*
         Settings
       */}
 
-      <Route
-        exact={true}
-        path="/settings"
-        component={Settings}
-      />
+      <Route exact={true} path="/settings" component={Settings} />
 
       <Route
         path="/settings/mediamanagement"
         component={MediaManagementConnector}
       />
 
-      <Route
-        path="/settings/profiles"
-        component={Profiles}
-      />
+      <Route path="/settings/profiles" component={Profiles} />
 
-      <Route
-        path="/settings/quality"
-        component={QualityConnector}
-      />
+      <Route path="/settings/quality" component={QualityConnector} />
 
       <Route
         path="/settings/customformats"
         component={CustomFormatSettingsPage}
       />
 
-      <Route
-        path="/settings/indexers"
-        component={IndexerSettingsConnector}
-      />
+      <Route path="/settings/indexers" component={IndexerSettingsConnector} />
 
       <Route
         path="/settings/downloadclients"
@@ -223,84 +168,48 @@ function AppRoutes(props) {
         component={ImportListSettingsConnector}
       />
 
-      <Route
-        path="/settings/connect"
-        component={NotificationSettings}
-      />
+      <Route path="/settings/connect" component={NotificationSettings} />
 
-      <Route
-        path="/settings/metadata"
-        component={MetadataSettings}
-      />
+      <Route path="/settings/metadata" component={MetadataSettings} />
 
       <Route
         path="/settings/metadatasource"
         component={MetadataSourceSettings}
       />
 
-      <Route
-        path="/settings/tags"
-        component={TagSettings}
-      />
+      <Route path="/settings/tags" component={TagSettings} />
 
-      <Route
-        path="/settings/general"
-        component={GeneralSettingsConnector}
-      />
+      <Route path="/settings/general" component={GeneralSettingsConnector} />
 
-      <Route
-        path="/settings/ui"
-        component={UISettingsConnector}
-      />
+      <Route path="/settings/ui" component={UISettingsConnector} />
 
       {/*
         System
       */}
 
-      <Route
-        path="/system/status"
-        component={Status}
-      />
+      <Route path="/system/status" component={Status} />
 
-      <Route
-        path="/system/tasks"
-        component={Tasks}
-      />
+      <Route path="/system/tasks" component={Tasks} />
 
-      <Route
-        path="/system/backup"
-        component={BackupsConnector}
-      />
+      <Route path="/system/backup" component={BackupsConnector} />
 
-      <Route
-        path="/system/updates"
-        component={UpdatesConnector}
-      />
+      <Route path="/system/updates" component={Updates} />
 
-      <Route
-        path="/system/events"
-        component={LogsTableConnector}
-      />
+      <Route path="/system/events" component={LogsTableConnector} />
 
-      <Route
-        path="/system/logs/files"
-        component={Logs}
-      />
+      <Route path="/system/logs/files" component={Logs} />
 
       {/*
         Not Found
       */}
 
-      <Route
-        path="*"
-        component={NotFound}
-      />
+      <Route path="*" component={NotFound} />
     </Switch>
   );
 }
 
 AppRoutes.propTypes = {
-  app: PropTypes.func.isRequired
+  app: PropTypes.func.isRequired,
 };
 
 export default AppRoutes;

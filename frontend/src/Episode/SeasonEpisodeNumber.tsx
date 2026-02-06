@@ -10,9 +10,7 @@ interface SeasonEpisodeNumberProps extends EpisodeNumberProps {
 function SeasonEpisodeNumber(props: SeasonEpisodeNumberProps) {
   const { airDate, seriesType, ...otherProps } = props;
 
-  if (seriesType === 'daily' && airDate) {
-    return <span>{airDate}</span>;
-  }
+  // Note: Whisparr doesn't have daily series type
 
   return (
     <EpisodeNumber

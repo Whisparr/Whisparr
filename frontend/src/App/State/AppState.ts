@@ -60,6 +60,7 @@ export interface AppSectionState {
 }
 
 interface AppState {
+  app: AppSectionState;
   blocklist: BlocklistAppState;
   calendar: CalendarAppState;
   commands: CommandAppState;

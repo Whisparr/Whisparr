@@ -68,11 +68,7 @@ function DiskSpace() {
               const { freeSpace, totalSpace } = item;
 
               const diskUsage = 100 - (freeSpace / totalSpace) * 100;
-<<<<<<< HEAD
-              let diskUsageKind = kinds.PRIMARY;
-=======
-              let diskUsageKind: Kind = 'primary';
->>>>>>> e1cbc4a782 (Convert Components to TypeScript)
+              let diskUsageKind: Kind = kinds.PRIMARY;
 
               if (diskUsage > 90) {
                 diskUsageKind = kinds.DANGER;

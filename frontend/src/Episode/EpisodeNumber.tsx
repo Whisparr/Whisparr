@@ -9,19 +9,11 @@ import translate from 'Utilities/String/translate';
 import SceneInfo from './SceneInfo';
 import styles from './EpisodeNumber.css';
 
-function getWarningMessage(
-  unverifiedSceneNumbering: boolean,
-  seriesType: SeriesType | undefined,
-  absoluteEpisodeNumber: number | undefined
-) {
+function getWarningMessage(unverifiedSceneNumbering: boolean) {
   const messages = [];
 
   if (unverifiedSceneNumbering) {
     messages.push(translate('SceneNumberNotVerified'));
-  }
-
-  if (seriesType === 'anime' && !absoluteEpisodeNumber) {
-    messages.push(translate('EpisodeMissingAbsoluteNumber'));
   }
 
   return messages.join('\n');
@@ -67,14 +59,10 @@ function EpisodeNumber(props: EpisodeNumberProps) {
   const hasSceneInformation =
     sceneSeasonNumber !== undefined ||
     sceneEpisodeNumber !== undefined ||
-    (seriesType === 'anime' && sceneAbsoluteEpisodeNumber !== undefined) ||
+    false ||
     !!alternateTitles.length;
 
-  const warningMessage = getWarningMessage(
-    unverifiedSceneNumbering,
-    seriesType,
-    absoluteEpisodeNumber
-  );
+  const warningMessage = getWarningMessage(unverifiedSceneNumbering);
 
   return (
     <span>
@@ -88,7 +76,7 @@ function EpisodeNumber(props: EpisodeNumberProps) {
 
               {showSeasonNumber ? padNumber(episodeNumber, 2) : episodeNumber}
 
-              {seriesType === 'anime' && !!absoluteEpisodeNumber && (
+              {false && (
                 <span className={styles.absoluteEpisodeNumber}>
                   ({absoluteEpisodeNumber})
                 </span>
@@ -117,7 +105,7 @@ function EpisodeNumber(props: EpisodeNumberProps) {
 
           {showSeasonNumber ? padNumber(episodeNumber, 2) : episodeNumber}
 
-          {seriesType === 'anime' && !!absoluteEpisodeNumber && (
+          {false && (
             <span className={styles.absoluteEpisodeNumber}>
               ({absoluteEpisodeNumber})
             </span>

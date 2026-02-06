@@ -13,3 +13,5 @@ export const all = [
   EXTRA_LARGE,
   EXTRA_EXTRA_LARGE,
 ] as const;
+
+export type Size = (typeof all)[number];

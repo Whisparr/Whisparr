@@ -1,3 +1,3 @@
 export default function getPathWithUrlBase(path: string) {
-  return `${window.Sonarr.urlBase}${path}`;
+  return `${window.Whisparr.urlBase}${path}`;
 }

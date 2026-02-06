@@ -1,8 +1,9 @@
-.heart {
-  margin-right: 5px;
-  color: var(--themeRed);
+.rating {
+  display: inline-flex;
+  align-items: center;
 }
 
-.rating {
-  margin-right: 15px;
+.heart {
+  margin-right: 4px;
+  color: var(--dangerColor);
 }

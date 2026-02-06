@@ -6,7 +6,7 @@ import AppState from './State/AppState';
 
 function createThemeSelector() {
   return createSelector(
-    (state: AppState) => state.settings.ui.item.theme || window.Sonarr.theme,
+    (state: AppState) => state.settings.ui.item.theme || window.Whisparr.theme,
     (theme) => {
       return theme;
     }

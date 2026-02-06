@@ -85,6 +85,7 @@ interface Series extends ModelBase {
   runtime: number;
   seasonFolder: boolean;
   seasons: Season[];
+  seriesType: SeriesType;
   sortTitle: string;
   statistics: Statistics;
   status: SeriesStatus;

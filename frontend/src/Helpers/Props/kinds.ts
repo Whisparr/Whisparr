@@ -21,3 +21,5 @@ export const all = [
   SUCCESS,
   WARNING,
 ] as const;
+
+export type Kind = (typeof all)[number];

@@ -72,6 +72,7 @@ export type UiSettingsAppState = AppSectionItemState<UiSettings>;
 
 interface SettingsAppState {
   advancedSettings: boolean;
+  safeForWorkMode: boolean;
   customFormats: CustomFormatAppState;
   downloadClients: DownloadClientAppState;
   general: GeneralAppState;

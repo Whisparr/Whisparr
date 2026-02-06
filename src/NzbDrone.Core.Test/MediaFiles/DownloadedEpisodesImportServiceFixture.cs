@@ -208,7 +208,8 @@ namespace NzbDrone.Core.Test.MediaFiles
 
             Mocker.GetMock<IDetectSample>()
                   .Setup(s => s.IsSample(It.IsAny<Series>(),
-                      It.IsAny<string>()))
+                      It.IsAny<string>(),
+                      It.IsAny<bool>()))
                   .Returns(DetectSampleResult.Sample);
 
             Subject.ProcessRootFolder(new DirectoryInfo(_droneFactory));
@@ -277,7 +278,8 @@ namespace NzbDrone.Core.Test.MediaFiles
 
             Mocker.GetMock<IDetectSample>()
                   .Setup(s => s.IsSample(It.IsAny<Series>(),
-                      It.IsAny<string>()))
+                      It.IsAny<string>(),
+                      It.IsAny<bool>()))
                   .Returns(DetectSampleResult.Sample);
 
             Mocker.GetMock<IDiskProvider>()
@@ -384,7 +386,8 @@ namespace NzbDrone.Core.Test.MediaFiles
 
             Mocker.GetMock<IDetectSample>()
                   .Setup(s => s.IsSample(It.IsAny<Series>(),
-                      It.IsAny<string>()))
+                      It.IsAny<string>(),
+                      It.IsAny<bool>()))
                   .Returns(DetectSampleResult.Sample);
 
             Mocker.GetMock<IDiskProvider>()

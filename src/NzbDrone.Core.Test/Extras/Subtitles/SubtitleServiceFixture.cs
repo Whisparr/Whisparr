@@ -61,7 +61,7 @@ namespace NzbDrone.Core.Test.Extras.Subtitles
             Mocker.GetMock<IDiskProvider>().Setup(s => s.GetParentFolder(It.IsAny<string>()))
                   .Returns((string path) => Directory.GetParent(path).FullName);
 
-            Mocker.GetMock<IDetectSample>().Setup(s => s.IsSample(It.IsAny<Series>(), It.IsAny<string>()))
+            Mocker.GetMock<IDetectSample>().Setup(s => s.IsSample(It.IsAny<Series>(), It.IsAny<string>(), It.IsAny<bool>()))
                   .Returns(DetectSampleResult.NotSample);
         }
 
@@ -174,7 +174,7 @@ namespace NzbDrone.Core.Test.Extras.Subtitles
             Mocker.GetMock<IDiskProvider>().Setup(s => s.GetFiles(It.IsAny<string>(), true))
                   .Returns(videoFiles);
 
-            Mocker.GetMock<IDetectSample>().Setup(s => s.IsSample(It.IsAny<Series>(), sampleFile))
+            Mocker.GetMock<IDetectSample>().Setup(s => s.IsSample(It.IsAny<Series>(), sampleFile, It.IsAny<bool>()))
                   .Returns(DetectSampleResult.Sample);
 
             var results = Subject.ImportFiles(_localEpisode, _episodeFile, new List<string> { subtitleFile }, true).ToList();

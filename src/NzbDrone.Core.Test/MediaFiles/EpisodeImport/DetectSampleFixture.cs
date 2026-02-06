@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using FizzWare.NBuilder;
 using FluentAssertions;
@@ -54,6 +54,11 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
             _localEpisode.MediaInfo = Builder<MediaInfoModel>.CreateNew().With(m => m.RunTime = runtime).Build();
         }
 
+        private bool IsSpecial()
+        {
+            return _localEpisode.Episodes.Count > 0 && _localEpisode.Episodes.TrueForAll(e => e.SeasonNumber == 0);
+        }
+
         [Test]
         public void should_return_false_if_season_zero()
         {
@@ -61,7 +66,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
 
             Subject.IsSample(_localEpisode.Series,
                 _localEpisode.Path,
-                _localEpisode.IsSpecial).Should().Be(DetectSampleResult.NotSample);
+                IsSpecial()).Should().Be(DetectSampleResult.NotSample);
         }
 
         [Test]
@@ -71,7 +76,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
 
             Subject.IsSample(_localEpisode.Series,
                 _localEpisode.Path,
-                _localEpisode.IsSpecial).Should().Be(DetectSampleResult.NotSample);
+                IsSpecial()).Should().Be(DetectSampleResult.NotSample);
 
             Mocker.GetMock<IVideoFileInfoReader>().Verify(c => c.GetRunTime(It.IsAny<string>()), Times.Never());
         }
@@ -83,7 +88,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
 
             Subject.IsSample(_localEpisode.Series,
                 _localEpisode.Path,
-                _localEpisode.IsSpecial).Should().Be(DetectSampleResult.NotSample);
+                IsSpecial()).Should().Be(DetectSampleResult.NotSample);
 
             Mocker.GetMock<IVideoFileInfoReader>().Verify(c => c.GetRunTime(It.IsAny<string>()), Times.Never());
         }
@@ -95,7 +100,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
 
             Subject.IsSample(_localEpisode.Series,
                              _localEpisode.Path,
-                             _localEpisode.IsSpecial);
+                             IsSpecial());
 
             Mocker.GetMock<IVideoFileInfoReader>().Verify(v => v.GetRunTime(It.IsAny<string>()), Times.Once());
         }
@@ -107,7 +112,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
 
             Subject.IsSample(_localEpisode.Series,
                 _localEpisode.Path,
-                _localEpisode.IsSpecial).Should().Be(DetectSampleResult.Sample);
+                IsSpecial()).Should().Be(DetectSampleResult.Sample);
         }
 
         [Test]
@@ -117,7 +122,7 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
 
             Subject.IsSample(_localEpisode.Series,
                 _localEpisode.Path,
-                _localEpisode.IsSpecial).Should().Be(DetectSampleResult.NotSample);
+                IsSpecial()).Should().Be(DetectSampleResult.NotSample);
         }
 
         [Test]
@@ -128,29 +133,29 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
 
             Subject.IsSample(_localEpisode.Series,
                 _localEpisode.Path,
-                _localEpisode.IsSpecial).Should().Be(DetectSampleResult.NotSample);
+                IsSpecial()).Should().Be(DetectSampleResult.NotSample);
         }
 
         [Test]
-        public void should_return_false_if_runtime_greater_than_anime_short_minimum()
+        public void should_return_false_if_runtime_greater_than_short_minimum()
         {
             _series.Runtime = 2;
             GivenRuntime(60);
 
             Subject.IsSample(_localEpisode.Series,
                 _localEpisode.Path,
-                _localEpisode.IsSpecial).Should().Be(DetectSampleResult.NotSample);
+                IsSpecial()).Should().Be(DetectSampleResult.NotSample);
         }
 
         [Test]
-        public void should_return_true_if_runtime_less_than_anime_short_minimum()
+        public void should_return_true_if_runtime_less_than_short_minimum()
         {
             _series.Runtime = 2;
             GivenRuntime(10);
 
             Subject.IsSample(_localEpisode.Series,
                 _localEpisode.Path,
-                _localEpisode.IsSpecial).Should().Be(DetectSampleResult.Sample);
+                IsSpecial()).Should().Be(DetectSampleResult.Sample);
         }
 
         [Test]
@@ -162,32 +167,19 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
 
             Subject.IsSample(_localEpisode.Series,
                              _localEpisode.Path,
-                             _localEpisode.IsSpecial).Should().Be(DetectSampleResult.Indeterminate);
+                             IsSpecial()).Should().Be(DetectSampleResult.Indeterminate);
 
             ExceptionVerification.ExpectedErrors(1);
         }
 
         [Test]
-        public void should_not_treat_daily_episode_a_special()
+        public void should_return_false_for_special()
         {
-            GivenRuntime(600);
-            _series.SeriesType = SeriesTypes.Daily;
             _localEpisode.Episodes[0].SeasonNumber = 0;
 
             Subject.IsSample(_localEpisode.Series,
                 _localEpisode.Path,
-                _localEpisode.IsSpecial).Should().Be(DetectSampleResult.NotSample);
-        }
-
-        [Test]
-        public void should_return_false_for_anime_special()
-        {
-            _series.SeriesType = SeriesTypes.Anime;
-            _localEpisode.Episodes[0].SeasonNumber = 0;
-
-            Subject.IsSample(_localEpisode.Series,
-                _localEpisode.Path,
-                _localEpisode.IsSpecial).Should().Be(DetectSampleResult.NotSample);
+                IsSpecial()).Should().Be(DetectSampleResult.NotSample);
         }
 
         [Test]

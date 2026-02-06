@@ -28,6 +28,7 @@ interface Episode extends ModelBase {
   episodeFile?: object;
   hasFile: boolean;
   monitored: boolean;
+  grabbed?: boolean;
   unverifiedSceneNumbering: boolean;
   endTime?: string;
   grabDate?: string;

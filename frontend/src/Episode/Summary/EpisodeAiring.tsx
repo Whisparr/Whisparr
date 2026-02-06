@@ -1,26 +1,28 @@
 import moment from 'moment';
-import PropTypes from 'prop-types';
 import React from 'react';
+import { useSelector } from 'react-redux';
 import Label from 'Components/Label';
 import { kinds, sizes } from 'Helpers/Props';
+import createUISettingsSelector from 'Store/Selectors/createUISettingsSelector';
 import isInNextWeek from 'Utilities/Date/isInNextWeek';
 import isToday from 'Utilities/Date/isToday';
 import isTomorrow from 'Utilities/Date/isTomorrow';
 import translate from 'Utilities/String/translate';
 
-function EpisodeAiring(props) {
-  const {
-    releaseDate,
-    network,
-    shortDateFormat,
-    showRelativeDates
-  } = props;
+interface EpisodeAiringProps {
+  releaseDate?: string;
+  network: string;
+}
+
+function EpisodeAiring(props: EpisodeAiringProps) {
+  const { releaseDate, network } = props;
+
+  const { shortDateFormat, showRelativeDates } = useSelector(
+    createUISettingsSelector()
+  );
 
   const networkLabel = (
-    <Label
-      kind={kinds.INFO}
-      size={sizes.MEDIUM}
-    >
+    <Label kind={kinds.INFO} size={sizes.MEDIUM}>
       {network}
     </Label>
   );
@@ -28,7 +30,8 @@ function EpisodeAiring(props) {
   if (!releaseDate) {
     return (
       <span>
-        {translate('AirsTbaOn', { networkLabel: '' })}{networkLabel}
+        {translate('AirsTbaOn', { networkLabel: '' })}
+        {networkLabel}
       </span>
     );
   }
@@ -71,12 +74,5 @@ function EpisodeAiring(props) {
     </span>
   );
 }
-
-EpisodeAiring.propTypes = {
-  releaseDate: PropTypes.string.isRequired,
-  network: PropTypes.string.isRequired,
-  shortDateFormat: PropTypes.string.isRequired,
-  showRelativeDates: PropTypes.bool.isRequired
-};
 
 export default EpisodeAiring;

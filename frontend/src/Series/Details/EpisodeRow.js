@@ -8,8 +8,8 @@ import TableRow from 'Components/Table/TableRow';
 import Popover from 'Components/Tooltip/Popover';
 import Tooltip from 'Components/Tooltip/Tooltip';
 import EpisodeFormats from 'Episode/EpisodeFormats';
-import EpisodeSearchCellConnector from 'Episode/EpisodeSearchCellConnector';
-import EpisodeStatusConnector from 'Episode/EpisodeStatusConnector';
+import EpisodeSearchCell from 'Episode/EpisodeSearchCell';
+import EpisodeStatus from 'Episode/EpisodeStatus';
 import EpisodeTitleLink from 'Episode/EpisodeTitleLink';
 import IndexerFlags from 'Episode/IndexerFlags';
 import EpisodeFileLanguageConnector from 'EpisodeFile/EpisodeFileLanguageConnector';
@@ -124,6 +124,7 @@ class EpisodeRow extends Component {
                     episodeId={id}
                     seriesId={seriesId}
                     episodeTitle={title}
+                    episodeEntity="episodes"
                     showOpenSeriesButton={false}
                   />
                 </TableRowCell>
@@ -342,7 +343,7 @@ class EpisodeRow extends Component {
                   key={name}
                   className={styles.status}
                 >
-                  <EpisodeStatusConnector
+                  <EpisodeStatus
                     episodeId={id}
                     episodeFileId={episodeFileId}
                   />
@@ -352,9 +353,10 @@ class EpisodeRow extends Component {
 
             if (name === 'actions') {
               return (
-                <EpisodeSearchCellConnector
+                <EpisodeSearchCell
                   key={name}
                   episodeId={id}
+                  episodeEntity='episodes'
                   seriesId={seriesId}
                   episodeTitle={title}
                 />

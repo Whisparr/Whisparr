@@ -3,6 +3,7 @@ import Episode from 'Episode/Episode';
 import Language from 'Language/Language';
 import { QualityModel } from 'Quality/Quality';
 import Series from 'Series/Series';
+import CustomFormat from 'typings/CustomFormat';
 import Rejection from 'typings/Rejection';
 
 export interface InteractiveImportCommandOptions {
@@ -31,7 +32,7 @@ interface InteractiveImport extends ModelBase {
   seasonNumber: number;
   episodes: Episode[];
   qualityWeight: number;
-  customFormats: object[];
+  customFormats: CustomFormat[];
   indexerFlags: number;
   rejections: Rejection[];
   episodeFileId?: number;

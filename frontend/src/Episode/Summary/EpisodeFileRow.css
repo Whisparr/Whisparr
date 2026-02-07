@@ -20,7 +20,7 @@
 .customFormatScore {
   composes: cell from '~Components/Table/Cells/TableRowCell.css';
 
-  width: 65px;
+  width: 55px;
 }
 
 .actions {

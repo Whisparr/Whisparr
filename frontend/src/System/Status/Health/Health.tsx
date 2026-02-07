@@ -14,6 +14,7 @@ import Table from 'Components/Table/Table';
 import TableBody from 'Components/Table/TableBody';
 import TableRow from 'Components/Table/TableRow';
 import { icons, kinds } from 'Helpers/Props';
+import { Kind } from 'Helpers/Props/kinds';
 import {
   testAllDownloadClients,
   testAllIndexers,
@@ -97,7 +98,7 @@ function Health() {
               {items.map((item) => {
                 const source = item.source;
 
-                let kind = kinds.WARNING;
+                let kind: Kind = kinds.WARNING;
                 switch (item.type.toLowerCase()) {
                   case 'error':
                     kind = kinds.DANGER;

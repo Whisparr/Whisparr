@@ -84,7 +84,7 @@ function EpisodeDetailsModalContent(props: EpisodeDetailsModalContentProps) {
   );
 
   const handleMonitorEpisodePress = useCallback(
-    (monitored: boolean) => {
+    (monitored: boolean, _options: { shiftKey: boolean }) => {
       dispatch(
         toggleEpisodeMonitored({
           episodeEntity,
@@ -111,7 +111,6 @@ function EpisodeDetailsModalContent(props: EpisodeDetailsModalContentProps) {
     <ModalContent onModalClose={onModalClose}>
       <ModalHeader>
         <MonitorToggleButton
-          id={episodeId}
           monitored={monitored}
           size={18}
           isDisabled={!seriesMonitored}
@@ -177,6 +176,7 @@ function EpisodeDetailsModalContent(props: EpisodeDetailsModalContentProps) {
             {/* Don't wrap in tabContent so we not have a top margin */}
             <EpisodeSearchConnector
               episodeId={episodeId}
+              seriesId={seriesId}
               startInteractiveSearch={startInteractiveSearch}
               onModalClose={onModalClose}
             />

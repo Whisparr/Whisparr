@@ -209,7 +209,6 @@ function SeriesIndexRow(props: SeriesIndexRowProps) {
                 <SeriesTitleLink
                   titleSlug={titleSlug}
                   title={title}
-                  tvdbId={series.tvdbId}
                 />
               )}
             </VirtualTableRowCell>

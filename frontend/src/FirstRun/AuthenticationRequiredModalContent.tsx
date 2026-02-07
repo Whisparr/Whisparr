@@ -101,7 +101,7 @@ export default function AuthenticationRequiredModalContent() {
                 values={authenticationMethodOptions}
                 helpText={translate('AuthenticationMethodHelpText')}
                 helpTextWarning={
-                  authenticationMethod.value === 'none'
+                  authenticationMethod?.value === 'none'
                     ? translate('AuthenticationMethodHelpTextWarning')
                     : undefined
                 }

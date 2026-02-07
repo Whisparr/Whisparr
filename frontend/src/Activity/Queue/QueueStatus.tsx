@@ -2,6 +2,7 @@ import React from 'react';
 import Icon from 'Components/Icon';
 import Popover from 'Components/Tooltip/Popover';
 import { icons, kinds } from 'Helpers/Props';
+import { Kind } from 'Helpers/Props/kinds';
 import { TooltipPosition } from 'Helpers/Props/tooltipPositions';
 import {
   QueueTrackedDownloadState,
@@ -61,7 +62,7 @@ function QueueStatus(props: QueueStatusProps) {
 
   // status === 'downloading'
   let iconName = icons.DOWNLOADING;
-  let iconKind = kinds.DEFAULT;
+  let iconKind: Kind = kinds.DEFAULT;
   let title = translate('Downloading');
 
   if (status === 'paused') {

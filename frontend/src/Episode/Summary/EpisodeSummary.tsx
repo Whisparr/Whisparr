@@ -121,7 +121,7 @@ function EpisodeSummary(props: EpisodeSummaryProps) {
       <div>
         <span className={styles.infoTitle}>{translate('Airs')}</span>
 
-        <EpisodeAiring airDateUtc={airDateUtc} network={network} />
+        <EpisodeAiring releaseDate={airDateUtc} network={network} />
       </div>
 
       <div>

@@ -15,6 +15,7 @@ export interface General {
   analyticsEnabled: boolean;
   username: string;
   password: string;
+  passwordConfirmation: string;
   logLevel: string;
   consoleLogLevel: string;
   branch: string;

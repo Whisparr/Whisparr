@@ -36,6 +36,7 @@ namespace NzbDrone.Core.Configuration
         AuthenticationRequiredType AuthenticationRequired { get; }
         bool AnalyticsEnabled { get; }
         string LogLevel { get; }
+        int LogSizeLimit { get; }
         string ConsoleLogLevel { get; }
         bool LogSql { get; }
         int LogRotate { get; }
@@ -233,6 +234,7 @@ namespace NzbDrone.Core.Configuration
         public string Branch => GetValue("Branch", "nightly").ToLowerInvariant();
 
         public string LogLevel => GetValue("LogLevel", "info").ToLowerInvariant();
+        public int LogSizeLimit => GetValueInt("LogSizeLimit", 1);
         public string ConsoleLogLevel => GetValue("ConsoleLogLevel", string.Empty, persist: false);
 
         public string Theme => GetValue("Theme", "auto", persist: false);
@@ -381,7 +383,7 @@ namespace NzbDrone.Core.Configuration
             }
 
             // If SSL is enabled and a cert hash is still in the config file or cert path is empty disable SSL
-            if (EnableSsl && (GetValue("SslCertHash", null).IsNotNullOrWhiteSpace() || SslCertPath.IsNullOrWhiteSpace()))
+            if (EnableSsl && (GetValue("SslCertHash", string.Empty, false).IsNotNullOrWhiteSpace() || SslCertPath.IsNullOrWhiteSpace()))
             {
                 SetValue("EnableSsl", false);
             }

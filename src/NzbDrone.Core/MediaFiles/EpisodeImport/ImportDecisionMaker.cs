@@ -211,7 +211,7 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport
         {
             return videoFiles.Count(file =>
             {
-                var sample = _detectSample.IsSample(series, file);
+                var sample = _detectSample.IsSample(series, file, false);
 
                 if (sample == DetectSampleResult.Sample)
                 {

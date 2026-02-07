@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import AppState from 'App/State/AppState';
@@ -169,7 +170,17 @@ function SeriesIndexPoster(props: SeriesIndexPosterProps) {
         </Label>
 
         {status === 'ended' ? (
-          <div className={styles.ended} title={translate('Ended')} />
+          <div
+            className={classNames(styles.status, styles.ended)}
+            title={translate('Ended')}
+          />
+        ) : null}
+
+        {status === 'deleted' ? (
+          <div
+            className={classNames(styles.status, styles.deleted)}
+            title={translate('Deleted')}
+          />
         ) : null}
 
         <Link className={styles.link} style={elementStyle} to={link}>

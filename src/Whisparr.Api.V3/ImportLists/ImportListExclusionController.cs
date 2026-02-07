@@ -18,7 +18,10 @@ namespace Whisparr.Api.V3.ImportLists
         {
             _importListExclusionService = importListExclusionService;
 
-            SharedValidator.RuleFor(c => c.TvdbId).NotEmpty().SetValidator(importListExclusionExistsValidator);
+            SharedValidator.RuleFor(c => c.TvdbId).Cascade(CascadeMode.Stop)
+                .NotEmpty()
+                .SetValidator(importListExclusionExistsValidator);
+
             SharedValidator.RuleFor(c => c.Title).NotEmpty();
         }
 

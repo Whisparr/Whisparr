@@ -128,7 +128,7 @@ namespace NzbDrone.Core.MediaFiles
                         return false;
                     }
 
-                    if (_detectSample.IsSample(series, videoFile) !=
+                    if (_detectSample.IsSample(series, videoFile, false) !=
                         DetectSampleResult.Sample)
                     {
                         _logger.Warn("Non-sample file detected: [{0}]", videoFile);

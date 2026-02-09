@@ -368,5 +368,6 @@
     "OrganizeConfirm": "Naozaj chcete toto vylúčenie importného zoznamu zmazať?",
     "QualityDefinitionsLoadError": "Nie je možné načítať albumy",
     "ReleaseHash": "Dátum vydania albumu",
-    "ResetTitles": "Dátum vydania albumu"
+    "ResetTitles": "Dátum vydania albumu",
+    "AddRootFolderError": "Nie je možné pridať koreňový priečinok"
 }

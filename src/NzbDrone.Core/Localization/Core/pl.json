@@ -1412,5 +1412,17 @@
     "ShowImdbRating": "Ocena IMDb",
     "ShowRottenTomatoesRating": "Ocena Tomato",
     "ShowTmdbRating": "Ocena TMDb",
-    "DownloadClientQbittorrentTorrentStateError": "Deluge zgłasza błąd"
+    "DownloadClientQbittorrentTorrentStateError": "Deluge zgłasza błąd",
+    "CustomFormatUnknownCondition": "Nieznany warunek formatu niestandardowego „{implementation}\"",
+    "CustomFormatUnknownConditionOption": "Nieznana opcja „{key}” dla warunku „{implementation}”",
+    "Dash": "Dash",
+    "DownloadClientDownloadStationValidationApiVersion": "Pobrana wersja Station API nie jest wspierana, minimalna wspierana wersja to {requiredVersion}. Powinna być między {minVersion} a {maxVersion}",
+    "DownloadClientDownloadStationValidationFolderMissing": "Folder nie istnieje",
+    "DownloadClientDownloadStationValidationFolderMissingDetail": "Folder \"{downloadDir}\" nie istnieje. Musi on zostać utworzony manualnie wewnątrz folderu współdzielonego \"{sharedFolder}\".",
+    "DownloadClientDownloadStationValidationNoDefaultDestination": "Nie zdefiniowano domyślne lokalizacji",
+    "DownloadClientDownloadStationValidationNoDefaultDestinationDetail": "Musisz zalogować się do swojej stacji DiskStation jako {username} i ręcznie skonfigurować to w ustawieniach DownloadStation w sekcji BT/HTTP/FTP/NZB -> Lokalizacja.",
+    "DownloadClientDownloadStationValidationSharedFolderMissing": "Folder współdzielony nie istnieje",
+    "DownloadClientDownloadStationValidationSharedFolderMissingDetail": "Stacja DiskStation nie posiada folderu współdzielonego o nazwie „{sharedFolder}”. Czy na pewno podana nazwa jest poprawna?",
+    "DownloadClientFloodSettingsPostImportTags": "Tagi po imporcie",
+    "DownloadClientFloodSettingsPostImportTagsHelpText": "Dołącz tagi po imprezie z klienta pobierania"
 }

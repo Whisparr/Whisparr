@@ -1148,5 +1148,6 @@
     "LanguagesLoadError": "לא ניתן לטעון תגים",
     "MovieMatchType": "סוגי חיפוש ספר",
     "RemotePathMappingCheckDockerFolderMissing": "אתה משתמש בדוקר; קליינט ההורדות {0} שם הורדות ב-{1} אבל הנתיב לא תקין {2}. בחן מחדש את ניתוב התיקיות והגדרות קליינט ההורדות.",
-    "SelectReleaseGroup": "קבוצת שחרור"
+    "SelectReleaseGroup": "קבוצת שחרור",
+    "AddConnectionImplementation": "הוסף חיבור - {implementationName}"
 }

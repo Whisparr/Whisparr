@@ -7,6 +7,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook.Resource
         public ShowResource()
         {
             Genres = new List<string>();
+            Types = new List<string>();
             Images = new List<ImageResource>();
             Years = new List<int>();
             Episodes = new List<EpisodeResource>();
@@ -27,6 +28,7 @@ namespace NzbDrone.Core.MetadataSource.SkyHook.Resource
         public string Network { get; set; }
         public string OriginalLanguage { get; set; }
         public List<string> Genres { get; set; }
+        public List<string> Types { get; set; }
 
         public string ContentRating { get; set; }
 

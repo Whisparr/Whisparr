@@ -6,7 +6,9 @@ import translate from 'Utilities/String/translate';
 import styles from './NoSeries.css';
 
 function NoSeries(props) {
-  const { totalItems } = props;
+  const { totalItems, seriesType } = props;
+
+  const addNewPath = seriesType === 'jav' ? '/jav/add/new' : '/add/new';
 
   if (totalItems > 0) {
     return (
@@ -24,18 +26,21 @@ function NoSeries(props) {
         {translate('NoSitesFoundImportOrAdd')}
       </div>
 
-      <div className={styles.buttonContainer}>
-        <Button
-          to="/add/import"
-          kind={kinds.PRIMARY}
-        >
-          {translate('ImportExistingSites')}
-        </Button>
-      </div>
+      {
+        seriesType !== 'jav' &&
+          <div className={styles.buttonContainer}>
+            <Button
+              to="/add/import"
+              kind={kinds.PRIMARY}
+            >
+              {translate('ImportExistingSites')}
+            </Button>
+          </div>
+      }
 
       <div className={styles.buttonContainer}>
         <Button
-          to="/add/new"
+          to={addNewPath}
           kind={kinds.PRIMARY}
         >
           {translate('AddNewSite')}
@@ -46,7 +51,8 @@ function NoSeries(props) {
 }
 
 NoSeries.propTypes = {
-  totalItems: PropTypes.number.isRequired
+  totalItems: PropTypes.number.isRequired,
+  seriesType: PropTypes.string
 };
 
 export default NoSeries;

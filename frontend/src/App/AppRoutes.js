@@ -49,7 +49,12 @@ function AppRoutes(props) {
       <Route
         exact={true}
         path="/"
-        component={SeriesIndex}
+        render={(routeProps) => (
+          <SeriesIndex
+            {...routeProps}
+            seriesType="standard"
+          />
+        )}
       />
 
       {
@@ -77,6 +82,27 @@ function AppRoutes(props) {
       <Route
         path="/add/import"
         component={ImportSeries}
+      />
+
+      <Route
+        exact={true}
+        path="/jav"
+        render={(routeProps) => (
+          <SeriesIndex
+            {...routeProps}
+            seriesType="jav"
+          />
+        )}
+      />
+
+      <Route
+        path="/jav/add/new"
+        render={(routeProps) => (
+          <AddNewSeriesConnector
+            {...routeProps}
+            defaultSeriesType="jav"
+          />
+        )}
       />
 
       <Route

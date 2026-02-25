@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import { clearAddSeries, lookupSeries } from 'Store/Actions/addSeriesActions';
+import { clearAddSeries, lookupSeries, setAddSeriesDefault } from 'Store/Actions/addSeriesActions';
 import { fetchRootFolders } from 'Store/Actions/rootFolderActions';
 import parseUrl from 'Utilities/String/parseUrl';
 import AddNewSeries from './AddNewSeries';
@@ -27,6 +27,7 @@ function createMapStateToProps() {
 const mapDispatchToProps = {
   lookupSeries,
   clearAddSeries,
+  setAddSeriesDefault,
   fetchRootFolders
 };
 
@@ -43,6 +44,10 @@ class AddNewSeriesConnector extends Component {
 
   componentDidMount() {
     this.props.fetchRootFolders();
+
+    if (this.props.defaultSeriesType) {
+      this.props.setAddSeriesDefault({ seriesType: this.props.defaultSeriesType });
+    }
   }
 
   componentWillUnmount() {
@@ -96,8 +101,10 @@ class AddNewSeriesConnector extends Component {
 
 AddNewSeriesConnector.propTypes = {
   term: PropTypes.string,
+  defaultSeriesType: PropTypes.string,
   lookupSeries: PropTypes.func.isRequired,
   clearAddSeries: PropTypes.func.isRequired,
+  setAddSeriesDefault: PropTypes.func.isRequired,
   fetchRootFolders: PropTypes.func.isRequired
 };
 

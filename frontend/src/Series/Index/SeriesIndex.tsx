@@ -26,14 +26,14 @@ import SortDirection from 'Helpers/Props/SortDirection';
 import ParseToolbarButton from 'Parse/ParseToolbarButton';
 import NoSeries from 'Series/NoSeries';
 import { executeCommand } from 'Store/Actions/commandActions';
-import { fetchQueueDetails } from 'Store/Actions/queueActions';
-import { fetchSeries } from 'Store/Actions/seriesActions';
 import {
   setJavSeriesFilter,
   setJavSeriesSort,
   setJavSeriesTableOption,
   setJavSeriesView,
 } from 'Store/Actions/javSeriesIndexActions';
+import { fetchQueueDetails } from 'Store/Actions/queueActions';
+import { fetchSeries } from 'Store/Actions/seriesActions';
 import {
   setSeriesFilter,
   setSeriesSort,
@@ -126,7 +126,9 @@ function SeriesIndex(props: SeriesIndexProps) {
     sortDirection,
     view,
   }: SeriesAppState & SeriesIndexAppState & ClientSideCollectionAppState =
-    useSelector(createSeriesClientSideCollectionItemsSelector(uiSection, seriesType));
+    useSelector(
+      createSeriesClientSideCollectionItemsSelector(uiSection, seriesType)
+    );
 
   const isRssSyncExecuting = useSelector(
     createCommandExecutingSelector(RSS_SYNC)

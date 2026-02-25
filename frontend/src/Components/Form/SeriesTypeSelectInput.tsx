@@ -21,7 +21,7 @@ interface ISeriesTypeOption {
 const seriesTypeOptions: ISeriesTypeOption[] = [
   {
     key: seriesTypes.STANDARD,
-    value: 'Standard',
+    value: 'Scenes',
     format: 'Season and episode numbers (S01E05)',
   },
   {

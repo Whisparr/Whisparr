@@ -6,6 +6,7 @@ import React, {
   useState,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { RouteComponentProps } from 'react-router-dom';
 import { SelectProvider } from 'App/SelectContext';
 import ClientSideCollectionAppState from 'App/State/ClientSideCollectionAppState';
 import SeriesAppState, { SeriesIndexAppState } from 'App/State/SeriesAppState';
@@ -20,12 +21,17 @@ import PageToolbarButton from 'Components/Page/Toolbar/PageToolbarButton';
 import PageToolbarSection from 'Components/Page/Toolbar/PageToolbarSection';
 import PageToolbarSeparator from 'Components/Page/Toolbar/PageToolbarSeparator';
 import TableOptionsModalWrapper from 'Components/Table/TableOptions/TableOptionsModalWrapper';
-import withScrollPosition from 'Components/withScrollPosition';
 import { align, icons, kinds } from 'Helpers/Props';
 import SortDirection from 'Helpers/Props/SortDirection';
 import ParseToolbarButton from 'Parse/ParseToolbarButton';
 import NoSeries from 'Series/NoSeries';
 import { executeCommand } from 'Store/Actions/commandActions';
+import {
+  setJavSeriesFilter,
+  setJavSeriesSort,
+  setJavSeriesTableOption,
+  setJavSeriesView,
+} from 'Store/Actions/javSeriesIndexActions';
 import { fetchQueueDetails } from 'Store/Actions/queueActions';
 import { fetchSeries } from 'Store/Actions/seriesActions';
 import {
@@ -69,11 +75,43 @@ function getViewComponent(view: string) {
   return SeriesIndexTable;
 }
 
-interface SeriesIndexProps {
-  initialScrollTop?: number;
+interface SeriesIndexProps extends RouteComponentProps {
+  seriesType?: string;
 }
 
-const SeriesIndex = withScrollPosition((props: SeriesIndexProps) => {
+function getActions(seriesType: string) {
+  if (seriesType === 'jav') {
+    return {
+      dispatchSetSort: setJavSeriesSort,
+      dispatchSetFilter: setJavSeriesFilter,
+      dispatchSetView: setJavSeriesView,
+      dispatchSetTableOption: setJavSeriesTableOption,
+    };
+  }
+
+  return {
+    dispatchSetSort: setSeriesSort,
+    dispatchSetFilter: setSeriesFilter,
+    dispatchSetView: setSeriesView,
+    dispatchSetTableOption: setSeriesTableOption,
+  };
+}
+
+function SeriesIndex(props: SeriesIndexProps) {
+  const seriesType = props.seriesType || 'standard';
+  const uiSection = seriesType === 'jav' ? 'javSeriesIndex' : 'seriesIndex';
+  const scrollKey = uiSection;
+
+  const initialScrollTop =
+    props.history?.action === 'POP' ? scrollPositions[scrollKey] : 0;
+
+  const {
+    dispatchSetSort,
+    dispatchSetFilter,
+    dispatchSetView,
+    dispatchSetTableOption,
+  } = getActions(seriesType);
+
   const {
     isFetching,
     isPopulated,
@@ -88,7 +126,9 @@ const SeriesIndex = withScrollPosition((props: SeriesIndexProps) => {
     sortDirection,
     view,
   }: SeriesAppState & SeriesIndexAppState & ClientSideCollectionAppState =
-    useSelector(createSeriesClientSideCollectionItemsSelector('seriesIndex'));
+    useSelector(
+      createSeriesClientSideCollectionItemsSelector(uiSection, seriesType)
+    );
 
   const isRssSyncExecuting = useSelector(
     createCommandExecutingSelector(RSS_SYNC)
@@ -121,34 +161,34 @@ const SeriesIndex = withScrollPosition((props: SeriesIndexProps) => {
 
   const onTableOptionChange = useCallback(
     (payload: unknown) => {
-      dispatch(setSeriesTableOption(payload));
+      dispatch(dispatchSetTableOption(payload));
     },
-    [dispatch]
+    [dispatch, dispatchSetTableOption]
   );
 
   const onViewSelect = useCallback(
     (value: string) => {
-      dispatch(setSeriesView({ view: value }));
+      dispatch(dispatchSetView({ view: value }));
 
       if (scrollerRef.current) {
         scrollerRef.current.scrollTo(0, 0);
       }
     },
-    [scrollerRef, dispatch]
+    [scrollerRef, dispatch, dispatchSetView]
   );
 
   const onSortSelect = useCallback(
     (value: string) => {
-      dispatch(setSeriesSort({ sortKey: value }));
+      dispatch(dispatchSetSort({ sortKey: value }));
     },
-    [dispatch]
+    [dispatch, dispatchSetSort]
   );
 
   const onFilterSelect = useCallback(
     (value: string) => {
-      dispatch(setSeriesFilter({ selectedFilterKey: value }));
+      dispatch(dispatchSetFilter({ selectedFilterKey: value }));
     },
-    [dispatch]
+    [dispatch, dispatchSetFilter]
   );
 
   const onOptionsPress = useCallback(() => {
@@ -169,9 +209,9 @@ const SeriesIndex = withScrollPosition((props: SeriesIndexProps) => {
   const onScroll = useCallback(
     ({ scrollTop }: { scrollTop: number }) => {
       setJumpToCharacter(undefined);
-      scrollPositions.seriesIndex = scrollTop;
+      scrollPositions[scrollKey] = scrollTop;
     },
-    [setJumpToCharacter]
+    [setJumpToCharacter, scrollKey]
   );
 
   const jumpBarItems = useMemo(() => {
@@ -312,7 +352,7 @@ const SeriesIndex = withScrollPosition((props: SeriesIndexProps) => {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             innerClassName={styles[`${view}InnerContentBody`]}
-            initialScrollTop={props.initialScrollTop}
+            initialScrollTop={initialScrollTop}
             onScroll={onScroll}
           >
             {isFetching && !isPopulated ? <LoadingIndicator /> : null}
@@ -338,7 +378,7 @@ const SeriesIndex = withScrollPosition((props: SeriesIndexProps) => {
             ) : null}
 
             {!error && isPopulated && !items.length ? (
-              <NoSeries totalItems={totalItems} />
+              <NoSeries totalItems={totalItems} seriesType={seriesType} />
             ) : null}
           </PageContentBody>
           {isLoaded && !!jumpBarItems.order.length ? (
@@ -366,6 +406,6 @@ const SeriesIndex = withScrollPosition((props: SeriesIndexProps) => {
       </PageContent>
     </SelectProvider>
   );
-}, 'seriesIndex');
+}
 
 export default SeriesIndex;

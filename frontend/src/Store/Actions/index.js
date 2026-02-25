@@ -12,6 +12,7 @@ import * as episodeSelection from './episodeSelectionActions';
 import * as history from './historyActions';
 import * as importSeries from './importSeriesActions';
 import * as interactiveImportActions from './interactiveImportActions';
+import * as javSeriesIndex from './javSeriesIndexActions';
 import * as oAuth from './oAuthActions';
 import * as organizePreview from './organizePreviewActions';
 import * as parse from './parseActions';
@@ -43,6 +44,7 @@ export default [
   history,
   importSeries,
   interactiveImportActions,
+  javSeriesIndex,
   oAuth,
   organizePreview,
   parse,

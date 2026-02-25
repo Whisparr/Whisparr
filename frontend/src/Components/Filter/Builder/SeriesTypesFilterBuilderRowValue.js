@@ -6,7 +6,7 @@ const seriesTypesList = [
   {
     id: 'standard',
     get name() {
-      return translate('Standard');
+      return translate('Scenes');
     }
   },
   {

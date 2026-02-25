@@ -119,7 +119,7 @@ export function createCustomFiltersSelector(type, alternateType) {
   );
 }
 
-function createClientSideCollectionSelector(section, uiSection) {
+function createClientSideCollectionSelector(section, uiSection, preFilter) {
   return createSelector(
     (state) => _.get(state, section),
     (state) => _.get(state, uiSection),
@@ -127,7 +127,8 @@ function createClientSideCollectionSelector(section, uiSection) {
     (sectionState, uiSectionState = {}, customFilters) => {
       const state = Object.assign({}, sectionState, uiSectionState, { customFilters });
 
-      const filtered = filter(state.items, state);
+      const items = preFilter ? state.items.filter(preFilter) : state.items;
+      const filtered = filter(items, state);
       const sorted = sort(filtered, state);
 
       return {
@@ -135,7 +136,7 @@ function createClientSideCollectionSelector(section, uiSection) {
         ...uiSectionState,
         customFilters,
         items: sorted,
-        totalItems: state.items.length
+        totalItems: items.length
       };
     }
   );

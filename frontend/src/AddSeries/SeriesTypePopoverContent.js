@@ -7,7 +7,7 @@ function SeriesTypePopoverContent() {
   return (
     <DescriptionList>
       <DescriptionListItem
-        title={translate('Standard')}
+        title={translate('Scenes')}
         data={translate('StandardTypeDescription')}
       />
 

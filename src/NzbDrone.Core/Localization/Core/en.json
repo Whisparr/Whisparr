@@ -1617,6 +1617,8 @@
   "SslCertPath": "SSL Cert Path",
   "SslCertPathHelpText": "Path to pfx file",
   "SslPort": "SSL Port",
+  "Scenes": "Scenes",
+  "SceneEpisodeFormat": "Scene Episode Format",
   "Standard": "Standard",
   "StandardEpisodeFormat": "Standard Episode Format",
   "StandardTypeDescription": "Episodes released with SxxEyy pattern",

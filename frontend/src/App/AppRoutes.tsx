@@ -46,10 +46,7 @@ function AppRoutes() {
         exact={true}
         path="/"
         render={(routeProps) => (
-          <SeriesIndex
-            {...routeProps}
-            seriesType="standard"
-          />
+          <SeriesIndex {...routeProps} seriesType="standard" />
         )}
       />
 
@@ -74,20 +71,14 @@ function AppRoutes() {
         exact={true}
         path="/jav"
         render={(routeProps) => (
-          <SeriesIndex
-            {...routeProps}
-            seriesType="jav"
-          />
+          <SeriesIndex {...routeProps} seriesType="jav" />
         )}
       />
 
       <Route
         path="/jav/add/new"
         render={(routeProps) => (
-          <AddNewSeriesConnector
-            {...routeProps}
-            defaultSeriesType="jav"
-          />
+          <AddNewSeriesConnector {...routeProps} defaultSeriesType="jav" />
         )}
       />
 

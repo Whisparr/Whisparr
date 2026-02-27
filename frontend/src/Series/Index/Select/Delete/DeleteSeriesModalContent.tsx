@@ -156,7 +156,7 @@ function DeleteSeriesModalContent(props: DeleteSeriesModalContentProps) {
 
         <ul>
           {series.map((s) => {
-            const { episodeFileCount = 0, sizeOnDisk = 0 } = s.statistics;
+            const { episodeFileCount = 0, sizeOnDisk = 0 } = s.statistics ?? {};
 
             return (
               <li key={s.title}>

@@ -3,6 +3,7 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import TextTruncate from 'react-text-truncate';
+import HeartRating from 'Components/HeartRating';
 import Icon from 'Components/Icon';
 import Label from 'Components/Label';
 import IconButton from 'Components/Link/IconButton';
@@ -184,6 +185,7 @@ class SeriesDetails extends Component {
       seasons,
       alternateTitles,
       genres,
+      ratings,
       tags,
       year,
       previousAiring,
@@ -206,8 +208,8 @@ class SeriesDetails extends Component {
     } = this.props;
 
     const {
-      episodeFileCount,
-      sizeOnDisk
+      episodeFileCount = 0,
+      sizeOnDisk = 0
     } = statistics;
 
     const {
@@ -411,6 +413,15 @@ class SeriesDetails extends Component {
                         </span>
                     }
 
+                    {
+                      ratings.value ?
+                        <HeartRating
+                          rating={ratings.value}
+                          iconSize={20}
+                        /> :
+                        null
+                    }
+
                     <SeriesGenres genres={genres} />
 
                     <span>
@@ -424,14 +435,16 @@ class SeriesDetails extends Component {
                     className={styles.detailsLabel}
                     size={sizes.LARGE}
                   >
-                    <Icon
-                      name={icons.FOLDER}
-                      size={17}
-                    />
 
-                    <span className={styles.path}>
-                      {path}
-                    </span>
+                    <div>
+                      <Icon
+                        name={icons.FOLDER}
+                        size={17}
+                      />
+                      <span className={styles.path}>
+                        {path}
+                      </span>
+                    </div>
                   </Label>
 
                   <Tooltip
@@ -440,16 +453,17 @@ class SeriesDetails extends Component {
                         className={styles.detailsLabel}
                         size={sizes.LARGE}
                       >
-                        <Icon
-                          name={icons.DRIVE}
-                          size={17}
-                        />
 
-                        <span className={styles.sizeOnDisk}>
-                          {
-                            formatBytes(sizeOnDisk || 0)
-                          }
-                        </span>
+                        <div>
+                          <Icon
+                            name={icons.DRIVE}
+                            size={17}
+                          />
+
+                          <span className={styles.sizeOnDisk}>
+                            {formatBytes(sizeOnDisk)}
+                          </span>
+                        </div>
                       </Label>
                     }
                     tooltip={
@@ -466,47 +480,54 @@ class SeriesDetails extends Component {
                     title={translate('QualityProfile')}
                     size={sizes.LARGE}
                   >
-                    <Icon
-                      name={icons.PROFILE}
-                      size={17}
-                    />
 
-                    <span className={styles.qualityProfileName}>
-                      {
-                        <QualityProfileNameConnector
-                          qualityProfileId={qualityProfileId}
-                        />
-                      }
-                    </span>
+                    <div>
+                      <Icon
+                        name={icons.PROFILE}
+                        size={17}
+                      />
+                      <span className={styles.qualityProfileName}>
+                        {
+                          <QualityProfileNameConnector
+                            qualityProfileId={qualityProfileId}
+                          />
+                        }
+                      </span>
+                    </div>
                   </Label>
 
                   <Label
                     className={styles.detailsLabel}
                     size={sizes.LARGE}
                   >
-                    <Icon
-                      name={monitored ? icons.MONITORED : icons.UNMONITORED}
-                      size={17}
-                    />
 
-                    <span className={styles.qualityProfileName}>
-                      {monitored ? translate('Monitored') : translate('Unmonitored')}
-                    </span>
+                    <div>
+                      <Icon
+                        name={monitored ? icons.MONITORED : icons.UNMONITORED}
+                        size={17}
+                      />
+                      <span className={styles.qualityProfileName}>
+                        {monitored ? translate('Monitored') : translate('Unmonitored')}
+                      </span>
+                    </div>
                   </Label>
 
                   <Label
                     className={styles.detailsLabel}
                     title={statusDetails.message}
                     size={sizes.LARGE}
+                    kind={status === 'deleted' ? kinds.INVERSE : undefined}
                   >
-                    <Icon
-                      name={statusDetails.icon}
-                      size={17}
-                    />
 
-                    <span className={styles.qualityProfileName}>
-                      {statusDetails.title}
-                    </span>
+                    <div>
+                      <Icon
+                        name={statusDetails.icon}
+                        size={17}
+                      />
+                      <span className={styles.statusName}>
+                        {statusDetails.title}
+                      </span>
+                    </div>
                   </Label>
 
                   {
@@ -516,14 +537,16 @@ class SeriesDetails extends Component {
                         title={translate('Network')}
                         size={sizes.LARGE}
                       >
-                        <Icon
-                          name={icons.NETWORK}
-                          size={17}
-                        />
 
-                        <span className={styles.qualityProfileName}>
-                          {network}
-                        </span>
+                        <div>
+                          <Icon
+                            name={icons.NETWORK}
+                            size={17}
+                          />
+                          <span className={styles.qualityProfileName}>
+                            {network}
+                          </span>
+                        </div>
                       </Label>
                   }
 
@@ -551,14 +574,16 @@ class SeriesDetails extends Component {
                         className={styles.detailsLabel}
                         size={sizes.LARGE}
                       >
-                        <Icon
-                          name={icons.EXTERNAL_LINK}
-                          size={17}
-                        />
 
-                        <span className={styles.links}>
-                          {translate('Links')}
-                        </span>
+                        <div>
+                          <Icon
+                            name={icons.EXTERNAL_LINK}
+                            size={17}
+                          />
+                          <span className={styles.links}>
+                            {translate('Links')}
+                          </span>
+                        </div>
                       </Label>
                     }
 
@@ -723,6 +748,7 @@ SeriesDetails.propTypes = {
   seasons: PropTypes.arrayOf(PropTypes.object).isRequired,
   alternateTitles: PropTypes.arrayOf(PropTypes.object).isRequired,
   genres: PropTypes.arrayOf(PropTypes.string).isRequired,
+  ratings: PropTypes.object.isRequired,
   tags: PropTypes.arrayOf(PropTypes.number).isRequired,
   year: PropTypes.number.isRequired,
   previousAiring: PropTypes.string,

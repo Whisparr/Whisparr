@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import TextTruncate from 'react-text-truncate';
@@ -5,6 +6,7 @@ import { REFRESH_SERIES, SERIES_SEARCH } from 'Commands/commandNames';
 import IconButton from 'Components/Link/IconButton';
 import Link from 'Components/Link/Link';
 import SpinnerIconButton from 'Components/Link/SpinnerIconButton';
+import TagListConnector from 'Components/TagListConnector';
 import { icons } from 'Helpers/Props';
 import DeleteSeriesModal from 'Series/Delete/DeleteSeriesModal';
 import EditSeriesModalConnector from 'Series/Edit/EditSeriesModalConnector';
@@ -70,6 +72,7 @@ function SeriesIndexOverview(props: SeriesIndexOverviewProps) {
     overview,
     statistics = {} as Statistics,
     images,
+    tags,
     network,
   } = series;
 
@@ -144,9 +147,19 @@ function SeriesIndexOverview(props: SeriesIndexOverviewProps) {
               <SeriesIndexPosterSelect seriesId={seriesId} />
             ) : null}
 
-            {status === 'ended' && (
-              <div className={styles.ended} title={translate('Ended')} />
-            )}
+            {status === 'ended' ? (
+              <div
+                className={classNames(styles.status, styles.ended)}
+                title={translate('Ended')}
+              />
+            ) : null}
+
+            {status === 'deleted' ? (
+              <div
+                className={classNames(styles.status, styles.deleted)}
+                title={translate('Deleted')}
+              />
+            ) : null}
 
             <Link className={styles.link} style={elementStyle} to={link}>
               <SeriesPoster
@@ -205,15 +218,22 @@ function SeriesIndexOverview(props: SeriesIndexOverviewProps) {
           </div>
 
           <div className={styles.details}>
-            <Link className={styles.overview} to={link}>
-              <TextTruncate
-                line={Math.floor(
-                  overviewHeight / (defaultFontSize * lineHeight)
-                )}
-                text={overview}
-              />
-            </Link>
+            <div className={styles.overviewContainer}>
+              <Link className={styles.overview} to={link}>
+                <TextTruncate
+                  line={Math.floor(
+                    overviewHeight / (defaultFontSize * lineHeight)
+                  )}
+                  text={overview}
+                />
+              </Link>
 
+              {overviewOptions.showTags ? (
+                <div className={styles.tags}>
+                  <TagListConnector tags={tags} />
+                </div>
+              ) : null}
+            </div>
             <SeriesIndexOverviewInfo
               height={overviewHeight}
               monitored={monitored}

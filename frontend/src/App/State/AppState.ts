@@ -54,6 +54,7 @@ interface AppState {
   parse: ParseAppState;
   queue: QueueAppState;
   rootFolders: RootFolderAppState;
+  javSeriesIndex: SeriesIndexAppState;
   series: SeriesAppState;
   seriesIndex: SeriesIndexAppState;
   settings: SettingsAppState;

@@ -36,6 +36,7 @@ namespace NzbDrone.Core.Download
         private readonly ISeriesService _seriesService;
         private readonly IEpisodeService _episodeService;
         private readonly ITrackedDownloadAlreadyImported _trackedDownloadAlreadyImported;
+        private readonly IMediaFileService _mediaFileService;
         private readonly Logger _logger;
 
         public CompletedDownloadService(IEventAggregator eventAggregator,
@@ -46,6 +47,7 @@ namespace NzbDrone.Core.Download
                                         ISeriesService seriesService,
                                         IEpisodeService episodeService,
                                         ITrackedDownloadAlreadyImported trackedDownloadAlreadyImported,
+                                        IMediaFileService mediaFileService,
                                         Logger logger)
         {
             _eventAggregator = eventAggregator;
@@ -56,6 +58,7 @@ namespace NzbDrone.Core.Download
             _seriesService = seriesService;
             _episodeService = episodeService;
             _trackedDownloadAlreadyImported = trackedDownloadAlreadyImported;
+            _mediaFileService = mediaFileService;
             _logger = logger;
         }
 
@@ -132,6 +135,8 @@ namespace NzbDrone.Core.Download
                 if (series == null)
                 {
                     trackedDownload.Warn("Series title mismatch; automatic import is not possible. Check the download troubleshooting entry on the wiki for common causes.");
+                    SendManualInteractionRequiredNotification(trackedDownload);
+
                     return;
                 }
 
@@ -142,16 +147,7 @@ namespace NzbDrone.Core.Download
                 if (seriesMatchType == SeriesMatchType.Id && releaseSource != ReleaseSourceType.InteractiveSearch)
                 {
                     trackedDownload.Warn("Found matching series via grab history, but release was matched to series by ID. Automatic import is not possible. See the FAQ for details.");
-
-                    if (!trackedDownload.HasNotifiedManualInteractionRequired)
-                    {
-                        trackedDownload.HasNotifiedManualInteractionRequired = true;
-
-                        var releaseInfo = new GrabbedReleaseInfo(grabbedHistories);
-                        var manualInteractionEvent = new ManualInteractionRequiredEvent(trackedDownload, releaseInfo);
-
-                        _eventAggregator.PublishEvent(manualInteractionEvent);
-                    }
+                    SendManualInteractionRequiredNotification(trackedDownload);
 
                     return;
                 }
@@ -172,6 +168,8 @@ namespace NzbDrone.Core.Download
             if (trackedDownload.RemoteEpisode == null)
             {
                 trackedDownload.Warn("Unable to parse download, automatic import is not possible.");
+                SendManualInteractionRequiredNotification(trackedDownload);
+
                 return;
             }
 
@@ -228,6 +226,7 @@ namespace NzbDrone.Core.Download
             if (statusMessages.Any())
             {
                 trackedDownload.Warn(statusMessages.ToArray());
+                SendManualInteractionRequiredNotification(trackedDownload);
             }
         }
 
@@ -238,11 +237,23 @@ namespace NzbDrone.Core.Download
                                                    .Count() >= Math.Max(1,
                                           trackedDownload.RemoteEpisode.Episodes.Count);
 
+            var historyItems = _historyService.FindByDownloadId(trackedDownload.DownloadItem.DownloadId)
+                .OrderByDescending(h => h.Date)
+                .ToList();
+
+            var grabbedHistory = historyItems.Where(h => h.EventType == EpisodeHistoryEventType.Grabbed).ToList();
+            var releaseInfo = grabbedHistory.Count > 0 ? new GrabbedReleaseInfo(grabbedHistory) : null;
+
             if (allEpisodesImported)
             {
                 _logger.Debug("All episodes were imported for {0}", trackedDownload.DownloadItem.Title);
                 trackedDownload.State = TrackedDownloadState.Imported;
-                _eventAggregator.PublishEvent(new DownloadCompletedEvent(trackedDownload, trackedDownload.RemoteEpisode.Series.Id));
+
+                _eventAggregator.PublishEvent(new DownloadCompletedEvent(trackedDownload,
+                    trackedDownload.RemoteEpisode.Series.Id,
+                    importResults.Where(c => c.Result == ImportResultType.Imported).Select(c => c.EpisodeFile).ToList(),
+                    releaseInfo));
+
                 return true;
             }
 
@@ -256,12 +267,9 @@ namespace NzbDrone.Core.Download
             // safe, but commenting for future benefit.
 
             var atLeastOneEpisodeImported = importResults.Any(c => c.Result == ImportResultType.Imported);
-
-            var historyItems = _historyService.FindByDownloadId(trackedDownload.DownloadItem.DownloadId)
-                                              .OrderByDescending(h => h.Date)
-                                              .ToList();
-
             var allEpisodesImportedInHistory = _trackedDownloadAlreadyImported.IsImported(trackedDownload, historyItems);
+            var episodes = _episodeService.GetEpisodes(trackedDownload.RemoteEpisode.Episodes.Select(e => e.Id));
+            var files = _mediaFileService.GetFiles(episodes.Select(e => e.EpisodeFileId).Distinct());
 
             if (allEpisodesImportedInHistory)
             {
@@ -285,13 +293,28 @@ namespace NzbDrone.Core.Download
                 }
 
                 trackedDownload.State = TrackedDownloadState.Imported;
-                _eventAggregator.PublishEvent(new DownloadCompletedEvent(trackedDownload, trackedDownload.RemoteEpisode.Series.Id));
+                _eventAggregator.PublishEvent(new DownloadCompletedEvent(trackedDownload, trackedDownload.RemoteEpisode.Series.Id, files, releaseInfo));
 
                 return true;
             }
 
             _logger.Debug("Not all episodes have been imported for the release '{0}'", trackedDownload.DownloadItem.Title);
             return false;
+        }
+
+        private void SendManualInteractionRequiredNotification(TrackedDownload trackedDownload)
+        {
+            if (!trackedDownload.HasNotifiedManualInteractionRequired)
+            {
+                var grabbedHistories = _historyService.FindByDownloadId(trackedDownload.DownloadItem.DownloadId).Where(h => h.EventType == EpisodeHistoryEventType.Grabbed).ToList();
+
+                trackedDownload.HasNotifiedManualInteractionRequired = true;
+
+                var releaseInfo = grabbedHistories.Count > 0 ? new GrabbedReleaseInfo(grabbedHistories) : null;
+                var manualInteractionEvent = new ManualInteractionRequiredEvent(trackedDownload, releaseInfo);
+
+                _eventAggregator.PublishEvent(manualInteractionEvent);
+            }
         }
 
         private void SetImportItem(TrackedDownload trackedDownload)

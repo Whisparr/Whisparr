@@ -71,7 +71,7 @@ namespace NzbDrone.Core.Download.Clients.FreeboxDownload
                     Category = Settings.Category,
                     Title = torrent.Name,
                     TotalSize = torrent.Size,
-                    DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this),
+                    DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this, false),
                     RemainingSize = (long)(torrent.Size * (double)(1 - ((double)torrent.ReceivedPrct / 10000))),
                     RemainingTime = torrent.Eta <= 0 ? null : TimeSpan.FromSeconds(torrent.Eta),
                     SeedRatio = torrent.StopRatio <= 0 ? 0 : torrent.StopRatio / 100,
@@ -114,7 +114,7 @@ namespace NzbDrone.Core.Download.Clients.FreeboxDownload
                         break;
                 }
 
-                item.CanBeRemoved = item.CanMoveFiles = torrent.Status == FreeboxDownloadTaskStatus.Done;
+                item.CanBeRemoved = item.CanMoveFiles = item.DownloadClientInfo.RemoveCompletedDownloads && torrent.Status == FreeboxDownloadTaskStatus.Done;
 
                 queueItems.Add(item);
             }

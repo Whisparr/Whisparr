@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Diacritical;
-using DryIoc.ImTools;
 using NLog;
 using NzbDrone.Common.Cache;
 using NzbDrone.Common.Disk;
@@ -63,7 +62,7 @@ namespace NzbDrone.Core.Organizer
         private static readonly Regex FileNameCleanupRegex = new Regex(@"([- ._])(\1)+", RegexOptions.Compiled);
         private static readonly Regex TrimSeparatorsRegex = new Regex(@"[- ._]$", RegexOptions.Compiled);
 
-        private static readonly Regex ScenifyRemoveChars = new Regex(@"(?<=\s)(,|<|>|\/|\\|;|:|'|""|\||`|~|!|\?|@|$|%|^|\*|-|_|=){1}(?=\s)|('|:|\?|,)(?=(?:(?:s|m)\s)|\s|$)|(\(|\)|\[|\]|\{|\})", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex ScenifyRemoveChars = new Regex(@"(?<=\s)(,|<|>|\/|\\|;|:|'|""|\||`|’|~|!|\?|@|$|%|^|\*|-|_|=){1}(?=\s)|('|`|’|:|\?|,)(?=(?:(?:s|m|t|ve|ll|d|re)\s)|\s|$)|(\(|\)|\[|\]|\{|\})", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         private static readonly Regex ScenifyReplaceChars = new Regex(@"[\/]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         // TODO: Support Written numbers (One, Two, etc) and Roman Numerals (I, II, III etc)
@@ -101,6 +100,9 @@ namespace NzbDrone.Core.Organizer
             { "tib", "bod" },
             { "wel", "cym" }
         }.ToImmutableDictionary();
+
+        public static readonly ImmutableArray<string> BadCharacters = ImmutableArray.Create("\\", "/", "<", ">", "?", "*", "|", "\"");
+        public static readonly ImmutableArray<string> GoodCharacters = ImmutableArray.Create("+", "+", "", "", "!", "-", "", "");
 
         public FileNameBuilder(INamingConfigService namingConfigService,
                                IQualityDefinitionService qualityDefinitionService,
@@ -614,7 +616,7 @@ namespace NzbDrone.Core.Organizer
         {
             tokenHandlers["{Original Title}"] = m => GetOriginalTitle(episodeFile, useCurrentFilenameAsFallback);
             tokenHandlers["{Original Filename}"] = m => GetOriginalFileName(episodeFile, useCurrentFilenameAsFallback);
-            tokenHandlers["{Release Group}"] = m => episodeFile.ReleaseGroup ?? m.DefaultValue("Whisparr");
+            tokenHandlers["{Release Group}"] = m => episodeFile.ReleaseGroup.IsNullOrWhiteSpace() ? m.DefaultValue("Whisparr") : Truncate(episodeFile.ReleaseGroup, m.CustomFormat);
         }
 
         private void AddQualityTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, Series series, EpisodeFile episodeFile)
@@ -633,7 +635,7 @@ namespace NzbDrone.Core.Organizer
             new Dictionary<string, int>(FileNameBuilderTokenEqualityComparer.Instance)
         {
             { MediaInfoVideoDynamicRangeToken, 5 },
-            { MediaInfoVideoDynamicRangeTypeToken, 8 }
+            { MediaInfoVideoDynamicRangeTypeToken, 11 }
         };
 
         private void AddMediaInfoTokens(Dictionary<string, Func<TokenMatch, string>> tokenHandlers, EpisodeFile episodeFile)
@@ -1028,8 +1030,6 @@ namespace NzbDrone.Core.Organizer
         private static string CleanFileName(string name, NamingConfig namingConfig)
         {
             var result = name;
-            string[] badCharacters = { "\\", "/", "<", ">", "?", "*", "|", "\"" };
-            string[] goodCharacters = { "+", "+", "", "", "!", "-", "", "" };
 
             if (namingConfig.ReplaceIllegalCharacters)
             {
@@ -1054,6 +1054,9 @@ namespace NzbDrone.Core.Organizer
                         case ColonReplacementFormat.SpaceDashSpace:
                             replacement = " - ";
                             break;
+                        case ColonReplacementFormat.Custom:
+                            replacement = namingConfig.CustomColonReplacementFormat;
+                            break;
                     }
 
                     result = result.Replace(":", replacement);
@@ -1064,12 +1067,41 @@ namespace NzbDrone.Core.Organizer
                 result = result.Replace(":", string.Empty);
             }
 
-            for (var i = 0; i < badCharacters.Length; i++)
+            for (var i = 0; i < BadCharacters.Length; i++)
             {
-                result = result.Replace(badCharacters[i], namingConfig.ReplaceIllegalCharacters ? goodCharacters[i] : string.Empty);
+                result = result.Replace(BadCharacters[i], namingConfig.ReplaceIllegalCharacters ? GoodCharacters[i] : string.Empty);
             }
 
             return result.TrimStart(' ', '.').TrimEnd(' ');
+        }
+
+        private string Truncate(string input, string formatter)
+        {
+            if (input.IsNullOrWhiteSpace())
+            {
+                return string.Empty;
+            }
+
+            var maxLength = GetMaxLengthFromFormatter(formatter);
+
+            if (maxLength == 0 || input.Length <= Math.Abs(maxLength))
+            {
+                return input;
+            }
+
+            if (maxLength < 0)
+            {
+                return $"{{ellipsis}}{new string(new string(input.Reverse().ToArray()).Truncate(Math.Abs(maxLength) - 3).TrimEnd(' ', '.').Reverse().ToArray())}";
+            }
+
+            return $"{input.Truncate(maxLength - 3).TrimEnd(' ', '.')}{{ellipsis}}";
+        }
+
+        private int GetMaxLengthFromFormatter(string formatter)
+        {
+            int.TryParse(formatter, out var maxCustomLength);
+
+            return maxCustomLength;
         }
     }
 
@@ -1111,6 +1143,7 @@ namespace NzbDrone.Core.Organizer
         Dash = 1,
         SpaceDash = 2,
         SpaceDashSpace = 3,
-        Smart = 4
+        Smart = 4,
+        Custom = 5
     }
 }

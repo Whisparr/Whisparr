@@ -5,6 +5,7 @@ import ModalBody from 'Components/Modal/ModalBody';
 import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
+import sortByProp from 'Utilities/Array/sortByProp';
 import translate from 'Utilities/String/translate';
 import CustomFilter from './CustomFilter';
 import styles from './CustomFiltersModalContent.css';
@@ -30,22 +31,24 @@ function CustomFiltersModalContent(props) {
 
       <ModalBody>
         {
-          customFilters.map((customFilter) => {
-            return (
-              <CustomFilter
-                key={customFilter.id}
-                id={customFilter.id}
-                label={customFilter.label}
-                filters={customFilter.filters}
-                selectedFilterKey={selectedFilterKey}
-                isDeleting={isDeleting}
-                deleteError={deleteError}
-                dispatchSetFilter={dispatchSetFilter}
-                dispatchDeleteCustomFilter={dispatchDeleteCustomFilter}
-                onEditPress={onEditCustomFilter}
-              />
-            );
-          })
+          customFilters
+            .sort((a, b) => sortByProp(a, b, 'label'))
+            .map((customFilter) => {
+              return (
+                <CustomFilter
+                  key={customFilter.id}
+                  id={customFilter.id}
+                  label={customFilter.label}
+                  filters={customFilter.filters}
+                  selectedFilterKey={selectedFilterKey}
+                  isDeleting={isDeleting}
+                  deleteError={deleteError}
+                  dispatchSetFilter={dispatchSetFilter}
+                  dispatchDeleteCustomFilter={dispatchDeleteCustomFilter}
+                  onEditPress={onEditCustomFilter}
+                />
+              );
+            })
         }
 
         <div className={styles.addButtonContainer}>

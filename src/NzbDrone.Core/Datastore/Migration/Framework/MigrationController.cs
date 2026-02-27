@@ -42,17 +42,18 @@ namespace NzbDrone.Core.Datastore.Migration.Framework
             serviceProvider = new ServiceCollection()
                 .AddLogging(b => b.AddNLog())
                 .AddFluentMigratorCore()
+                .Configure<RunnerOptions>(cfg => cfg.IncludeUntaggedMaintenances = true)
                 .ConfigureRunner(
                     builder => builder
                     .AddPostgres()
                     .AddNzbDroneSQLite()
                     .WithGlobalConnectionString(connectionString)
-                    .WithMigrationsIn(Assembly.GetExecutingAssembly()))
+                    .ScanIn(Assembly.GetExecutingAssembly()).For.All())
                 .Configure<TypeFilterOptions>(opt => opt.Namespace = "NzbDrone.Core.Datastore.Migration")
                 .Configure<ProcessorOptions>(opt =>
                 {
                     opt.PreviewOnly = false;
-                    opt.Timeout = TimeSpan.FromSeconds(60);
+                    opt.Timeout = TimeSpan.FromMinutes(5);
                 })
                 .Configure<SelectingProcessorAccessorOptions>(cfg =>
                 {

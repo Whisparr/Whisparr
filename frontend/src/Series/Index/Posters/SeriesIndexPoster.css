@@ -57,7 +57,21 @@ $hoverScale: 1.05;
   font-size: $smallFontSize;
 }
 
-.ended {
+.tags {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 3px;
+  height: 21px;
+  background-color: var(--seriesBackgroundColor);
+}
+
+.tagsList {
+  display: flex;
+  overflow: hidden;
+}
+
+.status {
   position: absolute;
   top: 0;
   right: 0;
@@ -66,8 +80,15 @@ $hoverScale: 1.05;
   height: 0;
   border-width: 0 25px 25px 0;
   border-style: solid;
-  border-color: transparent var(--dangerColor) transparent transparent;
   color: var(--white);
+
+  &.ended {
+    border-color: transparent var(--dangerColor) transparent transparent;
+  }
+
+  &.deleted {
+    border-color: transparent var(--gray) transparent transparent;
+  }
 }
 
 .controls {

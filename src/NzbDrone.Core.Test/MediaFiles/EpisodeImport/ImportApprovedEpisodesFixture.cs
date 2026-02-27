@@ -8,6 +8,7 @@ using NUnit.Framework;
 using NzbDrone.Common.Disk;
 using NzbDrone.Core.DecisionEngine;
 using NzbDrone.Core.Download;
+using NzbDrone.Core.History;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.MediaFiles.EpisodeImport;
 using NzbDrone.Core.MediaFiles.Events;
@@ -66,9 +67,13 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
                   .Setup(s => s.UpgradeEpisodeFile(It.IsAny<EpisodeFile>(), It.IsAny<LocalEpisode>(), It.IsAny<bool>()))
                   .Returns(new EpisodeFileMoveResult());
 
+            Mocker.GetMock<IHistoryService>()
+                .Setup(x => x.FindByDownloadId(It.IsAny<string>()))
+                .Returns(new List<EpisodeHistory>());
+
             _downloadClientItem = Builder<DownloadClientItem>.CreateNew()
-                                                             .With(d => d.OutputPath = new OsPath(outputPath))
-                                                             .Build();
+                .With(d => d.OutputPath = new OsPath(outputPath))
+                .Build();
         }
 
         private void GivenNewDownload()

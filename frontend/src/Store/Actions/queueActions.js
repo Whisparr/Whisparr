@@ -153,6 +153,12 @@ export const defaultState = {
         isVisible: true
       },
       {
+        name: 'added',
+        label: () => translate('Added'),
+        isSortable: true,
+        isVisible: false
+      },
+      {
         name: 'progress',
         label: () => translate('Progress'),
         isSortable: true,
@@ -418,13 +424,14 @@ export const actionHandlers = handleThunks({
       id,
       remove,
       blocklist,
-      skipRedownload
+      skipRedownload,
+      changeCategory
     } = payload;
 
     dispatch(updateItem({ section: paged, id, isRemoving: true }));
 
     const promise = createAjaxRequest({
-      url: `/queue/${id}?removeFromClient=${remove}&blocklist=${blocklist}&skipRedownload=${skipRedownload}`,
+      url: `/queue/${id}?removeFromClient=${remove}&blocklist=${blocklist}&skipRedownload=${skipRedownload}&changeCategory=${changeCategory}`,
       method: 'DELETE'
     }).request;
 
@@ -442,7 +449,8 @@ export const actionHandlers = handleThunks({
       ids,
       remove,
       blocklist,
-      skipRedownload
+      skipRedownload,
+      changeCategory
     } = payload;
 
     dispatch(batchActions([
@@ -458,7 +466,7 @@ export const actionHandlers = handleThunks({
     ]));
 
     const promise = createAjaxRequest({
-      url: `/queue/bulk?removeFromClient=${remove}&blocklist=${blocklist}&skipRedownload=${skipRedownload}`,
+      url: `/queue/bulk?removeFromClient=${remove}&blocklist=${blocklist}&skipRedownload=${skipRedownload}&changeCategory=${changeCategory}`,
       method: 'DELETE',
       dataType: 'json',
       contentType: 'application/json',

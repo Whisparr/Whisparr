@@ -1,5 +1,16 @@
 function sortByName(a, b) {
-  return a.name.localeCompare(b.name);
+  const nameA = a.name;
+  const nameB = b.name;
+
+  if (nameA < nameB) {
+    return -1;
+  }
+
+  if (nameA > nameB) {
+    return 1;
+  }
+
+  return 0;
 }
 
 export default sortByName;

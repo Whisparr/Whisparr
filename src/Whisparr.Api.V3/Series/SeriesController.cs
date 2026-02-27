@@ -56,6 +56,7 @@ namespace Whisparr.Api.V3.Series
                             SeriesAncestorValidator seriesAncestorValidator,
                             SystemFolderValidator systemFolderValidator,
                             ProfileExistsValidator profileExistsValidator,
+                            RootFolderExistsValidator rootFolderExistsValidator,
                             SeriesFolderAsRootFolderValidator seriesFolderAsRootFolderValidator)
             : base(signalRBroadcaster)
         {
@@ -84,12 +85,11 @@ namespace Whisparr.Api.V3.Series
             PostValidator.RuleFor(s => s.Path).IsValidPath().When(s => s.RootFolderPath.IsNullOrWhiteSpace());
             PostValidator.RuleFor(s => s.RootFolderPath)
                          .IsValidPath()
+                         .SetValidator(rootFolderExistsValidator)
                          .SetValidator(seriesFolderAsRootFolderValidator)
                          .When(s => s.Path.IsNullOrWhiteSpace());
             PostValidator.RuleFor(s => s.Title).NotEmpty();
             PostValidator.RuleFor(s => s.TvdbId).GreaterThan(0).SetValidator(seriesExistsValidator);
-
-            PutValidator.RuleFor(s => s.Path).IsValidPath();
         }
 
         [HttpGet]
@@ -153,7 +153,8 @@ namespace Whisparr.Api.V3.Series
 
         [RestPostById]
         [Consumes("application/json")]
-        public ActionResult<SeriesResource> AddSeries(SeriesResource seriesResource)
+        [Produces("application/json")]
+        public ActionResult<SeriesResource> AddSeries([FromBody] SeriesResource seriesResource)
         {
             var series = _addSeriesService.AddSeries(seriesResource.ToModel());
 
@@ -162,7 +163,8 @@ namespace Whisparr.Api.V3.Series
 
         [RestPutById]
         [Consumes("application/json")]
-        public ActionResult<SeriesResource> UpdateSeries(SeriesResource seriesResource, bool moveFiles = false)
+        [Produces("application/json")]
+        public ActionResult<SeriesResource> UpdateSeries([FromBody] SeriesResource seriesResource, [FromQuery] bool moveFiles = false)
         {
             var series = _seriesService.GetSeries(seriesResource.Id);
 
@@ -172,12 +174,12 @@ namespace Whisparr.Api.V3.Series
                 var destinationPath = seriesResource.Path;
 
                 _commandQueueManager.Push(new MoveSeriesCommand
-                                          {
-                                              SeriesId = series.Id,
-                                              SourcePath = sourcePath,
-                                              DestinationPath = destinationPath,
-                                              Trigger = CommandTrigger.Manual
-                                          });
+                {
+                    SeriesId = series.Id,
+                    SourcePath = sourcePath,
+                    DestinationPath = destinationPath,
+                    Trigger = CommandTrigger.Manual
+                });
             }
 
             var model = seriesResource.ToModel(series);

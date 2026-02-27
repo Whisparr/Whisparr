@@ -63,7 +63,7 @@ namespace NzbDrone.Core.Download.Clients.Sabnzbd
                 }
 
                 var queueItem = new DownloadClientItem();
-                queueItem.DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this);
+                queueItem.DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this, false);
                 queueItem.DownloadId = sabQueueItem.Id;
                 queueItem.Category = sabQueueItem.Category;
                 queueItem.Title = sabQueueItem.Title;
@@ -118,7 +118,7 @@ namespace NzbDrone.Core.Download.Clients.Sabnzbd
 
                 var historyItem = new DownloadClientItem
                 {
-                    DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this),
+                    DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this, false),
                     DownloadId = sabHistoryItem.Id,
                     Category = sabHistoryItem.Category,
                     Title = sabHistoryItem.Title,
@@ -203,11 +203,11 @@ namespace NzbDrone.Core.Download.Clients.Sabnzbd
                     DeleteItemData(item);
                 }
 
-                _proxy.RemoveFrom("history", item.DownloadId, deleteData, Settings);
+                _proxy.RemoveFromHistory(item.DownloadId, deleteData, item.Status == DownloadItemStatus.Failed, Settings);
             }
             else
             {
-                _proxy.RemoveFrom("queue", item.DownloadId, deleteData, Settings);
+                _proxy.RemoveFromQueue(item.DownloadId, deleteData, Settings);
             }
         }
 
@@ -471,6 +471,16 @@ namespace NzbDrone.Core.Download.Clients.Sabnzbd
                         DetailedDescription = "The Category your entered doesn't exist in Sabnzbd. Go to Sabnzbd to create it."
                     };
                 }
+            }
+
+            // New in SABnzbd 4.1, but on older versions this will be empty and not apply
+            if (config.Sorters.Any(s => s.is_active && ContainsCategory(s.sort_cats, Settings.TvCategory)))
+            {
+                return new NzbDroneValidationFailure("TvCategory", "Disable TV Sorting")
+                {
+                    InfoLink = _proxy.GetBaseUrl(Settings, "config/sorting/"),
+                    DetailedDescription = "You must disable sorting for the category Sonarr uses to prevent import issues. Go to Sabnzbd to fix it."
+                };
             }
 
             if (config.Misc.enable_tv_sorting && ContainsCategory(config.Misc.tv_categories, Settings.TvCategory))

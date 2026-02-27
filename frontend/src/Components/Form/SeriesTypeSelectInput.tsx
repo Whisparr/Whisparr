@@ -1,5 +1,6 @@
 import React from 'react';
 import * as seriesTypes from 'Utilities/Series/seriesTypes';
+import translate from 'Utilities/String/translate';
 import EnhancedSelectInput from './EnhancedSelectInput';
 import SeriesTypeSelectInputOption from './SeriesTypeSelectInputOption';
 import SeriesTypeSelectInputSelectedValue from './SeriesTypeSelectInputSelectedValue';
@@ -14,13 +15,13 @@ interface ISeriesTypeOption {
   key: string;
   value: string;
   format?: string;
-  disabled?: boolean;
+  isDisabled?: boolean;
 }
 
 const seriesTypeOptions: ISeriesTypeOption[] = [
   {
     key: seriesTypes.STANDARD,
-    value: 'Standard',
+    value: 'Scenes',
     format: 'Season and episode numbers (S01E05)',
   },
   {
@@ -42,16 +43,16 @@ function SeriesTypeSelectInput(props: SeriesTypeSelectInputProps) {
   if (includeNoChange) {
     values.unshift({
       key: 'noChange',
-      value: 'No Change',
-      disabled: includeNoChangeDisabled,
+      value: translate('NoChange'),
+      isDisabled: includeNoChangeDisabled,
     });
   }
 
   if (includeMixed) {
     values.unshift({
       key: 'mixed',
-      value: '(Mixed)',
-      disabled: true,
+      value: `(${translate('Mixed')})`,
+      isDisabled: true,
     });
   }
 

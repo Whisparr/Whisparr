@@ -28,6 +28,7 @@ namespace NzbDrone.Core.Download.TrackedDownloads
 
     public class TrackedDownloadService : ITrackedDownloadService,
                                           IHandle<EpisodeInfoRefreshedEvent>,
+                                          IHandle<SeriesAddedEvent>,
                                           IHandle<SeriesDeletedEvent>
     {
         private readonly IParsingService _parsingService;
@@ -116,10 +117,11 @@ namespace NzbDrone.Core.Download.TrackedDownloads
 
             try
             {
-                var parsedEpisodeInfo = Parser.Parser.ParseTitle(trackedDownload.DownloadItem.Title);
                 var historyItems = _historyService.FindByDownloadId(downloadItem.DownloadId)
-                                                  .OrderByDescending(h => h.Date)
-                                                  .ToList();
+                    .OrderByDescending(h => h.Date)
+                    .ToList();
+
+                var parsedEpisodeInfo = Parser.Parser.ParseTitle(trackedDownload.DownloadItem.Title);
 
                 var isForceDownload = IsForceDownload(historyItems);
 
@@ -143,7 +145,8 @@ namespace NzbDrone.Core.Download.TrackedDownloads
                     var firstHistoryItem = historyItems.First();
                     var grabbedEvent = historyItems.FirstOrDefault(v => v.EventType == EpisodeHistoryEventType.Grabbed);
 
-                    trackedDownload.Indexer = grabbedEvent?.Data["indexer"];
+                    trackedDownload.Indexer = grabbedEvent?.Data?.GetValueOrDefault("indexer");
+                    trackedDownload.Added = grabbedEvent?.Date;
 
                     if (IsForceDownload(historyItems))
                     {
@@ -169,8 +172,7 @@ namespace NzbDrone.Core.Download.TrackedDownloads
                     }
 
                     if (parsedEpisodeInfo == null ||
-                        trackedDownload.RemoteEpisode == null ||
-                        trackedDownload.RemoteEpisode.Series == null ||
+                        trackedDownload.RemoteEpisode?.Series == null ||
                         trackedDownload.RemoteEpisode.Episodes.Empty())
                     {
                         // Try parsing the original source title and if that fails, try parsing it as a special
@@ -185,6 +187,13 @@ namespace NzbDrone.Core.Download.TrackedDownloads
                                 historyItems.Where(v => v.EventType == EpisodeHistoryEventType.Grabbed)
                                     .Select(h => h.EpisodeId).Distinct());
                         }
+                    }
+
+                    if (trackedDownload.RemoteEpisode != null &&
+                        Enum.TryParse(grabbedEvent?.Data?.GetValueOrDefault("indexerFlags"), true, out IndexerFlags flags))
+                    {
+                        trackedDownload.RemoteEpisode.Release ??= new ReleaseInfo();
+                        trackedDownload.RemoteEpisode.Release.IndexerFlags = flags;
                     }
                 }
 
@@ -323,12 +332,29 @@ namespace NzbDrone.Core.Download.TrackedDownloads
             }
         }
 
+        public void Handle(SeriesAddedEvent message)
+        {
+            var cachedItems = _cache.Values
+                .Where(t =>
+                    t.RemoteEpisode?.Series == null ||
+                    message.Series?.TvdbId == t.RemoteEpisode.Series.TvdbId)
+                .ToList();
+
+            if (cachedItems.Any())
+            {
+                cachedItems.ForEach(UpdateCachedItem);
+
+                _eventAggregator.PublishEvent(new TrackedDownloadRefreshedEvent(GetTrackedDownloads()));
+            }
+        }
+
         public void Handle(SeriesDeletedEvent message)
         {
-            var cachedItems = _cache.Values.Where(t =>
-                                        t.RemoteEpisode?.Series != null &&
-                                        message.Series.Any(s => s.Id == t.RemoteEpisode.Series.Id))
-                                    .ToList();
+            var cachedItems = _cache.Values
+                .Where(t =>
+                    t.RemoteEpisode?.Series != null &&
+                    message.Series.Any(s => s.Id == t.RemoteEpisode.Series.Id || s.TvdbId == t.RemoteEpisode.Series.TvdbId))
+                .ToList();
 
             if (cachedItems.Any())
             {

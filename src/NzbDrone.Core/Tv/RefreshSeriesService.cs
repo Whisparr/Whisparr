@@ -116,6 +116,13 @@ namespace NzbDrone.Core.Tv
 
             series.Seasons = UpdateSeasons(series, seriesInfo);
 
+            // Calculate LastAired from episodes
+            var lastAiredEpisode = episodes
+                .Where(e => e.AirDateUtc.HasValue && e.AirDateUtc.Value < DateTime.UtcNow)
+                .OrderByDescending(e => e.AirDateUtc)
+                .FirstOrDefault();
+            series.LastAired = lastAiredEpisode?.AirDateUtc;
+
             _seriesService.UpdateSeries(series, publishUpdatedEvent: false);
             _refreshEpisodeService.RefreshEpisodeInfo(series, episodes);
 
@@ -192,34 +199,11 @@ namespace NzbDrone.Core.Tv
 
         private void UpdateTags(Series series)
         {
-            _logger.Trace("Updating tags for {0}", series);
+            var tagsUpdated = _seriesService.UpdateTags(series);
 
-            var tagsAdded = new HashSet<int>();
-            var tagsRemoved = new HashSet<int>();
-            var changes = _autoTaggingService.GetTagChanges(series);
-
-            foreach (var tag in changes.TagsToRemove)
-            {
-                if (series.Tags.Contains(tag))
-                {
-                    series.Tags.Remove(tag);
-                    tagsRemoved.Add(tag);
-                }
-            }
-
-            foreach (var tag in changes.TagsToAdd)
-            {
-                if (!series.Tags.Contains(tag))
-                {
-                    series.Tags.Add(tag);
-                    tagsAdded.Add(tag);
-                }
-            }
-
-            if (tagsAdded.Any() || tagsRemoved.Any())
+            if (tagsUpdated)
             {
                 _seriesService.UpdateSeries(series);
-                _logger.Debug("Updated tags for '{0}'. Added: {1}, Removed: {2}", series.Title, tagsAdded.Count, tagsRemoved.Count);
             }
         }
 

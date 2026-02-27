@@ -36,6 +36,7 @@ namespace NzbDrone.Core.Configuration
         AuthenticationRequiredType AuthenticationRequired { get; }
         bool AnalyticsEnabled { get; }
         string LogLevel { get; }
+        int LogSizeLimit { get; }
         string ConsoleLogLevel { get; }
         bool LogSql { get; }
         int LogRotate { get; }
@@ -233,6 +234,7 @@ namespace NzbDrone.Core.Configuration
         public string Branch => GetValue("Branch", "nightly").ToLowerInvariant();
 
         public string LogLevel => GetValue("LogLevel", "info").ToLowerInvariant();
+        public int LogSizeLimit => GetValueInt("LogSizeLimit", 1);
         public string ConsoleLogLevel => GetValue("ConsoleLogLevel", string.Empty, persist: false);
 
         public string Theme => GetValue("Theme", "auto", persist: false);
@@ -373,6 +375,20 @@ namespace NzbDrone.Core.Configuration
             }
         }
 
+        public void MigrateConfigFile()
+        {
+            if (!File.Exists(_configFile))
+            {
+                return;
+            }
+
+            // If SSL is enabled and a cert hash is still in the config file or cert path is empty disable SSL
+            if (EnableSsl && (GetValue("SslCertHash", string.Empty, false).IsNotNullOrWhiteSpace() || SslCertPath.IsNullOrWhiteSpace()))
+            {
+                SetValue("EnableSsl", false);
+            }
+        }
+
         private void DeleteOldValues()
         {
             var xDoc = LoadConfigFile();
@@ -414,13 +430,21 @@ namespace NzbDrone.Core.Configuration
                             throw new InvalidConfigFileException($"{_configFile} is corrupt. Please delete the config file and Whisparr will recreate it.");
                         }
 
-                        return XDocument.Parse(_diskProvider.ReadAllText(_configFile));
+                        var xDoc = XDocument.Parse(_diskProvider.ReadAllText(_configFile));
+                        var config = xDoc.Descendants(CONFIG_ELEMENT_NAME).ToList();
+
+                        if (config.Count != 1)
+                        {
+                            throw new InvalidConfigFileException($"{_configFile} is invalid. Please delete the config file and Sonarr will recreate it.");
+                        }
+
+                        return xDoc;
                     }
 
-                    var xDoc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"));
-                    xDoc.Add(new XElement(CONFIG_ELEMENT_NAME));
+                    var newXDoc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"));
+                    newXDoc.Add(new XElement(CONFIG_ELEMENT_NAME));
 
-                    return xDoc;
+                    return newXDoc;
                 }
             }
             catch (XmlException ex)
@@ -444,6 +468,7 @@ namespace NzbDrone.Core.Configuration
 
         public void HandleAsync(ApplicationStartedEvent message)
         {
+            MigrateConfigFile();
             EnsureDefaultConfigFile();
             DeleteOldValues();
         }

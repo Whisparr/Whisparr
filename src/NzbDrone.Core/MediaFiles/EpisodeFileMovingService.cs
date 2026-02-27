@@ -123,6 +123,11 @@ namespace NzbDrone.Core.MediaFiles
 
             episodeFile.RelativePath = series.Path.GetRelativePath(destinationFilePath);
 
+            if (localEpisode is not null)
+            {
+                localEpisode.FileNameBeforeRename = episodeFile.RelativePath;
+            }
+
             if (localEpisode is not null && _scriptImportDecider.TryImport(episodeFilePath, destinationFilePath, localEpisode, episodeFile, mode) is var scriptImportDecision && scriptImportDecision != ScriptImportDecision.DeferMove)
             {
                 if (scriptImportDecision == ScriptImportDecision.RenameRequested)
@@ -130,6 +135,7 @@ namespace NzbDrone.Core.MediaFiles
                     try
                     {
                         MoveEpisodeFile(episodeFile, series, episodeFile.Episodes);
+                        localEpisode.FileRenamedAfterScriptImport = true;
                     }
                     catch (SameFilenameException)
                     {

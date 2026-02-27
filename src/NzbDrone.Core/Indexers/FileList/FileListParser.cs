@@ -18,8 +18,6 @@ namespace NzbDrone.Core.Indexers.FileList
 
         public IList<ReleaseInfo> ParseResponse(IndexerResponse indexerResponse)
         {
-            var torrentInfos = new List<ReleaseInfo>();
-
             if (indexerResponse.HttpResponse.StatusCode != HttpStatusCode.OK)
             {
                 throw new IndexerException(indexerResponse,
@@ -27,15 +25,20 @@ namespace NzbDrone.Core.Indexers.FileList
                     indexerResponse.HttpResponse.StatusCode);
             }
 
+            if (!indexerResponse.HttpResponse.Headers.ContentType.Contains(HttpAccept.Json.Value))
+            {
+                throw new IndexerException(indexerResponse, "Unexpected response header '{0}' from indexer request, expected '{1}'", indexerResponse.HttpResponse.Headers.ContentType, HttpAccept.Json.Value);
+            }
+
+            var torrentInfos = new List<ReleaseInfo>();
+
             var queryResults = JsonConvert.DeserializeObject<List<FileListTorrent>>(indexerResponse.Content);
 
             foreach (var result in queryResults)
             {
                 var id = result.Id;
 
-                // if (result.FreeLeech)
-
-                torrentInfos.Add(new TorrentInfo()
+                torrentInfos.Add(new TorrentInfo
                 {
                     Guid = $"FileList-{id}",
                     Title = result.Name,
@@ -45,11 +48,29 @@ namespace NzbDrone.Core.Indexers.FileList
                     Seeders = result.Seeders,
                     Peers = result.Leechers + result.Seeders,
                     PublishDate = result.UploadDate.ToUniversalTime(),
-                    ImdbId = result.ImdbId
+                    ImdbId = result.ImdbId,
+                    IndexerFlags = GetIndexerFlags(result)
                 });
             }
 
             return torrentInfos.ToArray();
+        }
+
+        private static IndexerFlags GetIndexerFlags(FileListTorrent item)
+        {
+            IndexerFlags flags = 0;
+
+            if (item.FreeLeech)
+            {
+                flags |= IndexerFlags.Freeleech;
+            }
+
+            if (item.Internal)
+            {
+                flags |= IndexerFlags.Internal;
+            }
+
+            return flags;
         }
 
         private string GetDownloadUrl(string torrentId)

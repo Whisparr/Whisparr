@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import AppState from 'App/State/AppState';
@@ -6,6 +7,7 @@ import Label from 'Components/Label';
 import IconButton from 'Components/Link/IconButton';
 import Link from 'Components/Link/Link';
 import SpinnerIconButton from 'Components/Link/SpinnerIconButton';
+import TagListConnector from 'Components/TagListConnector';
 import { icons } from 'Helpers/Props';
 import DeleteSeriesModal from 'Series/Delete/DeleteSeriesModal';
 import EditSeriesModalConnector from 'Series/Edit/EditSeriesModalConnector';
@@ -46,6 +48,7 @@ function SeriesIndexPoster(props: SeriesIndexPosterProps) {
     showTitle,
     showMonitored,
     showQualityProfile,
+    showTags,
     showSearchAction,
   } = useSelector(selectPosterOptions);
 
@@ -65,6 +68,7 @@ function SeriesIndexPoster(props: SeriesIndexPosterProps) {
     added,
     statistics = {} as Statistics,
     images,
+    tags,
   } = series;
 
   const {
@@ -166,7 +170,17 @@ function SeriesIndexPoster(props: SeriesIndexPosterProps) {
         </Label>
 
         {status === 'ended' ? (
-          <div className={styles.ended} title={translate('Ended')} />
+          <div
+            className={classNames(styles.status, styles.ended)}
+            title={translate('Ended')}
+          />
+        ) : null}
+
+        {status === 'deleted' ? (
+          <div
+            className={classNames(styles.status, styles.deleted)}
+            title={translate('Deleted')}
+          />
         ) : null}
 
         <Link className={styles.link} style={elementStyle} to={link}>
@@ -233,6 +247,14 @@ function SeriesIndexPoster(props: SeriesIndexPosterProps) {
         </div>
       ) : null}
 
+      {showTags && tags.length ? (
+        <div className={styles.tags}>
+          <div className={styles.tagsList}>
+            <TagListConnector tags={tags} />
+          </div>
+        </div>
+      ) : null}
+
       <SeriesIndexPosterInfo
         originalLanguage={originalLanguage}
         network={network}
@@ -248,6 +270,8 @@ function SeriesIndexPoster(props: SeriesIndexPosterProps) {
         shortDateFormat={shortDateFormat}
         longDateFormat={longDateFormat}
         timeFormat={timeFormat}
+        tags={tags}
+        showTags={showTags}
       />
 
       <EditSeriesModalConnector

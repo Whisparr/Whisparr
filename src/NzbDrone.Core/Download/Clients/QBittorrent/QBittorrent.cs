@@ -221,13 +221,13 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
 
             foreach (var torrent in torrents)
             {
-                var item = new DownloadClientItem()
+                var item = new DownloadClientItem
                 {
                     DownloadId = torrent.Hash.ToUpper(),
                     Category = torrent.Category.IsNotNullOrWhiteSpace() ? torrent.Category : torrent.Label,
                     Title = torrent.Name,
                     TotalSize = torrent.Size,
-                    DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this),
+                    DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this, Settings.TvImportedCategory.IsNotNullOrWhiteSpace()),
                     RemainingSize = (long)(torrent.Size * (1.0 - torrent.Progress)),
                     RemainingTime = GetRemainingTime(torrent),
                     SeedRatio = torrent.Ratio
@@ -235,7 +235,10 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
 
                 // Avoid removing torrents that haven't reached the global max ratio.
                 // Removal also requires the torrent to be paused, in case a higher max ratio was set on the torrent itself (which is not exposed by the api).
-                item.CanMoveFiles = item.CanBeRemoved = torrent.State is "pausedUP" or "stoppedUP" && HasReachedSeedLimit(torrent, config);
+                item.CanMoveFiles = item.CanBeRemoved =
+                    item.DownloadClientInfo.RemoveCompletedDownloads &&
+                    torrent.State is "pausedUP" or "stoppedUP" &&
+                    HasReachedSeedLimit(torrent, config);
 
                 switch (torrent.State)
                 {
@@ -276,7 +279,7 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
                         item.Message = "The download is missing files";
                         break;
 
-                    case "metaDL": // torrent metadata is being downloaded
+                    case "metaDL": // torrent magnet is being downloaded
                     case "forcedMetaDL": // torrent metadata is being forcibly downloaded
                         if (config.DhtEnabled)
                         {
@@ -373,7 +376,15 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
             {
                 if (Proxy.GetLabels(Settings).TryGetValue(Settings.TvCategory, out var label) && label.SavePath.IsNotNullOrWhiteSpace())
                 {
-                    var labelDir = new OsPath(label.SavePath);
+                    var savePath = label.SavePath;
+
+                    if (savePath.StartsWith("//"))
+                    {
+                        _logger.Trace("Replacing double forward slashes in path '{0}'. If this is not meant to be a Windows UNC path fix the 'Save Path' in qBittorrent's {1} category", savePath, Settings.TvCategory);
+                        savePath = savePath.Replace('/', '\\');
+                    }
+
+                    var labelDir = new OsPath(savePath);
 
                     if (labelDir.IsRooted)
                     {
@@ -386,14 +397,18 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
                 }
             }
 
-            var minimumRetention = 60 * 24 * 14;
-
             return new DownloadClientInfo
             {
                 IsLocalhost = Settings.Host == "127.0.0.1" || Settings.Host == "localhost",
                 OutputRootFolders = new List<OsPath> { _remotePathMappingService.RemapRemoteToLocal(Settings.Host, destDir) },
-                RemovesCompletedDownloads = (config.MaxRatioEnabled || (config.MaxSeedingTimeEnabled && config.MaxSeedingTime < minimumRetention)) && (config.MaxRatioAction == QBittorrentMaxRatioAction.Remove || config.MaxRatioAction == QBittorrentMaxRatioAction.DeleteFiles)
+                RemovesCompletedDownloads = RemovesCompletedDownloads(config)
             };
+        }
+
+        private bool RemovesCompletedDownloads(QBittorrentPreferences config)
+        {
+            var minimumRetention = 60 * 24 * 14; // 14 days in minutes
+            return (config.MaxRatioEnabled || (config.MaxSeedingTimeEnabled && config.MaxSeedingTime < minimumRetention)) && (config.MaxRatioAction == QBittorrentMaxRatioAction.Remove || config.MaxRatioAction == QBittorrentMaxRatioAction.DeleteFiles);
         }
 
         protected override void Test(List<ValidationFailure> failures)
@@ -445,7 +460,7 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
 
                 // Complain if qBittorrent is configured to remove torrents on max ratio
                 var config = Proxy.GetConfig(Settings);
-                if ((config.MaxRatioEnabled || config.MaxSeedingTimeEnabled) && (config.MaxRatioAction == QBittorrentMaxRatioAction.Remove || config.MaxRatioAction == QBittorrentMaxRatioAction.DeleteFiles))
+                if (RemovesCompletedDownloads(config))
                 {
                     return new NzbDroneValidationFailure(string.Empty, "qBittorrent is configured to remove torrents when they reach their Share Ratio Limit")
                     {
@@ -611,7 +626,7 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
             }
             else if (torrent.RatioLimit == -2 && config.MaxRatioEnabled)
             {
-                if (torrent.Ratio >= config.MaxRatio)
+                if (Math.Round(torrent.Ratio, 2) >= config.MaxRatio)
                 {
                     return true;
                 }

@@ -77,7 +77,7 @@ namespace NzbDrone.Core.Download.Clients.Flood
                 }
             }
 
-            return result;
+            return result.Where(t => t.IsNotNullOrWhiteSpace());
         }
 
         public override string Name => "Flood";
@@ -114,7 +114,7 @@ namespace NzbDrone.Core.Download.Clients.Flood
 
                 var item = new DownloadClientItem
                 {
-                    DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this),
+                    DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this, false),
                     DownloadId = torrent.Key,
                     Title = properties.Name,
                     OutputPath = _remotePathMappingService.RemapRemoteToLocal(Settings.Host, new OsPath(properties.Directory)),
@@ -149,7 +149,7 @@ namespace NzbDrone.Core.Download.Clients.Flood
                     item.Status = DownloadItemStatus.Downloading;
                 }
 
-                if (item.Status == DownloadItemStatus.Completed)
+                if (item.DownloadClientInfo.RemoveCompletedDownloads && item.Status == DownloadItemStatus.Completed)
                 {
                     // Grab cached seedConfig
                     var seedConfig = _downloadSeedConfigProvider.GetSeedConfiguration(item.DownloadId);
@@ -161,7 +161,7 @@ namespace NzbDrone.Core.Download.Clients.Flood
                             // Check if seed ratio reached
                             item.CanMoveFiles = item.CanBeRemoved = true;
                         }
-                        else if (properties.DateFinished != null && properties.DateFinished > 0)
+                        else if (properties.DateFinished is > 0)
                         {
                             // Check if seed time reached
                             if ((DateTimeOffset.Now - DateTimeOffset.FromUnixTimeSeconds((long)properties.DateFinished)) >= seedConfig.SeedTime)

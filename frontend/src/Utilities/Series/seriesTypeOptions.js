@@ -4,7 +4,7 @@ const seriesTypeOptions = [
   {
     key: 'standard',
     get value() {
-      return translate('Standard');
+      return translate('Scenes');
     }
   },
   {

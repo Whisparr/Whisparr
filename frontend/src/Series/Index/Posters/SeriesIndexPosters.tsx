@@ -141,6 +141,7 @@ export default function SeriesIndexPosters(props: SeriesIndexPostersProps) {
       showTitle,
       showMonitored,
       showQualityProfile,
+      showTags,
     } = posterOptions;
 
     const nextAiringHeight = 19;
@@ -164,6 +165,10 @@ export default function SeriesIndexPosters(props: SeriesIndexPostersProps) {
       heights.push(19);
     }
 
+    if (showTags) {
+      heights.push(21);
+    }
+
     switch (sortKey) {
       case 'network':
       case 'seasons':
@@ -178,6 +183,11 @@ export default function SeriesIndexPosters(props: SeriesIndexPostersProps) {
           heights.push(19);
         }
         break;
+      case 'tags':
+        if (!showTags) {
+          heights.push(21);
+        }
+        break;
       default:
       // No need to add a height of 0
     }
@@ -190,11 +200,15 @@ export default function SeriesIndexPosters(props: SeriesIndexPostersProps) {
 
     if (isSmallScreen) {
       const padding = bodyPaddingSmallScreen - 5;
+      const width = window.innerWidth - padding * 2;
+      const height = window.innerHeight;
 
-      setSize({
-        width: window.innerWidth - padding * 2,
-        height: window.innerHeight,
-      });
+      if (width !== size.width || height !== size.height) {
+        setSize({
+          width,
+          height,
+        });
+      }
 
       return;
     }
@@ -208,7 +222,7 @@ export default function SeriesIndexPosters(props: SeriesIndexPostersProps) {
         height: window.innerHeight,
       });
     }
-  }, [isSmallScreen, scrollerRef, bounds]);
+  }, [isSmallScreen, scrollerRef, bounds, size.width, size.height]);
 
   useEffect(() => {
     const currentScrollerRef = scrollerRef.current as HTMLElement;

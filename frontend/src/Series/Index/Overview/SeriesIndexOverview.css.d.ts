@@ -3,13 +3,17 @@
 interface CssExports {
   'actions': string;
   'content': string;
+  'deleted': string;
   'details': string;
   'ended': string;
   'info': string;
   'link': string;
   'overview': string;
+  'overviewContainer': string;
   'poster': string;
   'posterContainer': string;
+  'status': string;
+  'tags': string;
   'title': string;
   'titleRow': string;
 }

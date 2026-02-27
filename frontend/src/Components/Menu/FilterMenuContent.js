@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import sortByProp from 'Utilities/Array/sortByProp';
 import translate from 'Utilities/String/translate';
 import FilterMenuItem from './FilterMenuItem';
 import MenuContent from './MenuContent';
@@ -40,18 +41,26 @@ class FilterMenuContent extends Component {
         }
 
         {
-          customFilters.map((filter) => {
-            return (
-              <FilterMenuItem
-                key={filter.id}
-                filterKey={filter.id}
-                selectedFilterKey={selectedFilterKey}
-                onPress={onFilterSelect}
-              >
-                {filter.label}
-              </FilterMenuItem>
-            );
-          })
+          customFilters.length > 0 ?
+            <MenuItemSeparator /> :
+            null
+        }
+
+        {
+          customFilters
+            .sort(sortByProp('label'))
+            .map((filter) => {
+              return (
+                <FilterMenuItem
+                  key={filter.id}
+                  filterKey={filter.id}
+                  selectedFilterKey={selectedFilterKey}
+                  onPress={onFilterSelect}
+                >
+                  {filter.label}
+                </FilterMenuItem>
+              );
+            })
         }
 
         {

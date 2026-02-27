@@ -4,13 +4,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import createSortedSectionSelector from 'Store/Selectors/createSortedSectionSelector';
-import sortByName from 'Utilities/Array/sortByName';
+import sortByProp from 'Utilities/Array/sortByProp';
 import translate from 'Utilities/String/translate';
 import EnhancedSelectInput from './EnhancedSelectInput';
 
 function createMapStateToProps() {
   return createSelector(
-    createSortedSectionSelector('settings.qualityProfiles', sortByName),
+    createSortedSectionSelector('settings.qualityProfiles', sortByProp('name')),
     (state, { includeNoChange }) => includeNoChange,
     (state, { includeNoChangeDisabled }) => includeNoChangeDisabled,
     (state, { includeMixed }) => includeMixed,
@@ -28,7 +28,7 @@ function createMapStateToProps() {
           get value() {
             return translate('NoChange');
           },
-          disabled: includeNoChangeDisabled
+          isDisabled: includeNoChangeDisabled
         });
       }
 
@@ -38,7 +38,7 @@ function createMapStateToProps() {
           get value() {
             return `(${translate('Mixed')})`;
           },
-          disabled: true
+          isDisabled: true
         });
       }
 

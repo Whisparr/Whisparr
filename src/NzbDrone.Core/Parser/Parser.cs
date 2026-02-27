@@ -199,7 +199,7 @@ namespace NzbDrone.Core.Parser
 
         // Valid TLDs http://data.iana.org/TLD/tlds-alpha-by-domain.txt
 
-        private static readonly RegexReplace WebsitePrefixRegex = new RegexReplace(@"^(?:\[\s*)?(?:www\.)?[-a-z0-9-]{1,256}\.(?:[a-z]{2,6}\.[a-z]{2,6}|xn--[a-z0-9-]{4,}|[a-z]{2,})\b(?:\s*\]|[ -]{2,})[ -]*",
+        private static readonly RegexReplace WebsitePrefixRegex = new RegexReplace(@"^(?:(?:\[|\()\s*)?(?:www\.)?[-a-z0-9-]{1,256}\.(?<!Naruto-Kun\.)(?:[a-z]{2,6}\.[a-z]{2,6}|xn--[a-z0-9-]{4,}|[a-z]{2,})\b(?:\s*(?:\]|\))|[ -]{2,})[ -]*",
                                                                 string.Empty,
                                                                 RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
@@ -231,10 +231,10 @@ namespace NzbDrone.Core.Parser
 
         // Handle Exception Release Groups that don't follow -RlsGrp; Manual List
         // name only...be very careful with this last; high chance of false positives
-        private static readonly Regex ExceptionReleaseGroupRegexExact = new Regex(@"(?<releasegroup>(?:D\-Z0N3|Fight-BB|VARYG)\b)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex ExceptionReleaseGroupRegexExact = new Regex(@"(?<releasegroup>(?:D\-Z0N3|Fight-BB|VARYG|E\.N\.D|KRaLiMaRKo|BluDragon|DarQ)\b)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         // groups whose releases end with RlsGroup) or RlsGroup]
-        private static readonly Regex ExceptionReleaseGroupRegex = new Regex(@"(?<releasegroup>(Silence|afm72|Panda|Ghost|MONOLITH|Tigole|Joy|ImE|UTR|t3nzin|Anime Time|Project Angel|Hakata Ramen|HONE|Vyndros|SEV|Garshasp|Kappa|Natty|RCVR|SAMPA|YOGI|r00t|EDGE2020)(?=\]|\)))", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex ExceptionReleaseGroupRegex = new Regex(@"(?<=[._ \[])(?<releasegroup>(Silence|afm72|Panda|Ghost|MONOLITH|Tigole|Joy|ImE|UTR|t3nzin|Anime Time|Project Angel|Hakata Ramen|HONE|Vyndros|SEV|Garshasp|Kappa|Natty|RCVR|SAMPA|YOGI|r00t|EDGE2020|RZeroX)(?=\]|\)))", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex YearInTitleRegex = new Regex(@"^(?<title>.+?)[-_. ]+?[\(\[]?(?<year>\d{4})[\]\)]?",
                                                                 RegexOptions.IgnoreCase | RegexOptions.Compiled);
@@ -377,7 +377,7 @@ namespace NzbDrone.Core.Parser
                         Logger.Trace(regex);
                         try
                         {
-                            var result = ParseMatchCollection(match, releaseTitle);
+                            var result = ParseMatchCollection(match, simpleTitle);
 
                             if (result != null)
                             {
@@ -669,15 +669,15 @@ namespace NzbDrone.Core.Parser
         public static string RemoveFileExtension(string title)
         {
             title = FileExtensionRegex.Replace(title, m =>
+            {
+                var extension = m.Value.ToLower();
+                if (MediaFiles.MediaFileExtensions.Extensions.Contains(extension) || new[] { ".par2", ".nzb" }.Contains(extension))
                 {
-                    var extension = m.Value.ToLower();
-                    if (MediaFiles.MediaFileExtensions.Extensions.Contains(extension) || new[] { ".par2", ".nzb" }.Contains(extension))
-                    {
-                        return string.Empty;
-                    }
+                    return string.Empty;
+                }
 
-                    return m.Value;
-                });
+                return m.Value;
+            });
 
             return title;
         }
@@ -920,7 +920,7 @@ namespace NzbDrone.Core.Parser
 
         private static int ParseNumber(string value)
         {
-            var normalized = value.Normalize(NormalizationForm.FormKC);
+            var normalized = ConvertToNumerals(value.Normalize(NormalizationForm.FormKC));
 
             if (int.TryParse(normalized, out var number))
             {
@@ -939,7 +939,7 @@ namespace NzbDrone.Core.Parser
 
         private static decimal ParseDecimal(string value)
         {
-            var normalized = value.Normalize(NormalizationForm.FormKC);
+            var normalized = ConvertToNumerals(value.Normalize(NormalizationForm.FormKC));
 
             if (decimal.TryParse(normalized, NumberStyles.Float, CultureInfo.InvariantCulture, out var number))
             {
@@ -947,6 +947,25 @@ namespace NzbDrone.Core.Parser
             }
 
             throw new FormatException(string.Format("{0} isn't a number", value));
+        }
+
+        private static string ConvertToNumerals(string input)
+        {
+            var result = new StringBuilder(input.Length);
+
+            foreach (var c in input.ToCharArray())
+            {
+                if (char.IsNumber(c))
+                {
+                    result.Append(char.GetNumericValue(c));
+                }
+                else
+                {
+                    result.Append(c);
+                }
+            }
+
+            return result.ToString();
         }
     }
 }

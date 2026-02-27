@@ -9,6 +9,7 @@ using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.MediaFiles.Events;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.Parser;
+using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.Tv;
 using NzbDrone.SignalR;
 using Whisparr.Http;
@@ -89,7 +90,7 @@ namespace Whisparr.Api.V3.EpisodeFiles
 
         [RestPutById]
         [Consumes("application/json")]
-        public ActionResult<EpisodeFileResource> SetQuality(EpisodeFileResource episodeFileResource)
+        public ActionResult<EpisodeFileResource> SetQuality([FromBody] EpisodeFileResource episodeFileResource)
         {
             var episodeFile = _mediaFileService.Get(episodeFileResource.Id);
             episodeFile.Quality = episodeFileResource.Quality;
@@ -202,6 +203,11 @@ namespace Whisparr.Api.V3.EpisodeFiles
                 if (resourceEpisodeFile.ReleaseGroup != null)
                 {
                     episodeFile.ReleaseGroup = resourceEpisodeFile.ReleaseGroup;
+                }
+
+                if (resourceEpisodeFile.IndexerFlags.HasValue)
+                {
+                    episodeFile.IndexerFlags = (IndexerFlags)resourceEpisodeFile.IndexerFlags;
                 }
             }
 

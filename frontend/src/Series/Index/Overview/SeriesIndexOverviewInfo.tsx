@@ -189,10 +189,12 @@ function getInfoRowProps(
   }
 
   if (name === 'sizeOnDisk') {
+    const { sizeOnDisk = 0 } = props;
+
     return {
       title: translate('SizeOnDisk'),
       iconName: icons.DRIVE,
-      label: formatBytes(props.sizeOnDisk),
+      label: formatBytes(sizeOnDisk),
     };
   }
 
@@ -230,7 +232,9 @@ function SeriesIndexOverviewInfo(props: SeriesIndexOverviewInfoProps) {
     <div className={styles.infos}>
       {!!nextAiring && (
         <SeriesIndexOverviewInfoRow
-          title={formatDateTime(nextAiring, longDateFormat, timeFormat)}
+          title={translate('NextAiringDate', {
+            date: formatDateTime(nextAiring, longDateFormat, timeFormat),
+          })}
           iconName={icons.SCHEDULED}
           label={getRelativeDate(
             nextAiring,

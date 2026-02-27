@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using FluentValidation.Results;
 using NzbDrone.Common.Extensions;
@@ -73,7 +74,7 @@ namespace NzbDrone.Core.Notifications.Discord
                         break;
                     case DiscordGrabFieldType.Rating:
                         discordField.Name = "Rating";
-                        discordField.Value = episodes.First().Ratings.Value.ToString();
+                        discordField.Value = series.Ratings.Value.ToString(CultureInfo.InvariantCulture);
                         break;
                     case DiscordGrabFieldType.Genres:
                         discordField.Name = "Genres";
@@ -176,7 +177,7 @@ namespace NzbDrone.Core.Notifications.Discord
                         break;
                     case DiscordImportFieldType.Rating:
                         discordField.Name = "Rating";
-                        discordField.Value = episodes.First().Ratings.Value.ToString();
+                        discordField.Value = series.Ratings.Value.ToString(CultureInfo.InvariantCulture);
                         break;
                     case DiscordImportFieldType.Genres:
                         discordField.Name = "Genres";
@@ -220,6 +221,104 @@ namespace NzbDrone.Core.Notifications.Discord
                         discordField.Name = "Links";
                         discordField.Value = GetLinksString(series);
                         break;
+                    case DiscordImportFieldType.CustomFormats:
+                        discordField.Name = "Custom Formats";
+                        discordField.Value = string.Join("|", message.EpisodeInfo.CustomFormats);
+                        break;
+                    case DiscordImportFieldType.CustomFormatScore:
+                        discordField.Name = "Custom Format Score";
+                        discordField.Value = message.EpisodeInfo.CustomFormatScore.ToString();
+                        break;
+                }
+
+                if (discordField.Name.IsNotNullOrWhiteSpace() && discordField.Value.IsNotNullOrWhiteSpace())
+                {
+                    embed.Fields.Add(discordField);
+                }
+            }
+
+            var payload = CreatePayload(null, new List<Embed> { embed });
+
+            _proxy.SendPayload(payload, Settings);
+        }
+
+        public override void OnImportComplete(ImportCompleteMessage message)
+        {
+            var series = message.Series;
+            var episodes = message.Episodes;
+
+            var embed = new Embed
+            {
+                Author = new DiscordAuthor
+                {
+                    Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
+                    IconUrl = "https://raw.githubusercontent.com/Sonarr/Sonarr/develop/Logo/256.png"
+                },
+                Url = $"http://thetvdb.com/?tab=series&id={series.TvdbId}",
+                Description = "Import Complete",
+                Title = GetTitle(series, episodes),
+                Color = (int)DiscordColors.Success,
+                Fields = new List<DiscordField>(),
+                Timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            };
+
+            if (Settings.ImportFields.Contains((int)DiscordImportFieldType.Poster))
+            {
+                embed.Thumbnail = new DiscordImage
+                {
+                    Url = series.Images.FirstOrDefault(x => x.CoverType == MediaCoverTypes.Poster)?.RemoteUrl
+                };
+            }
+
+            if (Settings.ImportFields.Contains((int)DiscordImportFieldType.Fanart))
+            {
+                embed.Image = new DiscordImage
+                {
+                    Url = series.Images.FirstOrDefault(x => x.CoverType == MediaCoverTypes.Fanart)?.RemoteUrl
+                };
+            }
+
+            foreach (var field in Settings.ImportFields)
+            {
+                var discordField = new DiscordField();
+
+                switch ((DiscordImportFieldType)field)
+                {
+                    case DiscordImportFieldType.Overview:
+                        var overview = episodes.First().Overview ?? "";
+                        discordField.Name = "Overview";
+                        discordField.Value = overview.Length <= 300 ? overview : $"{overview.AsSpan(0, 300)}...";
+                        break;
+                    case DiscordImportFieldType.Rating:
+                        discordField.Name = "Rating";
+                        discordField.Value = series.Ratings.Value.ToString(CultureInfo.InvariantCulture);
+                        break;
+                    case DiscordImportFieldType.Genres:
+                        discordField.Name = "Genres";
+                        discordField.Value = series.Genres.Take(5).Join(", ");
+                        break;
+                    case DiscordImportFieldType.Quality:
+                        discordField.Name = "Quality";
+                        discordField.Inline = true;
+                        discordField.Value = message.ReleaseQuality.Quality.Name;
+                        break;
+                    case DiscordImportFieldType.Group:
+                        discordField.Name = "Group";
+                        discordField.Value = message.ReleaseGroup;
+                        break;
+                    case DiscordImportFieldType.Size:
+                        discordField.Name = "Size";
+                        discordField.Value = BytesToString(message.Release?.Size ?? message.EpisodeFiles.Sum(f => f.Size));
+                        discordField.Inline = true;
+                        break;
+                    case DiscordImportFieldType.Release:
+                        discordField.Name = "Release";
+                        discordField.Value = $"```{message.Release?.Title}```";
+                        break;
+                    case DiscordImportFieldType.Links:
+                        discordField.Name = "Links";
+                        discordField.Value = GetLinksString(series);
+                        break;
                 }
 
                 if (discordField.Name.IsNotNullOrWhiteSpace() && discordField.Value.IsNotNullOrWhiteSpace())
@@ -236,12 +335,12 @@ namespace NzbDrone.Core.Notifications.Discord
         public override void OnRename(Series series, List<RenamedEpisodeFile> renamedFiles)
         {
             var attachments = new List<Embed>
-                              {
-                                  new Embed
-                                  {
-                                      Title = series.Title,
-                                  }
-                              };
+            {
+                new ()
+                {
+                    Title = series.Title,
+                }
+            };
 
             var payload = CreatePayload("Renamed", attachments);
 
@@ -268,8 +367,8 @@ namespace NzbDrone.Core.Notifications.Discord
                 Color = (int)DiscordColors.Danger,
                 Fields = new List<DiscordField>
                 {
-                    new DiscordField { Name = "Reason", Value = reason.ToString() },
-                    new DiscordField { Name = "File name", Value = string.Format("```{0}```", deletedFile) }
+                    new () { Name = "Reason", Value = reason.ToString() },
+                    new () { Name = "File name", Value = string.Format("```{0}```", deletedFile) }
                 },
                 Timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
             };
@@ -293,7 +392,7 @@ namespace NzbDrone.Core.Notifications.Discord
                 Title = series.Title,
                 Description = "Site Added",
                 Color = (int)DiscordColors.Success,
-                Fields = new List<DiscordField> { new DiscordField { Name = "Links", Value = GetLinksString(series) } }
+                Fields = new List<DiscordField> { new () { Name = "Links", Value = GetLinksString(series) } }
             };
 
             if (Settings.ImportFields.Contains((int)DiscordImportFieldType.Poster))
@@ -332,7 +431,7 @@ namespace NzbDrone.Core.Notifications.Discord
                 Title = series.Title,
                 Description = deleteMessage.DeletedFilesMessage,
                 Color = (int)DiscordColors.Danger,
-                Fields = new List<DiscordField> { new DiscordField { Name = "Links", Value = GetLinksString(series) } }
+                Fields = new List<DiscordField> { new () { Name = "Links", Value = GetLinksString(series) } }
             };
 
             if (Settings.ImportFields.Contains((int)DiscordImportFieldType.Poster))
@@ -410,12 +509,12 @@ namespace NzbDrone.Core.Notifications.Discord
                 Color = (int)DiscordColors.Standard,
                 Fields = new List<DiscordField>()
                 {
-                    new DiscordField()
+                    new ()
                     {
                         Name = "Previous Version",
                         Value = updateMessage.PreviousVersion.ToString()
                     },
-                    new DiscordField()
+                    new ()
                     {
                         Name = "New Version",
                         Value = updateMessage.NewVersion.ToString()
@@ -440,7 +539,7 @@ namespace NzbDrone.Core.Notifications.Discord
                     Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
                     IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
                 },
-                Url = $"http://thetvdb.com/?tab=series&id={series.TvdbId}",
+                Url = series?.TvdbId > 0 ? $"http://thetvdb.com/?tab=series&id={series.TvdbId}" : null,
                 Description = "Manual interaction needed",
                 Title = GetTitle(series, episodes),
                 Color = (int)DiscordColors.Standard,
@@ -448,19 +547,19 @@ namespace NzbDrone.Core.Notifications.Discord
                 Timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
             };
 
-            if (Settings.ManualInteractionFields.Contains((int)DiscordGrabFieldType.Poster))
+            if (Settings.ManualInteractionFields.Contains((int)DiscordManualInteractionFieldType.Poster))
             {
                 embed.Thumbnail = new DiscordImage
                 {
-                    Url = series.Images.FirstOrDefault(x => x.CoverType == MediaCoverTypes.Poster)?.Url
+                    Url = series?.Images?.FirstOrDefault(x => x.CoverType == MediaCoverTypes.Poster)?.Url
                 };
             }
 
-            if (Settings.ManualInteractionFields.Contains((int)DiscordGrabFieldType.Fanart))
+            if (Settings.ManualInteractionFields.Contains((int)DiscordManualInteractionFieldType.Fanart))
             {
                 embed.Image = new DiscordImage
                 {
-                    Url = series.Images.FirstOrDefault(x => x.CoverType == MediaCoverTypes.Fanart)?.Url
+                    Url = series?.Images?.FirstOrDefault(x => x.CoverType == MediaCoverTypes.Fanart)?.Url
                 };
             }
 
@@ -471,26 +570,26 @@ namespace NzbDrone.Core.Notifications.Discord
                 switch ((DiscordManualInteractionFieldType)field)
                 {
                     case DiscordManualInteractionFieldType.Overview:
-                        var overview = episodes.First().Overview ?? "";
+                        var overview = episodes.FirstOrDefault()?.Overview ?? "";
                         discordField.Name = "Overview";
                         discordField.Value = overview.Length <= 300 ? overview : $"{overview.AsSpan(0, 300)}...";
                         break;
                     case DiscordManualInteractionFieldType.Rating:
                         discordField.Name = "Rating";
-                        discordField.Value = episodes.First().Ratings.Value.ToString();
+                        discordField.Value = series?.Ratings?.Value.ToString(CultureInfo.InvariantCulture);
                         break;
                     case DiscordManualInteractionFieldType.Genres:
                         discordField.Name = "Genres";
-                        discordField.Value = series.Genres.Take(5).Join(", ");
+                        discordField.Value = series?.Genres.Take(5).Join(", ");
                         break;
                     case DiscordManualInteractionFieldType.Quality:
                         discordField.Name = "Quality";
                         discordField.Inline = true;
-                        discordField.Value = message.Quality.Quality.Name;
+                        discordField.Value = message.Quality?.Quality?.Name;
                         break;
                     case DiscordManualInteractionFieldType.Group:
                         discordField.Name = "Group";
-                        discordField.Value = message.Episode.ParsedEpisodeInfo.ReleaseGroup;
+                        discordField.Value = message.Episode?.ParsedEpisodeInfo?.ReleaseGroup;
                         break;
                     case DiscordManualInteractionFieldType.Size:
                         discordField.Name = "Size";
@@ -499,7 +598,7 @@ namespace NzbDrone.Core.Notifications.Discord
                         break;
                     case DiscordManualInteractionFieldType.DownloadTitle:
                         discordField.Name = "Download";
-                        discordField.Value = string.Format("```{0}```", message.TrackedDownload.DownloadItem.Title);
+                        discordField.Value = $"```{message.TrackedDownload.DownloadItem.Title}```";
                         break;
                     case DiscordManualInteractionFieldType.Links:
                         discordField.Name = "Links";
@@ -584,16 +683,27 @@ namespace NzbDrone.Core.Notifications.Discord
 
         private string GetLinksString(Series series)
         {
-            var links = new List<string>();
+            if (series == null)
+            {
+                return null;
+            }
 
-            links.Add($"[The TVDB](https://thetvdb.com/?tab=series&id={series.TvdbId})");
-            links.Add($"[Trakt](https://trakt.tv/search/tvdb/{series.TvdbId}?id_type=show)");
+            var links = new List<string>
+            {
+                $"[The TVDB](https://thetvdb.com/?tab=series&id={series.TvdbId})",
+                $"[Trakt](https://trakt.tv/search/tvdb/{series.TvdbId}?id_type=show)"
+            };
 
             return string.Join(" / ", links);
         }
 
         private string GetTitle(Series series, List<Episode> episodes)
         {
+            if (series == null)
+            {
+                return null;
+            }
+
             var episodeNumbers = string.Concat(episodes.Select(e => e.AirDate));
 
             var episodeTitles = string.Join(" + ", episodes.Select(e => e.Title));

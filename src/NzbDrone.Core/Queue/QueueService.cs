@@ -20,7 +20,7 @@ namespace NzbDrone.Core.Queue
     public class QueueService : IQueueService, IHandle<TrackedDownloadRefreshedEvent>
     {
         private readonly IEventAggregator _eventAggregator;
-        private static List<Queue> _queue = new List<Queue>();
+        private static List<Queue> _queue = new ();
 
         public QueueService(IEventAggregator eventAggregator)
         {
@@ -79,7 +79,9 @@ namespace NzbDrone.Core.Queue
                 Protocol = trackedDownload.Protocol,
                 DownloadClient = trackedDownload.DownloadItem.DownloadClientInfo.Name,
                 Indexer = trackedDownload.Indexer,
-                OutputPath = trackedDownload.DownloadItem.OutputPath.ToString()
+                OutputPath = trackedDownload.DownloadItem.OutputPath.ToString(),
+                Added = trackedDownload.Added,
+                DownloadClientHasPostImportCategory = trackedDownload.DownloadItem.DownloadClientInfo.HasPostImportCategory
             };
 
             queue.Id = HashConverter.GetHashInt31($"trackedDownload-{trackedDownload.DownloadClient}-{trackedDownload.DownloadItem.DownloadId}-ep{episode?.Id ?? 0}");
@@ -94,8 +96,11 @@ namespace NzbDrone.Core.Queue
 
         public void Handle(TrackedDownloadRefreshedEvent message)
         {
-            _queue = message.TrackedDownloads.OrderBy(c => c.DownloadItem.RemainingTime).SelectMany(MapQueue)
-                            .ToList();
+            _queue = message.TrackedDownloads
+                .Where(t => t.IsTrackable)
+                .OrderBy(c => c.DownloadItem.RemainingTime)
+                .SelectMany(MapQueue)
+                .ToList();
 
             _eventAggregator.PublishEvent(new QueueUpdatedEvent());
         }

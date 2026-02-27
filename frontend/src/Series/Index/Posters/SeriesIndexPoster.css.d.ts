@@ -5,11 +5,15 @@ interface CssExports {
   'container': string;
   'content': string;
   'controls': string;
+  'deleted': string;
   'ended': string;
   'link': string;
   'nextAiring': string;
   'overlayTitle': string;
   'posterContainer': string;
+  'status': string;
+  'tags': string;
+  'tagsList': string;
   'title': string;
 }
 export const cssExports: CssExports;

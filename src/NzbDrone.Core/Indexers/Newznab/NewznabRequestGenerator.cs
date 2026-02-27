@@ -80,7 +80,7 @@ namespace NzbDrone.Core.Indexers.Newznab
 
             if (SupportsSearch)
             {
-                var queryTitles = TextSearchEngine == "raw" ? searchCriteria.SceneTitles : searchCriteria.CleanSceneTitles;
+                var queryTitles = TextSearchEngine == "raw" ? searchCriteria.AllSceneTitles : searchCriteria.CleanSceneTitles;
 
                 // Pre-calculate commonly used values to avoid repeated processing
                 var dateFormats = GetDateFormats(searchCriteria.ReleaseDate, Settings.DateSearchFormat);
@@ -144,7 +144,7 @@ namespace NzbDrone.Core.Indexers.Newznab
             var pageableRequests = new IndexerPageableRequestChain();
             if (SupportsSearch)
             {
-                var queryTitles = TextSearchEngine == "raw" ? searchCriteria.SceneTitles : searchCriteria.CleanSceneTitles;
+                var queryTitles = TextSearchEngine == "raw" ? searchCriteria.AllSceneTitles : searchCriteria.CleanSceneTitles;
 
                 // Pre-calculate commonly used values to avoid repeated processing
                 var twoDigitYear = new DateTime(searchCriteria.Year, 1, 31).ToString("yy");

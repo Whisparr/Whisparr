@@ -28,7 +28,7 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Specifications
 
             try
             {
-                var sample = _detectSample.IsSample(localEpisode.Series, localEpisode.Path);
+                var sample = _detectSample.IsSample(localEpisode);
 
                 if (sample == DetectSampleResult.Sample)
                 {

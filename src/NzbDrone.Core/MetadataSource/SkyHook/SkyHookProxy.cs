@@ -200,6 +200,11 @@ namespace NzbDrone.Core.MetadataSource.SkyHook
             series.Images = show.Images.Select(MapImage).ToList();
             series.Monitored = true;
 
+            if (show.Types != null && show.Types.Any(t => t.Equals("JAV", StringComparison.OrdinalIgnoreCase)))
+            {
+                series.SeriesType = SeriesTypes.Jav;
+            }
+
             return series;
         }
 

@@ -37,6 +37,18 @@ const links = [
   },
 
   {
+    iconName: icons.SERIES_CONTINUING,
+    title: () => translate('JAV'),
+    to: '/jav',
+    children: [
+      {
+        title: () => translate('AddNew'),
+        to: '/jav/add/new'
+      }
+    ]
+  },
+
+  {
     iconName: icons.CALENDAR,
     title: () => translate('Calendar'),
     to: '/calendar'

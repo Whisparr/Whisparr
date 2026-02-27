@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Messaging.Commands;
@@ -15,12 +16,14 @@ namespace Whisparr.Api.V3.Series
         private readonly ISeriesService _seriesService;
         private readonly IManageCommandQueue _commandQueueManager;
         private readonly IEpisodeMonitoredService _episodeMonitoredService;
+        private readonly SeriesEditorValidator _seriesEditorValidator;
 
-        public SeriesEditorController(ISeriesService seriesService, IManageCommandQueue commandQueueManager, IEpisodeMonitoredService episodeMonitoredService)
+        public SeriesEditorController(ISeriesService seriesService, IManageCommandQueue commandQueueManager, IEpisodeMonitoredService episodeMonitoredService, SeriesEditorValidator seriesEditorValidator)
         {
             _seriesService = seriesService;
             _commandQueueManager = commandQueueManager;
             _episodeMonitoredService = episodeMonitoredService;
+            _seriesEditorValidator = seriesEditorValidator;
         }
 
         [HttpPut]
@@ -67,10 +70,10 @@ namespace Whisparr.Api.V3.Series
                 {
                     series.RootFolderPath = resource.RootFolderPath;
                     seriesToMove.Add(new BulkMoveSeries
-                                     {
-                                         SeriesId = series.Id,
-                                         SourcePath = series.Path
-                                     });
+                    {
+                        SeriesId = series.Id,
+                        SourcePath = series.Path
+                    });
                 }
 
                 if (resource.Tags != null)
@@ -92,6 +95,13 @@ namespace Whisparr.Api.V3.Series
                     }
                 }
 
+                var validationResult = _seriesEditorValidator.Validate(series);
+
+                if (!validationResult.IsValid)
+                {
+                    throw new ValidationException(validationResult.Errors);
+                }
+
                 // Apply monitoring options to episodes if provided
                 if (resource.MonitoringOptions != null)
                 {
@@ -102,10 +112,10 @@ namespace Whisparr.Api.V3.Series
             if (resource.MoveFiles && seriesToMove.Any())
             {
                 _commandQueueManager.Push(new BulkMoveSeriesCommand
-                                          {
-                                              DestinationRootFolder = resource.RootFolderPath,
-                                              Series = seriesToMove
-                                          });
+                {
+                    DestinationRootFolder = resource.RootFolderPath,
+                    Series = seriesToMove
+                });
             }
 
             // When MonitoringOptions is used, EpisodeMonitoredService already calls UpdateSeries

@@ -85,6 +85,10 @@ class SeriesHistoryRow extends Component {
 
     const EpisodeComponent = EpisodeNumber;
 
+    if (!series || !episode) {
+      return null;
+    }
+
     return (
       <TableRow>
         <HistoryEventTypeCell
@@ -118,6 +122,8 @@ class SeriesHistoryRow extends Component {
 
         <RelativeDateCellConnector
           date={date}
+          includeSeconds={true}
+          includeTime={true}
         />
 
         <TableRowCell className={styles.details}>

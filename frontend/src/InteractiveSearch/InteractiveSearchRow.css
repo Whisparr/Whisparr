@@ -28,6 +28,10 @@
   text-align: center;
 }
 
+.quality {
+  white-space: nowrap;
+}
+
 .languages {
   width: 100px;
 }
@@ -40,7 +44,8 @@
   cursor: default;
 }
 
-.rejected {
+.rejected,
+.indexerFlags {
   composes: cell from '~Components/Table/Cells/TableRowCell.css';
 
   width: 50px;

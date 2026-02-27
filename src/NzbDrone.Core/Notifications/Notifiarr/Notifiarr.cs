@@ -2,8 +2,11 @@ using System.Collections.Generic;
 using FluentValidation.Results;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Configuration;
+using NzbDrone.Core.Localization;
+using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.Notifications.Webhook;
+using NzbDrone.Core.Tags;
 using NzbDrone.Core.Tv;
 using NzbDrone.Core.Validation;
 
@@ -13,8 +16,8 @@ namespace NzbDrone.Core.Notifications.Notifiarr
     {
         private readonly INotifiarrProxy _proxy;
 
-        public Notifiarr(INotifiarrProxy proxy, IConfigFileProvider configFileProvider, IConfigService configService)
-            : base(configFileProvider, configService)
+        public Notifiarr(INotifiarrProxy proxy, IConfigFileProvider configFileProvider, IConfigService configService, ILocalizationService localizationService, ITagRepository tagRepository, IMapCoversToLocal mediaCoverService)
+            : base(configFileProvider, configService, localizationService, tagRepository, mediaCoverService)
         {
             _proxy = proxy;
         }
@@ -30,6 +33,11 @@ namespace NzbDrone.Core.Notifications.Notifiarr
         public override void OnDownload(DownloadMessage message)
         {
             _proxy.SendNotification(BuildOnDownloadPayload(message), Settings);
+        }
+
+        public override void OnImportComplete(ImportCompleteMessage message)
+        {
+            _proxy.SendNotification(BuildOnImportCompletePayload(message), Settings);
         }
 
         public override void OnRename(Series series, List<RenamedEpisodeFile> renamedFiles)

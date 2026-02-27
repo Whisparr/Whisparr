@@ -35,7 +35,7 @@ const autoAddOptions = [
     get value() {
       return translate('NoChange');
     },
-    disabled: true,
+    isDisabled: true,
   },
   {
     key: 'enabled',

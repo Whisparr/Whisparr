@@ -38,7 +38,7 @@ export interface Statistics {
 export interface Season {
   monitored: boolean;
   seasonNumber: number;
-  statistics: Statistics;
+  statistics?: Statistics;
   isSaving?: boolean;
 }
 

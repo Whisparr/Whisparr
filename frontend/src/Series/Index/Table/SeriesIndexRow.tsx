@@ -324,7 +324,11 @@ function SeriesIndexRow(props: SeriesIndexRowProps) {
             return <VirtualTableRowCell key={name} className={styles[name]} />;
           }
 
-          const seasonStatistics = latestSeason.statistics || {};
+          const {
+            episodeCount: seasonEpisodeCount = 0,
+            episodeFileCount: seasonEpisodeFileCount = 0,
+            totalEpisodeCount: seasonTotalEpisodeCount = 0,
+          } = latestSeason.statistics ?? {};
 
           return (
             <VirtualTableRowCell key={name} className={styles[name]}>
@@ -333,9 +337,9 @@ function SeriesIndexRow(props: SeriesIndexRowProps) {
                 seasonNumber={latestSeason.seasonNumber}
                 monitored={monitored}
                 status={status}
-                episodeCount={seasonStatistics.episodeCount}
-                episodeFileCount={seasonStatistics.episodeFileCount}
-                totalEpisodeCount={seasonStatistics.totalEpisodeCount}
+                episodeCount={seasonEpisodeCount}
+                episodeFileCount={seasonEpisodeFileCount}
+                totalEpisodeCount={seasonTotalEpisodeCount}
                 width={125}
                 detailedProgressBar={true}
                 isStandalone={true}

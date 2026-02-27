@@ -206,10 +206,7 @@ function SeriesIndexRow(props: SeriesIndexRowProps) {
                   )}
                 </Link>
               ) : (
-                <SeriesTitleLink
-                  titleSlug={titleSlug}
-                  title={title}
-                />
+                <SeriesTitleLink titleSlug={titleSlug} title={title} />
               )}
             </VirtualTableRowCell>
           );

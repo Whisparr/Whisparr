@@ -36,8 +36,6 @@ const columns: Column[] = [
   },
 ];
 
-const handleClearPaths = () => {};
-
 export interface FileBrowserModalContentProps {
   name: string;
   value: string;
@@ -61,6 +59,10 @@ function FileBrowserModalContent(props: FileBrowserModalContentProps) {
 
   const emptyParent = parent === '';
   const isWindowsService = isWindows && mode === 'service';
+
+  const handleClearPaths = useCallback(() => {
+    dispatch(clearPaths());
+  }, [dispatch]);
 
   const handlePathInputChange = useCallback(
     ({ value }: InputChanged<string>) => {

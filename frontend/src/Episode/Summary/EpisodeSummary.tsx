@@ -136,18 +136,25 @@ function EpisodeSummary(props: EpisodeSummaryProps) {
         {hasOverview ? overview : translate('NoEpisodeOverview')}
       </div>
 
-      {path ? (
+      {path &&
+      size != null &&
+      languages &&
+      quality &&
+      qualityCutoffNotMet != null &&
+      customFormats &&
+      customFormatScore != null &&
+      mediaInfo ? (
         <Table columns={COLUMNS}>
           <TableBody>
             <EpisodeFileRow
               path={path}
-              size={size!}
-              languages={languages!}
-              quality={quality!}
-              qualityCutoffNotMet={qualityCutoffNotMet!}
-              customFormats={customFormats!}
-              customFormatScore={customFormatScore!}
-              mediaInfo={mediaInfo!}
+              size={size}
+              languages={languages}
+              quality={quality}
+              qualityCutoffNotMet={qualityCutoffNotMet}
+              customFormats={customFormats}
+              customFormatScore={customFormatScore}
+              mediaInfo={mediaInfo}
               columns={COLUMNS}
               onDeleteEpisodeFile={handleDeleteEpisodeFile}
             />

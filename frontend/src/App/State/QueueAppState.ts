@@ -1,3 +1,4 @@
+import Queue from 'typings/Queue';
 import AppSectionState, {
   AppSectionFilterState,
   AppSectionItemState,
@@ -5,7 +6,6 @@ import AppSectionState, {
   PagedAppSectionState,
   TableAppSectionState,
 } from './AppSectionState';
-import Queue from 'typings/Queue';
 
 export interface QueueStatus {
   totalCount: number;
@@ -16,7 +16,6 @@ export interface QueueStatus {
   unknownErrors: boolean;
   unknownWarnings: boolean;
 }
-
 
 export interface QueueDetailsAppState extends AppSectionState<Queue> {
   params: unknown;

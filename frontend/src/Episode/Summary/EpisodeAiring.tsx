@@ -39,7 +39,11 @@ function EpisodeAiring(props: EpisodeAiringProps) {
   if (!showRelativeDates) {
     return (
       <span>
-        {translate('AirsDateAtTimeOn', { date: moment(releaseDate).format(shortDateFormat), networkLabel: '' })}{networkLabel}
+        {translate('AirsDateAtTimeOn', {
+          date: moment(releaseDate).format(shortDateFormat),
+          networkLabel: '',
+        })}
+        {networkLabel}
       </span>
     );
   }
@@ -47,7 +51,8 @@ function EpisodeAiring(props: EpisodeAiringProps) {
   if (isToday(releaseDate)) {
     return (
       <span>
-        {translate('AirsTimeOn', { networkLabel: '' })}{networkLabel}
+        {translate('AirsTimeOn', { networkLabel: '' })}
+        {networkLabel}
       </span>
     );
   }
@@ -55,7 +60,8 @@ function EpisodeAiring(props: EpisodeAiringProps) {
   if (isTomorrow(releaseDate)) {
     return (
       <span>
-        {translate('AirsTomorrowOn', { networkLabel: '' })}{networkLabel}
+        {translate('AirsTomorrowOn', { networkLabel: '' })}
+        {networkLabel}
       </span>
     );
   }
@@ -63,14 +69,22 @@ function EpisodeAiring(props: EpisodeAiringProps) {
   if (isInNextWeek(releaseDate)) {
     return (
       <span>
-        {translate('AirsDateAtTimeOn', { date: moment(releaseDate).format('dddd'), networkLabel: '' })}{networkLabel}
+        {translate('AirsDateAtTimeOn', {
+          date: moment(releaseDate).format('dddd'),
+          networkLabel: '',
+        })}
+        {networkLabel}
       </span>
     );
   }
 
   return (
     <span>
-      {translate('AirsDateAtTimeOn', { date: moment(releaseDate).format(shortDateFormat), networkLabel: '' })}{networkLabel}
+      {translate('AirsDateAtTimeOn', {
+        date: moment(releaseDate).format(shortDateFormat),
+        networkLabel: '',
+      })}
+      {networkLabel}
     </span>
   );
 }

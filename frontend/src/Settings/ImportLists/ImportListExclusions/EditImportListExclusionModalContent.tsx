@@ -22,7 +22,7 @@ import {
 } from 'Store/Actions/settingsActions';
 import selectSettings from 'Store/Selectors/selectSettings';
 import ImportListExclusion from 'typings/ImportListExclusion';
-import { PendingSection } from 'typings/pending';
+import { PendingSection } from 'typings/Pending';
 import translate from 'Utilities/String/translate';
 import styles from './EditImportListExclusionModalContent.css';
 

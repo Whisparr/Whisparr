@@ -107,10 +107,7 @@ function AppRoutes() {
         }}
       />
 
-      <Route
-        path="/site/:titleSlug"
-        component={SeriesDetailsPageConnector}
-      />
+      <Route path="/site/:titleSlug" component={SeriesDetailsPageConnector} />
 
       {/*
         Calendar

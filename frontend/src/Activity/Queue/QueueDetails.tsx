@@ -21,7 +21,7 @@ interface QueueDetailsProps {
   trackedDownloadStatus?: QueueTrackedDownloadStatus;
   statusMessages?: StatusMessage[];
   errorMessage?: string;
-  progressBar: React.ReactNode;
+  progressBar: NonNullable<React.ReactNode>;
 }
 
 function QueueDetails(props: QueueDetailsProps) {
@@ -58,7 +58,7 @@ function QueueDetails(props: QueueDetailsProps) {
     return (
       <Popover
         className={styles.progressBarContainer}
-        anchor={progressBar!}
+        anchor={progressBar}
         title={`${state} - ${progress.toFixed(1)}%`}
         body={<div>{title}</div>}
         position={tooltipPositions.LEFT}

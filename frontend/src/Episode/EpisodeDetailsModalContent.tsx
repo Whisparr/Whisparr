@@ -70,7 +70,6 @@ function EpisodeDetailsModalContent(props: EpisodeDetailsModalContentProps) {
     seasonNumber,
     episodeNumber,
     absoluteEpisodeNumber,
-    airDate,
     monitored,
   } = useEpisode(episodeId, episodeEntity) as Episode;
 
@@ -84,7 +83,7 @@ function EpisodeDetailsModalContent(props: EpisodeDetailsModalContentProps) {
   );
 
   const handleMonitorEpisodePress = useCallback(
-    (monitored: boolean, _options: { shiftKey: boolean }) => {
+    (monitored: boolean) => {
       dispatch(
         toggleEpisodeMonitored({
           episodeEntity,
@@ -126,7 +125,6 @@ function EpisodeDetailsModalContent(props: EpisodeDetailsModalContentProps) {
           seasonNumber={seasonNumber}
           episodeNumber={episodeNumber}
           absoluteEpisodeNumber={absoluteEpisodeNumber}
-          airDate={airDate}
           seriesType={seriesType}
         />
 

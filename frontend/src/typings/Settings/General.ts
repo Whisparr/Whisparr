@@ -1,4 +1,9 @@
-export type UpdateMechanism = 'builtIn' | 'script' | 'external' | 'apt' | 'docker';
+export type UpdateMechanism =
+  | 'builtIn'
+  | 'script'
+  | 'external'
+  | 'apt'
+  | 'docker';
 
 export interface General {
   bindAddress: string;

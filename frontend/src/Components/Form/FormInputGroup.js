@@ -284,7 +284,6 @@ FormInputGroup.propTypes = {
   includeNoChangeDisabled: PropTypes.bool,
   selectedValueOptions: PropTypes.object,
   indexerFlags: PropTypes.number,
-  isDisabled: PropTypes.bool,
   pending: PropTypes.bool,
   errors: PropTypes.arrayOf(PropTypes.object),
   warnings: PropTypes.arrayOf(PropTypes.object),

@@ -324,7 +324,7 @@ function SeriesIndexRow(props: SeriesIndexRowProps) {
             return <VirtualTableRowCell key={name} className={styles[name]} />;
           }
 
-          const { episodeCount: seasonEpisodeCount = 0, episodeFileCount: seasonEpisodeFileCount = 0, totalEpisodeCount: seasonTotalEpisodeCount = 0 } = latestSeason.statistics || {};
+          const { episodeCount: seasonEpisodeCount = 0, episodeFileCount: seasonEpisodeFileCount = 0, totalEpisodeCount: seasonTotalEpisodeCount = 0 } = latestSeason.statistics ?? {};
 
           return (
             <VirtualTableRowCell key={name} className={styles[name]}>

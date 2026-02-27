@@ -40,7 +40,7 @@ class QueuedTasksConnector extends Component {
 }
 
 QueuedTasksConnector.propTypes = {
-  dispatchFetchCommands: PropTypes.func.isRequired
+  dispatchFetchCommands: PropTypes.func
 };
 
 export default connect(createMapStateToProps, mapDispatchToProps)(QueuedTasksConnector);

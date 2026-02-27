@@ -137,11 +137,13 @@ function getInfoRowProps(
         date: formatDateTime(previousAiring, longDateFormat, timeFormat),
       }),
       iconName: icons.CALENDAR,
-      label:
-        getRelativeDate(previousAiring, shortDateFormat, showRelativeDates, {
-          timeFormat,
-          timeForToday: true,
-        }) ?? '',
+      label: getRelativeDate({
+        date: previousAiring,
+        shortDateFormat,
+        showRelativeDates,
+        timeFormat,
+        timeForToday: true,
+      }),
     };
   }
 
@@ -155,11 +157,13 @@ function getInfoRowProps(
         date: formatDateTime(added, longDateFormat, timeFormat),
       }),
       iconName: icons.ADD,
-      label:
-        getRelativeDate(added, shortDateFormat, showRelativeDates, {
-          timeFormat,
-          timeForToday: true,
-        }) ?? '',
+      label: getRelativeDate({
+        date: added,
+        shortDateFormat,
+        showRelativeDates,
+        timeFormat,
+        timeForToday: true,
+      }),
     };
   }
 
@@ -236,15 +240,13 @@ function SeriesIndexOverviewInfo(props: SeriesIndexOverviewInfoProps) {
             date: formatDateTime(nextAiring, longDateFormat, timeFormat),
           })}
           iconName={icons.SCHEDULED}
-          label={getRelativeDate(
-            nextAiring,
+          label={getRelativeDate({
+            date: nextAiring,
             shortDateFormat,
             showRelativeDates,
-            {
-              timeFormat,
-              timeForToday: true,
-            }
-          )}
+            timeFormat,
+            timeForToday: true,
+          })}
         />
       )}
 

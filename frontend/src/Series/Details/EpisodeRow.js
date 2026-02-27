@@ -2,14 +2,14 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import Icon from 'Components/Icon';
 import MonitorToggleButton from 'Components/MonitorToggleButton';
-import RelativeDateCellConnector from 'Components/Table/Cells/RelativeDateCellConnector';
+import RelativeDateCell from 'Components/Table/Cells/RelativeDateCell';
 import TableRowCell from 'Components/Table/Cells/TableRowCell';
 import TableRow from 'Components/Table/TableRow';
 import Popover from 'Components/Tooltip/Popover';
 import Tooltip from 'Components/Tooltip/Tooltip';
 import EpisodeFormats from 'Episode/EpisodeFormats';
-import EpisodeSearchCellConnector from 'Episode/EpisodeSearchCellConnector';
-import EpisodeStatusConnector from 'Episode/EpisodeStatusConnector';
+import EpisodeSearchCell from 'Episode/EpisodeSearchCell';
+import EpisodeStatus from 'Episode/EpisodeStatus';
 import EpisodeTitleLink from 'Episode/EpisodeTitleLink';
 import IndexerFlags from 'Episode/IndexerFlags';
 import EpisodeFileLanguageConnector from 'EpisodeFile/EpisodeFileLanguageConnector';
@@ -61,6 +61,7 @@ class EpisodeRow extends Component {
       monitored,
       actors,
       releaseDate,
+      airDateUtc,
       runtime,
       title,
       isSaving,
@@ -106,7 +107,7 @@ class EpisodeRow extends Component {
 
             if (name === 'releaseDate') {
               return (
-                <RelativeDateCellConnector
+                <RelativeDateCell
                   key={name}
                   date={releaseDate}
                 />
@@ -123,6 +124,7 @@ class EpisodeRow extends Component {
                     episodeId={id}
                     seriesId={seriesId}
                     episodeTitle={title}
+                    episodeEntity="episodes"
                     showOpenSeriesButton={false}
                   />
                 </TableRowCell>
@@ -161,6 +163,15 @@ class EpisodeRow extends Component {
                     episodeFileRelativePath
                   }
                 </TableRowCell>
+              );
+            }
+
+            if (name === 'airDateUtc') {
+              return (
+                <RelativeDateCell
+                  key={name}
+                  date={airDateUtc}
+                />
               );
             }
 
@@ -332,7 +343,7 @@ class EpisodeRow extends Component {
                   key={name}
                   className={styles.status}
                 >
-                  <EpisodeStatusConnector
+                  <EpisodeStatus
                     episodeId={id}
                     episodeFileId={episodeFileId}
                   />
@@ -342,9 +353,10 @@ class EpisodeRow extends Component {
 
             if (name === 'actions') {
               return (
-                <EpisodeSearchCellConnector
+                <EpisodeSearchCell
                   key={name}
                   episodeId={id}
+                  episodeEntity='episodes'
                   seriesId={seriesId}
                   episodeTitle={title}
                 />
@@ -371,6 +383,7 @@ EpisodeRow.propTypes = {
   actors: PropTypes.arrayOf(PropTypes.object),
   joinedPerformers: PropTypes.string,
   releaseDate: PropTypes.string,
+  airDateUtc: PropTypes.string,
   runtime: PropTypes.number,
   title: PropTypes.string.isRequired,
   isSaving: PropTypes.bool,

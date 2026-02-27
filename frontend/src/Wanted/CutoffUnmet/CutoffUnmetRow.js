@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import RelativeDateCellConnector from 'Components/Table/Cells/RelativeDateCellConnector';
+import RelativeDateCell from 'Components/Table/Cells/RelativeDateCell';
 import TableRowCell from 'Components/Table/Cells/TableRowCell';
 import TableSelectCell from 'Components/Table/Cells/TableSelectCell';
 import TableRow from 'Components/Table/TableRow';
 import episodeEntities from 'Episode/episodeEntities';
 import EpisodeNumber from 'Episode/EpisodeNumber';
-import EpisodeSearchCellConnector from 'Episode/EpisodeSearchCellConnector';
-import EpisodeStatusConnector from 'Episode/EpisodeStatusConnector';
+import EpisodeSearchCell from 'Episode/EpisodeSearchCell';
+import EpisodeStatus from 'Episode/EpisodeStatus';
 import EpisodeTitleLink from 'Episode/EpisodeTitleLink';
 import EpisodeFileLanguageConnector from 'EpisodeFile/EpisodeFileLanguageConnector';
 import SeriesTitleLink from 'Series/SeriesTitleLink';
@@ -106,7 +106,7 @@ function CutoffUnmetRow(props) {
 
           if (name === 'episodes.airDateUtc') {
             return (
-              <RelativeDateCellConnector
+              <RelativeDateCell
                 key={name}
                 date={releaseDate}
               />
@@ -132,7 +132,7 @@ function CutoffUnmetRow(props) {
                 key={name}
                 className={styles.status}
               >
-                <EpisodeStatusConnector
+                <EpisodeStatus
                   episodeId={id}
                   episodeFileId={episodeFileId}
                   episodeEntity={episodeEntities.WANTED_CUTOFF_UNMET}
@@ -143,7 +143,7 @@ function CutoffUnmetRow(props) {
 
           if (name === 'actions') {
             return (
-              <EpisodeSearchCellConnector
+              <EpisodeSearchCell
                 key={name}
                 episodeId={id}
                 seriesId={series.id}

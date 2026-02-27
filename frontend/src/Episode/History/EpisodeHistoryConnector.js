@@ -55,9 +55,9 @@ class EpisodeHistoryConnector extends Component {
 
 EpisodeHistoryConnector.propTypes = {
   episodeId: PropTypes.number.isRequired,
-  fetchEpisodeHistory: PropTypes.func.isRequired,
-  clearEpisodeHistory: PropTypes.func.isRequired,
-  episodeHistoryMarkAsFailed: PropTypes.func.isRequired
+  fetchEpisodeHistory: PropTypes.func,
+  clearEpisodeHistory: PropTypes.func,
+  episodeHistoryMarkAsFailed: PropTypes.func
 };
 
 export default connect(createMapStateToProps, mapDispatchToProps)(EpisodeHistoryConnector);

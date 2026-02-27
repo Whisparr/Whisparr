@@ -3,4 +3,6 @@ export interface UiSettings {
   shortDateFormat: string;
   longDateFormat: string;
   timeFormat: string;
+  theme?: string;
+  enableColorImpairedMode?: boolean;
 }

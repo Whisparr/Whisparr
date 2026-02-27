@@ -1,7 +1,22 @@
 import ModelBase from 'App/ModelBase';
 import Language from 'Language/Language';
 
+export type SeriesType = 'standard' | 'jav';
 export type SeriesStatus = 'continuing' | 'ended' | 'upcoming' | 'deleted';
+export type SeriesMonitor =
+  | 'all'
+  | 'future'
+  | 'missing'
+  | 'existing'
+  | 'recent'
+  | 'pilot'
+  | 'firstSeason'
+  | 'lastSeason'
+  | 'monitorSpecials'
+  | 'unmonitorSpecials'
+  | 'none';
+
+export type MonitorNewItems = 'all' | 'none';
 
 export interface Image {
   coverType: string;
@@ -34,7 +49,16 @@ export interface Ratings {
 
 export interface AlternateTitle {
   seasonNumber: number;
+  sceneSeasonNumber?: number;
   title: string;
+  sceneOrigin: 'unknown' | 'unknown:tvdb' | 'mixed' | 'tvdb';
+  comment?: string;
+}
+
+export interface SeriesAddOptions {
+  monitor: SeriesMonitor;
+  searchForMissingEpisodes: boolean;
+  searchForCutoffUnmetEpisodes: boolean;
 }
 
 interface Series extends ModelBase {
@@ -48,6 +72,7 @@ interface Series extends ModelBase {
   images: Image[];
   imdbId: string;
   monitored: boolean;
+  monitorNewItems: MonitorNewItems;
   network: string;
   originalLanguage: Language;
   overview: string;
@@ -60,6 +85,7 @@ interface Series extends ModelBase {
   runtime: number;
   seasonFolder: boolean;
   seasons: Season[];
+  seriesType: SeriesType;
   sortTitle: string;
   statistics: Statistics;
   status: SeriesStatus;
@@ -72,6 +98,7 @@ interface Series extends ModelBase {
   useSceneNumbering: boolean;
   year: number;
   isSaving?: boolean;
+  addOptions: SeriesAddOptions;
 }
 
 export default Series;

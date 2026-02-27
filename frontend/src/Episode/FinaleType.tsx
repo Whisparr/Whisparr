@@ -3,8 +3,7 @@ interface FinaleTypeProps {
 }
 
 // Stub - Whisparr doesn't use finale types
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function FinaleType(props: FinaleTypeProps) {
+function FinaleType(_props: FinaleTypeProps) {
   return null;
 }
 

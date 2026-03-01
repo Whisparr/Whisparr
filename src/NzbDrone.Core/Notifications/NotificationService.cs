@@ -217,7 +217,7 @@ namespace NzbDrone.Core.Notifications
             var remoteEpisode = message.Episode;
             var series = remoteEpisode?.Series;
 
-if (remoteEpisode != null && remoteEpisode.Episodes?.Any() != true)
+            if (remoteEpisode != null && remoteEpisode.Episodes?.Any() != true)
             {
                 _logger.Trace("Manual interaction required for {0}, but no episode information is available", message.TrackedDownload.DownloadItem.Title);
             }

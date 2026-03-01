@@ -15,8 +15,10 @@ namespace NzbDrone.Core.Parser
 {
     public static class Parser
     {
-        // Common external ID pattern: 2-10 letters, dash/underscore, 2-10 alphanumeric (e.g., MIKR-058, ABC_123)
-        private const string ExternalIdBasePattern = @"[A-Z]{2,10}[-_][A-Z0-9]{2,10}";
+        // Common external ID pattern: 2-10 letters, dash/underscore, 2-10 alphanumeric with at least one digit (e.g., MIKR-058, ABC_123)
+        // The lookahead (?=[A-Z0-9]*\d) ensures the second component contains at least one digit,
+        // preventing false positives on series names like "Hands-On", "Come-In", "Stand-By"
+        private const string ExternalIdBasePattern = @"[A-Z]{2,10}[-_](?=[A-Z0-9]*\d)[A-Z0-9]{2,10}";
 
         private static readonly Logger Logger = NzbDroneLogger.GetLogger(typeof(Parser));
 

@@ -64,7 +64,15 @@ namespace NzbDrone.Core.Tv
             // Normalize to lowercase before querying since external IDs are stored lowercase
             externalId = externalId.ToLowerInvariant();
 
-            return Query(e => e.ExternalId == externalId).SingleOrDefault();
+            var episodes = Query(e => e.ExternalId == externalId).ToList();
+
+            if (episodes.Count > 1)
+            {
+                _logger.Warn("Multiple episodes found with external ID '{0}', skipping automatic match to require manual import", externalId);
+                return null;
+            }
+
+            return episodes.SingleOrDefault();
         }
 
         public List<Episode> GetEpisodes(int seriesId)

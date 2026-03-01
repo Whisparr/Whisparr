@@ -135,6 +135,9 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("A-1.mp4")] // Too short - needs 2+ chars on each side
         [TestCase("ABCDEFGHIJK-12345678901")] // Too long - max 10 chars on each side
         [TestCase("123-ABC.mp4")] // First part must be letters only
+        [TestCase("Hands-On Something.mp4")] // Series name, no digits in second component
+        [TestCase("Come-In Title.mp4")] // Series name, no digits in second component
+        [TestCase("Stand-By Me.mp4")] // Series name, no digits in second component
         public void should_not_parse_external_id_from_non_matching_filename(string filename)
         {
             var result = Parser.Parser.ParseExternalIdFromFilename(filename);
@@ -152,6 +155,7 @@ namespace NzbDrone.Core.Test.ParserTests
 
         [TestCase("Some Title Without Bracket")]
         [TestCase("[SubGroup] Some Title")]
+        [TestCase("Hands-On [01+22] - Mario Gets A Very Hands-On Massage")] // Exact failing title from bug report
         public void should_not_parse_external_id_from_non_matching_title(string title)
         {
             var result = Parser.Parser.ParseExternalId(title);

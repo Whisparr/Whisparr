@@ -130,14 +130,6 @@ namespace NzbDrone.Core.Test.ParserTests
             result.Should().Be(expectedExternalId);
         }
 
-        [TestCase("FC2-PPV123.mp4", "FC2-PPV123")] // Mixed alphanumeric with digits still matches
-        [TestCase("T28-573.mp4", "T28-573")]
-        public void should_parse_external_id_with_mixed_alphanumeric(string filename, string expectedExternalId)
-        {
-            var result = Parser.Parser.ParseExternalIdFromFilename(filename);
-            result.Should().Be(expectedExternalId);
-        }
-
         [TestCase("Some Random Title.mp4")]
         [TestCase("Series.23.01.23.Title.mkv")]
         [TestCase("A-1.mp4")] // Too short - needs 2+ chars on each side

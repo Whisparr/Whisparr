@@ -188,23 +188,5 @@ namespace NzbDrone.Core.Tags
             _repo.Delete(tagId);
             _eventAggregator.PublishEvent(new TagsUpdatedEvent());
         }
-
-        private List<int> GetAutoTagIds(Tag tag, List<AutoTag> autoTags)
-        {
-            var autoTagIds = autoTags.Where(c => c.Tags.Contains(tag.Id)).Select(c => c.Id).ToList();
-
-            foreach (var autoTag in autoTags)
-            {
-                foreach (var specification in autoTag.Specifications)
-                {
-                    if (specification is TagSpecification tagSpecification && tagSpecification.Value == tag.Id)
-                    {
-                        autoTagIds.Add(autoTag.Id);
-                    }
-                }
-            }
-
-            return autoTagIds.Distinct().ToList();
-        }
     }
 }

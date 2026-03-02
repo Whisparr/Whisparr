@@ -6,15 +6,13 @@ using NzbDrone.Core.Parser.Model;
 
 namespace NzbDrone.Core.DecisionEngine.Specifications
 {
-    public class UpgradeDiskSpecification : IDecisionEngineSpecification
+    public class CutoffSpecification : IDecisionEngineSpecification
     {
         private readonly UpgradableSpecification _upgradableSpecification;
         private readonly ICustomFormatCalculationService _formatService;
         private readonly Logger _logger;
 
-        public UpgradeDiskSpecification(UpgradableSpecification upgradableSpecification,
-                                        ICustomFormatCalculationService formatService,
-                                        Logger logger)
+        public CutoffSpecification(UpgradableSpecification upgradableSpecification, ICustomFormatCalculationService formatService, Logger logger)
         {
             _upgradableSpecification = upgradableSpecification;
             _formatService = formatService;
@@ -26,6 +24,8 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
 
         public virtual Decision IsSatisfiedBy(RemoteEpisode subject, SearchCriteriaBase searchCriteria)
         {
+            var qualityProfile = subject.Series.QualityProfile.Value;
+
             foreach (var file in subject.Episodes.Where(c => c.EpisodeFileId != 0).Select(c => c.EpisodeFile.Value))
             {
                 if (file == null)
@@ -34,17 +34,21 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
                     continue;
                 }
 
-                var customFormats = _formatService.ParseCustomFormat(file);
-
                 _logger.Debug("Comparing file quality with report. Existing file is {0}", file.Quality);
 
-                if (!_upgradableSpecification.IsUpgradable(subject.Series.QualityProfile,
+                var customFormats = _formatService.ParseCustomFormat(file);
+
+                if (!_upgradableSpecification.CutoffNotMet(qualityProfile,
                                                            file.Quality,
-                                                           customFormats,
-                                                           subject.ParsedEpisodeInfo.Quality,
-                                                           subject.CustomFormats))
+                                                           _formatService.ParseCustomFormat(file),
+                                                           subject.ParsedEpisodeInfo.Quality))
                 {
-                    return Decision.Reject("Existing file on disk is of equal or higher preference: {0}", file.Quality);
+                    _logger.Debug("Cutoff already met, rejecting.");
+
+                    var qualityCutoffIndex = qualityProfile.GetIndex(qualityProfile.Cutoff);
+                    var qualityCutoff = qualityProfile.Items[qualityCutoffIndex.Index];
+
+                    return Decision.Reject("Existing file meets cutoff: {0}", qualityCutoff);
                 }
             }
 

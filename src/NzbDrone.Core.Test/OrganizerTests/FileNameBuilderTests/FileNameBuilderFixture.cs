@@ -14,7 +14,6 @@ using NzbDrone.Core.Organizer;
 using NzbDrone.Core.Qualities;
 using NzbDrone.Core.Test.Framework;
 using NzbDrone.Core.Tv;
-using NzbDrone.Test.Common;
 
 namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 {
@@ -299,7 +298,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         {
             _namingConfig.RenameEpisodes = false;
             _episodeFile.RelativePath = null;
-            _episodeFile.Path = @"C:\Test\Unsorted\Series - S01E01 - Test".AsOsAgnostic();
+            _episodeFile.Path = @"C:\Test\Unsorted\Series - S01E01 - Test";
 
             Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
                    .Should().Be(Path.GetFileNameWithoutExtension(_episodeFile.Path));
@@ -314,20 +313,6 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
 
             Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
                    .Should().Be("30.Rock.S01E01.xvid-LOL");
-        }
-
-        [Test]
-        public void should_replace_illegal_characters_when_renaming_is_disabled()
-        {
-            _namingConfig.RenameEpisodes = false;
-            _namingConfig.ReplaceIllegalCharacters = true;
-            _namingConfig.ColonReplacementFormat = ColonReplacementFormat.Smart;
-
-            _episodeFile.SceneName = "30.Rock.S01E01.xvid:LOL";
-            _episodeFile.RelativePath = "30 Rock - S01E01 - Test";
-
-            Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
-                .Should().Be("30.Rock.S01E01.xvid-LOL");
         }
 
         [Test]

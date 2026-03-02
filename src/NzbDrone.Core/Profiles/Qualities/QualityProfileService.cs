@@ -98,8 +98,6 @@ namespace NzbDrone.Core.Profiles.Qualities
                 Quality.WEBRip480p,
                 Quality.WEBDL480p,
                 Quality.DVD,
-                Quality.Bluray480p,
-                Quality.Bluray576p,
                 Quality.HDTV720p,
                 Quality.HDTV1080p,
                 Quality.WEBRip720p,
@@ -114,9 +112,7 @@ namespace NzbDrone.Core.Profiles.Qualities
                 Quality.SDTV,
                 Quality.WEBRip480p,
                 Quality.WEBDL480p,
-                Quality.DVD,
-                Quality.Bluray480p,
-                Quality.Bluray576p);
+                Quality.DVD);
 
             AddDefaultProfile("HD-720p",
                 Quality.HDTV720p,
@@ -182,7 +178,6 @@ namespace NzbDrone.Core.Profiles.Qualities
                 {
                     profile.MinFormatScore = 0;
                     profile.CutoffFormatScore = 0;
-                    profile.MinUpgradeFormatScore = 1;
                 }
 
                 Update(profile);
@@ -241,7 +236,6 @@ namespace NzbDrone.Core.Profiles.Qualities
                                      Items = items,
                                      MinFormatScore = 0,
                                      CutoffFormatScore = 0,
-                                     MinUpgradeFormatScore = 1,
                                      FormatItems = formatItems
                                  };
 

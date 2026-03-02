@@ -42,9 +42,7 @@ function FormInputButton(props) {
 FormInputButton.propTypes = {
   className: PropTypes.string.isRequired,
   isLastButton: PropTypes.bool.isRequired,
-  canSpin: PropTypes.bool.isRequired,
-  children: PropTypes.element,
-  id: PropTypes.string
+  canSpin: PropTypes.bool.isRequired
 };
 
 FormInputButton.defaultProps = {

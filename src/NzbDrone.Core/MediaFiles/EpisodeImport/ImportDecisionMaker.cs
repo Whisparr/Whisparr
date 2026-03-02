@@ -127,13 +127,13 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport
         {
             ImportDecision decision = null;
 
+            var fileEpisodeInfo = Parser.Parser.ParsePath(localEpisode.Path);
+
+            localEpisode.FileEpisodeInfo = fileEpisodeInfo;
+            localEpisode.Size = _diskProvider.GetFileSize(localEpisode.Path);
+
             try
             {
-                var fileEpisodeInfo = Parser.Parser.ParsePath(localEpisode.Path);
-
-                localEpisode.FileEpisodeInfo = fileEpisodeInfo;
-                localEpisode.Size = _diskProvider.GetFileSize(localEpisode.Path);
-
                 _aggregationService.Augment(localEpisode, downloadClientItem);
 
                 if (localEpisode.Episodes.Empty())

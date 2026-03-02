@@ -16,7 +16,6 @@ interface QualityProfile {
   items: QualityProfileQualityItem[];
   minFormatScore: number;
   cutoffFormatScore: number;
-  minUpgradeFormatScore: number;
   formatItems: QualityProfileFormatItem[];
   id: number;
 }

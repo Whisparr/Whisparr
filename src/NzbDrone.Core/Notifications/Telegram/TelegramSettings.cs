@@ -61,4 +61,13 @@ namespace NzbDrone.Core.Notifications.Telegram
             return new NzbDroneValidationResult(Validator.Validate(this));
         }
     }
+
+    public enum MetadataLinkType
+    {
+        [FieldOption(Label = "TVDb")]
+        Tvdb,
+
+        [FieldOption(Label = "Trakt")]
+        Trakt,
+    }
 }

@@ -157,25 +157,21 @@ namespace NzbDrone.Common.Extensions
                 return false;
             }
 
-            // Only check for leading or trailing spaces for path when running on Windows.
-            if (OsInfo.IsWindows)
+            if (path.Trim() != path)
             {
-                if (path.Trim() != path)
+                return false;
+            }
+
+            var directoryInfo = new DirectoryInfo(path);
+
+            while (directoryInfo != null)
+            {
+                if (directoryInfo.Name.Trim() != directoryInfo.Name)
                 {
                     return false;
                 }
 
-                var directoryInfo = new DirectoryInfo(path);
-
-                while (directoryInfo != null)
-                {
-                    if (directoryInfo.Name.Trim() != directoryInfo.Name)
-                    {
-                        return false;
-                    }
-
-                    directoryInfo = directoryInfo.Parent;
-                }
+                directoryInfo = directoryInfo.Parent;
             }
 
             if (validationType == PathValidationType.AnyOs)

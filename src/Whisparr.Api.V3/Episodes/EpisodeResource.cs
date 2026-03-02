@@ -18,7 +18,6 @@ namespace Whisparr.Api.V3.Episodes
         public int SeasonNumber { get; set; }
         public string Title { get; set; }
         public DateOnly? ReleaseDate { get; set; }
-        public DateTime? LastSearchTime { get; set; }
         public int Runtime { get; set; }
         public string Overview { get; set; }
         public EpisodeFileResource EpisodeFile { get; set; }
@@ -60,7 +59,6 @@ namespace Whisparr.Api.V3.Episodes
                 Runtime = model.Runtime,
                 Overview = model.Overview,
                 Actors = model.Actors,
-                LastSearchTime = model.LastSearchTime,
 
                 // EpisodeFile
 

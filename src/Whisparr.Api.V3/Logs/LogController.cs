@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Instrumentation;
@@ -23,11 +21,7 @@ namespace Whisparr.Api.V3.Logs
         public PagingResource<LogResource> GetLogs([FromQuery] PagingRequestResource paging, string level)
         {
             var pagingResource = new PagingResource<LogResource>(paging);
-            var pageSpec = pagingResource.MapToPagingSpec<LogResource, Log>(new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-            {
-                "id",
-                "time"
-            });
+            var pageSpec = pagingResource.MapToPagingSpec<LogResource, Log>();
 
             if (pageSpec.SortKey == "time")
             {

@@ -83,7 +83,7 @@ namespace NzbDrone.Core.MediaFiles
             if (DateTime.TryParse(fileDate + " 12:00", out var airDate))
             {
                 // avoiding false +ve checks and set date skewing by not using UTC (Windows)
-                var oldLastWrite = _diskProvider.FileGetLastWrite(filePath);
+                var oldDateTime = _diskProvider.FileGetLastWrite(filePath);
 
                 if (OsInfo.IsNotWindows && airDate < EpochTime)
                 {
@@ -91,12 +91,12 @@ namespace NzbDrone.Core.MediaFiles
                     airDate = EpochTime;
                 }
 
-                if (!DateTime.Equals(airDate.WithoutTicks(), oldLastWrite.WithoutTicks()))
+                if (!DateTime.Equals(airDate, oldDateTime))
                 {
                     try
                     {
                         _diskProvider.FileSetLastWriteTime(filePath, airDate);
-                        _logger.Debug("Date of file [{0}] changed from '{1}' to '{2}'", filePath, oldLastWrite, airDate);
+                        _logger.Debug("Date of file [{0}] changed from '{1}' to '{2}'", filePath, oldDateTime, airDate);
 
                         return true;
                     }
@@ -124,11 +124,11 @@ namespace NzbDrone.Core.MediaFiles
                 airDateUtc = EpochTime;
             }
 
-            if (!DateTime.Equals(airDateUtc.WithoutTicks(), oldLastWrite.WithoutTicks()))
+            if (!DateTime.Equals(airDateUtc, oldLastWrite))
             {
                 try
                 {
-                    _diskProvider.FileSetLastWriteTime(filePath, airDateUtc.AddMilliseconds(oldLastWrite.Millisecond));
+                    _diskProvider.FileSetLastWriteTime(filePath, airDateUtc);
                     _logger.Debug("Date of file [{0}] changed from '{1}' to '{2}'", filePath, oldLastWrite, airDateUtc);
 
                     return true;

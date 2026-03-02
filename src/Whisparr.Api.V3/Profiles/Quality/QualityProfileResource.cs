@@ -15,7 +15,6 @@ namespace Whisparr.Api.V3.Profiles.Quality
         public List<QualityProfileQualityItemResource> Items { get; set; }
         public int MinFormatScore { get; set; }
         public int CutoffFormatScore { get; set; }
-        public int MinUpgradeFormatScore { get; set; }
         public List<ProfileFormatItemResource> FormatItems { get; set; }
     }
 
@@ -57,7 +56,6 @@ namespace Whisparr.Api.V3.Profiles.Quality
                 Items = model.Items.ConvertAll(ToResource),
                 MinFormatScore = model.MinFormatScore,
                 CutoffFormatScore = model.CutoffFormatScore,
-                MinUpgradeFormatScore = model.MinUpgradeFormatScore,
                 FormatItems = model.FormatItems.ConvertAll(ToResource)
             };
         }
@@ -105,7 +103,6 @@ namespace Whisparr.Api.V3.Profiles.Quality
                 Items = resource.Items.ConvertAll(ToModel),
                 MinFormatScore = resource.MinFormatScore,
                 CutoffFormatScore = resource.CutoffFormatScore,
-                MinUpgradeFormatScore = resource.MinUpgradeFormatScore,
                 FormatItems = resource.FormatItems.ConvertAll(ToModel)
             };
         }

@@ -34,7 +34,7 @@ function Tooltip(props: TooltipProps) {
     canFlip = false,
   } = props;
 
-  const closeTimeout = useRef<ReturnType<typeof setTimeout>>();
+  const closeTimeout = useRef(0);
   const updater = useRef<(() => void) | null>(null);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -48,25 +48,16 @@ function Tooltip(props: TooltipProps) {
     });
   }, [setIsOpen]);
 
-  const handleMouseEnterAnchor = useCallback(() => {
+  const handleMouseEnter = useCallback(() => {
     // Mobile will fire mouse enter and click events rapidly,
     // this causes the tooltip not to open on the first press.
     // Ignore the mouse enter event on mobile.
-
     if (isMobileUtil()) {
       return;
     }
 
     if (closeTimeout.current) {
-      clearTimeout(closeTimeout.current);
-    }
-
-    setIsOpen(true);
-  }, [setIsOpen]);
-
-  const handleMouseEnterTooltip = useCallback(() => {
-    if (closeTimeout.current) {
-      clearTimeout(closeTimeout.current);
+      window.clearTimeout(closeTimeout.current);
     }
 
     setIsOpen(true);
@@ -75,8 +66,7 @@ function Tooltip(props: TooltipProps) {
   const handleMouseLeave = useCallback(() => {
     // Still listen for mouse leave on mobile to allow clicks outside to close the tooltip.
 
-    clearTimeout(closeTimeout.current);
-    closeTimeout.current = setTimeout(() => {
+    setTimeout(() => {
       setIsOpen(false);
     }, 100);
   }, [setIsOpen]);
@@ -121,18 +111,18 @@ function Tooltip(props: TooltipProps) {
   );
 
   useEffect(() => {
+    const currentTimeout = closeTimeout.current;
+
     if (updater.current && isOpen) {
       updater.current();
     }
-  });
 
-  useEffect(() => {
     return () => {
-      if (closeTimeout.current) {
-        clearTimeout(closeTimeout.current);
+      if (currentTimeout) {
+        window.clearTimeout(currentTimeout);
       }
     };
-  }, []);
+  });
 
   return (
     <Manager>
@@ -142,7 +132,7 @@ function Tooltip(props: TooltipProps) {
             ref={ref}
             className={className}
             onClick={handleClick}
-            onMouseEnter={handleMouseEnterAnchor}
+            onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
           >
             {anchor}
@@ -192,7 +182,7 @@ function Tooltip(props: TooltipProps) {
                     : styles.horizontalContainer
                 )}
                 style={style}
-                onMouseEnter={handleMouseEnterTooltip}
+                onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
               >
                 <div

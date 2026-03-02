@@ -51,12 +51,6 @@ export const defaultState = {
         isVisible: true
       },
       {
-        name: 'episodes.lastSearchTime',
-        label: () => translate('LastSearched'),
-        isSortable: true,
-        isVisible: false
-      },
-      {
         name: 'status',
         label: () => translate('Status'),
         isVisible: true
@@ -127,12 +121,6 @@ export const defaultState = {
         label: () => translate('ReleaseDate'),
         isSortable: true,
         isVisible: true
-      },
-      {
-        name: 'episodes.lastSearchTime',
-        label: () => translate('LastSearched'),
-        isSortable: true,
-        isVisible: false
       },
       {
         name: 'languages',

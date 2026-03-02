@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -14,11 +15,11 @@ function createMapStateToProps() {
     (state) => state.settings.advancedSettings,
     (state) => state.settings.namingExamples,
     createSettingsSectionSelector(SECTION),
-    (advancedSettings, namingExamples, sectionSettings) => {
+    (advancedSettings, examples, sectionSettings) => {
       return {
         advancedSettings,
-        examples: namingExamples.item,
-        examplesPopulated: namingExamples.isPopulated,
+        examples: examples.item,
+        examplesPopulated: !_.isEmpty(examples.item),
         ...sectionSettings
       };
     }

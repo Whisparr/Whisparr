@@ -989,10 +989,10 @@ namespace NzbDrone.Core.Organizer
         {
             if (episodeFile.SceneName.IsNullOrWhiteSpace())
             {
-                return CleanFileName(GetOriginalFileName(episodeFile, useCurrentFilenameAsFallback));
+                return GetOriginalFileName(episodeFile, useCurrentFilenameAsFallback);
             }
 
-            return CleanFileName(episodeFile.SceneName);
+            return episodeFile.SceneName;
         }
 
         private string GetOriginalFileName(EpisodeFile episodeFile, bool useCurrentFilenameAsFallback)

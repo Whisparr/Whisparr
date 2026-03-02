@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using NzbDrone.Core.AutoTagging;
 using NzbDrone.Core.Datastore.Events;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.Tags;
@@ -12,9 +11,7 @@ using Whisparr.Http.REST.Attributes;
 namespace Whisparr.Api.V3.Tags
 {
     [V3ApiController]
-    public class TagController : RestControllerWithSignalR<TagResource, Tag>,
-                                 IHandle<TagsUpdatedEvent>,
-                                 IHandle<AutoTagsUpdatedEvent>
+    public class TagController : RestControllerWithSignalR<TagResource, Tag>, IHandle<TagsUpdatedEvent>
     {
         private readonly ITagService _tagService;
 
@@ -60,12 +57,6 @@ namespace Whisparr.Api.V3.Tags
 
         [NonAction]
         public void Handle(TagsUpdatedEvent message)
-        {
-            BroadcastResourceChange(ModelAction.Sync);
-        }
-
-        [NonAction]
-        public void Handle(AutoTagsUpdatedEvent message)
         {
             BroadcastResourceChange(ModelAction.Sync);
         }

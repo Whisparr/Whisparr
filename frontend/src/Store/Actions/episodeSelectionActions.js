@@ -24,11 +24,6 @@ export const defaultState = {
   items: []
 };
 
-export const persistState = [
-  'episodeSelection.sortKey',
-  'episodeSelection.sortDirection'
-];
-
 //
 // Actions Types
 
@@ -59,9 +54,7 @@ export const reducers = createHandleActions({
 
   [CLEAR_EPISODES]: (state) => {
     return updateSectionState(state, section, {
-      ...defaultState,
-      sortKey: state.sortKey,
-      sortDirection: state.sortDirection
+      ...defaultState
     });
   }
 

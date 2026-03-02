@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using FluentValidation;
-using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Annotations;
 using NzbDrone.Core.ThingiProvider;
 using NzbDrone.Core.Validation;
@@ -15,30 +11,6 @@ namespace NzbDrone.Core.Notifications.Gotify
         {
             RuleFor(c => c.Server).IsValidUrl();
             RuleFor(c => c.AppToken).NotEmpty();
-
-            RuleFor(c => c.MetadataLinks).Custom((links, context) =>
-            {
-                foreach (var link in links)
-                {
-                    if (!Enum.IsDefined(typeof(MetadataLinkType), link))
-                    {
-                        context.AddFailure("MetadataLinks", $"MetadataLink is not valid: {link}");
-                    }
-                }
-            });
-
-            RuleFor(c => c).Custom((c, context) =>
-            {
-                if (c.MetadataLinks.Empty())
-                {
-                    return;
-                }
-
-                if (!c.MetadataLinks.Contains(c.PreferredMetadataLink))
-                {
-                    context.AddFailure("PreferredMetadataLink", "Must be a selected link");
-                }
-            });
         }
     }
 
@@ -49,8 +21,6 @@ namespace NzbDrone.Core.Notifications.Gotify
         public GotifySettings()
         {
             Priority = 5;
-            MetadataLinks = Enumerable.Empty<int>();
-            PreferredMetadataLink = (int)MetadataLinkType.Tvdb;
         }
 
         [FieldDefinition(0, Label = "Gotify Server", HelpText = "Gotify server URL, including http(s):// and port if needed")]
@@ -64,12 +34,6 @@ namespace NzbDrone.Core.Notifications.Gotify
 
         [FieldDefinition(3, Label = "Include Series Poster", Type = FieldType.Checkbox, HelpText = "Include series poster in message")]
         public bool IncludeSeriesPoster { get; set; }
-
-        [FieldDefinition(4, Label = "NotificationsGotifySettingsMetadataLinks", Type = FieldType.Select, SelectOptions = typeof(MetadataLinkType), HelpText = "NotificationsGotifySettingsMetadataLinksHelpText")]
-        public IEnumerable<int> MetadataLinks { get; set; }
-
-        [FieldDefinition(5, Label = "NotificationsGotifySettingsPreferredMetadataLink", Type = FieldType.Select, SelectOptions = typeof(MetadataLinkType), HelpText = "NotificationsGotifySettingsPreferredMetadataLinkHelpText")]
-        public int PreferredMetadataLink { get; set; }
 
         public NzbDroneValidationResult Validate()
         {

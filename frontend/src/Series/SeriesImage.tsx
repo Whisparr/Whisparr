@@ -107,10 +107,7 @@ function SeriesImage({
         }
       >
         <img
-          className={classNames(
-            className,
-            blur && styles.blur
-          )}
+          className={classNames(className, blur && styles.blur)}
           style={style}
           src={url}
           rel="noreferrer"
@@ -123,10 +120,7 @@ function SeriesImage({
 
   return (
     <img
-      className={classNames(
-        className,
-        blur && styles.blur
-      )}
+      className={classNames(className, blur && styles.blur)}
       style={style}
       src={isLoaded ? url : placeholder}
       onError={handleError}

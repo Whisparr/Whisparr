@@ -5,7 +5,6 @@ using System.Text;
 using FluentValidation.Results;
 using NLog;
 using NzbDrone.Common.Extensions;
-using NzbDrone.Core.Localization;
 using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.Tv;
 
@@ -164,12 +163,6 @@ namespace NzbDrone.Core.Notifications.Gotify
                         var linkText = "";
                         var linkUrl = "";
 
-                        if (linkType == MetadataLinkType.Imdb && series.ImdbId.IsNotNullOrWhiteSpace())
-                        {
-                            linkText = "IMDb";
-                            linkUrl = $"https://www.imdb.com/title/{series.ImdbId}";
-                        }
-
                         if (linkType == MetadataLinkType.Tvdb && series.TvdbId > 0)
                         {
                             linkText = "TVDb";
@@ -178,21 +171,18 @@ namespace NzbDrone.Core.Notifications.Gotify
 
                         if (linkType == MetadataLinkType.Trakt && series.TvdbId > 0)
                         {
-                            linkText = "TVMaze";
+                            linkText = "Trakt";
                             linkUrl = $"http://trakt.tv/search/tvdb/{series.TvdbId}?id_type=show";
                         }
 
-                        if (linkType == MetadataLinkType.Tvmaze && series.TvMazeId > 0)
+                        if (linkUrl.IsNotNullOrWhiteSpace())
                         {
-                            linkText = "Trakt";
-                            linkUrl = $"http://www.tvmaze.com/shows/{series.TvMazeId}/_";
-                        }
+                            sb.AppendLine($"[{linkText}]({linkUrl})");
 
-                        sb.AppendLine($"[{linkText}]({linkUrl})");
-
-                        if (link == Settings.PreferredMetadataLink)
-                        {
-                            payload.SetClickUrl(linkUrl);
+                            if (link == Settings.PreferredMetadataLink)
+                            {
+                                payload.SetClickUrl(linkUrl);
+                            }
                         }
                     }
                 }

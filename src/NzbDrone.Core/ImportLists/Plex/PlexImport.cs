@@ -14,7 +14,7 @@ namespace NzbDrone.Core.ImportLists.Plex
 {
     public class PlexImport : HttpImportListBase<PlexListSettings>
     {
-        public override string Name => _localizationService.GetLocalizedString("ImportListsPlexSettingsWatchlistName");
+        public override string Name => "Plex Watchlist";
         public override ImportListType ListType => ImportListType.Plex;
         public override TimeSpan MinRefreshInterval => TimeSpan.FromHours(6);
 

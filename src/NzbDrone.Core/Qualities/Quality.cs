@@ -99,7 +99,7 @@ namespace NzbDrone.Core.Qualities
 
         public static Quality Bluray576p
         {
-            get { return new Quality(22, "Bluray-576p", QualitySource.Bluray, 576); }
+            get { return new Quality(23, "Bluray-576p", QualitySource.Bluray, 576); }
         }
 
         public static Quality WEBRip720p

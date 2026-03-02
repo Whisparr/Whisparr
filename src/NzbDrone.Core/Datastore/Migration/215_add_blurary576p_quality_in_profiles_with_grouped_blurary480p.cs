@@ -21,7 +21,7 @@ namespace NzbDrone.Core.Datastore.Migration
         {
             var updater = new ProfileUpdater215(conn, tran);
 
-            updater.InsertQualityAfter(13, 22); // Group Bluray576p with Bluray480p
+            updater.InsertQualityAfter(13, 23); // Group Bluray576p with Bluray480p
             updater.Commit();
         }
     }

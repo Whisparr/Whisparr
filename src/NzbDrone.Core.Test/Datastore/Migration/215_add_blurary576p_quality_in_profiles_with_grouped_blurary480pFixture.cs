@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
@@ -137,5 +138,19 @@ namespace NzbDrone.Core.Test.Datastore.Migration
             items.Select(v => v.Name).Should().Equal("DVD", null);
             items.First().Items.Select(v => v.Quality).Should().Equal((int)Quality.DVD, (int)Quality.Bluray480p, (int)Quality.Bluray576p);
         }
+    }
+
+    public class Profile122
+    {
+        public List<ProfileItem122> Items { get; set; }
+    }
+
+    public class ProfileItem122
+    {
+        public int? Quality { get; set; }
+        public List<ProfileItem122> Items { get; set; }
+        public bool Allowed { get; set; }
+        public string Name { get; set; }
+        public int Id { get; set; }
     }
 }

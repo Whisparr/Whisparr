@@ -11,7 +11,7 @@ export default function SeriesTitleLink({
   title,
   ...linkProps
 }: SeriesTitleLinkProps) {
-  const link = `/series/${titleSlug}`;
+  const link = `/site/${titleSlug}`;
 
   return (
     <Link to={link} {...linkProps}>

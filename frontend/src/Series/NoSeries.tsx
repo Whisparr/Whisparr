@@ -30,23 +30,16 @@ function NoSeries(props: NoSeriesProps) {
         {translate('NoSitesFoundImportOrAdd')}
       </div>
 
-      {
-        seriesType !== 'jav' &&
-          <div className={styles.buttonContainer}>
-            <Button
-              to="/add/import"
-              kind={kinds.PRIMARY}
-            >
-              {translate('ImportExistingSites')}
-            </Button>
-          </div>
-      }
+      {seriesType !== 'jav' && (
+        <div className={styles.buttonContainer}>
+          <Button to="/add/import" kind={kinds.PRIMARY}>
+            {translate('ImportExistingSites')}
+          </Button>
+        </div>
+      )}
 
       <div className={styles.buttonContainer}>
-        <Button
-          to={addNewPath}
-          kind={kinds.PRIMARY}
-        >
+        <Button to={addNewPath} kind={kinds.PRIMARY}>
           {translate('AddNewSite')}
         </Button>
       </div>

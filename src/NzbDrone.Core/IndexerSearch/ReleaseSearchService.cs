@@ -71,19 +71,27 @@ namespace NzbDrone.Core.IndexerSearch
         public async Task<List<DownloadDecision>> SeasonSearch(int seriesId, int seasonNumber, List<Episode> episodes, bool monitoredOnly, bool userInvokedSearch, bool interactiveSearch)
         {
             var series = _seriesService.GetSeries(seriesId);
+
             var downloadDecisions = new List<DownloadDecision>();
 
-            _logger.ProgressInfo("Searching for {0} episodes in {1}", episodes.Count, series.Title);
-
-            // Search each episode individually - XXX content doesn't have traditional seasons
-            var searchedCount = 0;
-
-            foreach (var episode in episodes)
+            if (episodes.Count == 1)
             {
-                searchedCount++;
-                _logger.ProgressInfo("Searching for {0} - {1} [{2}/{3}]", series.Title, episode.Title, searchedCount, episodes.Count);
+                var searchSpec = Get<SingleEpisodeSearchCriteria>(series, episodes, monitoredOnly, userInvokedSearch, interactiveSearch);
+                var episode = episodes.First();
+                searchSpec.ReleaseDate = DateOnly.Parse(episode.AirDate);
+                searchSpec.Performer = episode.Actors.Select(p => p.Name).FirstOrDefault();
+                searchSpec.EpisodeTitle = episode.Title;
+                searchSpec.ExternalId = episode.ExternalId;
 
-                var decisions = await SearchSingle(series, episode, monitoredOnly, userInvokedSearch, interactiveSearch);
+                var decisions = await Dispatch(indexer => indexer.Fetch(searchSpec), searchSpec);
+                downloadDecisions.AddRange(decisions);
+            }
+            else
+            {
+                var searchSpec = Get<SeasonSearchCriteria>(series, episodes, monitoredOnly, userInvokedSearch, interactiveSearch);
+                searchSpec.Year = seasonNumber;
+
+                var decisions = await Dispatch(indexer => indexer.Fetch(searchSpec), searchSpec);
                 downloadDecisions.AddRange(decisions);
             }
 

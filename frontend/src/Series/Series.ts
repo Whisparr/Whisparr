@@ -18,7 +18,7 @@ export type SeriesMonitor =
 
 export type MonitorNewItems = 'all' | 'none';
 
-export type CoverType = 'poster' | 'banner' | 'fanart' | 'season';
+export type CoverType = 'poster' | 'banner' | 'fanart' | 'season' | 'logo';
 
 export interface Image {
   coverType: CoverType;

@@ -253,7 +253,7 @@ function HistoryRow(props: HistoryRowProps) {
         sourceTitle={sourceTitle}
         data={data}
         downloadId={downloadId}
-        isMarkingAsFailed={isMarkingAsFailed}
+        isMarkingAsFailed={isMarkingAsFailed ?? false}
         onMarkAsFailedPress={handleMarkAsFailedPress}
         onModalClose={handleDetailsModalClose}
       />

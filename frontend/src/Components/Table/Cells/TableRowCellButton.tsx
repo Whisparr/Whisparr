@@ -12,7 +12,11 @@ function TableRowCellButton(props: TableRowCellButtonProps) {
   const { className = styles.cell, ...otherProps } = props;
 
   return (
-    <Link className={className} component={TableRowCell as unknown as LinkProps['component']} {...otherProps} />
+    <Link
+      className={className}
+      component={TableRowCell as unknown as LinkProps['component']}
+      {...otherProps}
+    />
   );
 }
 

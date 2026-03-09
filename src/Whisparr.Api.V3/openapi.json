@@ -1850,6 +1850,22 @@
             }
           },
           {
+            "name": "includeSeries",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "includeEpisodeFile",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
             "name": "includeImages",
             "in": "query",
             "schema": {
@@ -5195,6 +5211,35 @@
         }
       }
     },
+    "/api/v3/qualitydefinition/limits": {
+      "get": {
+        "tags": [
+          "QualityDefinition"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/QualityDefinitionLimitsResource"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QualityDefinitionLimitsResource"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QualityDefinitionLimitsResource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v3/qualityprofile": {
       "post": {
         "tags": [
@@ -8218,6 +8263,11 @@
           "releaseDate": {
             "$ref": "#/components/schemas/DateOnly"
           },
+          "lastSearchTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
           "runtime": {
             "type": "integer",
             "format": "int32"
@@ -10100,6 +10150,20 @@
         },
         "additionalProperties": false
       },
+      "QualityDefinitionLimitsResource": {
+        "type": "object",
+        "properties": {
+          "min": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "max": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "QualityDefinitionResource": {
         "type": "object",
         "properties": {
@@ -10205,6 +10269,10 @@
             "format": "int32"
           },
           "cutoffFormatScore": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "minUpgradeFormatScore": {
             "type": "integer",
             "format": "int32"
           },
@@ -11788,7 +11856,7 @@
       },
       "apikey": {
         "type": "apiKey",
-        "description": "Apikey passed as header",
+        "description": "Apikey passed as query parameter",
         "name": "apikey",
         "in": "query"
       }

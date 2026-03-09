@@ -1,11 +1,15 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 import Button from 'Components/Link/Button';
 import { kinds } from 'Helpers/Props';
 import translate from 'Utilities/String/translate';
 import styles from './NoSeries.css';
 
-function NoSeries(props) {
+interface NoSeriesProps {
+  totalItems: number;
+  seriesType?: string;
+}
+
+function NoSeries(props: NoSeriesProps) {
   const { totalItems, seriesType } = props;
 
   const addNewPath = seriesType === 'jav' ? '/jav/add/new' : '/add/new';
@@ -26,33 +30,21 @@ function NoSeries(props) {
         {translate('NoSitesFoundImportOrAdd')}
       </div>
 
-      {
-        seriesType !== 'jav' &&
-          <div className={styles.buttonContainer}>
-            <Button
-              to="/add/import"
-              kind={kinds.PRIMARY}
-            >
-              {translate('ImportExistingSites')}
-            </Button>
-          </div>
-      }
+      {seriesType !== 'jav' && (
+        <div className={styles.buttonContainer}>
+          <Button to="/add/import" kind={kinds.PRIMARY}>
+            {translate('ImportExistingSites')}
+          </Button>
+        </div>
+      )}
 
       <div className={styles.buttonContainer}>
-        <Button
-          to={addNewPath}
-          kind={kinds.PRIMARY}
-        >
+        <Button to={addNewPath} kind={kinds.PRIMARY}>
           {translate('AddNewSite')}
         </Button>
       </div>
     </div>
   );
 }
-
-NoSeries.propTypes = {
-  totalItems: PropTypes.number.isRequired,
-  seriesType: PropTypes.string
-};
 
 export default NoSeries;

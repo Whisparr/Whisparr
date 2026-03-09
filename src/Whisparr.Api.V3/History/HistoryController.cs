@@ -65,7 +65,14 @@ namespace Whisparr.Api.V3.History
         public PagingResource<HistoryResource> GetHistory([FromQuery] PagingRequestResource paging, bool includeSeries, bool includeEpisode, [FromQuery(Name = "eventType")] int[] eventTypes, int? episodeId, string downloadId, [FromQuery] int[] seriesIds = null, [FromQuery] int[] languages = null, [FromQuery] int[] quality = null)
         {
             var pagingResource = new PagingResource<HistoryResource>(paging);
-            var pagingSpec = pagingResource.MapToPagingSpec<HistoryResource, EpisodeHistory>("date", SortDirection.Descending);
+            var pagingSpec = pagingResource.MapToPagingSpec<HistoryResource, EpisodeHistory>(
+                new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    "date",
+                    "series.sortTitle"
+                },
+                "date",
+                SortDirection.Descending);
 
             if (eventTypes != null && eventTypes.Any())
             {

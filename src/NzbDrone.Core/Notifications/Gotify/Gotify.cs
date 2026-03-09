@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using FluentValidation.Results;
 using NLog;
+using NzbDrone.Common.Extensions;
 using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.Tv;
 
@@ -11,6 +12,8 @@ namespace NzbDrone.Core.Notifications.Gotify
 {
     public class Gotify : NotificationBase<GotifySettings>
     {
+        private const string WhisparrImageUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/128.png";
+
         private readonly IGotifyProxy _proxy;
         private readonly Logger _logger;
 
@@ -85,20 +88,30 @@ namespace NzbDrone.Core.Notifications.Gotify
                 var sb = new StringBuilder();
                 sb.AppendLine("This is a test message from Whisparr");
 
+                var payload = new GotifyMessage
+                {
+                    Title = title,
+                    Priority = Settings.Priority
+                };
+
                 if (Settings.IncludeSeriesPoster)
                 {
                     isMarkdown = true;
 
-                    sb.AppendLine("\r![](https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/128.png)");
+                    sb.AppendLine($"\r![]({WhisparrImageUrl})");
+                    payload.SetImage(WhisparrImageUrl);
                 }
 
-                var payload = new GotifyMessage
+                if (Settings.MetadataLinks.Any())
                 {
-                    Title = title,
-                    Message = sb.ToString(),
-                    Priority = Settings.Priority
-                };
+                    isMarkdown = true;
 
+                    sb.AppendLine("");
+                    sb.AppendLine("[Whisparr](https://whisparr.com)");
+                    payload.SetClickUrl("https://whisparr.com");
+                }
+
+                payload.Message = sb.ToString();
                 payload.SetContentType(isMarkdown);
 
                 _proxy.SendNotification(payload, Settings);
@@ -119,24 +132,63 @@ namespace NzbDrone.Core.Notifications.Gotify
 
             sb.AppendLine(message);
 
-            if (Settings.IncludeSeriesPoster && series != null)
-            {
-                var poster = series.Images.FirstOrDefault(x => x.CoverType == MediaCoverTypes.Poster)?.RemoteUrl;
-
-                if (poster != null)
-                {
-                    isMarkdown = true;
-                    sb.AppendLine($"\r![]({poster})");
-                }
-            }
-
             var payload = new GotifyMessage
             {
                 Title = title,
-                Message = sb.ToString(),
                 Priority = Settings.Priority
             };
 
+            if (series != null)
+            {
+                if (Settings.IncludeSeriesPoster)
+                {
+                    var poster = series.Images.FirstOrDefault(x => x.CoverType == MediaCoverTypes.Poster)?.RemoteUrl;
+
+                    if (poster != null)
+                    {
+                        isMarkdown = true;
+                        sb.AppendLine($"\r![]({poster})");
+                        payload.SetImage(poster);
+                    }
+                }
+
+                if (Settings.MetadataLinks.Any())
+                {
+                    isMarkdown = true;
+                    sb.AppendLine("");
+
+                    foreach (var link in Settings.MetadataLinks)
+                    {
+                        var linkType = (MetadataLinkType)link;
+                        var linkText = "";
+                        var linkUrl = "";
+
+                        if (linkType == MetadataLinkType.Tvdb && series.TvdbId > 0)
+                        {
+                            linkText = "TVDb";
+                            linkUrl = $"http://www.thetvdb.com/?tab=series&id={series.TvdbId}";
+                        }
+
+                        if (linkType == MetadataLinkType.Trakt && series.TvdbId > 0)
+                        {
+                            linkText = "Trakt";
+                            linkUrl = $"http://trakt.tv/search/tvdb/{series.TvdbId}?id_type=show";
+                        }
+
+                        if (linkUrl.IsNotNullOrWhiteSpace())
+                        {
+                            sb.AppendLine($"[{linkText}]({linkUrl})");
+
+                            if (link == Settings.PreferredMetadataLink)
+                            {
+                                payload.SetClickUrl(linkUrl);
+                            }
+                        }
+                    }
+                }
+            }
+
+            payload.Message = sb.ToString();
             payload.SetContentType(isMarkdown);
 
             _proxy.SendNotification(payload, Settings);

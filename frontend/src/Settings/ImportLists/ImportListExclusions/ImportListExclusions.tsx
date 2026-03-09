@@ -29,7 +29,7 @@ const COLUMNS = [
     isSortable: true,
   },
   {
-    name: 'tvdbid',
+    name: 'tvdbId',
     label: () => translate('TvdbId'),
     isVisible: true,
     isSortable: true,

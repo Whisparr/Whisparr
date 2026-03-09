@@ -12,7 +12,6 @@ export interface ClipboardButtonProps extends Omit<ButtonProps, 'children'> {
 export type ClipboardState = 'success' | 'error' | null;
 
 export default function ClipboardButton({
-  id,
   value,
   className = styles.button,
   ...otherProps

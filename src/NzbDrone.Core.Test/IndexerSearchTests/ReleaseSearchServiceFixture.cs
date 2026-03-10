@@ -232,7 +232,7 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
         }
 
         [Test]
-        public async Task scene_seasonsearch_should_search_each_episode_individually()
+        public async Task scene_seasonsearch()
         {
             WithEpisodes();
 
@@ -240,14 +240,14 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
 
             await Subject.SeasonSearch(_xemSeries.Id, 1, false, false, true, false);
 
-            // Season 1 has 2 episodes, each searched individually
-            var criteria = allCriteria.OfType<SingleEpisodeSearchCriteria>().ToList();
+            var criteria = allCriteria.OfType<SeasonSearchCriteria>().ToList();
 
-            criteria.Count.Should().Be(2);
+            criteria.Count.Should().Be(1);
+            criteria[0].Year.Should().Be(1);
         }
 
         [Test]
-        public async Task scene_seasonsearch_should_search_all_episodes_in_season()
+        public async Task scene_seasonsearch_should_search_multiple_seasons()
         {
             WithEpisodes();
 
@@ -255,14 +255,14 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
 
             await Subject.SeasonSearch(_xemSeries.Id, 2, false, false, true, false);
 
-            // Season 2 has 4 episodes, each searched individually
-            var criteria = allCriteria.OfType<SingleEpisodeSearchCriteria>().ToList();
+            var criteria = allCriteria.OfType<SeasonSearchCriteria>().ToList();
 
-            criteria.Count.Should().Be(4);
+            criteria.Count.Should().Be(1);
+            criteria[0].Year.Should().Be(2);
         }
 
         [Test]
-        public async Task scene_seasonsearch_should_search_episodes_without_scene_numbers()
+        public async Task scene_seasonsearch_should_use_seasonnumber_if_no_scene_number_is_available()
         {
             WithEpisodes();
 
@@ -270,10 +270,10 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
 
             await Subject.SeasonSearch(_xemSeries.Id, 7, false, false, true, false);
 
-            // Season 7 has 2 episodes, each searched individually
-            var criteria = allCriteria.OfType<SingleEpisodeSearchCriteria>().ToList();
+            var criteria = allCriteria.OfType<SeasonSearchCriteria>().ToList();
 
-            criteria.Count.Should().Be(2);
+            criteria.Count.Should().Be(1);
+            criteria[0].Year.Should().Be(7);
         }
     }
 }

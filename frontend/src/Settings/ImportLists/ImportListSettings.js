@@ -7,7 +7,7 @@ import PageToolbarSeparator from 'Components/Page/Toolbar/PageToolbarSeparator';
 import { icons } from 'Helpers/Props';
 import SettingsToolbarConnector from 'Settings/SettingsToolbarConnector';
 import translate from 'Utilities/String/translate';
-import ImportListsExclusionsConnector from './ImportListExclusions/ImportListExclusionsConnector';
+import ImportListsExclusions from './ImportListExclusions/ImportListExclusions';
 import ImportListsConnector from './ImportLists/ImportListsConnector';
 import ManageImportListsModal from './ImportLists/Manage/ManageImportListsModal';
 
@@ -93,7 +93,9 @@ class ImportListSettings extends Component {
 
         <PageContentBody>
           <ImportListsConnector />
-          <ImportListsExclusionsConnector />
+
+          <ImportListsExclusions />
+
           <ManageImportListsModal
             isOpen={isManageImportListsOpen}
             onModalClose={this.onManageImportListsModalClose}

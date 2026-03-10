@@ -18,6 +18,7 @@ interface Episode extends ModelBase {
   airDate: string;
   airDateUtc?: string;
   actors: Actor[];
+  lastSearchTime?: string;
   runtime: number;
   absoluteEpisodeNumber?: number;
   sceneSeasonNumber?: number;
@@ -28,6 +29,7 @@ interface Episode extends ModelBase {
   episodeFile?: object;
   hasFile: boolean;
   monitored: boolean;
+  grabbed?: boolean;
   unverifiedSceneNumbering: boolean;
   endTime?: string;
   grabDate?: string;

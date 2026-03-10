@@ -15,8 +15,10 @@ namespace NzbDrone.Core.Parser
 {
     public static class Parser
     {
-        // Common external ID pattern: 2-10 letters, dash/underscore, 2-10 alphanumeric (e.g., MIKR-058, ABC_123)
-        private const string ExternalIdBasePattern = @"[A-Z]{2,10}[-_][A-Z0-9]{2,10}";
+        // Common external ID pattern: 2-10 letters, dash/underscore, 2-10 alphanumeric with at least one digit (e.g., MIKR-058, ABC_123)
+        // The lookahead (?=[A-Z0-9]*\d) ensures the second component contains at least one digit,
+        // preventing false positives on series names like "Hands-On", "Come-In", "Stand-By"
+        private const string ExternalIdBasePattern = @"[A-Z]{2,10}[-_](?=[A-Z0-9]*\d)[A-Z0-9]{2,10}";
 
         private static readonly Logger Logger = NzbDroneLogger.GetLogger(typeof(Parser));
 
@@ -231,7 +233,7 @@ namespace NzbDrone.Core.Parser
 
         // Handle Exception Release Groups that don't follow -RlsGrp; Manual List
         // name only...be very careful with this last; high chance of false positives
-        private static readonly Regex ExceptionReleaseGroupRegexExact = new Regex(@"(?<releasegroup>(?:D\-Z0N3|Fight-BB|VARYG|E\.N\.D|KRaLiMaRKo|BluDragon|DarQ)\b)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex ExceptionReleaseGroupRegexExact = new Regex(@"(?<releasegroup>(?:D\-Z0N3|Fight-BB|VARYG|E\.N\.D|KRaLiMaRKo|BluDragon|DarQ|KCRT|BEN THE MAN)\b)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         // groups whose releases end with RlsGroup) or RlsGroup]
         private static readonly Regex ExceptionReleaseGroupRegex = new Regex(@"(?<=[._ \[])(?<releasegroup>(Silence|afm72|Panda|Ghost|MONOLITH|Tigole|Joy|ImE|UTR|t3nzin|Anime Time|Project Angel|Hakata Ramen|HONE|Vyndros|SEV|Garshasp|Kappa|Natty|RCVR|SAMPA|YOGI|r00t|EDGE2020|RZeroX)(?=\]|\)))", RegexOptions.IgnoreCase | RegexOptions.Compiled);

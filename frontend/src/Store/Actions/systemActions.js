@@ -3,7 +3,7 @@ import { filterTypes, sortDirections } from 'Helpers/Props';
 import { setAppValue } from 'Store/Actions/appActions';
 import { createThunk, handleThunks } from 'Store/thunks';
 import createAjaxRequest from 'Utilities/createAjaxRequest';
-import serverSideCollectionHandlers from 'Utilities/serverSideCollectionHandlers';
+import serverSideCollectionHandlers from 'Utilities/State/serverSideCollectionHandlers';
 import translate from 'Utilities/String/translate';
 import { pingServer } from './appActions';
 import { set } from './baseActions';
@@ -110,7 +110,6 @@ export const defaultState = {
       {
         name: 'actions',
         columnLabel: () => translate('Actions'),
-        isSortable: true,
         isVisible: true,
         isModifiable: false
       }

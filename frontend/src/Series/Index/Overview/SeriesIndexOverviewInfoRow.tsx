@@ -12,6 +12,10 @@ interface SeriesIndexOverviewInfoRowProps {
 function SeriesIndexOverviewInfoRow(props: SeriesIndexOverviewInfoRowProps) {
   const { title, iconName, label } = props;
 
+  if (!iconName) {
+    return null;
+  }
+
   return (
     <div className={styles.infoRow} title={title}>
       <Icon className={styles.icon} name={iconName} size={14} />

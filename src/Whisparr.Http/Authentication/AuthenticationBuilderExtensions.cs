@@ -1,12 +1,18 @@
 using System;
+using System.Text.RegularExpressions;
+using Diacritical;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.DependencyInjection;
 using NzbDrone.Core.Authentication;
+using NzbDrone.Core.Configuration;
 
 namespace Whisparr.Http.Authentication
 {
     public static class AuthenticationBuilderExtensions
     {
+        private static readonly Regex CookieNameRegex = new Regex(@"[^a-z0-9]+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
         public static AuthenticationBuilder AddApiKey(this AuthenticationBuilder authenticationBuilder, string name, Action<ApiKeyAuthenticationOptions> options)
         {
             return authenticationBuilder.AddScheme<ApiKeyAuthenticationOptions, ApiKeyAuthenticationHandler>(name, options);
@@ -29,19 +35,27 @@ namespace Whisparr.Http.Authentication
 
         public static AuthenticationBuilder AddAppAuthentication(this IServiceCollection services)
         {
-            return services.AddAuthentication()
-                .AddNone(AuthenticationType.None.ToString())
-                .AddExternal(AuthenticationType.External.ToString())
-                .AddBasic(AuthenticationType.Basic.ToString())
-                .AddCookie(AuthenticationType.Forms.ToString(), options =>
+            services.AddOptions<CookieAuthenticationOptions>(AuthenticationType.Forms.ToString())
+                .Configure<IConfigFileProvider>((options, configFileProvider) =>
                 {
-                    options.Cookie.Name = "WhisparrAuth";
+                    // Replace diacritics and replace non-word characters to ensure cookie name doesn't contain any valid URL characters not allowed in cookie names
+                    var instanceName = configFileProvider.InstanceName;
+                    instanceName = instanceName.RemoveDiacritics();
+                    instanceName = CookieNameRegex.Replace(instanceName, string.Empty);
+
+                    options.Cookie.Name = $"{instanceName}Auth";
                     options.AccessDeniedPath = "/login?loginFailed=true";
                     options.LoginPath = "/login";
                     options.ExpireTimeSpan = TimeSpan.FromDays(7);
                     options.SlidingExpiration = true;
                     options.ReturnUrlParameter = "returnUrl";
-                })
+                });
+
+            return services.AddAuthentication()
+                .AddNone(AuthenticationType.None.ToString())
+                .AddExternal(AuthenticationType.External.ToString())
+                .AddBasic(AuthenticationType.Basic.ToString())
+                .AddCookie(AuthenticationType.Forms.ToString())
                 .AddApiKey("API", options =>
                 {
                     options.HeaderName = "X-Api-Key";

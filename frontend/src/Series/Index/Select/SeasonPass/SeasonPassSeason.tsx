@@ -12,7 +12,7 @@ interface SeasonPassSeasonProps {
   seriesId: number;
   seasonNumber: number;
   monitored: boolean;
-  statistics: Statistics;
+  statistics?: Statistics;
   isSaving: boolean;
 }
 

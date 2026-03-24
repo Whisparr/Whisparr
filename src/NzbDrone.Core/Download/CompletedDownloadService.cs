@@ -181,8 +181,20 @@ namespace NzbDrone.Core.Download
                 trackedDownload.RemoteEpisode.Series,
                 trackedDownload.ImportItem);
 
-            if (VerifyImport(trackedDownload, importResults))
+            try
             {
+                if (VerifyImport(trackedDownload, importResults))
+                {
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Warn(ex, "Failed to verify import for '{0}'", trackedDownload.DownloadItem.Title);
+                trackedDownload.State = TrackedDownloadState.ImportPending;
+                trackedDownload.Warn("Import verification failed for {0}, manual import may be required.", trackedDownload.DownloadItem.Title);
+                SendManualInteractionRequiredNotification(trackedDownload);
+
                 return;
             }
 
@@ -269,7 +281,7 @@ namespace NzbDrone.Core.Download
             var atLeastOneEpisodeImported = importResults.Any(c => c.Result == ImportResultType.Imported);
             var allEpisodesImportedInHistory = _trackedDownloadAlreadyImported.IsImported(trackedDownload, historyItems);
             var episodes = _episodeService.GetEpisodes(trackedDownload.RemoteEpisode.Episodes.Select(e => e.Id));
-            var files = _mediaFileService.GetFiles(episodes.Select(e => e.EpisodeFileId).Distinct());
+            var files = _mediaFileService.GetFiles(episodes.Select(e => e.EpisodeFileId).Where(id => id > 0).Distinct());
 
             if (allEpisodesImportedInHistory)
             {

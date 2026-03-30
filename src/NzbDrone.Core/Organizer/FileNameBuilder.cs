@@ -190,6 +190,16 @@ namespace NzbDrone.Core.Organizer
 
             if (!namingConfig.RenameEpisodes)
             {
+                // When renaming is disabled, prefer the actual filename on disk over the SceneName.
+                // SceneName comes from the download client's release title which may differ from
+                // the actual filename (e.g., missing resolution/codec info).
+                var originalFileName = GetOriginalFileName(episodeFile, true);
+
+                if (originalFileName.IsNotNullOrWhiteSpace())
+                {
+                    return CleanFileName(originalFileName) + extension;
+                }
+
                 return GetOriginalTitle(episodeFile, true) + extension;
             }
 

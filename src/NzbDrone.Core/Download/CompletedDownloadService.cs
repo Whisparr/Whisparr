@@ -124,8 +124,9 @@ namespace NzbDrone.Core.Download
                 }
             }
 
-            // Safety gate: only block if we couldn't identify the series AND the download wasn't grabbed by us / categorised
-            if (series == null && historyItem == null && trackedDownload.DownloadItem.Category.IsNullOrWhiteSpace())
+            // Safety gate: require a grab history, a category, or a confident external-ID match.
+            // A title-only series match isn't trusted here since the title can resemble any series.
+            if (historyItem == null && trackedDownload.DownloadItem.Category.IsNullOrWhiteSpace() && externalIdEpisode == null)
             {
                 trackedDownload.Warn("Download wasn't grabbed by Whisparr and not in a category, Skipping.");
                 return;

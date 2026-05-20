@@ -70,6 +70,7 @@ function EpisodeDetailsModalContent(props: EpisodeDetailsModalContentProps) {
     seasonNumber,
     episodeNumber,
     absoluteEpisodeNumber,
+    releaseDate,
     monitored,
   } = useEpisode(episodeId, episodeEntity) as Episode;
 
@@ -125,6 +126,7 @@ function EpisodeDetailsModalContent(props: EpisodeDetailsModalContentProps) {
           seasonNumber={seasonNumber}
           episodeNumber={episodeNumber}
           absoluteEpisodeNumber={absoluteEpisodeNumber}
+          releaseDate={releaseDate}
           seriesType={seriesType}
         />
 

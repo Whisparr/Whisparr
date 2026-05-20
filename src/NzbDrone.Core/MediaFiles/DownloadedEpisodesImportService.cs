@@ -27,8 +27,8 @@ namespace NzbDrone.Core.MediaFiles
         private readonly IDiskProvider _diskProvider;
         private readonly IDiskScanService _diskScanService;
         private readonly ISeriesService _seriesService;
-        private readonly IEpisodeService _episodeService;
         private readonly IParsingService _parsingService;
+        private readonly IExternalIdMatchService _externalIdMatchService;
         private readonly IMakeImportDecision _importDecisionMaker;
         private readonly IImportApprovedEpisodes _importApprovedEpisodes;
         private readonly IDetectSample _detectSample;
@@ -38,8 +38,8 @@ namespace NzbDrone.Core.MediaFiles
         public DownloadedEpisodesImportService(IDiskProvider diskProvider,
                                                IDiskScanService diskScanService,
                                                ISeriesService seriesService,
-                                               IEpisodeService episodeService,
                                                IParsingService parsingService,
+                                               IExternalIdMatchService externalIdMatchService,
                                                IMakeImportDecision importDecisionMaker,
                                                IImportApprovedEpisodes importApprovedEpisodes,
                                                IDetectSample detectSample,
@@ -49,8 +49,8 @@ namespace NzbDrone.Core.MediaFiles
             _diskProvider = diskProvider;
             _diskScanService = diskScanService;
             _seriesService = seriesService;
-            _episodeService = episodeService;
             _parsingService = parsingService;
+            _externalIdMatchService = externalIdMatchService;
             _importDecisionMaker = importDecisionMaker;
             _importApprovedEpisodes = importApprovedEpisodes;
             _detectSample = detectSample;
@@ -159,7 +159,8 @@ namespace NzbDrone.Core.MediaFiles
         private List<ImportResult> ProcessFolder(DirectoryInfo directoryInfo, ImportMode importMode, DownloadClientItem downloadClientItem)
         {
             var cleanedUpName = GetCleanedUpFolderName(directoryInfo.Name);
-            var series = _parsingService.GetSeries(cleanedUpName);
+            var series = _parsingService.GetSeries(cleanedUpName)
+                ?? _externalIdMatchService.FindSeriesInFolder(directoryInfo.FullName);
 
             if (series == null)
             {
@@ -235,13 +236,8 @@ namespace NzbDrone.Core.MediaFiles
 
         private List<ImportResult> ProcessFile(FileInfo fileInfo, ImportMode importMode, DownloadClientItem downloadClientItem)
         {
-            var series = _parsingService.GetSeries(Path.GetFileNameWithoutExtension(fileInfo.Name));
-
-            if (series == null)
-            {
-                // Try to find series by external ID from filename (e.g., MIKR-058.mp4)
-                series = GetSeriesByExternalId(fileInfo.Name);
-            }
+            var series = _parsingService.GetSeries(Path.GetFileNameWithoutExtension(fileInfo.Name))
+                ?? _externalIdMatchService.FindSeries(fileInfo.Name);
 
             if (series == null)
             {
@@ -254,35 +250,6 @@ namespace NzbDrone.Core.MediaFiles
             }
 
             return ProcessFile(fileInfo, importMode, series, downloadClientItem);
-        }
-
-        private Series GetSeriesByExternalId(string filename)
-        {
-            var externalId = Parser.Parser.ParseExternalIdFromFilename(filename);
-
-            if (externalId.IsNullOrWhiteSpace())
-            {
-                return null;
-            }
-
-            _logger.Debug("Attempting to find series by external ID: {0}", externalId);
-
-            var episode = _episodeService.FindByExternalId(externalId);
-
-            if (episode == null)
-            {
-                _logger.Debug("No episode found with external ID: {0}", externalId);
-                return null;
-            }
-
-            var series = _seriesService.GetSeries(episode.SeriesId);
-
-            if (series != null)
-            {
-                _logger.Debug("Found series '{0}' via external ID: {1}", series.Title, externalId);
-            }
-
-            return series;
         }
 
         private List<ImportResult> ProcessFile(FileInfo fileInfo, ImportMode importMode, Series series, DownloadClientItem downloadClientItem)

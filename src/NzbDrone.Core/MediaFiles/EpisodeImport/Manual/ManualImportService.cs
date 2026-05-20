@@ -36,6 +36,7 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Manual
         private readonly IMakeImportDecision _importDecisionMaker;
         private readonly ISeriesService _seriesService;
         private readonly IEpisodeService _episodeService;
+        private readonly IExternalIdMatchService _externalIdMatchService;
         private readonly IImportApprovedEpisodes _importApprovedEpisodes;
         private readonly IAggregationService _aggregationService;
         private readonly ITrackedDownloadService _trackedDownloadService;
@@ -51,6 +52,7 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Manual
                                    IMakeImportDecision importDecisionMaker,
                                    ISeriesService seriesService,
                                    IEpisodeService episodeService,
+                                   IExternalIdMatchService externalIdMatchService,
                                    IAggregationService aggregationService,
                                    IImportApprovedEpisodes importApprovedEpisodes,
                                    ITrackedDownloadService trackedDownloadService,
@@ -66,6 +68,7 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Manual
             _importDecisionMaker = importDecisionMaker;
             _seriesService = seriesService;
             _episodeService = episodeService;
+            _externalIdMatchService = externalIdMatchService;
             _aggregationService = aggregationService;
             _importApprovedEpisodes = importApprovedEpisodes;
             _trackedDownloadService = trackedDownloadService;
@@ -266,6 +269,11 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Manual
 
             if (series == null)
             {
+                series = _externalIdMatchService.FindSeriesInFolder(baseFolder);
+            }
+
+            if (series == null)
+            {
                 // Filter paths based on the rootFolder, so files in subfolders that should be ignored are ignored.
                 // It will lead to some extra directories being checked for files, but it saves the processing of them and is cleaner than
                 // teaching FilterPaths to know whether it's processing a file or a folder and changing it's filtering based on that.
@@ -308,7 +316,7 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Manual
 
                 if (series == null)
                 {
-                    _parsingService.GetSeries(relativeFile.Split('\\', '/')[0]);
+                    series = _parsingService.GetSeries(relativeFile.Split('\\', '/')[0]);
                 }
 
                 if (series == null)
@@ -329,6 +337,11 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Manual
                     {
                         series = _seriesService.FindByTitle(relativeParseInfo.SeriesTitle);
                     }
+                }
+
+                if (series == null)
+                {
+                    series = _externalIdMatchService.FindSeries(Path.GetFileName(file));
                 }
 
                 if (series == null)

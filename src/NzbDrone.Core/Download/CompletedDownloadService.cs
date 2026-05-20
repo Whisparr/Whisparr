@@ -37,6 +37,7 @@ namespace NzbDrone.Core.Download
         private readonly IEpisodeService _episodeService;
         private readonly ITrackedDownloadAlreadyImported _trackedDownloadAlreadyImported;
         private readonly IMediaFileService _mediaFileService;
+        private readonly IExternalIdMatchService _externalIdMatchService;
         private readonly Logger _logger;
 
         public CompletedDownloadService(IEventAggregator eventAggregator,
@@ -48,6 +49,7 @@ namespace NzbDrone.Core.Download
                                         IEpisodeService episodeService,
                                         ITrackedDownloadAlreadyImported trackedDownloadAlreadyImported,
                                         IMediaFileService mediaFileService,
+                                        IExternalIdMatchService externalIdMatchService,
                                         Logger logger)
         {
             _eventAggregator = eventAggregator;
@@ -59,6 +61,7 @@ namespace NzbDrone.Core.Download
             _episodeService = episodeService;
             _trackedDownloadAlreadyImported = trackedDownloadAlreadyImported;
             _mediaFileService = mediaFileService;
+            _externalIdMatchService = externalIdMatchService;
             _logger = logger;
         }
 
@@ -77,27 +80,23 @@ namespace NzbDrone.Core.Download
                 return;
             }
 
-            var grabbedHistories = _historyService.FindByDownloadId(trackedDownload.DownloadItem.DownloadId).Where(h => h.EventType == EpisodeHistoryEventType.Grabbed).ToList();
-            var historyItem = grabbedHistories.MaxBy(h => h.Date);
-
-            if (historyItem == null && trackedDownload.DownloadItem.Category.IsNullOrWhiteSpace())
-            {
-                trackedDownload.Warn("Download wasn't grabbed by Whisparr and not in a category, Skipping.");
-                return;
-            }
-
             if (!ValidatePath(trackedDownload))
             {
                 return;
             }
+
+            var grabbedHistories = _historyService.FindByDownloadId(trackedDownload.DownloadItem.DownloadId).Where(h => h.EventType == EpisodeHistoryEventType.Grabbed).ToList();
+            var historyItem = grabbedHistories.MaxBy(h => h.Date);
 
             var series = _parsingService.GetSeries(trackedDownload.DownloadItem.Title);
             Episode externalIdEpisode = null;
 
             if (series == null)
             {
-                // Try to find series by external ID from download title (e.g., MIKR-058)
-                externalIdEpisode = GetEpisodeByExternalId(trackedDownload.DownloadItem.Title);
+                // Try to find series by external ID from download title (e.g., MIKR-058), then fall back
+                // to scanning files inside the output path (e.g., release folder "abc123" containing miaa-254.mp4)
+                externalIdEpisode = _externalIdMatchService.FindEpisode(trackedDownload.DownloadItem.Title)
+                    ?? _externalIdMatchService.FindEpisodeInFolder(trackedDownload.ImportItem.OutputPath.FullPath);
 
                 if (externalIdEpisode != null)
                 {
@@ -123,6 +122,13 @@ namespace NzbDrone.Core.Download
                         };
                     }
                 }
+            }
+
+            // Safety gate: only block if we couldn't identify the series AND the download wasn't grabbed by us / categorised
+            if (series == null && historyItem == null && trackedDownload.DownloadItem.Category.IsNullOrWhiteSpace())
+            {
+                trackedDownload.Warn("Download wasn't grabbed by Whisparr and not in a category, Skipping.");
+                return;
             }
 
             if (series == null)
@@ -352,30 +358,6 @@ namespace NzbDrone.Core.Download
             }
 
             return true;
-        }
-
-        private Episode GetEpisodeByExternalId(string title)
-        {
-            var externalId = Parser.Parser.ParseExternalIdFromFilename(title);
-
-            if (externalId.IsNullOrWhiteSpace())
-            {
-                return null;
-            }
-
-            _logger.Debug("Attempting to find episode by external ID: {0}", externalId);
-
-            var episode = _episodeService.FindByExternalId(externalId);
-
-            if (episode == null)
-            {
-                _logger.Debug("No episode found with external ID: {0}", externalId);
-                return null;
-            }
-
-            _logger.Debug("Found episode '{0}' via external ID: {1}", episode.Title, externalId);
-
-            return episode;
         }
     }
 }

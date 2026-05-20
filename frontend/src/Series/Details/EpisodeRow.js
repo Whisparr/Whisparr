@@ -61,7 +61,6 @@ class EpisodeRow extends Component {
       monitored,
       actors,
       releaseDate,
-      airDateUtc,
       runtime,
       title,
       isSaving,
@@ -170,7 +169,7 @@ class EpisodeRow extends Component {
               return (
                 <RelativeDateCell
                   key={name}
-                  date={airDateUtc}
+                  date={releaseDate}
                 />
               );
             }
@@ -383,7 +382,6 @@ EpisodeRow.propTypes = {
   actors: PropTypes.arrayOf(PropTypes.object),
   joinedPerformers: PropTypes.string,
   releaseDate: PropTypes.string,
-  airDateUtc: PropTypes.string,
   runtime: PropTypes.number,
   title: PropTypes.string.isRequired,
   isSaving: PropTypes.bool,

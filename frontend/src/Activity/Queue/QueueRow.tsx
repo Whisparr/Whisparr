@@ -250,7 +250,7 @@ function QueueRow(props: QueueRowProps) {
 
         if (name === 'episodes.airDateUtc') {
           if (episode) {
-            return <RelativeDateCell key={name} date={episode.airDateUtc} />;
+            return <RelativeDateCell key={name} date={episode.releaseDate} />;
           }
 
           return <TableRowCell key={name}>-</TableRowCell>;

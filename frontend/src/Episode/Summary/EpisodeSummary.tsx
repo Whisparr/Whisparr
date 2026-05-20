@@ -83,7 +83,7 @@ function EpisodeSummary(props: EpisodeSummaryProps) {
 
   const { qualityProfileId, network } = useSeries(seriesId) as Series;
 
-  const { airDateUtc, overview } = useEpisode(
+  const { releaseDate, overview } = useEpisode(
     episodeId,
     episodeEntity
   ) as Episode;
@@ -121,7 +121,7 @@ function EpisodeSummary(props: EpisodeSummaryProps) {
       <div>
         <span className={styles.infoTitle}>{translate('Airs')}</span>
 
-        <EpisodeAiring releaseDate={airDateUtc} network={network} />
+        <EpisodeAiring releaseDate={releaseDate} network={network} />
       </div>
 
       <div>

@@ -170,7 +170,7 @@ class EpisodeRow extends Component {
               return (
                 <RelativeDateCell
                   key={name}
-                  date={airDateUtc}
+                  date={releaseDate}
                 />
               );
             }

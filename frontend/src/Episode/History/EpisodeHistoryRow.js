@@ -102,14 +102,6 @@ class EpisodeHistoryRow extends Component {
           />
         </TableRowCell>
 
-        <TableRowCell>
-          <EpisodeFormats formats={customFormats} />
-        </TableRowCell>
-
-        <TableRowCell>
-          {formatCustomFormatScore(customFormatScore, customFormats.length)}
-        </TableRowCell>
-
         <RelativeDateCell
           date={date}
           includeSeconds={true}

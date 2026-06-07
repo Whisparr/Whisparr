@@ -248,7 +248,7 @@ function QueueRow(props: QueueRowProps) {
           );
         }
 
-        if (name === 'episodes.airDateUtc') {
+        if (name === 'episodes.releaseDate') {
           if (episode) {
             return <RelativeDateCell key={name} date={episode.releaseDate} />;
           }

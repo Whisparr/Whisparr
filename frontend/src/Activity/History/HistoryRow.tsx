@@ -137,6 +137,7 @@ function HistoryRow(props: HistoryRowProps) {
               <SeasonEpisodeNumber
                 seasonNumber={episode.seasonNumber}
                 episodeNumber={episode.episodeNumber}
+                releaseDate={episode.releaseDate}
                 absoluteEpisodeNumber={episode.absoluteEpisodeNumber}
                 seriesType={series.seriesType}
                 alternateTitles={series.alternateTitles}
@@ -158,6 +159,19 @@ function HistoryRow(props: HistoryRowProps) {
                 episodeTitle={episode.title}
                 showOpenSeriesButton={true}
               />
+            </TableRowCell>
+          );
+        }
+
+        if (name === 'actors') {
+          const joinedPerformers = episode.actors
+            .map((a) => a.character)
+            .slice(0, 4)
+            .join(', ');
+
+          return (
+            <TableRowCell key={name} className={styles.actors}>
+              <span title={joinedPerformers}>{joinedPerformers}</span>
             </TableRowCell>
           );
         }

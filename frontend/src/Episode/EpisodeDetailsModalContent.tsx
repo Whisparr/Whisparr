@@ -191,7 +191,7 @@ function EpisodeDetailsModalContent(props: EpisodeDetailsModalContentProps) {
             to={seriesLink}
             onPress={onModalClose}
           >
-            {translate('OpenSeries')}
+            {translate('OpenSite')}
           </Button>
         )}
 

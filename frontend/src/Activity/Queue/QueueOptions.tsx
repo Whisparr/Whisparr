@@ -29,13 +29,13 @@ function QueueOptions() {
   return (
     <Fragment>
       <FormGroup>
-        <FormLabel>{translate('ShowUnknownSeriesItems')}</FormLabel>
+        <FormLabel>{translate('ShowUnknownSiteItems')}</FormLabel>
 
         <FormInputGroup
           type={inputTypes.CHECK}
           name="includeUnknownSeriesItems"
           value={includeUnknownSeriesItems}
-          helpText={translate('ShowUnknownSeriesItemsHelpText')}
+          helpText={translate('ShowUnknownSiteItemsHelpText')}
           onChange={handleOptionChange}
         />
       </FormGroup>

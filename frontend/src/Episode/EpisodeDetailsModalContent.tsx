@@ -105,7 +105,7 @@ function EpisodeDetailsModalContent(props: EpisodeDetailsModalContentProps) {
     };
   }, [dispatch]);
 
-  const seriesLink = `/series/${titleSlug}`;
+  const seriesLink = `/site/${titleSlug}`;
 
   return (
     <ModalContent onModalClose={onModalClose}>

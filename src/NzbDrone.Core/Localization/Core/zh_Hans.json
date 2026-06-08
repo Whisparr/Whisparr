@@ -1,6 +1,5 @@
 {
     "About": "关于",
-    "AcceptConfirmationModal": "中文",
     "Activity": "111",
     "Add": "添加",
     "AddAutoTagError": "添加",
@@ -31,5 +30,14 @@
     "YesCancel": "确认 ,取消",
     "Yesterday": "昨天",
     "YouCanAlsoSearch": "你可以通过TMDB或IMDB的ID进行搜索，如:`tmdb:71663`",
-    "yymmdd": "年.月.日"
+    "yymmdd": "年.月.日",
+    "AddCustomFormatError": "添加",
+    "AddImportListExclusionError": "添加",
+    "AddListError": "添加",
+    "AddNewTmdbIdMessage": "你可以通过TMDB或IMDB的ID进行搜索，如:`tmdb:71663`",
+    "KeyboardShortcutsConfirmModal": "中文",
+    "Actions": "操作",
+    "AddCondition": "001",
+    "UnableToAddANewCustomFormatPleaseTryAgain": "添加",
+    "UnableToAddANewListExclusionPleaseTryAgain": "添加"
 }

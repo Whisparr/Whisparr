@@ -285,6 +285,7 @@ namespace NzbDrone.Core.Download
             {
                 var episodes = _episodeService.GetEpisodes(trackedDownload.RemoteEpisode.Episodes.Select(e => e.Id));
                 var files = _mediaFileService.GetFiles(episodes.Select(e => e.EpisodeFileId).Where(id => id > 0).Distinct());
+
                 // Log different error messages depending on the circumstances, but treat both as fully imported, because that's the reality.
                 // The second message shouldn't be logged in most cases, but continued reporting would indicate an ongoing issue.
 

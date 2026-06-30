@@ -6,7 +6,6 @@ using Moq;
 using NUnit.Framework;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Download;
-using NzbDrone.Core.Download.TrackedDownloads;
 using NzbDrone.Core.History;
 using NzbDrone.Core.MediaFiles.EpisodeImport.Aggregation.Aggregators;
 using NzbDrone.Core.Parser;

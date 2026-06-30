@@ -5,6 +5,7 @@ using NLog;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Download;
 using NzbDrone.Core.Download.TrackedDownloads;
+using NzbDrone.Core.History;
 using NzbDrone.Core.Parser;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.Qualities;
@@ -17,13 +18,15 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Aggregation.Aggregators
         private readonly IParsingService _parsingService;
         private readonly IEpisodeService _episodeService;
         private readonly ITrackedDownloadService _trackedDownloadService;
+        private readonly IHistoryService _historyService;
         private readonly Logger _logger;
 
-        public AggregateEpisodes(IParsingService parsingService, IEpisodeService episodeService, ITrackedDownloadService trackedDownloadService, Logger logger)
+        public AggregateEpisodes(IParsingService parsingService, IEpisodeService episodeService, ITrackedDownloadService trackedDownloadService, IHistoryService historyService, Logger logger)
         {
             _parsingService = parsingService;
             _episodeService = episodeService;
             _trackedDownloadService = trackedDownloadService;
+            _historyService = historyService;
             _logger = logger;
         }
 
@@ -101,6 +104,12 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Aggregation.Aggregators
                 if (episodes != null && episodes.Any())
                 {
                     return episodes;
+                }
+
+                var grabbedEpisodes = TryMatchByGrabHistory(localEpisode);
+                if (grabbedEpisodes != null && grabbedEpisodes.Any())
+                {
+                    return grabbedEpisodes;
                 }
 
                 return new List<Episode>();
@@ -189,6 +198,50 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Aggregation.Aggregators
             }
 
             return null;
+        }
+
+        private List<Episode> TryMatchByGrabHistory(LocalEpisode localEpisode)
+        {
+            if (localEpisode.DownloadItem?.DownloadId.IsNullOrWhiteSpace() ?? true)
+            {
+                return null;
+            }
+
+            var grabbedHistories = _historyService.FindByDownloadId(localEpisode.DownloadItem.DownloadId)
+                .Where(h => h.EventType == EpisodeHistoryEventType.Grabbed)
+                .ToList();
+
+            if (grabbedHistories.Empty())
+            {
+                return null;
+            }
+
+            var episodeIds = grabbedHistories.Select(h => h.EpisodeId).Distinct().ToList();
+            var episodes = _episodeService.GetEpisodes(episodeIds);
+
+            if (localEpisode.Series != null)
+            {
+                episodes = episodes.Where(e => e.SeriesId == localEpisode.Series.Id).ToList();
+            }
+
+            if (episodes.Empty())
+            {
+                return null;
+            }
+
+            _logger.Debug("Matched file to {0} episode(s) via grab history: {1}", episodes.Count, string.Join(", ", episodeIds));
+
+            if (localEpisode.FileEpisodeInfo == null)
+            {
+                var trackedDownload = _trackedDownloadService.Find(localEpisode.DownloadItem.DownloadId);
+
+                if (trackedDownload?.RemoteEpisode?.ParsedEpisodeInfo != null)
+                {
+                    localEpisode.FileEpisodeInfo = trackedDownload.RemoteEpisode.ParsedEpisodeInfo;
+                }
+            }
+
+            return episodes;
         }
 
         private bool PreferOtherEpisodeInfo(ParsedEpisodeInfo fileEpisodeInfo, ParsedEpisodeInfo otherEpisodeInfo)

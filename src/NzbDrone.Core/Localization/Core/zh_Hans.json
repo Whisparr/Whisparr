@@ -1,6 +1,6 @@
 {
     "About": "关于",
-    "Activity": "111",
+    "Activity": "活动",
     "Add": "添加",
     "AddAutoTagError": "添加",
     "AddConditionError": "添加",
@@ -39,5 +39,6 @@
     "Actions": "操作",
     "AddCondition": "001",
     "UnableToAddANewCustomFormatPleaseTryAgain": "添加",
-    "UnableToAddANewListExclusionPleaseTryAgain": "添加"
+    "UnableToAddANewListExclusionPleaseTryAgain": "添加",
+    "AddANewPath": "Add a new path"
 }

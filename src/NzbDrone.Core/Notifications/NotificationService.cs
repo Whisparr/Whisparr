@@ -51,14 +51,13 @@ namespace NzbDrone.Core.Notifications
                 qualityString += " Proper";
             }
 
-            var episodeNumbers = string.Concat(episodes.Select(e => e.AirDate));
+            var releaseDates = string.Join(" + ", episodes.Select(e => e.AirDate));
 
             var episodeTitles = string.Join(" + ", episodes.Select(e => e.Title));
 
-            return string.Format("{0} - {1}{2} - {3} [{4}]",
+            return string.Format("{0} - {1} - {2} [{3}]",
                                     series.Title,
-                                    episodes.First().SeasonNumber,
-                                    episodeNumbers,
+                                    releaseDates,
                                     episodeTitles,
                                     qualityString);
         }

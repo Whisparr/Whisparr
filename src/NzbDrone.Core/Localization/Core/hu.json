@@ -80,7 +80,7 @@
     "ApiKey": "API Kulcs",
     "ApiKeyValidationHealthCheckMessage": "Kérlek frissítsd az API kulcsot, ami legalább {length} karakter hosszú. Ezt megteheted a Beállításokban, vagy a config file-ban",
     "AppDataDirectory": "AppData Könyvtár",
-    "AppDataLocationHealthCheckMessage": "A frissítés nem lehetséges az alkalmazás adatok törlése nélkül",
+    "AppDataLocationHealthCheckMessage": "A frissítés nem hajtható végre, hogy elkerüljük az alkalmazás adatainak törlését a frissítés során",
     "ApplicationURL": "Alkalmazás URL",
     "ApplicationUrlHelpText": "Ennek az alkalmazásnak a külső URL-címe, beleértve a http-eket",
     "Apply": "Alkamaz",
@@ -314,7 +314,7 @@
     "DeletedReasonUpgrade": "A fájl törlésre került a frissítés importálásához",
     "DeleteEmptyFolders": "Üres Mappa Törlése",
     "DeleteFile": "Fájl Törlése",
-    "DeleteFilesHelpText": "Törölje a film fájljait és a film mappáját",
+    "DeleteFilesHelpText": "Továbbá törölje a film fájljait a tárhelyről.",
     "DeleteFormatMessageText": "Biztosan törli a(z) {0} formátumcímkét?",
     "DeleteHeader": "Törlés - {0}",
     "DeleteImportList": "Importálási lista törlése",
@@ -323,7 +323,7 @@
     "DeleteImportListMessageText": "Biztosan törli a(z) „{name}” listát?",
     "DeleteIndexer": "Indexelő törlése",
     "DeleteIndexerMessageText": "Biztosan törli a(z) \"{name}\" indexelőt?",
-    "DeleteMovieFiles": "{0} Film fájl törlése",
+    "DeleteMovieFiles": "{movieFileCount} filmfájl törlése",
     "DeleteMovieFilesHelpText": "Törölje a film fájljait és a film mappáját",
     "DeleteMovieFolder": "Film mappájának törlése",
     "DeleteMovieFolderConfirmation": "A(z) „{path}” filmmappa és annak minden tartalma törlődik.",
@@ -2138,5 +2138,10 @@
     "PackageVersionInfo": "{packageVersion} {packageAuthor}-tól/től",
     "ParseModalErrorParsing": "Hiba történt az elemzés közben, kérjük, próbálja újra.",
     "SelectLanguageModalTitle": "{modalTitle} - Nyelv kiválasztása",
-    "UpdaterLogFiles": "A frissítő naplófájljai"
+    "UpdaterLogFiles": "A frissítő naplófájljai",
+    "Active": "Aktív",
+    "AddNewPerformer": "Új előadó hozzáadása",
+    "AddNewStudio": "Új Stúdió hozzáadása",
+    "AddStudio": "Stúdió hozzáadása",
+    "AutoRenameFolders": "Mappák és fájlok automatikus átnevezése"
 }

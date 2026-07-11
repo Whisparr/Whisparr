@@ -1,5 +1,5 @@
 {
-    "About": "約",
+    "About": "このソフトウェアについて",
     "Actions": "行動",
     "Activity": "アクティビティ",
     "Add": "追加",
@@ -1220,5 +1220,6 @@
     "TableColumns": "列",
     "TableColumnsHelpText": "表示する列と表示する順序を選択します",
     "UnmonitorDeletedMovies": "削除された映画の監視を解除する",
-    "UnmonitorDeletedMoviesHelpText": "ディスクから削除された映画は、{appName}では自動的に監視されません。"
+    "UnmonitorDeletedMoviesHelpText": "ディスクから削除された映画は、{appName}では自動的に監視されません。",
+    "UseSsl": "SSLを使用する"
 }

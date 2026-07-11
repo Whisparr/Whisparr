@@ -1224,5 +1224,6 @@
     "UnmonitorDeletedMovies": "Unmonitor हटाए गए फिल्में",
     "UnmonitorDeletedMoviesHelpText": "डिस्क से हटाई गई फ़िल्में स्वचालित रूप से {appName} में अनियंत्रित हैं",
     "ShowCinemaRelease": "सिनेमा रिलीज की तारीख दिखाएँ",
-    "ExclusionTitle": "शीर्षक"
+    "ExclusionTitle": "शीर्षक",
+    "RestartWhisparr": "फिर से शुरू करें"
 }

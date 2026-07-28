@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using FluentValidation.Results;
@@ -25,7 +24,7 @@ namespace NzbDrone.Core.Download.Clients.Transmission
                             IDiskProvider diskProvider,
                             IRemotePathMappingService remotePathMappingService,
                             Logger logger)
-            : base(proxy, torrentFileInfoReader, httpClient, configService, diskProvider, remotePathMappingService, localizationService, blocklistService, logger)
+            : base(proxy, torrentFileInfoReader, httpClient, configService, diskProvider, remotePathMappingService, logger)
         {
         }
 

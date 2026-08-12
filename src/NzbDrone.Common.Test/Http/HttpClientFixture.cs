@@ -800,8 +800,13 @@ namespace NzbDrone.Common.Test.Http
             Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(culture);
             try
             {
-                // the date is bad in the below - should be 13-Jul-2026
-                var malformedCookie = @"__cfduid=d29e686a9d65800021c66faca0a29b4261436890790; expires=Mon, 13-Jul-26 16:19:50 GMT; path=/; HttpOnly";
+                // The two digit year is the malformed part: a server should send 2027, not 27. Generate the date
+                // rather than hardcoding it, otherwise the cookie eventually expires and the test starts failing
+                // on a fixed date for everyone. Format as invariant because that is what a server sends; the
+                // thread culture stays set to the test case's culture so we still cover parsing it as a client
+                // running under a non-English locale.
+                var expires = DateTime.UtcNow.AddYears(1).ToString("ddd, dd-MMM-yy HH:mm:ss 'GMT'", CultureInfo.InvariantCulture);
+                var malformedCookie = $"__cfduid=d29e686a9d65800021c66faca0a29b4261436890790; expires={expires}; path=/; HttpOnly";
                 var requestSet = new HttpRequestBuilder($"https://{_httpBinHost}/response-headers")
                     .AddQueryParam("Set-Cookie", malformedCookie)
                     .Build();

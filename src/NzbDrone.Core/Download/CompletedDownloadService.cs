@@ -114,6 +114,7 @@ namespace NzbDrone.Core.Download
                             Episodes = new List<Episode> { externalIdEpisode },
                             ParsedEpisodeInfo = new ParsedEpisodeInfo
                             {
+                                ReleaseTitle = trackedDownload.DownloadItem.Title,
                                 Quality = new QualityModel(),
                                 Languages = LanguageParser.ParseLanguages(trackedDownload.DownloadItem.Title),
                                 ExternalId = externalIdEpisode.ExternalId

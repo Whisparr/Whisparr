@@ -670,6 +670,11 @@ namespace NzbDrone.Core.Parser
 
         public static string RemoveFileExtension(string title)
         {
+            if (title.IsNullOrWhiteSpace())
+            {
+                return title;
+            }
+
             title = FileExtensionRegex.Replace(title, m =>
             {
                 var extension = m.Value.ToLower();

@@ -165,7 +165,11 @@ namespace NzbDrone.Core.Download.TrackedDownloads
                                 Series = series,
                                 Episodes = episodes,
                                 Languages = firstHistoryItem.Languages,
-                                ParsedEpisodeInfo = parsedEpisodeInfo ?? new ParsedEpisodeInfo { Quality = firstHistoryItem.Quality },
+                                ParsedEpisodeInfo = parsedEpisodeInfo ?? new ParsedEpisodeInfo
+                                {
+                                    ReleaseTitle = firstHistoryItem.SourceTitle ?? trackedDownload.DownloadItem.Title,
+                                    Quality = firstHistoryItem.Quality
+                                },
                                 ShouldOverride = true
                             };
                         }

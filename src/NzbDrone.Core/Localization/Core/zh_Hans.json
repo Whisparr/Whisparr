@@ -40,5 +40,6 @@
     "AddCondition": "001",
     "UnableToAddANewCustomFormatPleaseTryAgain": "添加",
     "UnableToAddANewListExclusionPleaseTryAgain": "添加",
-    "AddANewPath": "Add a new path"
+    "AddANewPath": "Add a new path",
+    "AddConnection": "Add Connection"
 }

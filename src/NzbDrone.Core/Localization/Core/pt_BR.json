@@ -604,7 +604,7 @@
     "EnableRss": "Habilitar RSS",
     "EnableRssHelpText": "Será usado quando o {appName} procurar periodicamente lançamentos via RSS Sync",
     "EnableSsl": "Habilitar SSL",
-    "EnableSslHelpText": " Requer a reinicialização com a execução como administrador para fazer efeito",
+    "EnableSslHelpText": " Requer a reinicialização como administrador para entrar em vigor",
     "Ended": "Terminou",
     "Error": "Erro",
     "ErrorLoadingContents": "Erro ao carregar o conteúdo",

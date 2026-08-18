@@ -1954,5 +1954,21 @@
     "RemotePathMappingCheckFilesWrongOSPath": "Отдалеченият клиент за изтегляне {downloadClientName} докладва за файлове в {path}, но това не е валиден {osName} път. Прегледайте мапирането на отдалечени пътища и настройките на клиента за изтегляне.",
     "RemotePathMappingCheckGenericPermissions": "Клиентът за изтегляне {downloadClientName} поставя изтеглянията в {path}, но {appName} не може да види тази директория. Може да се наложи да коригирате разрешенията на папката.",
     "RemotePathMappingCheckFilesLocalWrongOSPath": "Локалният клиент за изтегляне {downloadClientName} докладва за файлове в {path}, но това не е валиден {osName} път. Прегледайте настройките на вашия клиент за изтегляне.",
-    "RemotePathMappingCheckLocalFolderMissing": "Отдалеченият клиент за изтегляне {downloadClientName} поставя изтеглянията в {path}, но тази директория изглежда не съществува. Вероятно липсва или има неправилно мапиране на отдалечен път."
+    "RemotePathMappingCheckLocalFolderMissing": "Отдалеченият клиент за изтегляне {downloadClientName} поставя изтеглянията в {path}, но тази директория изглежда не съществува. Вероятно липсва или има неправилно мапиране на отдалечен път.",
+    "Active": "Активен",
+    "AddNewPerformer": "Добави нов изпълнител",
+    "AddNewScene": "Добави нова сцена",
+    "AddNewStudio": "Добави ново студио",
+    "AddPerformer": "Добави изпълнител",
+    "AddPerformers": "Добави изпълнители",
+    "AddScenes": "Добави сцени",
+    "AddStudio": "Добави студио",
+    "Aliases": "Прякори",
+    "AllPerformersHiddenDueToFilter": "Всички изпълнители са скрити поради приложения филтър.",
+    "AllScenesHiddenDueToFilter": "Всички сцени са скрити поради приложен филтър.",
+    "AllScenesInPathHaveBeenImported": "Всички сцени в {path} бяха импортирани",
+    "AutoRenameFolders": "Автоматично преименувай папки и файлове",
+    "AutoTaggingSpecificationKeyword": "Ключова/и дума/и",
+    "Both": "И двете",
+    "Clean": "Изчисти"
 }

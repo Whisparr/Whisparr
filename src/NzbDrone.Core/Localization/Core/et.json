@@ -1,1 +1,11 @@
-{}
+{
+    "About": "Teave",
+    "Actions": "Toimingud",
+    "Activity": "Tegevused",
+    "Active": "Aktiivne",
+    "Add": "Lisa",
+    "AddAutoTag": "Lisa automaatne silt",
+    "AddAutoTagError": "Uue automaatse sildi lisamine nurjus, proovi uuesti.",
+    "AddANewPath": "Lisa uus kaustatee",
+    "AddCondition": "Lisa tingimus"
+}

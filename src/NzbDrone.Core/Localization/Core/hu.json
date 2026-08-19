@@ -239,7 +239,7 @@
     "ConnectSettings": "Csatlakozási beállítások",
     "ConnectSettingsSummary": "Értesítések, csatlakozások médiaszerverekhez",
     "ConsideredAvailable": "Feltételezhetően elérhető",
-    "CopyToClipboard": "Másolja a vágólapra",
+    "CopyToClipboard": "Másolás a vágólapra",
     "CopyUsingHardlinksHelpTextWarning": "Esetenként az írásvédettség megakadályozza a Seedelt fájlok átnevezését. Ideiglenesen állítsd le a Seedelést, hogy a {appName} át tudja nevezni a fájlokat.",
     "CopyUsingHardlinksMovieHelpText": "A merev hivatkozások lehetővé teszik a(z) {appName} számára, hogy import torrenteket importáljon a film mappájába anélkül, hogy további lemezterületet foglalna el, vagy a fájl teljes tartalmát lemásolná. A merev hivatkozások csak akkor működnek, ha a forrás és a cél ugyanazon a köteten található",
     "CouldNotConnectSignalR": "Nem sikerült csatlakozni a SignalR-hez, a felhasználói felület nem frissül",

@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using FluentValidation;
 using NzbDrone.Common.Extensions;
@@ -28,11 +29,25 @@ namespace NzbDrone.Core.Download.Clients.Transmission
     {
         private static readonly TransmissionSettingsValidator Validator = new TransmissionSettingsValidator();
 
+        // This constructor is used when creating a new instance, such as the user adding a new Transmission client.
         public TransmissionSettings()
         {
             Host = "localhost";
             Port = 9091;
             UrlBase = "/transmission/";
+            TvCategory = "tv-whisparr";
+        }
+
+        // TODO: Remove this in v4
+        // This constructor is used when deserializing from JSON, it will set the
+        // category to the deserialized value, defaulting to null.
+        [JsonConstructor]
+        public TransmissionSettings(string tvCategory = null)
+        {
+            Host = "localhost";
+            Port = 9091;
+            UrlBase = "/transmission/";
+            TvCategory = tvCategory;
         }
 
         [FieldDefinition(0, Label = "Host", Type = FieldType.Textbox)]
@@ -56,16 +71,19 @@ namespace NzbDrone.Core.Download.Clients.Transmission
         [FieldDefinition(6, Label = "Category", Type = FieldType.Textbox, HelpText = "Adding a category specific to Whisparr avoids conflicts with unrelated non-Whisparr downloads. Using a category is optional, but strongly recommended.. Creates a [category] subdirectory in the output directory.")]
         public string TvCategory { get; set; }
 
-        [FieldDefinition(7, Label = "Directory", Type = FieldType.Textbox, Advanced = true, HelpText = "Optional location to put downloads in, leave blank to use the default Transmission location")]
+        [FieldDefinition(7, Label = "PostImportCategory", Type = FieldType.Textbox, Advanced = true, HelpText = "DownloadClientSettingsPostImportCategoryHelpText")]
+        public string TvImportedCategory { get; set; }
+
+        [FieldDefinition(8, Label = "Directory", Type = FieldType.Textbox, Advanced = true, HelpText = "DownloadClientTransmissionSettingsDirectoryHelpText")]
         public string TvDirectory { get; set; }
 
-        [FieldDefinition(8, Label = "Recent Priority", Type = FieldType.Select, SelectOptions = typeof(TransmissionPriority), HelpText = "Priority to use when grabbing episodes that aired within the last 14 days")]
+        [FieldDefinition(9, Label = "Recent Priority", Type = FieldType.Select, SelectOptions = typeof(TransmissionPriority), HelpText = "Priority to use when grabbing episodes that aired within the last 14 days")]
         public int RecentTvPriority { get; set; }
 
-        [FieldDefinition(9, Label = "Older Priority", Type = FieldType.Select, SelectOptions = typeof(TransmissionPriority), HelpText = "Priority to use when grabbing episodes that aired over 14 days ago")]
+        [FieldDefinition(10, Label = "Older Priority", Type = FieldType.Select, SelectOptions = typeof(TransmissionPriority), HelpText = "Priority to use when grabbing episodes that aired over 14 days ago")]
         public int OlderTvPriority { get; set; }
 
-        [FieldDefinition(10, Label = "Add Paused", Type = FieldType.Checkbox)]
+        [FieldDefinition(11, Label = "Add Paused", Type = FieldType.Checkbox)]
         public bool AddPaused { get; set; }
 
         public NzbDroneValidationResult Validate()

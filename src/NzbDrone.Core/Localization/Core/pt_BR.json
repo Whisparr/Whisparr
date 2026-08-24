@@ -518,7 +518,7 @@
     "DownloadClientUnavailable": "O cliente de download está indisponível",
     "DownloadClientUTorrentTorrentStateError": "uTorrent está relatando um erro",
     "DownloadClientValidationApiKeyIncorrect": "Chave de API incorreta",
-    "DownloadClientValidationApiKeyRequired": "Chave de API necessária",
+    "DownloadClientValidationApiKeyRequired": "Chave da API Necessária",
     "DownloadClientValidationAuthenticationFailure": "Falha de Autenticação",
     "DownloadClientValidationAuthenticationFailureDetail": "Por favor verifique seu nome de usuário e senha. Verifique também se o host que executa {appName} não está impedido de acessar {clientName} pelas limitações da WhiteList na configuração de {clientName}.",
     "DownloadClientValidationCategoryMissing": "A categoria não existe",

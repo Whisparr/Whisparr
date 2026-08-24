@@ -1,7 +1,6 @@
-﻿using FluentValidation;
+using FluentValidation;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Annotations;
-using NzbDrone.Core.ThingiProvider;
 using NzbDrone.Core.Validation;
 
 namespace NzbDrone.Core.Download.Clients.Sabnzbd
@@ -32,9 +31,9 @@ namespace NzbDrone.Core.Download.Clients.Sabnzbd
         }
     }
 
-    public class SabnzbdSettings : IProviderConfig
+    public class SabnzbdSettings : DownloadClientSettingsBase<SabnzbdSettings>
     {
-        private static readonly SabnzbdSettingsValidator Validator = new SabnzbdSettingsValidator();
+        private static readonly SabnzbdSettingsValidator Validator = new ();
 
         public SabnzbdSettings()
         {
@@ -75,7 +74,7 @@ namespace NzbDrone.Core.Download.Clients.Sabnzbd
         [FieldDefinition(9, Label = "Older Priority", Type = FieldType.Select, SelectOptions = typeof(SabnzbdPriority), HelpText = "Priority to use when grabbing episodes that aired over 14 days ago")]
         public int OlderTvPriority { get; set; }
 
-        public NzbDroneValidationResult Validate()
+        public override NzbDroneValidationResult Validate()
         {
             return new NzbDroneValidationResult(Validator.Validate(this));
         }

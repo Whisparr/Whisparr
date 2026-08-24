@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Equ;
 using FluentValidation;
 using NzbDrone.Core.Annotations;
 using NzbDrone.Core.Validation;
@@ -17,9 +18,9 @@ namespace NzbDrone.Core.Indexers.FileList
         }
     }
 
-    public class FileListSettings : ITorrentIndexerSettings
+    public class FileListSettings : PropertywiseEquatable<FileListSettings>, ITorrentIndexerSettings
     {
-        private static readonly FileListSettingsValidator Validator = new FileListSettingsValidator();
+        private static readonly FileListSettingsValidator Validator = new ();
 
         public FileListSettings()
         {
@@ -48,7 +49,7 @@ namespace NzbDrone.Core.Indexers.FileList
         public int MinimumSeeders { get; set; }
 
         [FieldDefinition(7)]
-        public SeedCriteriaSettings SeedCriteria { get; set; } = new SeedCriteriaSettings();
+        public SeedCriteriaSettings SeedCriteria { get; set; } = new ();
 
         public NzbDroneValidationResult Validate()
         {

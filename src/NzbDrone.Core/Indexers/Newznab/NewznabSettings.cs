@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Equ;
 using FluentValidation;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Annotations;
@@ -40,7 +41,7 @@ namespace NzbDrone.Core.Indexers.Newznab
             return settings.BaseUrl != null && ApiKeyWhiteList.Any(c => settings.BaseUrl.ToLowerInvariant().Contains(c));
         }
 
-        private static readonly Regex AdditionalParametersRegex = new Regex(@"(&.+?\=.+?)+", RegexOptions.Compiled);
+        private static readonly Regex AdditionalParametersRegex = new (@"(&.+?\=.+?)+", RegexOptions.Compiled);
 
         public NewznabSettingsValidator()
         {
@@ -60,9 +61,9 @@ namespace NzbDrone.Core.Indexers.Newznab
         }
     }
 
-    public class NewznabSettings : IIndexerSettings
+    public class NewznabSettings : PropertywiseEquatable<NewznabSettings>, IIndexerSettings
     {
-        private static readonly NewznabSettingsValidator Validator = new NewznabSettingsValidator();
+        private static readonly NewznabSettingsValidator Validator = new ();
 
         public NewznabSettings()
         {

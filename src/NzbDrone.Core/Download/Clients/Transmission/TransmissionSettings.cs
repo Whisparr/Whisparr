@@ -3,7 +3,6 @@ using System.Text.RegularExpressions;
 using FluentValidation;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Annotations;
-using NzbDrone.Core.ThingiProvider;
 using NzbDrone.Core.Validation;
 
 namespace NzbDrone.Core.Download.Clients.Transmission
@@ -25,9 +24,9 @@ namespace NzbDrone.Core.Download.Clients.Transmission
         }
     }
 
-    public class TransmissionSettings : IProviderConfig
+    public class TransmissionSettings : DownloadClientSettingsBase<TransmissionSettings>
     {
-        private static readonly TransmissionSettingsValidator Validator = new TransmissionSettingsValidator();
+        private static readonly TransmissionSettingsValidator Validator = new ();
 
         // This constructor is used when creating a new instance, such as the user adding a new Transmission client.
         public TransmissionSettings()
@@ -86,7 +85,7 @@ namespace NzbDrone.Core.Download.Clients.Transmission
         [FieldDefinition(11, Label = "Add Paused", Type = FieldType.Checkbox)]
         public bool AddPaused { get; set; }
 
-        public NzbDroneValidationResult Validate()
+        public override NzbDroneValidationResult Validate()
         {
             return new NzbDroneValidationResult(Validator.Validate(this));
         }

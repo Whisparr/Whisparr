@@ -1,3 +1,4 @@
+using Equ;
 using FluentValidation;
 using NzbDrone.Core.Annotations;
 using NzbDrone.Core.Validation;
@@ -15,7 +16,7 @@ namespace NzbDrone.Core.Indexers.HDBits
         }
     }
 
-    public class HDBitsSettings : ITorrentIndexerSettings
+    public class HDBitsSettings : PropertywiseEquatable<HDBitsSettings>, ITorrentIndexerSettings
     {
         private static readonly HDBitsSettingsValidator Validator = new HDBitsSettingsValidator();
 

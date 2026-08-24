@@ -7,13 +7,12 @@ using NzbDrone.Core.Localization;
 using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.Tags;
-using NzbDrone.Core.ThingiProvider;
 using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Notifications.Webhook
 {
     public abstract class WebhookBase<TSettings> : NotificationBase<TSettings>
-        where TSettings : IProviderConfig, new()
+        where TSettings : NotificationSettingsBase<TSettings>, new()
     {
         private readonly IConfigFileProvider _configFileProvider;
         private readonly IConfigService _configService;

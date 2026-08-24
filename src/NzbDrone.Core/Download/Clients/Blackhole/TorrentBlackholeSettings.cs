@@ -2,7 +2,6 @@ using System.ComponentModel;
 using FluentValidation;
 using Newtonsoft.Json;
 using NzbDrone.Core.Annotations;
-using NzbDrone.Core.ThingiProvider;
 using NzbDrone.Core.Validation;
 using NzbDrone.Core.Validation.Paths;
 
@@ -18,7 +17,7 @@ namespace NzbDrone.Core.Download.Clients.Blackhole
         }
     }
 
-    public class TorrentBlackholeSettings : IProviderConfig
+    public class TorrentBlackholeSettings : DownloadClientSettingsBase<TorrentBlackholeSettings>
     {
         public TorrentBlackholeSettings()
         {
@@ -26,7 +25,7 @@ namespace NzbDrone.Core.Download.Clients.Blackhole
             ReadOnly = true;
         }
 
-        private static readonly TorrentBlackholeSettingsValidator Validator = new TorrentBlackholeSettingsValidator();
+        private static readonly TorrentBlackholeSettingsValidator Validator = new ();
 
         [FieldDefinition(0, Label = "Torrent Folder", Type = FieldType.Path, HelpText = "Folder in which Whisparr will store the .torrent file")]
         public string TorrentFolder { get; set; }
@@ -47,7 +46,7 @@ namespace NzbDrone.Core.Download.Clients.Blackhole
         [FieldDefinition(4, Label = "Read Only", Type = FieldType.Checkbox, HelpText = "Instead of moving files this will instruct Whisparr to Copy or Hardlink (depending on settings/system configuration)")]
         public bool ReadOnly { get; set; }
 
-        public NzbDroneValidationResult Validate()
+        public override NzbDroneValidationResult Validate()
         {
             return new NzbDroneValidationResult(Validator.Validate(this));
         }

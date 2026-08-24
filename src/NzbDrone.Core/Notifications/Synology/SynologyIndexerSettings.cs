@@ -1,6 +1,5 @@
 using FluentValidation;
 using NzbDrone.Core.Annotations;
-using NzbDrone.Core.ThingiProvider;
 using NzbDrone.Core.Validation;
 
 namespace NzbDrone.Core.Notifications.Synology
@@ -9,9 +8,9 @@ namespace NzbDrone.Core.Notifications.Synology
     {
     }
 
-    public class SynologyIndexerSettings : IProviderConfig
+    public class SynologyIndexerSettings : NotificationSettingsBase<SynologyIndexerSettings>
     {
-        private static readonly SynologyIndexerSettingsValidator Validator = new SynologyIndexerSettingsValidator();
+        private static readonly SynologyIndexerSettingsValidator Validator = new ();
 
         public SynologyIndexerSettings()
         {
@@ -21,7 +20,7 @@ namespace NzbDrone.Core.Notifications.Synology
         [FieldDefinition(0, Label = "Update Library", Type = FieldType.Checkbox, HelpText = "Call synoindex on localhost to update a library file")]
         public bool UpdateLibrary { get; set; }
 
-        public NzbDroneValidationResult Validate()
+        public override NzbDroneValidationResult Validate()
         {
             return new NzbDroneValidationResult(Validator.Validate(this));
         }

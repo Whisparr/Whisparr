@@ -3,7 +3,7 @@
 outputFolder=_output
 artifactsFolder=_artifacts
 uiFolder="$outputFolder/UI"
-framework="${FRAMEWORK:=net6.0}"
+framework="${FRAMEWORK:=net8.0}"
 
 # Sanitize BRANCH for safe file names (replace / with _)
 safeBranch="${BRANCH//\//_}"

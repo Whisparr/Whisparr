@@ -40,8 +40,11 @@ if [ "$PLATFORM" = "Windows" ]; then
 elif [ "$PLATFORM" = "Linux" ] || [ "$PLATFORM" = "Mac" ] ; then
   mkdir -p ~/.config/Whisparr
   WHERE="$WHERE&Category!=WINDOWS"
+elif  [ "$PLATFORM" = "Mac" ]; then
+  mkdir -p ~/Library/Application\ Support/Sonarr
+  WHERE="$WHERE&Category!=WINDOWS"
 else
-  echo "Platform must be provided as first arguement: Windows, Linux or Mac"
+  echo "Platform must be provided as first argument: Windows, Linux or Mac"
   exit 1
 fi
 

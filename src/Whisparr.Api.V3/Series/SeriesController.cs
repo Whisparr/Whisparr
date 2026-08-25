@@ -185,9 +185,8 @@ namespace Whisparr.Api.V3.Series
                 {
                     SeriesId = series.Id,
                     SourcePath = sourcePath,
-                    DestinationPath = destinationPath,
-                    Trigger = CommandTrigger.Manual
-                });
+                    DestinationPath = destinationPath
+                }, trigger: CommandTrigger.Manual);
             }
 
             var model = seriesResource.ToModel(series);

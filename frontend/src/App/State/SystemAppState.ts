@@ -5,6 +5,7 @@ import Task from 'typings/Task';
 import Update from 'typings/Update';
 import AppSectionState, { AppSectionItemState } from './AppSectionState';
 import BackupAppState from './BackupAppState';
+import LogsAppState from './LogsAppState';
 
 export type DiskSpaceAppState = AppSectionState<DiskSpace>;
 export type HealthAppState = AppSectionState<Health>;
@@ -17,6 +18,7 @@ interface SystemAppState {
   diskSpace: DiskSpaceAppState;
   health: HealthAppState;
   updates: UpdateAppState;
+  logs: LogsAppState;
   status: SystemStatusAppState;
   tasks: TaskAppState;
 }

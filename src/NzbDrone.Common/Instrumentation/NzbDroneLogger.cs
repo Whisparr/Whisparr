@@ -12,7 +12,10 @@ namespace NzbDrone.Common.Instrumentation
 {
     public static class NzbDroneLogger
     {
-        private const string FILE_LOG_LAYOUT = @"${date:format=yyyy-MM-dd HH\:mm\:ss.f}|${level}|${logger}|${message}${onexception:inner=${newline}${newline}[v${assembly-version}] ${exception:format=ToString}${newline}}";
+        private const string FileLogLayout = @"${date:format=yyyy-MM-dd HH\:mm\:ss.f}|${level}|${logger}|${message}${onexception:inner=${newline}${newline}[v${assembly-version}] ${exception:format=ToString}${newline}}";
+        private const string ConsoleFormat = "[${level}] ${logger}: ${message} ${onexception:inner=${newline}${newline}[v${assembly-version}] ${exception:format=ToString}${newline}}";
+
+        private static readonly CleansingConsoleLogLayout CleansingConsoleLayout = new (ConsoleFormat);
 
         private static bool _isConfigured;
 
@@ -120,7 +123,7 @@ namespace NzbDrone.Common.Instrumentation
             var coloredConsoleTarget = new ColoredConsoleTarget();
 
             coloredConsoleTarget.Name = "consoleLogger";
-            coloredConsoleTarget.Layout = "[${level}] ${logger}: ${message} ${onexception:inner=${newline}${newline}[v${assembly-version}] ${exception:format=ToString}${newline}}";
+            coloredConsoleTarget.Layout = CleansingConsoleLayout;
 
             var loggingRule = new LoggingRule("*", level, coloredConsoleTarget);
 
@@ -137,7 +140,7 @@ namespace NzbDrone.Common.Instrumentation
 
         private static void RegisterAppFile(IAppFolderInfo appFolderInfo, string name, string fileName, int maxArchiveFiles, LogLevel minLogLevel)
         {
-            var fileTarget = new NzbDroneFileTarget();
+            var fileTarget = new CleansingFileTarget();
 
             fileTarget.Name = name;
             fileTarget.FileName = Path.Combine(appFolderInfo.GetLogFolder(), fileName);
@@ -150,7 +153,7 @@ namespace NzbDrone.Common.Instrumentation
             fileTarget.MaxArchiveFiles = maxArchiveFiles;
             fileTarget.EnableFileDelete = true;
             fileTarget.ArchiveNumbering = ArchiveNumberingMode.Rolling;
-            fileTarget.Layout = FILE_LOG_LAYOUT;
+            fileTarget.Layout = FileLogLayout;
 
             var loggingRule = new LoggingRule("*", minLogLevel, fileTarget);
 
@@ -169,7 +172,7 @@ namespace NzbDrone.Common.Instrumentation
             fileTarget.ConcurrentWrites = false;
             fileTarget.ConcurrentWriteAttemptDelay = 50;
             fileTarget.ConcurrentWriteAttempts = 100;
-            fileTarget.Layout = FILE_LOG_LAYOUT;
+            fileTarget.Layout = FileLogLayout;
 
             var loggingRule = new LoggingRule("*", LogLevel.Trace, fileTarget);
 
@@ -202,6 +205,11 @@ namespace NzbDrone.Common.Instrumentation
         public static Logger GetLogger(object obj)
         {
             return GetLogger(obj.GetType());
+        }
+
+        public static void ConfigureConsoleLayout(ColoredConsoleTarget target)
+        {
+            target.Layout = CleansingConsoleLayout;
         }
     }
 }

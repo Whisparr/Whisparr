@@ -32,7 +32,6 @@ function EditIndexerModalContent(props) {
     onSavePress,
     onTestPress,
     onDeleteIndexerPress,
-    onAdvancedSettingsPress,
     ...otherProps
   } = props;
 
@@ -221,8 +220,6 @@ function EditIndexerModalContent(props) {
         }
 
         <AdvancedSettingsButton
-          advancedSettings={advancedSettings}
-          onAdvancedSettingsPress={onAdvancedSettingsPress}
           showLabel={false}
         />
 
@@ -265,7 +262,6 @@ EditIndexerModalContent.propTypes = {
   onModalClose: PropTypes.func.isRequired,
   onSavePress: PropTypes.func.isRequired,
   onTestPress: PropTypes.func.isRequired,
-  onAdvancedSettingsPress: PropTypes.func.isRequired,
   onDeleteIndexerPress: PropTypes.func
 };
 

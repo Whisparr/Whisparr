@@ -2,7 +2,12 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import { saveDownloadClient, setDownloadClientFieldValue, setDownloadClientValue, testDownloadClient } from 'Store/Actions/settingsActions';
+import {
+  saveDownloadClient,
+  setDownloadClientFieldValue,
+  setDownloadClientValue,
+  testDownloadClient
+} from 'Store/Actions/settingsActions';
 import createProviderSettingsSelector from 'Store/Selectors/createProviderSettingsSelector';
 import EditDownloadClientModalContent from './EditDownloadClientModalContent';
 

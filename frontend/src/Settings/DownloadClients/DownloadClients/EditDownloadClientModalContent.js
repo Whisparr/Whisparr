@@ -15,6 +15,7 @@ import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { inputTypes, kinds, sizes } from 'Helpers/Props';
+import AdvancedSettingsButton from 'Settings/AdvancedSettingsButton';
 import translate from 'Utilities/String/translate';
 import styles from './EditDownloadClientModalContent.css';
 
@@ -198,6 +199,10 @@ class EditDownloadClientModalContent extends Component {
                 {translate('Delete')}
               </Button>
           }
+
+          <AdvancedSettingsButton
+            showLabel={false}
+          />
 
           <SpinnerErrorButton
             isSpinning={isTesting}

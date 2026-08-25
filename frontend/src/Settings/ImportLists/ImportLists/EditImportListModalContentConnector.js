@@ -2,7 +2,12 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import { saveImportList, setImportListFieldValue, setImportListValue, testImportList } from 'Store/Actions/settingsActions';
+import {
+  saveImportList,
+  setImportListFieldValue,
+  setImportListValue,
+  testImportList
+} from 'Store/Actions/settingsActions';
 import createProviderSettingsSelector from 'Store/Selectors/createProviderSettingsSelector';
 import EditImportListModalContent from './EditImportListModalContent';
 

@@ -3,10 +3,13 @@ import AppSectionState, {
   AppSectionItemSchemaState,
   AppSectionItemState,
   AppSectionSaveState,
+  AppSectionSchemaState,
   PagedAppSectionState,
 } from 'App/State/AppSectionState';
 import Language from 'Language/Language';
+import AutoTagging, { AutoTaggingSpecification } from 'typings/AutoTagging';
 import CustomFormat from 'typings/CustomFormat';
+import DelayProfile from 'typings/DelayProfile';
 import DownloadClient from 'typings/DownloadClient';
 import ImportList from 'typings/ImportList';
 import ImportListExclusion from 'typings/ImportListExclusion';
@@ -18,7 +21,24 @@ import QualityProfile from 'typings/QualityProfile';
 import General from 'typings/Settings/General';
 import NamingConfig from 'typings/Settings/NamingConfig';
 import NamingExample from 'typings/Settings/NamingExample';
+import ReleaseProfile from 'typings/Settings/ReleaseProfile';
 import UiSettings from 'typings/Settings/UiSettings';
+
+export interface AutoTaggingAppState
+  extends AppSectionState<AutoTagging>,
+    AppSectionDeleteState,
+    AppSectionSaveState {}
+
+export interface AutoTaggingSpecificationAppState
+  extends AppSectionState<AutoTaggingSpecification>,
+    AppSectionDeleteState,
+    AppSectionSaveState,
+    AppSectionSchemaState<AutoTaggingSpecification> {}
+
+export interface DelayProfileAppState
+  extends AppSectionState<DelayProfile>,
+    AppSectionDeleteState,
+    AppSectionSaveState {}
 
 export interface DownloadClientAppState
   extends AppSectionState<DownloadClient>,
@@ -30,6 +50,12 @@ export interface DownloadClientAppState
 export interface GeneralAppState
   extends AppSectionItemState<General>,
     AppSectionSaveState {}
+
+export interface ReleaseProfilesAppState
+  extends AppSectionState<ReleaseProfile>,
+    AppSectionSaveState {
+  pendingChanges: Partial<ReleaseProfile>;
+}
 
 export interface NamingAppState
   extends AppSectionItemState<NamingConfig>,
@@ -79,11 +105,15 @@ export type LanguageSettingsAppState = AppSectionState<Language>;
 export type UiSettingsAppState = AppSectionItemState<UiSettings>;
 
 interface SettingsAppState {
+  releaseProfiles: ReleaseProfilesAppState;
   naming: NamingAppState;
   namingExamples: NamingExamplesAppState;
   advancedSettings: boolean;
   safeForWorkMode: boolean;
+  autoTaggings: AutoTaggingAppState;
+  autoTaggingSpecifications: AutoTaggingSpecificationAppState;
   customFormats: CustomFormatAppState;
+  delayProfiles: DelayProfileAppState;
   downloadClients: DownloadClientAppState;
   general: GeneralAppState;
   importListExclusions: ImportListExclusionsSettingsAppState;

@@ -68,14 +68,14 @@ function mapFailure(failure: ValidationFailure): Failure {
   };
 }
 
-interface ModelBaseSetting {
+export interface ModelBaseSetting {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [id: string]: any;
 }
 
 function selectSettings<T extends ModelBaseSetting>(
   item: T,
-  pendingChanges: Partial<ModelBaseSetting>,
+  pendingChanges?: Partial<ModelBaseSetting>,
   saveError?: Error
 ) {
   const { errors, warnings } = getValidationFailures(saveError);
@@ -93,18 +93,19 @@ function selectSettings<T extends ModelBaseSetting>(
 
       // Return a flattened value
       if (key === 'implementationName') {
-        // acc.implementationName = item[key];
+        acc.implementationName = item[key];
 
         return acc;
       }
 
       const setting: Pending<T> = {
         value: item[key],
+        pending: false,
         errors: getFailures(errors, key),
         warnings: getFailures(warnings, key),
       };
 
-      if (pendingChanges.hasOwnProperty(key)) {
+      if (pendingChanges?.hasOwnProperty(key)) {
         setting.previousValue = setting.value;
         setting.value = pendingChanges[key];
         setting.pending = true;
@@ -125,7 +126,7 @@ function selectSettings<T extends ModelBaseSetting>(
           f
         );
 
-        if ('fields' in pendingChanges) {
+        if (pendingChanges && 'fields' in pendingChanges) {
           const pendingChangesFields = pendingChanges.fields as Record<
             string,
             // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -392,5 +392,46 @@ namespace NzbDrone.Common.Test
             PosixOnly();
             path.AsOsAgnostic().IsPathValid(PathValidationType.CurrentOs).Should().BeFalse();
         }
+
+        [TestCase(@"C:\", @"C:\")]
+        [TestCase(@"C:\\", @"C:\")]
+        [TestCase(@"C:\Test", @"C:\Test")]
+        [TestCase(@"C:\Test\", @"C:\Test")]
+        [TestCase(@"\\server\share", @"\\server\share")]
+        [TestCase(@"\\server\share\", @"\\server\share")]
+        public void windows_path_should_return_clean_path(string path, string cleanPath)
+        {
+            path.GetCleanPath().Should().Be(cleanPath);
+        }
+
+        [TestCase("/", "/")]
+        [TestCase("//", "/")]
+        [TestCase("/test", "/test")]
+        [TestCase("/test/", "/test")]
+        [TestCase("/test//", "/test")]
+        public void unix_path_should_return_clean_path(string path, string cleanPath)
+        {
+            path.GetCleanPath().Should().Be(cleanPath);
+        }
+
+        [TestCase(@"C:\Test\", @"C:\Test\Series Title", "Series Title")]
+        [TestCase(@"C:\Test\", @"C:\Test\Collection\Series Title", @"Collection\Series Title")]
+        [TestCase(@"C:\Test\mydir\", @"C:\Test\mydir\Collection\Series Title", @"Collection\Series Title")]
+        [TestCase(@"\\server\share", @"\\server\share\Series Title", "Series Title")]
+        [TestCase(@"\\server\share\mydir\", @"\\server\share\mydir\/Collection\Series Title", @"Collection\Series Title")]
+        public void windows_path_should_return_relative_path(string parentPath, string childPath, string relativePath)
+        {
+            parentPath.GetRelativePath(childPath).Should().Be(relativePath);
+        }
+
+        [TestCase(@"/test", "/test/Series Title", "Series Title")]
+        [TestCase(@"/test/", "/test/Collection/Series Title", "Collection/Series Title")]
+        [TestCase(@"/test/mydir", "/test/mydir/Series Title", "Series Title")]
+        [TestCase(@"/test/mydir/", "/test/mydir/Collection/Series Title", "Collection/Series Title")]
+        [TestCase(@"/test/mydir/", @"/test/mydir/\Collection/Series Title", "Collection/Series Title")]
+        public void unix_path_should_return_relative_path(string parentPath, string childPath, string relativePath)
+        {
+            parentPath.GetRelativePath(childPath).Should().Be(relativePath);
+        }
     }
 }

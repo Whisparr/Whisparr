@@ -68,26 +68,34 @@ namespace Whisparr.Api.V3.Series
             _commandQueueManager = commandQueueManager;
             _rootFolderService = rootFolderService;
 
-            Http.Validation.RuleBuilderExtensions.ValidId(SharedValidator.RuleFor(s => s.QualityProfileId));
-
-            SharedValidator.RuleFor(s => s.Path)
-                .Cascade(CascadeMode.Stop)
+            SharedValidator.RuleFor(s => s.Path).Cascade(CascadeMode.Stop)
                 .IsValidPath()
-                           .SetValidator(rootFolderValidator)
-                           .SetValidator(mappedNetworkDriveValidator)
-                           .SetValidator(seriesPathValidator)
-                           .SetValidator(seriesAncestorValidator)
-                           .SetValidator(systemFolderValidator)
-                           .When(s => !s.Path.IsNullOrWhiteSpace());
+                .SetValidator(rootFolderValidator)
+                .SetValidator(mappedNetworkDriveValidator)
+                .SetValidator(seriesPathValidator)
+                .SetValidator(seriesAncestorValidator)
+                .SetValidator(systemFolderValidator)
+                .When(s => s.Path.IsNotNullOrWhiteSpace());
 
-            SharedValidator.RuleFor(s => s.QualityProfileId).SetValidator(profileExistsValidator);
+            PostValidator.RuleFor(s => s.Path).Cascade(CascadeMode.Stop)
+                .NotEmpty()
+                .IsValidPath()
+                .When(s => s.RootFolderPath.IsNullOrWhiteSpace());
+            PostValidator.RuleFor(s => s.RootFolderPath).Cascade(CascadeMode.Stop)
+                .NotEmpty()
+                .IsValidPath()
+                .SetValidator(rootFolderExistsValidator)
+                .SetValidator(seriesFolderAsRootFolderValidator)
+                .When(s => s.Path.IsNullOrWhiteSpace());
 
-            PostValidator.RuleFor(s => s.Path).IsValidPath().When(s => s.RootFolderPath.IsNullOrWhiteSpace());
-            PostValidator.RuleFor(s => s.RootFolderPath)
-                         .IsValidPath()
-                         .SetValidator(rootFolderExistsValidator)
-                         .SetValidator(seriesFolderAsRootFolderValidator)
-                         .When(s => s.Path.IsNullOrWhiteSpace());
+            PutValidator.RuleFor(s => s.Path).Cascade(CascadeMode.Stop)
+                .NotEmpty()
+                .IsValidPath();
+
+            SharedValidator.RuleFor(s => s.QualityProfileId).Cascade(CascadeMode.Stop)
+                .ValidId()
+                .SetValidator(profileExistsValidator);
+
             PostValidator.RuleFor(s => s.Title).NotEmpty();
             PostValidator.RuleFor(s => s.TvdbId).GreaterThan(0).SetValidator(seriesExistsValidator);
         }
@@ -177,9 +185,8 @@ namespace Whisparr.Api.V3.Series
                 {
                     SeriesId = series.Id,
                     SourcePath = sourcePath,
-                    DestinationPath = destinationPath,
-                    Trigger = CommandTrigger.Manual
-                });
+                    DestinationPath = destinationPath
+                }, trigger: CommandTrigger.Manual);
             }
 
             var model = seriesResource.ToModel(series);

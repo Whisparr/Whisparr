@@ -133,12 +133,12 @@ namespace NzbDrone.Core.Notifications.Telegram
 
                 if (linkType == MetadataLinkType.Tvdb && series.TvdbId > 0)
                 {
-                    links.Add(new TelegramLink("TVDb", $"http://www.thetvdb.com/?tab=series&id={series.TvdbId}"));
+                    links.Add(new TelegramLink(MetadataLinkType.Tvdb, "TVDb", $"http://www.thetvdb.com/?tab=series&id={series.TvdbId}"));
                 }
 
                 if (linkType == MetadataLinkType.Trakt && series.TvdbId > 0)
                 {
-                    links.Add(new TelegramLink("Trakt", $"http://trakt.tv/search/tvdb/{series.TvdbId}?id_type=show"));
+                    links.Add(new TelegramLink(MetadataLinkType.Trakt, "Trakt", $"http://trakt.tv/search/tvdb/{series.TvdbId}?id_type=show"));
                 }
             }
 

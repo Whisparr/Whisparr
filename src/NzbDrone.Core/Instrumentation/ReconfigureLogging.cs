@@ -93,7 +93,7 @@ namespace NzbDrone.Core.Instrumentation
 
         private void SetLogRotation()
         {
-            foreach (var target in LogManager.Configuration.AllTargets.OfType<NzbDroneFileTarget>())
+            foreach (var target in LogManager.Configuration.AllTargets.OfType<CleansingFileTarget>())
             {
                 target.MaxArchiveFiles = _configFileProvider.LogRotate;
             }

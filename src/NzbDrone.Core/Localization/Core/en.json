@@ -991,6 +991,8 @@
   "NoTagsHaveBeenAddedYet": "No tags have been added yet",
   "NotificationsTelegramSettingsIncludeInstanceName": "Include Instance Name in Title",
   "NotificationsTelegramSettingsIncludeInstanceNameHelpText": "Optionally include Instance name in notification",
+  "NotificationsTelegramSettingsLinkPreview": "Link Preview",
+  "NotificationsTelegramSettingsLinkPreviewHelpText": "Determines which link will be previewed in the Telegram notification. Choose 'None' to disable",
   "NoUpdatesAreAvailable": "No updates are available",
   "None": "None",
   "NotSeasonPack": "Not Season Pack",

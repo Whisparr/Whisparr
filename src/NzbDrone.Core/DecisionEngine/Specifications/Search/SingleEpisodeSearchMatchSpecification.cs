@@ -7,7 +7,7 @@ using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.DecisionEngine.Specifications.Search
 {
-    public class SingleEpisodeSearchMatchSpecification : IDecisionEngineSpecification
+    public class SingleEpisodeSearchMatchSpecification : IDownloadDecisionEngineSpecification
     {
         private readonly Logger _logger;
 
@@ -19,11 +19,11 @@ namespace NzbDrone.Core.DecisionEngine.Specifications.Search
         public SpecificationPriority Priority => SpecificationPriority.Default;
         public RejectionType Type => RejectionType.Permanent;
 
-        public Decision IsSatisfiedBy(RemoteEpisode remoteEpisode, SearchCriteriaBase searchCriteria)
+        public DownloadSpecDecision IsSatisfiedBy(RemoteEpisode remoteEpisode, SearchCriteriaBase searchCriteria)
         {
             if (searchCriteria == null)
             {
-                return Decision.Accept();
+                return DownloadSpecDecision.Accept();
             }
 
             var singleEpisodeSpec = searchCriteria as SingleEpisodeSearchCriteria;
@@ -32,10 +32,10 @@ namespace NzbDrone.Core.DecisionEngine.Specifications.Search
                 return IsSatisfiedBy(remoteEpisode, singleEpisodeSpec);
             }
 
-            return Decision.Accept();
+            return DownloadSpecDecision.Accept();
         }
 
-        private Decision IsSatisfiedBy(RemoteEpisode remoteEpisode, SingleEpisodeSearchCriteria singleEpisodeSpec)
+        private DownloadSpecDecision IsSatisfiedBy(RemoteEpisode remoteEpisode, SingleEpisodeSearchCriteria singleEpisodeSpec)
         {
             // Check if we matched by external ID
             if (!singleEpisodeSpec.ExternalId.IsNullOrWhiteSpace() &&
@@ -43,13 +43,13 @@ namespace NzbDrone.Core.DecisionEngine.Specifications.Search
                 string.Equals(singleEpisodeSpec.ExternalId, remoteEpisode.ParsedEpisodeInfo.ExternalId, StringComparison.OrdinalIgnoreCase))
             {
                 _logger.Debug("Release matched by external ID: {0}", singleEpisodeSpec.ExternalId);
-                return Decision.Accept();
+                return DownloadSpecDecision.Accept();
             }
 
             if (!singleEpisodeSpec.ReleaseDate.HasValue)
             {
                 _logger.Debug("Searched episode has no release date, skipping.");
-                return Decision.Reject("No Episode Release Date");
+                return DownloadSpecDecision.Reject(DownloadRejectionReason.NoEpisodeReleaseDate, "No Episode Release Date");
             }
 
             // TODO match by performer or release date
@@ -58,7 +58,7 @@ namespace NzbDrone.Core.DecisionEngine.Specifications.Search
             if (releaseDate != remoteEpisode.ParsedEpisodeInfo.AirDate)
             {
                 _logger.Debug("Release date does not match searched episode, skipping.");
-                return Decision.Reject("Wrong Episode");
+                return DownloadSpecDecision.Reject(DownloadRejectionReason.WrongEpisode, "Wrong Episode");
             }
 
             // if (!remoteEpisode.ParsedEpisodeInfo.EpisodeNumbers.Any())
@@ -73,7 +73,7 @@ namespace NzbDrone.Core.DecisionEngine.Specifications.Search
             //     return Decision.Reject("Wrong episode");
             // }
 
-            return Decision.Accept();
+            return DownloadSpecDecision.Accept();
         }
     }
 }

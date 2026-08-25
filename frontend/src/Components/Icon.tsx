@@ -8,14 +8,17 @@ import { kinds } from 'Helpers/Props';
 import { Kind } from 'Helpers/Props/kinds';
 import styles from './Icon.css';
 
+export type IconName = FontAwesomeIconProps['icon'];
+export type IconKind = Extract<Kind, keyof typeof styles>;
+
 export interface IconProps
   extends Omit<
     FontAwesomeIconProps,
     'icon' | 'spin' | 'name' | 'title' | 'size'
   > {
   containerClassName?: ComponentProps<'span'>['className'];
-  name: FontAwesomeIconProps['icon'];
-  kind?: Extract<Kind, keyof typeof styles>;
+  name: IconName;
+  kind?: IconKind;
   size?: number;
   isSpinning?: FontAwesomeIconProps['spin'];
   title?: string | (() => string) | null;

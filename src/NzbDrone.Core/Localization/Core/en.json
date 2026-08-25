@@ -987,6 +987,8 @@
   "NoSitesFound": "No sites found for this performer",
   "NoSitesFoundImportOrAdd": "No sites found, to get started you'll want to import your existing sites or add a new site.",
   "NoTagsHaveBeenAddedYet": "No tags have been added yet",
+  "NotificationsTelegramSettingsIncludeInstanceName": "Include Instance Name in Title",
+  "NotificationsTelegramSettingsIncludeInstanceNameHelpText": "Optionally include Instance name in notification",
   "NoUpdatesAreAvailable": "No updates are available",
   "None": "None",
   "NotSeasonPack": "Not Season Pack",

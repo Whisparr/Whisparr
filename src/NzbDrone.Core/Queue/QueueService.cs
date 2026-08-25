@@ -67,9 +67,9 @@ namespace NzbDrone.Core.Queue
                 Quality = trackedDownload.RemoteEpisode?.ParsedEpisodeInfo.Quality ?? new QualityModel(Quality.Unknown),
                 Title = Parser.Parser.RemoveFileExtension(trackedDownload.DownloadItem.Title),
                 Size = trackedDownload.DownloadItem.TotalSize,
-                Sizeleft = trackedDownload.DownloadItem.RemainingSize,
-                Timeleft = trackedDownload.DownloadItem.RemainingTime,
-                Status = trackedDownload.DownloadItem.Status.ToString(),
+                SizeLeft = trackedDownload.DownloadItem.RemainingSize,
+                TimeLeft = trackedDownload.DownloadItem.RemainingTime,
+                Status = Enum.TryParse(trackedDownload.DownloadItem.Status.ToString(), out QueueStatus outValue) ? outValue : QueueStatus.Unknown,
                 TrackedDownloadStatus = trackedDownload.Status,
                 TrackedDownloadState = trackedDownload.State,
                 StatusMessages = trackedDownload.StatusMessages.ToList(),
@@ -86,9 +86,9 @@ namespace NzbDrone.Core.Queue
 
             queue.Id = HashConverter.GetHashInt31($"trackedDownload-{trackedDownload.DownloadClient}-{trackedDownload.DownloadItem.DownloadId}-ep{episode?.Id ?? 0}");
 
-            if (queue.Timeleft.HasValue)
+            if (queue.TimeLeft.HasValue)
             {
-                queue.EstimatedCompletionTime = DateTime.UtcNow.Add(queue.Timeleft.Value);
+                queue.EstimatedCompletionTime = DateTime.UtcNow.Add(queue.TimeLeft.Value);
             }
 
             return queue;

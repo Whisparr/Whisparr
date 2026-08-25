@@ -136,7 +136,7 @@ namespace Whisparr.Api.V3.Queue
 
         [HttpGet]
         [Produces("application/json")]
-        public PagingResource<QueueResource> GetQueue([FromQuery] PagingRequestResource paging, bool includeUnknownSeriesItems = false, bool includeSeries = false, bool includeEpisode = false, [FromQuery] int[] seriesIds = null, DownloadProtocol? protocol = null, [FromQuery] int[] languages = null, int? quality = null)
+        public PagingResource<QueueResource> GetQueue([FromQuery] PagingRequestResource paging, bool includeUnknownSeriesItems = false, bool includeSeries = false, bool includeEpisode = false, [FromQuery] int[] seriesIds = null, DownloadProtocol? protocol = null, [FromQuery] int[] languages = null, [FromQuery] int[] quality = null, [FromQuery] QueueStatus[] status = null)
         {
             var pagingResource = new PagingResource<QueueResource>(paging);
             var pagingSpec = pagingResource.MapToPagingSpec<QueueResource, NzbDrone.Core.Queue.Queue>(
@@ -165,10 +165,10 @@ namespace Whisparr.Api.V3.Queue
                 "timeleft",
                 SortDirection.Ascending);
 
-            return pagingSpec.ApplyToPage((spec) => GetQueue(spec, seriesIds?.ToHashSet(), protocol, languages?.ToHashSet(), quality, includeUnknownSeriesItems), (q) => MapToResource(q, includeSeries, includeEpisode));
+            return pagingSpec.ApplyToPage((spec) => GetQueue(spec, seriesIds?.ToHashSet(), protocol, languages?.ToHashSet(), quality?.ToHashSet(), status?.ToHashSet(), includeUnknownSeriesItems), (q) => MapToResource(q, includeSeries, includeEpisode));
         }
 
-        private PagingSpec<NzbDrone.Core.Queue.Queue> GetQueue(PagingSpec<NzbDrone.Core.Queue.Queue> pagingSpec, HashSet<int> seriesIds, DownloadProtocol? protocol, HashSet<int> languages, int? quality, bool includeUnknownSeriesItems)
+        private PagingSpec<NzbDrone.Core.Queue.Queue> GetQueue(PagingSpec<NzbDrone.Core.Queue.Queue> pagingSpec, HashSet<int> seriesIds, DownloadProtocol? protocol, HashSet<int> languages, HashSet<int> quality, HashSet<QueueStatus> status, bool includeUnknownSeriesItems)
         {
             var ascending = pagingSpec.SortDirection == SortDirection.Ascending;
             var orderByFunc = GetOrderByFunc(pagingSpec);
@@ -179,6 +179,9 @@ namespace Whisparr.Api.V3.Queue
 
             var hasSeriesIdFilter = seriesIds.Any();
             var hasLanguageFilter = languages.Any();
+            var hasQualityFilter = quality.Any();
+            var hasStatusFilter = status.Any();
+
             var fullQueue = filteredQueue.Concat(pending).Where(q =>
             {
                 var include = true;
@@ -198,9 +201,14 @@ namespace Whisparr.Api.V3.Queue
                     include &= q.Languages.Any(l => languages.Contains(l.Id));
                 }
 
-                if (include && quality.HasValue)
+                if (include && hasQualityFilter)
                 {
-                    include &= q.Quality.Quality.Id == quality.Value;
+                    include &= quality.Contains(q.Quality.Quality.Id);
+                }
+
+                if (include && hasStatusFilter)
+                {
+                    include &= status.Contains(q.Status);
                 }
 
                 return include;
@@ -211,8 +219,8 @@ namespace Whisparr.Api.V3.Queue
             if (pagingSpec.SortKey == "timeleft")
             {
                 ordered = ascending
-                    ? fullQueue.OrderBy(q => q.Timeleft, new TimeleftComparer())
-                    : fullQueue.OrderByDescending(q => q.Timeleft, new TimeleftComparer());
+                    ? fullQueue.OrderBy(q => q.TimeLeft, new TimeleftComparer())
+                    : fullQueue.OrderByDescending(q => q.TimeLeft, new TimeleftComparer());
             }
             else if (pagingSpec.SortKey == "estimatedCompletionTime")
             {
@@ -263,7 +271,7 @@ namespace Whisparr.Api.V3.Queue
                 ordered = ascending ? fullQueue.OrderBy(orderByFunc) : fullQueue.OrderByDescending(orderByFunc);
             }
 
-            ordered = ordered.ThenByDescending(q => q.Size == 0 ? 0 : 100 - (q.Sizeleft / q.Size * 100));
+            ordered = ordered.ThenByDescending(q => q.Size == 0 ? 0 : 100 - (q.SizeLeft / q.Size * 100));
 
             pagingSpec.Records = ordered.Skip((pagingSpec.Page - 1) * pagingSpec.PageSize).Take(pagingSpec.PageSize).ToList();
             pagingSpec.TotalRecords = fullQueue.Count;
@@ -282,7 +290,7 @@ namespace Whisparr.Api.V3.Queue
             switch (pagingSpec.SortKey)
             {
                 case "status":
-                    return q => q.Status;
+                    return q => q.Status.ToString();
                 case "series.sortTitle":
                     return q => q.Series?.SortTitle ?? q.Title;
                 case "title":
@@ -305,9 +313,9 @@ namespace Whisparr.Api.V3.Queue
                     return q => q.Size;
                 case "progress":
                     // Avoid exploding if a download's size is 0
-                    return q => 100 - (q.Sizeleft / Math.Max(q.Size * 100, 1));
+                    return q => 100 - (q.SizeLeft / Math.Max(q.Size * 100, 1));
                 default:
-                    return q => q.Timeleft;
+                    return q => q.TimeLeft;
             }
         }
 

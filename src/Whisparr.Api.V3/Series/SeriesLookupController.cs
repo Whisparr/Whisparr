@@ -24,7 +24,7 @@ namespace Whisparr.Api.V3.Series
         }
 
         [HttpGet]
-        public object Search([FromQuery] string term)
+        public IEnumerable<SeriesResource> Search([FromQuery] string term)
         {
             var tvDbResults = _searchProxy.SearchForNewSeries(term);
             return MapToResource(tvDbResults);

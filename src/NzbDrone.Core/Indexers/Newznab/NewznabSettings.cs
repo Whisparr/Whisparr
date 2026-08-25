@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -71,6 +72,7 @@ namespace NzbDrone.Core.Indexers.Newznab
             Categories = new[] { 6000, 6010, 6020, 6030, 6040, 6045, 6050, 6070, 6080, 6090 };
             DateSearchFormat = DateSearchFormat.YearMonthDay;
             SeriesNameSource = SeriesNameSource.Site;
+            FailDownloads = Array.Empty<int>();
         }
 
         [FieldDefinition(0, Label = "URL")]
@@ -105,6 +107,10 @@ namespace NzbDrone.Core.Indexers.Newznab
 
         // Field 12 is used by TorznabSettings MinimumSeeders
         // Field 13 is used by TorznabSettings SeedCriteria
+
+        [FieldDefinition(14, Type = FieldType.Select, SelectOptions = typeof(FailDownloads), Label = "Fail Downloads", HelpText = "Mark downloads containing these file types as failed", Advanced = true)]
+        public IEnumerable<int> FailDownloads { get; set; }
+
         // If you need to add another field here, update TorznabSettings as well and this comment
 
         public virtual NzbDroneValidationResult Validate()

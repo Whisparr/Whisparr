@@ -193,11 +193,21 @@ namespace NzbDrone.Core.Download.TrackedDownloads
                         }
                     }
 
-                    if (trackedDownload.RemoteEpisode != null &&
-                        Enum.TryParse(grabbedEvent?.Data?.GetValueOrDefault("indexerFlags"), true, out IndexerFlags flags))
+                    if (trackedDownload.RemoteEpisode != null)
                     {
                         trackedDownload.RemoteEpisode.Release ??= new ReleaseInfo();
-                        trackedDownload.RemoteEpisode.Release.IndexerFlags = flags;
+                        trackedDownload.RemoteEpisode.Release.Indexer = trackedDownload.Indexer;
+                        trackedDownload.RemoteEpisode.Release.Title = trackedDownload.RemoteEpisode.ParsedEpisodeInfo?.ReleaseTitle;
+
+                        if (Enum.TryParse(grabbedEvent?.Data?.GetValueOrDefault("indexerFlags"), true, out IndexerFlags flags))
+                        {
+                            trackedDownload.RemoteEpisode.Release.IndexerFlags = flags;
+                        }
+
+                        if (downloadHistory != null)
+                        {
+                            trackedDownload.RemoteEpisode.Release.IndexerId = downloadHistory.IndexerId;
+                        }
                     }
                 }
 

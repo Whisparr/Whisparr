@@ -797,9 +797,7 @@ namespace NzbDrone.Core.Parser
                 // Swap day and month if month is bigger than 12 (scene fail)
                 if (airmonth > 12)
                 {
-                    var tempDay = airday;
-                    airday = airmonth;
-                    airmonth = tempDay;
+                    (airday, airmonth) = (airmonth, airday);
                 }
 
                 DateTime airDate;

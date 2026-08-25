@@ -1,3 +1,4 @@
+using Equ;
 using FluentValidation;
 using NzbDrone.Core.Annotations;
 using NzbDrone.Core.Validation;
@@ -46,7 +47,7 @@ namespace NzbDrone.Core.Indexers
         }
     }
 
-    public class SeedCriteriaSettings
+    public class SeedCriteriaSettings : PropertywiseEquatable<SeedCriteriaSettings>
     {
         [FieldDefinition(0, Type = FieldType.Number, Label = "Seed Ratio", HelpText = "The ratio a torrent should reach before stopping, empty is download client's default. Ratio should be at least 1.0 and follow the indexers rules")]
         public double? SeedRatio { get; set; }

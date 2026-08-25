@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
 using NzbDrone.Core.Annotations;
-using NzbDrone.Core.ThingiProvider;
 using NzbDrone.Core.Validation;
 
 namespace NzbDrone.Core.Notifications.Telegram
@@ -29,9 +28,9 @@ namespace NzbDrone.Core.Notifications.Telegram
         }
     }
 
-    public class TelegramSettings : IProviderConfig
+    public class TelegramSettings : NotificationSettingsBase<TelegramSettings>
     {
-        private static readonly TelegramSettingsValidator Validator = new TelegramSettingsValidator();
+        private static readonly TelegramSettingsValidator Validator = new ();
 
         public TelegramSettings()
         {
@@ -56,7 +55,7 @@ namespace NzbDrone.Core.Notifications.Telegram
         [FieldDefinition(5, Label = "NotificationsTelegramSettingsMetadataLinks", Type = FieldType.Select, SelectOptions = typeof(MetadataLinkType), HelpText = "NotificationsTelegramSettingsMetadataLinksHelpText")]
         public IEnumerable<int> MetadataLinks { get; set; }
 
-        public NzbDroneValidationResult Validate()
+        public override NzbDroneValidationResult Validate()
         {
             return new NzbDroneValidationResult(Validator.Validate(this));
         }

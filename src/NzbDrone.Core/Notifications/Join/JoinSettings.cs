@@ -1,6 +1,5 @@
 using FluentValidation;
 using NzbDrone.Core.Annotations;
-using NzbDrone.Core.ThingiProvider;
 using NzbDrone.Core.Validation;
 
 namespace NzbDrone.Core.Notifications.Join
@@ -14,14 +13,14 @@ namespace NzbDrone.Core.Notifications.Join
         }
     }
 
-    public class JoinSettings : IProviderConfig
+    public class JoinSettings : NotificationSettingsBase<JoinSettings>
     {
+        private static readonly JoinSettingsValidator Validator = new JoinSettingsValidator();
+
         public JoinSettings()
         {
             Priority = (int)JoinPriority.Normal;
         }
-
-        private static readonly JoinSettingsValidator Validator = new JoinSettingsValidator();
 
         [FieldDefinition(0, Label = "API Key", HelpText = "The API Key from your Join account settings (click Join API button).", HelpLink = "https://joinjoaomgcd.appspot.com/")]
         public string ApiKey { get; set; }
@@ -35,7 +34,7 @@ namespace NzbDrone.Core.Notifications.Join
         [FieldDefinition(3, Label = "Notification Priority", Type = FieldType.Select, SelectOptions = typeof(JoinPriority))]
         public int Priority { get; set; }
 
-        public NzbDroneValidationResult Validate()
+        public override NzbDroneValidationResult Validate()
         {
             return new NzbDroneValidationResult(Validator.Validate(this));
         }

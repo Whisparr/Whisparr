@@ -1,6 +1,5 @@
 using FluentValidation;
 using NzbDrone.Core.Annotations;
-using NzbDrone.Core.ThingiProvider;
 using NzbDrone.Core.Validation;
 
 namespace NzbDrone.Core.Notifications.Signal
@@ -16,7 +15,7 @@ namespace NzbDrone.Core.Notifications.Signal
         }
     }
 
-    public class SignalSettings : IProviderConfig
+    public class SignalSettings : NotificationSettingsBase<SignalSettings>
     {
         private static readonly SignalSettingsValidator Validator = new ();
 
@@ -41,7 +40,7 @@ namespace NzbDrone.Core.Notifications.Signal
         [FieldDefinition(6, Label = "Password", Type = FieldType.Password, Privacy = PrivacyLevel.Password, HelpText = "Password used to authenticate requests toward signal-api")]
         public string AuthPassword { get; set; }
 
-        public NzbDroneValidationResult Validate()
+        public override NzbDroneValidationResult Validate()
         {
             return new NzbDroneValidationResult(Validator.Validate(this));
         }

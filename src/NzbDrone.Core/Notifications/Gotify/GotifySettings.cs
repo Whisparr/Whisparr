@@ -4,7 +4,6 @@ using System.Linq;
 using FluentValidation;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Annotations;
-using NzbDrone.Core.ThingiProvider;
 using NzbDrone.Core.Validation;
 
 namespace NzbDrone.Core.Notifications.Gotify
@@ -42,9 +41,9 @@ namespace NzbDrone.Core.Notifications.Gotify
         }
     }
 
-    public class GotifySettings : IProviderConfig
+    public class GotifySettings : NotificationSettingsBase<GotifySettings>
     {
-        private static readonly GotifySettingsValidator Validator = new GotifySettingsValidator();
+        private static readonly GotifySettingsValidator Validator = new ();
 
         public GotifySettings()
         {
@@ -71,7 +70,7 @@ namespace NzbDrone.Core.Notifications.Gotify
         [FieldDefinition(5, Label = "NotificationsGotifySettingsPreferredMetadataLink", Type = FieldType.Select, SelectOptions = typeof(MetadataLinkType), HelpText = "NotificationsGotifySettingsPreferredMetadataLinkHelpText")]
         public int PreferredMetadataLink { get; set; }
 
-        public NzbDroneValidationResult Validate()
+        public override NzbDroneValidationResult Validate()
         {
             return new NzbDroneValidationResult(Validator.Validate(this));
         }

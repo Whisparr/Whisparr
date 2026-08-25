@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using FluentValidation;
 using NzbDrone.Core.Annotations;
-using NzbDrone.Core.ThingiProvider;
 using NzbDrone.Core.Validation;
 
 namespace NzbDrone.Core.Notifications.Mailgun
@@ -16,9 +15,9 @@ namespace NzbDrone.Core.Notifications.Mailgun
         }
     }
 
-    public class MailgunSettings : IProviderConfig
+    public class MailgunSettings : NotificationSettingsBase<MailgunSettings>
     {
-      private static readonly  MailGunSettingsValidator Validator = new MailGunSettingsValidator();
+      private static readonly  MailGunSettingsValidator Validator = new ();
 
       public MailgunSettings()
       {
@@ -40,7 +39,7 @@ namespace NzbDrone.Core.Notifications.Mailgun
       [FieldDefinition(4, Label = "Recipient Address(es)", Type = FieldType.Tag)]
       public IEnumerable<string> Recipients { get; set; }
 
-      public NzbDroneValidationResult Validate()
+      public override NzbDroneValidationResult Validate()
       {
           return new NzbDroneValidationResult(Validator.Validate(this));
       }

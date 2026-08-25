@@ -2,7 +2,6 @@ using FluentValidation;
 using Newtonsoft.Json;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Annotations;
-using NzbDrone.Core.ThingiProvider;
 using NzbDrone.Core.Validation;
 
 namespace NzbDrone.Core.Notifications.Stash
@@ -22,7 +21,7 @@ namespace NzbDrone.Core.Notifications.Stash
         }
     }
 
-    public class StashSettings : IProviderConfig
+    public class StashSettings : NotificationSettingsBase<StashSettings>
     {
         private static readonly StashSettingsValidator Validator = new StashSettingsValidator();
 
@@ -78,7 +77,7 @@ namespace NzbDrone.Core.Notifications.Stash
 
         public bool IsValid => !string.IsNullOrWhiteSpace(Host) && Port > 0;
 
-        public NzbDroneValidationResult Validate()
+        public override NzbDroneValidationResult Validate()
         {
             return new NzbDroneValidationResult(Validator.Validate(this));
         }

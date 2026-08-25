@@ -15,6 +15,7 @@ namespace Whisparr.Api.V3.Notifications
         public bool OnEpisodeFileDelete { get; set; }
         public bool OnEpisodeFileDeleteForUpgrade { get; set; }
         public bool OnHealthIssue { get; set; }
+        public bool IncludeHealthWarnings { get; set; }
         public bool OnHealthRestored { get; set; }
         public bool OnApplicationUpdate { get; set; }
         public bool OnManualInteractionRequired { get; set; }
@@ -31,7 +32,6 @@ namespace Whisparr.Api.V3.Notifications
         public bool SupportsOnHealthRestored { get; set; }
         public bool SupportsOnApplicationUpdate { get; set; }
         public bool SupportsOnManualInteractionRequired { get; set; }
-        public bool IncludeHealthWarnings { get; set; }
         public string TestCommand { get; set; }
     }
 
@@ -56,6 +56,7 @@ namespace Whisparr.Api.V3.Notifications
             resource.OnEpisodeFileDelete = definition.OnEpisodeFileDelete;
             resource.OnEpisodeFileDeleteForUpgrade = definition.OnEpisodeFileDeleteForUpgrade;
             resource.OnHealthIssue = definition.OnHealthIssue;
+            resource.IncludeHealthWarnings = definition.IncludeHealthWarnings;
             resource.OnHealthRestored = definition.OnHealthRestored;
             resource.OnApplicationUpdate = definition.OnApplicationUpdate;
             resource.OnManualInteractionRequired = definition.OnManualInteractionRequired;
@@ -70,7 +71,6 @@ namespace Whisparr.Api.V3.Notifications
             resource.SupportsOnEpisodeFileDeleteForUpgrade = definition.SupportsOnEpisodeFileDeleteForUpgrade;
             resource.SupportsOnHealthIssue = definition.SupportsOnHealthIssue;
             resource.SupportsOnHealthRestored = definition.SupportsOnHealthRestored;
-            resource.IncludeHealthWarnings = definition.IncludeHealthWarnings;
             resource.SupportsOnApplicationUpdate = definition.SupportsOnApplicationUpdate;
             resource.SupportsOnManualInteractionRequired = definition.SupportsOnManualInteractionRequired;
 
@@ -96,6 +96,7 @@ namespace Whisparr.Api.V3.Notifications
             definition.OnEpisodeFileDelete = resource.OnEpisodeFileDelete;
             definition.OnEpisodeFileDeleteForUpgrade = resource.OnEpisodeFileDeleteForUpgrade;
             definition.OnHealthIssue = resource.OnHealthIssue;
+            definition.IncludeHealthWarnings = resource.IncludeHealthWarnings;
             definition.OnHealthRestored = resource.OnHealthRestored;
             definition.OnApplicationUpdate = resource.OnApplicationUpdate;
             definition.OnManualInteractionRequired = resource.OnManualInteractionRequired;
@@ -110,7 +111,6 @@ namespace Whisparr.Api.V3.Notifications
             definition.SupportsOnEpisodeFileDeleteForUpgrade = resource.SupportsOnEpisodeFileDeleteForUpgrade;
             definition.SupportsOnHealthIssue = resource.SupportsOnHealthIssue;
             definition.SupportsOnHealthRestored = resource.SupportsOnHealthRestored;
-            definition.IncludeHealthWarnings = resource.IncludeHealthWarnings;
             definition.SupportsOnApplicationUpdate = resource.SupportsOnApplicationUpdate;
             definition.SupportsOnManualInteractionRequired = resource.SupportsOnManualInteractionRequired;
 

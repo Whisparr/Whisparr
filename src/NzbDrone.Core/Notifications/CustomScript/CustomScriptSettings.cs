@@ -1,6 +1,5 @@
-﻿using FluentValidation;
+using FluentValidation;
 using NzbDrone.Core.Annotations;
-using NzbDrone.Core.ThingiProvider;
 using NzbDrone.Core.Validation;
 using NzbDrone.Core.Validation.Paths;
 
@@ -16,9 +15,9 @@ namespace NzbDrone.Core.Notifications.CustomScript
         }
     }
 
-    public class CustomScriptSettings : IProviderConfig
+    public class CustomScriptSettings : NotificationSettingsBase<CustomScriptSettings>
     {
-        private static readonly CustomScriptSettingsValidator Validator = new CustomScriptSettingsValidator();
+        private static readonly CustomScriptSettingsValidator Validator = new ();
 
         [FieldDefinition(0, Label = "Path", Type = FieldType.FilePath)]
         public string Path { get; set; }
@@ -26,7 +25,7 @@ namespace NzbDrone.Core.Notifications.CustomScript
         [FieldDefinition(1, Label = "Arguments", HelpText = "Arguments to pass to the script", Hidden = HiddenType.HiddenIfNotSet)]
         public string Arguments { get; set; }
 
-        public NzbDroneValidationResult Validate()
+        public override NzbDroneValidationResult Validate()
         {
             return new NzbDroneValidationResult(Validator.Validate(this));
         }

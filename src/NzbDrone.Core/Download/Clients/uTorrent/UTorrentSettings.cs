@@ -1,7 +1,6 @@
 using FluentValidation;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Annotations;
-using NzbDrone.Core.ThingiProvider;
 using NzbDrone.Core.Validation;
 
 namespace NzbDrone.Core.Download.Clients.UTorrent
@@ -17,9 +16,9 @@ namespace NzbDrone.Core.Download.Clients.UTorrent
         }
     }
 
-    public class UTorrentSettings : IProviderConfig
+    public class UTorrentSettings : DownloadClientSettingsBase<UTorrentSettings>
     {
-        private static readonly UTorrentSettingsValidator Validator = new UTorrentSettingsValidator();
+        private static readonly UTorrentSettingsValidator Validator = new ();
 
         public UTorrentSettings()
         {
@@ -61,7 +60,7 @@ namespace NzbDrone.Core.Download.Clients.UTorrent
         [FieldDefinition(10, Label = "Initial State", Type = FieldType.Select, SelectOptions = typeof(UTorrentState), HelpText = "Initial state for torrents added to uTorrent")]
         public int IntialState { get; set; }
 
-        public NzbDroneValidationResult Validate()
+        public override NzbDroneValidationResult Validate()
         {
             return new NzbDroneValidationResult(Validator.Validate(this));
         }

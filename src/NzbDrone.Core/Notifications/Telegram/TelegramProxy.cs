@@ -8,6 +8,7 @@ using NLog;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
 using NzbDrone.Common.Serializer;
+using NzbDrone.Core.Configuration;
 
 namespace NzbDrone.Core.Notifications.Telegram
 {
@@ -22,11 +23,13 @@ namespace NzbDrone.Core.Notifications.Telegram
         private const string URL = "https://api.telegram.org";
 
         private readonly IHttpClient _httpClient;
+        private readonly IConfigFileProvider _configFileProvider;
         private readonly Logger _logger;
 
-        public TelegramProxy(IHttpClient httpClient, Logger logger)
+        public TelegramProxy(IHttpClient httpClient, IConfigFileProvider configFileProvider, Logger logger)
         {
             _httpClient = httpClient;
+            _configFileProvider = configFileProvider;
             _logger = logger;
         }
 
@@ -67,7 +70,10 @@ namespace NzbDrone.Core.Notifications.Telegram
                         new TelegramLink("Whisparr", "https://whisparr.com")
                     };
 
-                SendNotification(settings.IncludeAppNameInTitle ? brandedTitle : title, body, links, settings);
+                var testMessageTitle = settings.IncludeAppNameInTitle ? brandedTitle : title;
+                testMessageTitle = settings.IncludeInstanceNameInTitle ? $"{testMessageTitle} - {_configFileProvider.InstanceName}" : testMessageTitle;
+
+                SendNotification(testMessageTitle, body, links, settings);
             }
             catch (Exception ex)
             {

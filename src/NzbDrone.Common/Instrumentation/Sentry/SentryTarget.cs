@@ -107,6 +107,9 @@ namespace NzbDrone.Common.Instrumentation.Sentry
                                       o.BeforeSend = x => SentryCleanser.CleanseEvent(x);
                                       o.BeforeBreadcrumb = x => SentryCleanser.CleanseBreadcrumb(x);
                                       o.Environment = BuildInfo.Branch;
+
+                                      // Crash free run statistics (sends a ping for healthy and for crashes sessions)
+                                      o.AutoSessionTracking = false;
                                   });
 
             InitializeScope();

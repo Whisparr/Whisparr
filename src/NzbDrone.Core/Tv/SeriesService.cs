@@ -245,6 +245,7 @@ namespace NzbDrone.Core.Tv
 
             _seriesRepository.UpdateMany(series);
             _logger.Debug("{0} series updated", series.Count);
+            _eventAggregator.PublishEvent(new SeriesBulkEditedEvent(series));
 
             return series;
         }
@@ -291,6 +292,8 @@ namespace NzbDrone.Core.Tv
 
                 return true;
             }
+
+            _logger.Debug("Tags not updated for '{0}'", series.Title);
 
             return false;
         }

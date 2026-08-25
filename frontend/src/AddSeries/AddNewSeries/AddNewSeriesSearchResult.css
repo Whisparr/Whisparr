@@ -71,6 +71,16 @@
   height: 55px;
 }
 
+.originalLanguageName,
+.network,
+.genres {
+  margin-left: 8px;
+}
+
+.genres {
+  pointer-events: all;
+}
+
 .tvdbLink {
   composes: link from '~Components/Link/Link.css';
 

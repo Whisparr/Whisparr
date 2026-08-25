@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Equ;
 using FluentValidation;
 using NzbDrone.Core.Annotations;
@@ -20,6 +22,7 @@ namespace NzbDrone.Core.Indexers.Fanzub
         public FanzubSettings()
         {
             BaseUrl = "http://fanzub.com/rss/";
+            FailDownloads = Array.Empty<int>();
         }
 
         [FieldDefinition(0, Label = "Rss URL", HelpText = "Enter to URL to an Fanzub compatible RSS feed")]
@@ -27,6 +30,9 @@ namespace NzbDrone.Core.Indexers.Fanzub
 
         [FieldDefinition(1, Label = "Anime Standard Format Search", Type = FieldType.Checkbox, HelpText = "Also search for anime using the standard numbering")]
         public bool AnimeStandardFormatSearch { get; set; }
+
+        [FieldDefinition(2, Type = FieldType.Select, SelectOptions = typeof(FailDownloads), Label = "Fail Downloads", HelpText = "Mark downloads containing these file types as failed", Advanced = true)]
+        public IEnumerable<int> FailDownloads { get; set; }
 
         public NzbDroneValidationResult Validate()
         {

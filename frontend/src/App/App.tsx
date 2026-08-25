@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ConnectedRouter, ConnectedRouterProps } from 'connected-react-router';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -13,17 +14,21 @@ interface AppProps {
   history: ConnectedRouterProps['history'];
 }
 
+const queryClient = new QueryClient();
+
 function App({ store, history }: AppProps) {
   return (
     <DocumentTitle title={window.Whisparr.instanceName}>
-      <Provider store={store}>
-        <ConnectedRouter history={history}>
-          <ApplyTheme />
-          <PageConnector>
-            <AppRoutes app={App} />
-          </PageConnector>
-        </ConnectedRouter>
-      </Provider>
+      <QueryClientProvider client={queryClient}>
+        <Provider store={store}>
+          <ConnectedRouter history={history}>
+            <ApplyTheme />
+            <PageConnector>
+              <AppRoutes app={App} />
+            </PageConnector>
+          </ConnectedRouter>
+        </Provider>
+      </QueryClientProvider>
     </DocumentTitle>
   );
 }

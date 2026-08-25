@@ -358,10 +358,19 @@ module.exports = {
       ],
 
       rules: Object.assign(typescriptEslintRecommended.rules, {
-        'no-shadow': 'off',
-        // These should be enabled after cleaning things up
-        '@typescript-eslint/no-unused-vars': 'warn',
+        '@typescript-eslint/no-unused-vars': [
+          'error',
+          {
+            args: 'after-used',
+            argsIgnorePattern: '^_',
+            caughtErrorsIgnorePattern: '^_',
+            destructuredArrayIgnorePattern: '^_',
+            varsIgnorePattern: '^_',
+            ignoreRestSiblings: true
+          }
+        ],
         '@typescript-eslint/explicit-function-return-type': 'off',
+        'no-shadow': 'off',
         'react/prop-types': 'off',
         'prettier/prettier': 'error',
         'simple-import-sort/imports': [

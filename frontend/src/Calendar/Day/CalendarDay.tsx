@@ -49,14 +49,9 @@ function createCalendarEventsConnector(date: string) {
         );
       }
 
-      const groupedObject = filtered.reduce<Record<string, CalendarItem[]>>(
-        (acc, item) => {
-          const key = `${item.seriesId}-${item.seasonNumber}`;
-          (acc[key] = acc[key] ?? []).push(item);
-
-          return acc;
-        },
-        {}
+      const groupedObject = Object.groupBy(
+        filtered,
+        (item: CalendarItem) => `${item.seriesId}-${item.seasonNumber}`
       );
 
       const grouped = Object.entries(groupedObject).reduce<

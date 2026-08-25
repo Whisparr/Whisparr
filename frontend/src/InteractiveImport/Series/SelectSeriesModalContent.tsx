@@ -60,18 +60,19 @@ interface RowItemData {
   onSeriesSelect(seriesId: number): void;
 }
 
-const Row: React.FC<ListChildComponentProps<RowItemData>> = ({
-  index,
-  style,
-  data,
-}) => {
-  const { items, columns, onSeriesSelect } = data;
+function Row({ index, style, data }: ListChildComponentProps<RowItemData>) {
+  const { items, onSeriesSelect } = data;
+  const series = index >= items.length ? null : items[index];
 
-  if (index >= items.length) {
+  const handlePress = useCallback(() => {
+    if (series?.id) {
+      onSeriesSelect(series.id);
+    }
+  }, [series?.id, onSeriesSelect]);
+
+  if (series == null) {
     return null;
   }
-
-  const series = items[index];
 
   return (
     <VirtualTableRowButton
@@ -80,21 +81,18 @@ const Row: React.FC<ListChildComponentProps<RowItemData>> = ({
         justifyContent: 'space-between',
         ...style,
       }}
-      onPress={() => onSeriesSelect(series.id)}
+      onPress={handlePress}
     >
       <SelectSeriesRow
         key={series.id}
-        id={series.id}
         title={series.title}
         tvdbId={series.tvdbId}
         imdbId={series.imdbId}
         year={series.year}
-        columns={columns}
-        onSeriesSelect={onSeriesSelect}
       />
     </VirtualTableRowButton>
   );
-};
+}
 
 function SelectSeriesModalContent(props: SelectSeriesModalContentProps) {
   const { modalTitle, onSeriesSelect, onModalClose } = props;

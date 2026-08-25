@@ -1,10 +1,10 @@
 import React, { useCallback } from 'react';
 import Label from 'Components/Label';
+import SeriesTagList from 'Components/SeriesTagList';
 import TableRowCell from 'Components/Table/Cells/TableRowCell';
 import TableSelectCell from 'Components/Table/Cells/TableSelectCell';
 import Column from 'Components/Table/Column';
 import TableRow from 'Components/Table/TableRow';
-import TagListConnector from 'Components/TagListConnector';
 import { kinds } from 'Helpers/Props';
 import { SelectStateInputProps } from 'typings/props';
 import translate from 'Utilities/String/translate';
@@ -91,7 +91,7 @@ function ManageIndexersModalRow(props: ManageIndexersModalRowProps) {
       <TableRowCell className={styles.priority}>{priority}</TableRowCell>
 
       <TableRowCell className={styles.tags}>
-        <TagListConnector tags={tags} />
+        <SeriesTagList tags={tags} />
       </TableRowCell>
     </TableRow>
   );

@@ -185,7 +185,7 @@ function SeriesIndex(props: SeriesIndexProps) {
   );
 
   const onFilterSelect = useCallback(
-    (value: string) => {
+    (value: string | number) => {
       dispatch(dispatchSetFilter({ selectedFilterKey: value }));
     },
     [dispatch, dispatchSetFilter]

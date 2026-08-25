@@ -78,7 +78,6 @@ function AppRoutes() {
       <Route
         path="/jav/add/new"
         render={(routeProps) => (
-          // @ts-expect-error - dispatch props are injected by connect()
           <AddNewSeriesConnector {...routeProps} defaultSeriesType="jav" />
         )}
       />

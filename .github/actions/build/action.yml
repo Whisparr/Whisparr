@@ -99,7 +99,10 @@ runs:
         if [[ "${runtime}" == freebsd* ]]; then
           echo "FreeBSD target detected - using framework-dependent publish to avoid missing apphost"
           SELF_CONTAINED=false
-          MSBUILD_EXTRA="-p:UseAppHost=false"
+          # The FreeBSD runtime pack comes from the dotnet-bsd-crossbuild feed,
+          # which lags the SDK's own patch level. Without this the restore asks
+          # for the SDK's runtime version and fails with NU1102.
+          MSBUILD_EXTRA="-p:UseAppHost=false -p:RuntimeFrameworkVersion=${FREEBSD_RUNTIME_VERSION:-8.0.27}"
         fi
         dotnet msbuild -restore $slnFile -p:SelfContained=${SELF_CONTAINED} -p:Configuration=Release -p:Platform=$platform -p:RuntimeIdentifiers=$runtime -p:EnableWindowsTargeting=true $MSBUILD_EXTRA -t:PublishAllRids
 

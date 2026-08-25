@@ -14,7 +14,7 @@ import Column from 'Components/Table/Column';
 import TagListConnector from 'Components/TagListConnector';
 import { icons } from 'Helpers/Props';
 import DeleteSeriesModal from 'Series/Delete/DeleteSeriesModal';
-import EditSeriesModalConnector from 'Series/Edit/EditSeriesModalConnector';
+import EditSeriesModal from 'Series/Edit/EditSeriesModal';
 import createSeriesIndexItemSelector from 'Series/Index/createSeriesIndexItemSelector';
 import { Statistics } from 'Series/Series';
 import SeriesBanner from 'Series/SeriesBanner';
@@ -465,7 +465,7 @@ function SeriesIndexRow(props: SeriesIndexRowProps) {
         return null;
       })}
 
-      <EditSeriesModalConnector
+      <EditSeriesModal
         isOpen={isEditSeriesModalOpen}
         seriesId={seriesId}
         onModalClose={onEditSeriesModalClose}

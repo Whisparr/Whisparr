@@ -34,7 +34,9 @@ interface Episode extends ModelBase {
   endTime?: string;
   grabDate?: string;
   seriesTitle?: string;
+  queued?: boolean;
   series?: Series;
+  finaleType?: string;
 }
 
 export default Episode;

@@ -1,20 +1,22 @@
-import PropTypes from 'prop-types';
 import React from 'react';
+import { useSelector } from 'react-redux';
+import AppState from 'App/State/AppState';
 import { icons, kinds } from 'Helpers/Props';
+import createUISettingsSelector from 'Store/Selectors/createUISettingsSelector';
 import translate from 'Utilities/String/translate';
 import LegendIconItem from './LegendIconItem';
 import LegendItem from './LegendItem';
 import styles from './Legend.css';
 
-function Legend(props) {
+function Legend() {
+  const view = useSelector((state: AppState) => state.calendar.view);
   const {
-    view,
     showFinaleIcon,
     showSpecialIcon,
     showCutoffUnmetIcon,
     fullColorEvents,
-    colorImpairedMode
-  } = props;
+  } = useSelector((state: AppState) => state.calendar.options);
+  const { enableColorImpairedMode } = useSelector(createUISettingsSelector());
 
   const iconsToShow = [];
   const isAgendaView = view === 'agenda';
@@ -24,7 +26,8 @@ function Legend(props) {
       <LegendIconItem
         name="Finale"
         icon={icons.INFO}
-        kind={fullColorEvents ? kinds.DEFAULT : kinds.WARNING}
+        kind={kinds.WARNING}
+        fullColorEvents={fullColorEvents}
         tooltip={translate('CalendarLegendFinaleTooltip')}
       />
     );
@@ -36,7 +39,7 @@ function Legend(props) {
         name="Special"
         icon={icons.INFO}
         kind={kinds.PINK}
-        darken={fullColorEvents}
+        fullColorEvents={fullColorEvents}
         tooltip={translate('SpecialEpisode')}
       />
     );
@@ -47,7 +50,8 @@ function Legend(props) {
       <LegendIconItem
         name="Cutoff Not Met"
         icon={icons.EPISODE_FILE}
-        kind={fullColorEvents ? kinds.DEFAULT : kinds.WARNING}
+        kind={kinds.WARNING}
+        fullColorEvents={fullColorEvents}
         tooltip={translate('QualityCutoffNotMet')}
       />
     );
@@ -61,7 +65,7 @@ function Legend(props) {
           tooltip={translate('CalendarLegendUnairedTooltip')}
           isAgendaView={isAgendaView}
           fullColorEvents={fullColorEvents}
-          colorImpairedMode={colorImpairedMode}
+          colorImpairedMode={enableColorImpairedMode}
         />
 
         <LegendItem
@@ -69,7 +73,7 @@ function Legend(props) {
           tooltip={translate('CalendarLegendUnmonitoredTooltip')}
           isAgendaView={isAgendaView}
           fullColorEvents={fullColorEvents}
-          colorImpairedMode={colorImpairedMode}
+          colorImpairedMode={enableColorImpairedMode}
         />
       </div>
 
@@ -80,7 +84,7 @@ function Legend(props) {
           tooltip={translate('CalendarLegendOnAirTooltip')}
           isAgendaView={isAgendaView}
           fullColorEvents={fullColorEvents}
-          colorImpairedMode={colorImpairedMode}
+          colorImpairedMode={enableColorImpairedMode}
         />
 
         <LegendItem
@@ -88,7 +92,7 @@ function Legend(props) {
           tooltip={translate('CalendarLegendMissingTooltip')}
           isAgendaView={isAgendaView}
           fullColorEvents={fullColorEvents}
-          colorImpairedMode={colorImpairedMode}
+          colorImpairedMode={enableColorImpairedMode}
         />
       </div>
 
@@ -98,7 +102,7 @@ function Legend(props) {
           tooltip={translate('CalendarLegendDownloadingTooltip')}
           isAgendaView={isAgendaView}
           fullColorEvents={fullColorEvents}
-          colorImpairedMode={colorImpairedMode}
+          colorImpairedMode={enableColorImpairedMode}
         />
 
         <LegendItem
@@ -106,7 +110,7 @@ function Legend(props) {
           tooltip={translate('CalendarLegendDownloadedTooltip')}
           isAgendaView={isAgendaView}
           fullColorEvents={fullColorEvents}
-          colorImpairedMode={colorImpairedMode}
+          colorImpairedMode={enableColorImpairedMode}
         />
       </div>
 
@@ -115,31 +119,22 @@ function Legend(props) {
           name="Premiere"
           icon={icons.INFO}
           kind={kinds.INFO}
-          darken={true}
+          fullColorEvents={fullColorEvents}
           tooltip={translate('CalendarLegendPremiereTooltip')}
         />
 
         {iconsToShow[0]}
       </div>
 
-      {
-        iconsToShow.length > 1 &&
-          <div>
-            {iconsToShow[1]}
-            {iconsToShow[2]}
-          </div>
-      }
+      {iconsToShow.length > 1 ? (
+        <div>
+          {iconsToShow[1]}
+          {iconsToShow[2]}
+        </div>
+      ) : null}
+      {iconsToShow.length > 3 ? <div>{iconsToShow[3]}</div> : null}
     </div>
   );
 }
-
-Legend.propTypes = {
-  view: PropTypes.string.isRequired,
-  showFinaleIcon: PropTypes.bool.isRequired,
-  showSpecialIcon: PropTypes.bool.isRequired,
-  showCutoffUnmetIcon: PropTypes.bool.isRequired,
-  fullColorEvents: PropTypes.bool.isRequired,
-  colorImpairedMode: PropTypes.bool.isRequired
-};
 
 export default Legend;

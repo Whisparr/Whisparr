@@ -1,25 +1,110 @@
 import classNames from 'classnames';
 import moment from 'moment';
 import React from 'react';
+import { useSelector } from 'react-redux';
+import { createSelector } from 'reselect';
+import AppState from 'App/State/AppState';
 import * as calendarViews from 'Calendar/calendarViews';
-import CalendarEventConnector from 'Calendar/Events/CalendarEventConnector';
-import CalendarEventGroupConnector from 'Calendar/Events/CalendarEventGroupConnector';
+import CalendarEvent from 'Calendar/Events/CalendarEvent';
+import CalendarEventGroup from 'Calendar/Events/CalendarEventGroup';
 import Series from 'Series/Series';
-import CalendarEventGroup, { CalendarEvent } from 'typings/CalendarEventGroup';
+import {
+  CalendarEvent as CalendarEventModel,
+  CalendarEventGroup as CalendarEventGroupModel,
+  CalendarItem,
+} from 'typings/Calendar';
 import styles from './CalendarDay.css';
+
+function sort(items: (CalendarEventModel | CalendarEventGroupModel)[]) {
+  return items.sort((a, b) => {
+    const aDate = a.isGroup
+      ? moment(a.events[0].releaseDate).unix()
+      : moment(a.releaseDate).unix();
+
+    const bDate = b.isGroup
+      ? moment(b.events[0].releaseDate).unix()
+      : moment(b.releaseDate).unix();
+
+    return aDate - bDate;
+  });
+}
+
+function createCalendarEventsConnector(date: string) {
+  return createSelector(
+    (state: AppState) => state.calendar.items,
+    (state: AppState) => state.calendar.options.collapseMultipleEpisodes,
+    (items, collapseMultipleEpisodes) => {
+      const momentDate = moment(date);
+
+      const filtered = items.filter((item) => {
+        return momentDate.isSame(moment(item.releaseDate), 'day');
+      });
+
+      if (!collapseMultipleEpisodes) {
+        return sort(
+          filtered.map((item) => ({
+            isGroup: false,
+            ...item,
+          }))
+        );
+      }
+
+      const groupedObject = filtered.reduce<Record<string, CalendarItem[]>>(
+        (acc, item) => {
+          const key = `${item.seriesId}-${item.seasonNumber}`;
+          (acc[key] = acc[key] ?? []).push(item);
+
+          return acc;
+        },
+        {}
+      );
+
+      const grouped = Object.entries(groupedObject).reduce<
+        (CalendarEventModel | CalendarEventGroupModel)[]
+      >((acc, [, events]) => {
+        if (!events) {
+          return acc;
+        }
+
+        if (events.length === 1) {
+          acc.push({
+            isGroup: false,
+            ...events[0],
+          });
+        } else {
+          acc.push({
+            isGroup: true,
+            seriesId: events[0].seriesId,
+            seasonNumber: events[0].seasonNumber,
+            episodeIds: events.map((event) => event.id),
+            events: events.sort(
+              (a, b) =>
+                moment(a.releaseDate).unix() - moment(b.releaseDate).unix()
+            ),
+          });
+        }
+
+        return acc;
+      }, []);
+
+      return sort(grouped);
+    }
+  );
+}
 
 interface CalendarDayProps {
   date: string;
-  time: string;
   isTodaysDate: boolean;
-  events: (CalendarEvent | CalendarEventGroup)[];
-  view: string;
-  onEventModalOpenToggle(...args: unknown[]): unknown;
+  onEventModalOpenToggle(isOpen: boolean): unknown;
 }
 
-function CalendarDay(props: CalendarDayProps) {
-  const { date, time, isTodaysDate, events, view, onEventModalOpenToggle } =
-    props;
+function CalendarDay({
+  date,
+  isTodaysDate,
+  onEventModalOpenToggle,
+}: CalendarDayProps) {
+  const { time, view } = useSelector((state: AppState) => state.calendar);
+  const events = useSelector(createCalendarEventsConnector(date));
 
   const ref = React.useRef<HTMLDivElement>(null);
 
@@ -53,7 +138,7 @@ function CalendarDay(props: CalendarDayProps) {
         {events.map((event) => {
           if (event.isGroup) {
             return (
-              <CalendarEventGroupConnector
+              <CalendarEventGroup
                 key={event.seriesId}
                 {...event}
                 onEventModalOpenToggle={onEventModalOpenToggle}
@@ -62,7 +147,7 @@ function CalendarDay(props: CalendarDayProps) {
           }
 
           return (
-            <CalendarEventConnector
+            <CalendarEvent
               key={event.id}
               {...event}
               episodeId={event.id}

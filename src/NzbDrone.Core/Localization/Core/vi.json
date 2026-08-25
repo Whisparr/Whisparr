@@ -1268,5 +1268,7 @@
     "LanguagesLoadError": "Không thể tải thẻ",
     "DownloadClientFloodSettingsStartOnAdd": "Tìm kiếm trên Thêm",
     "NotificationsPushcutSettingsNotificationName": "Chứng chỉ",
-    "UpdaterLogFiles": "Tệp nhật ký của trình cập nhật"
+    "UpdaterLogFiles": "Tệp nhật ký của trình cập nhật",
+    "AddANewPath": "Thên đường dẫn mới",
+    "Any": "bất kỳ"
 }

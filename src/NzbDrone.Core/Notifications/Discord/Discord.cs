@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using FluentValidation.Results;
 using NzbDrone.Common.Extensions;
+using NzbDrone.Core.Configuration;
 using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.MediaFiles.MediaInfo;
@@ -16,10 +17,12 @@ namespace NzbDrone.Core.Notifications.Discord
     public class Discord : NotificationBase<DiscordSettings>
     {
         private readonly IDiscordProxy _proxy;
+        private readonly IConfigFileProvider _configFileProvider;
 
-        public Discord(IDiscordProxy proxy)
+        public Discord(IDiscordProxy proxy, IConfigFileProvider configFileProvider)
         {
             _proxy = proxy;
+            _configFileProvider = configFileProvider;
         }
 
         public override string Name => "Discord";
@@ -34,7 +37,7 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 Author = new DiscordAuthor
                 {
-                    Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
+                    Name = Settings.Author.IsNullOrWhiteSpace() ? _configFileProvider.InstanceName : Settings.Author,
                     IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
                 },
                 Url = $"http://thetvdb.com/?tab=series&id={series.TvdbId}",
@@ -137,7 +140,7 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 Author = new DiscordAuthor
                 {
-                    Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
+                    Name = Settings.Author.IsNullOrWhiteSpace() ? _configFileProvider.InstanceName : Settings.Author,
                     IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
                 },
                 Url = $"http://thetvdb.com/?tab=series&id={series.TvdbId}",
@@ -251,7 +254,7 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 Author = new DiscordAuthor
                 {
-                    Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
+                    Name = Settings.Author.IsNullOrWhiteSpace() ? _configFileProvider.InstanceName : Settings.Author,
                     IconUrl = "https://raw.githubusercontent.com/Sonarr/Sonarr/develop/Logo/256.png"
                 },
                 Url = $"http://thetvdb.com/?tab=series&id={series.TvdbId}",
@@ -358,7 +361,7 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 Author = new DiscordAuthor
                 {
-                    Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
+                    Name = Settings.Author.IsNullOrWhiteSpace() ? _configFileProvider.InstanceName : Settings.Author,
                     IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
                 },
                 Url = $"https://theporndb.net/sites/{series.TvdbId}",
@@ -385,7 +388,7 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 Author = new DiscordAuthor
                 {
-                    Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
+                    Name = Settings.Author.IsNullOrWhiteSpace() ? _configFileProvider.InstanceName : Settings.Author,
                     IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
                 },
                 Url = $"https://theporndb.net/sites/{series.TvdbId}",
@@ -424,7 +427,7 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 Author = new DiscordAuthor
                 {
-                    Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
+                    Name = Settings.Author.IsNullOrWhiteSpace() ? _configFileProvider.InstanceName : Settings.Author,
                     IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
                 },
                 Url = $"https://theporndb.net/sites/{series.TvdbId}",
@@ -461,7 +464,7 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 Author = new DiscordAuthor
                 {
-                    Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
+                    Name = Settings.Author.IsNullOrWhiteSpace() ? _configFileProvider.InstanceName : Settings.Author,
                     IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
                 },
                 Title = healthCheck.Source.Name,
@@ -481,7 +484,7 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 Author = new DiscordAuthor
                 {
-                    Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
+                    Name = Settings.Author.IsNullOrWhiteSpace() ? _configFileProvider.InstanceName : Settings.Author,
                     IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
                 },
                 Title = "Health Issue Resolved: " + previousCheck.Source.Name,
@@ -501,7 +504,7 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 Author = new DiscordAuthor
                 {
-                    Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
+                    Name = Settings.Author.IsNullOrWhiteSpace() ? _configFileProvider.InstanceName : Settings.Author,
                     IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
                 },
                 Title = APPLICATION_UPDATE_TITLE,
@@ -536,7 +539,7 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 Author = new DiscordAuthor
                 {
-                    Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
+                    Name = Settings.Author.IsNullOrWhiteSpace() ? _configFileProvider.InstanceName : Settings.Author,
                     IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
                 },
                 Url = series?.TvdbId > 0 ? $"http://thetvdb.com/?tab=series&id={series.TvdbId}" : null,

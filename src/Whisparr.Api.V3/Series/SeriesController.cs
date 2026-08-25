@@ -303,7 +303,7 @@ namespace Whisparr.Api.V3.Series
         {
             foreach (var series in message.Series)
             {
-                BroadcastResourceChange(ModelAction.Deleted, series.ToResource());
+                BroadcastResourceChange(ModelAction.Deleted, GetSeriesResource(series, false));
             }
         }
 
@@ -318,7 +318,7 @@ namespace Whisparr.Api.V3.Series
         {
             foreach (var series in message.Series)
             {
-                BroadcastResourceChange(ModelAction.Updated, series.ToResource());
+                BroadcastResourceChange(ModelAction.Updated, GetSeriesResource(series, false));
             }
         }
 

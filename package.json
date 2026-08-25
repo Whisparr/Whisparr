@@ -31,9 +31,10 @@
     "@microsoft/signalr": "8.0.7",
     "@sentry/browser": "7.119.1",
     "@sentry/integrations": "7.51.2",
+    "@tanstack/react-query": "5.61.0",
     "@types/node": "20.16.11",
-    "@types/react": "18.2.79",
-    "@types/react-dom": "18.2.25",
+    "@types/react": "18.3.12",
+    "@types/react-dom": "18.3.1",
     "classnames": "2.5.1",
     "connected-react-router": "6.9.3",
     "element-class": "0.2.2",
@@ -49,7 +50,7 @@
     "normalize.css": "8.0.1",
     "prop-types": "15.8.1",
     "qs": "6.13.0",
-    "react": "18.2.0",
+    "react": "18.3.1",
     "react-addons-shallow-compare": "15.6.3",
     "react-async-script": "1.2.0",
     "react-autosuggest": "10.1.0",
@@ -59,7 +60,7 @@
     "react-dnd-multi-backend": "6.0.2",
     "react-dnd-touch-backend": "14.1.1",
     "react-document-title": "2.0.3",
-    "react-dom": "18.2.0",
+    "react-dom": "18.3.1",
     "react-focus-lock": "2.9.4",
     "react-google-recaptcha": "2.1.0",
     "react-lazyload": "3.2.0",
@@ -155,7 +156,7 @@
     "yarn": "1.22.19"
   },
   "resolutions": {
-    "@types/react": "18.2.79",
-    "@types/react-dom": "18.2.25"
+    "@types/react": "18.3.12",
+    "@types/react-dom": "18.3.1"
   }
 }

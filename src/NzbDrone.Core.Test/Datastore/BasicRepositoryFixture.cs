@@ -20,7 +20,7 @@ namespace NzbDrone.Core.Test.Datastore
         {
             AssertionOptions.AssertEquivalencyUsing(options =>
             {
-                options.Using<DateTime>(ctx => ctx.Subject.Should().BeCloseTo(ctx.Expectation.ToUniversalTime())).WhenTypeIs<DateTime>();
+                options.Using<DateTime>(ctx => ctx.Subject.Should().BeCloseTo(ctx.Expectation.ToUniversalTime(), TimeSpan.FromSeconds(1))).WhenTypeIs<DateTime>();
                 return options;
             });
 

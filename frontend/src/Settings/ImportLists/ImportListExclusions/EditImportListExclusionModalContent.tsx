@@ -50,7 +50,6 @@ function createImportListExclusionSelector(id?: number) {
       const settings = selectSettings(mapping, pendingChanges, saveError);
 
       return {
-        id,
         isFetching,
         error,
         isSaving,
@@ -123,15 +122,15 @@ function EditImportListExclusionModalContent(
       </ModalHeader>
 
       <ModalBody className={styles.body}>
-        {isFetching && <LoadingIndicator />}
+        {isFetching ? <LoadingIndicator /> : null}
 
-        {!isFetching && !!error && (
+        {!isFetching && error ? (
           <Alert kind={kinds.DANGER}>
             {translate('AddImportListExclusionError')}
           </Alert>
-        )}
+        ) : null}
 
-        {!isFetching && !error && (
+        {!isFetching && !error ? (
           <Form {...otherProps}>
             <FormGroup>
               <FormLabel>{translate('Title')}</FormLabel>
@@ -157,11 +156,11 @@ function EditImportListExclusionModalContent(
               />
             </FormGroup>
           </Form>
-        )}
+        ) : null}
       </ModalBody>
 
       <ModalFooter>
-        {id && (
+        {id ? (
           <Button
             className={styles.deleteButton}
             kind={kinds.DANGER}
@@ -169,7 +168,7 @@ function EditImportListExclusionModalContent(
           >
             {translate('Delete')}
           </Button>
-        )}
+        ) : null}
 
         <Button onPress={onModalClose}>{translate('Cancel')}</Button>
 

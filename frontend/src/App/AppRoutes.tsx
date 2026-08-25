@@ -23,9 +23,9 @@ import Profiles from 'Settings/Profiles/Profiles';
 import QualityConnector from 'Settings/Quality/QualityConnector';
 import Settings from 'Settings/Settings';
 import TagSettings from 'Settings/Tags/TagSettings';
-import UISettingsConnector from 'Settings/UI/UISettingsConnector';
-import BackupsConnector from 'System/Backup/BackupsConnector';
-import LogsTableConnector from 'System/Events/LogsTableConnector';
+import UISettings from 'Settings/UI/UISettings';
+import Backups from 'System/Backup/Backups';
+import LogsTable from 'System/Events/LogsTable';
 import Logs from 'System/Logs/Logs';
 import Status from 'System/Status/Status';
 import Tasks from 'System/Tasks/Tasks';
@@ -168,7 +168,7 @@ function AppRoutes() {
 
       <Route path="/settings/general" component={GeneralSettingsConnector} />
 
-      <Route path="/settings/ui" component={UISettingsConnector} />
+      <Route path="/settings/ui" component={UISettings} />
 
       {/*
         System
@@ -178,11 +178,11 @@ function AppRoutes() {
 
       <Route path="/system/tasks" component={Tasks} />
 
-      <Route path="/system/backup" component={BackupsConnector} />
+      <Route path="/system/backup" component={Backups} />
 
       <Route path="/system/updates" component={Updates} />
 
-      <Route path="/system/events" component={LogsTableConnector} />
+      <Route path="/system/events" component={LogsTable} />
 
       <Route path="/system/logs/files" component={Logs} />
 

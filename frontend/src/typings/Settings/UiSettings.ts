@@ -7,6 +7,7 @@ export interface UiSettings {
   firstDayOfWeek: number;
   enableColorImpairedMode: boolean;
   calendarWeekColumnHeader: string;
+  uiLanguage: number;
 }
 
 export default UiSettings;

@@ -14,6 +14,7 @@ import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { inputTypes, kinds } from 'Helpers/Props';
+import AdvancedSettingsButton from 'Settings/AdvancedSettingsButton';
 import translate from 'Utilities/String/translate';
 import NotificationEventItems from './NotificationEventItems';
 import styles from './EditNotificationModalContent.css';
@@ -135,6 +136,10 @@ function EditNotificationModalContent(props) {
               {translate('Delete')}
             </Button>
         }
+
+        <AdvancedSettingsButton
+          showLabel={false}
+        />
 
         <SpinnerErrorButton
           isSpinning={isTesting}

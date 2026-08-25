@@ -154,7 +154,7 @@ namespace NzbDrone.Core.DecisionEngine
                     return 10;
                 }
 
-                return 1;
+                return Math.Round(Math.Log10(age)) * -1;
             });
         }
 

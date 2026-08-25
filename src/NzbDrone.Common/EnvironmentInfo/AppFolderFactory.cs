@@ -38,6 +38,7 @@ namespace NzbDrone.Common.EnvironmentInfo
         {
             try
             {
+                MigrateAppDataFolder();
                 _diskProvider.EnsureFolder(_appFolderInfo.AppDataFolder);
             }
             catch (UnauthorizedAccessException)
@@ -56,6 +57,28 @@ namespace NzbDrone.Common.EnvironmentInfo
             }
 
             InitializeMonoApplicationData();
+        }
+
+        private void MigrateAppDataFolder()
+        {
+            try
+            {
+                if (OsInfo.IsOsx)
+                {
+                    var userAppDataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile, Environment.SpecialFolderOption.DoNotVerify), ".config", "Whisparr");
+
+                    if (_diskProvider.FolderExists(userAppDataFolder) && !_diskProvider.FileExists(_appFolderInfo.GetConfigPath()))
+                    {
+                        _diskTransferService.MirrorFolder(userAppDataFolder, _appFolderInfo.AppDataFolder);
+                        _diskProvider.DeleteFolder(userAppDataFolder, true);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Debug(ex, ex.Message);
+                throw new WhisparrStartupException(ex, "Unable to migrate AppData folder to {0}. Migrate manually", _appFolderInfo.AppDataFolder);
+            }
         }
 
         public void SetPermissions()

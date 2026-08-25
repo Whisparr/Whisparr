@@ -63,6 +63,7 @@ namespace NzbDrone.Core.Configuration
         string PostgresLogDb { get; }
         string WhisparrMetadata { get; }
         string GithubOwnerRepo { get; }
+        bool TrustCgnatIpAddresses { get; }
     }
 
     public class ConfigFileProvider : IConfigFileProvider
@@ -477,5 +478,7 @@ namespace NzbDrone.Core.Configuration
         {
             SetValue("ApiKey", GenerateApiKey());
         }
+
+        public bool TrustCgnatIpAddresses => GetValueBoolean("TrustCgnatIpAddresses", false, persist: false);
     }
 }

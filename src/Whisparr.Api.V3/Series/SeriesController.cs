@@ -33,6 +33,7 @@ namespace Whisparr.Api.V3.Series
                                 IHandle<SeriesEditedEvent>,
                                 IHandle<SeriesDeletedEvent>,
                                 IHandle<SeriesRenamedEvent>,
+                                IHandle<SeriesBulkEditedEvent>,
                                 IHandle<MediaCoversUpdatedEvent>
     {
         private readonly ISeriesService _seriesService;
@@ -310,6 +311,15 @@ namespace Whisparr.Api.V3.Series
         public void Handle(SeriesRenamedEvent message)
         {
             BroadcastResourceChange(ModelAction.Updated, message.Series.Id);
+        }
+
+        [NonAction]
+        public void Handle(SeriesBulkEditedEvent message)
+        {
+            foreach (var series in message.Series)
+            {
+                BroadcastResourceChange(ModelAction.Updated, series.ToResource());
+            }
         }
 
         [NonAction]

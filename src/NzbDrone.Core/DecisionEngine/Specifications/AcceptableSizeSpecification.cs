@@ -7,7 +7,7 @@ using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.DecisionEngine.Specifications
 {
-    public class AcceptableSizeSpecification : IDecisionEngineSpecification
+    public class AcceptableSizeSpecification : IDownloadDecisionEngineSpecification
     {
         private readonly IQualityDefinitionService _qualityDefinitionService;
         private readonly IEpisodeService _episodeService;
@@ -23,7 +23,7 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
         public SpecificationPriority Priority => SpecificationPriority.Default;
         public RejectionType Type => RejectionType.Permanent;
 
-        public Decision IsSatisfiedBy(RemoteEpisode subject, SearchCriteriaBase searchCriteria)
+        public DownloadSpecDecision IsSatisfiedBy(RemoteEpisode subject, SearchCriteriaBase searchCriteria)
         {
             _logger.Debug("Beginning size check for: {0}", subject);
 
@@ -32,7 +32,7 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
             if (subject.Release.Size == 0)
             {
                 _logger.Debug("Release has unknown size, skipping size check");
-                return Decision.Accept();
+                return DownloadSpecDecision.Accept();
             }
 
             var seriesRuntime = subject.Series.Runtime;
@@ -49,7 +49,7 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
             if (runtime == 0)
             {
                 _logger.Debug("Runtime of all episodes is 0, unable to validate size until it is available, rejecting");
-                return Decision.Reject("Runtime of all episodes is 0, unable to validate size until it is available");
+                return DownloadSpecDecision.Reject(DownloadRejectionReason.UnknownRuntime, "Runtime of all episodes is 0, unable to validate size until it is available");
             }
 
             var qualityDefinition = _qualityDefinitionService.Get(quality);
@@ -67,7 +67,7 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
                     var runtimeMessage = subject.Episodes.Count == 1 ? $"{runtime}min" : $"{subject.Episodes.Count}x {runtime}min";
 
                     _logger.Debug("Item: {0}, Size: {1} is smaller than minimum allowed size ({2} bytes for {3}), rejecting.", subject, subject.Release.Size, minSize, runtimeMessage);
-                    return Decision.Reject("{0} is smaller than minimum allowed {1} (for {2})", subject.Release.Size.SizeSuffix(), minSize.SizeSuffix(), runtimeMessage);
+                    return DownloadSpecDecision.Reject(DownloadRejectionReason.BelowMinimumSize, "{0} is smaller than minimum allowed {1} (for {2})", subject.Release.Size.SizeSuffix(), minSize.SizeSuffix(), runtimeMessage);
                 }
             }
 
@@ -88,12 +88,12 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
                     var runtimeMessage = subject.Episodes.Count == 1 ? $"{runtime}min" : $"{subject.Episodes.Count}x {runtime}min";
 
                     _logger.Debug("Item: {0}, Size: {1} is greater than maximum allowed size ({2} for {3}), rejecting", subject, subject.Release.Size, maxSize, runtimeMessage);
-                    return Decision.Reject("{0} is larger than maximum allowed {1} (for {2})", subject.Release.Size.SizeSuffix(), maxSize.SizeSuffix(), runtimeMessage);
+                    return DownloadSpecDecision.Reject(DownloadRejectionReason.AboveMaximumSize, "{0} is larger than maximum allowed {1} (for {2})", subject.Release.Size.SizeSuffix(), maxSize.SizeSuffix(), runtimeMessage);
                 }
             }
 
             _logger.Debug("Item: {0}, meets size constraints", subject);
-            return Decision.Accept();
+            return DownloadSpecDecision.Accept();
         }
     }
 }

@@ -22,13 +22,13 @@ namespace NzbDrone.Core.DecisionEngine
 
     public class DownloadDecisionMaker : IMakeDownloadDecision
     {
-        private readonly IEnumerable<IDecisionEngineSpecification> _specifications;
+        private readonly IEnumerable<IDownloadDecisionEngineSpecification> _specifications;
         private readonly IParsingService _parsingService;
         private readonly ICustomFormatCalculationService _formatCalculator;
         private readonly IRemoteEpisodeAggregationService _aggregationService;
         private readonly Logger _logger;
 
-        public DownloadDecisionMaker(IEnumerable<IDecisionEngineSpecification> specifications,
+        public DownloadDecisionMaker(IEnumerable<IDownloadDecisionEngineSpecification> specifications,
                                      IParsingService parsingService,
                                      ICustomFormatCalculationService formatService,
                                      IRemoteEpisodeAggregationService aggregationService,
@@ -102,11 +102,11 @@ namespace NzbDrone.Core.DecisionEngine
 
                         if (remoteEpisode.Series == null)
                         {
-                            decision = new DownloadDecision(remoteEpisode, new Rejection("Unknown Series"));
+                            decision = new DownloadDecision(remoteEpisode, new DownloadRejection(DownloadRejectionReason.UnknownSeries, "Unknown Series"));
                         }
                         else if (remoteEpisode.Episodes.Empty())
                         {
-                            decision = new DownloadDecision(remoteEpisode, new Rejection("Unable to identify correct episode(s) using release name and scene mappings"));
+                            decision = new DownloadDecision(remoteEpisode, new DownloadRejection(DownloadRejectionReason.UnknownEpisode, "Unable to identify correct episode(s) using release name and scene mappings"));
                         }
                         else
                         {
@@ -134,7 +134,7 @@ namespace NzbDrone.Core.DecisionEngine
                             Languages = parsedEpisodeInfo?.Languages ?? LanguageParser.ParseLanguages(report.Title)
                         };
 
-                        decision = new DownloadDecision(remoteEpisode, new Rejection("Unable to parse release"));
+                        decision = new DownloadDecision(remoteEpisode, new DownloadRejection(DownloadRejectionReason.UnableToParse, "Unable to parse release"));
                     }
                 }
                 catch (Exception e)
@@ -142,7 +142,7 @@ namespace NzbDrone.Core.DecisionEngine
                     _logger.Error(e, "Couldn't process release.");
 
                     var remoteEpisode = new RemoteEpisode { Release = report };
-                    decision = new DownloadDecision(remoteEpisode, new Rejection("Unexpected error processing release"));
+                    decision = new DownloadDecision(remoteEpisode, new DownloadRejection(DownloadRejectionReason.Error, "Unexpected error processing release"));
                 }
 
                 reportNumber++;
@@ -185,7 +185,7 @@ namespace NzbDrone.Core.DecisionEngine
 
         private DownloadDecision GetDecisionForReport(RemoteEpisode remoteEpisode, SearchCriteriaBase searchCriteria = null)
         {
-            var reasons = Array.Empty<Rejection>();
+            var reasons = Array.Empty<DownloadRejection>();
 
             foreach (var specifications in _specifications.GroupBy(v => v.Priority).OrderBy(v => v.Key))
             {
@@ -202,7 +202,7 @@ namespace NzbDrone.Core.DecisionEngine
             return new DownloadDecision(remoteEpisode, reasons.ToArray());
         }
 
-        private Rejection EvaluateSpec(IDecisionEngineSpecification spec, RemoteEpisode remoteEpisode, SearchCriteriaBase searchCriteriaBase = null)
+        private DownloadRejection EvaluateSpec(IDownloadDecisionEngineSpecification spec, RemoteEpisode remoteEpisode, SearchCriteriaBase searchCriteriaBase = null)
         {
             try
             {
@@ -210,7 +210,7 @@ namespace NzbDrone.Core.DecisionEngine
 
                 if (!result.Accepted)
                 {
-                    return new Rejection(result.Reason, spec.Type);
+                    return new DownloadRejection(result.Reason, result.Message, spec.Type);
                 }
             }
             catch (Exception e)
@@ -218,7 +218,7 @@ namespace NzbDrone.Core.DecisionEngine
                 e.Data.Add("report", remoteEpisode.Release.ToJson());
                 e.Data.Add("parsed", remoteEpisode.ParsedEpisodeInfo.ToJson());
                 _logger.Error(e, "Couldn't evaluate decision on {0}", remoteEpisode.Release.Title);
-                return new Rejection($"{spec.GetType().Name}: {e.Message}");
+                return new DownloadRejection(DownloadRejectionReason.DecisionError, $"{spec.GetType().Name}: {e.Message}");
             }
 
             return null;

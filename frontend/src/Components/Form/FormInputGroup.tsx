@@ -111,7 +111,7 @@ function getComponent(type: InputType) {
 }
 
 // TODO: Remove once all parent components are updated to TSX and we can refactor to a consistent type
-interface ValidationMessage {
+export interface ValidationMessage {
   message: string;
 }
 

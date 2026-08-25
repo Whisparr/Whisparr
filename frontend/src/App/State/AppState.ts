@@ -11,6 +11,7 @@ import ParseAppState from './ParseAppState';
 import PathsAppState from './PathsAppState';
 import ProviderOptionsAppState from './ProviderOptionsAppState';
 import QueueAppState from './QueueAppState';
+import ReleasesAppState from './ReleasesAppState';
 import RootFolderAppState from './RootFolderAppState';
 import SeriesAppState, { SeriesIndexAppState } from './SeriesAppState';
 import SettingsAppState from './SettingsAppState';
@@ -78,6 +79,7 @@ interface AppState {
   paths: PathsAppState;
   providerOptions: ProviderOptionsAppState;
   queue: QueueAppState;
+  releases: ReleasesAppState;
   rootFolders: RootFolderAppState;
   javSeriesIndex: SeriesIndexAppState;
   series: SeriesAppState;

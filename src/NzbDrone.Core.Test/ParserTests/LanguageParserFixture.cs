@@ -385,5 +385,13 @@ namespace NzbDrone.Core.Test.ParserTests
             var result = LanguageParser.ParseLanguages(postTitle);
             result.Should().BeEquivalentTo(new[] { Language.English, Language.Spanish, Language.Catalan });
         }
+
+        [TestCase("Series.Title.S01E01.Original.1080P.WEB.H264-RlsGrp")]
+        [TestCase("Series.Title.S01E01.Orig.1080P.WEB.H264-RlsGrp")]
+        public void should_parse_language_original(string postTitle)
+        {
+            var result = LanguageParser.ParseLanguages(postTitle);
+            result.Should().Contain(Language.Original);
+        }
     }
 }

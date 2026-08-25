@@ -3,7 +3,7 @@ import { AppSectionItemState } from 'App/State/AppSectionState';
 import AppState from 'App/State/AppState';
 import SettingsAppState from 'App/State/SettingsAppState';
 import selectSettings from 'Store/Selectors/selectSettings';
-import { PendingSection } from 'typings/Pending';
+import { PendingSection } from 'typings/pending';
 
 type SectionsWithItemNames = {
   [K in keyof SettingsAppState]: SettingsAppState[K] extends AppSectionItemState<unknown>

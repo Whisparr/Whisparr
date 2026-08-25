@@ -16,6 +16,8 @@ import IndexerFlag from 'typings/IndexerFlag';
 import Notification from 'typings/Notification';
 import QualityProfile from 'typings/QualityProfile';
 import General from 'typings/Settings/General';
+import NamingConfig from 'typings/Settings/NamingConfig';
+import NamingExample from 'typings/Settings/NamingExample';
 import UiSettings from 'typings/Settings/UiSettings';
 
 export interface DownloadClientAppState
@@ -28,6 +30,12 @@ export interface DownloadClientAppState
 export interface GeneralAppState
   extends AppSectionItemState<General>,
     AppSectionSaveState {}
+
+export interface NamingAppState
+  extends AppSectionItemState<NamingConfig>,
+    AppSectionSaveState {}
+
+export type NamingExamplesAppState = AppSectionItemState<NamingExample>;
 
 export interface ImportListAppState
   extends AppSectionState<ImportList>,
@@ -71,6 +79,8 @@ export type LanguageSettingsAppState = AppSectionState<Language>;
 export type UiSettingsAppState = AppSectionItemState<UiSettings>;
 
 interface SettingsAppState {
+  naming: NamingAppState;
+  namingExamples: NamingExamplesAppState;
   advancedSettings: boolean;
   safeForWorkMode: boolean;
   customFormats: CustomFormatAppState;

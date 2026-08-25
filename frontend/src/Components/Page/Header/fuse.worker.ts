@@ -1,4 +1,7 @@
+// eslint-disable filenames/match-exported
+
 import Fuse from 'fuse.js';
+import { SuggestedSeries } from './SeriesSearchInput';
 
 const fuseOptions = {
   shouldSort: true,
@@ -7,14 +10,10 @@ const fuseOptions = {
   threshold: 0.3,
   maxPatternLength: 32,
   minMatchCharLength: 1,
-  keys: [
-    'title',
-    'alternateTitles.title',
-    'tags.label'
-  ]
+  keys: ['title', 'alternateTitles.title', 'tags.label'],
 };
 
-function getSuggestions(series, value) {
+function getSuggestions(series: SuggestedSeries[], value: string) {
   const limit = 10;
   let suggestions = [];
 
@@ -24,16 +23,14 @@ function getSuggestions(series, value) {
       if (s.firstCharacter === value.toLowerCase()) {
         suggestions.push({
           item: series[i],
-          indices: [
-            [0, 0]
-          ],
+          indices: [[0, 0]],
           matches: [
             {
               value: s.title,
-              key: 'title'
-            }
+              key: 'title',
+            },
           ],
-          arrayIndex: 0
+          refIndex: 0,
         });
         if (suggestions.length > limit) {
           break;
@@ -48,21 +45,18 @@ function getSuggestions(series, value) {
   return suggestions;
 }
 
-onmessage = function(e) {
+onmessage = function (e) {
   if (!e) {
     return;
   }
 
-  const {
-    series,
-    value
-  } = e.data;
+  const { series, value } = e.data;
 
   const suggestions = getSuggestions(series, value);
 
   const results = {
     value,
-    suggestions
+    suggestions,
   };
 
   self.postMessage(results);

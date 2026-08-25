@@ -5,7 +5,7 @@ import React from 'react';
 import DocumentTitle from 'react-document-title';
 import { Provider } from 'react-redux';
 import { Store } from 'redux';
-import PageConnector from 'Components/Page/PageConnector';
+import Page from 'Components/Page/Page';
 import ApplyTheme from './ApplyTheme';
 import AppRoutes from './AppRoutes';
 
@@ -23,9 +23,9 @@ function App({ store, history }: AppProps) {
         <Provider store={store}>
           <ConnectedRouter history={history}>
             <ApplyTheme />
-            <PageConnector>
-              <AppRoutes app={App} />
-            </PageConnector>
+            <Page>
+              <AppRoutes />
+            </Page>
           </ConnectedRouter>
         </Provider>
       </QueryClientProvider>

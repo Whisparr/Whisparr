@@ -10,9 +10,11 @@ interface PageContentProps {
   children: React.ReactNode;
 }
 
-function PageContent(props: PageContentProps) {
-  const { className = styles.content, title, children } = props;
-
+function PageContent({
+  className = styles.content,
+  title,
+  children,
+}: PageContentProps) {
   return (
     <ErrorBoundary errorComponent={PageContentError}>
       <DocumentTitle

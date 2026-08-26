@@ -6,6 +6,7 @@ import FieldSet from 'Components/FieldSet';
 import IconButton from 'Components/Link/IconButton';
 import PageSectionContent from 'Components/Page/PageSectionContent';
 import TableRowCell from 'Components/Table/Cells/TableRowCell';
+import Column from 'Components/Table/Column';
 import Table from 'Components/Table/Table';
 import TableBody from 'Components/Table/TableBody';
 import TablePager from 'Components/Table/TablePager';
@@ -21,7 +22,7 @@ import translate from 'Utilities/String/translate';
 import EditImportListExclusionModal from './EditImportListExclusionModal';
 import ImportListExclusionRow from './ImportListExclusionRow';
 
-const COLUMNS = [
+const COLUMNS: Column[] = [
   {
     name: 'title',
     label: () => translate('Title'),
@@ -36,6 +37,7 @@ const COLUMNS = [
   },
   {
     name: 'actions',
+    label: '',
     isVisible: true,
     isSortable: false,
   },
@@ -98,8 +100,8 @@ function ImportListExclusions(props: ImportListExclusionsProps) {
     [dispatch]
   );
 
-  const setImportListExclusionSort = useCallback(
-    (sortKey: { sortKey: string }) => {
+  const handleSortPress = useCallback(
+    (sortKey: string) => {
       dispatch(
         importListExclusionActions.setImportListExclusionSort({ sortKey })
       );
@@ -108,7 +110,7 @@ function ImportListExclusions(props: ImportListExclusionsProps) {
   );
 
   const setImportListTableOption = useCallback(
-    (payload: { pageSize: number }) => {
+    (payload: { pageSize?: number }) => {
       dispatch(
         importListExclusionActions.setImportListExclusionTableOption(payload)
       );
@@ -180,7 +182,7 @@ function ImportListExclusions(props: ImportListExclusionsProps) {
           pageSize={pageSize}
           sortKey={sortKey}
           sortDirection={sortDirection}
-          onSortPress={setImportListExclusionSort}
+          onSortPress={handleSortPress}
           onTableOptionChange={setImportListTableOption}
         >
           <TableBody>
@@ -212,7 +214,6 @@ function ImportListExclusions(props: ImportListExclusionsProps) {
 
         <TablePager
           totalRecords={totalRecords}
-          pageSize={pageSize}
           isFetching={isFetching}
           onFirstPagePress={gotoImportListExclusionFirstPage}
           onPreviousPagePress={gotoImportListExclusionPreviousPage}

@@ -125,7 +125,7 @@ function SelectEpisodeModalContent(props: SelectEpisodeModalContentProps) {
   );
 
   const onSortPress = useCallback(
-    (newSortKey: string, newSortDirection: SortDirection) => {
+    (newSortKey: string, newSortDirection?: SortDirection) => {
       dispatch(
         setEpisodesSort({
           sortKey: newSortKey,

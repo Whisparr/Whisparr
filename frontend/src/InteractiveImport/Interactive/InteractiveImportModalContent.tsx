@@ -57,7 +57,7 @@ import {
 } from 'Store/Actions/interactiveImportActions';
 import createClientSideCollectionSelector from 'Store/Selectors/createClientSideCollectionSelector';
 import { SortCallback } from 'typings/callbacks';
-import { SelectStateInputProps } from 'typings/props';
+import { CheckInputChanged } from 'typings/inputs';
 import getErrorMessage from 'Utilities/Object/getErrorMessage';
 import hasDifferentItems from 'Utilities/Object/hasDifferentItems';
 import translate from 'Utilities/String/translate';
@@ -394,7 +394,7 @@ function InteractiveImportModalContent(
   }, [previousIsDeleting, isDeleting, deleteError, onModalClose]);
 
   const onSelectAllChange = useCallback(
-    ({ value }: SelectStateInputProps) => {
+    ({ value }: CheckInputChanged) => {
       setSelectState({ type: value ? 'selectAll' : 'unselectAll', items });
     },
     [items, setSelectState]
@@ -412,8 +412,8 @@ function InteractiveImportModalContent(
 
       setWithoutEpisodeFileIdRowsSelected(
         hasEpisodeFileId || !value
-          ? without(withoutEpisodeFileIdRowsSelected, id)
-          : [...withoutEpisodeFileIdRowsSelected, id]
+          ? without(withoutEpisodeFileIdRowsSelected, id as number)
+          : [...withoutEpisodeFileIdRowsSelected, id as number]
       );
     },
     [

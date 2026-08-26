@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using NzbDrone.Common.Disk;
@@ -34,7 +34,12 @@ namespace NzbDrone.Core.Configuration
             var releaseInfoPath = Path.Combine(bin, "release_info");
 
             PackageUpdateMechanism = UpdateMechanism.BuiltIn;
-            DefaultBranch = "nightly";
+
+            // Only the Debian packaging writes a package_info file, so every other
+            // install (Windows installer, zip, tarball) lands on this default. It must
+            // name a real Whisparr channel; CI stamps the originating branch into the
+            // assembly, so use that rather than a hardcoded guess.
+            DefaultBranch = BuildInfo.Branch;
 
             if (Path.GetFileName(bin) == "bin" && diskProvider.FileExists(packageInfoPath))
             {

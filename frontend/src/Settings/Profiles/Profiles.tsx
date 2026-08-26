@@ -7,7 +7,7 @@ import SettingsToolbar from 'Settings/SettingsToolbar';
 import translate from 'Utilities/String/translate';
 import DelayProfiles from './Delay/DelayProfiles';
 import QualityProfiles from './Quality/QualityProfiles';
-import ReleaseProfiles from './Release/ReleaseProfiles';
+import ReleaseProfilesConnector from './Release/ReleaseProfilesConnector';
 
 // Only a single DragDrop Context can exist so it's done here to allow editing
 // quality profiles and reordering delay profiles to work.
@@ -21,7 +21,7 @@ function Profiles() {
         <DndProvider options={HTML5toTouch}>
           <QualityProfiles />
           <DelayProfiles />
-          <ReleaseProfiles />
+          <ReleaseProfilesConnector />
         </DndProvider>
       </PageContentBody>
     </PageContent>

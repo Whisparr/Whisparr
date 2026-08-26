@@ -41,6 +41,8 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Title.the.Italian.Series.S01E01.The.Family.720p.HDTV.x264-FTP")]
         [TestCase("Title.the.Italy.Series.S02E01.720p.HDTV.x264-TLA")]
         [TestCase("Series Title - S01E01 - Pilot.en.sub")]
+        [TestCase("Series.Title.S01E01.SUBFRENCH.1080p.WEB.x264-GROUP")]
+
         public void should_parse_language_unknown(string postTitle)
         {
             var result = LanguageParser.ParseLanguages(postTitle);
@@ -64,10 +66,32 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Title.S01.720p.VFF.WEB-DL.AAC2.0.H.264-BTN")]
         [TestCase("Title.S01.720p.VFQ.WEB-DL.AAC2.0.H.264-BTN")]
         [TestCase("Title.S01.720p.TRUEFRENCH.WEB-DL.AAC2.0.H.264-BTN")]
+        [TestCase("Series In The Middle S01 Multi VFI VO 1080p WEB x265 HEVC AAC 5.1-Papaya")]
+        [TestCase("Series Title S01 AVC.1080p.Blu-ray HD.VOSTFR.VFF")]
+        [TestCase("Series Title S01 Bluray 4k HDR HEVC AC3 VFF")]
+        [TestCase("Series Title S01 AVC.1080p.Blu-ray Remux HD.VOSTFR.VFF")]
+        [TestCase("Series Title S01 x264.720p.Blu-ray Rip HD.VOSTFR.VFF. ONLY")]
+        [TestCase("Series Title S01 HEVC.2160p.Blu-ray 4K.VOSTFR.VFF. JATO")]
+        [TestCase("Series_Title_S01_ENG_ITA_FRA_AAC_1080p_WebDL_x264")]
+        [TestCase("Series.Title.S01.ENG-ITA-FRA.AAC.1080p.WebDL.x264")]
+        [TestCase("Series Title S01 (BDrip 1080p ENG-ITA-FRA) Multisub x264")]
+        [TestCase("Series.Title.S01.ENG-ITA-FRE.AAC.1080p.WebDL.x264")]
+        [TestCase("Series Title S01 (BDrip 1080p ENG-ITA-FRE) Multisub x264")]
         public void should_parse_language_french(string postTitle)
         {
             var result = LanguageParser.ParseLanguages(postTitle);
             result.Should().Contain(Language.French);
+        }
+
+        [TestCase("Series Title S01 1080p Eng Fra [mkvonly]")]
+        [TestCase("Series Title S01 Eng Fre Multi Subs 720p [H264 mp4]")]
+        [TestCase("Series-Title-S01-[DVDRip]-H264-Fra-Ac3-2-0-Eng-5-1")]
+        public void should_parse_language_french_english(string postTitle)
+        {
+            var result = LanguageParser.ParseLanguages(postTitle);
+
+            result.Should().Contain(Language.French);
+            result.Should().Contain(Language.English);
         }
 
         [TestCase("Title.the.Series.2009.S01E14.Spanish.HDTV.XviD-LOL")]
@@ -97,6 +121,8 @@ namespace NzbDrone.Core.Test.ParserTests
 
         [TestCase("Title.the.Series.2009.S01E14.Italian.HDTV.XviD-LOL")]
         [TestCase("Title.the.Series.1x19.ita.720p.bdmux.x264-novarip")]
+        [TestCase("Title.the.Series.ENG-FRE-ITA.AAC.1080p.WebDL.x264")]
+        [TestCase("Title the Series (BDrip 1080p ENG-FRE-ITA) Multisub x264")]
         public void should_parse_language_italian(string postTitle)
         {
             var result = LanguageParser.ParseLanguages(postTitle);
@@ -158,8 +184,19 @@ namespace NzbDrone.Core.Test.ParserTests
             result.Should().Contain(Language.Korean);
         }
 
+        [TestCase("Title.the.Series.2009.S01E08.2160p.WEB-DL.LAV.ENG")]
+        [TestCase("Title.the.Series.S01.COMPLETE.2009.1080p.WEB-DL.x264.AVC.AAC.LT.LV.RU")]
+        [TestCase("Title.the.Series.S03.1080p.WEB.x264.LAT.ENG")]
+        [TestCase("Title.the.Series.S02E02.LATViAN.1080p.WEB.XviD-LOL")]
+        public void should_parse_language_latvian(string postTitle)
+        {
+            var result = LanguageParser.ParseLanguages(postTitle);
+            result.Should().Contain(Language.Latvian);
+        }
+
         [TestCase("Title.the.Series.2009.S01E14.Russian.HDTV.XviD-LOL")]
         [TestCase("Title.the.Series.S01E01.1080p.WEB-DL.Rus.Eng.TVKlondike")]
+        [TestCase("Title.the.Series.S01.COMPLETE.2009.1080p.WEB-DL.x264.AVC.AAC.LT.LV.RU")]
         public void should_parse_language_russian(string postTitle)
         {
             var result = LanguageParser.ParseLanguages(postTitle);
@@ -398,6 +435,26 @@ namespace NzbDrone.Core.Test.ParserTests
         {
             var result = LanguageParser.ParseLanguages(postTitle);
             result.Should().Contain(Language.Original);
+        }
+
+        [TestCase("Остання серія (Сезон 1) / The Last Series (Season 1) (2024) WEB-DLRip-AVC 2xUkr/Eng | Sub Ukr/Eng")]
+        [TestCase("Справжня серія (Сезон 1-3) / True Series (Season 1-3) (2014-2019) BDRip-AVC 3xUkr/Eng | Ukr/Eng")]
+        [TestCase("Серія (Сезон 1-3) / The Series (Seasons 1-3) (2019-2022) BDRip-AVC 4xUkr/Eng | Sub 2xUkr/Eng")]
+        public void should_parse_english_and_ukranian(string postTitle)
+        {
+            var result = LanguageParser.ParseLanguages(postTitle);
+
+            result.Should().Contain(Language.Ukrainian);
+            result.Should().Contain(Language.English);
+        }
+
+        [TestCase("Серія (Сезон 1, серії 01-26 із 51) / Seri (Season 1, episodes 01-26) (2018) WEBRip-AVC 2Ukr/Tur | Sub Ukr")]
+        public void should_parse_turkish_and_ukranian(string postTitle)
+        {
+            var result = LanguageParser.ParseLanguages(postTitle);
+
+            result.Should().Contain(Language.Ukrainian);
+            result.Should().Contain(Language.Turkish);
         }
     }
 }

@@ -79,6 +79,14 @@ export interface NotificationAppState
   extends AppSectionState<Notification>,
     AppSectionDeleteState {}
 
+export interface QualityDefinitionsAppState
+  extends AppSectionState<QualityProfile>,
+    AppSectionSaveState {
+  pendingChanges: {
+    [key: number]: Partial<QualityProfile>;
+  };
+}
+
 export interface QualityProfilesAppState
   extends AppSectionState<QualityProfile>,
     AppSectionItemSchemaState<QualityProfile> {}
@@ -123,6 +131,7 @@ interface SettingsAppState {
   indexers: IndexerAppState;
   languages: LanguageSettingsAppState;
   notifications: NotificationAppState;
+  qualityDefinitions: QualityDefinitionsAppState;
   qualityProfiles: QualityProfilesAppState;
   ui: UiSettingsAppState;
 }

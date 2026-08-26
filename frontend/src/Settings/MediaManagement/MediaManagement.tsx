@@ -26,7 +26,7 @@ import useIsWindows from 'System/useIsWindows';
 import { InputChanged } from 'typings/inputs';
 import isEmpty from 'Utilities/Object/isEmpty';
 import translate from 'Utilities/String/translate';
-import Naming from './Naming/Naming';
+import NamingConnector from './Naming/NamingConnector';
 import AddRootFolder from './RootFolder/AddRootFolder';
 
 const SECTION = 'mediaManagement';
@@ -164,7 +164,7 @@ function MediaManagement() {
       />
 
       <PageContentBody>
-        <Naming />
+        <NamingConnector />
 
         {isFetching ? (
           <FieldSet legend={translate('NamingSettings')}>

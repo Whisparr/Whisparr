@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
@@ -14,7 +14,7 @@ namespace NzbDrone.Core.Notifications.Telegram
 {
     public interface ITelegramProxy
     {
-        void SendNotification(string title, string message, List<TelegramLink> links, TelegramSettings settings);
+        void SendNotification(string title, string message, List<NotificationMetadataLink> links, TelegramSettings settings);
         ValidationFailure Test(TelegramSettings settings);
     }
 
@@ -33,7 +33,7 @@ namespace NzbDrone.Core.Notifications.Telegram
             _logger = logger;
         }
 
-        public void SendNotification(string title, string message, List<TelegramLink> links, TelegramSettings settings)
+        public void SendNotification(string title, string message, List<NotificationMetadataLink> links, TelegramSettings settings)
         {
             var text = new StringBuilder($"<b>{HttpUtility.HtmlEncode(title)}</b>\n");
 
@@ -74,9 +74,9 @@ namespace NzbDrone.Core.Notifications.Telegram
                 const string body = "This is a test message from Whisparr";
                 var brandedTitle = $"Whisparr - {title}";
 
-                var links = new List<TelegramLink>
+                var links = new List<NotificationMetadataLink>
                     {
-                        new TelegramLink(null, "Whisparr.tv", "https://whisparr.com")
+                        new NotificationMetadataLink(null, "Whisparr.tv", "https://whisparr.com")
                     };
 
                 var testMessageTitle = settings.IncludeAppNameInTitle ? brandedTitle : title;

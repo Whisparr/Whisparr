@@ -1,3 +1,4 @@
+﻿using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using FluentValidation.Results;
@@ -10,7 +11,7 @@ namespace NzbDrone.Core.Notifications.Pushcut
 {
     public interface IPushcutProxy
     {
-        void SendNotification(string title, string message, PushcutSettings settings);
+        void SendNotification(string title, string message, string posterUrl, List<NotificationMetadataLink> links, PushcutSettings settings);
         ValidationFailure Test(PushcutSettings settings);
     }
 
@@ -25,19 +26,36 @@ namespace NzbDrone.Core.Notifications.Pushcut
             _logger = logger;
         }
 
-        public void SendNotification(string title, string message, PushcutSettings settings)
+        public void SendNotification(string title, string message, string posterUrl, List<NotificationMetadataLink> links, PushcutSettings settings)
         {
+            if (settings == null)
+            {
+                return;
+            }
+
             var request = new HttpRequestBuilder("https://api.pushcut.io/v1/notifications/{notificationName}")
                 .SetSegment("notificationName", settings?.NotificationName)
                 .SetHeader("API-Key", settings?.ApiKey)
                 .Accept(HttpAccept.Json)
                 .Build();
+
             var payload = new PushcutPayload
             {
                 Title = title,
                 Text = message,
-                IsTimeSensitive = settings?.TimeSensitive
+                Image = settings.IncludePoster ? posterUrl : null,
+                IsTimeSensitive = settings.TimeSensitive,
+                Actions = new List<PushcutAction>()
             };
+
+            foreach (var link in links)
+            {
+                payload.Actions.Add(new PushcutAction
+                {
+                    Name = link.Label,
+                    Url = link.Link
+                });
+            }
 
             request.Method = HttpMethod.Post;
             request.Headers.ContentType = "application/json";
@@ -60,7 +78,7 @@ namespace NzbDrone.Core.Notifications.Pushcut
             {
                 const string title = "Whisparr Test Title";
                 const string message = "Success! You have properly configured your Pushcut notification settings.";
-                SendNotification(title, message, settings);
+                SendNotification(title, message, null, [], settings);
             }
             catch (PushcutException pushcutException) when (pushcutException.InnerException is HttpException httpException)
             {

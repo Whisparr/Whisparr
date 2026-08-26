@@ -6,7 +6,6 @@ import AppState from 'App/State/AppState';
 import FieldSet from 'Components/FieldSet';
 import PageSectionContent from 'Components/Page/PageSectionContent';
 import usePrevious from 'Helpers/Hooks/usePrevious';
-import useShowAdvancedSettings from 'Helpers/Hooks/useShowAdvancedSettings';
 import {
   fetchQualityDefinitions,
   saveQualityDefinitions,
@@ -50,7 +49,6 @@ function QualityDefinitions({
   onChildStateChange,
 }: QualityDefinitionsProps) {
   const dispatch = useDispatch();
-  const showAdvancedSettings = useShowAdvancedSettings();
   const { items, isFetching, isPopulated, isSaving, error, hasPendingChanges } =
     useSelector(createQualityDefinitionsSelector());
 
@@ -90,25 +88,12 @@ function QualityDefinitions({
         <div className={styles.header}>
           <div className={styles.quality}>{translate('Quality')}</div>
           <div className={styles.title}>{translate('Title')}</div>
-          <div className={styles.sizeLimit}>{translate('SizeLimit')}</div>
-
-          {showAdvancedSettings ? (
-            <div className={styles.megabytesPerMinute}>
-              {translate('MegabytesPerMinute')}
-            </div>
-          ) : null}
         </div>
 
         <div className={styles.definitions}>
           {items.map((item) => {
             return <QualityDefinition key={item.id} {...item} />;
           })}
-        </div>
-
-        <div className={styles.sizeLimitHelpTextContainer}>
-          <div className={styles.sizeLimitHelpText}>
-            {translate('QualityLimitsSeriesRuntimeHelpText')}
-          </div>
         </div>
       </PageSectionContent>
     </FieldSet>

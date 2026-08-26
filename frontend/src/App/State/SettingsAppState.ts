@@ -2,6 +2,7 @@ import AppSectionState, {
   AppSectionDeleteState,
   AppSectionItemSchemaState,
   AppSectionItemState,
+  AppSectionListState,
   AppSectionSaveState,
   AppSectionSchemaState,
   PagedAppSectionState,
@@ -9,6 +10,7 @@ import AppSectionState, {
 import Language from 'Language/Language';
 import AutoTagging, { AutoTaggingSpecification } from 'typings/AutoTagging';
 import CustomFormat from 'typings/CustomFormat';
+import CustomFormatSpecification from 'typings/CustomFormatSpecification';
 import DelayProfile from 'typings/DelayProfile';
 import DownloadClient from 'typings/DownloadClient';
 import ImportList from 'typings/ImportList';
@@ -45,7 +47,7 @@ export interface AutoTaggingSpecificationAppState
     AppSectionSchemaState<AutoTaggingSpecification> {}
 
 export interface DelayProfileAppState
-  extends AppSectionState<DelayProfile>,
+  extends AppSectionListState<DelayProfile>,
     AppSectionDeleteState,
     AppSectionSaveState {}
 
@@ -117,7 +119,20 @@ export interface QualityDefinitionsAppState
 
 export interface QualityProfilesAppState
   extends AppSectionState<QualityProfile>,
-    AppSectionItemSchemaState<QualityProfile> {}
+    AppSectionItemSchemaState<QualityProfile>,
+    AppSectionDeleteState,
+    AppSectionSaveState {}
+
+export interface CustomFormatAppState
+  extends AppSectionState<CustomFormat>,
+    AppSectionDeleteState,
+    AppSectionSaveState {}
+
+export interface CustomFormatSpecificationAppState
+  extends AppSectionState<CustomFormatSpecification>,
+    AppSectionDeleteState,
+    AppSectionSaveState,
+    AppSectionSchemaState<Presets<CustomFormatSpecification>> {}
 
 export interface ImportListOptionsSettingsAppState
   extends AppSectionItemState<ImportListOptionsSettings>,
@@ -130,11 +145,6 @@ export interface ImportListExclusionsSettingsAppState
     AppSectionDeleteState {
   pendingChanges: Partial<ImportListExclusion>;
 }
-
-export interface CustomFormatAppState
-  extends AppSectionState<CustomFormat>,
-    AppSectionDeleteState,
-    AppSectionSaveState {}
 
 export interface RemotePathMappingsAppState
   extends AppSectionState<RemotePathMapping>,
@@ -156,6 +166,7 @@ interface SettingsAppState {
   autoTaggings: AutoTaggingAppState;
   autoTaggingSpecifications: AutoTaggingSpecificationAppState;
   customFormats: CustomFormatAppState;
+  customFormatSpecifications: CustomFormatSpecificationAppState;
   delayProfiles: DelayProfileAppState;
   downloadClients: DownloadClientAppState;
   downloadClientOptions: DownloadClientOptionsAppState;

@@ -83,7 +83,7 @@ namespace NzbDrone.Core.Download
 
                 if (grabbedItems.Empty())
                 {
-                    trackedDownload.Warn("Download wasn't grabbed by whisparr, skipping");
+                    trackedDownload.Warn(trackedDownload.DownloadItem.IsEncrypted ? "Download is encrypted and wasn't grabbed by Whisparr, skipping automatic download handling" : "Download has failed wasn't grabbed by Whisparr, skipping automatic download handling");
                     return;
                 }
 

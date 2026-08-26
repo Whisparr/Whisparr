@@ -19,11 +19,16 @@ import IndexerFlag from 'typings/IndexerFlag';
 import Notification from 'typings/Notification';
 import QualityProfile from 'typings/QualityProfile';
 import General from 'typings/Settings/General';
+import IndexerOptions from 'typings/Settings/IndexerOptions';
 import MediaManagement from 'typings/Settings/MediaManagement';
 import NamingConfig from 'typings/Settings/NamingConfig';
 import NamingExample from 'typings/Settings/NamingExample';
 import ReleaseProfile from 'typings/Settings/ReleaseProfile';
 import UiSettings from 'typings/Settings/UiSettings';
+
+type Presets<T> = T & {
+  presets: T[];
+};
 
 export interface AutoTaggingAppState
   extends AppSectionState<AutoTagging>,
@@ -73,10 +78,15 @@ export interface ImportListAppState
     AppSectionDeleteState,
     AppSectionSaveState {}
 
+export interface IndexerOptionsAppState
+  extends AppSectionItemState<IndexerOptions>,
+    AppSectionSaveState {}
+
 export interface IndexerAppState
   extends AppSectionState<Indexer>,
     AppSectionDeleteState,
-    AppSectionSaveState {
+    AppSectionSaveState,
+    AppSectionSchemaState<Presets<Indexer>> {
   isTestingAll: boolean;
 }
 
@@ -133,6 +143,7 @@ interface SettingsAppState {
   importListOptions: ImportListOptionsSettingsAppState;
   importLists: ImportListAppState;
   indexerFlags: IndexerFlagSettingsAppState;
+  indexerOptions: IndexerOptionsAppState;
   indexers: IndexerAppState;
   languages: LanguageSettingsAppState;
   mediaManagement: MediaManagementAppState;

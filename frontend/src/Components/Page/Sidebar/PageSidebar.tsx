@@ -62,6 +62,18 @@ const LINKS: SidebarItem[] = [
   },
 
   {
+    iconName: icons.SERIES_CONTINUING,
+    title: () => translate('Jav'),
+    to: '/jav',
+    children: [
+      {
+        title: () => translate('AddNew'),
+        to: '/jav/add/new',
+      },
+    ],
+  },
+
+  {
     iconName: icons.CALENDAR,
     title: () => translate('Calendar'),
     to: '/calendar',

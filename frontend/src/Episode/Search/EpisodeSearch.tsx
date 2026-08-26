@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import AppState from 'App/State/AppState';
 import * as commandNames from 'Commands/commandNames';
@@ -45,13 +45,15 @@ function EpisodeSearch({
     setIsInteractiveSearchOpen(true);
   }, []);
 
+  // Must keep a stable identity: InteractiveSearch refetches whenever this
+  // changes, so a fresh object each render loops the search forever.
+  const searchPayload = useMemo(
+    () => ({ episodeId, seriesId }),
+    [episodeId, seriesId]
+  );
+
   if (isInteractiveSearchOpen) {
-    return (
-      <InteractiveSearch
-        type="episode"
-        searchPayload={{ episodeId, seriesId }}
-      />
-    );
+    return <InteractiveSearch type="episode" searchPayload={searchPayload} />;
   }
 
   return (

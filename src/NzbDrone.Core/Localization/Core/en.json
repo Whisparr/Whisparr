@@ -1929,7 +1929,7 @@
   "UpdateScriptPathHelpText": "Path to a custom script that takes an extracted update package and handle the remainder of the update process",
   "UpdateSelected": "Update Selected",
   "UpdateStartupNotWritableHealthCheckMessage": "Cannot install update because startup folder '{startupFolder}' is not writable by the user '{userName}'.",
-  "UpdateStartupTranslocationHealthCheckMessage": "Cannot install update because startup folder '{0}' is in an App Translocation folder.",
+  "UpdateStartupTranslocationHealthCheckMessage": "Cannot install update because startup folder '{startupFolder}' is in an App Translocation folder.",
   "UpdateUINotWritableHealthCheckMessage": "Cannot install update because UI folder '{0}' is not writable by the user '{1}'.",
   "UpdateUiNotWritableHealthCheckMessage": "Cannot install update because UI folder '{uiFolder}' is not writable by the  user '{userName}'.",
   "UpdateSonarrDirectlyLoadError": "Unable to update {appName} directly,",

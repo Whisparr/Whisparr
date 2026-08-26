@@ -1,18 +1,15 @@
-import ModelBase from 'App/ModelBase';
-import Field from './Field';
+import DownloadProtocol from 'DownloadClient/DownloadProtocol';
+import Provider from './Provider';
 
-interface Indexer extends ModelBase {
+interface Indexer extends Provider {
   enableRss: boolean;
   enableAutomaticSearch: boolean;
   enableInteractiveSearch: boolean;
-  protocol: string;
+  supportsRss: boolean;
+  supportsSearch: boolean;
+  protocol: DownloadProtocol;
   priority: number;
-  name: string;
-  fields: Field[];
-  implementationName: string;
-  implementation: string;
-  configContract: string;
-  infoLink: string;
+  downloadClientId: number;
   tags: number[];
 }
 

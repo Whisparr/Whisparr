@@ -12,9 +12,9 @@ import SeriesDetailsPageConnector from 'Series/Details/SeriesDetailsPageConnecto
 import SeriesIndex from 'Series/Index/SeriesIndex';
 import CustomFormatSettingsPage from 'Settings/CustomFormats/CustomFormatSettingsPage';
 import DownloadClientSettingsConnector from 'Settings/DownloadClients/DownloadClientSettingsConnector';
-import GeneralSettingsConnector from 'Settings/General/GeneralSettingsConnector';
-import ImportListSettingsConnector from 'Settings/ImportLists/ImportListSettingsConnector';
-import IndexerSettingsConnector from 'Settings/Indexers/IndexerSettingsConnector';
+import GeneralSettings from 'Settings/General/GeneralSettings';
+import ImportListSettings from 'Settings/ImportLists/ImportListSettings';
+import IndexerSettings from 'Settings/Indexers/IndexerSettings';
 import MediaManagement from 'Settings/MediaManagement/MediaManagement';
 import MetadataSettings from 'Settings/Metadata/MetadataSettings';
 import MetadataSourceSettings from 'Settings/MetadataSource/MetadataSourceSettings';
@@ -140,17 +140,14 @@ function AppRoutes() {
         component={CustomFormatSettingsPage}
       />
 
-      <Route path="/settings/indexers" component={IndexerSettingsConnector} />
+      <Route path="/settings/indexers" component={IndexerSettings} />
 
       <Route
         path="/settings/downloadclients"
         component={DownloadClientSettingsConnector}
       />
 
-      <Route
-        path="/settings/importlists"
-        component={ImportListSettingsConnector}
-      />
+      <Route path="/settings/importlists" component={ImportListSettings} />
 
       <Route path="/settings/connect" component={NotificationSettings} />
 
@@ -163,7 +160,7 @@ function AppRoutes() {
 
       <Route path="/settings/tags" component={TagSettings} />
 
-      <Route path="/settings/general" component={GeneralSettingsConnector} />
+      <Route path="/settings/general" component={GeneralSettings} />
 
       <Route path="/settings/ui" component={UISettings} />
 

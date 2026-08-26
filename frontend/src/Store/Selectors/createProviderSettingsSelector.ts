@@ -9,6 +9,7 @@ import AppState from 'App/State/AppState';
 import selectSettings, {
   ModelBaseSetting,
 } from 'Store/Selectors/selectSettings';
+import { PendingSection } from 'typings/pending';
 import getSectionState from 'Utilities/State/getSectionState';
 
 function selector<
@@ -69,7 +70,8 @@ function selector<
     saveError,
     isTesting,
     ...settings,
-    item: settings.settings,
+    pendingChanges,
+    item: settings.settings as PendingSection<T>,
   };
 }
 

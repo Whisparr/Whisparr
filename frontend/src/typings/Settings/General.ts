@@ -9,11 +9,13 @@ export interface General {
   bindAddress: string;
   port: number;
   urlBase: string;
+  applicationUrl: string;
   instanceName: string;
   enableSsl: boolean;
   sslPort: number;
   sslCertPath: string;
   sslCertPassword: string;
+  certificateValidation: string;
   launchBrowser: boolean;
   authenticationMethod: string;
   authenticationRequired: string;
@@ -22,6 +24,7 @@ export interface General {
   password: string;
   passwordConfirmation: string;
   logLevel: string;
+  logSizeLimit: number;
   consoleLogLevel: string;
   branch: string;
   apiKey: string;

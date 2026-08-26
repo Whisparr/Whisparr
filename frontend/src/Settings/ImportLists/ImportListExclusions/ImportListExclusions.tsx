@@ -42,8 +42,8 @@ const COLUMNS = [
 ];
 
 interface ImportListExclusionsProps {
-  useCurrentPage: number;
-  totalRecords: number;
+  useCurrentPage?: number;
+  totalRecords?: number;
 }
 
 function createImportListExlucionsSelector() {

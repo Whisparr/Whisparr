@@ -10,6 +10,7 @@ import ModalBody from 'Components/Modal/ModalBody';
 import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
+import Column from 'Components/Table/Column';
 import Table from 'Components/Table/Table';
 import TableBody from 'Components/Table/TableBody';
 import { icons, kinds, sizes } from 'Helpers/Props';
@@ -22,18 +23,21 @@ import translate from 'Utilities/String/translate';
 import RecentFolderRow from './RecentFolderRow';
 import styles from './InteractiveImportSelectFolderModalContent.css';
 
-const recentFoldersColumns = [
+const recentFoldersColumns: Column[] = [
   {
     name: 'folder',
     label: () => translate('Folder'),
+    isVisible: true,
   },
   {
     name: 'lastUsed',
     label: () => translate('LastUsed'),
+    isVisible: true,
   },
   {
     name: 'actions',
     label: '',
+    isVisible: true,
   },
 ];
 

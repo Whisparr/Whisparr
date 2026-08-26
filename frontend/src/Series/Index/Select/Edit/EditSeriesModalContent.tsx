@@ -12,6 +12,7 @@ import ModalHeader from 'Components/Modal/ModalHeader';
 import Popover from 'Components/Tooltip/Popover';
 import { icons, inputTypes, tooltipPositions } from 'Helpers/Props';
 import MoveSeriesModal from 'Series/MoveSeries/MoveSeriesModal';
+import { InputChanged } from 'typings/inputs';
 import translate from 'Utilities/String/translate';
 import styles from './EditSeriesModalContent.css';
 
@@ -153,28 +154,28 @@ function EditSeriesModalContent(props: EditSeriesModalContentProps) {
   );
 
   const onInputChange = useCallback(
-    ({ name, value }: { name: string; value: string }) => {
+    ({ name, value }: InputChanged) => {
       switch (name) {
         case 'monitored':
-          setMonitored(value);
+          setMonitored(value as string);
           break;
         case 'monitorNewItems':
-          setMonitorNewItems(value);
+          setMonitorNewItems(value as string);
           break;
         case 'monitor':
-          setMonitor(value);
+          setMonitor(value as string);
           break;
         case 'qualityProfileId':
-          setQualityProfileId(value);
+          setQualityProfileId(value as string);
           break;
         case 'seriesType':
-          setSeriesType(value);
+          setSeriesType(value as string);
           break;
         case 'seasonFolder':
-          setSeasonFolder(value);
+          setSeasonFolder(value as string);
           break;
         case 'rootFolderPath':
-          setRootFolderPath(value);
+          setRootFolderPath(value as string);
           break;
         default:
           console.warn('EditSeriesModalContent Unknown Input');

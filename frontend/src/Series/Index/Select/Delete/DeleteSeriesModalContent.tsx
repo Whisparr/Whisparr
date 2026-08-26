@@ -138,7 +138,7 @@ function DeleteSeriesModalContent(props: DeleteSeriesModalContentProps) {
                   ? translate('DeleteSiteFoldersHelpText')
                   : translate('DeleteSiteFolderHelpText')
               }
-              kind={kinds.DANGER}
+              kind="danger"
               onChange={onDeleteFilesChange}
             />
           </FormGroup>

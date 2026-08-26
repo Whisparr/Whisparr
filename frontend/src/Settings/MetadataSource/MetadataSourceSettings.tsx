@@ -7,10 +7,8 @@ import Tpdb from './Tpdb';
 
 function MetadataSourceSettings() {
   return (
-    <PageContent title={translate('MetadataSourceSettings')} >
-      <SettingsToolbar
-        showSave={false}
-      />
+    <PageContent title={translate('MetadataSourceSettings')}>
+      <SettingsToolbar showSave={false} />
 
       <PageContentBody>
         <Tpdb />

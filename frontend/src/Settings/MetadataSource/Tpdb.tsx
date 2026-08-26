@@ -3,7 +3,7 @@ import InlineMarkdown from 'Components/Markdown/InlineMarkdown';
 import translate from 'Utilities/String/translate';
 import styles from './Tpdb.css';
 
-function Tpdb(props) {
+function Tpdb() {
   return (
     <div className={styles.container}>
       <img
@@ -12,13 +12,12 @@ function Tpdb(props) {
       />
 
       <div className={styles.info}>
-        <div className={styles.title}>
-          {translate('TheTpdb')}
-        </div>
+        <div className={styles.title}>{translate('TheTpdb')}</div>
 
-        <InlineMarkdown data={translate('SiteAndEpisodeInformationIsProvidedByTheTPDB')} />
+        <InlineMarkdown
+          data={translate('SiteAndEpisodeInformationIsProvidedByTheTPDB')}
+        />
       </div>
-
     </div>
   );
 }

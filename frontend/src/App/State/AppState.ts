@@ -1,6 +1,7 @@
 import ModelBase from 'App/ModelBase';
 import { FilterBuilderTypes } from 'Helpers/Props/filterBuilderTypes';
 import { DateFilterValue, FilterType } from 'Helpers/Props/filterTypes';
+import AddSeriesAppState from './AddSeriesAppState';
 import { Error } from './AppSectionState';
 import BlocklistAppState from './BlocklistAppState';
 import CalendarAppState from './CalendarAppState';
@@ -10,6 +11,7 @@ import CustomFiltersAppState from './CustomFiltersAppState';
 import EpisodeFilesAppState from './EpisodeFilesAppState';
 import EpisodesAppState from './EpisodesAppState';
 import HistoryAppState, { SeriesHistoryAppState } from './HistoryAppState';
+import ImportSeriesAppState from './ImportSeriesAppState';
 import InteractiveImportAppState from './InteractiveImportAppState';
 import MessagesAppState from './MessagesAppState';
 import OAuthAppState from './OAuthAppState';
@@ -81,6 +83,7 @@ export interface AppSectionState {
 }
 
 interface AppState {
+  addSeries: AddSeriesAppState;
   app: AppSectionState;
   blocklist: BlocklistAppState;
   calendar: CalendarAppState;
@@ -92,6 +95,7 @@ interface AppState {
   episodes: EpisodesAppState;
   episodesSelection: EpisodesAppState;
   history: HistoryAppState;
+  importSeries: ImportSeriesAppState;
   interactiveImport: InteractiveImportAppState;
   oAuth: OAuthAppState;
   organizePreview: OrganizePreviewAppState;

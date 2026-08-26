@@ -3,8 +3,8 @@ import { Redirect, Route } from 'react-router-dom';
 import Blocklist from 'Activity/Blocklist/Blocklist';
 import History from 'Activity/History/History';
 import Queue from 'Activity/Queue/Queue';
-import AddNewSeriesConnector from 'AddSeries/AddNewSeries/AddNewSeriesConnector';
-import ImportSeries from 'AddSeries/ImportSeries/ImportSeries';
+import AddNewSeries from 'AddSeries/AddNewSeries/AddNewSeries';
+import ImportSeriesPage from 'AddSeries/ImportSeries/ImportSeriesPage';
 import CalendarPage from 'Calendar/CalendarPage';
 import NotFound from 'Components/NotFound';
 import Switch from 'Components/Router/Switch';
@@ -64,9 +64,9 @@ function AppRoutes() {
         />
       )}
 
-      <Route path="/add/new" component={AddNewSeriesConnector} />
+      <Route path="/add/new" component={AddNewSeries} />
 
-      <Route path="/add/import" component={ImportSeries} />
+      <Route path="/add/import" component={ImportSeriesPage} />
 
       <Route
         exact={true}
@@ -79,7 +79,7 @@ function AppRoutes() {
       <Route
         path="/jav/add/new"
         render={(routeProps) => (
-          <AddNewSeriesConnector {...routeProps} defaultSeriesType="jav" />
+          <AddNewSeries {...routeProps} defaultSeriesType="jav" />
         )}
       />
 

@@ -7,17 +7,19 @@ import EnhancedSelectInput, {
   EnhancedSelectInputValue,
 } from './EnhancedSelectInput';
 
-interface LanguageSelectInputOnChangeProps {
+export interface LanguageSelectInputOnChangeProps {
   name: string;
   value: number | string | Language;
 }
 
 export interface LanguageSelectInputProps {
+  className?: string;
   name: string;
   value: number | string | Language;
   includeNoChange?: boolean;
   includeNoChangeDisabled?: boolean;
   includeMixed?: boolean;
+  isDisabled?: boolean;
   onChange: (payload: LanguageSelectInputOnChangeProps) => void;
 }
 

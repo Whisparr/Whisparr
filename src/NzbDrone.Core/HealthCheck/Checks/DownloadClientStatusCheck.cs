@@ -1,4 +1,5 @@
-﻿using System.Linq;
+using System.Collections.Generic;
+using System.Linq;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Download;
 using NzbDrone.Core.Localization;
@@ -45,7 +46,10 @@ namespace NzbDrone.Core.HealthCheck.Checks
 
             return new HealthCheck(GetType(),
                 HealthCheckResult.Warning,
-                string.Format(_localizationService.GetLocalizedString("DownloadClientStatusSingleClientHealthCheckMessage"), string.Join(", ", backOffProviders.Select(v => v.Provider.Definition.Name))),
+                _localizationService.GetLocalizedString("DownloadClientStatusSingleClientHealthCheckMessage", new Dictionary<string, object>
+                {
+                    { "downloadClientNames", string.Join(", ", backOffProviders.Select(v => v.Provider.Definition.Name)) }
+                }),
                 "#download-clients-are-unavailable-due-to-failures");
         }
     }

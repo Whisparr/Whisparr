@@ -17,6 +17,7 @@ import ImportListOptionsSettings from 'typings/ImportListOptionsSettings';
 import Indexer from 'typings/Indexer';
 import IndexerFlag from 'typings/IndexerFlag';
 import Notification from 'typings/Notification';
+import QualityDefinition from 'typings/QualityDefinition';
 import QualityProfile from 'typings/QualityProfile';
 import DownloadClientOptions from 'typings/Settings/DownloadClientOptions';
 import General from 'typings/Settings/General';
@@ -107,10 +108,10 @@ export interface NotificationAppState
     AppSectionSchemaState<Presets<Notification>> {}
 
 export interface QualityDefinitionsAppState
-  extends AppSectionState<QualityProfile>,
+  extends AppSectionState<QualityDefinition>,
     AppSectionSaveState {
   pendingChanges: {
-    [key: number]: Partial<QualityProfile>;
+    [key: number]: Partial<QualityDefinition>;
   };
 }
 

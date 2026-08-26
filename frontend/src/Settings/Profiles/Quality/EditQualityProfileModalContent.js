@@ -43,6 +43,9 @@ class EditQualityProfileModalContent extends Component {
     this.state = {
       headerHeight: 0,
       bodyHeight: 0,
+      defaultBodyHeight: 0,
+      editGroupsBodyHeight: 0,
+      editSizesBodyHeight: 0,
       footerHeight: 0
     };
   }
@@ -50,9 +53,10 @@ class EditQualityProfileModalContent extends Component {
   componentDidUpdate(prevProps, prevState) {
     const {
       headerHeight,
-      bodyHeight,
       footerHeight
     } = this.state;
+
+    const bodyHeight = this.state[`${this.props.mode}BodyHeight`];
 
     if (
       headerHeight > 0 &&
@@ -60,7 +64,7 @@ class EditQualityProfileModalContent extends Component {
       footerHeight > 0 &&
       (
         headerHeight !== prevState.headerHeight ||
-        bodyHeight !== prevState.bodyHeight ||
+        bodyHeight !== prevState[`${prevProps.mode}BodyHeight`] ||
         footerHeight !== prevState.footerHeight
       )
     ) {
@@ -76,15 +80,16 @@ class EditQualityProfileModalContent extends Component {
   // Listeners
 
   onHeaderMeasure = ({ height }) => {
-    if (height > this.state.headerHeight) {
+    if (height !== this.state.headerHeight) {
       this.setState({ headerHeight: height });
     }
   };
 
   onBodyMeasure = ({ height }) => {
+    const heightKey = `${this.props.mode}BodyHeight`;
 
-    if (height > this.state.bodyHeight) {
-      this.setState({ bodyHeight: height });
+    if (height !== this.state[heightKey]) {
+      this.setState({ [heightKey]: height });
     }
   };
 
@@ -99,7 +104,7 @@ class EditQualityProfileModalContent extends Component {
 
   render() {
     const {
-      editGroups,
+      mode,
       isFetching,
       error,
       isSaving,
@@ -270,7 +275,7 @@ class EditQualityProfileModalContent extends Component {
 
                       <div className={styles.formGroupWrapper}>
                         <QualityProfileItems
-                          editGroups={editGroups}
+                          mode={mode}
                           qualityProfileItems={items.value}
                           errors={items.errors}
                           warnings={items.warnings}
@@ -337,7 +342,7 @@ class EditQualityProfileModalContent extends Component {
 }
 
 EditQualityProfileModalContent.propTypes = {
-  editGroups: PropTypes.bool.isRequired,
+  mode: PropTypes.string.isRequired,
   isFetching: PropTypes.bool.isRequired,
   error: PropTypes.object,
   isSaving: PropTypes.bool.isRequired,

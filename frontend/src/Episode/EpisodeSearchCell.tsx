@@ -4,7 +4,7 @@ import { EPISODE_SEARCH } from 'Commands/commandNames';
 import IconButton from 'Components/Link/IconButton';
 import SpinnerIconButton from 'Components/Link/SpinnerIconButton';
 import TableRowCell from 'Components/Table/Cells/TableRowCell';
-import { EpisodeEntities } from 'Episode/useEpisode';
+import { EpisodeEntity } from 'Episode/useEpisode';
 import useModalOpenState from 'Helpers/Hooks/useModalOpenState';
 import { icons } from 'Helpers/Props';
 import { executeCommand } from 'Store/Actions/commandActions';
@@ -15,21 +15,19 @@ import styles from './EpisodeSearchCell.css';
 
 interface EpisodeSearchCellProps {
   episodeId: number;
-  episodeEntity: EpisodeEntities;
+  episodeEntity: EpisodeEntity;
   seriesId: number;
   episodeTitle: string;
-  showOpenSeriesButton?: boolean;
+  showOpenSeriesButton: boolean;
 }
 
-function EpisodeSearchCell(props: EpisodeSearchCellProps) {
-  const {
-    episodeId,
-    episodeEntity,
-    seriesId,
-    episodeTitle,
-    showOpenSeriesButton,
-  } = props;
-
+function EpisodeSearchCell({
+  episodeId,
+  episodeEntity,
+  seriesId,
+  episodeTitle,
+  showOpenSeriesButton,
+}: EpisodeSearchCellProps) {
   const executingCommands = useSelector(createExecutingCommandsSelector());
   const isSearching = executingCommands.some(({ name, body }) => {
     const { episodeIds = [] } = body;

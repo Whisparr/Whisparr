@@ -31,8 +31,12 @@ import Status from 'System/Status/Status';
 import Tasks from 'System/Tasks/Tasks';
 import Updates from 'System/Updates/Updates';
 import getPathWithUrlBase from 'Utilities/getPathWithUrlBase';
-import CutoffUnmetConnector from 'Wanted/CutoffUnmet/CutoffUnmetConnector';
+import CutoffUnmet from 'Wanted/CutoffUnmet/CutoffUnmet';
 import Missing from 'Wanted/Missing/Missing';
+
+function RedirectWithUrlBase() {
+  return <Redirect to={getPathWithUrlBase('/')} />;
+}
 
 function AppRoutes() {
   return (
@@ -56,9 +60,7 @@ function AppRoutes() {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           addUrlBase={false}
-          render={() => {
-            return <Redirect to={getPathWithUrlBase('/')} />;
-          }}
+          render={RedirectWithUrlBase}
         />
       )}
 
@@ -81,21 +83,9 @@ function AppRoutes() {
         )}
       />
 
-      <Route
-        path="/serieseditor"
-        exact={true}
-        render={() => {
-          return <Redirect to={getPathWithUrlBase('/')} />;
-        }}
-      />
+      <Route path="/serieseditor" exact={true} render={RedirectWithUrlBase} />
 
-      <Route
-        path="/seasonpass"
-        exact={true}
-        render={() => {
-          return <Redirect to={getPathWithUrlBase('/')} />;
-        }}
-      />
+      <Route path="/seasonpass" exact={true} render={RedirectWithUrlBase} />
 
       <Route path="/site/:titleSlug" component={SeriesDetailsPageConnector} />
 
@@ -121,7 +111,7 @@ function AppRoutes() {
 
       <Route path="/wanted/missing" component={Missing} />
 
-      <Route path="/wanted/cutoffunmet" component={CutoffUnmetConnector} />
+      <Route path="/wanted/cutoffunmet" component={CutoffUnmet} />
 
       {/*
         Settings

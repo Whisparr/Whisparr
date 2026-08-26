@@ -8,23 +8,28 @@
   flex: 0 1 250px;
 }
 
+.notice {
+  composes: alert from '~Components/Alert.css';
+
+  margin: 0;
+  margin-bottom: 20px;
+}
+
 .sizeLimit {
-  flex: 0 1 500px;
+  flex: 1 0 auto;
 }
 
 .megabytesPerMinute {
-  flex: 0 0 250px;
+  flex: 0 0 150px;
+  text-align: right;
 }
 
 .sizeLimitHelpTextContainer {
   display: flex;
-  justify-content: flex-end;
-  margin-top: 20px;
-  max-width: 1000px;
+  justify-content: center;
 }
 
 .sizeLimitHelpText {
-  max-width: 500px;
   color: var(--helpTextColor);
 }
 

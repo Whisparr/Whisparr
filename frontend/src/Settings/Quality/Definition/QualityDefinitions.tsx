@@ -16,7 +16,7 @@ import {
   SetChildSave,
 } from 'typings/Settings/SettingsState';
 import translate from 'Utilities/String/translate';
-import QualityDefinitionConnector from './QualityDefinitionConnector';
+import QualityDefinition from './QualityDefinition';
 import styles from './QualityDefinitions.css';
 
 function createQualityDefinitionsSelector() {
@@ -101,13 +101,7 @@ function QualityDefinitions({
 
         <div className={styles.definitions}>
           {items.map((item) => {
-            return (
-              <QualityDefinitionConnector
-                key={item.id}
-                {...item}
-                advancedSettings={showAdvancedSettings}
-              />
-            );
+            return <QualityDefinition key={item.id} {...item} />;
           })}
         </div>
 

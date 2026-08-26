@@ -18,10 +18,17 @@ interface EpisodeSearchCellProps {
   episodeEntity: EpisodeEntities;
   seriesId: number;
   episodeTitle: string;
+  showOpenSeriesButton?: boolean;
 }
 
 function EpisodeSearchCell(props: EpisodeSearchCellProps) {
-  const { episodeId, episodeEntity, seriesId, episodeTitle } = props;
+  const {
+    episodeId,
+    episodeEntity,
+    seriesId,
+    episodeTitle,
+    showOpenSeriesButton,
+  } = props;
 
   const executingCommands = useSelector(createExecutingCommandsSelector());
   const isSearching = executingCommands.some(({ name, body }) => {
@@ -66,6 +73,7 @@ function EpisodeSearchCell(props: EpisodeSearchCellProps) {
         episodeTitle={episodeTitle}
         selectedTab="search"
         startInteractiveSearch={true}
+        showOpenSeriesButton={showOpenSeriesButton}
         onModalClose={setDetailsModalClosed}
       />
     </TableRowCell>

@@ -6,18 +6,20 @@ import EnhancedSelectInput, {
   EnhancedSelectInputValue,
 } from './EnhancedSelectInput';
 
-interface MonitorEpisodesSelectInputProps
+export interface MonitorEpisodesSelectInputProps
   extends Omit<
     EnhancedSelectInputProps<EnhancedSelectInputValue<string>, string>,
     'values'
   > {
-  includeNoChange: boolean;
-  includeMixed: boolean;
+  includeNoChange?: boolean;
+  includeNoChangeDisabled?: boolean;
+  includeMixed?: boolean;
 }
 
 function MonitorEpisodesSelectInput(props: MonitorEpisodesSelectInputProps) {
   const {
     includeNoChange = false,
+    includeNoChangeDisabled = true,
     includeMixed = false,
     ...otherProps
   } = props;
@@ -30,7 +32,7 @@ function MonitorEpisodesSelectInput(props: MonitorEpisodesSelectInputProps) {
       get value() {
         return translate('NoChange');
       },
-      isDisabled: true,
+      isDisabled: includeNoChangeDisabled,
     });
   }
 

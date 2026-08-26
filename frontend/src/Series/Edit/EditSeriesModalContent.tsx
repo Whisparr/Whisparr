@@ -201,6 +201,7 @@ function EditSeriesModalContent({
             <FormInputGroup
               type={inputTypes.PATH}
               name="path"
+              includeFiles={false}
               {...settings.path}
               onChange={handleInputChange}
             />

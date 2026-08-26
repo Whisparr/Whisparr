@@ -3,10 +3,13 @@ import AppSectionState, {
   AppSectionItemSchemaState,
   AppSectionItemState,
   AppSectionSaveState,
+  AppSectionSchemaState,
   PagedAppSectionState,
 } from 'App/State/AppSectionState';
 import Language from 'Language/Language';
+import AutoTagging, { AutoTaggingSpecification } from 'typings/AutoTagging';
 import CustomFormat from 'typings/CustomFormat';
+import DelayProfile from 'typings/DelayProfile';
 import DownloadClient from 'typings/DownloadClient';
 import ImportList from 'typings/ImportList';
 import ImportListExclusion from 'typings/ImportListExclusion';
@@ -16,9 +19,27 @@ import IndexerFlag from 'typings/IndexerFlag';
 import Notification from 'typings/Notification';
 import QualityProfile from 'typings/QualityProfile';
 import General from 'typings/Settings/General';
+import MediaManagement from 'typings/Settings/MediaManagement';
 import NamingConfig from 'typings/Settings/NamingConfig';
 import NamingExample from 'typings/Settings/NamingExample';
+import ReleaseProfile from 'typings/Settings/ReleaseProfile';
 import UiSettings from 'typings/Settings/UiSettings';
+
+export interface AutoTaggingAppState
+  extends AppSectionState<AutoTagging>,
+    AppSectionDeleteState,
+    AppSectionSaveState {}
+
+export interface AutoTaggingSpecificationAppState
+  extends AppSectionState<AutoTaggingSpecification>,
+    AppSectionDeleteState,
+    AppSectionSaveState,
+    AppSectionSchemaState<AutoTaggingSpecification> {}
+
+export interface DelayProfileAppState
+  extends AppSectionState<DelayProfile>,
+    AppSectionDeleteState,
+    AppSectionSaveState {}
 
 export interface DownloadClientAppState
   extends AppSectionState<DownloadClient>,
@@ -29,6 +50,16 @@ export interface DownloadClientAppState
 
 export interface GeneralAppState
   extends AppSectionItemState<General>,
+    AppSectionSaveState {}
+
+export interface ReleaseProfilesAppState
+  extends AppSectionState<ReleaseProfile>,
+    AppSectionSaveState {
+  pendingChanges: Partial<ReleaseProfile>;
+}
+
+export interface MediaManagementAppState
+  extends AppSectionItemState<MediaManagement>,
     AppSectionSaveState {}
 
 export interface NamingAppState
@@ -52,6 +83,14 @@ export interface IndexerAppState
 export interface NotificationAppState
   extends AppSectionState<Notification>,
     AppSectionDeleteState {}
+
+export interface QualityDefinitionsAppState
+  extends AppSectionState<QualityProfile>,
+    AppSectionSaveState {
+  pendingChanges: {
+    [key: number]: Partial<QualityProfile>;
+  };
+}
 
 export interface QualityProfilesAppState
   extends AppSectionState<QualityProfile>,
@@ -79,11 +118,15 @@ export type LanguageSettingsAppState = AppSectionState<Language>;
 export type UiSettingsAppState = AppSectionItemState<UiSettings>;
 
 interface SettingsAppState {
+  releaseProfiles: ReleaseProfilesAppState;
   naming: NamingAppState;
   namingExamples: NamingExamplesAppState;
   advancedSettings: boolean;
   safeForWorkMode: boolean;
+  autoTaggings: AutoTaggingAppState;
+  autoTaggingSpecifications: AutoTaggingSpecificationAppState;
   customFormats: CustomFormatAppState;
+  delayProfiles: DelayProfileAppState;
   downloadClients: DownloadClientAppState;
   general: GeneralAppState;
   importListExclusions: ImportListExclusionsSettingsAppState;
@@ -92,7 +135,9 @@ interface SettingsAppState {
   indexerFlags: IndexerFlagSettingsAppState;
   indexers: IndexerAppState;
   languages: LanguageSettingsAppState;
+  mediaManagement: MediaManagementAppState;
   notifications: NotificationAppState;
+  qualityDefinitions: QualityDefinitionsAppState;
   qualityProfiles: QualityProfilesAppState;
   ui: UiSettingsAppState;
 }

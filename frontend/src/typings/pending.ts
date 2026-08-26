@@ -33,7 +33,7 @@ export interface Pending<T> {
   value: T;
   errors: Failure[];
   warnings: Failure[];
-  pending?: boolean;
+  pending: boolean;
   previousValue?: T;
 }
 
@@ -58,5 +58,6 @@ type Mapped<T> = {
 };
 
 export type PendingSection<T> = Mapped<T> & {
+  implementationName?: string;
   fields?: PendingField<T>[];
 };

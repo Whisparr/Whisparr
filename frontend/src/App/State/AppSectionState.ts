@@ -43,9 +43,8 @@ export interface AppSectionSchemaState<T> {
   isSchemaFetching: boolean;
   isSchemaPopulated: boolean;
   schemaError: Error;
-  schema: {
-    items: T[];
-  };
+  schema: T[];
+  selectedSchema?: T;
 }
 
 export interface AppSectionItemSchemaState<T> {
@@ -61,6 +60,17 @@ export interface AppSectionItemState<T> {
   error: Error;
   pendingChanges: Partial<T>;
   item: T;
+}
+
+export interface AppSectionProviderState<T>
+  extends AppSectionDeleteState,
+    AppSectionSaveState {
+  isFetching: boolean;
+  isPopulated: boolean;
+  isTesting?: boolean;
+  error: Error;
+  items: T[];
+  pendingChanges?: Partial<T>;
 }
 
 interface AppSectionState<T> {

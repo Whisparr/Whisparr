@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import Button from 'Components/Link/Button';
 import ModalBody from 'Components/Modal/ModalBody';
 import ModalContent from 'Components/Modal/ModalContent';
@@ -20,6 +20,13 @@ function SeasonInteractiveSearchModalContent(
 ) {
   const { seriesId, seasonNumber, onModalClose } = props;
 
+  // Must keep a stable identity: InteractiveSearch refetches whenever this
+  // changes, so a fresh object each render loops the search forever.
+  const searchPayload = useMemo(
+    () => ({ seriesId, seasonNumber }),
+    [seriesId, seasonNumber]
+  );
+
   return (
     <ModalContent onModalClose={onModalClose}>
       <ModalHeader>
@@ -31,13 +38,7 @@ function SeasonInteractiveSearchModalContent(
       </ModalHeader>
 
       <ModalBody scrollDirection={scrollDirections.BOTH}>
-        <InteractiveSearch
-          type="season"
-          searchPayload={{
-            seriesId,
-            seasonNumber,
-          }}
-        />
+        <InteractiveSearch type="season" searchPayload={searchPayload} />
       </ModalBody>
 
       <ModalFooter>

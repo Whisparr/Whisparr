@@ -19,6 +19,7 @@ import IndexerFlag from 'typings/IndexerFlag';
 import Notification from 'typings/Notification';
 import QualityProfile from 'typings/QualityProfile';
 import General from 'typings/Settings/General';
+import MediaManagement from 'typings/Settings/MediaManagement';
 import NamingConfig from 'typings/Settings/NamingConfig';
 import NamingExample from 'typings/Settings/NamingExample';
 import ReleaseProfile from 'typings/Settings/ReleaseProfile';
@@ -56,6 +57,10 @@ export interface ReleaseProfilesAppState
     AppSectionSaveState {
   pendingChanges: Partial<ReleaseProfile>;
 }
+
+export interface MediaManagementAppState
+  extends AppSectionItemState<MediaManagement>,
+    AppSectionSaveState {}
 
 export interface NamingAppState
   extends AppSectionItemState<NamingConfig>,
@@ -130,6 +135,7 @@ interface SettingsAppState {
   indexerFlags: IndexerFlagSettingsAppState;
   indexers: IndexerAppState;
   languages: LanguageSettingsAppState;
+  mediaManagement: MediaManagementAppState;
   notifications: NotificationAppState;
   qualityDefinitions: QualityDefinitionsAppState;
   qualityProfiles: QualityProfilesAppState;

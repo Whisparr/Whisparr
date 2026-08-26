@@ -24,6 +24,7 @@ using NzbDrone.Common.Instrumentation;
 using NzbDrone.Common.Instrumentation.Extensions;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Datastore.Extensions;
+using Whisparr.Http.ClientSchema;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 using PostgresOptions = NzbDrone.Core.Datastore.PostgresOptions;
 
@@ -152,6 +153,8 @@ namespace NzbDrone.Host
                         .AddNzbDroneLogger()
                         .AddDatabase()
                         .AddStartupContext(context);
+
+                    SchemaBuilder.Initialize(c);
                 })
                 .ConfigureServices(services =>
                 {

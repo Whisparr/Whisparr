@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using NLog;
@@ -53,7 +54,11 @@ namespace NzbDrone.Core.HealthCheck.Checks
                     {
                         return new HealthCheck(GetType(),
                             HealthCheckResult.Warning,
-                            string.Format(_localizationService.GetLocalizedString("DownloadClientRootFolderHealthCheckMessage"), client.Definition.Name, folder.Path),
+                            _localizationService.GetLocalizedString("DownloadClientRootFolderHealthCheckMessage", new Dictionary<string, object>
+                            {
+                                { "downloadClientName", client.Definition.Name },
+                                { "path", folder.Path }
+                            }),
                             "#downloads-in-root-folder");
                     }
                 }

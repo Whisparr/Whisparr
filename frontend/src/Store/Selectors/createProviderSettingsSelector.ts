@@ -1,7 +1,7 @@
-import _ from 'lodash';
 import { createSelector } from 'reselect';
 import ModelBase from 'App/ModelBase';
 import {
+  AppSectionItemSchemaState,
   AppSectionProviderState,
   AppSectionSchemaState,
 } from 'App/State/AppSectionState';
@@ -9,32 +9,27 @@ import AppState from 'App/State/AppState';
 import selectSettings, {
   ModelBaseSetting,
 } from 'Store/Selectors/selectSettings';
-import { PendingSection } from 'typings/pending';
 import getSectionState from 'Utilities/State/getSectionState';
+
+type SchemaState<T> = AppSectionSchemaState<T> | AppSectionItemSchemaState<T>;
 
 function selector<
   T extends ModelBaseSetting,
-  S extends AppSectionProviderState<T> & AppSectionSchemaState<T>
+  S extends AppSectionProviderState<T> & SchemaState<T>
 >(id: number | undefined, section: S) {
-  if (!id) {
-    const item = _.isArray(section.schema)
-      ? section.selectedSchema
-      : section.schema;
-    const settings = selectSettings(
-      Object.assign({ name: '' }, item),
-      section.pendingChanges ?? {},
-      section.saveError
-    );
-
+  if (id) {
     const {
-      isSchemaFetching: isFetching,
-      isSchemaPopulated: isPopulated,
-      schemaError: error,
+      isFetching,
+      isPopulated,
+      error,
       isSaving,
       saveError,
       isTesting,
       pendingChanges,
     } = section;
+
+    const item = section.items.find((i) => i.id === id)!;
+    const settings = selectSettings<T>(item, pendingChanges, saveError);
 
     return {
       isFetching,
@@ -44,23 +39,30 @@ function selector<
       saveError,
       isTesting,
       ...settings,
-      pendingChanges,
       item: settings.settings,
     };
   }
 
+  const item =
+    'selectedSchema' in section
+      ? section.selectedSchema
+      : (section.schema as T);
+
+  const settings = selectSettings(
+    Object.assign({ name: '' }, item),
+    section.pendingChanges ?? {},
+    section.saveError
+  );
+
   const {
-    isFetching,
-    isPopulated,
-    error,
+    isSchemaFetching: isFetching,
+    isSchemaPopulated: isPopulated,
+    schemaError: error,
     isSaving,
     saveError,
     isTesting,
     pendingChanges,
   } = section;
-
-  const item = section.items.find((i) => i.id === id)!;
-  const settings = selectSettings<T>(item, pendingChanges, saveError);
 
   return {
     isFetching,
@@ -71,13 +73,13 @@ function selector<
     isTesting,
     ...settings,
     pendingChanges,
-    item: settings.settings as PendingSection<T>,
+    item: settings.settings,
   };
 }
 
 export default function createProviderSettingsSelector<
   T extends ModelBase,
-  S extends AppSectionProviderState<T> & AppSectionSchemaState<T>
+  S extends AppSectionProviderState<T> & SchemaState<T>
 >(sectionName: string) {
   // @ts-expect-error - This isn't fully typed
   return createSelector(
@@ -89,7 +91,7 @@ export default function createProviderSettingsSelector<
 
 export function createProviderSettingsSelectorHook<
   T extends ModelBaseSetting,
-  S extends AppSectionProviderState<T> & AppSectionSchemaState<T>
+  S extends AppSectionProviderState<T> & SchemaState<T>
 >(sectionName: string, id: number | undefined) {
   return createSelector(
     (state: AppState) => state.settings,

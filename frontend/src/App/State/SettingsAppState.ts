@@ -2,6 +2,7 @@ import AppSectionState, {
   AppSectionDeleteState,
   AppSectionItemSchemaState,
   AppSectionItemState,
+  AppSectionListState,
   AppSectionSaveState,
   AppSectionSchemaState,
   PagedAppSectionState,
@@ -45,7 +46,7 @@ export interface AutoTaggingSpecificationAppState
     AppSectionSchemaState<AutoTaggingSpecification> {}
 
 export interface DelayProfileAppState
-  extends AppSectionState<DelayProfile>,
+  extends AppSectionListState<DelayProfile>,
     AppSectionDeleteState,
     AppSectionSaveState {}
 
@@ -117,7 +118,9 @@ export interface QualityDefinitionsAppState
 
 export interface QualityProfilesAppState
   extends AppSectionState<QualityProfile>,
-    AppSectionItemSchemaState<QualityProfile> {}
+    AppSectionItemSchemaState<QualityProfile>,
+    AppSectionDeleteState,
+    AppSectionSaveState {}
 
 export interface ImportListOptionsSettingsAppState
   extends AppSectionItemState<ImportListOptionsSettings>,

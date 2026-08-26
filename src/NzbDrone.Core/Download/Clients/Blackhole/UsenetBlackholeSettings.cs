@@ -18,7 +18,8 @@ namespace NzbDrone.Core.Download.Clients.Blackhole
     {
         private static readonly UsenetBlackholeSettingsValidator Validator = new ();
 
-        [FieldDefinition(0, Label = "Nzb Folder", Type = FieldType.Path, HelpText = "Folder in which Whisparr will store the .nzb file")]
+        [FieldDefinition(0, Label = "UsenetBlackholeNzbFolder", Type = FieldType.Path, HelpText = "BlackholeFolderHelpText")]
+        [FieldToken(TokenField.HelpText, "UsenetBlackholeNzbFolder", "extension", ".nzb")]
         public string NzbFolder { get; set; }
 
         [FieldDefinition(1, Label = "Watch Folder", Type = FieldType.Path, HelpText = "Folder from which Whisparr should import completed downloads")]

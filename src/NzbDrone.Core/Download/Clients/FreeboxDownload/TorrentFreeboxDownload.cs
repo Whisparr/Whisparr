@@ -9,6 +9,7 @@ using NzbDrone.Common.Http;
 using NzbDrone.Core.Blocklisting;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Download.Clients.FreeboxDownload.Responses;
+using NzbDrone.Core.Localization;
 using NzbDrone.Core.MediaFiles.TorrentInfo;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.RemotePathMappings;
@@ -26,8 +27,9 @@ namespace NzbDrone.Core.Download.Clients.FreeboxDownload
             IDiskProvider diskProvider,
             IRemotePathMappingService remotePathMappingService,
             IBlocklistService blocklistService,
-            Logger logger)
-            : base(torrentFileInfoReader, httpClient, configService, diskProvider, remotePathMappingService, blocklistService, logger)
+            Logger logger,
+            ILocalizationService localizationService)
+            : base(torrentFileInfoReader, httpClient, configService, diskProvider, remotePathMappingService, blocklistService, logger, localizationService)
         {
             _proxy = proxy;
         }
@@ -110,8 +112,9 @@ namespace NzbDrone.Core.Download.Clients.FreeboxDownload
 
                     case FreeboxDownloadTaskStatus.Unknown:
                     default: // new status in API? default to downloading
-                        item.Message = "Unknown download state: " + torrent.Status;
-                        _logger.Info(item.Message);
+                        item.Message = _localizationService.GetLocalizedString("UnknownDownloadState",
+                            new Dictionary<string, object> { { "state", torrent.Status } });
+                        _logger.Info($"Unknown download state: {torrent.Status}");
                         item.Status = DownloadItemStatus.Downloading;
                         break;
                 }

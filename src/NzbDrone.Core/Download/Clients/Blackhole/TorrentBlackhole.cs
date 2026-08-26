@@ -9,6 +9,7 @@ using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
 using NzbDrone.Core.Blocklisting;
 using NzbDrone.Core.Configuration;
+using NzbDrone.Core.Localization;
 using NzbDrone.Core.MediaFiles.TorrentInfo;
 using NzbDrone.Core.Organizer;
 using NzbDrone.Core.Parser.Model;
@@ -31,8 +32,9 @@ namespace NzbDrone.Core.Download.Clients.Blackhole
                                 IDiskProvider diskProvider,
                                 IRemotePathMappingService remotePathMappingService,
                                 IBlocklistService blocklistService,
-                                Logger logger)
-            : base(torrentFileInfoReader, httpClient, configService, diskProvider, remotePathMappingService, blocklistService, logger)
+                                Logger logger,
+                                ILocalizationService localizationService)
+            : base(torrentFileInfoReader, httpClient, configService, diskProvider, remotePathMappingService, blocklistService, logger, localizationService)
         {
             _scanWatchFolder = scanWatchFolder;
 
@@ -81,7 +83,7 @@ namespace NzbDrone.Core.Download.Clients.Blackhole
             return null;
         }
 
-        public override string Name => "Torrent Blackhole";
+        public override string Name => _localizationService.GetLocalizedString("TorrentBlackhole");
 
         public override IEnumerable<DownloadClientItem> GetItems()
         {

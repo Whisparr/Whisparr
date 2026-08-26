@@ -136,7 +136,7 @@ namespace NzbDrone.Test.Common
 
         private void Start(string outputWhisparrConsoleExe)
         {
-            StringDictionary envVars = new ();
+            StringDictionary envVars = new();
             if (PostgresOptions?.Host != null)
             {
                 envVars.Add("Whisparr__Postgres__Host", PostgresOptions.Host);

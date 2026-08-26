@@ -27,7 +27,7 @@ namespace NzbDrone.Core.Indexers.IPTorrents
 
     public class IPTorrentsSettings : PropertywiseEquatable<IPTorrentsSettings>, ITorrentIndexerSettings
     {
-        private static readonly IPTorrentsSettingsValidator Validator = new ();
+        private static readonly IPTorrentsSettingsValidator Validator = new();
 
         public IPTorrentsSettings()
         {
@@ -42,7 +42,7 @@ namespace NzbDrone.Core.Indexers.IPTorrents
         public int MinimumSeeders { get; set; }
 
         [FieldDefinition(2)]
-        public SeedCriteriaSettings SeedCriteria { get; set; } = new ();
+        public SeedCriteriaSettings SeedCriteria { get; set; } = new();
 
         [FieldDefinition(3, Type = FieldType.Checkbox, Label = "Reject Blocklisted Torrent Hashes While Grabbing", HelpText = "If a torrent is blocked by hash it may not properly be rejected during RSS/Search for some indexers, enabling this will allow it to be rejected after the torrent is grabbed, but before it is sent to the client.", Advanced = true)]
         public bool RejectBlocklistedTorrentHashesWhileGrabbing { get; set; }

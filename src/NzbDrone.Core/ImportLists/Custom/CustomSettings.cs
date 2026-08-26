@@ -15,7 +15,7 @@ namespace NzbDrone.Core.ImportLists.Custom
 
     public class CustomSettings : ImportListSettingsBase<CustomSettings>
     {
-        private static readonly CustomSettingsValidator Validator = new ();
+        private static readonly CustomSettingsValidator Validator = new();
 
         [FieldDefinition(0, Label = "List URL", HelpText = "The URL for the series list")]
         public override string BaseUrl { get; set; } = string.Empty;

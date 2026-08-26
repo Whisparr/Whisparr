@@ -18,7 +18,7 @@ namespace NzbDrone.Core.Notifications.SendGrid
 
     public class SendGridSettings : NotificationSettingsBase<SendGridSettings>
     {
-        private static readonly SendGridSettingsValidator Validator = new ();
+        private static readonly SendGridSettingsValidator Validator = new();
 
         public SendGridSettings()
         {

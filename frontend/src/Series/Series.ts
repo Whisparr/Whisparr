@@ -89,7 +89,7 @@ interface Series extends ModelBase {
   seasons: Season[];
   seriesType: SeriesType;
   sortTitle: string;
-  statistics: Statistics;
+  statistics?: Statistics;
   status: SeriesStatus;
   tags: number[];
   title: string;

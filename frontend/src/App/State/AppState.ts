@@ -1,6 +1,6 @@
 import ModelBase from 'App/ModelBase';
-import { DateFilterValue } from 'Components/Filter/Builder/DateFilterBuilderRowValue';
 import { FilterBuilderTypes } from 'Helpers/Props/filterBuilderTypes';
+import { DateFilterValue, FilterType } from 'Helpers/Props/filterTypes';
 import { Error } from './AppSectionState';
 import BlocklistAppState from './BlocklistAppState';
 import CalendarAppState from './CalendarAppState';
@@ -9,7 +9,7 @@ import CommandAppState from './CommandAppState';
 import CustomFiltersAppState from './CustomFiltersAppState';
 import EpisodeFilesAppState from './EpisodeFilesAppState';
 import EpisodesAppState from './EpisodesAppState';
-import HistoryAppState from './HistoryAppState';
+import HistoryAppState, { SeriesHistoryAppState } from './HistoryAppState';
 import InteractiveImportAppState from './InteractiveImportAppState';
 import MessagesAppState from './MessagesAppState';
 import OAuthAppState from './OAuthAppState';
@@ -42,7 +42,7 @@ export interface FilterBuilderProp<T> {
 export interface PropertyFilter {
   key: string;
   value: string | string[] | number[] | boolean[] | DateFilterValue;
-  type: string;
+  type: FilterType;
 }
 
 export interface Filter {
@@ -103,6 +103,7 @@ interface AppState {
   rootFolders: RootFolderAppState;
   javSeriesIndex: SeriesIndexAppState;
   series: SeriesAppState;
+  seriesHistory: SeriesHistoryAppState;
   seriesIndex: SeriesIndexAppState;
   settings: SettingsAppState;
   system: SystemAppState;

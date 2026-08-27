@@ -30,7 +30,6 @@
   display: flex;
   align-items: flex-end;
   flex-direction: column;
-  margin-left: auto;
   gap: 2px;
 }
 

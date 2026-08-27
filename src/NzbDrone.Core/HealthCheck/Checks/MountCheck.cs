@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using NzbDrone.Common.Disk;
 using NzbDrone.Core.Localization;
@@ -31,6 +31,7 @@ namespace NzbDrone.Core.HealthCheck.Checks
             {
                 return new HealthCheck(GetType(),
                     HealthCheckResult.Error,
+                    HealthCheckReason.MountSeries,
                     $"{_localizationService.GetLocalizedString("MountHealthCheckMessage")}{string.Join(", ", mounts.Select(m => $"{m.Item1.Name} ({m.Item2})"))}",
                     "#series-mount-ro");
             }

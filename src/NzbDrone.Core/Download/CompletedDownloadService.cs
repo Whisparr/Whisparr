@@ -1,9 +1,8 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NLog;
-using NLog.Fluent;
 using NzbDrone.Common.EnvironmentInfo;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Instrumentation.Extensions;
@@ -296,14 +295,14 @@ namespace NzbDrone.Core.Download
                 }
                 else
                 {
-                    _logger.Debug()
+                    _logger.ForDebugEvent()
                            .Message("No Episodes were just imported, but all episodes were previously imported, possible issue with download history.")
                            .Property("SeriesId", trackedDownload.RemoteEpisode.Series.Id)
                            .Property("DownloadId", trackedDownload.DownloadItem.DownloadId)
                            .Property("Title", trackedDownload.DownloadItem.Title)
                            .Property("Path", trackedDownload.ImportItem.OutputPath.ToString())
                            .WriteSentryWarn("DownloadHistoryIncomplete")
-                           .Write();
+                           .Log();
                 }
 
                 trackedDownload.State = TrackedDownloadState.Imported;

@@ -23,7 +23,13 @@ runs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '8.0.x'
+        dotnet-version: '10.0.x'
+
+    - name: Setup NuGet registry source
+      shell: bash
+      if: ${{ startsWith(inputs.runtime, 'freebsd') }}
+      run:
+        dotnet nuget add source --configfile src/NuGet.config --name gh-openur https://nuget.pkg.github.com/openur/index.json --username ${{ github.repository_owner }} --password ${{ github.token }} --store-password-in-clear-text
 
     - name: Setup Environment Variables
       id: variables
@@ -94,17 +100,8 @@ runs:
         rm -rf _output
         rm -rf _tests
         echo "Building Whisparr for $runtime, Platform: $platform"
-        SELF_CONTAINED=true
-        MSBUILD_EXTRA=""
-        if [[ "${runtime}" == freebsd* ]]; then
-          echo "FreeBSD target detected - using framework-dependent publish to avoid missing apphost"
-          SELF_CONTAINED=false
-          # The FreeBSD runtime pack comes from the dotnet-bsd-crossbuild feed,
-          # which lags the SDK's own patch level. Without this the restore asks
-          # for the SDK's runtime version and fails with NU1102.
-          MSBUILD_EXTRA="-p:UseAppHost=false -p:RuntimeFrameworkVersion=${FREEBSD_RUNTIME_VERSION:-8.0.27}"
-        fi
-        dotnet msbuild -restore $slnFile -p:SelfContained=${SELF_CONTAINED} -p:Configuration=Release -p:Platform=$platform -p:RuntimeIdentifiers=$runtime -p:EnableWindowsTargeting=true $MSBUILD_EXTRA -t:PublishAllRids
+
+        dotnet msbuild -restore $slnFile -p:SelfContained=true -p:Configuration=Release -p:Platform=$platform -p:RuntimeIdentifiers=$runtime -p:EnableWindowsTargeting=true -t:PublishAllRids
 
     - name: Package
       shell: bash

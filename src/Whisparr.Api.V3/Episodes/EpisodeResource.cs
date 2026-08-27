@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
@@ -25,8 +25,6 @@ namespace Whisparr.Api.V3.Episodes
         public bool HasFile { get; set; }
         public bool Monitored { get; set; }
         public int? AbsoluteEpisodeNumber { get; set; }
-        public DateTime? EndTime { get; set; }
-        public DateTime? GrabDate { get; set; }
         public string SeriesTitle { get; set; }
         public SeriesResource Series { get; set; }
         public List<Actor> Actors { get; set; }

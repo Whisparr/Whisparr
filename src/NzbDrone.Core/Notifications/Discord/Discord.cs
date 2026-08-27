@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -711,9 +711,9 @@ namespace NzbDrone.Core.Notifications.Discord
 
             var episodeTitles = string.Join(" + ", episodes.Select(e => e.Title));
 
-            var title = $"{series.Title} - {episodes.First().SeasonNumber}{episodeNumbers} - {episodeTitles}";
+            var title = $"{series.Title} - {episodes.First().SeasonNumber}{episodeNumbers} - {episodeTitles}".Replace("`", "\\`");
 
-            return title.Length > 256 ? $"{title.AsSpan(0, 253)}..." : title;
+            return title.Length > 256 ? $"{title.AsSpan(0, 253).TrimEnd('\\')}..." : title;
         }
     }
 }

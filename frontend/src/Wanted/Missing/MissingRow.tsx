@@ -4,6 +4,7 @@ import TableRowCell from 'Components/Table/Cells/TableRowCell';
 import TableSelectCell from 'Components/Table/Cells/TableSelectCell';
 import Column from 'Components/Table/Column';
 import TableRow from 'Components/Table/TableRow';
+import { Actor } from 'Episode/Episode';
 import EpisodeSearchCell from 'Episode/EpisodeSearchCell';
 import EpisodeStatus from 'Episode/EpisodeStatus';
 import EpisodeTitleLink from 'Episode/EpisodeTitleLink';
@@ -24,7 +25,8 @@ interface MissingRowProps {
   sceneEpisodeNumber?: number;
   sceneAbsoluteEpisodeNumber?: number;
   unverifiedSceneNumbering: boolean;
-  airDateUtc?: string;
+  releaseDate?: string;
+  actors?: Actor[];
   lastSearchTime?: string;
   title: string;
   isSelected?: boolean;
@@ -43,7 +45,8 @@ function MissingRow({
   sceneEpisodeNumber,
   sceneAbsoluteEpisodeNumber,
   unverifiedSceneNumbering,
-  airDateUtc,
+  releaseDate,
+  actors = [],
   lastSearchTime,
   title,
   isSelected,
@@ -114,8 +117,21 @@ function MissingRow({
           );
         }
 
+        if (name === 'actors') {
+          const joinedPerformers = actors
+            .map((a) => a.character)
+            .slice(0, 4)
+            .join(', ');
+
+          return (
+            <TableRowCell key={name} className={styles.actors}>
+              <span title={joinedPerformers}>{joinedPerformers}</span>
+            </TableRowCell>
+          );
+        }
+
         if (name === 'episodes.airDateUtc') {
-          return <RelativeDateCell key={name} date={airDateUtc} />;
+          return <RelativeDateCell key={name} date={releaseDate} />;
         }
 
         if (name === 'episodes.lastSearchTime') {

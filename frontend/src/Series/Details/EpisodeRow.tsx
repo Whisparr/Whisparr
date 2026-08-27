@@ -7,6 +7,7 @@ import Column from 'Components/Table/Column';
 import TableRow from 'Components/Table/TableRow';
 import Popover from 'Components/Tooltip/Popover';
 import Tooltip from 'Components/Tooltip/Tooltip';
+import { Actor } from 'Episode/Episode';
 import EpisodeFormats from 'Episode/EpisodeFormats';
 import EpisodeSearchCell from 'Episode/EpisodeSearchCell';
 import EpisodeStatus from 'Episode/EpisodeStatus';
@@ -36,7 +37,8 @@ interface EpisodeRowProps {
   sceneSeasonNumber?: number;
   sceneEpisodeNumber?: number;
   sceneAbsoluteEpisodeNumber?: number;
-  airDateUtc?: string;
+  releaseDate?: string;
+  actors?: Actor[];
   runtime?: number;
   finaleType?: string;
   title: string;
@@ -63,7 +65,8 @@ function EpisodeRow({
   seriesId,
   episodeFileId,
   monitored,
-  airDateUtc,
+  releaseDate,
+  actors = [],
   runtime,
   finaleType,
   title,
@@ -138,8 +141,21 @@ function EpisodeRow({
           );
         }
 
-        if (name === 'airDateUtc') {
-          return <RelativeDateCell key={name} date={airDateUtc} />;
+        if (name === 'actors') {
+          const joinedPerformers = actors
+            .map((a) => a.character)
+            .slice(0, 4)
+            .join(', ');
+
+          return (
+            <TableRowCell key={name} className={styles.actors}>
+              <span title={joinedPerformers}>{joinedPerformers}</span>
+            </TableRowCell>
+          );
+        }
+
+        if (name === 'releaseDate') {
+          return <RelativeDateCell key={name} date={releaseDate} />;
         }
 
         if (name === 'runtime') {

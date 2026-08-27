@@ -19,9 +19,9 @@ function createIsDownloadingSelector(episodeIds: number[]) {
   return createSelector(
     (state: AppState) => state.queue.details,
     (details) => {
-      return details.items.some((item) => {
-        return !!(item.episodeId && episodeIds.includes(item.episodeId));
-      });
+      return details.items.some(
+        (item) => item.episodeId && episodeIds.includes(item.episodeId)
+      );
     }
   );
 }
@@ -60,9 +60,9 @@ function CalendarEventGroup({
   );
   const seasonNumber = firstEpisode.seasonNumber;
 
-  const { allDownloaded, anyQueued, anyMonitored } = useMemo(() => {
+  const { allDownloaded, anyGrabbed, anyMonitored } = useMemo(() => {
     let files = 0;
-    let queued = 0;
+    let grabbed = 0;
     let monitored = 0;
 
     events.forEach((event) => {
@@ -70,8 +70,8 @@ function CalendarEventGroup({
         files++;
       }
 
-      if (event.queued) {
-        queued++;
+      if (event.grabbed) {
+        grabbed++;
       }
 
       if (series.monitored && event.monitored) {
@@ -81,12 +81,12 @@ function CalendarEventGroup({
 
     return {
       allDownloaded: files === events.length,
-      anyQueued: queued > 0,
+      anyGrabbed: grabbed > 0,
       anyMonitored: monitored > 0,
     };
   }, [series, events]);
 
-  const anyDownloading = isDownloading || anyQueued;
+  const anyDownloading = isDownloading || anyGrabbed;
 
   const statusStyle = getStatusStyle(
     allDownloaded,

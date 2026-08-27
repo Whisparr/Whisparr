@@ -1,4 +1,4 @@
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
 using NzbDrone.Core.Languages;
 using NzbDrone.Core.Parser;
@@ -455,6 +455,14 @@ namespace NzbDrone.Core.Test.ParserTests
 
             result.Should().Contain(Language.Ukrainian);
             result.Should().Contain(Language.Turkish);
+        }
+
+        [TestCase("Title.the.Series.2009.S01E14.Urdu.HDTV.XviD-LOL")]
+        public void should_parse_language_urdu(string postTitle)
+        {
+            var result = LanguageParser.ParseLanguages(postTitle);
+
+            result.Should().Contain(Language.Urdu);
         }
     }
 }

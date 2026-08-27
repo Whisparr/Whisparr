@@ -70,6 +70,7 @@ import toggleSelected from 'Utilities/Table/toggleSelected';
 import SeriesAlternateTitles from './SeriesAlternateTitles';
 import SeriesDetailsLinks from './SeriesDetailsLinks';
 import SeriesDetailsSeason from './SeriesDetailsSeason';
+import SeriesProgressLabel from './SeriesProgressLabel';
 import SeriesTags from './SeriesTags';
 import styles from './SeriesDetails.css';
 
@@ -438,7 +439,12 @@ function SeriesDetails({ seriesId }: SeriesDetailsProps) {
     isSaving = false,
   } = series;
 
-  const { episodeFileCount = 0, sizeOnDisk = 0, lastAired } = statistics;
+  const {
+    episodeCount = 0,
+    episodeFileCount = 0,
+    sizeOnDisk = 0,
+    lastAired,
+  } = statistics;
 
   const statusDetails = getSeriesStatusDetails(status);
   const runningYears =
@@ -769,6 +775,14 @@ function SeriesDetails({ seriesId }: SeriesDetailsProps) {
                     position={tooltipPositions.BOTTOM}
                   />
                 ) : null}
+
+                <SeriesProgressLabel
+                  className={styles.seriesProgressLabel}
+                  seriesId={seriesId}
+                  monitored={monitored}
+                  episodeCount={episodeCount}
+                  episodeFileCount={episodeFileCount}
+                />
               </div>
 
               <div ref={overviewRef} className={styles.overview}>

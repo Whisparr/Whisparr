@@ -1,3 +1,4 @@
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
@@ -109,6 +110,7 @@ namespace Whisparr.Api.V3.EpisodeFiles
             return Accepted(episodeFile.Id);
         }
 
+        [Obsolete("Use bulk endpoint instead")]
         [HttpPut("editor")]
         [Consumes("application/json")]
         public object SetQuality([FromBody] EpisodeFileListResource resource)

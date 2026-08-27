@@ -456,6 +456,8 @@
   "DownloadClientPneumaticSettingsNzbFolderHelpText": "This folder will need to be reachable from XBMC",
   "DownloadClientPneumaticSettingsStrmFolder": "Strm Folder",
   "DownloadClientPneumaticSettingsStrmFolderHelpText": ".strm files in this folder will be import by drone",
+  "DownloadClientQbittorrentSettingsAddSeriesTags": "Add Series Tags",
+  "DownloadClientQbittorrentSettingsAddSeriesTagsHelpText": "Add series tags to new torrents added to the download client (qBittorrent 4.1.0+)",
   "DownloadClientQbittorrentSettingsFirstAndLastFirst": "First and Last First",
   "DownloadClientQbittorrentSettingsFirstAndLastFirstHelpText": "Download first and last pieces first (qBittorrent 4.1.0+)",
   "DownloadClientQbittorrentSettingsContentLayout": "Content Layout",

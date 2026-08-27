@@ -50,7 +50,7 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
         [FieldToken(TokenField.HelpText, "UrlBase", "url", "http://[host]:[port]/[urlBase]/api")]
         public string UrlBase { get; set; }
 
-        [FieldDefinition(4, Label = "API Key", Type = FieldType.Textbox, Privacy = PrivacyLevel.ApiKey, HelpText = "API Key from qBittorrent 5.2+. Leave Username and Password empty when using API Key.")]
+        [FieldDefinition(4, Label = "ApiKey", Type = FieldType.Textbox, Privacy = PrivacyLevel.ApiKey, HelpText = "API Key from qBittorrent 5.2+. Leave Username and Password empty when using API Key.")]
         public string ApiKey { get; set; }
 
         [FieldDefinition(5, Label = "Username", Type = FieldType.Textbox, Privacy = PrivacyLevel.UserName)]
@@ -77,7 +77,7 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
         [FieldDefinition(12, Label = "DownloadClientQbittorrentSettingsSequentialOrder", Type = FieldType.Checkbox, HelpText = "DownloadClientQbittorrentSettingsSequentialOrderHelpText")]
         public bool SequentialOrder { get; set; }
 
-        [FieldDefinition(13, Label = "First and Last First", Type = FieldType.Checkbox, HelpText = "Download first and last pieces first (qBittorrent 4.1.0+)")]
+        [FieldDefinition(13, Label = "DownloadClientQbittorrentSettingsFirstAndLastFirst", Type = FieldType.Checkbox, HelpText = "DownloadClientQbittorrentSettingsFirstAndLastFirstHelpText")]
         public bool FirstAndLast { get; set; }
 
         [FieldDefinition(14, Label = "DownloadClientQbittorrentSettingsContentLayout", Type = FieldType.Select, SelectOptions = typeof(QBittorrentContentLayout), HelpText = "DownloadClientQbittorrentSettingsContentLayoutHelpText")]

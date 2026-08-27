@@ -466,7 +466,6 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
                 catch (HttpException ex)
                 {
                     _logger.Debug(ex, "qbitTorrent authentication failed.");
-
                     if (ex.Response.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)
                     {
                         throw new DownloadClientAuthenticationException("Failed to authenticate with qBittorrent.", ex);

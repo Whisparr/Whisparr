@@ -11,7 +11,7 @@ namespace NzbDrone.Core.Notifications.Apprise
 {
     public interface IAppriseProxy
     {
-        void SendNotification(string title, string message, AppriseSettings settings);
+        void SendNotification(string title, string message, string posterUrl, AppriseSettings settings);
         ValidationFailure Test(AppriseSettings settings);
     }
 
@@ -26,7 +26,7 @@ namespace NzbDrone.Core.Notifications.Apprise
             _logger = logger;
         }
 
-        public void SendNotification(string title, string message, AppriseSettings settings)
+        public void SendNotification(string title, string message, string posterUrl, AppriseSettings settings)
         {
             var payload = new ApprisePayload
             {
@@ -57,6 +57,11 @@ namespace NzbDrone.Core.Notifications.Apprise
                 payload.Tag = settings.Tags.Join(",");
             }
 
+            if (settings.IncludePoster && posterUrl.IsNotNullOrWhiteSpace())
+            {
+                payload.Attachment = posterUrl;
+            }
+
             if (settings.AuthUsername.IsNotNullOrWhiteSpace() || settings.AuthPassword.IsNotNullOrWhiteSpace())
             {
                 requestBuilder.NetworkCredential = new BasicNetworkCredential(settings.AuthUsername, settings.AuthPassword);
@@ -82,10 +87,11 @@ namespace NzbDrone.Core.Notifications.Apprise
         {
             const string title = "Whisparr - Test Notification";
             const string body = "Success! You have properly configured your apprise notification settings.";
+            const string posterUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/128.png";
 
             try
             {
-                SendNotification(title, body, settings);
+                SendNotification(title, body, posterUrl, settings);
             }
             catch (AppriseException ex) when (ex.InnerException is HttpException httpException)
             {

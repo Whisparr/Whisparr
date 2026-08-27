@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
@@ -131,6 +131,7 @@ namespace NzbDrone.Host
             var sslPort = config.GetValue("Whisparr:Server:SslPort", config.GetValue(nameof(ConfigFileProvider.SslPort), 8008));
             var enableSsl = config.GetValue("Whisparr:Server:EnableSsl", config.GetValue(nameof(ConfigFileProvider.EnableSsl), false));
             var sslCertPath = config.GetValue("Whisparr:Server:SslCertPath", config.GetValue<string>(nameof(ConfigFileProvider.SslCertPath)));
+            var sslKeyPath = config.GetValue("Whisparr:Server:SslKeyPath", config.GetValue<string>(nameof(ConfigFileProvider.SslKeyPath)));
             var sslCertPassword = config.GetValue("Whisparr:Server:SslCertPassword", config.GetValue<string>(nameof(ConfigFileProvider.SslCertPassword)));
 
             var urls = new List<string> { BuildUrl("http", bindAddress, port) };
@@ -170,7 +171,7 @@ namespace NzbDrone.Host
                         {
                             options.ConfigureHttpsDefaults(configureOptions =>
                             {
-                                configureOptions.ServerCertificate = ValidateSslCertificate(sslCertPath, sslCertPassword);
+                                configureOptions.ServerCertificate = ValidateSslCertificate(sslCertPath, sslKeyPath, sslCertPassword);
                             });
                         }
                     });
@@ -250,13 +251,26 @@ namespace NzbDrone.Host
             return $"{scheme}://{bindAddress}:{port}";
         }
 
-        private static X509Certificate2 ValidateSslCertificate(string cert, string password)
+        private static X509Certificate2 ValidateSslCertificate(string cert, string key, string password)
         {
             X509Certificate2 certificate;
 
             try
             {
-                certificate = new X509Certificate2(cert, password, X509KeyStorageFlags.DefaultKeySet);
+                var type = X509Certificate2.GetCertContentType(cert);
+
+                if (type == X509ContentType.Cert)
+                {
+                    certificate = X509Certificate2.CreateFromPemFile(cert, key.IsNullOrWhiteSpace() ? null : key);
+                }
+                else if (type == X509ContentType.Pkcs12)
+                {
+                    certificate = new X509Certificate2(cert, password, X509KeyStorageFlags.DefaultKeySet);
+                }
+                else
+                {
+                    throw new WhisparrStartupException($"Invalid certificate type: {type}");
+                }
             }
             catch (CryptographicException ex)
             {
@@ -266,6 +280,10 @@ namespace NzbDrone.Host
                         $"The SSL certificate file {cert} does not exist");
                 }
 
+                throw new WhisparrStartupException(ex);
+            }
+            catch (Exception ex)
+            {
                 throw new WhisparrStartupException(ex);
             }
 

@@ -44,6 +44,7 @@ namespace NzbDrone.Core.Configuration
         string Branch { get; }
         string ApiKey { get; }
         string SslCertPath { get; }
+        string SslKeyPath { get; }
         string SslCertPassword { get; }
         string UrlBase { get; }
         string UiFolder { get; }
@@ -282,6 +283,7 @@ namespace NzbDrone.Core.Configuration
         public int LogRotate => GetValueInt("LogRotate", 50, persist: false);
         public bool FilterSentryEvents => GetValueBoolean("FilterSentryEvents", true, persist: false);
         public string SslCertPath => GetValue("SslCertPath", "");
+        public string SslKeyPath => GetValue("SslKeyPath", "");
         public string SslCertPassword => GetValue("SslCertPassword", "");
 
         public string UrlBase

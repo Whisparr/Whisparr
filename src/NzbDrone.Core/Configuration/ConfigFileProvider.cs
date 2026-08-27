@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -232,7 +232,27 @@ namespace NzbDrone.Core.Configuration
 
         public bool AnalyticsEnabled => GetValueBoolean("AnalyticsEnabled", true, persist: false);
 
-        public string Branch => GetValue("Branch", "nightly").ToLowerInvariant();
+        private static readonly Regex ValidBranchRegex = new Regex(@"^v\d+(-develop)?$", RegexOptions.Compiled);
+
+        public string Branch
+        {
+            get
+            {
+                var branch = GetValue("Branch", BuildInfo.Branch).ToLowerInvariant();
+
+                // Older installs persisted Sonarr's branch names ("nightly", "develop",
+                // "master"), which match none of Whisparr's release channels. Left alone
+                // they disable update filtering entirely, so a stable install is offered
+                // develop builds. CI stamps the originating branch into the assembly, so
+                // fall back to the channel this build actually came from.
+                if (!ValidBranchRegex.IsMatch(branch))
+                {
+                    return BuildInfo.Branch.ToLowerInvariant();
+                }
+
+                return branch;
+            }
+        }
 
         public string LogLevel => GetValue("LogLevel", "info").ToLowerInvariant();
         public int LogSizeLimit => GetValueInt("LogSizeLimit", 1);

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -117,28 +117,30 @@ namespace NzbDrone.Core.Update
 
             var packages = new List<UpdatePackage>();
 
+            // An unrecognised branch is treated as stable, so a bad value can never
+            // fall through to offering pre-releases.
+            var wantsPrerelease = branch != null &&
+                                  branch.Contains("develop", StringComparison.OrdinalIgnoreCase);
+
             foreach (var release in releases)
             {
-                // Filter out releases that do not match the requested branch
-                // For v2, skip tags with 'develop'; for v2-develop, skip tags without 'develop'
-                if (!string.IsNullOrEmpty(branch))
+                // Whisparr publishes stable builds from 'v2' and pre-releases from
+                // 'v2-develop'. Compare channels rather than testing for specific branch
+                // names: the previous check only filtered when the branch was exactly
+                // "v2" or contained "develop", so any other value (older installs
+                // persisted Sonarr's "nightly") matched neither test and filtered
+                // nothing, leaving a stable install to take the newest release overall,
+                // which is always a develop build.
+                var isPrerelease = release.prerelease ||
+                                   release.tag_name.Contains("develop", StringComparison.OrdinalIgnoreCase);
+
+                if (isPrerelease != wantsPrerelease)
                 {
-                    var tagLower = release.tag_name.ToLowerInvariant();
-                    var branchLower = branch.ToLowerInvariant();
-
-                    // If branch is exactly 'v2', skip develop tags
-                    if (branchLower == "v2" && tagLower.Contains("develop"))
-                    {
-                        _logger.Debug($"Skipping prerelease {release.tag_name} for stable branch {branch}.");
-                        continue;
-                    }
-
-                    // If branch contains 'develop', skip tags without 'develop'
-                    if (branchLower.Contains("develop") && !tagLower.Contains("develop"))
-                    {
-                        _logger.Debug($"Skipping release {release.tag_name} because it is a release tag and branch is {branch}.");
-                        continue;
-                    }
+                    _logger.Debug("Skipping {0} ({1}) for branch {2}.",
+                        release.tag_name,
+                        isPrerelease ? "pre-release" : "release",
+                        branch);
+                    continue;
                 }
 
                 if (release.assets == null)
@@ -254,6 +256,9 @@ namespace NzbDrone.Core.Update
         {
             /// <summary>The tag name of the release.</summary>
             public string tag_name { get; set; }
+
+            /// <summary>Whether GitHub marked this release as a pre-release.</summary>
+            public bool prerelease { get; set; }
 
             /// <summary>The body/description of the release.</summary>
             public string body { get; set; }

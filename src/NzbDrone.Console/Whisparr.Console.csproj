@@ -12,11 +12,4 @@
     <ProjectReference Include="..\NzbDrone.Host\Whisparr.Host.csproj" />
     <ProjectReference Include="..\Whisparr.RuntimePatches\Whisparr.RuntimePatches.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="StyleCop.Analyzers.Unstable" Version="1.2.0.556">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Remove="StyleCop.Analyzers" />
-  </ItemGroup>
 </Project>

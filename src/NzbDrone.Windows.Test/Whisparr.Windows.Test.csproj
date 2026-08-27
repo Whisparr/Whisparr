@@ -7,12 +7,5 @@
     <ProjectReference Include="..\NzbDrone.Test.Common\Whisparr.Test.Common.csproj" />
     <ProjectReference Include="..\NzbDrone.Windows\Whisparr.Windows.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="StyleCop.Analyzers.Unstable" Version="1.2.0.556">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Remove="StyleCop.Analyzers" />
-  </ItemGroup>
 
 </Project>

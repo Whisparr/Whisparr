@@ -391,7 +391,7 @@ function QueueRow(props: QueueRowProps) {
       <InteractiveImportModal
         isOpen={isInteractiveImportModalOpen}
         downloadId={downloadId}
-        modalTitle={title}
+        title={title}
         onModalClose={handleInteractiveImportModalClose}
       />
 

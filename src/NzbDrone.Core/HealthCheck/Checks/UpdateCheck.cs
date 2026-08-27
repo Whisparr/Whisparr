@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using NzbDrone.Common.Disk;
@@ -48,6 +48,7 @@ namespace NzbDrone.Core.HealthCheck.Checks
                 {
                     return new HealthCheck(GetType(),
                         HealthCheckResult.Error,
+                        HealthCheckReason.UpdateStartupTranslocation,
                         _localizationService.GetLocalizedString(
                             "UpdateStartupTranslocationHealthCheckMessage",
                             new Dictionary<string, object>
@@ -61,6 +62,7 @@ namespace NzbDrone.Core.HealthCheck.Checks
                 {
                     return new HealthCheck(GetType(),
                         HealthCheckResult.Error,
+                        HealthCheckReason.UpdateStartupNotWritable,
                         _localizationService.GetLocalizedString(
                             "UpdateStartupNotWritableHealthCheckMessage",
                             new Dictionary<string, object>
@@ -75,6 +77,7 @@ namespace NzbDrone.Core.HealthCheck.Checks
                 {
                     return new HealthCheck(GetType(),
                         HealthCheckResult.Error,
+                        HealthCheckReason.UpdateUiNotWritable,
                         _localizationService.GetLocalizedString(
                             "UpdateUiNotWritableHealthCheckMessage",
                             new Dictionary<string, object>
@@ -94,7 +97,11 @@ namespace NzbDrone.Core.HealthCheck.Checks
                 {
                     return new HealthCheck(GetType(),
                         HealthCheckResult.Warning,
-                        _localizationService.GetLocalizedString("UpdateAvailableHealthCheckMessage").Replace("{version}", $"v{latestAvailable.Version}"),
+                        HealthCheckReason.UpdateAvailable,
+                        _localizationService.GetLocalizedString("UpdateAvailableHealthCheckMessage", new Dictionary<string, object>
+                        {
+                            { "version", $"v{latestAvailable.Version}" }
+                        }),
                         "#new-update-is-available");
                 }
             }

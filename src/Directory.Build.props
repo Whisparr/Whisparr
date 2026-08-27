@@ -102,11 +102,11 @@
   <!-- Standard testing packages -->
   <ItemGroup Condition="'$(TestProject)'=='true'">
     <PackageReference Include="coverlet.collector" Version="6.0.4" />
+    <PackageReference Include="GitHubActionsTestLogger" Version="2.4.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
     <PackageReference Include="NUnit" Version="3.14.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="5.1.0" />
     <PackageReference Include="NunitXml.TestLogger" Version="3.1.20" />
-    <PackageReference Include="GitHubActionsTestLogger" Version="2.4.1" />
   </ItemGroup>
 
   <PropertyGroup Condition="'$(WhisparrProject)'=='true' and '$(EnableAnalyzers)'=='false'">
@@ -117,9 +117,9 @@
   <!-- Set up stylecop -->
   <ItemGroup Condition="'$(WhisparrProject)'=='true' and '$(EnableAnalyzers)'!='false'">
     <!-- StyleCop analysis -->
-    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+    <PackageReference Include="StyleCop.Analyzers.Unstable" Version="1.2.0.556">
       <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <AdditionalFiles Include="$(SolutionDir)stylecop.json" />
   </ItemGroup>

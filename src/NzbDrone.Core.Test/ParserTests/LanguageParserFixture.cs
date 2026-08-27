@@ -145,6 +145,7 @@ namespace NzbDrone.Core.Test.ParserTests
         }
 
         [TestCase("Title.the.Series.2009.S01E14.Japanese.HDTV.XviD-LOL")]
+        [TestCase("[Erai-raws] To Be Series - 14 (JA) [1080p CR WEB-DL AVC AAC][MultiSub]")]
         public void should_parse_language_japanese(string postTitle)
         {
             var result = LanguageParser.ParseLanguages(postTitle);

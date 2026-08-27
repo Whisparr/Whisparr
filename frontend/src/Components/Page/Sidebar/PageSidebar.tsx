@@ -46,7 +46,7 @@ interface SidebarItem {
 const LINKS: SidebarItem[] = [
   {
     iconName: icons.SERIES_CONTINUING,
-    title: () => translate('Series'),
+    title: () => translate('Sites'),
     to: '/',
     alias: '/series',
     children: [

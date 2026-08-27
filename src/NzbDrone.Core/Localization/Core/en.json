@@ -1481,6 +1481,7 @@
   "QualityProfiles": "Quality Profiles",
   "QualityProfilesLoadError": "Unable to load Quality Profiles",
   "QualitySettings": "Quality Settings",
+  "QualitySizeLimitsMovedToProfiles": "Size limits are now set per quality profile. Open a quality profile and choose Edit Sizes to change them.",
   "QualitySettingsSummary": "Quality sizes and naming",
   "Queue": "Queue",
   "QueueFilterHasNoItems": "Selected queue filter has no items",

@@ -5,7 +5,7 @@
 .header {
   position: relative;
   width: 100%;
-  height: 290px;
+  min-height: 290px;
   background-color: #374151;
 }
 
@@ -31,19 +31,17 @@
   width: 100%;
   height: 100%;
   color: var(--white);
+  gap: 35px;
 }
 
 .poster {
   flex-shrink: 0;
-  margin-right: 35px;
   max-width: 250px;
 }
 
 .info {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
   overflow: hidden;
+  width: 100%;
 }
 
 .titleRow {
@@ -59,10 +57,13 @@
 }
 
 .title {
+  overflow: auto;
+  max-height: calc(3 * 50px);
   text-wrap: balance;
   font-weight: 300;
   font-size: 50px;
   line-height: 50px;
+  line-clamp: 3;
 }
 
 .toggleMonitoredContainer {
@@ -170,6 +171,8 @@
   }
 
   .title {
+    overflow: hidden;
+    max-height: calc(3 * 30px);
     font-weight: 300;
     font-size: 30px;
     line-height: 30px;

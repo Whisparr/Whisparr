@@ -410,7 +410,7 @@ namespace NzbDrone.Core.Organizer
                 return title;
             }
 
-            // Regex match incase the year in the title doesn't match the year, for whatever reason.
+            // Regex match in case the year in the title doesn't match the year, for whatever reason.
             if (YearRegex.IsMatch(title))
             {
                 return title;
@@ -427,7 +427,7 @@ namespace NzbDrone.Core.Organizer
                 return CleanTitleThe(title);
             }
 
-            // Regex match incase the year in the title doesn't match the year, for whatever reason.
+            // Regex match in case the year in the title doesn't match the year, for whatever reason.
             if (YearRegex.IsMatch(title))
             {
                 var splitReturn = YearRegex.Split(title);

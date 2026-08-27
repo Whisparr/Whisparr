@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using NLog;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.IndexerSearch.Definitions;
@@ -19,15 +19,16 @@ namespace NzbDrone.Core.DecisionEngine.Specifications.Search
         public SpecificationPriority Priority => SpecificationPriority.Default;
         public RejectionType Type => RejectionType.Permanent;
 
-        public DownloadSpecDecision IsSatisfiedBy(RemoteEpisode remoteEpisode, SearchCriteriaBase searchCriteria)
+        public DownloadSpecDecision IsSatisfiedBy(RemoteEpisode remoteEpisode, ReleaseDecisionInformation information)
         {
+            var searchCriteria = information.SearchCriteria;
+
             if (searchCriteria == null)
             {
                 return DownloadSpecDecision.Accept();
             }
 
-            var singleEpisodeSpec = searchCriteria as SingleEpisodeSearchCriteria;
-            if (singleEpisodeSpec != null)
+            if (searchCriteria is SingleEpisodeSearchCriteria singleEpisodeSpec)
             {
                 return IsSatisfiedBy(remoteEpisode, singleEpisodeSpec);
             }

@@ -44,7 +44,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             WithAvailableSpace(200);
             WithSize(100);
 
-            Subject.IsSatisfiedBy(_remoteEpisode, null).Accepted.Should().BeTrue();
+            Subject.IsSatisfiedBy(_remoteEpisode, new()).Accepted.Should().BeTrue();
         }
 
         [Test]
@@ -54,7 +54,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             WithAvailableSpace(200);
             WithSize(100);
 
-            Subject.IsSatisfiedBy(_remoteEpisode, null).Accepted.Should().BeTrue();
+            Subject.IsSatisfiedBy(_remoteEpisode, new()).Accepted.Should().BeTrue();
         }
 
         [Test]
@@ -64,7 +64,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             WithAvailableSpace(200);
             WithSize(1000);
 
-            Subject.IsSatisfiedBy(_remoteEpisode, null).Accepted.Should().BeFalse();
+            Subject.IsSatisfiedBy(_remoteEpisode, new()).Accepted.Should().BeFalse();
         }
 
         [Test]
@@ -74,7 +74,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             WithAvailableSpace(200);
             WithSize(100);
 
-            Subject.IsSatisfiedBy(_remoteEpisode, null).Accepted.Should().BeFalse();
+            Subject.IsSatisfiedBy(_remoteEpisode, new()).Accepted.Should().BeFalse();
         }
 
         [Test]
@@ -88,7 +88,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             WithAvailableSpace(200);
             WithSize(100);
 
-            Subject.IsSatisfiedBy(_remoteEpisode, null).Accepted.Should().BeTrue();
+            Subject.IsSatisfiedBy(_remoteEpisode, new()).Accepted.Should().BeTrue();
         }
 
         [Test]
@@ -99,7 +99,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
 
             Mocker.GetMock<IDiskProvider>().Setup(s => s.GetAvailableSpace(It.IsAny<string>())).Throws<DirectoryNotFoundException>();
 
-            Subject.IsSatisfiedBy(_remoteEpisode, null).Accepted.Should().BeTrue();
+            Subject.IsSatisfiedBy(_remoteEpisode, new()).Accepted.Should().BeTrue();
         }
     }
 }

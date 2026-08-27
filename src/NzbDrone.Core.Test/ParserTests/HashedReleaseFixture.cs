@@ -1,4 +1,4 @@
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
 using NzbDrone.Core.Qualities;
 using NzbDrone.Core.Test.Framework;
@@ -115,7 +115,7 @@ namespace NzbDrone.Core.Test.ParserTests
                 "Series Title 2019",
                 Quality.WEBDL1080p,
                 "NTb"
-            }
+            },
         };
 
         [Test]

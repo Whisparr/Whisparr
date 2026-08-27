@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NzbDrone.Common.Extensions;
@@ -64,7 +64,7 @@ namespace NzbDrone.Core.Notifications.Webhook
                 {
                     SourcePath = message.SourcePath
                 },
-                Release = new WebhookGrabbedRelease(message.Release),
+                Release = new WebhookGrabbedRelease(message.Release, episodeFile.IndexerFlags),
                 IsUpgrade = message.OldFiles.Any(),
                 DownloadClient = message.DownloadClientInfo?.Name,
                 DownloadClientType = message.DownloadClientInfo?.Type,
@@ -95,7 +95,6 @@ namespace NzbDrone.Core.Notifications.Webhook
                 Series = GetSeries(message.Series),
                 Episodes = message.Episodes.ConvertAll(x => new WebhookEpisode(x)),
                 EpisodeFiles = episodeFiles.ConvertAll(e => new WebhookEpisodeFile(e)),
-                Release = new WebhookGrabbedRelease(message.Release),
                 DownloadClient = message.DownloadClientInfo?.Name,
                 DownloadClientType = message.DownloadClientInfo?.Type,
                 DownloadId = message.DownloadId,

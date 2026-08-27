@@ -1,7 +1,8 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Equ;
 using FluentValidation;
+using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Annotations;
 using NzbDrone.Core.Validation;
 
@@ -14,6 +15,14 @@ namespace NzbDrone.Core.Indexers.FileList
             RuleFor(c => c.BaseUrl).ValidRootUrl();
             RuleFor(c => c.Username).NotEmpty();
             RuleFor(c => c.Passkey).NotEmpty();
+
+            RuleFor(c => c).Custom((c, context) =>
+            {
+                if (c.Categories.Empty())
+                {
+                    context.AddFailure("'Categories' must be provided");
+                }
+            });
 
             RuleFor(c => c.SeedCriteria).SetValidator(_ => new SeedCriteriaSettingsValidator());
         }

@@ -86,6 +86,8 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Series Title S01 1080p Eng Fra [mkvonly]")]
         [TestCase("Series Title S01 Eng Fre Multi Subs 720p [H264 mp4]")]
         [TestCase("Series-Title-S01-[DVDRip]-H264-Fra-Ac3-2-0-Eng-5-1")]
+        [TestCase("Series Title S01 1080p FR ENG [mkvonly]")]
+        [TestCase("Series Title S01 1080p ENG FR [mkvonly]")]
         public void should_parse_language_french_english(string postTitle)
         {
             var result = LanguageParser.ParseLanguages(postTitle);

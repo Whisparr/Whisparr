@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using NLog;
 using NzbDrone.Common.Disk;
@@ -37,6 +37,14 @@ namespace Whisparr.Http.Frontend.Mappers
                    !resourceUrl.StartsWith("/mediacover") &&
                    !resourceUrl.Contains('.') &&
                    !resourceUrl.StartsWith("/login");
+        }
+
+        protected override string GetHtmlText()
+        {
+            var html = base.GetHtmlText();
+            var theme = _configFileProvider.Theme;
+
+            return html.Replace("_THEME_", theme);
         }
     }
 }

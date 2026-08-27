@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import React, {
   useCallback,
   useEffect,
@@ -11,6 +10,8 @@ import { useDispatch } from 'react-redux';
 import { useLocation } from 'react-router';
 import QueueStatus from 'Activity/Queue/Status/QueueStatus';
 import { IconName } from 'Components/Icon';
+import IconButton from 'Components/Link/IconButton';
+import Link from 'Components/Link/Link';
 import OverlayScroller from 'Components/Scroller/OverlayScroller';
 import Scroller from 'Components/Scroller/Scroller';
 import usePrevious from 'Helpers/Hooks/usePrevious';
@@ -242,10 +243,6 @@ function PageSidebar({ isSidebarVisible, isSmallScreen }: PageSidebarProps) {
     transition: 'none',
     transform: isSidebarVisible ? 0 : SIDEBAR_WIDTH * -1,
   });
-  const [sidebarStyle, setSidebarStyle] = useState({
-    top: dimensions.headerHeight,
-    height: `${window.innerHeight - HEADER_HEIGHT}px`,
-  });
 
   const urlBase = window.Whisparr.urlBase;
   const pathname = urlBase
@@ -310,22 +307,6 @@ function PageSidebar({ isSidebarVisible, isSmallScreen }: PageSidebarProps) {
   const handleItemPress = useCallback(() => {
     dispatch(setIsSidebarVisible({ isSidebarVisible: false }));
   }, [dispatch]);
-
-  const handleWindowScroll = useCallback(() => {
-    const windowScroll =
-      window.scrollY == null
-        ? document.documentElement.scrollTop
-        : window.scrollY;
-    const sidebarTop = Math.max(HEADER_HEIGHT - windowScroll, 0);
-    const sidebarHeight = window.innerHeight - sidebarTop;
-
-    if (isSmallScreen) {
-      setSidebarStyle({
-        top: `${sidebarTop}px`,
-        height: `${sidebarHeight}px`,
-      });
-    }
-  }, [isSmallScreen]);
 
   const handleTouchStart = useCallback(
     (event: TouchEvent) => {
@@ -408,10 +389,13 @@ function PageSidebar({ isSidebarVisible, isSmallScreen }: PageSidebarProps) {
     touchStartY.current = null;
   }, []);
 
+  const handleSidebarClosePress = useCallback(() => {
+    dispatch(setIsSidebarVisible({ isSidebarVisible: false }));
+  }, [dispatch]);
+
   useEffect(() => {
     if (isSmallScreen) {
       window.addEventListener('click', handleWindowClick, { capture: true });
-      window.addEventListener('scroll', handleWindowScroll);
       window.addEventListener('touchstart', handleTouchStart);
       window.addEventListener('touchmove', handleTouchMove);
       window.addEventListener('touchend', handleTouchEnd);
@@ -420,7 +404,6 @@ function PageSidebar({ isSidebarVisible, isSmallScreen }: PageSidebarProps) {
 
     return () => {
       window.removeEventListener('click', handleWindowClick, { capture: true });
-      window.removeEventListener('scroll', handleWindowScroll);
       window.removeEventListener('touchstart', handleTouchStart);
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('touchend', handleTouchEnd);
@@ -429,7 +412,6 @@ function PageSidebar({ isSidebarVisible, isSmallScreen }: PageSidebarProps) {
   }, [
     isSmallScreen,
     handleWindowClick,
-    handleWindowScroll,
     handleTouchStart,
     handleTouchMove,
     handleTouchEnd,
@@ -468,13 +450,37 @@ function PageSidebar({ isSidebarVisible, isSmallScreen }: PageSidebarProps) {
   return (
     <div
       ref={sidebarRef}
-      className={classNames(styles.sidebarContainer)}
+      className={styles.sidebarContainer}
       style={containerStyle}
     >
+      {isSmallScreen ? (
+        <div className={styles.sidebarHeader}>
+          <div className={styles.logoContainer}>
+            <Link className={styles.logoLink} to="/">
+              <img
+                className={styles.logo}
+                src={`${window.Whisparr.urlBase}/Content/Images/logo.svg`}
+                alt="Whisparr Logo"
+              />
+            </Link>
+          </div>
+
+          <IconButton
+            className={styles.sidebarCloseButton}
+            name={icons.CLOSE}
+            aria-label={translate('Close')}
+            size={20}
+            onPress={handleSidebarClosePress}
+          />
+        </div>
+      ) : null}
+
       <ScrollerComponent
         className={styles.sidebar}
         scrollDirection="vertical"
-        style={sidebarStyle}
+        style={{
+          height: `${window.innerHeight - HEADER_HEIGHT}px`,
+        }}
       >
         <div>
           {LINKS.map((link) => {

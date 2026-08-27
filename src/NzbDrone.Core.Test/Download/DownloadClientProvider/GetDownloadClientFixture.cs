@@ -12,7 +12,7 @@ using NzbDrone.Core.Test.Framework;
 namespace NzbDrone.Core.Test.Download
 {
     [TestFixture]
-    public class DownloadClientProviderFixture : CoreTest<DownloadClientProvider>
+    public class GetDownloadClientFixture : CoreTest<DownloadClientProvider>
     {
         private List<IDownloadClient> _downloadClients;
         private List<DownloadClientStatus> _blockedProviders;

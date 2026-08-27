@@ -38,5 +38,13 @@ namespace Whisparr.Http.Frontend.Mappers
                    !resourceUrl.Contains('.') &&
                    !resourceUrl.StartsWith("/login");
         }
+
+        protected override string GetHtmlText()
+        {
+            var html = base.GetHtmlText();
+            var theme = _configFileProvider.Theme;
+
+            return html.Replace("_THEME_", theme);
+        }
     }
 }

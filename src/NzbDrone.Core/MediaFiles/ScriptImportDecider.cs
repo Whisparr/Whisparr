@@ -153,15 +153,31 @@ namespace NzbDrone.Core.MediaFiles
             environmentVariables.Add("Whisparr_Download_Client", downloadClientInfo?.Name ?? string.Empty);
             environmentVariables.Add("Whisparr_Download_Client_Type", downloadClientInfo?.Type ?? string.Empty);
             environmentVariables.Add("Whisparr_Download_Id", downloadId ?? string.Empty);
-            environmentVariables.Add("Whisparr_EpisodeFile_MediaInfo_AudioChannels", MediaInfoFormatter.FormatAudioChannels(localEpisode.MediaInfo).ToString());
-            environmentVariables.Add("Whisparr_EpisodeFile_MediaInfo_AudioCodec", MediaInfoFormatter.FormatAudioCodec(localEpisode.MediaInfo, null));
-            environmentVariables.Add("Whisparr_EpisodeFile_MediaInfo_AudioLanguages", localEpisode.MediaInfo.AudioLanguages.Distinct().ConcatToString(" / "));
-            environmentVariables.Add("Whisparr_EpisodeFile_MediaInfo_Languages", localEpisode.MediaInfo.AudioLanguages.ConcatToString(" / "));
-            environmentVariables.Add("Whisparr_EpisodeFile_MediaInfo_Height", localEpisode.MediaInfo.Height.ToString());
-            environmentVariables.Add("Whisparr_EpisodeFile_MediaInfo_Width", localEpisode.MediaInfo.Width.ToString());
-            environmentVariables.Add("Whisparr_EpisodeFile_MediaInfo_Subtitles", localEpisode.MediaInfo.Subtitles.ConcatToString(" / "));
-            environmentVariables.Add("Whisparr_EpisodeFile_MediaInfo_VideoCodec", MediaInfoFormatter.FormatVideoCodec(localEpisode.MediaInfo, null));
-            environmentVariables.Add("Whisparr_EpisodeFile_MediaInfo_VideoDynamicRangeType", MediaInfoFormatter.FormatVideoDynamicRangeType(localEpisode.MediaInfo));
+
+            if (localEpisode.MediaInfo == null)
+            {
+                _logger.Trace("MediaInfo is null for episode file import. This may cause issues with the import script.");
+            }
+            else
+            {
+                environmentVariables.Add("Whisparr_EpisodeFile_MediaInfo_AudioChannels",
+                    MediaInfoFormatter.FormatAudioChannels(localEpisode.MediaInfo).ToString());
+                environmentVariables.Add("Whisparr_EpisodeFile_MediaInfo_AudioCodec",
+                    MediaInfoFormatter.FormatAudioCodec(localEpisode.MediaInfo, null));
+                environmentVariables.Add("Whisparr_EpisodeFile_MediaInfo_AudioLanguages",
+                    localEpisode.MediaInfo.AudioLanguages.Distinct().ConcatToString(" / "));
+                environmentVariables.Add("Whisparr_EpisodeFile_MediaInfo_Languages",
+                    localEpisode.MediaInfo.AudioLanguages.ConcatToString(" / "));
+                environmentVariables.Add("Whisparr_EpisodeFile_MediaInfo_Height",
+                    localEpisode.MediaInfo.Height.ToString());
+                environmentVariables.Add("Whisparr_EpisodeFile_MediaInfo_Width", localEpisode.MediaInfo.Width.ToString());
+                environmentVariables.Add("Whisparr_EpisodeFile_MediaInfo_Subtitles",
+                    localEpisode.MediaInfo.Subtitles.ConcatToString(" / "));
+                environmentVariables.Add("Whisparr_EpisodeFile_MediaInfo_VideoCodec",
+                    MediaInfoFormatter.FormatVideoCodec(localEpisode.MediaInfo, null));
+                environmentVariables.Add("Whisparr_EpisodeFile_MediaInfo_VideoDynamicRangeType",
+                    MediaInfoFormatter.FormatVideoDynamicRangeType(localEpisode.MediaInfo));
+            }
 
             environmentVariables.Add("Whisparr_EpisodeFile_CustomFormat", string.Join("|", localEpisode.CustomFormats));
             environmentVariables.Add("Whisparr_EpisodeFile_CustomFormatScore", localEpisode.CustomFormatScore.ToString());

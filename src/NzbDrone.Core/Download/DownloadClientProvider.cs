@@ -121,6 +121,42 @@ namespace NzbDrone.Core.Download
             _lastUsedDownloadClient.Set(downloadProtocol.ToString(), downloadClientId);
         }
 
+        public DownloadClientDefinition ResolveDownloadClient(int? downloadClientId, string downloadClientName)
+        {
+            var all = _downloadClientFactory.All();
+            var clientByName = downloadClientName.IsNullOrWhiteSpace() ? null : all.FirstOrDefault(c => c.Name.EqualsIgnoreCase(downloadClientName));
+            var clientById = downloadClientId.HasValue ? all.FirstOrDefault(c => c.Id == downloadClientId.Value) : null;
+
+            if (downloadClientId.HasValue && clientById == null)
+            {
+                throw new ResolveDownloadClientException("Download client with ID '{0}' could not be found", downloadClientId.Value);
+            }
+
+            if (downloadClientName.IsNotNullOrWhiteSpace() && clientByName == null)
+            {
+                throw new ResolveDownloadClientException("Download client with name '{0}' could not be found", downloadClientName);
+            }
+
+            if (clientByName == null && clientById == null)
+            {
+                return null;
+            }
+
+            if (clientByName != null && clientById != null && clientByName.Id != clientById.Id)
+            {
+                throw new ResolveDownloadClientException("Download client with name '{0}' does not match download client with ID '{1}'", downloadClientName, downloadClientId.Value);
+            }
+
+            var client = clientById ?? clientByName;
+
+            if (!client.Enable)
+            {
+                throw new ResolveDownloadClientException("Download client '{0}' ({1}) is not enabled", client.Name, downloadClientId);
+            }
+
+            return clientById ?? clientByName;
+        }
+
         private IEnumerable<IDownloadClient> FilterBlockedDownloadClients(IEnumerable<IDownloadClient> clients)
         {
             var blockedClients = _downloadClientStatusService.GetBlockedProviders().ToDictionary(v => v.ProviderId, v => v);

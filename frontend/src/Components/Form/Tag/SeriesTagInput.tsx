@@ -5,14 +5,18 @@ import { addTag } from 'Store/Actions/tagActions';
 import createTagsSelector from 'Store/Selectors/createTagsSelector';
 import { InputChanged } from 'typings/inputs';
 import sortByProp from 'Utilities/Array/sortByProp';
-import TagInput, { TagBase } from './TagInput';
+import TagInput, { TagBase, TagInputProps } from './TagInput';
 
 interface SeriesTag extends TagBase {
   id: number;
   name: string;
 }
 
-export interface SeriesTagInputProps<V> {
+export interface SeriesTagInputProps<V>
+  extends Omit<
+    TagInputProps<SeriesTag>,
+    'tags' | 'tagList' | 'onTagAdd' | 'onTagDelete' | 'onChange'
+  > {
   name: string;
   value: V;
   onChange: (change: InputChanged<V>) => void;
@@ -63,6 +67,7 @@ export default function SeriesTagInput<V extends number | number[]>({
   name,
   value,
   onChange,
+  ...otherProps
 }: SeriesTagInputProps<V>) {
   const dispatch = useDispatch();
   const isArray = Array.isArray(value);
@@ -135,6 +140,7 @@ export default function SeriesTagInput<V extends number | number[]>({
 
   return (
     <TagInput
+      {...otherProps}
       name={name}
       tags={tags}
       tagList={tagList}

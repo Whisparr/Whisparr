@@ -7,6 +7,7 @@ interface ReleaseProfile extends ModelBase {
   ignored: string[];
   indexerId: number;
   tags: number[];
+  excludedTags: number[];
 }
 
 export default ReleaseProfile;

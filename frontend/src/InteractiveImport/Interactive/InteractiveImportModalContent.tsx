@@ -5,7 +5,7 @@ import { createSelector } from 'reselect';
 import AppState from 'App/State/AppState';
 import InteractiveImportAppState from 'App/State/InteractiveImportAppState';
 import * as commandNames from 'Commands/commandNames';
-import SelectInput from 'Components/Form/SelectInput';
+import SelectInput, { SelectInputOption } from 'Components/Form/SelectInput';
 import Icon from 'Components/Icon';
 import Button from 'Components/Link/Button';
 import SpinnerButton from 'Components/Link/SpinnerButton';
@@ -156,7 +156,7 @@ const COLUMNS = [
   },
 ];
 
-const importModeOptions = [
+const importModeOptions: SelectInputOption[] = [
   {
     key: 'chooseImportMode',
     value: () => translate('ChooseImportMode'),
@@ -280,37 +280,6 @@ function InteractiveImportModalContent(
   const [interactiveImportErrorMessage, setInteractiveImportErrorMessage] =
     useState<string | null>(null);
   const [selectState, setSelectState] = useSelectState();
-  const [bulkSelectOptions, setBulkSelectOptions] = useState([
-    {
-      key: 'select',
-      value: translate('SelectDropdown'),
-      disabled: true,
-    },
-    {
-      key: 'season',
-      value: translate('SelectYear'),
-    },
-    {
-      key: 'episode',
-      value: translate('SelectEpisodes'),
-    },
-    {
-      key: 'quality',
-      value: translate('SelectQuality'),
-    },
-    {
-      key: 'releaseGroup',
-      value: translate('SelectReleaseGroup'),
-    },
-    {
-      key: 'language',
-      value: translate('SelectLanguage'),
-    },
-    {
-      key: 'indexerFlags',
-      value: translate('SelectIndexerFlags'),
-    },
-  ]);
   const { allSelected, allUnselected, selectedState } = selectState;
   const previousIsDeleting = usePrevious(isDeleting);
   const dispatch = useDispatch();
@@ -343,19 +312,80 @@ function InteractiveImportModalContent(
     return getSelectedIds(selectedState);
   }, [selectedState]);
 
+  const bulkSelectOptions = useMemo(() => {
+    const { seasonSelectDisabled, episodeSelectDisabled } = items.reduce(
+      (acc, item) => {
+        if (!selectedIds.includes(item.id)) {
+          return acc;
+        }
+
+        const lastSelectedSeason = acc.lastSelectedSeason;
+
+        acc.seasonSelectDisabled ||= !item.series;
+        acc.episodeSelectDisabled ||=
+          item.seasonNumber === undefined ||
+          (lastSelectedSeason >= 0 && item.seasonNumber !== lastSelectedSeason);
+        acc.lastSelectedSeason = item.seasonNumber ?? -1;
+
+        return acc;
+      },
+      {
+        seasonSelectDisabled: false,
+        episodeSelectDisabled: false,
+        lastSelectedSeason: -1,
+      }
+    );
+
+    const options: SelectInputOption[] = [
+      {
+        key: 'select',
+        value: translate('SelectDropdown'),
+        disabled: true,
+      },
+      {
+        key: 'season',
+        value: translate('SelectSeason'),
+        disabled: seasonSelectDisabled,
+      },
+      {
+        key: 'episode',
+        value: translate('SelectEpisodes'),
+        disabled: episodeSelectDisabled,
+      },
+      {
+        key: 'quality',
+        value: translate('SelectQuality'),
+      },
+      {
+        key: 'releaseGroup',
+        value: translate('SelectReleaseGroup'),
+      },
+      {
+        key: 'language',
+        value: translate('SelectLanguage'),
+      },
+      {
+        key: 'indexerFlags',
+        value: translate('SelectIndexerFlags'),
+      },
+      {
+        key: 'releaseType',
+        value: translate('SelectReleaseType'),
+      },
+    ];
+
+    if (allowSeriesChange) {
+      options.splice(1, 0, {
+        key: 'series',
+        value: translate('SelectSite'),
+      });
+    }
+
+    return options;
+  }, [allowSeriesChange, items, selectedIds]);
+
   useEffect(
     () => {
-      if (allowSeriesChange) {
-        const newBulkSelectOptions = [...bulkSelectOptions];
-
-        newBulkSelectOptions.splice(1, 0, {
-          key: 'series',
-          value: translate('SelectSite'),
-        });
-
-        setBulkSelectOptions(newBulkSelectOptions);
-      }
-
       if (initialSortKey) {
         const sortProps: { sortKey: string; sortDirection?: string } = {
           sortKey: initialSortKey,

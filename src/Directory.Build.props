@@ -116,6 +116,17 @@
     <EnableNETAnalyzers>false</EnableNETAnalyzers>
   </PropertyGroup>
 
+  <!--
+       Self-contained publish bundles Microsoft.NETCore.App.Runtime.<rid>, which ships its own
+       (older) copy of System.Text.Encoding.CodePages.dll. Since every self-contained Whisparr
+       project publishes into the same shared _output folder, whichever project's runtime-pack
+       copy lands last wins on disk - so every project needs the same explicit override or the
+       app ends up with a mismatched assembly (FileNotFoundException on Linux/macOS at startup).
+  -->
+  <ItemGroup Condition="'$(WhisparrProject)'=='true'">
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
+  </ItemGroup>
+
   <!-- Set up stylecop -->
   <ItemGroup Condition="'$(WhisparrProject)'=='true' and '$(EnableAnalyzers)'!='false'">
     <!-- StyleCop analysis -->

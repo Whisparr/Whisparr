@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+﻿import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import AppState from 'App/State/AppState';
 import FormGroup from 'Components/Form/FormGroup';
@@ -61,9 +61,7 @@ function DeleteSeriesModalContent({
 
   return (
     <ModalContent onModalClose={onModalClose}>
-      <ModalHeader>
-        {translate('DeleteSeriesModalHeader', { title })}
-      </ModalHeader>
+      <ModalHeader>{translate('DeleteSiteModalHeader', { title })}</ModalHeader>
 
       <ModalBody>
         <div className={styles.pathContainer}>
@@ -87,7 +85,7 @@ function DeleteSeriesModalContent({
         <FormGroup>
           <FormLabel>
             {episodeFileCount === 0
-              ? translate('DeleteSeriesFolder')
+              ? translate('DeleteSiteFolder')
               : translate('DeleteEpisodesFiles', { episodeFileCount })}
           </FormLabel>
 
@@ -97,7 +95,7 @@ function DeleteSeriesModalContent({
             value={deleteFiles}
             helpText={
               episodeFileCount === 0
-                ? translate('DeleteSeriesFolderHelpText')
+                ? translate('DeleteSiteFolderHelpText')
                 : translate('DeleteEpisodesFilesHelpText')
             }
             kind={kinds.DANGER}
@@ -109,14 +107,14 @@ function DeleteSeriesModalContent({
           <div className={styles.deleteFilesMessage}>
             <div>
               <InlineMarkdown
-                data={translate('DeleteSeriesFolderConfirmation', { path })}
+                data={translate('DeleteSiteFolderConfirmation', { path })}
                 blockClassName={styles.folderPath}
               />
             </div>
 
             {episodeFileCount ? (
               <div className={styles.deleteCount}>
-                {translate('DeleteSeriesFolderEpisodeCount', {
+                {translate('DeleteSiteFolderEpisodeCount', {
                   episodeFileCount,
                   size: formatBytes(sizeOnDisk),
                 })}

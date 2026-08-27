@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+﻿import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import SeriesMonitorNewItemsOptionsPopoverContent from 'AddSeries/SeriesMonitorNewItemsOptionsPopoverContent';
 import AppState from 'App/State/AppState';
@@ -133,7 +133,7 @@ function EditSeriesModalContent({
 
   return (
     <ModalContent onModalClose={onModalClose}>
-      <ModalHeader>{translate('EditSeriesModalHeader', { title })}</ModalHeader>
+      <ModalHeader>{translate('EditSiteModalHeader', { title })}</ModalHeader>
 
       <ModalBody>
         <Form {...otherSettings}>

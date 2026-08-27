@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+﻿import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router';
 import NotFound from 'Components/NotFound';
@@ -29,7 +29,7 @@ function SeriesDetailsPage() {
   }, [seriesIndex, previousIndex, history]);
 
   if (seriesIndex === -1) {
-    return <NotFound message={translate('SeriesCannotBeFound')} />;
+    return <NotFound message={translate('SiteCannotBeFound')} />;
   }
 
   return <SeriesDetails seriesId={allSeries[seriesIndex].id} />;

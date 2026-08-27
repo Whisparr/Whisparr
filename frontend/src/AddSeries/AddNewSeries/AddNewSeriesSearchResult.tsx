@@ -72,6 +72,7 @@ function AddNewSeriesSearchResult({
             size={250}
             overflow={true}
             lazy={false}
+            title={title}
           />
         )}
 

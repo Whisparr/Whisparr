@@ -44,6 +44,7 @@ function SeriesSearchResult(props: SeriesSearchResultProps) {
         size={250}
         lazy={false}
         overflow={true}
+        title={title}
       />
 
       <div className={styles.titles}>

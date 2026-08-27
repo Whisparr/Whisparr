@@ -29,7 +29,7 @@ runs:
       shell: bash
       if: ${{ startsWith(inputs.runtime, 'freebsd') }}
       run:
-        dotnet nuget add source --configfile src/NuGet.Config --name gh-openur https://nuget.pkg.github.com/openur/index.json --username ${{ github.repository_owner }} --password ${{ github.token }} --store-password-in-clear-text
+        dotnet nuget add source --configfile src/NuGet.config --name gh-openur https://nuget.pkg.github.com/openur/index.json --username ${{ github.repository_owner }} --password ${{ github.token }} --store-password-in-clear-text
 
     - name: Setup Environment Variables
       id: variables

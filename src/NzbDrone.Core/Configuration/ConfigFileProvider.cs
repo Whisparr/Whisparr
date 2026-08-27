@@ -224,7 +224,18 @@ namespace NzbDrone.Core.Configuration
                     return AuthenticationType.Forms;
                 }
 
-                return GetValueEnum("AuthenticationMethod", AuthenticationType.None);
+                var value = GetValueEnum("AuthenticationMethod", AuthenticationType.None);
+
+#pragma warning disable CS0618 // Type or member is obsolete
+                if (value == AuthenticationType.Basic)
+#pragma warning restore CS0618 // Type or member is obsolete
+                {
+                    SetValue("AuthenticationMethod", AuthenticationType.Forms);
+
+                    return AuthenticationType.Forms;
+                }
+
+                return value;
             }
         }
 
@@ -407,6 +418,12 @@ namespace NzbDrone.Core.Configuration
             if (EnableSsl && (GetValue("SslCertHash", string.Empty, false).IsNotNullOrWhiteSpace() || SslCertPath.IsNullOrWhiteSpace()))
             {
                 SetValue("EnableSsl", false);
+            }
+#pragma warning disable CS0618 // Type or member is obsolete
+            if (AuthenticationMethod == AuthenticationType.Basic)
+#pragma warning restore CS0618 // Type or member is obsolete
+            {
+                SetValue("AuthenticationMethod", AuthenticationType.Forms);
             }
         }
 

@@ -164,6 +164,8 @@ namespace NzbDrone.Core.Test.IndexerTests.NewznabTests
         [TestCase("nuked=0 attribute")]
         [TestCase("prematch=1 and nuked=1 attributes", IndexerFlags.Scene, IndexerFlags.Nuked)]
         [TestCase("haspretime=0 and nuked=0 attributes")]
+        [TestCase("subs=eng", IndexerFlags.Subtitles)]
+        [TestCase("subs=''")]
         public async Task should_parse_indexer_flags(string releaseGuid, params IndexerFlags[] indexerFlags)
         {
             var feed = ReadAllText(@"Files/Indexers/Newznab/newznab_indexerflags.xml");

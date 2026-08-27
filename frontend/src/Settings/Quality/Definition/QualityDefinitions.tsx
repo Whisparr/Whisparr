@@ -3,9 +3,11 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
 import AppState from 'App/State/AppState';
+import Alert from 'Components/Alert';
 import FieldSet from 'Components/FieldSet';
 import PageSectionContent from 'Components/Page/PageSectionContent';
 import usePrevious from 'Helpers/Hooks/usePrevious';
+import { kinds } from 'Helpers/Props';
 import {
   fetchQualityDefinitions,
   saveQualityDefinitions,
@@ -85,6 +87,10 @@ function QualityDefinitions({
         isPopulated={isPopulated}
         error={error}
       >
+        <Alert className={styles.notice} kind={kinds.INFO}>
+          {translate('QualitySizeLimitsMovedToProfiles')}
+        </Alert>
+
         <div className={styles.header}>
           <div className={styles.quality}>{translate('Quality')}</div>
           <div className={styles.title}>{translate('Title')}</div>

@@ -166,7 +166,7 @@ namespace NzbDrone.Common.EnvironmentInfo
 
         private void RemovePidFile()
         {
-            if (OsInfo.IsNotWindows)
+            if (OsInfo.IsNotWindows && _diskProvider.FolderExists(_appFolderInfo.AppDataFolder))
             {
                 _diskProvider.DeleteFile(Path.Combine(_appFolderInfo.AppDataFolder, "whisparr.pid"));
             }

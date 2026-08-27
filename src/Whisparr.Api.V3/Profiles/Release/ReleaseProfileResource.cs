@@ -17,10 +17,12 @@ namespace Whisparr.Api.V3.Profiles.Release
         public object Ignored { get; set; }
         public int IndexerId { get; set; }
         public HashSet<int> Tags { get; set; }
+        public HashSet<int> ExcludedTags { get; set; }
 
         public ReleaseProfileResource()
         {
             Tags = new HashSet<int>();
+            ExcludedTags = new HashSet<int>();
         }
     }
 
@@ -41,7 +43,8 @@ namespace Whisparr.Api.V3.Profiles.Release
                 Required = model.Required ?? new List<string>(),
                 Ignored = model.Ignored ?? new List<string>(),
                 IndexerId = model.IndexerId,
-                Tags = new HashSet<int>(model.Tags)
+                Tags = new HashSet<int>(model.Tags),
+                ExcludedTags = new HashSet<int>(model.ExcludedTags)
             };
         }
 
@@ -60,7 +63,8 @@ namespace Whisparr.Api.V3.Profiles.Release
                 Required = resource.MapRequired(),
                 Ignored = resource.MapIgnored(),
                 IndexerId = resource.IndexerId,
-                Tags = new HashSet<int>(resource.Tags)
+                Tags = new HashSet<int>(resource.Tags),
+                ExcludedTags = new HashSet<int>(resource.ExcludedTags)
             };
         }
 

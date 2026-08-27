@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
 import AppState from 'App/State/AppState';
@@ -11,14 +12,42 @@ function createThemeSelector() {
       (state.settings.ui.item.theme ||
         window.Whisparr.theme ||
         'auto') as ThemeName,
-    (theme) => {
-      return theme;
-    }
+    (theme) => theme
   );
 }
 
 const useTheme = () => {
-  return useSelector(createThemeSelector());
+  const selectedTheme = useSelector(createThemeSelector());
+  const [resolvedTheme, setResolvedTheme] = useState(selectedTheme);
+
+  useEffect(() => {
+    if (selectedTheme !== 'auto') {
+      setResolvedTheme(selectedTheme);
+      return;
+    }
+
+    const applySystemTheme = () => {
+      setResolvedTheme(
+        window.matchMedia('(prefers-color-scheme: dark)').matches
+          ? 'dark'
+          : 'light'
+      );
+    };
+
+    applySystemTheme();
+
+    window
+      .matchMedia('(prefers-color-scheme: dark)')
+      .addEventListener('change', applySystemTheme);
+
+    return () => {
+      window
+        .matchMedia('(prefers-color-scheme: dark)')
+        .removeEventListener('change', applySystemTheme);
+    };
+  }, [selectedTheme]);
+
+  return resolvedTheme;
 };
 
 export default useTheme;

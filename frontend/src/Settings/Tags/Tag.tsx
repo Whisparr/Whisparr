@@ -22,6 +22,7 @@ function Tag({ id, label }: TagProps) {
     importListIds = [],
     notificationIds = [],
     restrictionIds = [],
+    excludedReleaseProfileIds = [],
     indexerIds = [],
     downloadClientIds = [],
     autoTagIds = [],
@@ -35,10 +36,15 @@ function Tag({ id, label }: TagProps) {
     importListIds.length ||
     notificationIds.length ||
     restrictionIds.length ||
+    excludedReleaseProfileIds.length ||
     indexerIds.length ||
     downloadClientIds.length ||
     autoTagIds.length ||
     seriesIds.length
+  );
+
+  const mergedReleaseProfileIds = Array.from(
+    new Set([...restrictionIds, ...excludedReleaseProfileIds]).values()
   );
 
   const handleShowDetailsPress = useCallback(() => {
@@ -95,7 +101,7 @@ function Tag({ id, label }: TagProps) {
           <TagInUse
             label={translate('ReleaseProfile')}
             labelPlural={translate('ReleaseProfiles')}
-            count={restrictionIds.length}
+            count={mergedReleaseProfileIds.length}
           />
 
           <TagInUse
@@ -126,7 +132,7 @@ function Tag({ id, label }: TagProps) {
         delayProfileIds={delayProfileIds}
         importListIds={importListIds}
         notificationIds={notificationIds}
-        restrictionIds={restrictionIds}
+        releaseProfileIds={mergedReleaseProfileIds}
         indexerIds={indexerIds}
         downloadClientIds={downloadClientIds}
         autoTagIds={autoTagIds}

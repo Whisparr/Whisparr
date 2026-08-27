@@ -42,7 +42,7 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Title.the.Italy.Series.S02E01.720p.HDTV.x264-TLA")]
         [TestCase("Series Title - S01E01 - Pilot.en.sub")]
         [TestCase("Series.Title.S01E01.SUBFRENCH.1080p.WEB.x264-GROUP")]
-
+        [TestCase("[Judas] Series Japanese Name (Series English Name) - S02E10 [1080P][HEVC x256 10bit][Eng-Subs] (Weekly)")]
         public void should_parse_language_unknown(string postTitle)
         {
             var result = LanguageParser.ParseLanguages(postTitle);
@@ -477,6 +477,40 @@ namespace NzbDrone.Core.Test.ParserTests
             var result = LanguageParser.ParseLanguages(postTitle);
 
             result.Should().Contain(Language.Romansh);
+        }
+
+        [TestCase("Title.the.Series.2025.S01.Georgian.1080p.WEB-DL.h264-RlsGrp")]
+        [TestCase("Title.the.Series.2025.S01.Geo.1080p.WEB-DL.h264-RlsGrp")]
+        [TestCase("Title.the.Series.2025.S01.KA.1080p.WEB-DL.h264-RlsGrp")]
+        public void should_parse_language_georgian(string postTitle)
+        {
+            var result = LanguageParser.ParseLanguages(postTitle);
+
+            result.Should().Contain(Language.Georgian);
+        }
+
+        [TestCase("Title.the.Series.2025.S01.RU-KA.1080p.WEB-DL.h264-RlsGrp")]
+        public void should_parse_language_russian_and_georgian(string postTitle)
+        {
+            var result = LanguageParser.ParseLanguages(postTitle);
+
+            result.Should().BeEquivalentTo(new[] { Language.Russian, Language.Georgian });
+        }
+
+        [TestCase("The Boys S02 Eng Fre Ger Ita Por Spa 2160p WEBMux HDR10Plus HDR HEVC DDP SGF")]
+        public void should_parse_language_english_french_german_italian_portuguese_spanish(string postTitle)
+        {
+            var result = LanguageParser.ParseLanguages(postTitle);
+
+            result.Should().BeEquivalentTo(new[]
+            {
+                Language.English,
+                Language.French,
+                Language.German,
+                Language.Italian,
+                Language.Portuguese,
+                Language.Spanish
+            });
         }
     }
 }

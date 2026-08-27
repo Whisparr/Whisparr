@@ -11,6 +11,7 @@ namespace NzbDrone.Core.Profiles.Releases
         public List<string> Ignored { get; set; }
         public int IndexerId { get; set; }
         public HashSet<int> Tags { get; set; }
+        public HashSet<int> ExcludedTags { get; set; }
 
         public ReleaseProfile()
         {
@@ -18,6 +19,7 @@ namespace NzbDrone.Core.Profiles.Releases
             Required = new List<string>();
             Ignored = new List<string>();
             Tags = new HashSet<int>();
+            ExcludedTags = new HashSet<int>();
             IndexerId = 0;
         }
     }

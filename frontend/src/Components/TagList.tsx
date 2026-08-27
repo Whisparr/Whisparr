@@ -1,16 +1,22 @@
 import React from 'react';
 import { Tag } from 'App/State/TagsAppState';
 import { kinds } from 'Helpers/Props';
+import { Kind } from 'Helpers/Props/kinds';
 import sortByProp from 'Utilities/Array/sortByProp';
-import Label from './Label';
+import Label, { LabelProps } from './Label';
 import styles from './TagList.css';
 
 interface TagListProps {
   tags: number[];
   tagList: Tag[];
+  kind?: Extract<Kind, LabelProps['kind']>;
 }
 
-function TagList({ tags, tagList }: TagListProps) {
+export default function TagList({
+  tags,
+  tagList,
+  kind = kinds.INFO,
+}: TagListProps) {
   const sortedTags = tags
     .map((tagId) => tagList.find((tag) => tag.id === tagId))
     .filter((tag) => !!tag)
@@ -20,7 +26,7 @@ function TagList({ tags, tagList }: TagListProps) {
     <div className={styles.tags}>
       {sortedTags.map((tag) => {
         return (
-          <Label key={tag.id} kind={kinds.INFO}>
+          <Label key={tag.id} kind={kind}>
             {tag.label}
           </Label>
         );
@@ -28,5 +34,3 @@ function TagList({ tags, tagList }: TagListProps) {
     </div>
   );
 }
-
-export default TagList;

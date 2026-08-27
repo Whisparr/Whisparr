@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -125,6 +125,10 @@ namespace NzbDrone.Core.Parser
 
                 // Episodes with airdate before title (2018-10-12, 20181012) (Strict pattern to avoid false matches)
                 new Regex(@"^(?<airyear>19[6-9]\d|20\d{2})[-_]?(?<airmonth>[0-1][0-9])[-_]?(?<airday>[0-3][0-9])",
+                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
+                // Daily episodes that use short month format instead of number
+                new Regex(@"^(?<title>.+?)[-_. ]+(?<airday>[1-2]\d|3[01]|[1-9])(?:th|st|rd)[-_. ](?<shortairmonth>jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[-_. ](?<airyear>(19|20)\d{2})",
                     RegexOptions.IgnoreCase | RegexOptions.Compiled)
             };
 
@@ -252,6 +256,22 @@ namespace NzbDrone.Core.Parser
         private static readonly Regex RequestInfoRegex = new Regex(@"^(?:\[.+?\])+", RegexOptions.Compiled);
 
         private static readonly string[] Numbers = new[] { "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" };
+
+        private static readonly Dictionary<string, int> ShortMonths = new()
+        {
+            { "jan", 1 },
+            { "feb", 2 },
+            { "mar", 3 },
+            { "apr", 4 },
+            { "may", 5 },
+            { "jun", 6 },
+            { "jul", 7 },
+            { "aug", 8 },
+            { "sep", 9 },
+            { "oct", 10 },
+            { "nov", 11 },
+            { "dec", 12 },
+        };
 
         public static ParsedEpisodeInfo ParsePath(string path)
         {
@@ -786,6 +806,19 @@ namespace NzbDrone.Core.Parser
                     // Convert month name to number
                     var monthName = matchCollection[0].Groups["airmonthname"].Value;
                     airmonth = DateTime.ParseExact(monthName, "MMMM", CultureInfo.InvariantCulture).Month;
+                }
+                else if (matchCollection[0].Groups["shortairmonth"].Success)
+                {
+                    var shortMonthValue = matchCollection[0].Groups["shortairmonth"].Value;
+
+                    if (ShortMonths.TryGetValue(shortMonthValue.ToLowerInvariant(), out var shortMonth))
+                    {
+                        airmonth = shortMonth;
+                    }
+                    else
+                    {
+                        throw new InvalidDateException("Unable to determine air month from month: {0}", shortMonthValue);
+                    }
                 }
                 else
                 {

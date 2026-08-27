@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+﻿import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
 import AppState from 'App/State/AppState';
@@ -139,7 +139,7 @@ function EditImportListExclusionModalContent(
               <FormInputGroup
                 type={inputTypes.TEXT}
                 name="title"
-                helpText={translate('SeriesTitleToExcludeHelpText')}
+                helpText={translate('SiteTitleToExcludeHelpText')}
                 {...title}
                 onChange={onInputChange}
               />

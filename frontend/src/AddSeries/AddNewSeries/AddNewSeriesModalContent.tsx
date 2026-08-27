@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+﻿import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import SeriesMonitoringOptionsPopoverContent from 'AddSeries/SeriesMonitoringOptionsPopoverContent';
 import SeriesTypePopoverContent from 'AddSeries/SeriesTypePopoverContent';
@@ -163,7 +163,7 @@ function AddNewSeriesModalContent({
                     seriesFolder: folder,
                     isWindows,
                   }}
-                  helpText={translate('AddNewSeriesRootFolderHelpText', {
+                  helpText={translate('AddNewSiteRootFolderHelpText', {
                     folder,
                   })}
                   onChange={handleInputChange}
@@ -258,7 +258,7 @@ function AddNewSeriesModalContent({
         <div>
           <label className={styles.searchLabelContainer}>
             <span className={styles.searchLabel}>
-              {translate('AddNewSeriesSearchForMissingEpisodes')}
+              {translate('AddNewSiteSearchForMissingEpisodes')}
             </span>
 
             <CheckInput
@@ -272,7 +272,7 @@ function AddNewSeriesModalContent({
 
           <label className={styles.searchLabelContainer}>
             <span className={styles.searchLabel}>
-              {translate('AddNewSeriesSearchForCutoffUnmetEpisodes')}
+              {translate('AddNewSiteSearchForCutoffUnmetEpisodes')}
             </span>
 
             <CheckInput
@@ -291,7 +291,7 @@ function AddNewSeriesModalContent({
           isSpinning={isAdding}
           onPress={handleAddSeriesPress}
         >
-          {translate('AddSeriesWithTitle', { title })}
+          {translate('AddSiteWithTitle', { title })}
         </SpinnerButton>
       </ModalFooter>
     </ModalContent>

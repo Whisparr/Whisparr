@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+﻿import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import AppState from 'App/State/AppState';
 import Alert from 'Components/Alert';
@@ -193,12 +193,12 @@ function MediaManagement() {
                   isAdvanced={true}
                   size={sizes.MEDIUM}
                 >
-                  <FormLabel>{translate('CreateEmptySeriesFolders')}</FormLabel>
+                  <FormLabel>{translate('CreateEmptySiteFolders')}</FormLabel>
 
                   <FormInputGroup
                     type={inputTypes.CHECK}
                     name="createEmptySeriesFolders"
-                    helpText={translate('CreateEmptySeriesFoldersHelpText')}
+                    helpText={translate('CreateEmptySiteFoldersHelpText')}
                     onChange={handleInputChange}
                     {...settings.createEmptySeriesFolders}
                   />
@@ -422,7 +422,7 @@ function MediaManagement() {
                 isAdvanced={true}
               >
                 <FormLabel>
-                  {translate('RescanSeriesFolderAfterRefresh')}
+                  {translate('RescanSiteFolderAfterRefresh')}
                 </FormLabel>
 
                 <FormInputGroup

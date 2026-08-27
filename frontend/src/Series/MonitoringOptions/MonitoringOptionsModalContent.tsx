@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+﻿import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import SeriesMonitoringOptionsPopoverContent from 'AddSeries/SeriesMonitoringOptionsPopoverContent';
 import AppState from 'App/State/AppState';
@@ -66,7 +66,7 @@ function MonitoringOptionsModalContent({
 
   return (
     <ModalContent onModalClose={onModalClose}>
-      <ModalHeader>{translate('MonitorSeries')}</ModalHeader>
+      <ModalHeader>{translate('MonitorSite')}</ModalHeader>
 
       <ModalBody>
         <Form>

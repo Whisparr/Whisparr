@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import Button from 'Components/Link/Button';
 import Modal from 'Components/Modal/Modal';
 import ModalBody from 'Components/Modal/ModalBody';
@@ -46,13 +46,13 @@ function MoveSeriesModal({
 
         <ModalBody>
           {destinationRootFolder
-            ? translate('MoveSeriesFoldersToRootFolder', {
+            ? translate('MoveSiteFoldersToRootFolder', {
                 destinationRootFolder,
               })
             : null}
 
           {originalPath && destinationPath
-            ? translate('MoveSeriesFoldersToNewPath', {
+            ? translate('MoveSiteFoldersToNewPath', {
                 originalPath,
                 destinationPath,
               })
@@ -61,11 +61,11 @@ function MoveSeriesModal({
 
         <ModalFooter>
           <Button className={styles.doNotMoveButton} onPress={onSavePress}>
-            {translate('MoveSeriesFoldersDontMoveFiles')}
+            {translate('MoveSiteFoldersDontMoveFiles')}
           </Button>
 
           <Button kind={kinds.DANGER} onPress={onMoveSeriesPress}>
-            {translate('MoveSeriesFoldersMoveFiles')}
+            {translate('MoveSiteFoldersMoveFiles')}
           </Button>
         </ModalFooter>
       </ModalContent>

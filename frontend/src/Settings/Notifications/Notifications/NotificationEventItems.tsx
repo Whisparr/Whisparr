@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import FormGroup from 'Components/Form/FormGroup';
 import FormInputGroup from 'Components/Form/FormInputGroup';
 import FormInputHelpText from 'Components/Form/FormInputHelpText';
@@ -119,7 +119,7 @@ function NotificationEventItems({
             <FormInputGroup
               type={inputTypes.CHECK}
               name="onSeriesAdd"
-              helpText={translate('OnSeriesAdd')}
+              helpText={translate('OnSiteAdd')}
               isDisabled={!supportsOnSeriesAdd.value}
               {...onSeriesAdd}
               onChange={onInputChange}

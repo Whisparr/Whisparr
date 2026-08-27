@@ -1,4 +1,4 @@
-import moment from 'moment';
+﻿import moment from 'moment';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import TextTruncate from 'react-text-truncate';
@@ -444,12 +444,12 @@ function SeriesDetails({ seriesId }: SeriesDetailsProps) {
   const runningYears =
     status === 'ended' ? `${year}-${getDateYear(lastAired)}` : `${year}-`;
 
-  let episodeFilesCountMessage = translate('SeriesDetailsNoEpisodeFiles');
+  let episodeFilesCountMessage = translate('SiteDetailsNoEpisodeFiles');
 
   if (episodeFileCount === 1) {
-    episodeFilesCountMessage = translate('SeriesDetailsOneEpisodeFile');
+    episodeFilesCountMessage = translate('SiteDetailsOneEpisodeFile');
   } else if (episodeFileCount > 1) {
-    episodeFilesCountMessage = translate('SeriesDetailsCountEpisodeFiles', {
+    episodeFilesCountMessage = translate('SiteDetailsCountEpisodeFiles', {
       episodeFileCount,
     });
   }
@@ -517,7 +517,7 @@ function SeriesDetails({ seriesId }: SeriesDetailsProps) {
           <PageToolbarSeparator />
 
           <PageToolbarButton
-            label={translate('SeriesMonitoring')}
+            label={translate('SiteMonitoring')}
             iconName={icons.MONITORED}
             onPress={handleMonitorOptionsPress}
           />
@@ -605,7 +605,7 @@ function SeriesDetails({ seriesId }: SeriesDetailsProps) {
                     className={styles.seriesNavigationButton}
                     name={icons.ARROW_LEFT}
                     size={30}
-                    title={translate('SeriesDetailsGoTo', {
+                    title={translate('SiteDetailsGoTo', {
                       title: previousSeries.title,
                     })}
                     to={`/series/${previousSeries.titleSlug}`}
@@ -615,7 +615,7 @@ function SeriesDetails({ seriesId }: SeriesDetailsProps) {
                     className={styles.seriesNavigationButton}
                     name={icons.ARROW_RIGHT}
                     size={30}
-                    title={translate('SeriesDetailsGoTo', {
+                    title={translate('SiteDetailsGoTo', {
                       title: nextSeries.title,
                     })}
                     to={`/series/${nextSeries.titleSlug}`}
@@ -627,7 +627,7 @@ function SeriesDetails({ seriesId }: SeriesDetailsProps) {
                 <div>
                   {runtime ? (
                     <span className={styles.runtime}>
-                      {translate('SeriesDetailsRuntime', { runtime })}
+                      {translate('SiteDetailsRuntime', { runtime })}
                     </span>
                   ) : null}
 

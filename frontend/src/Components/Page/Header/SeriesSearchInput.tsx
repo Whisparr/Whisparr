@@ -1,4 +1,4 @@
-import { push } from 'connected-react-router';
+﻿import { push } from 'connected-react-router';
 import { ExtendedKeyboardEvent } from 'mousetrap';
 import React, {
   FormEvent,
@@ -139,14 +139,14 @@ function SeriesSearchInput() {
 
     if (suggestions.length || isLoading.current) {
       result.push({
-        title: translate('ExistingSeries'),
+        title: translate('ExistingSite'),
         loading: isLoading.current,
         suggestions,
       });
     }
 
     result.push({
-      title: translate('AddNewSeries'),
+      title: translate('AddNewSite'),
       suggestions: [
         {
           type: ADD_NEW_TYPE,

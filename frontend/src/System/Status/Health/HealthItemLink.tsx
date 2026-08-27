@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import IconButton from 'Components/Link/IconButton';
 import { icons } from 'Helpers/Props';
 import translate from 'Utilities/String/translate';
@@ -45,7 +45,7 @@ function HealthItemLink(props: HealthItemLinkProps) {
       return (
         <IconButton
           name={icons.SERIES_CONTINUING}
-          title={translate('SeriesEditor')}
+          title={translate('SiteEditor')}
           to="/serieseditor"
         />
       );

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+﻿import React, { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Card from 'Components/Card';
 import Label from 'Components/Label';
@@ -113,11 +113,11 @@ function Notification({
       ) : null}
 
       {supportsOnSeriesAdd && onSeriesAdd ? (
-        <Label kind={kinds.SUCCESS}>{translate('OnSeriesAdd')}</Label>
+        <Label kind={kinds.SUCCESS}>{translate('OnSiteAdd')}</Label>
       ) : null}
 
       {supportsOnSeriesDelete && onSeriesDelete ? (
-        <Label kind={kinds.SUCCESS}>{translate('OnSeriesDelete')}</Label>
+        <Label kind={kinds.SUCCESS}>{translate('OnSiteDelete')}</Label>
       ) : null}
 
       {supportsOnEpisodeFileDelete && onEpisodeFileDelete ? (

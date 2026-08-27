@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+﻿import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
 import EpisodesAppState from 'App/State/EpisodesAppState';
@@ -513,7 +513,7 @@ function SeriesDetailsSeason({
               </Table>
             ) : (
               <div className={styles.noEpisodes}>
-                {translate('NoEpisodesInThisSeason')}
+                {translate('NoEpisodesInThisYear')}
               </div>
             )}
 

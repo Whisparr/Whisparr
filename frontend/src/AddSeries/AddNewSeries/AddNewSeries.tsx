@@ -76,7 +76,7 @@ function AddNewSeries({ defaultSeriesType }: AddNewSeriesProps) {
   }, [initialTerm]);
 
   return (
-    <PageContent title={translate('AddNewSeries')}>
+    <PageContent title={translate('AddNewSite')}>
       <PageContentBody>
         <div className={styles.searchContainer}>
           <div className={styles.searchIconContainer}>
@@ -87,7 +87,7 @@ function AddNewSeries({ defaultSeriesType }: AddNewSeriesProps) {
             className={styles.searchInput}
             name="seriesLookup"
             value={term}
-            placeholder="eg. Breaking Bad, tvdb:####"
+            placeholder="eg. Brazzers, tpdb:####"
             autoFocus={true}
             onChange={handleSearchInputChange}
           />
@@ -105,7 +105,7 @@ function AddNewSeries({ defaultSeriesType }: AddNewSeriesProps) {
         {!isFetching && !!error ? (
           <div className={styles.message}>
             <div className={styles.helpText}>
-              {translate('AddNewSeriesError')}
+              {translate('AddNewSiteError')}
             </div>
 
             <Alert kind={kinds.DANGER}>{getErrorMessage(error)}</Alert>
@@ -125,10 +125,10 @@ function AddNewSeries({ defaultSeriesType }: AddNewSeriesProps) {
             <div className={styles.noResults}>
               {translate('CouldNotFindResults', { term })}
             </div>
-            <div>{translate('SearchByTvdbId')}</div>
+            <div>{translate('SearchByTpdbId')}</div>
             <div>
-              <Link to="https://wiki.servarr.com/sonarr/faq#why-cant-i-add-a-new-series-when-i-know-the-tvdb-id">
-                {translate('WhyCantIFindMyShow')}
+              <Link to="https://wiki.servarr.com/whisparr/faq#why-cant-i-add-a-new-site-when-i-know-the-tpdb-id">
+                {translate('WhyCantIFindMySite')}
               </Link>
             </div>
           </div>
@@ -137,20 +137,20 @@ function AddNewSeries({ defaultSeriesType }: AddNewSeriesProps) {
         {term ? null : (
           <div className={styles.message}>
             <div className={styles.helpText}>
-              {translate('AddNewSeriesHelpText')}
+              {translate('AddNewSiteHelpText')}
             </div>
-            <div>{translate('SearchByTvdbId')}</div>
+            <div>{translate('SearchByTpdbId')}</div>
           </div>
         )}
 
         {!term && !seriesCount ? (
           <div className={styles.message}>
             <div className={styles.noSeriesText}>
-              {translate('NoSeriesHaveBeenAdded')}
+              {translate('NoSitesHaveBeenAdded')}
             </div>
             <div>
               <Button to="/add/import" kind={kinds.PRIMARY}>
-                {translate('ImportExistingSeries')}
+                {translate('ImportExistingSites')}
               </Button>
             </div>
           </div>

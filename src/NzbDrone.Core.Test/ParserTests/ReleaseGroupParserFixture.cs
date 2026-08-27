@@ -1,4 +1,4 @@
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
 using NzbDrone.Core.Test.Framework;
 
@@ -138,6 +138,14 @@ namespace NzbDrone.Core.Test.ParserTests
         public void should_not_include_repost_in_release_group(string title, string expected)
         {
             Parser.Parser.ParseReleaseGroup(title).Should().Be(expected);
+        }
+
+        [TestCase("Some TV (1979) - S02E10 - Hart-Shaped Murder [SDTV][AAC 2.0][x264]")]
+        [TestCase("Some TV (1979) - S02E10 - Hart-Shaped Murder [HDTV-480p][AAC 2.0][x264]")]
+        [TestCase("Some TV (1979) - S02E10 - Hart-Shaped Murder [480p-HDTV][AAC 2.0][x264]")]
+        public void should_not_parse_episode_title_as_release_group(string title)
+        {
+            Parser.Parser.ParseReleaseGroup(title).Should().BeNull();
         }
     }
 }

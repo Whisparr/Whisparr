@@ -44,6 +44,7 @@ function useApiQuery<T>(options: QueryOptions<T>) {
       headers: {
         ...options.headers,
         'X-Api-Key': window.Whisparr.apiKey,
+        'X-Whisparr-Client': 'Whisparr',
       },
     };
   }, [options]);

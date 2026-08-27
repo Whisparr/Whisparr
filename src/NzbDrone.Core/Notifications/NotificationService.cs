@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using NLog;
@@ -49,6 +49,11 @@ namespace NzbDrone.Core.Notifications
             if (quality.Revision.Version > 1)
             {
                 qualityString += " Proper";
+            }
+
+            if (episodes.Empty())
+            {
+                return $"{series.Title} - [{qualityString}]";
             }
 
             var releaseDates = string.Join(" + ", episodes.Select(e => e.AirDate));

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using FluentValidation.Results;
@@ -263,6 +263,11 @@ namespace NzbDrone.Core.Notifications.Slack
 
         private string GetTitle(Series series, List<Episode> episodes)
         {
+            if (episodes.Empty())
+            {
+                return series.Title;
+            }
+
             var episodeNumbers = string.Concat(episodes.Select(e => e.AirDate));
 
             var episodeTitles = string.Join(" + ", episodes.Select(e => e.Title));

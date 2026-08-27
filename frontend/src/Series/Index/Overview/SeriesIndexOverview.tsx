@@ -144,7 +144,10 @@ function SeriesIndexOverview(props: SeriesIndexOverviewProps) {
         <div className={styles.poster}>
           <div className={styles.posterContainer}>
             {isSelectMode ? (
-              <SeriesIndexPosterSelect seriesId={seriesId} />
+              <SeriesIndexPosterSelect
+                seriesId={seriesId}
+                titleSlug={titleSlug}
+              />
             ) : null}
 
             {status === 'ended' ? (

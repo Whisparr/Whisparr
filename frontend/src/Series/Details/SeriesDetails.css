@@ -58,11 +58,12 @@
 
 .title {
   overflow: auto;
-  max-height: calc(3 * 50px);
+  max-height: calc(3 * 60px);
   text-wrap: balance;
   font-weight: 300;
   font-size: 50px;
-  line-height: 50px;
+  line-height: 60px;
+  -webkit-line-clamp: 3;
   line-clamp: 3;
 }
 
@@ -83,6 +84,7 @@
 
 .alternateTitlesIconContainer {
   align-self: flex-end;
+  margin-bottom: 10px;
   margin-left: 20px;
 }
 

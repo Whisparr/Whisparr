@@ -14,6 +14,7 @@ export interface General {
   enableSsl: boolean;
   sslPort: number;
   sslCertPath: string;
+  sslKeyPath: string;
   sslCertPassword: string;
   certificateValidation: string;
   launchBrowser: boolean;

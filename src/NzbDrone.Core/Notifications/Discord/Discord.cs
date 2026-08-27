@@ -707,6 +707,11 @@ namespace NzbDrone.Core.Notifications.Discord
                 return null;
             }
 
+            if (episodes.Empty())
+            {
+                return series.Title;
+            }
+
             var episodeNumbers = string.Concat(episodes.Select(e => e.AirDate));
 
             var episodeTitles = string.Join(" + ", episodes.Select(e => e.Title));

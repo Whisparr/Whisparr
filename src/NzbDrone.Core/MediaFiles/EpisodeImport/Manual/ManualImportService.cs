@@ -487,6 +487,7 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Manual
 
             var imported = new List<ImportResult>();
             var importedTrackedDownload = new List<ManuallyImportedFile>();
+            var importedUntrackedDownload = new List<ImportResult>();
 
             for (var i = 0; i < message.Files.Count; i++)
             {
@@ -547,7 +548,10 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Manual
 
                 if (trackedDownload == null)
                 {
-                    imported.AddRange(_importApprovedEpisodes.Import(new List<ImportDecision> { importDecision }, !existingFile, null, message.ImportMode));
+                    var importResult = _importApprovedEpisodes.Import(new List<ImportDecision> { importDecision }, !existingFile, null, message.ImportMode);
+
+                    imported.AddRange(importResult);
+                    importedUntrackedDownload.AddRange(importResult);
                 }
                 else
                 {
@@ -568,7 +572,7 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Manual
                 _logger.ProgressTrace("Manually imported {0} files", imported.Count);
             }
 
-            var untrackedImports = imported.Where(i => i.Result == ImportResultType.Imported && importedTrackedDownload.FirstOrDefault(t => t.ImportResult != i) == null).ToList();
+            var untrackedImports = importedUntrackedDownload.Where(i => i.Result == ImportResultType.Imported).ToList();
 
             if (untrackedImports.Any())
             {

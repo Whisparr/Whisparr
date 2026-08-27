@@ -1,4 +1,6 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import AppState from 'App/State/AppState';
 import FormGroup from 'Components/Form/FormGroup';
 import FormInputGroup from 'Components/Form/FormInputGroup';
 import FormLabel from 'Components/Form/FormLabel';
@@ -10,6 +12,8 @@ import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { inputTypes, kinds, sizes } from 'Helpers/Props';
+import { setQueueRemovalOption } from 'Store/Actions/queueActions';
+import { InputChanged } from 'typings/inputs';
 import translate from 'Utilities/String/translate';
 import styles from './RemoveQueueItemModal.css';
 
@@ -31,12 +35,6 @@ interface RemoveQueueItemModalProps {
   onModalClose: () => void;
 }
 
-type RemovalMethod = 'removeFromClient' | 'changeCategory' | 'ignore';
-type BlocklistMethod =
-  | 'doNotBlocklist'
-  | 'blocklistAndSearch'
-  | 'blocklistOnly';
-
 function RemoveQueueItemModal(props: RemoveQueueItemModalProps) {
   const {
     isOpen,
@@ -49,12 +47,13 @@ function RemoveQueueItemModal(props: RemoveQueueItemModalProps) {
     onModalClose,
   } = props;
 
+  const dispatch = useDispatch();
+
   const multipleSelected = selectedCount && selectedCount > 1;
 
-  const [removalMethod, setRemovalMethod] =
-    useState<RemovalMethod>('removeFromClient');
-  const [blocklistMethod, setBlocklistMethod] =
-    useState<BlocklistMethod>('doNotBlocklist');
+  const { removalMethod, blocklistMethod } = useSelector(
+    (state: AppState) => state.queue.removalOptions
+  );
 
   const { title, message } = useMemo(() => {
     if (!selectedCount) {
@@ -138,18 +137,11 @@ function RemoveQueueItemModal(props: RemoveQueueItemModalProps) {
     return options;
   }, [isPending, multipleSelected]);
 
-  const handleRemovalMethodChange = useCallback(
-    ({ value }: { value: RemovalMethod }) => {
-      setRemovalMethod(value);
+  const handleRemovalOptionInputChange = useCallback(
+    ({ name, value }: InputChanged) => {
+      dispatch(setQueueRemovalOption({ [name]: value }));
     },
-    [setRemovalMethod]
-  );
-
-  const handleBlocklistMethodChange = useCallback(
-    ({ value }: { value: BlocklistMethod }) => {
-      setBlocklistMethod(value);
-    },
-    [setBlocklistMethod]
+    [dispatch]
   );
 
   const handleConfirmRemove = useCallback(() => {
@@ -159,23 +151,11 @@ function RemoveQueueItemModal(props: RemoveQueueItemModalProps) {
       blocklist: blocklistMethod !== 'doNotBlocklist',
       skipRedownload: blocklistMethod === 'blocklistOnly',
     });
-
-    setRemovalMethod('removeFromClient');
-    setBlocklistMethod('doNotBlocklist');
-  }, [
-    removalMethod,
-    blocklistMethod,
-    setRemovalMethod,
-    setBlocklistMethod,
-    onRemovePress,
-  ]);
+  }, [removalMethod, blocklistMethod, onRemovePress]);
 
   const handleModalClose = useCallback(() => {
-    setRemovalMethod('removeFromClient');
-    setBlocklistMethod('doNotBlocklist');
-
     onModalClose();
-  }, [setRemovalMethod, setBlocklistMethod, onModalClose]);
+  }, [onModalClose]);
 
   return (
     <Modal isOpen={isOpen} size={sizes.MEDIUM} onModalClose={handleModalClose}>
@@ -198,7 +178,7 @@ function RemoveQueueItemModal(props: RemoveQueueItemModalProps) {
                 helpTextWarning={translate(
                   'RemoveQueueItemRemovalMethodHelpTextWarning'
                 )}
-                onChange={handleRemovalMethodChange}
+                onChange={handleRemovalOptionInputChange}
               />
             </FormGroup>
           )}
@@ -216,7 +196,7 @@ function RemoveQueueItemModal(props: RemoveQueueItemModalProps) {
               value={blocklistMethod}
               values={blocklistMethodOptions}
               helpText={translate('BlocklistReleaseHelpText')}
-              onChange={handleBlocklistMethodChange}
+              onChange={handleRemovalOptionInputChange}
             />
           </FormGroup>
         </ModalBody>

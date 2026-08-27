@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net;
 using NLog;
@@ -335,6 +335,15 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
                                                 .Post()
                                                 .AddFormParameter("hashes", hash)
                                                 .AddFormParameter("value", enabled ? "true" : "false");
+            ProcessRequest(request, settings);
+        }
+
+        public void AddTags(string hash, IEnumerable<string> tags, QBittorrentSettings settings)
+        {
+            var request = BuildRequest(settings).Resource("/api/v2/torrents/addTags")
+                .Post()
+                .AddFormParameter("hashes", hash)
+                .AddFormParameter("tags", string.Join(",", tags));
             ProcessRequest(request, settings);
         }
 

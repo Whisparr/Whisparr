@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -14,6 +14,7 @@ using NzbDrone.Core.Localization;
 using NzbDrone.Core.MediaFiles.TorrentInfo;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.RemotePathMappings;
+using NzbDrone.Core.Tags;
 using NzbDrone.Core.Validation;
 
 namespace NzbDrone.Core.Download.Clients.QBittorrent
@@ -22,6 +23,7 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
     {
         private readonly IQBittorrentProxySelector _proxySelector;
         private readonly ICached<SeedingTimeCacheEntry> _seedingTimeCache;
+        private readonly ITagRepository _tagRepository;
 
         private class SeedingTimeCacheEntry
         {
@@ -37,6 +39,7 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
                            IRemotePathMappingService remotePathMappingService,
                            ICacheManager cacheManager,
                            IBlocklistService blocklistService,
+                           ITagRepository tagRepository,
                            Logger logger,
                            ILocalizationService localizationService)
             : base(torrentFileInfoReader, httpClient, configService, diskProvider, remotePathMappingService, blocklistService, logger, localizationService)
@@ -44,6 +47,7 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
             _proxySelector = proxySelector;
 
             _seedingTimeCache = cacheManager.GetCache<SeedingTimeCacheEntry>(GetType(), "seedingTime");
+            _tagRepository = tagRepository;
         }
 
         private IQBittorrentProxy Proxy => _proxySelector.GetProxy(Settings);
@@ -83,7 +87,7 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
 
             Proxy.AddTorrentFromUrl(magnetLink, addHasSetShareLimits && setShareLimits ? remoteEpisode.SeedConfiguration : null, Settings);
 
-            if ((!addHasSetShareLimits && setShareLimits) || moveToTop || forceStart)
+            if ((!addHasSetShareLimits && setShareLimits) || moveToTop || forceStart || (Settings.AddSeriesTags && remoteEpisode.Series.Tags.Count > 0))
             {
                 if (!WaitForTorrent(hash))
                 {
@@ -123,6 +127,18 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
                     catch (Exception ex)
                     {
                         _logger.Warn(ex, "Failed to set ForceStart for {0}.", hash);
+                    }
+                }
+
+                if (Settings.AddSeriesTags && remoteEpisode.Series.Tags.Count > 0)
+                {
+                    try
+                    {
+                        Proxy.AddTags(hash.ToLower(), _tagRepository.GetTags(remoteEpisode.Series.Tags).Select(tag => tag.Label), Settings);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Warn(ex, "Failed to add tags for {0}.", hash);
                     }
                 }
             }
@@ -140,7 +156,7 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
 
             Proxy.AddTorrentFromFile(filename, fileContent, addHasSetShareLimits ? remoteEpisode.SeedConfiguration : null, Settings);
 
-            if ((!addHasSetShareLimits && setShareLimits) || moveToTop || forceStart)
+            if ((!addHasSetShareLimits && setShareLimits) || moveToTop || forceStart || (Settings.AddSeriesTags && remoteEpisode.Series.Tags.Count > 0))
             {
                 if (!WaitForTorrent(hash))
                 {
@@ -180,6 +196,18 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
                     catch (Exception ex)
                     {
                         _logger.Warn(ex, "Failed to set ForceStart for {0}.", hash);
+                    }
+                }
+
+                if (Settings.AddSeriesTags && remoteEpisode.Series.Tags.Count > 0)
+                {
+                    try
+                    {
+                        Proxy.AddTags(hash.ToLower(), _tagRepository.GetTags(remoteEpisode.Series.Tags).Select(tag => tag.Label), Settings);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Warn(ex, "Failed to add tags for {0}.", hash);
                     }
                 }
             }

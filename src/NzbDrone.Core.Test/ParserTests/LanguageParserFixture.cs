@@ -478,5 +478,23 @@ namespace NzbDrone.Core.Test.ParserTests
 
             result.Should().Contain(Language.Romansh);
         }
+
+        [TestCase("Title.the.Series.2025.S01.Georgian.1080p.WEB-DL.h264-RlsGrp")]
+        [TestCase("Title.the.Series.2025.S01.Geo.1080p.WEB-DL.h264-RlsGrp")]
+        [TestCase("Title.the.Series.2025.S01.KA.1080p.WEB-DL.h264-RlsGrp")]
+        public void should_parse_language_georgian(string postTitle)
+        {
+            var result = LanguageParser.ParseLanguages(postTitle);
+
+            result.Should().Contain(Language.Georgian);
+        }
+
+        [TestCase("Title.the.Series.2025.S01.RU-KA.1080p.WEB-DL.h264-RlsGrp")]
+        public void should_parse_language_russian_and_georgian(string postTitle)
+        {
+            var result = LanguageParser.ParseLanguages(postTitle);
+
+            result.Should().BeEquivalentTo(new[] { Language.Russian, Language.Georgian });
+        }
     }
 }

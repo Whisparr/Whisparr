@@ -15,8 +15,6 @@ interface Episode extends ModelBase {
   seasonNumber: number;
   episodeNumber: number;
   releaseDate?: string;
-  airDate: string;
-  airDateUtc?: string;
   actors: Actor[];
   lastSearchTime?: string;
   runtime: number;

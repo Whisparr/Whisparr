@@ -59,7 +59,7 @@ function getSeasonStatistics(episodes: Episode[]) {
   episodes.forEach((episode) => {
     if (
       episode.episodeFileId ||
-      (episode.monitored && isBefore(episode.airDateUtc))
+      (episode.monitored && isBefore(episode.releaseDate))
     ) {
       episodeCount++;
     }
@@ -280,8 +280,8 @@ function SeriesDetailsSeason({
     const expand =
       itemsRef.current.some(
         (item) =>
-          isAfter(item.airDateUtc) || isAfter(item.airDateUtc, { days: -30 })
-      ) || itemsRef.current.every((item) => !item.airDateUtc);
+          isAfter(item.releaseDate) || isAfter(item.releaseDate, { days: -30 })
+      ) || itemsRef.current.every((item) => !item.releaseDate);
 
     onExpandPress(seasonNumber, expand && seasonNumber > 0);
   }, [seriesId, seasonNumber, onExpandPress]);

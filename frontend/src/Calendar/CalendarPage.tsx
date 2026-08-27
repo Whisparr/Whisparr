@@ -44,13 +44,13 @@ function createMissingEpisodeIdsSelector() {
     (state: AppState) => state.queue.details.items,
     (start, end, episodes, queueDetails) => {
       return episodes.reduce<number[]>((acc, episode) => {
-        const airDateUtc = episode.airDateUtc;
+        const releaseDate = episode.releaseDate;
 
         if (
           !episode.episodeFileId &&
-          moment(airDateUtc).isAfter(start) &&
-          moment(airDateUtc).isBefore(end) &&
-          isBefore(episode.airDateUtc) &&
+          moment(releaseDate).isAfter(start) &&
+          moment(releaseDate).isBefore(end) &&
+          isBefore(episode.releaseDate) &&
           !queueDetails.some(
             (details) => !!details.episode && details.episode.id === episode.id
           )

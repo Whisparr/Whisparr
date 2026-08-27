@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -104,8 +104,8 @@ namespace NzbDrone.Common.Instrumentation.Sentry
                                       o.AttachStacktrace = true;
                                       o.MaxBreadcrumbs = 200;
                                       o.Release = $"{BuildInfo.AppName}@{BuildInfo.Release}";
-                                      o.BeforeSend = x => SentryCleanser.CleanseEvent(x);
-                                      o.BeforeBreadcrumb = x => SentryCleanser.CleanseBreadcrumb(x);
+                                      o.SetBeforeSend(x => SentryCleanser.CleanseEvent(x));
+                                      o.SetBeforeBreadcrumb(x => SentryCleanser.CleanseBreadcrumb(x));
                                       o.Environment = BuildInfo.Branch;
 
                                       // Crash free run statistics (sends a ping for healthy and for crashes sessions)
@@ -128,7 +128,7 @@ namespace NzbDrone.Common.Instrumentation.Sentry
         {
             SentrySdk.ConfigureScope(scope =>
             {
-                scope.User = new User
+                scope.User = new SentryUser
                 {
                     Id = HashUtil.AnonymousToken()
                 };

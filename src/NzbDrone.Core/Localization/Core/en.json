@@ -35,7 +35,7 @@
   "AddNewRestriction": "Add new restriction",
   "AddNewSite": "Add New Site",
   "AddNewSiteError": "Failed to load search results, please try again.",
-  "AddNewSiteHelpText": "It's easy to add a new site, just start typing the name the site you want to add.",
+  "AddNewSiteHelpText": "It's easy to add a new site, just start typing the name of the site you want to add.",
   "AddNewSiteRootFolderHelpText": "'{folder}' subfolder will be created automatically",
   "AddNewSiteSearchForCutoffUnmetEpisodes": "Start search for cutoff unmet episodes",
   "AddNewSiteSearchForMissingEpisodes": "Start search for missing episodes",

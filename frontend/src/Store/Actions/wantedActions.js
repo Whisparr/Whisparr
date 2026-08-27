@@ -41,7 +41,7 @@ export const defaultState = {
       },
       {
         name: 'actors',
-        label: 'Performers',
+        label: () => translate('Performers'),
         isVisible: true
       },
       {
@@ -119,7 +119,7 @@ export const defaultState = {
       },
       {
         name: 'actors',
-        label: 'Performers',
+        label: () => translate('Performers'),
         isVisible: true
       },
       {

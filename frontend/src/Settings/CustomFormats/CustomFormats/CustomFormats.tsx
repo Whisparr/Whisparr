@@ -76,6 +76,7 @@ function CustomFormats() {
 
           <Card
             className={styles.addCustomFormat}
+            aria-label={translate('AddCustomFormat')}
             onPress={handleAddCustomFormatPress}
           >
             <div className={styles.center}>

@@ -4,6 +4,7 @@ import Icon from 'Components/Icon';
 import { icons, kinds } from 'Helpers/Props';
 import { CheckInputChanged } from 'typings/inputs';
 import { SelectStateInputProps } from 'typings/props';
+import translate from 'Utilities/String/translate';
 import styles from './OrganizePreviewRow.css';
 
 interface OrganizePreviewRowProps {
@@ -37,6 +38,7 @@ function OrganizePreviewRow({
       <CheckInput
         containerClassName={styles.selectedContainer}
         name={id.toString()}
+        ariaLabel={translate('SelectRow')}
         value={isSelected}
         onChange={handleSelectedChange}
       />

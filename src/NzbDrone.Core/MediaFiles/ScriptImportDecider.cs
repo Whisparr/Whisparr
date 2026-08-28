@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
@@ -136,7 +136,7 @@ namespace NzbDrone.Core.MediaFiles
             environmentVariables.Add("Whisparr_Series_Path", series.Path);
             environmentVariables.Add("Whisparr_Series_TvdbId", series.TvdbId.ToString());
             environmentVariables.Add("Whisparr_Series_Genres", string.Join("|", series.Genres));
-            environmentVariables.Add("Whisparr_Series_Tags", string.Join("|", series.Tags.Select(t => _tagRepository.Get(t).Label)));
+            environmentVariables.Add("Whisparr_Series_Tags", string.Join("|", _tagRepository.GetTags(series.Tags).Select(t => t.Label)));
 
             environmentVariables.Add("Whisparr_EpisodeFile_EpisodeCount", localEpisode.Episodes.Count.ToString());
             environmentVariables.Add("Whisparr_EpisodeFile_EpisodeIds", string.Join(",", localEpisode.Episodes.Select(e => e.Id)));

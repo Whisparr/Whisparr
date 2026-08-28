@@ -65,6 +65,9 @@ function Specification({
     <Card
       className={styles.customFormat}
       overlayContent={true}
+      aria-label={translate('EditConditionImplementation', {
+        implementationName,
+      })}
       onPress={handleEditSpecificationPress}
     >
       <div className={styles.nameContainer}>

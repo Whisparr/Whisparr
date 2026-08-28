@@ -4,7 +4,7 @@ import { DragSourceMonitor, useDrag, useDrop, XYCoord } from 'react-dnd';
 import { useDispatch } from 'react-redux';
 import { Tag } from 'App/State/TagsAppState';
 import Icon from 'Components/Icon';
-import Link from 'Components/Link/Link';
+import IconButton from 'Components/Link/IconButton';
 import ConfirmModal from 'Components/Modal/ConfirmModal';
 import TagList from 'Components/TagList';
 import DragType from 'Helpers/DragType';
@@ -197,12 +197,13 @@ function DelayProfile({
         <TagList tags={tags} tagList={tagList} />
 
         <div className={styles.actions}>
-          <Link
+          <IconButton
+            name={icons.EDIT}
             className={id === 1 ? styles.editButton : undefined}
+            aria-label={translate('EditDelayProfile')}
+            title={translate('EditDelayProfile')}
             onPress={handleEditDelayProfilePress}
-          >
-            <Icon name={icons.EDIT} />
-          </Link>
+          />
 
           {id === 1 ? null : (
             <div ref={dragRef} className={styles.dragHandle}>

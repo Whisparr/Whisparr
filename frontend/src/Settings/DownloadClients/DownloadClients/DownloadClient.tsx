@@ -64,6 +64,7 @@ function DownloadClient({
     <Card
       className={styles.downloadClient}
       overlayContent={true}
+      aria-label={translate('EditDownloadClientName', { name })}
       onPress={handleEditDownloadClientPress}
     >
       <div className={styles.name}>{name}</div>

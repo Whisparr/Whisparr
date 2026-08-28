@@ -13,6 +13,7 @@ using NzbDrone.Core.Validation.Paths;
 using Whisparr.Http;
 using Whisparr.Http.REST;
 using Whisparr.Http.REST.Attributes;
+using Whisparr.Http.Validation;
 
 namespace Whisparr.Api.V3.Config
 {

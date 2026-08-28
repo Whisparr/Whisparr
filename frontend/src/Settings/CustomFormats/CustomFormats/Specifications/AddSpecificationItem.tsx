@@ -41,7 +41,13 @@ function AddSpecificationItem({
 
   return (
     <div className={styles.specification}>
-      <Link className={styles.underlay} onPress={handleSpecificationSelect} />
+      <Link
+        className={styles.underlay}
+        aria-label={translate('AddConditionImplementation', {
+          implementationName,
+        })}
+        onPress={handleSpecificationSelect}
+      />
 
       <div className={styles.overlay}>
         <div className={styles.name}>{implementationName}</div>

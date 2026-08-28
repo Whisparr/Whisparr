@@ -153,6 +153,12 @@ export const defaultState = {
       isVisible: false
     },
     {
+      name: 'averageSizePerEpisode',
+      label: () => translate('AverageSizePerEpisode'),
+      isSortable: true,
+      isVisible: false
+    },
+    {
       name: 'genres',
       label: () => translate('Genres'),
       isSortable: false,

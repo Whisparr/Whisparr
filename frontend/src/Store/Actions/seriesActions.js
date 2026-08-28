@@ -176,6 +176,18 @@ export const filterPredicates = {
     return predicate(sizeOnDisk, filterValue);
   },
 
+  averageSizePerEpisode: function(item, filterValue, type) {
+    const predicate = getFilterTypePredicate(type);
+    const totalEpisodeCount = item.statistics && item.statistics.totalEpisodeCount ?
+      item.statistics.totalEpisodeCount :
+      0;
+    const averageSize = totalEpisodeCount > 0 ?
+      (item.statistics.sizeOnDisk || 0) / totalEpisodeCount :
+      0;
+
+    return predicate(averageSize, filterValue);
+  },
+
   hasMissingSeason: function(item, filterValue, type) {
     const predicate = getFilterTypePredicate(type);
     const { seasons = [] } = item;
@@ -327,6 +339,12 @@ export const filterBuilderProps = [
     valueType: filterBuilderValueTypes.BYTES
   },
   {
+    name: 'averageSizePerEpisode',
+    label: () => translate('AverageSizePerEpisode'),
+    type: filterBuilderTypes.NUMBER,
+    valueType: filterBuilderValueTypes.BYTES
+  },
+  {
     name: 'genres',
     label: () => translate('Genres'),
     type: filterBuilderTypes.ARRAY,
@@ -423,6 +441,13 @@ export const sortPredicates = {
     const { statistics = {} } = item;
 
     return statistics.sizeOnDisk || 0;
+  },
+
+  averageSizePerEpisode: function(item) {
+    const { statistics = {} } = item;
+    const totalEpisodeCount = statistics.totalEpisodeCount || 0;
+
+    return totalEpisodeCount > 0 ? (statistics.sizeOnDisk || 0) / totalEpisodeCount : 0;
   }
 };
 

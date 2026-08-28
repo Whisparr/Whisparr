@@ -73,6 +73,7 @@ function QualityProfiles() {
 
           <Card
             className={styles.addQualityProfile}
+            aria-label={translate('AddQualityProfile')}
             onPress={handleEditQualityProfilePress}
           >
             <div className={styles.center}>

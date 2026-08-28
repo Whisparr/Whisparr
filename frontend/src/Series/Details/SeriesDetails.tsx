@@ -606,6 +606,9 @@ function SeriesDetails({ seriesId }: SeriesDetailsProps) {
                       title={translate('SiteDetailsGoTo', {
                         title: previousSeries.title,
                       })}
+                      aria-label={translate('SiteDetailsGoTo', {
+                        title: previousSeries.title,
+                      })}
                       to={`/series/${previousSeries.titleSlug}`}
                     />
                   ) : null}
@@ -616,6 +619,9 @@ function SeriesDetails({ seriesId }: SeriesDetailsProps) {
                       name={icons.ARROW_RIGHT}
                       size={30}
                       title={translate('SiteDetailsGoTo', {
+                        title: nextSeries.title,
+                      })}
+                      aria-label={translate('SiteDetailsGoTo', {
                         title: nextSeries.title,
                       })}
                       to={`/series/${nextSeries.titleSlug}`}

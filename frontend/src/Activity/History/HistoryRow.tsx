@@ -22,6 +22,7 @@ import { fetchHistory, markAsFailed } from 'Store/Actions/historyActions';
 import CustomFormat from 'typings/CustomFormat';
 import { HistoryData, HistoryEventType } from 'typings/History';
 import formatCustomFormatScore from 'Utilities/Number/formatCustomFormatScore';
+import translate from 'Utilities/String/translate';
 import HistoryDetailsModal from './Details/HistoryDetailsModal';
 import HistoryEventTypeCell from './HistoryEventTypeCell';
 import styles from './HistoryRow.css';
@@ -253,7 +254,11 @@ function HistoryRow(props: HistoryRowProps) {
         if (name === 'details') {
           return (
             <TableRowCell key={name} className={styles.details}>
-              <IconButton name={icons.INFO} onPress={handleDetailsPress} />
+              <IconButton
+                name={icons.INFO}
+                aria-label={translate('Details')}
+                onPress={handleDetailsPress}
+              />
             </TableRowCell>
           );
         }

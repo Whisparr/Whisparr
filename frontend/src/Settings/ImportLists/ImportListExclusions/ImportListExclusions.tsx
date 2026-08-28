@@ -205,6 +205,7 @@ function ImportListExclusions(props: ImportListExclusionsProps) {
               <TableRowCell>
                 <IconButton
                   name={icons.ADD}
+                  aria-label={translate('Add')}
                   onPress={setAddImportListExclusionModalOpen}
                 />
               </TableRowCell>

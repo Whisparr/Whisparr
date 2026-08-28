@@ -457,6 +457,7 @@ function SeriesIndexRow(props: SeriesIndexRowProps) {
               <IconButton
                 name={icons.EDIT}
                 title={translate('EditSite')}
+                aria-label={translate('EditSite')}
                 onPress={onEditSeriesPress}
               />
             </VirtualTableRowCell>

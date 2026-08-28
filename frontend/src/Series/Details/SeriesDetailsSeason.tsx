@@ -452,6 +452,7 @@ function SeriesDetailsSeason({
               className={styles.actionButton}
               name={icons.INTERACTIVE}
               title={translate('InteractiveSearchSeason')}
+              aria-label={translate('InteractiveSearchSeason')}
               size={24}
               isDisabled={!totalEpisodeCount}
               onPress={handleInteractiveSearchPress}
@@ -461,6 +462,7 @@ function SeriesDetailsSeason({
               className={styles.actionButton}
               name={icons.ORGANIZE}
               title={translate('PreviewRenameSeason')}
+              aria-label={translate('PreviewRenameSeason')}
               size={24}
               isDisabled={!episodeFileCount}
               onPress={handleOrganizePress}
@@ -470,6 +472,7 @@ function SeriesDetailsSeason({
               className={styles.actionButton}
               name={icons.EPISODE_FILE}
               title={translate('ManageEpisodesSeason')}
+              aria-label={translate('ManageEpisodesSeason')}
               size={24}
               isDisabled={!episodeFileCount}
               onPress={handleManageEpisodesPress}
@@ -479,6 +482,7 @@ function SeriesDetailsSeason({
               className={styles.actionButton}
               name={icons.HISTORY}
               title={translate('HistorySeason')}
+              aria-label={translate('HistorySeason')}
               size={24}
               isDisabled={!totalEpisodeCount}
               onPress={handleHistoryPress}
@@ -523,6 +527,7 @@ function SeriesDetailsSeason({
                 name={icons.COLLAPSE}
                 size={20}
                 title={translate('HideEpisodes')}
+                aria-label={translate('HideEpisodes')}
                 onPress={handleExpandPress}
               />
             </div>

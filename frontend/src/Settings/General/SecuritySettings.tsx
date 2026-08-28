@@ -99,6 +99,7 @@ interface SecuritySettingsProps {
   passwordConfirmation: PendingSection<General>['passwordConfirmation'];
   apiKey: PendingSection<General>['apiKey'];
   certificateValidation: PendingSection<General>['certificateValidation'];
+  trustedNetworks: PendingSection<General>['trustedNetworks'];
   isResettingApiKey: boolean;
   onInputChange: (change: InputChanged) => void;
 }
@@ -111,6 +112,7 @@ function SecuritySettings({
   passwordConfirmation,
   apiKey,
   certificateValidation,
+  trustedNetworks,
   isResettingApiKey,
   onInputChange,
 }: SecuritySettingsProps) {
@@ -254,6 +256,20 @@ function SecuritySettings({
           helpText={translate('CertificateValidationHelpText')}
           onChange={onInputChange}
           {...certificateValidation}
+        />
+      </FormGroup>
+
+      <FormGroup>
+        <FormLabel>{translate('TrustedNetworks')}</FormLabel>
+
+        <FormInputGroup
+          type={inputTypes.TEXT}
+          name="trustedNetworks"
+          helpText={translate('TrustedNetworksHelpText')}
+          helpTextWarning={translate('RestartRequiredHelpTextWarning')}
+          helpLink="https://wiki.servarr.com/sonarr/settings#security"
+          onChange={onInputChange}
+          {...trustedNetworks}
         />
       </FormGroup>
 

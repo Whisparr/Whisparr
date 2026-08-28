@@ -65,14 +65,6 @@
       document.documentElement.style.setProperty('--pageBackground', finalTheme === 'dark' ? '#202020' : '#f5f7fa');
     </script>
 
-      var theme = '_THEME_';
-      var defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      var finalTheme =
-        theme === 'dark' || (theme === 'auto' && defaultDark) ? 'dark' : 'light';
-
-      document.documentElement.style.setProperty('--pageBackground', finalTheme === 'dark' ? '#202020' : '#f5f7fa');
-    </script>
-
     <% for (key in htmlWebpackPlugin.files.js) { %><script type="text/javascript" src="<%= htmlWebpackPlugin.files.js[key] %>" data-no-hash></script><% } %>
     <% for (key in htmlWebpackPlugin.files.css) { %><link href="<%= htmlWebpackPlugin.files.css[key] %>" rel="stylesheet"></link><% } %>
 

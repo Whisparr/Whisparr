@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using NLog;
@@ -127,14 +127,19 @@ namespace NzbDrone.Core.Download.TrackedDownloads
 
                 var isForceDownload = IsForceDownload(historyItems);
 
+                var downloadHistory = _downloadHistoryService.GetLatestDownloadHistoryItem(downloadItem.DownloadId);
+
                 // Only do normal parsing if this is NOT a force download
                 if (!isForceDownload && parsedEpisodeInfo != null)
                 {
-                    trackedDownload.RemoteEpisode = _parsingService.Map(parsedEpisodeInfo, 0);
+                    // Items the download client has already imported will not parse back to a
+                    // site from the title alone, so use the site the import recorded.
+                    trackedDownload.RemoteEpisode = downloadHistory is { EventType: DownloadHistoryEventType.DownloadImported }
+                        ? _parsingService.Map(parsedEpisodeInfo, _seriesService.GetSeries(downloadHistory.SeriesId))
+                        : _parsingService.Map(parsedEpisodeInfo, 0);
+
                     _aggregationService.Augment(trackedDownload.RemoteEpisode);
                 }
-
-                var downloadHistory = _downloadHistoryService.GetLatestDownloadHistoryItem(downloadItem.DownloadId);
 
                 if (downloadHistory != null)
                 {

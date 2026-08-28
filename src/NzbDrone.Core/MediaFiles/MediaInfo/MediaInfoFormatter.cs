@@ -25,21 +25,21 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
                 audioChannels = mediaInfo.AudioChannels;
             }
 
-            return audioChannels.Value;
+            return audioChannels ?? 0;
         }
 
         public static string FormatAudioCodec(MediaInfoModel mediaInfo, string sceneName)
         {
-            if (mediaInfo.AudioFormat == null)
+            if (mediaInfo?.AudioFormat == null)
             {
-                return null;
+                return string.Empty;
             }
 
-            var audioFormat = mediaInfo.AudioFormat;
+            var audioFormat = mediaInfo.AudioFormat?.Trim();
             var audioCodecID = mediaInfo.AudioCodecID ?? string.Empty;
             var audioProfile = mediaInfo.AudioProfile ?? string.Empty;
 
-            if (audioFormat.Empty())
+            if (audioFormat.IsNullOrWhiteSpace())
             {
                 return string.Empty;
             }
@@ -149,24 +149,22 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
                   .WriteSentryWarn("UnknownAudioFormatFFProbe", mediaInfo.ContainerFormat, mediaInfo.AudioFormat, audioCodecID)
                   .Log();
 
-            return mediaInfo.AudioFormat;
+            return audioFormat;
         }
 
         public static string FormatVideoCodec(MediaInfoModel mediaInfo, string sceneName)
         {
-            if (mediaInfo.VideoFormat == null)
+            if (mediaInfo?.VideoFormat == null)
             {
-                return null;
+                return string.Empty;
             }
 
-            var videoFormat = mediaInfo.VideoFormat;
+            var videoFormat = mediaInfo.VideoFormat?.Trim();
             var videoCodecID = mediaInfo.VideoCodecID ?? string.Empty;
 
-            var result = videoFormat.Trim();
-
-            if (videoFormat.Empty())
+            if (videoFormat.IsNullOrWhiteSpace())
             {
-                return result;
+                return string.Empty;
             }
 
             // see definitions here: https://github.com/FFmpeg/FFmpeg/blob/master/libavcodec/codec_desc.c
@@ -188,6 +186,16 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
             if (videoFormat == "hevc")
             {
                 return GetSceneNameMatch(sceneName, "HEVC", "x265", "h265");
+            }
+
+            if (videoCodecID == "x266")
+            {
+                return "x266";
+            }
+
+            if (videoFormat == "vvc")
+            {
+                return GetSceneNameMatch(sceneName, "VVC", "x266", "h266");
             }
 
             if (videoFormat == "mpeg2video")
@@ -264,7 +272,7 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
                   .WriteSentryWarn("UnknownVideoFormatFFProbe", mediaInfo.ContainerFormat, videoFormat, videoCodecID)
                   .Log();
 
-            return result;
+            return videoFormat;
         }
 
         private static decimal? FormatAudioChannelsFromAudioChannelPositions(MediaInfoModel mediaInfo)

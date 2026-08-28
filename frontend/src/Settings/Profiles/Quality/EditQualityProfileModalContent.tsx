@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useDebouncedCallback } from 'use-debounce';
 import { QualityProfilesAppState } from 'App/State/SettingsAppState';
 import Alert from 'Components/Alert';
 import Form from 'Components/Form/Form';
@@ -469,7 +470,7 @@ function EditQualityProfileModalContent({
     setMode(newMode);
   }, []);
 
-  const handleFormatItemScoreChange = useCallback(
+  const handleFormatItemScoreChange = useDebouncedCallback(
     (formatId: number, score: number) => {
       const newFormatItems = formatItems.value.map((formatItem) => {
         if (formatItem.format === formatId) {
@@ -490,7 +491,7 @@ function EditQualityProfileModalContent({
         })
       );
     },
-    [formatItems, dispatch]
+    1000
   );
 
   useEffect(() => {

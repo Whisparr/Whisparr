@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -451,8 +451,11 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Manual
             {
                 item.Series = decision.LocalEpisode.Series;
 
-                item.CustomFormats = _formatCalculator.ParseCustomFormat(decision.LocalEpisode);
-                item.CustomFormatScore = item.Series.QualityProfile?.Value.CalculateCustomFormatScore(item.CustomFormats) ?? 0;
+                if (item.SeasonNumber.HasValue)
+                {
+                    item.CustomFormats = _formatCalculator.ParseCustomFormat(decision.LocalEpisode);
+                    item.CustomFormatScore = item.Series.QualityProfile?.Value.CalculateCustomFormatScore(item.CustomFormats) ?? 0;
+                }
             }
 
             return item;

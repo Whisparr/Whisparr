@@ -512,7 +512,10 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Manual
                     Path = file.Path,
                     ReleaseGroup = file.ReleaseGroup,
                     Quality = file.Quality,
-                    Languages = file.Languages,
+                    Languages = file.Languages is { Count: > 0 } &&
+                                file.Languages.All(l => l is not null && l.IsValid(false))
+                        ? file.Languages
+                        : new List<Language> { Language.Unknown },
                     IndexerFlags = (IndexerFlags)file.IndexerFlags,
                     Series = series,
                     Size = 0
@@ -539,7 +542,6 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Manual
                 localEpisode.Episodes = episodes;
                 localEpisode.ReleaseGroup = file.ReleaseGroup;
                 localEpisode.Quality = file.Quality;
-                localEpisode.Languages = file.Languages;
                 localEpisode.IndexerFlags = (IndexerFlags)file.IndexerFlags;
 
                 localEpisode.CustomFormats = _formatCalculator.ParseCustomFormat(localEpisode);

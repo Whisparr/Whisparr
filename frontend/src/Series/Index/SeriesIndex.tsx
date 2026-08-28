@@ -40,7 +40,6 @@ import {
   setSeriesTableOption,
   setSeriesView,
 } from 'Store/Actions/seriesIndexActions';
-import scrollPositions from 'Store/scrollPositions';
 import createCommandExecutingSelector from 'Store/Selectors/createCommandExecutingSelector';
 import createDimensionsSelector from 'Store/Selectors/createDimensionsSelector';
 import createSeriesClientSideCollectionItemsSelector from 'Store/Selectors/createSeriesClientSideCollectionItemsSelector';
@@ -101,9 +100,6 @@ function SeriesIndex(props: SeriesIndexProps) {
   const seriesType = props.seriesType || 'standard';
   const uiSection = seriesType === 'jav' ? 'javSeriesIndex' : 'seriesIndex';
   const scrollKey = uiSection;
-
-  const initialScrollTop =
-    props.history?.action === 'POP' ? scrollPositions[scrollKey] : 0;
 
   const {
     dispatchSetSort,
@@ -206,13 +202,9 @@ function SeriesIndex(props: SeriesIndexProps) {
     [setJumpToCharacter]
   );
 
-  const onScroll = useCallback(
-    ({ scrollTop }: { scrollTop: number }) => {
-      setJumpToCharacter(undefined);
-      scrollPositions[scrollKey] = scrollTop;
-    },
-    [setJumpToCharacter, scrollKey]
-  );
+  const onScroll = useCallback(() => {
+    setJumpToCharacter(undefined);
+  }, [setJumpToCharacter]);
 
   const jumpBarItems: PageJumpBarItems = useMemo(() => {
     // Reset if not sorting by sortTitle
@@ -353,7 +345,7 @@ function SeriesIndex(props: SeriesIndexProps) {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             innerClassName={styles[`${view}InnerContentBody`]}
-            initialScrollTop={initialScrollTop}
+            scrollPositionKey={scrollKey}
             onScroll={onScroll}
           >
             {isFetching && !isPopulated ? <LoadingIndicator /> : null}

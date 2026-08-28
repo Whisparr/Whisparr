@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
@@ -59,7 +59,7 @@ namespace NzbDrone.Test.Common
             }
             else
             {
-                Start(Path.Combine(TestContext.CurrentContext.TestDirectory, "bin", consoleExe));
+                Start(Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "bin", consoleExe));
             }
 
             while (true)
@@ -200,7 +200,7 @@ namespace NzbDrone.Test.Common
                 return;
             }
 
-            var contentDirectory = Path.Combine(TestContext.CurrentContext.TestDirectory, "bin", "UI", "Content");
+            var contentDirectory = Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "bin", "UI", "Content");
             var stylesPath = Path.Combine(contentDirectory, "styles.css");
 
             Directory.CreateDirectory(contentDirectory);

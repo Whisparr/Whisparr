@@ -188,6 +188,15 @@ export const filterPredicates = {
     return predicate(averageSize, filterValue);
   },
 
+  episodeFileQualities: function(item, filterValue, type) {
+    const episodeFileQualities = (item.statistics && item.statistics.episodeFileQualities ?
+      item.statistics.episodeFileQualities :
+      []).map((q) => q.id);
+    const predicate = getFilterTypePredicate(type);
+
+    return predicate(episodeFileQualities, filterValue);
+  },
+
   hasMissingSeason: function(item, filterValue, type) {
     const predicate = getFilterTypePredicate(type);
     const { seasons = [] } = item;
@@ -343,6 +352,12 @@ export const filterBuilderProps = [
     label: () => translate('AverageSizePerEpisode'),
     type: filterBuilderTypes.NUMBER,
     valueType: filterBuilderValueTypes.BYTES
+  },
+  {
+    name: 'episodeFileQualities',
+    label: () => translate('EpisodeFileQualities'),
+    type: filterBuilderTypes.ARRAY,
+    valueType: filterBuilderValueTypes.QUALITY
   },
   {
     name: 'genres',

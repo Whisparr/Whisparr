@@ -77,6 +77,12 @@
   flex: 0 0 180px;
 }
 
+.episodeFileQualities {
+  composes: cell;
+
+  flex: 0 0 220px;
+}
+
 .seasonCount,
 .certification {
   composes: cell;

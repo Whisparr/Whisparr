@@ -177,6 +177,12 @@ export const defaultState = {
       isVisible: false
     },
     {
+      name: 'episodeFileQualities',
+      label: () => translate('EpisodeFileQualities'),
+      isSortable: false,
+      isVisible: false
+    },
+    {
       name: 'tags',
       label: () => translate('Tags'),
       isSortable: true,

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -824,7 +824,7 @@ namespace NzbDrone.Common.Test.Http
                 requestSet.AllowAutoRedirect = false;
                 requestSet.StoreResponseCookie = true;
 
-                var responseSet = await Subject.GetAsync(requestSet);
+                await Subject.GetAsync(requestSet);
 
                 var request = new HttpRequest($"https://{_httpBinHost}/get");
 

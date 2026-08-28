@@ -1054,5 +1054,20 @@
     "NotificationsPushcutSettingsApiKeyHelpText": "API võtmeid saab hallata Pushcuti rakenduse konto seadete alt",
     "NotificationsPushcutSettingsIncludePoster": "Lisa plakat",
     "NotificationsPushcutSettingsIncludePosterHelpText": "Lisa teavitusse plakat",
-    "NotificationsPushcutSettingsMetadataLinks": "Metaandmete lingid"
+    "NotificationsPushcutSettingsMetadataLinks": "Metaandmete lingid",
+    "NotificationsValidationInvalidUsernamePassword": "Vale kasutajanimi või parool",
+    "NotificationsValidationUnableToConnect": "Ühendumine nurjus: {exceptionMessage}",
+    "NotificationsValidationUnableToConnectToApi": "Teenuse {service} API-ga ei saanud ühendust. Serveriühendus nurjus: ({responseCode}) {exceptionMessage}",
+    "NotificationsValidationUnableToConnectToService": "Ühenduse loomine teenusega {serviceName} nurjus",
+    "NotificationsValidationUnableToSendTestMessage": "Testsõnumi saatmine nurjus: {exceptionMessage}",
+    "NotificationsValidationUnableToSendTestMessageApiResponse": "Testsõnumi saatmine nurjus. API vastus: {error}",
+    "NzbgetHistoryItemMessage": "PAR-olek: {parStatus} - Lahtipakkimise olek: {unpackStatus} - Teisaldamise olek: {moveStatus} - Skripti olek: {scriptStatus} - Kustutamise olek: {deleteStatus} - Märkimise olek: {markStatus}",
+    "Ok": "Ok",
+    "OnApplicationUpdate": "Rakenduse uuendamisel",
+    "OnFileImport": "Faili importimisel",
+    "OnFileUpgrade": "Kvaliteedi parandamisel",
+    "OnLatestVersion": "Rakenduse {appName} uusim versioon on juba paigaldatud",
+    "OnManualInteractionRequired": "Käsitsi sekkumise vajadusel",
+    "OnRename": "Ümbernimetamisel",
+    "OneMinute": "1 minut"
 }

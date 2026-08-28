@@ -945,6 +945,7 @@
   "InstanceName": "Instance Name",
   "InstanceNameHelpText": "Instance name in tab and for Syslog app name",
   "InteractiveImport": "Interactive Import",
+  "InteractiveImportDuplicateEpisodes": "One or more episodes were assigned to multiple files",
   "InteractiveImportLoadError": "Unable to load manual import items",
   "InteractiveImportNoEpisode": "One or more episodes must be chosen for each selected file",
   "InteractiveImportNoFilesFound": "No video files were found in the selected folder",

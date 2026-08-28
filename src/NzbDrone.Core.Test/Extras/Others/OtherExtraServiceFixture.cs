@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using FizzWare.NBuilder;
@@ -87,7 +87,7 @@ namespace NzbDrone.Core.Test.Extras.Others
         }
 
         [Test]
-        [TestCase(@"audio_folder_1\Series Title S01E01.mka", @"audio_folder_2\Series Title S01E01.mka", "Series Title - S01E01.1.mka", "Series Title - S01E01.2.mka")]
+        [TestCase(@"audio_folder_1\Series Title 23.01.15.mka", @"audio_folder_2\Series Title 23.01.15.mka", "Series Title - 23.01.15.1.mka", "Series Title - 23.01.15.2.mka")]
         public void should_import_all_files_with_same_name(string firstExtraFilePath, string secondExtraFilePath, string firstOutputPath, string secondOutputPath)
         {
             var files = new List<string>
@@ -109,17 +109,17 @@ namespace NzbDrone.Core.Test.Extras.Others
         {
             var files = new List<string>
             {
-                Path.Combine(_episodeFolder, @"audio_folder_1\Series Title S01E01.mka").AsOsAgnostic(),
-                Path.Combine(_episodeFolder, @"audio_folder_2\Series Title S01E01.mka").AsOsAgnostic(),
-                Path.Combine(_episodeFolder, @"audio_folder_3\Series Title S01E01.mka").AsOsAgnostic(),
+                Path.Combine(_episodeFolder, @"audio_folder_1\Series Title 23.01.15.mka").AsOsAgnostic(),
+                Path.Combine(_episodeFolder, @"audio_folder_2\Series Title 23.01.15.mka").AsOsAgnostic(),
+                Path.Combine(_episodeFolder, @"audio_folder_3\Series Title 23.01.15.mka").AsOsAgnostic(),
             };
 
             var results = Subject.ImportFiles(_localEpisode, _episodeFile, files, true).ToList();
 
             results.Count.Should().Be(3);
-            results[0].RelativePath.AsOsAgnostic().PathEquals(Path.Combine("Season 1", "Series Title - S01E01.1.mka").AsOsAgnostic()).Should().Be(true);
-            results[1].RelativePath.AsOsAgnostic().PathEquals(Path.Combine("Season 1", "Series Title - S01E01.2.mka").AsOsAgnostic()).Should().Be(true);
-            results[2].RelativePath.AsOsAgnostic().PathEquals(Path.Combine("Season 1", "Series Title - S01E01.3.mka").AsOsAgnostic()).Should().Be(true);
+            results[0].RelativePath.AsOsAgnostic().PathEquals(Path.Combine("Season 1", "Series Title - 23.01.15.1.mka").AsOsAgnostic()).Should().Be(true);
+            results[1].RelativePath.AsOsAgnostic().PathEquals(Path.Combine("Season 1", "Series Title - 23.01.15.2.mka").AsOsAgnostic()).Should().Be(true);
+            results[2].RelativePath.AsOsAgnostic().PathEquals(Path.Combine("Season 1", "Series Title - 23.01.15.3.mka").AsOsAgnostic()).Should().Be(true);
         }
 
         [Test]
@@ -127,15 +127,15 @@ namespace NzbDrone.Core.Test.Extras.Others
         {
             var files = new List<string>
             {
-                Path.Combine(_episodeFolder, "Series.Title.S01E01.behind_scenes.mka").AsOsAgnostic(),
-                Path.Combine(_episodeFolder, "Series.Title.S01E01.commentary.mka").AsOsAgnostic(),
+                Path.Combine(_episodeFolder, "Series.Title.23.01.15.behind_scenes.mka").AsOsAgnostic(),
+                Path.Combine(_episodeFolder, "Series.Title.23.01.15.commentary.mka").AsOsAgnostic(),
             };
 
             var results = Subject.ImportFiles(_localEpisode, _episodeFile, files, true).ToList();
 
             results.Count.Should().Be(2);
-            results[0].RelativePath.AsOsAgnostic().PathEquals(Path.Combine("Season 1", "Series Title - S01E01.1.mka").AsOsAgnostic()).Should().Be(true);
-            results[1].RelativePath.AsOsAgnostic().PathEquals(Path.Combine("Season 1", "Series Title - S01E01.2.mka").AsOsAgnostic()).Should().Be(true);
+            results[0].RelativePath.AsOsAgnostic().PathEquals(Path.Combine("Season 1", "Series Title - 23.01.15.1.mka").AsOsAgnostic()).Should().Be(true);
+            results[1].RelativePath.AsOsAgnostic().PathEquals(Path.Combine("Season 1", "Series Title - 23.01.15.2.mka").AsOsAgnostic()).Should().Be(true);
         }
 
         [Test]
@@ -143,15 +143,15 @@ namespace NzbDrone.Core.Test.Extras.Others
         {
             var files = new List<string>
             {
-                Path.Combine(_episodeFolder, "Series.Title.S01E01.behind_scenes.mka").AsOsAgnostic(),
-                Path.Combine(_episodeFolder, @"extras\S01E01.mka").AsOsAgnostic(),
+                Path.Combine(_episodeFolder, "Series.Title.23.01.15.behind_scenes.mka").AsOsAgnostic(),
+                Path.Combine(_episodeFolder, @"extras\23.01.15.mka").AsOsAgnostic(),
             };
 
             var results = Subject.ImportFiles(_localEpisode, _episodeFile, files, true).ToList();
 
             results.Count.Should().Be(2);
-            results[0].RelativePath.AsOsAgnostic().PathEquals(Path.Combine("Season 1", "Series Title - S01E01.1.mka").AsOsAgnostic()).Should().Be(true);
-            results[1].RelativePath.AsOsAgnostic().PathEquals(Path.Combine("Season 1", "Series Title - S01E01.2.mka").AsOsAgnostic()).Should().Be(true);
+            results[0].RelativePath.AsOsAgnostic().PathEquals(Path.Combine("Season 1", "Series Title - 23.01.15.1.mka").AsOsAgnostic()).Should().Be(true);
+            results[1].RelativePath.AsOsAgnostic().PathEquals(Path.Combine("Season 1", "Series Title - 23.01.15.2.mka").AsOsAgnostic()).Should().Be(true);
         }
 
         [Test]
@@ -159,14 +159,14 @@ namespace NzbDrone.Core.Test.Extras.Others
         {
             var files = new List<string>
             {
-                Path.Combine(_episodeFolder, "Series.Title.S01E01.mka").AsOsAgnostic(),
-                Path.Combine(_episodeFolder, "Series.Title.S01E02.mka").AsOsAgnostic(),
+                Path.Combine(_episodeFolder, "Series.Title.23.01.15.mka").AsOsAgnostic(),
+                Path.Combine(_episodeFolder, "Series.Title.23.01.16.mka").AsOsAgnostic(),
             };
 
             var results = Subject.ImportFiles(_localEpisode, _episodeFile, files, true).ToList();
 
             results.Count.Should().Be(1);
-            results[0].RelativePath.AsOsAgnostic().PathEquals(Path.Combine("Season 1", "Series Title - S01E01.mka").AsOsAgnostic()).Should().Be(true);
+            results[0].RelativePath.AsOsAgnostic().PathEquals(Path.Combine("Season 1", "Series Title - 23.01.15.mka").AsOsAgnostic()).Should().Be(true);
         }
     }
 }

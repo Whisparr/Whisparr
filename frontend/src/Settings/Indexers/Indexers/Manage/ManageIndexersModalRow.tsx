@@ -1,10 +1,12 @@
 import React, { useCallback } from 'react';
+import ProtocolLabel from 'Activity/Queue/ProtocolLabel';
 import Label from 'Components/Label';
 import SeriesTagList from 'Components/SeriesTagList';
 import TableRowCell from 'Components/Table/Cells/TableRowCell';
 import TableSelectCell from 'Components/Table/Cells/TableSelectCell';
 import Column from 'Components/Table/Column';
 import TableRow from 'Components/Table/TableRow';
+import DownloadProtocol from 'DownloadClient/DownloadProtocol';
 import { kinds } from 'Helpers/Props';
 import { SelectStateInputProps } from 'typings/props';
 import translate from 'Utilities/String/translate';
@@ -13,6 +15,7 @@ import styles from './ManageIndexersModalRow.css';
 interface ManageIndexersModalRowProps {
   id: number;
   name: string;
+  protocol: DownloadProtocol;
   enableRss: boolean;
   enableAutomaticSearch: boolean;
   enableInteractiveSearch: boolean;
@@ -30,6 +33,7 @@ function ManageIndexersModalRow(props: ManageIndexersModalRowProps) {
     id,
     isSelected,
     name,
+    protocol,
     enableRss,
     enableAutomaticSearch,
     enableInteractiveSearch,
@@ -58,6 +62,10 @@ function ManageIndexersModalRow(props: ManageIndexersModalRowProps) {
       />
 
       <TableRowCell className={styles.name}>{name}</TableRowCell>
+
+      <TableRowCell className={styles.protocol}>
+        <ProtocolLabel protocol={protocol} />
+      </TableRowCell>
 
       <TableRowCell className={styles.implementation}>
         {implementation}

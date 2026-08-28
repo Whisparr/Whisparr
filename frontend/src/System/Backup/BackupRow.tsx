@@ -91,12 +91,14 @@ function BackupRow({ id, type, name, path, size, time }: BackupRowProps) {
       <TableRowCell className={styles.actions}>
         <IconButton
           title={translate('RestoreBackup')}
+          aria-label={translate('RestoreBackup')}
           name={icons.RESTORE}
           onPress={handleRestorePress}
         />
 
         <IconButton
           title={translate('DeleteBackup')}
+          aria-label={translate('DeleteBackup')}
           name={icons.DELETE}
           onPress={handleDeletePress}
         />

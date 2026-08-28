@@ -3,6 +3,7 @@
 interface CssExports {
   'actions': string;
   'added': string;
+  'averageSizePerEpisode': string;
   'banner': string;
   'bannerGrow': string;
   'bannerImage': string;
@@ -10,6 +11,7 @@ interface CssExports {
   'certification': string;
   'checkInput': string;
   'episodeCount': string;
+  'episodeFileQualities': string;
   'episodeProgress': string;
   'genres': string;
   'latestSeason': string;
@@ -21,6 +23,7 @@ interface CssExports {
   'path': string;
   'previousAiring': string;
   'qualityProfileId': string;
+  'ratings': string;
   'releaseGroups': string;
   'seasonCount': string;
   'seasonFolder': string;

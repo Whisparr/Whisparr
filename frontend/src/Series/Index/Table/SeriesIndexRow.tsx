@@ -80,6 +80,7 @@ function SeriesIndexRow(props: SeriesIndexRowProps) {
     totalEpisodeCount = 0,
     sizeOnDisk = 0,
     releaseGroups = [],
+    episodeFileQualities = [],
   } = statistics;
 
   const dispatch = useDispatch();
@@ -381,6 +382,17 @@ function SeriesIndexRow(props: SeriesIndexRowProps) {
           );
         }
 
+        if (name === 'averageSizePerEpisode') {
+          const averageSize =
+            totalEpisodeCount > 0 ? sizeOnDisk / totalEpisodeCount : 0;
+
+          return (
+            <VirtualTableRowCell key={name} className={styles[name]}>
+              {averageSize ? formatBytes(averageSize) : null}
+            </VirtualTableRowCell>
+          );
+        }
+
         if (name === 'genres') {
           const joinedGenres = genres.join(', ');
 
@@ -409,6 +421,25 @@ function SeriesIndexRow(props: SeriesIndexRowProps) {
           return (
             <VirtualTableRowCell key={name} className={styles[name]}>
               <span title={joinedReleaseGroups}>{truncatedReleaseGroups}</span>
+            </VirtualTableRowCell>
+          );
+        }
+
+        if (name === 'episodeFileQualities') {
+          const joinedQualities = episodeFileQualities
+            .map((q) => q.name)
+            .join(', ');
+          const truncatedQualities =
+            episodeFileQualities.length > 3
+              ? `${episodeFileQualities
+                  .slice(0, 3)
+                  .map((q) => q.name)
+                  .join(', ')}...`
+              : joinedQualities;
+
+          return (
+            <VirtualTableRowCell key={name} className={styles[name]}>
+              <span title={joinedQualities}>{truncatedQualities}</span>
             </VirtualTableRowCell>
           );
         }
@@ -457,6 +488,7 @@ function SeriesIndexRow(props: SeriesIndexRowProps) {
               <IconButton
                 name={icons.EDIT}
                 title={translate('EditSite')}
+                aria-label={translate('EditSite')}
                 onPress={onEditSeriesPress}
               />
             </VirtualTableRowCell>

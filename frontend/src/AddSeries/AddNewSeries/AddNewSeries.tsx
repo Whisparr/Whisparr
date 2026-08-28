@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AddSeries } from 'App/State/AddSeriesAppState';
 import AppState from 'App/State/AppState';
@@ -40,6 +40,7 @@ function AddNewSeries({ defaultSeriesType }: AddNewSeriesProps) {
   );
 
   const [term, setTerm] = useState(initialTerm);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const [isFetching, setIsFetching] = useState(false);
   const query = useDebounce(term, term ? 300 : 0);
 
@@ -54,6 +55,7 @@ function AddNewSeries({ defaultSeriesType }: AddNewSeriesProps) {
   const handleClearSeriesLookupPress = useCallback(() => {
     setTerm('');
     setIsFetching(false);
+    searchInputRef.current?.focus();
   }, []);
 
   const {
@@ -84,6 +86,7 @@ function AddNewSeries({ defaultSeriesType }: AddNewSeriesProps) {
           </div>
 
           <TextInput
+            ref={searchInputRef}
             className={styles.searchInput}
             name="seriesLookup"
             value={term}

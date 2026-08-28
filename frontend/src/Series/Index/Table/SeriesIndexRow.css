@@ -77,6 +77,12 @@
   flex: 0 0 180px;
 }
 
+.episodeFileQualities {
+  composes: cell;
+
+  flex: 0 0 220px;
+}
+
 .seasonCount,
 .certification {
   composes: cell;
@@ -122,6 +128,18 @@
   composes: cell;
 
   flex: 0 0 120px;
+}
+
+.averageSizePerEpisode {
+  composes: cell;
+
+  flex: 0 0 160px;
+}
+
+.ratings {
+  composes: cell from '~Components/Table/Cells/VirtualTableRowCell.css';
+
+  flex: 0 0 80px;
 }
 
 .tags {

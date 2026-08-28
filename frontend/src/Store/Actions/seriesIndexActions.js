@@ -153,6 +153,12 @@ export const defaultState = {
       isVisible: false
     },
     {
+      name: 'averageSizePerEpisode',
+      label: () => translate('AverageSizePerEpisode'),
+      isSortable: true,
+      isVisible: false
+    },
+    {
       name: 'genres',
       label: () => translate('Genres'),
       isSortable: false,
@@ -167,6 +173,12 @@ export const defaultState = {
     {
       name: 'releaseGroups',
       label: () => translate('ReleaseGroups'),
+      isSortable: false,
+      isVisible: false
+    },
+    {
+      name: 'episodeFileQualities',
+      label: () => translate('EpisodeFileQualities'),
       isSortable: false,
       isVisible: false
     },

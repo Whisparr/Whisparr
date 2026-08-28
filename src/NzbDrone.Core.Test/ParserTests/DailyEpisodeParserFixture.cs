@@ -31,6 +31,8 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("[Site] Loli (Beautiful Episode) 2023.07.21 [1080p]", "Site", 2023, 07, 21)]
         [TestCase("[Site] Beautiful Episode - Loli - 2023-07-22 - 1080p", "Site", 2023, 07, 22)]
         [TestCase("[Site] Loli - Beautiful Episode [2023-08-18] [2160p]", "Site", 2023, 8, 18)]
+        [TestCase("Series.2025.09.01.The.170.Million.Pound.Diamond.Scam.1080p.HDTV.H264-DEADPOOL'", "Series", 2025, 9, 1)]
+        [TestCase("Series.2025.09.01.The.Million.Pound.Diamond.Scam.1080p.HDTV.H264-DEADPOOL'", "Series", 2025, 9, 1)]
 
         // [TestCase("", "", 0, 0, 0)]
         public void should_parse_daily_episode(string postTitle, string title, int year, int month, int day)

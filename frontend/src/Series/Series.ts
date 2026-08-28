@@ -1,5 +1,6 @@
 import ModelBase from 'App/ModelBase';
 import Language from 'Language/Language';
+import Quality from 'Quality/Quality';
 
 export type SeriesType = 'standard' | 'jav';
 export type SeriesStatus = 'continuing' | 'ended' | 'upcoming' | 'deleted';
@@ -33,9 +34,9 @@ export interface Statistics {
   percentOfEpisodes: number;
   previousAiring?: Date;
   releaseGroups: string[];
+  episodeFileQualities: Quality[];
   sizeOnDisk: number;
   totalEpisodeCount: number;
-  lastAired?: string;
 }
 
 export interface Season {
@@ -70,7 +71,8 @@ interface Series extends ModelBase {
   certification: string;
   cleanTitle: string;
   ended: boolean;
-  firstAired: string;
+  firstAired?: string;
+  lastAired?: string;
   genres: string[];
   images: Image[];
   imdbId: string;

@@ -169,6 +169,7 @@ function SeriesIndexPoster(props: SeriesIndexPosterProps) {
             className={styles.action}
             name={icons.EDIT}
             title={translate('EditSite')}
+            aria-label={translate('EditSite')}
             tabIndex={-1}
             onPress={onEditSeriesPress}
           />

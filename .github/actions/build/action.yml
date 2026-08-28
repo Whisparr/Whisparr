@@ -21,7 +21,7 @@ runs:
   using: "composite"
   steps:
     - name: Setup .NET
-      uses: actions/setup-dotnet@v5
+      uses: actions/setup-dotnet@v6
       with:
         dotnet-version: '10.0.x'
 
@@ -125,8 +125,8 @@ runs:
             rm -f $folder/Whisparr.Windows.*
             echo "Adding Whisparr.Mono to UpdatePackage"
             cp $folder/Whisparr.Mono.* $folder/Whisparr.Update 2>/dev/null || true
-            cp $folder/Mono.Posix.NETStandard.* $folder/Whisparr.Update 2>/dev/null || true
-            cp $folder/libMonoPosixHelper.* $folder/Whisparr.Update 2>/dev/null || true
+            cp $folder/Openur.Mono.Unix.* $folder/Whisparr.Update 2>/dev/null || true
+            cp $folder/libMono.Unix.* $folder/Whisparr.Update 2>/dev/null || true
             ;;
           win)
             folder=_artifacts/$runtime/$framework/Whisparr
@@ -139,8 +139,8 @@ runs:
             cp -r _output/$framework-windows/$runtime/publish/* $folder 2>/dev/null || true
             echo "Removing Whisparr.Mono"
             rm -f $folder/Whisparr.Mono.*
-            rm -f $folder/Mono.Posix.NETStandard.*
-            rm -f $folder/libMonoPosixHelper.*
+            rm -f $folder/Openur.Mono.Unix.*
+            rm -f $folder/libMono.Unix.*
             echo "Adding Whisparr.Windows to UpdatePackage"
             cp $folder/Whisparr.Windows.* $folder/Whisparr.Update 2>/dev/null || true
             ;;
@@ -159,8 +159,8 @@ runs:
             rm -f $folder/Whisparr.Windows.*
             echo "Adding Whisparr.Mono to UpdatePackage"
             cp $folder/Whisparr.Mono.* $folder/Whisparr.Update 2>/dev/null || true
-            cp $folder/Mono.Posix.NETStandard.* $folder/Whisparr.Update 2>/dev/null || true
-            cp $folder/libMonoPosixHelper.* $folder/Whisparr.Update 2>/dev/null || true
+            cp $folder/Openur.Mono.Unix.* $folder/Whisparr.Update 2>/dev/null || true
+            cp $folder/libMono.Unix.* $folder/Whisparr.Update 2>/dev/null || true
             ;;
         esac
 

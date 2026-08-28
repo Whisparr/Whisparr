@@ -20,6 +20,8 @@ export interface General {
   launchBrowser: boolean;
   authenticationMethod: string;
   authenticationRequired: string;
+  allowedHosts: string;
+  trustedNetworks: string;
   analyticsEnabled: boolean;
   username: string;
   password: string;
@@ -29,9 +31,9 @@ export interface General {
   consoleLogLevel: string;
   branch: string;
   apiKey: string;
+  updateAutomatically: boolean;
   updateMechanism: UpdateMechanism;
   updateScriptPath: string;
-  updateAutomatically: boolean;
   proxyEnabled: boolean;
   proxyType: string;
   proxyHostname: string;

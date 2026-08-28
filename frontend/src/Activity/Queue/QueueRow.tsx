@@ -344,6 +344,7 @@ function QueueRow(props: QueueRowProps) {
             <TableRowCell key={name} className={styles.progress}>
               {!!progress && (
                 <ProgressBar
+                  ariaLabel={translate('DownloadProgressForTitle', { title })}
                   progress={progress}
                   title={`${progress.toFixed(1)}%`}
                 />

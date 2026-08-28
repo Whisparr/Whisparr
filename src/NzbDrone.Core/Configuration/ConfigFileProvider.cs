@@ -34,6 +34,7 @@ namespace NzbDrone.Core.Configuration
         bool LaunchBrowser { get; }
         AuthenticationType AuthenticationMethod { get; }
         AuthenticationRequiredType AuthenticationRequired { get; }
+        string AllowedHosts { get; }
         bool AnalyticsEnabled { get; }
         string LogLevel { get; }
         int LogSizeLimit { get; }
@@ -47,6 +48,7 @@ namespace NzbDrone.Core.Configuration
         string SslKeyPath { get; }
         string SslCertPassword { get; }
         string UrlBase { get; }
+        string TrustedNetworks { get; }
         string UiFolder { get; }
         string InstanceName { get; }
         bool UpdateAutomatically { get; }
@@ -251,6 +253,8 @@ namespace NzbDrone.Core.Configuration
 
         public bool AnalyticsEnabled => GetValueBoolean("AnalyticsEnabled", true, persist: false);
 
+        public string AllowedHosts => GetValue("AllowedHosts", string.Empty);
+
         private static readonly Regex ValidBranchRegex = new Regex(@"^v\d+(-develop)?$", RegexOptions.Compiled);
 
         public string Branch
@@ -309,6 +313,8 @@ namespace NzbDrone.Core.Configuration
                 return "/" + urlBase;
             }
         }
+
+        public string TrustedNetworks => GetValue("TrustedNetworks", string.Empty);
 
         public string UiFolder => BuildInfo.IsDebug ? Path.Combine("..", "UI") : "UI";
 

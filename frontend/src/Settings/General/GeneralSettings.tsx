@@ -36,6 +36,8 @@ const requiresRestartKeys = [
   'bindAddress',
   'port',
   'urlBase',
+  'allowedHosts',
+  'trustedNetworks',
   'instanceName',
   'enableSsl',
   'sslPort',
@@ -153,6 +155,7 @@ function GeneralSettings() {
               urlBase={settings.urlBase}
               instanceName={settings.instanceName}
               applicationUrl={settings.applicationUrl}
+              allowedHosts={settings.allowedHosts}
               enableSsl={settings.enableSsl}
               sslPort={settings.sslPort}
               sslCertPath={settings.sslCertPath}
@@ -170,6 +173,7 @@ function GeneralSettings() {
               passwordConfirmation={settings.passwordConfirmation}
               apiKey={settings.apiKey}
               certificateValidation={settings.certificateValidation}
+              trustedNetworks={settings.trustedNetworks}
               isResettingApiKey={isResettingApiKey}
               onInputChange={handleInputChange}
             />

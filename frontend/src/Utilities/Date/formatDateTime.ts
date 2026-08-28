@@ -49,6 +49,7 @@ function formatDateTime(
       formattedTime,
     });
   }
+
   return translate('FormatDateTime', { formattedDate, formattedTime });
 }
 

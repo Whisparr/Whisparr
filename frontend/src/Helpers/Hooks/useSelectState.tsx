@@ -67,16 +67,19 @@ function selectReducer(state: SelectState, action: SelectAction): SelectState {
     case 'reset': {
       return cloneDeep(initialState);
     }
+
     case 'selectAll': {
       return {
         ...selectAll(selectedState, true),
       };
     }
+
     case 'unselectAll': {
       return {
         ...selectAll(selectedState, false),
       };
     }
+
     case 'toggleSelected': {
       const result = {
         ...toggleSelected(
@@ -90,6 +93,7 @@ function selectReducer(state: SelectState, action: SelectAction): SelectState {
 
       return result;
     }
+
     case 'updateItems': {
       const nextSelectedState = getSelectedState(action.items, selectedState);
 
@@ -99,6 +103,7 @@ function selectReducer(state: SelectState, action: SelectAction): SelectState {
         selectedState: nextSelectedState,
       };
     }
+
     default: {
       throw new Error(`Unhandled action type: ${action.type}`);
     }

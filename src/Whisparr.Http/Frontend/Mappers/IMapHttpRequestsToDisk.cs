@@ -1,4 +1,5 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Whisparr.Http.Frontend.Mappers
@@ -7,6 +8,6 @@ namespace Whisparr.Http.Frontend.Mappers
     {
         string Map(string resourceUrl);
         bool CanHandle(string resourceUrl);
-        Task<IActionResult> GetResponse(string resourceUrl);
+        Task<IActionResult> GetResponse(HttpContext context, string resourceUrl);
     }
 }

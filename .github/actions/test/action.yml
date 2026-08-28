@@ -29,7 +29,7 @@ runs:
   using: 'composite'
   steps:
     - name: Setup .NET
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: '10.0.x'
 
@@ -54,14 +54,14 @@ runs:
         echo "Whisparr__Postgres__Password=postgres" >> "$GITHUB_ENV"
 
     - name: Download Tests Artifact
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: ${{ inputs.artifact }}
         path: _tests
 
     - name: Download Binary Artifact
       if: ${{ inputs.integration_tests }}
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: ${{ inputs.binary_artifact }}
         path: _output

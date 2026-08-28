@@ -54,6 +54,7 @@ namespace NzbDrone.Core.Configuration
         public void SaveConfigDictionary(Dictionary<string, object> configValues)
         {
             var allWithDefaults = AllWithDefaults();
+            var hasUpdated = false;
 
             foreach (var configValue in configValues)
             {
@@ -67,11 +68,15 @@ namespace NzbDrone.Core.Configuration
 
                 if (!equal)
                 {
+                    hasUpdated = true;
                     SetValue(configValue.Key, configValue.Value.ToString());
                 }
             }
 
-            _eventAggregator.PublishEvent(new ConfigSavedEvent());
+            if (hasUpdated)
+            {
+                _eventAggregator.PublishEvent(new ConfigSavedEvent());
+            }
         }
 
         public bool IsDefined(string key)

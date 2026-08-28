@@ -505,6 +505,9 @@ function InteractiveImportModalContent(
       return;
     }
 
+    const seenEpisodeIds = new Set<number>();
+    let hasDuplicateEpisodes = false;
+
     items.forEach((item) => {
       const isSelected = selectedIds.indexOf(item.id) > -1;
 
@@ -555,6 +558,19 @@ function InteractiveImportModalContent(
           return;
         }
 
+        if (!hasDuplicateEpisodes) {
+          for (const episode of episodes) {
+            const hasAlreadySeen = seenEpisodeIds.has(episode.id);
+
+            seenEpisodeIds.add(episode.id);
+
+            if (hasAlreadySeen) {
+              hasDuplicateEpisodes = true;
+              return;
+            }
+          }
+        }
+
         setInteractiveImportErrorMessage(null);
 
         if (episodeFileId) {
@@ -587,6 +603,14 @@ function InteractiveImportModalContent(
         });
       }
     });
+
+    if (hasDuplicateEpisodes) {
+      setInteractiveImportErrorMessage(
+        translate('InteractiveImportDuplicateEpisodes')
+      );
+
+      return;
+    }
 
     let shouldClose = false;
 
@@ -940,13 +964,13 @@ function InteractiveImportModalContent(
         </div>
 
         <div className={styles.rightButtons}>
-          <Button onPress={onModalClose}>Cancel</Button>
-
-          {interactiveImportErrorMessage && (
+          {interactiveImportErrorMessage ? (
             <span className={styles.errorMessage}>
               {interactiveImportErrorMessage}
             </span>
-          )}
+          ) : null}
+
+          <Button onPress={onModalClose}>Cancel</Button>
 
           <Button
             kind={kinds.SUCCESS}

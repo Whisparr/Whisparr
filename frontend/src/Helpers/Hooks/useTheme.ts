@@ -16,9 +16,17 @@ function createThemeSelector() {
   );
 }
 
-const useTheme = () => {
+const useTheme = (): 'dark' | 'light' => {
   const selectedTheme = useSelector(createThemeSelector());
-  const [resolvedTheme, setResolvedTheme] = useState(selectedTheme);
+  const [resolvedTheme, setResolvedTheme] = useState<'dark' | 'light'>(() => {
+    if (selectedTheme === 'auto') {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light';
+    }
+
+    return selectedTheme;
+  });
 
   useEffect(() => {
     if (selectedTheme !== 'auto') {

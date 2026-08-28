@@ -9,8 +9,8 @@ on:
       - "src/Whisparr.Api.*/openapi.json"
   pull_request:
     branches:
-      - v2-develop
-      - v2
+      - v5-develop
+      - v5-redesign
     paths-ignore:
       - "src/NzbDrone.Core/Localization/Core/**"
       - "src/Whisparr.Api.*/openapi.json"

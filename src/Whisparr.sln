@@ -65,9 +65,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Whisparr.Host.Test", "NzbDrone.Host.Test\Whisparr.Host.Test.csproj", "{C0EA1A40-91AD-4EEB-BD16-2DDDEBD20AE5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Whisparr.RuntimePatches", "Whisparr.RuntimePatches\Whisparr.RuntimePatches.csproj", "{F3F63718-63C6-432F-BDDC-C960AD95EC82}"
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sonarr.Http.Test", "Sonarr.Http.Test\Sonarr.Http.Test.csproj", "{69333F98-305F-4E1A-87F3-7A2A3B062657}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sonarr.RuntimePatches", "Sonarr.RuntimePatches\Sonarr.RuntimePatches.csproj", "{F3F63718-63C6-432F-BDDC-C960AD95EC82}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Whisparr.Http.Test", "Whisparr.Http.Test\Whisparr.Http.Test.csproj", "{69333F98-305F-4E1A-87F3-7A2A3B062657}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0C7E5F5A-C4CC-4945-B399-1E1C9817CC45}"
 	ProjectSection(SolutionItems) = preProject

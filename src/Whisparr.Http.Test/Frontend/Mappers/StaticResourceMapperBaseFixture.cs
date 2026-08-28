@@ -1,12 +1,12 @@
-using System.IO;
+﻿using System.IO;
 using FluentAssertions;
 using NLog;
 using NUnit.Framework;
 using NzbDrone.Common.Disk;
 using NzbDrone.Test.Common;
-using Sonarr.Http.Frontend.Mappers;
+using Whisparr.Http.Frontend.Mappers;
 
-namespace Sonarr.Http.Test.Frontend.Mappers
+namespace Whisparr.Http.Test.Frontend.Mappers
 {
     [TestFixture]
     public class StaticResourceMapperBaseFixture : TestBase

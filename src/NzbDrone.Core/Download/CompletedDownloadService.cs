@@ -218,7 +218,7 @@ namespace NzbDrone.Core.Download
                 {
                     if (trackedDownload.State != TrackedDownloadState.FailedPending)
                     {
-                        SetStateToImportBlocked(trackedDownload);
+                        SendManualInteractionRequiredNotification(trackedDownload);
                     }
 
                     return;

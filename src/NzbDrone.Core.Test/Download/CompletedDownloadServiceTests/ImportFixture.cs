@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using Moq;
@@ -398,8 +398,6 @@ namespace NzbDrone.Core.Test.Download.CompletedDownloadServiceTests
                   .Returns(true);
 
             Subject.Import(_trackedDownload);
-
-            _trackedDownload.State.Should().Be(TrackedDownloadState.ImportBlocked);
 
             Mocker.GetMock<IEventAggregator>()
                   .Verify(v => v.PublishEvent(It.IsAny<ManualInteractionRequiredEvent>()), Times.Once());

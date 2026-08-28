@@ -35,7 +35,7 @@ import DeleteSeriesModal from 'Series/Delete/DeleteSeriesModal';
 import EditSeriesModal from 'Series/Edit/EditSeriesModal';
 import SeriesHistoryModal from 'Series/History/SeriesHistoryModal';
 import MonitoringOptionsModal from 'Series/MonitoringOptions/MonitoringOptionsModal';
-import { Image, Statistics } from 'Series/Series';
+import { Image, SeriesStatus, Statistics } from 'Series/Series';
 import SeriesGenres from 'Series/SeriesGenres';
 import SeriesPoster from 'Series/SeriesPoster';
 import { getSeriesStatusDetails } from 'Series/SeriesStatus';
@@ -76,10 +76,22 @@ function getFanartUrl(images: Image[]) {
   return images.find((image) => image.coverType === 'fanart')?.url;
 }
 
-function getDateYear(date: string | undefined) {
-  const dateDate = moment.utc(date);
+function getDateYear(date: string) {
+  return moment.utc(date).format('YYYY');
+}
 
-  return dateDate.format('YYYY');
+function getRunningYears(
+  status: SeriesStatus,
+  year: number,
+  lastAired: string | undefined
+) {
+  if (year === 0) {
+    return null;
+  }
+
+  return status === 'ended' && lastAired
+    ? `${year}-${getDateYear(lastAired)}`
+    : `${year}-`;
 }
 
 function createEpisodesSelector() {
@@ -426,19 +438,14 @@ function SeriesDetails({ seriesId }: SeriesDetailsProps) {
     genres,
     tags,
     year,
+    lastAired,
     isSaving = false,
   } = series;
 
-  const {
-    episodeCount = 0,
-    episodeFileCount = 0,
-    sizeOnDisk = 0,
-    lastAired,
-  } = statistics;
+  const { episodeCount = 0, episodeFileCount = 0, sizeOnDisk = 0 } = statistics;
 
   const statusDetails = getSeriesStatusDetails(status);
-  const runningYears =
-    status === 'ended' ? `${year}-${getDateYear(lastAired)}` : `${year}-`;
+  const runningYears = getRunningYears(status, year, lastAired);
 
   let episodeFilesCountMessage = translate('SiteDetailsNoEpisodeFiles');
 

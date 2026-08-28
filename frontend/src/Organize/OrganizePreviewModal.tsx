@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import Modal from 'Components/Modal/Modal';
+import { sizes } from 'Helpers/Props';
 import { clearOrganizePreview } from 'Store/Actions/organizePreviewActions';
 import OrganizePreviewModalContent, {
   OrganizePreviewModalContentProps,
@@ -24,7 +25,11 @@ function OrganizePreviewModal({
   }, [dispatch, onModalClose]);
 
   return (
-    <Modal isOpen={isOpen} onModalClose={handleOnModalClose}>
+    <Modal
+      isOpen={isOpen}
+      size={sizes.EXTRA_EXTRA_LARGE}
+      onModalClose={handleOnModalClose}
+    >
       {isOpen ? (
         <OrganizePreviewModalContent
           {...otherProps}

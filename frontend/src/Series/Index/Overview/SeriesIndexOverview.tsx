@@ -172,6 +172,7 @@ function SeriesIndexOverview(props: SeriesIndexOverviewProps) {
                 size={250}
                 lazy={false}
                 overflow={true}
+                title={title}
               />
             </Link>
           </div>

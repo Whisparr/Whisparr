@@ -4,6 +4,7 @@ import AppState from 'App/State/AppState';
 import PageSidebarStatus from 'Components/Page/Sidebar/PageSidebarStatus';
 import usePrevious from 'Helpers/Hooks/usePrevious';
 import { fetchQueueStatus } from 'Store/Actions/queueActions';
+import translate from 'Utilities/String/translate';
 import createQueueStatusSelector from './createQueueStatusSelector';
 
 function QueueStatus() {
@@ -30,7 +31,16 @@ function QueueStatus() {
   }, [isConnected, wasReconnecting, dispatch]);
 
   return (
-    <PageSidebarStatus count={count} errors={errors} warnings={warnings} />
+    <PageSidebarStatus
+      aria-label={
+        count === 1
+          ? translate('QueueItem')
+          : translate('QueueItems', { count })
+      }
+      count={count}
+      errors={errors}
+      warnings={warnings}
+    />
   );
 }
 

@@ -197,6 +197,7 @@ function SeriesIndexRow(props: SeriesIndexRowProps) {
                     images={images}
                     lazy={false}
                     overflow={true}
+                    title={title}
                     onError={onBannerLoadError}
                     onLoad={onBannerLoad}
                   />

@@ -287,6 +287,7 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("My Title - 23.01.12 - EpTitle [4k HEVC DTSHD-MA-6ch]", false)]
         [TestCase("[GM-Team][国漫][诛仙][Series Title][2022][19][HEVC][GB][4K]", false)]
         [TestCase("Series.Title.S02E04.German.Dubbed.DL.AAC.2160p.DV.HDR.WEB.HEVC-GROUP", false)]
+        [TestCase("Series.S01.MULTi.2160p.NF.SDR.WEB.DDP.5.1.Atmos.h265-FRESH", false)]
         public void should_parse_webdl2160p_quality(string title, bool proper)
         {
             ParseAndVerifyQuality(title, Quality.WEBDL2160p, proper);

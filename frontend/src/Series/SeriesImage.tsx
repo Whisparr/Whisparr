@@ -1,6 +1,13 @@
 import classNames from 'classnames';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import LazyLoad from 'react-lazyload';
+import translate from 'Utilities/String/translate';
 import { CoverType, Image } from './Series';
 import styles from './SeriesImage.css';
 
@@ -26,6 +33,7 @@ export interface SeriesImageProps {
   blur?: boolean;
   lazy?: boolean;
   overflow?: boolean;
+  title: string;
   onError?: () => void;
   onLoad?: () => void;
 }
@@ -42,6 +50,7 @@ function SeriesImage({
   blur = false,
   lazy = true,
   overflow = false,
+  title,
   onError,
   onLoad,
 }: SeriesImageProps) {
@@ -49,6 +58,26 @@ function SeriesImage({
   const [hasError, setHasError] = useState(false);
   const [isLoaded, setIsLoaded] = useState(true);
   const image = useRef<Image | null>(null);
+
+  const alt = useMemo(() => {
+    let type = translate('ImagePoster');
+
+    switch (coverType) {
+      case 'banner':
+        type = translate('Banner');
+        break;
+      case 'fanart':
+        type = translate('ImageFanart');
+        break;
+      case 'season':
+        type = translate('ImageSeason');
+        break;
+      default:
+        break;
+    }
+
+    return `${title} ${type}`;
+  }, [title, coverType]);
 
   const handleLoad = useCallback(() => {
     setHasError(false);
@@ -107,6 +136,7 @@ function SeriesImage({
         }
       >
         <img
+          alt={alt}
           className={classNames(className, blur && styles.blur)}
           style={style}
           src={url}
@@ -120,6 +150,7 @@ function SeriesImage({
 
   return (
     <img
+      alt={alt}
       className={classNames(className, blur && styles.blur)}
       style={style}
       src={isLoaded ? url : placeholder}

@@ -68,7 +68,7 @@ export const defaultState = {
         columnLabel: () => translate('Status'),
         isSortable: true,
         isVisible: true,
-        isModifiable: false
+        isModifiable: 'onlyPosition'
       },
       {
         name: 'series.sortTitle',
@@ -173,7 +173,7 @@ export const defaultState = {
         name: 'actions',
         columnLabel: () => translate('Actions'),
         isVisible: true,
-        isModifiable: false
+        isModifiable: 'onlyPosition'
       }
     ],
 

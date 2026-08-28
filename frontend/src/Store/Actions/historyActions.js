@@ -34,7 +34,7 @@ export const defaultState = {
       name: 'eventType',
       columnLabel: () => translate('EventType'),
       isVisible: true,
-      isModifiable: false
+      isModifiable: 'onlyPosition'
     },
     {
       name: 'series.sortTitle',
@@ -112,7 +112,7 @@ export const defaultState = {
       name: 'details',
       columnLabel: () => translate('Details'),
       isVisible: true,
-      isModifiable: false
+      isModifiable: 'onlyPosition'
     }
   ],
 

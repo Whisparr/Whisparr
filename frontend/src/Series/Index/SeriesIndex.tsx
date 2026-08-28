@@ -250,7 +250,7 @@ function SeriesIndex(props: SeriesIndexProps) {
 
   return (
     <SelectProvider items={items}>
-      <PageContent>
+      <PageContent title={translate('Sites')}>
         <PageToolbar>
           <PageToolbarSection>
             <SeriesIndexRefreshSeriesButton

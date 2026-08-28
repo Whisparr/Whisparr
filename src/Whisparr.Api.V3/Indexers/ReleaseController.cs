@@ -142,7 +142,7 @@ namespace Whisparr.Api.V3.Indexers
             catch (ReleaseDownloadException ex)
             {
                 _logger.Error(ex, ex.Message);
-                throw new NzbDroneClientException(HttpStatusCode.Conflict, "Getting release from indexer failed");
+                throw new NzbDroneClientException(HttpStatusCode.Conflict, $"Getting release from indexer failed: {ex.Message}");
             }
 
             return release;

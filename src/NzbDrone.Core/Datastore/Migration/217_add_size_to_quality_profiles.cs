@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Dapper;
@@ -162,21 +162,27 @@ namespace NzbDrone.Core.Datastore.Migration
                     {
                         var quality = reader.GetInt32(0);
 
-                        double.TryParse(reader.GetValue(1).ToString(), out var minSize);
-                        double.TryParse(reader.GetValue(2).ToString(), out var maxSize);
-                        double.TryParse(reader.GetValue(3).ToString(), out var preferredSize);
-
                         sizes.Add(quality, new Definition217
                         {
-                            MinSize = minSize,
-                            MaxSize = maxSize,
-                            PreferredSize = preferredSize
+                            MinSize = ReadNullableDouble(reader, 1),
+                            MaxSize = ReadNullableDouble(reader, 2),
+                            PreferredSize = ReadNullableDouble(reader, 3)
                         });
                     }
                 }
             }
 
             return sizes;
+        }
+
+        private static double? ReadNullableDouble(IDataReader reader, int index)
+        {
+            if (reader.IsDBNull(index))
+            {
+                return null;
+            }
+
+            return double.TryParse(reader.GetValue(index).ToString(), out var value) ? value : null;
         }
     }
 }

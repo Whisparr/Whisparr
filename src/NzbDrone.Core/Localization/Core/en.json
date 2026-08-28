@@ -1110,7 +1110,7 @@
   "MonitorAllScenes": "All Scenes",
   "MonitorAllScenesDescription": "Monitor all scenes except specials",
   "MonitorExistingScenes": "Existing Scenes",
-  "MonitorExistingScenesDescription": "Monitor scenes that have files or have not aired yet",
+  "MonitorExistingScenesDescription": "Monitor scenes that have files",
   "MonitorFirstYear": "First Year",
   "MonitorFirstYearDescription": "Monitor all episodes of the first year. All other years will be ignored",
   "MonitorFutureScenes": "Future Scenes",

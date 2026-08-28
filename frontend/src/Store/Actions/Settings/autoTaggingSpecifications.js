@@ -93,6 +93,7 @@ export default {
 
     [FETCH_AUTO_TAGGING_SPECIFICATIONS]: (getState, payload, dispatch) => {
       let tags = [];
+
       if (payload.id) {
         const cfState = getSectionState(getState(), 'settings.autoTaggings', true);
         const cf = cfState.items[cfState.itemMap[payload.id]];

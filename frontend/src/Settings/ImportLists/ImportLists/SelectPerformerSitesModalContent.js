@@ -138,6 +138,7 @@ function SelectPerformerSitesModalContent(props) {
           // Existing list: excluded sites are unselected, others are selected
           acc[site.tvdbId] = !excludedIds.has(site.tvdbId);
         }
+
         return acc;
       }, {});
 

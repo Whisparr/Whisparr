@@ -109,6 +109,7 @@ function CustomFormat({
           if (item.required) {
             kind = kinds.SUCCESS;
           }
+
           if (item.negate) {
             kind = kinds.DANGER;
           }

@@ -35,6 +35,7 @@ class ReleaseProfilesConnector extends Component {
 
   componentDidMount() {
     this.props.fetchReleaseProfiles();
+
     if (!this.props.isIndexersPopulated) {
       this.props.fetchIndexers();
     }

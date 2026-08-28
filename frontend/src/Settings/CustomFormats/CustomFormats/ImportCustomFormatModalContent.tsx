@@ -72,6 +72,7 @@ function ImportCustomFormatModalContent({
     (fields: Field[], schema: CustomFormatSpecification) => {
       for (const [key, value] of Object.entries(fields)) {
         const field = schema.fields.find((field) => field.name === key);
+
         if (!field) {
           throw new Error(
             translate('CustomFormatUnknownConditionOption', {

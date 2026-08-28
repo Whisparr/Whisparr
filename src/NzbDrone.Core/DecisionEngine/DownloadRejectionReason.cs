@@ -1,4 +1,4 @@
-namespace NzbDrone.Core.DecisionEngine;
+﻿namespace NzbDrone.Core.DecisionEngine;
 
 public enum DownloadRejectionReason
 {
@@ -76,4 +76,5 @@ public enum DownloadRejectionReason
     DiskCustomFormatScoreIncrement,
     DiskUpgradesNotAllowed,
     NoEpisodeReleaseDate,
+    BeforeAirDate
 }

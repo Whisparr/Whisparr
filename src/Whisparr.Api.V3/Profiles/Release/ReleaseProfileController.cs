@@ -27,7 +27,7 @@ namespace Whisparr.Api.V3.Profiles.Release
 
             SharedValidator.RuleFor(d => d).Custom((restriction, context) =>
             {
-                if (restriction.MapRequired().Empty() && restriction.MapIgnored().Empty())
+                if (restriction.MapRequired().Empty() && restriction.MapIgnored().Empty() && !restriction.AirDateRestriction)
                 {
                     context.AddFailure(nameof(ReleaseProfile.Required), "'Must contain' or 'Must not contain' is required");
                 }

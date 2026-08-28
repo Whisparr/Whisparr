@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -274,6 +274,21 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
 
             criteria.Count.Should().Be(1);
             criteria[0].Year.Should().Be(7);
+        }
+
+        [Test]
+        public async Task scene_seasonsearch_should_skip_search_if_no_episodes_after_filtering()
+        {
+            WithEpisodes();
+            _xemEpisodes.ForEach(e => e.EpisodeFileId = 1);
+
+            var allCriteria = WatchForSearchCriteria();
+
+            await Subject.SeasonSearch(_xemSeries.Id, 1, true, false, true, false);
+
+            var criteria = allCriteria.OfType<SeasonSearchCriteria>().ToList();
+
+            criteria.Count.Should().Be(0);
         }
     }
 }

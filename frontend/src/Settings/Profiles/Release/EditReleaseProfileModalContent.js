@@ -35,7 +35,9 @@ function EditReleaseProfileModalContent(props) {
     required,
     ignored,
     tags,
-    indexerId
+    indexerId,
+    airDateRestriction,
+    airDateGracePeriod
   } = item;
 
   return (
@@ -105,6 +107,33 @@ function EditReleaseProfileModalContent(props) {
               onChange={onInputChange}
             />
           </FormGroup>
+
+          <FormGroup>
+            <FormLabel>{translate('AirDateRestriction')}</FormLabel>
+
+            <FormInputGroup
+              {...airDateRestriction}
+              type={inputTypes.CHECK}
+              name="airDateRestriction"
+              helpText={translate('AirDateRestrictionHelpText')}
+              onChange={onInputChange}
+            />
+          </FormGroup>
+
+          {airDateRestriction.value ? (
+            <FormGroup>
+              <FormLabel>{translate('AirDateGracePeriod')}</FormLabel>
+
+              <FormInputGroup
+                {...airDateGracePeriod}
+                type={inputTypes.NUMBER}
+                unit="days"
+                name="airDateGracePeriod"
+                helpText={translate('AirDateGracePeriodHelpText')}
+                onChange={onInputChange}
+              />
+            </FormGroup>
+          ) : null}
 
           <FormGroup>
             <FormLabel>{translate('Indexer')}</FormLabel>

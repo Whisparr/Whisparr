@@ -12,6 +12,7 @@ export default interface MediaManagement {
   chownGroup: string;
   episodeTitleRequired: string;
   skipFreeSpaceCheckWhenImporting: boolean;
+  skipFreeSpaceCheckWhenGrabbing: boolean;
   minimumFreeSpaceWhenImporting: number;
   copyUsingHardlinks: boolean;
   useScriptImport: boolean;

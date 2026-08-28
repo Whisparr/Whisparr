@@ -34,6 +34,7 @@ namespace NzbDrone.Core.Configuration
         bool LaunchBrowser { get; }
         AuthenticationType AuthenticationMethod { get; }
         AuthenticationRequiredType AuthenticationRequired { get; }
+        string AllowedHosts { get; }
         bool AnalyticsEnabled { get; }
         string LogLevel { get; }
         int LogSizeLimit { get; }
@@ -250,6 +251,8 @@ namespace NzbDrone.Core.Configuration
         public AuthenticationRequiredType AuthenticationRequired => GetValueEnum("AuthenticationRequired", AuthenticationRequiredType.Enabled);
 
         public bool AnalyticsEnabled => GetValueBoolean("AnalyticsEnabled", true, persist: false);
+
+        public string AllowedHosts => GetValue("AllowedHosts", string.Empty);
 
         private static readonly Regex ValidBranchRegex = new Regex(@"^v\d+(-develop)?$", RegexOptions.Compiled);
 

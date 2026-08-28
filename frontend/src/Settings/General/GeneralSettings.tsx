@@ -36,6 +36,7 @@ const requiresRestartKeys = [
   'bindAddress',
   'port',
   'urlBase',
+  'allowedHosts',
   'instanceName',
   'enableSsl',
   'sslPort',
@@ -153,6 +154,7 @@ function GeneralSettings() {
               urlBase={settings.urlBase}
               instanceName={settings.instanceName}
               applicationUrl={settings.applicationUrl}
+              allowedHosts={settings.allowedHosts}
               enableSsl={settings.enableSsl}
               sslPort={settings.sslPort}
               sslCertPath={settings.sslCertPath}

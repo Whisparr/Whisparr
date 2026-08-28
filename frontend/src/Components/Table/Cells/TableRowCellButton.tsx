@@ -9,14 +9,19 @@ interface TableRowCellButtonProps extends LinkProps {
 }
 
 function TableRowCellButton(props: TableRowCellButtonProps) {
-  const { className = styles.cell, ...otherProps } = props;
+  const { className = styles.cell, children, title, ...otherProps } = props;
 
   return (
-    <Link
-      className={className}
-      component={TableRowCell as unknown as LinkProps['component']}
-      {...otherProps}
-    />
+    <TableRowCell className={className}>
+      <Link
+        className={styles.button}
+        title={title}
+        aria-label={title}
+        {...otherProps}
+      >
+        {children}
+      </Link>
+    </TableRowCell>
   );
 }
 

@@ -1,0 +1,227 @@
+name: Upstream Pull
+
+# Opens one pull request per upstream Sonarr commit, oldest first.
+#
+# Replaces the Servarr app that used to do this (11 PRs on 2025-02-18, then
+# nothing -- those targeted `develop`, which no longer exists here).
+#
+# Commits that conflict still get a PR: the conflicted state is committed with
+# the markers left in and the PR is labelled `has-conflicts`, so the decision
+# about whether a change suits this fork is made on the PR rather than here.
+#
+# It never merges upstream. `git merge upstream/v5-develop` produces roughly
+# 1550 conflicted files and reintroduces anime, season, Trakt and TVDB code that
+# was removed on purpose.
+#
+# Requires UPSTREAM_PULL_TOKEN -- a PAT with `repo` scope. GITHUB_TOKEN will not
+# do: pull requests it creates do not trigger other workflows, so build.yml
+# would never run and every PR would arrive without CI. That is exactly how
+# Servarr's PR #376 died ("came in before the azure pipeline was updated, and
+# can't have tests re-run").
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: 'Maximum PRs to open in this run'
+        required: false
+        default: '25'
+      dry_run:
+        description: 'Report what would be opened, without pushing'
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: upstream-pull
+  cancel-in-progress: false
+
+env:
+  BASE: v2-develop
+  UPSTREAM: upstream/v5-develop
+  # A safety valve, not a filter -- the remainder is picked up next run, so a
+  # misresolved sync point cannot open hundreds of PRs at once.
+  LIMIT: ${{ inputs.limit || '25' }}
+  DRY_RUN: ${{ inputs.dry_run && 'yes' || 'no' }}
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.UPSTREAM_PULL_TOKEN }}
+
+      - name: Fetch upstream
+        run: |
+          git config user.name 'whisparr-sync'
+          git config user.email 'whisparr-sync@users.noreply.github.com'
+          git remote add upstream https://github.com/Sonarr/Sonarr.git 2>/dev/null || true
+          git fetch --quiet upstream v5-develop
+
+      - name: Find the sync point
+        id: sync
+        run: |
+          # Every picked commit records `Sonarr/Sonarr@<sha>` in its subject, and
+          # squash-merging a batch PR keeps those lines in the merge body. So the
+          # newest upstream commit referenced anywhere in this branch's history is
+          # the furthest point reached -- no external state needed.
+          point=''
+          point_date=''
+
+          for sha in $(git log "$BASE" --format=%B -n 1500 \
+                       | grep -oE 'Sonarr/Sonarr@[0-9a-f]{9,40}' \
+                       | cut -d@ -f2 | sort -u); do
+            date=$(git log -1 --format=%cI "$sha" 2>/dev/null) || continue
+            [ -z "$date" ] && continue
+            if [[ "$date" > "$point_date" ]]; then
+              point="$sha"
+              point_date="$date"
+            fi
+          done
+
+          if [ -z "$point" ]; then
+            echo "No Sonarr/Sonarr@ provenance found in the last 1500 commits." >&2
+            exit 1
+          fi
+
+          echo "point=$point" >> "$GITHUB_OUTPUT"
+          echo "Sync point $point ($point_date)"
+
+      - name: Open pull requests
+        env:
+          GH_TOKEN: ${{ secrets.UPSTREAM_PULL_TOKEN }}
+          POINT: ${{ steps.sync.outputs.point }}
+        run: |
+          # Guard hard. An empty POINT makes the range `..upstream`, which git
+          # reads as the whole of upstream history -- ~4800 commits back to 2016
+          # -- and the loop would cheerfully open PRs for them, LIMIT at a time,
+          # every day. Caught in testing when the step output was not wired up.
+          if [ -z "$POINT" ]; then
+            echo "Sync point is empty; refusing to walk all of upstream." >&2
+            exit 1
+          fi
+
+          if ! git cat-file -e "${POINT}^{commit}" 2>/dev/null; then
+            echo "Sync point $POINT is not a commit in this repository." >&2
+            exit 1
+          fi
+
+          # Note for anyone running this logic by hand: the loop does
+          # `git checkout --force`, so commit your work first or it will be
+          # discarded along with the throwaway branches.
+          behind=$(git log --no-merges --format=%H "$POINT..$UPSTREAM" | wc -l)
+          opened=0
+
+          {
+            echo "## Upstream pull"
+            echo
+            echo "Sync point \`$POINT\` - $behind commit(s) behind."
+            echo
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          for sha in $(git log --no-merges --format=%H --reverse "$POINT..$UPSTREAM"); do
+            [ "$opened" -ge "$LIMIT" ] && break
+
+            short=${sha:0:8}
+            branch="sonarr-pull-$short"
+            subject=$(git log -1 --format=%s "$sha")
+
+            # Already handled? A branch or a PR in any state is enough.
+            if [ -n "$(git ls-remote --heads origin "$branch")" ]; then continue; fi
+            if [ -n "$(gh pr list --head "$branch" --state all --json number -q '.[].number')" ]; then
+              continue
+            fi
+
+            git checkout -q -B "$branch" "$BASE"
+
+            clashes=''
+            if git cherry-pick -x "$sha" >/dev/null 2>&1; then
+              git commit -q --amend --no-verify -m "$subject (Sonarr/Sonarr@${sha:0:9})"
+            else
+              clashes=$(git diff --name-only --diff-filter=U)
+
+              if [ -z "$clashes" ]; then
+                # Empty pick, or a failure with nothing to show.
+                git cherry-pick --abort >/dev/null 2>&1 || true
+                git checkout -q --force "$BASE"
+                git branch -D "$branch" >/dev/null 2>&1 || true
+                echo "- \`${sha:0:9}\` $subject - could not be applied" >> "$GITHUB_STEP_SUMMARY"
+                continue
+              fi
+
+              # Stage only what this commit touched. Never `git add -A` here: on
+              # a conflicted pick it also sweeps up anything else in the tree.
+              git show "$sha" --name-only --format= | grep . | while read -r f; do
+                git add -- "$f" 2>/dev/null || true
+              done
+
+              git commit -q --no-verify -m "$subject (Sonarr/Sonarr@${sha:0:9})"
+            fi
+
+            count=$(printf '%s' "$clashes" | grep -c . || true)
+
+            if [ "$DRY_RUN" = 'yes' ]; then
+              git checkout -q --force "$BASE"
+              git branch -D "$branch" >/dev/null 2>&1 || true
+              echo "| \`${sha:0:9}\` | ${count:-0} | $subject | (dry run) |" >> "$GITHUB_STEP_SUMMARY"
+              opened=$((opened + 1))
+              continue
+            fi
+
+            git push -q --force-with-lease origin "$branch"
+
+            # Keep upstream's conventional prefix so the release-notes tooling
+            # picks the PR up; anything else is housekeeping.
+            case "$subject" in
+              New:*|Fixed:*|Chore:*) title="$subject" ;;
+              *) title="Chore: $subject" ;;
+            esac
+
+            {
+              echo "Cherry-picked from upstream Sonarr."
+              echo
+              echo "Sonarr/Sonarr@${sha:0:9} - $subject"
+              echo
+              if [ -n "$clashes" ]; then
+                echo "### This one conflicts"
+                echo
+                echo "Committed with the conflict markers left in, so the changes"
+                echo "are visible and can be resolved on this branch. Files:"
+                echo
+                printf '%s\n' "$clashes" | sed 's/^/- `/; s/$/`/'
+                echo
+                echo "**Do not merge until the markers are gone.**"
+              else
+                echo "Applied cleanly."
+              fi
+              echo
+              echo '---'
+              echo
+              echo "Opened automatically, one PR per upstream commit. Whether the"
+              echo "change suits this fork has not been assessed - close it if it"
+              echo "does not apply."
+            } > /tmp/pr-body.md
+
+            labels='upstream-sync'
+            [ -n "$clashes" ] && labels='upstream-sync,has-conflicts'
+
+            url=$(gh pr create --base "$BASE" --head "$branch" \
+                    --title "$title" --body-file /tmp/pr-body.md \
+                    --label "$labels" 2>/dev/null) || url='(failed to open)'
+
+            git checkout -q --force "$BASE"
+
+            echo "| \`${sha:0:9}\` | ${count:-0} | $subject | $url |" >> "$GITHUB_STEP_SUMMARY"
+            opened=$((opened + 1))
+          done
+
+          echo "Opened $opened pull request(s)."

@@ -100,8 +100,8 @@ interface AppState {
   series: SeriesAppState;
   seriesHistory: SeriesHistoryAppState;
   seriesIndex: SeriesIndexAppState;
-  settings: SettingsAppState;
   system: SystemAppState;
+  settings: SettingsAppState;
   tags: TagsAppState;
   wanted: WantedAppState;
 }

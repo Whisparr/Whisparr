@@ -6,10 +6,8 @@ import createAjaxRequest from 'Utilities/createAjaxRequest';
 import serverSideCollectionHandlers from 'Utilities/State/serverSideCollectionHandlers';
 import translate from 'Utilities/String/translate';
 import { pingServer } from './appActions';
-import { set } from './baseActions';
 import createFetchHandler from './Creators/createFetchHandler';
 import createHandleActions from './Creators/createHandleActions';
-import createRemoveItemHandler from './Creators/createRemoveItemHandler';
 import createServerSideCollectionHandlers from './Creators/createServerSideCollectionHandlers';
 import createClearReducer from './Creators/Reducers/createClearReducer';
 import createSetTableOptionReducer from './Creators/Reducers/createSetTableOptionReducer';
@@ -18,23 +16,11 @@ import createSetTableOptionReducer from './Creators/Reducers/createSetTableOptio
 // Variables
 
 export const section = 'system';
-const backupsSection = 'system.backups';
 
 //
 // State
 
 export const defaultState = {
-  backups: {
-    isFetching: false,
-    isPopulated: false,
-    error: null,
-    isRestoring: false,
-    restoreError: null,
-    isDeleting: false,
-    deleteError: null,
-    items: []
-  },
-
   updates: {
     isFetching: false,
     isPopulated: false,
@@ -142,11 +128,6 @@ export const persistState = [
 //
 // Actions Types
 
-export const FETCH_BACKUPS = 'system/backups/fetchBackups';
-export const RESTORE_BACKUP = 'system/backups/restoreBackup';
-export const CLEAR_RESTORE_BACKUP = 'system/backups/clearRestoreBackup';
-export const DELETE_BACKUP = 'system/backups/deleteBackup';
-
 export const FETCH_UPDATES = 'system/updates/fetchUpdates';
 
 export const FETCH_LOGS = 'system/logs/fetchLogs';
@@ -165,11 +146,6 @@ export const SHUTDOWN = 'system/shutdown';
 
 //
 // Action Creators
-
-export const fetchBackups = createThunk(FETCH_BACKUPS);
-export const restoreBackup = createThunk(RESTORE_BACKUP);
-export const clearRestoreBackup = createAction(CLEAR_RESTORE_BACKUP);
-export const deleteBackup = createThunk(DELETE_BACKUP);
 
 export const fetchUpdates = createThunk(FETCH_UPDATES);
 
@@ -191,70 +167,6 @@ export const shutdown = createThunk(SHUTDOWN);
 // Action Handlers
 
 export const actionHandlers = handleThunks({
-  [FETCH_BACKUPS]: createFetchHandler(backupsSection, '/system/backup'),
-
-  [RESTORE_BACKUP]: function(getState, payload, dispatch) {
-    const {
-      id,
-      file
-    } = payload;
-
-    dispatch(set({
-      section: backupsSection,
-      isRestoring: true
-    }));
-
-    let ajaxOptions = null;
-
-    if (id) {
-      ajaxOptions = {
-        url: `/system/backup/restore/${id}`,
-        method: 'POST',
-        contentType: 'application/json',
-        dataType: 'json',
-        data: JSON.stringify({
-          id
-        })
-      };
-    } else if (file) {
-      const formData = new FormData();
-      formData.append('restore', file);
-
-      ajaxOptions = {
-        url: '/system/backup/restore/upload',
-        method: 'POST',
-        processData: false,
-        contentType: false,
-        data: formData
-      };
-    } else {
-      dispatch(set({
-        section: backupsSection,
-        isRestoring: false,
-        restoreError: 'Error restoring backup'
-      }));
-    }
-
-    const promise = createAjaxRequest(ajaxOptions).request;
-
-    promise.done((data) => {
-      dispatch(set({
-        section: backupsSection,
-        isRestoring: false,
-        restoreError: null
-      }));
-    });
-
-    promise.fail((xhr) => {
-      dispatch(set({
-        section: backupsSection,
-        isRestoring: false,
-        restoreError: xhr
-      }));
-    });
-  },
-
-  [DELETE_BACKUP]: createRemoveItemHandler(backupsSection, '/system/backup'),
 
   [FETCH_UPDATES]: createFetchHandler('system.updates', '/update'),
 
@@ -298,17 +210,6 @@ export const actionHandlers = handleThunks({
 // Reducers
 
 export const reducers = createHandleActions({
-
-  [CLEAR_RESTORE_BACKUP]: function(state, { payload }) {
-    return {
-      ...state,
-      backups: {
-        ...state.backups,
-        isRestoring: false,
-        restoreError: null
-      }
-    };
-  },
 
   [SET_LOGS_TABLE_OPTION]: createSetTableOptionReducer('logs'),
 

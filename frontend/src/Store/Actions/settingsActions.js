@@ -1,5 +1,4 @@
 import { createAction } from 'redux-actions';
-import indexerFlags from 'Store/Actions/Settings/indexerFlags';
 import { handleThunks } from 'Store/thunks';
 import createHandleActions from './Creators/createHandleActions';
 import autoTaggings from './Settings/autoTaggings';
@@ -36,7 +35,6 @@ export * from './Settings/downloadClientOptions';
 export * from './Settings/general';
 export * from './Settings/importLists';
 export * from './Settings/importListExclusions';
-export * from './Settings/indexerFlags';
 export * from './Settings/indexerOptions';
 export * from './Settings/indexers';
 export * from './Settings/languages';
@@ -72,7 +70,6 @@ export const defaultState = {
   general: general.defaultState,
   importLists: importLists.defaultState,
   importListExclusions: importListExclusions.defaultState,
-  indexerFlags: indexerFlags.defaultState,
   indexerOptions: indexerOptions.defaultState,
   indexers: indexers.defaultState,
   languages: languages.defaultState,
@@ -119,7 +116,6 @@ export const actionHandlers = handleThunks({
   ...general.actionHandlers,
   ...importLists.actionHandlers,
   ...importListExclusions.actionHandlers,
-  ...indexerFlags.actionHandlers,
   ...indexerOptions.actionHandlers,
   ...indexers.actionHandlers,
   ...languages.actionHandlers,
@@ -158,7 +154,6 @@ export const reducers = createHandleActions({
   ...general.reducers,
   ...importLists.reducers,
   ...importListExclusions.reducers,
-  ...indexerFlags.reducers,
   ...indexerOptions.reducers,
   ...indexers.reducers,
   ...languages.reducers,

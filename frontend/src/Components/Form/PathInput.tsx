@@ -9,15 +9,11 @@ import {
   ChangeEvent,
   SuggestionsFetchRequestedParams,
 } from 'react-autosuggest';
-import { useDispatch, useSelector } from 'react-redux';
-import { createSelector } from 'reselect';
-import AppState from 'App/State/AppState';
-import { Path } from 'App/State/PathsAppState';
 import FileBrowserModal from 'Components/FileBrowser/FileBrowserModal';
 import Icon from 'Components/Icon';
 import usePrevious from 'Helpers/Hooks/usePrevious';
 import { icons } from 'Helpers/Props';
-import { clearPaths, fetchPaths } from 'Store/Actions/pathActions';
+import usePaths, { Path } from 'Path/usePaths';
 import { InputChanged } from 'typings/inputs';
 import AutoSuggestInput from './AutoSuggestInput';
 import FormInputButton from './FormInputButton';
@@ -44,43 +40,27 @@ function handleSuggestionsClearRequested() {
   // because we don't want to reset the paths after a path is selected.
 }
 
-function createPathsSelector() {
-  return createSelector(
-    (state: AppState) => state.paths,
-    (paths) => {
-      const { currentPath, directories, files } = paths;
-
-      const filteredPaths = [...directories, ...files].filter(({ path }) => {
-        return path.toLowerCase().startsWith(currentPath.toLowerCase());
-      });
-
-      return filteredPaths;
-    }
-  );
-}
-
 function PathInput(props: PathInputProps) {
-  const { includeFiles } = props;
+  const { includeFiles, value = '' } = props;
+  const [currentPath, setCurrentPath] = useState(value);
 
-  const dispatch = useDispatch();
+  const { data } = usePaths({
+    path: currentPath,
+    includeFiles,
+  });
 
-  const paths = useSelector(createPathsSelector());
-
-  const handleFetchPaths = useCallback(
-    (path: string) => {
-      dispatch(fetchPaths({ path, includeFiles }));
-    },
-    [includeFiles, dispatch]
-  );
+  const handleFetchPaths = useCallback((path: string) => {
+    setCurrentPath(path);
+  }, []);
 
   const handleClearPaths = useCallback(() => {
-    dispatch(clearPaths);
-  }, [dispatch]);
+    // No-op for React Query implementation as we don't need to clear
+  }, []);
 
   return (
     <PathInputInternal
       {...props}
-      paths={paths}
+      paths={data.paths}
       onFetchPaths={handleFetchPaths}
       onClearPaths={handleClearPaths}
     />
@@ -106,14 +86,6 @@ export function PathInputInternal(props: PathInputInternalProps) {
   const [value, setValue] = useState(inputValue);
   const [isFileBrowserModalOpen, setIsFileBrowserModalOpen] = useState(false);
   const previousInputValue = usePrevious(inputValue);
-  const dispatch = useDispatch();
-
-  const handleFetchPaths = useCallback(
-    (path: string) => {
-      dispatch(fetchPaths({ path, includeFiles }));
-    },
-    [includeFiles, dispatch]
-  );
 
   const handleInputChange = useCallback(
     (_event: SyntheticEvent, { newValue }: ChangeEvent) => {
@@ -135,12 +107,12 @@ export function PathInputInternal(props: PathInputInternalProps) {
           });
 
           if (path.type !== 'file') {
-            handleFetchPaths(path.path);
+            onFetchPaths(path.path);
           }
         }
       }
     },
-    [name, paths, handleFetchPaths, onChange]
+    [name, paths, onFetchPaths, onChange]
   );
   const handleInputBlur = useCallback(() => {
     onChange({
@@ -153,16 +125,16 @@ export function PathInputInternal(props: PathInputInternalProps) {
 
   const handleSuggestionSelected = useCallback(
     (_event: SyntheticEvent, { suggestion }: { suggestion: Path }) => {
-      handleFetchPaths(suggestion.path);
+      onFetchPaths(suggestion.path);
     },
-    [handleFetchPaths]
+    [onFetchPaths]
   );
 
   const handleSuggestionsFetchRequested = useCallback(
     ({ value: newValue }: SuggestionsFetchRequestedParams) => {
-      handleFetchPaths(newValue);
+      onFetchPaths(newValue);
     },
-    [handleFetchPaths]
+    [onFetchPaths]
   );
 
   const handleFileBrowserOpenPress = useCallback(() => {

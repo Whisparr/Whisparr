@@ -8,7 +8,7 @@ import { icons } from 'Helpers/Props';
 import { setIsSidebarVisible } from 'Store/Actions/appActions';
 import translate from 'Utilities/String/translate';
 import KeyboardShortcutsModal from './KeyboardShortcutsModal';
-import PageHeaderActionsMenuConnector from './PageHeaderActionsMenuConnector';
+import PageHeaderActionsMenu from './PageHeaderActionsMenu';
 import SafeForWorkButtonConnector from './SafeForWorkButtonConnector';
 import SeriesSearchInput from './SeriesSearchInput';
 import styles from './PageHeader.css';
@@ -81,7 +81,7 @@ function PageHeader() {
           title={translate('Donate')}
         />
 
-        <PageHeaderActionsMenuConnector
+        <PageHeaderActionsMenu
           onKeyboardShortcutsPress={handleOpenKeyboardShortcutsModal}
         />
       </div>

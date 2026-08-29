@@ -1,5 +1,6 @@
 import React from 'react';
 import { Error } from 'App/State/AppSectionState';
+import { ApiError } from 'Utilities/Fetch/fetchJson';
 import getErrorMessage from 'Utilities/Object/getErrorMessage';
 import translate from 'Utilities/String/translate';
 import styles from './ErrorPage.css';
@@ -7,7 +8,7 @@ import styles from './ErrorPage.css';
 interface ErrorPageProps {
   version: string;
   isLocalStorageSupported: boolean;
-  translationsError?: Error;
+  translationsError?: ApiError | null;
   seriesError?: Error;
   customFiltersError?: Error;
   tagsError?: Error;

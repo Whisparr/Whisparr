@@ -2,7 +2,6 @@ import ModelBase from 'App/ModelBase';
 import { FilterBuilderTypes } from 'Helpers/Props/filterBuilderTypes';
 import { DateFilterValue, FilterType } from 'Helpers/Props/filterTypes';
 import AddSeriesAppState from './AddSeriesAppState';
-import { Error } from './AppSectionState';
 import BlocklistAppState from './BlocklistAppState';
 import CalendarAppState from './CalendarAppState';
 import CaptchaAppState from './CaptchaAppState';
@@ -74,10 +73,6 @@ export interface AppSectionState {
     isLargeScreen: boolean;
     width: number;
     height: number;
-  };
-  translations: {
-    error?: Error;
-    isPopulated: boolean;
   };
   messages: MessagesAppState;
 }

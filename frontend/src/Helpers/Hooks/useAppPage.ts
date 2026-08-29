@@ -2,7 +2,6 @@ import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
 import AppState from 'App/State/AppState';
-import { ApiError } from 'Helpers/Hooks/useApiQuery';
 import { useInitializeLanguage } from 'Language/useLanguageName';
 import useIndexerFlags from 'Settings/Indexers/useIndexerFlags';
 import { fetchTranslations } from 'Store/Actions/appActions';
@@ -16,6 +15,7 @@ import {
 } from 'Store/Actions/settingsActions';
 import { fetchStatus } from 'Store/Actions/systemActions';
 import { fetchTags } from 'Store/Actions/tagActions';
+import { ApiError } from 'Utilities/Fetch/fetchJson';
 
 const createErrorsSelector = ({
   indexerFlagsError,

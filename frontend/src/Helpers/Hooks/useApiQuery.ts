@@ -1,79 +1,49 @@
 import { UndefinedInitialDataOptions, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
+import fetchJson, {
+  ApiError,
+  FetchJsonOptions,
+} from 'Utilities/Fetch/fetchJson';
+import getQueryPath from 'Utilities/Fetch/getQueryPath';
+import getQueryString, { QueryParams } from 'Utilities/Fetch/getQueryString';
 
-interface ApiErrorResponse {
-  message: string;
-  details: string;
-}
-
-export class ApiError extends Error {
-  public statusCode: number;
-  public statusText: string;
-  public statusBody?: ApiErrorResponse;
-
-  public constructor(
-    path: string,
-    statusCode: number,
-    statusText: string,
-    statusBody?: ApiErrorResponse
-  ) {
-    super(`Request Error: (${statusCode}) ${path}`);
-
-    this.statusCode = statusCode;
-    this.statusText = statusText;
-    this.statusBody = statusBody;
-
-    Object.setPrototypeOf(this, new.target.prototype);
-  }
-}
-
-interface QueryOptions<T> {
-  path: string;
-  headers?: HeadersInit;
+export interface QueryOptions<T> extends FetchJsonOptions<unknown> {
+  queryParams?: QueryParams;
   queryOptions?:
-    | Omit<UndefinedInitialDataOptions<T, ApiError>, 'queryKey' | 'queryFn'>
+    | Omit<
+        UndefinedInitialDataOptions<Readonly<T>, ApiError>,
+        'queryKey' | 'queryFn'
+      >
     | undefined;
 }
 
-const apiRoot = window.Whisparr.apiRoot;
+const useApiQuery = <T>(options: QueryOptions<T>) => {
+  const { queryKey, requestOptions } = useMemo(() => {
+    const { path: path, queryOptions, queryParams, ...otherOptions } = options;
 
-function useApiQuery<T>(options: QueryOptions<T>) {
-  const { path, headers } = useMemo(() => {
     return {
-      path: apiRoot + options.path,
-      headers: {
-        ...options.headers,
-        'X-Api-Key': window.Whisparr.apiKey,
-        'X-Whisparr-Client': 'Whisparr',
+      queryKey: queryParams ? [path, queryParams] : [path],
+      requestOptions: {
+        ...otherOptions,
+        path: getQueryPath(path) + getQueryString(queryParams),
+        headers: {
+          ...options.headers,
+          'X-Api-Key': window.Whisparr.apiKey,
+          'X-Whisparr-Client': 'Whisparr',
+        },
       },
     };
   }, [options]);
 
-  return useQuery({
-    ...options.queryOptions,
-    queryKey: [path, headers],
-    queryFn: async ({ signal }) => {
-      const response = await fetch(path, {
-        headers,
-        signal,
-      });
-
-      if (!response.ok) {
-        // eslint-disable-next-line init-declarations
-        let body;
-
-        try {
-          body = (await response.json()) as ApiErrorResponse;
-        } catch {
-          throw new ApiError(path, response.status, response.statusText);
-        }
-
-        throw new ApiError(path, response.status, response.statusText, body);
-      }
-
-      return response.json() as T;
-    },
-  });
-}
+  return {
+    queryKey,
+    ...useQuery({
+      ...options.queryOptions,
+      queryKey,
+      queryFn: async ({ signal }) =>
+        fetchJson<Readonly<T>, unknown>({ ...requestOptions, signal }),
+    }),
+  };
+};
 
 export default useApiQuery;

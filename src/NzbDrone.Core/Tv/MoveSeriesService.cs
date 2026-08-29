@@ -1,6 +1,7 @@
 using System.IO;
 using NLog;
 using NzbDrone.Common.Disk;
+using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Instrumentation.Extensions;
 using NzbDrone.Core.Messaging.Commands;
 using NzbDrone.Core.Messaging.Events;
@@ -36,6 +37,12 @@ namespace NzbDrone.Core.Tv
 
         private void MoveSingleSeries(Series series, string sourcePath, string destinationPath, int? index = null, int? total = null)
         {
+            if (!sourcePath.IsPathValid(PathValidationType.CurrentOs))
+            {
+                _logger.Warn("Folder '{0}' for '{1}' is invalid, unable to move series. Try moving files manually", sourcePath, series.Title);
+                return;
+            }
+
             if (!_diskProvider.FolderExists(sourcePath))
             {
                 _logger.Debug("Folder '{0}' for '{1}' does not exist, not moving.", sourcePath, series.Title);

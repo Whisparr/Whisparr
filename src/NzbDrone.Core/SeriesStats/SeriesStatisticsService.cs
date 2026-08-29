@@ -75,8 +75,8 @@ namespace NzbDrone.Core.SeriesStats
             var nextAiring = seasonStatistics.Where(s => s.NextAiring != null).MinBy(s => s.NextAiring);
             var previousAiring = seasonStatistics.Where(s => s.PreviousAiring != null).MaxBy(s => s.PreviousAiring);
 
-            seriesStatistics.NextAiringString = nextAiring?.NextAiringString;
-            seriesStatistics.PreviousAiringString = previousAiring?.PreviousAiringString;
+            seriesStatistics.NextAiring = nextAiring?.NextAiring;
+            seriesStatistics.PreviousAiring = previousAiring?.PreviousAiring;
 
             return seriesStatistics;
         }

@@ -24,13 +24,6 @@ const backupsSection = 'system.backups';
 // State
 
 export const defaultState = {
-  status: {
-    isFetching: false,
-    isPopulated: false,
-    error: null,
-    item: {}
-  },
-
   health: {
     isFetching: false,
     isPopulated: false,
@@ -184,7 +177,6 @@ export const persistState = [
 //
 // Actions Types
 
-export const FETCH_STATUS = 'system/status/fetchStatus';
 export const FETCH_HEALTH = 'system/health/fetchHealth';
 export const FETCH_DISK_SPACE = 'system/diskSpace/fetchDiskSPace';
 
@@ -218,7 +210,6 @@ export const SHUTDOWN = 'system/shutdown';
 //
 // Action Creators
 
-export const fetchStatus = createThunk(FETCH_STATUS);
 export const fetchHealth = createThunk(FETCH_HEALTH);
 export const fetchDiskSpace = createThunk(FETCH_DISK_SPACE);
 
@@ -253,7 +244,6 @@ export const shutdown = createThunk(SHUTDOWN);
 // Action Handlers
 
 export const actionHandlers = handleThunks({
-  [FETCH_STATUS]: createFetchHandler('system.status', '/system/status'),
   [FETCH_HEALTH]: createFetchHandler('system.health', '/health'),
   [FETCH_DISK_SPACE]: createFetchHandler('system.diskSpace', '/diskspace'),
   [FETCH_TASK]: createFetchHandler('system.tasks', '/system/task'),

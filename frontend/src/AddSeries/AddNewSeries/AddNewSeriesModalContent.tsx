@@ -21,7 +21,7 @@ import SeriesPoster from 'Series/SeriesPoster';
 import { addSeries, setAddSeriesDefault } from 'Store/Actions/addSeriesActions';
 import createDimensionsSelector from 'Store/Selectors/createDimensionsSelector';
 import selectSettings from 'Store/Selectors/selectSettings';
-import useIsWindows from 'System/useIsWindows';
+import { useIsWindows } from 'System/Status/useSystemStatus';
 import { InputChanged } from 'typings/inputs';
 import translate from 'Utilities/String/translate';
 import styles from './AddNewSeriesModalContent.css';

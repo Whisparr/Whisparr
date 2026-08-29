@@ -7,16 +7,19 @@ import MenuContent from 'Components/Menu/MenuContent';
 import MenuItem from 'Components/Menu/MenuItem';
 import MenuItemSeparator from 'Components/Menu/MenuItemSeparator';
 import { align, icons, kinds } from 'Helpers/Props';
+import { useSystemStatusData } from 'System/Status/useSystemStatus';
 import translate from 'Utilities/String/translate';
 import styles from './PageHeaderActionsMenu.css';
 
 function PageHeaderActionsMenu(props) {
   const {
-    formsAuth,
     onKeyboardShortcutsPress,
     onRestartPress,
     onShutdownPress
   } = props;
+
+  const { authentication } = useSystemStatusData();
+  const formsAuth = authentication === 'forms';
 
   return (
     <div>
@@ -81,7 +84,6 @@ function PageHeaderActionsMenu(props) {
 }
 
 PageHeaderActionsMenu.propTypes = {
-  formsAuth: PropTypes.bool.isRequired,
   onKeyboardShortcutsPress: PropTypes.func.isRequired,
   onRestartPress: PropTypes.func.isRequired,
   onShutdownPress: PropTypes.func.isRequired

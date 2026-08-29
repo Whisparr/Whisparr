@@ -14,7 +14,7 @@ interface ErrorPageProps {
   tagsError?: Error;
   qualityProfilesError?: Error;
   uiSettingsError?: Error;
-  systemStatusError?: Error;
+  systemStatusError: ApiError | null;
 }
 
 function ErrorPage(props: ErrorPageProps) {

@@ -1,20 +1,8 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { createSelector } from 'reselect';
 import { restart, shutdown } from 'Store/Actions/systemActions';
 import PageHeaderActionsMenu from './PageHeaderActionsMenu';
-
-function createMapStateToProps() {
-  return createSelector(
-    (state) => state.system.status,
-    (status) => {
-      return {
-        formsAuth: status.item.authentication === 'forms'
-      };
-    }
-  );
-}
 
 const mapDispatchToProps = {
   restart,
@@ -49,8 +37,9 @@ class PageHeaderActionsMenuConnector extends Component {
 }
 
 PageHeaderActionsMenuConnector.propTypes = {
+  onKeyboardShortcutsPress: PropTypes.func.isRequired,
   restart: PropTypes.func.isRequired,
   shutdown: PropTypes.func.isRequired
 };
 
-export default connect(createMapStateToProps, mapDispatchToProps)(PageHeaderActionsMenuConnector);
+export default connect(null, mapDispatchToProps)(PageHeaderActionsMenuConnector);

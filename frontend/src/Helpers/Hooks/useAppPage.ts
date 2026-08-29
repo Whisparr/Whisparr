@@ -13,18 +13,20 @@ import {
   fetchQualityProfiles,
   fetchUISettings,
 } from 'Store/Actions/settingsActions';
-import { fetchStatus } from 'Store/Actions/systemActions';
 import { fetchTags } from 'Store/Actions/tagActions';
+import useSystemStatus from 'System/Status/useSystemStatus';
 import { ApiError } from 'Utilities/Fetch/fetchJson';
 
 const createErrorsSelector = ({
   indexerFlagsError,
   languagesError,
   translationsError,
+  systemStatusError,
 }: {
   indexerFlagsError: ApiError | null;
   languagesError: ApiError | null;
   translationsError: ApiError | null;
+  systemStatusError: ApiError | null;
 }) =>
   createSelector(
     (state: AppState) => state.series.error,
@@ -33,15 +35,13 @@ const createErrorsSelector = ({
     (state: AppState) => state.settings.ui.error,
     (state: AppState) => state.settings.qualityProfiles.error,
     (state: AppState) => state.settings.importLists.error,
-    (state: AppState) => state.system.status.error,
     (
       seriesError,
       customFiltersError,
       tagsError,
       uiSettingsError,
       qualityProfilesError,
-      importListsError,
-      systemStatusError
+      importListsError
     ) => {
       const hasError = !!(
         seriesError ||
@@ -86,8 +86,7 @@ const useAppPage = () => {
       state.tags.isPopulated &&
       state.settings.ui.isPopulated &&
       state.settings.qualityProfiles.isPopulated &&
-      state.settings.importLists.isPopulated &&
-      state.system.status.isPopulated
+      state.settings.importLists.isPopulated
   );
 
   const { isFetched: isIndexerFlagsFetched, error: indexerFlagsError } =
@@ -99,17 +98,22 @@ const useAppPage = () => {
   const { isFetched: isTranslationsFetched, error: translationsError } =
     useTranslations();
 
+  const { isFetched: isSystemStatusFetched, error: systemStatusError } =
+    useSystemStatus();
+
   const isPopulated =
     isReduxPopulated &&
     isIndexerFlagsFetched &&
     isLanguagesFetched &&
-    isTranslationsFetched;
+    isTranslationsFetched &&
+    isSystemStatusFetched;
 
   const { hasError, errors } = useSelector(
     createErrorsSelector({
       indexerFlagsError,
       languagesError,
       translationsError,
+      systemStatusError,
     })
   );
 
@@ -133,7 +137,6 @@ const useAppPage = () => {
     dispatch(fetchQualityProfiles());
     dispatch(fetchImportLists());
     dispatch(fetchUISettings());
-    dispatch(fetchStatus());
   }, [dispatch]);
 
   return useMemo(() => {

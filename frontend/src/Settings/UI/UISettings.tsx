@@ -12,13 +12,13 @@ import LoadingIndicator from 'Components/Loading/LoadingIndicator';
 import PageContent from 'Components/Page/PageContent';
 import PageContentBody from 'Components/Page/PageContentBody';
 import { inputTypes, kinds } from 'Helpers/Props';
+import { useFilteredLanguages } from 'Language/useLanguages';
 import SettingsToolbar from 'Settings/SettingsToolbar';
 import {
   fetchUISettings,
   saveUISettings,
   setUISettingsValue,
 } from 'Store/Actions/settingsActions';
-import createLanguagesSelector from 'Store/Selectors/createLanguagesSelector';
 import createSettingsSectionSelector from 'Store/Selectors/createSettingsSectionSelector';
 import themes from 'Styles/Themes';
 import { InputChanged } from 'typings/inputs';
@@ -80,17 +80,15 @@ function UISettings() {
   const dispatch = useDispatch();
 
   const {
-    items,
+    data: languageItems = [],
     isFetching: isLanguagesFetching,
-    isPopulated: isLanguagesPopulated,
+    isFetched: isLanguagesPopulated,
     error: languagesError,
-  } = useSelector(
-    createLanguagesSelector({
-      Any: true,
-      Original: true,
-      Unknown: true,
-    })
-  );
+  } = useFilteredLanguages({
+    includeAny: true,
+    includeOriginal: true,
+    includeUnknown: true,
+  });
 
   const {
     isFetching: isSettingsFetching,
@@ -109,13 +107,13 @@ function UISettings() {
   const error = languagesError || settingsError;
 
   const languages = useMemo(() => {
-    return items.map((item) => {
+    return languageItems.map((item) => {
       return {
         key: item.id,
         value: item.name,
       };
     });
-  }, [items]);
+  }, [languageItems]);
 
   const themeOptions = Object.keys(themes).map((theme) => ({
     key: theme,

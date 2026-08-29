@@ -98,7 +98,7 @@ export interface FilterBuilderRowValueProps<
   filterValue: V[];
   sectionItems: T[];
   selectedFilterBuilderProp: FilterBuilderProp<T>;
-  tagList: FilterBuilderTag<V>[];
+  tagList: ReadonlyArray<FilterBuilderTag<V>>;
   onChange: InputOnChange<V[]>;
 }
 

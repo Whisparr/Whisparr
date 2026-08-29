@@ -17,7 +17,6 @@ import ImportList from 'typings/ImportList';
 import ImportListExclusion from 'typings/ImportListExclusion';
 import ImportListOptionsSettings from 'typings/ImportListOptionsSettings';
 import Indexer from 'typings/Indexer';
-import IndexerFlag from 'typings/IndexerFlag';
 import Notification from 'typings/Notification';
 import QualityDefinition from 'typings/QualityDefinition';
 import QualityProfile from 'typings/QualityProfile';
@@ -153,7 +152,6 @@ export interface RemotePathMappingsAppState
   pendingChanges: Partial<RemotePathMapping>;
 }
 
-export type IndexerFlagSettingsAppState = AppSectionState<IndexerFlag>;
 export type LanguageSettingsAppState = AppSectionState<Language>;
 export type UiSettingsAppState = AppSectionItemState<UiSettings>;
 
@@ -174,7 +172,6 @@ interface SettingsAppState {
   importListExclusions: ImportListExclusionsSettingsAppState;
   importListOptions: ImportListOptionsSettingsAppState;
   importLists: ImportListAppState;
-  indexerFlags: IndexerFlagSettingsAppState;
   indexerOptions: IndexerOptionsAppState;
   indexers: IndexerAppState;
   languages: LanguageSettingsAppState;

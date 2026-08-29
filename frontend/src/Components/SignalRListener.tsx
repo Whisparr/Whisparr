@@ -272,7 +272,7 @@ function SignalRListener() {
     }
 
     if (name === 'system/task') {
-      dispatch(fetchCommands());
+      queryClient.invalidateQueries({ queryKey: ['/system/task'] });
       return;
     }
 

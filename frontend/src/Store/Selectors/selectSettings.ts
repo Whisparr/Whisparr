@@ -12,7 +12,7 @@ import {
 } from 'typings/pending';
 import isEmpty from 'Utilities/Object/isEmpty';
 
-interface ValidationFailures {
+export interface ValidationFailures {
   errors: ValidationError[];
   warnings: ValidationWarning[];
 }

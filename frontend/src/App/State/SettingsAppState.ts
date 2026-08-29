@@ -7,7 +7,6 @@ import AppSectionState, {
   AppSectionSchemaState,
   PagedAppSectionState,
 } from 'App/State/AppSectionState';
-import Language from 'Language/Language';
 import AutoTagging, { AutoTaggingSpecification } from 'typings/AutoTagging';
 import CustomFormat from 'typings/CustomFormat';
 import CustomFormatSpecification from 'typings/CustomFormatSpecification';
@@ -152,7 +151,6 @@ export interface RemotePathMappingsAppState
   pendingChanges: Partial<RemotePathMapping>;
 }
 
-export type LanguageSettingsAppState = AppSectionState<Language>;
 export type UiSettingsAppState = AppSectionItemState<UiSettings>;
 
 interface SettingsAppState {
@@ -174,7 +172,6 @@ interface SettingsAppState {
   importLists: ImportListAppState;
   indexerOptions: IndexerOptionsAppState;
   indexers: IndexerAppState;
-  languages: LanguageSettingsAppState;
   mediaManagement: MediaManagementAppState;
   notifications: NotificationAppState;
   qualityDefinitions: QualityDefinitionsAppState;

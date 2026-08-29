@@ -16,7 +16,6 @@ import MessagesAppState from './MessagesAppState';
 import OAuthAppState from './OAuthAppState';
 import OrganizePreviewAppState from './OrganizePreviewAppState';
 import ParseAppState from './ParseAppState';
-import PathsAppState from './PathsAppState';
 import ProviderOptionsAppState from './ProviderOptionsAppState';
 import QueueAppState from './QueueAppState';
 import ReleasesAppState from './ReleasesAppState';
@@ -95,7 +94,6 @@ interface AppState {
   oAuth: OAuthAppState;
   organizePreview: OrganizePreviewAppState;
   parse: ParseAppState;
-  paths: PathsAppState;
   providerOptions: ProviderOptionsAppState;
   queue: QueueAppState;
   releases: ReleasesAppState;

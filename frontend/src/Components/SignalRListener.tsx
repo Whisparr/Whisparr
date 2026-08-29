@@ -3,6 +3,7 @@ import {
   HubConnectionBuilder,
   LogLevel,
 } from '@microsoft/signalr';
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ModelBase from 'App/ModelBase';
@@ -19,7 +20,6 @@ import { fetchQueue, fetchQueueDetails } from 'Store/Actions/queueActions';
 import { fetchRootFolders } from 'Store/Actions/rootFolderActions';
 import { fetchSeries } from 'Store/Actions/seriesActions';
 import { fetchQualityDefinitions } from 'Store/Actions/settingsActions';
-import { fetchHealth } from 'Store/Actions/systemActions';
 import { fetchTagDetails, fetchTags } from 'Store/Actions/tagActions';
 import { repopulatePage } from 'Utilities/pagePopulator';
 import SignalRLogger from 'Utilities/SignalRLogger';
@@ -37,6 +37,7 @@ interface SignalRMessage {
 
 function SignalRListener() {
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
 
   const isQueuePopulated = useSelector(
     (state: AppState) => state.queue.paged.isPopulated
@@ -179,7 +180,7 @@ function SignalRListener() {
     }
 
     if (name === 'health') {
-      dispatch(fetchHealth());
+      queryClient.invalidateQueries({ queryKey: ['/health'] });
       return;
     }
 
@@ -271,7 +272,7 @@ function SignalRListener() {
     }
 
     if (name === 'system/task') {
-      dispatch(fetchCommands());
+      queryClient.invalidateQueries({ queryKey: ['/system/task'] });
       return;
     }
 

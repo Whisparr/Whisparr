@@ -1,18 +1,16 @@
 import React, { useEffect, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import AppState from 'App/State/AppState';
 import PageSidebarStatus from 'Components/Page/Sidebar/PageSidebarStatus';
 import usePrevious from 'Helpers/Hooks/usePrevious';
-import { fetchHealth } from 'Store/Actions/systemActions';
 import translate from 'Utilities/String/translate';
-import createHealthSelector from './createHealthSelector';
+import useHealth from './useHealth';
 
 function HealthStatus() {
-  const dispatch = useDispatch();
   const { isConnected, isReconnecting } = useSelector(
     (state: AppState) => state.app
   );
-  const { isPopulated, items } = useSelector(createHealthSelector());
+  const { data, refetch } = useHealth();
 
   const wasReconnecting = usePrevious(isReconnecting);
 
@@ -20,7 +18,7 @@ function HealthStatus() {
     let errors = false;
     let warnings = false;
 
-    items.forEach((item) => {
+    data.forEach((item) => {
       if (item.type === 'error') {
         errors = true;
       }
@@ -31,23 +29,17 @@ function HealthStatus() {
     });
 
     return {
-      count: items.length,
+      count: data.length,
       errors,
       warnings,
     };
-  }, [items]);
-
-  useEffect(() => {
-    if (!isPopulated) {
-      dispatch(fetchHealth());
-    }
-  }, [isPopulated, dispatch]);
+  }, [data]);
 
   useEffect(() => {
     if (isConnected && wasReconnecting) {
-      dispatch(fetchHealth());
+      refetch();
     }
-  }, [isConnected, wasReconnecting, dispatch]);
+  }, [isConnected, wasReconnecting, refetch]);
 
   return (
     <PageSidebarStatus

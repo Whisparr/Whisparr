@@ -85,9 +85,9 @@ function UISettings() {
     isFetched: isLanguagesPopulated,
     error: languagesError,
   } = useFilteredLanguages({
-    includeAny: true,
-    includeOriginal: true,
-    includeUnknown: true,
+    Any: true,
+    Original: true,
+    Unknown: true,
   });
 
   const {
@@ -270,6 +270,8 @@ function UISettings() {
                   name="uiLanguage"
                   helpText={translate('UiLanguageHelpText')}
                   helpTextWarning={translate('BrowserReloadRequired')}
+                  includeOriginal={false}
+                  includeUnknown={false}
                   onChange={handleInputChange}
                   {...settings.uiLanguage}
                   errors={

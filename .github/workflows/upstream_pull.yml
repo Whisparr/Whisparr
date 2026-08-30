@@ -22,11 +22,18 @@ name: Upstream Pull
 # 1550 conflicted files and reintroduces anime, season, Trakt and TVDB code that
 # was removed on purpose.
 #
-# Requires UPSTREAM_PULL_TOKEN -- a PAT with `repo` scope. GITHUB_TOKEN will not
-# do: pull requests it creates do not trigger other workflows, so build.yml
-# would never run and every PR would arrive without CI. That is how the old
-# bot's PR #376 died ("came in before the azure pipeline was updated, and can't
-# have tests re-run").
+# Authenticates as a GitHub App, so issues and pull requests are authored by the
+# app rather than by whoever owns a token -- the same way the old Servarr app
+# appeared here.
+#
+# It has to be an App (or a PAT) rather than GITHUB_TOKEN: pull requests created
+# with GITHUB_TOKEN do not trigger other workflows, so build.yml would never run
+# and every PR would arrive without CI. That is how the old bot's PR #376 died
+# ("came in before the azure pipeline was updated, and can't have tests
+# re-run"). App installation tokens do not have that restriction.
+#
+# Needs SYNC_APP_ID and SYNC_APP_PRIVATE_KEY, and the app installed on this
+# repository with Contents, Issues and Pull requests read/write.
 
 on:
   schedule:
@@ -63,11 +70,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Mint an app token
+        id: app
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.SYNC_APP_ID }}
+          private-key: ${{ secrets.SYNC_APP_PRIVATE_KEY }}
+
       - name: Checkout
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
-          token: ${{ secrets.UPSTREAM_PULL_TOKEN }}
+          token: ${{ steps.app.outputs.token }}
 
       - name: Fetch upstream
         run: |
@@ -107,7 +121,7 @@ jobs:
 
       - name: Track upstream commits
         env:
-          GH_TOKEN: ${{ secrets.UPSTREAM_PULL_TOKEN }}
+          GH_TOKEN: ${{ steps.app.outputs.token }}
           POINT: ${{ steps.sync.outputs.point }}
         run: |
           # Guard hard. An empty POINT makes the range `..upstream`, which git

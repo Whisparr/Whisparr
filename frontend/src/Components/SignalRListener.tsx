@@ -42,6 +42,11 @@ function SignalRListener() {
   const isQueuePopulated = useSelector(
     (state: AppState) => state.queue.paged.isPopulated
   );
+  const isQueuePopulatedRef = useRef(isQueuePopulated);
+
+  useEffect(() => {
+    isQueuePopulatedRef.current = isQueuePopulated;
+  }, [isQueuePopulated]);
 
   const connection = useRef<HubConnection | null>(null);
 
@@ -236,7 +241,7 @@ function SignalRListener() {
     }
 
     if (name === 'queue') {
-      if (isQueuePopulated) {
+      if (isQueuePopulatedRef.current) {
         dispatch(fetchQueue());
       }
 

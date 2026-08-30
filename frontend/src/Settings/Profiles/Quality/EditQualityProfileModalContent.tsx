@@ -735,11 +735,7 @@ function EditQualityProfileModalContent({
         {id ? (
           <div
             className={styles.deleteButtonContainer}
-            title={
-              isInUse
-                ? translate('QualityProfileInUseSeriesListCollection')
-                : undefined
-            }
+            title={isInUse ? translate('QualityProfileInUse') : undefined}
           >
             <Button
               kind={kinds.DANGER}

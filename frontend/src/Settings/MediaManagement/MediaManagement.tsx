@@ -215,7 +215,7 @@ function MediaManagement() {
                   <FormInputGroup
                     type={inputTypes.CHECK}
                     name="deleteEmptyFolders"
-                    helpText={translate('DeleteEmptySeriesFoldersHelpText')}
+                    helpText={translate('DeleteEmptyFoldersHelpText')}
                     onChange={handleInputChange}
                     {...settings.deleteEmptyFolders}
                   />
@@ -311,7 +311,7 @@ function MediaManagement() {
                   <FormInputGroup
                     type={inputTypes.CHECK}
                     name="copyUsingHardlinks"
-                    helpText={translate('CopyUsingHardlinksSeriesHelpText')}
+                    helpText={translate('CopyUsingHardlinksHelpText')}
                     helpTextWarning={translate(
                       'CopyUsingHardlinksHelpTextWarning'
                     )}
@@ -360,7 +360,7 @@ function MediaManagement() {
                   <FormInputGroup
                     type={inputTypes.CHECK}
                     name="importExtraFiles"
-                    helpText={translate('ImportExtraFilesEpisodeHelpText')}
+                    helpText={translate('ImportExtraFilesHelpText')}
                     onChange={handleInputChange}
                     {...settings.importExtraFiles}
                   />
@@ -471,7 +471,7 @@ function MediaManagement() {
                 <FormInputGroup
                   type={inputTypes.SELECT}
                   name="rescanAfterRefresh"
-                  helpText={translate('RescanAfterRefreshSeriesHelpText')}
+                  helpText={translate('RescanAfterRefreshHelpText')}
                   helpTextWarning={translate(
                     'RescanAfterRefreshHelpTextWarning'
                   )}

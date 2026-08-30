@@ -90,7 +90,7 @@ function Notification({
       ) : null}
 
       {supportsOnUpgrade && onDownload && onUpgrade ? (
-        <Label kind={kinds.SUCCESS}>{translate('OnFileUpgrade')}</Label>
+        <Label kind={kinds.SUCCESS}>{translate('OnUpgrade')}</Label>
       ) : null}
 
       {supportsOnImportComplete && onImportComplete ? (

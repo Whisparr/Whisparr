@@ -344,7 +344,7 @@ function InteractiveImportModalContent(
       },
       {
         key: 'season',
-        value: translate('SelectSeason'),
+        value: translate('SelectYear'),
         disabled: seasonSelectDisabled,
       },
       {

@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import AppState from 'App/State/AppState';
 import Alert from 'Components/Alert';
-import FieldSet from 'Components/FieldSet';
 import Button from 'Components/Link/Button';
 import LoadingIndicator from 'Components/Loading/LoadingIndicator';
 import ModalBody from 'Components/Modal/ModalBody';
@@ -35,7 +34,7 @@ function AddNotificationModalContent({
 
   return (
     <ModalContent onModalClose={onModalClose}>
-      <ModalHeader>{translate('AddNotification')}</ModalHeader>
+      <ModalHeader>{translate('AddConnection')}</ModalHeader>
 
       <ModalBody>
         {isSchemaFetching ? <LoadingIndicator /> : null}
@@ -51,20 +50,18 @@ function AddNotificationModalContent({
               <div>{translate('SupportedNotificationsMoreInfo')}</div>
             </Alert>
 
-            <FieldSet legend={translate('Email')}>
-              <div className={styles.notifications}>
-                {schema.map((notification) => {
-                  return (
-                    <AddNotificationItem
-                      key={notification.implementation}
-                      {...notification}
-                      implementation={notification.implementation}
-                      onNotificationSelect={onNotificationSelect}
-                    />
-                  );
-                })}
-              </div>
-            </FieldSet>
+            <div className={styles.notifications}>
+              {schema.map((notification) => {
+                return (
+                  <AddNotificationItem
+                    key={notification.implementation}
+                    {...notification}
+                    implementation={notification.implementation}
+                    onNotificationSelect={onNotificationSelect}
+                  />
+                );
+              })}
+            </div>
           </div>
         ) : null}
       </ModalBody>

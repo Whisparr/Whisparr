@@ -124,7 +124,7 @@ function SeriesIndexSortMenu(props: SeriesIndexSortMenuProps) {
           sortDirection={sortDirection}
           onPress={onSortSelect}
         >
-          {translate('LatestSeason')}
+          {translate('LatestYear')}
         </SortMenuItem>
 
         <SortMenuItem

@@ -87,7 +87,7 @@ function CalendarLinkModalContent({
               type={inputTypes.CHECK}
               name="unmonitored"
               value={unmonitored}
-              helpText={translate('ICalIncludeUnmonitoredEpisodesHelpText')}
+              helpText={translate('ICalIncludeUnmonitoredHelpText')}
               onChange={handleInputChange}
             />
           </FormGroup>
@@ -123,7 +123,7 @@ function CalendarLinkModalContent({
               type={inputTypes.SERIES_TAG}
               name="tags"
               value={tags}
-              helpText={translate('ICalTagsSeriesHelpText')}
+              helpText={translate('ICalTagsHelpText')}
               onChange={handleInputChange}
             />
           </FormGroup>

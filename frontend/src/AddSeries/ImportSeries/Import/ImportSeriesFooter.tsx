@@ -248,7 +248,7 @@ function ImportSeriesFooter() {
             isDisabled={!selectedCount || isLookingUpSeries}
             onPress={handleImportPress}
           >
-            {translate('ImportCountSeries', { selectedCount })}
+            {translate('ImportCountSites', { selectedCount })}
           </SpinnerButton>
 
           {isLookingUpSeries ? (

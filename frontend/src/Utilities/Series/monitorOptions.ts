@@ -26,18 +26,6 @@ const monitorOptions = [
     },
   },
   {
-    key: 'recent',
-    get value() {
-      return translate('MonitorRecentEpisodes');
-    },
-  },
-  {
-    key: 'pilot',
-    get value() {
-      return translate('MonitorPilotEpisode');
-    },
-  },
-  {
     key: 'firstSeason',
     get value() {
       return translate('MonitorFirstYear');
@@ -47,18 +35,6 @@ const monitorOptions = [
     key: 'latestSeason',
     get value() {
       return translate('MonitorLatestYear');
-    },
-  },
-  {
-    key: 'monitorSpecials',
-    get value() {
-      return translate('MonitorSpecialEpisodes');
-    },
-  },
-  {
-    key: 'unmonitorSpecials',
-    get value() {
-      return translate('UnmonitorSpecialEpisodes');
     },
   },
   {

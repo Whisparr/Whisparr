@@ -84,7 +84,7 @@ function ImportSeries() {
 
   return (
     <SelectProvider items={items}>
-      <PageContent title={translate('ImportSeries')}>
+      <PageContent title={translate('ImportSites')}>
         <PageContentBody ref={scrollerRef}>
           {rootFoldersFetching ? <LoadingIndicator /> : null}
 
@@ -99,7 +99,7 @@ function ImportSeries() {
           rootFoldersPopulated &&
           !unmappedFolders.length ? (
             <Alert kind={kinds.INFO}>
-              {translate('AllSeriesInRootFolderHaveBeenImported', { path })}
+              {translate('AllSitesInRootFolderHaveBeenImported', { path })}
             </Alert>
           ) : null}
 

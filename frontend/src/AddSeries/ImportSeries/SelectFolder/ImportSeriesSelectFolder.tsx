@@ -35,10 +35,10 @@ function ImportSeriesSelectFolder() {
   const wasSaving = usePrevious(isSaving);
 
   const hasRootFolders = items.length > 0;
-  const goodFolderExample = isWindows ? 'C:\\tv shows' : '/tv shows';
+  const goodFolderExample = isWindows ? 'C:\\sites' : '/sites';
   const badFolderExample = isWindows
-    ? 'C:\\tv shows\\the simpsons'
-    : '/tv shows/the simpsons';
+    ? 'C:\\sites\\some site'
+    : '/sites/some site';
 
   const handleAddNewRootFolderPress = useCallback(() => {
     setIsAddNewRootFolderModalOpen(true);
@@ -72,7 +72,7 @@ function ImportSeriesSelectFolder() {
   }, [isSaving, wasSaving, saveError, items]);
 
   return (
-    <PageContent title={translate('ImportSeries')}>
+    <PageContent title={translate('ImportSites')}>
       <PageContentBody>
         {isFetching && !isPopulated ? <LoadingIndicator /> : null}
 
@@ -83,7 +83,7 @@ function ImportSeriesSelectFolder() {
         {!error && isPopulated && (
           <div>
             <div className={styles.header}>
-              {translate('LibraryImportSeriesHeader')}
+              {translate('LibraryImportHeader')}
             </div>
 
             <div className={styles.tips}>
@@ -91,14 +91,12 @@ function ImportSeriesSelectFolder() {
               <ul>
                 <li className={styles.tip}>
                   <InlineMarkdown
-                    data={translate(
-                      'LibraryImportTipsQualityInEpisodeFilename'
-                    )}
+                    data={translate('LibraryImportTipsQualityInFilename')}
                   />
                 </li>
                 <li className={styles.tip}>
                   <InlineMarkdown
-                    data={translate('LibraryImportTipsSeriesUseRootFolder', {
+                    data={translate('LibraryImportTipsUseRootFolder', {
                       goodFolderExample,
                       badFolderExample,
                     })}

@@ -1053,7 +1053,7 @@
   "LibraryImportHeader": "Import sites you already have",
   "LibraryImportTips": "Some tips to ensure the import goes smoothly:",
   "LibraryImportTipsDontUseDownloadsFolder": "Do not use for importing downloads from your download client, this is only for existing organized libraries, not unsorted files.",
-  "LibraryImportTipsQualityInFilename": "Make sure that your files include the quality in their filenames. eg. `episode.s02e15.bluray.mkv`",
+  "LibraryImportTipsQualityInFilename": "Make sure that your files include the quality in their filenames. eg. `some site - 2024-01-15 - scene title bluray-1080p.mkv`",
   "LibraryImportTipsUseRootFolder": "Point {appName} to the folder containing all of your scenes, not a specific one. eg. \"`{goodFolderExample}`\" and not \"`{badFolderExample}`\". Additionally, each site must be in its own folder within the root/library folder.",
   "Links": "Links",
   "ListExclusionsLoadError": "Unable to load List Exclusions",

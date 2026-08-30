@@ -342,7 +342,7 @@ function EditDelayProfileModalContent({
                   type={inputTypes.TAG}
                   name="tags"
                   {...tags}
-                  helpText={translate('DelayProfileSeriesTagsHelpText')}
+                  helpText={translate('DelayProfileTagsHelpText')}
                   onChange={onInputChange}
                 />
               </FormGroup>

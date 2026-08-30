@@ -85,7 +85,7 @@ function NotificationEventItems({
               <FormInputGroup
                 type={inputTypes.CHECK}
                 name="onUpgrade"
-                helpText={translate('OnFileUpgrade')}
+                helpText={translate('OnUpgrade')}
                 isDisabled={!supportsOnUpgrade.value}
                 {...onUpgrade}
                 onChange={onInputChange}

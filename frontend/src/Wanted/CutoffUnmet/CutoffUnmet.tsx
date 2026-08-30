@@ -333,14 +333,13 @@ function CutoffUnmet() {
             <ConfirmModal
               isOpen={isConfirmSearchAllModalOpen}
               kind={kinds.DANGER}
-              title={translate('SearchForCutoffUnmetEpisodes')}
+              title={translate('SearchForCutoffUnmet')}
               message={
                 <div>
                   <div>
-                    {translate(
-                      'SearchForCutoffUnmetEpisodesConfirmationCount',
-                      { totalRecords }
-                    )}
+                    {translate('SearchForCutoffUnmetConfirmationCount', {
+                      totalRecords,
+                    })}
                   </div>
                   <div>{translate('MassSearchCancelWarning')}</div>
                 </div>

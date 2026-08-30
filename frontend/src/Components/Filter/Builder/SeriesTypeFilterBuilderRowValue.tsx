@@ -6,21 +6,15 @@ import FilterBuilderRowValue, {
 
 const seriesTypeList = [
   {
-    id: 'anime',
-    get name() {
-      return translate('Anime');
-    },
-  },
-  {
-    id: 'daily',
-    get name() {
-      return translate('Daily');
-    },
-  },
-  {
     id: 'standard',
     get name() {
-      return translate('Standard');
+      return translate('Scenes');
+    },
+  },
+  {
+    id: 'jav',
+    get name() {
+      return translate('Jav');
     },
   },
 ];

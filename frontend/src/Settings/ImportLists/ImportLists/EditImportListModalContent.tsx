@@ -154,7 +154,7 @@ function EditImportListModalContent({
               <FormInputGroup
                 type={inputTypes.CHECK}
                 name="enableAutomaticAdd"
-                helpText={translate('EnableAutomaticAddSeriesHelpText')}
+                helpText={translate('EnableAutomaticAddHelpText')}
                 {...enableAutomaticAdd}
                 onChange={handleInputChange}
               />
@@ -200,12 +200,12 @@ function EditImportListModalContent({
 
             <FormGroup>
               <FormLabel>
-                {translate('MonitorNewSeasons')}
+                {translate('MonitorNewScenes')}
                 <Popover
                   anchor={
                     <Icon className={styles.labelIcon} name={icons.INFO} />
                   }
-                  title={translate('MonitorNewSeasons')}
+                  title={translate('MonitorNewScenes')}
                   body={<SeriesMonitorNewItemsOptionsPopoverContent />}
                   position={tooltipPositions.RIGHT}
                 />
@@ -214,7 +214,7 @@ function EditImportListModalContent({
               <FormInputGroup
                 type={inputTypes.MONITOR_NEW_ITEMS_SELECT}
                 name="monitorNewItems"
-                helpText={translate('MonitorNewSeasonsHelpText')}
+                helpText={translate('MonitorNewScenesHelpText')}
                 {...monitorNewItems}
                 onChange={handleInputChange}
               />
@@ -246,7 +246,7 @@ function EditImportListModalContent({
             </FormGroup>
 
             <FormGroup>
-              <FormLabel>{translate('SonarrTags')}</FormLabel>
+              <FormLabel>{translate('WhisparrTags')}</FormLabel>
 
               <FormInputGroup
                 type={inputTypes.TAG}

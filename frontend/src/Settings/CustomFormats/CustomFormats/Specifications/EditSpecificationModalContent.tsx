@@ -85,11 +85,7 @@ function EditSpecificationModalContent({
           validationErrors={validationErrors}
           validationWarnings={validationWarnings}
         >
-          {fields?.some(
-            (x) =>
-              x.label ===
-              translate('CustomFormatsSpecificationRegularExpression')
-          ) ? (
+          {fields?.some((x) => x.label === translate('RegularExpression')) ? (
             <Alert kind={kinds.INFO}>
               <div>
                 <InlineMarkdown

@@ -130,7 +130,7 @@ export const defaultState = {
     },
     {
       name: 'latestSeason',
-      label: () => translate('LatestSeason'),
+      label: () => translate('LatestYear'),
       isSortable: true,
       isVisible: false
     },

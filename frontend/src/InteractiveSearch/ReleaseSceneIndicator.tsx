@@ -198,7 +198,7 @@ function ReleaseSceneIndicator(props: ReleaseSceneIndicatorProps) {
         <DescriptionListItem
           titleClassName={styles.title}
           descriptionClassName={styles.description}
-          title={translate('TheTvdb')}
+          title={translate('TheTpdb')}
           data={mappedNumber ?? 'unknown'}
         />
       )}

@@ -225,7 +225,7 @@ function AddNewSeriesModalContent({
                   onChange={handleInputChange}
                   {...seriesTypeSetting}
                   value={seriesType}
-                  helpText={translate('SeriesTypesHelpText')}
+                  helpText={translate('SeriesTypeHelpText')}
                 />
               </FormGroup>
 

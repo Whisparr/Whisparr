@@ -192,7 +192,7 @@ function InteractiveSearch({ type, searchPayload }: InteractiveSearchProps) {
         <div>
           {errorMessage ? (
             <>
-              {translate('InteractiveSearchResultsSeriesFailedErrorMessage', {
+              {translate('InteractiveSearchResultsFailedErrorMessage', {
                 message:
                   errorMessage.charAt(0).toLowerCase() + errorMessage.slice(1),
               })}

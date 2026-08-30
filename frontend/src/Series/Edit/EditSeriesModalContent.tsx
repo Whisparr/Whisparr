@@ -144,7 +144,7 @@ function EditSeriesModalContent({
             <FormInputGroup
               type={inputTypes.CHECK}
               name="monitored"
-              helpText={translate('MonitoredEpisodesHelpText')}
+              helpText={translate('MonitoredHelpText')}
               {...settings.monitored}
               onChange={handleInputChange}
             />
@@ -152,10 +152,10 @@ function EditSeriesModalContent({
 
           <FormGroup size={sizes.MEDIUM}>
             <FormLabel>
-              {translate('MonitorNewSeasons')}
+              {translate('MonitorNewScenes')}
               <Popover
                 anchor={<Icon className={styles.labelIcon} name={icons.INFO} />}
-                title={translate('MonitorNewSeasons')}
+                title={translate('MonitorNewScenes')}
                 body={<SeriesMonitorNewItemsOptionsPopoverContent />}
                 position={tooltipPositions.RIGHT}
               />
@@ -164,7 +164,7 @@ function EditSeriesModalContent({
             <FormInputGroup
               type={inputTypes.MONITOR_NEW_ITEMS_SELECT}
               name="monitorNewItems"
-              helpText={translate('MonitorNewSeasonsHelpText')}
+              helpText={translate('MonitorNewScenesHelpText')}
               {...settings.monitorNewItems}
               onChange={handleInputChange}
             />
@@ -200,7 +200,7 @@ function EditSeriesModalContent({
               type={inputTypes.SERIES_TYPE_SELECT}
               name="seriesType"
               {...settings.seriesType}
-              helpText={translate('SeriesTypesHelpText')}
+              helpText={translate('SeriesTypeHelpText')}
               onChange={handleInputChange}
             />
           </FormGroup>

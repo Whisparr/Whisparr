@@ -184,8 +184,8 @@ jobs:
                 echo "| \`${sha:0:9}\` | $conflicts | issue (dry run) | $subject |" >> "$GITHUB_STEP_SUMMARY"
               else
                 url=$(gh issue create --title "Pull Sonarr commit '$subject'" \
-                        --body-file /tmp/issue-body.md --label 'sonarr-pull' --label 'conflict') \
-                  || { echo "issue create failed for $sha" >&2; url='(failed)'; }
+                        --body-file /tmp/issue-body.md --label 'sonarr-pull' --label 'conflict' 2>/tmp/gh-err) \
+                  || { echo "issue create failed for $sha:" >&2; cat /tmp/gh-err >&2; url='(failed)'; }
                 echo "| \`${sha:0:9}\` | $conflicts | $url | $subject |" >> "$GITHUB_STEP_SUMMARY"
               fi
 
@@ -206,8 +206,8 @@ jobs:
             fi
 
             issue=$(gh issue create --title "Pull Sonarr commit '$subject'" \
-                      --body-file /tmp/issue-body.md --label 'sonarr-pull' --label 'no-conflict') \
-              || { echo "issue create failed for $sha" >&2; issue=''; }
+                      --body-file /tmp/issue-body.md --label 'sonarr-pull' --label 'no-conflict' 2>/tmp/gh-err) \
+              || { echo "issue create failed for $sha:" >&2; cat /tmp/gh-err >&2; issue=''; }
 
             git push -q --force-with-lease origin "$branch"
 
@@ -236,7 +236,7 @@ jobs:
 
             url=$(gh pr create --base "$BASE" --head "$branch" \
                     --title "$title" --body-file /tmp/pr-body.md \
-                    --label 'sonarr-pull') || { echo "pr create failed for $sha" >&2; url='(failed to open)'; }
+                    --label 'sonarr-pull' 2>/tmp/gh-err) || { echo "pr create failed for $sha" >&2; cat /tmp/gh-err >&2; url='(failed to open)'; }
 
             git checkout -q --force "$BASE"
 

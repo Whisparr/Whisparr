@@ -211,7 +211,7 @@ function SeriesDetailsSeason({
       dispatch(
         toggleEpisodesMonitored({
           episodeIds,
-          value,
+          monitored: value,
         })
       );
     },

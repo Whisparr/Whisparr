@@ -9,12 +9,8 @@ export type SeriesMonitor =
   | 'future'
   | 'missing'
   | 'existing'
-  | 'recent'
-  | 'pilot'
   | 'firstSeason'
-  | 'lastSeason'
-  | 'monitorSpecials'
-  | 'unmonitorSpecials'
+  | 'latestSeason'
   | 'none';
 
 export type MonitorNewItems = 'all' | 'none';

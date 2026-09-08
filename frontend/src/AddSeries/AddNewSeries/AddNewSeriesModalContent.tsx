@@ -16,6 +16,7 @@ import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import Popover from 'Components/Tooltip/Popover';
+import usePrevious from 'Helpers/Hooks/usePrevious';
 import { icons, inputTypes, kinds, tooltipPositions } from 'Helpers/Props';
 import SeriesPoster from 'Series/SeriesPoster';
 import { addSeries, setAddSeriesDefault } from 'Store/Actions/addSeriesActions';
@@ -26,29 +27,23 @@ import { InputChanged } from 'typings/inputs';
 import translate from 'Utilities/String/translate';
 import styles from './AddNewSeriesModalContent.css';
 
-export interface AddNewSeriesModalContentProps
-  extends Pick<
-    AddSeries,
-    'tvdbId' | 'title' | 'year' | 'overview' | 'images' | 'folder'
-  > {
+export interface AddNewSeriesModalContentProps {
+  series: AddSeries;
   initialSeriesType: string;
   onModalClose: () => void;
 }
 
 function AddNewSeriesModalContent({
-  tvdbId,
-  title,
-  year,
-  overview,
-  images,
-  folder,
+  series,
   initialSeriesType,
   onModalClose,
 }: AddNewSeriesModalContentProps) {
+  const { title, year, overview, images, folder } = series;
   const dispatch = useDispatch();
-  const { isAdding, addError, defaults } = useSelector(
+  const { isAdding, isAdded, addError, defaults } = useSelector(
     (state: AppState) => state.addSeries
   );
+  const wasAdding = usePrevious(isAdding);
   const { isSmallScreen } = useSelector(createDimensionsSelector());
   const isWindows = useIsWindows();
 
@@ -68,7 +63,6 @@ function AddNewSeriesModalContent({
     rootFolderPath,
     searchForCutoffUnmetEpisodes,
     searchForMissingEpisodes,
-    seasonFolder,
     seriesType: seriesTypeSetting,
     tags,
   } = settings;
@@ -90,24 +84,22 @@ function AddNewSeriesModalContent({
   const handleAddSeriesPress = useCallback(() => {
     dispatch(
       addSeries({
-        tvdbId,
+        series,
         rootFolderPath: rootFolderPath.value,
         monitor: monitor.value,
         qualityProfileId: qualityProfileId.value,
         seriesType,
-        seasonFolder: seasonFolder.value,
         searchForMissingEpisodes: searchForMissingEpisodes.value,
         searchForCutoffUnmetEpisodes: searchForCutoffUnmetEpisodes.value,
         tags: tags.value,
       })
     );
   }, [
-    tvdbId,
+    series,
     seriesType,
     rootFolderPath,
     monitor,
     qualityProfileId,
-    seasonFolder,
     searchForMissingEpisodes,
     searchForCutoffUnmetEpisodes,
     tags,
@@ -117,6 +109,12 @@ function AddNewSeriesModalContent({
   useEffect(() => {
     setSeriesType(seriesTypeSetting.value);
   }, [seriesTypeSetting]);
+
+  useEffect(() => {
+    if (wasAdding && !isAdding && isAdded) {
+      onModalClose();
+    }
+  }, [wasAdding, isAdding, isAdded, onModalClose]);
 
   return (
     <ModalContent onModalClose={onModalClose}>
@@ -226,17 +224,6 @@ function AddNewSeriesModalContent({
                   {...seriesTypeSetting}
                   value={seriesType}
                   helpText={translate('SeriesTypeHelpText')}
-                />
-              </FormGroup>
-
-              <FormGroup>
-                <FormLabel>{translate('SeasonFolder')}</FormLabel>
-
-                <FormInputGroup
-                  type={inputTypes.CHECK}
-                  name="seasonFolder"
-                  onChange={handleInputChange}
-                  {...seasonFolder}
                 />
               </FormGroup>
 

@@ -18,22 +18,23 @@ import styles from './AddNewSeriesSearchResult.css';
 
 type AddNewSeriesSearchResultProps = AddSeries;
 
-function AddNewSeriesSearchResult({
-  tvdbId,
-  titleSlug,
-  title,
-  year,
-  network,
-  originalLanguage,
-  genres = [],
-  status,
-  statistics = {} as Statistics,
-  ratings,
-  folder,
-  overview,
-  seriesType,
-  images,
-}: AddNewSeriesSearchResultProps) {
+function AddNewSeriesSearchResult(props: AddNewSeriesSearchResultProps) {
+  const {
+    tvdbId,
+    titleSlug,
+    title,
+    year,
+    network,
+    originalLanguage,
+    genres = [],
+    status,
+    statistics = {} as Statistics,
+    ratings,
+    overview,
+    seriesType,
+    images,
+  } = props;
+
   const isExistingSeries = useSelector(createExistingSeriesSelector(tvdbId));
   const { isSmallScreen } = useSelector(createDimensionsSelector());
   const [isNewAddSeriesModalOpen, setIsNewAddSeriesModalOpen] = useState(false);
@@ -177,13 +178,8 @@ function AddNewSeriesSearchResult({
 
       <AddNewSeriesModal
         isOpen={isNewAddSeriesModalOpen && !isExistingSeries}
-        tvdbId={tvdbId}
-        title={title}
-        year={year}
-        overview={overview}
-        folder={folder}
+        series={props}
         initialSeriesType={seriesType}
-        images={images}
         onModalClose={handleAddSeriesModalClose}
       />
     </div>

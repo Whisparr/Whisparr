@@ -225,7 +225,7 @@ namespace Whisparr.Api.V3.Series
         {
             foreach (var seriesResource in series)
             {
-                _coverMapper.ConvertToLocalUrls(seriesResource.Id, seriesResource.Images);
+                _coverMapper.ConvertToLocalUrls(seriesResource.Id, seriesResource.Images, seriesResource.Added);
             }
         }
 

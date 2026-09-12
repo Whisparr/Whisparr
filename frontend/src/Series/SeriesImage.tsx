@@ -102,6 +102,7 @@ function SeriesImage({
 
       setUrl(getUrl(nextImage, coverType, pixelRatio * size));
       setHasError(false);
+      setIsLoaded(true);
     } else if (!nextImage) {
       if (image.current) {
         image.current = null;

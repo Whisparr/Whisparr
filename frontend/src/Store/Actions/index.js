@@ -23,6 +23,7 @@ import * as series from './seriesActions';
 import * as seriesHistory from './seriesHistoryActions';
 import * as seriesIndex from './seriesIndexActions';
 import * as settings from './settingsActions';
+import * as system from './systemActions';
 import * as tags from './tagActions';
 import * as wanted from './wantedActions';
 
@@ -52,6 +53,7 @@ export default [
   seriesHistory,
   seriesIndex,
   settings,
+  system,
   tags,
   wanted
 ];

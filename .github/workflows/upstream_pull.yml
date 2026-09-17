@@ -171,6 +171,15 @@ jobs:
             if ! git cherry-pick -x "$sha" >/dev/null 2>&1; then
               conflicts=$(git diff --name-only --diff-filter=U | grep -c . || true)
               git cherry-pick --abort >/dev/null 2>&1 || true
+
+              # Failed without conflicts: the change is already here, so the
+              # pick is empty. Nothing to track; leave the branch untouched.
+              if [ "$conflicts" -eq 0 ]; then
+                git checkout -q --force "$BASE"
+                git branch -D "$branch" >/dev/null 2>&1 || true
+                echo "| \`${sha:0:9}\` | 0 | skipped (empty pick) | $subject |" >> "$GITHUB_STEP_SUMMARY"
+                continue
+              fi
             fi
 
             {
@@ -207,8 +216,9 @@ jobs:
               continue
             fi
 
-            # Clean: redo the pick, then open the issue and its PR together.
-            git cherry-pick -x "$sha" >/dev/null 2>&1
+            # Clean: the pick above already landed on the branch, so only its
+            # message needs rewriting. Picking again would be empty and exit 1,
+            # which kills the step under `bash -e`.
             git commit -q --amend --no-verify -m "$subject (Sonarr/Sonarr@${sha:0:9})"
 
             if [ "$DRY_RUN" = 'yes' ]; then

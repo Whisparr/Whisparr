@@ -159,7 +159,17 @@ jobs:
 
             # Already tracked? An issue or PR mentioning this commit, in any
             # state, is enough -- closing one is a decision and must stick.
-            if [ -n "$(gh search issues --repo "$GITHUB_REPOSITORY" "$sha" --json number -q '.[].number' 2>/dev/null)" ]; then
+            #
+            # A failed search must stop the run rather than read as "untracked",
+            # or it opens a duplicate. The search API allows 30 requests a
+            # minute, so pace the calls to stay under it.
+            sleep 2
+            if ! tracked=$(gh search issues --repo "$GITHUB_REPOSITORY" "$sha" --json number -q '.[].number' 2>/tmp/gh-err); then
+              echo "issue search failed for $sha; stopping so nothing is opened twice:" >&2
+              cat /tmp/gh-err >&2
+              exit 1
+            fi
+            if [ -n "$tracked" ]; then
               continue
             fi
             if [ -n "$(git ls-remote --heads origin "$branch")" ]; then continue; fi

@@ -59,6 +59,7 @@ namespace Whisparr.Api.V3.Qualities
         }
 
         [HttpPut("update")]
+        [ProducesResponseType(typeof(List<QualityDefinitionResource>), 202)]
         public object UpdateMany([FromBody] List<QualityDefinitionResource> resource)
         {
             // Read from request

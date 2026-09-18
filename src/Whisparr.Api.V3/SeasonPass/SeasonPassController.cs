@@ -19,6 +19,7 @@ namespace Whisparr.Api.V3.SeasonPass
 
         [HttpPost]
         [Consumes("application/json")]
+        [ProducesResponseType(202)]
         public IActionResult UpdateAll([FromBody] SeasonPassResource resource)
         {
             var seriesToUpdate = _seriesService.GetSeries(resource.Series.Select(s => s.Id));

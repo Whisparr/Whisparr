@@ -115,6 +115,7 @@ namespace Whisparr.Api.V3.EpisodeFiles
         [Obsolete("Use bulk endpoint instead")]
         [HttpPut("editor")]
         [Consumes("application/json")]
+        [ProducesResponseType(typeof(List<EpisodeFileResource>), 202)]
         public object SetQuality([FromBody] EpisodeFileListResource resource)
         {
             var episodeFiles = _mediaFileService.GetFiles(resource.EpisodeFileIds);
@@ -181,6 +182,7 @@ namespace Whisparr.Api.V3.EpisodeFiles
 
         [HttpPut("bulk")]
         [Consumes("application/json")]
+        [ProducesResponseType(typeof(List<EpisodeFileResource>), 202)]
         public object SetPropertiesBulk([FromBody] List<EpisodeFileResource> resources)
         {
             var episodeFiles = _mediaFileService.GetFiles(resources.Select(r => r.Id));

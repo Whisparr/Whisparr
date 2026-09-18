@@ -81,6 +81,7 @@ namespace Whisparr.Api.V3.CustomFormats
         [HttpPut("bulk")]
         [Consumes("application/json")]
         [Produces("application/json")]
+        [ProducesResponseType(typeof(List<CustomFormatResource>), 202)]
         public virtual ActionResult<CustomFormatResource> Update([FromBody] CustomFormatBulkResource resource)
         {
             if (!resource.Ids.Any())

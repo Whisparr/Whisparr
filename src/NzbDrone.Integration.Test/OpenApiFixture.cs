@@ -132,6 +132,19 @@ namespace NzbDrone.Integration.Test
             paths.Should().Contain("/login");
         }
 
+        [Test]
+        public void description_should_name_the_build_it_was_generated_from()
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, RootUrl + "api/v3/system/status");
+            request.Headers.Add("X-Api-Key", ApiKey);
+            using var response = _httpClient.Send(request);
+
+            var status = JsonDocument.Parse(response.Content.ReadAsStringAsync().GetAwaiter().GetResult()).RootElement;
+            var version = status.GetProperty("version").GetString();
+
+            _document.GetProperty("info").GetProperty("description").GetString().Should().Contain(version);
+        }
+
         private JsonElement GetOperation(string verb, string path)
         {
             _document.GetProperty("paths").TryGetProperty(path, out var item).Should().BeTrue("{0} should be documented", path);

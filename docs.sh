@@ -3,9 +3,9 @@ PLATFORM=$1
 if [ "$PLATFORM" = "Windows" ]; then
   RUNTIME="win-x64"
 elif [ "$PLATFORM" = "Linux" ]; then
-  WHERE="linux-x64"
+  RUNTIME="linux-x64"
 elif [ "$PLATFORM" = "Mac" ]; then
-  WHERE="osx-x64"
+  RUNTIME="osx-x64"
 else
   echo "Platform must be provided as first arguement: Windows, Linux or Mac"
   exit 1
@@ -26,10 +26,15 @@ dotnet clean $slnFile -c Release
 
 dotnet msbuild -restore $slnFile -p:Configuration=Debug -p:Platform=$platform -p:RuntimeIdentifiers=$RUNTIME -t:PublishAllRids
 
-dotnet new tool-manifest
-dotnet tool install --version 6.3.0 Swashbuckle.AspNetCore.Cli
+# Read the generator version from the project so the CLI cannot drift from it.
+swaggerVersion=$(sed -n 's/.*Swashbuckle\.AspNetCore\.SwaggerGen" Version="\([^"]*\)".*/\1/p' src/NzbDrone.Host/Whisparr.Host.csproj)
 
-dotnet tool run swagger tofile --output ./src/Whisparr.Api.V3/openapi.json "$outputFolder/net8.0/$RUNTIME/whisparr.console.dll" v3 &
+dotnet new tool-manifest --force
+dotnet tool install --version "$swaggerVersion" Swashbuckle.AspNetCore.Cli
+
+consoleDll=$(echo $outputFolder/net*/$RUNTIME/Whisparr.Console.dll)
+
+dotnet tool run swagger tofile --output ./src/Whisparr.Api.V3/openapi.json "$consoleDll" v3 &
 
 sleep 45
 

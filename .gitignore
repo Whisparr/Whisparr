@@ -164,3 +164,6 @@ src/.idea/
 
 # Ignore Jetbrains IntelliJ Workspace Directories
 .idea/
+
+# Local tool manifest created by docs.sh
+/dotnet-tools.json

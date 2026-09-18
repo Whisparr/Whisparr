@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Core.RootFolders;
 using NzbDrone.Core.Validation.Paths;
@@ -50,6 +51,7 @@ namespace Whisparr.Api.V3.RootFolders
 
         [RestPostById]
         [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public ActionResult<RootFolderResource> CreateRootFolder([FromBody] RootFolderResource rootFolderResource)
         {
             var model = rootFolderResource.ToModel();

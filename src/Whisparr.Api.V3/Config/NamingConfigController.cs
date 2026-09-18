@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Organizer;
@@ -57,6 +58,7 @@ namespace Whisparr.Api.V3.Config
         }
 
         [RestPutById]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
         public ActionResult<NamingConfigResource> UpdateNamingConfig([FromBody] NamingConfigResource resource)
         {
             var nameSpec = resource.ToModel();

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Core.CustomFilters;
 using Whisparr.Http;
@@ -31,6 +32,7 @@ namespace Whisparr.Api.V3.CustomFilters
 
         [RestPostById]
         [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public ActionResult<CustomFilterResource> AddCustomFilter([FromBody] CustomFilterResource resource)
         {
             var customFilter = _customFilterService.Add(resource.ToModel());
@@ -40,6 +42,7 @@ namespace Whisparr.Api.V3.CustomFilters
 
         [RestPutById]
         [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
         public ActionResult<CustomFilterResource> UpdateCustomFilter([FromBody] CustomFilterResource resource)
         {
             _customFilterService.Update(resource.ToModel());

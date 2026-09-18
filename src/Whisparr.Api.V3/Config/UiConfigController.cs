@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Reflection;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Languages;
@@ -32,6 +33,7 @@ namespace Whisparr.Api.V3.Config
         }
 
         [RestPutById]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
         public override ActionResult<UiConfigResource> SaveConfig([FromBody] UiConfigResource resource)
         {
             var dictionary = resource.GetType()

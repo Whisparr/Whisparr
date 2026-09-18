@@ -2,6 +2,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Common.Disk;
 using NzbDrone.Common.Extensions;
@@ -132,6 +133,7 @@ namespace Whisparr.Api.V3.Config
         }
 
         [RestPutById]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
         public ActionResult<HostConfigResource> SaveHostConfig([FromBody] HostConfigResource resource)
         {
             resource.TrustedNetworks = IPNetworkParser.NormalizeList(resource.TrustedNetworks);

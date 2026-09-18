@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.RemotePathMappings;
@@ -53,6 +54,7 @@ namespace Whisparr.Api.V3.RemotePathMappings
 
         [RestPostById]
         [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public ActionResult<RemotePathMappingResource> CreateMapping([FromBody] RemotePathMappingResource resource)
         {
             var model = resource.ToModel();
@@ -74,6 +76,7 @@ namespace Whisparr.Api.V3.RemotePathMappings
         }
 
         [RestPutById]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
         public ActionResult<RemotePathMappingResource> UpdateMapping([FromBody] RemotePathMappingResource resource)
         {
             var mapping = resource.ToModel();

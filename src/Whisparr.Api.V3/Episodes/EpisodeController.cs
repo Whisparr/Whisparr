@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Core.CustomFormats;
 using NzbDrone.Core.DecisionEngine.Specifications;
@@ -50,6 +51,7 @@ namespace Whisparr.Api.V3.Episodes
 
         [RestPutById]
         [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
         public ActionResult<EpisodeResource> SetEpisodeMonitored([FromRoute] int id, [FromBody] EpisodeResource resource)
         {
             _episodeService.SetEpisodeMonitored(id, resource.Monitored);

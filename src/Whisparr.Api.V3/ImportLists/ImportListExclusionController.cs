@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Core.Datastore;
 using NzbDrone.Core.ImportLists.Exclusions;
@@ -61,6 +62,7 @@ namespace Whisparr.Api.V3.ImportLists
 
         [RestPostById]
         [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public ActionResult<ImportListExclusionResource> AddImportListExclusion([FromBody] ImportListExclusionResource resource)
         {
             var importListExclusion = _importListExclusionService.Add(resource.ToModel());
@@ -70,6 +72,7 @@ namespace Whisparr.Api.V3.ImportLists
 
         [RestPutById]
         [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
         public ActionResult<ImportListExclusionResource> UpdateImportListExclusion([FromBody] ImportListExclusionResource resource)
         {
             _importListExclusionService.Update(resource.ToModel());

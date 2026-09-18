@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.CustomFormats;
@@ -48,6 +49,7 @@ namespace Whisparr.Api.V3.Profiles.Quality
 
         [RestPostById]
         [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public ActionResult<QualityProfileResource> Create([FromBody] QualityProfileResource resource)
         {
             var model = resource.ToModel();
@@ -63,6 +65,7 @@ namespace Whisparr.Api.V3.Profiles.Quality
 
         [RestPutById]
         [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
         public ActionResult<QualityProfileResource> Update([FromBody] QualityProfileResource resource)
         {
             var model = resource.ToModel();

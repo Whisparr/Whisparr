@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.AutoTagging;
@@ -51,6 +52,7 @@ namespace Whisparr.Api.V3.AutoTagging
 
         [RestPostById]
         [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public ActionResult<AutoTaggingResource> Create([FromBody] AutoTaggingResource autoTagResource)
         {
             var model = autoTagResource.ToModel(_specifications);
@@ -62,6 +64,7 @@ namespace Whisparr.Api.V3.AutoTagging
 
         [RestPutById]
         [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
         public ActionResult<AutoTaggingResource> Update([FromBody] AutoTaggingResource resource)
         {
             var model = resource.ToModel(_specifications);

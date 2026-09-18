@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Indexers;
@@ -55,6 +56,7 @@ namespace Whisparr.Api.V3.Profiles.Release
         }
 
         [RestPostById]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public ActionResult<ReleaseProfileResource> Create([FromBody] ReleaseProfileResource resource)
         {
             var model = resource.ToModel();
@@ -69,6 +71,7 @@ namespace Whisparr.Api.V3.Profiles.Release
         }
 
         [RestPutById]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
         public ActionResult<ReleaseProfileResource> Update([FromBody] ReleaseProfileResource resource)
         {
             var model = resource.ToModel();

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Datastore;
@@ -163,6 +164,7 @@ namespace Whisparr.Api.V3.Series
         [RestPostById]
         [Consumes("application/json")]
         [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public ActionResult<SeriesResource> AddSeries([FromBody] SeriesResource seriesResource)
         {
             var series = _addSeriesService.AddSeries(seriesResource.ToModel());
@@ -173,6 +175,7 @@ namespace Whisparr.Api.V3.Series
         [RestPutById]
         [Consumes("application/json")]
         [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
         public ActionResult<SeriesResource> UpdateSeries([FromBody] SeriesResource seriesResource, [FromQuery] bool moveFiles = false)
         {
             var series = _seriesService.GetSeries(seriesResource.Id);

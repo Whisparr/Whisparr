@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.CustomFormats;
@@ -56,6 +57,7 @@ namespace Whisparr.Api.V3.CustomFormats
 
         [RestPostById]
         [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public ActionResult<CustomFormatResource> Create([FromBody] CustomFormatResource customFormatResource)
         {
             var model = customFormatResource.ToModel(_specifications);
@@ -67,6 +69,7 @@ namespace Whisparr.Api.V3.CustomFormats
 
         [RestPutById]
         [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
         public ActionResult<CustomFormatResource> Update([FromBody] CustomFormatResource resource)
         {
             var model = resource.ToModel(_specifications);
@@ -81,6 +84,7 @@ namespace Whisparr.Api.V3.CustomFormats
         [HttpPut("bulk")]
         [Consumes("application/json")]
         [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
         public virtual ActionResult<CustomFormatResource> Update([FromBody] CustomFormatBulkResource resource)
         {
             if (!resource.Ids.Any())

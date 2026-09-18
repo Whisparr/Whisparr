@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Core.AutoTagging;
 using NzbDrone.Core.Datastore.Events;
@@ -46,6 +47,7 @@ namespace Whisparr.Api.V3.Tags
 
         [RestPostById]
         [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public ActionResult<TagResource> Create([FromBody] TagResource resource)
         {
             return Created(_tagService.Add(resource.ToModel()).Id);
@@ -53,6 +55,7 @@ namespace Whisparr.Api.V3.Tags
 
         [RestPutById]
         [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
         public ActionResult<TagResource> Update([FromBody] TagResource resource)
         {
             _tagService.Update(resource.ToModel());

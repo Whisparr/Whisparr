@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Core.Datastore.Events;
 using NzbDrone.Core.Messaging.Events;
@@ -34,6 +35,7 @@ namespace Whisparr.Api.V3.Qualities
         }
 
         [RestPutById]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
         public ActionResult<QualityDefinitionResource> Update([FromBody] QualityDefinitionResource resource)
         {
             var model = resource.ToModel();

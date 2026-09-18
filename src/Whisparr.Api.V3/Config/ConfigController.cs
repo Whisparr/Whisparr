@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Reflection;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Core.Configuration;
 using Whisparr.Http.REST;
@@ -34,6 +35,7 @@ namespace Whisparr.Api.V3.Config
 
         [RestPutById]
         [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
         public virtual ActionResult<TResource> SaveConfig([FromBody] TResource resource)
         {
             var dictionary = resource.GetType()

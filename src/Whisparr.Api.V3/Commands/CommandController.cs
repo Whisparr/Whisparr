@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Common.Composition;
 using NzbDrone.Common.Serializer;
@@ -51,6 +52,7 @@ namespace Whisparr.Api.V3.Commands
         [RestPostById]
         [Consumes("application/json")]
         [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public ActionResult<CommandResource> StartCommand([FromBody] CommandResource commandResource)
         {
             var commandType =

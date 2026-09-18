@@ -1,4 +1,4 @@
-using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
@@ -34,27 +34,27 @@ namespace Whisparr.Api.V3.FileSystem
 
         [HttpGet("type")]
         [Produces("application/json")]
-        public object GetEntityType(string path)
+        public FileSystemTypeResource GetEntityType(string path)
         {
             if (_diskProvider.FileExists(path))
             {
-                return new { type = "file" };
+                return new FileSystemTypeResource { Type = FileSystemEntityType.File };
             }
 
             // Return folder even if it doesn't exist on disk to avoid leaking anything from the UI about the underlying system
-            return new { type = "folder" };
+            return new FileSystemTypeResource { Type = FileSystemEntityType.Folder };
         }
 
         [HttpGet("mediafiles")]
         [Produces("application/json")]
-        public object GetMediaFiles(string path)
+        public IEnumerable<FileSystemMediaFileResource> GetMediaFiles(string path)
         {
             if (!_diskProvider.FolderExists(path))
             {
-                return Array.Empty<string>();
+                return Enumerable.Empty<FileSystemMediaFileResource>();
             }
 
-            return _diskScanService.GetVideoFiles(path).Select(f => new
+            return _diskScanService.GetVideoFiles(path).Select(f => new FileSystemMediaFileResource
             {
                 Path = f,
                 RelativePath = path.GetRelativePath(f),

@@ -104,6 +104,12 @@ namespace NzbDrone.Host
                     }
                 });
 
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, "Whisparr.Api.V3.xml");
+                if (File.Exists(xmlPath))
+                {
+                    c.IncludeXmlComments(xmlPath);
+                }
+
                 var apiKeyHeader = new OpenApiSecurityScheme
                 {
                     Name = "X-Api-Key",
@@ -235,6 +241,23 @@ namespace NzbDrone.Host
 
             app.UseRouting();
             app.UseCors();
+
+            // Served ahead of authentication so the API docs are reachable without an API key
+            app.UseSwagger(c =>
+            {
+                c.RouteTemplate = "docs/{documentName}/openapi.json";
+            });
+
+            app.UseSwaggerUI(c =>
+            {
+                // Relative to /docs/, so it keeps working behind a URL base
+                c.SwaggerEndpoint("v3/openapi.json", "Whisparr API v3");
+                c.RoutePrefix = "docs";
+                c.DocumentTitle = "Whisparr API";
+                c.DefaultModelsExpandDepth(-1);
+                c.DisplayRequestDuration();
+            });
+
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseResponseCompression();
@@ -248,15 +271,6 @@ namespace NzbDrone.Host
             app.UseMiddleware<BufferingMiddleware>(new List<string> { "/api/v3/command" });
 
             app.UseWebSockets();
-
-            // Enable middleware to serve generated Swagger as a JSON endpoint.
-            if (BuildInfo.IsDebug)
-            {
-                app.UseSwagger(c =>
-                {
-                    c.RouteTemplate = "docs/{documentName}/openapi.json";
-                });
-            }
 
             app.UseEndpoints(x =>
             {

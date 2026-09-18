@@ -233,7 +233,7 @@ namespace Whisparr.Api.V3
 
         [HttpPost("testall")]
         [Produces("application/json")]
-        public IActionResult TestAll()
+        public ActionResult<List<ProviderTestAllResult>> TestAll()
         {
             var providerDefinitions = _providerFactory.All()
                                                       .Where(c => c.Settings.Validate().IsValid && c.Enable)

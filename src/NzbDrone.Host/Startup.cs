@@ -20,6 +20,7 @@ using NzbDrone.Core.Instrumentation;
 using NzbDrone.Core.Lifecycle;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Host.AccessControl;
+using NzbDrone.Host.OpenApi;
 using NzbDrone.Http.Authentication;
 using NzbDrone.SignalR;
 using Whisparr.Api.V3.System;
@@ -153,6 +154,11 @@ namespace NzbDrone.Host
                 });
 
                 c.DescribeAllParametersInCamelCase();
+
+                c.CustomOperationIds(api => OperationIds.FromRoute(api.HttpMethod, api.RelativePath));
+                c.OperationFilter<SuccessStatusCodeOperationFilter>();
+                c.OperationFilter<AllowAnonymousOperationFilter>();
+                c.SchemaFilter<CommandResourceSchemaFilter>();
             });
 
             services

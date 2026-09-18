@@ -27,6 +27,7 @@ namespace Whisparr.Api.V3.Series
         }
 
         [HttpPut]
+        [ProducesResponseType(typeof(List<SeriesResource>), 202)]
         public object SaveAll([FromBody] SeriesEditorResource resource)
         {
             var seriesToUpdate = _seriesService.GetSeries(resource.SeriesIds);

@@ -13,6 +13,7 @@ namespace Whisparr.Http.Frontend
 {
     [Authorize(Policy="UI")]
     [ApiController]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class StaticResourceController : Controller
     {
         private readonly IEnumerable<IMapHttpRequestsToDisk> _requestMappers;

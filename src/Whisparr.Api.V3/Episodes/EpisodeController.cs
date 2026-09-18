@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Core.CustomFormats;
 using NzbDrone.Core.DecisionEngine.Specifications;
@@ -61,7 +62,8 @@ namespace Whisparr.Api.V3.Episodes
 
         [HttpPut("monitor")]
         [Consumes("application/json")]
-        public IActionResult SetEpisodesMonitored([FromBody] EpisodesMonitoredResource resource, [FromQuery] bool includeImages = false)
+        [ProducesResponseType(typeof(List<EpisodeResource>), StatusCodes.Status202Accepted)]
+        public ActionResult<List<EpisodeResource>> SetEpisodesMonitored([FromBody] EpisodesMonitoredResource resource, [FromQuery] bool includeImages = false)
         {
             if (resource.EpisodeIds.Count == 1)
             {

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Core.CustomFormats;
 using NzbDrone.Core.Datastore.Events;
@@ -115,7 +116,8 @@ namespace Whisparr.Api.V3.EpisodeFiles
         [Obsolete("Use bulk endpoint instead")]
         [HttpPut("editor")]
         [Consumes("application/json")]
-        public object SetQuality([FromBody] EpisodeFileListResource resource)
+        [ProducesResponseType(typeof(List<EpisodeFileResource>), StatusCodes.Status202Accepted)]
+        public ActionResult<List<EpisodeFileResource>> SetQuality([FromBody] EpisodeFileListResource resource)
         {
             var episodeFiles = _mediaFileService.GetFiles(resource.EpisodeFileIds);
 
@@ -181,7 +183,8 @@ namespace Whisparr.Api.V3.EpisodeFiles
 
         [HttpPut("bulk")]
         [Consumes("application/json")]
-        public object SetPropertiesBulk([FromBody] List<EpisodeFileResource> resources)
+        [ProducesResponseType(typeof(List<EpisodeFileResource>), StatusCodes.Status202Accepted)]
+        public ActionResult<List<EpisodeFileResource>> SetPropertiesBulk([FromBody] List<EpisodeFileResource> resources)
         {
             var episodeFiles = _mediaFileService.GetFiles(resources.Select(r => r.Id));
 

@@ -1,4 +1,5 @@
 using System.Linq;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Core.Tv;
 using Whisparr.Http;
@@ -19,6 +20,7 @@ namespace Whisparr.Api.V3.SeasonPass
 
         [HttpPost]
         [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
         public IActionResult UpdateAll([FromBody] SeasonPassResource resource)
         {
             var seriesToUpdate = _seriesService.GetSeries(resource.Series.Select(s => s.Id));

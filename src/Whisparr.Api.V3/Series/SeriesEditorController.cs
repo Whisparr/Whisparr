@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Messaging.Commands;
@@ -27,7 +28,8 @@ namespace Whisparr.Api.V3.Series
         }
 
         [HttpPut]
-        public object SaveAll([FromBody] SeriesEditorResource resource)
+        [ProducesResponseType(typeof(List<SeriesResource>), StatusCodes.Status202Accepted)]
+        public ActionResult<List<SeriesResource>> SaveAll([FromBody] SeriesEditorResource resource)
         {
             var seriesToUpdate = _seriesService.GetSeries(resource.SeriesIds);
             var seriesToMove = new List<BulkMoveSeries>();

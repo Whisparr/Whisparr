@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -20,6 +21,7 @@ using NzbDrone.Core.Instrumentation;
 using NzbDrone.Core.Lifecycle;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Host.AccessControl;
+using NzbDrone.Host.OpenApi;
 using NzbDrone.Http.Authentication;
 using NzbDrone.SignalR;
 using Whisparr.Api.V3.System;
@@ -145,6 +147,13 @@ namespace NzbDrone.Host
                 {
                     [new OpenApiSecuritySchemeReference(apikeyQuery.Name, document)] = new List<string>(),
                 });
+
+                c.CustomOperationIds(apiDescription =>
+                    apiDescription.ActionDescriptor is ControllerActionDescriptor descriptor
+                        ? $"{descriptor.ControllerName}_{descriptor.ActionName}"
+                        : null);
+
+                c.DocumentFilter<UniqueOperationIdDocumentFilter>();
 
                 c.DescribeAllParametersInCamelCase();
             });

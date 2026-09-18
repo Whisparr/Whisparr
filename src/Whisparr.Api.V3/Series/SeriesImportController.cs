@@ -16,7 +16,7 @@ namespace Whisparr.Api.V3.Series
         }
 
         [HttpPost]
-        public object Import([FromBody] List<SeriesResource> resource)
+        public List<SeriesResource> Import([FromBody] List<SeriesResource> resource)
         {
             var newSeries = resource.ToModel();
 

@@ -239,6 +239,16 @@ function SecuritySettings({
             >
               <Icon name={icons.REFRESH} isSpinning={isResettingApiKey} />
             </FormInputButton>,
+
+            <FormInputButton
+              key="docs"
+              to={`${window.Whisparr.urlBase}/docs`}
+              target="_blank"
+              noRouter={true}
+              title={translate('ApiDocumentation')}
+            >
+              <Icon name={icons.WIKI} />
+            </FormInputButton>,
           ]}
           onChange={onInputChange}
           onFocus={handleApikeyFocus}

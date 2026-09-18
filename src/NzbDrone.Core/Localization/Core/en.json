@@ -94,6 +94,7 @@
   "AnimeEpisodeFormat": "Anime Episode Format",
   "AnimeTypeDescription": "Episodes released using an absolute episode number",
   "Any": "Any",
+  "ApiDocumentation": "API Documentation",
   "ApiKey": "API Key",
   "ApiKeyValidationHealthCheckMessage": "Please update your API key to be at least {length} characters long. You can do this via settings or the config file",
   "AppDataDirectory": "AppData directory",

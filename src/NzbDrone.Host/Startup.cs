@@ -102,7 +102,7 @@ namespace NzbDrone.Host
                     License = new OpenApiLicense
                     {
                         Name = "GPL-3.0",
-                        Url = new Uri("https://github.com/Whisparr/Whisparr/blob/develop/LICENSE")
+                        Url = new Uri("https://github.com/Whisparr/Whisparr/blob/v2-develop/LICENSE")
                     }
                 });
 

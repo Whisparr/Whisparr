@@ -219,6 +219,14 @@ namespace NzbDrone.Integration.Test
         }
 
         [Test]
+        public void route_graph_should_be_plain_text()
+        {
+            var content = GetOperation("get", "/api/v3/system/routes").GetProperty("responses").GetProperty("200").GetProperty("content");
+
+            content.EnumerateObject().Select(c => c.Name).Should().BeEquivalentTo("text/plain");
+        }
+
+        [Test]
         public void every_path_parameter_should_appear_in_its_path_template()
         {
             foreach (var (path, _, operation) in GetOperations())

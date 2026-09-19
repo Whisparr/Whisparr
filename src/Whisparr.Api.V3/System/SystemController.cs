@@ -95,7 +95,8 @@ namespace Whisparr.Api.V3.System
         }
 
         [HttpGet("routes")]
-        [Produces("application/json")]
+        [Produces("text/plain")]
+        [ProducesResponseType(typeof(string), 200)]
         public IActionResult GetRoutes()
         {
             using (var sw = new StringWriter())

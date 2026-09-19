@@ -93,6 +93,7 @@ namespace Whisparr.Api.V3.System.Backup
 
         [HttpPost("restore/upload")]
         [RequestFormLimits(MultipartBodyLengthLimit = 5000000000)]
+        [FileUpload("restore")]
         public object UploadAndRestore()
         {
             var files = Request.Form.Files;

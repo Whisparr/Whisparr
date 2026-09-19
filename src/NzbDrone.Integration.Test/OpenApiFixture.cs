@@ -131,6 +131,17 @@ namespace NzbDrone.Integration.Test
         }
 
         [Test]
+        public void backup_upload_should_describe_its_multipart_body()
+        {
+            var requestBody = GetOperation("post", "/api/v3/system/backup/restore/upload").GetProperty("requestBody");
+            var schema = requestBody.GetProperty("content").GetProperty("multipart/form-data").GetProperty("schema");
+
+            requestBody.GetProperty("required").GetBoolean().Should().BeTrue();
+            schema.GetProperty("required").EnumerateArray().Select(r => r.GetString()).Should().BeEquivalentTo("restore");
+            schema.GetProperty("properties").GetProperty("restore").GetProperty("format").GetString().Should().Be("binary");
+        }
+
+        [Test]
         public void every_path_parameter_should_appear_in_its_path_template()
         {
             foreach (var (path, _, operation) in GetOperations())

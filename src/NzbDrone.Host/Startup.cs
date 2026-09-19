@@ -163,6 +163,7 @@ namespace NzbDrone.Host
                 c.CustomOperationIds(api => OperationIds.FromRoute(api.HttpMethod, api.RelativePath));
                 c.OperationFilter<SuccessStatusCodeOperationFilter>();
                 c.OperationFilter<AllowAnonymousOperationFilter>();
+                c.OperationFilter<FileUploadOperationFilter>();
                 c.SchemaFilter<CommandResourceSchemaFilter>();
                 c.RequestBodyFilter<RequiredRequestBodyFilter>();
             });

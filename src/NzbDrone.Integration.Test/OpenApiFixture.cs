@@ -165,6 +165,28 @@ namespace NzbDrone.Integration.Test
             }
         }
 
+        [TestCase("get", "/api/v3/filesystem/type", "FileSystemTypeResource")]
+        [TestCase("post", "/api/v3/system/shutdown", "ShutdownResource")]
+        [TestCase("post", "/api/v3/system/restart", "RestartResource")]
+        [TestCase("post", "/api/v3/system/backup/restore/{id}", "BackupRestoreResource")]
+        [TestCase("post", "/api/v3/system/backup/restore/upload", "BackupRestoreResource")]
+        public void anonymous_responses_should_be_named_resources(string verb, string path, string schema)
+        {
+            var content = GetOperation(verb, path).GetProperty("responses").GetProperty("200").GetProperty("content");
+
+            content.GetProperty("application/json").GetProperty("schema").GetProperty("$ref").GetString()
+                .Should().Be("#/components/schemas/" + schema);
+        }
+
+        [Test]
+        public void media_files_should_be_a_named_resource()
+        {
+            var schema = GetOperation("get", "/api/v3/filesystem/mediafiles").GetProperty("responses").GetProperty("200")
+                .GetProperty("content").GetProperty("application/json").GetProperty("schema");
+
+            schema.GetProperty("items").GetProperty("$ref").GetString().Should().Be("#/components/schemas/FileSystemMediaFileResource");
+        }
+
         [Test]
         public void every_path_parameter_should_appear_in_its_path_template()
         {

@@ -115,17 +115,17 @@ namespace Whisparr.Api.V3.System
         }
 
         [HttpPost("shutdown")]
-        public object Shutdown()
+        public ShutdownResource Shutdown()
         {
             Task.Factory.StartNew(() => _lifecycleService.Shutdown());
-            return new { ShuttingDown = true };
+            return new ShutdownResource { ShuttingDown = true };
         }
 
         [HttpPost("restart")]
-        public object Restart()
+        public RestartResource Restart()
         {
             Task.Factory.StartNew(() => _lifecycleService.Restart());
-            return new { Restarting = true };
+            return new RestartResource { Restarting = true };
         }
     }
 }

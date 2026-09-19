@@ -107,6 +107,14 @@ namespace NzbDrone.Integration.Test
         }
 
         [Test]
+        public void http_uri_should_be_described_as_a_string()
+        {
+            var wikiUrl = GetSchema("HealthResource").GetProperty("properties").GetProperty("wikiUrl");
+
+            wikiUrl.GetProperty("type").GetString().Should().Be("string");
+        }
+
+        [Test]
         public void every_path_parameter_should_appear_in_its_path_template()
         {
             foreach (var (path, _, operation) in GetOperations())
@@ -143,6 +151,11 @@ namespace NzbDrone.Integration.Test
             var version = status.GetProperty("version").GetString();
 
             _document.GetProperty("info").GetProperty("description").GetString().Should().Contain(version);
+        }
+
+        private JsonElement GetSchema(string name)
+        {
+            return _document.GetProperty("components").GetProperty("schemas").GetProperty(name);
         }
 
         private JsonElement GetOperation(string verb, string path)

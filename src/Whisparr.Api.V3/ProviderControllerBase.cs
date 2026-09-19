@@ -235,6 +235,7 @@ namespace Whisparr.Api.V3
         [HttpPost("testall")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(List<ProviderTestAllResult>), 200)]
+        [ProducesResponseType(typeof(List<ProviderTestAllResult>), 400)]
         public IActionResult TestAll()
         {
             var providerDefinitions = _providerFactory.All()

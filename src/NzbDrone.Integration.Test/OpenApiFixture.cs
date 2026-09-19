@@ -67,6 +67,20 @@ namespace NzbDrone.Integration.Test
             responses.EnumerateObject().Select(r => r.Name).Should().BeEquivalentTo(new[] { statusCode });
         }
 
+        [TestCase("post", "/login", "302", "401")]
+        [TestCase("get", "/logout", "302")]
+        [TestCase("get", "/api/v3/parse", "200", "204")]
+        [TestCase("get", "/api/v3/system/task/{id}", "200", "204")]
+        [TestCase("get", "/api/v3/tag/{id}", "200")]
+        [TestCase("get", "/feed/v3/calendar/whisparr.ics", "200", "204")]
+        [TestCase("post", "/api/v3/indexer/testall", "200", "400")]
+        public void should_document_every_status_code_the_action_returns(string verb, string path, params string[] statusCodes)
+        {
+            var responses = GetOperation(verb, path).GetProperty("responses");
+
+            responses.EnumerateObject().Select(r => r.Name).Should().BeEquivalentTo(statusCodes);
+        }
+
         [TestCase("post", "/api/v3/tag", "TagResource")]
         [TestCase("put", "/api/v3/tag/{id}", "TagResource")]
         public void should_keep_the_response_schema_when_moving_the_status_code(string verb, string path, string schema)

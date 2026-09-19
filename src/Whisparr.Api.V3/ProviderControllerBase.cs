@@ -221,6 +221,7 @@ namespace Whisparr.Api.V3
         [SkipValidation(true, false)]
         [HttpPost("test")]
         [Consumes("application/json")]
+        [ProducesResponseType(typeof(string), 200, "text/plain", "application/json")]
         public object Test([FromBody] TProviderResource providerResource, [FromQuery] bool forceTest = false)
         {
             var existingDefinition = providerResource.Id > 0 ? _providerFactory.Find(providerResource.Id) : null;
@@ -233,6 +234,7 @@ namespace Whisparr.Api.V3
 
         [HttpPost("testall")]
         [Produces("application/json")]
+        [ProducesResponseType(typeof(List<ProviderTestAllResult>), 200)]
         public IActionResult TestAll()
         {
             var providerDefinitions = _providerFactory.All()
@@ -261,6 +263,7 @@ namespace Whisparr.Api.V3
         [HttpPost("action/{name}")]
         [Consumes("application/json")]
         [Produces("application/json")]
+        [ProducesResponseType(typeof(object), 200)]
         public IActionResult RequestAction([FromRoute] string name, [FromBody] TProviderResource providerResource)
         {
             var existingDefinition = providerResource.Id > 0 ? _providerFactory.Find(providerResource.Id) : null;

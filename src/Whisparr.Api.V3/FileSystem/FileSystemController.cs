@@ -27,6 +27,7 @@ namespace Whisparr.Api.V3.FileSystem
 
         [HttpGet]
         [Produces("application/json")]
+        [ProducesResponseType(typeof(FileSystemResult), 200)]
         public IActionResult GetContents(string path, bool includeFiles = false, bool allowFoldersWithoutTrailingSlashes = false)
         {
             return Ok(_fileSystemLookupService.LookupContents(path, includeFiles, allowFoldersWithoutTrailingSlashes));

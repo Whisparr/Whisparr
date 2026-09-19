@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -107,6 +108,7 @@ namespace Whisparr.Api.V3.System
 
         [HttpGet("routes/duplicate")]
         [Produces("application/json")]
+        [ProducesResponseType(typeof(Dictionary<string, List<string>>), 200)]
         public object DuplicateRoutes()
         {
             return _detector.GetDuplicateEndpoints(_endpointData);

@@ -141,6 +141,30 @@ namespace NzbDrone.Integration.Test
             schema.GetProperty("properties").GetProperty("restore").GetProperty("format").GetString().Should().Be("binary");
         }
 
+        [TestCase("get", "/api")]
+        [TestCase("get", "/api/v3/autotagging/schema")]
+        [TestCase("get", "/api/v3/customformat/schema")]
+        [TestCase("get", "/api/v3/config/naming/examples")]
+        [TestCase("get", "/api/v3/filesystem")]
+        [TestCase("get", "/api/v3/system/routes/duplicate")]
+        [TestCase("post", "/api/v3/series/import")]
+        [TestCase("post", "/api/v3/manualimport")]
+        [TestCase("post", "/api/v3/release")]
+        [TestCase("post", "/api/v3/indexer/test")]
+        [TestCase("post", "/api/v3/indexer/testall")]
+        [TestCase("post", "/api/v3/indexer/action/{name}")]
+        public void operations_returning_data_should_describe_it(string verb, string path)
+        {
+            var response = GetOperation(verb, path).GetProperty("responses").GetProperty("200");
+
+            response.TryGetProperty("content", out var content).Should().BeTrue("{0} {1} returns a body", verb, path);
+
+            foreach (var mediaType in content.EnumerateObject())
+            {
+                mediaType.Value.TryGetProperty("schema", out _).Should().BeTrue("{0} {1} should describe its {2} body", verb, path, mediaType.Name);
+            }
+        }
+
         [Test]
         public void every_path_parameter_should_appear_in_its_path_template()
         {

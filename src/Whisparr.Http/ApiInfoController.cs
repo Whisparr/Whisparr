@@ -7,6 +7,7 @@ namespace NzbDrone.Http
     {
         [HttpGet("/api")]
         [Produces("application/json")]
+        [ProducesResponseType(typeof(ApiInfoResource), 200)]
         public object GetApiInfo()
         {
             return new ApiInfoResource

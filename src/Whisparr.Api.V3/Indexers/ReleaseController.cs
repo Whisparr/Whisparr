@@ -68,6 +68,7 @@ namespace Whisparr.Api.V3.Indexers
 
         [HttpPost]
         [Consumes("application/json")]
+        [ProducesResponseType(typeof(ReleaseResource), 200)]
         public async Task<object> DownloadRelease([FromBody] ReleaseResource release)
         {
             var remoteEpisode = _remoteEpisodeCache.Find(GetCacheKey(release));

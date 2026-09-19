@@ -26,6 +26,8 @@ namespace Whisparr.Api.V3.MediaCovers
         }
 
         [HttpGet(@"{seriesId:int}/{filename:regex((.+)\.(jpg|png|gif))}")]
+        [Produces("image/jpeg", "image/png", "image/gif")]
+        [ProducesResponseType(typeof(FileResult), 200)]
         public IActionResult GetMediaCover(int seriesId, string filename)
         {
             var filePath = Path.Combine(_appFolderInfo.GetAppDataPath(), "MediaCover", seriesId.ToString(), filename);

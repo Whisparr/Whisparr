@@ -28,6 +28,9 @@ namespace Whisparr.Api.V3.Calendar
         }
 
         [HttpGet("Whisparr.ics")]
+        [Produces("text/calendar")]
+        [ProducesResponseType(typeof(string), 200)]
+        [ProducesResponseType(204)]
         public IActionResult GetCalendarFeed(int pastDays = 7, int futureDays = 28, string tags = "", bool unmonitored = false, bool premieresOnly = false, bool asAllDay = false)
         {
             var start = DateTime.Today.AddDays(-pastDays);

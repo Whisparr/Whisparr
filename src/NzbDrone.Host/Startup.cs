@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi;
 using NLog.Extensions.Logging;
 using NzbDrone.Common.EnvironmentInfo;
+using NzbDrone.Common.Http;
 using NzbDrone.Common.Instrumentation;
 using NzbDrone.Common.Processes;
 using NzbDrone.Common.Serializer;
@@ -111,6 +112,9 @@ namespace NzbDrone.Host
                 {
                     c.IncludeXmlComments(xmlPath);
                 }
+
+                // HttpUri is written by STJHttpUriConverter as its FullUri string, not as an object
+                c.MapType<HttpUri>(() => new OpenApiSchema { Type = JsonSchemaType.String });
 
                 var apiKeyHeader = new OpenApiSecurityScheme
                 {

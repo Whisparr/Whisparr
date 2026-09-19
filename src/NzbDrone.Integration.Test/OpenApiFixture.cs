@@ -115,6 +115,22 @@ namespace NzbDrone.Integration.Test
         }
 
         [Test]
+        public void json_request_bodies_should_be_required()
+        {
+            foreach (var (path, verb, operation) in GetOperations())
+            {
+                if (!operation.TryGetProperty("requestBody", out var requestBody) ||
+                    !requestBody.GetProperty("content").TryGetProperty("application/json", out _))
+                {
+                    continue;
+                }
+
+                requestBody.TryGetProperty("required", out var required).Should().BeTrue("{0} {1} rejects a request without a body", verb, path);
+                required.GetBoolean().Should().BeTrue("{0} {1} rejects a request without a body", verb, path);
+            }
+        }
+
+        [Test]
         public void every_path_parameter_should_appear_in_its_path_template()
         {
             foreach (var (path, _, operation) in GetOperations())

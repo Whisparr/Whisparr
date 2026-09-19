@@ -53,6 +53,7 @@ namespace Whisparr.Api.V3.Logs
 
         [HttpGet(@"{filename:regex([[-.a-zA-Z0-9]]+?\.txt)}")]
         [Produces("text/plain")]
+        [ProducesResponseType(typeof(string), 200)]
         public IActionResult GetLogFileResponse(string filename)
         {
             LogManager.Flush();

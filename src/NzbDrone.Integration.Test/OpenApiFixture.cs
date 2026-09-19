@@ -187,6 +187,23 @@ namespace NzbDrone.Integration.Test
             schema.GetProperty("items").GetProperty("$ref").GetString().Should().Be("#/components/schemas/FileSystemMediaFileResource");
         }
 
+        [TestCase("get", "/feed/v3/calendar/whisparr.ics", "text/calendar", null)]
+        [TestCase("get", "/api/v3/log/file/{filename}", "text/plain", null)]
+        [TestCase("get", "/api/v3/log/file/update/{filename}", "text/plain", null)]
+        [TestCase("get", "/api/v3/mediacover/{seriesId}/{filename}", "image/jpeg", "binary")]
+        public void file_responses_should_declare_their_media_type(string verb, string path, string mediaType, string format)
+        {
+            var content = GetOperation(verb, path).GetProperty("responses").GetProperty("200").GetProperty("content");
+            var schema = content.GetProperty(mediaType).GetProperty("schema");
+
+            schema.GetProperty("type").GetString().Should().Be("string");
+
+            if (format != null)
+            {
+                schema.GetProperty("format").GetString().Should().Be(format);
+            }
+        }
+
         [Test]
         public void every_path_parameter_should_appear_in_its_path_template()
         {

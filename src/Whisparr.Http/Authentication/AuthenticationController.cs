@@ -33,6 +33,8 @@ namespace Whisparr.Http.Authentication
         }
 
         [HttpPost("login")]
+        [ProducesResponseType(302)]
+        [ProducesResponseType(typeof(ProblemDetails), 401, "application/problem+json")]
         public async Task<IActionResult> Login([FromForm] LoginResource resource, [FromQuery] string returnUrl = null)
         {
             var user = _authService.Login(HttpContext.Request, resource.Username, resource.Password);
@@ -86,6 +88,7 @@ namespace Whisparr.Http.Authentication
         }
 
         [HttpGet("logout")]
+        [ProducesResponseType(302)]
         public async Task<IActionResult> Logout()
         {
             _authService.Logout(HttpContext);

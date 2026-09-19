@@ -87,6 +87,7 @@ namespace Whisparr.Api.V3.AutoTagging
         }
 
         [HttpGet("schema")]
+        [ProducesResponseType(typeof(List<AutoTaggingSpecificationSchema>), 200)]
         public object GetTemplates()
         {
             var schema = _specifications.OrderBy(x => x.Order).Select(x => x.ToSchema()).ToList();

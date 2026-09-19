@@ -36,6 +36,7 @@ namespace Whisparr.Api.V3.ManualImport
 
         [HttpPost]
         [Consumes("application/json")]
+        [ProducesResponseType(typeof(List<ManualImportReprocessResource>), 200)]
         public object ReprocessItems([FromBody] List<ManualImportReprocessResource> items)
         {
             if (items is { Count: 0 })

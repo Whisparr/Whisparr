@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -94,7 +95,8 @@ namespace Whisparr.Api.V3.System
         }
 
         [HttpGet("routes")]
-        [Produces("application/json")]
+        [Produces("text/plain")]
+        [ProducesResponseType(typeof(string), 200)]
         public IActionResult GetRoutes()
         {
             using (var sw = new StringWriter())
@@ -107,23 +109,24 @@ namespace Whisparr.Api.V3.System
 
         [HttpGet("routes/duplicate")]
         [Produces("application/json")]
+        [ProducesResponseType(typeof(Dictionary<string, List<string>>), 200)]
         public object DuplicateRoutes()
         {
             return _detector.GetDuplicateEndpoints(_endpointData);
         }
 
         [HttpPost("shutdown")]
-        public object Shutdown()
+        public ShutdownResource Shutdown()
         {
             Task.Factory.StartNew(() => _lifecycleService.Shutdown());
-            return new { ShuttingDown = true };
+            return new ShutdownResource { ShuttingDown = true };
         }
 
         [HttpPost("restart")]
-        public object Restart()
+        public RestartResource Restart()
         {
             Task.Factory.StartNew(() => _lifecycleService.Restart());
-            return new { Restarting = true };
+            return new RestartResource { Restarting = true };
         }
     }
 }

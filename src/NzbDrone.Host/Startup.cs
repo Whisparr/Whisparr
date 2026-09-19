@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi;
 using NLog.Extensions.Logging;
 using NzbDrone.Common.EnvironmentInfo;
+using NzbDrone.Common.Http;
 using NzbDrone.Common.Instrumentation;
 using NzbDrone.Common.Processes;
 using NzbDrone.Common.Serializer;
@@ -102,7 +103,7 @@ namespace NzbDrone.Host
                     License = new OpenApiLicense
                     {
                         Name = "GPL-3.0",
-                        Url = new Uri("https://github.com/Whisparr/Whisparr/blob/develop/LICENSE")
+                        Url = new Uri("https://github.com/Whisparr/Whisparr/blob/v2-develop/LICENSE")
                     }
                 });
 
@@ -156,10 +157,15 @@ namespace NzbDrone.Host
 
                 c.DescribeAllParametersInCamelCase();
 
+                // STJHttpUriConverter writes HttpUri as its full URI
+                c.MapType<HttpUri>(() => new OpenApiSchema { Type = JsonSchemaType.String, Format = "uri" });
+
                 c.CustomOperationIds(api => OperationIds.FromRoute(api.HttpMethod, api.RelativePath));
                 c.OperationFilter<SuccessStatusCodeOperationFilter>();
                 c.OperationFilter<AllowAnonymousOperationFilter>();
+                c.OperationFilter<FileUploadOperationFilter>();
                 c.SchemaFilter<CommandResourceSchemaFilter>();
+                c.RequestBodyFilter<RequiredRequestBodyFilter>();
             });
 
             services

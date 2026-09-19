@@ -67,6 +67,20 @@ namespace NzbDrone.Integration.Test
             responses.EnumerateObject().Select(r => r.Name).Should().BeEquivalentTo(new[] { statusCode });
         }
 
+        [TestCase("post", "/login", "302", "401")]
+        [TestCase("get", "/logout", "302")]
+        [TestCase("get", "/api/v3/parse", "200", "204")]
+        [TestCase("get", "/api/v3/system/task/{id}", "200", "204")]
+        [TestCase("get", "/api/v3/tag/{id}", "200")]
+        [TestCase("get", "/feed/v3/calendar/whisparr.ics", "200", "204")]
+        [TestCase("post", "/api/v3/indexer/testall", "200", "400")]
+        public void should_document_every_status_code_the_action_returns(string verb, string path, params string[] statusCodes)
+        {
+            var responses = GetOperation(verb, path).GetProperty("responses");
+
+            responses.EnumerateObject().Select(r => r.Name).Should().BeEquivalentTo(statusCodes);
+        }
+
         [TestCase("post", "/api/v3/tag", "TagResource")]
         [TestCase("put", "/api/v3/tag/{id}", "TagResource")]
         public void should_keep_the_response_schema_when_moving_the_status_code(string verb, string path, string schema)
@@ -107,6 +121,112 @@ namespace NzbDrone.Integration.Test
         }
 
         [Test]
+        public void http_uri_should_be_described_as_a_string()
+        {
+            var wikiUrl = GetSchema("HealthResource").GetProperty("properties").GetProperty("wikiUrl");
+
+            wikiUrl.GetProperty("type").GetString().Should().Be("string");
+        }
+
+        [Test]
+        public void json_request_bodies_should_be_required()
+        {
+            foreach (var (path, verb, operation) in GetOperations())
+            {
+                if (!operation.TryGetProperty("requestBody", out var requestBody) ||
+                    !requestBody.GetProperty("content").TryGetProperty("application/json", out _))
+                {
+                    continue;
+                }
+
+                requestBody.TryGetProperty("required", out var required).Should().BeTrue("{0} {1} rejects a request without a body", verb, path);
+                required.GetBoolean().Should().BeTrue("{0} {1} rejects a request without a body", verb, path);
+            }
+        }
+
+        [Test]
+        public void backup_upload_should_describe_its_multipart_body()
+        {
+            var requestBody = GetOperation("post", "/api/v3/system/backup/restore/upload").GetProperty("requestBody");
+            var schema = requestBody.GetProperty("content").GetProperty("multipart/form-data").GetProperty("schema");
+
+            requestBody.GetProperty("required").GetBoolean().Should().BeTrue();
+            schema.GetProperty("required").EnumerateArray().Select(r => r.GetString()).Should().BeEquivalentTo("restore");
+            schema.GetProperty("properties").GetProperty("restore").GetProperty("format").GetString().Should().Be("binary");
+        }
+
+        [TestCase("get", "/api")]
+        [TestCase("get", "/api/v3/autotagging/schema")]
+        [TestCase("get", "/api/v3/customformat/schema")]
+        [TestCase("get", "/api/v3/config/naming/examples")]
+        [TestCase("get", "/api/v3/filesystem")]
+        [TestCase("get", "/api/v3/system/routes/duplicate")]
+        [TestCase("post", "/api/v3/series/import")]
+        [TestCase("post", "/api/v3/manualimport")]
+        [TestCase("post", "/api/v3/release")]
+        [TestCase("post", "/api/v3/indexer/test")]
+        [TestCase("post", "/api/v3/indexer/testall")]
+        [TestCase("post", "/api/v3/indexer/action/{name}")]
+        public void operations_returning_data_should_describe_it(string verb, string path)
+        {
+            var response = GetOperation(verb, path).GetProperty("responses").GetProperty("200");
+
+            response.TryGetProperty("content", out var content).Should().BeTrue("{0} {1} returns a body", verb, path);
+
+            foreach (var mediaType in content.EnumerateObject())
+            {
+                mediaType.Value.TryGetProperty("schema", out _).Should().BeTrue("{0} {1} should describe its {2} body", verb, path, mediaType.Name);
+            }
+        }
+
+        [TestCase("get", "/api/v3/filesystem/type", "FileSystemTypeResource")]
+        [TestCase("post", "/api/v3/system/shutdown", "ShutdownResource")]
+        [TestCase("post", "/api/v3/system/restart", "RestartResource")]
+        [TestCase("post", "/api/v3/system/backup/restore/{id}", "BackupRestoreResource")]
+        [TestCase("post", "/api/v3/system/backup/restore/upload", "BackupRestoreResource")]
+        public void anonymous_responses_should_be_named_resources(string verb, string path, string schema)
+        {
+            var content = GetOperation(verb, path).GetProperty("responses").GetProperty("200").GetProperty("content");
+
+            content.GetProperty("application/json").GetProperty("schema").GetProperty("$ref").GetString()
+                .Should().Be("#/components/schemas/" + schema);
+        }
+
+        [Test]
+        public void media_files_should_be_a_named_resource()
+        {
+            var schema = GetOperation("get", "/api/v3/filesystem/mediafiles").GetProperty("responses").GetProperty("200")
+                .GetProperty("content").GetProperty("application/json").GetProperty("schema");
+
+            schema.GetProperty("items").GetProperty("$ref").GetString().Should().Be("#/components/schemas/FileSystemMediaFileResource");
+        }
+
+        [TestCase("get", "/feed/v3/calendar/whisparr.ics", "text/calendar", null)]
+        [TestCase("get", "/api/v3/log/file/{filename}", "text/plain", null)]
+        [TestCase("get", "/api/v3/log/file/update/{filename}", "text/plain", null)]
+        [TestCase("get", "/api/v3/mediacover/{seriesId}/{filename}", "image/jpeg", "binary")]
+        public void file_responses_should_declare_their_media_type(string verb, string path, string mediaType, string format)
+        {
+            var content = GetOperation(verb, path).GetProperty("responses").GetProperty("200").GetProperty("content");
+            var schema = content.GetProperty(mediaType).GetProperty("schema");
+
+            schema.GetProperty("type").GetString().Should().Be("string");
+
+            if (format != null)
+            {
+                schema.GetProperty("format").GetString().Should().Be(format);
+            }
+        }
+
+        [Test]
+        public void route_graph_should_be_plain_text()
+        {
+            var content = GetOperation("get", "/api/v3/system/routes").GetProperty("responses").GetProperty("200").GetProperty("content");
+
+            content.EnumerateObject().Select(c => c.Name).Should().BeEquivalentTo("text/plain");
+        }
+
+        [Test]
         public void every_path_parameter_should_appear_in_its_path_template()
         {
             foreach (var (path, _, operation) in GetOperations())
@@ -143,6 +263,11 @@ namespace NzbDrone.Integration.Test
             var version = status.GetProperty("version").GetString();
 
             _document.GetProperty("info").GetProperty("description").GetString().Should().Contain(version);
+        }
+
+        private JsonElement GetSchema(string name)
+        {
+            return _document.GetProperty("components").GetProperty("schemas").GetProperty(name);
         }
 
         private JsonElement GetOperation(string verb, string path)

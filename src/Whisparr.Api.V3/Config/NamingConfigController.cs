@@ -68,6 +68,7 @@ namespace Whisparr.Api.V3.Config
         }
 
         [HttpGet("examples")]
+        [ProducesResponseType(typeof(NamingExampleResource), 200)]
         public object GetExamples([FromQuery]NamingConfigResource config)
         {
             if (config.Id == 0)

@@ -31,6 +31,14 @@ namespace Whisparr.Api.V3.System.Tasks
                                .ToList();
         }
 
+        // GetResourceById returns null for an unknown id, so this answers 204 where the rest answer 404
+        [ProducesResponseType(typeof(TaskResource), 200)]
+        [ProducesResponseType(204)]
+        public override ActionResult<TaskResource> GetResourceByIdWithErrorHandler(int id)
+        {
+            return base.GetResourceByIdWithErrorHandler(id);
+        }
+
         protected override TaskResource GetResourceById(int id)
         {
             var task = _taskManager.GetAll()

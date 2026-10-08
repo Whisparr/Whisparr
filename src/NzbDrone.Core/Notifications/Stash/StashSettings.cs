@@ -19,6 +19,14 @@ namespace NzbDrone.Core.Notifications.Stash
                 .Equal(false)
                 .Unless(c => c.GeneratePreviews)
                 .WithMessage("Generate Previews must also be enabled");
+            RuleFor(c => c.PerformerSyncRootFolderPath)
+                .NotEmpty()
+                .When(c => c.SyncsToWhisparr)
+                .WithMessage("A root folder is required when syncing favorites to Whisparr");
+            RuleFor(c => c.PerformerSyncQualityProfileId)
+                .GreaterThan(0)
+                .When(c => c.SyncsToWhisparr)
+                .WithMessage("A quality profile is required when syncing favorites to Whisparr");
         }
     }
 
@@ -89,10 +97,25 @@ namespace NzbDrone.Core.Notifications.Stash
         [FieldDefinition(18, Label = "Map Paths To", Type = FieldType.Textbox, Advanced = true, HelpText = "Stash Path, Used to modify site paths when Stash sees library path location differently from Whisparr")]
         public string MapTo { get; set; }
 
+        [FieldDefinition(19, Label = "Performer Sync Mode", Type = FieldType.Select, SelectOptions = typeof(StashPerformerSyncMode), HelpText = "Synchronize Whisparr performer monitoring with favorites in this local Stash instance")]
+        public StashPerformerSyncMode PerformerSyncMode { get; set; }
+
+        [FieldDefinition(20, Label = "Performer Sync Root Folder", Type = FieldType.Select, SelectOptionsProviderAction = "getRootFolders", HelpText = "Root folder used when a Stash favorite creates a performer in Whisparr")]
+        public string PerformerSyncRootFolderPath { get; set; }
+
+        [FieldDefinition(21, Label = "Performer Sync Quality Profile", Type = FieldType.Select, SelectOptionsProviderAction = "getQualityProfiles", HelpText = "Quality profile used when a Stash favorite creates a performer in Whisparr")]
+        public int PerformerSyncQualityProfileId { get; set; }
+
+        [FieldDefinition(22, Label = "Performer Sync State", Type = FieldType.Textbox, Hidden = HiddenType.Hidden)]
+        public string PerformerSyncState { get; set; }
+
         [JsonIgnore]
         public string Address => $"{Host.ToUrlHost()}:{Port}";
 
         public bool IsValid => !string.IsNullOrWhiteSpace(Host) && Port > 0;
+
+        [JsonIgnore]
+        public bool SyncsToWhisparr => PerformerSyncMode == StashPerformerSyncMode.StashToWhisparr || PerformerSyncMode == StashPerformerSyncMode.Bidirectional;
 
         public override NzbDroneValidationResult Validate()
         {

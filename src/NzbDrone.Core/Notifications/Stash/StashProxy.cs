@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Newtonsoft.Json;
 using NLog;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
@@ -5,8 +9,20 @@ using NzbDrone.Common.Serializer;
 
 namespace NzbDrone.Core.Notifications.Stash
 {
-    public class StashProxy
+    public interface IStashProxy
     {
+        void Clean(StashSettings settings, string path);
+        void Update(StashSettings settings, string path);
+        void GetStatus(StashSettings settings);
+        List<StashPerformer> GetPerformers(StashSettings settings);
+        StashPerformer UpdatePerformerFavorite(StashSettings settings, string performerId, bool favorite);
+        StashPerformer CreatePerformer(StashSettings settings, string name, string stashDbId);
+    }
+
+    public class StashProxy : IStashProxy
+    {
+        public const string StashDbEndpoint = "https://stashdb.org/graphql";
+
         private readonly IHttpClient _httpClient;
         private readonly Logger _logger;
 
@@ -112,7 +128,117 @@ namespace NzbDrone.Core.Notifications.Stash
             ProcessRequest(request, settings);
         }
 
-        private string ProcessRequest(HttpRequest request, StashSettings settings)
+        public List<StashPerformer> GetPerformers(StashSettings settings)
+        {
+            const string query = @"query($page:Int!){
+                findPerformers(filter:{page:$page,per_page:500,sort:""id"",direction:ASC}){
+                    count
+                    performers{id name favorite stash_ids{endpoint stash_id}}
+                }
+            }";
+
+            var performers = new List<StashPerformer>();
+            var page = 1;
+
+            while (true)
+            {
+                var data = ExecuteGraphQl<StashFindPerformersData>(settings, query, new { page });
+                var result = data?.FindPerformers;
+
+                if (result?.Performers == null)
+                {
+                    throw new InvalidOperationException("Stash returned an incomplete performer listing");
+                }
+
+                performers.AddRange(result.Performers);
+
+                if (performers.Count >= result.Count)
+                {
+                    return performers;
+                }
+
+                if (result.Performers.Count == 0)
+                {
+                    throw new InvalidOperationException("Stash performer pagination ended before the reported count");
+                }
+
+                page++;
+            }
+        }
+
+        public StashPerformer UpdatePerformerFavorite(StashSettings settings, string performerId, bool favorite)
+        {
+            const string mutation = @"mutation($input:PerformerUpdateInput!){
+                performerUpdate(input:$input){id name favorite stash_ids{endpoint stash_id}}
+            }";
+
+            var data = ExecuteGraphQl<StashPerformerMutationData>(settings, mutation, new
+            {
+                input = new
+                {
+                    id = performerId,
+                    favorite
+                }
+            });
+
+            return data?.PerformerUpdate ?? throw new InvalidOperationException("Stash did not return the updated performer");
+        }
+
+        public StashPerformer CreatePerformer(StashSettings settings, string name, string stashDbId)
+        {
+            const string mutation = @"mutation($input:PerformerCreateInput!){
+                performerCreate(input:$input){id name favorite stash_ids{endpoint stash_id}}
+            }";
+
+            var data = ExecuteGraphQl<StashPerformerMutationData>(settings, mutation, new
+            {
+                input = new
+                {
+                    name,
+                    favorite = true,
+                    stash_ids = new[]
+                    {
+                        new
+                        {
+                            endpoint = StashDbEndpoint,
+                            stash_id = stashDbId
+                        }
+                    }
+                }
+            });
+
+            return data?.PerformerCreate ?? throw new InvalidOperationException("Stash did not return the created performer");
+        }
+
+        public static bool IsStashDbEndpoint(string endpoint)
+        {
+            return string.Equals(endpoint?.TrimEnd('/'), StashDbEndpoint, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private T ExecuteGraphQl<T>(StashSettings settings, string query, object variables)
+        {
+            var request = BuildRequest(settings);
+            request.Headers.ContentType = "application/json";
+            request.SetContent(new { query, variables }.ToJson());
+
+            var content = ProcessRequest(request, settings, false);
+            var response = JsonConvert.DeserializeObject<StashGraphQlResponse<T>>(content);
+
+            if (response == null)
+            {
+                throw new InvalidOperationException("Stash returned an empty GraphQL response");
+            }
+
+            if (response.Errors?.Any() == true)
+            {
+                var messages = string.Join("; ", response.Errors.Select(error => error.Message).Where(message => message.IsNotNullOrWhiteSpace()));
+                throw new InvalidOperationException($"Stash GraphQL request failed: {messages}");
+            }
+
+            return response.Data;
+        }
+
+        private string ProcessRequest(HttpRequest request, StashSettings settings, bool logResponse = true)
         {
             if (settings.ApiKey.IsNotNullOrWhiteSpace())
             {
@@ -120,7 +246,10 @@ namespace NzbDrone.Core.Notifications.Stash
             }
 
             var response = _httpClient.Post(request);
-            _logger.Trace("Response: {0}", response.Content);
+            if (logResponse)
+            {
+                _logger.Trace("Response: {0}", response.Content);
+            }
 
             CheckForError(response);
 

@@ -1,18 +1,26 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using FluentValidation.Results;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.Movies;
+using NzbDrone.Core.Profiles.Qualities;
+using NzbDrone.Core.RootFolders;
 
 namespace NzbDrone.Core.Notifications.Stash
 {
     public class Stash : NotificationBase<StashSettings>
     {
         private readonly IStashService _stashService;
+        private readonly IRootFolderService _rootFolderService;
+        private readonly IQualityProfileService _qualityProfileService;
 
-        public Stash(IStashService stashService)
+        public Stash(IStashService stashService, IRootFolderService rootFolderService, IQualityProfileService qualityProfileService)
         {
             _stashService = stashService;
+            _rootFolderService = rootFolderService;
+            _qualityProfileService = qualityProfileService;
         }
 
         public override string Link => "https://stashapp.cc/";
@@ -46,6 +54,39 @@ namespace NzbDrone.Core.Notifications.Stash
             failures.AddIfNotNull(_stashService.Test(Settings));
 
             return new ValidationResult(failures);
+        }
+
+        public override object RequestAction(string action, IDictionary<string, string> query)
+        {
+            if (action == "getRootFolders")
+            {
+                return new
+                {
+                    options = _rootFolderService.All()
+                        .OrderBy(folder => folder.Path, StringComparer.InvariantCultureIgnoreCase)
+                        .Select(folder => new
+                        {
+                            Value = folder.Path,
+                            Name = folder.Path
+                        })
+                };
+            }
+
+            if (action == "getQualityProfiles")
+            {
+                return new
+                {
+                    options = _qualityProfileService.All()
+                        .OrderBy(profile => profile.Name, StringComparer.InvariantCultureIgnoreCase)
+                        .Select(profile => new
+                        {
+                            Value = profile.Id,
+                            Name = profile.Name
+                        })
+                };
+            }
+
+            return new { };
         }
     }
 }

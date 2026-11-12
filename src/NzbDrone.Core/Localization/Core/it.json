@@ -259,7 +259,7 @@
     "CustomFormatsSettings": "Impostazioni Formati Personalizzati",
     "CustomFormatsSettingsSummary": "Formati Personalizzati e Impostazioni",
     "CustomFormatsSpecificationRegularExpression": "Espressione Regolare",
-    "CustomFormatUnknownCondition": "Condizione del Formato Personalizzato sconosciuta '{0}'",
+    "CustomFormatUnknownCondition": "Condizione del Formato Personalizzato sconosciuta '{implementation}'",
     "CustomFormatUnknownConditionOption": "Opzione sconosciuta '{key}' per la condizione '{implementation}'",
     "Cutoff": "Taglio",
     "CutoffFormatScoreHelpText": "Una volta raggiunto questo formato personalizzato, {appName} non scaricherà più i film",

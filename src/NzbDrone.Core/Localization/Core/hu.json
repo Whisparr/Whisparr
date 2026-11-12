@@ -39,7 +39,7 @@
     "AddNewMovie": "Új film hozzáadása",
     "AddNewMovieMessage": "Könnyű hozzáadni egy filmet, csak kezd el gépelni a kívánt film nevét",
     "AddNewRestriction": "Új korlátozás hozzáadása",
-    "AddNewSceneMessage": "Könnyű hozzáadni egy filmet, csak kezd el gépelni a kívánt film nevét",
+    "AddNewSceneMessage": "Könnyű új jelenetet, szereplőt vagy stúdiót hozzáadni.  Csak kezdje el beírni a hozzáadni kívánt elem nevét",
     "AddNewTmdbIdMessage": "TMDb azonosító segítségével is kereshetsz filmre. Pl. 'tmdb:71663'",
     "AddNotificationError": "Nem sikerült új értesítést hozzáadni, próbálkozzon újra.",
     "AddQualityProfile": "Minőségi Profil hozzáadása",
@@ -1352,7 +1352,7 @@
     "Test": "Teszt",
     "TestAll": "Összes Tesztelése",
     "TestAllClients": "Minden ügyfél tesztelése",
-    "TestAllIndexers": "Tesztelje az összes indexelőt",
+    "TestAllIndexers": "Összes indexelő tesztelése",
     "TestAllLists": "Minden lista tesztelése",
     "TestParsing": "Tesztelemzés",
     "TheLogLevelDefault": "A naplózási szint alapértékei az 'Info' alatt változtathatóak",
@@ -2145,5 +2145,10 @@
     "AddStudio": "Stúdió hozzáadása",
     "AutoRenameFolders": "Mappák és fájlok automatikus átnevezése",
     "ActivePerformerDescription": "Az előadó aktivan készít tartalmat",
-    "AddNewScene": "Új jelenet hozzáadása"
+    "AddNewScene": "Új jelenet hozzáadása",
+    "AddNewStashIdMessage": "A jelenet Stash-azonosítója alapján is kereshet. Például: „stash:06a8ee7b-4b90-4f31-a640-9a12aedfe7cf”",
+    "AddPerformer": "Előadó hozzáadása",
+    "AddPerformers": "Előadók hozzáadása",
+    "AddScenes": "Jelenetek hozzáadása",
+    "AllPerformersHiddenDueToFilter": "Az alkalmazott szűrő miatt az összes előadó el van rejtve."
 }

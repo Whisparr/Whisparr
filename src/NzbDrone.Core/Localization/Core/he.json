@@ -53,7 +53,7 @@
     "AllCollectionsHiddenDueToFilter": "כל הסרטים מוסתרים בגלל המסנן שהוחל.",
     "AllFiles": "כל הקבצים",
     "AllMoviesHiddenDueToFilter": "כל הסרטים מוסתרים בגלל המסנן שהוחל.",
-    "AllMoviesInPathHaveBeenImported": "כל הסרטים ב- {0} יובאו",
+    "AllMoviesInPathHaveBeenImported": "{path}כל הסרטים ב- {0} יובאו",
     "AllowHardcodedSubs": "אפשר תת-קידודים קשיחים",
     "AllowHardcodedSubsHelpText": "תת-קידודים מזוהים שזוהו יורדו אוטומטית",
     "AllResultsHiddenFilter": "כל התוצאות מוסתרות על ידי המסנן שהוחל",

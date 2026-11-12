@@ -2132,7 +2132,7 @@
     "UnmonitorDeletedMovies": "Silinen Filmlerin Takibini Kaldır",
     "UnmonitorDeletedMoviesHelpText": "Diskten silinen filmler otomatik olarak {appName}'da takip edilmez",
     "UpdateMoviePath": "Film Yolunu Güncelle",
-    "UpdatePath": "Güncelleme Yolu",
+    "UpdatePath": "Yolu Güncelle",
     "UserInvokedSearch": "Kullanıcı Tarafından Çağrılan Arama",
     "Warning": "Uyarı",
     "WithFiles": "Dosyalarla",

@@ -465,7 +465,7 @@
     "DownloadClientRTorrentSettingsDirectoryHelpText": "Volitelné umístění pro stahování, ponechte prázdné pro použití výchozího umístění rTorrentu",
     "DownloadClientRTorrentSettingsUrlPath": "Cesta URL",
     "DownloadClientRTorrentSettingsUrlPathHelpText": "Cesta ke koncovému bodu XMLRPC, viz {url}. Při použití ruTorrentu je to obvykle RPC2 nebo [cesta k ruTorrentu]{url2}.",
-    "DownloadClients": "Stáhnout klienty",
+    "DownloadClients": "Klienti pro stahování",
     "DownloadClientSettings": "Stáhněte si nastavení klienta",
     "DownloadClientSettingsAddPaused": "Přidat pozastavené",
     "DownloadClientSettingsDestinationHelpText": "Ručně určuje cíl stahování, pro použití výchozího nastavení nechte prázdné",
@@ -615,7 +615,7 @@
     "Global": "Globální",
     "GoToInterp": "Přejít na {0}",
     "Grab": "Urvat",
-    "Grabbed": "Popadl",
+    "Grabbed": "Zachyceno",
     "GrabId": "Chyť ID",
     "GrabRelease": "Uchopte uvolnění",
     "GrabReleaseMessageText": "{appName} nebyl schopen určit, pro který film je toto vydání určeno. {appName} nemusí být schopen toto vydání automaticky importovat. Chcete chytit „{0}“?",
@@ -627,7 +627,7 @@
     "HealthMessagesInfoBox": "Další informace o příčině těchto zpráv o kontrole zdraví najdete kliknutím na odkaz wiki (ikona knihy) na konci řádku nebo kontrolou [logů]({link}). Pokud máte potíže s interpretací těchto zpráv, můžete se obrátit na naši podporu, a to na níže uvedených odkazech.",
     "HiddenClickToShow": "Skryté, kliknutím zobrazíte",
     "HideAdvanced": "Skrýt pokročilé",
-    "History": "Dějiny",
+    "History": "Historie",
     "HistoryLoadError": "Nelze načíst historii",
     "HomePage": "Domovská stránka",
     "Host": "Hostitel",
@@ -1457,7 +1457,7 @@
     "VisitTheWikiForMoreDetails": "Další podrobnosti naleznete na wiki: ",
     "WaitingToImport": "Čekání na import",
     "WaitingToProcess": "Čekání na zpracování",
-    "Wanted": "Chtěl",
+    "Wanted": "Zažádáno",
     "Warn": "Varovat",
     "Week": "Týden",
     "WeekColumnHeader": "Záhlaví sloupce týdne",
@@ -1704,5 +1704,6 @@
     "DownloadClientQbittorrentValidationCategoryRecommendedDetail": "{appName} se nepokusí importovat dokončená stahování bez kategorie.",
     "DownloadClientQbittorrentValidationCategoryUnsupportedDetail": "qBittorrent do verze 3.3.0 nepodporoval kategorie. Prosím aktualizujte ho, nebo to zkuste znova s prázdnou kategorií.",
     "DownloadClientQbittorrentValidationQueueingNotEnabled": "Fronta není povolená",
-    "UnknownDownloadState": "Neznámý stav stahování: {state}"
+    "UnknownDownloadState": "Neznámý stav stahování: {state}",
+    "GrabbedAt": "Zachzceno {date}"
 }

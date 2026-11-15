@@ -53,7 +53,7 @@ function AddNewSeriesSearchResult(props: AddNewSeriesSearchResultProps) {
   }, []);
 
   const linkProps = isExistingSeries
-    ? { to: `/series/${titleSlug}` }
+    ? { to: `/site/${titleSlug}` }
     : { onPress: handlePress };
   let seasons = translate('OneSeason');
 

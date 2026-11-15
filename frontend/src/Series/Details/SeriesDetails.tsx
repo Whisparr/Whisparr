@@ -616,7 +616,7 @@ function SeriesDetails({ seriesId }: SeriesDetailsProps) {
                       aria-label={translate('SiteDetailsGoTo', {
                         title: previousSeries.title,
                       })}
-                      to={`/series/${previousSeries.titleSlug}`}
+                      to={`/site/${previousSeries.titleSlug}`}
                     />
                   ) : null}
 
@@ -631,7 +631,7 @@ function SeriesDetails({ seriesId }: SeriesDetailsProps) {
                       aria-label={translate('SiteDetailsGoTo', {
                         title: nextSeries.title,
                       })}
-                      to={`/series/${nextSeries.titleSlug}`}
+                      to={`/site/${nextSeries.titleSlug}`}
                     />
                   ) : null}
                 </div>

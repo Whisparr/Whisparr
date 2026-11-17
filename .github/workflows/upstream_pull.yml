@@ -249,7 +249,7 @@ jobs:
               echo "Sonarr/Sonarr@${sha:0:9} - $subject"
               if [ -n "$issue" ]; then
                 echo
-                echo "Fixes ${issue##*/}"
+                echo "Fixes #${issue##*/}"
               fi
               echo
               echo '---'

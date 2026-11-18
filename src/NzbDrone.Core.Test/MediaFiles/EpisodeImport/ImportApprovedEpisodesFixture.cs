@@ -6,7 +6,6 @@ using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using NzbDrone.Common.Disk;
-using NzbDrone.Core.DecisionEngine;
 using NzbDrone.Core.Download;
 using NzbDrone.Core.History;
 using NzbDrone.Core.MediaFiles;
@@ -46,9 +45,10 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
             var episodes = Builder<Episode>.CreateListOfSize(5)
                                            .Build();
 
-            _rejectedDecisions.Add(new ImportDecision(new LocalEpisode(), new Rejection("Rejected!")));
-            _rejectedDecisions.Add(new ImportDecision(new LocalEpisode(), new Rejection("Rejected!")));
-            _rejectedDecisions.Add(new ImportDecision(new LocalEpisode(), new Rejection("Rejected!")));
+            _rejectedDecisions.Add(new ImportDecision(new LocalEpisode(), new ImportRejection(ImportRejectionReason.Unknown, "Rejected!")));
+            _rejectedDecisions.Add(new ImportDecision(new LocalEpisode(), new ImportRejection(ImportRejectionReason.Unknown, "Rejected!")));
+            _rejectedDecisions.Add(new ImportDecision(new LocalEpisode(), new ImportRejection(ImportRejectionReason.Unknown, "Rejected!")));
+            _rejectedDecisions.ForEach(r => r.LocalEpisode.FileEpisodeInfo = new ParsedEpisodeInfo());
 
             foreach (var episode in episodes)
             {

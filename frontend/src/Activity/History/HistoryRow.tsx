@@ -22,6 +22,7 @@ import { fetchHistory, markAsFailed } from 'Store/Actions/historyActions';
 import CustomFormat from 'typings/CustomFormat';
 import { HistoryData, HistoryEventType } from 'typings/History';
 import formatCustomFormatScore from 'Utilities/Number/formatCustomFormatScore';
+import translate from 'Utilities/String/translate';
 import HistoryDetailsModal from './Details/HistoryDetailsModal';
 import HistoryEventTypeCell from './HistoryEventTypeCell';
 import styles from './HistoryRow.css';
@@ -137,6 +138,7 @@ function HistoryRow(props: HistoryRowProps) {
               <SeasonEpisodeNumber
                 seasonNumber={episode.seasonNumber}
                 episodeNumber={episode.episodeNumber}
+                releaseDate={episode.releaseDate}
                 absoluteEpisodeNumber={episode.absoluteEpisodeNumber}
                 seriesType={series.seriesType}
                 alternateTitles={series.alternateTitles}
@@ -158,6 +160,19 @@ function HistoryRow(props: HistoryRowProps) {
                 episodeTitle={episode.title}
                 showOpenSeriesButton={true}
               />
+            </TableRowCell>
+          );
+        }
+
+        if (name === 'actors') {
+          const joinedPerformers = episode.actors
+            .map((a) => a.character)
+            .slice(0, 4)
+            .join(', ');
+
+          return (
+            <TableRowCell key={name} className={styles.actors}>
+              <span title={joinedPerformers}>{joinedPerformers}</span>
             </TableRowCell>
           );
         }
@@ -239,7 +254,11 @@ function HistoryRow(props: HistoryRowProps) {
         if (name === 'details') {
           return (
             <TableRowCell key={name} className={styles.details}>
-              <IconButton name={icons.INFO} onPress={handleDetailsPress} />
+              <IconButton
+                name={icons.INFO}
+                aria-label={translate('Details')}
+                onPress={handleDetailsPress}
+              />
             </TableRowCell>
           );
         }

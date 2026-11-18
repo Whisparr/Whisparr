@@ -24,6 +24,9 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("test/test", "testtest")]
         [TestCase("126", "126")]
         [TestCase("24", "24")]
+        [TestCase("Test: Something à Deux", "testsomethingdeux")]
+        [TestCase("Parler à", "parlera")]
+        [TestCase("Ríkið", "rikid")]
         public void should_remove_special_characters_and_casing(string dirty, string clean)
         {
             var result = dirty.CleanSeriesTitle();

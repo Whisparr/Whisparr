@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import IconButton from 'Components/Link/IconButton';
 import { icons } from 'Helpers/Props';
 import translate from 'Utilities/String/translate';
@@ -20,6 +20,7 @@ function HealthItemLink(props: HealthItemLinkProps) {
         <IconButton
           name={icons.SETTINGS}
           title={translate('Settings')}
+          aria-label={translate('Settings')}
           to="/settings/indexers"
         />
       );
@@ -30,6 +31,7 @@ function HealthItemLink(props: HealthItemLinkProps) {
         <IconButton
           name={icons.SETTINGS}
           title={translate('Settings')}
+          aria-label={translate('Settings')}
           to="/settings/downloadclients"
         />
       );
@@ -38,6 +40,7 @@ function HealthItemLink(props: HealthItemLinkProps) {
         <IconButton
           name={icons.SETTINGS}
           title={translate('Settings')}
+          aria-label={translate('Settings')}
           to="/settings/connect"
         />
       );
@@ -45,7 +48,8 @@ function HealthItemLink(props: HealthItemLinkProps) {
       return (
         <IconButton
           name={icons.SERIES_CONTINUING}
-          title={translate('SeriesEditor')}
+          title={translate('SiteEditor')}
+          aria-label={translate('SiteEditor')}
           to="/serieseditor"
         />
       );
@@ -54,6 +58,7 @@ function HealthItemLink(props: HealthItemLinkProps) {
         <IconButton
           name={icons.UPDATE}
           title={translate('Updates')}
+          aria-label={translate('Updates')}
           to="/system/updates"
         />
       );

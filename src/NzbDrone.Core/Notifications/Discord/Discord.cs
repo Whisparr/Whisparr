@@ -1,9 +1,10 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using FluentValidation.Results;
 using NzbDrone.Common.Extensions;
+using NzbDrone.Core.Configuration;
 using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.MediaFiles.MediaInfo;
@@ -16,10 +17,12 @@ namespace NzbDrone.Core.Notifications.Discord
     public class Discord : NotificationBase<DiscordSettings>
     {
         private readonly IDiscordProxy _proxy;
+        private readonly IConfigFileProvider _configFileProvider;
 
-        public Discord(IDiscordProxy proxy)
+        public Discord(IDiscordProxy proxy, IConfigFileProvider configFileProvider)
         {
             _proxy = proxy;
+            _configFileProvider = configFileProvider;
         }
 
         public override string Name => "Discord";
@@ -34,7 +37,7 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 Author = new DiscordAuthor
                 {
-                    Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
+                    Name = Settings.Author.IsNullOrWhiteSpace() ? _configFileProvider.InstanceName : Settings.Author,
                     IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
                 },
                 Url = $"http://thetvdb.com/?tab=series&id={series.TvdbId}",
@@ -42,7 +45,7 @@ namespace NzbDrone.Core.Notifications.Discord
                 Title = GetTitle(series, episodes),
                 Color = (int)DiscordColors.Standard,
                 Fields = new List<DiscordField>(),
-                Timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+                Timestamp = DateTime.UtcNow.ToString("O")
             };
 
             if (Settings.GrabFields.Contains((int)DiscordGrabFieldType.Poster))
@@ -137,7 +140,7 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 Author = new DiscordAuthor
                 {
-                    Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
+                    Name = Settings.Author.IsNullOrWhiteSpace() ? _configFileProvider.InstanceName : Settings.Author,
                     IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
                 },
                 Url = $"http://thetvdb.com/?tab=series&id={series.TvdbId}",
@@ -145,7 +148,7 @@ namespace NzbDrone.Core.Notifications.Discord
                 Title = GetTitle(series, episodes),
                 Color = isUpgrade ? (int)DiscordColors.Upgrade : (int)DiscordColors.Success,
                 Fields = new List<DiscordField>(),
-                Timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+                Timestamp = DateTime.UtcNow.ToString("O")
             };
 
             if (Settings.ImportFields.Contains((int)DiscordImportFieldType.Poster))
@@ -251,7 +254,7 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 Author = new DiscordAuthor
                 {
-                    Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
+                    Name = Settings.Author.IsNullOrWhiteSpace() ? _configFileProvider.InstanceName : Settings.Author,
                     IconUrl = "https://raw.githubusercontent.com/Sonarr/Sonarr/develop/Logo/256.png"
                 },
                 Url = $"http://thetvdb.com/?tab=series&id={series.TvdbId}",
@@ -259,7 +262,7 @@ namespace NzbDrone.Core.Notifications.Discord
                 Title = GetTitle(series, episodes),
                 Color = (int)DiscordColors.Success,
                 Fields = new List<DiscordField>(),
-                Timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+                Timestamp = DateTime.UtcNow.ToString("O")
             };
 
             if (Settings.ImportFields.Contains((int)DiscordImportFieldType.Poster))
@@ -336,7 +339,7 @@ namespace NzbDrone.Core.Notifications.Discord
         {
             var attachments = new List<Embed>
             {
-                new ()
+                new()
                 {
                     Title = series.Title,
                 }
@@ -358,7 +361,7 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 Author = new DiscordAuthor
                 {
-                    Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
+                    Name = Settings.Author.IsNullOrWhiteSpace() ? _configFileProvider.InstanceName : Settings.Author,
                     IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
                 },
                 Url = $"https://theporndb.net/sites/{series.TvdbId}",
@@ -367,10 +370,10 @@ namespace NzbDrone.Core.Notifications.Discord
                 Color = (int)DiscordColors.Danger,
                 Fields = new List<DiscordField>
                 {
-                    new () { Name = "Reason", Value = reason.ToString() },
-                    new () { Name = "File name", Value = string.Format("```{0}```", deletedFile) }
+                    new() { Name = "Reason", Value = reason.ToString() },
+                    new() { Name = "File name", Value = string.Format("```{0}```", deletedFile) }
                 },
-                Timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+                Timestamp = DateTime.UtcNow.ToString("O"),
             };
 
             var payload = CreatePayload(null, new List<Embed> { embed });
@@ -385,14 +388,14 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 Author = new DiscordAuthor
                 {
-                    Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
+                    Name = Settings.Author.IsNullOrWhiteSpace() ? _configFileProvider.InstanceName : Settings.Author,
                     IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
                 },
                 Url = $"https://theporndb.net/sites/{series.TvdbId}",
                 Title = series.Title,
                 Description = "Site Added",
                 Color = (int)DiscordColors.Success,
-                Fields = new List<DiscordField> { new () { Name = "Links", Value = GetLinksString(series) } }
+                Fields = new List<DiscordField> { new() { Name = "Links", Value = GetLinksString(series) } }
             };
 
             if (Settings.ImportFields.Contains((int)DiscordImportFieldType.Poster))
@@ -424,14 +427,14 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 Author = new DiscordAuthor
                 {
-                    Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
+                    Name = Settings.Author.IsNullOrWhiteSpace() ? _configFileProvider.InstanceName : Settings.Author,
                     IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
                 },
                 Url = $"https://theporndb.net/sites/{series.TvdbId}",
                 Title = series.Title,
                 Description = deleteMessage.DeletedFilesMessage,
                 Color = (int)DiscordColors.Danger,
-                Fields = new List<DiscordField> { new () { Name = "Links", Value = GetLinksString(series) } }
+                Fields = new List<DiscordField> { new() { Name = "Links", Value = GetLinksString(series) } }
             };
 
             if (Settings.ImportFields.Contains((int)DiscordImportFieldType.Poster))
@@ -461,12 +464,12 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 Author = new DiscordAuthor
                 {
-                    Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
+                    Name = Settings.Author.IsNullOrWhiteSpace() ? _configFileProvider.InstanceName : Settings.Author,
                     IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
                 },
                 Title = healthCheck.Source.Name,
                 Description = healthCheck.Message,
-                Timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+                Timestamp = DateTime.UtcNow.ToString("O"),
                 Color = healthCheck.Type == HealthCheck.HealthCheckResult.Warning ? (int)DiscordColors.Warning : (int)DiscordColors.Danger
             };
 
@@ -481,12 +484,12 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 Author = new DiscordAuthor
                 {
-                    Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
+                    Name = Settings.Author.IsNullOrWhiteSpace() ? _configFileProvider.InstanceName : Settings.Author,
                     IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
                 },
                 Title = "Health Issue Resolved: " + previousCheck.Source.Name,
                 Description = $"The following issue is now resolved: {previousCheck.Message}",
-                Timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+                Timestamp = DateTime.UtcNow.ToString("O"),
                 Color = (int)DiscordColors.Success
             };
 
@@ -501,20 +504,20 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 Author = new DiscordAuthor
                 {
-                    Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
+                    Name = Settings.Author.IsNullOrWhiteSpace() ? _configFileProvider.InstanceName : Settings.Author,
                     IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
                 },
                 Title = APPLICATION_UPDATE_TITLE,
-                Timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+                Timestamp = DateTime.UtcNow.ToString("O"),
                 Color = (int)DiscordColors.Standard,
                 Fields = new List<DiscordField>()
                 {
-                    new ()
+                    new()
                     {
                         Name = "Previous Version",
                         Value = updateMessage.PreviousVersion.ToString()
                     },
-                    new ()
+                    new()
                     {
                         Name = "New Version",
                         Value = updateMessage.NewVersion.ToString()
@@ -536,7 +539,7 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 Author = new DiscordAuthor
                 {
-                    Name = Settings.Author.IsNullOrWhiteSpace() ? Environment.MachineName : Settings.Author,
+                    Name = Settings.Author.IsNullOrWhiteSpace() ? _configFileProvider.InstanceName : Settings.Author,
                     IconUrl = "https://raw.githubusercontent.com/Whisparr/Whisparr/develop/Logo/256.png"
                 },
                 Url = series?.TvdbId > 0 ? $"http://thetvdb.com/?tab=series&id={series.TvdbId}" : null,
@@ -544,14 +547,14 @@ namespace NzbDrone.Core.Notifications.Discord
                 Title = GetTitle(series, episodes),
                 Color = (int)DiscordColors.Standard,
                 Fields = new List<DiscordField>(),
-                Timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+                Timestamp = DateTime.UtcNow.ToString("O")
             };
 
             if (Settings.ManualInteractionFields.Contains((int)DiscordManualInteractionFieldType.Poster))
             {
                 embed.Thumbnail = new DiscordImage
                 {
-                    Url = series?.Images?.FirstOrDefault(x => x.CoverType == MediaCoverTypes.Poster)?.Url
+                    Url = series?.Images?.FirstOrDefault(x => x.CoverType == MediaCoverTypes.Poster)?.RemoteUrl
                 };
             }
 
@@ -559,7 +562,7 @@ namespace NzbDrone.Core.Notifications.Discord
             {
                 embed.Image = new DiscordImage
                 {
-                    Url = series?.Images?.FirstOrDefault(x => x.CoverType == MediaCoverTypes.Fanart)?.Url
+                    Url = series?.Images?.FirstOrDefault(x => x.CoverType == MediaCoverTypes.Fanart)?.RemoteUrl
                 };
             }
 
@@ -704,13 +707,18 @@ namespace NzbDrone.Core.Notifications.Discord
                 return null;
             }
 
+            if (episodes.Empty())
+            {
+                return series.Title;
+            }
+
             var episodeNumbers = string.Concat(episodes.Select(e => e.AirDate));
 
             var episodeTitles = string.Join(" + ", episodes.Select(e => e.Title));
 
-            var title = $"{series.Title} - {episodes.First().SeasonNumber}{episodeNumbers} - {episodeTitles}";
+            var title = $"{series.Title} - {episodes.First().SeasonNumber}{episodeNumbers} - {episodeTitles}".Replace("`", "\\`");
 
-            return title.Length > 256 ? $"{title.AsSpan(0, 253)}..." : title;
+            return title.Length > 256 ? $"{title.AsSpan(0, 253).TrimEnd('\\')}..." : title;
         }
     }
 }

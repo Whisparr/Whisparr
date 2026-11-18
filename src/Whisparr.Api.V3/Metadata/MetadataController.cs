@@ -1,6 +1,7 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Core.Extras.Metadata;
+using NzbDrone.SignalR;
 using Whisparr.Http;
 
 namespace Whisparr.Api.V3.Metadata
@@ -8,11 +9,11 @@ namespace Whisparr.Api.V3.Metadata
     [V3ApiController]
     public class MetadataController : ProviderControllerBase<MetadataResource, MetadataBulkResource, IMetadata, MetadataDefinition>
     {
-        public static readonly MetadataResourceMapper ResourceMapper = new ();
-        public static readonly MetadataBulkResourceMapper BulkResourceMapper = new ();
+        public static readonly MetadataResourceMapper ResourceMapper = new();
+        public static readonly MetadataBulkResourceMapper BulkResourceMapper = new();
 
-        public MetadataController(IMetadataFactory metadataFactory)
-            : base(metadataFactory, "metadata", ResourceMapper, BulkResourceMapper)
+        public MetadataController(IBroadcastSignalRMessage signalRBroadcaster, IMetadataFactory metadataFactory)
+            : base(signalRBroadcaster, metadataFactory, "metadata", ResourceMapper, BulkResourceMapper)
         {
         }
 

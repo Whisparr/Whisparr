@@ -1,4 +1,4 @@
-using NLog;
+﻿using NLog;
 using NzbDrone.Core.IndexerSearch;
 using NzbDrone.Core.MediaFiles.Events;
 using NzbDrone.Core.Messaging.Commands;
@@ -39,14 +39,12 @@ namespace NzbDrone.Core.Tv
 
             if (addOptions == null)
             {
-                _episodeAddedService.SearchForRecentlyAdded(series.Id);
+                _episodeAddedService.SearchForRecentlyAdded(series);
                 return;
             }
 
             _logger.Info("[{0}] was recently added, performing post-add actions", series.Title);
             _episodeMonitoredService.SetEpisodeMonitoredStatus(series, addOptions);
-
-            _eventAggregator.PublishEvent(new SeriesAddCompletedEvent(series));
 
             // If both options are enabled search for the whole series, which will only include monitored episodes.
             // This way multiple searches for the same season are skipped, though a season that can't be upgraded may be
@@ -71,6 +69,8 @@ namespace NzbDrone.Core.Tv
 
             series.AddOptions = null;
             _seriesService.RemoveAddOptions(series);
+
+            _eventAggregator.PublishEvent(new SeriesAddCompletedEvent(series));
         }
 
         public void Handle(SeriesScannedEvent message)

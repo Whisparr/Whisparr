@@ -61,6 +61,7 @@ namespace Whisparr.Api.V3.Episodes
 
         [HttpPut("monitor")]
         [Consumes("application/json")]
+        [ProducesResponseType(typeof(List<EpisodeResource>), 202)]
         public IActionResult SetEpisodesMonitored([FromBody] EpisodesMonitoredResource resource, [FromQuery] bool includeImages = false)
         {
             if (resource.EpisodeIds.Count == 1)

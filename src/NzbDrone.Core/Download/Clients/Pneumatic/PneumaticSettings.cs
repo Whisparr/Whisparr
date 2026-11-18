@@ -1,6 +1,5 @@
-﻿using FluentValidation;
+using FluentValidation;
 using NzbDrone.Core.Annotations;
-using NzbDrone.Core.ThingiProvider;
 using NzbDrone.Core.Validation;
 using NzbDrone.Core.Validation.Paths;
 
@@ -15,17 +14,17 @@ namespace NzbDrone.Core.Download.Clients.Pneumatic
         }
     }
 
-    public class PneumaticSettings : IProviderConfig
+    public class PneumaticSettings : DownloadClientSettingsBase<PneumaticSettings>
     {
-        private static readonly PneumaticSettingsValidator Validator = new PneumaticSettingsValidator();
+        private static readonly PneumaticSettingsValidator Validator = new();
 
-        [FieldDefinition(0, Label = "Nzb Folder", Type = FieldType.Path, HelpText = "This folder will need to be reachable from XBMC")]
+        [FieldDefinition(0, Label = "DownloadClientPneumaticSettingsNzbFolder", Type = FieldType.Path, HelpText = "DownloadClientPneumaticSettingsNzbFolderHelpText")]
         public string NzbFolder { get; set; }
 
-        [FieldDefinition(1, Label = "Strm Folder", Type = FieldType.Path, HelpText = ".strm files in this folder will be import by drone")]
+        [FieldDefinition(1, Label = "DownloadClientPneumaticSettingsStrmFolder", Type = FieldType.Path, HelpText = "DownloadClientPneumaticSettingsStrmFolderHelpText")]
         public string StrmFolder { get; set; }
 
-        public NzbDroneValidationResult Validate()
+        public override NzbDroneValidationResult Validate()
         {
             return new NzbDroneValidationResult(Validator.Validate(this));
         }

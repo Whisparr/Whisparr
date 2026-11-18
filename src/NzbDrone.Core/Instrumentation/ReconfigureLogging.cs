@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using NLog;
 using NLog.Config;
@@ -93,7 +93,7 @@ namespace NzbDrone.Core.Instrumentation
 
         private void SetLogRotation()
         {
-            foreach (var target in LogManager.Configuration.AllTargets.OfType<NzbDroneFileTarget>())
+            foreach (var target in LogManager.Configuration.AllTargets.OfType<CleansingFileTarget>())
             {
                 target.MaxArchiveFiles = _configFileProvider.LogRotate;
             }
@@ -111,13 +111,12 @@ namespace NzbDrone.Core.Instrumentation
 
         private void SetSyslogParameters(string syslogServer, int syslogPort, LogLevel minimumLogLevel)
         {
-            var syslogTarget = new SyslogTarget();
+            using var syslogTarget = new SyslogTarget();
 
             syslogTarget.Name = "syslogTarget";
             syslogTarget.MessageSend.Protocol = ProtocolType.Udp;
             syslogTarget.MessageSend.Udp.Port = syslogPort;
             syslogTarget.MessageSend.Udp.Server = syslogServer;
-            syslogTarget.MessageSend.Udp.ReconnectInterval = 500;
             syslogTarget.MessageCreation.Rfc = RfcNumber.Rfc5424;
             syslogTarget.MessageCreation.Rfc5424.AppName = _configFileProvider.InstanceName;
 

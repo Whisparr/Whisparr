@@ -69,14 +69,35 @@ function getRelativeDate({
   }
 
   if (isInNextWeek(date)) {
-    const day = moment(date).format('dddd');
+    const day = getDayOfWeek(moment(date).day());
 
     return includeTime ? translate('DayOfWeekAt', { day, time }) : day;
   }
 
-  return includeTime
+  return includeTime && timeFormat
     ? formatDateTime(date, shortDateFormat, timeFormat, { includeSeconds })
     : moment(date).format(shortDateFormat);
 }
 
 export default getRelativeDate;
+
+function getDayOfWeek(dayNumber: number) {
+  switch (dayNumber) {
+    case 0:
+      return translate('Sunday');
+    case 1:
+      return translate('Monday');
+    case 2:
+      return translate('Tuesday');
+    case 3:
+      return translate('Wednesday');
+    case 4:
+      return translate('Thursday');
+    case 5:
+      return translate('Friday');
+    case 6:
+      return translate('Saturday');
+    default:
+      return '';
+  }
+}

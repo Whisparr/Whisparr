@@ -7,14 +7,14 @@ import CheckInput from 'Components/Form/CheckInput';
 import IconButton from 'Components/Link/IconButton';
 import Link from 'Components/Link/Link';
 import SpinnerIconButton from 'Components/Link/SpinnerIconButton';
+import SeriesTagList from 'Components/SeriesTagList';
 import RelativeDateCell from 'Components/Table/Cells/RelativeDateCell';
 import VirtualTableRowCell from 'Components/Table/Cells/VirtualTableRowCell';
 import VirtualTableSelectCell from 'Components/Table/Cells/VirtualTableSelectCell';
 import Column from 'Components/Table/Column';
-import TagListConnector from 'Components/TagListConnector';
 import { icons } from 'Helpers/Props';
 import DeleteSeriesModal from 'Series/Delete/DeleteSeriesModal';
-import EditSeriesModalConnector from 'Series/Edit/EditSeriesModalConnector';
+import EditSeriesModal from 'Series/Edit/EditSeriesModal';
 import createSeriesIndexItemSelector from 'Series/Index/createSeriesIndexItemSelector';
 import { Statistics } from 'Series/Series';
 import SeriesBanner from 'Series/SeriesBanner';
@@ -80,6 +80,7 @@ function SeriesIndexRow(props: SeriesIndexRowProps) {
     totalEpisodeCount = 0,
     sizeOnDisk = 0,
     releaseGroups = [],
+    episodeFileQualities = [],
   } = statistics;
 
   const dispatch = useDispatch();
@@ -92,7 +93,7 @@ function SeriesIndexRow(props: SeriesIndexRowProps) {
     dispatch(
       executeCommand({
         name: REFRESH_SERIES,
-        seriesId,
+        seriesIds: [seriesId],
       })
     );
   }, [seriesId, dispatch]);
@@ -191,12 +192,13 @@ function SeriesIndexRow(props: SeriesIndexRowProps) {
               )}
             >
               {showBanners ? (
-                <Link className={styles.link} to={`/series/${titleSlug}`}>
+                <Link className={styles.link} to={`/site/${titleSlug}`}>
                   <SeriesBanner
                     className={styles.bannerImage}
                     images={images}
                     lazy={false}
                     overflow={true}
+                    title={title}
                     onError={onBannerLoadError}
                     onLoad={onBannerLoad}
                   />
@@ -380,6 +382,17 @@ function SeriesIndexRow(props: SeriesIndexRowProps) {
           );
         }
 
+        if (name === 'averageSizePerEpisode') {
+          const averageSize =
+            totalEpisodeCount > 0 ? sizeOnDisk / totalEpisodeCount : 0;
+
+          return (
+            <VirtualTableRowCell key={name} className={styles[name]}>
+              {averageSize ? formatBytes(averageSize) : null}
+            </VirtualTableRowCell>
+          );
+        }
+
         if (name === 'genres') {
           const joinedGenres = genres.join(', ');
 
@@ -412,10 +425,29 @@ function SeriesIndexRow(props: SeriesIndexRowProps) {
           );
         }
 
+        if (name === 'episodeFileQualities') {
+          const joinedQualities = episodeFileQualities
+            .map((q) => q.name)
+            .join(', ');
+          const truncatedQualities =
+            episodeFileQualities.length > 3
+              ? `${episodeFileQualities
+                  .slice(0, 3)
+                  .map((q) => q.name)
+                  .join(', ')}...`
+              : joinedQualities;
+
+          return (
+            <VirtualTableRowCell key={name} className={styles[name]}>
+              <span title={joinedQualities}>{truncatedQualities}</span>
+            </VirtualTableRowCell>
+          );
+        }
+
         if (name === 'tags') {
           return (
             <VirtualTableRowCell key={name} className={styles[name]}>
-              <TagListConnector tags={tags} />
+              <SeriesTagList tags={tags} />
             </VirtualTableRowCell>
           );
         }
@@ -456,6 +488,7 @@ function SeriesIndexRow(props: SeriesIndexRowProps) {
               <IconButton
                 name={icons.EDIT}
                 title={translate('EditSite')}
+                aria-label={translate('EditSite')}
                 onPress={onEditSeriesPress}
               />
             </VirtualTableRowCell>
@@ -465,7 +498,7 @@ function SeriesIndexRow(props: SeriesIndexRowProps) {
         return null;
       })}
 
-      <EditSeriesModalConnector
+      <EditSeriesModal
         isOpen={isEditSeriesModalOpen}
         seriesId={seriesId}
         onModalClose={onEditSeriesModalClose}

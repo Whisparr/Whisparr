@@ -1,10 +1,9 @@
 ﻿using NLog;
-using NzbDrone.Core.IndexerSearch.Definitions;
 using NzbDrone.Core.Parser.Model;
 
 namespace NzbDrone.Core.DecisionEngine.Specifications
 {
-    public class NotSampleSpecification : IDecisionEngineSpecification
+    public class NotSampleSpecification : IDownloadDecisionEngineSpecification
     {
         private readonly Logger _logger;
 
@@ -16,15 +15,15 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
             _logger = logger;
         }
 
-        public Decision IsSatisfiedBy(RemoteEpisode subject, SearchCriteriaBase searchCriteria)
+        public DownloadSpecDecision IsSatisfiedBy(RemoteEpisode subject, ReleaseDecisionInformation information)
         {
             if (subject.Release.Title.ToLower().Contains("sample") && subject.Release.Size < 70.Megabytes())
             {
                 _logger.Debug("Sample release, rejecting.");
-                return Decision.Reject("Sample");
+                return DownloadSpecDecision.Reject(DownloadRejectionReason.Sample, "Sample");
             }
 
-            return Decision.Accept();
+            return DownloadSpecDecision.Accept();
         }
     }
 }

@@ -7,6 +7,7 @@ import Form from 'Components/Form/Form';
 import FormGroup from 'Components/Form/FormGroup';
 import FormInputGroup from 'Components/Form/FormInputGroup';
 import FormLabel from 'Components/Form/FormLabel';
+import { EnhancedSelectInputValue } from 'Components/Form/Select/EnhancedSelectInput';
 import Button from 'Components/Link/Button';
 import LoadingIndicator from 'Components/Loading/LoadingIndicator';
 import ModalBody from 'Components/Modal/ModalBody';
@@ -16,7 +17,7 @@ import ModalHeader from 'Components/Modal/ModalHeader';
 import { inputTypes, kinds } from 'Helpers/Props';
 import Quality, { QualityModel } from 'Quality/Quality';
 import { fetchQualityProfileSchema } from 'Store/Actions/settingsActions';
-import { CheckInputChanged } from 'typings/inputs';
+import { InputChanged } from 'typings/inputs';
 import getQualities from 'Utilities/Quality/getQualities';
 import translate from 'Utilities/String/translate';
 
@@ -69,7 +70,7 @@ function SelectQualityModalContent(props: SelectQualityModalContentProps) {
   );
 
   const qualityOptions = useMemo(() => {
-    return items.map(({ id, name }) => {
+    return items.map(({ id, name }): EnhancedSelectInputValue<number> => {
       return {
         key: id,
         value: name,
@@ -78,21 +79,21 @@ function SelectQualityModalContent(props: SelectQualityModalContentProps) {
   }, [items]);
 
   const onQualityChange = useCallback(
-    ({ value }: { value: string }) => {
-      setQualityId(parseInt(value));
+    ({ value }: { value: number }) => {
+      setQualityId(value);
     },
     [setQualityId]
   );
 
   const onProperChange = useCallback(
-    ({ value }: CheckInputChanged) => {
+    ({ value }: InputChanged<boolean>) => {
       setProper(value);
     },
     [setProper]
   );
 
   const onRealChange = useCallback(
-    ({ value }: CheckInputChanged) => {
+    ({ value }: InputChanged<boolean>) => {
       setReal(value);
     },
     [setReal]
@@ -118,7 +119,7 @@ function SelectQualityModalContent(props: SelectQualityModalContentProps) {
       <ModalHeader>{modalTitle} - Select Quality</ModalHeader>
 
       <ModalBody>
-        {isFetching && <LoadingIndicator />}
+        {isFetching ? <LoadingIndicator /> : null}
 
         {!isFetching && error ? (
           <Alert kind={kinds.DANGER}>{translate('QualitiesLoadError')}</Alert>

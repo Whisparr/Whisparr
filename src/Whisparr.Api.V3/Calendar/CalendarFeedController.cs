@@ -28,6 +28,8 @@ namespace Whisparr.Api.V3.Calendar
         }
 
         [HttpGet("Whisparr.ics")]
+        [ProducesResponseType(typeof(string), 200, "text/calendar")]
+        [ProducesResponseType(204)]
         public IActionResult GetCalendarFeed(int pastDays = 7, int futureDays = 28, string tags = "", bool unmonitored = false, bool premieresOnly = false, bool asAllDay = false)
         {
             var start = DateTime.Today.AddDays(-pastDays);
@@ -54,6 +56,11 @@ namespace Whisparr.Api.V3.Calendar
             {
                 var series = allSeries.SingleOrDefault(s => s.Id == episode.SeriesId);
 
+                if (series == null)
+                {
+                    continue;
+                }
+
                 if (premieresOnly && (episode.SeasonNumber == 0))
                 {
                     continue;
@@ -72,21 +79,21 @@ namespace Whisparr.Api.V3.Calendar
 
                 if (asAllDay)
                 {
-                    occurrence.Start = new CalDateTime(episode.AirDateUtc.Value.ToLocalTime()) { HasTime = false };
+                    occurrence.Start = new CalDateTime(episode.AirDateUtc.Value.ToLocalTime(), false);
                 }
                 else
                 {
-                    occurrence.Start = new CalDateTime(episode.AirDateUtc.Value) { HasTime = true };
-                    occurrence.End = new CalDateTime(episode.AirDateUtc.Value.AddMinutes(series.Runtime)) { HasTime = true };
+                    occurrence.Start = new CalDateTime(episode.AirDateUtc.Value, true);
+                    occurrence.End = new CalDateTime(episode.AirDateUtc.Value.AddMinutes(series.Runtime), true);
                 }
 
                 occurrence.Summary = $"{series.Title} - {episode.AirDate} - {episode.Title}";
             }
 
-            var serializer = (IStringSerializer)new SerializerFactory().Build(calendar.GetType(), new SerializationContext());
-            var icalendar = serializer.SerializeToString(calendar);
+            var serializer = new SerializerFactory().Build(calendar.GetType(), new SerializationContext()) as IStringSerializer;
+            var icalendar = serializer?.SerializeToString(calendar);
 
-            return Content(icalendar, "text/calendar");
+            return icalendar is null ? NoContent() : Content(icalendar, "text/calendar");
         }
     }
 }

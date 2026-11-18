@@ -33,6 +33,7 @@ namespace Whisparr.Api.V3.Series
                                 IHandle<SeriesEditedEvent>,
                                 IHandle<SeriesDeletedEvent>,
                                 IHandle<SeriesRenamedEvent>,
+                                IHandle<SeriesBulkEditedEvent>,
                                 IHandle<MediaCoversUpdatedEvent>
     {
         private readonly ISeriesService _seriesService;
@@ -68,26 +69,34 @@ namespace Whisparr.Api.V3.Series
             _commandQueueManager = commandQueueManager;
             _rootFolderService = rootFolderService;
 
-            Http.Validation.RuleBuilderExtensions.ValidId(SharedValidator.RuleFor(s => s.QualityProfileId));
-
-            SharedValidator.RuleFor(s => s.Path)
-                .Cascade(CascadeMode.Stop)
+            SharedValidator.RuleFor(s => s.Path).Cascade(CascadeMode.Stop)
                 .IsValidPath()
-                           .SetValidator(rootFolderValidator)
-                           .SetValidator(mappedNetworkDriveValidator)
-                           .SetValidator(seriesPathValidator)
-                           .SetValidator(seriesAncestorValidator)
-                           .SetValidator(systemFolderValidator)
-                           .When(s => !s.Path.IsNullOrWhiteSpace());
+                .SetValidator(rootFolderValidator)
+                .SetValidator(mappedNetworkDriveValidator)
+                .SetValidator(seriesPathValidator)
+                .SetValidator(seriesAncestorValidator)
+                .SetValidator(systemFolderValidator)
+                .When(s => s.Path.IsNotNullOrWhiteSpace());
 
-            SharedValidator.RuleFor(s => s.QualityProfileId).SetValidator(profileExistsValidator);
+            PostValidator.RuleFor(s => s.Path).Cascade(CascadeMode.Stop)
+                .NotEmpty()
+                .IsValidPath()
+                .When(s => s.RootFolderPath.IsNullOrWhiteSpace());
+            PostValidator.RuleFor(s => s.RootFolderPath).Cascade(CascadeMode.Stop)
+                .NotEmpty()
+                .IsValidPath()
+                .SetValidator(rootFolderExistsValidator)
+                .SetValidator(seriesFolderAsRootFolderValidator)
+                .When(s => s.Path.IsNullOrWhiteSpace());
 
-            PostValidator.RuleFor(s => s.Path).IsValidPath().When(s => s.RootFolderPath.IsNullOrWhiteSpace());
-            PostValidator.RuleFor(s => s.RootFolderPath)
-                         .IsValidPath()
-                         .SetValidator(rootFolderExistsValidator)
-                         .SetValidator(seriesFolderAsRootFolderValidator)
-                         .When(s => s.Path.IsNullOrWhiteSpace());
+            PutValidator.RuleFor(s => s.Path).Cascade(CascadeMode.Stop)
+                .NotEmpty()
+                .IsValidPath();
+
+            SharedValidator.RuleFor(s => s.QualityProfileId).Cascade(CascadeMode.Stop)
+                .ValidId()
+                .SetValidator(profileExistsValidator);
+
             PostValidator.RuleFor(s => s.Title).NotEmpty();
             PostValidator.RuleFor(s => s.TvdbId).GreaterThan(0).SetValidator(seriesExistsValidator);
         }
@@ -177,9 +186,9 @@ namespace Whisparr.Api.V3.Series
                 {
                     SeriesId = series.Id,
                     SourcePath = sourcePath,
-                    DestinationPath = destinationPath,
-                    Trigger = CommandTrigger.Manual
-                });
+                    DestinationPath = destinationPath
+                },
+                    trigger: CommandTrigger.Manual);
             }
 
             var model = seriesResource.ToModel(series);
@@ -212,17 +221,17 @@ namespace Whisparr.Api.V3.Series
             return resource;
         }
 
-        private void MapCoversToLocal(params SeriesResource[] series)
+        private void MapCoversToLocal(params IEnumerable<SeriesResource> series)
         {
             foreach (var seriesResource in series)
             {
-                _coverMapper.ConvertToLocalUrls(seriesResource.Id, seriesResource.Images);
+                _coverMapper.ConvertToLocalUrls(seriesResource.Id, seriesResource.Images, seriesResource.Added);
             }
         }
 
         private void FetchAndLinkSeriesStatistics(SeriesResource resource)
         {
-            LinkSeriesStatistics(resource, _seriesStatisticsService.SeriesStatistics(resource.Id));
+            LinkSeriesStatistics(resource, _seriesStatisticsService.SeriesStatistics(resource.Id, resource.QualityProfileId));
         }
 
         private void LinkSeriesStatistics(List<SeriesResource> resources, List<SeriesStatistics> seriesStatistics)
@@ -295,7 +304,7 @@ namespace Whisparr.Api.V3.Series
         {
             foreach (var series in message.Series)
             {
-                BroadcastResourceChange(ModelAction.Deleted, series.ToResource());
+                BroadcastResourceChange(ModelAction.Deleted, GetSeriesResource(series, false));
             }
         }
 
@@ -303,6 +312,15 @@ namespace Whisparr.Api.V3.Series
         public void Handle(SeriesRenamedEvent message)
         {
             BroadcastResourceChange(ModelAction.Updated, message.Series.Id);
+        }
+
+        [NonAction]
+        public void Handle(SeriesBulkEditedEvent message)
+        {
+            foreach (var series in message.Series)
+            {
+                BroadcastResourceChange(ModelAction.Updated, GetSeriesResource(series, false));
+            }
         }
 
         [NonAction]

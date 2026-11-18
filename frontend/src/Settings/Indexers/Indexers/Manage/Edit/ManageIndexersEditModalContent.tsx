@@ -2,12 +2,14 @@ import React, { useCallback, useState } from 'react';
 import FormGroup from 'Components/Form/FormGroup';
 import FormInputGroup from 'Components/Form/FormInputGroup';
 import FormLabel from 'Components/Form/FormLabel';
+import { EnhancedSelectInputValue } from 'Components/Form/Select/EnhancedSelectInput';
 import Button from 'Components/Link/Button';
 import ModalBody from 'Components/Modal/ModalBody';
 import ModalContent from 'Components/Modal/ModalContent';
 import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { inputTypes } from 'Helpers/Props';
+import { InputChanged } from 'typings/inputs';
 import translate from 'Utilities/String/translate';
 import styles from './ManageIndexersEditModalContent.css';
 
@@ -16,6 +18,7 @@ interface SavePayload {
   enableAutomaticSearch?: boolean;
   enableInteractiveSearch?: boolean;
   priority?: number;
+  seasonSearchMaximumSingleEpisodeAge?: number;
 }
 
 interface ManageIndexersEditModalContentProps {
@@ -26,7 +29,7 @@ interface ManageIndexersEditModalContentProps {
 
 const NO_CHANGE = 'noChange';
 
-const enableOptions = [
+const enableOptions: EnhancedSelectInputValue<string>[] = [
   {
     key: NO_CHANGE,
     get value() {
@@ -57,7 +60,11 @@ function ManageIndexersEditModalContent(
   const [enableAutomaticSearch, setEnableAutomaticSearch] = useState(NO_CHANGE);
   const [enableInteractiveSearch, setEnableInteractiveSearch] =
     useState(NO_CHANGE);
-  const [priority, setPriority] = useState<null | string | number>(null);
+  const [priority, setPriority] = useState<null | number>(null);
+  const [
+    seasonSearchMaximumSingleEpisodeAge,
+    setSeasonSearchMaximumSingleEpisodeAge,
+  ] = useState<null | number>(null);
 
   const save = useCallback(() => {
     let hasChanges = false;
@@ -83,6 +90,12 @@ function ManageIndexersEditModalContent(
       payload.priority = priority as number;
     }
 
+    if (seasonSearchMaximumSingleEpisodeAge !== null) {
+      hasChanges = true;
+      payload.seasonSearchMaximumSingleEpisodeAge =
+        seasonSearchMaximumSingleEpisodeAge as number;
+    }
+
     if (hasChanges) {
       onSavePress(payload);
     }
@@ -93,31 +106,32 @@ function ManageIndexersEditModalContent(
     enableAutomaticSearch,
     enableInteractiveSearch,
     priority,
+    seasonSearchMaximumSingleEpisodeAge,
     onSavePress,
     onModalClose,
   ]);
 
-  const onInputChange = useCallback(
-    ({ name, value }: { name: string; value: string }) => {
-      switch (name) {
-        case 'enableRss':
-          setEnableRss(value);
-          break;
-        case 'enableAutomaticSearch':
-          setEnableAutomaticSearch(value);
-          break;
-        case 'enableInteractiveSearch':
-          setEnableInteractiveSearch(value);
-          break;
-        case 'priority':
-          setPriority(value);
-          break;
-        default:
-          console.warn(`EditIndexersModalContent Unknown Input: '${name}'`);
-      }
-    },
-    []
-  );
+  const onInputChange = useCallback(({ name, value }: InputChanged) => {
+    switch (name) {
+      case 'enableRss':
+        setEnableRss(value as string);
+        break;
+      case 'enableAutomaticSearch':
+        setEnableAutomaticSearch(value as string);
+        break;
+      case 'enableInteractiveSearch':
+        setEnableInteractiveSearch(value as string);
+        break;
+      case 'priority':
+        setPriority(value as number);
+        break;
+      case 'seasonSearchMaximumSingleEpisodeAge':
+        setSeasonSearchMaximumSingleEpisodeAge(value as number);
+        break;
+      default:
+        console.warn(`EditIndexersModalContent Unknown Input: '${name}'`);
+    }
+  }, []);
 
   const selectedCount = indexerIds.length;
 
@@ -171,6 +185,20 @@ function ManageIndexersEditModalContent(
             value={priority}
             min={1}
             max={50}
+            onChange={onInputChange}
+          />
+        </FormGroup>
+
+        <FormGroup>
+          <FormLabel>{translate('MaximumSingleEpisodeAge')}</FormLabel>
+
+          <FormInputGroup
+            type={inputTypes.NUMBER}
+            name="seasonSearchMaximumSingleEpisodeAge"
+            helpText={translate('MaximumSingleEpisodeAgeHelpText')}
+            value={seasonSearchMaximumSingleEpisodeAge}
+            min={0}
+            unit="days"
             onChange={onInputChange}
           />
         </FormGroup>

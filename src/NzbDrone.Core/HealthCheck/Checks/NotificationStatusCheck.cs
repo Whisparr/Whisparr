@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Localization;
@@ -39,13 +40,18 @@ namespace NzbDrone.Core.HealthCheck.Checks
             {
                 return new HealthCheck(GetType(),
                     HealthCheckResult.Error,
+                    HealthCheckReason.NotificationStatusAll,
                     _localizationService.GetLocalizedString("NotificationStatusAllClientHealthCheckMessage"),
                     "#notifications-are-unavailable-due-to-failures");
             }
 
             return new HealthCheck(GetType(),
                 HealthCheckResult.Warning,
-                string.Format(_localizationService.GetLocalizedString("NotificationStatusSingleClientHealthCheckMessage"), string.Join(", ", backOffProviders.Select(v => v.Provider.Definition.Name))),
+                HealthCheckReason.NotificationStatusSingle,
+                _localizationService.GetLocalizedString("NotificationStatusSingleClientHealthCheckMessage", new Dictionary<string, object>
+                {
+                    { "notificationNames", string.Join(", ", backOffProviders.Select(v => v.Provider.Definition.Name)) }
+                }),
                 "#notifications-are-unavailable-due-to-failures");
         }
     }

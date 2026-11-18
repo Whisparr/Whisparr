@@ -1,9 +1,16 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
+using System.Xml;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NLog;
+using NzbDrone.Common.EnvironmentInfo;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Authentication;
 using NzbDrone.Core.Configuration;
@@ -16,14 +23,41 @@ namespace Whisparr.Http.Authentication
     {
         private readonly IAuthenticationService _authService;
         private readonly IConfigFileProvider _configFileProvider;
+        private readonly IAppFolderInfo _appFolderInfo;
+        private readonly Logger _logger;
 
-        public AuthenticationController(IAuthenticationService authService, IConfigFileProvider configFileProvider)
+        public AuthenticationController(IAuthenticationService authService, IConfigFileProvider configFileProvider, IAppFolderInfo appFolderInfo, Logger logger)
         {
             _authService = authService;
             _configFileProvider = configFileProvider;
+            _appFolderInfo = appFolderInfo;
+            _logger = logger;
+        }
+
+        [HttpGet("login/sso")]
+        [ProducesResponseType(302)]
+        public IActionResult LoginSso([FromQuery] string returnUrl = null)
+        {
+            if (_configFileProvider.AuthenticationMethod != AuthenticationType.Oidc)
+            {
+                return Redirect(_configFileProvider.UrlBase + "/login");
+            }
+
+            if (!_configFileProvider.IsOidcConfigured())
+            {
+                _logger.Error("OIDC authentication is enabled, but Authority, Client ID, Client Secret, User and Scopes are not all configured");
+
+                return Redirect(_configFileProvider.UrlBase + "/login");
+            }
+
+            return Challenge(
+                new AuthenticationProperties { RedirectUri = GetRedirectUrl(returnUrl) },
+                nameof(AuthenticationType.Oidc));
         }
 
         [HttpPost("login")]
+        [ProducesResponseType(302)]
+        [ProducesResponseType(typeof(ProblemDetails), 401, "application/problem+json")]
         public async Task<IActionResult> Login([FromForm] LoginResource resource, [FromQuery] string returnUrl = null)
         {
             var user = _authService.Login(HttpContext.Request, resource.Username, resource.Password);
@@ -45,27 +79,83 @@ namespace Whisparr.Http.Authentication
                 IsPersistent = resource.RememberMe == "on"
             };
 
-            await HttpContext.SignInAsync(AuthenticationType.Forms.ToString(), new ClaimsPrincipal(new ClaimsIdentity(claims, "Cookies", "user", "identifier")), authProperties);
-
-            if (returnUrl.IsNullOrWhiteSpace() || !Url.IsLocalUrl(returnUrl))
+            try
             {
-                return Redirect(_configFileProvider.UrlBase + "/");
+                await HttpContext.SignInAsync(AuthenticationType.Forms.ToString(), new ClaimsPrincipal(new ClaimsIdentity(claims, "Cookies", "user", "identifier")), authProperties);
+            }
+            catch (CryptographicException e)
+            {
+                if (e.InnerException is XmlException)
+                {
+                    _logger.Error(e, "Failed to authenticate user due to corrupt XML. Please remove all XML files from {0} and restart Sonarr", Path.Combine(_appFolderInfo.AppDataFolder, "asp"));
+                }
+                else
+                {
+                    _logger.Error(e, "Failed to authenticate user. {0}", e.Message);
+                }
+
+                return Unauthorized();
             }
 
-            if (_configFileProvider.UrlBase.IsNullOrWhiteSpace() || returnUrl.StartsWith(_configFileProvider.UrlBase))
-            {
-                return Redirect(returnUrl);
-            }
-
-            return Redirect(_configFileProvider.UrlBase + returnUrl);
+            return Redirect(GetRedirectUrl(returnUrl));
         }
 
         [HttpGet("logout")]
+        [ProducesResponseType(302)]
         public async Task<IActionResult> Logout()
         {
             _authService.Logout(HttpContext);
+
+            if (_configFileProvider.EffectiveAuthenticationMethod() == AuthenticationType.Oidc)
+            {
+                var loggedOutUrl = _configFileProvider.UrlBase + "/loggedout";
+                var signedOut = false;
+
+                try
+                {
+                    await HttpContext.SignOutAsync(nameof(AuthenticationType.Oidc), new AuthenticationProperties { RedirectUri = loggedOutUrl });
+
+                    signedOut = true;
+                }
+                catch (Exception e)
+                {
+                    _logger.Warn(e, "Unable to sign out of the OIDC provider, signing out locally only");
+                }
+
+                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                await HttpContext.SignOutAsync(AuthenticationType.Forms.ToString());
+
+                if (signedOut || Response.HasStarted)
+                {
+                    return new EmptyResult();
+                }
+
+                return Redirect(loggedOutUrl);
+            }
+
             await HttpContext.SignOutAsync(AuthenticationType.Forms.ToString());
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
             return Redirect(_configFileProvider.UrlBase + "/");
+        }
+
+        private string GetRedirectUrl(string returnUrl)
+        {
+            var urlBase = _configFileProvider.UrlBase;
+
+            if (returnUrl.IsNullOrWhiteSpace() || !Url.IsLocalUrl(returnUrl))
+            {
+                return urlBase + "/";
+            }
+
+            if (urlBase.IsNullOrWhiteSpace() ||
+                returnUrl.Equals(urlBase, StringComparison.OrdinalIgnoreCase) ||
+                returnUrl.StartsWith(urlBase + "/", StringComparison.OrdinalIgnoreCase))
+            {
+                return returnUrl;
+            }
+
+            return urlBase + returnUrl;
         }
     }
 }

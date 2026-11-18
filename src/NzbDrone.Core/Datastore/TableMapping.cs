@@ -125,7 +125,10 @@ namespace NzbDrone.Core.Datastore
 
             Mapper.Entity<QualityDefinition>("QualityDefinitions").RegisterModel()
                   .Ignore(d => d.GroupName)
-                  .Ignore(d => d.Weight);
+                  .Ignore(d => d.Weight)
+                  .Ignore(d => d.MinSize)
+                  .Ignore(d => d.MaxSize)
+                  .Ignore(d => d.PreferredSize);
 
             Mapper.Entity<CustomFormat>("CustomFormats").RegisterModel();
 
@@ -193,6 +196,9 @@ namespace NzbDrone.Core.Datastore
             SqlMapper.RemoveTypeMap(typeof(Guid));
             SqlMapper.RemoveTypeMap(typeof(Guid?));
             SqlMapper.AddTypeHandler(new GuidConverter());
+            SqlMapper.RemoveTypeMap(typeof(TimeSpan));
+            SqlMapper.RemoveTypeMap(typeof(TimeSpan?));
+            SqlMapper.AddTypeHandler(new TimeSpanConverter());
             SqlMapper.AddTypeHandler(new CommandConverter());
             SqlMapper.AddTypeHandler(new SystemVersionConverter());
         }

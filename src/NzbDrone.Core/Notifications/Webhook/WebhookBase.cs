@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NzbDrone.Common.Extensions;
@@ -7,13 +7,12 @@ using NzbDrone.Core.Localization;
 using NzbDrone.Core.MediaCover;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.Tags;
-using NzbDrone.Core.ThingiProvider;
 using NzbDrone.Core.Tv;
 
 namespace NzbDrone.Core.Notifications.Webhook
 {
     public abstract class WebhookBase<TSettings> : NotificationBase<TSettings>
-        where TSettings : IProviderConfig, new()
+        where TSettings : NotificationSettingsBase<TSettings>, new()
     {
         private readonly IConfigFileProvider _configFileProvider;
         private readonly IConfigService _configService;
@@ -61,8 +60,11 @@ namespace NzbDrone.Core.Notifications.Webhook
                 ApplicationUrl = _configService.ApplicationUrl,
                 Series = GetSeries(message.Series),
                 Episodes = episodeFile.Episodes.Value.ConvertAll(x => new WebhookEpisode(x)),
-                EpisodeFile = new WebhookEpisodeFile(episodeFile),
-                Release = new WebhookGrabbedRelease(message.Release),
+                EpisodeFile = new WebhookEpisodeFile(episodeFile)
+                {
+                    SourcePath = message.SourcePath
+                },
+                Release = new WebhookGrabbedRelease(message.Release, episodeFile.IndexerFlags),
                 IsUpgrade = message.OldFiles.Any(),
                 DownloadClient = message.DownloadClientInfo?.Name,
                 DownloadClientType = message.DownloadClientInfo?.Type,
@@ -93,7 +95,6 @@ namespace NzbDrone.Core.Notifications.Webhook
                 Series = GetSeries(message.Series),
                 Episodes = message.Episodes.ConvertAll(x => new WebhookEpisode(x)),
                 EpisodeFiles = episodeFiles.ConvertAll(e => new WebhookEpisodeFile(e)),
-                Release = new WebhookGrabbedRelease(message.Release),
                 DownloadClient = message.DownloadClientInfo?.Name,
                 DownloadClientType = message.DownloadClientInfo?.Type,
                 DownloadId = message.DownloadId,
@@ -229,7 +230,7 @@ namespace NzbDrone.Core.Notifications.Webhook
                 },
                 Episodes = new List<WebhookEpisode>
                 {
-                    new ()
+                    new()
                     {
                         Id = 123,
                         EpisodeNumber = 1,
@@ -247,7 +248,7 @@ namespace NzbDrone.Core.Notifications.Webhook
                 return null;
             }
 
-            _mediaCoverService.ConvertToLocalUrls(series.Id, series.Images);
+            _mediaCoverService.ConvertToLocalUrls(series.Id, series.Images, series.Added);
 
             return new WebhookSeries(series, GetTagLabels(series));
         }

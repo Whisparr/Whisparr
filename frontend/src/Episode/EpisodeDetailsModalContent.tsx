@@ -10,7 +10,7 @@ import MonitorToggleButton from 'Components/MonitorToggleButton';
 import Episode from 'Episode/Episode';
 import EpisodeDetailsTab from 'Episode/EpisodeDetailsTab';
 import episodeEntities from 'Episode/episodeEntities';
-import useEpisode, { EpisodeEntities } from 'Episode/useEpisode';
+import useEpisode, { EpisodeEntity } from 'Episode/useEpisode';
 import Series from 'Series/Series';
 import useSeries from 'Series/useSeries';
 import { toggleEpisodeMonitored } from 'Store/Actions/episodeActions';
@@ -19,8 +19,8 @@ import {
   clearReleases,
 } from 'Store/Actions/releaseActions';
 import translate from 'Utilities/String/translate';
-import EpisodeHistoryConnector from './History/EpisodeHistoryConnector';
-import EpisodeSearchConnector from './Search/EpisodeSearchConnector';
+import EpisodeHistory from './History/EpisodeHistory';
+import EpisodeSearch from './Search/EpisodeSearch';
 import SeasonEpisodeNumber from './SeasonEpisodeNumber';
 import EpisodeSummary from './Summary/EpisodeSummary';
 import styles from './EpisodeDetailsModalContent.css';
@@ -29,7 +29,7 @@ const TABS: EpisodeDetailsTab[] = ['details', 'history', 'search'];
 
 export interface EpisodeDetailsModalContentProps {
   episodeId: number;
-  episodeEntity: EpisodeEntities;
+  episodeEntity: EpisodeEntity;
   seriesId: number;
   episodeTitle: string;
   isSaving?: boolean;
@@ -70,6 +70,7 @@ function EpisodeDetailsModalContent(props: EpisodeDetailsModalContentProps) {
     seasonNumber,
     episodeNumber,
     absoluteEpisodeNumber,
+    releaseDate,
     monitored,
   } = useEpisode(episodeId, episodeEntity) as Episode;
 
@@ -104,7 +105,7 @@ function EpisodeDetailsModalContent(props: EpisodeDetailsModalContentProps) {
     };
   }, [dispatch]);
 
-  const seriesLink = `/series/${titleSlug}`;
+  const seriesLink = `/site/${titleSlug}`;
 
   return (
     <ModalContent onModalClose={onModalClose}>
@@ -125,6 +126,7 @@ function EpisodeDetailsModalContent(props: EpisodeDetailsModalContentProps) {
           seasonNumber={seasonNumber}
           episodeNumber={episodeNumber}
           absoluteEpisodeNumber={absoluteEpisodeNumber}
+          releaseDate={releaseDate}
           seriesType={seriesType}
         />
 
@@ -166,13 +168,13 @@ function EpisodeDetailsModalContent(props: EpisodeDetailsModalContentProps) {
 
           <TabPanel>
             <div className={styles.tabContent}>
-              <EpisodeHistoryConnector episodeId={episodeId} />
+              <EpisodeHistory episodeId={episodeId} />
             </div>
           </TabPanel>
 
           <TabPanel>
             {/* Don't wrap in tabContent so we not have a top margin */}
-            <EpisodeSearchConnector
+            <EpisodeSearch
               episodeId={episodeId}
               seriesId={seriesId}
               startInteractiveSearch={startInteractiveSearch}
@@ -189,7 +191,7 @@ function EpisodeDetailsModalContent(props: EpisodeDetailsModalContentProps) {
             to={seriesLink}
             onPress={onModalClose}
           >
-            {translate('OpenSeries')}
+            {translate('OpenSite')}
           </Button>
         )}
 

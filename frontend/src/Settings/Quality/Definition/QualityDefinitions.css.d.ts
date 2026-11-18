@@ -4,6 +4,7 @@ interface CssExports {
   'definitions': string;
   'header': string;
   'megabytesPerMinute': string;
+  'notice': string;
   'quality': string;
   'sizeLimit': string;
   'sizeLimitHelpText': string;

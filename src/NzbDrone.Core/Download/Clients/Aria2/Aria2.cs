@@ -7,7 +7,9 @@ using NLog;
 using NzbDrone.Common.Disk;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
+using NzbDrone.Core.Blocklisting;
 using NzbDrone.Core.Configuration;
+using NzbDrone.Core.Localization;
 using NzbDrone.Core.MediaFiles.TorrentInfo;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.RemotePathMappings;
@@ -27,8 +29,10 @@ namespace NzbDrone.Core.Download.Clients.Aria2
                         IConfigService configService,
                         IDiskProvider diskProvider,
                         IRemotePathMappingService remotePathMappingService,
-                        Logger logger)
-            : base(torrentFileInfoReader, httpClient, configService, diskProvider, remotePathMappingService, logger)
+                        IBlocklistService blocklistService,
+                        Logger logger,
+                        ILocalizationService localizationService)
+            : base(torrentFileInfoReader, httpClient, configService, diskProvider, remotePathMappingService, blocklistService, logger, localizationService)
         {
             _proxy = proxy;
         }
@@ -77,8 +81,8 @@ namespace NzbDrone.Core.Download.Clients.Aria2
             {
                 var firstFile = torrent.Files?.FirstOrDefault();
 
-                // skip metadata download
-                if (firstFile?.Path?.Contains("[METADATA]") == true)
+                // skip metadata download or if the torrent is already removed
+                if (firstFile?.Path?.Contains("[METADATA]") == true || torrent.Status == "removed")
                 {
                     continue;
                 }
@@ -116,9 +120,6 @@ namespace NzbDrone.Core.Download.Clients.Aria2
                     case "complete":
                         status = DownloadItemStatus.Completed;
                         break;
-                    case "removed":
-                        status = DownloadItemStatus.Failed;
-                        break;
                 }
 
                 _logger.Trace($"- aria2 getstatus hash:'{torrent.InfoHash}' gid:'{torrent.Gid}' status:'{status}' total:{totalLength} completed:'{completedLength}'");
@@ -135,7 +136,6 @@ namespace NzbDrone.Core.Download.Clients.Aria2
                     OutputPath = outputPath,
                     RemainingSize = totalLength - completedLength,
                     RemainingTime = downloadSpeed == 0 ? (TimeSpan?)null : new TimeSpan(0, 0, (int)((totalLength - completedLength) / downloadSpeed)),
-                    Removed = torrent.Status == "removed",
                     SeedRatio = totalLength > 0 ? (double)uploadedLength / totalLength : 0,
                     Status = status,
                     Title = title,
@@ -194,7 +194,7 @@ namespace NzbDrone.Core.Download.Clients.Aria2
 
             return new DownloadClientInfo
             {
-                IsLocalhost = Settings.Host.Contains("127.0.0.1") || Settings.Host.Contains("localhost"),
+                IsLocalhost = Settings.Host.IsLocalhostAddress(),
                 OutputRootFolders = new List<OsPath> { _remotePathMappingService.RemapRemoteToLocal(Settings.Host, new OsPath(destDir["dir"])) }
             };
         }
@@ -236,14 +236,19 @@ namespace NzbDrone.Core.Download.Clients.Aria2
 
                 if (new Version(version) < new Version("1.34.0"))
                 {
-                    return new ValidationFailure(string.Empty, "Aria2 version should be at least 1.34.0. Version reported is {0}", version);
+                    return new ValidationFailure(string.Empty,
+                        _localizationService.GetLocalizedString("DownloadClientValidationErrorVersion",
+                            new Dictionary<string, object>
+                            {
+                                { "clientName", "Aria2" }, { "requiredVersion", "1.34.0" }, { "reportedVersion", version }
+                            }));
                 }
             }
             catch (Exception ex)
             {
                 _logger.Error(ex, "Failed to test Aria2");
 
-                return new NzbDroneValidationFailure("Host", "Unable to connect to Aria2")
+                return new NzbDroneValidationFailure("Host", _localizationService.GetLocalizedString("DownloadClientValidationUnableToConnect", new Dictionary<string, object> { { "clientName", "Aria2" } }))
                 {
                     DetailedDescription = ex.Message
                 };

@@ -161,7 +161,7 @@ namespace NzbDrone.Core.History
                 history.Data.SetShouldOverride(message.Episode.ShouldOverride);
 
                 history.Data.Add("AgeMinutes", message.Episode.Release.AgeMinutes.ToString());
-                history.Data.Add("PublishedDate", message.Episode.Release.PublishDate.ToString("s") + "Z");
+                history.Data.Add("PublishedDate", message.Episode.Release.PublishDate.ToUniversalTime().ToString("s") + "Z");
                 history.Data.Add("DownloadClient", message.DownloadClient);
                 history.Data.Add("DownloadClientName", message.DownloadClientName);
                 history.Data.Add("Size", message.Episode.Release.Size.ToString());
@@ -179,9 +179,7 @@ namespace NzbDrone.Core.History
                     history.Data.Add("ReleaseHash", message.Episode.ParsedEpisodeInfo.ReleaseHash);
                 }
 
-                var torrentRelease = message.Episode.Release as TorrentInfo;
-
-                if (torrentRelease != null)
+                if (message.Episode.Release is TorrentInfo torrentRelease)
                 {
                     history.Data.Add("TorrentInfoHash", torrentRelease.InfoHash);
                 }
@@ -251,8 +249,10 @@ namespace NzbDrone.Core.History
                 history.Data.Add("DownloadClient", message.DownloadClient);
                 history.Data.Add("DownloadClientName", message.TrackedDownload?.DownloadItem.DownloadClientInfo.Name);
                 history.Data.Add("Message", message.Message);
-                history.Data.Add("ReleaseGroup", message.TrackedDownload?.RemoteEpisode?.ParsedEpisodeInfo?.ReleaseGroup);
-                history.Data.Add("Size", message.TrackedDownload?.DownloadItem.TotalSize.ToString());
+                history.Data.Add("Source", message.Source);
+                history.Data.Add("ReleaseGroup", message.TrackedDownload?.RemoteEpisode?.ParsedEpisodeInfo?.ReleaseGroup ?? message.Data.GetValueOrDefault(EpisodeHistory.RELEASE_GROUP));
+                history.Data.Add("Size", message.TrackedDownload?.DownloadItem.TotalSize.ToString() ?? message.Data.GetValueOrDefault(EpisodeHistory.SIZE));
+                history.Data.Add("Indexer", message.TrackedDownload?.RemoteEpisode?.Release?.Indexer ?? message.Data.GetValueOrDefault(EpisodeHistory.INDEXER));
 
                 _historyRepository.Insert(history);
             }
@@ -348,6 +348,7 @@ namespace NzbDrone.Core.History
                 history.Data.Add("Message", message.Message);
                 history.Data.Add("ReleaseGroup", message.TrackedDownload?.RemoteEpisode?.ParsedEpisodeInfo?.ReleaseGroup);
                 history.Data.Add("Size", message.TrackedDownload?.DownloadItem.TotalSize.ToString());
+                history.Data.Add("Indexer", message.TrackedDownload?.RemoteEpisode?.Release?.Indexer);
 
                 historyToAdd.Add(history);
             }

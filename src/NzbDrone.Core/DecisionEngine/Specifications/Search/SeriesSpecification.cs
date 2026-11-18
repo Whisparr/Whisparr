@@ -1,10 +1,9 @@
 using NLog;
-using NzbDrone.Core.IndexerSearch.Definitions;
 using NzbDrone.Core.Parser.Model;
 
 namespace NzbDrone.Core.DecisionEngine.Specifications.Search
 {
-    public class SeriesSpecification : IDecisionEngineSpecification
+    public class SeriesSpecification : IDownloadDecisionEngineSpecification
     {
         private readonly Logger _logger;
 
@@ -16,11 +15,13 @@ namespace NzbDrone.Core.DecisionEngine.Specifications.Search
         public SpecificationPriority Priority => SpecificationPriority.Default;
         public RejectionType Type => RejectionType.Permanent;
 
-        public Decision IsSatisfiedBy(RemoteEpisode remoteEpisode, SearchCriteriaBase searchCriteria)
+        public DownloadSpecDecision IsSatisfiedBy(RemoteEpisode remoteEpisode, ReleaseDecisionInformation information)
         {
+            var searchCriteria = information.SearchCriteria;
+
             if (searchCriteria == null)
             {
-                return Decision.Accept();
+                return DownloadSpecDecision.Accept();
             }
 
             _logger.Debug("Checking if series matches searched series");
@@ -28,10 +29,10 @@ namespace NzbDrone.Core.DecisionEngine.Specifications.Search
             if (remoteEpisode.Series.Id != searchCriteria.Series.Id)
             {
                 _logger.Debug("Series {0} does not match {1}", remoteEpisode.Series, searchCriteria.Series);
-                return Decision.Reject("Wrong series");
+                return DownloadSpecDecision.Reject(DownloadRejectionReason.WrongSeries, "Wrong series");
             }
 
-            return Decision.Accept();
+            return DownloadSpecDecision.Accept();
         }
     }
 }

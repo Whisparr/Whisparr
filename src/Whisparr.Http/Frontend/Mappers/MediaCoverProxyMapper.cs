@@ -1,7 +1,8 @@
-using System;
+﻿using System;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using NzbDrone.Core.MediaCover;
@@ -10,7 +11,7 @@ namespace Whisparr.Http.Frontend.Mappers
 {
     public class MediaCoverProxyMapper : IMapHttpRequestsToDisk
     {
-        private readonly Regex _regex = new (@"/MediaCoverProxy/(?<hash>\w+)/(?<filename>(.+)\.(jpg|png|gif))");
+        private readonly Regex _regex = new(@"/MediaCoverProxy/(?<hash>\w+)/(?<filename>(.+)\.(jpg|png|gif))");
 
         private readonly IMediaCoverProxy _mediaCoverProxy;
         private readonly IContentTypeProvider _mimeTypeProvider;
@@ -31,7 +32,7 @@ namespace Whisparr.Http.Frontend.Mappers
             return resourceUrl.StartsWith("/MediaCoverProxy/", StringComparison.InvariantCultureIgnoreCase);
         }
 
-        public async Task<IActionResult> GetResponse(string resourceUrl)
+        public async Task<IActionResult> GetResponse(HttpContext context, string resourceUrl)
         {
             var match = _regex.Match(resourceUrl);
 

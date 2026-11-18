@@ -23,6 +23,8 @@ namespace NzbDrone.Test.Common.AutoMoq
             SetupAutoMoqer(CreateTestContainer(new Container()));
         }
 
+        public IContainer Container => _container;
+
         public virtual T Resolve<T>()
         {
             var result = _container.Resolve<T>();
@@ -110,7 +112,8 @@ namespace NzbDrone.Test.Common.AutoMoq
                                 var mock = (Mock)r.Resolve(mockType);
                                 SetMock(serviceType, mock);
                                 return mock.Object;
-                            }, Reuse.Singleton);
+                            },
+                                Reuse.Singleton);
 
                             return new[] { new DynamicRegistration(mockFactory, IfAlreadyRegistered.Keep) };
                         }

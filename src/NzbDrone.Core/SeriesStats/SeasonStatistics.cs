@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Datastore;
+using NzbDrone.Core.Qualities;
 
 namespace NzbDrone.Core.SeriesStats
 {
@@ -18,6 +20,7 @@ namespace NzbDrone.Core.SeriesStats
         public int TotalEpisodeCount { get; set; }
         public long SizeOnDisk { get; set; }
         public string ReleaseGroupsString { get; set; }
+        public string EpisodeFileQualitiesString { get; set; }
 
         public DateTime? NextAiring
         {
@@ -27,7 +30,7 @@ namespace NzbDrone.Core.SeriesStats
 
                 try
                 {
-                    if (!DateTime.TryParse(NextAiringString, out nextAiring))
+                    if (!DateTime.TryParse(NextAiringString, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.AssumeUniversal, out nextAiring))
                     {
                         return null;
                     }
@@ -50,7 +53,7 @@ namespace NzbDrone.Core.SeriesStats
 
                 try
                 {
-                    if (!DateTime.TryParse(PreviousAiringString, out previousAiring))
+                    if (!DateTime.TryParse(PreviousAiringString, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.AssumeUniversal, out previousAiring))
                     {
                         return null;
                     }
@@ -82,6 +85,24 @@ namespace NzbDrone.Core.SeriesStats
                 }
 
                 return releasegroups;
+            }
+        }
+
+        public List<Quality> EpisodeFileQualities
+        {
+            get
+            {
+                if (EpisodeFileQualitiesString.IsNullOrWhiteSpace())
+                {
+                    return new List<Quality>();
+                }
+
+                return EpisodeFileQualitiesString
+                    .Split('|', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                    .Select(int.Parse)
+                    .Distinct()
+                    .Select(Quality.FindById)
+                    .ToList();
             }
         }
     }

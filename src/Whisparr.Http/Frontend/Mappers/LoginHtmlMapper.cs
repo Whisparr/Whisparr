@@ -3,12 +3,14 @@ using System.IO;
 using NLog;
 using NzbDrone.Common.Disk;
 using NzbDrone.Common.EnvironmentInfo;
+using NzbDrone.Core.Authentication;
 using NzbDrone.Core.Configuration;
 
 namespace Whisparr.Http.Frontend.Mappers
 {
     public class LoginHtmlMapper : HtmlMapperBase
     {
+        private readonly IAppFolderInfo _appFolderInfo;
         private readonly IConfigFileProvider _configFileProvider;
 
         public LoginHtmlMapper(IAppFolderInfo appFolderInfo,
@@ -16,14 +18,16 @@ namespace Whisparr.Http.Frontend.Mappers
                                Lazy<ICacheBreakerProvider> cacheBreakProviderFactory,
                                IConfigFileProvider configFileProvider,
                                Logger logger)
-            : base(diskProvider, cacheBreakProviderFactory, logger)
+            : base(diskProvider, configFileProvider, cacheBreakProviderFactory, logger)
         {
+            _appFolderInfo = appFolderInfo;
             _configFileProvider = configFileProvider;
-            HtmlPath = Path.Combine(appFolderInfo.StartUpFolder, configFileProvider.UiFolder, "login.html");
-            UrlBase = configFileProvider.UrlBase;
         }
 
-        public override string Map(string resourceUrl)
+        protected override string FolderPath => Path.Combine(_appFolderInfo.StartUpFolder, _configFileProvider.UiFolder);
+        protected override string HtmlPath => Path.Combine(FolderPath, "login.html");
+
+        protected override string MapPath(string resourceUrl)
         {
             return HtmlPath;
         }
@@ -37,8 +41,16 @@ namespace Whisparr.Http.Frontend.Mappers
         {
             var html = base.GetHtmlText();
             var theme = _configFileProvider.Theme;
+            var authMethod = _configFileProvider.AuthenticationMethod.ToString().ToLowerInvariant();
+
+            if (_configFileProvider.AuthenticationMethod == AuthenticationType.Oidc &&
+                !_configFileProvider.IsOidcConfigured())
+            {
+                authMethod += " oidc-misconfigured";
+            }
 
             html = html.Replace("_THEME_", theme);
+            html = html.Replace("_AUTH_METHOD_", authMethod);
 
             return html;
         }

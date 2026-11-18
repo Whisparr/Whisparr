@@ -2,6 +2,7 @@
 // Please do not change this file!
 interface CssExports {
   'cell': string;
+  'imdbId': string;
   'title': string;
   'tvdbId': string;
   'year': string;

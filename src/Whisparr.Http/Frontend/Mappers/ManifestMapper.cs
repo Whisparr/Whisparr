@@ -8,13 +8,22 @@ namespace Whisparr.Http.Frontend.Mappers
 {
     public class ManifestMapper : UrlBaseReplacementResourceMapperBase
     {
+        private readonly IAppFolderInfo _appFolderInfo;
+        private readonly IConfigFileProvider _configFileProvider;
+
+        private string _generatedContent;
+
         public ManifestMapper(IAppFolderInfo appFolderInfo, IDiskProvider diskProvider, IConfigFileProvider configFileProvider, Logger logger)
             : base(diskProvider, configFileProvider, logger)
         {
-            FilePath = Path.Combine(appFolderInfo.StartUpFolder, configFileProvider.UiFolder, "Content", "manifest.json");
+            _appFolderInfo = appFolderInfo;
+            _configFileProvider = configFileProvider;
         }
 
-        public override string Map(string resourceUrl)
+        protected override string FolderPath => Path.Combine(_appFolderInfo.StartUpFolder, _configFileProvider.UiFolder);
+        protected override string FilePath => Path.Combine(FolderPath, "Content", "manifest.json");
+
+        protected override string MapPath(string resourceUrl)
         {
             return FilePath;
         }
@@ -22,6 +31,22 @@ namespace Whisparr.Http.Frontend.Mappers
         public override bool CanHandle(string resourceUrl)
         {
             return resourceUrl.StartsWith("/Content/manifest");
+        }
+
+        protected override string GetFileText()
+        {
+            if (RuntimeInfo.IsProduction && _generatedContent != null)
+            {
+                return _generatedContent;
+            }
+
+            var text = base.GetFileText();
+
+            text = text.Replace("__INSTANCE_NAME__", _configFileProvider.InstanceName);
+
+            _generatedContent = text;
+
+            return _generatedContent;
         }
     }
 }

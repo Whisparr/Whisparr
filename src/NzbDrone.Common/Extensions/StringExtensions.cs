@@ -1,17 +1,24 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
+using Diacritical;
+using NzbDrone.Common.Globalization;
 
 namespace NzbDrone.Common.Extensions
 {
     public static class StringExtensions
     {
         private static readonly Regex CamelCaseRegex = new Regex("(?<!^)[A-Z]", RegexOptions.Compiled);
+
+        static StringExtensions()
+        {
+            DiacriticMap.AddProviders(new AdditionalDiacriticsProvider());
+        }
 
         public static string NullSafe(this string target)
         {
@@ -62,21 +69,9 @@ namespace NzbDrone.Common.Extensions
             return text;
         }
 
-        public static string RemoveAccent(this string text)
+        public static string RemoveDiacritics(this string text)
         {
-            var normalizedString = text.Normalize(NormalizationForm.FormD);
-            var stringBuilder = new StringBuilder();
-
-            foreach (var c in normalizedString)
-            {
-                var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
-                if (unicodeCategory != UnicodeCategory.NonSpacingMark)
-                {
-                    stringBuilder.Append(c);
-                }
-            }
-
-            return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
+            return Diacritical.StringExtensions.RemoveDiacritics(text);
         }
 
         public static string TrimEnd(this string text, string postfix)
@@ -99,15 +94,17 @@ namespace NzbDrone.Common.Extensions
             return CollapseSpace.Replace(text, " ").Trim();
         }
 
-        public static bool IsNullOrWhiteSpace(this string text)
+        #nullable enable
+        public static bool IsNullOrWhiteSpace([NotNullWhen(false)] this string? text)
         {
             return string.IsNullOrWhiteSpace(text);
         }
 
-        public static bool IsNotNullOrWhiteSpace(this string text)
+        public static bool IsNotNullOrWhiteSpace([NotNullWhen(true)] this string? text)
         {
             return !string.IsNullOrWhiteSpace(text);
         }
+        #nullable disable
 
         public static bool StartsWithIgnoreCase(this string text, string startsWith)
         {
@@ -180,7 +177,7 @@ namespace NzbDrone.Common.Extensions
             value = value.ToLowerInvariant();
 
             // Remove all accents
-            value = value.RemoveAccent();
+            value = value.RemoveDiacritics();
 
             // Replace spaces
             value = Regex.Replace(value, @"\s", "-", RegexOptions.Compiled);
@@ -238,9 +235,46 @@ namespace NzbDrone.Common.Extensions
             return parsedAddress.AddressFamily == AddressFamily.InterNetwork || parsedAddress.AddressFamily == AddressFamily.InterNetworkV6;
         }
 
+        public static bool IsLocalhostAddress(this string input)
+        {
+            if (input.IsNullOrWhiteSpace())
+            {
+                return false;
+            }
+
+            var host = input.FromUrlHost();
+
+            if (host.Equals("localhost", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return true;
+            }
+
+            return IPAddress.TryParse(host, out var parsedAddress) && IPAddress.IsLoopback(parsedAddress);
+        }
+
         public static string ToUrlHost(this string input)
         {
-            return input.Contains(':') ? $"[{input}]" : input;
+            if (input.IsNullOrWhiteSpace() || !input.Contains(':') || IsBracketed(input))
+            {
+                return input;
+            }
+
+            return $"[{input}]";
+        }
+
+        public static string FromUrlHost(this string input)
+        {
+            if (input.IsNullOrWhiteSpace() || !IsBracketed(input))
+            {
+                return input;
+            }
+
+            return input[1..^1];
+        }
+
+        private static bool IsBracketed(string input)
+        {
+            return input.StartsWith('[') && input.EndsWith(']');
         }
     }
 }

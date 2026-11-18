@@ -1,5 +1,6 @@
 import { createAction } from 'redux-actions';
-import { filterBuilderTypes, filterBuilderValueTypes, filterTypePredicates, filterTypes, sortDirections } from 'Helpers/Props';
+import { filterBuilderTypes, filterBuilderValueTypes, filterTypes, sortDirections } from 'Helpers/Props';
+import getFilterTypePredicate from 'Helpers/Props/getFilterTypePredicate';
 import { createThunk, handleThunks } from 'Store/thunks';
 import sortByProp from 'Utilities/Array/sortByProp';
 import createAjaxRequest from 'Utilities/createAjaxRequest';
@@ -120,8 +121,7 @@ export const defaultState = {
     },
 
     languages: function(item, filterValue, type) {
-      const predicate = filterTypePredicates[type];
-
+      const predicate = getFilterTypePredicate(type);
       const languages = item.languages.map((language) => language.name);
 
       return predicate(languages, filterValue);
@@ -384,7 +384,7 @@ export const reducers = createHandleActions({
     const items = newState.items;
     const index = items.findIndex((item) => item.guid === guid);
 
-    // Don't try to update if there isnt a matching item (the user closed the modal)
+    // Don't try to update if there isn't a matching item (the user closed the modal)
 
     if (index >= 0) {
       const item = Object.assign({}, items[index], payload);

@@ -9,6 +9,11 @@
   &.isInGroup {
     border-style: dashed;
   }
+
+  &.editSizes {
+    flex-direction: column;
+    padding: 10px;
+  }
 }
 
 .checkInputContainer {
@@ -32,6 +37,10 @@
   font-weight: normal;
   line-height: $qualityProfileItemHeight;
   cursor: pointer;
+
+  &.editSizes {
+    cursor: default;
+  }
 }
 
 .qualityName {
@@ -45,7 +54,7 @@
 }
 
 .createGroupButton {
-  composes: buton from '~Components/Link/IconButton.css';
+  composes: button from '~Components/Link/IconButton.css';
 
   display: flex;
   align-items: center;

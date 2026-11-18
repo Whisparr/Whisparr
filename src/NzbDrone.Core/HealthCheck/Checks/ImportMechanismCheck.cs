@@ -1,4 +1,4 @@
-using NzbDrone.Core.Configuration;
+﻿using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Configuration.Events;
 using NzbDrone.Core.Download;
 using NzbDrone.Core.Localization;
@@ -25,6 +25,7 @@ namespace NzbDrone.Core.HealthCheck.Checks
             {
                 return new HealthCheck(GetType(),
                     HealthCheckResult.Warning,
+                    HealthCheckReason.ImportMechanismHandlingDisabled,
                     _localizationService.GetLocalizedString("ImportMechanismHandlingDisabledHealthCheckMessage"),
                     "#completed-download-handling-is-disabled");
             }

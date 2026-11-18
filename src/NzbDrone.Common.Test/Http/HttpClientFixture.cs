@@ -1,10 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -36,7 +37,7 @@ namespace NzbDrone.Common.Test.Http
         private string _httpBinHost;
         private string _httpBinHost2;
 
-        private System.Net.Http.HttpClient _httpClient = new ();
+        private System.Net.Http.HttpClient _httpClient = new();
 
         [OneTimeSetUp]
         public void FixtureSetUp()
@@ -129,6 +130,16 @@ namespace NzbDrone.Common.Test.Http
             var response = await Subject.ExecuteAsync(request);
 
             response.Content.Should().NotBeNullOrWhiteSpace();
+        }
+
+        [Test]
+        public void should_throw_timeout_request()
+        {
+            var request = new HttpRequest($"https://{_httpBinHost}/delay/10");
+
+            request.RequestTimeout = new TimeSpan(0, 0, 5);
+
+            Assert.ThrowsAsync<WebException>(async () => await Subject.ExecuteAsync(request));
         }
 
         [Test]
@@ -361,6 +372,28 @@ namespace NzbDrone.Common.Test.Http
             var response = await Subject.GetAsync<HttpBinResource>(request);
 
             response.Resource.Headers[header].ToString().Should().Be(value);
+        }
+
+        [Test]
+        public async Task should_send_basic_auth_header_as_utf8()
+        {
+            var username = "tèst";
+            var password = "pâsswörd_ș";
+
+            var request = new HttpRequest($"https://{_httpBinHost}/get")
+            {
+                Credentials = new BasicNetworkCredential(username, password)
+            };
+
+            var response = await Subject.GetAsync<HttpBinResource>(request);
+
+            response.Resource.Headers.Should().ContainKey("Authorization");
+
+            var authHeader = response.Resource.Headers["Authorization"].ToString();
+            var encodedPart = authHeader!.Split(' ', 2).Last();
+            var decoded = Encoding.UTF8.GetString(Convert.FromBase64String(encodedPart));
+
+            decoded.Should().Be($"{username}:{password}");
         }
 
         [Test]
@@ -814,7 +847,7 @@ namespace NzbDrone.Common.Test.Http
                 requestSet.AllowAutoRedirect = false;
                 requestSet.StoreResponseCookie = true;
 
-                var responseSet = await Subject.GetAsync(requestSet);
+                await Subject.GetAsync(requestSet);
 
                 var request = new HttpRequest($"https://{_httpBinHost}/get");
 

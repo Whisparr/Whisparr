@@ -93,6 +93,7 @@ export default {
 
     [FETCH_CUSTOM_FORMAT_SPECIFICATIONS]: (getState, payload, dispatch) => {
       let tags = [];
+
       if (payload.id) {
         const cfState = getSectionState(getState(), 'settings.customFormats', true);
         const cf = cfState.items[cfState.itemMap[payload.id]];

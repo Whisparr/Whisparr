@@ -15,8 +15,6 @@ interface Episode extends ModelBase {
   seasonNumber: number;
   episodeNumber: number;
   releaseDate?: string;
-  airDate: string;
-  airDateUtc?: string;
   actors: Actor[];
   lastSearchTime?: string;
   runtime: number;
@@ -31,10 +29,9 @@ interface Episode extends ModelBase {
   monitored: boolean;
   grabbed?: boolean;
   unverifiedSceneNumbering: boolean;
-  endTime?: string;
-  grabDate?: string;
   seriesTitle?: string;
   series?: Series;
+  finaleType?: string;
 }
 
 export default Episode;

@@ -1,39 +1,42 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 import { Redirect, Route } from 'react-router-dom';
 import Blocklist from 'Activity/Blocklist/Blocklist';
 import History from 'Activity/History/History';
 import Queue from 'Activity/Queue/Queue';
-import AddNewSeriesConnector from 'AddSeries/AddNewSeries/AddNewSeriesConnector';
-import ImportSeries from 'AddSeries/ImportSeries/ImportSeries';
-import CalendarPageConnector from 'Calendar/CalendarPageConnector';
+import AddNewSeries from 'AddSeries/AddNewSeries/AddNewSeries';
+import ImportSeriesPage from 'AddSeries/ImportSeries/ImportSeriesPage';
+import CalendarPage from 'Calendar/CalendarPage';
 import NotFound from 'Components/NotFound';
 import Switch from 'Components/Router/Switch';
-import SeriesDetailsPageConnector from 'Series/Details/SeriesDetailsPageConnector';
+import SeriesDetailsPage from 'Series/Details/SeriesDetailsPage';
 import SeriesIndex from 'Series/Index/SeriesIndex';
 import CustomFormatSettingsPage from 'Settings/CustomFormats/CustomFormatSettingsPage';
-import DownloadClientSettingsConnector from 'Settings/DownloadClients/DownloadClientSettingsConnector';
-import GeneralSettingsConnector from 'Settings/General/GeneralSettingsConnector';
-import ImportListSettingsConnector from 'Settings/ImportLists/ImportListSettingsConnector';
-import IndexerSettingsConnector from 'Settings/Indexers/IndexerSettingsConnector';
-import MediaManagementConnector from 'Settings/MediaManagement/MediaManagementConnector';
+import DownloadClientSettings from 'Settings/DownloadClients/DownloadClientSettings';
+import GeneralSettings from 'Settings/General/GeneralSettings';
+import ImportListSettings from 'Settings/ImportLists/ImportListSettings';
+import IndexerSettings from 'Settings/Indexers/IndexerSettings';
+import MediaManagement from 'Settings/MediaManagement/MediaManagement';
 import MetadataSettings from 'Settings/Metadata/MetadataSettings';
 import MetadataSourceSettings from 'Settings/MetadataSource/MetadataSourceSettings';
 import NotificationSettings from 'Settings/Notifications/NotificationSettings';
 import Profiles from 'Settings/Profiles/Profiles';
-import QualityConnector from 'Settings/Quality/QualityConnector';
+import Quality from 'Settings/Quality/Quality';
 import Settings from 'Settings/Settings';
 import TagSettings from 'Settings/Tags/TagSettings';
-import UISettingsConnector from 'Settings/UI/UISettingsConnector';
-import BackupsConnector from 'System/Backup/BackupsConnector';
-import LogsTableConnector from 'System/Events/LogsTableConnector';
+import UISettings from 'Settings/UI/UISettings';
+import Backups from 'System/Backup/Backups';
+import LogsTable from 'System/Events/LogsTable';
 import Logs from 'System/Logs/Logs';
 import Status from 'System/Status/Status';
 import Tasks from 'System/Tasks/Tasks';
 import Updates from 'System/Updates/Updates';
 import getPathWithUrlBase from 'Utilities/getPathWithUrlBase';
-import CutoffUnmetConnector from 'Wanted/CutoffUnmet/CutoffUnmetConnector';
-import MissingConnector from 'Wanted/Missing/MissingConnector';
+import CutoffUnmet from 'Wanted/CutoffUnmet/CutoffUnmet';
+import Missing from 'Wanted/Missing/Missing';
+
+function RedirectWithUrlBase() {
+  return <Redirect to={getPathWithUrlBase('/')} />;
+}
 
 function AppRoutes() {
   return (
@@ -57,15 +60,13 @@ function AppRoutes() {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           addUrlBase={false}
-          render={() => {
-            return <Redirect to={getPathWithUrlBase('/')} />;
-          }}
+          render={RedirectWithUrlBase}
         />
       )}
 
-      <Route path="/add/new" component={AddNewSeriesConnector} />
+      <Route path="/add/new" component={AddNewSeries} />
 
-      <Route path="/add/import" component={ImportSeries} />
+      <Route path="/add/import" component={ImportSeriesPage} />
 
       <Route
         exact={true}
@@ -78,34 +79,21 @@ function AppRoutes() {
       <Route
         path="/jav/add/new"
         render={(routeProps) => (
-          // @ts-expect-error - dispatch props are injected by connect()
-          <AddNewSeriesConnector {...routeProps} defaultSeriesType="jav" />
+          <AddNewSeries {...routeProps} defaultSeriesType="jav" />
         )}
       />
 
-      <Route
-        path="/serieseditor"
-        exact={true}
-        render={() => {
-          return <Redirect to={getPathWithUrlBase('/')} />;
-        }}
-      />
+      <Route path="/serieseditor" exact={true} render={RedirectWithUrlBase} />
 
-      <Route
-        path="/seasonpass"
-        exact={true}
-        render={() => {
-          return <Redirect to={getPathWithUrlBase('/')} />;
-        }}
-      />
+      <Route path="/seasonpass" exact={true} render={RedirectWithUrlBase} />
 
-      <Route path="/site/:titleSlug" component={SeriesDetailsPageConnector} />
+      <Route path="/site/:titleSlug" component={SeriesDetailsPage} />
 
       {/*
         Calendar
       */}
 
-      <Route path="/calendar" component={CalendarPageConnector} />
+      <Route path="/calendar" component={CalendarPage} />
 
       {/*
         Activity
@@ -121,9 +109,9 @@ function AppRoutes() {
         Wanted
       */}
 
-      <Route path="/wanted/missing" component={MissingConnector} />
+      <Route path="/wanted/missing" component={Missing} />
 
-      <Route path="/wanted/cutoffunmet" component={CutoffUnmetConnector} />
+      <Route path="/wanted/cutoffunmet" component={CutoffUnmet} />
 
       {/*
         Settings
@@ -131,31 +119,25 @@ function AppRoutes() {
 
       <Route exact={true} path="/settings" component={Settings} />
 
-      <Route
-        path="/settings/mediamanagement"
-        component={MediaManagementConnector}
-      />
+      <Route path="/settings/mediamanagement" component={MediaManagement} />
 
       <Route path="/settings/profiles" component={Profiles} />
 
-      <Route path="/settings/quality" component={QualityConnector} />
+      <Route path="/settings/quality" component={Quality} />
 
       <Route
         path="/settings/customformats"
         component={CustomFormatSettingsPage}
       />
 
-      <Route path="/settings/indexers" component={IndexerSettingsConnector} />
+      <Route path="/settings/indexers" component={IndexerSettings} />
 
       <Route
         path="/settings/downloadclients"
-        component={DownloadClientSettingsConnector}
+        component={DownloadClientSettings}
       />
 
-      <Route
-        path="/settings/importlists"
-        component={ImportListSettingsConnector}
-      />
+      <Route path="/settings/importlists" component={ImportListSettings} />
 
       <Route path="/settings/connect" component={NotificationSettings} />
 
@@ -168,9 +150,9 @@ function AppRoutes() {
 
       <Route path="/settings/tags" component={TagSettings} />
 
-      <Route path="/settings/general" component={GeneralSettingsConnector} />
+      <Route path="/settings/general" component={GeneralSettings} />
 
-      <Route path="/settings/ui" component={UISettingsConnector} />
+      <Route path="/settings/ui" component={UISettings} />
 
       {/*
         System
@@ -180,11 +162,11 @@ function AppRoutes() {
 
       <Route path="/system/tasks" component={Tasks} />
 
-      <Route path="/system/backup" component={BackupsConnector} />
+      <Route path="/system/backup" component={Backups} />
 
       <Route path="/system/updates" component={Updates} />
 
-      <Route path="/system/events" component={LogsTableConnector} />
+      <Route path="/system/events" component={LogsTable} />
 
       <Route path="/system/logs/files" component={Logs} />
 
@@ -196,9 +178,5 @@ function AppRoutes() {
     </Switch>
   );
 }
-
-AppRoutes.propTypes = {
-  app: PropTypes.func.isRequired,
-};
 
 export default AppRoutes;

@@ -1,8 +1,6 @@
 # Whisparr
 
-[![Build Status](https://dev.azure.com/Servarr/Whisparr/_apis/build/status/Whisparr.Whisparr?branchName=develop)](https://dev.azure.com/Servarr/Whisparr/_build/latest?definitionId=1&branchName=develop)
-[![Translated](https://translate.servarr.com/widgets/servarr/-/whisparr/svg-badge.svg)](https://translate.servarr.com/engage/whisparr/?utm_source=widget)
-[![Docker Pulls](https://img.shields.io/docker/pulls/hotio/whisparr.svg)](https://wiki.servarr.com/whisparr/installation#docker)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/Whisparr/Whisparr/build.yml?branch=v2)
 ![Github Downloads](https://img.shields.io/github/downloads/Whisparr/Whisparr/total.svg)
 [![Backers on Open Collective](https://opencollective.com/Whisparr/backers/badge.svg)](#backers)
 [![Sponsors on Open Collective](https://opencollective.com/Whisparr/sponsors/badge.svg)](#sponsors)
@@ -36,8 +34,10 @@ Note that only one type of a given movie is supported. If you want both an 4k ve
 See https://wiki.servarr.com/whisparr/installation
 
 ### Version 3.x (based on Radarr), focuses on scenes, but also supports movies.
-Docker-only, use `image: hotio/whisparr:v3` in Docker Compose
+Docker: use `image: hotio/whisparr:v3` in Docker Compose
 See https://wiki.servarr.com/whisparr/installation/docker
+
+Direct install: See ***Releases*** at https://github.com/whisparr/whisparr-eros
 
 ## Support
 

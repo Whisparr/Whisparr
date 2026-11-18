@@ -22,7 +22,7 @@ import {
   setEpisodesSort,
 } from 'Store/Actions/episodeSelectionActions';
 import createClientSideCollectionSelector from 'Store/Selectors/createClientSideCollectionSelector';
-import { CheckInputChanged } from 'typings/inputs';
+import { CheckInputChanged, InputChanged } from 'typings/inputs';
 import { SelectStateInputProps } from 'typings/props';
 import getErrorMessage from 'Utilities/Object/getErrorMessage';
 import translate from 'Utilities/String/translate';
@@ -72,9 +72,6 @@ interface SelectEpisodeModalContentProps {
   onModalClose(): unknown;
 }
 
-//
-// Render
-
 function SelectEpisodeModalContent(props: SelectEpisodeModalContentProps) {
   const {
     selectedIds,
@@ -101,7 +98,7 @@ function SelectEpisodeModalContent(props: SelectEpisodeModalContentProps) {
     selectedEpisodesCount > 0 && selectedEpisodesCount % selectedCount === 0;
 
   const onFilterChange = useCallback(
-    ({ value }: { value: string }) => {
+    ({ value }: InputChanged<string>) => {
       setFilter(value.toLowerCase());
     },
     [setFilter]
@@ -128,7 +125,7 @@ function SelectEpisodeModalContent(props: SelectEpisodeModalContentProps) {
   );
 
   const onSortPress = useCallback(
-    (newSortKey: string, newSortDirection: SortDirection) => {
+    (newSortKey: string, newSortDirection?: SortDirection) => {
       dispatch(
         setEpisodesSort({
           sortKey: newSortKey,

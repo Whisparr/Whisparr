@@ -27,6 +27,7 @@
 "TvrageID":"4055",
 "ImdbID":"0320037",
 "InfoHash":"123",
+"Tags": ["Subtitles"],
 "DownloadURL":"https:\/\/broadcasthe.net\/torrents.php?action=download&id=123&authkey=123&torrent_pass=123"
 },
 "1234":{
@@ -54,6 +55,7 @@
 "TvrageID":"38472",
 "ImdbID":"2377081",
 "InfoHash":"1234",
+"Tags": [],
 "DownloadURL":"https:\/\/broadcasthe.net\/torrents.php?action=download&id=1234&authkey=1234&torrent_pass=1234"
 }},
 "results":"117927"

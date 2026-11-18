@@ -1,6 +1,6 @@
 using FluentValidation;
-using FluentValidation.Validators;
 using NzbDrone.Common.Extensions;
+using NzbDrone.Common.Network;
 
 namespace NzbDrone.Core.Validation
 {
@@ -11,9 +11,9 @@ namespace NzbDrone.Core.Validation
             return ruleBuilder.Must(x => x.IsValidIpAddress()).WithMessage("Must contain wildcard (*) or a valid IP Address");
         }
 
-        public static IRuleBuilderOptions<T, string> NotListenAllIp4Address<T>(this IRuleBuilder<T, string> ruleBuilder)
+        public static IRuleBuilderOptions<T, string> ValidIpNetworks<T>(this IRuleBuilder<T, string> ruleBuilder)
         {
-            return ruleBuilder.SetValidator(new RegularExpressionValidator(@"^(?!0\.0\.0\.0)")).WithMessage("Use * instead of 0.0.0.0");
+            return ruleBuilder.Must(IPNetworkParser.IsValidList).WithMessage("Must be a comma separated list of IP addresses or networks in CIDR notation, such as 172.17.0.1, 10.0.0.0/8 or fc00::/7");
         }
     }
 }

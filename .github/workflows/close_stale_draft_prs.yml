@@ -1,0 +1,39 @@
+name: Close stale draft PRs
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  close-stale-drafts:
+    runs-on: ubuntu-latest
+    if: github.repository == 'Sonarr/Sonarr'
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Close draft PRs inactive for 90+ days
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          cutoff=$(date -u -d '90 days ago' +%Y-%m-%dT%H:%M:%SZ)
+
+          for pr in $(gh pr list --draft --state open --limit 1000 --json number --jq '.[].number'); do
+            read -r author last <<< "$(gh pr view "$pr" --json author,commits,comments,reviews --jq '
+              .author.login as $author
+              | [ (.commits[].committedDate),
+                  (.comments[] | select(.author.login == $author) | .createdAt),
+                  (.reviews[] | select(.author.login == $author) | .submittedAt) ]
+              | "\($author) \(max // "")"')"
+
+            if [[ -n "$last" && "$last" < "$cutoff" ]]; then
+              echo "Closing #$pr (last author activity: $last)"
+              gh pr close "$pr" --comment ":wave: @${author}, this draft pull request has been closed automatically because it has not had any activity in 90 days.
+
+          **Please do not open a new PR for these changes**
+          If you are still working on this, please update it and let us know so we can reopen it."
+            else
+              echo "Skipping #$pr (last author activity: ${last:-unknown})"
+            fi
+          done

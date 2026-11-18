@@ -32,6 +32,17 @@ export interface QueuePagedAppState
   removeError: Error;
 }
 
+export type RemovalMethod = 'removeFromClient' | 'changeCategory' | 'ignore';
+export type BlocklistMethod =
+  | 'doNotBlocklist'
+  | 'blocklistAndSearch'
+  | 'blocklistOnly';
+
+interface RemovalOptions {
+  removalMethod: RemovalMethod;
+  blocklistMethod: BlocklistMethod;
+}
+
 interface QueueAppState {
   status: AppSectionItemState<QueueStatus>;
   details: QueueDetailsAppState;
@@ -39,6 +50,7 @@ interface QueueAppState {
   options: {
     includeUnknownSeriesItems: boolean;
   };
+  removalOptions: RemovalOptions;
 }
 
 export default QueueAppState;

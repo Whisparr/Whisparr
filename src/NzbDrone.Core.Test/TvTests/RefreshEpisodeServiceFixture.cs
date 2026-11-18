@@ -282,5 +282,127 @@ namespace NzbDrone.Core.Test.TvTests
 
             _insertedEpisodes.Should().OnlyContain(e => e.AirDateUtc.Value.ToString("s") == episodes.First().AirDateUtc.Value.ToString("s"));
         }
+
+        private static Episode GivenSameDateEpisode(int id, int tvdbId, string title, int episodeFileId = 0)
+        {
+            return new Episode
+            {
+                Id = id,
+                TvdbId = tvdbId,
+                SeasonNumber = 2026,
+                AirDate = "2026-08-31",
+                Title = title,
+                EpisodeFileId = episodeFileId
+            };
+        }
+
+        [Test]
+        public void should_match_existing_episodes_by_id_when_same_date_episodes_are_returned_in_a_different_order()
+        {
+            Mocker.GetMock<IEpisodeService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
+                .Returns(new List<Episode>
+                {
+                    GivenSameDateEpisode(100, 1, "Summer Snatch", 10),
+                    GivenSameDateEpisode(200, 2, "Rub Me Down! The Best Of Pervy Massages", 20)
+                });
+
+            Subject.RefreshEpisodeInfo(GetSeries(), new List<Episode>
+            {
+                GivenSameDateEpisode(0, 2, "Rub Me Down! The Best Of Pervy Massages"),
+                GivenSameDateEpisode(0, 1, "Summer Snatch")
+            });
+
+            _insertedEpisodes.Should().BeEmpty();
+            _deletedEpisodes.Should().BeEmpty();
+            _updatedEpisodes.Should().HaveCount(2);
+            _updatedEpisodes.Single(e => e.Id == 100).TvdbId.Should().Be(1);
+            _updatedEpisodes.Single(e => e.Id == 100).Title.Should().Be("Summer Snatch");
+            _updatedEpisodes.Single(e => e.Id == 200).TvdbId.Should().Be(2);
+            _updatedEpisodes.Single(e => e.Id == 200).Title.Should().Be("Rub Me Down! The Best Of Pervy Massages");
+        }
+
+        [Test]
+        public void should_match_existing_same_date_episodes_by_title_when_ids_do_not_match()
+        {
+            Mocker.GetMock<IEpisodeService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
+                .Returns(new List<Episode>
+                {
+                    GivenSameDateEpisode(100, 0, "Summer Snatch", 10),
+                    GivenSameDateEpisode(200, 0, "Rub Me Down! The Best Of Pervy Massages", 20)
+                });
+
+            Subject.RefreshEpisodeInfo(GetSeries(), new List<Episode>
+            {
+                GivenSameDateEpisode(0, 2, "Rub Me Down - The Best of Pervy Massages"),
+                GivenSameDateEpisode(0, 1, "Summer Snatch")
+            });
+
+            _insertedEpisodes.Should().BeEmpty();
+            _deletedEpisodes.Should().BeEmpty();
+            _updatedEpisodes.Single(e => e.Id == 100).TvdbId.Should().Be(1);
+            _updatedEpisodes.Single(e => e.Id == 200).TvdbId.Should().Be(2);
+        }
+
+        [Test]
+        public void should_match_existing_episode_by_date_when_it_is_the_only_episode_on_that_date_and_title_changed()
+        {
+            Mocker.GetMock<IEpisodeService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
+                .Returns(new List<Episode>
+                {
+                    GivenSameDateEpisode(100, 0, "Sumer Snatch", 10)
+                });
+
+            Subject.RefreshEpisodeInfo(GetSeries(), new List<Episode>
+            {
+                GivenSameDateEpisode(0, 1, "Summer Snatch")
+            });
+
+            _insertedEpisodes.Should().BeEmpty();
+            _deletedEpisodes.Should().BeEmpty();
+            _updatedEpisodes.Single().Id.Should().Be(100);
+            _updatedEpisodes.Single().Title.Should().Be("Summer Snatch");
+        }
+
+        [Test]
+        public void should_not_match_existing_episode_by_date_when_its_title_matches_another_remote_episode()
+        {
+            Mocker.GetMock<IEpisodeService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
+                .Returns(new List<Episode>
+                {
+                    GivenSameDateEpisode(100, 0, "Summer Snatch", 10)
+                });
+
+            Subject.RefreshEpisodeInfo(GetSeries(), new List<Episode>
+            {
+                GivenSameDateEpisode(0, 3, "A Brand New Scene"),
+                GivenSameDateEpisode(0, 1, "Summer Snatch")
+            });
+
+            _deletedEpisodes.Should().BeEmpty();
+            _updatedEpisodes.Single().Id.Should().Be(100);
+            _updatedEpisodes.Single().TvdbId.Should().Be(1);
+            _insertedEpisodes.Single().TvdbId.Should().Be(3);
+        }
+
+        [Test]
+        public void should_not_match_existing_episode_that_belongs_to_another_remote_episode()
+        {
+            Mocker.GetMock<IEpisodeService>().Setup(c => c.GetEpisodeBySeries(It.IsAny<int>()))
+                .Returns(new List<Episode>
+                {
+                    GivenSameDateEpisode(100, 1, "Summer Snatch", 10)
+                });
+
+            Subject.RefreshEpisodeInfo(GetSeries(), new List<Episode>
+            {
+                GivenSameDateEpisode(0, 3, "A Brand New Scene"),
+                GivenSameDateEpisode(0, 1, "Summer Snatch")
+            });
+
+            _deletedEpisodes.Should().BeEmpty();
+            _updatedEpisodes.Single().Id.Should().Be(100);
+            _updatedEpisodes.Single().TvdbId.Should().Be(1);
+            _insertedEpisodes.Single().TvdbId.Should().Be(3);
+        }
     }
 }

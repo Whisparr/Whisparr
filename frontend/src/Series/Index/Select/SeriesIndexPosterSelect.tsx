@@ -7,17 +7,24 @@ import styles from './SeriesIndexPosterSelect.css';
 
 interface SeriesIndexPosterSelectProps {
   seriesId: number;
+  titleSlug: string;
 }
 
-function SeriesIndexPosterSelect(props: SeriesIndexPosterSelectProps) {
-  const { seriesId } = props;
+function SeriesIndexPosterSelect({
+  seriesId,
+  titleSlug,
+}: SeriesIndexPosterSelectProps) {
   const [selectState, selectDispatch] = useSelect();
   const isSelected = selectState.selectedState[seriesId];
 
   const onSelectPress = useCallback(
-    (event: SyntheticEvent) => {
-      const nativeEvent = event.nativeEvent as PointerEvent;
-      const shiftKey = nativeEvent.shiftKey;
+    (event: SyntheticEvent<HTMLElement, PointerEvent>) => {
+      if (event.nativeEvent.ctrlKey || event.nativeEvent.metaKey) {
+        window.open(`${window.Whisparr.urlBase}/site/${titleSlug}`, '_blank');
+        return;
+      }
+
+      const shiftKey = event.nativeEvent.shiftKey;
 
       selectDispatch({
         type: 'toggleSelected',
@@ -26,7 +33,7 @@ function SeriesIndexPosterSelect(props: SeriesIndexPosterSelectProps) {
         shiftKey,
       });
     },
-    [seriesId, isSelected, selectDispatch]
+    [seriesId, titleSlug, isSelected, selectDispatch]
   );
 
   return (

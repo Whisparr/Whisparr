@@ -1,19 +1,31 @@
-interface AjaxResponse {
-  responseJSON:
-    | {
-        message: string | undefined;
-      }
-    | undefined;
-}
+import { Error } from 'App/State/AppSectionState';
+import { ApiError } from 'Utilities/Fetch/fetchJson';
 
-function getErrorMessage(xhr: AjaxResponse, fallbackErrorMessage?: string) {
-  if (!xhr || !xhr.responseJSON || !xhr.responseJSON.message) {
+function getErrorMessage(
+  error: Error | ApiError | undefined | null,
+  fallbackErrorMessage = ''
+) {
+  if (!error) {
     return fallbackErrorMessage;
   }
 
-  const message = xhr.responseJSON.message;
+  if (error instanceof ApiError) {
+    if (!error.statusBody) {
+      return fallbackErrorMessage;
+    }
 
-  return message || fallbackErrorMessage;
+    return error.statusBody.message;
+  }
+
+  if (!error.responseJSON) {
+    return fallbackErrorMessage;
+  }
+
+  if ('message' in error.responseJSON && error.responseJSON.message) {
+    return error.responseJSON.message;
+  }
+
+  return fallbackErrorMessage;
 }
 
 export default getErrorMessage;

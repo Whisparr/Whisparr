@@ -165,6 +165,23 @@ namespace NzbDrone.Core.Test.MediaFiles.EpisodeImport
                                .BeNull();
         }
 
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase("   ")]
+        public void should_fall_back_to_file_name_when_download_client_item_has_no_release_title(string releaseTitle)
+        {
+            _localEpisode.DownloadClientEpisodeInfo = new ParsedEpisodeInfo
+                                                      {
+                                                          ReleaseTitle = releaseTitle
+                                                      };
+
+            _localEpisode.Path = Path.Combine(@"C:\Test\Unsorted TV", _seasonName, _episodeName + ".mkv")
+                                     .AsOsAgnostic();
+
+            SceneNameCalculator.GetSceneName(_localEpisode).Should()
+                               .Be(_episodeName);
+        }
+
         [TestCase(".mkv")]
         [TestCase(".par2")]
         [TestCase(".nzb")]

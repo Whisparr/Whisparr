@@ -12,7 +12,9 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport
             var otherVideoFiles = localEpisode.OtherVideoFiles;
             var downloadClientInfo = localEpisode.DownloadClientEpisodeInfo;
 
-            if (!otherVideoFiles && downloadClientInfo != null)
+            // The release title can be missing when the download was matched by external ID or
+            // recreated from history, in which case fall back to the file/folder name below
+            if (!otherVideoFiles && downloadClientInfo != null && downloadClientInfo.ReleaseTitle.IsNotNullOrWhiteSpace())
             {
                 return Parser.Parser.RemoveFileExtension(downloadClientInfo.ReleaseTitle);
             }

@@ -36,7 +36,6 @@ pr:
   paths:
     exclude:
     - src/NzbDrone.Core/Localization/Core
-    - src/Whisparr.Api.*/openapi.json
     - .github
 
 stages:
@@ -119,27 +118,27 @@ stages:
         artifact: '$(osName)Backend'
         displayName: Publish Backend
         condition: and(succeeded(), eq(variables['osName'], 'Windows'))
-      - publish: '$(testsFolder)/net6.0/win-x64/publish'
+      - publish: '$(testsFolder)/net8.0/win-x64/publish'
         artifact: win-x64-tests
         displayName: Publish win-x64 Test Package
         condition: and(succeeded(), eq(variables['osName'], 'Windows'))
-      - publish: '$(testsFolder)/net6.0/linux-x64/publish'
+      - publish: '$(testsFolder)/net8.0/linux-x64/publish'
         artifact: linux-x64-tests
         displayName: Publish linux-x64 Test Package
         condition: and(succeeded(), eq(variables['osName'], 'Windows'))
-      - publish: '$(testsFolder)/net6.0/linux-x86/publish'
+      - publish: '$(testsFolder)/net8.0/linux-x86/publish'
         artifact: linux-x86-tests
         displayName: Publish linux-x86 Test Package
         condition: and(succeeded(), eq(variables['osName'], 'Windows'))
-      - publish: '$(testsFolder)/net6.0/linux-musl-x64/publish'
+      - publish: '$(testsFolder)/net8.0/linux-musl-x64/publish'
         artifact: linux-musl-x64-tests
         displayName: Publish linux-musl-x64 Test Package
         condition: and(succeeded(), eq(variables['osName'], 'Windows'))
-      - publish: '$(testsFolder)/net6.0/freebsd-x64/publish'
+      - publish: '$(testsFolder)/net8.0/freebsd-x64/publish'
         artifact: freebsd-x64-tests
         displayName: Publish freebsd-x64 Test Package
         condition: and(succeeded(), eq(variables['osName'], 'Windows'))
-      - publish: '$(testsFolder)/net6.0/osx-x64/publish'
+      - publish: '$(testsFolder)/net8.0/osx-x64/publish'
         artifact: osx-x64-tests
         displayName: Publish osx-x64 Test Package
         condition: and(succeeded(), eq(variables['osName'], 'Windows'))
@@ -257,21 +256,21 @@ stages:
           archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).windows-core-x64.zip'
           archiveType: 'zip'
           includeRootFolder: false
-          rootFolderOrFile: $(artifactsFolder)/win-x64/net6.0
+          rootFolderOrFile: $(artifactsFolder)/win-x64/net8.0
       - task: ArchiveFiles@2
         displayName: Create win-x86 zip
         inputs:
           archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).windows-core-x86.zip'
           archiveType: 'zip'
           includeRootFolder: false
-          rootFolderOrFile: $(artifactsFolder)/win-x86/net6.0
+          rootFolderOrFile: $(artifactsFolder)/win-x86/net8.0
       - task: ArchiveFiles@2
         displayName: Create osx-x64 app
         inputs:
           archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).osx-app-core-x64.zip'
           archiveType: 'zip'
           includeRootFolder: false
-          rootFolderOrFile: $(artifactsFolder)/osx-x64-app/net6.0
+          rootFolderOrFile: $(artifactsFolder)/osx-x64-app/net8.0
       - task: ArchiveFiles@2
         displayName: Create osx-x64 tar
         inputs:
@@ -279,14 +278,14 @@ stages:
           archiveType: 'tar'
           tarCompression: 'gz'
           includeRootFolder: false
-          rootFolderOrFile: $(artifactsFolder)/osx-x64/net6.0
+          rootFolderOrFile: $(artifactsFolder)/osx-x64/net8.0
       - task: ArchiveFiles@2
         displayName: Create osx-arm64 app
         inputs:
           archiveFile: '$(Build.ArtifactStagingDirectory)/Whisparr.$(buildName).osx-app-core-arm64.zip'
           archiveType: 'zip'
           includeRootFolder: false
-          rootFolderOrFile: $(artifactsFolder)/osx-arm64-app/net6.0
+          rootFolderOrFile: $(artifactsFolder)/osx-arm64-app/net8.0
       - task: ArchiveFiles@2
         displayName: Create osx-arm64 tar
         inputs:
@@ -294,7 +293,7 @@ stages:
           archiveType: 'tar'
           tarCompression: 'gz'
           includeRootFolder: false
-          rootFolderOrFile: $(artifactsFolder)/osx-arm64/net6.0
+          rootFolderOrFile: $(artifactsFolder)/osx-arm64/net8.0
       - task: ArchiveFiles@2
         displayName: Create linux-x64 tar
         inputs:
@@ -302,7 +301,7 @@ stages:
           archiveType: 'tar'
           tarCompression: 'gz'
           includeRootFolder: false
-          rootFolderOrFile: $(artifactsFolder)/linux-x64/net6.0
+          rootFolderOrFile: $(artifactsFolder)/linux-x64/net8.0
       - task: ArchiveFiles@2
         displayName: Create linux-musl-x64 tar
         inputs:
@@ -310,7 +309,7 @@ stages:
           archiveType: 'tar'
           tarCompression: 'gz'
           includeRootFolder: false
-          rootFolderOrFile: $(artifactsFolder)/linux-musl-x64/net6.0
+          rootFolderOrFile: $(artifactsFolder)/linux-musl-x64/net8.0
       - task: ArchiveFiles@2
         displayName: Create linux-x86 tar
         inputs:
@@ -318,7 +317,7 @@ stages:
           archiveType: 'tar'
           tarCompression: 'gz'
           includeRootFolder: false
-          rootFolderOrFile: $(artifactsFolder)/linux-x86/net6.0
+          rootFolderOrFile: $(artifactsFolder)/linux-x86/net8.0
       - task: ArchiveFiles@2
         displayName: Create linux-arm tar
         inputs:
@@ -326,7 +325,7 @@ stages:
           archiveType: 'tar'
           tarCompression: 'gz'
           includeRootFolder: false
-          rootFolderOrFile: $(artifactsFolder)/linux-arm/net6.0
+          rootFolderOrFile: $(artifactsFolder)/linux-arm/net8.0
       - task: ArchiveFiles@2
         displayName: Create linux-musl-arm tar
         inputs:
@@ -334,7 +333,7 @@ stages:
           archiveType: 'tar'
           tarCompression: 'gz'
           includeRootFolder: false
-          rootFolderOrFile: $(artifactsFolder)/linux-musl-arm/net6.0
+          rootFolderOrFile: $(artifactsFolder)/linux-musl-arm/net8.0
       - task: ArchiveFiles@2
         displayName: Create linux-arm64 tar
         inputs:
@@ -342,7 +341,7 @@ stages:
           archiveType: 'tar'
           tarCompression: 'gz'
           includeRootFolder: false
-          rootFolderOrFile: $(artifactsFolder)/linux-arm64/net6.0
+          rootFolderOrFile: $(artifactsFolder)/linux-arm64/net8.0
       - task: ArchiveFiles@2
         displayName: Create linux-musl-arm64 tar
         inputs:
@@ -350,7 +349,7 @@ stages:
           archiveType: 'tar'
           tarCompression: 'gz'
           includeRootFolder: false
-          rootFolderOrFile: $(artifactsFolder)/linux-musl-arm64/net6.0
+          rootFolderOrFile: $(artifactsFolder)/linux-musl-arm64/net8.0
       - task: ArchiveFiles@2
         displayName: Create freebsd-x64 tar
         inputs:
@@ -358,7 +357,7 @@ stages:
           archiveType: 'tar'
           tarCompression: 'gz'
           includeRootFolder: false
-          rootFolderOrFile: $(artifactsFolder)/freebsd-x64/net6.0
+          rootFolderOrFile: $(artifactsFolder)/freebsd-x64/net8.0
       - publish: $(Build.ArtifactStagingDirectory)
         artifact: 'Packages'
         displayName: Publish Packages
@@ -1115,60 +1114,6 @@ stages:
         env:
           FORCE_COLOR: 0
           YARN_CACHE_FOLDER: $(yarnCacheFolder)
-
-    - job: Api_Docs
-      displayName: API Docs
-      dependsOn: Prepare
-      condition: |
-        and
-        (
-          and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop')),
-          and(succeeded(), eq(dependencies.Prepare.outputs['setVar.backendNotUpdated'], '0'))
-        )
-
-      pool:
-        vmImage: ${{ variables.windowsImage }}
-
-      steps:
-      - task: UseDotNet@2
-        displayName: 'Install .net core'
-        inputs:
-          version: $(dotnetVersion)
-      - checkout: self
-        submodules: true
-        persistCredentials: true
-        fetchDepth: 1
-      - bash: ./docs.sh Windows
-        displayName: Create openapi.json
-      - bash: |
-          git config --global user.email "development@lidarr.audio"
-          git config --global user.name "Servarr"
-          git checkout -b api-docs
-          git add .
-          git status
-          if git status | grep modified
-          then
-            git commit -am 'Automated API Docs update'
-            git push -f --set-upstream origin api-docs
-            curl -X POST -H "Authorization: token ${GITHUBTOKEN}" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/whisparr/whisparr/pulls -d '{"head":"api-docs","base":"develop","title":"Update API docs"}'
-          else
-            echo "No changes since last run"
-          fi
-        displayName: Commit API Doc Change
-        continueOnError: true
-        env:
-          GITHUBTOKEN: $(githubToken)
-      - task: CopyFiles@2
-        displayName: 'Copy openapi.json to: $(Build.ArtifactStagingDirectory)'
-        inputs:
-          SourceFolder: '$(Build.SourcesDirectory)'
-          Contents: |
-            **/*openapi.json
-          TargetFolder: '$(Build.ArtifactStagingDirectory)/api_docs'
-      - publish: $(Build.ArtifactStagingDirectory)/api_docs
-        artifact: 'APIDocs'
-        displayName: Publish API Docs Bundle
-        condition: and(succeeded(), eq(variables['System.JobAttempt'], '1'))
 
   - stage: Report_Out
     dependsOn:

@@ -1,6 +1,6 @@
+using System.Collections.Generic;
 using FluentValidation;
 using NzbDrone.Core.Annotations;
-using NzbDrone.Core.ThingiProvider;
 using NzbDrone.Core.Validation;
 
 namespace NzbDrone.Core.Notifications.Pushcut
@@ -14,9 +14,9 @@ namespace NzbDrone.Core.Notifications.Pushcut
         }
     }
 
-    public class PushcutSettings : IProviderConfig
+    public class PushcutSettings : NotificationSettingsBase<PushcutSettings>
     {
-        private static readonly PushcutSettingsValidator Validator = new ();
+        private static readonly PushcutSettingsValidator Validator = new();
 
         [FieldDefinition(0, Label = "Notification name", Type = FieldType.Textbox, HelpText = "Notification name from Notifications tab of the Pushcut app.")]
         public string NotificationName { get; set; }
@@ -27,7 +27,13 @@ namespace NzbDrone.Core.Notifications.Pushcut
         [FieldDefinition(2, Label = "Time sensitive", Type = FieldType.Checkbox, HelpText = "Check to mark the notification as \"Time-Sensitive\"")]
         public bool TimeSensitive { get; set; }
 
-        public NzbDroneValidationResult Validate()
+        [FieldDefinition(3, Label = "NotificationsPushcutSettingsIncludePoster", Type = FieldType.Checkbox, HelpText = "NotificationsPushcutSettingsIncludePosterHelpText")]
+        public bool IncludePoster { get; set; }
+
+        [FieldDefinition(4, Label = "NotificationsPushcutSettingsMetadataLinks", Type = FieldType.Select, SelectOptions = typeof(MetadataLinkType), HelpText = "NotificationsPushcutSettingsMetadataLinksHelpText")]
+        public IEnumerable<int> MetadataLinks { get; set; } = [];
+
+        public override NzbDroneValidationResult Validate()
         {
             return new NzbDroneValidationResult(Validator.Validate(this));
         }

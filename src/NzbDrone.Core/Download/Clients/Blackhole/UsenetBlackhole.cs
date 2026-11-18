@@ -7,6 +7,7 @@ using NzbDrone.Common.Disk;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
 using NzbDrone.Core.Configuration;
+using NzbDrone.Core.Localization;
 using NzbDrone.Core.Organizer;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.RemotePathMappings;
@@ -25,8 +26,9 @@ namespace NzbDrone.Core.Download.Clients.Blackhole
                                IDiskProvider diskProvider,
                                IRemotePathMappingService remotePathMappingService,
                                IValidateNzbs nzbValidationService,
-                               Logger logger)
-            : base(httpClient, configService, diskProvider, remotePathMappingService, nzbValidationService, logger)
+                               Logger logger,
+                               ILocalizationService localizationService)
+            : base(httpClient, configService, diskProvider, remotePathMappingService, nzbValidationService, logger, localizationService)
         {
             _scanWatchFolder = scanWatchFolder;
 
@@ -51,13 +53,13 @@ namespace NzbDrone.Core.Download.Clients.Blackhole
             return null;
         }
 
-        public override string Name => "Usenet Blackhole";
+        public override string Name => _localizationService.GetLocalizedString("UsenetBlackhole");
 
         public override IEnumerable<DownloadClientItem> GetItems()
         {
             foreach (var item in _scanWatchFolder.GetItems(Settings.WatchFolder, ScanGracePeriod))
             {
-                yield return new DownloadClientItem
+                var queueItem = new DownloadClientItem
                 {
                     DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this, false),
                     DownloadId = Definition.Name + "_" + item.DownloadId,
@@ -70,10 +72,12 @@ namespace NzbDrone.Core.Download.Clients.Blackhole
                     OutputPath = item.OutputPath,
 
                     Status = item.Status,
-
-                    CanBeRemoved = true,
-                    CanMoveFiles = true
                 };
+
+                queueItem.CanMoveFiles = true;
+                queueItem.CanBeRemoved = queueItem.DownloadClientInfo.RemoveCompletedDownloads;
+
+                yield return queueItem;
             }
         }
 

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -309,14 +309,31 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
                         var video = new XElement("video");
                         video.Add(new XElement("aspect", (float)episodeFile.MediaInfo.Width / (float)episodeFile.MediaInfo.Height));
                         video.Add(new XElement("bitrate", episodeFile.MediaInfo.VideoBitrate));
-                        video.Add(new XElement("codec", MediaInfoFormatter.FormatVideoCodec(episodeFile.MediaInfo, sceneName)));
-                        video.Add(new XElement("framerate", episodeFile.MediaInfo.VideoFps));
+                        video.Add(new XElement("codec", episodeFile.MediaInfo.VideoFormat));
+                        video.Add(new XElement("framerate", episodeFile.MediaInfo.VideoFps.ToString("0.###")));
                         video.Add(new XElement("height", episodeFile.MediaInfo.Height));
                         video.Add(new XElement("scantype", episodeFile.MediaInfo.ScanType));
                         video.Add(new XElement("width", episodeFile.MediaInfo.Width));
 
                         video.Add(new XElement("duration", episodeFile.MediaInfo.RunTime.TotalMinutes));
                         video.Add(new XElement("durationinseconds", Math.Round(episodeFile.MediaInfo.RunTime.TotalSeconds)));
+
+                        if (episodeFile.MediaInfo.VideoHdrFormat is HdrFormat.DolbyVision or HdrFormat.DolbyVisionHdr10 or HdrFormat.DolbyVisionHdr10Plus or HdrFormat.DolbyVisionHlg or HdrFormat.DolbyVisionSdr)
+                        {
+                            video.Add(new XElement("hdrtype", "dolbyvision"));
+                        }
+                        else if (episodeFile.MediaInfo.VideoHdrFormat is HdrFormat.Hdr10 or HdrFormat.Hdr10Plus or HdrFormat.Pq10)
+                        {
+                            video.Add(new XElement("hdrtype", "hdr10"));
+                        }
+                        else if (episodeFile.MediaInfo.VideoHdrFormat == HdrFormat.Hlg10)
+                        {
+                            video.Add(new XElement("hdrtype", "hlg"));
+                        }
+                        else if (episodeFile.MediaInfo.VideoHdrFormat == HdrFormat.None)
+                        {
+                            video.Add(new XElement("hdrtype", ""));
+                        }
 
                         streamDetails.Add(video);
 
@@ -386,7 +403,15 @@ namespace NzbDrone.Core.Extras.Metadata.Consumers.Xbmc
 
             try
             {
-                var screenshot = episodeFile.Episodes.Value.First().Images.SingleOrDefault(i => i.CoverType == MediaCoverTypes.Screenshot);
+                var firstEpisode = episodeFile.Episodes.Value.FirstOrDefault();
+
+                if (firstEpisode == null)
+                {
+                    _logger.Debug("Episode file has no associated episodes, potentially a duplicate file");
+                    return new List<ImageFileResult>();
+                }
+
+                var screenshot = firstEpisode.Images.SingleOrDefault(i => i.CoverType == MediaCoverTypes.Screenshot);
 
                 if (screenshot == null)
                 {

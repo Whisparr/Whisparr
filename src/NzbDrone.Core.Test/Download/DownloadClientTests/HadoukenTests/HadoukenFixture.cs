@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
@@ -105,7 +106,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.HadoukenTests
         {
             Mocker.GetMock<IHttpClient>()
                   .Setup(s => s.GetAsync(It.IsAny<HttpRequest>()))
-                  .Returns<HttpRequest>(r => Task.FromResult(new HttpResponse(r, new HttpHeader(), new byte[1000])));
+                  .ReturnsAsync((HttpRequest r, CancellationToken _) => new HttpResponse(r, new HttpHeader(), new byte[1000]));
 
             Mocker.GetMock<IHadoukenProxy>()
                 .Setup(s => s.AddTorrentUri(It.IsAny<HadoukenSettings>(), It.IsAny<string>()))
@@ -320,7 +321,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.HadoukenTests
 
             var result = Subject.Test();
 
-            result.Errors.First().ErrorMessage.Should().Be("Old Hadouken client with unsupported API, need 5.1 or higher");
+            result.Errors.Count.Should().Be(1);
         }
     }
 }

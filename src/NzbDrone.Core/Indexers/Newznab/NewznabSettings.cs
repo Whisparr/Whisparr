@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Equ;
 using FluentValidation;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Annotations;
@@ -24,10 +26,10 @@ namespace NzbDrone.Core.Indexers.Newznab
 
     public class NewznabSettingsValidator : AbstractValidator<NewznabSettings>
     {
-        private static readonly string[] ApiKeyWhiteList =
+        private static readonly string[] ApiKeyAllowList =
         {
             "nzbs.org",
-            "nzb.su",
+            "nzb.life",
             "dognzb.cr",
             "nzbplanet.net",
             "nzbid.org",
@@ -37,10 +39,10 @@ namespace NzbDrone.Core.Indexers.Newznab
 
         private static bool ShouldHaveApiKey(NewznabSettings settings)
         {
-            return settings.BaseUrl != null && ApiKeyWhiteList.Any(c => settings.BaseUrl.ToLowerInvariant().Contains(c));
+            return settings.BaseUrl != null && ApiKeyAllowList.Any(c => settings.BaseUrl.ToLowerInvariant().Contains(c));
         }
 
-        private static readonly Regex AdditionalParametersRegex = new Regex(@"(&.+?\=.+?)+", RegexOptions.Compiled);
+        private static readonly Regex AdditionalParametersRegex = new(@"(&.+?\=.+?)+", RegexOptions.Compiled);
 
         public NewznabSettingsValidator()
         {
@@ -60,9 +62,9 @@ namespace NzbDrone.Core.Indexers.Newznab
         }
     }
 
-    public class NewznabSettings : IIndexerSettings
+    public class NewznabSettings : PropertywiseEquatable<NewznabSettings>, IIndexerSettings
     {
-        private static readonly NewznabSettingsValidator Validator = new NewznabSettingsValidator();
+        private static readonly NewznabSettingsValidator Validator = new();
 
         public NewznabSettings()
         {
@@ -70,6 +72,7 @@ namespace NzbDrone.Core.Indexers.Newznab
             Categories = new[] { 6000, 6010, 6020, 6030, 6040, 6045, 6050, 6070, 6080, 6090 };
             DateSearchFormat = DateSearchFormat.YearMonthDay;
             SeriesNameSource = SeriesNameSource.Site;
+            FailDownloads = Array.Empty<int>();
         }
 
         [FieldDefinition(0, Label = "URL")]
@@ -104,6 +107,10 @@ namespace NzbDrone.Core.Indexers.Newznab
 
         // Field 12 is used by TorznabSettings MinimumSeeders
         // Field 13 is used by TorznabSettings SeedCriteria
+
+        [FieldDefinition(14, Type = FieldType.Select, SelectOptions = typeof(FailDownloads), Label = "Fail Downloads", HelpText = "Mark downloads containing these file types as failed", Advanced = true)]
+        public IEnumerable<int> FailDownloads { get; set; }
+
         // If you need to add another field here, update TorznabSettings as well and this comment
 
         public virtual NzbDroneValidationResult Validate()

@@ -4,12 +4,11 @@ using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.CustomFormats;
 using NzbDrone.Core.History;
-using NzbDrone.Core.IndexerSearch.Definitions;
 using NzbDrone.Core.Parser.Model;
 
 namespace NzbDrone.Core.DecisionEngine.Specifications.RssSync
 {
-    public class HistorySpecification : IDecisionEngineSpecification
+    public class HistorySpecification : IDownloadDecisionEngineSpecification
     {
         private readonly IHistoryService _historyService;
         private readonly UpgradableSpecification _upgradableSpecification;
@@ -33,12 +32,12 @@ namespace NzbDrone.Core.DecisionEngine.Specifications.RssSync
         public SpecificationPriority Priority => SpecificationPriority.Database;
         public RejectionType Type => RejectionType.Permanent;
 
-        public virtual Decision IsSatisfiedBy(RemoteEpisode subject, SearchCriteriaBase searchCriteria)
+        public virtual DownloadSpecDecision IsSatisfiedBy(RemoteEpisode subject, ReleaseDecisionInformation information)
         {
-            if (searchCriteria != null)
+            if (information.SearchCriteria != null)
             {
                 _logger.Debug("Skipping history check during search");
-                return Decision.Accept();
+                return DownloadSpecDecision.Accept();
             }
 
             var cdhEnabled = _configService.EnableCompletedDownloadHandling;
@@ -81,10 +80,10 @@ namespace NzbDrone.Core.DecisionEngine.Specifications.RssSync
                     {
                         if (recent)
                         {
-                            return Decision.Reject("Recent grab event in history already meets cutoff: {0}", mostRecent.Quality);
+                            return DownloadSpecDecision.Reject(DownloadRejectionReason.HistoryRecentCutoffMet, "Recent grab event in history already meets cutoff: {0}", mostRecent.Quality);
                         }
 
-                        return Decision.Reject("CDH is disabled and grab event in history already meets cutoff: {0}", mostRecent.Quality);
+                        return DownloadSpecDecision.Reject(DownloadRejectionReason.HistoryCdhDisabledCutoffMet, "CDH is disabled and grab event in history already meets cutoff: {0}", mostRecent.Quality);
                     }
 
                     var rejectionSubject = recent ? "Recent" : "CDH is disabled and";
@@ -95,27 +94,30 @@ namespace NzbDrone.Core.DecisionEngine.Specifications.RssSync
                             continue;
 
                         case UpgradeableRejectReason.BetterQuality:
-                            return Decision.Reject("{0} grab event in history is of equal or higher preference: {1}", rejectionSubject, mostRecent.Quality);
+                            return DownloadSpecDecision.Reject(DownloadRejectionReason.HistoryHigherPreference, "{0} grab event in history is of equal or higher preference: {1}", rejectionSubject, mostRecent.Quality);
 
                         case UpgradeableRejectReason.BetterRevision:
-                            return Decision.Reject("{0} grab event in history is of equal or higher revision: {1}", rejectionSubject, mostRecent.Quality.Revision);
+                            return DownloadSpecDecision.Reject(DownloadRejectionReason.HistoryHigherRevision, "{0} grab event in history is of equal or higher revision: {1}", rejectionSubject, mostRecent.Quality.Revision);
 
                         case UpgradeableRejectReason.QualityCutoff:
-                            return Decision.Reject("{0} grab event in history meets quality cutoff: {1}", rejectionSubject, qualityProfile.Items[qualityProfile.GetIndex(qualityProfile.Cutoff).Index]);
+                            return DownloadSpecDecision.Reject(DownloadRejectionReason.HistoryCutoffMet, "{0} grab event in history meets quality cutoff: {1}", rejectionSubject, qualityProfile.Items[qualityProfile.GetIndex(qualityProfile.Cutoff).Index]);
 
                         case UpgradeableRejectReason.CustomFormatCutoff:
-                            return Decision.Reject("{0} grab event in history meets Custom Format cutoff: {1}", rejectionSubject, qualityProfile.CutoffFormatScore);
+                            return DownloadSpecDecision.Reject(DownloadRejectionReason.HistoryCustomFormatCutoffMet, "{0} grab event in history meets Custom Format cutoff: {1}", rejectionSubject, qualityProfile.CutoffFormatScore);
 
                         case UpgradeableRejectReason.CustomFormatScore:
-                            return Decision.Reject("{0} grab event in history has an equal or higher Custom Format score: {1}", rejectionSubject, qualityProfile.CalculateCustomFormatScore(customFormats));
+                            return DownloadSpecDecision.Reject(DownloadRejectionReason.HistoryCustomFormatScore, "{0} grab event in history has an equal or higher Custom Format score: {1}", rejectionSubject, qualityProfile.CalculateCustomFormatScore(customFormats));
 
                         case UpgradeableRejectReason.MinCustomFormatScore:
-                            return Decision.Reject("{0} grab event in history has Custom Format score within Custom Format score increment: {1}", rejectionSubject, qualityProfile.MinUpgradeFormatScore);
+                            return DownloadSpecDecision.Reject(DownloadRejectionReason.HistoryCustomFormatScoreIncrement, "{0} grab event in history has Custom Format score within Custom Format score increment: {1}", rejectionSubject, qualityProfile.MinUpgradeFormatScore);
+
+                        case UpgradeableRejectReason.UpgradesNotAllowed:
+                            return DownloadSpecDecision.Reject(DownloadRejectionReason.HistoryUpgradesNotAllowed, "{0} grab event in history and Quality Profile '{1}' does not allow upgrades", rejectionSubject, qualityProfile.Name);
                     }
                 }
             }
 
-            return Decision.Accept();
+            return DownloadSpecDecision.Accept();
         }
     }
 }

@@ -313,7 +313,7 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
             _episodeFile.RelativePath = "30 Rock - S01E01 - Test";
 
             Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
-                   .Should().Be("30.Rock.S01E01.xvid-LOL");
+                   .Should().Be(Path.GetFileNameWithoutExtension(_episodeFile.RelativePath));
         }
 
         [Test]
@@ -324,10 +324,10 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
             _namingConfig.ColonReplacementFormat = ColonReplacementFormat.Smart;
 
             _episodeFile.SceneName = "30.Rock.S01E01.xvid:LOL";
-            _episodeFile.RelativePath = "30 Rock - S01E01 - Test";
+            _episodeFile.RelativePath = "30 Rock - S01E01 - Test: Colon";
 
             Subject.BuildFileName(new List<Episode> { _episode1 }, _series, _episodeFile)
-                .Should().Be("30.Rock.S01E01.xvid-LOL");
+                .Should().Be("30 Rock - S01E01 - Test - Colon");
         }
 
         [Test]
@@ -476,10 +476,13 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
         [TestCase("rum", "RO")]
         [TestCase("per", "FA")]
         [TestCase("ger", "DE")]
+        [TestCase("gsw", "DE")]
         [TestCase("cze", "CS")]
         [TestCase("ice", "IS")]
         [TestCase("dut", "NL")]
         [TestCase("nor", "NO")]
+        [TestCase("geo", "KA")]
+        [TestCase("kat", "KA")]
         public void should_format_languagecodes_properly(string language, string code)
         {
             _namingConfig.StandardEpisodeFormat = "{Site.Title}.{Episode.Title}.{MEDIAINFO.FULL}";

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using FluentValidation;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Annotations;
-using NzbDrone.Core.ThingiProvider;
 using NzbDrone.Core.Validation;
 
 namespace NzbDrone.Core.Notifications.Ntfy
@@ -21,17 +20,18 @@ namespace NzbDrone.Core.Notifications.Ntfy
             RuleForEach(c => c.Topics).NotEmpty().Matches("[a-zA-Z0-9_-]+").Must(c => !InvalidTopics.Contains(c)).WithMessage("Invalid topic");
         }
 
-        private static List<string> InvalidTopics => new List<string> { "announcements", "app", "docs", "settings", "stats", "mytopic-rw", "mytopic-ro", "mytopic-wo" };
+        private static List<string> InvalidTopics => new() { "announcements", "app", "docs", "settings", "stats", "mytopic-rw", "mytopic-ro", "mytopic-wo" };
     }
 
-    public class NtfySettings : IProviderConfig
+    public class NtfySettings : NotificationSettingsBase<NtfySettings>
     {
-        private static readonly NtfySettingsValidator Validator = new NtfySettingsValidator();
+        private static readonly NtfySettingsValidator Validator = new();
 
         public NtfySettings()
         {
             Topics = Array.Empty<string>();
             Priority = 3;
+            Headers = new List<KeyValuePair<string, string>>();
         }
 
         [FieldDefinition(0, Label = "Server Url", Type = FieldType.Url, HelpLink = "https://ntfy.sh/docs/install/", HelpText = "Leave blank to use public server (https://ntfy.sh)")]
@@ -58,7 +58,10 @@ namespace NzbDrone.Core.Notifications.Ntfy
         [FieldDefinition(7, Label = "Click URL", Type = FieldType.Url, HelpText = "Optional link when user clicks notification")]
         public string ClickUrl { get; set; }
 
-        public NzbDroneValidationResult Validate()
+        [FieldDefinition(8, Label = "NotificationsNtfySettingsHeaders", Type = FieldType.KeyValueList, Advanced = true)]
+        public IEnumerable<KeyValuePair<string, string>> Headers { get; set; }
+
+        public override NzbDroneValidationResult Validate()
         {
             return new NzbDroneValidationResult(Validator.Validate(this));
         }

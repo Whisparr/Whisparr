@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -125,6 +125,10 @@ namespace NzbDrone.Core.Parser
 
                 // Episodes with airdate before title (2018-10-12, 20181012) (Strict pattern to avoid false matches)
                 new Regex(@"^(?<airyear>19[6-9]\d|20\d{2})[-_]?(?<airmonth>[0-1][0-9])[-_]?(?<airday>[0-3][0-9])",
+                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
+                // Daily episodes that use short month format instead of number
+                new Regex(@"^(?<title>.+?)[-_. ]+(?<airday>[1-2]\d|3[01]|[1-9])(?:th|st|rd)[-_. ](?<shortairmonth>jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[-_. ](?<airyear>(19|20)\d{2})",
                     RegexOptions.IgnoreCase | RegexOptions.Compiled)
             };
 
@@ -184,9 +188,9 @@ namespace NzbDrone.Core.Parser
             };
 
         // Regex to detect whether the title was reversed.
-        private static readonly Regex ReversedTitleRegex = new Regex(@"(?:^|[-._ ])(p027|p0801|\d{2,3}E\d{2}S)[-._ ]", RegexOptions.Compiled);
+        private static readonly Regex ReversedTitleRegex = new Regex(@"(?:^|[-._ ])(p027|p0801|\d{2,3}E-?\d{2}S)[-._ ]", RegexOptions.Compiled);
 
-        private static readonly RegexReplace NormalizeRegex = new RegexReplace(@"((?:\b|_)(?<!^)(a(?!$)|an|the|and|or|of)(?!$)(?:\b|_))|\W|_",
+        private static readonly RegexReplace NormalizeRegex = new RegexReplace(@"((?:\b|_)(?<!^)([aà](?!$)|an|the|and|or|of)(?!$)(?:\b|_))|\W|_",
                                                                 string.Empty,
                                                                 RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
@@ -195,7 +199,7 @@ namespace NzbDrone.Core.Parser
         private static readonly Regex FileExtensionRegex = new Regex(@"\.[a-z0-9]{2,4}$",
                                                                 RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        private static readonly RegexReplace SimpleTitleRegex = new RegexReplace(@"(?:(480|540|576|720|1080|2160)[ip]|[xh][\W_]?26[45]|DD\W?5\W1|[<>?*]|848x480|1280x720|1920x1080|3840x2160|4096x2160|(8|10)b(it)?|10-bit)\s*?",
+        private static readonly RegexReplace SimpleTitleRegex = new RegexReplace(@"(?:(480|540|576|720|1080|1440|2160)[ip]|[xh][\W_]?26[456]|DD\W?5\W1|[<>?*]|848x480|1280x720|1920x1080|3840x2160|4096x2160|(?<![a-f0-9])(8|10)[ -]?(b(?![a-z0-9])|bit))\s*?",
                                                                 string.Empty,
                                                                 RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
@@ -212,7 +216,7 @@ namespace NzbDrone.Core.Parser
         private static readonly Regex SixDigitAirDateRegex = new Regex(@"(?<=[_.-])(?<airdate>(?<!\d)(?<airyear>[1-9]\d{1})(?<airmonth>[0-1][0-9])(?<airday>[0-3][0-9]))(?=[_.-])",
                                                                         RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        private static readonly RegexReplace CleanReleaseGroupRegex = new RegexReplace(@"^(.*?[-._ ](S\d+E\d+)[-._ ])|(-(RP|1|NZBGeek|Obfuscated|Scrambled|sample|Pre|postbot|xpost|Rakuv[a-z0-9]*|WhiteRev|BUYMORE|AsRequested|AlternativeToRequested|GEROV|Z0iDS3N|Chamele0n|4P|4Planet|AlteZachen|RePACKPOST))+$",
+        private static readonly RegexReplace CleanReleaseGroupRegex = new RegexReplace(@"^(.*?[-._ ](S\d+E\d+)[-._ ])|(-(RP|1|NZBGeek|\[N-Z-B\]|Obfuscated|Scrambled|sample|Pre|postbot|xpost|Rakuv[a-z0-9]*|WhiteRev|BUYMORE|AsRequested|AlternativeToRequested|GEROV|Z0iDS3N|Chamele0n|4P|4Planet|AlteZachen|RePACKPOST))+$",
                                                                 string.Empty,
                                                                 RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
@@ -223,7 +227,7 @@ namespace NzbDrone.Core.Parser
         private static readonly Regex CleanQualityBracketsRegex = new Regex(@"\[[a-z0-9 ._-]+\]$",
                                                                    RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        private static readonly Regex ReleaseGroupRegex = new Regex(@"-(?<releasegroup>[a-z0-9]+(?<part2>-[a-z0-9]+)?(?!.+?(?:480p|576p|720p|1080p|2160p)))(?<!(?:WEB-DL|Blu-Ray|480p|576p|720p|1080p|2160p|DTS-HD|DTS-X|DTS-MA|DTS-ES|-ES|-EN|-CAT|[ ._]\d{4}-\d{2}|-\d{2})(?:\k<part2>)?)(?:\b|[-._ ]|$)|[-._ ]\[(?<releasegroup>[a-z0-9]+)\]$",
+        private static readonly Regex ReleaseGroupRegex = new Regex(@"-(?<releasegroup>[A-Za-zÀ-ÖØ-öø-ÿ0-9]+(?<part2>-[A-Za-zÀ-ÖØ-öø-ÿ0-9]+)?(?!.+?(?:HDTV|SDTV|480p|576p|720p|1080p|2160p)))(?<!(?:HDTV|SDTV|WEB-DL|Blu-Ray|480p|576p|720p|1080p|2160p|DTS-HD|DTS-X|DTS-MA|DTS-ES|-ES|-EN|-CAT|-GER|-FRA|-FRE|-ITA|\d{1,2}-bit|[ ._]\d{4}-\d{2}|-\d{2})(?:\k<part2>)?)(?:\b|[-._ ]|$)|[-._ ]\[(?<releasegroup>[a-z0-9]+)\]$",
                                                                 RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex InvalidReleaseGroupRegex = new Regex(@"^([se]\d+|[0-9a-f]{8})$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
@@ -233,15 +237,15 @@ namespace NzbDrone.Core.Parser
 
         // Handle Exception Release Groups that don't follow -RlsGrp; Manual List
         // name only...be very careful with this last; high chance of false positives
-        private static readonly Regex ExceptionReleaseGroupRegexExact = new Regex(@"(?<releasegroup>(?:D\-Z0N3|Fight-BB|VARYG|E\.N\.D|KRaLiMaRKo|BluDragon|DarQ|KCRT|BEN THE MAN)\b)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex ExceptionReleaseGroupRegexExact = new Regex(@"(?<releasegroup>(?:D\-Z0N3|Fight-BB|VARYG|E\.N\.D|KRaLiMaRKo|BluDragon|DarQ|KCRT|BEN[_. ]THE[_. ]MEN|QxR)|Vialle\b)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         // groups whose releases end with RlsGroup) or RlsGroup]
-        private static readonly Regex ExceptionReleaseGroupRegex = new Regex(@"(?<=[._ \[])(?<releasegroup>(Silence|afm72|Panda|Ghost|MONOLITH|Tigole|Joy|ImE|UTR|t3nzin|Anime Time|Project Angel|Hakata Ramen|HONE|Vyndros|SEV|Garshasp|Kappa|Natty|RCVR|SAMPA|YOGI|r00t|EDGE2020|RZeroX)(?=\]|\)))", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex ExceptionReleaseGroupRegex = new Regex(@"(?<=[._ \[])(?<releasegroup>(Silence|afm72|Panda|Ghost|MONOLITH|Tigole|Joy|ImE|UTR|t3nzin|Anime Time|Project Angel|Hakata Ramen|HONE|Vyndros|SEV|Garshasp|Kappa|Natty|RCVR|SAMPA|YOGI|r00t|EDGE2020|RZeroX|TAoE|Celdra)(?=\]|\)))", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex YearInTitleRegex = new Regex(@"^(?<title>.+?)[-_. ]+?[\(\[]?(?<year>\d{4})[\]\)]?",
                                                                 RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        private static readonly Regex TitleComponentsRegex = new Regex(@"^(?:(?<title>.+?) \((?<title>.+?)\)|(?<title>.+?) \| (?<title>.+?))$",
+        private static readonly Regex TitleComponentsRegex = new Regex(@"^(?:(?<title>.+?) \((?<title>.+?)\)|(?<title>.+?) \| (?<title>.+?)|(?<title>.+?) AKA (?<title>.+?)|(?<title>.+?) / (?<title>.+?))$",
                                                                 RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex PunctuationRegex = new Regex(@"[^\w\s]", RegexOptions.Compiled);
@@ -252,6 +256,22 @@ namespace NzbDrone.Core.Parser
         private static readonly Regex RequestInfoRegex = new Regex(@"^(?:\[.+?\])+", RegexOptions.Compiled);
 
         private static readonly string[] Numbers = new[] { "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" };
+
+        private static readonly Dictionary<string, int> ShortMonths = new()
+        {
+            { "jan", 1 },
+            { "feb", 2 },
+            { "mar", 3 },
+            { "apr", 4 },
+            { "may", 5 },
+            { "jun", 6 },
+            { "jul", 7 },
+            { "aug", 8 },
+            { "sep", 9 },
+            { "oct", 10 },
+            { "nov", 11 },
+            { "dec", 12 },
+        };
 
         public static ParsedEpisodeInfo ParsePath(string path)
         {
@@ -444,6 +464,11 @@ namespace NzbDrone.Core.Parser
 
         public static string CleanSeriesTitle(this string title)
         {
+            if (title.IsNullOrWhiteSpace())
+            {
+                return title;
+            }
+
             // If Title only contains numbers return it as is.
             if (long.TryParse(title, out _))
             {
@@ -453,7 +478,7 @@ namespace NzbDrone.Core.Parser
             // Replace `%` with `percent` to deal with the 3% case
             title = PercentRegex.Replace(title, "percent");
 
-            return NormalizeRegex.Replace(title).ToLower().RemoveAccent();
+            return NormalizeRegex.Replace(title).ToLowerInvariant().RemoveDiacritics();
         }
 
         public static string NormalizeEpisodeTitle(string title)
@@ -478,8 +503,7 @@ namespace NzbDrone.Core.Parser
             title = PunctuationRegex.Replace(title, " ");
             title = DuplicateSpacesRegex.Replace(title, " ");
 
-            return title.Trim()
-                        .ToLower();
+            return title.Trim().ToLower();
         }
 
         public static string NormalizeTitle(string title)
@@ -670,6 +694,11 @@ namespace NzbDrone.Core.Parser
 
         public static string RemoveFileExtension(string title)
         {
+            if (title.IsNullOrWhiteSpace())
+            {
+                return title;
+            }
+
             title = FileExtensionRegex.Replace(title, m =>
             {
                 var extension = m.Value.ToLower();
@@ -777,6 +806,19 @@ namespace NzbDrone.Core.Parser
                     var monthName = matchCollection[0].Groups["airmonthname"].Value;
                     airmonth = DateTime.ParseExact(monthName, "MMMM", CultureInfo.InvariantCulture).Month;
                 }
+                else if (matchCollection[0].Groups["shortairmonth"].Success)
+                {
+                    var shortMonthValue = matchCollection[0].Groups["shortairmonth"].Value;
+
+                    if (ShortMonths.TryGetValue(shortMonthValue.ToLowerInvariant(), out var shortMonth))
+                    {
+                        airmonth = shortMonth;
+                    }
+                    else
+                    {
+                        throw new InvalidDateException("Unable to determine air month from month: {0}", shortMonthValue);
+                    }
+                }
                 else
                 {
                     airmonth = Convert.ToInt32(matchCollection[0].Groups["airmonth"].Value);
@@ -787,9 +829,7 @@ namespace NzbDrone.Core.Parser
                 // Swap day and month if month is bigger than 12 (scene fail)
                 if (airmonth > 12)
                 {
-                    var tempDay = airday;
-                    airday = airmonth;
-                    airmonth = tempDay;
+                    (airday, airmonth) = (airmonth, airday);
                 }
 
                 DateTime airDate;

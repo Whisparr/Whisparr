@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using NLog;
@@ -27,8 +27,11 @@ namespace NzbDrone.Core.Download.TrackedDownloads
     }
 
     public class TrackedDownloadService : ITrackedDownloadService,
+                                          IHandle<EpisodeGrabbedEvent>,
                                           IHandle<EpisodeInfoRefreshedEvent>,
                                           IHandle<SeriesAddedEvent>,
+                                          IHandle<SeriesEditedEvent>,
+                                          IHandle<SeriesBulkEditedEvent>,
                                           IHandle<SeriesDeletedEvent>
     {
         private readonly IParsingService _parsingService;
@@ -125,14 +128,19 @@ namespace NzbDrone.Core.Download.TrackedDownloads
 
                 var isForceDownload = IsForceDownload(historyItems);
 
+                var downloadHistory = _downloadHistoryService.GetLatestDownloadHistoryItem(downloadItem.DownloadId);
+
                 // Only do normal parsing if this is NOT a force download
                 if (!isForceDownload && parsedEpisodeInfo != null)
                 {
-                    trackedDownload.RemoteEpisode = _parsingService.Map(parsedEpisodeInfo, 0);
+                    // Items the download client has already imported will not parse back to a
+                    // site from the title alone, so use the site the import recorded.
+                    trackedDownload.RemoteEpisode = downloadHistory is { EventType: DownloadHistoryEventType.DownloadImported }
+                        ? _parsingService.Map(parsedEpisodeInfo, _seriesService.GetSeries(downloadHistory.SeriesId))
+                        : _parsingService.Map(parsedEpisodeInfo, 0);
+
                     _aggregationService.Augment(trackedDownload.RemoteEpisode);
                 }
-
-                var downloadHistory = _downloadHistoryService.GetLatestDownloadHistoryItem(downloadItem.DownloadId);
 
                 if (downloadHistory != null)
                 {
@@ -165,7 +173,11 @@ namespace NzbDrone.Core.Download.TrackedDownloads
                                 Series = series,
                                 Episodes = episodes,
                                 Languages = firstHistoryItem.Languages,
-                                ParsedEpisodeInfo = parsedEpisodeInfo ?? new ParsedEpisodeInfo { Quality = firstHistoryItem.Quality },
+                                ParsedEpisodeInfo = parsedEpisodeInfo ?? new ParsedEpisodeInfo
+                                {
+                                    ReleaseTitle = firstHistoryItem.SourceTitle ?? trackedDownload.DownloadItem.Title,
+                                    Quality = firstHistoryItem.Quality
+                                },
                                 ShouldOverride = true
                             };
                         }
@@ -189,11 +201,21 @@ namespace NzbDrone.Core.Download.TrackedDownloads
                         }
                     }
 
-                    if (trackedDownload.RemoteEpisode != null &&
-                        Enum.TryParse(grabbedEvent?.Data?.GetValueOrDefault("indexerFlags"), true, out IndexerFlags flags))
+                    if (trackedDownload.RemoteEpisode != null)
                     {
                         trackedDownload.RemoteEpisode.Release ??= new ReleaseInfo();
-                        trackedDownload.RemoteEpisode.Release.IndexerFlags = flags;
+                        trackedDownload.RemoteEpisode.Release.Indexer = trackedDownload.Indexer;
+                        trackedDownload.RemoteEpisode.Release.Title = trackedDownload.RemoteEpisode.ParsedEpisodeInfo?.ReleaseTitle;
+
+                        if (Enum.TryParse(grabbedEvent?.Data?.GetValueOrDefault("indexerFlags"), true, out IndexerFlags flags))
+                        {
+                            trackedDownload.RemoteEpisode.Release.IndexerFlags = flags;
+                        }
+
+                        if (downloadHistory != null)
+                        {
+                            trackedDownload.RemoteEpisode.Release.IndexerId = downloadHistory.IndexerId;
+                        }
                     }
                 }
 
@@ -307,6 +329,23 @@ namespace NzbDrone.Core.Download.TrackedDownloads
             }
         }
 
+        public void Handle(EpisodeGrabbedEvent message)
+        {
+            if (message.DownloadId.IsNullOrWhiteSpace())
+            {
+                return;
+            }
+
+            var trackedDownload = _cache.Find(message.DownloadId);
+
+            if (trackedDownload is { State: TrackedDownloadState.Imported or
+                                            TrackedDownloadState.Failed or
+                                            TrackedDownloadState.Ignored })
+            {
+                _cache.Remove(message.DownloadId);
+            }
+        }
+
         public void Handle(EpisodeInfoRefreshedEvent message)
         {
             var needsToUpdate = false;
@@ -338,6 +377,38 @@ namespace NzbDrone.Core.Download.TrackedDownloads
                 .Where(t =>
                     t.RemoteEpisode?.Series == null ||
                     message.Series?.TvdbId == t.RemoteEpisode.Series.TvdbId)
+                .ToList();
+
+            if (cachedItems.Any())
+            {
+                cachedItems.ForEach(UpdateCachedItem);
+
+                _eventAggregator.PublishEvent(new TrackedDownloadRefreshedEvent(GetTrackedDownloads()));
+            }
+        }
+
+        public void Handle(SeriesEditedEvent message)
+        {
+            var cachedItems = _cache.Values
+                .Where(t =>
+                    t.RemoteEpisode?.Series != null &&
+                    (t.RemoteEpisode.Series.Id == message.Series?.Id || t.RemoteEpisode.Series.TvdbId == message.Series?.TvdbId))
+                .ToList();
+
+            if (cachedItems.Any())
+            {
+                cachedItems.ForEach(UpdateCachedItem);
+
+                _eventAggregator.PublishEvent(new TrackedDownloadRefreshedEvent(GetTrackedDownloads()));
+            }
+        }
+
+        public void Handle(SeriesBulkEditedEvent message)
+        {
+            var cachedItems = _cache.Values
+                .Where(t =>
+                    t.RemoteEpisode?.Series != null &&
+                    message.Series.Any(s => s.Id == t.RemoteEpisode.Series.Id || s.TvdbId == t.RemoteEpisode.Series.TvdbId))
                 .ToList();
 
             if (cachedItems.Any())

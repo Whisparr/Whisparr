@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+﻿import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
 import AppState from 'App/State/AppState';
@@ -22,7 +22,8 @@ import {
 } from 'Store/Actions/settingsActions';
 import selectSettings from 'Store/Selectors/selectSettings';
 import ImportListExclusion from 'typings/ImportListExclusion';
-import { PendingSection } from 'typings/Pending';
+import { InputChanged } from 'typings/inputs';
+import { PendingSection } from 'typings/pending';
 import translate from 'Utilities/String/translate';
 import styles from './EditImportListExclusionModalContent.css';
 
@@ -45,12 +46,11 @@ function createImportListExclusionSelector(id?: number) {
         importListExclusions;
 
       const mapping = id
-        ? items.find((i) => i.id === id)
+        ? items.find((i) => i.id === id)!
         : newImportListExclusion;
       const settings = selectSettings(mapping, pendingChanges, saveError);
 
       return {
-        id,
         isFetching,
         error,
         isSaving,
@@ -107,9 +107,9 @@ function EditImportListExclusionModalContent(
   }, [dispatch, id]);
 
   const onInputChange = useCallback(
-    (payload: { name: string; value: string | number }) => {
+    (change: InputChanged) => {
       // @ts-expect-error 'setImportListExclusionValue' isn't typed yet
-      dispatch(setImportListExclusionValue(payload));
+      dispatch(setImportListExclusionValue(change));
     },
     [dispatch]
   );
@@ -123,15 +123,15 @@ function EditImportListExclusionModalContent(
       </ModalHeader>
 
       <ModalBody className={styles.body}>
-        {isFetching && <LoadingIndicator />}
+        {isFetching ? <LoadingIndicator /> : null}
 
-        {!isFetching && !!error && (
+        {!isFetching && error ? (
           <Alert kind={kinds.DANGER}>
             {translate('AddImportListExclusionError')}
           </Alert>
-        )}
+        ) : null}
 
-        {!isFetching && !error && (
+        {!isFetching && !error ? (
           <Form {...otherProps}>
             <FormGroup>
               <FormLabel>{translate('Title')}</FormLabel>
@@ -139,7 +139,7 @@ function EditImportListExclusionModalContent(
               <FormInputGroup
                 type={inputTypes.TEXT}
                 name="title"
-                helpText={translate('SeriesTitleToExcludeHelpText')}
+                helpText={translate('SiteTitleToExcludeHelpText')}
                 {...title}
                 onChange={onInputChange}
               />
@@ -157,11 +157,11 @@ function EditImportListExclusionModalContent(
               />
             </FormGroup>
           </Form>
-        )}
+        ) : null}
       </ModalBody>
 
       <ModalFooter>
-        {id && (
+        {id ? (
           <Button
             className={styles.deleteButton}
             kind={kinds.DANGER}
@@ -169,7 +169,7 @@ function EditImportListExclusionModalContent(
           >
             {translate('Delete')}
           </Button>
-        )}
+        ) : null}
 
         <Button onPress={onModalClose}>{translate('Cancel')}</Button>
 

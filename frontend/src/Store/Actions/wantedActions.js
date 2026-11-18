@@ -41,7 +41,7 @@ export const defaultState = {
       },
       {
         name: 'actors',
-        label: 'Performers',
+        label: () => translate('Performers'),
         isVisible: true
       },
       {
@@ -65,7 +65,7 @@ export const defaultState = {
         name: 'actions',
         columnLabel: () => translate('Actions'),
         isVisible: true,
-        isModifiable: false
+        isModifiable: 'onlyPosition'
       }
     ],
 
@@ -119,7 +119,7 @@ export const defaultState = {
       },
       {
         name: 'actors',
-        label: 'Performers',
+        label: () => translate('Performers'),
         isVisible: true
       },
       {
@@ -148,7 +148,7 @@ export const defaultState = {
         name: 'actions',
         columnLabel: () => translate('Actions'),
         isVisible: true,
-        isModifiable: false
+        isModifiable: 'onlyPosition'
       }
     ],
 

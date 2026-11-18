@@ -1,7 +1,6 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using FluentValidation;
 using NzbDrone.Core.Annotations;
-using NzbDrone.Core.ThingiProvider;
 using NzbDrone.Core.Validation;
 
 namespace NzbDrone.Core.Notifications.Pushover
@@ -13,12 +12,14 @@ namespace NzbDrone.Core.Notifications.Pushover
             RuleFor(c => c.UserKey).NotEmpty();
             RuleFor(c => c.Retry).GreaterThanOrEqualTo(30).LessThanOrEqualTo(86400).When(c => (PushoverPriority)c.Priority == PushoverPriority.Emergency);
             RuleFor(c => c.Retry).GreaterThanOrEqualTo(0).LessThanOrEqualTo(86400).When(c => (PushoverPriority)c.Priority == PushoverPriority.Emergency);
+            RuleFor(c => c.Ttl).GreaterThanOrEqualTo(0);
+            RuleFor(c => c.EncryptionKey).Matches("^[0-9a-fA-F]{64}$").When(c => !string.IsNullOrWhiteSpace(c.EncryptionKey));
         }
     }
 
-    public class PushoverSettings : IProviderConfig
+    public class PushoverSettings : NotificationSettingsBase<PushoverSettings>
     {
-        private static readonly PushoverSettingsValidator Validator = new PushoverSettingsValidator();
+        private static readonly PushoverSettingsValidator Validator = new();
 
         public PushoverSettings()
         {
@@ -45,12 +46,18 @@ namespace NzbDrone.Core.Notifications.Pushover
         [FieldDefinition(5, Label = "Expire", Type = FieldType.Textbox, HelpText = "Maximum time to retry Emergency alerts, maximum 86400 seconds")]
         public int Expire { get; set; }
 
-        [FieldDefinition(6, Label = "Sound", Type = FieldType.Textbox, HelpText = "Notification sound, leave blank to use the default", HelpLink = "https://pushover.net/api#sounds")]
+        [FieldDefinition(6, Label = "NotificationsPushoverSettingsTtl", Type = FieldType.Textbox, HelpText = "NotificationsPushoverSettingsTtlHelpText", Advanced = true)]
+        public int Ttl { get; set; }
+
+        [FieldDefinition(7, Label = "NotificationsPushoverSettingsSound", Type = FieldType.Textbox, HelpText = "NotificationsPushoverSettingsSoundHelpText", HelpLink = "https://pushover.net/api#sounds")]
         public string Sound { get; set; }
+
+        [FieldDefinition(8, Label = "NotificationsPushoverSettingsEncryptionKey", Privacy = PrivacyLevel.ApiKey, HelpText = "NotificationsPushoverSettingsEncryptionKeyHelpText", HelpLink = "https://pushover.net/api#e2ee", Advanced = true)]
+        public string EncryptionKey { get; set; }
 
         public bool IsValid => !string.IsNullOrWhiteSpace(UserKey) && Priority >= -1 && Priority <= 2;
 
-        public NzbDroneValidationResult Validate()
+        public override NzbDroneValidationResult Validate()
         {
             return new NzbDroneValidationResult(Validator.Validate(this));
         }

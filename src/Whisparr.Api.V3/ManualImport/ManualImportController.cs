@@ -8,6 +8,7 @@ using NzbDrone.Core.Qualities;
 using Whisparr.Api.V3.CustomFormats;
 using Whisparr.Api.V3.Episodes;
 using Whisparr.Http;
+using Whisparr.Http.REST;
 
 namespace Whisparr.Api.V3.ManualImport
 {
@@ -25,7 +26,7 @@ namespace Whisparr.Api.V3.ManualImport
         [Produces("application/json")]
         public List<ManualImportResource> GetMediaFiles(string folder, string downloadId, int? seriesId, int? seasonNumber, bool filterExistingFiles = true)
         {
-            if (seriesId.HasValue)
+            if (seriesId.HasValue && downloadId.IsNullOrWhiteSpace())
             {
                 return _manualImportService.GetMediaFiles(seriesId.Value, seasonNumber).ToResource().Select(AddQualityWeight).ToList();
             }
@@ -35,8 +36,14 @@ namespace Whisparr.Api.V3.ManualImport
 
         [HttpPost]
         [Consumes("application/json")]
+        [ProducesResponseType(typeof(List<ManualImportReprocessResource>), 200)]
         public object ReprocessItems([FromBody] List<ManualImportReprocessResource> items)
         {
+            if (items is { Count: 0 })
+            {
+                throw new BadRequestException("items must be provided");
+            }
+
             foreach (var item in items)
             {
                 var processedItem = _manualImportService.ReprocessItem(item.Path, item.DownloadId, item.SeriesId, item.SeasonNumber, item.EpisodeIds ?? new List<int>(), item.ReleaseGroup, item.Quality, item.Languages, item.IndexerFlags);
@@ -44,7 +51,7 @@ namespace Whisparr.Api.V3.ManualImport
                 item.SeasonNumber = processedItem.SeasonNumber;
                 item.Episodes = processedItem.Episodes.ToResource();
                 item.IndexerFlags = processedItem.IndexerFlags;
-                item.Rejections = processedItem.Rejections;
+                item.Rejections = processedItem.Rejections.Select(r => r.ToResource());
                 item.CustomFormats = processedItem.CustomFormats.ToResource(false);
                 item.CustomFormatScore = processedItem.CustomFormatScore;
 
@@ -60,7 +67,7 @@ namespace Whisparr.Api.V3.ManualImport
                     item.Quality = processedItem.Quality;
                 }
 
-                if (item.ReleaseGroup.IsNotNullOrWhiteSpace())
+                if (item.ReleaseGroup.IsNullOrWhiteSpace())
                 {
                     item.ReleaseGroup = processedItem.ReleaseGroup;
                 }

@@ -35,7 +35,7 @@ export const defaultState = {
       name: 'monitored',
       columnLabel: () => translate('Monitored'),
       isVisible: true,
-      isModifiable: false
+      isModifiable: 'disabled'
     },
     {
       name: 'title',
@@ -147,7 +147,7 @@ export const defaultState = {
       name: 'actions',
       columnLabel: () => translate('Actions'),
       isVisible: true,
-      isModifiable: false
+      isModifiable: 'disabled'
     }
   ]
 };

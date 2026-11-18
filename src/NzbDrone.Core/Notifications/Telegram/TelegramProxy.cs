@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
@@ -8,12 +8,13 @@ using NLog;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
 using NzbDrone.Common.Serializer;
+using NzbDrone.Core.Configuration;
 
 namespace NzbDrone.Core.Notifications.Telegram
 {
     public interface ITelegramProxy
     {
-        void SendNotification(string title, string message, List<TelegramLink> links, TelegramSettings settings);
+        void SendNotification(string title, string message, List<NotificationMetadataLink> links, TelegramSettings settings);
         ValidationFailure Test(TelegramSettings settings);
     }
 
@@ -22,15 +23,17 @@ namespace NzbDrone.Core.Notifications.Telegram
         private const string URL = "https://api.telegram.org";
 
         private readonly IHttpClient _httpClient;
+        private readonly IConfigFileProvider _configFileProvider;
         private readonly Logger _logger;
 
-        public TelegramProxy(IHttpClient httpClient, Logger logger)
+        public TelegramProxy(IHttpClient httpClient, IConfigFileProvider configFileProvider, Logger logger)
         {
             _httpClient = httpClient;
+            _configFileProvider = configFileProvider;
             _logger = logger;
         }
 
-        public void SendNotification(string title, string message, List<TelegramLink> links, TelegramSettings settings)
+        public void SendNotification(string title, string message, List<NotificationMetadataLink> links, TelegramSettings settings)
         {
             var text = new StringBuilder($"<b>{HttpUtility.HtmlEncode(title)}</b>\n");
 
@@ -44,12 +47,21 @@ namespace NzbDrone.Core.Notifications.Telegram
             var requestBuilder = new HttpRequestBuilder(URL).Resource("bot{token}/sendmessage").Post();
 
             var request = requestBuilder.SetSegment("token", settings.BotToken)
-                                        .AddFormParameter("chat_id", settings.ChatId)
-                                        .AddFormParameter("parse_mode", "HTML")
-                                        .AddFormParameter("text", text)
-                                        .AddFormParameter("disable_notification", settings.SendSilently)
-                                        .AddFormParameter("message_thread_id", settings.TopicId)
+                                        .Accept(HttpAccept.Json)
                                         .Build();
+
+            request.Headers.ContentType = "application/json";
+
+            var payload = new TelegramPayload
+            {
+                ChatId = settings.ChatId,
+                Text = text.ToString(),
+                DisableNotification = settings.SendSilently,
+                MessageThreadId = settings.TopicId,
+                LinkPreviewOptions = new TelegramLinkPreviewOptions(links, settings)
+            };
+
+            request.SetContent(payload.ToJson());
 
             _httpClient.Post(request);
         }
@@ -62,12 +74,15 @@ namespace NzbDrone.Core.Notifications.Telegram
                 const string body = "This is a test message from Whisparr";
                 var brandedTitle = $"Whisparr - {title}";
 
-                var links = new List<TelegramLink>
+                var links = new List<NotificationMetadataLink>
                     {
-                        new TelegramLink("Whisparr", "https://whisparr.com")
+                        new NotificationMetadataLink(null, "Whisparr.tv", "https://whisparr.com")
                     };
 
-                SendNotification(settings.IncludeAppNameInTitle ? brandedTitle : title, body, links, settings);
+                var testMessageTitle = settings.IncludeAppNameInTitle ? brandedTitle : title;
+                testMessageTitle = settings.IncludeInstanceNameInTitle ? $"{testMessageTitle} - {_configFileProvider.InstanceName}" : testMessageTitle;
+
+                SendNotification(testMessageTitle, body, links, settings);
             }
             catch (Exception ex)
             {

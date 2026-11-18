@@ -1,3 +1,4 @@
+using System.IO;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
@@ -43,7 +44,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             WithAvailableSpace(200);
             WithSize(100);
 
-            Subject.IsSatisfiedBy(_remoteEpisode, null).Accepted.Should().BeTrue();
+            Subject.IsSatisfiedBy(_remoteEpisode, new()).Accepted.Should().BeTrue();
         }
 
         [Test]
@@ -53,7 +54,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             WithAvailableSpace(200);
             WithSize(100);
 
-            Subject.IsSatisfiedBy(_remoteEpisode, null).Accepted.Should().BeTrue();
+            Subject.IsSatisfiedBy(_remoteEpisode, new()).Accepted.Should().BeTrue();
         }
 
         [Test]
@@ -63,7 +64,7 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             WithAvailableSpace(200);
             WithSize(1000);
 
-            Subject.IsSatisfiedBy(_remoteEpisode, null).Accepted.Should().BeFalse();
+            Subject.IsSatisfiedBy(_remoteEpisode, new()).Accepted.Should().BeFalse();
         }
 
         [Test]
@@ -73,21 +74,32 @@ namespace NzbDrone.Core.Test.DecisionEngineTests
             WithAvailableSpace(200);
             WithSize(100);
 
-            Subject.IsSatisfiedBy(_remoteEpisode, null).Accepted.Should().BeFalse();
+            Subject.IsSatisfiedBy(_remoteEpisode, new()).Accepted.Should().BeFalse();
         }
 
         [Test]
         public void should_return_true_if_skip_free_space_check_is_true()
         {
             Mocker.GetMock<IConfigService>()
-                .Setup(s => s.SkipFreeSpaceCheckWhenImporting)
+                .Setup(s => s.SkipFreeSpaceCheckWhenGrabbing)
                 .Returns(true);
 
             WithMinimumFreeSpace(150);
             WithAvailableSpace(200);
             WithSize(100);
 
-            Subject.IsSatisfiedBy(_remoteEpisode, null).Accepted.Should().BeTrue();
+            Subject.IsSatisfiedBy(_remoteEpisode, new()).Accepted.Should().BeTrue();
+        }
+
+        [Test]
+        public void should_return_true_if_root_folder_is_not_available()
+        {
+            WithMinimumFreeSpace(150);
+            WithSize(100);
+
+            Mocker.GetMock<IDiskProvider>().Setup(s => s.GetAvailableSpace(It.IsAny<string>())).Throws<DirectoryNotFoundException>();
+
+            Subject.IsSatisfiedBy(_remoteEpisode, new()).Accepted.Should().BeTrue();
         }
     }
 }

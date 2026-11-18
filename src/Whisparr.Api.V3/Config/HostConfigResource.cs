@@ -4,10 +4,11 @@ using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Security;
 using NzbDrone.Core.Update;
 using Whisparr.Http.REST;
+using Whisparr.Http.Validation;
 
 namespace Whisparr.Api.V3.Config
 {
-    public class HostConfigResource : RestResource
+    public class HostConfigResource : RestResource, ISslCertificateResource
     {
         public string BindAddress { get; set; }
         public int Port { get; set; }
@@ -16,18 +17,26 @@ namespace Whisparr.Api.V3.Config
         public bool LaunchBrowser { get; set; }
         public AuthenticationType AuthenticationMethod { get; set; }
         public AuthenticationRequiredType AuthenticationRequired { get; set; }
+        public string AllowedHosts { get; set; }
         public bool AnalyticsEnabled { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
         public string PasswordConfirmation { get; set; }
+        public string OidcAuthority { get; set; }
+        public string OidcClientId { get; set; }
+        public string OidcClientSecret { get; set; }
+        public string OidcUserIdentifier { get; set; }
+        public string OidcScopes { get; set; }
         public string LogLevel { get; set; }
         public int LogSizeLimit { get; set; }
         public string ConsoleLogLevel { get; set; }
         public string Branch { get; set; }
         public string ApiKey { get; set; }
         public string SslCertPath { get; set; }
+        public string SslKeyPath { get; set; }
         public string SslCertPassword { get; set; }
         public string UrlBase { get; set; }
+        public string TrustedNetworks { get; set; }
         public string InstanceName { get; set; }
         public string ApplicationUrl { get; set; }
         public bool UpdateAutomatically { get; set; }
@@ -45,6 +54,7 @@ namespace Whisparr.Api.V3.Config
         public string BackupFolder { get; set; }
         public int BackupInterval { get; set; }
         public int BackupRetention { get; set; }
+        public bool TrustCgnatIpAddresses { get; set; }
     }
 
     public static class HostConfigResourceMapper
@@ -61,18 +71,22 @@ namespace Whisparr.Api.V3.Config
                 LaunchBrowser = model.LaunchBrowser,
                 AuthenticationMethod = model.AuthenticationMethod,
                 AuthenticationRequired = model.AuthenticationRequired,
+                AllowedHosts = model.AllowedHosts,
                 AnalyticsEnabled = model.AnalyticsEnabled,
-
-                // Username
-                // Password
+                OidcAuthority = model.OidcAuthority,
+                OidcClientId = model.OidcClientId,
+                OidcUserIdentifier = model.OidcUserIdentifier,
+                OidcScopes = model.OidcScopes,
                 LogLevel = model.LogLevel,
                 LogSizeLimit = model.LogSizeLimit,
                 ConsoleLogLevel = model.ConsoleLogLevel,
                 Branch = model.Branch,
                 ApiKey = model.ApiKey,
                 SslCertPath = model.SslCertPath,
+                SslKeyPath = model.SslKeyPath,
                 SslCertPassword = model.SslCertPassword,
                 UrlBase = model.UrlBase,
+                TrustedNetworks = model.TrustedNetworks,
                 InstanceName = model.InstanceName,
                 UpdateAutomatically = model.UpdateAutomatically,
                 UpdateMechanism = model.UpdateMechanism,

@@ -5,8 +5,10 @@ using NLog;
 using NzbDrone.Common.Disk;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
+using NzbDrone.Core.Blocklisting;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Download.Clients.Hadouken.Models;
+using NzbDrone.Core.Localization;
 using NzbDrone.Core.MediaFiles.TorrentInfo;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.RemotePathMappings;
@@ -24,8 +26,10 @@ namespace NzbDrone.Core.Download.Clients.Hadouken
                         IConfigService configService,
                         IDiskProvider diskProvider,
                         IRemotePathMappingService remotePathMappingService,
-                        Logger logger)
-            : base(torrentFileInfoReader, httpClient, configService, diskProvider, remotePathMappingService, logger)
+                        IBlocklistService blocklistService,
+                        Logger logger,
+                        ILocalizationService localizationService)
+            : base(torrentFileInfoReader, httpClient, configService, diskProvider, remotePathMappingService, blocklistService, logger, localizationService)
         {
             _proxy = proxy;
         }
@@ -118,7 +122,7 @@ namespace NzbDrone.Core.Download.Clients.Hadouken
 
             var status = new DownloadClientInfo
             {
-                IsLocalhost = Settings.Host == "127.0.0.1" || Settings.Host == "localhost"
+                IsLocalhost = Settings.Host.IsLocalhostAddress()
             };
 
             if (!destDir.IsEmpty)
@@ -162,18 +166,20 @@ namespace NzbDrone.Core.Download.Clients.Hadouken
                 if (version < new Version("5.1"))
                 {
                     return new ValidationFailure(string.Empty,
-                        "Old Hadouken client with unsupported API, need 5.1 or higher");
+                        _localizationService.GetLocalizedString("DownloadClientValidationErrorVersion",
+                            new Dictionary<string, object>
+                                { { "clientName", Name }, { "requiredVersion", "5.1" }, { "reportedVersion", version } }));
                 }
             }
             catch (DownloadClientAuthenticationException ex)
             {
                 _logger.Error(ex, ex.Message);
 
-                return new NzbDroneValidationFailure("Password", "Authentication failed");
+                return new NzbDroneValidationFailure("Password", _localizationService.GetLocalizedString("DownloadClientValidationAuthenticationFailure"));
             }
             catch (Exception ex)
             {
-                return new NzbDroneValidationFailure("Host", "Unable to connect to Hadouken")
+                return new NzbDroneValidationFailure("Host", _localizationService.GetLocalizedString("DownloadClientValidationUnableToConnect"))
                        {
                            DetailedDescription = ex.Message
                        };
@@ -191,7 +197,7 @@ namespace NzbDrone.Core.Download.Clients.Hadouken
             catch (Exception ex)
             {
                 _logger.Error(ex, ex.Message);
-                return new NzbDroneValidationFailure(string.Empty, "Failed to get the list of torrents: " + ex.Message);
+                return new NzbDroneValidationFailure(string.Empty, _localizationService.GetLocalizedString("DownloadClientValidationTestTorrents", new Dictionary<string, object> { { "exceptionMessage", ex.Message } }));
             }
 
             return null;

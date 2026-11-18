@@ -69,7 +69,7 @@ namespace NzbDrone.Core.MediaFiles
             _logger = logger;
         }
 
-        private static readonly Regex ExcludedExtrasSubFolderRegex = new Regex(@"(?:\\|\/|^)(?:extras|extrafanart|behind the scenes|deleted scenes|featurettes|interviews|other|scenes|samples|shorts|trailers)(?:\\|\/)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex ExcludedExtrasSubFolderRegex = new Regex(@"(?:\\|\/|^)(?:extras|extrafanart|behind the scenes|deleted scenes|featurettes|interviews|other|scenes|samples|shorts|trailers|theme[-_. ]music|backdrops)(?:\\|\/)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         private static readonly Regex ExcludedSubFoldersRegex = new Regex(@"(?:\\|\/|^)(?:@eadir|\.@__thumb|plex versions|\.[^\\/]+)(?:\\|\/)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         private static readonly Regex ExcludedExtraFilesRegex = new Regex(@"(-(trailer|other|behindthescenes|deleted|featurette|interview|scene|short)\.[^.]+$)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         private static readonly Regex ExcludedFilesRegex = new Regex(@"^\.(_|unmanic|DS_Store$)|^Thumbs\.db$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -243,6 +243,28 @@ namespace NzbDrone.Core.MediaFiles
             }
 
             return filteredPaths;
+        }
+
+        public static List<string> FilteredSubFolderMatches(string subfolder)
+        {
+            var matches = new List<string>();
+
+            foreach (var match in ExcludedSubFoldersRegex.Matches(subfolder))
+            {
+                matches.Add(match.ToString());
+            }
+
+            foreach (var match in ExcludedExtrasSubFolderRegex.Matches(subfolder))
+            {
+                matches.Add(match.ToString());
+            }
+
+            foreach (var match in ExcludedExtraFilesRegex.Matches(subfolder))
+            {
+                matches.Add(match.ToString());
+            }
+
+            return matches;
         }
 
         private void SetPermissions(string path)

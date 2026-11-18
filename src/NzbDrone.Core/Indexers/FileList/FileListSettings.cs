@@ -1,5 +1,8 @@
+﻿using System;
 using System.Collections.Generic;
+using Equ;
 using FluentValidation;
+using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Annotations;
 using NzbDrone.Core.Validation;
 
@@ -13,13 +16,21 @@ namespace NzbDrone.Core.Indexers.FileList
             RuleFor(c => c.Username).NotEmpty();
             RuleFor(c => c.Passkey).NotEmpty();
 
+            RuleFor(c => c).Custom((c, context) =>
+            {
+                if (c.Categories.Empty())
+                {
+                    context.AddFailure("'Categories' must be provided");
+                }
+            });
+
             RuleFor(c => c.SeedCriteria).SetValidator(_ => new SeedCriteriaSettingsValidator());
         }
     }
 
-    public class FileListSettings : ITorrentIndexerSettings
+    public class FileListSettings : PropertywiseEquatable<FileListSettings>, ITorrentIndexerSettings
     {
-        private static readonly FileListSettingsValidator Validator = new FileListSettingsValidator();
+        private static readonly FileListSettingsValidator Validator = new();
 
         public FileListSettings()
         {
@@ -30,6 +41,7 @@ namespace NzbDrone.Core.Indexers.FileList
             {
                 (int)FileListCategories.XXX
             };
+            FailDownloads = Array.Empty<int>();
         }
 
         [FieldDefinition(0, Label = "Username", Privacy = PrivacyLevel.UserName)]
@@ -48,7 +60,16 @@ namespace NzbDrone.Core.Indexers.FileList
         public int MinimumSeeders { get; set; }
 
         [FieldDefinition(7)]
-        public SeedCriteriaSettings SeedCriteria { get; set; } = new SeedCriteriaSettings();
+        public SeedCriteriaSettings SeedCriteria { get; set; } = new();
+
+        [FieldDefinition(8, Type = FieldType.Checkbox, Label = "Reject Blocklisted Torrent Hashes While Grabbing", HelpText = "If a torrent is blocked by hash it may not properly be rejected during RSS/Search for some indexers, enabling this will allow it to be rejected after the torrent is grabbed, but before it is sent to the client.", Advanced = true)]
+        public bool RejectBlocklistedTorrentHashesWhileGrabbing { get; set; }
+
+        [FieldDefinition(9, Type = FieldType.Checkbox, Label = "IndexerSettingsRejectTorrentFilesWithBlockedExtensions", HelpText = "IndexerSettingsRejectTorrentFilesWithBlockedExtensionsHelpText", Advanced = true)]
+        public bool RejectTorrentFilesWithBlockedExtensionsWhileGrabbing { get; set; }
+
+        [FieldDefinition(10, Type = FieldType.Select, SelectOptions = typeof(FailDownloads), Label = "Fail Downloads", HelpText = "Mark downloads containing these file types as failed", Advanced = true)]
+        public IEnumerable<int> FailDownloads { get; set; }
 
         public NzbDroneValidationResult Validate()
         {

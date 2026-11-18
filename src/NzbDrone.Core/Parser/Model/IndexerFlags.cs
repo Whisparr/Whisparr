@@ -43,6 +43,11 @@ namespace NzbDrone.Core.Parser.Model
         /// <summary>
         /// The release is nuked
         /// </summary>
-        Nuked = 128
+        Nuked = 128,
+
+        /// <summary>
+        /// The release contains subtitles
+        /// </summary>
+        Subtitles = 256
     }
 }

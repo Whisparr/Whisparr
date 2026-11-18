@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
@@ -96,6 +96,16 @@ namespace Whisparr.Http.Extensions
             }
 
             return remoteIP.ToString();
+        }
+
+        public static string GetSource(this HttpRequest request)
+        {
+            if (request.Headers.TryGetValue("X-Whisparr-Client", out var source))
+            {
+                return source;
+            }
+
+            return NzbDrone.Common.Http.UserAgentParser.ParseSource(request.Headers["User-Agent"]);
         }
 
         public static void DisableCache(this IHeaderDictionary headers)

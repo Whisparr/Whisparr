@@ -1,6 +1,7 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Core.Notifications;
+using NzbDrone.SignalR;
 using Whisparr.Http;
 
 namespace Whisparr.Api.V3.Notifications
@@ -8,11 +9,11 @@ namespace Whisparr.Api.V3.Notifications
     [V3ApiController]
     public class NotificationController : ProviderControllerBase<NotificationResource, NotificationBulkResource, INotification, NotificationDefinition>
     {
-        public static readonly NotificationResourceMapper ResourceMapper = new ();
-        public static readonly NotificationBulkResourceMapper BulkResourceMapper = new ();
+        public static readonly NotificationResourceMapper ResourceMapper = new();
+        public static readonly NotificationBulkResourceMapper BulkResourceMapper = new();
 
-        public NotificationController(NotificationFactory notificationFactory)
-            : base(notificationFactory, "notification", ResourceMapper, BulkResourceMapper)
+        public NotificationController(IBroadcastSignalRMessage signalRBroadcaster, NotificationFactory notificationFactory)
+            : base(signalRBroadcaster, notificationFactory, "notification", ResourceMapper, BulkResourceMapper)
         {
         }
 

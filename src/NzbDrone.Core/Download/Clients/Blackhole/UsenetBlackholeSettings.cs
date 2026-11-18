@@ -1,6 +1,5 @@
-﻿using FluentValidation;
+using FluentValidation;
 using NzbDrone.Core.Annotations;
-using NzbDrone.Core.ThingiProvider;
 using NzbDrone.Core.Validation;
 using NzbDrone.Core.Validation.Paths;
 
@@ -15,17 +14,18 @@ namespace NzbDrone.Core.Download.Clients.Blackhole
         }
     }
 
-    public class UsenetBlackholeSettings : IProviderConfig
+    public class UsenetBlackholeSettings : DownloadClientSettingsBase<UsenetBlackholeSettings>
     {
-        private static readonly UsenetBlackholeSettingsValidator Validator = new UsenetBlackholeSettingsValidator();
+        private static readonly UsenetBlackholeSettingsValidator Validator = new();
 
-        [FieldDefinition(0, Label = "Nzb Folder", Type = FieldType.Path, HelpText = "Folder in which Whisparr will store the .nzb file")]
+        [FieldDefinition(0, Label = "UsenetBlackholeNzbFolder", Type = FieldType.Path, HelpText = "BlackholeFolderHelpText")]
+        [FieldToken(TokenField.HelpText, "UsenetBlackholeNzbFolder", "extension", ".nzb")]
         public string NzbFolder { get; set; }
 
         [FieldDefinition(1, Label = "Watch Folder", Type = FieldType.Path, HelpText = "Folder from which Whisparr should import completed downloads")]
         public string WatchFolder { get; set; }
 
-        public NzbDroneValidationResult Validate()
+        public override NzbDroneValidationResult Validate()
         {
             return new NzbDroneValidationResult(Validator.Validate(this));
         }

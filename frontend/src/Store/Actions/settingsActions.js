@@ -1,5 +1,4 @@
 import { createAction } from 'redux-actions';
-import indexerFlags from 'Store/Actions/Settings/indexerFlags';
 import { handleThunks } from 'Store/thunks';
 import createHandleActions from './Creators/createHandleActions';
 import autoTaggings from './Settings/autoTaggings';
@@ -14,7 +13,6 @@ import importListExclusions from './Settings/importListExclusions';
 import importLists from './Settings/importLists';
 import indexerOptions from './Settings/indexerOptions';
 import indexers from './Settings/indexers';
-import languages from './Settings/languages';
 import mediaManagement from './Settings/mediaManagement';
 import metadata from './Settings/metadata';
 import naming from './Settings/naming';
@@ -36,10 +34,8 @@ export * from './Settings/downloadClientOptions';
 export * from './Settings/general';
 export * from './Settings/importLists';
 export * from './Settings/importListExclusions';
-export * from './Settings/indexerFlags';
 export * from './Settings/indexerOptions';
 export * from './Settings/indexers';
-export * from './Settings/languages';
 export * from './Settings/mediaManagement';
 export * from './Settings/metadata';
 export * from './Settings/naming';
@@ -72,10 +68,8 @@ export const defaultState = {
   general: general.defaultState,
   importLists: importLists.defaultState,
   importListExclusions: importListExclusions.defaultState,
-  indexerFlags: indexerFlags.defaultState,
   indexerOptions: indexerOptions.defaultState,
   indexers: indexers.defaultState,
-  languages: languages.defaultState,
   mediaManagement: mediaManagement.defaultState,
   metadata: metadata.defaultState,
   naming: naming.defaultState,
@@ -119,10 +113,8 @@ export const actionHandlers = handleThunks({
   ...general.actionHandlers,
   ...importLists.actionHandlers,
   ...importListExclusions.actionHandlers,
-  ...indexerFlags.actionHandlers,
   ...indexerOptions.actionHandlers,
   ...indexers.actionHandlers,
-  ...languages.actionHandlers,
   ...mediaManagement.actionHandlers,
   ...metadata.actionHandlers,
   ...naming.actionHandlers,
@@ -158,10 +150,8 @@ export const reducers = createHandleActions({
   ...general.reducers,
   ...importLists.reducers,
   ...importListExclusions.reducers,
-  ...indexerFlags.reducers,
   ...indexerOptions.reducers,
   ...indexers.reducers,
-  ...languages.reducers,
   ...mediaManagement.reducers,
   ...metadata.reducers,
   ...naming.reducers,

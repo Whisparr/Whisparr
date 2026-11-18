@@ -1,9 +1,8 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NLog;
-using NLog.Fluent;
 using NzbDrone.Common.EnvironmentInfo;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Instrumentation.Extensions;
@@ -37,6 +36,7 @@ namespace NzbDrone.Core.Download
         private readonly IEpisodeService _episodeService;
         private readonly ITrackedDownloadAlreadyImported _trackedDownloadAlreadyImported;
         private readonly IMediaFileService _mediaFileService;
+        private readonly IRejectedImportService _rejectedImportService;
         private readonly Logger _logger;
 
         public CompletedDownloadService(IEventAggregator eventAggregator,
@@ -48,6 +48,7 @@ namespace NzbDrone.Core.Download
                                         IEpisodeService episodeService,
                                         ITrackedDownloadAlreadyImported trackedDownloadAlreadyImported,
                                         IMediaFileService mediaFileService,
+                                        IRejectedImportService rejectedImportService,
                                         Logger logger)
         {
             _eventAggregator = eventAggregator;
@@ -59,6 +60,7 @@ namespace NzbDrone.Core.Download
             _episodeService = episodeService;
             _trackedDownloadAlreadyImported = trackedDownloadAlreadyImported;
             _mediaFileService = mediaFileService;
+            _rejectedImportService = rejectedImportService;
             _logger = logger;
         }
 
@@ -114,6 +116,7 @@ namespace NzbDrone.Core.Download
                             Episodes = new List<Episode> { externalIdEpisode },
                             ParsedEpisodeInfo = new ParsedEpisodeInfo
                             {
+                                ReleaseTitle = trackedDownload.DownloadItem.Title,
                                 Quality = new QualityModel(),
                                 Languages = LanguageParser.ParseLanguages(trackedDownload.DownloadItem.Title),
                                 ExternalId = externalIdEpisode.ExternalId
@@ -181,8 +184,20 @@ namespace NzbDrone.Core.Download
                 trackedDownload.RemoteEpisode.Series,
                 trackedDownload.ImportItem);
 
-            if (VerifyImport(trackedDownload, importResults))
+            try
             {
+                if (VerifyImport(trackedDownload, importResults))
+                {
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Warn(ex, "Failed to verify import for '{0}'", trackedDownload.DownloadItem.Title);
+                trackedDownload.State = TrackedDownloadState.ImportPending;
+                trackedDownload.Warn("Import verification failed for {0}, manual import may be required.", trackedDownload.DownloadItem.Title);
+                SendManualInteractionRequiredNotification(trackedDownload);
+
                 return;
             }
 
@@ -199,9 +214,12 @@ namespace NzbDrone.Core.Download
             {
                 var firstResult = importResults.First();
 
-                if (firstResult.Result == ImportResultType.Rejected && firstResult.ImportDecision.LocalEpisode == null)
+                if (_rejectedImportService.Process(trackedDownload, firstResult))
                 {
-                    trackedDownload.Warn(new TrackedDownloadStatusMessage(firstResult.Errors.First(), new List<string>()));
+                    if (trackedDownload.State != TrackedDownloadState.FailedPending)
+                    {
+                        SendManualInteractionRequiredNotification(trackedDownload);
+                    }
 
                     return;
                 }
@@ -269,7 +287,7 @@ namespace NzbDrone.Core.Download
             var atLeastOneEpisodeImported = importResults.Any(c => c.Result == ImportResultType.Imported);
             var allEpisodesImportedInHistory = _trackedDownloadAlreadyImported.IsImported(trackedDownload, historyItems);
             var episodes = _episodeService.GetEpisodes(trackedDownload.RemoteEpisode.Episodes.Select(e => e.Id));
-            var files = _mediaFileService.GetFiles(episodes.Select(e => e.EpisodeFileId).Distinct());
+            var files = _mediaFileService.GetFiles(episodes.Select(e => e.EpisodeFileId).Where(id => id > 0).Distinct());
 
             if (allEpisodesImportedInHistory)
             {
@@ -282,14 +300,14 @@ namespace NzbDrone.Core.Download
                 }
                 else
                 {
-                    _logger.Debug()
+                    _logger.ForDebugEvent()
                            .Message("No Episodes were just imported, but all episodes were previously imported, possible issue with download history.")
                            .Property("SeriesId", trackedDownload.RemoteEpisode.Series.Id)
                            .Property("DownloadId", trackedDownload.DownloadItem.DownloadId)
                            .Property("Title", trackedDownload.DownloadItem.Title)
                            .Property("Path", trackedDownload.ImportItem.OutputPath.ToString())
                            .WriteSentryWarn("DownloadHistoryIncomplete")
-                           .Write();
+                           .Log();
                 }
 
                 trackedDownload.State = TrackedDownloadState.Imported;
@@ -306,6 +324,8 @@ namespace NzbDrone.Core.Download
         {
             if (!trackedDownload.HasNotifiedManualInteractionRequired)
             {
+                _logger.Warn("Import blocked for '{0}': {1}", trackedDownload.DownloadItem.Title, trackedDownload.StatusMessages.SelectMany(m => m.Messages).ConcatToString("; "));
+
                 var grabbedHistories = _historyService.FindByDownloadId(trackedDownload.DownloadItem.DownloadId).Where(h => h.EventType == EpisodeHistoryEventType.Grabbed).ToList();
 
                 trackedDownload.HasNotifiedManualInteractionRequired = true;

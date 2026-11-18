@@ -1,11 +1,10 @@
 using System.Linq;
 using NLog;
-using NzbDrone.Core.IndexerSearch.Definitions;
 using NzbDrone.Core.Parser.Model;
 
 namespace NzbDrone.Core.DecisionEngine.Specifications.Search
 {
-    public class EpisodeRequestedSpecification : IDecisionEngineSpecification
+    public class EpisodeRequestedSpecification : IDownloadDecisionEngineSpecification
     {
         private readonly Logger _logger;
 
@@ -17,14 +16,14 @@ namespace NzbDrone.Core.DecisionEngine.Specifications.Search
         public SpecificationPriority Priority => SpecificationPriority.Default;
         public RejectionType Type => RejectionType.Permanent;
 
-        public Decision IsSatisfiedBy(RemoteEpisode remoteEpisode, SearchCriteriaBase searchCriteria)
+        public DownloadSpecDecision IsSatisfiedBy(RemoteEpisode remoteEpisode, ReleaseDecisionInformation information)
         {
-            if (searchCriteria == null)
+            if (information.SearchCriteria == null)
             {
-                return Decision.Accept();
+                return DownloadSpecDecision.Accept();
             }
 
-            var criteriaEpisodes = searchCriteria.Episodes.Select(v => v.Id).ToList();
+            var criteriaEpisodes = information.SearchCriteria.Episodes.Select(v => v.Id).ToList();
             var remoteEpisodes = remoteEpisode.Episodes.Select(v => v.Id).ToList();
 
             if (!criteriaEpisodes.Intersect(remoteEpisodes).Any())
@@ -37,20 +36,20 @@ namespace NzbDrone.Core.DecisionEngine.Specifications.Search
 
                     if (episodes.Count > 1)
                     {
-                        return Decision.Reject($"Episode wasn't requested: {episodes.First().SeasonNumber}x{episodes.First().AirDate}-{episodes.Last().AirDate}");
+                        return DownloadSpecDecision.Reject(DownloadRejectionReason.WrongEpisode, $"Episode wasn't requested: {episodes.First().SeasonNumber}x{episodes.First().AirDate}-{episodes.Last().AirDate}");
                     }
                     else
                     {
-                        return Decision.Reject($"Episode wasn't requested: {episodes.First().SeasonNumber}x{episodes.First().AirDate}");
+                        return DownloadSpecDecision.Reject(DownloadRejectionReason.WrongEpisode, $"Episode wasn't requested: {episodes.First().SeasonNumber}x{episodes.First().AirDate}");
                     }
                 }
                 else
                 {
-                    return Decision.Reject("Episode wasn't requested");
+                    return DownloadSpecDecision.Reject(DownloadRejectionReason.WrongEpisode, "Episode wasn't requested");
                 }
             }
 
-            return Decision.Accept();
+            return DownloadSpecDecision.Accept();
         }
     }
 }

@@ -15,6 +15,7 @@ namespace Whisparr.Api.V3.Profiles.Languages
         [RestPostById]
         [Produces("application/json")]
         [Consumes("application/json")]
+        [ProducesResponseType(typeof(LanguageProfileResource), 202)]
         public ActionResult<LanguageProfileResource> Create([FromBody] LanguageProfileResource resource)
         {
             return Accepted(resource);

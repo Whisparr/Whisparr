@@ -39,12 +39,14 @@ namespace NzbDrone.Core.Tv
             var updateList = new List<Episode>();
             var newList = new List<Episode>();
             var dupeFreeRemoteEpisodes = remoteEpisodes.DistinctBy(m => new { m.SeasonNumber, m.AirDate, m.Title }).ToList();
+            var remoteIds = dupeFreeRemoteEpisodes.Where(e => e.TvdbId > 0).Select(e => e.TvdbId).ToHashSet();
+            var remoteTitles = dupeFreeRemoteEpisodes.Select(GetTitleKey).ToHashSet();
 
             foreach (var episode in OrderEpisodes(series, dupeFreeRemoteEpisodes))
             {
                 try
                 {
-                    var episodeToUpdate = GetEpisodeToUpdate(series, episode, existingEpisodes);
+                    var episodeToUpdate = GetEpisodeToUpdate(series, episode, existingEpisodes, remoteIds, remoteTitles);
 
                     if (episodeToUpdate != null)
                     {
@@ -157,9 +159,45 @@ namespace NzbDrone.Core.Tv
             }
         }
 
-        private Episode GetEpisodeToUpdate(Series series, Episode episode, List<Episode> existingEpisodes)
+        private Episode GetEpisodeToUpdate(Series series, Episode episode, List<Episode> existingEpisodes, HashSet<int> remoteIds, HashSet<string> remoteTitles)
         {
-            return existingEpisodes.FirstOrDefault(e => e.SeasonNumber == episode.SeasonNumber && e.AirDate == episode.AirDate);
+            if (episode.TvdbId > 0)
+            {
+                var idMatch = existingEpisodes.FirstOrDefault(e => e.TvdbId == episode.TvdbId);
+
+                if (idMatch != null)
+                {
+                    return idMatch;
+                }
+            }
+
+            // Sites can release multiple scenes on the same date, only consider existing episodes that won't be matched by ID to another remote episode
+            var sameDateEpisodes = existingEpisodes.Where(e => e.SeasonNumber == episode.SeasonNumber &&
+                                                               e.AirDate == episode.AirDate &&
+                                                               !remoteIds.Contains(e.TvdbId))
+                                                   .ToList();
+
+            var normalizedTitle = Parser.Parser.NormalizeEpisodeTitle(episode.Title);
+
+            if (normalizedTitle.IsNotNullOrWhiteSpace())
+            {
+                var titleMatch = sameDateEpisodes.FirstOrDefault(e => Parser.Parser.NormalizeEpisodeTitle(e.Title) == normalizedTitle);
+
+                if (titleMatch != null)
+                {
+                    return titleMatch;
+                }
+            }
+
+            // Fall back to the air date only when it is unambiguous, this handles title changes from the metadata source
+            var unmatchedSameDateEpisodes = sameDateEpisodes.Where(e => !remoteTitles.Contains(GetTitleKey(e))).ToList();
+
+            return unmatchedSameDateEpisodes.Count == 1 ? unmatchedSameDateEpisodes.First() : null;
+        }
+
+        private static string GetTitleKey(Episode episode)
+        {
+            return $"{episode.SeasonNumber}|{episode.AirDate}|{Parser.Parser.NormalizeEpisodeTitle(episode.Title)}";
         }
 
         private IEnumerable<Episode> OrderEpisodes(Series series, List<Episode> episodes)

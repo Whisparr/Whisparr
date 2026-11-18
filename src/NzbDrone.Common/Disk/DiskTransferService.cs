@@ -28,15 +28,15 @@ namespace NzbDrone.Common.Disk
 
         private string ResolveRealParentPath(string path)
         {
-            var parentPath = path.GetParentPath();
-            if (!_diskProvider.FolderExists(parentPath))
+            if (!_diskProvider.FolderExists(path.GetParentPath()))
             {
                 return path;
             }
 
+            var cleanPath = path.GetCleanPath();
+            var parentPath = cleanPath.GetParentPath();
             var realParentPath = parentPath.GetActualCasing();
-
-            var partialChildPath = path.Substring(parentPath.Length);
+            var partialChildPath = cleanPath.Substring(parentPath.Length);
 
             return realParentPath + partialChildPath;
         }
@@ -324,7 +324,11 @@ namespace NzbDrone.Common.Disk
                     return TransferMode.HardLink;
                 }
 
-                if (!mode.HasFlag(TransferMode.Copy))
+                if (mode.HasFlag(TransferMode.Copy))
+                {
+                    _logger.Warn("Hardlinking from '{0}' to '{1}' failed, fallback to copy.", sourcePath, targetPath);
+                }
+                else
                 {
                     throw new IOException("Hardlinking from '" + sourcePath + "' to '" + targetPath + "' failed.");
                 }
@@ -340,40 +344,15 @@ namespace NzbDrone.Common.Disk
             var targetDriveFormat = targetMount?.DriveFormat ?? string.Empty;
 
             var isCifs = targetDriveFormat == "cifs";
-            var isBtrfs = sourceDriveFormat == "btrfs" && targetDriveFormat == "btrfs";
 
             if (mode.HasFlag(TransferMode.Copy))
             {
-                if (isBtrfs)
-                {
-                    if (_diskProvider.TryCreateRefLink(sourcePath, targetPath))
-                    {
-                        return TransferMode.Copy;
-                    }
-                }
-
                 TryCopyFileVerified(sourcePath, targetPath, originalSize);
                 return TransferMode.Copy;
             }
 
             if (mode.HasFlag(TransferMode.Move))
             {
-                if (isBtrfs)
-                {
-                    if (isSameMount && _diskProvider.TryRenameFile(sourcePath, targetPath))
-                    {
-                        _logger.Trace("Renamed [{0}] to [{1}].", sourcePath, targetPath);
-                        return TransferMode.Move;
-                    }
-
-                    if (_diskProvider.TryCreateRefLink(sourcePath, targetPath))
-                    {
-                        _logger.Trace("Reflink successful, deleting source [{0}].", sourcePath);
-                        _diskProvider.DeleteFile(sourcePath);
-                        return TransferMode.Move;
-                    }
-                }
-
                 if (isCifs && !isSameMount)
                 {
                     _logger.Trace("On cifs mount. Starting verified copy [{0}] to [{1}].", sourcePath, targetPath);
@@ -474,12 +453,7 @@ namespace NzbDrone.Common.Disk
             try
             {
                 _diskProvider.CopyFile(sourcePath, targetPath);
-
-                var targetSize = _diskProvider.GetFileSize(targetPath);
-                if (targetSize != originalSize)
-                {
-                    throw new IOException(string.Format("File copy incomplete. [{0}] was {1} bytes long instead of {2} bytes.", targetPath, targetSize, originalSize));
-                }
+                VerifyFile(sourcePath, targetPath, originalSize, "copy");
             }
             catch
             {
@@ -493,12 +467,7 @@ namespace NzbDrone.Common.Disk
             try
             {
                 _diskProvider.MoveFile(sourcePath, targetPath);
-
-                var targetSize = _diskProvider.GetFileSize(targetPath);
-                if (targetSize != originalSize)
-                {
-                    throw new IOException(string.Format("File move incomplete, data loss may have occurred. [{0}] was {1} bytes long instead of the expected {2}.", targetPath, targetSize, originalSize));
-                }
+                VerifyFile(sourcePath, targetPath, originalSize, "move");
             }
             catch (Exception ex)
             {
@@ -509,6 +478,27 @@ namespace NzbDrone.Common.Disk
 
                 throw;
             }
+        }
+
+        private void VerifyFile(string sourcePath, string targetPath, long originalSize, string action)
+        {
+            var targetSize = _diskProvider.GetFileSize(targetPath);
+
+            if (targetSize == originalSize)
+            {
+                return;
+            }
+
+            _logger.Debug("File {0} incomplete, waiting in case filesystem is not synchronized. [{1}] was {2} bytes long instead of the expected {3}.", action, targetPath, targetSize, originalSize);
+            WaitForIO();
+            targetSize = _diskProvider.GetFileSize(targetPath);
+
+            if (targetSize == originalSize)
+            {
+                return;
+            }
+
+            throw new IOException(string.Format("File {0} incomplete, data loss may have occurred. [{1}] was {2} bytes long instead of the expected {3}.", action, targetPath, targetSize, originalSize));
         }
 
         private bool ShouldIgnore(DirectoryInfo folder)

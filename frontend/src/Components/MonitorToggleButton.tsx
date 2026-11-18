@@ -29,7 +29,7 @@ function MonitorToggleButton(props: MonitorToggleButtonProps) {
 
   const title = useMemo(() => {
     if (isDisabled) {
-      return translate('ToggleMonitoredSeriesUnmonitored');
+      return translate('ToggleMonitoredSiteUnmonitored');
     }
 
     if (monitored) {
@@ -54,6 +54,7 @@ function MonitorToggleButton(props: MonitorToggleButtonProps) {
       name={iconName}
       size={size}
       title={title}
+      aria-label={title}
       isDisabled={isDisabled}
       isSpinning={isSaving}
       {...otherProps}

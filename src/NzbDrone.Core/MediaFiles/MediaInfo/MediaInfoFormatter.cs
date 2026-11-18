@@ -1,8 +1,7 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using NLog;
-using NLog.Fluent;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Instrumentation;
 using NzbDrone.Common.Instrumentation.Extensions;
@@ -26,21 +25,21 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
                 audioChannels = mediaInfo.AudioChannels;
             }
 
-            return audioChannels.Value;
+            return audioChannels ?? 0;
         }
 
         public static string FormatAudioCodec(MediaInfoModel mediaInfo, string sceneName)
         {
-            if (mediaInfo.AudioFormat == null)
+            if (mediaInfo?.AudioFormat == null)
             {
-                return null;
+                return string.Empty;
             }
 
-            var audioFormat = mediaInfo.AudioFormat;
+            var audioFormat = mediaInfo.AudioFormat?.Trim();
             var audioCodecID = mediaInfo.AudioCodecID ?? string.Empty;
             var audioProfile = mediaInfo.AudioProfile ?? string.Empty;
 
-            if (audioFormat.Empty())
+            if (audioFormat.IsNullOrWhiteSpace())
             {
                 return string.Empty;
             }
@@ -53,7 +52,11 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
 
             if (audioFormat == "truehd")
             {
-                return "TrueHD";
+                return audioProfile switch
+                {
+                    "Dolby TrueHD + Dolby Atmos" => "TrueHD Atmos",
+                    _ => "TrueHD"
+                };
             }
 
             if (audioFormat == "flac")
@@ -63,37 +66,16 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
 
             if (audioFormat == "dts")
             {
-                if (audioProfile == "DTS:X")
+                return audioProfile switch
                 {
-                    return "DTS-X";
-                }
-
-                if (audioProfile == "DTS-HD MA")
-                {
-                    return "DTS-HD MA";
-                }
-
-                if (audioProfile == "DTS-ES")
-                {
-                    return "DTS-ES";
-                }
-
-                if (audioProfile == "DTS-HD HRA")
-                {
-                    return "DTS-HD HRA";
-                }
-
-                if (audioProfile == "DTS Express")
-                {
-                    return "DTS Express";
-                }
-
-                if (audioProfile == "DTS 96/24")
-                {
-                    return "DTS 96/24";
-                }
-
-                return "DTS";
+                    "DTS:X" or "DTS-HD MA + DTS:X" or "DTS-HD MA + DTS:X IMAX" => "DTS-X",
+                    "DTS-HD MA" => "DTS-HD MA",
+                    "DTS-ES" => "DTS-ES",
+                    "DTS-HD HRA" => "DTS-HD HRA",
+                    "DTS Express" => "DTS Express",
+                    "DTS 96/24" => "DTS 96/24",
+                    _ => "DTS"
+                };
             }
 
             if (audioCodecID == "ec+3")
@@ -103,7 +85,11 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
 
             if (audioFormat == "eac3")
             {
-                return "EAC3";
+                return audioProfile switch
+                {
+                    "Dolby Digital Plus + Dolby Atmos" => "EAC3 Atmos",
+                    _ => "EAC3"
+                };
             }
 
             if (audioFormat == "ac3")
@@ -118,7 +104,12 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
                     return "HE-AAC";
                 }
 
-                return "AAC";
+                return audioProfile switch
+                {
+                    "HE-AAC" => "HE-AAC",
+                    "xHE-AAC" => "xHE-AAC",
+                    _ => "AAC"
+                };
             }
 
             if (audioFormat == "mp3")
@@ -153,29 +144,27 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
                 return "WMA";
             }
 
-            Logger.Debug()
+            Logger.ForDebugEvent()
                   .Message("Unknown audio format: '{0}' in '{1}'. Streams: {2}", audioFormat, sceneName, mediaInfo.RawStreamData)
                   .WriteSentryWarn("UnknownAudioFormatFFProbe", mediaInfo.ContainerFormat, mediaInfo.AudioFormat, audioCodecID)
-                  .Write();
+                  .Log();
 
-            return mediaInfo.AudioFormat;
+            return audioFormat;
         }
 
         public static string FormatVideoCodec(MediaInfoModel mediaInfo, string sceneName)
         {
-            if (mediaInfo.VideoFormat == null)
+            if (mediaInfo?.VideoFormat == null)
             {
-                return null;
+                return string.Empty;
             }
 
-            var videoFormat = mediaInfo.VideoFormat;
+            var videoFormat = mediaInfo.VideoFormat?.Trim();
             var videoCodecID = mediaInfo.VideoCodecID ?? string.Empty;
 
-            var result = videoFormat.Trim();
-
-            if (videoFormat.Empty())
+            if (videoFormat.IsNullOrWhiteSpace())
             {
-                return result;
+                return string.Empty;
             }
 
             // see definitions here: https://github.com/FFmpeg/FFmpeg/blob/master/libavcodec/codec_desc.c
@@ -199,6 +188,16 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
                 return GetSceneNameMatch(sceneName, "HEVC", "x265", "h265");
             }
 
+            if (videoCodecID == "x266")
+            {
+                return "x266";
+            }
+
+            if (videoFormat == "vvc")
+            {
+                return GetSceneNameMatch(sceneName, "VVC", "x266", "h266");
+            }
+
             if (videoFormat == "mpeg2video")
             {
                 return "MPEG2";
@@ -211,7 +210,7 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
 
             if (videoFormat == "mpeg4" || videoFormat.Contains("msmpeg4"))
             {
-                if (videoCodecID == "XVID")
+                if (videoCodecID.ToUpperInvariant() == "XVID")
                 {
                     return "XviD";
                 }
@@ -268,12 +267,12 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
                 return "";
             }
 
-            Logger.Debug()
+            Logger.ForDebugEvent()
                   .Message("Unknown video format: '{0}' in '{1}'. Streams: {2}", videoFormat, sceneName, mediaInfo.RawStreamData)
                   .WriteSentryWarn("UnknownVideoFormatFFProbe", mediaInfo.ContainerFormat, videoFormat, videoCodecID)
-                  .Write();
+                  .Log();
 
-            return result;
+            return videoFormat;
         }
 
         private static decimal? FormatAudioChannelsFromAudioChannelPositions(MediaInfoModel mediaInfo)

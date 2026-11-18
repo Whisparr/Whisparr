@@ -6,7 +6,7 @@ using NLog;
 using NzbDrone.Common.Disk;
 using NzbDrone.Common.EnvironmentInfo;
 using NzbDrone.Common.Extensions;
-using NzbDrone.Core.DecisionEngine;
+using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Download;
 using NzbDrone.Core.MediaFiles.EpisodeImport;
 using NzbDrone.Core.Parser;
@@ -33,6 +33,7 @@ namespace NzbDrone.Core.MediaFiles
         private readonly IImportApprovedEpisodes _importApprovedEpisodes;
         private readonly IDetectSample _detectSample;
         private readonly IRuntimeInfo _runtimeInfo;
+        private readonly IConfigService _configService;
         private readonly Logger _logger;
 
         public DownloadedEpisodesImportService(IDiskProvider diskProvider,
@@ -44,6 +45,7 @@ namespace NzbDrone.Core.MediaFiles
                                                IImportApprovedEpisodes importApprovedEpisodes,
                                                IDetectSample detectSample,
                                                IRuntimeInfo runtimeInfo,
+                                               IConfigService configService,
                                                Logger logger)
         {
             _diskProvider = diskProvider;
@@ -55,6 +57,7 @@ namespace NzbDrone.Core.MediaFiles
             _importApprovedEpisodes = importApprovedEpisodes;
             _detectSample = detectSample;
             _runtimeInfo = runtimeInfo;
+            _configService = configService;
             _logger = logger;
         }
 
@@ -181,7 +184,7 @@ namespace NzbDrone.Core.MediaFiles
                 _logger.Warn("Unable to process folder that is mapped to an existing series");
                 return new List<ImportResult>
                 {
-                    RejectionResult("Import path is mapped to a series folder")
+                    RejectionResult(ImportRejectionReason.SeriesFolder, "Import path is mapped to a series folder")
                 };
             }
 
@@ -293,11 +296,44 @@ namespace NzbDrone.Core.MediaFiles
 
                 return new List<ImportResult>
                        {
-                           new ImportResult(new ImportDecision(new LocalEpisode { Path = fileInfo.FullName }, new Rejection("Invalid video file, filename starts with '._'")), "Invalid video file, filename starts with '._'")
+                           new ImportResult(new ImportDecision(new LocalEpisode { Path = fileInfo.FullName }, new ImportRejection(ImportRejectionReason.InvalidFilePath, "Invalid video file, filename starts with '._'")), "Invalid video file, filename starts with '._'")
                        };
             }
 
             var extension = Path.GetExtension(fileInfo.Name);
+
+            if (FileExtensions.DangerousExtensions.Contains(extension))
+            {
+                return new List<ImportResult>
+                {
+                    new ImportResult(new ImportDecision(new LocalEpisode { Path = fileInfo.FullName },
+                            new ImportRejection(ImportRejectionReason.DangerousFile, $"Caution: Found potentially dangerous file with extension: {extension}")),
+                        $"Caution: Found potentially dangerous file with extension: {extension}")
+                };
+            }
+
+            if (FileExtensions.ExecutableExtensions.Contains(extension))
+            {
+                return new List<ImportResult>
+                {
+                    new ImportResult(new ImportDecision(new LocalEpisode { Path = fileInfo.FullName },
+                            new ImportRejection(ImportRejectionReason.ExecutableFile, $"Caution: Found executable file with extension: '{extension}'")),
+                        $"Caution: Found executable file with extension: '{extension}'")
+                };
+            }
+
+            if (FileExtensions.ParseUserRejectedExtensions(_configService.UserRejectedExtensions).Contains(extension))
+            {
+                return new List<ImportResult>
+                {
+                    new ImportResult(new ImportDecision(new LocalEpisode
+                            {
+                                Path = fileInfo.FullName
+                            },
+                            new ImportRejection(ImportRejectionReason.UserRejectedExtension, $"Caution: Found file with user defined rejected extension: '{extension}'")),
+                        $"Caution: Found executable file with user defined rejected extension: '{extension}'")
+                };
+            }
 
             if (extension.IsNullOrWhiteSpace() || !MediaFileExtensions.Extensions.Contains(extension))
             {
@@ -306,7 +342,7 @@ namespace NzbDrone.Core.MediaFiles
                 return new List<ImportResult>
                        {
                            new ImportResult(new ImportDecision(new LocalEpisode { Path = fileInfo.FullName },
-                               new Rejection($"Invalid video file, unsupported extension: '{extension}'")),
+                               new ImportRejection(ImportRejectionReason.UnsupportedExtension, $"Invalid video file, unsupported extension: '{extension}'")),
                                $"Invalid video file, unsupported extension: '{extension}'")
                        };
             }
@@ -338,33 +374,38 @@ namespace NzbDrone.Core.MediaFiles
         private ImportResult FileIsLockedResult(string videoFile)
         {
             _logger.Debug("[{0}] is currently locked by another process, skipping", videoFile);
-            return new ImportResult(new ImportDecision(new LocalEpisode { Path = videoFile }, new Rejection("Locked file, try again later")), "Locked file, try again later");
+            return new ImportResult(new ImportDecision(new LocalEpisode { Path = videoFile }, new ImportRejection(ImportRejectionReason.FileLocked, "Locked file, try again later")), "Locked file, try again later");
         }
 
         private ImportResult UnknownSeriesResult(string message, string videoFile = null)
         {
             var localEpisode = videoFile == null ? null : new LocalEpisode { Path = videoFile };
 
-            return new ImportResult(new ImportDecision(localEpisode, new Rejection("Unknown Series")), message);
+            return new ImportResult(new ImportDecision(localEpisode, new ImportRejection(ImportRejectionReason.UnknownSeries, "Unknown Series")), message);
         }
 
-        private ImportResult RejectionResult(string message)
+        private ImportResult RejectionResult(ImportRejectionReason reason, string message)
         {
-            return new ImportResult(new ImportDecision(null, new Rejection(message)), message);
+            return new ImportResult(new ImportDecision(null, new ImportRejection(reason, message)), message);
         }
 
         private ImportResult CheckEmptyResultForIssue(string folder)
         {
             var files = _diskProvider.GetFiles(folder, true);
 
+            if (files.Any(file => FileExtensions.DangerousExtensions.Contains(Path.GetExtension(file))))
+            {
+                return RejectionResult(ImportRejectionReason.DangerousFile, "Caution: Found potentially dangerous file");
+            }
+
             if (files.Any(file => FileExtensions.ExecutableExtensions.Contains(Path.GetExtension(file))))
             {
-                return RejectionResult("Caution: Found executable file");
+                return RejectionResult(ImportRejectionReason.ExecutableFile, "Caution: Found executable file");
             }
 
             if (files.Any(file => FileExtensions.ArchiveExtensions.Contains(Path.GetExtension(file))))
             {
-                return RejectionResult("Found archive file, might need to be extracted");
+                return RejectionResult(ImportRejectionReason.ArchiveFile, "Found archive file, might need to be extracted");
             }
 
             return null;

@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using Equ;
 using FluentValidation;
 using NzbDrone.Core.Annotations;
 using NzbDrone.Core.Validation;
@@ -14,15 +17,16 @@ namespace NzbDrone.Core.Indexers.TorrentRss
         }
     }
 
-    public class TorrentRssIndexerSettings : ITorrentIndexerSettings
+    public class TorrentRssIndexerSettings : PropertywiseEquatable<TorrentRssIndexerSettings>, ITorrentIndexerSettings
     {
-        private static readonly TorrentRssIndexerSettingsValidator Validator = new TorrentRssIndexerSettingsValidator();
+        private static readonly TorrentRssIndexerSettingsValidator Validator = new();
 
         public TorrentRssIndexerSettings()
         {
             BaseUrl = string.Empty;
             AllowZeroSize = false;
             MinimumSeeders = IndexerDefaults.MINIMUM_SEEDERS;
+            FailDownloads = Array.Empty<int>();
         }
 
         [FieldDefinition(0, Label = "Full RSS Feed URL")]
@@ -38,7 +42,16 @@ namespace NzbDrone.Core.Indexers.TorrentRss
         public int MinimumSeeders { get; set; }
 
         [FieldDefinition(4)]
-        public SeedCriteriaSettings SeedCriteria { get; set; } = new SeedCriteriaSettings();
+        public SeedCriteriaSettings SeedCriteria { get; set; } = new();
+
+        [FieldDefinition(5, Type = FieldType.Checkbox, Label = "Reject Blocklisted Torrent Hashes While Grabbing", HelpText = "If a torrent is blocked by hash it may not properly be rejected during RSS/Search for some indexers, enabling this will allow it to be rejected after the torrent is grabbed, but before it is sent to the client.", Advanced = true)]
+        public bool RejectBlocklistedTorrentHashesWhileGrabbing { get; set; }
+
+        [FieldDefinition(6, Type = FieldType.Checkbox, Label = "IndexerSettingsRejectTorrentFilesWithBlockedExtensions", HelpText = "IndexerSettingsRejectTorrentFilesWithBlockedExtensionsHelpText", Advanced = true)]
+        public bool RejectTorrentFilesWithBlockedExtensionsWhileGrabbing { get; set; }
+
+        [FieldDefinition(7, Type = FieldType.Select, SelectOptions = typeof(FailDownloads), Label = "Fail Downloads", HelpText = "Mark downloads containing these file types as failed", Advanced = true)]
+        public IEnumerable<int> FailDownloads { get; set; }
 
         public NzbDroneValidationResult Validate()
         {

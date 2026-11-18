@@ -1,26 +1,19 @@
-import ModelBase from 'App/ModelBase';
+import { MonitorNewItems, SeriesMonitor } from 'Series/Series';
+import Provider from './Provider';
 
-export interface Field {
-  order: number;
-  name: string;
-  label: string;
-  value: boolean | number | string;
-  type: string;
-  advanced: boolean;
-  privacy: string;
-}
-
-interface ImportList extends ModelBase {
+interface ImportList extends Provider {
   enable: boolean;
   enableAutomaticAdd: boolean;
+  searchForMissingEpisodes: boolean;
   qualityProfileId: number;
   rootFolderPath: string;
+  shouldMonitor: SeriesMonitor;
+  monitorNewItems: MonitorNewItems;
+  siteMonitorType: SeriesMonitor;
+  listType: string;
+  listOrder: number;
+  minRefreshInterval: string;
   name: string;
-  fields: Field[];
-  implementationName: string;
-  implementation: string;
-  configContract: string;
-  infoLink: string;
   tags: number[];
 }
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using NLog;
 using NzbDrone.Common.EnsureThat;
 using NzbDrone.Common.EnvironmentInfo;
@@ -189,6 +190,25 @@ namespace NzbDrone.Common.Disk
             }
 
             var fi = new FileInfo(path);
+
+            try
+            {
+                // If the file is a symlink, resolve the target path and get the size of the target file.
+                if (fi.Attributes.HasFlag(FileAttributes.ReparsePoint))
+                {
+                    var targetPath = fi.ResolveLinkTarget(true)?.FullName;
+
+                    if (targetPath != null)
+                    {
+                        fi = new FileInfo(targetPath);
+                    }
+                }
+            }
+            catch (IOException ex)
+            {
+                Logger.Trace(ex, "Unable to resolve symlink target for {0}", path);
+            }
+
             return fi.Length;
         }
 
@@ -218,11 +238,6 @@ namespace NzbDrone.Common.Disk
                 throw new IOException(string.Format("Source and destination can't be the same {0}", source));
             }
 
-            CloneFileInternal(source, destination, overwrite);
-        }
-
-        protected virtual void CloneFileInternal(string source, string destination, bool overwrite = false)
-        {
             CopyFileInternal(source, destination, overwrite);
         }
 
@@ -288,18 +303,30 @@ namespace NzbDrone.Common.Disk
 
         public abstract bool TryCreateHardLink(string source, string destination);
 
-        public virtual bool TryCreateRefLink(string source, string destination)
-        {
-            return false;
-        }
-
         public void DeleteFolder(string path, bool recursive)
         {
             Ensure.That(path, () => path).IsValidPath(PathValidationType.CurrentOs);
 
-            var files = GetFiles(path, recursive);
+            var files = GetFiles(path, recursive).ToList();
 
-            files.ToList().ForEach(RemoveReadOnly);
+            files.ForEach(RemoveReadOnly);
+
+            var attempts = 0;
+
+            while (attempts < 3 && files.Any())
+            {
+                EmptyFolder(path);
+
+                if (GetFiles(path, recursive).Any())
+                {
+                    // Wait for IO operations to complete  after emptying the folder since they aren't always
+                    // instantly removed and it can lead to false positives that files are still present.
+                    Thread.Sleep(3000);
+                }
+
+                attempts++;
+                files = GetFiles(path, recursive).ToList();
+            }
 
             Directory.Delete(path, recursive);
         }

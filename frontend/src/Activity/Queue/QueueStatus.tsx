@@ -1,8 +1,7 @@
 import React from 'react';
-import Icon from 'Components/Icon';
+import Icon, { IconKind } from 'Components/Icon';
 import Popover from 'Components/Tooltip/Popover';
 import { icons, kinds } from 'Helpers/Props';
-import { Kind } from 'Helpers/Props/kinds';
 import { TooltipPosition } from 'Helpers/Props/tooltipPositions';
 import {
   QueueTrackedDownloadState,
@@ -62,7 +61,7 @@ function QueueStatus(props: QueueStatusProps) {
 
   // status === 'downloading'
   let iconName = icons.DOWNLOADING;
-  let iconKind: Kind = kinds.DEFAULT;
+  let iconKind: IconKind = kinds.DEFAULT;
   let title = translate('Downloading');
 
   if (status === 'paused') {
@@ -86,7 +85,7 @@ function QueueStatus(props: QueueStatusProps) {
 
     if (trackedDownloadState === 'importing') {
       title += ` - ${translate('Importing')}`;
-      iconKind = kinds.PURPLE;
+      iconKind = kinds.PRIMARY;
     }
 
     if (trackedDownloadState === 'failedPending') {
@@ -139,6 +138,7 @@ function QueueStatus(props: QueueStatusProps) {
   return (
     <Popover
       anchor={<Icon name={iconName} kind={iconKind} />}
+      accessibleLabel={title}
       title={title}
       body={
         hasWarning || hasError

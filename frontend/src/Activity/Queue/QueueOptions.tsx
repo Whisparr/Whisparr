@@ -6,7 +6,7 @@ import FormInputGroup from 'Components/Form/FormInputGroup';
 import FormLabel from 'Components/Form/FormLabel';
 import { inputTypes } from 'Helpers/Props';
 import { setQueueOption } from 'Store/Actions/queueActions';
-import { CheckInputChanged } from 'typings/inputs';
+import { InputChanged } from 'typings/inputs';
 import translate from 'Utilities/String/translate';
 
 function QueueOptions() {
@@ -16,7 +16,7 @@ function QueueOptions() {
   );
 
   const handleOptionChange = useCallback(
-    ({ name, value }: CheckInputChanged) => {
+    ({ name, value }: InputChanged<boolean>) => {
       dispatch(
         setQueueOption({
           [name]: value,
@@ -29,13 +29,13 @@ function QueueOptions() {
   return (
     <Fragment>
       <FormGroup>
-        <FormLabel>{translate('ShowUnknownSeriesItems')}</FormLabel>
+        <FormLabel>{translate('ShowUnknownSiteItems')}</FormLabel>
 
         <FormInputGroup
           type={inputTypes.CHECK}
           name="includeUnknownSeriesItems"
           value={includeUnknownSeriesItems}
-          helpText={translate('ShowUnknownSeriesItemsHelpText')}
+          helpText={translate('ShowUnknownSiteItemsHelpText')}
           onChange={handleOptionChange}
         />
       </FormGroup>

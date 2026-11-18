@@ -1,12 +1,11 @@
 using NLog;
 using NzbDrone.Core.Indexers;
-using NzbDrone.Core.IndexerSearch.Definitions;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.Profiles.Delay;
 
 namespace NzbDrone.Core.DecisionEngine.Specifications
 {
-    public class ProtocolSpecification : IDecisionEngineSpecification
+    public class ProtocolSpecification : IDownloadDecisionEngineSpecification
     {
         private readonly IDelayProfileService _delayProfileService;
         private readonly Logger _logger;
@@ -21,23 +20,23 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
         public SpecificationPriority Priority => SpecificationPriority.Default;
         public RejectionType Type => RejectionType.Permanent;
 
-        public virtual Decision IsSatisfiedBy(RemoteEpisode subject, SearchCriteriaBase searchCriteria)
+        public virtual DownloadSpecDecision IsSatisfiedBy(RemoteEpisode subject, ReleaseDecisionInformation information)
         {
             var delayProfile = _delayProfileService.BestForTags(subject.Series.Tags);
 
             if (subject.Release.DownloadProtocol == DownloadProtocol.Usenet && !delayProfile.EnableUsenet)
             {
                 _logger.Debug("[{0}] Usenet is not enabled for this series", subject.Release.Title);
-                return Decision.Reject("Usenet is not enabled for this series");
+                return DownloadSpecDecision.Reject(DownloadRejectionReason.ProtocolDisabled, "Usenet is not enabled for this series");
             }
 
             if (subject.Release.DownloadProtocol == DownloadProtocol.Torrent && !delayProfile.EnableTorrent)
             {
                 _logger.Debug("[{0}] Torrent is not enabled for this series", subject.Release.Title);
-                return Decision.Reject("Torrent is not enabled for this series");
+                return DownloadSpecDecision.Reject(DownloadRejectionReason.ProtocolDisabled, "Torrent is not enabled for this series");
             }
 
-            return Decision.Accept();
+            return DownloadSpecDecision.Accept();
         }
     }
 }

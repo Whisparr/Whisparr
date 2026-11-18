@@ -81,6 +81,7 @@ namespace Whisparr.Api.V3.CustomFormats
         [HttpPut("bulk")]
         [Consumes("application/json")]
         [Produces("application/json")]
+        [ProducesResponseType(typeof(List<CustomFormatResource>), 202)]
         public virtual ActionResult<CustomFormatResource> Update([FromBody] CustomFormatBulkResource resource)
         {
             if (!resource.Ids.Any())
@@ -116,6 +117,7 @@ namespace Whisparr.Api.V3.CustomFormats
         }
 
         [HttpGet("schema")]
+        [ProducesResponseType(typeof(List<CustomFormatSpecificationSchema>), 200)]
         public object GetTemplates()
         {
             var schema = _specifications.OrderBy(x => x.Order).Select(x => x.ToSchema()).ToList();

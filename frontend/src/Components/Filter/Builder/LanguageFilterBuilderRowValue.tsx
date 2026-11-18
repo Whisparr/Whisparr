@@ -1,11 +1,18 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
-import createLanguagesSelector from 'Store/Selectors/createLanguagesSelector';
-import FilterBuilderRowValue from './FilterBuilderRowValue';
-import FilterBuilderRowValueProps from './FilterBuilderRowValueProps';
+import { useLanguages } from 'Language/useLanguages';
+import FilterBuilderRowValue, {
+  FilterBuilderRowValueProps,
+} from './FilterBuilderRowValue';
 
-function LanguageFilterBuilderRowValue(props: FilterBuilderRowValueProps) {
-  const { items } = useSelector(createLanguagesSelector());
+type LanguageFilterBuilderRowValueProps<T> = Omit<
+  FilterBuilderRowValueProps<T, number>,
+  'tagList'
+>;
+
+function LanguageFilterBuilderRowValue<T>(
+  props: LanguageFilterBuilderRowValueProps<T>
+) {
+  const { data: items = [] } = useLanguages();
 
   return <FilterBuilderRowValue {...props} tagList={items} />;
 }

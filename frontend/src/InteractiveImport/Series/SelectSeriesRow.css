@@ -17,7 +17,8 @@
   flex: 0 0 70px;
 }
 
-.tvdbId {
+.tvdbId,
+.imdbId {
   composes: cell;
 
   flex: 0 0 110px;

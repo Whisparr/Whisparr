@@ -6,12 +6,12 @@ import Column from 'Components/Table/Column';
 import Table from 'Components/Table/Table';
 import TableBody from 'Components/Table/TableBody';
 import Episode from 'Episode/Episode';
-import useEpisode, { EpisodeEntities } from 'Episode/useEpisode';
+import useEpisode, { EpisodeEntity } from 'Episode/useEpisode';
 import useEpisodeFile from 'EpisodeFile/useEpisodeFile';
 import { icons, kinds, sizes } from 'Helpers/Props';
 import Series from 'Series/Series';
 import useSeries from 'Series/useSeries';
-import QualityProfileNameConnector from 'Settings/Profiles/Quality/QualityProfileNameConnector';
+import QualityProfileName from 'Settings/Profiles/Quality/QualityProfileName';
 import {
   deleteEpisodeFile,
   fetchEpisodeFile,
@@ -72,7 +72,7 @@ const COLUMNS: Column[] = [
 interface EpisodeSummaryProps {
   seriesId: number;
   episodeId: number;
-  episodeEntity: EpisodeEntities;
+  episodeEntity: EpisodeEntity;
   episodeFileId?: number;
 }
 
@@ -83,7 +83,7 @@ function EpisodeSummary(props: EpisodeSummaryProps) {
 
   const { qualityProfileId, network } = useSeries(seriesId) as Series;
 
-  const { airDateUtc, overview } = useEpisode(
+  const { releaseDate, overview } = useEpisode(
     episodeId,
     episodeEntity
   ) as Episode;
@@ -121,14 +121,14 @@ function EpisodeSummary(props: EpisodeSummaryProps) {
       <div>
         <span className={styles.infoTitle}>{translate('Airs')}</span>
 
-        <EpisodeAiring releaseDate={airDateUtc} network={network} />
+        <EpisodeAiring releaseDate={releaseDate} network={network} />
       </div>
 
       <div>
         <span className={styles.infoTitle}>{translate('QualityProfile')}</span>
 
         <Label kind={kinds.PRIMARY} size={sizes.MEDIUM}>
-          <QualityProfileNameConnector qualityProfileId={qualityProfileId} />
+          <QualityProfileName qualityProfileId={qualityProfileId} />
         </Label>
       </div>
 

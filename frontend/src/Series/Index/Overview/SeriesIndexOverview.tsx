@@ -6,10 +6,10 @@ import { REFRESH_SERIES, SERIES_SEARCH } from 'Commands/commandNames';
 import IconButton from 'Components/Link/IconButton';
 import Link from 'Components/Link/Link';
 import SpinnerIconButton from 'Components/Link/SpinnerIconButton';
-import TagListConnector from 'Components/TagListConnector';
+import SeriesTagList from 'Components/SeriesTagList';
 import { icons } from 'Helpers/Props';
 import DeleteSeriesModal from 'Series/Delete/DeleteSeriesModal';
-import EditSeriesModalConnector from 'Series/Edit/EditSeriesModalConnector';
+import EditSeriesModal from 'Series/Edit/EditSeriesModal';
 import SeriesIndexProgressBar from 'Series/Index/ProgressBar/SeriesIndexProgressBar';
 import SeriesIndexPosterSelect from 'Series/Index/Select/SeriesIndexPosterSelect';
 import { Statistics } from 'Series/Series';
@@ -92,7 +92,7 @@ function SeriesIndexOverview(props: SeriesIndexOverviewProps) {
     dispatch(
       executeCommand({
         name: REFRESH_SERIES,
-        seriesId,
+        seriesIds: [seriesId],
       })
     );
   }, [seriesId, dispatch]);
@@ -144,7 +144,10 @@ function SeriesIndexOverview(props: SeriesIndexOverviewProps) {
         <div className={styles.poster}>
           <div className={styles.posterContainer}>
             {isSelectMode ? (
-              <SeriesIndexPosterSelect seriesId={seriesId} />
+              <SeriesIndexPosterSelect
+                seriesId={seriesId}
+                titleSlug={titleSlug}
+              />
             ) : null}
 
             {status === 'ended' ? (
@@ -169,6 +172,7 @@ function SeriesIndexOverview(props: SeriesIndexOverviewProps) {
                 size={250}
                 lazy={false}
                 overflow={true}
+                title={title}
               />
             </Link>
           </div>
@@ -212,6 +216,7 @@ function SeriesIndexOverview(props: SeriesIndexOverviewProps) {
               <IconButton
                 name={icons.EDIT}
                 title={translate('EditSite')}
+                aria-label={translate('EditSite')}
                 onPress={onEditSeriesPress}
               />
             </div>
@@ -230,7 +235,7 @@ function SeriesIndexOverview(props: SeriesIndexOverviewProps) {
 
               {overviewOptions.showTags ? (
                 <div className={styles.tags}>
-                  <TagListConnector tags={tags} />
+                  <SeriesTagList tags={tags} />
                 </div>
               ) : null}
             </div>
@@ -252,7 +257,7 @@ function SeriesIndexOverview(props: SeriesIndexOverviewProps) {
         </div>
       </div>
 
-      <EditSeriesModalConnector
+      <EditSeriesModal
         isOpen={isEditSeriesModalOpen}
         seriesId={seriesId}
         onModalClose={onEditSeriesModalClose}

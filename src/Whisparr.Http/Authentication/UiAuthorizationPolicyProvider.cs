@@ -1,14 +1,16 @@
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
+using NzbDrone.Core.Authentication;
 using NzbDrone.Core.Configuration;
 
 namespace NzbDrone.Http.Authentication
 {
     public class UiAuthorizationPolicyProvider : IAuthorizationPolicyProvider
     {
-        private const string POLICY_NAME = "UI";
+        private const string PolicyName = "UI";
         private readonly IConfigFileProvider _config;
 
         public DefaultAuthorizationPolicyProvider FallbackPolicyProvider { get; }
@@ -26,9 +28,20 @@ namespace NzbDrone.Http.Authentication
 
         public Task<AuthorizationPolicy> GetPolicyAsync(string policyName)
         {
-            if (policyName.Equals(POLICY_NAME, StringComparison.OrdinalIgnoreCase))
+            if (policyName.Equals(PolicyName, StringComparison.OrdinalIgnoreCase))
             {
-                var policy = new AuthorizationPolicyBuilder(_config.AuthenticationMethod.ToString())
+                var authenticationMethod = _config.EffectiveAuthenticationMethod();
+
+                // OIDC signs into the cookie scheme, so authenticate against the cookie.
+                // Using the OIDC scheme would challenge the identity provider on every
+                // unauthenticated request instead of redirecting to the login page.
+                var scheme = authenticationMethod switch
+                {
+                    AuthenticationType.Oidc => CookieAuthenticationDefaults.AuthenticationScheme,
+                    _ => authenticationMethod.ToString()
+                };
+
+                var policy = new AuthorizationPolicyBuilder(scheme)
                     .AddRequirements(new BypassableDenyAnonymousAuthorizationRequirement());
 
                 return Task.FromResult(policy.Build());

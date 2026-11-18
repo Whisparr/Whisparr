@@ -1,10 +1,13 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Core.CustomFormats;
 using NzbDrone.Core.Datastore.Events;
 using NzbDrone.Core.DecisionEngine.Specifications;
 using NzbDrone.Core.Exceptions;
+using NzbDrone.Core.Languages;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.MediaFiles.Events;
 using NzbDrone.Core.Messaging.Events;
@@ -109,8 +112,10 @@ namespace Whisparr.Api.V3.EpisodeFiles
             return Accepted(episodeFile.Id);
         }
 
+        [Obsolete("Use bulk endpoint instead")]
         [HttpPut("editor")]
         [Consumes("application/json")]
+        [ProducesResponseType(typeof(List<EpisodeFileResource>), 202)]
         public object SetQuality([FromBody] EpisodeFileListResource resource)
         {
             var episodeFiles = _mediaFileService.GetFiles(resource.EpisodeFileIds);
@@ -152,7 +157,7 @@ namespace Whisparr.Api.V3.EpisodeFiles
 
             if (episodeFile == null)
             {
-                throw new NzbDroneClientException(global::System.Net.HttpStatusCode.NotFound, "Episode file not found");
+                throw new NzbDroneClientException(HttpStatusCode.NotFound, "Episode file not found");
             }
 
             var series = _seriesService.GetSeries(episodeFile.SeriesId);
@@ -177,6 +182,7 @@ namespace Whisparr.Api.V3.EpisodeFiles
 
         [HttpPut("bulk")]
         [Consumes("application/json")]
+        [ProducesResponseType(typeof(List<EpisodeFileResource>), 202)]
         public object SetPropertiesBulk([FromBody] List<EpisodeFileResource> resources)
         {
             var episodeFiles = _mediaFileService.GetFiles(resources.Select(r => r.Id));
@@ -187,7 +193,8 @@ namespace Whisparr.Api.V3.EpisodeFiles
 
                 if (resourceEpisodeFile.Languages != null)
                 {
-                    episodeFile.Languages = resourceEpisodeFile.Languages;
+                    // Don't allow user to set files with 'Original' language
+                    episodeFile.Languages = resourceEpisodeFile.Languages.Where(l => l != null && l != Language.Original).ToList();
                 }
 
                 if (resourceEpisodeFile.Quality != null)
@@ -212,7 +219,9 @@ namespace Whisparr.Api.V3.EpisodeFiles
             }
 
             _mediaFileService.Update(episodeFiles);
+
             var series = _seriesService.GetSeries(episodeFiles.First().SeriesId);
+
             return Accepted(episodeFiles.ConvertAll(f => f.ToResource(series, _upgradableSpecification, _formatCalculator)));
         }
 

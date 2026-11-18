@@ -163,8 +163,8 @@ function InteractiveImportRow(props: InteractiveImportRowProps) {
     onValidRowChange,
   ]);
 
-  const onSelectedChangeWrapper = useCallback(
-    (result: SelectedChangeProps) => {
+  const handleSelectedChange = useCallback(
+    (result: SelectStateInputProps) => {
       onSelectedChange({
         ...result,
         hasEpisodeFileId: !!episodeFileId,
@@ -366,7 +366,7 @@ function InteractiveImportRow(props: InteractiveImportRowProps) {
       <TableSelectCell
         id={id}
         isSelected={isSelected}
-        onSelectedChange={onSelectedChangeWrapper}
+        onSelectedChange={handleSelectedChange}
       />
 
       <TableRowCell className={styles.relativePath} title={relativePath}>
@@ -486,6 +486,7 @@ function InteractiveImportRow(props: InteractiveImportRowProps) {
               {indexerFlags ? (
                 <Popover
                   anchor={<Icon name={icons.FLAG} kind={kinds.PRIMARY} />}
+                  isAnchorFocusable={false}
                   title={translate('IndexerFlags')}
                   body={<IndexerFlags indexerFlags={indexerFlags} />}
                   position={tooltipPositions.LEFT}

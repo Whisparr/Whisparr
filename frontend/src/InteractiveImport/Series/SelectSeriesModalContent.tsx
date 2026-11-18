@@ -21,6 +21,7 @@ import { scrollDirections } from 'Helpers/Props';
 import Series from 'Series/Series';
 import createAllSeriesSelector from 'Store/Selectors/createAllSeriesSelector';
 import dimensions from 'Styles/Variables/dimensions';
+import { InputChanged } from 'typings/inputs';
 import sortByProp from 'Utilities/Array/sortByProp';
 import translate from 'Utilities/String/translate';
 import SelectSeriesModalTableHeader from './SelectSeriesModalTableHeader';
@@ -59,18 +60,19 @@ interface RowItemData {
   onSeriesSelect(seriesId: number): void;
 }
 
-const Row: React.FC<ListChildComponentProps<RowItemData>> = ({
-  index,
-  style,
-  data,
-}) => {
-  const { items, columns, onSeriesSelect } = data;
+function Row({ index, style, data }: ListChildComponentProps<RowItemData>) {
+  const { items, onSeriesSelect } = data;
+  const series = index >= items.length ? null : items[index];
 
-  if (index >= items.length) {
+  const handlePress = useCallback(() => {
+    if (series?.id) {
+      onSeriesSelect(series.id);
+    }
+  }, [series?.id, onSeriesSelect]);
+
+  if (series == null) {
     return null;
   }
-
-  const series = items[index];
 
   return (
     <VirtualTableRowButton
@@ -79,21 +81,18 @@ const Row: React.FC<ListChildComponentProps<RowItemData>> = ({
         justifyContent: 'space-between',
         ...style,
       }}
-      onPress={() => onSeriesSelect(series.id)}
+      onPress={handlePress}
     >
       <SelectSeriesRow
         key={series.id}
-        id={series.id}
         title={series.title}
         tvdbId={series.tvdbId}
         imdbId={series.imdbId}
         year={series.year}
-        columns={columns}
-        onSeriesSelect={onSeriesSelect}
       />
     </VirtualTableRowButton>
   );
-};
+}
 
 function SelectSeriesModalContent(props: SelectSeriesModalContentProps) {
   const { modalTitle, onSeriesSelect, onModalClose } = props;
@@ -143,7 +142,7 @@ function SelectSeriesModalContent(props: SelectSeriesModalContentProps) {
   }, [listRef, scrollerRef]);
 
   const onFilterChange = useCallback(
-    ({ value }: { value: string }) => {
+    ({ value }: InputChanged<string>) => {
       setFilter(value);
     },
     [setFilter]

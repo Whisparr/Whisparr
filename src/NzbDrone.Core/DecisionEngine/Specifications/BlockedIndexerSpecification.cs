@@ -4,12 +4,11 @@ using System.Linq;
 using NLog;
 using NzbDrone.Common.Cache;
 using NzbDrone.Core.Indexers;
-using NzbDrone.Core.IndexerSearch.Definitions;
 using NzbDrone.Core.Parser.Model;
 
 namespace NzbDrone.Core.DecisionEngine.Specifications
 {
-    public class BlockedIndexerSpecification : IDecisionEngineSpecification
+    public class BlockedIndexerSpecification : IDownloadDecisionEngineSpecification
     {
         private readonly IIndexerStatusService _indexerStatusService;
         private readonly Logger _logger;
@@ -27,15 +26,15 @@ namespace NzbDrone.Core.DecisionEngine.Specifications
         public SpecificationPriority Priority => SpecificationPriority.Database;
         public RejectionType Type => RejectionType.Temporary;
 
-        public virtual Decision IsSatisfiedBy(RemoteEpisode subject, SearchCriteriaBase searchCriteria)
+        public virtual DownloadSpecDecision IsSatisfiedBy(RemoteEpisode subject, ReleaseDecisionInformation information)
         {
             var status = _blockedIndexerCache.Find(subject.Release.IndexerId.ToString());
             if (status != null)
             {
-                return Decision.Reject($"Indexer {subject.Release.Indexer} is blocked till {status.DisabledTill} due to failures, cannot grab release.");
+                return DownloadSpecDecision.Reject(DownloadRejectionReason.IndexerDisabled, $"Indexer {subject.Release.Indexer} is blocked till {status.DisabledTill} due to failures, cannot grab release.");
             }
 
-            return Decision.Accept();
+            return DownloadSpecDecision.Accept();
         }
 
         private IDictionary<string, IndexerStatus> FetchBlockedIndexer()

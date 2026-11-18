@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -12,10 +13,12 @@ namespace Whisparr.Http.Frontend
 {
     [Authorize(Policy="UI")]
     [ApiController]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class StaticResourceController : Controller
     {
         private readonly IEnumerable<IMapHttpRequestsToDisk> _requestMappers;
         private readonly Logger _logger;
+        private static readonly Regex InvalidPathRegex = new(@"([\/\\]|%2f|%5c)\.\.|\.\.([\/\\]|%2f|%5c)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         public StaticResourceController(IEnumerable<IMapHttpRequestsToDisk> requestMappers,
             Logger logger)
@@ -31,6 +34,13 @@ namespace Whisparr.Http.Frontend
             return await MapResource("login");
         }
 
+        [AllowAnonymous]
+        [HttpGet("loggedout")]
+        public async Task<IActionResult> LogoutPage()
+        {
+            return await MapResource("logout");
+        }
+
         [EnableCors("AllowGet")]
         [AllowAnonymous]
         [HttpGet("/content/{**path:regex(^(?!api/).*)}")]
@@ -40,7 +50,7 @@ namespace Whisparr.Http.Frontend
         }
 
         [HttpGet("")]
-        [HttpGet("/{**path:regex(^(?!(api|feed)/).*)}")]
+        [HttpGet("/{**path:regex(^(?!(api|feed|docs)/).*)}")]
         public async Task<IActionResult> Index([FromRoute] string path)
         {
             return await MapResource(path);
@@ -50,11 +60,16 @@ namespace Whisparr.Http.Frontend
         {
             path = "/" + (path ?? "");
 
+            if (InvalidPathRegex.IsMatch(path))
+            {
+                return NotFound();
+            }
+
             var mapper = _requestMappers.SingleOrDefault(m => m.CanHandle(path));
 
             if (mapper != null)
             {
-                var result = await mapper.GetResponse(path);
+                var result = await mapper.GetResponse(Request.HttpContext, path);
 
                 if (result != null)
                 {

@@ -68,6 +68,7 @@ import {
   faHistory as fasHistory,
   faHome as fasHome,
   faInfoCircle as fasInfoCircle,
+  faLanguage as fasLanguage,
   faLaptop as fasLaptop,
   faLevelUpAlt as fasLevelUpAlt,
   faListCheck as fasListCheck,
@@ -98,6 +99,7 @@ import {
   faTable as fasTable,
   faTags as fasTags,
   faTh as fasTh,
+  faTheaterMasks as fasTheaterMasks,
   faThList as fasThList,
   faTimes as fasTimes,
   faTimesCircle as fasTimesCircle,
@@ -157,6 +159,7 @@ export const FLAG = fasFlag;
 export const FOOTNOTE = fasAsterisk;
 export const FOLDER = farFolder;
 export const FOLDER_OPEN = fasFolderOpen;
+export const GENRE = fasTheaterMasks;
 export const GROUP = farObjectGroup;
 export const HEALTH = fasMedkit;
 export const HEART = fasHeart;
@@ -166,6 +169,7 @@ export const IGNORE = fasTimesCircle;
 export const INFO = fasInfoCircle;
 export const INTERACTIVE = fasUser;
 export const KEYBOARD = farKeyboard;
+export const LANGUAGE = fasLanguage;
 export const LOGOUT = fasSignOutAlt;
 export const MANAGE = fasListCheck;
 export const MEDIA_INFO = farFileInvoice;

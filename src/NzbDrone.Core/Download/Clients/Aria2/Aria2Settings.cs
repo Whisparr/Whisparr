@@ -1,6 +1,5 @@
 using FluentValidation;
 using NzbDrone.Core.Annotations;
-using NzbDrone.Core.ThingiProvider;
 using NzbDrone.Core.Validation;
 
 namespace NzbDrone.Core.Download.Clients.Aria2
@@ -13,9 +12,9 @@ namespace NzbDrone.Core.Download.Clients.Aria2
         }
     }
 
-    public class Aria2Settings : IProviderConfig
+    public class Aria2Settings : DownloadClientSettingsBase<Aria2Settings>
     {
-        private static readonly Aria2SettingsValidator Validator = new Aria2SettingsValidator();
+        private static readonly Aria2SettingsValidator Validator = new();
 
         public Aria2Settings()
         {
@@ -32,16 +31,16 @@ namespace NzbDrone.Core.Download.Clients.Aria2
         [FieldDefinition(1, Label = "Port", Type = FieldType.Number)]
         public int Port { get; set; }
 
-        [FieldDefinition(2, Label = "XML RPC Path", Type = FieldType.Textbox)]
+        [FieldDefinition(2, Label = "XmlRpcPath", Type = FieldType.Textbox)]
         public string RpcPath { get; set; }
 
-        [FieldDefinition(3, Label = "Use SSL", Type = FieldType.Checkbox)]
+        [FieldDefinition(3, Label = "UseSsl", Type = FieldType.Checkbox)]
         public bool UseSsl { get; set; }
 
-        [FieldDefinition(4, Label = "Secret token", Type = FieldType.Password, Privacy = PrivacyLevel.Password)]
+        [FieldDefinition(4, Label = "SecretToken", Type = FieldType.Password, Privacy = PrivacyLevel.Password)]
         public string SecretToken { get; set; }
 
-        public NzbDroneValidationResult Validate()
+        public override NzbDroneValidationResult Validate()
         {
                 return new NzbDroneValidationResult(Validator.Validate(this));
             }

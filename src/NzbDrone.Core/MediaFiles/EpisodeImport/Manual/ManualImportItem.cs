@@ -1,6 +1,5 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using NzbDrone.Core.CustomFormats;
-using NzbDrone.Core.DecisionEngine;
 using NzbDrone.Core.Languages;
 using NzbDrone.Core.Qualities;
 using NzbDrone.Core.Tv;
@@ -18,14 +17,14 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Manual
         public int? SeasonNumber { get; set; }
         public List<Episode> Episodes { get; set; }
         public int? EpisodeFileId { get; set; }
-        public QualityModel Quality { get; set; }
-        public List<Language> Languages { get; set; }
+        public QualityModel Quality { get; set; } = new();
+        public List<Language> Languages { get; set; } = new();
         public string ReleaseGroup { get; set; }
         public string DownloadId { get; set; }
-        public List<CustomFormat> CustomFormats { get; set; }
+        public List<CustomFormat> CustomFormats { get; set; } = new();
         public int CustomFormatScore { get; set; }
         public int IndexerFlags { get; set; }
-        public IEnumerable<Rejection> Rejections { get; set; }
+        public IEnumerable<ImportRejection> Rejections { get; set; } = new List<ImportRejection>();
 
         public ManualImportItem()
         {

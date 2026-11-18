@@ -15,7 +15,7 @@ import Alert from 'Components/Alert';
 import LoadingIndicator from 'Components/Loading/LoadingIndicator';
 import PageContent from 'Components/Page/PageContent';
 import PageContentBody from 'Components/Page/PageContentBody';
-import PageJumpBar from 'Components/Page/PageJumpBar';
+import PageJumpBar, { PageJumpBarItems } from 'Components/Page/PageJumpBar';
 import PageToolbar from 'Components/Page/Toolbar/PageToolbar';
 import PageToolbarButton from 'Components/Page/Toolbar/PageToolbarButton';
 import PageToolbarSection from 'Components/Page/Toolbar/PageToolbarSection';
@@ -40,7 +40,6 @@ import {
   setSeriesTableOption,
   setSeriesView,
 } from 'Store/Actions/seriesIndexActions';
-import scrollPositions from 'Store/scrollPositions';
 import createCommandExecutingSelector from 'Store/Selectors/createCommandExecutingSelector';
 import createDimensionsSelector from 'Store/Selectors/createDimensionsSelector';
 import createSeriesClientSideCollectionItemsSelector from 'Store/Selectors/createSeriesClientSideCollectionItemsSelector';
@@ -101,9 +100,6 @@ function SeriesIndex(props: SeriesIndexProps) {
   const seriesType = props.seriesType || 'standard';
   const uiSection = seriesType === 'jav' ? 'javSeriesIndex' : 'seriesIndex';
   const scrollKey = uiSection;
-
-  const initialScrollTop =
-    props.history?.action === 'POP' ? scrollPositions[scrollKey] : 0;
 
   const {
     dispatchSetSort,
@@ -185,7 +181,7 @@ function SeriesIndex(props: SeriesIndexProps) {
   );
 
   const onFilterSelect = useCallback(
-    (value: string) => {
+    (value: string | number) => {
       dispatch(dispatchSetFilter({ selectedFilterKey: value }));
     },
     [dispatch, dispatchSetFilter]
@@ -206,18 +202,15 @@ function SeriesIndex(props: SeriesIndexProps) {
     [setJumpToCharacter]
   );
 
-  const onScroll = useCallback(
-    ({ scrollTop }: { scrollTop: number }) => {
-      setJumpToCharacter(undefined);
-      scrollPositions[scrollKey] = scrollTop;
-    },
-    [setJumpToCharacter, scrollKey]
-  );
+  const onScroll = useCallback(() => {
+    setJumpToCharacter(undefined);
+  }, [setJumpToCharacter]);
 
-  const jumpBarItems = useMemo(() => {
+  const jumpBarItems: PageJumpBarItems = useMemo(() => {
     // Reset if not sorting by sortTitle
     if (sortKey !== 'sortTitle') {
       return {
+        characters: {},
         order: [],
       };
     }
@@ -257,7 +250,7 @@ function SeriesIndex(props: SeriesIndexProps) {
 
   return (
     <SelectProvider items={items}>
-      <PageContent>
+      <PageContent title={translate('Sites')}>
         <PageToolbar>
           <PageToolbarSection>
             <SeriesIndexRefreshSeriesButton
@@ -352,7 +345,7 @@ function SeriesIndex(props: SeriesIndexProps) {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             innerClassName={styles[`${view}InnerContentBody`]}
-            initialScrollTop={initialScrollTop}
+            scrollPositionKey={scrollKey}
             onScroll={onScroll}
           >
             {isFetching && !isPopulated ? <LoadingIndicator /> : null}

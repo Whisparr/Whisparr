@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.ImportLists;
@@ -39,13 +40,18 @@ namespace NzbDrone.Core.HealthCheck.Checks
             {
                 return new HealthCheck(GetType(),
                     HealthCheckResult.Error,
+                    HealthCheckReason.ImportListStatusAllUnavailable,
                     _localizationService.GetLocalizedString("ImportListStatusAllUnavailableHealthCheckMessage"),
                     "#import-lists-are-unavailable-due-to-failures");
             }
 
             return new HealthCheck(GetType(),
                 HealthCheckResult.Warning,
-                string.Format(_localizationService.GetLocalizedString("ImportListStatusUnavailableHealthCheckMessage"), string.Join(", ", backOffProviders.Select(v => v.ImportList.Definition.Name))),
+                HealthCheckReason.ImportListStatusUnavailable,
+                _localizationService.GetLocalizedString("ImportListStatusUnavailableHealthCheckMessage", new Dictionary<string, object>
+                {
+                    { "importListNames", string.Join(", ", backOffProviders.Select(v => v.ImportList.Definition.Name)) }
+                }),
                 "#import-lists-are-unavailable-due-to-failures");
         }
     }

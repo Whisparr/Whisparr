@@ -124,5 +124,34 @@
 			<newznab:attr name="nuked" value="0"/>
 		</item>
 
+		<item>
+			<title>title</title>
+			<guid isPermaLink="true">subs=eng</guid>
+			<link>link</link>
+			<comments>comments</comments>
+			<pubDate>Sat, 31 Aug 2024 12:28:40 +0300</pubDate>
+			<category>category</category>
+			<description>description</description>
+			<enclosure url="url" length="500" type="application/x-nzb"/>
+
+			<newznab:attr name="haspretime" value="0"/>
+			<newznab:attr name="nuked" value="0"/>
+			<newznab:attr name="subs" value="Eng"/>
+		</item>
+
+		<item>
+			<title>title</title>
+			<guid isPermaLink="true">subs=''</guid>
+			<link>link</link>
+			<comments>comments</comments>
+			<pubDate>Sat, 31 Aug 2024 12:28:40 +0300</pubDate>
+			<category>category</category>
+			<description>description</description>
+			<enclosure url="url" length="500" type="application/x-nzb"/>
+
+			<newznab:attr name="haspretime" value="0"/>
+			<newznab:attr name="nuked" value="0"/>
+			<newznab:attr name="subs" value=""/>
+		</item>
 	</channel>
 </rss>

@@ -6,13 +6,15 @@ import styles from './PageContent.css';
 
 interface PageContentProps {
   className?: string;
-  title?: string;
+  title: string;
   children: React.ReactNode;
 }
 
-function PageContent(props: PageContentProps) {
-  const { className = styles.content, title, children } = props;
-
+function PageContent({
+  className = styles.content,
+  title,
+  children,
+}: PageContentProps) {
   return (
     <ErrorBoundary errorComponent={PageContentError}>
       <DocumentTitle
@@ -22,7 +24,9 @@ function PageContent(props: PageContentProps) {
             : window.Whisparr.instanceName
         }
       >
-        <div className={className}>{children}</div>
+        <main className={className} aria-label={title}>
+          {children}
+        </main>
       </DocumentTitle>
     </ErrorBoundary>
   );

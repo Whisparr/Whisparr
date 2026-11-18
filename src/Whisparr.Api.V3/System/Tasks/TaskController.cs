@@ -8,6 +8,7 @@ using NzbDrone.Core.Messaging.Events;
 using NzbDrone.SignalR;
 using Whisparr.Http;
 using Whisparr.Http.REST;
+using Whisparr.Http.REST.Attributes;
 
 namespace Whisparr.Api.V3.System.Tasks
 {
@@ -29,6 +30,16 @@ namespace Whisparr.Api.V3.System.Tasks
                                .Select(ConvertToResource)
                                .OrderBy(t => t.Name)
                                .ToList();
+        }
+
+        // GetResourceById answers null rather than throwing ModelNotFoundException, so an unknown id is a 204
+        [RestGetById]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(TaskResource), 200)]
+        [ProducesResponseType(204)]
+        public override ActionResult<TaskResource> GetResourceByIdWithErrorHandler(int id)
+        {
+            return base.GetResourceByIdWithErrorHandler(id);
         }
 
         protected override TaskResource GetResourceById(int id)

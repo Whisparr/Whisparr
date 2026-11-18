@@ -28,6 +28,8 @@ namespace Whisparr.Api.V3.Parse
 
         [HttpGet]
         [Produces("application/json")]
+        [ProducesResponseType(typeof(ParseResource), 200)]
+        [ProducesResponseType(204)]
         public ParseResource Parse(string title, string path)
         {
             if (title.IsNullOrWhiteSpace())

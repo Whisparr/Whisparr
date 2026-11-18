@@ -68,6 +68,7 @@ namespace Whisparr.Api.V3.Indexers
 
         [HttpPost]
         [Consumes("application/json")]
+        [ProducesResponseType(typeof(ReleaseResource), 200)]
         public async Task<object> DownloadRelease([FromBody] ReleaseResource release)
         {
             var remoteEpisode = _remoteEpisodeCache.Find(GetCacheKey(release));
@@ -107,7 +108,7 @@ namespace Whisparr.Api.V3.Indexers
 
                         if (episodes.Empty())
                         {
-                            throw new NzbDroneClientException(HttpStatusCode.NotFound, "Unable to parse episodes in the release");
+                            throw new NzbDroneClientException(HttpStatusCode.NotFound, "Unable to parse episodes in the release, will need to be manually provided");
                         }
 
                         remoteEpisode.Series = series;
@@ -115,7 +116,7 @@ namespace Whisparr.Api.V3.Indexers
                     }
                     else
                     {
-                        throw new NzbDroneClientException(HttpStatusCode.NotFound, "Unable to find matching series and episodes");
+                        throw new NzbDroneClientException(HttpStatusCode.NotFound, "Unable to find matching series and episodes, will need to be manually provided");
                     }
                 }
                 else if (remoteEpisode.Episodes.Empty())
@@ -134,7 +135,7 @@ namespace Whisparr.Api.V3.Indexers
 
                 if (remoteEpisode.Episodes.Empty())
                 {
-                    throw new NzbDroneClientException(HttpStatusCode.NotFound, "Unable to parse episodes in the release");
+                    throw new NzbDroneClientException(HttpStatusCode.NotFound, "Unable to parse episodes in the release, will need to be manually provided");
                 }
 
                 await _downloadService.DownloadReport(remoteEpisode, release.DownloadClientId);
@@ -142,7 +143,7 @@ namespace Whisparr.Api.V3.Indexers
             catch (ReleaseDownloadException ex)
             {
                 _logger.Error(ex, ex.Message);
-                throw new NzbDroneClientException(HttpStatusCode.Conflict, "Getting release from indexer failed");
+                throw new NzbDroneClientException(HttpStatusCode.Conflict, $"Getting release from indexer failed: {ex.Message}");
             }
 
             return release;

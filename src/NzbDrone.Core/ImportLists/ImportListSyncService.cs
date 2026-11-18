@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using NLog;
 using NzbDrone.Common.Extensions;
@@ -59,7 +59,7 @@ namespace NzbDrone.Core.ImportLists
 
         private void SyncList(ImportListDefinition definition)
         {
-            _logger.ProgressInfo(string.Format("Starting Import List Refresh for List {0}", definition.Name));
+            _logger.ProgressInfo("Starting Import List Refresh for List {0}", definition.Name);
 
             var listItems = _listFetcherAndParser.FetchSingleList(definition).ToList();
 
@@ -107,7 +107,7 @@ namespace NzbDrone.Core.ImportLists
                 }
 
                 // Check to see if series excluded
-                var excludedSeries = listExclusions.Where(s => s.TvdbId == item.TpdbSiteId).SingleOrDefault();
+                var excludedSeries = listExclusions.SingleOrDefault(s => s.TvdbId == item.TpdbSiteId);
 
                 if (excludedSeries != null)
                 {
@@ -179,9 +179,7 @@ namespace NzbDrone.Core.ImportLists
 
             _addSeriesService.AddSeries(seriesToAdd, true);
 
-            var message = string.Format("Import List Sync Completed. Items found: {0}, Series added: {1}", items.Count, seriesToAdd.Count);
-
-            _logger.ProgressInfo(message);
+            _logger.ProgressInfo("Import List Sync Completed. Items found: {0}, Series added: {1}", items.Count, seriesToAdd.Count);
         }
 
         public void Execute(ImportListSyncCommand message)

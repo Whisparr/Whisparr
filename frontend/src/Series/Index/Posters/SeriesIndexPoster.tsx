@@ -7,10 +7,10 @@ import Label from 'Components/Label';
 import IconButton from 'Components/Link/IconButton';
 import Link from 'Components/Link/Link';
 import SpinnerIconButton from 'Components/Link/SpinnerIconButton';
-import TagListConnector from 'Components/TagListConnector';
+import SeriesTagList from 'Components/SeriesTagList';
 import { icons } from 'Helpers/Props';
 import DeleteSeriesModal from 'Series/Delete/DeleteSeriesModal';
-import EditSeriesModalConnector from 'Series/Edit/EditSeriesModalConnector';
+import EditSeriesModal from 'Series/Edit/EditSeriesModal';
 import SeriesIndexProgressBar from 'Series/Index/ProgressBar/SeriesIndexProgressBar';
 import SeriesIndexPosterSelect from 'Series/Index/Select/SeriesIndexPosterSelect';
 import { Statistics } from 'Series/Series';
@@ -88,7 +88,7 @@ function SeriesIndexPoster(props: SeriesIndexPosterProps) {
     dispatch(
       executeCommand({
         name: REFRESH_SERIES,
-        seriesId,
+        seriesIds: [seriesId],
       })
     );
   }, [seriesId, dispatch]);
@@ -140,7 +140,9 @@ function SeriesIndexPoster(props: SeriesIndexPosterProps) {
   return (
     <div className={styles.content}>
       <div className={styles.posterContainer} title={title}>
-        {isSelectMode ? <SeriesIndexPosterSelect seriesId={seriesId} /> : null}
+        {isSelectMode ? (
+          <SeriesIndexPosterSelect seriesId={seriesId} titleSlug={titleSlug} />
+        ) : null}
 
         <Label className={styles.controls}>
           <SpinnerIconButton
@@ -148,6 +150,7 @@ function SeriesIndexPoster(props: SeriesIndexPosterProps) {
             name={icons.REFRESH}
             title={translate('RefreshSite')}
             isSpinning={isRefreshingSeries}
+            tabIndex={-1}
             onPress={onRefreshPress}
           />
 
@@ -157,6 +160,7 @@ function SeriesIndexPoster(props: SeriesIndexPosterProps) {
               name={icons.SEARCH}
               title={translate('SearchForMonitoredEpisodes')}
               isSpinning={isSearchingSeries}
+              tabIndex={-1}
               onPress={onSearchPress}
             />
           ) : null}
@@ -165,6 +169,8 @@ function SeriesIndexPoster(props: SeriesIndexPosterProps) {
             className={styles.action}
             name={icons.EDIT}
             title={translate('EditSite')}
+            aria-label={translate('EditSite')}
+            tabIndex={-1}
             onPress={onEditSeriesPress}
           />
         </Label>
@@ -191,6 +197,7 @@ function SeriesIndexPoster(props: SeriesIndexPosterProps) {
             size={250}
             lazy={false}
             overflow={true}
+            title={title}
             onError={onPosterLoadError}
             onLoad={onPosterLoad}
           />
@@ -253,7 +260,7 @@ function SeriesIndexPoster(props: SeriesIndexPosterProps) {
       {showTags && tags.length ? (
         <div className={styles.tags}>
           <div className={styles.tagsList}>
-            <TagListConnector tags={tags} />
+            <SeriesTagList tags={tags} />
           </div>
         </div>
       ) : null}
@@ -277,7 +284,7 @@ function SeriesIndexPoster(props: SeriesIndexPosterProps) {
         showTags={showTags}
       />
 
-      <EditSeriesModalConnector
+      <EditSeriesModal
         isOpen={isEditSeriesModalOpen}
         seriesId={seriesId}
         onModalClose={onEditSeriesModalClose}

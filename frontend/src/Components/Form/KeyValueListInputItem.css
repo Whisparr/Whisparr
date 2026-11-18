@@ -5,11 +5,12 @@
 
   &:last-child {
     margin-bottom: 0;
+    border-bottom: 0;
   }
 }
 
 .keyInputWrapper {
-  flex: 6 0 0;
+  flex: 1 0 0;
 }
 
 .valueInputWrapper {
@@ -25,4 +26,10 @@
 .valueInput {
   width: 100%;
   border: none;
+  background-color: transparent;
+  color: var(--textColor);
+
+  &::placeholder {
+    color: var(--helpTextColor);
+  }
 }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net;
 using FluentValidation.Results;
@@ -59,8 +59,7 @@ namespace NzbDrone.Core.Notifications.Emby
             try
             {
                 _logger.Debug("Testing connection to Emby/Jellyfin : {0}", settings.Address);
-
-                Notify(settings, "Test from Whisparr", "Success! MediaBrowser has been successfully configured!");
+                _proxy.TestConnection(settings);
             }
             catch (HttpException ex)
             {
@@ -68,11 +67,54 @@ namespace NzbDrone.Core.Notifications.Emby
                 {
                     return new ValidationFailure("ApiKey", "API Key is incorrect");
                 }
+                else
+                {
+                    _logger.Trace(ex, "Error when connecting to Emby/Jellyfin");
+                    return new ValidationFailure("Host", "Unable to send test message: " + ex.Message);
+                }
             }
             catch (Exception ex)
             {
                 _logger.Error(ex, "Unable to send test message");
                 return new ValidationFailure("Host", "Unable to send test message: " + ex.Message);
+            }
+
+            if (settings.Notify)
+            {
+                try
+                {
+                    Notify(settings, "Test from Sonarr", "Success! MediaBrowser has been successfully configured!");
+                }
+                catch (HttpException ex)
+                {
+                    if (ex.Response.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        return new ValidationFailure("Notify", "Unable to send notification to Emby. If you're using Jellyfin disable 'Send Notifications'");
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+
+            if (settings.Notify)
+            {
+                try
+                {
+                    Notify(settings, "Test from Sonarr", "Success! MediaBrowser has been successfully configured!");
+                }
+                catch (HttpException ex)
+                {
+                    if (ex.Response.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        return new ValidationFailure("Notify", "Unable to send notification to Emby. If you're using Jellyfin disable 'Send Notifications'");
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
             }
 
             return null;

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -202,7 +202,7 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport
 
             // Adding all the rejected decisions
             importResults.AddRange(decisions.Where(c => !c.Approved)
-                                            .Select(d => new ImportResult(d, d.Rejections.Select(r => r.Reason).ToArray())));
+                                            .Select(d => new ImportResult(d, d.Rejections.Select(r => r.Message).ToArray())));
 
             return importResults;
         }

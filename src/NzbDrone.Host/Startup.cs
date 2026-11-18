@@ -1,17 +1,17 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using NLog.Extensions.Logging;
 using NzbDrone.Common.EnvironmentInfo;
+using NzbDrone.Common.Http;
 using NzbDrone.Common.Instrumentation;
 using NzbDrone.Common.Processes;
 using NzbDrone.Common.Serializer;
@@ -21,6 +21,7 @@ using NzbDrone.Core.Instrumentation;
 using NzbDrone.Core.Lifecycle;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Host.AccessControl;
+using NzbDrone.Host.OpenApi;
 using NzbDrone.Http.Authentication;
 using NzbDrone.SignalR;
 using Whisparr.Api.V3.System;
@@ -47,19 +48,17 @@ namespace NzbDrone.Host
             services.AddLogging(b =>
             {
                 b.ClearProviders();
-                b.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
-                b.AddFilter("Microsoft.AspNetCore", Microsoft.Extensions.Logging.LogLevel.Warning);
-                b.AddFilter("Whisparr.Http.Authentication", LogLevel.Information);
+                b.SetMinimumLevel(LogLevel.Trace);
+                b.AddFilter("Microsoft.AspNetCore", LogLevel.Warning);
+                b.AddFilter("Microsoft.AspNetCore.HostFiltering", LogLevel.Information);
+                b.AddFilter("Microsoft.AspNetCore.HttpOverrides", LogLevel.Debug);
+                b.AddFilter("Whisparr.Http.Authentication.ApiKeyAuthenticationHandler", LogLevel.Information);
                 b.AddFilter("Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager", LogLevel.Error);
                 b.AddNLog();
             });
 
-            services.Configure<ForwardedHeadersOptions>(options =>
-            {
-                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
-                options.KnownNetworks.Clear();
-                options.KnownProxies.Clear();
-            });
+            services.AddOptions<ForwardedHeadersOptions>()
+                    .Configure<IConfigFileProvider>(ForwardedHeadersConfigurator.Configure);
 
             services.AddRouting(options => options.LowercaseUrls = true);
 
@@ -99,13 +98,20 @@ namespace NzbDrone.Host
                 {
                     Version = "3.0.0",
                     Title = "Whisparr",
-                    Description = "Whisparr API docs - The v3 API docs apply to both v2 versions of Whisparr. Some functionality may only be available in v2 of the Whisparr application.",
+                    Description = "Whisparr API docs - These API docs apply only to Whisparr v2." +
+                                  $"\n\nGenerated from {BuildInfo.AppName} {BuildInfo.Version} ({BuildInfo.Branch}).",
                     License = new OpenApiLicense
                     {
                         Name = "GPL-3.0",
-                        Url = new Uri("https://github.com/Whisparr/Whisparr/blob/develop/LICENSE")
+                        Url = new Uri("https://github.com/Whisparr/Whisparr/blob/v2-develop/LICENSE")
                     }
                 });
+
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, "Whisparr.Api.V3.xml");
+                if (File.Exists(xmlPath))
+                {
+                    c.IncludeXmlComments(xmlPath);
+                }
 
                 var apiKeyHeader = new OpenApiSecurityScheme
                 {
@@ -114,18 +120,13 @@ namespace NzbDrone.Host
                     Scheme = "apiKey",
                     Description = "Apikey passed as header",
                     In = ParameterLocation.Header,
-                    Reference = new OpenApiReference
-                    {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "X-Api-Key"
-                    },
                 };
 
                 c.AddSecurityDefinition("X-Api-Key", apiKeyHeader);
 
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                c.AddSecurityRequirement(document => new OpenApiSecurityRequirement
                 {
-                    { apiKeyHeader, Array.Empty<string>() }
+                    [new OpenApiSecuritySchemeReference(apiKeyHeader.Name, document)] = new List<string>(),
                 });
 
                 var apikeyQuery = new OpenApiSecurityScheme
@@ -135,11 +136,6 @@ namespace NzbDrone.Host
                     Scheme = "apiKey",
                     Description = "Apikey passed as query parameter",
                     In = ParameterLocation.Query,
-                    Reference = new OpenApiReference
-                    {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "apikey"
-                    },
                 };
 
                 c.AddServer(new OpenApiServer
@@ -154,12 +150,22 @@ namespace NzbDrone.Host
 
                 c.AddSecurityDefinition("apikey", apikeyQuery);
 
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                c.AddSecurityRequirement(document => new OpenApiSecurityRequirement
                 {
-                    { apikeyQuery, Array.Empty<string>() }
+                    [new OpenApiSecuritySchemeReference(apikeyQuery.Name, document)] = new List<string>(),
                 });
 
                 c.DescribeAllParametersInCamelCase();
+
+                // STJHttpUriConverter writes HttpUri as its full URI
+                c.MapType<HttpUri>(() => new OpenApiSchema { Type = JsonSchemaType.String, Format = "uri" });
+
+                c.CustomOperationIds(api => OperationIds.FromRoute(api.HttpMethod, api.RelativePath));
+                c.OperationFilter<SuccessStatusCodeOperationFilter>();
+                c.OperationFilter<AllowAnonymousOperationFilter>();
+                c.OperationFilter<FileUploadOperationFilter>();
+                c.SchemaFilter<CommandResourceSchemaFilter>();
+                c.RequestBodyFilter<RequiredRequestBodyFilter>();
             });
 
             services
@@ -237,6 +243,7 @@ namespace NzbDrone.Host
             }
 
             app.UseForwardedHeaders();
+            app.UseHostFiltering();
             app.UseMiddleware<LoggingMiddleware>();
             app.UsePathBase(new PathString(configFileProvider.UrlBase));
             app.UseExceptionHandler(new ExceptionHandlerOptions
@@ -247,6 +254,23 @@ namespace NzbDrone.Host
 
             app.UseRouting();
             app.UseCors();
+
+            // Served ahead of authentication so the API docs are reachable without an API key
+            app.UseSwagger(c =>
+            {
+                c.RouteTemplate = "docs/{documentName}/openapi.json";
+            });
+
+            app.UseSwaggerUI(c =>
+            {
+                // Relative to /docs/, so it keeps working behind a URL base
+                c.SwaggerEndpoint("v3/openapi.json", "Whisparr API v3");
+                c.RoutePrefix = "docs";
+                c.DocumentTitle = "Whisparr API";
+                c.DefaultModelsExpandDepth(-1);
+                c.DisplayRequestDuration();
+            });
+
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseResponseCompression();
@@ -260,15 +284,6 @@ namespace NzbDrone.Host
             app.UseMiddleware<BufferingMiddleware>(new List<string> { "/api/v3/command" });
 
             app.UseWebSockets();
-
-            // Enable middleware to serve generated Swagger as a JSON endpoint.
-            if (BuildInfo.IsDebug)
-            {
-                app.UseSwagger(c =>
-                {
-                    c.RouteTemplate = "docs/{documentName}/openapi.json";
-                });
-            }
 
             app.UseEndpoints(x =>
             {

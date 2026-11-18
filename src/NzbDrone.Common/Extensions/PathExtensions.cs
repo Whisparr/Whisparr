@@ -25,8 +25,6 @@ namespace NzbDrone.Common.Extensions
         private static readonly string UPDATE_CLIENT_FOLDER_NAME = "Whisparr.Update" + Path.DirectorySeparatorChar;
         private static readonly string UPDATE_LOG_FOLDER_NAME = "UpdateLogs" + Path.DirectorySeparatorChar;
 
-        private static readonly Regex PARENT_PATH_END_SLASH_REGEX = new Regex(@"(?<!:)\\$", RegexOptions.Compiled);
-
         public static string CleanFilePath(this string path)
         {
             if (path.IsNotNullOrWhiteSpace())
@@ -61,6 +59,10 @@ namespace NzbDrone.Common.Extensions
                 return false;
             }
 
+            // Normalize paths to ensure unicode characters are represented the same way
+            firstPath = firstPath.Normalize();
+            secondPath = secondPath?.Normalize();
+
             if (!comparison.HasValue)
             {
                 comparison = DiskProviderBase.PathStringComparison;
@@ -92,7 +94,7 @@ namespace NzbDrone.Common.Extensions
                 throw new NotParentException("{0} is not a child of {1}", childPath, parentPath);
             }
 
-            return childPath.Substring(parentPath.Length).Trim(Path.DirectorySeparatorChar);
+            return childPath.Substring(parentPath.Length).Trim('\\', '/');
         }
 
         public static string GetParentPath(this string childPath)
@@ -118,11 +120,9 @@ namespace NzbDrone.Common.Extensions
 
         public static string GetCleanPath(this string path)
         {
-            var cleanPath = OsInfo.IsWindows
-                ? PARENT_PATH_END_SLASH_REGEX.Replace(path, "")
-                : path.TrimEnd(Path.DirectorySeparatorChar);
+            var osPath = new OsPath(path);
 
-            return cleanPath;
+            return osPath == OsPath.Null ? null : osPath.PathWithoutTrailingSlash;
         }
 
         public static bool IsParentPath(this string parentPath, string childPath)

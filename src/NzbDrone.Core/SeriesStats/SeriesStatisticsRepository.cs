@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Dapper;
@@ -49,6 +49,7 @@ namespace NzbDrone.Core.SeriesStats
 
                 e.SizeOnDisk = file?.SizeOnDisk ?? 0;
                 e.ReleaseGroupsString = file?.ReleaseGroupsString;
+                e.EpisodeFileQualitiesString = file?.EpisodeFileQualitiesString;
             });
 
             return episodesResult;
@@ -80,7 +81,8 @@ namespace NzbDrone.Core.SeriesStats
                              SUM(CASE WHEN (""Monitored"" = {trueIndicator} AND ""AirDateUtc"" <= @currentDate) OR ""EpisodeFileId"" > 0 THEN 1 ELSE 0 END) AS EpisodeCount,
                              SUM(CASE WHEN ""EpisodeFileId"" > 0 THEN 1 ELSE 0 END) AS EpisodeFileCount,
                              MIN(CASE WHEN ""AirDateUtc"" < @currentDate OR ""Monitored"" = {falseIndicator} THEN NULL ELSE ""AirDateUtc"" END) AS NextAiringString,
-                             MAX(CASE WHEN ""AirDateUtc"" >= @currentDate OR ""Monitored"" = {falseIndicator} THEN NULL ELSE ""AirDateUtc"" END) AS PreviousAiringString", parameters)
+                             MAX(CASE WHEN ""AirDateUtc"" >= @currentDate OR ""Monitored"" = {falseIndicator} THEN NULL ELSE ""AirDateUtc"" END) AS PreviousAiringString",
+                parameters)
             .GroupBy<Episode>(x => x.SeriesId)
             .GroupBy<Episode>(x => x.SeasonNumber);
         }
@@ -93,7 +95,8 @@ namespace NzbDrone.Core.SeriesStats
                 .Select(@"""SeriesId"",
                             ""SeasonNumber"",
                             SUM(COALESCE(""Size"", 0)) AS SizeOnDisk,
-                            GROUP_CONCAT(""ReleaseGroup"", '|') AS ReleaseGroupsString")
+                            GROUP_CONCAT(""ReleaseGroup"", '|') AS ReleaseGroupsString,
+                            GROUP_CONCAT(JSON_EXTRACT(""Quality"", '$.quality'), '|') AS EpisodeFileQualitiesString")
                 .GroupBy<EpisodeFile>(x => x.SeriesId)
                 .GroupBy<EpisodeFile>(x => x.SeasonNumber);
             }
@@ -102,7 +105,8 @@ namespace NzbDrone.Core.SeriesStats
                 .Select(@"""SeriesId"",
                             ""SeasonNumber"",
                             SUM(COALESCE(""Size"", 0)) AS SizeOnDisk,
-                            string_agg(""ReleaseGroup"", '|') AS ReleaseGroupsString")
+                            string_agg(DISTINCT ""ReleaseGroup"", '|') AS ReleaseGroupsString,
+                            string_agg(DISTINCT ""Quality""::json->>'quality', '|') AS EpisodeFileQualitiesString")
                 .GroupBy<EpisodeFile>(x => x.SeriesId)
                 .GroupBy<EpisodeFile>(x => x.SeasonNumber);
         }

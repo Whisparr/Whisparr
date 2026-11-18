@@ -8,6 +8,7 @@ namespace NzbDrone.Core.Profiles.Releases
     public interface IReleaseProfileService
     {
         List<ReleaseProfile> All();
+        List<ReleaseProfile> AllExcludedForTag(int tagId);
         List<ReleaseProfile> AllForTag(int tagId);
         List<ReleaseProfile> AllForTags(HashSet<int> tagIds);
         List<ReleaseProfile> EnabledForTags(HashSet<int> tagIds, int indexerId);
@@ -35,6 +36,11 @@ namespace NzbDrone.Core.Profiles.Releases
             return all;
         }
 
+        public List<ReleaseProfile> AllExcludedForTag(int tagId)
+        {
+            return _repo.All().Where(r => r.ExcludedTags.Contains(tagId)).ToList();
+        }
+
         public List<ReleaseProfile> AllForTag(int tagId)
         {
             return _repo.All().Where(r => r.Tags.Contains(tagId)).ToList();
@@ -42,7 +48,7 @@ namespace NzbDrone.Core.Profiles.Releases
 
         public List<ReleaseProfile> AllForTags(HashSet<int> tagIds)
         {
-            return _repo.All().Where(r => r.Tags.Intersect(tagIds).Any() || r.Tags.Empty()).ToList();
+            return _repo.All().Where(r => (r.Tags.Intersect(tagIds).Any() || r.Tags.Empty()) && !r.ExcludedTags.Intersect(tagIds).Any()).ToList();
         }
 
         public List<ReleaseProfile> EnabledForTags(HashSet<int> tagIds, int indexerId)

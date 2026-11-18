@@ -22,6 +22,7 @@ namespace Whisparr.Api.V3.Config
         public string ChownGroup { get; set; }
 
         public EpisodeTitleRequiredType EpisodeTitleRequired { get; set; }
+        public bool SkipFreeSpaceCheckWhenGrabbing { get; set; }
         public bool SkipFreeSpaceCheckWhenImporting { get; set; }
         public int MinimumFreeSpaceWhenImporting { get; set; }
         public bool CopyUsingHardlinks { get; set; }
@@ -30,6 +31,7 @@ namespace Whisparr.Api.V3.Config
         public bool ImportExtraFiles { get; set; }
         public string ExtraFileExtensions { get; set; }
         public bool EnableMediaInfo { get; set; }
+        public string UserRejectedExtensions { get; set; }
     }
 
     public static class MediaManagementConfigResourceMapper
@@ -53,13 +55,15 @@ namespace Whisparr.Api.V3.Config
 
                 EpisodeTitleRequired = model.EpisodeTitleRequired,
                 SkipFreeSpaceCheckWhenImporting = model.SkipFreeSpaceCheckWhenImporting,
+                SkipFreeSpaceCheckWhenGrabbing = model.SkipFreeSpaceCheckWhenGrabbing,
                 MinimumFreeSpaceWhenImporting = model.MinimumFreeSpaceWhenImporting,
                 CopyUsingHardlinks = model.CopyUsingHardlinks,
                 UseScriptImport = model.UseScriptImport,
                 ScriptImportPath = model.ScriptImportPath,
                 ImportExtraFiles = model.ImportExtraFiles,
                 ExtraFileExtensions = model.ExtraFileExtensions,
-                EnableMediaInfo = model.EnableMediaInfo
+                EnableMediaInfo = model.EnableMediaInfo,
+                UserRejectedExtensions = model.UserRejectedExtensions
             };
         }
     }

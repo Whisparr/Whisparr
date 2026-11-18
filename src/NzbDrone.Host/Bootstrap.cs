@@ -1,10 +1,10 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
+using System.Net.Security;
 using System.Reflection;
 using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using DryIoc;
 using DryIoc.Microsoft.DependencyInjection;
@@ -20,10 +20,12 @@ using NzbDrone.Common.Composition.Extensions;
 using NzbDrone.Common.EnvironmentInfo;
 using NzbDrone.Common.Exceptions;
 using NzbDrone.Common.Extensions;
+using NzbDrone.Common.Http;
 using NzbDrone.Common.Instrumentation;
 using NzbDrone.Common.Instrumentation.Extensions;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Datastore.Extensions;
+using Whisparr.Http.ClientSchema;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 using PostgresOptions = NzbDrone.Core.Datastore.PostgresOptions;
 
@@ -130,6 +132,7 @@ namespace NzbDrone.Host
             var sslPort = config.GetValue("Whisparr:Server:SslPort", config.GetValue(nameof(ConfigFileProvider.SslPort), 8008));
             var enableSsl = config.GetValue("Whisparr:Server:EnableSsl", config.GetValue(nameof(ConfigFileProvider.EnableSsl), false));
             var sslCertPath = config.GetValue("Whisparr:Server:SslCertPath", config.GetValue<string>(nameof(ConfigFileProvider.SslCertPath)));
+            var sslKeyPath = config.GetValue("Whisparr:Server:SslKeyPath", config.GetValue<string>(nameof(ConfigFileProvider.SslKeyPath)));
             var sslCertPassword = config.GetValue("Whisparr:Server:SslCertPassword", config.GetValue<string>(nameof(ConfigFileProvider.SslCertPassword)));
 
             var urls = new List<string> { BuildUrl("http", bindAddress, port) };
@@ -152,6 +155,8 @@ namespace NzbDrone.Host
                         .AddNzbDroneLogger()
                         .AddDatabase()
                         .AddStartupContext(context);
+
+                    SchemaBuilder.Initialize(c);
                 })
                 .ConfigureServices(services =>
                 {
@@ -167,7 +172,13 @@ namespace NzbDrone.Host
                         {
                             options.ConfigureHttpsDefaults(configureOptions =>
                             {
-                                configureOptions.ServerCertificate = ValidateSslCertificate(sslCertPath, sslCertPassword);
+                                var sslContext = ValidateSslCertificate(sslCertPath, sslKeyPath, sslCertPassword);
+
+                                configureOptions.ServerCertificate = sslContext.TargetCertificate;
+                                configureOptions.OnAuthenticate = (_, authOptions) =>
+                                {
+                                    authOptions.ServerCertificateContext = sslContext;
+                                };
                             });
                         }
                     });
@@ -230,7 +241,7 @@ namespace NzbDrone.Host
             {
                 return new ConfigurationBuilder()
                     .AddXmlFile(configPath, optional: true, reloadOnChange: false)
-                    .AddInMemoryCollection(new List<KeyValuePair<string, string>> { new ("dataProtectionFolder", appFolder.GetDataProtectionPath()) })
+                    .AddInMemoryCollection(new List<KeyValuePair<string, string>> { new("dataProtectionFolder", appFolder.GetDataProtectionPath()) })
                     .AddEnvironmentVariables()
                     .Build();
             }
@@ -247,13 +258,11 @@ namespace NzbDrone.Host
             return $"{scheme}://{bindAddress}:{port}";
         }
 
-        private static X509Certificate2 ValidateSslCertificate(string cert, string password)
+        private static SslStreamCertificateContext ValidateSslCertificate(string cert, string key, string password)
         {
-            X509Certificate2 certificate;
-
             try
             {
-                certificate = new X509Certificate2(cert, password, X509KeyStorageFlags.DefaultKeySet);
+                return SslCertificateLoader.LoadCertificateContext(cert, key, password);
             }
             catch (CryptographicException ex)
             {
@@ -265,8 +274,10 @@ namespace NzbDrone.Host
 
                 throw new WhisparrStartupException(ex);
             }
-
-            return certificate;
+            catch (Exception ex)
+            {
+                throw new WhisparrStartupException(ex);
+            }
         }
     }
 }

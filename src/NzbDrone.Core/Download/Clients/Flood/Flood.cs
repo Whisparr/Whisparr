@@ -7,8 +7,10 @@ using NLog;
 using NzbDrone.Common.Disk;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Common.Http;
+using NzbDrone.Core.Blocklisting;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Download.Clients.Flood.Models;
+using NzbDrone.Core.Localization;
 using NzbDrone.Core.MediaFiles.TorrentInfo;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.RemotePathMappings;
@@ -28,8 +30,10 @@ namespace NzbDrone.Core.Download.Clients.Flood
                         IConfigService configService,
                         IDiskProvider diskProvider,
                         IRemotePathMappingService remotePathMappingService,
-                        Logger logger)
-            : base(torrentFileInfoReader, httpClient, configService, diskProvider, remotePathMappingService, logger)
+                        IBlocklistService blocklistService,
+                        Logger logger,
+                        ILocalizationService localizationService)
+            : base(torrentFileInfoReader, httpClient, configService, diskProvider, remotePathMappingService, blocklistService, logger, localizationService)
         {
             _proxy = proxy;
             _downloadSeedConfigProvider = downloadSeedConfigProvider;
@@ -81,7 +85,7 @@ namespace NzbDrone.Core.Download.Clients.Flood
         }
 
         public override string Name => "Flood";
-        public override ProviderMessage Message => new ProviderMessage("Whisparr will handle automatic removal of torrents based on the current seed criteria in Settings -> Indexers", ProviderMessageType.Info);
+        public override ProviderMessage Message => new ProviderMessage(_localizationService.GetLocalizedString("DownloadClientFloodSettingsRemovalInfo"), ProviderMessageType.Info);
 
         protected override string AddFromTorrentFile(RemoteEpisode remoteEpisode, string hash, string filename, byte[] fileContent)
         {
@@ -112,9 +116,14 @@ namespace NzbDrone.Core.Download.Clients.Flood
                     continue;
                 }
 
+                if (Settings.PostImportTags.All(tag => properties.Tags.Contains(tag)))
+                {
+                    continue;
+                }
+
                 var item = new DownloadClientItem
                 {
-                    DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this, false),
+                    DownloadClientInfo = DownloadClientItemClientInfo.FromDownloadClient(this, Settings.PostImportTags.Any()),
                     DownloadId = torrent.Key,
                     Title = properties.Name,
                     OutputPath = _remotePathMappingService.RemapRemoteToLocal(Settings.Host, new OsPath(properties.Directory)),
@@ -243,7 +252,7 @@ namespace NzbDrone.Core.Download.Clients.Flood
 
             return new DownloadClientInfo
             {
-                IsLocalhost = Settings.Host == "127.0.0.1" || Settings.Host == "::1" || Settings.Host == "localhost",
+                IsLocalhost = Settings.Host.IsLocalhostAddress(),
                 OutputRootFolders = new List<OsPath> { _remotePathMappingService.RemapRemoteToLocal(Settings.Host, new OsPath(destDir)) }
             };
         }

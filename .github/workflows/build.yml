@@ -5,26 +5,23 @@ on:
     branches:
       - v2-develop
       - v2
-    paths-ignore:
-      - "src/Whisparr.Api.*/openapi.json"
   pull_request:
     branches:
       - v2-develop
       - v2
     paths-ignore:
       - "src/NzbDrone.Core/Localization/Core/**"
-      - "src/Whisparr.Api.*/openapi.json"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 env:
-  FRAMEWORK: net6.0
+  FRAMEWORK: net10.0
   RAW_BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
   WHISPARR_MAJOR_VERSION: 2
-  VERSION: 2.2.0
-  WHISPARR_ASSEMBLY_VERSION: 2.2.0.${{ github.run_number }}
+  VERSION: 2.3.0
+  WHISPARR_ASSEMBLY_VERSION: 2.3.0.${{ github.run_number }}
 
 jobs:
   prepare:
@@ -89,7 +86,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Check out
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -106,14 +103,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
 
       - name: Yarn Install
         run: yarn install --frozen-lockfile
@@ -125,7 +122,7 @@ jobs:
         run: yarn build --env production
 
       - name: Publish UI Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: build_ui
           path: _output/UI/**/*
@@ -152,7 +149,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Check out
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -170,10 +167,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        postgres-version: [14, 15, 16]
+        postgres-version: [16, 17, 18]
     steps:
       - name: Check out
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -212,7 +209,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Check out
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Test
@@ -226,6 +223,43 @@ jobs:
           binary_artifact: ${{ matrix.binary_artifact }}
           binary_path: ${{ matrix.binary_path }}
 
+  api_docs:
+    needs: [prepare, backend]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Binary Artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: build-linux-x64
+          path: _output
+
+      - name: Generate OpenAPI Document
+        shell: bash
+        run: |
+          BIN="_output/linux-x64/${{ needs.prepare.outputs.framework }}/Whisparr/Whisparr"
+          chmod +x "$BIN"
+          "$BIN" -nobrowser -nosingleinstancecheck -data="$RUNNER_TEMP/whisparr" &
+          PID=$!
+
+          # 503 while starting up, so poll until the document is served
+          for _ in $(seq 1 60); do
+            if curl -sf -o openapi.json http://localhost:6969/docs/v3/openapi.json; then
+              break
+            fi
+            sleep 2
+          done
+
+          kill "$PID" || true
+
+          jq -e '.paths | length > 0' openapi.json > /dev/null
+          echo "$(jq '.paths | length' openapi.json) paths documented"
+
+      - name: Upload OpenAPI Document
+        uses: actions/upload-artifact@v7
+        with:
+          name: api-docs
+          path: openapi.json
+
   deploy:
     needs:
       [
@@ -235,6 +269,7 @@ jobs:
         unit_test,
         unit_test_postgres,
         integration_test,
+        api_docs,
       ]
     secrets: inherit
     uses: ./.github/workflows/deploy.yml

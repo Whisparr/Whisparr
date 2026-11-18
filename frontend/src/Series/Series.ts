@@ -1,5 +1,6 @@
 import ModelBase from 'App/ModelBase';
 import Language from 'Language/Language';
+import Quality from 'Quality/Quality';
 
 export type SeriesType = 'standard' | 'jav';
 export type SeriesStatus = 'continuing' | 'ended' | 'upcoming' | 'deleted';
@@ -8,12 +9,8 @@ export type SeriesMonitor =
   | 'future'
   | 'missing'
   | 'existing'
-  | 'recent'
-  | 'pilot'
   | 'firstSeason'
-  | 'lastSeason'
-  | 'monitorSpecials'
-  | 'unmonitorSpecials'
+  | 'latestSeason'
   | 'none';
 
 export type MonitorNewItems = 'all' | 'none';
@@ -33,6 +30,7 @@ export interface Statistics {
   percentOfEpisodes: number;
   previousAiring?: Date;
   releaseGroups: string[];
+  episodeFileQualities: Quality[];
   sizeOnDisk: number;
   totalEpisodeCount: number;
 }
@@ -69,7 +67,8 @@ interface Series extends ModelBase {
   certification: string;
   cleanTitle: string;
   ended: boolean;
-  firstAired: string;
+  firstAired?: string;
+  lastAired?: string;
   genres: string[];
   images: Image[];
   imdbId: string;
@@ -89,7 +88,7 @@ interface Series extends ModelBase {
   seasons: Season[];
   seriesType: SeriesType;
   sortTitle: string;
-  statistics: Statistics;
+  statistics?: Statistics;
   status: SeriesStatus;
   tags: number[];
   title: string;

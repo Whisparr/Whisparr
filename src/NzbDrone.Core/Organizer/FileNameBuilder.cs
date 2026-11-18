@@ -5,7 +5,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Diacritical;
 using NLog;
 using NzbDrone.Common.Cache;
 using NzbDrone.Common.Disk;
@@ -90,6 +89,7 @@ namespace NzbDrone.Core.Organizer
             { "geo", "kat" },
             { "ger", "deu" },
             { "gre", "ell" },
+            { "gsw", "deu" },
             { "ice", "isl" },
             { "mac", "mkd" },
             { "mao", "mri" },
@@ -190,6 +190,16 @@ namespace NzbDrone.Core.Organizer
 
             if (!namingConfig.RenameEpisodes)
             {
+                // When renaming is disabled, prefer the actual filename on disk over the SceneName.
+                // SceneName comes from the download client's release title which may differ from
+                // the actual filename (e.g., missing resolution/codec info).
+                var originalFileName = GetOriginalFileName(episodeFile, true);
+
+                if (originalFileName.IsNotNullOrWhiteSpace())
+                {
+                    return CleanFileName(originalFileName) + extension;
+                }
+
                 return GetOriginalTitle(episodeFile, true) + extension;
             }
 
@@ -373,7 +383,7 @@ namespace NzbDrone.Core.Organizer
             title = ScenifyReplaceChars.Replace(title, " ");
             title = ScenifyRemoveChars.Replace(title, string.Empty);
 
-            return title;
+            return title.RemoveDiacritics();
         }
 
         public static string TitleThe(string title)
@@ -400,7 +410,7 @@ namespace NzbDrone.Core.Organizer
                 return title;
             }
 
-            // Regex match incase the year in the title doesn't match the year, for whatever reason.
+            // Regex match in case the year in the title doesn't match the year, for whatever reason.
             if (YearRegex.IsMatch(title))
             {
                 return title;
@@ -417,7 +427,7 @@ namespace NzbDrone.Core.Organizer
                 return CleanTitleThe(title);
             }
 
-            // Regex match incase the year in the title doesn't match the year, for whatever reason.
+            // Regex match in case the year in the title doesn't match the year, for whatever reason.
             if (YearRegex.IsMatch(title))
             {
                 var splitReturn = YearRegex.Split(title);

@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using Equ;
 using FluentValidation;
 using NzbDrone.Core.Annotations;
 using NzbDrone.Core.Validation;
@@ -15,7 +18,7 @@ namespace NzbDrone.Core.Indexers.HDBits
         }
     }
 
-    public class HDBitsSettings : ITorrentIndexerSettings
+    public class HDBitsSettings : PropertywiseEquatable<HDBitsSettings>, ITorrentIndexerSettings
     {
         private static readonly HDBitsSettingsValidator Validator = new HDBitsSettingsValidator();
 
@@ -23,6 +26,7 @@ namespace NzbDrone.Core.Indexers.HDBits
         {
             BaseUrl = "https://hdbits.org";
             MinimumSeeders = IndexerDefaults.MINIMUM_SEEDERS;
+            FailDownloads = Array.Empty<int>();
         }
 
         [FieldDefinition(0, Label = "Username", Privacy = PrivacyLevel.UserName)]
@@ -39,6 +43,15 @@ namespace NzbDrone.Core.Indexers.HDBits
 
         [FieldDefinition(4)]
         public SeedCriteriaSettings SeedCriteria { get; set; } = new SeedCriteriaSettings();
+
+        [FieldDefinition(8, Type = FieldType.Checkbox, Label = "Reject Blocklisted Torrent Hashes While Grabbing", HelpText = "If a torrent is blocked by hash it may not properly be rejected during RSS/Search for some indexers, enabling this will allow it to be rejected after the torrent is grabbed, but before it is sent to the client.", Advanced = true)]
+        public bool RejectBlocklistedTorrentHashesWhileGrabbing { get; set; }
+
+        [FieldDefinition(9, Type = FieldType.Checkbox, Label = "IndexerSettingsRejectTorrentFilesWithBlockedExtensions", HelpText = "IndexerSettingsRejectTorrentFilesWithBlockedExtensionsHelpText", Advanced = true)]
+        public bool RejectTorrentFilesWithBlockedExtensionsWhileGrabbing { get; set; }
+
+        [FieldDefinition(10, Type = FieldType.Select, SelectOptions = typeof(FailDownloads), Label = "Fail Downloads", HelpText = "Mark downloads containing these file types as failed", Advanced = true)]
+        public IEnumerable<int> FailDownloads { get; set; }
 
         public NzbDroneValidationResult Validate()
         {

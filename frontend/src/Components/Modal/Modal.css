@@ -19,6 +19,7 @@
 .modal {
   position: relative;
   display: flex;
+  max-width: 90%;
   max-height: 90%;
   border-radius: 6px;
   opacity: 1;
@@ -29,15 +30,15 @@
   overflow: hidden !important;
 }
 
-.modalOpenIOS {
-  position: fixed;
-  right: 0;
-  left: 0;
-}
-
 /*
  * Sizes
  */
+
+.extraSmall {
+  composes: modal;
+
+  width: 320px;
+}
 
 .small {
   composes: modal;
@@ -63,7 +64,6 @@
   width: 1280px;
 }
 
-
 .extraExtraLarge {
   composes: modal;
 
@@ -83,13 +83,6 @@
 }
 
 @media only screen and (max-width: $breakpointMedium) {
-  .modal.small,
-  .modal.medium {
-    width: 90%;
-  }
-}
-
-@media only screen and (max-width: $breakpointSmall) {
   .modalContainer {
     position: fixed;
   }

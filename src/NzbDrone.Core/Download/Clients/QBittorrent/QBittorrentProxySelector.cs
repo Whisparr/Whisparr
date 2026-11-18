@@ -26,9 +26,8 @@ namespace NzbDrone.Core.Download.Clients.QBittorrent
         Dictionary<string, QBittorrentLabel> GetLabels(QBittorrentSettings settings);
         void SetTorrentSeedingConfiguration(string hash, TorrentSeedConfiguration seedConfiguration, QBittorrentSettings settings);
         void MoveTorrentToTopInQueue(string hash, QBittorrentSettings settings);
-        void PauseTorrent(string hash, QBittorrentSettings settings);
-        void ResumeTorrent(string hash, QBittorrentSettings settings);
         void SetForceStart(string hash, bool enabled, QBittorrentSettings settings);
+        void AddTags(string hash, IEnumerable<string> tags, QBittorrentSettings settings);
     }
 
     public interface IQBittorrentProxySelector

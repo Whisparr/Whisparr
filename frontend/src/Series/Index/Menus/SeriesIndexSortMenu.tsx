@@ -10,7 +10,7 @@ interface SeriesIndexSortMenuProps {
   sortKey?: string;
   sortDirection?: SortDirection;
   isDisabled: boolean;
-  onSortSelect(sortKey: string): unknown;
+  onSortSelect(sortKey: string): void;
 }
 
 function SeriesIndexSortMenu(props: SeriesIndexSortMenuProps) {
@@ -124,7 +124,7 @@ function SeriesIndexSortMenu(props: SeriesIndexSortMenuProps) {
           sortDirection={sortDirection}
           onPress={onSortSelect}
         >
-          {translate('LatestSeason')}
+          {translate('LatestYear')}
         </SortMenuItem>
 
         <SortMenuItem
@@ -143,6 +143,15 @@ function SeriesIndexSortMenu(props: SeriesIndexSortMenuProps) {
           onPress={onSortSelect}
         >
           {translate('SizeOnDisk')}
+        </SortMenuItem>
+
+        <SortMenuItem
+          name="averageSizePerEpisode"
+          sortKey={sortKey}
+          sortDirection={sortDirection}
+          onPress={onSortSelect}
+        >
+          {translate('AverageSizePerEpisode')}
         </SortMenuItem>
 
         <SortMenuItem

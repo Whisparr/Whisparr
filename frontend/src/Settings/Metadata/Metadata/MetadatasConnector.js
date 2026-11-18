@@ -41,7 +41,7 @@ class MetadatasConnector extends Component {
 }
 
 MetadatasConnector.propTypes = {
-  fetchMetadata: PropTypes.func.isRequired
+  fetchMetadata: PropTypes.func
 };
 
 export default connect(createMapStateToProps, mapDispatchToProps)(MetadatasConnector);

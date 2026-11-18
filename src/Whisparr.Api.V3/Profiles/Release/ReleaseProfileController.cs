@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Indexers;
 using NzbDrone.Core.Profiles.Releases;
+using NzbDrone.Core.Tags;
 using Whisparr.Http;
 using Whisparr.Http.REST;
 using Whisparr.Http.REST.Attributes;
@@ -16,15 +17,17 @@ namespace Whisparr.Api.V3.Profiles.Release
     {
         private readonly IReleaseProfileService _profileService;
         private readonly IIndexerFactory _indexerFactory;
+        private readonly ITagService _tagService;
 
-        public ReleaseProfileController(IReleaseProfileService profileService, IIndexerFactory indexerFactory)
+        public ReleaseProfileController(IReleaseProfileService profileService, IIndexerFactory indexerFactory, ITagService tagService)
         {
             _profileService = profileService;
             _indexerFactory = indexerFactory;
+            _tagService = tagService;
 
             SharedValidator.RuleFor(d => d).Custom((restriction, context) =>
             {
-                if (restriction.MapRequired().Empty() && restriction.MapIgnored().Empty())
+                if (restriction.MapRequired().Empty() && restriction.MapIgnored().Empty() && !restriction.AirDateRestriction)
                 {
                     context.AddFailure(nameof(ReleaseProfile.Required), "'Must contain' or 'Must not contain' is required");
                 }
@@ -44,6 +47,11 @@ namespace Whisparr.Api.V3.Profiles.Release
                     context.AddFailure(nameof(ReleaseProfile.IndexerId), "Indexer does not exist");
                 }
             });
+
+            SharedValidator.RuleFor(d => d.Tags.Intersect(d.ExcludedTags))
+                .Empty()
+                .WithName("ExcludedTags")
+                .WithMessage(d => $"'{string.Join(", ", _tagService.GetTags(d.Tags.Intersect(d.ExcludedTags)).Select(t => t.Label))}' cannot be in both 'Tags' and 'Excluded Tags'");
         }
 
         [RestPostById]

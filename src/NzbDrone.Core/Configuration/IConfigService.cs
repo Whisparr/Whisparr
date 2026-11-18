@@ -30,6 +30,7 @@ namespace NzbDrone.Core.Configuration
         bool CreateEmptySeriesFolders { get; set; }
         bool DeleteEmptyFolders { get; set; }
         FileDateType FileDate { get; set; }
+        bool SkipFreeSpaceCheckWhenGrabbing { get; set; }
         bool SkipFreeSpaceCheckWhenImporting { get; set; }
         int MinimumFreeSpaceWhenImporting { get; set; }
         bool CopyUsingHardlinks { get; set; }
@@ -40,6 +41,7 @@ namespace NzbDrone.Core.Configuration
         string ExtraFileExtensions { get; set; }
         RescanAfterRefreshType RescanAfterRefresh { get; set; }
         EpisodeTitleRequiredType EpisodeTitleRequired { get; set; }
+        string UserRejectedExtensions { get; set; }
 
         // Permissions (Media Management)
         bool SetPermissionsLinux { get; set; }

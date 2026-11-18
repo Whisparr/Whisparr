@@ -66,12 +66,19 @@ namespace NzbDrone.Core.Backup
         {
             _logger.ProgressInfo("Starting Backup");
 
+            var backupFolder = GetBackupFolder(backupType);
+
             _diskProvider.EnsureFolder(_backupTempFolder);
-            _diskProvider.EnsureFolder(GetBackupFolder(backupType));
+            _diskProvider.EnsureFolder(backupFolder);
+
+            if (!_diskProvider.FolderWritable(backupFolder))
+            {
+                throw new UnauthorizedAccessException($"Backup folder {backupFolder} is not writable");
+            }
 
             var dateNow = DateTime.Now;
             var backupFilename = $"whisparr_backup_v{BuildInfo.Version}_{dateNow:yyyy.MM.dd_HH.mm.ss}.zip";
-            var backupPath = Path.Combine(GetBackupFolder(backupType), backupFilename);
+            var backupPath = Path.Combine(backupFolder, backupFilename);
 
             Cleanup();
 
@@ -90,6 +97,8 @@ namespace NzbDrone.Core.Backup
             _diskProvider.DeleteFile(Path.Combine(_backupTempFolder, "whisparr2.db-journal"));
 
             _archiveService.CreateZip(backupPath, _diskProvider.GetFiles(_backupTempFolder, false));
+
+            Cleanup();
 
             _logger.ProgressDebug("Backup zip created");
         }

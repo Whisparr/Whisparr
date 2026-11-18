@@ -116,7 +116,7 @@ namespace Whisparr.Api.V3.Indexers
                 TemporarilyRejected = model.TemporarilyRejected,
                 Rejected = model.Rejected,
                 TvdbId = releaseInfo.TvdbId,
-                Rejections = model.Rejections.Select(r => r.Reason).ToList(),
+                Rejections = model.Rejections.Select(r => r.Message).ToList(),
                 PublishDate = releaseInfo.PublishDate,
                 CommentUrl = releaseInfo.CommentUrl,
                 DownloadUrl = releaseInfo.DownloadUrl,

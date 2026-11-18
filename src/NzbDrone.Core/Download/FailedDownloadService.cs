@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using NzbDrone.Common.EnvironmentInfo;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Download.TrackedDownloads;
 using NzbDrone.Core.History;
@@ -11,8 +12,8 @@ namespace NzbDrone.Core.Download
 {
     public interface IFailedDownloadService
     {
-        void MarkAsFailed(int historyId, bool skipRedownload = false);
-        void MarkAsFailed(TrackedDownload trackedDownload, bool skipRedownload = false);
+        void MarkAsFailed(int historyId, string message = null, string source = null, bool skipRedownload = false);
+        void MarkAsFailed(TrackedDownload trackedDownload, string message = null, string source = null, bool skipRedownload = false);
         void Check(TrackedDownload trackedDownload);
         void ProcessFailed(TrackedDownload trackedDownload);
     }
@@ -30,17 +31,22 @@ namespace NzbDrone.Core.Download
             _eventAggregator = eventAggregator;
         }
 
-        public void MarkAsFailed(int historyId, bool skipRedownload = false)
+        public void MarkAsFailed(int historyId, string message, string source = null, bool skipRedownload = false)
         {
-            var history = _historyService.Get(historyId);
+            message ??= "Manually marked as failed";
 
+            var history = _historyService.Get(historyId);
             var downloadId = history.DownloadId;
 
             if (downloadId.IsNullOrWhiteSpace())
             {
-                PublishDownloadFailedEvent(history, new List<int> { history.EpisodeId }, "Manually marked as failed", skipRedownload: skipRedownload);
+                if (history.EventType == EpisodeHistoryEventType.Grabbed)
+                {
+                    PublishDownloadFailedEvent(history, new List<int> { history.EpisodeId }, message, source, skipRedownload: skipRedownload);
+                    return;
+                }
 
-                return;
+                throw new InvalidOperationException("Unable to mark download as failed, history item was not grabbed and has no download ID");
             }
 
             var grabbedHistory = new List<EpisodeHistory>();
@@ -55,17 +61,26 @@ namespace NzbDrone.Core.Download
             grabbedHistory.AddRange(GetGrabbedHistory(downloadId));
             grabbedHistory = grabbedHistory.DistinctBy(h => h.Id).ToList();
 
-            PublishDownloadFailedEvent(history, GetEpisodeIds(grabbedHistory), "Manually marked as failed");
+            if (grabbedHistory.Any())
+            {
+                PublishDownloadFailedEvent(grabbedHistory.First(), GetEpisodeIds(grabbedHistory), message, source);
+                return;
+            }
+
+            throw new InvalidOperationException("Unable to mark download as failed, no grabbed history available");
         }
 
-        public void MarkAsFailed(TrackedDownload trackedDownload, bool skipRedownload = false)
+        public void MarkAsFailed(TrackedDownload trackedDownload, string message, string source = null, bool skipRedownload = false)
         {
             var history = GetGrabbedHistory(trackedDownload.DownloadItem.DownloadId);
 
             if (history.Any())
             {
-                PublishDownloadFailedEvent(history.First(), GetEpisodeIds(history), "Manually marked as failed", trackedDownload, skipRedownload: skipRedownload);
+                PublishDownloadFailedEvent(history.First(), GetEpisodeIds(history), message ?? "Manually marked as failed", source, trackedDownload, skipRedownload: skipRedownload);
+                return;
             }
+
+            throw new InvalidOperationException("Unable to mark download as failed, no grabbed history available");
         }
 
         public void Check(TrackedDownload trackedDownload)
@@ -83,7 +98,7 @@ namespace NzbDrone.Core.Download
 
                 if (grabbedItems.Empty())
                 {
-                    trackedDownload.Warn("Download wasn't grabbed by whisparr, skipping");
+                    trackedDownload.Warn(trackedDownload.DownloadItem.IsEncrypted ? "Download is encrypted and wasn't grabbed by Whisparr, skipping automatic download handling" : "Download has failed wasn't grabbed by Whisparr, skipping automatic download handling");
                     return;
                 }
 
@@ -117,10 +132,10 @@ namespace NzbDrone.Core.Download
             }
 
             trackedDownload.State = TrackedDownloadState.Failed;
-            PublishDownloadFailedEvent(grabbedItems.First(), GetEpisodeIds(grabbedItems), failure, trackedDownload);
+            PublishDownloadFailedEvent(grabbedItems.First(), GetEpisodeIds(grabbedItems), failure, $"{BuildInfo.AppName} Failed Download Handling", trackedDownload);
         }
 
-        private void PublishDownloadFailedEvent(EpisodeHistory historyItem, List<int> episodeIds, string message, TrackedDownload trackedDownload = null, bool skipRedownload = false)
+        private void PublishDownloadFailedEvent(EpisodeHistory historyItem, List<int> episodeIds, string message, string source, TrackedDownload trackedDownload = null, bool skipRedownload = false)
         {
             Enum.TryParse(historyItem.Data.GetValueOrDefault(EpisodeHistory.RELEASE_SOURCE, ReleaseSourceType.Unknown.ToString()), out ReleaseSourceType releaseSource);
 
@@ -133,6 +148,7 @@ namespace NzbDrone.Core.Download
                 DownloadClient = historyItem.Data.GetValueOrDefault(EpisodeHistory.DOWNLOAD_CLIENT),
                 DownloadId = historyItem.DownloadId,
                 Message = message,
+                Source = source,
                 Data = historyItem.Data,
                 TrackedDownload = trackedDownload,
                 Languages = historyItem.Languages,

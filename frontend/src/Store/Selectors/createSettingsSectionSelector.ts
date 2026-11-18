@@ -3,7 +3,7 @@ import { AppSectionItemState } from 'App/State/AppSectionState';
 import AppState from 'App/State/AppState';
 import SettingsAppState from 'App/State/SettingsAppState';
 import selectSettings from 'Store/Selectors/selectSettings';
-import { PendingSection } from 'typings/Pending';
+import { PendingSection } from 'typings/pending';
 
 type SectionsWithItemNames = {
   [K in keyof SettingsAppState]: SettingsAppState[K] extends AppSectionItemState<unknown>
@@ -28,6 +28,9 @@ function createSettingsSectionSelector<
       const saveError =
         'saveError' in sectionSettings ? sectionSettings.saveError : undefined;
 
+      const isSaving =
+        'isSaving' in sectionSettings ? sectionSettings.isSaving : false;
+
       const {
         settings,
         pendingChanges: selectedPendingChanges,
@@ -36,6 +39,7 @@ function createSettingsSectionSelector<
 
       return {
         ...other,
+        isSaving,
         saveError,
         settings: settings as PendingSection<T>,
         pendingChanges: selectedPendingChanges as Partial<T>,

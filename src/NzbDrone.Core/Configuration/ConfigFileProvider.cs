@@ -34,6 +34,7 @@ namespace NzbDrone.Core.Configuration
         bool LaunchBrowser { get; }
         AuthenticationType AuthenticationMethod { get; }
         AuthenticationRequiredType AuthenticationRequired { get; }
+        string AllowedHosts { get; }
         bool AnalyticsEnabled { get; }
         string LogLevel { get; }
         int LogSizeLimit { get; }
@@ -44,8 +45,10 @@ namespace NzbDrone.Core.Configuration
         string Branch { get; }
         string ApiKey { get; }
         string SslCertPath { get; }
+        string SslKeyPath { get; }
         string SslCertPassword { get; }
         string UrlBase { get; }
+        string TrustedNetworks { get; }
         string UiFolder { get; }
         string InstanceName { get; }
         bool UpdateAutomatically { get; }
@@ -63,6 +66,14 @@ namespace NzbDrone.Core.Configuration
         string PostgresLogDb { get; }
         string WhisparrMetadata { get; }
         string GithubOwnerRepo { get; }
+        string PostgresMainDbConnectionString { get; }
+        string PostgresLogDbConnectionString { get; }
+        bool TrustCgnatIpAddresses { get; }
+        string OidcAuthority { get; }
+        string OidcClientId { get; }
+        string OidcClientSecret { get; }
+        string OidcUserIdentifier { get; }
+        string OidcScopes { get; }
     }
 
     public class ConfigFileProvider : IConfigFileProvider
@@ -146,6 +157,7 @@ namespace NzbDrone.Core.Configuration
             _cache.Clear();
 
             var allWithDefaults = GetConfigDictionary();
+            var hasUpdated = false;
 
             foreach (var configValue in configValues)
             {
@@ -164,11 +176,15 @@ namespace NzbDrone.Core.Configuration
 
                 if (!equal)
                 {
+                    hasUpdated = true;
                     SetValue(configValue.Key.FirstCharToUpper(), configValue.Value.ToString());
                 }
             }
 
-            _eventAggregator.PublishEvent(new ConfigFileSavedEvent());
+            if (hasUpdated)
+            {
+                _eventAggregator.PublishEvent(new ConfigFileSavedEvent());
+            }
         }
 
         public string BindAddress
@@ -219,17 +235,36 @@ namespace NzbDrone.Core.Configuration
 
                 if (enabled)
                 {
-                    SetValue("AuthenticationMethod", AuthenticationType.Basic);
-                    return AuthenticationType.Basic;
+                    SetValue("AuthenticationMethod", AuthenticationType.Forms);
+                    return AuthenticationType.Forms;
                 }
 
-                return GetValueEnum("AuthenticationMethod", AuthenticationType.None);
+                var value = GetValueEnum("AuthenticationMethod", AuthenticationType.None);
+
+#pragma warning disable CS0618 // Type or member is obsolete
+                if (value == AuthenticationType.Basic)
+#pragma warning restore CS0618 // Type or member is obsolete
+                {
+                    SetValue("AuthenticationMethod", AuthenticationType.Forms);
+
+                    return AuthenticationType.Forms;
+                }
+
+                return value;
             }
         }
 
         public AuthenticationRequiredType AuthenticationRequired => GetValueEnum("AuthenticationRequired", AuthenticationRequiredType.Enabled);
 
         public bool AnalyticsEnabled => GetValueBoolean("AnalyticsEnabled", true, persist: false);
+
+        public string AllowedHosts => GetValue("AllowedHosts", string.Empty);
+
+        public string OidcAuthority => GetValue("OidcAuthority", string.Empty, persist: false);
+        public string OidcClientId => GetValue("OidcClientId", string.Empty, persist: false);
+        public string OidcClientSecret => GetValue("OidcClientSecret", string.Empty, persist: false);
+        public string OidcUserIdentifier => GetValue("OidcUserIdentifier", string.Empty, persist: false);
+        public string OidcScopes => GetValue("OidcScopes", "openid profile email", persist: false);
 
         private static readonly Regex ValidBranchRegex = new Regex(@"^v\d+(-develop)?$", RegexOptions.Compiled);
 
@@ -265,11 +300,14 @@ namespace NzbDrone.Core.Configuration
         public string PostgresMainDb => _postgresOptions?.MainDb ?? GetValue("PostgresMainDb", "whisparr-main", persist: false);
         public string PostgresLogDb => _postgresOptions?.LogDb ?? GetValue("PostgresLogDb", "whisparr-log", persist: false);
         public int PostgresPort => (_postgresOptions?.Port ?? 0) != 0 ? _postgresOptions.Port : GetValueInt("PostgresPort", 5432, persist: false);
+        public string PostgresMainDbConnectionString => _postgresOptions?.MainDbConnectionString ?? GetValue("PostgresMainDbConnectionString", string.Empty, persist: false);
+        public string PostgresLogDbConnectionString => _postgresOptions?.LogDbConnectionString ?? GetValue("PostgresLogDbConnectionString", string.Empty, persist: false);
 
         public bool LogSql => GetValueBoolean("LogSql", false, persist: false);
         public int LogRotate => GetValueInt("LogRotate", 50, persist: false);
         public bool FilterSentryEvents => GetValueBoolean("FilterSentryEvents", true, persist: false);
         public string SslCertPath => GetValue("SslCertPath", "");
+        public string SslKeyPath => GetValue("SslKeyPath", "");
         public string SslCertPassword => GetValue("SslCertPassword", "");
 
         public string UrlBase
@@ -286,6 +324,8 @@ namespace NzbDrone.Core.Configuration
                 return "/" + urlBase;
             }
         }
+
+        public string TrustedNetworks => GetValue("TrustedNetworks", string.Empty);
 
         public string UiFolder => BuildInfo.IsDebug ? Path.Combine("..", "UI") : "UI";
 
@@ -407,6 +447,12 @@ namespace NzbDrone.Core.Configuration
             {
                 SetValue("EnableSsl", false);
             }
+#pragma warning disable CS0618 // Type or member is obsolete
+            if (AuthenticationMethod == AuthenticationType.Basic)
+#pragma warning restore CS0618 // Type or member is obsolete
+            {
+                SetValue("AuthenticationMethod", AuthenticationType.Forms);
+            }
         }
 
         private void DeleteOldValues()
@@ -497,5 +543,7 @@ namespace NzbDrone.Core.Configuration
         {
             SetValue("ApiKey", GenerateApiKey());
         }
+
+        public bool TrustCgnatIpAddresses => GetValueBoolean("TrustCgnatIpAddresses", false, persist: false);
     }
 }

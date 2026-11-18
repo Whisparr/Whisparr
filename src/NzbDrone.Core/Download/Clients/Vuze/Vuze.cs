@@ -2,8 +2,10 @@ using FluentValidation.Results;
 using NLog;
 using NzbDrone.Common.Disk;
 using NzbDrone.Common.Http;
+using NzbDrone.Core.Blocklisting;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Download.Clients.Transmission;
+using NzbDrone.Core.Localization;
 using NzbDrone.Core.MediaFiles.TorrentInfo;
 using NzbDrone.Core.RemotePathMappings;
 
@@ -13,14 +15,19 @@ namespace NzbDrone.Core.Download.Clients.Vuze
     {
         private const int MINIMUM_SUPPORTED_PROTOCOL_VERSION = 14;
 
+        public override string Name => "Vuze";
+        public override bool SupportsLabels => false;
+
         public Vuze(ITransmissionProxy proxy,
                     ITorrentFileInfoReader torrentFileInfoReader,
                     IHttpClient httpClient,
                     IConfigService configService,
                     IDiskProvider diskProvider,
                     IRemotePathMappingService remotePathMappingService,
-                    Logger logger)
-            : base(proxy, torrentFileInfoReader, httpClient, configService, diskProvider, remotePathMappingService, logger)
+                    IBlocklistService blocklistService,
+                    Logger logger,
+                    ILocalizationService localizationService)
+            : base(proxy, torrentFileInfoReader, httpClient, configService, diskProvider, remotePathMappingService, blocklistService, logger, localizationService)
         {
         }
 
@@ -57,13 +64,11 @@ namespace NzbDrone.Core.Download.Clients.Vuze
             if (!int.TryParse(versionString, out var version) || version < MINIMUM_SUPPORTED_PROTOCOL_VERSION)
             {
                 {
-                    return new ValidationFailure(string.Empty, "Protocol version not supported, use Vuze 5.0.0.0 or higher with Vuze Web Remote plugin.");
+                    return new ValidationFailure(string.Empty, _localizationService.GetLocalizedString("DownloadClientVuzeValidationErrorVersion"));
                 }
             }
 
             return null;
         }
-
-        public override string Name => "Vuze";
     }
 }

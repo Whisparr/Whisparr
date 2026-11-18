@@ -49,14 +49,13 @@ namespace NzbDrone.Core.Indexers.Newznab
             {
                 yield return GetDefinition("DOGnzb", GetSettings("https://api.dognzb.cr"));
                 yield return GetDefinition("DrunkenSlug", GetSettings("https://drunkenslug.com"));
-                yield return GetDefinition("Nzb.su", GetSettings("https://api.nzb.su"));
+                yield return GetDefinition("Nzb.life", GetSettings("https://api.nzb.life"));
                 yield return GetDefinition("NZBCat", GetSettings("https://nzb.cat"));
                 yield return GetDefinition("NZBFinder.ws", GetSettings("https://nzbfinder.ws", categories: new[] { 5030, 5040, 5045 }));
                 yield return GetDefinition("NZBgeek", GetSettings("https://api.nzbgeek.info"));
                 yield return GetDefinition("nzbplanet.net", GetSettings("https://api.nzbplanet.net"));
                 yield return GetDefinition("SimplyNZBs", GetSettings("https://simplynzbs.com"));
                 yield return GetDefinition("Tabula Rasa", GetSettings("https://www.tabula-rasa.pw", apiPath: @"/api/v1/api"));
-                yield return GetDefinition("AnimeTosho Usenet", GetSettings("https://feed.animetosho.org", apiPath: @"/nabapi", categories: Array.Empty<int>(), animeCategories: new[] { 5070 }));
             }
         }
 

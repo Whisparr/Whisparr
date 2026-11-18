@@ -210,7 +210,6 @@ module.exports = {
     'no-undef-init': 'off',
     'no-undefined': 'off',
     'no-unused-vars': ['error', { args: 'none', ignoreRestSiblings: true }],
-    'no-use-before-define': 'error',
 
     // Node.js and CommonJS
 
@@ -284,6 +283,11 @@ module.exports = {
     'space-unary-ops': 'off',
     'spaced-comment': 'error',
     'wrap-regex': 'error',
+    'padding-line-between-statements': [
+      'error',
+      { blankLine: 'always', prev: '*', next: 'multiline-block-like' },
+      { blankLine: 'always', prev: 'multiline-block-like', next: '*' }
+    ],
 
     // ImportSort
 
@@ -359,10 +363,19 @@ module.exports = {
       ],
 
       rules: Object.assign(typescriptEslintRecommended.rules, {
-        'no-shadow': 'off',
-        // These should be enabled after cleaning things up
-        '@typescript-eslint/no-unused-vars': 'warn',
+        '@typescript-eslint/no-unused-vars': [
+          'error',
+          {
+            args: 'after-used',
+            argsIgnorePattern: '^_',
+            caughtErrorsIgnorePattern: '^_',
+            destructuredArrayIgnorePattern: '^_',
+            varsIgnorePattern: '^_',
+            ignoreRestSiblings: true
+          }
+        ],
         '@typescript-eslint/explicit-function-return-type': 'off',
+        'no-shadow': 'off',
         'react/prop-types': 'off',
         'prettier/prettier': 'error',
         'simple-import-sort/imports': [

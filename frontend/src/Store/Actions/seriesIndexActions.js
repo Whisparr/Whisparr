@@ -59,14 +59,14 @@ export const defaultState = {
       columnLabel: () => translate('Status'),
       isSortable: true,
       isVisible: true,
-      isModifiable: false
+      isModifiable: 'disabled'
     },
     {
       name: 'sortTitle',
       label: () => translate('SiteTitle'),
       isSortable: true,
       isVisible: true,
-      isModifiable: false
+      isModifiable: 'disabled'
     },
     {
       name: 'network',
@@ -130,7 +130,7 @@ export const defaultState = {
     },
     {
       name: 'latestSeason',
-      label: () => translate('LatestSeason'),
+      label: () => translate('LatestYear'),
       isSortable: true,
       isVisible: false
     },
@@ -153,6 +153,12 @@ export const defaultState = {
       isVisible: false
     },
     {
+      name: 'averageSizePerEpisode',
+      label: () => translate('AverageSizePerEpisode'),
+      isSortable: true,
+      isVisible: false
+    },
+    {
       name: 'genres',
       label: () => translate('Genres'),
       isSortable: false,
@@ -167,6 +173,12 @@ export const defaultState = {
     {
       name: 'releaseGroups',
       label: () => translate('ReleaseGroups'),
+      isSortable: false,
+      isVisible: false
+    },
+    {
+      name: 'episodeFileQualities',
+      label: () => translate('EpisodeFileQualities'),
       isSortable: false,
       isVisible: false
     },
@@ -186,7 +198,7 @@ export const defaultState = {
       name: 'actions',
       columnLabel: () => translate('Actions'),
       isVisible: true,
-      isModifiable: false
+      isModifiable: 'disabled'
     }
   ],
 

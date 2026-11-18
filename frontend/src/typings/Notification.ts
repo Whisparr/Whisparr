@@ -1,23 +1,34 @@
-import ModelBase from 'App/ModelBase';
+import Provider from './Provider';
 
-export interface Field {
-  order: number;
-  name: string;
-  label: string;
-  value: boolean | number | string;
-  type: string;
-  advanced: boolean;
-  privacy: string;
-}
-
-interface Notification extends ModelBase {
+interface Notification extends Provider {
   enable: boolean;
-  name: string;
-  fields: Field[];
-  implementationName: string;
-  implementation: string;
-  configContract: string;
-  infoLink: string;
+  onGrab: boolean;
+  onDownload: boolean;
+  onUpgrade: boolean;
+  onImportComplete: boolean;
+  onRename: boolean;
+  onSeriesAdd: boolean;
+  onSeriesDelete: boolean;
+  onEpisodeFileDelete: boolean;
+  onEpisodeFileDeleteForUpgrade: boolean;
+  onHealthIssue: boolean;
+  includeHealthWarnings: boolean;
+  onHealthRestored: boolean;
+  onApplicationUpdate: boolean;
+  onManualInteractionRequired: boolean;
+  supportsOnGrab: boolean;
+  supportsOnDownload: boolean;
+  supportsOnUpgrade: boolean;
+  supportsOnImportComplete: boolean;
+  supportsOnRename: boolean;
+  supportsOnSeriesAdd: boolean;
+  supportsOnSeriesDelete: boolean;
+  supportsOnEpisodeFileDelete: boolean;
+  supportsOnEpisodeFileDeleteForUpgrade: boolean;
+  supportsOnHealthIssue: boolean;
+  supportsOnHealthRestored: boolean;
+  supportsOnApplicationUpdate: boolean;
+  supportsOnManualInteractionRequired: boolean;
   tags: number[];
 }
 

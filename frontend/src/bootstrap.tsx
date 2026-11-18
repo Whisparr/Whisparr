@@ -9,7 +9,6 @@ import 'Diag/ConsoleApi';
 export async function bootstrap() {
   const history = createBrowserHistory();
   const store = createAppStore(history);
-
   const container = document.getElementById('root');
 
   if (container) {

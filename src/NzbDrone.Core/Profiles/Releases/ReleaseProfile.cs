@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using NzbDrone.Core.Datastore;
 
 namespace NzbDrone.Core.Profiles.Releases
@@ -10,7 +10,10 @@ namespace NzbDrone.Core.Profiles.Releases
         public List<string> Required { get; set; }
         public List<string> Ignored { get; set; }
         public int IndexerId { get; set; }
+        public bool AirDateRestriction { get; set; }
+        public int AirDateGracePeriod { get; set; }
         public HashSet<int> Tags { get; set; }
+        public HashSet<int> ExcludedTags { get; set; }
 
         public ReleaseProfile()
         {
@@ -18,6 +21,7 @@ namespace NzbDrone.Core.Profiles.Releases
             Required = new List<string>();
             Ignored = new List<string>();
             Tags = new HashSet<int>();
+            ExcludedTags = new HashSet<int>();
             IndexerId = 0;
         }
     }

@@ -37,6 +37,7 @@ function BlocklistRow(props: BlocklistRowProps) {
     protocol,
     indexer,
     message,
+    source,
     isSelected,
     columns,
     onSelectedChange,
@@ -133,10 +134,15 @@ function BlocklistRow(props: BlocklistRowProps) {
         if (name === 'actions') {
           return (
             <TableRowCell key={name} className={styles.actions}>
-              <IconButton name={icons.INFO} onPress={handleDetailsPress} />
+              <IconButton
+                name={icons.INFO}
+                aria-label={translate('Details')}
+                onPress={handleDetailsPress}
+              />
 
               <IconButton
                 title={translate('RemoveFromBlocklist')}
+                aria-label={translate('RemoveFromBlocklist')}
                 name={icons.REMOVE}
                 kind={kinds.DANGER}
                 onPress={handleRemovePress}
@@ -154,6 +160,7 @@ function BlocklistRow(props: BlocklistRowProps) {
         protocol={protocol}
         indexer={indexer}
         message={message}
+        source={source}
         onModalClose={handleDetailsModalClose}
       />
     </TableRow>

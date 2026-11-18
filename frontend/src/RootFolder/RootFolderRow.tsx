@@ -74,6 +74,7 @@ function RootFolderRow(props: RootFolderRowProps) {
       <TableRowCell className={styles.actions}>
         <IconButton
           title={translate('RemoveRootFolder')}
+          aria-label={translate('RemoveRootFolder')}
           name={icons.REMOVE}
           onPress={onDeletePress}
         />
@@ -82,9 +83,9 @@ function RootFolderRow(props: RootFolderRowProps) {
       <ConfirmModal
         isOpen={isDeleteModalOpen}
         kind={kinds.DANGER}
-        title={translate('DeleteRootFolder')}
-        message={translate('DeleteRootFolderMessageText', { path })}
-        confirmLabel={translate('Delete')}
+        title={translate('RemoveRootFolder')}
+        message={translate('RemoveRootFolderWithSeriesMessageText', { path })}
+        confirmLabel={translate('Remove')}
         onConfirm={onConfirmDelete}
         onCancel={onDeleteModalClose}
       />

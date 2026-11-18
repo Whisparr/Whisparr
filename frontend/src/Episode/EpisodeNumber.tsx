@@ -22,6 +22,7 @@ function getWarningMessage(unverifiedSceneNumbering: boolean) {
 export interface EpisodeNumberProps {
   seasonNumber: number;
   episodeNumber: number;
+  releaseDate?: string;
   absoluteEpisodeNumber?: number;
   sceneSeasonNumber?: number;
   sceneEpisodeNumber?: number;
@@ -37,6 +38,7 @@ function EpisodeNumber(props: EpisodeNumberProps) {
   const {
     seasonNumber,
     episodeNumber,
+    releaseDate,
     absoluteEpisodeNumber,
     sceneSeasonNumber,
     sceneEpisodeNumber,
@@ -63,6 +65,23 @@ function EpisodeNumber(props: EpisodeNumberProps) {
     !!alternateTitles.length;
 
   const warningMessage = getWarningMessage(unverifiedSceneNumbering);
+
+  if (releaseDate) {
+    return (
+      <span>
+        <span>{releaseDate}</span>
+
+        {warningMessage ? (
+          <Icon
+            className={styles.warning}
+            name={icons.WARNING}
+            kind={kinds.WARNING}
+            title={warningMessage}
+          />
+        ) : null}
+      </span>
+    );
+  }
 
   return (
     <span>

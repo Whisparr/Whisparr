@@ -8,6 +8,7 @@ interface CssExports {
   'details': string;
   'detailsLabel': string;
   'fileCountMessage': string;
+  'genres': string;
   'header': string;
   'headerContent': string;
   'info': string;
@@ -15,6 +16,7 @@ interface CssExports {
   'links': string;
   'monitorToggleButton': string;
   'network': string;
+  'originalLanguageName': string;
   'overview': string;
   'path': string;
   'poster': string;
@@ -22,6 +24,7 @@ interface CssExports {
   'runtime': string;
   'seriesNavigationButton': string;
   'seriesNavigationButtons': string;
+  'seriesProgressLabel': string;
   'sizeOnDisk': string;
   'statusName': string;
   'tags': string;

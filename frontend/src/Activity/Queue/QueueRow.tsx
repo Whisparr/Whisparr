@@ -248,9 +248,9 @@ function QueueRow(props: QueueRowProps) {
           );
         }
 
-        if (name === 'episodes.airDateUtc') {
+        if (name === 'episodes.releaseDate') {
           if (episode) {
-            return <RelativeDateCell key={name} date={episode.airDateUtc} />;
+            return <RelativeDateCell key={name} date={episode.releaseDate} />;
           }
 
           return <TableRowCell key={name}>-</TableRowCell>;
@@ -344,6 +344,7 @@ function QueueRow(props: QueueRowProps) {
             <TableRowCell key={name} className={styles.progress}>
               {!!progress && (
                 <ProgressBar
+                  ariaLabel={translate('DownloadProgressForTitle', { title })}
                   progress={progress}
                   title={`${progress.toFixed(1)}%`}
                 />
@@ -362,6 +363,7 @@ function QueueRow(props: QueueRowProps) {
               {showInteractiveImport ? (
                 <IconButton
                   name={icons.INTERACTIVE}
+                  aria-label={translate('InteractiveSearch')}
                   onPress={handleInteractiveImportPress}
                 />
               ) : null}
@@ -370,6 +372,7 @@ function QueueRow(props: QueueRowProps) {
                 <SpinnerIconButton
                   name={icons.DOWNLOAD}
                   kind={grabError ? kinds.DANGER : kinds.DEFAULT}
+                  aria-label={translate('Grab')}
                   isSpinning={isGrabbing}
                   onPress={handleGrabPress}
                 />
@@ -391,7 +394,7 @@ function QueueRow(props: QueueRowProps) {
       <InteractiveImportModal
         isOpen={isInteractiveImportModalOpen}
         downloadId={downloadId}
-        modalTitle={title}
+        title={title}
         onModalClose={handleInteractiveImportModalClose}
       />
 
@@ -401,6 +404,7 @@ function QueueRow(props: QueueRowProps) {
         canChangeCategory={!!downloadClientHasPostImportCategory}
         canIgnore={!!series}
         isPending={isPending}
+        downloadClient={downloadClient}
         onRemovePress={handleRemoveQueueItemModalConfirmed}
         onModalClose={handleRemoveQueueItemModalClose}
       />
